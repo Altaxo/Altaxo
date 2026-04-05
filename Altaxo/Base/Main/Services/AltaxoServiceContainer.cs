@@ -41,17 +41,25 @@ namespace Altaxo.Main.Services
     private readonly List<Type> servicesToDispose = new List<Type>();
     private readonly Dictionary<Type, object> _taskCompletionSources = new Dictionary<Type, object>(); // object = TaskCompletionSource<T> for various T
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AltaxoServiceContainer"/> class.
+    /// </summary>
     public AltaxoServiceContainer()
     {
       _services.Add(typeof(AltaxoServiceContainer), this);
       _services.Add(typeof(IServiceContainer), this);
     }
 
+    /// <summary>
+    /// Adds a fallback service provider that is queried when the service is not found in this container.
+    /// </summary>
+    /// <param name="provider">The fallback service provider to add.</param>
     public void AddFallbackProvider(IServiceProvider provider)
     {
       _fallbackServiceProviders.Push(provider);
     }
 
+    /// <inheritdoc/>
     public object? GetService(Type serviceType)
     {
       object? instance;
@@ -85,6 +93,7 @@ namespace Altaxo.Main.Services
       return null;
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
       Type[] disposableTypes;
@@ -123,6 +132,7 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <inheritdoc/>
     public void AddService(Type serviceType, object serviceInstance)
     {
       lock (_services)
@@ -132,11 +142,13 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <inheritdoc/>
     public void AddService(Type serviceType, object serviceInstance, bool promote)
     {
       AddService(serviceType, serviceInstance);
     }
 
+    /// <inheritdoc/>
     public void AddService(Type serviceType, ServiceCreatorCallback callback)
     {
       lock (_services)
@@ -145,11 +157,13 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <inheritdoc/>
     public void AddService(Type serviceType, ServiceCreatorCallback callback, bool promote)
     {
       AddService(serviceType, callback);
     }
 
+    /// <inheritdoc/>
     public void RemoveService(Type serviceType)
     {
       lock (_services)
@@ -164,11 +178,17 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <inheritdoc/>
     public void RemoveService(Type serviceType, bool promote)
     {
       RemoveService(serviceType);
     }
 
+    /// <summary>
+    /// Gets a task that completes when a service of the specified type becomes available.
+    /// </summary>
+    /// <typeparam name="T">The type of service to await.</typeparam>
+    /// <returns>A task that returns the requested service instance when it becomes available, or <c>null</c>.</returns>
     public Task<T?> GetFutureService<T>() where T : class
     {
       Type serviceType = typeof(T);

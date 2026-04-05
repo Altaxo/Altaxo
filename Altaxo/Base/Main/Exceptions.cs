@@ -28,10 +28,14 @@ using System;
 namespace Altaxo
 {
   /// <summary>
-  /// Summary description for AltaxoExeptions.
+  /// Exception thrown when an operator error occurs.
   /// </summary>
   public class AltaxoOperatorException : System.ApplicationException
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AltaxoOperatorException"/> class.
+    /// </summary>
+    /// <param name="s">Error message.</param>
     public AltaxoOperatorException(string s)
       : base(s)
     {

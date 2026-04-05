@@ -38,6 +38,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
   /// </summary>
   public class FourierCommands
   {
+    /// <summary>
+    /// Starts a one-dimensional FFT for the selected column.
+    /// </summary>
+    /// <param name="dg">The worksheet controller.</param>
     public static void FFT(IWorksheetController dg)
     {
       int len = dg.SelectedDataColumns.Count;
@@ -54,13 +58,24 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     #region Two dimensional Fourier transformation
 
+    /// <summary>
+    /// Stores the last used options for 2D Fourier transformation.
+    /// </summary>
     public static RealFourierTransformation2DOptions? _lastUsedOptions;
 
+    /// <summary>
+    /// Starts the 2D FFT command.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
     public static void TwoDimensionalFFT(IWorksheetController ctrl)
     {
       ShowRealFourierTransformation2DDialog(ctrl.DataTable, ctrl.SelectedDataRows, ctrl.SelectedDataColumns, ctrl.SelectedPropertyColumns);
     }
 
+    /// <summary>
+    /// Starts the centered 2D FFT command.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
     public static void TwoDimensionalCenteredFFT(IWorksheetController ctrl)
     {
       ShowRealFourierTransformation2DDialog(ctrl.DataTable, ctrl.SelectedDataRows, ctrl.SelectedDataColumns, ctrl.SelectedPropertyColumns);
@@ -224,6 +239,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     #region Convolution
 
+    /// <summary>
+    /// Performs convolution on the selected columns of the worksheet.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
     public static void Convolution(IWorksheetController ctrl)
     {
       string? err = Convolution(Current.Project, ctrl);
@@ -231,6 +250,12 @@ namespace Altaxo.Worksheet.Commands.Analysis
         Current.Gui.ErrorMessageBox(err);
     }
 
+    /// <summary>
+    /// Performs convolution on the selected columns of the worksheet and returns an error message if any.
+    /// </summary>
+    /// <param name="mainDocument">The main document.</param>
+    /// <param name="dg">The worksheet controller.</param>
+    /// <returns>Null if successful, otherwise an error message.</returns>
     public static string? Convolution(Altaxo.AltaxoDocument mainDocument, IWorksheetController dg)
     {
       int len = dg.SelectedDataColumns.Count;
@@ -270,6 +295,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     #region Correlation
 
+    /// <summary>
+    /// Performs correlation on the selected columns of the worksheet.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
     public static void Correlation(IWorksheetController ctrl)
     {
       var err = Correlation(Current.Project, ctrl);
@@ -277,6 +306,12 @@ namespace Altaxo.Worksheet.Commands.Analysis
         Current.Gui.ErrorMessageBox(err);
     }
 
+    /// <summary>
+    /// Performs correlation on the selected columns of the worksheet and returns an error message if any.
+    /// </summary>
+    /// <param name="mainDocument">The main document.</param>
+    /// <param name="dg">The worksheet controller.</param>
+    /// <returns>Null if successful, otherwise an error message.</returns>
     public static string? Correlation(Altaxo.AltaxoDocument mainDocument, IWorksheetController dg)
     {
       int len = dg.SelectedDataColumns.Count;

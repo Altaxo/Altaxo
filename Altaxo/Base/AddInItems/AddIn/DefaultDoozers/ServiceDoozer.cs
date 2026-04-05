@@ -37,11 +37,13 @@ namespace Altaxo.AddInItems
   /// </returns>
   public class ServiceDoozer : IDoozer
   {
+    /// <inheritdoc/>
     public bool HandleConditions
     {
       get { return false; }
     }
 
+    /// <inheritdoc/>
     public object? BuildItem(BuildItemArgs args)
     {
       if(!(args.Parameter is IServiceContainer container))

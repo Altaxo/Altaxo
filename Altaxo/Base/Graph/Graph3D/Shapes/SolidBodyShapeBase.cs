@@ -24,36 +24,39 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Drawing.D3D;
-using Altaxo.Graph.Graph3D.GraphicsContext;
 
 namespace Altaxo.Graph.Graph3D.Shapes
 {
-  using Geometry;
-
   /// <summary>
-  ///
+  /// Provides the base implementation for solid three-dimensional shapes.
   /// </summary>
   public abstract class SolidBodyShapeBase : GraphicBase
   {
+    /// <summary>
+    /// The material used to render the solid body.
+    /// </summary>
     protected IMaterial _material = Materials.GetSolidMaterial(Drawing.NamedColors.LightGray);
 
     #region Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SolidBodyShapeBase"/> class during deserialization.
+    /// </summary>
+    /// <param name="info">The deserialization info.</param>
     protected SolidBodyShapeBase(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     : base(info)
     {
     }
 
     /// <summary>
+    /// Serializes <see cref="SolidBodyShapeBase"/> instances.
     /// 2016-03-01: Initial version
     /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SolidBodyShapeBase), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (SolidBodyShapeBase)obj;
@@ -61,6 +64,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
         info.AddValue("Material", s._material);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (SolidBodyShapeBase)(o ?? throw new ArgumentNullException(nameof(o)));
@@ -73,17 +77,29 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SolidBodyShapeBase"/> class.
+    /// </summary>
     public SolidBodyShapeBase()
       : base(new ItemLocationDirect())
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SolidBodyShapeBase"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The shape to copy from.</param>
     public SolidBodyShapeBase(SolidBodyShapeBase from)
       : base(from)
     {
       CopyFrom(from, false);
     }
 
+    /// <summary>
+    /// Copies values from another <see cref="SolidBodyShapeBase"/> instance.
+    /// </summary>
+    /// <param name="from">The shape to copy from.</param>
+    /// <param name="withBaseMembers">If set to <c>true</c>, base members are copied as well.</param>
     protected void CopyFrom(SolidBodyShapeBase from, bool withBaseMembers)
     {
       if (withBaseMembers)
@@ -92,6 +108,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       _material = from._material;
     }
 
+    /// <inheritdoc/>
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -111,6 +128,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets the material used to render the shape.
+    /// </summary>
     public IMaterial Material
     {
       get
@@ -128,6 +148,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       }
     }
 
+    /// <inheritdoc/>
     public override IHitTestObject? HitTest(HitTestPointData parentHitData)
     {
       var result = base.HitTest(parentHitData);
@@ -138,6 +159,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
       return result;
     }
 
+    /// <summary>
+    /// Opens the shape-properties dialog for the double-clicked object.
+    /// </summary>
     protected static bool EhHitDoubleClick(IHitTestObject o)
     {
       object hitted = o.HittedObject;

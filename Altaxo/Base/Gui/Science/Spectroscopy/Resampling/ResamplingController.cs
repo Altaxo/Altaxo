@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -31,13 +31,20 @@ using Altaxo.Science.Spectroscopy.Resampling;
 
 namespace Altaxo.Gui.Science.Spectroscopy.Resampling
 {
+  /// <summary>
+  /// View interface for selecting and editing an <see cref="IResampling"/> implementation.
+  /// </summary>
   public interface IResamplingView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller that allows selecting a resampling method and editing its parameters.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IResamplingView))]
   public class ResamplingController : MVCANControllerEditImmutableDocBase<IResampling, IResamplingView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_subController, () => SubController = null);
@@ -47,6 +54,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Resampling
 
     private ItemsController<Type> _availableMethods;
 
+    /// <summary>
+    /// Gets or sets the available resampling method types.
+    /// </summary>
     public ItemsController<Type> AvailableMethods
     {
       get => _availableMethods;
@@ -63,6 +73,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Resampling
 
     private IMVCANController? _subController;
 
+    /// <summary>
+    /// Gets or sets the controller that edits the currently selected resampling method.
+    /// </summary>
     public IMVCANController? SubController
     {
       get => _subController;
@@ -81,6 +94,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Resampling
     #endregion
 
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -121,6 +135,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Resampling
       CreateSubController();
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (SubController is not null)

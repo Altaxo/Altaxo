@@ -28,17 +28,21 @@ using Altaxo.Graph.Scales;
 
 namespace Altaxo.Gui.Graph.Scales
 {
+  /// <summary>
+  /// View contract for editing axis links.
+  /// </summary>
   public interface IAxisLinkView : IDataContextAwareView
   {
   }
 
   /// <summary>
-  /// Summary description for LinkAxisController.
+  /// Controller for editing <see cref="LinkedScaleParameters"/>.
   /// </summary>
   [ExpectedTypeOfView(typeof(IAxisLinkView))]
   [UserControllerForObject(typeof(LinkedScaleParameters))]
   public class AxisLinkController : MVCANControllerEditOriginalDocBase<LinkedScaleParameters, IAxisLinkView>
   {
+    /// <inheritdoc/>
     public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -64,6 +68,9 @@ namespace Altaxo.Gui.Graph.Scales
         }
       }
     }
+    /// <summary>
+    /// Gets a value indicating whether a custom link is used.
+    /// </summary>
     public bool IsCustomLink => !IsStraightLink;
 
 
@@ -144,6 +151,7 @@ namespace Altaxo.Gui.Graph.Scales
 
 
     #endregion
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -158,6 +166,7 @@ namespace Altaxo.Gui.Graph.Scales
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (IsStraightLink)

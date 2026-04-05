@@ -35,11 +35,17 @@ using Altaxo.Calc.RootFinding;
 
 namespace Altaxo.Data.Obsolete
 {
+  /// <summary>
+  /// Obsolete helpers for master curve creation.
+  /// </summary>
   [Obsolete("Use Altaxo.Science.Thermorheology.MasterCurves.MasterCurveCreation instead")]
   public static class MasterCurveCreation
   {
     #region Helper types
 
+    /// <summary>
+    /// Holds grouped curve data.
+    /// </summary>
     public class CurveData : List<List<DoubleColumn>>
     {
     }
@@ -95,6 +101,9 @@ namespace Altaxo.Data.Obsolete
       /// </summary>
       public OptimizationMethod OptimizationMethod { get; set; }
 
+      /// <summary>
+      /// Factory used to create interpolation functions for the master-curve calculation.
+      /// </summary>
       protected Func<IInterpolationFunction> _interpolationFunctionCreation = new Func<IInterpolationFunction>(() => new LinearInterpolation());
 
       /// <summary>
@@ -109,6 +118,9 @@ namespace Altaxo.Data.Obsolete
         set { _interpolationFunctionCreation = value ?? throw new ArgumentNullException(nameof(value)); }
       }
 
+      /// <summary>
+      /// Stores the configured number of master-curve fitting iterations.
+      /// </summary>
       protected int _numberOfIterations = 1;
 
       /// <summary>
@@ -160,6 +172,9 @@ namespace Altaxo.Data.Obsolete
       /// </summary>
       OptimizeSquaredDifference,
 
+      /// <summary>
+      /// Evaluates the mean squared difference by brute-force search over the allowed shift interval.
+      /// </summary>
       OptimizeSquaredDifferenceByBruteForce
     }
 
@@ -382,6 +397,10 @@ namespace Altaxo.Data.Obsolete
 
     #endregion Helper types
 
+    /// <summary>
+    /// Creates the master curve for the specified options and stores the resulting shifts and interpolations in the options instance.
+    /// </summary>
+    /// <param name="options">The options that define the source columns, fitting behavior, and result storage.</param>
     public static void CreateMasterCurve(Options options)
     {
       // First we create the initial interpolation of the master column
@@ -539,6 +558,16 @@ namespace Altaxo.Data.Obsolete
       }
     }
 
+    /// <summary>
+    /// Gets the minimum and maximum valid values from the first column for rows where both transformed columns contain finite values.
+    /// </summary>
+    /// <param name="x">The first column.</param>
+    /// <param name="y">The second column.</param>
+    /// <param name="doLogX">Whether to logarithmize the values of <paramref name="x"/> before evaluation.</param>
+    /// <param name="doLogY">Whether to logarithmize the values of <paramref name="y"/> before evaluation.</param>
+    /// <param name="min">Receives the minimum valid value from <paramref name="x"/>.</param>
+    /// <param name="max">Receives the maximum valid value from <paramref name="x"/>.</param>
+    /// <returns><see langword="true"/> if at least one valid pair was found; otherwise, <see langword="false"/>.</returns>
     public static bool GetMinMaxOfFirstColumnForValidSecondColumn(DoubleColumn x, DoubleColumn y, bool doLogX, bool doLogY, out double min, out double max)
     {
       int len = Math.Min(x.Count, y.Count);

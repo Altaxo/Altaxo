@@ -34,7 +34,7 @@ namespace Altaxo.Graph
   /// <summary>
   /// This is the base class of graphs.
   /// </summary>
-  /// <remarks>The coordinate system of the graphs is in units of points (1/72 inch). </remarks>
+  /// <remarks>The coordinate system of the graphs is in units of points (1/72 inch).</remarks>
   public abstract class GraphDocumentBase
     :
     Main.SuspendableDocumentNodeWithSingleAccumulatedData<EventArgs>,
@@ -89,6 +89,9 @@ namespace Altaxo.Graph
     [field: NonSerialized]
     public event EventHandler? SizeChanged;
 
+    /// <summary>
+    /// Indicates whether internal data structures are currently being fixed up.
+    /// </summary>
     [NonSerialized]
     protected bool _isFixupInternalDataStructuresActive;
 
@@ -149,6 +152,7 @@ namespace Altaxo.Graph
       return !(name is null);
     }
 
+    /// <inheritdoc/>
     public override string Name
     {
       get
@@ -262,6 +266,13 @@ namespace Altaxo.Graph
       return result;
     }
 
+    /// <summary>
+    /// Gets or sets the property value identified by the given key.
+    /// </summary>
+    /// <typeparam name="T">The property value type.</typeparam>
+    /// <param name="key">The property key.</param>
+    /// <param name="resultCreationIfNotFound">A factory used when the value is not found.</param>
+    /// <returns>The property value.</returns>
     [return: NotNullIfNotNull("resultCreationIfNotFound")]
     [return: MaybeNull]
     public T GetPropertyValue<T>(Altaxo.Main.Properties.PropertyKey<T> key, Func<T>? resultCreationIfNotFound) where T : notnull
@@ -298,6 +309,7 @@ namespace Altaxo.Graph
       SizeChanged?.Invoke(this, EventArgs.Empty);
     }
 
+    /// <inheritdoc/>
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (_paintThread is not null && object.ReferenceEquals(_paintThread, System.Threading.Thread.CurrentThread))
@@ -339,6 +351,7 @@ namespace Altaxo.Graph
       return base.HandleHighPriorityChildChangeCases(sender, ref e);
     }
 
+    /// <inheritdoc/>
     protected override void AccumulateChangeData(object? sender, EventArgs e)
     {
       if (sender is not null && _accumulatedEventData is null)
@@ -349,6 +362,9 @@ namespace Altaxo.Graph
 
     #region IPropertyBagOwner
 
+    /// <summary>
+    /// Gets or sets the graph property bag.
+    /// </summary>
     public Main.Properties.PropertyBag? PropertyBag
     {
       get { return _graphProperties; }
@@ -360,6 +376,9 @@ namespace Altaxo.Graph
       }
     }
 
+    /// <summary>
+    /// Gets the graph property bag, creating it if necessary.
+    /// </summary>
     public Main.Properties.PropertyBag PropertyBagNotNull
     {
       get

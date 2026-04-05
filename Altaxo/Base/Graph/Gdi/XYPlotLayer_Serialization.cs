@@ -45,6 +45,16 @@ namespace Altaxo.Graph.Gdi
   {
     #region Serialization
 
+    /// <summary>
+    /// Converts a legacy axis description into the current scale representation.
+    /// </summary>
+    /// <param name="idx">The target scale index.</param>
+    /// <param name="axis">The legacy axis description.</param>
+    /// <param name="isLinked">A value indicating whether the legacy axis is linked to another layer.</param>
+    /// <param name="orgA">The first origin link parameter.</param>
+    /// <param name="orgB">The second origin link parameter.</param>
+    /// <param name="endA">The first end link parameter.</param>
+    /// <param name="endB">The second end link parameter.</param>
     private void SetupOldAxis(int idx, Altaxo.Graph.Scales.Deprecated.Scale axis, bool isLinked, double orgA, double orgB, double endA, double endB)
     {
       Scale? transScale = null;
@@ -82,6 +92,10 @@ namespace Altaxo.Graph.Gdi
       _scales[idx] = transScale;
     }
 
+    /// <summary>
+    /// Converts both legacy linked scales of a two-dimensional plot layer.
+    /// </summary>
+    /// <param name="linkedScales">The legacy linked-scale collection.</param>
     private void SetupOldAxes(Altaxo.Graph.Scales.Deprecated.LinkedScaleCollection linkedScales)
     {
       SetupOldAxis(0, linkedScales.X.Scale, linkedScales.X.AxisLinkType != ScaleLinkType.None, linkedScales.X.LinkOrgA, linkedScales.X.LinkOrgB, linkedScales.X.LinkEndA, linkedScales.X.LinkEndB);
@@ -90,10 +104,14 @@ namespace Altaxo.Graph.Gdi
 
     #region Version 0 and 1
 
+    /// <summary>
+    /// Deserializes legacy version 0 and 1 <see cref="XYPlotLayer"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLayer", 0)]
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLayer", 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new ApplicationException("Calling of an outdated serialization routine");
@@ -166,6 +184,7 @@ namespace Altaxo.Graph.Gdi
                 */
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         XYPlotLayer s = SDeserialize(o, info, parent);
@@ -174,6 +193,13 @@ namespace Altaxo.Graph.Gdi
         return s;
       }
 
+      /// <summary>
+      /// Deserializes the core state of a legacy <see cref="XYPlotLayer"/> instance.
+      /// </summary>
+      /// <param name="o">The target instance, if one already exists.</param>
+      /// <param name="info">The deserialization information.</param>
+      /// <param name="parent">The parent object in the serialization graph.</param>
+      /// <returns>The deserialized plot layer.</returns>
       protected virtual XYPlotLayer SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (XYPlotLayer?)o ?? new XYPlotLayer(info);
@@ -286,9 +312,13 @@ namespace Altaxo.Graph.Gdi
 
     #region Version 2
 
+    /// <summary>
+    /// Deserializes legacy version 2 <see cref="XYPlotLayer"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLayer", 2)]
     private class XmlSerializationSurrogate2 : XmlSerializationSurrogate0
     {
+      /// <inheritdoc/>
       public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotSupportedException("Serialization of old versions not supported, maybe a programming error");
@@ -301,6 +331,13 @@ namespace Altaxo.Graph.Gdi
                 */
       }
 
+      /// <summary>
+      /// Deserializes the additional state stored in version 2 of <see cref="XYPlotLayer"/>.
+      /// </summary>
+      /// <param name="o">The target instance, if one already exists.</param>
+      /// <param name="info">The deserialization information.</param>
+      /// <param name="parent">The parent object in the serialization graph.</param>
+      /// <returns>The deserialized plot layer.</returns>
       protected override XYPlotLayer SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         XYPlotLayer s = base.SDeserialize(o, info, parent);
@@ -315,9 +352,13 @@ namespace Altaxo.Graph.Gdi
 
     #region Version 3
 
+    /// <summary>
+    /// Deserializes legacy version 3 <see cref="XYPlotLayer"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLayer", 3)]
     private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotSupportedException("Serialization of old versions is not supported");
@@ -357,6 +398,7 @@ namespace Altaxo.Graph.Gdi
                 */
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         XYPlotLayer s = SDeserialize(o, info, parent);
@@ -365,6 +407,13 @@ namespace Altaxo.Graph.Gdi
         return s;
       }
 
+      /// <summary>
+      /// Deserializes the core state stored in version 3 of <see cref="XYPlotLayer"/>.
+      /// </summary>
+      /// <param name="o">The target instance, if one already exists.</param>
+      /// <param name="info">The deserialization information.</param>
+      /// <param name="parent">The parent object in the serialization graph.</param>
+      /// <returns>The deserialized plot layer.</returns>
       protected virtual XYPlotLayer SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (XYPlotLayer?)o ?? new XYPlotLayer(info);
@@ -430,9 +479,13 @@ namespace Altaxo.Graph.Gdi
 
     #region Version 4
 
+    /// <summary>
+    /// Deserializes legacy version 4 <see cref="XYPlotLayer"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.XYPlotLayer", 4)]
     private class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
@@ -475,6 +528,13 @@ namespace Altaxo.Graph.Gdi
                 */
       }
 
+      /// <summary>
+      /// Deserializes the core state stored in version 4 of <see cref="XYPlotLayer"/>.
+      /// </summary>
+      /// <param name="o">The target instance, if one already exists.</param>
+      /// <param name="info">The deserialization information.</param>
+      /// <param name="parent">The parent object in the serialization graph.</param>
+      /// <returns>The deserialized plot layer.</returns>
       protected virtual XYPlotLayer SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (XYPlotLayer?)o ?? new XYPlotLayer(info);
@@ -530,6 +590,7 @@ namespace Altaxo.Graph.Gdi
         return s;
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         XYPlotLayer s = SDeserialize(o, info, parent);
@@ -549,6 +610,7 @@ namespace Altaxo.Graph.Gdi
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.XYPlotLayer", 5)]
     private class XmlSerializationSurrogate5 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
@@ -591,6 +653,13 @@ namespace Altaxo.Graph.Gdi
                 */
       }
 
+      /// <summary>
+      /// Deserializes the core state stored in version 5 of <see cref="XYPlotLayer"/>.
+      /// </summary>
+      /// <param name="o">The target instance, if one already exists.</param>
+      /// <param name="info">The deserialization information.</param>
+      /// <param name="parent">The parent object in the serialization graph.</param>
+      /// <returns>The deserialized plot layer.</returns>
       protected virtual XYPlotLayer SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (XYPlotLayer?)o ?? new XYPlotLayer(info);
@@ -646,6 +715,7 @@ namespace Altaxo.Graph.Gdi
         return s;
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         XYPlotLayer s = SDeserialize(o, info, parent);
@@ -666,6 +736,7 @@ namespace Altaxo.Graph.Gdi
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLayer), 6)]
     private class XmlSerializationSurrogate6 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (XYPlotLayer)obj;
@@ -691,6 +762,13 @@ namespace Altaxo.Graph.Gdi
         info.AddValue("Plots", s._plotItems);
       }
 
+      /// <summary>
+      /// Deserializes the current serialized state of an <see cref="XYPlotLayer"/>.
+      /// </summary>
+      /// <param name="o">The target instance, if one already exists.</param>
+      /// <param name="info">The deserialization information.</param>
+      /// <param name="parent">The parent object in the serialization graph.</param>
+      /// <returns>The deserialized plot layer.</returns>
       protected virtual XYPlotLayer SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (XYPlotLayer?)o ?? new XYPlotLayer(info);
@@ -719,6 +797,7 @@ namespace Altaxo.Graph.Gdi
         return s;
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         XYPlotLayer s = SDeserialize(o, info, parent);
@@ -749,6 +828,12 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Restores the linked-layer index on linked scales from a relative document proxy.
+    /// </summary>
+    /// <param name="s">The plot layer whose scales should be updated.</param>
+    /// <param name="linkedLayer">The proxy to the linked layer.</param>
+    /// <param name="info">The deserialization information.</param>
     private static void ProvideLinkedScalesWithLinkedLayerIndex(XYPlotLayer s, Main.RelDocNodeProxy? linkedLayer, Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
       if (linkedLayer is not null)
@@ -757,6 +842,12 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Restores the linked-layer index on linked scales from an absolute document path.
+    /// </summary>
+    /// <param name="s">The plot layer whose scales should be updated.</param>
+    /// <param name="path">The absolute path to the linked layer.</param>
+    /// <param name="info">The deserialization information.</param>
     private static void ProvideLinkedScalesWithLinkedLayerIndex(XYPlotLayer s, Main.AbsoluteDocumentPath path, Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
       if (path is not null && path.Count > 0)
@@ -772,6 +863,12 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Restores the linked-layer index on linked scales from a relative document path.
+    /// </summary>
+    /// <param name="s">The plot layer whose scales should be updated.</param>
+    /// <param name="path">The relative path to the linked layer.</param>
+    /// <param name="info">The deserialization information.</param>
     private static void ProvideLinkedScalesWithLinkedLayerIndex(XYPlotLayer s, Main.RelativeDocumentPath path, Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
       if (path is not null && path.Count > 0)

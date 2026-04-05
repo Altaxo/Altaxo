@@ -30,21 +30,31 @@ using Altaxo.Graph.Gdi.Shapes;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
+  /// <summary>
+  /// View contract for editing collections of graphic items.
+  /// </summary>
   public interface IGraphicItemsView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for editing a <see cref="GraphicCollection"/>.
+  /// </summary>
   [UserControllerForObject(typeof(GraphicCollection))]
   [ExpectedTypeOfView(typeof(IGraphicItemsView))]
   public class GraphicItemsController : MVCANControllerEditCopyOfDocBase<GraphicCollection, IGraphicItemsView>
   {
     private SelectableListNodeList _itemsList = new();
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GraphicItemsController"/> class.
+    /// </summary>
     public GraphicItemsController()
     {
       CmdSelectedItemsUp = new RelayCommand(EhSelectedItemsUp);
@@ -54,21 +64,37 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the command that moves selected items up.
+    /// </summary>
     public ICommand CmdSelectedItemsUp { get; }
+
+    /// <summary>
+    /// Gets the command that moves selected items down.
+    /// </summary>
     public ICommand CmdSelectedItemsDown { get; }
+
+    /// <summary>
+    /// Gets the command that removes selected items.
+    /// </summary>
     public ICommand CmdSelectedItemsRemove { get; }
 
+    /// <summary>
+    /// Gets the list of graphic items.
+    /// </summary>
     public SelectableListNodeList ItemsList => _itemsList;
 
 
     #endregion
 
+    /// <inheritdoc/>
     public override void Dispose(bool isDisposing)
     {
       _itemsList = null;
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -85,6 +111,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       using (var token = _doc.GetEventDisableToken())

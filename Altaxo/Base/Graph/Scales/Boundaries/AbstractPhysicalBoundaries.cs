@@ -33,11 +33,20 @@ namespace Altaxo.Graph.Scales.Boundaries
   [Serializable]
   public abstract class AbstractPhysicalBoundaries : Main.SuspendableDocumentLeafNodeWithSingleAccumulatedData<BoundariesChangedEventArgs>, IPhysicalBoundaries
   {
+    /// <summary>
+    /// The number of tracked items.
+    /// </summary>
     protected int _numberOfItems = 0;
 
+    /// <summary>
+    /// Stores the number of items when events are disabled.
+    /// </summary>
     [NonSerialized]
-    protected int _savedNumberOfItems; // stores the number of items when events are disabled
+    protected int _savedNumberOfItems;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AbstractPhysicalBoundaries"/> class.
+    /// </summary>
     public AbstractPhysicalBoundaries()
     {
       _numberOfItems = 0;
@@ -77,11 +86,13 @@ namespace Altaxo.Graph.Scales.Boundaries
     /// <returns>True if data is in the tracked range, false if the data is not in the tracked range.</returns>
     public abstract bool Add(Altaxo.Data.AltaxoVariant item);
 
+    /// <inheritdoc />
     public virtual void Reset()
     {
       _numberOfItems = 0;
     }
 
+    /// <inheritdoc />
     public int NumberOfItems
     {
       get
@@ -90,6 +101,7 @@ namespace Altaxo.Graph.Scales.Boundaries
       }
     }
 
+    /// <inheritdoc />
     public virtual bool IsEmpty
     {
       get
@@ -108,12 +120,14 @@ namespace Altaxo.Graph.Scales.Boundaries
 
     #region ICloneable Members
 
+    /// <inheritdoc />
     public abstract object Clone();
 
     #endregion ICloneable Members
 
     #region Changed event handling
 
+    /// <inheritdoc />
     protected override void AccumulateChangeData(object? sender, EventArgs e)
     {
       var eAsBCEA = e as BoundariesChangedEventArgs;

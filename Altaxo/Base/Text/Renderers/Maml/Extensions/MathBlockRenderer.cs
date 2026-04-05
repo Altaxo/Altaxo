@@ -34,8 +34,14 @@ using Markdig.Extensions.Mathematics;
 
 namespace Altaxo.Text.Renderers.Maml.Extensions
 {
+  /// <summary>
+  /// MAML renderer for a block math element.
+  /// </summary>
   public class MathBlockRenderer : MamlObjectRenderer<MathBlock>
   {
+    /// <summary>
+    /// Writes a block math element.
+    /// </summary>
     protected override void Write(MamlRenderer renderer, MathBlock obj)
     {
       string formulaText = string.Empty; // obj.Content.Text.Substring(obj.Content.Start, obj.Content.Length);

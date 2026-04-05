@@ -33,10 +33,13 @@ using System.Xml;
 namespace Altaxo.Serialization.Xml
 {
   /// <summary>
-  /// Summary description for XmlStreamSerializationInfo.
+  /// Provides XML serialization support for writing values and objects to an XML stream.
   /// </summary>
   public class XmlStreamSerializationInfo : IXmlSerializationInfo
   {
+    /// <summary>
+    /// Property key that enables indented XML output.
+    /// </summary>
     public const string UseXmlIndentation = "UseXmlIndentation";
     private static readonly XmlWriter _nullWriter = new XmlTextWriter(System.IO.Stream.Null, System.Text.Encoding.UTF8);
 
@@ -60,6 +63,9 @@ namespace Altaxo.Serialization.Xml
     private const int _size_of_double = 8;
     private const int _size_of_DateTime = 8;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XmlStreamSerializationInfo"/> class.
+    /// </summary>
     public XmlStreamSerializationInfo()
     {
       _bufferSize = 16384;
@@ -69,6 +75,10 @@ namespace Altaxo.Serialization.Xml
       _writer = _nullWriter;
     }
 
+    /// <summary>
+    /// Begins writing XML to the specified stream.
+    /// </summary>
+    /// <param name="stream">The stream to write to.</param>
     public void BeginWriting(System.IO.Stream stream)
     {
       if (string.IsNullOrEmpty(_properties[Altaxo.Serialization.Xml.XmlStreamSerializationInfo.UseXmlIndentation]))
@@ -90,6 +100,10 @@ namespace Altaxo.Serialization.Xml
       _writer.WriteStartDocument();
     }
 
+    /// <summary>
+    /// Begins writing XML to the specified string builder.
+    /// </summary>
+    /// <param name="stb">The string builder that receives the generated XML.</param>
     public void BeginWriting(System.Text.StringBuilder stb)
     {
       _writer = XmlWriter.Create(stb);
@@ -107,6 +121,9 @@ namespace Altaxo.Serialization.Xml
       _isWriterCreatedHere = false;
     }
 
+    /// <summary>
+    /// Ends XML writing and flushes or detaches the underlying writer.
+    /// </summary>
     public void EndWriting()
     {
       if (_isWriterCreatedHere)
@@ -121,6 +138,11 @@ namespace Altaxo.Serialization.Xml
       }
     }
 
+    /// <summary>
+    /// Sets a serializer property.
+    /// </summary>
+    /// <param name="propertyname">The property name.</param>
+    /// <param name="propertyvalue">The property value.</param>
     public void SetProperty(string propertyname, string? propertyvalue)
     {
       if (_properties.ContainsKey(propertyname))
@@ -129,11 +151,22 @@ namespace Altaxo.Serialization.Xml
         _properties.Add(propertyname, propertyvalue);
     }
 
+    /// <summary>
+    /// Gets a serializer property.
+    /// </summary>
+    /// <param name="propertyname">The property name.</param>
+    /// <returns>The property value, or <c>null</c> if the property is not set.</returns>
     public string? GetProperty(string propertyname)
     {
       return _properties[propertyname];
     }
 
+    /// <summary>
+    /// Saves the current property value and then sets a new value.
+    /// </summary>
+    /// <param name="propertyName">The property name.</param>
+    /// <param name="propertyValue">The new property value.</param>
+    /// <returns>The previous property value, or <c>null</c> if the property was not set.</returns>
     public string? SaveAndSetProperty(string propertyName, string? propertyValue)
     {
       var result = _properties[propertyName];
@@ -153,17 +186,20 @@ namespace Altaxo.Serialization.Xml
 
     #region IXmlSerializationInfo Members
 
+    /// <inheritdoc/>
     public XmlArrayEncoding DefaultArrayEncoding
     {
       get { return m_DefaultArrayEncoding; }
       set { m_DefaultArrayEncoding = value; }
     }
 
+    /// <inheritdoc/>
     public void AddValue(string name, bool val)
     {
       _writer.WriteElementString(name, XmlConvert.ToString(val));
     }
 
+    /// <inheritdoc/>
     public void AddValue(string name, bool? val)
     {
       if (val is null)
@@ -172,16 +208,19 @@ namespace Altaxo.Serialization.Xml
         _writer.WriteElementString(name, XmlConvert.ToString(val.Value));
     }
 
+    /// <inheritdoc/>
     public void AddValue(string name, char val)
     {
       _writer.WriteElementString(name, XmlConvert.ToString(val));
     }
 
+    /// <inheritdoc/>
     public void AddValue(string name, int val)
     {
       _writer.WriteElementString(name, XmlConvert.ToString(val));
     }
 
+    /// <inheritdoc/>
     public void AddValue(string name, int? val)
     {
       if (val is null)
@@ -190,37 +229,44 @@ namespace Altaxo.Serialization.Xml
         _writer.WriteElementString(name, XmlConvert.ToString((int)val));
     }
 
+    /// <inheritdoc/>
     public void AddValue(string name, long val)
     {
       _writer.WriteElementString(name, XmlConvert.ToString(val));
     }
 
+    /// <inheritdoc/>
     public void AddValue(string name, string? val)
     {
       _writer.WriteElementString(name, val);
     }
 
 
+    /// <inheritdoc/>
     public void AddAttributeValue(string name, int val)
     {
       _writer.WriteAttributeString(name, XmlConvert.ToString(val));
     }
 
+    /// <inheritdoc/>
     public void AddAttributeValue(string name, string val)
     {
       _writer.WriteAttributeString(name, val);
     }
 
+    /// <inheritdoc/>
     public void AddValue(string name, float val)
     {
       _writer.WriteElementString(name, XmlConvert.ToString(val));
     }
 
+    /// <inheritdoc/>
     public void AddValue(string name, double val)
     {
       _writer.WriteElementString(name, XmlConvert.ToString(val));
     }
 
+    /// <inheritdoc/>
     public void AddValue(string name, double? val)
     {
       if (val is null)
@@ -229,16 +275,19 @@ namespace Altaxo.Serialization.Xml
         _writer.WriteElementString(name, XmlConvert.ToString((double)val));
     }
 
+    /// <inheritdoc/>
     public void AddValue(string name, DateTime val)
     {
       _writer.WriteElementString(name, XmlConvert.ToString(val, XmlDateTimeSerializationMode.RoundtripKind));
     }
 
+    /// <inheritdoc/>
     public void AddValue(string name, TimeSpan val)
     {
       _writer.WriteElementString(name, XmlConvert.ToString(val));
     }
 
+    /// <inheritdoc/>
     public void AddValue(string name, System.IO.MemoryStream stream)
     {
       _writer.WriteStartElement(name);
@@ -253,11 +302,13 @@ namespace Altaxo.Serialization.Xml
       _writer.WriteEndElement();
     }
 
+    /// <inheritdoc/>
     public void AddEnum(string name, System.Enum val)
     {
       _writer.WriteElementString(name, val.ToString());
     }
 
+    /// <inheritdoc/>
     public void AddNullableEnum<T>(string name, T? val) where T : struct
     {
       if (val is null)
@@ -266,11 +317,13 @@ namespace Altaxo.Serialization.Xml
         _writer.WriteElementString(name, val.Value.ToString());
     }
 
+    /// <inheritdoc/>
     public void SetNodeContent(string nodeContent)
     {
       _writer.WriteString(nodeContent);
     }
 
+    /// <inheritdoc/>
     public void CreateArray(string name, int count)
     {
       if (count < 0)
@@ -280,11 +333,13 @@ namespace Altaxo.Serialization.Xml
       _writer.WriteAttributeString("Count", XmlConvert.ToString(count));
     }
 
+    /// <inheritdoc/>
     public void CommitArray()
     {
       _writer.WriteEndElement(); // Node "name"
     }
 
+    /// <inheritdoc/>
     public void AddArray(string name, float[] val, int count)
     {
       CreateArray(name, count);
@@ -311,6 +366,7 @@ namespace Altaxo.Serialization.Xml
       CommitArray();
     }
 
+    /// <inheritdoc/>
     public void AddArray(string name, IReadOnlyList<double> val, int count)
     {
       CreateArray(name, count);
@@ -337,6 +393,7 @@ namespace Altaxo.Serialization.Xml
       CommitArray();
     }
 
+    /// <inheritdoc/>
     public void AddArray(string name, IReadOnlyList<int> val, int count)
     {
       CreateArray(name, count);
@@ -367,6 +424,7 @@ namespace Altaxo.Serialization.Xml
       CommitArray();
     }
 
+    /// <inheritdoc/>
     public void AddArray(string name, DateTime[] val, int count)
     {
       CreateArray(name, count);
@@ -393,6 +451,7 @@ namespace Altaxo.Serialization.Xml
       CommitArray();
     }
 
+    /// <inheritdoc/>
     public void AddArray(string name, IReadOnlyList<string?> val, int count)
     {
       CreateArray(name, count);
@@ -407,6 +466,7 @@ namespace Altaxo.Serialization.Xml
       CommitArray();
     }
 
+    /// <inheritdoc/>
     public void AddArray(string name, System.Collections.BitArray val, System.Collections.BitArray cond, int count)
     {
       CreateArray(name, count);
@@ -437,6 +497,7 @@ namespace Altaxo.Serialization.Xml
       CommitArray();
     }
 
+    /// <inheritdoc/>
     public void AddArrayOfPrimitiveType(string name, System.Array val, int count, int sizeofelement, XmlArrayEncoding encoding)
     {
       switch (encoding)
@@ -481,6 +542,7 @@ namespace Altaxo.Serialization.Xml
     }
 
 
+    /// <inheritdoc/>
     public void AddArray(string name, IReadOnlyList<object> val, int count)
     {
       CreateArray(name, count);
@@ -495,6 +557,7 @@ namespace Altaxo.Serialization.Xml
       CommitArray();
     }
 
+    /// <inheritdoc/>
     public void AddArrayOfNullableElements(string name, IReadOnlyList<object?> val, int count)
     {
       CreateArray(name, count);
@@ -509,26 +572,31 @@ namespace Altaxo.Serialization.Xml
       CommitArray();
     }
 
+    /// <inheritdoc/>
     public void CreateElement(string name)
     {
       _writer.WriteStartElement(name);
     }
 
+    /// <inheritdoc/>
     public void CommitElement()
     {
       _writer.WriteEndElement();
     }
 
+    /// <inheritdoc/>
     public bool IsSerializable(object? o)
     {
       return o is null || _surrogateSelector.GetSurrogate(o.GetType()) is not null;
     }
 
+    /// <inheritdoc/>
     public bool IsSerializableType(System.Type type)
     {
       return _surrogateSelector.GetSurrogate(type) is not null;
     }
 
+    /// <inheritdoc/>
     public void AddValue(string name, object o)
     {
 #if !NONULLSTRICTCHECK
@@ -539,6 +607,7 @@ namespace Altaxo.Serialization.Xml
     }
 
 
+    /// <inheritdoc/>
     public void AddValueOrNull(string name, object? o)
     {
       if (o is not null)
@@ -563,6 +632,7 @@ namespace Altaxo.Serialization.Xml
       }
     }
 
+    /// <inheritdoc/>
     public void AddBaseValueEmbedded(object o, System.Type basetype)
     {
       if (_surrogateSelector.GetSurrogate(basetype) is { } ss)
@@ -576,6 +646,7 @@ namespace Altaxo.Serialization.Xml
       }
     }
 
+    /// <inheritdoc/>
     public void AddBaseValueStandalone(string name, object o, System.Type basetype)
     {
       if (_surrogateSelector.GetSurrogate(basetype) is { } ss)

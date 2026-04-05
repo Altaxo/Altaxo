@@ -32,6 +32,9 @@ using Altaxo.Data;
 
 namespace Altaxo.Gui.Data.Transformations
 {
+  /// <summary>
+  /// Controller for editing <see cref="IVariantToVariantTransformation"/> instances.
+  /// </summary>
   [UserControllerForObject(typeof(IVariantToVariantTransformation), 90)]
   public class VariantToVariantTransformationController : Altaxo.Gui.Common.SimpleImmutableObjectController<IVariantToVariantTransformation>
   {

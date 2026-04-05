@@ -31,6 +31,9 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Drawing.D3D.CrossSections
 {
+  /// <summary>
+  /// Elliptical cross section for 3D lines.
+  /// </summary>
   public class Ellipsoidal : ICrossSectionOfLine
   {
     private double _radius1;
@@ -64,11 +67,19 @@ namespace Altaxo.Drawing.D3D.CrossSections
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Ellipsoidal"/> class with unit sizes.
+    /// </summary>
     public Ellipsoidal()
       : this(1, 1)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Ellipsoidal"/> class.
+    /// </summary>
+    /// <param name="size1">The first ellipse diameter.</param>
+    /// <param name="size2">The second ellipse diameter.</param>
     public Ellipsoidal(double size1, double size2)
     {
       if (!(size1 >= 0))
@@ -82,6 +93,7 @@ namespace Altaxo.Drawing.D3D.CrossSections
       _radius2 = size2 / 2;
     }
 
+    /// <inheritdoc/>
     public int NumberOfNormals
     {
       get
@@ -90,6 +102,7 @@ namespace Altaxo.Drawing.D3D.CrossSections
       }
     }
 
+    /// <inheritdoc/>
     public int NumberOfVertices
     {
       get
@@ -98,6 +111,7 @@ namespace Altaxo.Drawing.D3D.CrossSections
       }
     }
 
+    /// <inheritdoc/>
     public double Size1
     {
       get
@@ -106,6 +120,7 @@ namespace Altaxo.Drawing.D3D.CrossSections
       }
     }
 
+    /// <inheritdoc/>
     public ICrossSectionOfLine WithSize1(double size1)
     {
       if (!(size1 >= 0))
@@ -125,6 +140,7 @@ namespace Altaxo.Drawing.D3D.CrossSections
       }
     }
 
+    /// <inheritdoc/>
     public double Size2
     {
       get
@@ -133,6 +149,7 @@ namespace Altaxo.Drawing.D3D.CrossSections
       }
     }
 
+    /// <inheritdoc/>
     public ICrossSectionOfLine WithSize2(double size2)
     {
       if (!(size2 >= 0))
@@ -152,6 +169,7 @@ namespace Altaxo.Drawing.D3D.CrossSections
       }
     }
 
+    /// <inheritdoc/>
     public ICrossSectionOfLine WithSize(double size1, double size2)
     {
       if (!(size1 >= 0))
@@ -175,22 +193,26 @@ namespace Altaxo.Drawing.D3D.CrossSections
       }
     }
 
+    /// <inheritdoc/>
     public double GetMaximalDistanceFromCenter()
     {
       return Math.Max(_radius1, _radius2);
     }
 
+    /// <inheritdoc/>
     public bool IsVertexSharp(int idx)
     {
       return false;
     }
 
+    /// <inheritdoc/>
     public VectorD2D Normals(int i)
     {
       double phi = i * (2 * Math.PI / _numberOfVertices);
       return VectorD2D.CreateNormalized(_radius2 * Math.Cos(phi), _radius1 * Math.Sin(phi));
     }
 
+    /// <inheritdoc/>
     public PointD2D Vertices(int i)
     {
       double phi = i * (2 * Math.PI / _numberOfVertices);

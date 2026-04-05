@@ -35,8 +35,15 @@ namespace Altaxo.Gui.Worksheet
 {
   #region Interfaces
 
+  /// <summary>
+  /// Provides the view contract for <see cref="MasterCurveCreationDataController"/>.
+  /// </summary>
   public interface IMasterCurveCreationDataView
   {
+    /// <summary>
+    /// Initializes the list data shown in the view.
+    /// </summary>
+    /// <param name="list">The grouped list data.</param>
     void InitializeListData(List<SelectableListNodeList> list);
   }
 
@@ -55,6 +62,10 @@ namespace Altaxo.Gui.Worksheet
 
     private List<SelectableListNodeList> _viewList;
 
+    /// <summary>
+    /// Initializes the controller state.
+    /// </summary>
+    /// <param name="initData">If set to <see langword="true"/>, the model data are copied to the view state.</param>
     private void Initialize(bool initData)
     {
       if (initData)
@@ -78,6 +89,11 @@ namespace Altaxo.Gui.Worksheet
       }
     }
 
+    /// <summary>
+    /// Copies the nested list structure from one document to another.
+    /// </summary>
+    /// <param name="src">The source document.</param>
+    /// <param name="dest">The destination document.</param>
     private void CopyDoc(List<List<DoubleColumn>> src, List<List<DoubleColumn>> dest)
     {
       dest.Clear();
@@ -92,6 +108,7 @@ namespace Altaxo.Gui.Worksheet
       }
     }
 
+    /// <inheritdoc />
     public bool InitializeDocument(params object[] args)
     {
       if (args is null || args.Length == 0 || !(args[0] is List<List<DoubleColumn>>))
@@ -106,11 +123,13 @@ namespace Altaxo.Gui.Worksheet
       return true;
     }
 
+    /// <inheritdoc />
     public UseDocument UseDocumentCopy
     {
       set { }
     }
 
+    /// <inheritdoc />
     public object ViewObject
     {
       get
@@ -128,15 +147,18 @@ namespace Altaxo.Gui.Worksheet
       }
     }
 
+    /// <inheritdoc />
     public object ModelObject
     {
       get { return _docOriginal; }
     }
 
+    /// <inheritdoc />
     public void Dispose()
     {
     }
 
+    /// <inheritdoc />
     public bool Apply(bool disposeController)
     {
       return true;
@@ -147,8 +169,9 @@ namespace Altaxo.Gui.Worksheet
     /// </summary>
     /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
     /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    ///   <c>True</c> if the revert operation was successful; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
     /// </returns>
+    /// <inheritdoc />
     public bool Revert(bool disposeController)
     {
       return false;

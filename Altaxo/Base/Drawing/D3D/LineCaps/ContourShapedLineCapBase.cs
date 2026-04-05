@@ -31,8 +31,12 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Drawing.D3D.LineCaps
 {
+  /// <summary>
+  /// Base class for 3D line caps that are defined by a 2D contour.
+  /// </summary>
   public abstract class ContourShapedLineCapBase : ILineCap
   {
+    /// <inheritdoc/>
     public virtual double MinimumRelativeSize
     {
       get
@@ -41,6 +45,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
       }
     }
 
+    /// <inheritdoc/>
     public virtual double MinimumAbsoluteSizePt
     {
       get
@@ -49,6 +54,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
       }
     }
 
+    /// <inheritdoc/>
     public virtual string Name
     {
       get
@@ -57,6 +63,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
       }
     }
 
+    /// <inheritdoc/>
     public virtual ILineCap WithMinimumAbsoluteAndRelativeSize(double absoluteSizePt, double relativeSize)
     {
       return this;
@@ -87,6 +94,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
       Regular
     }
 
+    /// <inheritdoc/>
     public abstract void AddGeometry(
       Action<PointD3D, VectorD3D> AddPositionAndNormal,
       Action<int, int, int, bool> AddIndices,
@@ -104,6 +112,22 @@ namespace Altaxo.Drawing.D3D.LineCaps
     private static readonly PointD2D _pointD2D_0_1 = new PointD2D(0, 1);
     private static readonly VectorD2D _vectorD2D_M1_0 = new VectorD2D(-1, 0);
 
+    /// <summary>
+    /// Adds geometry for a contour-based line cap using the specified contour description.
+    /// </summary>
+    /// <param name="AddPositionAndNormal">Adds a vertex position together with its normal vector.</param>
+    /// <param name="AddIndices">Adds the vertex indices for a triangle.</param>
+    /// <param name="vertexIndexOffset">The running vertex index offset.</param>
+    /// <param name="isStartCap"><see langword="true"/> to generate the start cap; otherwise the end cap.</param>
+    /// <param name="basePoint">The base point of the cap.</param>
+    /// <param name="westVector">The west direction of the local cap coordinate system.</param>
+    /// <param name="northVector">The north direction of the local cap coordinate system.</param>
+    /// <param name="forwardVectorNormalized">The normalized forward direction of the line.</param>
+    /// <param name="lineCrossSection">The cross section of the line.</param>
+    /// <param name="crossSectionPositions">Optional cached cross-section positions at the cap base.</param>
+    /// <param name="crossSectionNormals">Optional cached cross-section normals at the cap base.</param>
+    /// <param name="temporaryStorageSpace">Temporary storage reused across geometry generation calls.</param>
+    /// <param name="capContour">The contour that defines the cap shape.</param>
     public static void Add(
       Action<PointD3D, VectorD3D> AddPositionAndNormal,
       Action<int, int, int, bool> AddIndices,

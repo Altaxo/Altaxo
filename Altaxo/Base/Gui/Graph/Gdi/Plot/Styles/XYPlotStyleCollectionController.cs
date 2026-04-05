@@ -39,17 +39,20 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
 
   /// <summary>
-  /// Summary description for XYPlotStyleCollectionController.
+  /// Provides the view contract for <see cref="XYPlotStyleCollectionController"/>.
   /// </summary>
   public interface IXYPlotStyleCollectionView : IDataContextAwareView
   {
   }
 
   /// <summary>
-  /// Summary description for XYPlotStyleCollectionController.
+  /// Provides the controller contract for editing a 2D plot-style collection.
   /// </summary>
   public interface IXYPlotStyleCollectionController : IMVCANController
   {
+    /// <summary>
+    /// Occurs when a collection change is committed.
+    /// </summary>
     event EventHandler CollectionChangeCommit;
 
     /// <summary>Is fired when user selected a style for editing. The argument is the index of the style to edit.</summary>
@@ -57,6 +60,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
   }
 
 
+  /// <summary>
+  /// Controller for editing a <see cref="G2DPlotStyleCollection"/>.
+  /// </summary>
   [UserControllerForObject(typeof(G2DPlotStyleCollection))]
   [ExpectedTypeOfView(typeof(IXYPlotStyleCollectionView))]
   public class XYPlotStyleCollectionController
@@ -69,11 +75,15 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     /// <summary>Is fired when user selected a style for editing. The argument is the index of the style to edit.</summary>
     public event Action<int> StyleEditRequested;
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYPlotStyleCollectionController"/> class.
+    /// </summary>
     public XYPlotStyleCollectionController()
     {
       CmdAddPredefinedStyleSet = new RelayCommand(EhView_AddPredefinedStyleSet);
@@ -86,15 +96,41 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the command that adds a predefined style set.
+    /// </summary>
     public ICommand CmdAddPredefinedStyleSet { get; }
+
+    /// <summary>
+    /// Gets the command that adds a single style.
+    /// </summary>
     public ICommand CmdAddSingleStyle { get; }
+
+    /// <summary>
+    /// Gets the command that moves the selected style up.
+    /// </summary>
     public ICommand CmdStyleUp { get; }
+
+    /// <summary>
+    /// Gets the command that moves the selected style down.
+    /// </summary>
     public ICommand CmdStyleDown { get; }
+
+    /// <summary>
+    /// Gets the command that edits the selected style.
+    /// </summary>
     public ICommand CmdStyleEdit { get; }
+
+    /// <summary>
+    /// Gets the command that removes the selected style.
+    /// </summary>
     public ICommand CmdStyleRemove { get; }
 
     private ItemsController<int> _predefinedStyleSetsAvailable;
 
+    /// <summary>
+    /// Gets or sets the available predefined style sets.
+    /// </summary>
     public ItemsController<int> PredefinedStyleSetsAvailable
     {
       get => _predefinedStyleSetsAvailable;
@@ -110,6 +146,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private ItemsController<Type> _singleStylesAvailable;
 
+    /// <summary>
+    /// Gets or sets the available single styles.
+    /// </summary>
     public ItemsController<Type> SingleStylesAvailable
     {
       get => _singleStylesAvailable;
@@ -125,6 +164,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private SelectableListNodeList _currentItems;
 
+    /// <summary>
+    /// Gets or sets the current style items.
+    /// </summary>
     public SelectableListNodeList CurrentItems
     {
       get => _currentItems;
@@ -141,6 +183,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     #endregion
 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       _predefinedStyleSetsAvailable = null;
@@ -151,6 +194,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -180,6 +224,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);
@@ -197,6 +242,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
         _currentItems.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(_doc[i].GetType()), _doc[i], false));
     }
 
+    /// <summary>
+    /// Adds the currently selected single style.
+    /// </summary>
     public virtual void EhView_AddSingleStyle()
     {
       var sel = SingleStylesAvailable.SelectedItem;
@@ -226,18 +274,27 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       OnCollectionChangeCommit();
     }
 
+    /// <summary>
+    /// Moves the selected style up.
+    /// </summary>
     public virtual void EhView_StyleUp()
     {
       _currentItems.MoveSelectedItemsUp((i, j) => _doc.ExchangeItemPositions(i, j));
       OnCollectionChangeCommit();
     }
 
+    /// <summary>
+    /// Moves the selected style down.
+    /// </summary>
     public virtual void EhView_StyleDown()
     {
       _currentItems.MoveSelectedItemsDown((i, j) => _doc.ExchangeItemPositions(i, j));
       OnCollectionChangeCommit();
     }
 
+    /// <summary>
+    /// Requests editing of the selected style.
+    /// </summary>
     public virtual void EhView_StyleEdit()
     {
       var idx = _currentItems.FirstSelectedNodeIndex;
@@ -245,12 +302,18 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
         StyleEditRequested(idx);
     }
 
+    /// <summary>
+    /// Removes the selected style.
+    /// </summary>
     public virtual void EhView_StyleRemove()
     {
       _currentItems.RemoveSelectedItems((i, tag) => _doc.RemoveAt(i));
       OnCollectionChangeCommit();
     }
 
+    /// <summary>
+    /// Adds the selected predefined style set.
+    /// </summary>
     public void EhView_AddPredefinedStyleSet()
     {
       var sel = _predefinedStyleSetsAvailable.SelectedItem;
@@ -272,8 +335,12 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     #region CollectionController Members
 
+    /// <inheritdoc/>
     public event EventHandler CollectionChangeCommit;
 
+    /// <summary>
+    /// Raises the <see cref="CollectionChangeCommit"/> event.
+    /// </summary>
     public virtual void OnCollectionChangeCommit()
     {
       CollectionChangeCommit?.Invoke(this, EventArgs.Empty);

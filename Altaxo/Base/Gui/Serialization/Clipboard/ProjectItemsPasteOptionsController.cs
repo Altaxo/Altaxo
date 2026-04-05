@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -29,14 +29,21 @@ namespace Altaxo.Gui.Serialization.Clipboard
 {
   using Altaxo.Serialization.Clipboard;
 
+  /// <summary>
+  /// View interface for editing <see cref="ProjectItemsPasteOptions"/>.
+  /// </summary>
   public interface IProjectItemsPasteOptionsView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for editing <see cref="ProjectItemsPasteOptions"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IProjectItemsPasteOptionsView))]
   [UserControllerForObject(typeof(ProjectItemsPasteOptions))]
   public class ProjectItemsPasteOptionsController : MVCANControllerEditOriginalDocBase<ProjectItemsPasteOptions, IProjectItemsPasteOptionsView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -46,6 +53,9 @@ namespace Altaxo.Gui.Serialization.Clipboard
 
     private bool _relocateReferences;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether references should be relocated.
+    /// </summary>
     public bool RelocateReferences
     {
       get => _relocateReferences;
@@ -61,6 +71,9 @@ namespace Altaxo.Gui.Serialization.Clipboard
 
     private bool _tryToKeepInternalReferences;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether internal references should be retained, if possible.
+    /// </summary>
     public bool TryToKeepInternalReferences
     {
       get => _tryToKeepInternalReferences;
@@ -77,6 +90,7 @@ namespace Altaxo.Gui.Serialization.Clipboard
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -88,6 +102,7 @@ namespace Altaxo.Gui.Serialization.Clipboard
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc.RelocateReferences = RelocateReferences;

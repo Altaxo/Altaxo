@@ -34,8 +34,14 @@ using Altaxo.Main.Properties;
 
 namespace Altaxo.Graph.Gdi.GraphTemplates
 {
+  /// <summary>
+  /// Provides creation helpers for graph templates with a Cartesian x-y plot layer.
+  /// </summary>
   public static class TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem
   {
+    /// <summary>
+    /// Gets the property key for the default Cartesian graph template.
+    /// </summary>
     public static readonly Main.Properties.PropertyKey<GraphDocument> PropertyKeyDefaultTemplate =
 new Main.Properties.PropertyKey<GraphDocument>(
 "A5C78616-F722-4C52-8687-977EC56616AF",
@@ -116,6 +122,12 @@ typeof(object),
       return graph;
     }
 
+    /// <summary>
+    /// Determines whether the specified graph can be used as a Cartesian x-y graph template.
+    /// </summary>
+    /// <param name="graphTemplate">The graph template to test.</param>
+    /// <param name="problemDescription">On failure, receives a description of the problem.</param>
+    /// <returns><c>true</c> if the graph is suitable; otherwise, <c>false</c>.</returns>
     public static bool IsGraphTemplateSuitable(GraphDocument graphTemplate, [MaybeNullWhen(true)] out string problemDescription)
     {
       // Make sure that the graph contains an XYPlotLayer

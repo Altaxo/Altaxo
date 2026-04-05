@@ -31,14 +31,21 @@ using Altaxo.Science.Spectroscopy.BaselineEstimation;
 
 namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
 {
+  /// <summary>
+  /// View interface for SNIP baseline estimation settings.
+  /// </summary>
   public interface ISNIP_BaseView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="SNIP_Base"/>.
+  /// </summary>
   [UserControllerForObject(typeof(SNIP_Base), 99)]
   [ExpectedTypeOfView(typeof(ISNIP_BaseView))]
   public class SNIP_BaseController : MVCANControllerEditImmutableDocBase<SNIP_Base, ISNIP_BaseView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -48,6 +55,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
 
     private double _halfWidth;
 
+    /// <summary>
+    /// Gets or sets the half width.
+    /// </summary>
     public double HalfWidth
     {
       get => _halfWidth;
@@ -63,6 +73,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
 
     private bool _isHalfWidthInXUnits;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the half width is expressed in X units.
+    /// </summary>
     public bool IsHalfWidthInXUnits
     {
       get => _isHalfWidthInXUnits;
@@ -79,6 +92,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
 
     private int _numberOfRegularIterations;
 
+    /// <summary>
+    /// Gets or sets the number of regular iterations.
+    /// </summary>
     public int NumberOfRegularIterations
     {
       get => _numberOfRegularIterations;
@@ -97,6 +113,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -109,6 +126,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = _doc with

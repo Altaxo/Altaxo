@@ -30,28 +30,52 @@ using Altaxo.Data;
 
 namespace Altaxo.Science.Signals
 {
+  /// <summary>
+  /// Data source that evaluates a peak using a four-point method.
+  /// </summary>
   public class FourPointPeakEvaluationDataSource : TableDataSourceBaseImmutableOptions<FourPointPeakEvaluationOptions, XAndYColumn>
   {
+    /// <summary>Column name for the baseline x-values.</summary>
     public const string ColumnNameLineX = "LineX";
+    /// <summary>Column name for the baseline y-values.</summary>
     public const string ColumnNameLineY = "LineY";
+    /// <summary>Column name for the inner baseline x-values.</summary>
     public const string ColumnNameInnerLineX = "InnerLineX";
+    /// <summary>Column name for the inner baseline y-values.</summary>
     public const string ColumnNameInnerLineY = "InnerLineY";
+    /// <summary>Column name for the optional original-curve x-values.</summary>
     public const string ColumnNameCurveX = "CurveX";
+    /// <summary>Column name for the optional original-curve y-values.</summary>
     public const string ColumnNameCurveY = "CurveY";
+    /// <summary>Column name for parameter names.</summary>
     public const string ColumnNameParameterName = "ParameterName";
+    /// <summary>Column name for parameter values.</summary>
     public const string ColumnNameParameterValue = "ParameterValue";
+    /// <summary>Column group number for the baseline line.</summary>
     public const int ColumnGroupNumberLine = 0;
+    /// <summary>Column group number for the inner baseline line.</summary>
     public const int ColumnGroupNumberInnerLine = 1;
+    /// <summary>Column group number for calculated parameters.</summary>
     public const int ColumnGroupParameter = 2;
+    /// <summary>Column group number for optional curve values.</summary>
     public const int ColumnGroupCurveValues = 3;
 
+    /// <summary>Parameter name for the left integration border.</summary>
     public const string ParameterNameAreaLeftX = "AreaLeftBorderX";
+    /// <summary>Parameter name for the right integration border.</summary>
     public const string ParameterNameAreaRightX = "AreaRightBorderX";
+    /// <summary>Parameter name for the peak area.</summary>
     public const string ParameterNameAreaValue = "AreaValue";
+    /// <summary>Parameter name for the peak height.</summary>
     public const string ParameterNameHeight = "PeakHeight";
+    /// <summary>Parameter name for the peak position.</summary>
     public const string ParameterNamePeakX = "PeakPositionX";
+    /// <summary>Parameter name for the peak full width at half maximum.</summary>
     public const string ParameterNameFWHM = "PeakFWHM";
 
+    /// <summary>
+    /// Gets all parameter names written by this data source.
+    /// </summary>
     public IEnumerable<string> AllParameterNames
     {
       get
@@ -75,12 +99,18 @@ namespace Altaxo.Science.Signals
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FourPointPeakEvaluationDataSource), 0)]
     private class XmlSerializationSurrogate0 : XmlSerializationSurrogateBase
     {
+      /// <inheritdoc />
       public override object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new FourPointPeakEvaluationDataSource(info, 0);
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FourPointPeakEvaluationDataSource"/> class from serialized data.
+    /// </summary>
+    /// <param name="info">The deserialization info.</param>
+    /// <param name="version">The serialized version.</param>
     protected FourPointPeakEvaluationDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     : base(info, version)
     {
@@ -91,10 +121,10 @@ namespace Altaxo.Science.Signals
     #endregion Serialization
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ConvertXYVToMatrixDataSource"/> class.
+    /// Initializes a new instance of the <see cref="FourPointPeakEvaluationDataSource"/> class.
     /// </summary>
     /// <param name="inputData">The input data designates the original source of data (used then for the processing).</param>
-    /// <param name="dataSourceOptions">The Fourier transformation options.</param>
+    /// <param name="dataSourceOptions">The evaluation options.</param>
     /// <param name="importOptions">The data source import options.</param>
     public FourPointPeakEvaluationDataSource(XAndYColumn inputData, FourPointPeakEvaluationOptions dataSourceOptions, IDataSourceImportOptions importOptions)
         : base(inputData, dataSourceOptions, importOptions)
@@ -114,7 +144,7 @@ namespace Altaxo.Science.Signals
     /// Fills (or refills) the data table with the processed data. The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable" />.
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
-    /// <param name="reporter"></param>
+    /// <param name="reporter">The progress reporter.</param>
     public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter reporter)
     {
       destinationTable.DataColumns.RemoveColumnsAll();
@@ -243,7 +273,6 @@ namespace Altaxo.Science.Signals
     /// <param name="y">The y values.</param>
     /// <param name="index1">The start index.</param>
     /// <param name="index2">The end index (inclusive).</param>
-    /// to create the linear regression; otherwise, only point[index1] and point[index2] are used to calculate the line.</param>
     /// <returns>The regression that forms a line under the peak.</returns>
     public static QuickLinearRegression GetBaselineRegression(double[] x, double[] y, double index1, double index2)
     {
@@ -487,6 +516,11 @@ namespace Altaxo.Science.Signals
       }
     }
 
+    /// <summary>
+    /// Reports an evaluation error.
+    /// </summary>
+    /// <param name="destinationTable">The destination table.</param>
+    /// <param name="message">The error message.</param>
     protected void ReportError(DataTable destinationTable, string message)
     {
       Current.Console.WriteLine($"Error in StepEvaluationDataSource: {message}");

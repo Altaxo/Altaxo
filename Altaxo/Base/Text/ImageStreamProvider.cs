@@ -33,20 +33,60 @@ using Altaxo.Drawing;
 
 namespace Altaxo.Text
 {
+  /// <summary>
+  /// Represents the result of rendering an image reference to a stream.
+  /// </summary>
   public class ImageRenderToStreamResult
   {
+    /// <summary>
+    /// Gets a value indicating whether the render operation succeeded.
+    /// </summary>
     public bool IsValid { get; private set; }
+
+    /// <summary>
+    /// Gets a suggested base name for the rendered image.
+    /// </summary>
     public string NameHint { get; private set; } = string.Empty;
+
+    /// <summary>
+    /// Gets the file-name extension of the rendered image.
+    /// </summary>
     public string Extension { get; private set; } = string.Empty;
 
+    /// <summary>
+    /// Gets the error message when rendering failed.
+    /// </summary>
     public string? ErrorMessage { get; private set; }
 
+    /// <summary>
+    /// Gets the horizontal image resolution in dots per inch.
+    /// </summary>
     public double DpiX { get; private set; }
+
+    /// <summary>
+    /// Gets the vertical image resolution in dots per inch.
+    /// </summary>
     public double DpiY { get; private set; }
 
+    /// <summary>
+    /// Gets the horizontal image size in pixels.
+    /// </summary>
     public double PixelsX { get; private set; }
+
+    /// <summary>
+    /// Gets the vertical image size in pixels.
+    /// </summary>
     public double PixelsY { get; private set; }
 
+    /// <summary>
+    /// Initializes a successful render result.
+    /// </summary>
+    /// <param name="nameHint">A suggested base name for the image.</param>
+    /// <param name="extension">The file extension.</param>
+    /// <param name="dpiX">The horizontal resolution in dots per inch.</param>
+    /// <param name="dpiY">The vertical resolution in dots per inch.</param>
+    /// <param name="pixelsX">The horizontal size in pixels.</param>
+    /// <param name="pixelsY">The vertical size in pixels.</param>
     public ImageRenderToStreamResult(
       string nameHint,
       string extension,
@@ -65,6 +105,10 @@ namespace Altaxo.Text
       PixelsY = pixelsY;
     }
 
+    /// <summary>
+    /// Initializes a failed render result.
+    /// </summary>
+    /// <param name="errorMessage">The error message.</param>
     public ImageRenderToStreamResult(string? errorMessage)
     {
       IsValid = false;
@@ -74,7 +118,7 @@ namespace Altaxo.Text
 
 
   /// <summary>
-  /// Provided stream content of images referenced in a <see cref="TextDocument"/>.
+  /// Provides stream content for images referenced by a <see cref="TextDocument"/>.
   /// </summary>
   public class ImageStreamProvider
   {
@@ -86,7 +130,7 @@ namespace Altaxo.Text
     /// <param name="targetResolution">The target resolution in dpi.</param>
     /// <param name="altaxoFolderLocation">The folder location of the <see cref="TextDocument"/> It is used for searching graphs relative to that location.</param>
     /// <param name="localImages">The local images of the <see cref="TextDocument"/>.</param>
-    /// <returns>A tuple of tree values. isStreamImage is true if the url could be resolved to an image. extension is the file extension of the image. errorMessage is unequal to null if an error has occured. In this case the content of <paramref name="stream"/> was not set.</returns>
+    /// <returns>The rendering result for the requested image.</returns>
     public ImageRenderToStreamResult GetImageStream(System.IO.Stream stream, string url, double targetResolution, string altaxoFolderLocation, IReadOnlyDictionary<string, MemoryStreamImageProxy> localImages)
     {
       if (url.StartsWith(ImagePretext.GraphRelativePathPretext))

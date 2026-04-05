@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -33,8 +33,14 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Science.Thermorheology
 {
+  /// <summary>
+  /// View interface for editing <see cref="MasterCurveGroupOptionsWithScalarInterpolation"/>.
+  /// </summary>
   public interface IMasterCurveGroupOptionsWithScalarInterpolationView : IDataContextAwareView { }
 
+  /// <summary>
+  /// Controller for editing <see cref="MasterCurveGroupOptionsWithScalarInterpolation"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IMasterCurveGroupOptionsWithScalarInterpolationView))]
   [UserControllerForObject(typeof(MasterCurveGroupOptionsWithScalarInterpolation))]
   public class MasterCurveGroupOptionsWithScalarInterpolationController : MVCANControllerEditImmutableDocBase<MasterCurveGroupOptionsWithScalarInterpolation, IMasterCurveGroupOptionsWithScalarInterpolationView>
@@ -42,6 +48,7 @@ namespace Altaxo.Gui.Science.Thermorheology
     Altaxo.Calc.Interpolation.IInterpolationFunctionOptions _selectedInterpolation;
 
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_interpolationDetails, () => InterpolationDetails = null!);
@@ -51,6 +58,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private ItemsController<ShiftXBy> _shiftX;
 
+    /// <summary>
+    /// Gets or sets how x-values are shifted.
+    /// </summary>
     public ItemsController<ShiftXBy> ShiftX
     {
       get => _shiftX;
@@ -66,6 +76,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private bool _logarithmizeXForInterpolation;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether x-values are logarithmized for interpolation.
+    /// </summary>
     public bool LogarithmizeXForInterpolation
     {
       get => _logarithmizeXForInterpolation;
@@ -82,6 +95,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private bool _logarithmizeYForInterpolation;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether y-values are logarithmized for interpolation.
+    /// </summary>
     public bool LogarithmizeYForInterpolation
     {
       get => _logarithmizeYForInterpolation;
@@ -97,6 +113,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private ItemsController<System.Type> _interpolationFunction0;
 
+    /// <summary>
+    /// Gets or sets the interpolation function type selection.
+    /// </summary>
     public ItemsController<System.Type> InterpolationFunction0
     {
       get => _interpolationFunction0;
@@ -114,6 +133,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private IMVCANController _interpolationDetails;
 
+    /// <summary>
+    /// Gets or sets the controller for editing interpolation details.
+    /// </summary>
     public IMVCANController InterpolationDetails
     {
       get => _interpolationDetails;
@@ -130,10 +152,16 @@ namespace Altaxo.Gui.Science.Thermorheology
 
 
 
+    /// <summary>
+    /// Gets the unit environment used for fitting weights.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment FittingWeightEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _fittingWeight;
 
+    /// <summary>
+    /// Gets or sets the fitting weight.
+    /// </summary>
     public DimensionfulQuantity FittingWeight
     {
       get => _fittingWeight;
@@ -149,6 +177,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private bool _isParticipatingInFit;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether this group participates in fitting.
+    /// </summary>
     public bool IsParticipatingInFit
     {
       get => _isParticipatingInFit;
@@ -173,6 +204,7 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -211,6 +243,7 @@ namespace Altaxo.Gui.Science.Thermorheology
       InterpolationDetails = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _selectedInterpolation }, typeof(IMVCANController));
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (InterpolationDetails is not null)

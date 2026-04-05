@@ -34,10 +34,13 @@ namespace Altaxo.Gui.Worksheet
   #region SingleColumnChoice document
 
   /// <summary>
-  /// Summary description for SingleColumnChoice.
+  /// Represents the document model for choosing a single table.
   /// </summary>
   public class SingleTableChoice
   {
+    /// <summary>
+    /// Gets or sets the selected table.
+    /// </summary>
     public DataTable SelectedTable { get; set; }
   }
 
@@ -45,19 +48,28 @@ namespace Altaxo.Gui.Worksheet
 
   #region interfaces
 
+  /// <summary>
+  /// Provides the view contract for selecting a single tree item.
+  /// </summary>
   public interface ISingleTreeViewItemChoiceView
   {
     /// <summary>
     /// Initializes the treeview of available data with content.
     /// </summary>
-    /// <param name="nodes"></param>
+    /// <param name="nodes">The nodes to display.</param>
     void Initialize(NGTreeNodeCollection nodes);
 
+    /// <summary>
+    /// Occurs when the selection changes.
+    /// </summary>
     event Action<NGTreeNode> SelectionChanged;
   }
 
   #endregion interfaces
 
+  /// <summary>
+  /// Controller for choosing a single table.
+  /// </summary>
   [UserControllerForObject(typeof(SingleTableChoice))]
   [ExpectedTypeOfView(typeof(ISingleTreeViewItemChoiceView))]
   public class SingleColumnChoiceController : IMVCANController
@@ -97,6 +109,7 @@ namespace Altaxo.Gui.Worksheet
     private DataTable _selectedTable = null;
     private NGTreeNode _rootNode = new NGTreeNode();
 
+    /// <inheritdoc />
     public bool InitializeDocument(params object[] args)
     {
       if (args is null || 0 == args.Length || !(args[0] is SingleTableChoice))
@@ -107,11 +120,16 @@ namespace Altaxo.Gui.Worksheet
       return true;
     }
 
+    /// <inheritdoc />
     public UseDocument UseDocumentCopy
     {
       set { }
     }
 
+    /// <summary>
+    /// Initializes the controller.
+    /// </summary>
+    /// <param name="initData">If set to <see langword="true"/>, model data are loaded into the view model.</param>
     public void Initialize(bool initData)
     {
       if (initData)
@@ -140,6 +158,10 @@ namespace Altaxo.Gui.Worksheet
       }
     }
 
+    /// <summary>
+    /// Adds all table nodes to the specified tree node.
+    /// </summary>
+    /// <param name="tableCollectionNode">The tree node representing the table collection.</param>
     public static void AddAllTableNodes(NGTreeNode tableCollectionNode)
     {
       // Create a dictionary of folders to TreeNodes relation
@@ -187,6 +209,10 @@ namespace Altaxo.Gui.Worksheet
       return null;
     }
 
+    /// <summary>
+    /// Handles selection changes in the view.
+    /// </summary>
+    /// <param name="node">The selected node.</param>
     public void EhSelectionChanged(NGTreeNode node)
     {
       if (node.Tag is DataTable)
@@ -197,6 +223,7 @@ namespace Altaxo.Gui.Worksheet
 
     #region IMVCController Members
 
+    /// <inheritdoc />
     public object ViewObject
     {
       get
@@ -221,6 +248,7 @@ namespace Altaxo.Gui.Worksheet
       }
     }
 
+    /// <inheritdoc />
     public object ModelObject
     {
       get
@@ -229,6 +257,7 @@ namespace Altaxo.Gui.Worksheet
       }
     }
 
+    /// <inheritdoc />
     public void Dispose()
     {
     }
@@ -237,6 +266,7 @@ namespace Altaxo.Gui.Worksheet
 
     #region IApplyController Members
 
+    /// <inheritdoc />
     public bool Apply(bool disposeController)
     {
       if (_selectedTable is not null)
@@ -253,8 +283,9 @@ namespace Altaxo.Gui.Worksheet
     /// </summary>
     /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
     /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    ///   <c>True</c> if the revert operation was successful; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
     /// </returns>
+    /// <inheritdoc />
     public bool Revert(bool disposeController)
     {
       return false;
@@ -264,6 +295,11 @@ namespace Altaxo.Gui.Worksheet
 
     #region ISingleColumnChoiceViewEventSink Members
 
+    /// <summary>
+    /// Gets the root node for the specified node.
+    /// </summary>
+    /// <param name="node">The node.</param>
+    /// <returns>The root node.</returns>
     protected NGTreeNode GetRootNode(NGTreeNode node)
     {
       while (node.ParentNode is not null)

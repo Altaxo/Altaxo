@@ -30,6 +30,9 @@ using Altaxo.Data;
 
 namespace Altaxo.Serialization.Galactic
 {
+  /// <summary>
+  /// Importer for Galactic SPC files.
+  /// </summary>
   public record GalacticSPCImporter : DataFileImporterBase, Main.IImmutable
   {
     /// <inheritdoc/>
@@ -86,7 +89,10 @@ namespace Altaxo.Serialization.Galactic
     /// </summary>
     /// <param name="filenames">An array of filenames to import.</param>
     /// <param name="table">The table the spectra should be imported to.</param>
+    /// <param name="importOptionsObj">The import options object.</param>
+    /// <param name="attachDataSource">Whether to attach a data source to the imported table.</param>
     /// <returns>Null if no error occurs, or an error description.</returns>
+    /// <inheritdoc />
     public override string? Import(IReadOnlyList<string> filenames, Altaxo.Data.DataTable table, object importOptionsObj, bool attachDataSource)
     {
       var importOptions = (GalacticSPCImportOptions)importOptionsObj;

@@ -30,19 +30,36 @@ using System.Text;
 
 namespace Altaxo.Gui.DataConnection
 {
+  /// <summary>
+  /// View interface for editing query parameters.
+  /// </summary>
   public interface IParametersView
   {
+    /// <summary>
+    /// Sets the parameter source.
+    /// </summary>
+    /// <param name="parms">The parameters.</param>
     void SetParametersSource(List<System.Data.OleDb.OleDbParameter> parms);
 
+    /// <summary>
+    /// Reads the edited parameter values from the view.
+    /// </summary>
     void ReadParameter();
   }
 
+  /// <summary>
+  /// Controller for editing OLE DB parameters.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IParametersView))]
   public class ParametersController : IMVCAController
   {
     private IParametersView _view;
     private List<System.Data.OleDb.OleDbParameter> _doc;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ParametersController"/> class.
+    /// </summary>
+    /// <param name="parms">The parameters to edit.</param>
     public ParametersController(List<System.Data.OleDb.OleDbParameter> parms)
     {
       // TODO: Complete member initialization
@@ -61,6 +78,7 @@ namespace Altaxo.Gui.DataConnection
       }
     }
 
+    /// <inheritdoc/>
     public object ViewObject
     {
       get
@@ -77,16 +95,19 @@ namespace Altaxo.Gui.DataConnection
       }
     }
 
+    /// <inheritdoc/>
     public object ModelObject
     {
       get { return _doc; }
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
       ViewObject = null;
     }
 
+    /// <inheritdoc/>
     public bool Apply(bool disposeController)
     {
       _view.ReadParameter();
@@ -98,8 +119,9 @@ namespace Altaxo.Gui.DataConnection
     /// </summary>
     /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
     /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    ///   <c>True</c> if the revert operation was successful; <c>false</c> if the revert operation was not possible, that is, because the controller has not stored the original state of the model.
     /// </returns>
+    /// <inheritdoc/>
     public bool Revert(bool disposeController)
     {
       return false;

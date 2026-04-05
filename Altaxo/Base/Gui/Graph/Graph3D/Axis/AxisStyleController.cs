@@ -32,13 +32,16 @@ using System.Windows.Input;
 namespace Altaxo.Gui.Graph.Graph3D.Axis
 {
 
+  /// <summary>
+  /// Provides the view contract for <see cref="AxisStyleController"/>.
+  /// </summary>
   public interface IAxisStyleView : IDataContextAwareView
   {
   }
 
 
   /// <summary>
-  /// Summary description for TitleFormatLayerController.
+  /// Controller for <see cref="AxisStyle"/>.
   /// </summary>
   [UserControllerForObject(typeof(AxisStyle), 90)]
   [ExpectedTypeOfView(typeof(IAxisStyleView))]
@@ -46,6 +49,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
   {
     private Altaxo.Main.Properties.IReadOnlyPropertyBag _context;
 
+    /// <inheritdoc />
     public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_axisLineStyleController, () => _axisLineStyleController = null);
@@ -54,6 +58,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
       yield return new ControllerAndSetNullMethod(_minorLabelCondController, () => _minorLabelCondController = null);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AxisStyleController"/> class.
+    /// </summary>
     public AxisStyleController()
     {
       CmdEditAxisTitle = new RelayCommand(EhEditAxisTitle);
@@ -61,6 +68,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
 
     #region Bindings
 
+    /// <summary>
+    /// Gets or sets the command to edit the axis title.
+    /// </summary>
     public ICommand CmdEditAxisTitle { get; }
 
     #region AxisLine
@@ -68,6 +78,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
 
     private IMVCANController _axisLineStyleController;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public IMVCANController AxisLineStyleController
     {
       get
@@ -82,6 +95,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
     }
 
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public object? AxisLineStyleView
     {
       get
@@ -100,6 +116,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the axis line is shown.
+    /// </summary>
     public bool ShowAxisLine
     {
       get => _doc.AxisLineStyle is not null;
@@ -131,6 +150,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
 
     private ConditionalDocumentController<AxisLabelStyle> _majorLabelCondController;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public ConditionalDocumentController<AxisLabelStyle> MajorLabelCondController
     {
       get
@@ -149,6 +171,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the major labels are shown.
+    /// </summary>
     public bool ShowMajorLabels
     {
       get => _doc.MajorLabelStyle is not null;
@@ -173,6 +198,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
         }
       }
     }
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public IConditionalDocumentView MajorLabelCondView
     {
       get
@@ -192,6 +220,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
 
     private ConditionalDocumentController<AxisLabelStyle> _minorLabelCondController;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public ConditionalDocumentController<AxisLabelStyle> MinorLabelCondController
     {
       get
@@ -211,6 +242,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the minor labels are shown.
+    /// </summary>
     public bool ShowMinorLabels
     {
       get => _doc.MinorLabelStyle is not null;
@@ -236,6 +270,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public IConditionalDocumentView MinorLabelCondView
     {
       get
@@ -255,6 +292,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
 
     private string _axisTitle;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public string AxisTitle
     {
       get => _axisTitle;
@@ -272,6 +312,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
 
     #region Custom Tick Spacing
 
+    /// <summary>
+    /// Gets or sets a value indicating whether custom tick spacing is shown.
+    /// </summary>
     public bool ShowCustomTickSpacing
     {
       get => _doc.TickSpacing is not null;
@@ -307,8 +350,14 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
       }
       OnPropertyChanged(nameof(CustomTickSpacingView));
     }
+    /// <summary>
+    /// Gets or sets the ticks pacing controller.
+    /// </summary>
     protected TickSpacingController _tickSpacingController;
 
+    /// <summary>
+    /// Gets or sets the custom ticks pacing view.
+    /// </summary>
     public object? CustomTickSpacingView => _tickSpacingController?.ViewObject;
 
     #endregion Custom Tick Spacing
@@ -316,6 +365,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
     #endregion
 
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -328,6 +378,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       // read axis title

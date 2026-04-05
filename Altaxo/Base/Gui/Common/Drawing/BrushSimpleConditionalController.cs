@@ -31,20 +31,32 @@ using Altaxo.Drawing;
 
 namespace Altaxo.Gui.Common.Drawing
 {
+  /// <summary>
+  /// Defines the view contract for simple conditional brush editing.
+  /// </summary>
   public interface IBrushSimpleConditionalView : IDataContextAwareView
   {
   }
 
 
+  /// <summary>
+  /// Controller for editing a brush that can be enabled or disabled.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IBrushSimpleConditionalView))]
   public class BrushSimpleConditionalController : MVCANDControllerEditImmutableDocBase<BrushX, object>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BrushSimpleConditionalController"/> class.
+    /// </summary>
     public BrushSimpleConditionalController(BrushX doc)
     {
       _doc = _originalDoc = doc ?? new BrushX(NamedColors.Transparent);
       
     }
 
+    /// <summary>
+    /// Gets or sets the effective brush document.
+    /// </summary>
     public BrushX Doc
     {
       get => _isEnabled ? Brush : Brush.WithColor(NamedColors.Transparent);
@@ -55,9 +67,12 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <inheritdoc/>
     public override object ModelObject => Doc;
+    /// <inheritdoc/>
     public override object ProvisionalModelObject => Doc;
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -67,6 +82,9 @@ namespace Altaxo.Gui.Common.Drawing
 
     private bool _isEnabled;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the brush is enabled.
+    /// </summary>
     public bool IsEnabled
     {
       get => _isEnabled;
@@ -85,6 +103,9 @@ namespace Altaxo.Gui.Common.Drawing
     }
 
 
+    /// <summary>
+    /// Gets or sets the brush.
+    /// </summary>
     public BrushX Brush
     {
       get => _doc;
@@ -99,11 +120,13 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);
     }
 
+    /// <inheritdoc/>
     protected override void OnMadeDirty()
     {
       base.OnMadeDirty();

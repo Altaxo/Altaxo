@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -33,23 +33,32 @@ using Altaxo.Drawing;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
+  /// <summary>
+  /// Text-only RGB color model.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelRGB}")]
   public class TextOnlyColorModelRGB : ITextOnlyColorModel
   {
+    /// <inheritdoc/>
     public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
     {
       return new string[] { color.R.ToString(formatProvider), color.G.ToString(formatProvider), color.B.ToString(formatProvider) };
     }
 
+    /// <inheritdoc/>
     public string[] GetNamesOfComponents()
     {
       return new[] { "R", "G", "B" };
     }
   }
 
+  /// <summary>
+  /// Text-only linear RGB color model.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelLinearRGB}")]
   public class TextOnlyColorModelLinearRGB : ITextOnlyColorModel
   {
+    /// <inheritdoc/>
     public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
     {
       return new string[]
@@ -59,29 +68,39 @@ namespace Altaxo.Gui.Drawing.ColorManagement
         color.ScB.ToString("F3", formatProvider) };
     }
 
+    /// <inheritdoc/>
     public string[] GetNamesOfComponents()
     {
       return new[] { "Lin R", "Lin G", "Lin B" };
     }
   }
 
+  /// <summary>
+  /// Text-only CMY color model.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelCMY}")]
   public class TextOnlyColorModelCMY : ITextOnlyColorModel
   {
+    /// <inheritdoc/>
     public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
     {
       return new string[] { (255 - color.R).ToString(formatProvider), (255 - color.G).ToString(formatProvider), (255 - color.B).ToString(formatProvider) };
     }
 
+    /// <inheritdoc/>
     public string[] GetNamesOfComponents()
     {
       return new[] { "C", "M", "Y" };
     }
   }
 
+  /// <summary>
+  /// Text-only linear CMY color model.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelLinearCMY}")]
   public class TextOnlyColorModelLinearCMY : ITextOnlyColorModel
   {
+    /// <inheritdoc/>
     public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
     {
       return new string[]
@@ -91,15 +110,20 @@ namespace Altaxo.Gui.Drawing.ColorManagement
         (1 - color.ScB).ToString("F3", formatProvider) };
     }
 
+    /// <inheritdoc/>
     public string[] GetNamesOfComponents()
     {
       return new[] { "Lin C", "Lin M", "Lin Y" };
     }
   }
 
+  /// <summary>
+  /// Text-only CMYK color model.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelCMYK}")]
   public class TextOnlyColorModelCMYK : ITextOnlyColorModel
   {
+    /// <inheritdoc/>
     public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
     {
       var (a, c, m, y, k) = color.ToAcmyk();
@@ -113,15 +137,20 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       };
     }
 
+    /// <inheritdoc/>
     public string[] GetNamesOfComponents()
     {
       return new[] { "C", "M", "Y", "K" };
     }
   }
 
+  /// <summary>
+  /// Text-only HSB color model.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelHSB}")]
   public class TextOnlyColorModelHSB : ITextOnlyColorModel
   {
+    /// <inheritdoc/>
     public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
     {
       var (a, h, s, b) = color.ToAhsb();
@@ -132,34 +161,45 @@ namespace Altaxo.Gui.Drawing.ColorManagement
         b.ToString("F3", formatProvider) };
     }
 
+    /// <inheritdoc/>
     public string[] GetNamesOfComponents()
     {
       return new[] { "H", "S", "B" };
     }
   }
 
+  /// <summary>
+  /// Text-only hexadecimal RGB color model.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelRGBHex}")]
   public class TextOnlyColorModelRGBHex : ITextOnlyColorModel
   {
+    /// <inheritdoc/>
     public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
     {
       return new string[] { string.Format(formatProvider, "#{0:X02}{1:X02}{2:X02}", color.R, color.G, color.B) };
     }
 
+    /// <inheritdoc/>
     public string[] GetNamesOfComponents()
     {
       return new[] { "RGB_Hex" };
     }
   }
 
+  /// <summary>
+  /// Text-only hexadecimal ARGB color model.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelARGBHex}")]
   public class TextOnlyColorModelARGBHex : ITextOnlyColorModel
   {
+    /// <inheritdoc/>
     public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
     {
       return new string[] { string.Format(formatProvider, "#{0:X02}{1:X02}{2:X02}{2:X02}", color.A, color.R, color.G, color.B) };
     }
 
+    /// <inheritdoc/>
     public string[] GetNamesOfComponents()
     {
       return new[] { "ARGB_Hex" };

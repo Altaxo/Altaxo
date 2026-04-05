@@ -36,7 +36,7 @@ namespace Altaxo.Serialization.Clipboard
   public static class ClipboardSerialization
   {
     /// <summary>Puts an object into the provided dataObject.</summary>
-    /// <param name="clipBoardFormat">The clip board format string (is used later on to identify the data on the clipboard).</param>
+    /// <param name="clipBoardFormat">The clipboard format string used later to identify the data on the clipboard.</param>
     /// <param name="toSerialize">Data to put on the clipboard.</param>
     /// <param name="dataObject">The data object to put the data into.</param>
     public static void PutObjectToDataObject(string clipBoardFormat, object toSerialize, Altaxo.Gui.IClipboardSetDataObject dataObject)
@@ -51,7 +51,7 @@ namespace Altaxo.Serialization.Clipboard
     }
 
     /// <summary>Puts an object into the provided dataObject, using one or more clipboard formats.</summary>
-    /// <param name="clipBoardFormats">The clip board formats (are used later on to identify the data on the clipboard).</param>
+    /// <param name="clipBoardFormats">The clipboard formats used later to identify the data on the clipboard.</param>
     /// <param name="toSerialize">Data to put on the clipboard.</param>
     /// <param name="dataObject">The data object to put the data into.</param>
     public static void PutObjectToDataObject(IEnumerable<string> clipBoardFormats, object toSerialize, Altaxo.Gui.IClipboardSetDataObject dataObject)
@@ -65,7 +65,7 @@ namespace Altaxo.Serialization.Clipboard
     }
 
     /// <summary>Puts an object to the clipboard.</summary>
-    /// <param name="clipBoardFormat">The clip board format string (is used later on to identify the data on the clipboard).</param>
+    /// <param name="clipBoardFormat">The clipboard format string used later to identify the data on the clipboard.</param>
     /// <param name="toSerialize">Data to put on the clipboard.</param>
     public static void PutObjectToClipboard(string clipBoardFormat, object toSerialize)
     {
@@ -78,7 +78,7 @@ namespace Altaxo.Serialization.Clipboard
     }
 
     /// <summary>Puts an object to the clipboard.</summary>
-    /// <param name="clipBoardFormats">The clip board formats (are used later on to identify the data on the clipboard).</param>
+    /// <param name="clipBoardFormats">The clipboard formats used later to identify the data on the clipboard.</param>
     /// <param name="toSerialize">Data to put on the clipboard.</param>
     public static void PutObjectToClipboard(IEnumerable<string> clipBoardFormats, object toSerialize)
     {
@@ -112,7 +112,7 @@ namespace Altaxo.Serialization.Clipboard
     }
 
     /// <summary>Determines whether data in the given clipboard format is available.</summary>
-    /// <param name="clipBoardFormat">The clip board format.</param>
+    /// <param name="clipBoardFormat">The clipboard format.</param>
     /// <returns><c>True</c> if data in the given clipboard format are available; otherwise, <c>false</c>.</returns>
     public static bool IsClipboardFormatAvailable(string clipBoardFormat)
     {
@@ -121,7 +121,7 @@ namespace Altaxo.Serialization.Clipboard
     }
 
     /// <summary>Gets an object from the clipboard.</summary>
-    /// <param name="clipBoardFormat">The clip board format string.</param>
+    /// <param name="clipBoardFormat">The clipboard format string.</param>
     /// <returns>The deserialized object that was on the clipboard, or <c>null</c> otherwise.</returns>
     public static object? GetObjectFromClipboard(string clipBoardFormat)
     {
@@ -130,7 +130,7 @@ namespace Altaxo.Serialization.Clipboard
 
     /// <summary>Gets an object of a certain type from the clipboard.</summary>
     /// <typeparam name="T">The type of object to deserialize.</typeparam>
-    /// <param name="clipBoardFormat">The clip board format string.</param>
+    /// <param name="clipBoardFormat">The clipboard format string.</param>
     /// <returns>The deserialized object. If deserialization was not possible, or the deserialized data was not of the expected type, the default object for type T is returned (default(T)).</returns>
     [return: MaybeNull]
     public static T GetObjectFromClipboard<T>(string clipBoardFormat)
@@ -151,7 +151,7 @@ namespace Altaxo.Serialization.Clipboard
     /// Deserializes an object from a string containing Altaxo's XML format.
     /// </summary>
     /// <typeparam name="T">Type of the object that is expected to be deserialized.</typeparam>
-    /// <param name="s">The string containing Altaxo's XML format. Is is expected that the root node is named 'Object'.</param>
+    /// <param name="s">The string containing Altaxo's XML format. It is expected that the root node is named `Object`.</param>
     /// <returns>The deserialized object, or default(T) if either the object was null or had a type that was not the expected type.</returns>
     [return: MaybeNull]
     public static T DeserializeObjectFromString<T>(string s)

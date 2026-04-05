@@ -29,23 +29,43 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi
 {
+  /// <summary>
+  /// Specifies the vertical anchor position.
+  /// </summary>
   [Serializable]
-  public enum YAnchorPositionType { Top, Center, Bottom }
+  public enum YAnchorPositionType
+  {
+    /// <summary>
+    /// Anchor at the top.
+    /// </summary>
+    Top,
+    /// <summary>
+    /// Anchor at the center.
+    /// </summary>
+    Center,
+    /// <summary>
+    /// Anchor at the bottom.
+    /// </summary>
+    Bottom
+  }
 
   /// <summary>
-  /// 2015-11-14 Version 1 Moved to Altaxo.Graph.Gdi namespace.
+  /// XML serialization surrogate for <see cref="YAnchorPositionType"/>.
   /// </summary>
+  /// <remarks>2015-11-14 Version 1: moved to the <c>Altaxo.Graph.Gdi</c> namespace.</remarks>
   [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.TextGraphics+YAnchorPositionType", 0)]
   [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.YAnchorPositionType", 0)]
   [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(YAnchorPositionType), 1)]
   public class YAnchorPositionTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
   {
+    /// <inheritdoc/>
     public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
       var s = (YAnchorPositionType)obj;
       info.SetNodeContent(s.ToString());
     }
 
+    /// <inheritdoc/>
     public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
     {
       string val = info.GetNodeContent();

@@ -75,6 +75,7 @@ namespace Altaxo.Main
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Main.DocNodeProxy", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version not supported");
@@ -88,6 +89,7 @@ namespace Altaxo.Main
                 */
       }
 
+      /// <inheritdoc />
       public virtual object? Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var node = info.GetValueOrNull("Node", null);
@@ -112,6 +114,7 @@ namespace Altaxo.Main
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DocNodeProxy), 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DocNodeProxy)obj;
@@ -127,6 +130,7 @@ namespace Altaxo.Main
         info.AddValue("Path", s._docNodePath);
       }
 
+      /// <inheritdoc />
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (DocNodeProxy?)o ?? new DocNodeProxy(info);
@@ -160,6 +164,10 @@ namespace Altaxo.Main
     }
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DocNodeProxy"/> class for a document node.
+    /// </summary>
+    /// <param name="docNode">The document node.</param>
     public DocNodeProxy(IDocumentLeafNode docNode)
     {
       if (docNode is null)
@@ -168,6 +176,11 @@ namespace Altaxo.Main
       InternalSetDocNode(docNode); // if constructed from derived classes, use the constructor below
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DocNodeProxy"/> class for a document node.
+    /// </summary>
+    /// <param name="docNode">The document node.</param>
+    /// <param name="isCalledFromConstructor">A value that indicates whether this overload is called from a constructor of a derived class.</param>
     protected DocNodeProxy(IDocumentLeafNode docNode, bool isCalledFromConstructor)
     {
       if (docNode is null)
@@ -177,6 +190,10 @@ namespace Altaxo.Main
     }
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DocNodeProxy"/> class for a document node path.
+    /// </summary>
+    /// <param name="docNodePath">The absolute document path.</param>
     protected DocNodeProxy(Main.AbsoluteDocumentPath docNodePath)
     {
       InternalDocumentPath = docNodePath ?? throw new ArgumentNullException(nameof(docNodePath));
@@ -226,6 +243,10 @@ namespace Altaxo.Main
 
     #region public properties (that need locking)
 
+    /// <summary>
+    /// Gets the absolute document path represented by this proxy.
+    /// </summary>
+    /// <returns>The current document path.</returns>
     public virtual Main.AbsoluteDocumentPath DocumentPath()
     {
       lock (this)
@@ -279,10 +300,9 @@ namespace Altaxo.Main
     }
 
     /// <summary>
-    /// Sets the document node that is held by this proxy.
+    /// Sets the document node held by this proxy.
     /// </summary>
-    /// <param name="value">The document node. If <c>docNode</c> implements <see cref="Main.IDocumentLeafNode" />,
-    /// the document path is stored for this object in addition to the object itself.</param>
+    /// <param name="value">The document node.</param>
     public virtual void SetDocNode(IDocumentLeafNode value)
     {
       InstanceChangedEventArgs? instanceArgs;
@@ -342,6 +362,7 @@ namespace Altaxo.Main
       return success;
     }
 
+    /// <inheritdoc/>
     public virtual object Clone()
     {
       lock (this)
@@ -658,6 +679,9 @@ namespace Altaxo.Main
     {
     }
 
+    /// <summary>
+    /// Validates that the internally stored path is absolute and points to a supported root entry.
+    /// </summary>
     [System.Diagnostics.Conditional("Debug_CheckDocNodePath")]
     protected void InternalCheckAbsolutePath()
     {
@@ -810,6 +834,9 @@ namespace Altaxo.Main
       }
     }
 
+    /// <summary>
+    /// Gets or sets the internally stored absolute document path.
+    /// </summary>
     protected AbsoluteDocumentPath InternalDocumentPath
     {
       get
@@ -905,6 +932,12 @@ namespace Altaxo.Main
 
 
 
+    /// <summary>
+    /// Resolves the proxied document after XML deserialization has completed.
+    /// </summary>
+    /// <param name="info">The deserialization info.</param>
+    /// <param name="documentRoot">The root object of the deserialized document tree.</param>
+    /// <param name="isFinallyCall">A value indicating whether this is the final deserialization callback.</param>
     protected void EhXmlDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
     {
       var (node, _) = ResolveDocumentObject((Main.IDocumentNode)documentRoot);

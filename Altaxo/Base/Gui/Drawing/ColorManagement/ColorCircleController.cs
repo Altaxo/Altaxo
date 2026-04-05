@@ -33,38 +33,89 @@ using Altaxo.Drawing;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
+  /// <summary>
+  /// View contract for editing colors using circle and variation models.
+  /// </summary>
   public interface IColorCircleView
   {
+    /// <summary>
+    /// Initializes the available color models.
+    /// </summary>
     void InitializeAvailableColorModels(SelectableListNodeList listOfColorModels);
 
+    /// <summary>
+    /// Initializes the available text-only color models.
+    /// </summary>
     void InitializeAvailableTextOnlyColorModels(SelectableListNodeList listOfTextOnlyColorModels);
 
+    /// <summary>
+    /// Initializes the current color model.
+    /// </summary>
     void InitializeColorModel(IColorModel colorModel, bool silentSet);
 
+    /// <summary>
+    /// Initializes the current text-only color model.
+    /// </summary>
     void InitializeTextOnlyColorModel(ITextOnlyColorModel colorModel, bool silentSet);
 
+    /// <summary>
+    /// Initializes the available color circle models.
+    /// </summary>
     void InitializeAvailableColorCircleModels(SelectableListNodeList availableColorCircleModels);
 
+    /// <summary>
+    /// Initializes the current color circle model.
+    /// </summary>
     IReadOnlyList<double> InitializeCurrentColorCircleModel(IColorCircleModel currentColorCircleModel, bool silentSet);
 
+    /// <summary>
+    /// Initializes the available color variation models.
+    /// </summary>
     void InitializeAvailableColorVariationModels(SelectableListNodeList availableColorVariationModels);
 
+    /// <summary>
+    /// Initializes the current color variation model.
+    /// </summary>
     void InitializeCurrentColorVariationModel(IColorVariationModel currentColorVariationModel, bool silentSet);
 
+    /// <summary>
+    /// Initializes the currently selected color.
+    /// </summary>
     void InitializeCurrentColor(AxoColor color);
 
+    /// <summary>
+    /// Initializes the number of generated color shades.
+    /// </summary>
     void InitializeNumberOfColorShades(int numberOfShades);
 
+    /// <summary>
+    /// Initializes the generated color shades.
+    /// </summary>
     void InitializeColorShades(AxoColor[][] colorShades);
 
+    /// <summary>
+    /// Occurs when the selected color model changes.
+    /// </summary>
     event Action ColorModelSelectionChanged;
 
+    /// <summary>
+    /// Occurs when the selected text-only color model changes.
+    /// </summary>
     event Action TextOnlyColorModelSelectionChanged;
 
+    /// <summary>
+    /// Occurs when the selected color circle model changes.
+    /// </summary>
     event Action ColorCircleModelChanged;
 
+    /// <summary>
+    /// Occurs when the selected color variation model changes.
+    /// </summary>
     event Action ColorVariationModelChanged;
 
+    /// <summary>
+    /// Occurs when the current color changes.
+    /// </summary>
     event Action<AxoColor> CurrentColorChanged;
 
     /// <summary>
@@ -74,9 +125,15 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
     event Action<IReadOnlyList<double>> HueValuesChanged;
 
+    /// <summary>
+    /// Occurs when the number of generated color shades changes.
+    /// </summary>
     event Action<int> NumberOfColorShadesChanged;
   }
 
+  /// <summary>
+  /// Controller for editing colors using circle and variation models.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IColorCircleView))]
   public class ColorCircleController : MVCANDControllerEditImmutableDocBase<AxoColor, IColorCircleView>
   {
@@ -95,11 +152,13 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
     private AxoColor[][] _colorShades;
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -164,11 +223,13 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);
     }
 
+    /// <inheritdoc/>
     protected override void AttachView()
     {
       base.AttachView();
@@ -185,6 +246,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       _view.CurrentColorChanged += EhCurrentColorChanged;
     }
 
+    /// <inheritdoc/>
     protected override void DetachView()
     {
       _view.HueValuesChanged -= EhView_HueValuesChanged;
@@ -213,6 +275,9 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       UpdateColorShades();
     }
 
+    /// <summary>
+    /// Updates the generated color shades.
+    /// </summary>
     private void UpdateColorShades()
     {
       if (_hueValues is null)

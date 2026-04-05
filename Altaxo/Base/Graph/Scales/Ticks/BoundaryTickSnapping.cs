@@ -31,17 +31,32 @@ using System.Text;
 
 namespace Altaxo.Graph.Scales.Ticks
 {
+  /// <summary>
+  /// Specifies how axis boundaries are snapped to tick positions.
+  /// </summary>
   public enum BoundaryTickSnapping
   {
+    /// <summary>
+    /// Do not snap the boundary to any tick.
+    /// </summary>
     [Description("${res:ClassNames.Altaxo.Graph.Scales.Ticks.BoundaryTickSnapping.SnapToNothing}")]
     SnapToNothing,
 
+    /// <summary>
+    /// Snap the boundary to the nearest minor or major tick.
+    /// </summary>
     [Description("${res:ClassNames.Altaxo.Graph.Scales.Ticks.BoundaryTickSnapping.SnapToMinorOrMajor}")]
     SnapToMinorOrMajor,
 
+    /// <summary>
+    /// Snap the boundary only to major ticks.
+    /// </summary>
     [Description("${res:ClassNames.Altaxo.Graph.Scales.Ticks.BoundaryTickSnapping.SnapToMajorOnly}")]
     SnapToMajorOnly,
 
+    /// <summary>
+    /// Snap the boundary only to minor ticks.
+    /// </summary>
     [Description("${res:ClassNames.Altaxo.Graph.Scales.Ticks.BoundaryTickSnapping.SnapToMinorOnly}")]
     SnapToMinorOnly,
   }

@@ -27,22 +27,44 @@ using Altaxo.Data;
 
 namespace Altaxo.Gui.Data
 {
+  /// <summary>
+  /// Common view interface for data-source editors with process data, process options, and import options.
+  /// </summary>
   public interface ICommonDataSourceView
   {
+    /// <summary>
+    /// Sets the process-options control.
+    /// </summary>
+    /// <param name="p">The control object.</param>
     void SetProcessOptionsControl(object p);
 
+    /// <summary>
+    /// Sets the import-options control.
+    /// </summary>
+    /// <param name="p">The control object.</param>
     void SetImportOptionsControl(object p);
 
+    /// <summary>
+    /// Sets the process-data control.
+    /// </summary>
+    /// <param name="p">The control object.</param>
     void SetProcessDataControl(object p);
   }
 
+  /// <summary>
+  /// Common data-source view interface that supports data binding.
+  /// </summary>
   public interface ICommonDataSourceViewN : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="ExpandCyclingVariableColumnDataSource"/>.
+  /// </summary>
   [UserControllerForObject(typeof(ExpandCyclingVariableColumnDataSource))]
   public class ExpandCyclingVariableDataSourceController : DataSourceControllerBase<ExpandCyclingVariableColumnDataSource>
   {
+    /// <inheritdoc/>
     protected override IMVCANController GetProcessDataController()
     {
 

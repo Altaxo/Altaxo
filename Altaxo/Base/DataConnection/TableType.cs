@@ -38,8 +38,19 @@ namespace Altaxo.DataConnection
   /// </summary>
   public enum TableType
   {
+    /// <summary>
+    /// A regular table.
+    /// </summary>
     Table,
+
+    /// <summary>
+    /// A database view.
+    /// </summary>
     View,
+
+    /// <summary>
+    /// A stored procedure.
+    /// </summary>
     Procedure
   }
 }

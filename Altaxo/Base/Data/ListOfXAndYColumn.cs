@@ -37,7 +37,7 @@ namespace Altaxo.Data
   public class ListOfXAndYColumn : Main.SuspendableDocumentNodeWithSetOfEventArgs, IHasDocumentReferences, ICloneable
   {
     /// <summary>
-    /// The data of the x-y-curves.
+    /// Gets or sets the data of the x-y curves.
     /// </summary>
     public List<XAndYColumn> CurveData { get; set; } = [];
 
@@ -49,6 +49,7 @@ namespace Altaxo.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ListOfXAndYColumn), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ListOfXAndYColumn)obj;
@@ -65,6 +66,7 @@ namespace Altaxo.Data
 
 
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = o as ListOfXAndYColumn ?? new ListOfXAndYColumn();

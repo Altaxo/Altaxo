@@ -31,6 +31,9 @@ using Altaxo.Gui.Graph.Plot.Data;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot
 {
+  /// <summary>
+  /// Controller for <see cref="DataMeshPlotItem"/>.
+  /// </summary>
   [UserControllerForObject(typeof(DataMeshPlotItem))]
   [ExpectedTypeOfView(typeof(ITabbedElementViewDC))]
   internal class DataMeshPlotItemController : MVCANControllerEditOriginalDocBase<DataMeshPlotItem, ITabbedElementViewDC>
@@ -43,6 +46,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
     /// <summary>Controls the data view, in which the user can chose which columns to use in the plot item.</summary>
     private IMVCANController _dataController;
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_styleController, () => _styleController = null);
@@ -79,6 +83,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
     #endregion
 
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -92,6 +97,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (_styleController is not null)

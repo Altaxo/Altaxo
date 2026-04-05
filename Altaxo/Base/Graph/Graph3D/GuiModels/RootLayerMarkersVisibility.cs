@@ -39,7 +39,7 @@ namespace Altaxo.Graph.Graph3D.GuiModels
     /// <summary>Definitely not show root layer markers.</summary>
     None = 0,
 
-    /// <summary>Definitely not show root layer markers.</summary>
+    /// <summary>Show root layer markers as arrows.</summary>
     Arrows = 1,
 
     /// <summary>Show root layer markers as lines.</summary>

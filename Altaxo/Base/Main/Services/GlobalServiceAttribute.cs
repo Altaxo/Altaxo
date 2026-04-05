@@ -33,7 +33,7 @@ namespace Altaxo.Main.Services
   public class GlobalServiceAttribute : Attribute
   {
     /// <summary>
-    /// Creates a new SDServiceAttribute instance.
+    /// Initializes a new instance of the <see cref="GlobalServiceAttribute"/> class.
     /// </summary>
     public GlobalServiceAttribute()
     {
@@ -41,7 +41,7 @@ namespace Altaxo.Main.Services
     }
 
     /// <summary>
-    /// Creates a new SDServiceAttribute instance.
+    /// Initializes a new instance of the <see cref="GlobalServiceAttribute"/> class.
     /// </summary>
     /// <param name="staticPropertyPath">Documents the suggested way to access this service using a static property.
     /// Example: <c>SD.WinForms.ResourceService</c>
@@ -69,6 +69,9 @@ namespace Altaxo.Main.Services
     public Type? FallbackImplementation { get; set; }
   }
 
+  /// <summary>
+  /// Resolves fallback service instances declared through <see cref="GlobalServiceAttribute"/>.
+  /// </summary>
   public class FallbackServiceProvider : IServiceProvider
   {
     /// <summary>
@@ -76,6 +79,7 @@ namespace Altaxo.Main.Services
     /// </summary>
     private Dictionary<Type, object?> fallbackServiceDict = new Dictionary<Type, object?>();
 
+    /// <inheritdoc/>
     public object? GetService(Type serviceType)
     {
       object? instance;

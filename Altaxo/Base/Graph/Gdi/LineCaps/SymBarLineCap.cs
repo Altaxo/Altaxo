@@ -24,10 +24,8 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Text;
 
 namespace Altaxo.Graph.Gdi.LineCaps
 {
@@ -36,8 +34,10 @@ namespace Altaxo.Graph.Gdi.LineCaps
   /// </summary>
   public class SymBarLineCap : GdiLineCapBase
   {
+    /// <inheritdoc />
     public override Type ExtendsType => typeof(Altaxo.Drawing.LineCaps.SymBarLineCap);
 
+    /// <inheritdoc />
     protected override CustomLineCap GetCustomLineCap(Pen pen, float size, bool isEndCap)
     {
       float endPoint;

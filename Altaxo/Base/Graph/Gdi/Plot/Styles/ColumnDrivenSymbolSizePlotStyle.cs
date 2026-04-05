@@ -107,6 +107,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColumnDrivenSymbolSizePlotStyle), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ColumnDrivenSymbolSizePlotStyle)obj;
@@ -122,6 +123,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         info.AddValue("NumberOfSteps", s._numberOfSteps);
       }
 
+      /// <summary>
+      /// Deserializes the specified symbol-size-driven plot style instance.
+      /// </summary>
+      /// <param name="o">The existing instance, if any.</param>
+      /// <param name="info">The deserialization info.</param>
+      /// <param name="parent">The parent object.</param>
+      /// <returns>The deserialized style.</returns>
       protected virtual ColumnDrivenSymbolSizePlotStyle SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (ColumnDrivenSymbolSizePlotStyle?)o ?? new ColumnDrivenSymbolSizePlotStyle(info);
@@ -144,6 +152,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         return s;
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return SDeserialize(o, info, parent);
@@ -152,6 +161,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColumnDrivenSymbolSizePlotStyle"/> class during deserialization.
+    /// </summary>
+    /// <param name="info">The deserialization info.</param>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected ColumnDrivenSymbolSizePlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
@@ -187,6 +200,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       CopyFrom(from, copyWithDataReferences);
     }
 
+    /// <summary>
+    /// Copies member values from another <see cref="ColumnDrivenSymbolSizePlotStyle"/> instance.
+    /// </summary>
+    /// <param name="from">The source instance.</param>
+    /// <param name="copyWithDataReferences">If set to <see langword="true"/>, data references are copied as well.</param>
     [MemberNotNull(nameof(_scale))]
     protected void CopyFrom(ColumnDrivenSymbolSizePlotStyle from, bool copyWithDataReferences)
     {
@@ -207,11 +225,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
     /// <summary>
-    /// Copies the member variables from another instance.
+    /// Copies values from another instance.
     /// </summary>
-    /// <param name="obj">Another instance to copy the data from.</param>
-    /// <param name="copyWithDataReferences">If true, data references are copyied from the template style to this style. If false, the data references of this style are left as they are.</param>
-    /// <returns>True if data was copied, otherwise false.</returns>
+    /// <param name="obj">The source object.</param>
+    /// <param name="copyWithDataReferences">If set to <c>true</c>, data references are copied.</param>
+    /// <returns><c>true</c> if the copy succeeded; otherwise, <c>false</c>.</returns>
     public bool CopyFrom(object obj, bool copyWithDataReferences)
     {
       if (ReferenceEquals(this, obj))
@@ -249,6 +267,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       return new ColumnDrivenSymbolSizePlotStyle(this, true);
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_dataColumnProxy is not null)
@@ -259,6 +278,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region Changed event handling
 
+    /// <inheritdoc />
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (object.ReferenceEquals(_dataColumnProxy, sender))
@@ -515,62 +535,74 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <inheritdoc />
     public void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups)
     {
       // this is only for internal use inside one plot item
     }
 
+    /// <inheritdoc />
     public void CollectExternalGroupStyles(Graph3D.Plot.Groups.PlotGroupStyleCollection externalGroups)
     {
       // this is only for internal use inside one plot item
     }
 
+    /// <inheritdoc />
     public void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       VariableSymbolSizeGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
     }
 
+    /// <inheritdoc />
     public void CollectLocalGroupStyles(Graph3D.Plot.Groups.PlotGroupStyleCollection externalGroups, Graph3D.Plot.Groups.PlotGroupStyleCollection localGroups)
     {
       VariableSymbolSizeGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
     }
 
+    /// <inheritdoc />
     public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
     {
       VariableSymbolSizeGroupStyle.PrepareStyle(externalGroups, localGroups, GetSymbolSize);
     }
 
+    /// <inheritdoc />
     public void PrepareGroupStyles(Graph3D.Plot.Groups.PlotGroupStyleCollection externalGroups, Graph3D.Plot.Groups.PlotGroupStyleCollection localGroups, Graph3D.IPlotArea layer, Graph3D.Plot.Data.Processed3DPlotData pdata)
     {
       VariableSymbolSizeGroupStyle.PrepareStyle(externalGroups, localGroups, GetSymbolSize);
     }
 
+    /// <inheritdoc />
     public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       // there is nothing to apply here, because it is only a provider
     }
 
+    /// <inheritdoc />
     public void ApplyGroupStyles(Graph3D.Plot.Groups.PlotGroupStyleCollection externalGroups, Graph3D.Plot.Groups.PlotGroupStyleCollection localGroups)
     {
       // there is nothing to apply here, because it is only a provider
     }
 
+    /// <inheritdoc />
     public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData? prevItemData, Processed2DPlotData? nextItemData)
     {
       // this is not a visible style, thus doing nothing
     }
 
+    /// <inheritdoc />
     public void Paint(IGraphicsContext3D g, Graph3D.IPlotArea layer, Graph3D.Plot.Data.Processed3DPlotData pdata, Graph3D.Plot.Data.Processed3DPlotData? prevItemData, Graph3D.Plot.Data.Processed3DPlotData? nextItemData)
     {
       // this is not a visible style, thus doing nothing
     }
 
+    /// <inheritdoc />
     public RectangleF PaintSymbol(Graphics g, RectangleF bounds)
     {
       // this is not a visible style, thus doing nothing
       return RectangleF.Empty;
     }
 
+    /// <inheritdoc />
     public RectangleD3D PaintSymbol(IGraphicsContext3D g, RectangleD3D bounds)
     {
       return RectangleD3D.Empty;
@@ -609,6 +641,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// to change a plot so that the plot items refer to another table.
     /// </summary>
     /// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
+    /// <inheritdoc />
     public void VisitDocumentReferences(DocNodeProxyReporter Report)
     {
       Report(_dataColumnProxy, this, "DataColumn");

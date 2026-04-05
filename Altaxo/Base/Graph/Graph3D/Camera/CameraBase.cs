@@ -38,11 +38,29 @@ namespace Altaxo.Graph.Graph3D.Camera
   /// <seealso cref="Altaxo.Main.IImmutable" />
   public abstract class CameraBase : Main.IImmutable
   {
+    /// <summary>
+    /// Stores the up vector of the camera.
+    /// </summary>
     protected VectorD3D _upVector;
+    /// <summary>
+    /// Stores the eye position of the camera.
+    /// </summary>
     protected PointD3D _eyePosition;
+    /// <summary>
+    /// Stores the target position of the camera.
+    /// </summary>
     protected PointD3D _targetPosition;
+    /// <summary>
+    /// Stores the near clipping distance.
+    /// </summary>
     protected double _zNear;
+    /// <summary>
+    /// Stores the far clipping distance.
+    /// </summary>
     protected double _zFar;
+    /// <summary>
+    /// Stores the visible width at the near clipping plane.
+    /// </summary>
     protected double _widthAtZNear;
 
     /// <summary>
@@ -156,6 +174,15 @@ namespace Altaxo.Graph.Graph3D.Camera
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CameraBase"/> class.
+    /// </summary>
+    /// <param name="upVector">The up vector.</param>
+    /// <param name="eyePosition">The eye position.</param>
+    /// <param name="targetPosition">The target position.</param>
+    /// <param name="zNear">The near clipping distance.</param>
+    /// <param name="zFar">The far clipping distance.</param>
+    /// <param name="widthAtZNear">The width of the view field at the near plane.</param>
     protected CameraBase(VectorD3D upVector, PointD3D eyePosition, PointD3D targetPosition, double zNear, double zFar, double widthAtZNear)
     {
       _upVector = upVector;
@@ -167,7 +194,7 @@ namespace Altaxo.Graph.Graph3D.Camera
     }
 
     /// <summary>
-    /// Creates a new camera with provided upVector, eyePosition, targetPosition, znear and  zfar distance..
+    /// Creates a new camera with the provided up vector, eye position, target position, and clipping distances.
     /// </summary>
     /// <param name="upVector">Up vector.</param>
     /// <param name="eyePosition">The eye position.</param>
@@ -187,7 +214,7 @@ namespace Altaxo.Graph.Graph3D.Camera
     }
 
     /// <summary>
-    /// Creates a new camera with provided upVector, eyePosition, targetPosition.
+    /// Creates a new camera with the provided up vector, eye position, and target position.
     /// </summary>
     /// <param name="upVector">Up vector.</param>
     /// <param name="eyePosition">The eye position.</param>
@@ -203,7 +230,7 @@ namespace Altaxo.Graph.Graph3D.Camera
     }
 
     /// <summary>
-    /// Creates a new camera with provided upVector and eyePosition.
+    /// Creates a new camera with the provided up vector and eye position.
     /// </summary>
     /// <param name="upVector">Up vector.</param>
     /// <param name="eyePosition">The eye position.</param>
@@ -217,7 +244,7 @@ namespace Altaxo.Graph.Graph3D.Camera
     }
 
     /// <summary>
-    /// Creates a new camera with provided  eyePosition and targetPosition;
+    /// Creates a new camera with the provided eye position and target position.
     /// </summary>
     /// <param name="eyePosition">The eye position.</param>
     /// <param name="targetPosition">The target position.</param>
@@ -264,7 +291,7 @@ namespace Altaxo.Graph.Graph3D.Camera
     /// </summary>
     /// <param name="distance">The new distance between eye and target.</param>
     /// <returns>A new camera with the distance between eye and target as provided in the argument <paramref name="distance"/>.</returns>
-    /// <exception cref="System.ArgumentOutOfRangeException">distance has to be > 0</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="distance"/> is less than or equal to zero.</exception>
     public CameraBase WithDistanceByChangingEyePosition(double distance)
     {
       if (!(distance > 0))

@@ -31,6 +31,9 @@ using Altaxo.Collections;
 
 namespace Altaxo.Graph.Gdi
 {
+  /// <summary>
+  /// Provides helper methods to create new plot layers in graph documents.
+  /// </summary>
   public static class GraphDocumentLayerCreation
   {
     #region XYPlotLayer Creation

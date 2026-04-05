@@ -81,6 +81,7 @@ namespace Altaxo.Graph.Gdi
       /// </summary>
       private bool _wasSuccessful;
 
+      /// <inheritdoc />
       public override bool Equals(object? obj)
       {
         var from = obj as GraphDocumentRenderTask;
@@ -90,11 +91,19 @@ namespace Altaxo.Graph.Gdi
           return false;
       }
 
+      /// <inheritdoc />
       public override int GetHashCode()
       {
         return Owner.GetHashCode();
       }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="GraphDocumentRenderTask"/> class.
+      /// </summary>
+      /// <param name="parent">The parent render manager.</param>
+      /// <param name="token">The owner token.</param>
+      /// <param name="doc">The graph document to render.</param>
+      /// <param name="renderingAction">The rendering action.</param>
       public GraphDocumentRenderTask(
         GraphDocumentRenderManager parent,
         object token,
@@ -182,6 +191,9 @@ namespace Altaxo.Graph.Gdi
 
     private static GraphDocumentRenderManager _instance = new GraphDocumentRenderManager();
 
+    /// <summary>
+    /// Gets the shared render manager instance.
+    /// </summary>
     public static GraphDocumentRenderManager Instance { get { return _instance; } }
 
     /// <summary>The list of rendering tasks waiting to be started.</summary>

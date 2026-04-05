@@ -35,6 +35,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
   using GraphicsContext;
   using Plot.Data;
 
+  /// <summary>
+  /// Stacks three-dimensional plot items by converting accumulated z values to relative percentages.
+  /// </summary>
   public class RelativeStackTransform
     :
     Main.SuspendableDocumentLeafNodeWithEventArgs,
@@ -47,11 +50,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RelativeStackTransform), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (RelativeStackTransform)obj;
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         RelativeStackTransform s = o is not null ? (RelativeStackTransform)o : new RelativeStackTransform();
@@ -61,26 +66,36 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RelativeStackTransform"/> class.
+    /// </summary>
     public RelativeStackTransform()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RelativeStackTransform"/> class by copying from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public RelativeStackTransform(RelativeStackTransform from)
     {
     }
 
     #region ICoordinateTransformingGroupStyle Members
 
+    /// <inheritdoc/>
     public void MergeXBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll)
     {
       CoordinateTransformingStyleBase.MergeXBoundsInto(pb, coll);
     }
 
+    /// <inheritdoc/>
     public void MergeYBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll)
     {
       CoordinateTransformingStyleBase.MergeYBoundsInto(pb, coll);
     }
 
+    /// <inheritdoc/>
     public void MergeZBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll)
     {
       var pbclone = (IPhysicalBoundaries)pb.Clone(); // before we can use CanUseStyle, we have to give physical y boundaries template
@@ -100,6 +115,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
       return AbsoluteStackTransform.CanUseStyle(layer, coll, out plotDataList);
     }
 
+    /// <inheritdoc/>
     public void PaintPreprocessing(IPaintContext paintContext, IPlotArea layer, PlotItemCollection coll)
     {
       if (!CanUseStyle(layer, coll, out var plotDataDict))
@@ -162,10 +178,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
       }
     }
 
+    /// <inheritdoc/>
     public void PaintPostprocessing()
     {
     }
 
+    /// <inheritdoc/>
     public void PaintChild(IGraphicsContext3D g, IPaintContext paintContext, IPlotArea layer, PlotItemCollection coll, int indexOfChild)
     {
       var plotDataDict = paintContext.GetValueOrDefault<Dictionary<G3DPlotItem, Processed3DPlotData>>(this);
@@ -198,6 +216,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
     #region ICloneable Members
 
+    /// <inheritdoc/>
     public object Clone()
     {
       return new RelativeStackTransform(this);

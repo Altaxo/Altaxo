@@ -31,8 +31,8 @@ using System.Text;
 namespace Altaxo.Graph.Plot.Groups
 {
   /// <summary>
-  /// This group style is used to distribute a symbol size function to all local plot styles.
-  /// The symbol size function maps an index i of the actual plot point to a symbol size.
+  /// This group style is used to distribute a color function to all local plot styles.
+  /// The color function maps an index of the actual plot point to a color.
   /// </summary>
   public class VariableColorGroupStyle
     :
@@ -69,11 +69,17 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="VariableColorGroupStyle"/> class.
+    /// </summary>
     public VariableColorGroupStyle()
     {
       _colorForIndex = (i) => Color.Black;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="VariableColorGroupStyle"/> class by copying another instance.
+    /// </summary>
     public VariableColorGroupStyle(VariableColorGroupStyle from)
     {
       _isInitialized = from._isInitialized;
@@ -84,6 +90,9 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region ICloneable Members
 
+    /// <summary>
+    /// Creates a copy of this style.
+    /// </summary>
     public VariableColorGroupStyle Clone()
     {
       return new VariableColorGroupStyle(this);
@@ -98,6 +107,7 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region IGroupStyle Members
 
+    /// <inheritdoc/>
     public void TransferFrom(IPlotGroupStyle fromb)
     {
       var from = (VariableColorGroupStyle)fromb;
@@ -105,19 +115,23 @@ namespace Altaxo.Graph.Plot.Groups
       _colorForIndex = from._colorForIndex;
     }
 
+    /// <inheritdoc/>
     public void BeginPrepare()
     {
       _isInitialized = false;
     }
 
+    /// <inheritdoc/>
     public void PrepareStep()
     {
     }
 
+    /// <inheritdoc/>
     public void EndPrepare()
     {
     }
 
+    /// <inheritdoc/>
     public bool CanCarryOver
     {
       get
@@ -126,6 +140,7 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <inheritdoc/>
     public bool CanStep
     {
       get
@@ -134,6 +149,7 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <inheritdoc/>
     public int Step(int step)
     {
       return 0;
@@ -157,6 +173,9 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region Other members
 
+    /// <summary>
+    /// Gets a value indicating whether this style was initialized.
+    /// </summary>
     public bool IsInitialized
     {
       get
@@ -165,12 +184,19 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <summary>
+    /// Initializes the color function.
+    /// </summary>
+    /// <param name="colorForIndex">The color function.</param>
     public void Initialize(Func<int, Color> colorForIndex)
     {
       _isInitialized = true;
       _colorForIndex = colorForIndex;
     }
 
+    /// <summary>
+    /// Gets the color function.
+    /// </summary>
     public Func<int, Color> ColorForIndex
     {
       get
@@ -184,7 +210,7 @@ namespace Altaxo.Graph.Plot.Groups
     #region Static helpers
 
     /// <summary>
-    /// If neccessary, adds this group style to localGroups.
+    /// If necessary, adds this group style to local groups.
     /// </summary>
     /// <param name="externalGroups">External group styles.</param>
     /// <param name="localGroups">Local group styles.</param>
@@ -196,6 +222,9 @@ namespace Altaxo.Graph.Plot.Groups
         localGroups.Add(new VariableColorGroupStyle());
     }
 
+    /// <summary>
+    /// Prepares the variable-color style.
+    /// </summary>
     public static void PrepareStyle(
       IPlotGroupStyleCollection externalGroups,
       IPlotGroupStyleCollection localGroups,
@@ -219,7 +248,7 @@ namespace Altaxo.Graph.Plot.Groups
     }
 
     /// <summary>
-    /// Try to apply the symbol size group style. Returns true if successfull applied.
+    /// Tries to apply the variable-color group style.
     /// </summary>
     /// <param name="externalGroups"></param>
     /// <param name="localGroups"></param>

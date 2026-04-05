@@ -23,9 +23,6 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -162,7 +159,7 @@ namespace Altaxo.Gui.Serialization.Ascii
       GuiHelper.SynchronizeSelectionFromGui(_guiNumberFormats);
     }
 
-    public bool NumberFormatCultureIsKnowm
+    public bool NumberFormatCultureIsKnown
     {
       get
       {

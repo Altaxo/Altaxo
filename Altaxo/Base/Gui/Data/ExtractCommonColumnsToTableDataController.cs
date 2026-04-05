@@ -12,17 +12,27 @@ using Markdig.Extensions.Tables;
 
 namespace Altaxo.Gui.Data
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="ExtractCommonColumnsToTableDataController"/>.
+  /// </summary>
   public interface IExtractCommonColumnsToTableDataView : IDataContextAwareView { }
 
+  /// <summary>
+  /// Controller for extracting common columns from multiple tables into a single table.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IExtractCommonColumnsToTableDataView))]
   [UserControllerForObject(typeof(ExtractCommonColumnsToTableData))]
   public class ExtractCommonColumnsToTableDataController : MVCANControllerEditCopyOfDocBase<ExtractCommonColumnsToTableData, IExtractCommonColumnsToTableDataView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ExtractCommonColumnsToTableDataController"/> class.
+    /// </summary>
     public ExtractCommonColumnsToTableDataController()
     {
       AddToParticipatingTablesCommand = new RelayCommand(EhAddToParticipatingDataTable);
@@ -35,14 +45,32 @@ namespace Altaxo.Gui.Data
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the command that adds selected tables to the participating list.
+    /// </summary>
     public ICommand AddToParticipatingTablesCommand { get; }
+
+    /// <summary>
+    /// Gets the command that removes selected tables from the participating list.
+    /// </summary>
     public ICommand RemoveFromParticipatingTablesCommand { get; }
+
+    /// <summary>
+    /// Gets the command that moves selected participating tables up.
+    /// </summary>
     public ICommand ParticipatingTablesUpCommand { get; }
+
+    /// <summary>
+    /// Gets the command that moves selected participating tables down.
+    /// </summary>
     public ICommand ParticipatingTablesDownCommand { get; }
 
 
     private SelectableListNodeList _availableTables;
 
+    /// <summary>
+    /// Gets or sets the available tables.
+    /// </summary>
     public SelectableListNodeList AvailableTables
     {
       get => _availableTables;
@@ -58,6 +86,9 @@ namespace Altaxo.Gui.Data
 
     private SelectableListNodeList _participatingTables;
 
+    /// <summary>
+    /// Gets or sets the participating tables.
+    /// </summary>
     public SelectableListNodeList ParticipatingTables
     {
       get => _participatingTables;
@@ -73,6 +104,9 @@ namespace Altaxo.Gui.Data
 
     private ItemsController<string> _xColumn;
 
+    /// <summary>
+    /// Gets or sets the selected X column.
+    /// </summary>
     public ItemsController<string> XColumn
     {
       get => _xColumn;
@@ -88,6 +122,9 @@ namespace Altaxo.Gui.Data
 
     private SelectableListNodeList _yColumns;
 
+    /// <summary>
+    /// Gets or sets the selected Y columns.
+    /// </summary>
     public SelectableListNodeList YColumns
     {
       get => _yColumns;
@@ -103,6 +140,7 @@ namespace Altaxo.Gui.Data
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -191,6 +229,7 @@ namespace Altaxo.Gui.Data
       ParticipatingTables.MoveSelectedItemsDown();
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (ParticipatingTables.Count == 0)

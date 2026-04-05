@@ -31,12 +31,12 @@ using Altaxo.Data;
 namespace Altaxo.Gui.Data
 {
   /// <summary>
-  /// Controller for configuring a <see cref="DataTablesAggregationDataSource"/> in the GUI.
+  /// Controller for <see cref="DataTablesAggregationDataSource"/>.
   /// </summary>
   [UserControllerForObject(typeof(DataTablesAggregationDataSource))]
   public class DataTablesAggregationSourceController : DataSourceControllerBase<DataTablesAggregationDataSource>
   {
-    /// <inheritdoc/>
+    /// <inheritdoc />
     protected override IMVCANController GetProcessDataController()
     {
       var pdc = base.GetProcessDataController();
@@ -83,7 +83,7 @@ namespace Altaxo.Gui.Data
       }
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (disposeController && base.GetProcessDataController() is DataTablesAggregationDataController pdcDataController)

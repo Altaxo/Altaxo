@@ -38,8 +38,12 @@ namespace Altaxo.Graph.Graph3D.Camera
   {
     private static CameraChangedEventArgs _instance = new CameraChangedEventArgs();
 
+    /// <summary>
+    /// Gets the shared empty instance.
+    /// </summary>
     public static new CameraChangedEventArgs Empty { get { return _instance; } }
 
+    /// <inheritdoc/>
     public override void Add(SelfAccumulateableEventArgs e)
     {
     }

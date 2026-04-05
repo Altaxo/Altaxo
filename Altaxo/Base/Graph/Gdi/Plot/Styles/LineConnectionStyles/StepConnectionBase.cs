@@ -24,13 +24,8 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Text;
-using Altaxo.Drawing;
-using Altaxo.Geometry;
 using Altaxo.Graph.Gdi.Plot.Data;
 using Altaxo.Graph.Plot.Data;
 
@@ -138,10 +133,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
     }
 
     /// <summary>
-    /// Template to get a fill path.
+    /// Builds the fill path for a processed step polyline.
     /// </summary>
     /// <param name="gp">Graphics path to fill with data.</param>
-    /// <param name="pdata">The plot data. Don't use the Range property of the pdata, since it is overriden by the next argument.</param>
+    /// <param name="pdata">The plot data.</param>
     /// <param name="range">The plot range to use.</param>
     /// <param name="layer">Graphics layer.</param>
     /// <param name="fillDirection">Designates a bound to fill to.</param>
@@ -149,7 +144,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
     /// <param name="connectCircular">If true, a circular connection is drawn.</param>
     /// <param name="allLinePointsShiftedAlready">The plot positions, already shifted when a logical shift needed to be applied. Don't use the Range property of the pdata, since it is overriden by the next argument.</param>
     /// <param name="logicalShiftX">The logical shift in x-direction.</param>
-    /// <param name="logicalShiftY">The logical shift in x-direction.</param>
+    /// <param name="logicalShiftY">The logical shift in y-direction.</param>
     public virtual void FillOneRange(
     GraphicsPath gp,
       Processed2DPlotData pdata,

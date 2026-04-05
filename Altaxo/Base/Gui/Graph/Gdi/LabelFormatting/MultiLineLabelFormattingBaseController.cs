@@ -31,14 +31,21 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
 {
+  /// <summary>
+  /// Provides the view for editing multiline label formatting.
+  /// </summary>
   public interface IMultiLineLabelFormattingBaseView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controls the common multiline label formatting settings for 2D graphs.
+  /// </summary>
   [UserControllerForObject(typeof(MultiLineLabelFormattingBase))]
   [ExpectedTypeOfView(typeof(IMultiLineLabelFormattingBaseView))]
   public class MultiLineLabelFormattingBaseController : MVCANControllerEditOriginalDocBase<MultiLineLabelFormattingBase, IMultiLineLabelFormattingBaseView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -46,10 +53,16 @@ namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the quantity environment used for editing line spacing.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment LineSpacingEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _lineSpacing;
 
+    /// <summary>
+    /// Gets or sets the spacing between lines.
+    /// </summary>
     public DimensionfulQuantity LineSpacing
     {
       get => _lineSpacing;
@@ -65,6 +78,9 @@ namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
 
     private ItemsController<System.Drawing.StringAlignment> _textBlockAlignment;
 
+    /// <summary>
+    /// Gets or sets the alignment of the text block.
+    /// </summary>
     public ItemsController<System.Drawing.StringAlignment> TextBlockAlignment
     {
       get => _textBlockAlignment;
@@ -81,12 +97,14 @@ namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
 
     #endregion
 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       _textBlockAlignment = null;
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -98,6 +116,7 @@ namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       _doc.LineSpacing = LineSpacing.AsValueInSIUnits;

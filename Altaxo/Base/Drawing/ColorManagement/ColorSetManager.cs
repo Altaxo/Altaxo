@@ -34,10 +34,22 @@ using Altaxo.Serialization.Xml;
 
 namespace Altaxo.Drawing.ColorManagement
 {
+  /// <summary>
+  /// Manager entry value for registered color sets.
+  /// </summary>
   public class ColorSetManagerEntryValue : StyleListManagerBaseEntryValue<IColorSet, NamedColor>
   {
+    /// <summary>
+    /// Gets a value indicating whether the registered color set is intended for plotting.
+    /// </summary>
     public bool IsPlotColorSet { get; private set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColorSetManagerEntryValue"/> class.
+    /// </summary>
+    /// <param name="colorSet">The color set.</param>
+    /// <param name="level">The definition level of the color set.</param>
+    /// <param name="isPlotColorSet"><see langword="true"/> if the color set is intended for plotting.</param>
     public ColorSetManagerEntryValue(IColorSet colorSet, Main.ItemDefinitionLevel level, bool isPlotColorSet)
       : base(colorSet, level)
     {
@@ -50,6 +62,9 @@ namespace Altaxo.Drawing.ColorManagement
   /// </summary>
   public class ColorSetManager : StyleListManagerBase<IColorSet, NamedColor, ColorSetManagerEntryValue>
   {
+    /// <summary>
+    /// Property key used to persist user-defined color sets.
+    /// </summary>
     public static readonly Main.Properties.PropertyKey<ColorSetBag> PropertyKeyUserDefinedColorSets;
 
     /// <summary>
@@ -137,11 +152,13 @@ namespace Altaxo.Drawing.ColorManagement
       }
     }
 
+    /// <inheritdoc/>
     public override IColorSet CreateNewList(string name, IEnumerable<NamedColor> symbols)
     {
       return new ColorSet(name, symbols);
     }
 
+    /// <inheritdoc/>
     public override IColorSet? GetParentList(NamedColor item)
     {
       return item.ParentColorSet;
@@ -169,6 +186,11 @@ namespace Altaxo.Drawing.ColorManagement
       }
     }
 
+    /// <summary>
+    /// Determines whether the specified color set is marked as a plot color set.
+    /// </summary>
+    /// <param name="colorSet">The color set to inspect.</param>
+    /// <returns><see langword="true"/> if the set is marked for plotting; otherwise, <see langword="false"/>.</returns>
     public bool IsPlotColorSet(IColorSet colorSet)
     {
       if (colorSet is null)
@@ -180,6 +202,10 @@ namespace Altaxo.Drawing.ColorManagement
       return false;
     }
 
+    /// <summary>
+    /// Marks the specified color set as a plot color set.
+    /// </summary>
+    /// <param name="colorSet">The registered color set to mark.</param>
     public void DeclareAsPlotColorList(IColorSet colorSet)
     {
       if (colorSet is null)
@@ -217,6 +243,12 @@ namespace Altaxo.Drawing.ColorManagement
 
     #region Deserialization of colors
 
+    /// <summary>
+    /// Tries to find a color set that contains the specified color value.
+    /// </summary>
+    /// <param name="color">The color value to search for.</param>
+    /// <param name="value">The matching color set, if found.</param>
+    /// <returns><see langword="true"/> if a matching color set was found; otherwise, <see langword="false"/>.</returns>
     public bool TryFindColorSetContaining(AxoColor color, [MaybeNullWhen(false)] out IColorSet value)
     {
 
@@ -239,6 +271,13 @@ namespace Altaxo.Drawing.ColorManagement
       return false;
     }
 
+    /// <summary>
+    /// Tries to find a color set that contains the specified color value and name.
+    /// </summary>
+    /// <param name="colorValue">The color value to search for.</param>
+    /// <param name="colorName">The color name to search for.</param>
+    /// <param name="value">The matching color set, if found.</param>
+    /// <returns><see langword="true"/> if a matching color set was found; otherwise, <see langword="false"/>.</returns>
     public bool TryFindColorSetContaining(AxoColor colorValue, string colorName, [MaybeNullWhen(false)] out IColorSet value)
     {
 
@@ -261,6 +300,12 @@ namespace Altaxo.Drawing.ColorManagement
       return false;
     }
 
+    /// <summary>
+    /// Resolves a deserialized color that has no associated color set.
+    /// </summary>
+    /// <param name="color">The deserialized color value.</param>
+    /// <param name="name">The deserialized color name.</param>
+    /// <returns>A matching known color when possible; otherwise a standalone <see cref="NamedColor"/>.</returns>
     public NamedColor GetDeserializedColorWithNoSet(AxoColor color, string name)
     {
       // test if it is a standard color
@@ -274,11 +319,26 @@ namespace Altaxo.Drawing.ColorManagement
       return string.IsNullOrEmpty(name) ? new NamedColor(color) : new NamedColor(color, name); // if it is not a known color, then return the color without a color set as parent
     }
 
+    /// <summary>
+    /// Creates a deserialized color that belongs to a built-in color set.
+    /// </summary>
+    /// <param name="color">The deserialized color value.</param>
+    /// <param name="colorName">The deserialized color name.</param>
+    /// <param name="builtinColorSet">The built-in parent color set.</param>
+    /// <returns>A named color associated with the built-in color set.</returns>
     public NamedColor GetDeserializedColorFromBuiltinSet(AxoColor color, string colorName, IColorSet builtinColorSet)
     {
       return new NamedColor(color, colorName, builtinColorSet);
     }
 
+    /// <summary>
+    /// Resolves a deserialized color from its color set name.
+    /// </summary>
+    /// <param name="deserializationInfo">The deserialization context.</param>
+    /// <param name="colorValue">The deserialized color value.</param>
+    /// <param name="colorName">The deserialized color name.</param>
+    /// <param name="colorSetName">The deserialized color set name.</param>
+    /// <returns>A matching named color, or a fallback named color if no exact match is found.</returns>
     public NamedColor GetDeserializedColorFromLevelAndSetName(Altaxo.Serialization.Xml.IXmlDeserializationInfo deserializationInfo, AxoColor colorValue, string colorName, string colorSetName)
     {
 
@@ -311,6 +371,7 @@ namespace Altaxo.Drawing.ColorManagement
 
     #region User defined color sets
 
+    /// <inheritdoc/>
     protected override void OnUserDefinedListAddedChangedRemoved(IColorSet? list)
     {
       var colorSetBag = new ColorSetBag(_allLists.Values.Where(entry => entry.Level == ItemDefinitionLevel.UserDefined).Select(entry => new Tuple<IColorSet, bool>(entry.List, entry.IsPlotColorSet)));

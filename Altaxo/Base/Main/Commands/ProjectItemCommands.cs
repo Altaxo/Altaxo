@@ -39,6 +39,9 @@ namespace Altaxo.Main.Commands
   {
     #region Clipboard commands
 
+    /// <summary>
+    /// Base options for clipboard lists that contain project items or references.
+    /// </summary>
     public class ProjectItemClipboardListBase
     {
       /// <summary>Folder from which the items are copied. Can be null if the base folder is unknown.</summary>
@@ -56,7 +59,7 @@ namespace Altaxo.Main.Commands
     }
 
     /// <summary>
-    ///
+    /// Clipboard payload containing serialized project items together with relocation options.
     /// </summary>
     /// <remarks>
     /// There are two groups of possible options:
@@ -71,6 +74,9 @@ namespace Altaxo.Main.Commands
     /// <para>
     /// </para>
     /// </remarks>
+    /// <summary>
+    /// Clipboard payload containing serialized project items.
+    /// </summary>
     public class ProjectItemClipboardList : ProjectItemClipboardListBase
     {
       /// <summary>List of project items to serialize/deserialize</summary>
@@ -81,6 +87,11 @@ namespace Altaxo.Main.Commands
         _projectItems = new List<IProjectItem>();
       }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ProjectItemClipboardList"/> class.
+      /// </summary>
+      /// <param name="projectItems">The project items to store.</param>
+      /// <param name="baseFolder">The base folder of the copied items.</param>
       public ProjectItemClipboardList(IEnumerable<Altaxo.Main.IProjectItem> projectItems, string baseFolder)
       {
         BaseFolder = baseFolder;
@@ -90,7 +101,8 @@ namespace Altaxo.Main.Commands
       [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ProjectItemClipboardList), 0)]
       private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
       {
-        public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+          /// <inheritdoc/>
+          public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
         {
           var s = (ProjectItemClipboardList)obj;
 
@@ -105,7 +117,8 @@ namespace Altaxo.Main.Commands
           info.CommitArray();
         }
 
-        public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+          /// <inheritdoc/>
+          public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
           var s = (ProjectItemClipboardList?)o ?? new ProjectItemClipboardList(info);
 
@@ -129,6 +142,9 @@ namespace Altaxo.Main.Commands
         }
       }
 
+      /// <summary>
+      /// Gets the project items stored in this clipboard list.
+      /// </summary>
       public IEnumerable<IProjectItem> ProjectItems
       {
         get { return _projectItems.OfType<IProjectItem>(); }
@@ -136,7 +152,7 @@ namespace Altaxo.Main.Commands
     }
 
     /// <summary>
-    ///
+    /// Clipboard payload containing project-item references together with relocation options.
     /// </summary>
     /// <remarks>
     /// There are two groups of possible options:
@@ -151,6 +167,9 @@ namespace Altaxo.Main.Commands
     /// <para>
     /// </para>
     /// </remarks>
+    /// <summary>
+    /// Clipboard payload containing project-item references.
+    /// </summary>
     public class ProjectItemReferenceClipboardList : ProjectItemClipboardListBase
     {
       /// <summary>List of project items to serialize/deserialize</summary>
@@ -161,6 +180,11 @@ namespace Altaxo.Main.Commands
         _projectItems = new List<DocNodeProxy>();
       }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ProjectItemReferenceClipboardList"/> class.
+      /// </summary>
+      /// <param name="projectItemReferences">The project-item references to store.</param>
+      /// <param name="baseFolder">The base folder of the copied references.</param>
       public ProjectItemReferenceClipboardList(IEnumerable<DocNodeProxy> projectItemReferences, string baseFolder)
       {
         BaseFolder = baseFolder;
@@ -170,7 +194,8 @@ namespace Altaxo.Main.Commands
       [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ProjectItemReferenceClipboardList), 0)]
       private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
       {
-        public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+          /// <inheritdoc/>
+          public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
         {
           var s = (ProjectItemReferenceClipboardList)obj;
 
@@ -186,7 +211,8 @@ namespace Altaxo.Main.Commands
           info.CommitArray();
         }
 
-        public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+          /// <inheritdoc/>
+          public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
           var s = (ProjectItemReferenceClipboardList?)o ?? new ProjectItemReferenceClipboardList(info);
 
@@ -210,6 +236,9 @@ namespace Altaxo.Main.Commands
         }
       }
 
+      /// <summary>
+      /// Gets the project-item references stored in this clipboard list.
+      /// </summary>
       public IEnumerable<DocNodeProxy> ProjectItemReferences
       {
         get { return _projectItems.OfType<DocNodeProxy>(); }
@@ -230,11 +259,19 @@ namespace Altaxo.Main.Commands
       Altaxo.Serialization.Clipboard.ClipboardSerialization.PutObjectToClipboard(ClipboardFormat_ListOfProjectItems, new ProjectItemClipboardList(items, baseFolder));
     }
 
+    /// <summary>
+    /// Determines whether project items can be pasted from the clipboard.
+    /// </summary>
+    /// <returns><c>true</c> if project items can be pasted from the clipboard; otherwise, <c>false</c>.</returns>
     public static bool CanPasteItemsFromClipboard()
     {
       return Altaxo.Serialization.Clipboard.ClipboardSerialization.IsClipboardFormatAvailable(ClipboardFormat_ListOfProjectItems);
     }
 
+    /// <summary>
+    /// Pastes project items from the clipboard into the specified base folder.
+    /// </summary>
+    /// <param name="baseFolder">The destination base folder.</param>
     public static void PasteItemsFromClipboard(string baseFolder)
     {
       var list = Altaxo.Serialization.Clipboard.ClipboardSerialization.GetObjectFromClipboard<ProjectItemClipboardList>(ClipboardFormat_ListOfProjectItems);
@@ -242,6 +279,11 @@ namespace Altaxo.Main.Commands
         PasteItems(baseFolder, list);
     }
 
+    /// <summary>
+    /// Pastes the specified project items into the target folder.
+    /// </summary>
+    /// <param name="targetFolder">The target folder.</param>
+    /// <param name="list">The clipboard payload to paste.</param>
     public static void PasteItems(string targetFolder, ProjectItemClipboardList list)
     {
       // first we have to make sure that list has values set for TryToKeepInternalReferences and RelocateReferences -- otherwise we have to show a dialog
@@ -328,6 +370,11 @@ namespace Altaxo.Main.Commands
       private IProjectItem _projectItem;
       private string _projectItemTypeName;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="RenameValidator"/> class.
+      /// </summary>
+      /// <param name="projectItem">The project item to validate.</param>
+      /// <param name="projectItemTypeName">The display name of the project-item type.</param>
       public RenameValidator(IProjectItem projectItem, string projectItemTypeName)
         : base(string.Format("The {0} name must not be empty! Please enter a valid name.", projectItemTypeName))
       {
@@ -340,6 +387,7 @@ namespace Altaxo.Main.Commands
           _projectItemTypeName = _projectItem.GetType().Name;
       }
 
+      /// <inheritdoc/>
       public override string? Validate(string projectItemName)
       {
         var err = base.Validate(projectItemName);

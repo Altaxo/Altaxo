@@ -34,6 +34,9 @@ namespace Altaxo.Text.Renderers.Maml
   /// <seealso cref="MamlObjectRenderer{T}" />
   public class ListRenderer : MamlObjectRenderer<ListBlock>
   {
+    /// <summary>
+    /// Writes a list block.
+    /// </summary>
     protected override void Write(MamlRenderer renderer, ListBlock listBlock)
     {
       renderer.EnsureLine();

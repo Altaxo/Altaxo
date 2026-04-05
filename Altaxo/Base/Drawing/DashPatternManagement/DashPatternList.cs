@@ -35,6 +35,9 @@ using Altaxo.Graph.Graph3D.Plot.Styles;
 
 namespace Altaxo.Drawing.DashPatternManagement
 {
+  /// <summary>
+  /// Immutable named list of dash patterns.
+  /// </summary>
   public class DashPatternList : StyleListBase<IDashPattern>
   {
     /// <summary>First part of the key that is used during serialization to decide whether the set was already serialized before.</summary>
@@ -74,6 +77,11 @@ namespace Altaxo.Drawing.DashPatternManagement
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DashPatternList"/> class.
+    /// </summary>
+    /// <param name="name">The list name.</param>
+    /// <param name="symbols">The dash patterns contained in the list.</param>
     public DashPatternList(string name, IEnumerable<IDashPattern> symbols)
       : base(name, symbols.Select(instance => (IDashPattern)instance.Clone()))
     {

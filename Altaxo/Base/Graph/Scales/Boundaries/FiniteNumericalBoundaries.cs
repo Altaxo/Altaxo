@@ -28,8 +28,7 @@ using System;
 namespace Altaxo.Graph.Scales.Boundaries
 {
   /// <summary>
-  /// FinitePhysicalBoundaries is intended to use for LinearAxis
-  /// it keeps track of the most negative and most positive finite value
+  /// Tracks the smallest and largest finite values for numerical scales.
   /// </summary>
   [Serializable]
   public class FiniteNumericalBoundaries : NumericalBoundaries
@@ -41,12 +40,14 @@ namespace Altaxo.Graph.Scales.Boundaries
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FiniteNumericalBoundaries), 2)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (FiniteNumericalBoundaries)obj;
         info.AddBaseValueEmbedded(s, typeof(FiniteNumericalBoundaries).BaseType!);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (FiniteNumericalBoundaries?)o ?? new FiniteNumericalBoundaries();
@@ -57,21 +58,30 @@ namespace Altaxo.Graph.Scales.Boundaries
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FiniteNumericalBoundaries"/> class.
+    /// </summary>
     public FiniteNumericalBoundaries()
         : base()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FiniteNumericalBoundaries"/> class by copying another instance.
+    /// </summary>
+    /// <param name="c">The instance to copy.</param>
     public FiniteNumericalBoundaries(FiniteNumericalBoundaries c)
         : base(c)
     {
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new FiniteNumericalBoundaries(this);
     }
 
+    /// <inheritdoc />
     public override bool Add(Altaxo.Data.IReadableColumn col, int idx)
     {
       var v = col[idx];
@@ -80,11 +90,17 @@ namespace Altaxo.Graph.Scales.Boundaries
       return Add(d);
     }
 
+    /// <inheritdoc />
     public override bool Add(Altaxo.Data.AltaxoVariant item)
     {
       return Add(item.ToDouble());
     }
 
+    /// <summary>
+    /// Adds a finite numeric value to the tracked boundaries.
+    /// </summary>
+    /// <param name="d">The value to add.</param>
+    /// <returns><see langword="true"/> if the value contributed to the boundaries; otherwise, <see langword="false"/>.</returns>
     public virtual bool Add(double d)
     {
       if (IsSuspended) // when suspended: performance tweak, see overrides OnSuspended and OnResume for details (if suspended, we have saved the state of the instance for comparison when we resume).

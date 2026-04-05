@@ -32,14 +32,19 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Drawing
 {
-
   /// <summary>
-  /// Holds an image, either from a resource or from a file stream or from the clipboard.
+  /// Holds an image, either from a resource, a file stream, or the clipboard.
   /// </summary>
   [Serializable]
   public abstract class ImageProxy : Main.IImmutable
   {
+    /// <summary>
+    /// Conversion factor from points to inches.
+    /// </summary>
     protected const double InchesPerPoint = 1 / 72.0;
+    /// <summary>
+    /// Conversion factor from inches to points.
+    /// </summary>
     protected const double PointsPerInch = 72.0;
 
     /// <summary>

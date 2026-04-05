@@ -32,6 +32,9 @@ using Altaxo.Main.PegParser;
 
 namespace Altaxo.Graph.Graph3D.Shapes
 {
+  /// <summary>
+  /// Enumerates the parser rules for the 3D Altaxo label grammar.
+  /// </summary>
   internal enum EAltaxo_LabelV1
   {
     MainSentence = 1, Sentence = 2, SentenceNC = 3, WordSpanExt = 4,
@@ -40,6 +43,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
     EscSeq1 = 15, QuotedString = 16, StringContent = 17
   };
 
+  /// <summary>
+  /// Parser for the 3D Altaxo label grammar.
+  /// </summary>
   internal class Altaxo_LabelV1 : PegCharParser
   {
     #region Input Properties
@@ -51,11 +57,19 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Altaxo_LabelV1"/> class.
+    /// </summary>
     public Altaxo_LabelV1()
       : base()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Altaxo_LabelV1"/> class.
+    /// </summary>
+    /// <param name="src">The source text.</param>
+    /// <param name="FerrOut">The error writer.</param>
     public Altaxo_LabelV1(string src, TextWriter FerrOut)
       : base(src, FerrOut)
     {
@@ -65,6 +79,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     #region Overrides
 
+    /// <inheritdoc/>
     public override string GetRuleNameFromId(int id)
     {
       try
@@ -86,6 +101,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       }
     }
 
+    /// <inheritdoc/>
     public override void GetProperties(out EncodingClass encoding, out UnicodeDetection detection)
     {
       encoding = encodingClass;

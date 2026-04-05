@@ -32,13 +32,17 @@ using Altaxo.Gui.Common.PropertyGrid;
 namespace Altaxo.Gui.Calc.Interpolation
 {
   /// <summary>
-  /// Controls the Smoothing parameter of a rational cubic spline.
+  /// Controls options for an exponential spline.
   /// </summary>
   [UserControllerForObject(typeof(Altaxo.Calc.Interpolation.ExponentialSplineOptions), 100)]
   public class ExponentialSplineOptionsController : PropertyGridController
   {
+    /// <summary>
+    /// Gets the spline options document.
+    /// </summary>
     private ExponentialSplineOptions Spline => (ExponentialSplineOptions)_doc;
 
+    /// <inheritdoc/>
     protected override void InitializeValueInfos()
     {
       var controller = new Altaxo.Gui.Common.BasicTypes.NumericDoubleValueController(Spline.Smoothing);
@@ -48,6 +52,7 @@ namespace Altaxo.Gui.Calc.Interpolation
       ValueInfos.Add(new ValueInfo("Smoothing parameter p (p > 0; default is 1) :", controller));
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       var controller = ValueInfos[0].Controller;

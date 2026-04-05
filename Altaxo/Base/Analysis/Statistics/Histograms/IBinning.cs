@@ -31,7 +31,7 @@ using System.Text;
 namespace Altaxo.Analysis.Statistics.Histograms
 {
   /// <summary>
-  /// Interface to a binning (for instance <see cref="LinearBinning"/> or <see cref="LogarithmicBinning"/>.
+  /// Defines a binning, for instance <see cref="LinearBinning"/> or <see cref="LogarithmicBinning"/>.
   /// </summary>
   public interface IBinning : ICloneable
   {
@@ -44,14 +44,14 @@ namespace Altaxo.Analysis.Statistics.Histograms
     IReadOnlyList<Bin> Bins { get; }
 
     /// <summary>
-    /// Calculates the bin positions, the width of the bins and the number of bins from a sorted list containing the data ensemble.
-    /// This does not calculate the bins itself. To do this, use <see cref="CalculateBinsFromSortedList"/>
+    /// Calculates the bin positions, the bin widths, and the number of bins from a sorted list containing the data ensemble.
+    /// This does not calculate the bins themselves. To do this, use <see cref="CalculateBinsFromSortedList"/>.
     /// </summary>
-    /// <param name="sortedList">The sorted list.</param>
+    /// <param name="sortedList">The sorted list of data.</param>
     void CalculateBinPositionsFromSortedList(IReadOnlyList<double> sortedList);
 
     /// <summary>
-    /// Calculates the bins from sorted list containing the data ensemble.
+    /// Calculates the bins from a sorted list containing the data ensemble.
     /// </summary>
     /// <param name="sortedListOfData">The sorted list of data.</param>
     void CalculateBinsFromSortedList(IReadOnlyList<double> sortedListOfData);

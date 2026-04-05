@@ -36,7 +36,7 @@ namespace Altaxo.Text.Renderers
     /// <summary>
     /// Gets the name of the content layout file, depending on the file name the user has chosen to be the output file.
     /// If the user has chosen a .content file, then this name is returned. If the user has chosen a SHFBPROJ file, then the name of the .content
-    /// file is extracted from this project file. If all this fails, the name of the content layout file is synthezized from the user chosen file name.
+      /// file is extracted from this project file. If all this fails, the name of the content layout file is synthesized from the user chosen file name.
     /// </summary>
     /// <returns>The full name of the content layout file.</returns>
     public string GetContentLayoutFileName()

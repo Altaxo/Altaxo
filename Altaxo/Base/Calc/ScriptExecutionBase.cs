@@ -44,130 +44,211 @@ namespace Altaxo.Calc
     #region System Double_Mathematics
 
     // ------------------- Double Mathematics --------------------------------------
+    /// <summary>
+    /// Euler's number.
+    /// </summary>
     public const double E = System.Math.E;
 
+    /// <summary>
+    /// The ratio of a circle's circumference to its diameter.
+    /// </summary>
     public const double PI = System.Math.PI;
 
+    /// <summary>
+    /// Returns the absolute value of the specified number.
+    /// </summary>
     public static double Abs(double s)
     {
       return System.Math.Abs(s);
     }
 
+    /// <summary>
+    /// Returns the arc cosine of the specified number.
+    /// </summary>
     public static double Acos(double s)
     {
       return System.Math.Acos(s);
     }
 
+    /// <summary>
+    /// Returns the arc sine of the specified number.
+    /// </summary>
     public static double Asin(double s)
     {
       return System.Math.Asin(s);
     }
 
+    /// <summary>
+    /// Returns the arc tangent of the specified number.
+    /// </summary>
     public static double Atan(double s)
     {
       return System.Math.Atan(s);
     }
 
+    /// <summary>
+    /// Returns the angle whose tangent is the quotient of two specified numbers.
+    /// </summary>
     public static double Atan2(double y, double x)
     {
       return System.Math.Atan2(y, x);
     }
 
+    /// <summary>
+    /// Returns the smallest integral value greater than or equal to the specified number.
+    /// </summary>
     public static double Ceiling(double s)
     {
       return System.Math.Ceiling(s);
     }
 
+    /// <summary>
+    /// Returns the cosine of the specified angle.
+    /// </summary>
     public static double Cos(double s)
     {
       return System.Math.Cos(s);
     }
 
+    /// <summary>
+    /// Returns the hyperbolic cosine of the specified angle.
+    /// </summary>
     public static double Cosh(double s)
     {
       return System.Math.Cosh(s);
     }
 
+    /// <summary>
+    /// Returns e raised to the specified power.
+    /// </summary>
     public static double Exp(double s)
     {
       return System.Math.Exp(s);
     }
 
+    /// <summary>
+    /// Returns the largest integral value less than or equal to the specified number.
+    /// </summary>
     public static double Floor(double s)
     {
       return System.Math.Floor(s);
     }
 
+    /// <summary>
+    /// Returns the remainder resulting from the division of two specified numbers.
+    /// </summary>
     public static double IEEERemainder(double x, double y)
     {
       return System.Math.IEEERemainder(x, y);
     }
 
+    /// <summary>
+    /// Returns the natural logarithm of the specified number.
+    /// </summary>
     public static double Log(double s)
     {
       return System.Math.Log(s);
     }
 
+    /// <summary>
+    /// Returns the base-10 logarithm of the specified number.
+    /// </summary>
     public static double Log10(double s)
     {
       return System.Math.Log10(s);
     }
 
+    /// <summary>
+    /// Returns the logarithm of the specified number in the specified base.
+    /// </summary>
     public static double Log(double s, double bas)
     {
       return System.Math.Log(s, bas);
     }
 
+    /// <summary>
+    /// Returns the larger of two specified numbers.
+    /// </summary>
     public static double Max(double x, double y)
     {
       return System.Math.Max(x, y);
     }
 
+    /// <summary>
+    /// Returns the smaller of two specified numbers.
+    /// </summary>
     public static double Min(double x, double y)
     {
       return System.Math.Min(x, y);
     }
 
+    /// <summary>
+    /// Returns a specified number raised to the specified power.
+    /// </summary>
     public static double Pow(double x, double y)
     {
       return System.Math.Pow(x, y);
     }
 
+    /// <summary>
+    /// Rounds a value to the nearest integral value.
+    /// </summary>
     public static double Round(double x)
     {
       return System.Math.Round(x);
     }
 
+    /// <summary>
+    /// Rounds a value to the specified number of fractional digits.
+    /// </summary>
     public static double Round(double x, int i)
     {
       return System.Math.Round(x, i);
     }
 
+    /// <summary>
+    /// Returns an integer that indicates the sign of the specified number.
+    /// </summary>
     public static double Sign(double s)
     {
       return System.Math.Sign(s);
     }
 
+    /// <summary>
+    /// Returns the sine of the specified angle.
+    /// </summary>
     public static double Sin(double s)
     {
       return System.Math.Sin(s);
     }
 
+    /// <summary>
+    /// Returns the hyperbolic sine of the specified angle.
+    /// </summary>
     public static double Sinh(double s)
     {
       return System.Math.Sinh(s);
     }
 
+    /// <summary>
+    /// Returns the square root of the specified number.
+    /// </summary>
     public static double Sqrt(double s)
     {
       return System.Math.Sqrt(s);
     }
 
+    /// <summary>
+    /// Returns the tangent of the specified angle.
+    /// </summary>
     public static double Tan(double s)
     {
       return System.Math.Tan(s);
     }
 
+    /// <summary>
+    /// Returns the hyperbolic tangent of the specified angle.
+    /// </summary>
     public static double Tanh(double s)
     {
       return System.Math.Tanh(s);
@@ -256,196 +337,313 @@ namespace Altaxo.Calc
 
     // ---------------------- DoubleColumn mathematics -----------------------------
 
+    /// <summary>
+    /// Applies absolute value to a <see cref="Altaxo.Data.DoubleColumn"/>.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Abs(Altaxo.Data.DoubleColumn s)
     {
       return Altaxo.Data.DoubleColumn.Abs(s);
     }
 
+    /// <summary>
+    /// Applies arc cosine to a <see cref="Altaxo.Data.DoubleColumn"/>.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Acos(Altaxo.Data.DoubleColumn s)
     {
       return Altaxo.Data.DoubleColumn.Acos(s);
     }
 
+    /// <summary>
+    /// Applies arc sine to a <see cref="Altaxo.Data.DoubleColumn"/>.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Asin(Altaxo.Data.DoubleColumn s)
     {
       return Altaxo.Data.DoubleColumn.Asin(s);
     }
 
+    /// <summary>
+    /// Applies arc tangent to a <see cref="Altaxo.Data.DoubleColumn"/>.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Atan(Altaxo.Data.DoubleColumn s)
     {
       return Altaxo.Data.DoubleColumn.Atan(s);
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Atan2(double, double)"/> to two <see cref="Altaxo.Data.DoubleColumn"/> instances.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Atan2(Altaxo.Data.DoubleColumn y, Altaxo.Data.DoubleColumn x)
     {
       return Altaxo.Data.DoubleColumn.Atan2(y, x);
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Atan2(double, double)"/> to a <see cref="Altaxo.Data.DoubleColumn"/> and a scalar.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Atan2(Altaxo.Data.DoubleColumn y, double x)
     {
       return Altaxo.Data.DoubleColumn.Atan2(y, x);
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Atan2(double, double)"/> to a scalar and a <see cref="Altaxo.Data.DoubleColumn"/>.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Atan2(double y, Altaxo.Data.DoubleColumn x)
     {
       return Altaxo.Data.DoubleColumn.Atan2(y, x);
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Ceiling(double)"/> to a <see cref="Altaxo.Data.DoubleColumn"/>.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Ceiling(Altaxo.Data.DoubleColumn s)
     {
       return Altaxo.Data.DoubleColumn.Ceiling(s);
     }
 
+    /// <summary>
+    /// Applies cosine to a <see cref="Altaxo.Data.DoubleColumn"/>.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Cos(Altaxo.Data.DoubleColumn s)
     {
       return Altaxo.Data.DoubleColumn.Cos(s);
     }
 
+    /// <summary>
+    /// Applies hyperbolic cosine to a <see cref="Altaxo.Data.DoubleColumn"/>.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Cosh(Altaxo.Data.DoubleColumn s)
     {
       return Altaxo.Data.DoubleColumn.Cosh(s);
     }
 
+    /// <summary>
+    /// Applies exponentiation to a <see cref="Altaxo.Data.DoubleColumn"/>.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Exp(Altaxo.Data.DoubleColumn s)
     {
       return Altaxo.Data.DoubleColumn.Exp(s);
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Floor(double)"/> to a <see cref="Altaxo.Data.DoubleColumn"/>.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Floor(Altaxo.Data.DoubleColumn s)
     {
       return Altaxo.Data.DoubleColumn.Floor(s);
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.IEEERemainder(double, double)"/> to two <see cref="Altaxo.Data.DoubleColumn"/> instances.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn IEEERemainder(Altaxo.Data.DoubleColumn x, Altaxo.Data.DoubleColumn y)
     {
       return Altaxo.Data.DoubleColumn.IEEERemainder(x, y);
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.IEEERemainder(double, double)"/> to a <see cref="Altaxo.Data.DoubleColumn"/> and a scalar.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn IEEERemainder(Altaxo.Data.DoubleColumn x, double y)
     {
       return Altaxo.Data.DoubleColumn.IEEERemainder(x, y);
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.IEEERemainder(double, double)"/> to a scalar and a <see cref="Altaxo.Data.DoubleColumn"/>.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn IEEERemainder(double x, Altaxo.Data.DoubleColumn y)
     {
       return Altaxo.Data.DoubleColumn.IEEERemainder(x, y);
     }
 
+    /// <summary>
+    /// Applies the natural logarithm to a <see cref="Altaxo.Data.DoubleColumn"/>.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Log(Altaxo.Data.DoubleColumn s)
     {
       return Altaxo.Data.DoubleColumn.Log(s);
     }
 
+    /// <summary>
+    /// Applies logarithm evaluation to two <see cref="Altaxo.Data.DoubleColumn"/> instances.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Log(Altaxo.Data.DoubleColumn s, Altaxo.Data.DoubleColumn bas)
     {
       return Altaxo.Data.DoubleColumn.Log(s, bas);
     }
 
+    /// <summary>
+    /// Applies logarithm evaluation to a <see cref="Altaxo.Data.DoubleColumn"/> and a scalar base.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Log(Altaxo.Data.DoubleColumn s, double bas)
     {
       return Altaxo.Data.DoubleColumn.Log(s, bas);
     }
 
+    /// <summary>
+    /// Applies logarithm evaluation to a scalar and a <see cref="Altaxo.Data.DoubleColumn"/> base.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Log(double s, Altaxo.Data.DoubleColumn bas)
     {
       return Altaxo.Data.DoubleColumn.Log(s, bas);
     }
 
+    /// <summary>
+    /// Applies the base-10 logarithm to a <see cref="Altaxo.Data.DoubleColumn"/>.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Log10(Altaxo.Data.DoubleColumn s)
     {
       return Altaxo.Data.DoubleColumn.Log10(s);
     }
 
+    /// <summary>
+    /// Computes the element-wise maximum of two <see cref="Altaxo.Data.DoubleColumn"/> instances.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Max(Altaxo.Data.DoubleColumn x, Altaxo.Data.DoubleColumn y)
     {
       return Altaxo.Data.DoubleColumn.Max(x, y);
     }
 
+    /// <summary>
+    /// Computes the element-wise maximum of a <see cref="Altaxo.Data.DoubleColumn"/> and a scalar.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Max(Altaxo.Data.DoubleColumn x, double y)
     {
       return Altaxo.Data.DoubleColumn.Max(x, y);
     }
 
+    /// <summary>
+    /// Computes the element-wise maximum of a scalar and a <see cref="Altaxo.Data.DoubleColumn"/>.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Max(double x, Altaxo.Data.DoubleColumn y)
     {
       return Altaxo.Data.DoubleColumn.Max(x, y);
     }
 
+    /// <summary>
+    /// Computes the element-wise minimum of two <see cref="Altaxo.Data.DoubleColumn"/> instances.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Min(Altaxo.Data.DoubleColumn x, Altaxo.Data.DoubleColumn y)
     {
       return Altaxo.Data.DoubleColumn.Min(x, y);
     }
 
+    /// <summary>
+    /// Computes the element-wise minimum of a <see cref="Altaxo.Data.DoubleColumn"/> and a scalar.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Min(Altaxo.Data.DoubleColumn x, double y)
     {
       return Altaxo.Data.DoubleColumn.Min(x, y);
     }
 
+    /// <summary>
+    /// Computes the element-wise minimum of a scalar and a <see cref="Altaxo.Data.DoubleColumn"/>.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Min(double x, Altaxo.Data.DoubleColumn y)
     {
       return Altaxo.Data.DoubleColumn.Min(x, y);
     }
 
+    /// <summary>
+    /// Applies element-wise power evaluation to two <see cref="Altaxo.Data.DoubleColumn"/> instances.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Pow(Altaxo.Data.DoubleColumn x, Altaxo.Data.DoubleColumn y)
     {
       return Altaxo.Data.DoubleColumn.Pow(x, y);
     }
 
+    /// <summary>
+    /// Raises each element of a <see cref="Altaxo.Data.DoubleColumn"/> to a scalar power.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Pow(Altaxo.Data.DoubleColumn x, double y)
     {
       return Altaxo.Data.DoubleColumn.Pow(x, y);
     }
 
+    /// <summary>
+    /// Raises a scalar base to element-wise powers from a <see cref="Altaxo.Data.DoubleColumn"/>.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Pow(double x, Altaxo.Data.DoubleColumn y)
     {
       return Altaxo.Data.DoubleColumn.Pow(x, y);
     }
 
+    /// <summary>
+    /// Rounds each element of a <see cref="Altaxo.Data.DoubleColumn"/>.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Round(Altaxo.Data.DoubleColumn x)
     {
       return Altaxo.Data.DoubleColumn.Round(x);
     }
 
+    /// <summary>
+    /// Rounds elements of a <see cref="Altaxo.Data.DoubleColumn"/> using element-wise precision values.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Round(Altaxo.Data.DoubleColumn x, Altaxo.Data.DoubleColumn i)
     {
       return Altaxo.Data.DoubleColumn.Round(x, i);
     }
 
+    /// <summary>
+    /// Rounds each element of a <see cref="Altaxo.Data.DoubleColumn"/> to the specified number of digits.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Round(Altaxo.Data.DoubleColumn x, int i)
     {
       return Altaxo.Data.DoubleColumn.Round(x, i);
     }
 
+    /// <summary>
+    /// Rounds a scalar value using element-wise precision values from a <see cref="Altaxo.Data.DoubleColumn"/>.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Round(double x, Altaxo.Data.DoubleColumn i)
     {
       return Altaxo.Data.DoubleColumn.Round(x, i);
     }
 
+    /// <summary>
+    /// Applies sign evaluation to a <see cref="Altaxo.Data.DoubleColumn"/>.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Sign(Altaxo.Data.DoubleColumn s)
     {
       return Altaxo.Data.DoubleColumn.Sign(s);
     }
 
+    /// <summary>
+    /// Applies sine to a <see cref="Altaxo.Data.DoubleColumn"/>.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Sin(Altaxo.Data.DoubleColumn s)
     {
       return Altaxo.Data.DoubleColumn.Sin(s);
     }
 
+    /// <summary>
+    /// Applies hyperbolic sine to a <see cref="Altaxo.Data.DoubleColumn"/>.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Sinh(Altaxo.Data.DoubleColumn s)
     {
       return Altaxo.Data.DoubleColumn.Sinh(s);
     }
 
+    /// <summary>
+    /// Applies square root to a <see cref="Altaxo.Data.DoubleColumn"/>.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Sqrt(Altaxo.Data.DoubleColumn s)
     {
       return Altaxo.Data.DoubleColumn.Sqrt(s);
     }
 
+    /// <summary>
+    /// Applies tangent to a <see cref="Altaxo.Data.DoubleColumn"/>.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Tan(Altaxo.Data.DoubleColumn s)
     {
       return Altaxo.Data.DoubleColumn.Tan(s);
     }
 
+    /// <summary>
+    /// Applies hyperbolic tangent to a <see cref="Altaxo.Data.DoubleColumn"/>.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Tanh(Altaxo.Data.DoubleColumn s)
     {
       return Altaxo.Data.DoubleColumn.Tanh(s);
@@ -572,6 +770,9 @@ namespace Altaxo.Calc
     #region AltaxoDataColumn_Mathematics
 
     // ------------------------- Altaxo.Data.DataColumn mathematics ----------------------------
+    /// <summary>
+    /// Applies absolute value to a numeric data column.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Abs(Altaxo.Data.DataColumn x)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
@@ -580,6 +781,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply Abs() to " + x.TypeAndName, "x");
     }
 
+    /// <summary>
+    /// Applies arc cosine to a numeric data column.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Acos(Altaxo.Data.DataColumn x)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
@@ -588,6 +792,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply Acos() to " + x.TypeAndName, "x");
     }
 
+    /// <summary>
+    /// Applies arc sine to a numeric data column.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Asin(Altaxo.Data.DataColumn x)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
@@ -596,6 +803,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply Asin() to " + x.TypeAndName, "x");
     }
 
+    /// <summary>
+    /// Applies arc tangent to a numeric data column.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Atan(Altaxo.Data.DataColumn x)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
@@ -604,6 +814,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply Atan() to " + x.TypeAndName, "x");
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Atan2(double, double)"/> to two numeric data columns.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Atan2(Altaxo.Data.DataColumn y, Altaxo.Data.DataColumn x)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == y.GetType() && typeof(Altaxo.Data.DoubleColumn) == x.GetType())
@@ -612,6 +825,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply Atan2() to " + y.TypeAndName + " and " + x.TypeAndName, "x");
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Atan2(double, double)"/> to a data column and a scalar.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Atan2(Altaxo.Data.DataColumn y, double x)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == y.GetType())
@@ -620,6 +836,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply Atan2() to " + y.TypeAndName + " and " + x.GetType(), "x");
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Atan2(double, double)"/> to a scalar and a data column.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Atan2(double y, Altaxo.Data.DataColumn x)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
@@ -628,6 +847,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply Atan2() to " + y.GetType() + " and " + x.TypeAndName, "x");
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Ceiling(double)"/> to a data column.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Ceiling(Altaxo.Data.DataColumn x)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
@@ -636,6 +858,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply Ceiling() to " + x.TypeAndName, "x");
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Cos(double)"/> to a data column.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Cos(Altaxo.Data.DataColumn x)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
@@ -644,6 +869,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply Cos() to " + x.TypeAndName, "x");
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Cosh(double)"/> to a data column.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Cosh(Altaxo.Data.DataColumn x)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
@@ -652,6 +880,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply Cosh() to " + x.TypeAndName, "x");
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Exp(double)"/> to a data column.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Exp(Altaxo.Data.DataColumn x)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
@@ -660,6 +891,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply Exp() to " + x.TypeAndName, "x");
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Floor(double)"/> to a data column.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Floor(Altaxo.Data.DataColumn x)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
@@ -668,6 +902,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply Floor() to " + x.TypeAndName, "x");
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.IEEERemainder(double, double)"/> to two data columns.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn IEEERemainder(Altaxo.Data.DataColumn x, Altaxo.Data.DataColumn y)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == x.GetType() && typeof(Altaxo.Data.DoubleColumn) == y.GetType())
@@ -676,6 +913,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply IEEERemainder() to " + x.TypeAndName + " and " + y.TypeAndName, "x");
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.IEEERemainder(double, double)"/> to a data column and a scalar.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn IEEERemainder(Altaxo.Data.DataColumn x, double y)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
@@ -684,6 +924,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply IEEERemainder() to " + x.TypeAndName + " and " + y.GetType() + " " + y.ToString(), "x");
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.IEEERemainder(double, double)"/> to a scalar and a data column.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn IEEERemainder(double x, Altaxo.Data.DataColumn y)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == y.GetType())
@@ -692,6 +935,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply IEEERemainder() to " + x.GetType() + " " + x.ToString() + " and " + y.TypeAndName, "x");
     }
 
+    /// <summary>
+    /// Applies the natural logarithm to a data column.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Log(Altaxo.Data.DataColumn x)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
@@ -700,6 +946,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply Log() to " + x.TypeAndName, "x");
     }
 
+    /// <summary>
+    /// Applies logarithm evaluation to two data columns.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Log(Altaxo.Data.DataColumn x, Altaxo.Data.DataColumn y)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == x.GetType() && typeof(Altaxo.Data.DoubleColumn) == y.GetType())
@@ -708,6 +957,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply Log() to " + x.TypeAndName + " and " + y.TypeAndName, "x");
     }
 
+    /// <summary>
+    /// Applies logarithm evaluation to a data column and a scalar.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Log(Altaxo.Data.DataColumn x, double y)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
@@ -716,6 +968,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply Log() to " + x.TypeAndName + " and " + y.GetType() + " " + y.ToString(), "x");
     }
 
+    /// <summary>
+    /// Applies logarithm evaluation to a scalar and a data column.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Log(double x, Altaxo.Data.DataColumn y)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == y.GetType())
@@ -724,6 +979,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply Log() to " + x.GetType() + " " + x.ToString() + " and " + y.TypeAndName, "x");
     }
 
+    /// <summary>
+    /// Applies the base-10 logarithm to a data column.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Log10(Altaxo.Data.DataColumn x)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
@@ -732,6 +990,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply Log10() to " + x.TypeAndName, "x");
     }
 
+    /// <summary>
+    /// Computes the element-wise maximum of two data columns.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Max(Altaxo.Data.DataColumn x, Altaxo.Data.DataColumn y)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == x.GetType() && typeof(Altaxo.Data.DoubleColumn) == y.GetType())
@@ -740,6 +1001,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply Max() to " + x.TypeAndName + " and " + y.TypeAndName, "x");
     }
 
+    /// <summary>
+    /// Computes the element-wise maximum of a data column and a scalar.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Max(Altaxo.Data.DataColumn x, double y)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
@@ -748,6 +1012,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply Max() to " + x.TypeAndName + " and " + y.GetType() + " " + y.ToString(), "x");
     }
 
+    /// <summary>
+    /// Computes the element-wise maximum of a scalar and a data column.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Max(double x, Altaxo.Data.DataColumn y)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == y.GetType())
@@ -756,6 +1023,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply Max() to " + x.GetType() + " " + x.ToString() + " and " + y.TypeAndName, "x");
     }
 
+    /// <summary>
+    /// Computes the element-wise minimum of two data columns.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Min(Altaxo.Data.DataColumn x, Altaxo.Data.DataColumn y)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == x.GetType() && typeof(Altaxo.Data.DoubleColumn) == y.GetType())
@@ -764,6 +1034,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply Min() to " + x.TypeAndName + " and " + y.TypeAndName, "x");
     }
 
+    /// <summary>
+    /// Computes the element-wise minimum of a data column and a scalar.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Min(Altaxo.Data.DataColumn x, double y)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
@@ -772,6 +1045,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply Min() to " + x.TypeAndName + " and " + y.GetType() + " " + y.ToString(), "x");
     }
 
+    /// <summary>
+    /// Computes the element-wise minimum of a scalar and a data column.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Min(double x, Altaxo.Data.DataColumn y)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == y.GetType())
@@ -780,6 +1056,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply Min() to " + x.GetType() + " " + x.ToString() + " and " + y.TypeAndName, "x");
     }
 
+    /// <summary>
+    /// Applies element-wise power evaluation to two data columns.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Pow(Altaxo.Data.DataColumn x, Altaxo.Data.DataColumn y)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == x.GetType() && typeof(Altaxo.Data.DoubleColumn) == y.GetType())
@@ -788,6 +1067,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply Pow() to " + x.TypeAndName + " and " + y.TypeAndName, "x");
     }
 
+    /// <summary>
+    /// Raises each element of a data column to a scalar power.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Pow(Altaxo.Data.DataColumn x, double y)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
@@ -796,6 +1078,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply Pow() to " + x.TypeAndName + " and " + y.GetType() + " " + y.ToString(), "x");
     }
 
+    /// <summary>
+    /// Raises a scalar base to element-wise powers from a data column.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Pow(double x, Altaxo.Data.DataColumn y)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == y.GetType())
@@ -804,6 +1089,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply Pow() to " + x.GetType() + " " + x.ToString() + " and " + y.TypeAndName, "x");
     }
 
+    /// <summary>
+    /// Rounds each element of a data column.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Round(Altaxo.Data.DataColumn x)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
@@ -812,6 +1100,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply Round() to " + x.TypeAndName, "x");
     }
 
+    /// <summary>
+    /// Rounds elements of a data column using element-wise precision from another column.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Round(Altaxo.Data.DataColumn x, Altaxo.Data.DataColumn y)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == x.GetType() && typeof(Altaxo.Data.DoubleColumn) == y.GetType())
@@ -820,6 +1111,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply Round() to " + x.TypeAndName + " and " + y.TypeAndName, "x");
     }
 
+    /// <summary>
+    /// Rounds each element of a data column to the specified number of digits.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Round(Altaxo.Data.DataColumn x, int y)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
@@ -828,6 +1122,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply Round() to " + x.TypeAndName + " and " + y.GetType() + " " + y.ToString(), "x");
     }
 
+    /// <summary>
+    /// Rounds a scalar using element-wise precision from a data column.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Round(double x, Altaxo.Data.DataColumn y)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == y.GetType())
@@ -836,6 +1133,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply Round() to " + x.GetType() + " " + x.ToString() + " and " + y.TypeAndName, "x");
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Sign(double)"/> to a data column.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Sign(Altaxo.Data.DataColumn x)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
@@ -844,6 +1144,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply Sign() to " + x.TypeAndName, "x");
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Sin(double)"/> to a data column.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Sin(Altaxo.Data.DataColumn x)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
@@ -852,6 +1155,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply Sin() to " + x.TypeAndName, "x");
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Sinh(double)"/> to a data column.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Sinh(Altaxo.Data.DataColumn x)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
@@ -860,6 +1166,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply Sinh() to " + x.TypeAndName, "x");
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Sqrt(double)"/> to a data column.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Sqrt(Altaxo.Data.DataColumn x)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
@@ -868,6 +1177,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply Sqrt() to " + x.TypeAndName, "x");
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Tan(double)"/> to a data column.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Tan(Altaxo.Data.DataColumn x)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
@@ -876,6 +1188,9 @@ namespace Altaxo.Calc
         throw new ArgumentException("Error: Try to apply Tan() to " + x.TypeAndName, "x");
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Tanh(double)"/> to a data column.
+    /// </summary>
     public static Altaxo.Data.DoubleColumn Tanh(Altaxo.Data.DataColumn x)
     {
       if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
@@ -1167,6 +1482,9 @@ namespace Altaxo.Calc
     public virtual (string Filter, string Description)[] FileFilters { get; } = new[] { ("*.*", "All files (*.*)") };
   }
 
+  /// <summary>
+  /// Base class for scripts that process multiple source tables into a destination table.
+  /// </summary>
   public class ProcessSourceTablesScriptExeBase : ScriptExecutionBase
   {
     /// <summary>
@@ -1233,11 +1551,25 @@ namespace Altaxo.Calc
     }
   }
 
+  /// <summary>
+  /// Base class for script-defined fit functions.
+  /// </summary>
   public abstract class FitFunctionExeBase : ScriptExecutionBase, Altaxo.Calc.Regression.Nonlinear.IFitFunction
   {
     private static readonly string[] _emptyStringArray = new string[0];
+    /// <summary>
+    /// The names of the independent variables.
+    /// </summary>
     protected string[] _independentVariableNames = _emptyStringArray;
+
+    /// <summary>
+    /// The names of the dependent variables.
+    /// </summary>
     protected string[] _dependentVariableNames = _emptyStringArray;
+
+    /// <summary>
+    /// The names of the parameters.
+    /// </summary>
     protected string[] _parameterNames = _emptyStringArray;
 
     /// <summary>
@@ -1334,6 +1666,7 @@ namespace Altaxo.Calc
     /// function values at the point (independent).</param>
     public abstract void Evaluate(double[] independent, double[] parameters, double[] result);
 
+    /// <inheritdoc/>
     public virtual void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var xx = new double[NumberOfIndependentVariables];
@@ -1390,11 +1723,13 @@ namespace Altaxo.Calc
 
     #endregion Change event
 
+    /// <inheritdoc/>
     public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesHardLimit()
     {
       return (null, null);
     }
 
+    /// <inheritdoc/>
     public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesSoftLimit()
     {
       return (null, null);

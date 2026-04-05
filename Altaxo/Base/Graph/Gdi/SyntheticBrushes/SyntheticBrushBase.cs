@@ -32,12 +32,34 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.SyntheticBrushes
 {
+  /// <summary>
+  /// Provides the base implementation for synthetic brush textures.
+  /// </summary>
   public abstract class SyntheticBrushBase : ImageProxy, IHatchBrushTexture
   {
+    /// <summary>
+    /// Default effective resolution in DPI.
+    /// </summary>
     protected const double DefaultEffectiveResolution = 300;
+
+    /// <summary>
+    /// Default background color.
+    /// </summary>
     protected static readonly NamedColor _defaultBackColor = NamedColors.Transparent;
+
+    /// <summary>
+    /// Default foreground color.
+    /// </summary>
     protected static readonly NamedColor _defaultForeColor = NamedColors.Black;
+
+    /// <summary>
+    /// Minimum bitmap size in pixels.
+    /// </summary>
     protected const int MinimumBitmapPixelSize = 16;
+
+    /// <summary>
+    /// Maximum bitmap size in pixels.
+    /// </summary>
     protected const int MaximumBitmapPixelSize = 8192;
 
     /// <summary>
@@ -67,8 +89,18 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
 
     #endregion Serialization
 
+    /// <summary>
+    /// Creates the image for the specified resolution and colors.
+    /// </summary>
     protected abstract Image GetImage(double maxEffectiveResolutionDpi, NamedColor foreColor, NamedColor backColor);
 
+    /// <summary>
+    /// Gets the content stream for the specified resolution and colors.
+    /// </summary>
+    /// <param name="maxEffectiveResolutionDpi">The maximum effective resolution in DPI.</param>
+    /// <param name="foreColor">The foreground color.</param>
+    /// <param name="backColor">The background color.</param>
+    /// <returns>The content stream.</returns>
     public virtual System.IO.Stream GetContentStream(double maxEffectiveResolutionDpi, NamedColor foreColor, NamedColor backColor)
     {
       var str = new System.IO.MemoryStream();
@@ -79,21 +111,31 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
       return str;
     }
 
+    /// <summary>
+    /// Gets the content stream for the specified resolution.
+    /// </summary>
+    /// <param name="maxEffectiveResolutionDpi">The maximum effective resolution in DPI.</param>
+    /// <returns>The content stream.</returns>
     public virtual System.IO.Stream GetContentStream(double maxEffectiveResolutionDpi)
     {
       return GetContentStream(maxEffectiveResolutionDpi, _defaultForeColor, _defaultBackColor);
     }
 
+    /// <inheritdoc />
     public override System.IO.Stream GetContentStream()
     {
       return GetContentStream(DefaultEffectiveResolution);
     }
 
+    /// <inheritdoc />
     public override VectorD2D Size
     {
       get { return new VectorD2D(_repeatLengthPt, _repeatLengthPt); }
     }
 
+    /// <summary>
+    /// Gets the repeat length in points.
+    /// </summary>
     [System.ComponentModel.Editor(typeof(Altaxo.Gui.Common.LengthValueInPointController), typeof(Altaxo.Gui.IMVCANController))]
     [Altaxo.Main.Services.PropertyReflection.DisplayOrder(1)]
     public double RepeatLength
@@ -101,6 +143,11 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
       get { return _repeatLengthPt; }
     }
 
+    /// <summary>
+    /// Creates a copy with a different repeat length.
+    /// </summary>
+    /// <param name="repeatLength">The new repeat length.</param>
+    /// <returns>The updated instance or the current instance if unchanged.</returns>
     public SyntheticBrushBase WithRepeatLength(double repeatLength)
     {
       if (!(_repeatLengthPt == repeatLength))
@@ -115,6 +162,9 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
       }
     }
 
+    /// <summary>
+    /// Gets the pixel dimensions for the specified effective resolution.
+    /// </summary>
     protected int GetPixelDimensions(double maxEffectiveResolutionDpi)
     {
       // use a factor of 2 for safety, thus we have at least two pixels of the bitmap mapping to 1 pixel of the drawing
@@ -125,6 +175,9 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
       return pixels;
     }
 
+    /// <summary>
+    /// Gets the pixel dimensions for the specified structure size constraints.
+    /// </summary>
     protected int GetPixelDimensions(double maxEffectiveResolutionDpi, double relativeStructureSize, int minimumPixelsForStructureSize)
     {
       // use a factor of 2 for safety, thus we have at least two pixels of the bitmap mapping to 1 pixel of the drawing
@@ -136,6 +189,7 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
       return pixels;
     }
 
+    /// <inheritdoc />
     public override string ContentHash
     {
       get
@@ -144,11 +198,13 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
       }
     }
 
+    /// <inheritdoc />
     public override string Name
     {
       get { return GetType().ToString(); }
     }
 
+    /// <inheritdoc />
     public override bool IsValid
     {
       get { return true; }

@@ -53,6 +53,14 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <summary>
+    /// Creates a project archive backed by <see cref="ZipArchiveAsProjectArchiveNative"/>.
+    /// </summary>
+    /// <param name="stream">The archive stream.</param>
+    /// <param name="zipArchiveMode">The archive mode.</param>
+    /// <param name="leaveOpen">If set to <c>true</c>, leaves the stream open.</param>
+    /// <param name="archiveManager">The archive manager.</param>
+    /// <returns>The created project archive.</returns>
     private IProjectArchive InternalCreateProjectArchive(Stream stream, ZipArchiveMode zipArchiveMode, bool leaveOpen, IFileBasedProjectArchiveManager archiveManager)
     {
       var result = new Services.Files.ZipArchiveAsProjectArchiveNative(stream, zipArchiveMode, leaveOpen: leaveOpen, archiveManager);

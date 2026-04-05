@@ -37,7 +37,7 @@ using Altaxo.Graph.Plot.Data;
 namespace Altaxo.Graph.Graph3D.Plot.Styles
 {
   /// <summary>
-  /// Represents a symbol shape for a 3D scatter plot. Instances of this class have to be immutable.
+  /// Represents an immutable strategy for connecting plot points with lines in a three-dimensional plot.
   /// </summary>
   /// <seealso cref="Altaxo.Main.IImmutable" />
   public interface ILineConnectionStyle : Main.IImmutable

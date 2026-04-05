@@ -45,10 +45,19 @@ namespace Altaxo.Main
     /// <summary>Keeps track of the name of all project items, and admisters them in virtual folders.</summary>
     protected ProjectFolders _projectFolders;
 
+    /// <summary>
+    /// Indicates whether the project contains unsaved changes.
+    /// </summary>
     protected bool _isDirty;
 
+    /// <summary>
+    /// Occurs when the dirty state changes.
+    /// </summary>
     public event EventHandler? IsDirtyChanged;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ProjectBase"/> class.
+    /// </summary>
 #pragma warning disable 8616 // we can not create _projectFolders here, it must be created after all other collections are created
     public ProjectBase()
     {
@@ -67,11 +76,17 @@ namespace Altaxo.Main
     /// </summary>
     public ProjectFolders Folders => _projectFolders;
 
+    /// <summary>
+    /// Raises the <see cref="IsDirtyChanged"/> event.
+    /// </summary>
     protected virtual void OnDirtyChanged()
     {
       IsDirtyChanged?.Invoke(this, EventArgs.Empty);
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the project has unsaved changes.
+    /// </summary>
     public bool IsDirty
     {
       get { return _isDirty; }
@@ -100,12 +115,14 @@ namespace Altaxo.Main
       IsDirty = false;
     }
 
+    /// <inheritdoc/>
     protected override bool HandleLowPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       IsDirty = true;
       return base.HandleLowPriorityChildChangeCases(sender, ref e);
     }
 
+    /// <inheritdoc/>
     protected override void AccumulateChangeData(object? sender, EventArgs e)
     {
       _accumulatedEventData = e ?? EventArgs.Empty;
@@ -254,19 +271,17 @@ namespace Altaxo.Main
     }
 
     /// <summary>
-    /// Tests whether an item with the same type and name is already present in the project.
+    /// Determines whether an item with the same type and name already exists in the project.
     /// </summary>
     /// <param name="item">The item to test.</param>
-    /// <returns>True if an item with the same type and same name is already present in the project.</returns>
-    /// <exception cref="System.ArgumentNullException">item</exception>
-    /// <exception cref="System.ArgumentOutOfRangeException"></exception>
+    /// <returns><c>true</c> if such an item exists; otherwise, <c>false</c>.</returns>
     public bool ExistsItemWithSameTypeAndName(IProjectItem item)
     {
       return TryGetExistingItemWithSameTypeAndName(item, out _);
     }
 
     /// <summary>
-    /// Removes the provided project item to the Altaxo project, for instance a table or a graph, to the project.
+    /// Removes the provided project item from the Altaxo project.
     /// </summary>
     /// <param name="item">The item to remove.</param>
     /// <exception cref="System.ArgumentNullException">item</exception>

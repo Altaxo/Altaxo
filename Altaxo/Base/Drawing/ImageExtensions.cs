@@ -43,8 +43,8 @@ namespace Altaxo.Drawing
     /// </summary>
     /// <param name="image">The image.</param>
     /// <returns>The file extension (lower case letters with a preceding dot, like .jpg) of the image.</returns>
-    /// <exception cref="ArgumentNullException">imageFormat</exception>
-    /// <exception cref="NotImplementedException">Unknown image format: " + imageFormat.ToString()</exception>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="image"/> is <see langword="null"/>.</exception>
+    /// <exception cref="NotImplementedException">Thrown if the image format is unknown.</exception>
     public static string GetFileExtension(this Image image)
     {
       return GetFileExtension(image.RawFormat);
@@ -55,8 +55,8 @@ namespace Altaxo.Drawing
     /// </summary>
     /// <param name="imageFormat">The image format.</param>
     /// <returns>The file extension (lower case letters with a preceding dot, like .jpg) corresponding to the image format.</returns>
-    /// <exception cref="ArgumentNullException">imageFormat</exception>
-    /// <exception cref="NotImplementedException">Unknown image format: " + imageFormat.ToString()</exception>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="imageFormat"/> is <see langword="null"/>.</exception>
+    /// <exception cref="NotImplementedException">Thrown if the image format is unknown.</exception>
     public static string GetFileExtension(this ImageFormat imageFormat)
     {
       if (imageFormat == ImageFormat.Bmp)

@@ -24,10 +24,8 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Text;
 
 namespace Altaxo.Graph.Gdi.LineCaps
 {
@@ -38,9 +36,11 @@ namespace Altaxo.Graph.Gdi.LineCaps
   {
     private const double _designAngle = 45;
 
+    /// <inheritdoc />
     public override Type ExtendsType => typeof(Altaxo.Drawing.LineCaps.BreakLineCap);
 
 
+    /// <inheritdoc />
     protected override CustomLineCap GetCustomLineCap(Pen pen, float size, bool isEndCap)
     {
       float endPoint;

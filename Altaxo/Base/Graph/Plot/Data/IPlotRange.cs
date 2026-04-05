@@ -81,6 +81,8 @@ namespace Altaxo.Graph.Plot.Data
     /// Returns the row index in the original data column in dependence on the plot point index.
     /// Thus, if the argument is set to <see cref="LowerBound"/>, the return value is <see cref="OriginalFirstPoint"/>.
     /// </summary>
+    /// <param name="plotPointIndex">The index of the plot point.</param>
+    /// <returns>The corresponding row index in the original data column.</returns>
     int GetOriginalRowIndexFromPlotPointIndex(int plotPointIndex);
   }
 }

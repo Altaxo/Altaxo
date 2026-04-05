@@ -39,6 +39,9 @@ namespace Altaxo.Worksheet.Commands.Analysis
     private DataTableMatrixProxy _processData;
     private IDataSourceImportOptions _importOptions;
 
+    /// <summary>
+    /// Callback that is invoked when the data source changes.
+    /// </summary>
     public Action<IAltaxoTableDataSource>? _dataSourceChanged;
 
     #region Serialization
@@ -51,6 +54,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FourierTransformation2DDataSource), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (o is FourierTransformation2DDataSource s)
@@ -60,6 +64,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         return s;
       }
 
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (FourierTransformation2DDataSource)obj;
@@ -85,6 +90,11 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     #endregion Version 0
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FourierTransformation2DDataSource"/> class from XML deserialization data.
+    /// </summary>
+    /// <param name="info">The deserialization information.</param>
+    /// <param name="version">The serialized version.</param>
     protected FourierTransformation2DDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     {
       switch (version)
@@ -140,6 +150,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies state from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     [MemberNotNull(nameof(_importOptions), nameof(_processOptions), nameof(_processData))]
     protected void CopyFrom(FourierTransformation2DDataSource from)
     {
@@ -152,7 +166,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// Copies from another instance.
     /// </summary>
     /// <param name="obj">The object to copy from.</param>
-    /// <returns><c>True</c> if anything could be copied from the object, otherwise <c>false</c>.</returns>
+    /// <returns><c>True</c> if anything could be copied from the object; otherwise, <c>false</c>.</returns>
     public bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -172,6 +186,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
 
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_processData is not null)
@@ -196,7 +211,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// Fills (or refills) the data table with the 2D-Fourier transformation of the original data.. The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable" />.
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
-    /// <param name="reporter"></param>
+    /// <param name="reporter">The progress reporter.</param>
     public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter reporter)
     {
       FourierCommands.ExecuteFouriertransformation2D(_processData, _processOptions, destinationTable);
@@ -330,7 +345,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     }
 
     /// <summary>
-    /// Called after deserization of a data source instance, when it is already associated with a data table.
+    /// Called after deserialization of a data source instance, when it is already associated with a data table.
     /// </summary>
     public void OnAfterDeserialization()
     {

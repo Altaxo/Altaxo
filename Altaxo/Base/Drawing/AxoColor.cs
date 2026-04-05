@@ -30,7 +30,7 @@ using System.Text;
 namespace Altaxo.Drawing
 {
   /// <summary>
-  /// Type of colors that is shown e.g. in comboboxes.
+  /// Specifies the type of colors shown, for example, in combo boxes.
   /// </summary>
   [Serializable]
   public enum ColorType
@@ -51,18 +51,37 @@ namespace Altaxo.Drawing
     PlotColor
   }
 
+  /// <summary>
+  /// Provides helper methods for converting between GDI colors and Altaxo named colors.
+  /// </summary>
   public static class GdiColorHelper
   {
+    /// <summary>
+    /// Converts a GDI color to a <see cref="NamedColor"/>.
+    /// </summary>
+    /// <param name="c">The color to convert.</param>
+    /// <returns>The converted named color.</returns>
     public static NamedColor ToNamedColor(System.Drawing.Color c)
     {
       return new NamedColor(AxoColor.FromArgb(c.A, c.R, c.G, c.B));
     }
 
+    /// <summary>
+    /// Converts a GDI color to a <see cref="NamedColor"/> using the specified name.
+    /// </summary>
+    /// <param name="c">The color to convert.</param>
+    /// <param name="name">The name of the color.</param>
+    /// <returns>The converted named color.</returns>
     public static NamedColor ToNamedColor(System.Drawing.Color c, string name)
     {
       return new NamedColor(AxoColor.FromArgb(c.A, c.R, c.G, c.B), name);
     }
 
+    /// <summary>
+    /// Converts a <see cref="NamedColor"/> to a GDI color.
+    /// </summary>
+    /// <param name="color">The color to convert.</param>
+    /// <returns>The converted GDI color.</returns>
     public static System.Drawing.Color ToGdi(NamedColor color)
     {
       var c = color.Color;
@@ -70,6 +89,9 @@ namespace Altaxo.Drawing
     }
   }
 
+  /// <summary>
+  /// Represents a color in both ARGB and linear scRGB form.
+  /// </summary>
   [Serializable]
   public struct AxoColor : IEquatable<AxoColor>
   {
@@ -77,22 +99,49 @@ namespace Altaxo.Drawing
     private byte _a, _r, _g, _b;
     private float _scA, _scR, _scG, _scB;
 
+    /// <summary>
+    /// Gets or sets the alpha component in linear scRGB space.
+    /// </summary>
     public float ScA { get { return _scA; } set { _scA = value; _a = A2I(value); _isFromArgb = false; } }
 
+    /// <summary>
+    /// Gets or sets the red component in linear scRGB space.
+    /// </summary>
     public float ScR { get { return _scR; } set { _scR = value; _r = GammaCorrectedFromLinear(value); _isFromArgb = false; } }
 
+    /// <summary>
+    /// Gets or sets the green component in linear scRGB space.
+    /// </summary>
     public float ScG { get { return _scG; } set { _scG = value; _g = GammaCorrectedFromLinear(value); _isFromArgb = false; } }
 
+    /// <summary>
+    /// Gets or sets the blue component in linear scRGB space.
+    /// </summary>
     public float ScB { get { return _scB; } set { _scB = value; _b = GammaCorrectedFromLinear(value); _isFromArgb = false; } }
 
+    /// <summary>
+    /// Gets or sets the alpha component in ARGB space.
+    /// </summary>
     public byte A { get { return _a; } set { _a = value; _scA = I2A(value); } }
 
+    /// <summary>
+    /// Gets or sets the red component in ARGB space.
+    /// </summary>
     public byte R { get { return _r; } set { _r = value; _scR = LinearFromGammaCorrected(value); } }
 
+    /// <summary>
+    /// Gets or sets the green component in ARGB space.
+    /// </summary>
     public byte G { get { return _g; } set { _g = value; _scG = LinearFromGammaCorrected(value); } }
 
+    /// <summary>
+    /// Gets or sets the blue component in ARGB space.
+    /// </summary>
     public byte B { get { return _b; } set { _b = value; _scB = LinearFromGammaCorrected(value); } }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether this color was created from ARGB values.
+    /// </summary>
     public bool IsFromArgb
     {
       get
@@ -112,7 +161,7 @@ namespace Altaxo.Drawing
     /// <param name="r">Red component-</param>
     /// <param name="g">Green component.</param>
     /// <param name="b">Blue component.</param>
-    /// <returns></returns>
+    /// <returns>The corresponding alpha, red, green, and blue components in linear scRGB space.</returns>
     public static Tuple<float, float, float, float> ToScARGBFromIARGB(byte a, byte r, byte g, byte b)
     {
       return new Tuple<float, float, float, float>(I2A(a), LinearFromGammaCorrected(r), LinearFromGammaCorrected(g), LinearFromGammaCorrected(b));
@@ -121,7 +170,7 @@ namespace Altaxo.Drawing
     /// <summary>
     /// Convert from linear SRGB to gamma corrected values, see wikipedia (SRGB).
     /// </summary>
-    /// <param name="x"></param>
+    /// <param name="x">The linear value.</param>
     /// <returns>Gamma corrected values (range 0.255).</returns>
     public static byte GammaCorrectedFromLinear(float x)
     {
@@ -142,7 +191,7 @@ namespace Altaxo.Drawing
     /// <summary>
     /// Conversion to linear SRGB, see wikipedia (SRGB).
     /// </summary>
-    /// <param name="x"></param>
+    /// <param name="x">The gamma-corrected byte value.</param>
     /// <returns>Linear SRGB value (normal range 0..1).</returns>
     public static float LinearFromGammaCorrected(byte x)
     {
@@ -158,8 +207,8 @@ namespace Altaxo.Drawing
     /// <summary>
     /// Convert the alpha channel value in the range 0..1 to a byte value in the range 0..255.
     /// </summary>
-    /// <param name="x"></param>
-    /// <returns></returns>
+    /// <param name="x">The alpha value in the range 0..1.</param>
+    /// <returns>The alpha value converted to a byte.</returns>
     private static byte A2I(float x)
     {
       double r;
@@ -174,34 +223,63 @@ namespace Altaxo.Drawing
     /// <summary>
     /// Convert the alpha channel value (0..255) into a float value (0..1).
     /// </summary>
-    /// <param name="x"></param>
-    /// <returns></returns>
+    /// <param name="x">The alpha value in the range 0..255.</param>
+    /// <returns>The alpha value converted to a normalized floating-point number.</returns>
     private static float I2A(byte x)
     {
       const double fac = 1 / 255.0;
       return (float)(x * fac);
     }
 
+    /// <summary>
+    /// Creates a color from linear scRGB components.
+    /// </summary>
+    /// <param name="a">The alpha component.</param>
+    /// <param name="r">The red component.</param>
+    /// <param name="g">The green component.</param>
+    /// <param name="b">The blue component.</param>
+    /// <returns>The created color.</returns>
     public static AxoColor FromScRgb(float a, float r, float g, float b)
     {
       return new AxoColor() { ScA = a, ScR = r, ScG = g, ScB = b, _isFromArgb = false };
     }
 
+    /// <summary>
+    /// Creates a color from ARGB components.
+    /// </summary>
+    /// <param name="a">The alpha component.</param>
+    /// <param name="r">The red component.</param>
+    /// <param name="g">The green component.</param>
+    /// <param name="b">The blue component.</param>
+    /// <returns>The created color.</returns>
     public static AxoColor FromArgb(byte a, byte r, byte g, byte b)
     {
       return new AxoColor() { A = a, R = r, G = g, B = b, _isFromArgb = true };
     }
 
+    /// <summary>
+    /// Converts this color to a packed ARGB integer value.
+    /// </summary>
+    /// <returns>The packed ARGB value.</returns>
     public int ToArgb()
     {
       return _a << 24 | _r << 16 | _g << 8 | _b;
     }
 
+    /// <summary>
+    /// Returns a fully opaque version of this color.
+    /// </summary>
+    /// <returns>A fully opaque color.</returns>
     public AxoColor ToFullyOpaque()
     {
       return ToFullyOpaque(this);
     }
 
+    /// <summary>
+    /// Returns a fully opaque version of the specified color.
+    /// </summary>
+    /// <param name="c">The color to convert.</param>
+    /// <returns>A fully opaque color.</returns>
     public static AxoColor ToFullyOpaque(AxoColor c)
     {
       AxoColor result = c;
@@ -210,11 +288,22 @@ namespace Altaxo.Drawing
       return result;
     }
 
+    /// <summary>
+    /// Returns a copy of this color with the specified alpha value.
+    /// </summary>
+    /// <param name="alpha">The alpha value.</param>
+    /// <returns>The adjusted color.</returns>
     public AxoColor ToAlphaValue(byte alpha)
     {
       return ToAlphaValue(this, alpha);
     }
 
+    /// <summary>
+    /// Returns a copy of the specified color with the specified alpha value.
+    /// </summary>
+    /// <param name="c">The color to modify.</param>
+    /// <param name="alpha">The alpha value.</param>
+    /// <returns>The adjusted color.</returns>
     public static AxoColor ToAlphaValue(AxoColor c, byte alpha)
     {
       AxoColor result = c;
@@ -223,6 +312,7 @@ namespace Altaxo.Drawing
       return result;
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       if (_isFromArgb)
@@ -231,6 +321,7 @@ namespace Altaxo.Drawing
         return (_scA * 4294967296.0 + _scB * 16777216.0 + _scG * 65536.0 + _scR * 256.0).GetHashCode();
     }
 
+    /// <inheritdoc/>
     public bool Equals(AxoColor from)
     {
       if (_isFromArgb && from._isFromArgb)
@@ -257,26 +348,38 @@ namespace Altaxo.Drawing
           _scR == from._scR;
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       return obj is AxoColor color ? Equals(color) : false;
     }
 
+    /// <summary>
+    /// Determines whether two colors are equal.
+    /// </summary>
     public static bool operator ==(AxoColor x, AxoColor y)
     {
       return x.Equals(y);
     }
 
+    /// <summary>
+    /// Determines whether two colors are not equal.
+    /// </summary>
     public static bool operator !=(AxoColor x, AxoColor y)
     {
       return !(x.Equals(y));
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return ToInvariantString();
     }
 
+    /// <summary>
+    /// Converts this color to an invariant string representation.
+    /// </summary>
+    /// <returns>The invariant string representation.</returns>
     public string ToInvariantString()
     {
       if (_isFromArgb)
@@ -289,6 +392,11 @@ namespace Altaxo.Drawing
       }
     }
 
+    /// <summary>
+    /// Creates a color from its invariant string representation.
+    /// </summary>
+    /// <param name="val">The invariant string representation.</param>
+    /// <returns>The parsed color.</returns>
     public static AxoColor FromInvariantString(string val)
     {
       if (val.StartsWith("{sc#"))
@@ -330,6 +438,10 @@ namespace Altaxo.Drawing
 
     #region Conversion operators
 
+    /// <summary>
+    /// Converts an <see cref="AxoColor"/> to a GDI color.
+    /// </summary>
+    /// <param name="c">The color to convert.</param>
     public static implicit operator System.Drawing.Color(AxoColor c)
     {
       return System.Drawing.Color.FromArgb(c.A, c.R, c.G, c.B);
@@ -451,7 +563,7 @@ namespace Altaxo.Drawing
     /// <summary>
     /// Converts the color to the linear AHSB model, with alpha [0, 1], Hue [0, 1], Saturation [0, 1] and Brightness [0, 1].
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The alpha, hue, saturation, and brightness values.</returns>
     /// <exception cref="System.InvalidProgramException"></exception>
     public (float alpha, float hue, float saturation, float brightness) ToAhsb()
     {
@@ -692,7 +804,7 @@ namespace Altaxo.Drawing
     /// <param name="y">The yalpha value in the range [0, 1].</param>
     /// <param name="m">The malpha value in the range [0, 1].</param>
     /// <param name="k">The kalpha value in the range [0, 1].</param>
-    /// <returns></returns>
+    /// <returns>The converted color.</returns>
     public static AxoColor FromAcmyk(float alpha, float c, float y, float m, float k)
     {
       var r = 1 - Math.Min(1, c * (1 - k) + k);
@@ -732,11 +844,21 @@ namespace Altaxo.Drawing
 
     #endregion CMYK
 
+    /// <summary>
+    /// Converts a normalized floating-point value to a byte.
+    /// </summary>
+    /// <param name="f">The normalized floating-point value.</param>
+    /// <returns>The corresponding byte value.</returns>
     public static byte NormFloatToByte(float f)
     {
       return (byte)(f * 255 + 0.5f);
     }
 
+    /// <summary>
+    /// Converts a byte value to a normalized floating-point value.
+    /// </summary>
+    /// <param name="val">The byte value.</param>
+    /// <returns>The corresponding normalized floating-point value.</returns>
     public static float ByteToNormFloat(byte val)
     {
       return val / 255.0f;
@@ -745,6 +867,9 @@ namespace Altaxo.Drawing
     #endregion Conversion to/from other color models
   }
 
+  /// <summary>
+  /// Provides predefined named colors as <see cref="AxoColor"/> values.
+  /// </summary>
   public static class AxoColors
   {
     #region Generated code
@@ -893,288 +1018,710 @@ AxoColor.FromArgb(255, 255, 255, 0),
 AxoColor.FromArgb(255, 154, 205, 50),
 };
 
+    /// <summary>
+    /// Gets the color value for AliceBlue.
+    /// </summary>
     public static AxoColor AliceBlue { get { return _colors[0]; } }
 
+    /// <summary>
+    /// Gets the color value for AntiqueWhite.
+    /// </summary>
     public static AxoColor AntiqueWhite { get { return _colors[1]; } }
 
+    /// <summary>
+    /// Gets the color value for Aqua.
+    /// </summary>
     public static AxoColor Aqua { get { return _colors[2]; } }
 
+    /// <summary>
+    /// Gets the color value for Aquamarine.
+    /// </summary>
     public static AxoColor Aquamarine { get { return _colors[3]; } }
 
+    /// <summary>
+    /// Gets the color value for Azure.
+    /// </summary>
     public static AxoColor Azure { get { return _colors[4]; } }
 
+    /// <summary>
+    /// Gets the color value for Beige.
+    /// </summary>
     public static AxoColor Beige { get { return _colors[5]; } }
 
+    /// <summary>
+    /// Gets the color value for Bisque.
+    /// </summary>
     public static AxoColor Bisque { get { return _colors[6]; } }
 
+    /// <summary>
+    /// Gets the color value for Black.
+    /// </summary>
     public static AxoColor Black { get { return _colors[7]; } }
 
+    /// <summary>
+    /// Gets the color value for BlanchedAlmond.
+    /// </summary>
     public static AxoColor BlanchedAlmond { get { return _colors[8]; } }
 
+    /// <summary>
+    /// Gets the color value for Blue.
+    /// </summary>
     public static AxoColor Blue { get { return _colors[9]; } }
 
+    /// <summary>
+    /// Gets the color value for BlueViolet.
+    /// </summary>
     public static AxoColor BlueViolet { get { return _colors[10]; } }
 
+    /// <summary>
+    /// Gets the color value for Brown.
+    /// </summary>
     public static AxoColor Brown { get { return _colors[11]; } }
 
+    /// <summary>
+    /// Gets the color value for BurlyWood.
+    /// </summary>
     public static AxoColor BurlyWood { get { return _colors[12]; } }
 
+    /// <summary>
+    /// Gets the color value for CadetBlue.
+    /// </summary>
     public static AxoColor CadetBlue { get { return _colors[13]; } }
 
+    /// <summary>
+    /// Gets the color value for Chartreuse.
+    /// </summary>
     public static AxoColor Chartreuse { get { return _colors[14]; } }
 
+    /// <summary>
+    /// Gets the color value for Chocolate.
+    /// </summary>
     public static AxoColor Chocolate { get { return _colors[15]; } }
 
+    /// <summary>
+    /// Gets the color value for Coral.
+    /// </summary>
     public static AxoColor Coral { get { return _colors[16]; } }
 
+    /// <summary>
+    /// Gets the color value for CornflowerBlue.
+    /// </summary>
     public static AxoColor CornflowerBlue { get { return _colors[17]; } }
 
+    /// <summary>
+    /// Gets the color value for Cornsilk.
+    /// </summary>
     public static AxoColor Cornsilk { get { return _colors[18]; } }
 
+    /// <summary>
+    /// Gets the color value for Crimson.
+    /// </summary>
     public static AxoColor Crimson { get { return _colors[19]; } }
 
+    /// <summary>
+    /// Gets the color value for Cyan.
+    /// </summary>
     public static AxoColor Cyan { get { return _colors[20]; } }
 
+    /// <summary>
+    /// Gets the color value for DarkBlue.
+    /// </summary>
     public static AxoColor DarkBlue { get { return _colors[21]; } }
 
+    /// <summary>
+    /// Gets the color value for DarkCyan.
+    /// </summary>
     public static AxoColor DarkCyan { get { return _colors[22]; } }
 
+    /// <summary>
+    /// Gets the color value for DarkGoldenrod.
+    /// </summary>
     public static AxoColor DarkGoldenrod { get { return _colors[23]; } }
 
+    /// <summary>
+    /// Gets the color value for DarkGray.
+    /// </summary>
     public static AxoColor DarkGray { get { return _colors[24]; } }
 
+    /// <summary>
+    /// Gets the color value for DarkGreen.
+    /// </summary>
     public static AxoColor DarkGreen { get { return _colors[25]; } }
 
+    /// <summary>
+    /// Gets the color value for DarkKhaki.
+    /// </summary>
     public static AxoColor DarkKhaki { get { return _colors[26]; } }
 
+    /// <summary>
+    /// Gets the color value for DarkMagenta.
+    /// </summary>
     public static AxoColor DarkMagenta { get { return _colors[27]; } }
 
+    /// <summary>
+    /// Gets the color value for DarkOliveGreen.
+    /// </summary>
     public static AxoColor DarkOliveGreen { get { return _colors[28]; } }
 
+    /// <summary>
+    /// Gets the color value for DarkOrange.
+    /// </summary>
     public static AxoColor DarkOrange { get { return _colors[29]; } }
 
+    /// <summary>
+    /// Gets the color value for DarkOrchid.
+    /// </summary>
     public static AxoColor DarkOrchid { get { return _colors[30]; } }
 
+    /// <summary>
+    /// Gets the color value for DarkRed.
+    /// </summary>
     public static AxoColor DarkRed { get { return _colors[31]; } }
 
+    /// <summary>
+    /// Gets the color value for DarkSalmon.
+    /// </summary>
     public static AxoColor DarkSalmon { get { return _colors[32]; } }
 
+    /// <summary>
+    /// Gets the color value for DarkSeaGreen.
+    /// </summary>
     public static AxoColor DarkSeaGreen { get { return _colors[33]; } }
 
+    /// <summary>
+    /// Gets the color value for DarkSlateBlue.
+    /// </summary>
     public static AxoColor DarkSlateBlue { get { return _colors[34]; } }
 
+    /// <summary>
+    /// Gets the color value for DarkSlateGray.
+    /// </summary>
     public static AxoColor DarkSlateGray { get { return _colors[35]; } }
 
+    /// <summary>
+    /// Gets the color value for DarkTurquoise.
+    /// </summary>
     public static AxoColor DarkTurquoise { get { return _colors[36]; } }
 
+    /// <summary>
+    /// Gets the color value for DarkViolet.
+    /// </summary>
     public static AxoColor DarkViolet { get { return _colors[37]; } }
 
+    /// <summary>
+    /// Gets the color value for DeepPink.
+    /// </summary>
     public static AxoColor DeepPink { get { return _colors[38]; } }
 
+    /// <summary>
+    /// Gets the color value for DeepSkyBlue.
+    /// </summary>
     public static AxoColor DeepSkyBlue { get { return _colors[39]; } }
 
+    /// <summary>
+    /// Gets the color value for DimGray.
+    /// </summary>
     public static AxoColor DimGray { get { return _colors[40]; } }
 
+    /// <summary>
+    /// Gets the color value for DodgerBlue.
+    /// </summary>
     public static AxoColor DodgerBlue { get { return _colors[41]; } }
 
+    /// <summary>
+    /// Gets the color value for Firebrick.
+    /// </summary>
     public static AxoColor Firebrick { get { return _colors[42]; } }
 
+    /// <summary>
+    /// Gets the color value for FloralWhite.
+    /// </summary>
     public static AxoColor FloralWhite { get { return _colors[43]; } }
 
+    /// <summary>
+    /// Gets the color value for ForestGreen.
+    /// </summary>
     public static AxoColor ForestGreen { get { return _colors[44]; } }
 
+    /// <summary>
+    /// Gets the color value for Fuchsia.
+    /// </summary>
     public static AxoColor Fuchsia { get { return _colors[45]; } }
 
+    /// <summary>
+    /// Gets the color value for Gainsboro.
+    /// </summary>
     public static AxoColor Gainsboro { get { return _colors[46]; } }
 
+    /// <summary>
+    /// Gets the color value for GhostWhite.
+    /// </summary>
     public static AxoColor GhostWhite { get { return _colors[47]; } }
 
+    /// <summary>
+    /// Gets the color value for Gold.
+    /// </summary>
     public static AxoColor Gold { get { return _colors[48]; } }
 
+    /// <summary>
+    /// Gets the color value for Goldenrod.
+    /// </summary>
     public static AxoColor Goldenrod { get { return _colors[49]; } }
 
+    /// <summary>
+    /// Gets the color value for Gray.
+    /// </summary>
     public static AxoColor Gray { get { return _colors[50]; } }
 
+    /// <summary>
+    /// Gets the color value for Green.
+    /// </summary>
     public static AxoColor Green { get { return _colors[51]; } }
 
+    /// <summary>
+    /// Gets the color value for GreenYellow.
+    /// </summary>
     public static AxoColor GreenYellow { get { return _colors[52]; } }
 
+    /// <summary>
+    /// Gets the color value for Honeydew.
+    /// </summary>
     public static AxoColor Honeydew { get { return _colors[53]; } }
 
+    /// <summary>
+    /// Gets the color value for HotPink.
+    /// </summary>
     public static AxoColor HotPink { get { return _colors[54]; } }
 
+    /// <summary>
+    /// Gets the color value for IndianRed.
+    /// </summary>
     public static AxoColor IndianRed { get { return _colors[55]; } }
 
+    /// <summary>
+    /// Gets the color value for Indigo.
+    /// </summary>
     public static AxoColor Indigo { get { return _colors[56]; } }
 
+    /// <summary>
+    /// Gets the color value for Ivory.
+    /// </summary>
     public static AxoColor Ivory { get { return _colors[57]; } }
 
+    /// <summary>
+    /// Gets the color value for Khaki.
+    /// </summary>
     public static AxoColor Khaki { get { return _colors[58]; } }
 
+    /// <summary>
+    /// Gets the color value for Lavender.
+    /// </summary>
     public static AxoColor Lavender { get { return _colors[59]; } }
 
+    /// <summary>
+    /// Gets the color value for LavenderBlush.
+    /// </summary>
     public static AxoColor LavenderBlush { get { return _colors[60]; } }
 
+    /// <summary>
+    /// Gets the color value for LawnGreen.
+    /// </summary>
     public static AxoColor LawnGreen { get { return _colors[61]; } }
 
+    /// <summary>
+    /// Gets the color value for LemonChiffon.
+    /// </summary>
     public static AxoColor LemonChiffon { get { return _colors[62]; } }
 
+    /// <summary>
+    /// Gets the color value for LightBlue.
+    /// </summary>
     public static AxoColor LightBlue { get { return _colors[63]; } }
 
+    /// <summary>
+    /// Gets the color value for LightCoral.
+    /// </summary>
     public static AxoColor LightCoral { get { return _colors[64]; } }
 
+    /// <summary>
+    /// Gets the color value for LightCyan.
+    /// </summary>
     public static AxoColor LightCyan { get { return _colors[65]; } }
 
+    /// <summary>
+    /// Gets the color value for LightGoldenrodYellow.
+    /// </summary>
     public static AxoColor LightGoldenrodYellow { get { return _colors[66]; } }
 
+    /// <summary>
+    /// Gets the color value for LightGray.
+    /// </summary>
     public static AxoColor LightGray { get { return _colors[67]; } }
 
+    /// <summary>
+    /// Gets the color value for LightGreen.
+    /// </summary>
     public static AxoColor LightGreen { get { return _colors[68]; } }
 
+    /// <summary>
+    /// Gets the color value for LightPink.
+    /// </summary>
     public static AxoColor LightPink { get { return _colors[69]; } }
 
+    /// <summary>
+    /// Gets the color value for LightSalmon.
+    /// </summary>
     public static AxoColor LightSalmon { get { return _colors[70]; } }
 
+    /// <summary>
+    /// Gets the color value for LightSeaGreen.
+    /// </summary>
     public static AxoColor LightSeaGreen { get { return _colors[71]; } }
 
+    /// <summary>
+    /// Gets the color value for LightSkyBlue.
+    /// </summary>
     public static AxoColor LightSkyBlue { get { return _colors[72]; } }
 
+    /// <summary>
+    /// Gets the color value for LightSlateGray.
+    /// </summary>
     public static AxoColor LightSlateGray { get { return _colors[73]; } }
 
+    /// <summary>
+    /// Gets the color value for LightSteelBlue.
+    /// </summary>
     public static AxoColor LightSteelBlue { get { return _colors[74]; } }
 
+    /// <summary>
+    /// Gets the color value for LightYellow.
+    /// </summary>
     public static AxoColor LightYellow { get { return _colors[75]; } }
 
+    /// <summary>
+    /// Gets the color value for Lime.
+    /// </summary>
     public static AxoColor Lime { get { return _colors[76]; } }
 
+    /// <summary>
+    /// Gets the color value for LimeGreen.
+    /// </summary>
     public static AxoColor LimeGreen { get { return _colors[77]; } }
 
+    /// <summary>
+    /// Gets the color value for Linen.
+    /// </summary>
     public static AxoColor Linen { get { return _colors[78]; } }
 
+    /// <summary>
+    /// Gets the color value for Magenta.
+    /// </summary>
     public static AxoColor Magenta { get { return _colors[79]; } }
 
+    /// <summary>
+    /// Gets the color value for Maroon.
+    /// </summary>
     public static AxoColor Maroon { get { return _colors[80]; } }
 
+    /// <summary>
+    /// Gets the color value for MediumAquamarine.
+    /// </summary>
     public static AxoColor MediumAquamarine { get { return _colors[81]; } }
 
+    /// <summary>
+    /// Gets the color value for MediumBlue.
+    /// </summary>
     public static AxoColor MediumBlue { get { return _colors[82]; } }
 
+    /// <summary>
+    /// Gets the color value for MediumOrchid.
+    /// </summary>
     public static AxoColor MediumOrchid { get { return _colors[83]; } }
 
+    /// <summary>
+    /// Gets the color value for MediumPurple.
+    /// </summary>
     public static AxoColor MediumPurple { get { return _colors[84]; } }
 
+    /// <summary>
+    /// Gets the color value for MediumSeaGreen.
+    /// </summary>
     public static AxoColor MediumSeaGreen { get { return _colors[85]; } }
 
+    /// <summary>
+    /// Gets the color value for MediumSlateBlue.
+    /// </summary>
     public static AxoColor MediumSlateBlue { get { return _colors[86]; } }
 
+    /// <summary>
+    /// Gets the color value for MediumSpringGreen.
+    /// </summary>
     public static AxoColor MediumSpringGreen { get { return _colors[87]; } }
 
+    /// <summary>
+    /// Gets the color value for MediumTurquoise.
+    /// </summary>
     public static AxoColor MediumTurquoise { get { return _colors[88]; } }
 
+    /// <summary>
+    /// Gets the color value for MediumVioletRed.
+    /// </summary>
     public static AxoColor MediumVioletRed { get { return _colors[89]; } }
 
+    /// <summary>
+    /// Gets the color value for MidnightBlue.
+    /// </summary>
     public static AxoColor MidnightBlue { get { return _colors[90]; } }
 
+    /// <summary>
+    /// Gets the color value for MintCream.
+    /// </summary>
     public static AxoColor MintCream { get { return _colors[91]; } }
 
+    /// <summary>
+    /// Gets the color value for MistyRose.
+    /// </summary>
     public static AxoColor MistyRose { get { return _colors[92]; } }
 
+    /// <summary>
+    /// Gets the color value for Moccasin.
+    /// </summary>
     public static AxoColor Moccasin { get { return _colors[93]; } }
 
+    /// <summary>
+    /// Gets the color value for NavajoWhite.
+    /// </summary>
     public static AxoColor NavajoWhite { get { return _colors[94]; } }
 
+    /// <summary>
+    /// Gets the color value for Navy.
+    /// </summary>
     public static AxoColor Navy { get { return _colors[95]; } }
 
+    /// <summary>
+    /// Gets the color value for OldLace.
+    /// </summary>
     public static AxoColor OldLace { get { return _colors[96]; } }
 
+    /// <summary>
+    /// Gets the color value for Olive.
+    /// </summary>
     public static AxoColor Olive { get { return _colors[97]; } }
 
+    /// <summary>
+    /// Gets the color value for OliveDrab.
+    /// </summary>
     public static AxoColor OliveDrab { get { return _colors[98]; } }
 
+    /// <summary>
+    /// Gets the color value for Orange.
+    /// </summary>
     public static AxoColor Orange { get { return _colors[99]; } }
 
+    /// <summary>
+    /// Gets the color value for OrangeRed.
+    /// </summary>
     public static AxoColor OrangeRed { get { return _colors[100]; } }
 
+    /// <summary>
+    /// Gets the color value for Orchid.
+    /// </summary>
     public static AxoColor Orchid { get { return _colors[101]; } }
 
+    /// <summary>
+    /// Gets the color value for PaleGoldenrod.
+    /// </summary>
     public static AxoColor PaleGoldenrod { get { return _colors[102]; } }
 
+    /// <summary>
+    /// Gets the color value for PaleGreen.
+    /// </summary>
     public static AxoColor PaleGreen { get { return _colors[103]; } }
 
+    /// <summary>
+    /// Gets the color value for PaleTurquoise.
+    /// </summary>
     public static AxoColor PaleTurquoise { get { return _colors[104]; } }
 
+    /// <summary>
+    /// Gets the color value for PaleVioletRed.
+    /// </summary>
     public static AxoColor PaleVioletRed { get { return _colors[105]; } }
 
+    /// <summary>
+    /// Gets the color value for PapayaWhip.
+    /// </summary>
     public static AxoColor PapayaWhip { get { return _colors[106]; } }
 
+    /// <summary>
+    /// Gets the color value for PeachPuff.
+    /// </summary>
     public static AxoColor PeachPuff { get { return _colors[107]; } }
 
+    /// <summary>
+    /// Gets the color value for Peru.
+    /// </summary>
     public static AxoColor Peru { get { return _colors[108]; } }
 
+    /// <summary>
+    /// Gets the color value for Pink.
+    /// </summary>
     public static AxoColor Pink { get { return _colors[109]; } }
 
+    /// <summary>
+    /// Gets the color value for Plum.
+    /// </summary>
     public static AxoColor Plum { get { return _colors[110]; } }
 
+    /// <summary>
+    /// Gets the color value for PowderBlue.
+    /// </summary>
     public static AxoColor PowderBlue { get { return _colors[111]; } }
 
+    /// <summary>
+    /// Gets the color value for Purple.
+    /// </summary>
     public static AxoColor Purple { get { return _colors[112]; } }
 
+    /// <summary>
+    /// Gets the color value for Red.
+    /// </summary>
     public static AxoColor Red { get { return _colors[113]; } }
 
+    /// <summary>
+    /// Gets the color value for RosyBrown.
+    /// </summary>
     public static AxoColor RosyBrown { get { return _colors[114]; } }
 
+    /// <summary>
+    /// Gets the color value for RoyalBlue.
+    /// </summary>
     public static AxoColor RoyalBlue { get { return _colors[115]; } }
 
+    /// <summary>
+    /// Gets the color value for SaddleBrown.
+    /// </summary>
     public static AxoColor SaddleBrown { get { return _colors[116]; } }
 
+    /// <summary>
+    /// Gets the color value for Salmon.
+    /// </summary>
     public static AxoColor Salmon { get { return _colors[117]; } }
 
+    /// <summary>
+    /// Gets the color value for SandyBrown.
+    /// </summary>
     public static AxoColor SandyBrown { get { return _colors[118]; } }
 
+    /// <summary>
+    /// Gets the color value for SeaGreen.
+    /// </summary>
     public static AxoColor SeaGreen { get { return _colors[119]; } }
 
+    /// <summary>
+    /// Gets the color value for SeaShell.
+    /// </summary>
     public static AxoColor SeaShell { get { return _colors[120]; } }
 
+    /// <summary>
+    /// Gets the color value for Sienna.
+    /// </summary>
     public static AxoColor Sienna { get { return _colors[121]; } }
 
+    /// <summary>
+    /// Gets the color value for Silver.
+    /// </summary>
     public static AxoColor Silver { get { return _colors[122]; } }
 
+    /// <summary>
+    /// Gets the color value for SkyBlue.
+    /// </summary>
     public static AxoColor SkyBlue { get { return _colors[123]; } }
 
+    /// <summary>
+    /// Gets the color value for SlateBlue.
+    /// </summary>
     public static AxoColor SlateBlue { get { return _colors[124]; } }
 
+    /// <summary>
+    /// Gets the color value for SlateGray.
+    /// </summary>
     public static AxoColor SlateGray { get { return _colors[125]; } }
 
+    /// <summary>
+    /// Gets the color value for Snow.
+    /// </summary>
     public static AxoColor Snow { get { return _colors[126]; } }
 
+    /// <summary>
+    /// Gets the color value for SpringGreen.
+    /// </summary>
     public static AxoColor SpringGreen { get { return _colors[127]; } }
 
+    /// <summary>
+    /// Gets the color value for SteelBlue.
+    /// </summary>
     public static AxoColor SteelBlue { get { return _colors[128]; } }
 
+    /// <summary>
+    /// Gets the color value for Tan.
+    /// </summary>
     public static AxoColor Tan { get { return _colors[129]; } }
 
+    /// <summary>
+    /// Gets the color value for Teal.
+    /// </summary>
     public static AxoColor Teal { get { return _colors[130]; } }
 
+    /// <summary>
+    /// Gets the color value for Thistle.
+    /// </summary>
     public static AxoColor Thistle { get { return _colors[131]; } }
 
+    /// <summary>
+    /// Gets the color value for Tomato.
+    /// </summary>
     public static AxoColor Tomato { get { return _colors[132]; } }
 
+    /// <summary>
+    /// Gets the color value for Transparent.
+    /// </summary>
     public static AxoColor Transparent { get { return _colors[133]; } }
 
+    /// <summary>
+    /// Gets the color value for Turquoise.
+    /// </summary>
     public static AxoColor Turquoise { get { return _colors[134]; } }
 
+    /// <summary>
+    /// Gets the color value for Violet.
+    /// </summary>
     public static AxoColor Violet { get { return _colors[135]; } }
 
+    /// <summary>
+    /// Gets the color value for Wheat.
+    /// </summary>
     public static AxoColor Wheat { get { return _colors[136]; } }
 
+    /// <summary>
+    /// Gets the color value for White.
+    /// </summary>
     public static AxoColor White { get { return _colors[137]; } }
 
+    /// <summary>
+    /// Gets the color value for WhiteSmoke.
+    /// </summary>
     public static AxoColor WhiteSmoke { get { return _colors[138]; } }
 
+    /// <summary>
+    /// Gets the color value for Yellow.
+    /// </summary>
     public static AxoColor Yellow { get { return _colors[139]; } }
 
+    /// <summary>
+    /// Gets the color value for YellowGreen.
+    /// </summary>
     public static AxoColor YellowGreen { get { return _colors[140]; } }
-
     #endregion Generated code
   }
 }

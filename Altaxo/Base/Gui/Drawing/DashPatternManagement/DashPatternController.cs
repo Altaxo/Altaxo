@@ -32,14 +32,21 @@ using Altaxo.Drawing;
 
 namespace Altaxo.Gui.Drawing.DashPatternManagement
 {
+  /// <summary>
+  /// View interface for editing dash patterns.
+  /// </summary>
   public interface IDashPatternView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for editing <see cref="IDashPattern"/> instances.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IDashPatternView))]
   [UserControllerForObject(typeof(IDashPattern))]
   public class DashPatternController : MVCANControllerEditImmutableDocBase<IDashPattern, IDashPatternView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -49,6 +56,9 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
 
     private IDashPattern _selectedItem;
 
+    /// <summary>
+    /// Gets or sets the selected dash pattern.
+    /// </summary>
     public IDashPattern SelectedItem
     {
       get => _selectedItem;
@@ -65,6 +75,7 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -75,6 +86,7 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = SelectedItem;

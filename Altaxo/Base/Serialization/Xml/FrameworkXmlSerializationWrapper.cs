@@ -74,7 +74,7 @@ namespace Altaxo.Serialization.Xml
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="FrameworkXmlSerializationWrapper" /> class. This empty constructur
+    /// Initializes a new instance of the <see cref="FrameworkXmlSerializationWrapper" /> class. This empty constructor
     /// is intended for deserialization.
     /// </summary>
     public FrameworkXmlSerializationWrapper()

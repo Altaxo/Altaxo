@@ -35,10 +35,25 @@ namespace Altaxo.Graph
   /// </summary>
   public struct Logical3D
   {
+    /// <summary>
+    /// The logical x-coordinate.
+    /// </summary>
     public double RX;
+    /// <summary>
+    /// The logical y-coordinate.
+    /// </summary>
     public double RY;
+    /// <summary>
+    /// The logical z-coordinate.
+    /// </summary>
     public double RZ;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Logical3D"/> struct.
+    /// </summary>
+    /// <param name="rx">The logical x-coordinate.</param>
+    /// <param name="ry">The logical y-coordinate.</param>
+    /// <param name="rz">The logical z-coordinate.</param>
     public Logical3D(double rx, double ry, double rz)
     {
       RX = rx;
@@ -46,6 +61,11 @@ namespace Altaxo.Graph
       RZ = rz;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Logical3D"/> struct for a 2D coordinate system.
+    /// </summary>
+    /// <param name="rx">The logical x-coordinate.</param>
+    /// <param name="ry">The logical y-coordinate.</param>
     public Logical3D(double rx, double ry)
     {
       RX = rx;
@@ -53,6 +73,12 @@ namespace Altaxo.Graph
       RZ = 0;
     }
 
+    /// <summary>
+    /// Returns a copy with one coordinate replaced.
+    /// </summary>
+    /// <param name="axisNumber">The axis number.</param>
+    /// <param name="r">The new coordinate value.</param>
+    /// <returns>A copy with the specified coordinate replaced.</returns>
     public Logical3D WithR(int axisNumber, double r)
     {
       var result = this;
@@ -60,6 +86,11 @@ namespace Altaxo.Graph
       return result;
     }
 
+    /// <summary>
+    /// Gets the coordinate for the specified axis number.
+    /// </summary>
+    /// <param name="axisNumber">The axis number.</param>
+    /// <returns>The coordinate value.</returns>
     public double GetR(int axisNumber)
     {
       switch (axisNumber)
@@ -78,6 +109,11 @@ namespace Altaxo.Graph
       }
     }
 
+    /// <summary>
+    /// Sets the coordinate for the specified axis number.
+    /// </summary>
+    /// <param name="axisNumber">The axis number.</param>
+    /// <param name="r">The coordinate value.</param>
     public void SetR(int axisNumber, double r)
     {
       switch (axisNumber)
@@ -204,6 +240,12 @@ namespace Altaxo.Graph
       }
     }
 
+    /// <summary>
+    /// Interpolates from this value to another logical coordinate.
+    /// </summary>
+    /// <param name="to">The target coordinate.</param>
+    /// <param name="t">The interpolation parameter.</param>
+    /// <returns>The interpolated coordinate.</returns>
     public Logical3D InterpolateTo(Logical3D to, double t)
     {
       return new Logical3D
@@ -222,6 +264,13 @@ namespace Altaxo.Graph
       get { return double.IsNaN(RX) || double.IsNaN(RY) || double.IsNaN(RZ); }
     }
 
+    /// <summary>
+    /// Interpolates between two logical coordinates.
+    /// </summary>
+    /// <param name="from">The start coordinate.</param>
+    /// <param name="to">The target coordinate.</param>
+    /// <param name="t">The interpolation parameter.</param>
+    /// <returns>The interpolated coordinate.</returns>
     public static Logical3D Interpolate(Logical3D from, Logical3D to, double t)
     {
       return new Logical3D
@@ -232,6 +281,9 @@ namespace Altaxo.Graph
         );
     }
 
+    /// <summary>
+    /// Adds two logical coordinates.
+    /// </summary>
     public static Logical3D operator +(Logical3D r, Logical3D s)
     {
       return new Logical3D(r.RX + s.RX, r.RY + s.RY, r.RZ + s.RZ);

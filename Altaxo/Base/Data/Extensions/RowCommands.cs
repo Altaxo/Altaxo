@@ -29,6 +29,9 @@ using Altaxo.Collections;
 
 namespace Altaxo.Data
 {
+  /// <summary>
+  /// Commands for copying, moving, and transforming rows.
+  /// </summary>
   public static class RowCommands
   {
     /// <summary>

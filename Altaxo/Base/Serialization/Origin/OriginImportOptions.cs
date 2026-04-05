@@ -48,20 +48,22 @@ namespace Altaxo.Serialization.Origin
     public bool IncludeFilePathAsProperty { get; init; } = true;
 
     /// <summary>
-    /// Gets the full paths to the imported data parts in the Origin file (could be spreadsheet, spreadsheet in an excel, or matrix)
-    /// If the collection is empty, all data parts are imported.
+    /// Gets the full paths to the imported data parts in the Origin file, for example a spreadsheet, a spreadsheet in Excel, or a matrix.
     /// </summary>
+    /// <remarks>
+    /// If the collection is empty, all data parts are imported.
+    /// </remarks>
     public IReadOnlyList<string> PathsOfImportedData { get; init; } = [];
 
     #region Serialization
 
     /// <summary>
-    /// 
+    /// XML serialization surrogate for <see cref="OriginImportOptions"/>.
     /// </summary>
-    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(OriginImportOptions), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (OriginImportOptions)obj;
@@ -71,6 +73,7 @@ namespace Altaxo.Serialization.Origin
         info.AddArray("PathsOfImportedData", s.PathsOfImportedData, s.PathsOfImportedData.Count);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var useNeutralColumnName = info.GetBoolean("UseNeutralColumnName");

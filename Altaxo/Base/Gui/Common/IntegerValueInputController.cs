@@ -28,6 +28,9 @@ using System;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// Controller for editing a single integer value.
+  /// </summary>
   [ExpectedTypeOfView(typeof(ISingleValueView))]
   [UserControllerForObject(typeof(int))]
   public class IntegerValueInputController : IMVCAController
@@ -42,11 +45,20 @@ namespace Altaxo.Gui.Common
 
     private IIntegerValidator? _validator;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IntegerValueInputController"/> class.
+    /// </summary>
+    /// <param name="initialcontents">The initial value.</param>
     public IntegerValueInputController(int initialcontents)
       : this(initialcontents, "Value: ")
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IntegerValueInputController"/> class.
+    /// </summary>
+    /// <param name="initialcontents">The initial value.</param>
+    /// <param name="description">The description text.</param>
     public IntegerValueInputController(int initialcontents, string description)
     {
       _initialContents = initialcontents;
@@ -54,6 +66,9 @@ namespace Altaxo.Gui.Common
       _description = description;
     }
 
+    /// <summary>
+    /// Initializes the view from the current controller state.
+    /// </summary>
     private void Initialize()
     {
       if (_view is null)
@@ -79,16 +94,25 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <summary>
+    /// Gets the entered contents.
+    /// </summary>
     public int EnteredContents
     {
       get { return _enteredContents; }
     }
 
+    /// <summary>
+    /// Sets the validator used for entered values.
+    /// </summary>
     public IIntegerValidator Validator
     {
       set { _validator = value; }
     }
 
+    /// <summary>
+    /// Validates the currently entered value.
+    /// </summary>
     protected bool Validate()
     {
       if (_view is null)
@@ -114,6 +138,9 @@ namespace Altaxo.Gui.Common
 
     #region ISingleValueFormController Members
 
+    /// <summary>
+    /// Validates the entered integer text.
+    /// </summary>
     public void EhView_ValidatingValue1(ValidationEventArgs<string> e)
     {
       if (!int.TryParse(e.ValueToValidate, out var val))
@@ -123,7 +150,7 @@ namespace Altaxo.Gui.Common
     #endregion ISingleValueFormController Members
 
     /// <summary>
-    /// Provides an interface to a validator to validates the user input
+    /// Provides an interface to a validator that validates the user input.
     /// </summary>
     public interface IIntegerValidator
     {
@@ -135,8 +162,12 @@ namespace Altaxo.Gui.Common
       string? Validate(int i);
     }
 
+    /// <summary>
+    /// Validator that accepts only zero or positive integers.
+    /// </summary>
     public class ZeroOrPositiveIntegerValidator : IIntegerValidator
     {
+      /// <inheritdoc/>
       public string? Validate(int i)
       {
         if (i < 0)
@@ -148,6 +179,7 @@ namespace Altaxo.Gui.Common
 
     #region IMVCController Members
 
+    /// <inheritdoc/>
     public object? ViewObject
     {
       get
@@ -168,11 +200,13 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     public object ModelObject
     {
       get { return _initialContents; }
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
     }
@@ -181,6 +215,7 @@ namespace Altaxo.Gui.Common
 
     #region IApplyController Members
 
+    /// <inheritdoc/>
     public bool Apply(bool disposeController)
     {
       if (!Validate())
@@ -197,6 +232,7 @@ namespace Altaxo.Gui.Common
     /// <returns>
     ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
     /// </returns>
+    /// <inheritdoc/>
     public bool Revert(bool disposeController)
     {
       return false;

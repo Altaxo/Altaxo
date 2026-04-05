@@ -43,17 +43,21 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Graph3D.Axis
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="AxisLabelStyleController"/>.
+  /// </summary>
   public interface IAxisLabelStyleView : IDataContextAwareView
   {
   }
 
   /// <summary>
-  /// Summary description.
+  /// Controller for <see cref="AxisLabelStyle"/>.
   /// </summary>
   [UserControllerForObject(typeof(AxisLabelStyle))]
   [ExpectedTypeOfView(typeof(IAxisLabelStyleView))]
   public class AxisLabelStyleController : MVCANControllerEditOriginalDocBase<AxisLabelStyle, IAxisLabelStyleView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_labelFormattingSpecificController, () => LabelFormattingSpecificController = null);
@@ -65,6 +69,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
 
     private FontX3DController _labelFontController;
 
+    /// <summary>
+    /// Gets or sets the controller for the label font.
+    /// </summary>
     public FontX3DController LabelFontController
     {
       get => _labelFontController;
@@ -81,6 +88,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
 
     private BackgroundStyleController _backgroundController;
 
+    /// <summary>
+    /// Gets or sets the controller for the label background.
+    /// </summary>
     public BackgroundStyleController BackgroundController
     {
       get => _backgroundController;
@@ -149,6 +159,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets the environment for rotation values.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment RotationEnvironment { get; set; } = AngleEnvironment.Instance;
 
     private DimensionfulQuantity _rotationX;
@@ -171,6 +184,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
 
     private DimensionfulQuantity _rotationY;
 
+    /// <summary>
+    /// Gets or sets the rotation around the Y axis.
+    /// </summary>
     public DimensionfulQuantity RotationY
     {
       get => _rotationY;
@@ -186,6 +202,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
 
     private DimensionfulQuantity _rotationZ;
 
+    /// <summary>
+    /// Gets or sets the rotation around the Z axis.
+    /// </summary>
     public DimensionfulQuantity RotationZ
     {
       get => _rotationZ;
@@ -201,6 +220,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
 
 
 
+    /// <summary>
+    /// Gets or sets the environment for label offsets.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment OffsetEnvironment { get; set; } = RelationEnvironment.Instance;
 
     private DimensionfulQuantity _offsetX;
@@ -241,6 +263,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
 
     private DimensionfulQuantity _offsetZ;
 
+    /// <summary>
+    /// Gets or sets the offset along the Z axis.
+    /// </summary>
     public DimensionfulQuantity OffsetZ
     {
       get => _offsetZ;
@@ -292,6 +317,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
 
     private string _suppressedLabelsByNumber;
 
+    /// <summary>
+    /// Gets or sets the labels to suppress by number.
+    /// </summary>
     public string SuppressedLabelsByNumber
     {
       get => _suppressedLabelsByNumber;
@@ -306,6 +334,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
     }
     private string _suppressedLabelsByValue;
 
+    /// <summary>
+    /// Gets or sets the labels to suppress by value.
+    /// </summary>
     public string SuppressedLabelsByValue
     {
       get => _suppressedLabelsByValue;
@@ -340,6 +371,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
 
     private ItemsController<Alignment> _alignmentY;
 
+    /// <summary>
+    /// Gets or sets the alignment options for the Y axis.
+    /// </summary>
     public ItemsController<Alignment> AlignmentY
     {
       get => _alignmentY;
@@ -356,6 +390,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
 
     private ItemsController<Alignment> _alignmentZ;
 
+    /// <summary>
+    /// Gets or sets the alignment options for the Z axis.
+    /// </summary>
     public ItemsController<Alignment> AlignmentZ
     {
       get => _alignmentZ;
@@ -373,6 +410,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
 
     private ItemsController<Type> _labelStyle;
 
+    /// <summary>
+    /// Gets or sets the available label style types.
+    /// </summary>
     public ItemsController<Type> LabelStyle
     {
       get => _labelStyle;
@@ -387,6 +427,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Updates the label formatting controller after the label style changed.
+    /// </summary>
+    /// <param name="value">The newly selected label style type.</param>
     public void EhView_LabelStyleChanged(System.Type value)
     {
       if (value is not null && _doc.LabelFormat.GetType() != value)
@@ -414,6 +458,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
 
     private IMVCANController _labelFormattingSpecificController;
 
+    /// <summary>
+    /// Gets or sets the controller for the label-formatting-specific settings.
+    /// </summary>
     public IMVCANController LabelFormattingSpecificController
     {
       get => _labelFormattingSpecificController;
@@ -432,6 +479,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
     #endregion
 
 
+ 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       LabelSides = null;
@@ -443,6 +492,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
       base.Dispose(isDisposing);
     }
 
+ 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -500,6 +551,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
       }
     }
 
+ 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (!_labelFontController.Apply(disposeController))

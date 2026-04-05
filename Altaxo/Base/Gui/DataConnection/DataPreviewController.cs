@@ -30,17 +30,31 @@ using System.Text;
 
 namespace Altaxo.Gui.DataConnection
 {
+  /// <summary>
+  /// View interface for previewing table data.
+  /// </summary>
   public interface IDataPreviewView
   {
+    /// <summary>
+    /// Sets the table source to preview.
+    /// </summary>
+    /// <param name="table">The table to preview.</param>
     void SetTableSource(System.Data.DataTable table);
   }
 
+  /// <summary>
+  /// Controller for previewing a data table.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IDataPreviewView))]
   public class DataPreviewController : IMVCAController
   {
     private IDataPreviewView _view;
     private System.Data.DataTable dt;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DataPreviewController"/> class.
+    /// </summary>
+    /// <param name="dt">The table to preview.</param>
     public DataPreviewController(System.Data.DataTable dt)
     {
       this.dt = dt;
@@ -58,6 +72,7 @@ namespace Altaxo.Gui.DataConnection
       }
     }
 
+    /// <inheritdoc/>
     public object ViewObject
     {
       get
@@ -74,16 +89,19 @@ namespace Altaxo.Gui.DataConnection
       }
     }
 
+    /// <inheritdoc/>
     public object ModelObject
     {
       get { return null; }
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
       ViewObject = null;
     }
 
+    /// <inheritdoc/>
     public bool Apply(bool disposeController)
     {
       return true;
@@ -94,8 +112,9 @@ namespace Altaxo.Gui.DataConnection
     /// </summary>
     /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
     /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    ///   <c>True</c> if the revert operation was successful; <c>false</c> if the revert operation was not possible, that is, because the controller has not stored the original state of the model.
     /// </returns>
+    /// <inheritdoc/>
     public bool Revert(bool disposeController)
     {
       return false;

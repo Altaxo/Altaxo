@@ -55,12 +55,15 @@ namespace Altaxo.Gui.Graph.Graph3D
 
 
   /// <summary>
-  /// Summary description for LayerController.
+  /// Controller for editing a 3D <see cref="XYZPlotLayer"/>.
   /// </summary>
   [UserControllerForObject(typeof(XYZPlotLayer))]
   [ExpectedTypeOfView(typeof(Altaxo.Gui.Graph.Gdi.IXYPlotLayerView))]
   public class XYPlotLayerController : MVCANControllerEditOriginalDocBase<XYZPlotLayer, Altaxo.Gui.Graph.Gdi.IXYPlotLayerView>
   {
+    /// <summary>
+    /// Stores the initially selected tab tag.
+    /// </summary>
     protected string _initialTag;
 
     private int _currentScale; // which scale is choosen 0==X-AxisScale, 1==Y-AxisScale
@@ -70,11 +73,26 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private IMVCAController _currentController;
 
+    /// <summary>
+    /// Stores the coordinate-system controller.
+    /// </summary>
     protected CoordinateSystemController _coordinateController;
+    /// <summary>
+    /// Stores the layer-position controller.
+    /// </summary>
     protected IMVCANController _layerPositionController;
+    /// <summary>
+    /// Stores the layer-contents controller.
+    /// </summary>
     protected IMVCANController _layerContentsController;
+    /// <summary>
+    /// Stores the axis-scale controllers.
+    /// </summary>
     protected IMVCAController[] _axisScaleController;
 
+    /// <summary>
+    /// Stores the controller for graphical items on the layer.
+    /// </summary>
     protected IMVCANController _layerGraphItemsController;
 
     private Dictionary<CSLineID, AxisStyleController> _axisController = new Dictionary<CSLineID, AxisStyleController>();
@@ -86,17 +104,48 @@ namespace Altaxo.Gui.Graph.Graph3D
     private SelectableListNodeList _listOfPlanes;
     private SelectableListNodeList _listOfUniqueItem;
 
+    /// <summary>
+    /// Tag for the position tab.
+    /// </summary>
     public const string PositionTag = "Position";
+    /// <summary>
+    /// Tag for the graphical-items tab.
+    /// </summary>
     public const string GraphItemsTag = "GraphicItems";
+    /// <summary>
+    /// Tag for the scale tab.
+    /// </summary>
     public const string ScaleTag = "Scale";
+    /// <summary>
+    /// Tag for the coordinate-system tab.
+    /// </summary>
     public const string CoordSystemTag = "CoordSys";
+    /// <summary>
+    /// Tag for the contents tab.
+    /// </summary>
     public const string ContentsTag = "Content";
+    /// <summary>
+    /// Tag for the title-and-format tab.
+    /// </summary>
     public const string TitleAndFormatTag = "TitleFormat";
+    /// <summary>
+    /// Tag for the major-labels tab.
+    /// </summary>
     public const string MajorLabelsTag = "MajorLabels";
+    /// <summary>
+    /// Tag for the minor-labels tab.
+    /// </summary>
     public const string MinorLabelsTag = "MinorLabels";
+    /// <summary>
+    /// Tag for the grid-style tab.
+    /// </summary>
     public const string GridStyleTag = "GridStyle";
+    /// <summary>
+    /// Tag used for sections that have only one common secondary choice.
+    /// </summary>
     public const string SecondaryCommonTag = "2ndCommon";
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_coordinateController, () => _coordinateController = null);
@@ -125,6 +174,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       yield return new ControllerAndSetNullMethod(null, () => _axisController = null);
     }
 
+    /// <inheritdoc/>
     public override void Dispose(bool isDisposing)
     {
       _lastControllerApplied = null;
@@ -140,11 +190,17 @@ namespace Altaxo.Gui.Graph.Graph3D
 
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYPlotLayerController"/> class.
+    /// </summary>
     public XYPlotLayerController(XYZPlotLayer layer, UseDocument useDocumentCopy)
       : this(layer, ScaleTag, 1, null, useDocumentCopy)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYPlotLayerController"/> class.
+    /// </summary>
     public XYPlotLayerController(XYZPlotLayer layer, string currentPage, CSLineID id, UseDocument useDocumentCopy)
       : this(layer, currentPage, id.ParallelAxisNumber, id, useDocumentCopy)
     {
@@ -169,14 +225,29 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     #region Bindings
 
+    /// <summary>
+    /// Gets or sets the command that moves an axis.
+    /// </summary>
     public ICommand CmdMoveAxis { get; set; }
+    /// <summary>
+    /// Gets or sets the command that creates an axis.
+    /// </summary>
     public ICommand CmdCreateAxis { get; set; }
+    /// <summary>
+    /// Gets or sets the command that deletes an axis.
+    /// </summary>
     public ICommand CmdDeleteAxis { get; set; }
 
+    /// <summary>
+    /// Gets the available primary tabs.
+    /// </summary>
     public SelectableListNodeList Tabs { get; } = new();
 
     private string? _selectedTab;
 
+    /// <summary>
+    /// Gets or sets the selected tab.
+    /// </summary>
     public string? SelectedTab
     {
       get => _selectedTab;
@@ -191,6 +262,10 @@ namespace Altaxo.Gui.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Handles a change of the selected primary tab.
+    /// </summary>
+    /// <param name="selectedTab">The selected tab tag.</param>
     protected void EhPrimaryChoiceChanged(string selectedTab)
     {
       switch (selectedTab)
@@ -220,6 +295,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private SelectableListNodeList _secondaryChoices;
 
+    /// <summary>
+    /// Gets or sets the list of secondary choices.
+    /// </summary>
     public SelectableListNodeList SecondaryChoices
     {
       get => _secondaryChoices;
@@ -237,6 +315,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private object _selectedSecondaryChoice;
 
+    /// <summary>
+    /// Gets or sets the selected secondary choice.
+    /// </summary>
     public object SelectedSecondaryChoice
     {
       get => _selectedSecondaryChoice;
@@ -258,6 +339,10 @@ namespace Altaxo.Gui.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Handles a change of the selected secondary choice.
+    /// </summary>
+    /// <param name="value">The selected value.</param>
     public void EhSecondaryChoiceChanged(object value)
     {
       if (SelectedTab == ScaleTag && value is int currentScale)
@@ -279,6 +364,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private bool _areAxisButtonsVisible;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the axis buttons are visible.
+    /// </summary>
     public bool AreAxisButtonsVisible
     {
       get => _areAxisButtonsVisible;
@@ -295,6 +383,7 @@ namespace Altaxo.Gui.Graph.Graph3D
     #endregion
 
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -323,6 +412,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       ApplyCurrentController(true, disposeController);
@@ -642,16 +732,25 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     #region Dialog
 
+    /// <summary>
+    /// Shows the s ho wd ia l o g.
+    /// </summary>
     public static bool ShowDialog(XYZPlotLayer layer)
     {
       return ShowDialog(layer, ScaleTag, new CSLineID(0, 0, 0));
     }
 
+    /// <summary>
+    /// Shows the s ho wd ia l o g.
+    /// </summary>
     public static bool ShowDialog(XYZPlotLayer layer, string currentPage)
     {
       return ShowDialog(layer, currentPage, new CSLineID(0, 0));
     }
 
+    /// <summary>
+    /// Shows the s ho wd ia l o g.
+    /// </summary>
     public static bool ShowDialog(XYZPlotLayer layer, string currentPage, CSLineID currentEdge)
     {
       var ctrl = new XYPlotLayerController(layer, currentPage, currentEdge, UseDocument.Copy);
@@ -662,6 +761,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     #region Edit Handlers
 
+    /// <summary>
+    /// Registers edit handlers for double-click operations on plot-layer elements.
+    /// </summary>
     public static void RegisterEditHandlers()
     {
       // register here editor methods
@@ -673,6 +775,11 @@ namespace Altaxo.Gui.Graph.Graph3D
       XYZPlotLayer.LayerPositionEditorMethod = new DoubleClickHandler(EhLayerPositionEdit);
     }
 
+    /// <summary>
+    /// Opens the dialog for editing the layer position.
+    /// </summary>
+    /// <param name="hit">The hit-test information.</param>
+    /// <returns><c>false</c> after handling the request.</returns>
     public static bool EhLayerPositionEdit(IHitTestObject hit)
     {
       var layer = hit.HittedObject as XYZPlotLayer;
@@ -684,6 +791,11 @@ namespace Altaxo.Gui.Graph.Graph3D
       return false;
     }
 
+    /// <summary>
+    /// Opens the dialog for editing an axis scale.
+    /// </summary>
+    /// <param name="hit">The hit-test information.</param>
+    /// <returns><c>false</c> after handling the request.</returns>
     public static bool EhAxisScaleEdit(IHitTestObject hit)
     {
       var style = hit.HittedObject as AxisLineStyle;
@@ -697,6 +809,11 @@ namespace Altaxo.Gui.Graph.Graph3D
       return false;
     }
 
+    /// <summary>
+    /// Opens the dialog for editing an axis style.
+    /// </summary>
+    /// <param name="hit">The hit-test information.</param>
+    /// <returns><c>false</c> after handling the request.</returns>
     public static bool EhAxisStyleEdit(IHitTestObject hit)
     {
       var style = hit.HittedObject as AxisLineStyle;
@@ -710,6 +827,11 @@ namespace Altaxo.Gui.Graph.Graph3D
       return false;
     }
 
+    /// <summary>
+    /// Opens the dialog for editing the major axis-label style.
+    /// </summary>
+    /// <param name="hit">The hit-test information.</param>
+    /// <returns><c>false</c> after handling the request.</returns>
     public static bool EhAxisLabelMajorStyleEdit(IHitTestObject hit)
     {
       var style = hit.HittedObject as AxisLabelStyle;
@@ -723,6 +845,11 @@ namespace Altaxo.Gui.Graph.Graph3D
       return false;
     }
 
+    /// <summary>
+    /// Opens the dialog for editing the minor axis-label style.
+    /// </summary>
+    /// <param name="hit">The hit-test information.</param>
+    /// <returns><c>false</c> after handling the request.</returns>
     public static bool EhAxisLabelMinorStyleEdit(IHitTestObject hit)
     {
       var style = hit.HittedObject as AxisLabelStyle;

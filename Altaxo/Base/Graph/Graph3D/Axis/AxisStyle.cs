@@ -74,9 +74,13 @@ namespace Altaxo.Graph.Graph3D.Axis
     #region Serialization
 
     // 2015-09-1 Initial version
+    /// <summary>
+    /// Serializes <see cref="AxisStyle"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisStyle), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (AxisStyle)obj;
@@ -89,6 +93,7 @@ namespace Altaxo.Graph.Graph3D.Axis
         info.AddValueOrNull("AxisTitle", s._axisTitle);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (AxisStyle?)o ?? new AxisStyle(info);
@@ -108,6 +113,10 @@ namespace Altaxo.Graph.Graph3D.Axis
     }
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AxisStyle"/> class during deserialization.
+    /// </summary>
+    /// <param name="info">The deserialization info.</param>
     protected AxisStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
     }
@@ -116,11 +125,19 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AxisStyle"/> class by copying from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public AxisStyle(AxisStyle from)
     {
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies values from another <see cref="AxisStyle"/> instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     [MemberNotNull(nameof(_styleID))]
     public void CopyFrom(AxisStyle from)
     {
@@ -135,6 +152,10 @@ namespace Altaxo.Graph.Graph3D.Axis
     }
 
 
+    /// <summary>
+    /// Copies all values except the style identifier from another <see cref="AxisStyle"/> instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public void CopyWithoutIdFrom(AxisStyle from)
     {
       ChildCloneToMember(ref _customTickSpacing, from._customTickSpacing);
@@ -144,6 +165,7 @@ namespace Altaxo.Graph.Graph3D.Axis
       ChildCloneToMember(ref _axisTitle, from._axisTitle);
     }
 
+    /// <inheritdoc/>
     public bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -181,6 +203,15 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AxisStyle"/> class.
+    /// </summary>
+    /// <param name="id">The style identifier.</param>
+    /// <param name="isAxisLineEnabled">If set to <c>true</c>, an axis line style is created.</param>
+    /// <param name="areMajorTicksEnabled">If set to <c>true</c>, major labels are enabled.</param>
+    /// <param name="areMinorTicksEnabled">If set to <c>true</c>, minor labels are enabled.</param>
+    /// <param name="axisTitleOrNull">The axis title, or <c>null</c>.</param>
+    /// <param name="context">The property context.</param>
     public AxisStyle(CSLineID id, bool isAxisLineEnabled, bool areMajorTicksEnabled, bool areMinorTicksEnabled, string? axisTitleOrNull, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       _styleID = id;
@@ -207,6 +238,15 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AxisStyle"/> class using axis metadata.
+    /// </summary>
+    /// <param name="info">The axis information.</param>
+    /// <param name="isAxisLineEnabled">If set to <c>true</c>, an axis line style is created.</param>
+    /// <param name="areMajorTicksEnabled">If set to <c>true</c>, major labels are enabled.</param>
+    /// <param name="areMinorTicksEnabled">If set to <c>true</c>, minor labels are enabled.</param>
+    /// <param name="axisTitleOrNull">The axis title, or <c>null</c>.</param>
+    /// <param name="context">The property context.</param>
     public AxisStyle(CSAxisInformation info, bool isAxisLineEnabled, bool areMajorTicksEnabled, bool areMinorTicksEnabled, string? axisTitleOrNull, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       _styleID = info.Identifier;
@@ -233,6 +273,7 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_axisLineStyle is not null)
@@ -262,6 +303,9 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets the cached axis information associated with this style.
+    /// </summary>
     public CSAxisInformation? CachedAxisInformation
     {
       get
@@ -280,6 +324,9 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether no axis line, title, or labels are enabled.
+    /// </summary>
     public bool IsEmpty
     {
       get
@@ -327,11 +374,24 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Updates cached data structures using the specified plot area.
+    /// </summary>
+    /// <param name="layer">The plot area.</param>
     public void FixupInternalDataStructures(IPlotArea layer)
     {
       FixupInternalDataStructures(layer, layer.CoordinateSystem.GetAxisStyleInformation);
     }
 
+    /// <summary>
+    /// Performs hit testing for the title, axis line, and labels.
+    /// </summary>
+    /// <param name="parentCoord">The hit-test data in parent coordinates.</param>
+    /// <param name="AxisScaleEditorMethod">Unused scale editor callback.</param>
+    /// <param name="AxisStyleEditorMethod">The double-click handler for the axis line.</param>
+    /// <param name="AxisLabelMajorStyleEditorMethod">The double-click handler for major labels.</param>
+    /// <param name="AxisLabelMinorStyleEditorMethod">The double-click handler for minor labels.</param>
+    /// <returns>The matching hit-test object, or <see langword="null"/>.</returns>
     public IHitTestObject? HitTest(HitTestPointData parentCoord, DoubleClickHandler? AxisScaleEditorMethod, DoubleClickHandler? AxisStyleEditorMethod, DoubleClickHandler? AxisLabelMajorStyleEditorMethod, DoubleClickHandler? AxisLabelMinorStyleEditorMethod)
     {
       IHitTestObject? hit;
@@ -361,6 +421,11 @@ namespace Altaxo.Graph.Graph3D.Axis
       return null;
     }
 
+    /// <summary>
+    /// Updates internal data structures of all contained axis styles.
+    /// </summary>
+    /// <param name="layer">The plot area.</param>
+    /// <param name="GetAxisStyleInformation">The resolver for axis information.</param>
     public void FixupInternalDataStructures(IPlotArea layer, Func<CSLineID, CSAxisInformation> GetAxisStyleInformation)
     {
       // update the logical values of the physical axes before
@@ -395,15 +460,28 @@ namespace Altaxo.Graph.Graph3D.Axis
         _axisTitle.SetParentSize(layer.Size, false);
     }
 
+    /// <summary>
+    /// Performs preprocessing for all contained axis styles.
+    /// </summary>
+    /// <param name="layer">The plot area.</param>
     public void PaintPreprocessing(IPlotArea layer)
     {
     }
 
+    /// <summary>
+    /// Paints the complete axis style.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="paintContext">The paint context.</param>
+    /// <param name="layer">The plot area.</param>
     public void Paint(IGraphicsContext3D g, Altaxo.Graph.IPaintContext paintContext, IPlotArea layer)
     {
       Paint(g, paintContext, layer, layer.CoordinateSystem.GetAxisStyleInformation);
     }
 
+    /// <summary>
+    /// Paints the complete axis style using the supplied axis-information resolver.
+    /// </summary>
     public void Paint(IGraphicsContext3D g, Altaxo.Graph.IPaintContext paintContext, IPlotArea layer, Func<CSLineID, CSAxisInformation> GetAxisStyleInformation)
     {
       PaintLine(g, layer);
@@ -412,6 +490,9 @@ namespace Altaxo.Graph.Graph3D.Axis
       PaintTitle(g, paintContext, layer);
     }
 
+    /// <summary>
+    /// Paints the axis line.
+    /// </summary>
     public void PaintLine(IGraphicsContext3D g, IPlotArea layer)
     {
       if (_cachedAxisInfo is null)
@@ -423,6 +504,9 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Paints the major labels.
+    /// </summary>
     public void PaintMajorLabels(IGraphicsContext3D g, IPlotArea layer)
     {
       if (_cachedAxisInfo is null)
@@ -437,6 +521,9 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Paints the minor labels.
+    /// </summary>
     public void PaintMinorLabels(IGraphicsContext3D g, IPlotArea layer)
     {
       if (_cachedAxisInfo is null)
@@ -451,6 +538,9 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Paints the axis title.
+    /// </summary>
     public void PaintTitle(IGraphicsContext3D g, Altaxo.Graph.IPaintContext paintContext, IPlotArea layer)
     {
       if (_axisTitle is not null)
@@ -459,6 +549,9 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Performs cleanup after painting.
+    /// </summary>
     public void PaintPostprocessing()
     {
     }
@@ -476,6 +569,10 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Ensures that the axis line exists.
+    /// </summary>
+    /// <param name="context">The property context.</param>
     public void ShowAxisLine(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       if (_axisLineStyle is null)
@@ -488,6 +585,9 @@ namespace Altaxo.Graph.Graph3D.Axis
         AxisLineStyle = new AxisLineStyle(hasTicksByDefault, preferredTickSide, context);
     }
 
+    /// <summary>
+    /// Removes the axis line.
+    /// </summary>
     public void HideAxisLine()
     {
       AxisLineStyle = null;
@@ -504,18 +604,28 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Ensures that major labels exist.
+    /// </summary>
+    /// <param name="context">The property context.</param>
     public void ShowMajorLabels(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       if (_majorLabelStyle is null)
         MajorLabelStyle = new AxisLabelStyle(context) { CachedAxisInformation = _cachedAxisInfo };
     }
 
+    /// <summary>
+    /// Ensures that major labels exist on the specified side.
+    /// </summary>
     public void ShowMajorLabels(CSAxisSide preferredLabelSide, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       if (_majorLabelStyle is null)
         MajorLabelStyle = new AxisLabelStyle(preferredLabelSide, context) { CachedAxisInformation = _cachedAxisInfo };
     }
 
+    /// <summary>
+    /// Removes the major labels.
+    /// </summary>
     public void HideMajorLabels()
     {
       MajorLabelStyle = null;
@@ -532,18 +642,28 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Ensures that minor labels exist.
+    /// </summary>
+    /// <param name="context">The property context.</param>
     public void ShowMinorLabels(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       if (_minorLabelStyle is null)
         MinorLabelStyle = new AxisLabelStyle(context) { CachedAxisInformation = _cachedAxisInfo };
     }
 
+    /// <summary>
+    /// Ensures that minor labels exist on the specified side.
+    /// </summary>
     public void ShowMinorLabels(CSAxisSide preferredLabelSide, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       if (_minorLabelStyle is null)
         MinorLabelStyle = new AxisLabelStyle(preferredLabelSide, context) { CachedAxisInformation = _cachedAxisInfo };
     }
 
+    /// <summary>
+    /// Removes the minor labels.
+    /// </summary>
     public void HideMinorLabels()
     {
       MinorLabelStyle = null;
@@ -560,6 +680,10 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Ensures that an axis title exists.
+    /// </summary>
+    /// <param name="context">The property context.</param>
     [MemberNotNull(nameof(_axisTitle))]
     public void ShowTitle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
@@ -570,6 +694,9 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Removes the axis title.
+    /// </summary>
     public void HideTitle()
     {
       Title = null;
@@ -626,6 +753,9 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets the axis title graphic.
+    /// </summary>
     public TextGraphic? Title
     {
       get { return _axisTitle; }
@@ -636,6 +766,9 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets the axis-title text.
+    /// </summary>
     public string TitleText
     {
       get { return _axisTitle?.Text ?? string.Empty; }
@@ -666,6 +799,10 @@ namespace Altaxo.Graph.Graph3D.Axis
 
 
 
+    /// <summary>
+    /// Creates a copy of this axis style.
+    /// </summary>
+    /// <returns>A cloned axis style.</returns>
     public object Clone()
     {
       return new AxisStyle(this);

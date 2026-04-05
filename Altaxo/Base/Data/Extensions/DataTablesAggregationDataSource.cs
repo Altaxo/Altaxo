@@ -34,6 +34,9 @@ namespace Altaxo.Data
   /// <summary>
   /// Provides a data source that aggregates data from multiple tables according to specified options.
   /// </summary>
+  /// <summary>
+  /// Provides a data source that aggregates data from multiple tables according to specified options.
+  /// </summary>
   public class DataTablesAggregationDataSource : TableDataSourceBase, Altaxo.Data.IAltaxoTableDataSource
   {
     /// <summary>
@@ -127,6 +130,7 @@ namespace Altaxo.Data
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DataTablesAggregationDataSource)obj;
@@ -138,7 +142,7 @@ namespace Altaxo.Data
 
 
 
-      /// <inheritdoc/>
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (o is DataTablesAggregationDataSource s)
@@ -219,6 +223,10 @@ namespace Altaxo.Data
     }
 
 
+    /// <summary>
+    /// Copies the content from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     [MemberNotNull(nameof(_importOptions), nameof(_processOptions), nameof(_processData))]
     void CopyFrom(DataTablesAggregationDataSource from)
     {

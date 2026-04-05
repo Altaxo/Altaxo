@@ -33,6 +33,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 {
   public abstract partial class GraphicBase
   {
+    /// <summary>
+    /// Grip handle used to rotate a graphic object.
+    /// </summary>
     protected class RotationGripHandle : IGripManipulationHandle
     {
       private static GraphicsPath _rotationGripShape;
@@ -44,6 +47,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       private MatrixD2D _spanningHalfYRhombus;
       private bool _hasMoved;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="RotationGripHandle"/> class.
+      /// </summary>
       public RotationGripHandle(IHitTestObject parent, PointD2D relPos, MatrixD2D spanningHalfYRhombus)
       {
         _parent = parent;
@@ -80,6 +86,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         return false;
       }
 
+      /// <inheritdoc />
       public void MoveGrip(PointD2D newPosition)
       {
         newPosition = _parent.Transformation.InverseTransformPoint(newPosition);
@@ -98,12 +105,14 @@ namespace Altaxo.Graph.Gdi.Shapes
         g.FillPath(Brushes.Blue, shape);
       }
 
+      /// <inheritdoc />
       public bool IsGripHitted(PointD2D point)
       {
         point = _spanningHalfYRhombus.InverseTransformPoint(point);
         return Calc.RMath.IsInIntervalCC(point.X, 0, 1) && Calc.RMath.IsInIntervalCC(point.Y, -1, 1);
       }
 
+      /// <inheritdoc />
       public bool IsGrippedObjectDisposed
       {
         get

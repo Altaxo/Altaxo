@@ -30,6 +30,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
 {
   using GraphicsContext;
 
+  /// <summary>
+  /// Defines the common behavior of three-dimensional graphics placed on a graph layer.
+  /// </summary>
   public interface IGraphicBase
     :
     Main.IChangedEventSource,
@@ -43,6 +46,11 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// <param name="isTriggeringChangedEvent">If set to <c>true</c>, the Changed event is triggered if the size of the parent differs from the cached parent's size.</param>
     void SetParentSize(VectorD3D parentSize, bool isTriggeringChangedEvent);
 
+    /// <summary>
+    /// Tests whether the graphic is hit by the specified hit data.
+    /// </summary>
+    /// <param name="hitData">The hit-test data.</param>
+    /// <returns>The hit-test object, or <see langword="null"/>.</returns>
     IHitTestObject? HitTest(HitTestPointData hitData);
 
     //Altaxo.Graph.Gdi.IHitTestObject HitTest(Altaxo.Graph.Gdi.HitTestRectangularData hitData);
@@ -59,6 +67,11 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// <param name="context">The paint context.</param>
     void PaintPreprocessing(Altaxo.Graph.IPaintContext context);
 
+    /// <summary>
+    /// Paints the graphic.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="context">The paint context.</param>
     void Paint(IGraphicsContext3D g, Altaxo.Graph.IPaintContext context);
 
     /// <summary>
@@ -68,6 +81,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// <returns><c>True</c> if this object is compatible with the parent object; otherwise <c>false</c>.</returns>
     bool IsCompatibleWithParent(object parentObject);
 
+    /// <summary>
+    /// Gets or sets the graphic position.
+    /// </summary>
     PointD3D Position { get; set; }
   }
 }

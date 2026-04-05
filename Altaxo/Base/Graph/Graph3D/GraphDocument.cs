@@ -41,10 +41,24 @@ namespace Altaxo.Graph.Graph3D
   using GraphicsContext;
   using Gui.Graph.Graph3D;
 
+  /// <summary>
+  /// Represents a three-dimensional graph document.
+  /// </summary>
   public class GraphDocument : GraphDocumentBase
   {
+    /// <summary>
+    /// The default root-layer size in x-direction, in points.
+    /// </summary>
     protected const double DefaultRootLayerSizeX = 128 * 720 / 254.0; // 128 mm
+
+    /// <summary>
+    /// The default root-layer size in y-direction, in points.
+    /// </summary>
     protected const double DefaultRootLayerSizeY = 96 * 720 / 254.0; // 96 mm
+
+    /// <summary>
+    /// The default root-layer size in z-direction, in points.
+    /// </summary>
     protected const double DefaultRootLayerSizeZ = 96 * 720 / 254.0; // 96 mm
 
     #region Member variables
@@ -76,6 +90,9 @@ namespace Altaxo.Graph.Graph3D
 
     #region Properties and Property-Keys
 
+    /// <summary>
+    /// Gets the property key for the default root-layer size of three-dimensional graph documents.
+    /// </summary>
     public static readonly Main.Properties.PropertyKey<ItemLocationDirect> PropertyKeyDefaultRootLayerSize =
     new Main.Properties.PropertyKey<ItemLocationDirect>(
       "401DBB9A-7605-4DA6-BFBE-C7A24AA42C48",
@@ -94,6 +111,9 @@ namespace Altaxo.Graph.Graph3D
       }
     };
 
+    /// <summary>
+    /// Gets the property key for the default font of three-dimensional graph documents.
+    /// </summary>
     public static readonly Main.Properties.PropertyKey<FontX3D> PropertyKeyDefaultFont =
       new Main.Properties.PropertyKey<FontX3D>(
       "8D245305-B64F-4B51-ACB4-A30B5C7C20FE",
@@ -110,6 +130,9 @@ namespace Altaxo.Graph.Graph3D
         }
       };
 
+    /// <summary>
+    /// Gets the property key for the default foreground color of three-dimensional graph documents.
+    /// </summary>
     public static readonly Main.Properties.PropertyKey<Altaxo.Drawing.NamedColor> PropertyKeyDefaultForeColor =
       new Main.Properties.PropertyKey<Altaxo.Drawing.NamedColor>(
       "C574AE52-EFA1-4F77-88EF-2CB1DE3A3867",
@@ -127,6 +150,9 @@ namespace Altaxo.Graph.Graph3D
         }
       };
 
+    /// <summary>
+    /// Gets the property key for the default scene background color of three-dimensional graph documents.
+    /// </summary>
     public static readonly Main.Properties.PropertyKey<Altaxo.Drawing.NamedColor> PropertyKeyDefaultSceneBackColor =
     new Main.Properties.PropertyKey<Altaxo.Drawing.NamedColor>(
     "D66E1DCF-F338-4CF1-BC4C-077335A4C823",
@@ -144,6 +170,9 @@ namespace Altaxo.Graph.Graph3D
       }
     };
 
+    /// <summary>
+    /// Gets the property key for the visibility of root-layer markers.
+    /// </summary>
     public static readonly Main.Properties.PropertyKey<GuiModels.RootLayerMarkersVisibility> PropertyKeyRootLayerMarkersVisibility =
     new Main.Properties.PropertyKey<GuiModels.RootLayerMarkersVisibility>(
     "4EF17EF7-C494-4B76-98EC-D394172B58F8",
@@ -160,6 +189,11 @@ namespace Altaxo.Graph.Graph3D
       }
     };
 
+    /// <summary>
+    /// Gets the default font using the specified property context.
+    /// </summary>
+    /// <param name="context">The property context.</param>
+    /// <returns>The default font.</returns>
     public static FontX3D GetDefaultFont(IReadOnlyPropertyBag context)
     {
       if (context is not null)
@@ -246,6 +280,11 @@ namespace Altaxo.Graph.Graph3D
       return result;
     }
 
+    /// <summary>
+    /// Gets the default foreground color using the specified property context.
+    /// </summary>
+    /// <param name="context">The property context.</param>
+    /// <returns>The default foreground color.</returns>
     public static NamedColor GetDefaultForeColor(IReadOnlyPropertyBag context)
     {
       if (context is null)
@@ -254,11 +293,21 @@ namespace Altaxo.Graph.Graph3D
       return context.GetValue<NamedColor>(PropertyKeyDefaultForeColor);
     }
 
+    /// <summary>
+    /// Gets the default background color using the specified property context.
+    /// </summary>
+    /// <param name="context">The property context.</param>
+    /// <returns>The default background color.</returns>
     public static NamedColor GetDefaultBackColor(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       return Altaxo.Graph.Gdi.GraphDocument.GetDefaultBackColor(context);
     }
 
+    /// <summary>
+    /// Gets the default plot color using the specified property context.
+    /// </summary>
+    /// <param name="context">The property context.</param>
+    /// <returns>The default plot color.</returns>
     public static NamedColor GetDefaultPlotColor(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       return Altaxo.Graph.Gdi.GraphDocument.GetDefaultPlotColor(context);
@@ -271,6 +320,7 @@ namespace Altaxo.Graph.Graph3D
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphDocument), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (GraphDocument)obj;
@@ -287,6 +337,12 @@ namespace Altaxo.Graph.Graph3D
         //info.AddValue("DefaultCamera", s._defaultCamera);
       }
 
+      /// <summary>
+      /// Deserializes the specified graph document instance.
+      /// </summary>
+      /// <param name="s">The graph document to populate.</param>
+      /// <param name="info">The deserialization info.</param>
+      /// <param name="parent">The parent object.</param>
       public void Deserialize(GraphDocument s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         s._name = info.GetString("Name");
@@ -301,6 +357,7 @@ namespace Altaxo.Graph.Graph3D
         //s._defaultCamera = (CameraBase)info.GetValue("DefaultCamera", s);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (GraphDocument?)o ?? new GraphDocument();
@@ -329,6 +386,10 @@ namespace Altaxo.Graph.Graph3D
       };
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GraphDocument"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public GraphDocument(GraphDocument from)
     {
       using (var suppressToken = SuspendGetToken())
@@ -342,6 +403,11 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Copies data from another graph document.
+    /// </summary>
+    /// <param name="from">The source document.</param>
+    /// <param name="options">The copy options.</param>
     [MemberNotNull(nameof(_camera), nameof(_lighting))]
     public void CopyFrom(GraphDocument from, Altaxo.Graph.Gdi.GraphCopyOptions options)
     {
@@ -391,6 +457,7 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new GraphDocument(this);
@@ -400,6 +467,7 @@ namespace Altaxo.Graph.Graph3D
 
     #region Infrastructure
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_rootLayer is not null)
@@ -412,6 +480,9 @@ namespace Altaxo.Graph.Graph3D
         yield return new Main.DocumentNodeAndName(_notes, () => _notes = null!, "Notes");
     }
 
+    /// <summary>
+    /// Gets or sets the camera used to view the scene.
+    /// </summary>
     public CameraBase Camera
     {
       get
@@ -432,6 +503,9 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the scene lighting.
+    /// </summary>
     public LightSettings Lighting
     {
       get
@@ -535,6 +609,7 @@ namespace Altaxo.Graph.Graph3D
       EhSelfChanged(EventArgs.Empty);
     }
 
+    /// <inheritdoc />
     protected override void OnChanged(EventArgs e)
     {
       if (_cachedRootLayerSize != _rootLayer.Size)
@@ -579,6 +654,10 @@ namespace Altaxo.Graph.Graph3D
       _rootLayer.Position = _rootLayer.Position - (VectorD3D)r.Location;
     }
 
+    /// <summary>
+    /// Paints the graph using the specified 3D graphics context.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
     public void Paint(IGraphicsContext3D g)
     {
       // First set the current thread's document culture

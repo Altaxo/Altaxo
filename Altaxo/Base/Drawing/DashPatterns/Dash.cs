@@ -30,10 +30,13 @@ using System.Text;
 
 namespace Altaxo.Drawing.DashPatterns
 {
+  /// <summary>
+  /// Built-in dash pattern with repeating dash-gap segments.
+  /// </summary>
   public class Dash : DashPatternBase
   {
     /// <summary>
-    /// Gets an pre-instantiated instance of this class.
+    /// Gets a pre-instantiated instance of this class.
     /// </summary>
     /// <value>
     /// An instance of this class.
@@ -62,6 +65,7 @@ namespace Altaxo.Drawing.DashPatterns
 
     #endregion Serialization
 
+    /// <inheritdoc/>
     public override double this[int index]
     {
       get
@@ -84,6 +88,7 @@ namespace Altaxo.Drawing.DashPatterns
       }
     }
 
+    /// <inheritdoc/>
     public override int Count
     {
       get

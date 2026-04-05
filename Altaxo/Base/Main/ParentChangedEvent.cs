@@ -27,26 +27,53 @@ using System;
 
 namespace Altaxo.Main
 {
+  /// <summary>
+  /// Provides data for notifications that report a changed parent object.
+  /// </summary>
   public class ParentChangedEventArgs : System.EventArgs
   {
-    protected object? _oldParent, _newParent;
+    /// <summary>
+    /// The previous parent object.
+    /// </summary>
+    protected object? _oldParent;
 
+    /// <summary>
+    /// The new parent object.
+    /// </summary>
+    protected object? _newParent;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ParentChangedEventArgs"/> class.
+    /// </summary>
+    /// <param name="oldParent">The previous parent object.</param>
+    /// <param name="newParent">The new parent object.</param>
     public ParentChangedEventArgs(object? oldParent, object? newParent)
     {
       _oldParent = oldParent;
       _newParent = newParent;
     }
 
+    /// <summary>
+    /// Gets the new parent object.
+    /// </summary>
     public object? NewParent
     {
       get { return _newParent; }
     }
 
+    /// <summary>
+    /// Gets the previous parent object.
+    /// </summary>
     public object? OldParent
     {
       get { return _oldParent; }
     }
   }
 
+  /// <summary>
+  /// Represents the method that handles a parent-changed event.
+  /// </summary>
+  /// <param name="sender">The event source.</param>
+  /// <param name="e">The event arguments.</param>
   public delegate void ParentChangedEventHandler(object sender, ParentChangedEventArgs e);
 }

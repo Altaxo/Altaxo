@@ -27,7 +27,7 @@
 namespace Altaxo.Data
 {
   /// <summary>
-  /// Interface to a readable column that is amended with a transformation.
+  /// Interface for a readable column that is combined with a transformation.
   /// </summary>
   /// <seealso cref="Altaxo.Data.IReadableColumn" />
   public interface ITransformedReadableColumn : IReadableColumn

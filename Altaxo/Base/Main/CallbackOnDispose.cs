@@ -37,11 +37,16 @@ namespace Altaxo.Main
   {
     private Action _action;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CallbackOnDispose"/> class.
+    /// </summary>
+    /// <param name="action">The action to invoke when this instance is disposed.</param>
     public CallbackOnDispose(Action action)
     {
       _action = action ?? throw new ArgumentNullException(nameof(action));
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
       Interlocked.Exchange(ref _action, null!)?.Invoke();
@@ -50,9 +55,9 @@ namespace Altaxo.Main
   }
 
   /// <summary>
-  /// This class is used to prevent stack overflows by representing a 'busy' flag
+  /// This class is used to prevent stack overflows by representing a busy flag
   /// that prevents reentrance when another call is running.
-  /// However, using a simple 'bool busy' is not thread-safe, so we use a
+  /// However, using a simple <c>bool busy</c> is not thread-safe, so we use a
   /// thread-static BusyManager.
   /// </summary>
   internal static class BusyManager

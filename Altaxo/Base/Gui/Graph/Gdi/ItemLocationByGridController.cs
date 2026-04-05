@@ -30,12 +30,15 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Gdi
 {
+  /// <summary>
+  /// View contract for editing 2D item locations in a grid.
+  /// </summary>
   public interface IItemLocationByGridView : IDataContextAwareView
   {
   }
 
   /// <summary>
-  /// Summary description for LayerPositionController.
+  /// Controller for editing <see cref="ItemLocationByGrid"/> values in 2D graphs.
   /// </summary>
   [ExpectedTypeOfView(typeof(IItemLocationByGridView))]
   [UserControllerForObject(typeof(ItemLocationByGrid))]
@@ -43,11 +46,13 @@ namespace Altaxo.Gui.Graph.Gdi
   {
     private GridPartitioning _parentLayerGrid;
 
+    /// <inheritdoc/>
     public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <inheritdoc/>
     public override bool InitializeDocument(params object[] args)
     {
       if (args.Length < 2)
@@ -61,10 +66,16 @@ namespace Altaxo.Gui.Graph.Gdi
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the rotation environment.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment RotationEnvironment => AngleEnvironment.Instance;
 
     private DimensionfulQuantity _rotation;
 
+    /// <summary>
+    /// Gets or sets the rotation.
+    /// </summary>
     public DimensionfulQuantity Rotation
     {
       get => _rotation;
@@ -78,10 +89,16 @@ namespace Altaxo.Gui.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets the shear environment.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment ShearEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _shearX;
 
+    /// <summary>
+    /// Gets or sets the X shear.
+    /// </summary>
     public DimensionfulQuantity ShearX
     {
       get => _shearX;
@@ -95,10 +112,16 @@ namespace Altaxo.Gui.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets the scale environment.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment ScaleEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _scaleX;
 
+    /// <summary>
+    /// Gets or sets the X scale.
+    /// </summary>
     public DimensionfulQuantity ScaleX
     {
       get => _scaleX;
@@ -115,6 +138,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private DimensionfulQuantity _scaleY;
 
+    /// <summary>
+    /// Gets or sets the Y scale.
+    /// </summary>
     public DimensionfulQuantity ScaleY
     {
       get => _scaleY;
@@ -130,6 +156,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private bool _forceFitIntoCell;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the item is forced to fit into the cell.
+    /// </summary>
     public bool ForceFitIntoCell
     {
       get => _forceFitIntoCell;
@@ -145,6 +174,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private double _gridRow;
 
+    /// <summary>
+    /// Gets or sets the grid row.
+    /// </summary>
     public double GridRow
     {
       get => _gridRow;
@@ -160,6 +192,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private double _gridRowSpan;
 
+    /// <summary>
+    /// Gets or sets the grid row span.
+    /// </summary>
     public double GridRowSpan
     {
       get => _gridRowSpan;
@@ -175,6 +210,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private double _gridColumn;
 
+    /// <summary>
+    /// Gets or sets the grid column.
+    /// </summary>
     public double GridColumn
     {
       get => _gridColumn;
@@ -189,6 +227,9 @@ namespace Altaxo.Gui.Graph.Gdi
     }
     private double _gridColumnSpan;
 
+    /// <summary>
+    /// Gets or sets the grid column span.
+    /// </summary>
     public double GridColumnSpan
     {
       get => _gridColumnSpan;
@@ -206,6 +247,7 @@ namespace Altaxo.Gui.Graph.Gdi
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -224,6 +266,7 @@ namespace Altaxo.Gui.Graph.Gdi
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       try

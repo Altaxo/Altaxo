@@ -31,6 +31,9 @@ using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Worksheet
 {
+  /// <summary>
+  /// Represents the worksheet style used for Boolean data columns.
+  /// </summary>
   public class BooleanColumnStyle : Altaxo.Worksheet.ColumnStyle
   {
     #region Serialization
@@ -38,12 +41,14 @@ namespace Altaxo.Worksheet
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BooleanColumnStyle), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (BooleanColumnStyle)obj;
         info.AddBaseValueEmbedded(s, typeof(BooleanColumnStyle).BaseType!);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         BooleanColumnStyle s = o is not null ? (BooleanColumnStyle)o : new BooleanColumnStyle();
@@ -54,6 +59,9 @@ namespace Altaxo.Worksheet
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BooleanColumnStyle"/> class.
+    /// </summary>
     public BooleanColumnStyle()
       : base(ColumnStyleType.DataCell)
     {
@@ -61,22 +69,29 @@ namespace Altaxo.Worksheet
       _textFormat.FormatFlags = StringFormatFlags.LineLimit;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BooleanColumnStyle"/> class by copying another instance.
+    /// </summary>
+    /// <param name="tcs">The instance to copy.</param>
     public BooleanColumnStyle(BooleanColumnStyle tcs)
       : base(tcs)
     {
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new BooleanColumnStyle(this);
     }
 
+    /// <inheritdoc />
     public override string GetColumnValueAtRow(int nRow, Altaxo.Data.DataColumn data)
     {
       var v = ((Altaxo.Data.BooleanColumn)data)[nRow];
       return v.HasValue ? (v.Value ? "true" : "false") : "";
     }
 
+    /// <inheritdoc />
     public override void SetColumnValueAtRow(string s, int nRow, Altaxo.Data.DataColumn data)
     {
       try
@@ -88,8 +103,12 @@ namespace Altaxo.Worksheet
       catch (Exception) { }
     }
 
-    public static Dictionary<System.Type, Action<BooleanColumnStyle, object, RectangleD2D, int, Altaxo.Data.DataColumn, bool>> RegisteredPaintMethods = new Dictionary<Type, Action<BooleanColumnStyle, object, RectangleD2D, int, Data.DataColumn, bool>>();
+    /// <summary>
+    /// Gets the registered paint methods for specific drawing contexts.
+    /// </summary>
+    public static Dictionary<System.Type, Action<BooleanColumnStyle, object, RectangleD2D, int, Altaxo.Data.DataColumn, bool>> RegisteredPaintMethods = new Dictionary<System.Type, Action<BooleanColumnStyle, object, RectangleD2D, int, Altaxo.Data.DataColumn, bool>>();
 
+    /// <inheritdoc />
     public override void Paint(System.Type dctype, object dc, RectangleD2D cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
     {
       if (RegisteredPaintMethods.TryGetValue(dctype, out var action))
@@ -98,6 +117,7 @@ namespace Altaxo.Worksheet
         throw new NotImplementedException("Paint method is not implemented for context type " + dc.GetType().ToString());
     }
 
+    /// <inheritdoc />
     public override void Paint(Graphics dc, Rectangle cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
     {
       PaintBackground(dc, cellRectangle, bSelected);

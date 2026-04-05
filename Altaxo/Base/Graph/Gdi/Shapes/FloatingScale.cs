@@ -40,6 +40,9 @@ using Altaxo.Graph.Scales.Ticks;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
+  /// <summary>
+  /// Enumerates the kind of span that determines the length of a floating scale.
+  /// </summary>
   /// <summary>Enumerates the kind of span that determines the length of the floating scale.</summary>
   public enum FloatingScaleSpanType
   {
@@ -59,6 +62,9 @@ namespace Altaxo.Graph.Gdi.Shapes
     IsPhysicalEndOrgRatio
   }
 
+  /// <summary>
+  /// Represents a floating scale graphic.
+  /// </summary>
   [Serializable]
   public class FloatingScale : GraphicBase
   {
@@ -100,6 +106,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FloatingScale), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (FloatingScale)obj;
@@ -117,6 +124,7 @@ namespace Altaxo.Graph.Gdi.Shapes
           info.AddValue("BackgroundPadding", s._backgroundPadding);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (FloatingScale?)o ?? new FloatingScale(info);
@@ -152,6 +160,10 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FloatingScale"/> class.
+    /// </summary>
+    /// <param name="context">The property context.</param>
     public FloatingScale(Main.Properties.IReadOnlyPropertyBag context)
       : base(new ItemLocationDirectAutoSize())
     {
@@ -160,12 +172,19 @@ namespace Altaxo.Graph.Gdi.Shapes
       _axisStyle = new AxisStyle(new CSLineID(0, 0), true, false, true, null, context);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FloatingScale"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public FloatingScale(FloatingScale from)
       : base(from)
     {
       CopyFrom(from, false);
     }
 
+    /// <summary>
+    /// Copies values from another <see cref="FloatingScale"/> instance.
+    /// </summary>
     [MemberNotNull(nameof(_scaleSpanValue), nameof(_tickSpacing), nameof(_axisStyle))]
     protected void CopyFrom(FloatingScale from, bool withBaseMembers)
     {
@@ -186,6 +205,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       CopyHelper.Copy(ref _background, from._background);
     }
 
+    /// <inheritdoc/>
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -205,11 +225,13 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <inheritdoc/>
     public override object Clone()
     {
       return new FloatingScale(this);
     }
 
+    /// <inheritdoc/>
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_tickSpacing is not null)
@@ -222,6 +244,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #endregion Constructors
 
+    /// <inheritdoc/>
     public override void FixupInternalDataStructures()
     {
       base.FixupInternalDataStructures();
@@ -283,11 +306,15 @@ namespace Altaxo.Graph.Gdi.Shapes
       _axisStyle.FixupInternalDataStructures(_cachedLayerSegment, _cachedLayerSegment.GetAxisStyleInformation); // we use here special AxisStyleInformation not provided by the underlying CS, but by the layer segment
     }
 
+    /// <inheritdoc/>
     public override bool IsCompatibleWithParent(object parentObject)
     {
       return parentObject is XYPlotLayer;
     }
 
+    /// <summary>
+    /// Gets the axis style of the floating scale.
+    /// </summary>
     public AxisStyle AxisStyle
     {
       get
@@ -296,6 +323,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets the scale segment type.
+    /// </summary>
     public ScaleSegmentType ScaleType
     {
       get
@@ -313,6 +343,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets the tick spacing.
+    /// </summary>
     public TickSpacing TickSpacing
     {
       get
@@ -330,6 +363,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets the number of the underlying scale.
+    /// </summary>
     public int ScaleNumber
     {
       get
@@ -342,6 +378,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets the scale span value.
+    /// </summary>
     public double ScaleSpanValue
     {
       get
@@ -354,6 +393,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets the type of the scale span value.
+    /// </summary>
     public FloatingScaleSpanType ScaleSpanType
     {
       get
@@ -366,6 +408,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets the background padding.
+    /// </summary>
     public Margin2D BackgroundPadding
     {
       get
@@ -381,6 +426,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets the background style.
+    /// </summary>
     public IBackgroundStyle? Background
     {
       get
@@ -396,6 +444,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <inheritdoc/>
     public override bool AllowNegativeSize
     {
       get
@@ -404,6 +453,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <inheritdoc/>
     public override bool AutoSize
     {
       get
@@ -412,6 +462,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <inheritdoc/>
     protected override void SetPosition(PointD2D value, Main.EventFiring eventFiring)
     {
       var oldPosition = GetPosition();
@@ -424,6 +475,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <inheritdoc/>
     public override void SilentSetPosition(PointD2D newPosition)
     {
       var oldPosition = GetPosition();
@@ -435,21 +487,32 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets the selection path.
+    /// </summary>
+    /// <returns>The selection path.</returns>
     public GraphicsPath GetSelectionPath()
     {
       return (GraphicsPath?)_cachedPath?.Clone() ?? throw new InvalidOperationException("Path not set yet!");
     }
 
+    /// <inheritdoc/>
     public override GraphicsPath GetObjectOutlineForArrangements()
     {
       return (GraphicsPath?)_cachedPath?.Clone() ?? throw new InvalidOperationException("Path not set yet!");
     }
 
+    /// <summary>
+    /// Gets a copy of the cached path for the floating scale.
+    /// </summary>
+    /// <param name="minWidth">The minimum width used when creating the path.</param>
+    /// <returns>A copy of the cached path.</returns>
     protected GraphicsPath? GetPath(double minWidth)
     {
       return (GraphicsPath?)_cachedPath?.Clone() ?? throw new InvalidOperationException("Path not set yet!");
     }
 
+    /// <inheritdoc/>
     public override IHitTestObject? HitTest(HitTestPointData htd)
     {
       if (_axisStyle.Title is not null)
@@ -492,6 +555,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       return true;
     }
 
+    /// <inheritdoc/>
     public override void Paint(Graphics g, IPaintContext paintContext)
     {
       if (_cachedLayerSegment is null) // _privLayer should be set before in FixupInternalDataStructures
@@ -666,7 +730,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
 
     /// <summary>
-    /// Enumerates the type of scale segment
+    /// Enumerates the type of scale segment.
     /// </summary>
     public enum ScaleSegmentType
     {

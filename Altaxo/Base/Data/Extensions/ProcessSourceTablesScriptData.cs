@@ -33,6 +33,9 @@ using Altaxo.Scripting;
 
 namespace Altaxo.Data
 {
+  /// <summary>
+  /// Process data for executing a script against multiple source tables.
+  /// </summary>
   public class ProcessSourceTablesScriptData : Main.SuspendableDocumentNodeWithEventArgs, ICloneable
   {
     private List<(string Name, DataTableProxy TableProxy)> _tables = new();
@@ -95,6 +98,10 @@ namespace Altaxo.Data
 
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ProcessSourceTablesScriptData"/> class from a sequence of named table proxies.
+    /// </summary>
+    /// <param name="tables">The source tables to process.</param>
     public ProcessSourceTablesScriptData(IEnumerable<(string Name, DataTableProxy TableProxy)> tables)
     {
       _tables = new();
@@ -106,16 +113,23 @@ namespace Altaxo.Data
       }
     }
 
+    /// <summary>
+    /// Creates a deep copy of this process-source-table description.
+    /// </summary>
+    /// <returns>A cloned instance.</returns>
     public object Clone()
     {
       return new ProcessSourceTablesScriptData(_tables);
     }
 
     /// <summary>
-    /// Gets the source tables for the extraction.
+    /// Gets the source table proxies.
     /// </summary>
     public IReadOnlyList<(string Name, DataTableProxy Proxy)> TableProxies => _tables;
 
+    /// <summary>
+    /// Gets the resolved source tables indexed by their configured names.
+    /// </summary>
     public IReadOnlyListDictionary<string, DataTable> Tables
     {
       get
@@ -131,6 +145,7 @@ namespace Altaxo.Data
     }
 
 
+    /// <inheritdoc />
     protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_tables is { } tables)
@@ -140,6 +155,7 @@ namespace Altaxo.Data
       }
     }
 
+    /// <inheritdoc />
     public void VisitDocumentReferences(DocNodeProxyReporter reportProxies)
     {
       for (int i = _tables.Count - 1; i >= 0; i--)

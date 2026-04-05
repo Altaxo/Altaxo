@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -34,38 +34,48 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
+  /// <summary>
+  /// HSB color model implementation for the color management UI.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorModelHSB}")]
   public class ColorModelHSB : IColorModel
   {
+    /// <inheritdoc/>
     public AxoColor GetColorFor1DColorSurfaceFromRelativePosition(double relativePosition)
     {
       return AxoColor.FromAhsb(1, (float)relativePosition, 1, 1);
     }
 
+    /// <inheritdoc/>
     public AxoColor GetColorFor2DColorSurfaceFromRelativePosition(PointD2D relativePosition, AxoColor c)
     {
       return AxoColor.FromAhsb(1, c.GetHue(), (float)(relativePosition.X), (float)(relativePosition.Y));
     }
 
+    /// <inheritdoc/>
     public (double position1D, PointD2D position2D) GetRelativePositionsFor1Dand2DColorSurfaceFromColor(AxoColor color)
     {
       var (alpha, hue, saturation, brightness) = color.ToAhsb();
       return (hue, new PointD2D(saturation, brightness));
     }
 
+    /// <inheritdoc/>
     public bool IsUsingByteComponents { get { return false; } }
 
+    /// <inheritdoc/>
     public double[] GetComponentsForColor(AxoColor color)
     {
       var (alpha, hue, saturation, brightness) = color.ToAhsb();
       return new double[] { hue, saturation, brightness };
     }
 
+    /// <inheritdoc/>
     public AxoColor GetColorFromComponents(double[] components)
     {
       return AxoColor.FromAhsb(1, (float)components[0], (float)components[1], (float)components[2]);
     }
 
+    /// <inheritdoc/>
     public string[] GetNamesOfComponents()
     {
       return new string[] { "H", "S", "B" };

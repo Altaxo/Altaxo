@@ -35,13 +35,19 @@ using Altaxo.Serialization;
 namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
 {
   /// <summary>
-  /// Represents the null symbol in a scatter plot, i.e. this symbol is not visible.
+  /// Represents a cube scatter symbol.
   /// </summary>
   /// <seealso cref="Altaxo.Graph.Graph3D.Plot.Styles.IScatterSymbol" />
   public sealed class Cube : ScatterSymbolShapeBase
   {
+    /// <summary>
+    /// Gets the shared instance of the <see cref="Cube"/> symbol.
+    /// </summary>
     public static Cube Instance { get; private set; } = new Cube();
 
+    /// <summary>
+    /// Gets the factor that converts the enclosing sphere diameter to the cube edge length.
+    /// </summary>
     public static readonly double Sqrt1By3 = Math.Sqrt(1 / 3.0);
 
     #region Serialization
@@ -49,14 +55,19 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
     /// <summary>
     /// 2016-05-09 initial version.
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="Cube"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Cube), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         SerializeV0((IScatterSymbol)obj, info);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return DeserializeV0(Instance, info, parent);
@@ -65,6 +76,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
 
     #endregion Serialization
 
+    /// <inheritdoc/>
     public override void Paint(IGraphicsContext3D g, IMaterial material, PointD3D centerLocation, double symbolSize)
     {
       // Note: the symbolSize provided in the argument is the diameter of an imaginary sphere in which the cube has to fit in

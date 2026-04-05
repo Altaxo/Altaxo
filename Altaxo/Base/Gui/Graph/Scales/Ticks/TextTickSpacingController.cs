@@ -31,15 +31,20 @@ using Altaxo.Graph.Scales.Ticks;
 
 namespace Altaxo.Gui.Graph.Scales.Ticks
 {
+  /// <summary>
+  /// Controller for <see cref="TextTickSpacing"/>.
+  /// </summary>
   [UserControllerForObject(typeof(TextTickSpacing), 200)]
   [ExpectedTypeOfView(typeof(INoTickSpacingView))]
   public class TextTickSpacingController : MVCANControllerEditOriginalDocBase<TextTickSpacing, INoTickSpacingView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -49,6 +54,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);

@@ -33,6 +33,9 @@ namespace Altaxo
 {
   public partial class Current
   {
+    /// <summary>
+    /// Gets the Altaxo-specific project service.
+    /// </summary>
     public static Altaxo.Main.IAltaxoProjectService ProjectService
     {
       get
@@ -136,7 +139,7 @@ namespace Altaxo
     private static Altaxo.Main.Services.IHighResolutionClock? _highResolutionClock;
 
     /// <summary>
-    /// Gets a high resolution clock that delivers relative values (TimeSpan values relative to the start of the clock). Those values are guaranteed to be continuously incresing, even
+    /// Gets a high resolution clock that delivers relative values (TimeSpan values relative to the start of the clock). Those values are guaranteed to be continuously increasing, even
     /// if the computer's clock time is changed backwards.
     /// </summary>
     /// <value>

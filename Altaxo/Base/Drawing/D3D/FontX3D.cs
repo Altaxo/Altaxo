@@ -33,6 +33,9 @@ using Altaxo.Graph;
 
 namespace Altaxo.Drawing.D3D
 {
+  /// <summary>
+  /// Represents a 3D font consisting of a 2D font definition and an extrusion depth.
+  /// </summary>
   public class FontX3D
   {
     private FontX _font;
@@ -64,17 +67,28 @@ namespace Altaxo.Drawing.D3D
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FontX3D"/> class.
+    /// </summary>
+    /// <param name="font">The 2D font definition.</param>
+    /// <param name="depth">The extrusion depth.</param>
     public FontX3D(FontX font, double depth)
     {
       _font = font;
       _depth = depth;
     }
 
+    /// <summary>
+    /// Gets the underlying 2D font definition.
+    /// </summary>
     public FontX Font
     {
       get { return _font; }
     }
 
+    /// <summary>
+    /// Gets the extrusion depth.
+    /// </summary>
     public double Depth
     {
       get
@@ -83,6 +97,9 @@ namespace Altaxo.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Gets the font size.
+    /// </summary>
     public double Size
     {
       get
@@ -91,6 +108,9 @@ namespace Altaxo.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Gets the font style.
+    /// </summary>
     public FontXStyle Style
     {
       get
@@ -103,21 +123,41 @@ namespace Altaxo.Drawing.D3D
     /// <value>The name of the font family.</value>
     public string FontFamilyName { get { return _font.FontFamilyName; } }
 
+    /// <summary>
+    /// Returns a copy of this font with a different size.
+    /// </summary>
+    /// <param name="newSize">The new size.</param>
+    /// <returns>A font with the updated size.</returns>
     public FontX3D WithSize(double newSize)
     {
       return new FontX3D(_font.WithSize(newSize), _depth);
     }
 
+    /// <summary>
+    /// Returns a copy of this font with a different family.
+    /// </summary>
+    /// <param name="newFamily">The new family name.</param>
+    /// <returns>A font with the updated family.</returns>
     public FontX3D WithFamily(string newFamily)
     {
       return new FontX3D(_font.WithFamily(newFamily), _depth);
     }
 
+    /// <summary>
+    /// Returns a copy of this font with a different style.
+    /// </summary>
+    /// <param name="style">The new font style.</param>
+    /// <returns>A font with the updated style.</returns>
     public FontX3D WithStyle(FontXStyle style)
     {
       return new FontX3D(_font.WithStyle(style), _depth);
     }
 
+    /// <summary>
+    /// Returns a copy of this font with a different extrusion depth.
+    /// </summary>
+    /// <param name="newDepth">The new extrusion depth.</param>
+    /// <returns>A font with the updated depth.</returns>
     public FontX3D WithDepth(double newDepth)
     {
       return new FontX3D(_font, newDepth);

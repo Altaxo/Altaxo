@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -28,16 +28,25 @@ using System.Collections.Generic;
 
 namespace Altaxo.Gui.Common.BasicTypes
 {
+  /// <summary>
+  /// Defines the view contract for editing <see cref="DateTime"/> values.
+  /// </summary>
   public interface IDateTimeValueView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="DateTime"/> values.
+  /// </summary>
   [UserControllerForObject(typeof(DateTime), 100)]
   [ExpectedTypeOfView(typeof(IDateTimeValueView))]
   public class DateTimeValueController : MVCANDControllerEditImmutableDocBase<DateTime, IDateTimeValueView>
   {
     #region Bindings
 
+    /// <summary>
+    /// Gets or sets the value.
+    /// </summary>
     public DateTime Value
     {
       get
@@ -57,21 +66,30 @@ namespace Altaxo.Gui.Common.BasicTypes
 
     #endregion
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DateTimeValueController"/> class.
+    /// </summary>
     public DateTimeValueController()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DateTimeValueController"/> class.
+    /// </summary>
+    /// <param name="value">The initial value.</param>
     public DateTimeValueController(DateTime value)
     {
       _doc = _originalDoc = value;
       Initialize(true);
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;

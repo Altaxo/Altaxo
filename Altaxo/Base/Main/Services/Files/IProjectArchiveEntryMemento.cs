@@ -47,10 +47,10 @@ namespace Altaxo.Main.Services
     string EntryName { get; }
 
     /// <summary>
-    /// Gives a instance of the memento, with a new entry name (returns the same instance if the entry name is the same).
+    /// Returns a memento with a new entry name.
     /// </summary>
     /// <param name="newEntryName">New name of the entry.</param>
-    /// <returns>Instance of the memento with the new entry name.</returns>
+    /// <returns>The current instance if the entry name is unchanged; otherwise, a memento for the new entry name.</returns>
     IProjectArchiveEntryMemento WithEntryName(string newEntryName);
 
     /// <summary>

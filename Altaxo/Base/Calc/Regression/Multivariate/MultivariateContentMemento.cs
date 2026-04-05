@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -96,14 +96,19 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     #region Serialization for CrossPRESSCalculationType
 
+    /// <summary>
+    /// Serializes <see cref="CrossPRESSCalculationType"/> values.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CrossPRESSCalculationType), 0)]
     public class CrossPRESSCalculationTypeXmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         info.SetNodeContent(obj.ToString() ?? string.Empty);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         string val = info.GetNodeContent();
@@ -116,6 +121,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.Regression.PLS.PLSContentMemento", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (MultivariateContentMemento)obj;
@@ -127,6 +133,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         info.AddValue("PreferredNumberOfFactors", s._PreferredNumberOfFactors); // the property columns of that table
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (MultivariateContentMemento?)o ?? new MultivariateContentMemento();
@@ -148,6 +155,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.Regression.PLS.PLSContentMemento", 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (MultivariateContentMemento)obj;
@@ -165,6 +173,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         info.AddValue("SpectralPreprocessingEnsembleScale", s._spectralPreprocessing.EnsembleScale);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (MultivariateContentMemento?)o ?? new MultivariateContentMemento();
@@ -196,6 +205,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MultivariateContentMemento), 2)]
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (MultivariateContentMemento)obj;
@@ -219,6 +229,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         info.AddValue("CrossPRESSCalculationType", s._crossPRESSCalculationType);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (MultivariateContentMemento?)o ?? new MultivariateContentMemento();
@@ -303,6 +314,9 @@ namespace Altaxo.Calc.Regression.Multivariate
       set { _MeanNumberOfMeasurementsInCrossPRESSCalculation = value; }
     }
 
+    /// <summary>
+    /// Gets the cross-validation grouping strategy corresponding to the stored cross-PRESS calculation type.
+    /// </summary>
     public ICrossValidationGroupingStrategy CrossValidationGroupingStrategy
     {
       get { return GetGroupingStrategy(_crossPRESSCalculationType); }

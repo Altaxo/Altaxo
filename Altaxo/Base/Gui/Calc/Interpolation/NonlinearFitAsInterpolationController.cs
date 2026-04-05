@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -35,17 +35,27 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Calc.Interpolation
 {
+  /// <summary>
+  /// Defines the view contract for editing <see cref="NonlinearFitAsInterpolation"/>.
+  /// </summary>
   public interface INonlinearFitAsInterpolationView : IDataContextAwareView { }
 
+  /// <summary>
+  /// Controller for <see cref="NonlinearFitAsInterpolation"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(INonlinearFitAsInterpolationView))]
   [UserControllerForObject(typeof(NonlinearFitAsInterpolation))]
   public class NonlinearFitAsInterpolationController : MVCANControllerEditImmutableDocBase<NonlinearFitAsInterpolation, INonlinearFitAsInterpolationView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(ParameterController, () => ParameterController = null!);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NonlinearFitAsInterpolationController"/> class.
+    /// </summary>
     public NonlinearFitAsInterpolationController()
     {
       CmdConfigureShape = new RelayCommand(EhConfigureShape);
@@ -56,8 +66,17 @@ namespace Altaxo.Gui.Calc.Interpolation
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the command for configuring the curve shape.
+    /// </summary>
     public ICommand CmdConfigureShape { get; }
+    /// <summary>
+    /// Gets the command for pasting parameter values.
+    /// </summary>
     public ICommand CmdPasteValues { get; }
+    /// <summary>
+    /// Gets the command for copying parameter values.
+    /// </summary>
     public ICommand CmdCopyValues { get; }
 
     private void EhConfigureShape()
@@ -73,6 +92,9 @@ namespace Altaxo.Gui.Calc.Interpolation
 
     private ItemsController<Type> _availableShapes;
 
+    /// <summary>
+    /// Gets or sets the available curve shapes.
+    /// </summary>
     public ItemsController<Type> AvailableShapes
     {
       get => _availableShapes;
@@ -88,6 +110,9 @@ namespace Altaxo.Gui.Calc.Interpolation
 
     private IMVCANController _parameterController;
 
+    /// <summary>
+    /// Gets or sets the parameter controller.
+    /// </summary>
     public IMVCANController ParameterController
     {
       get => _parameterController;
@@ -104,6 +129,7 @@ namespace Altaxo.Gui.Calc.Interpolation
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -165,6 +191,7 @@ namespace Altaxo.Gui.Calc.Interpolation
         psc.EhCopyParameterValues();
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (!ParameterController.Apply(disposeController))

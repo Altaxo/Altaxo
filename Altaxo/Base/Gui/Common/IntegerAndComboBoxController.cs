@@ -30,38 +30,93 @@ namespace Altaxo.Gui.Common
 {
   #region Interfaces
 
+  /// <summary>
+  /// View interface for a controller that combines an integer editor with a combo box.
+  /// </summary>
   public interface IIntegerAndComboBoxView
   {
+    /// <summary>
+    /// Initializes the combo box with the available items.
+    /// </summary>
     void ComboBox_Initialize(SelectableListNodeList items, SelectableListNode defaultItem);
 
+    /// <summary>
+    /// Initializes the label for the combo box.
+    /// </summary>
     void ComboBoxLabel_Initialize(string text);
 
+    /// <summary>
+    /// Initializes the integer editor.
+    /// </summary>
     void IntegerEdit_Initialize(int min, int max, int val);
 
+    /// <summary>
+    /// Initializes the label for the integer editor.
+    /// </summary>
     void IntegerLabel_Initialize(string text);
 
+    /// <summary>
+    /// Occurs when the combo box selection changes.
+    /// </summary>
     event Action<SelectableListNode> ComboBoxSelectionChanged;
 
+    /// <summary>
+    /// Occurs when the integer selection changes.
+    /// </summary>
     event Action<int> IntegerSelectionChanged;
   }
 
   #endregion Interfaces
 
   /// <summary>
-  /// Summary description for IntegerAndComboBoxController.
+  /// Controller for a combined integer editor and combo box view.
   /// </summary>
   [ExpectedTypeOfView(typeof(IIntegerAndComboBoxView))]
   public class IntegerAndComboBoxController : IMVCAController
   {
+    /// <summary>
+    /// The attached view.
+    /// </summary>
     protected IIntegerAndComboBoxView? _view;
+
+    /// <summary>
+    /// The label text for the integer input.
+    /// </summary>
     protected string _integerLabelText;
+
+    /// <summary>
+    /// The label text for the combo box.
+    /// </summary>
     protected string _comboBoxLabelText;
+
+    /// <summary>
+    /// The minimum integer value.
+    /// </summary>
     protected int _integerMinimum;
+
+    /// <summary>
+    /// The maximum integer value.
+    /// </summary>
     protected int _integerMaximum;
+
+    /// <summary>
+    /// The current integer value.
+    /// </summary>
     protected int _integerValue;
+
+    /// <summary>
+    /// The combo-box items.
+    /// </summary>
     protected SelectableListNodeList _comboBoxItems;
+
+    /// <summary>
+    /// The selected combo-box item.
+    /// </summary>
     protected SelectableListNode _selectedItem;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IntegerAndComboBoxController"/> class.
+    /// </summary>
     public IntegerAndComboBoxController(string integerLabel,
       int intMin, int intMax,
       int intVal,
@@ -80,6 +135,10 @@ namespace Altaxo.Gui.Common
       Initialize(true);
     }
 
+    /// <summary>
+    /// Initializes the controller and, if available, its view.
+    /// </summary>
+    /// <param name="initData">If set to <c>true</c>, model initialization is requested.</param>
     public void Initialize(bool initData)
     {
       if (initData)
@@ -95,6 +154,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     public bool Apply(bool disposeController)
     {
       return true; // all is done on the fly, we don't need actions here
@@ -112,11 +172,17 @@ namespace Altaxo.Gui.Common
       return false;
     }
 
+    /// <summary>
+    /// Gets the selected combo box item.
+    /// </summary>
     public SelectableListNode SelectedItem
     {
       get { return _selectedItem; }
     }
 
+    /// <summary>
+    /// Gets the selected integer value.
+    /// </summary>
     public int IntegerValue
     {
       get { return _integerValue; }
@@ -124,6 +190,7 @@ namespace Altaxo.Gui.Common
 
     #region IMVCController Members
 
+    /// <inheritdoc/>
     public object? ViewObject
     {
       get { return _view; }
@@ -146,11 +213,13 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     public object ModelObject
     {
       get { return _integerValue; }
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
     }
@@ -159,11 +228,17 @@ namespace Altaxo.Gui.Common
 
     #region IIntegerAndComboBoxController Members
 
+    /// <summary>
+    /// Handles changes of the integer value in the view.
+    /// </summary>
     public void EhView_IntegerChanged(int val)
     {
       _integerValue = val;
     }
 
+    /// <summary>
+    /// Handles changes of the combo box selection in the view.
+    /// </summary>
     public void EhView_ComboBoxSelectionChanged(SelectableListNode selectedItem)
     {
       _selectedItem = selectedItem;

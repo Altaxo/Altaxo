@@ -36,6 +36,9 @@ namespace Altaxo.Graph.Gdi
   using Geometry;
   using Shapes;
 
+  /// <summary>
+  /// Represents a host layer that contains graphics objects and child layers.
+  /// </summary>
   public class HostLayer
     :
     Main.SuspendableDocumentNodeWithSetOfEventArgs,
@@ -45,14 +48,38 @@ namespace Altaxo.Graph.Gdi
   {
     #region Constants
 
+    /// <summary>
+    /// Default relative X position for landscape layers.
+    /// </summary>
     protected const double _xDefPositionLandscape = 0.14;
+    /// <summary>
+    /// Default relative Y position for landscape layers.
+    /// </summary>
     protected const double _yDefPositionLandscape = 0.14;
+    /// <summary>
+    /// Default relative width for landscape layers.
+    /// </summary>
     protected const double _xDefSizeLandscape = 0.76;
+    /// <summary>
+    /// Default relative height for landscape layers.
+    /// </summary>
     protected const double _yDefSizeLandscape = 0.7;
 
+    /// <summary>
+    /// Default relative X position for portrait layers.
+    /// </summary>
     protected const double _xDefPositionPortrait = 0.14;
+    /// <summary>
+    /// Default relative Y position for portrait layers.
+    /// </summary>
     protected const double _yDefPositionPortrait = 0.14;
+    /// <summary>
+    /// Default relative width for portrait layers.
+    /// </summary>
     protected const double _xDefSizePortrait = 0.7;
+    /// <summary>
+    /// Default relative height for portrait layers.
+    /// </summary>
     protected const double _yDefSizePortrait = 0.76;
 
     #endregion Constants
@@ -75,6 +102,9 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     protected PointD2D _cachedLayerSize;
 
+    /// <summary>
+    /// Cached transformation from local to parent coordinates.
+    /// </summary>
     protected MatrixD2D _transformation = new MatrixD2D();
 
     /// <summary>
@@ -91,8 +121,14 @@ namespace Altaxo.Graph.Gdi
 
     #region Member variables
 
+    /// <summary>
+    /// The location definition of this layer.
+    /// </summary>
     protected IItemLocation _location;
 
+    /// <summary>
+    /// The graphics objects contained in this layer.
+    /// </summary>
     protected GraphicCollection _graphObjects;
 
     /// <summary>
@@ -178,6 +214,7 @@ namespace Altaxo.Graph.Gdi
 
     #region Copying
 
+    /// <inheritdoc />
     public virtual bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -192,6 +229,11 @@ namespace Altaxo.Graph.Gdi
       return false;
     }
 
+    /// <summary>
+    /// Copies the state from another layer using the specified copy options.
+    /// </summary>
+    /// <param name="from">The source layer.</param>
+    /// <param name="options">The copy options.</param>
     public virtual void CopyFrom(HostLayer from, GraphCopyOptions options)
     {
       if (ReferenceEquals(this, from))
@@ -247,6 +289,11 @@ namespace Altaxo.Graph.Gdi
       CalculateMatrix();
     }
 
+    /// <summary>
+    /// Copies graph items and optionally child layers from another host layer.
+    /// </summary>
+    /// <param name="from">The source layer.</param>
+    /// <param name="options">The copy options.</param>
     protected virtual void InternalCopyGraphItems(HostLayer from, GraphCopyOptions options)
     {
       bool bGraphItems = options.HasFlag(GraphCopyOptions.CopyLayerGraphItems);
@@ -263,6 +310,12 @@ namespace Altaxo.Graph.Gdi
       InternalCopyGraphItems(from, options, criterium);
     }
 
+    /// <summary>
+    /// Copies selected graph items and optionally child layers from another host layer.
+    /// </summary>
+    /// <param name="from">The source layer.</param>
+    /// <param name="options">The copy options.</param>
+    /// <param name="selectionCriteria">The item-selection predicate.</param>
     protected virtual void InternalCopyGraphItems(HostLayer from, GraphCopyOptions options, Func<IGraphicBase, bool> selectionCriteria)
     {
       var pwThis = _graphObjects.CreatePartialView(x => selectionCriteria(x));
@@ -304,6 +357,10 @@ namespace Altaxo.Graph.Gdi
         pwThis.Add((IGraphicBase)pwFrom[j].Clone());
     }
 
+    /// <summary>
+    /// Creates a copy of this layer.
+    /// </summary>
+    /// <returns>The cloned layer.</returns>
     public virtual object Clone()
     {
       return new HostLayer(this);
@@ -322,11 +379,11 @@ namespace Altaxo.Graph.Gdi
     }
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
-    /// <summary>
-    /// The copy constructor.
-    /// </summary>
-    /// <param name="from"></param>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HostLayer"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The layer to copy from.</param>
     public HostLayer(HostLayer from)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
@@ -342,10 +399,10 @@ namespace Altaxo.Graph.Gdi
     }
 
     /// <summary>
-    /// Creates a layer at the designated <paramref name="location"/>.
+    /// Initializes a new instance of the <see cref="HostLayer"/> class at the specified location.
     /// </summary>
-    /// <param name="parentLayer">The parent layer of the newly created layer.</param>
-    /// <param name="location">The position and size of this layer</param>
+    /// <param name="parentLayer">The parent layer.</param>
+    /// <param name="location">The position and size of this layer.</param>
     public HostLayer(HostLayer? parentLayer, IItemLocation location)
     {
       Grid = new GridPartitioning();
@@ -361,6 +418,9 @@ namespace Altaxo.Graph.Gdi
       CalculateMatrix();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HostLayer"/> class.
+    /// </summary>
     public HostLayer()
       : this(null, new ItemLocationDirect())
     {
@@ -370,6 +430,9 @@ namespace Altaxo.Graph.Gdi
 
     #region Position and Size
 
+    /// <summary>
+    /// Gets the default relative position for a child layer.
+    /// </summary>
     public static PointD2D DefaultChildLayerRelativePosition
     {
       get { return new PointD2D(0.145, 0.139); }
@@ -384,6 +447,9 @@ namespace Altaxo.Graph.Gdi
       get { return DefaultChildLayerRelativePosition * Size; }
     }
 
+    /// <summary>
+    /// Gets the default relative size for a child layer.
+    /// </summary>
     public static PointD2D DefaultChildLayerRelativeSize
     {
       get { return new PointD2D(0.763, 0.708); }
@@ -398,6 +464,10 @@ namespace Altaxo.Graph.Gdi
       get { return DefaultChildLayerRelativeSize * Size; }
     }
 
+    /// <summary>
+    /// Gets the default location for a child layer.
+    /// </summary>
+    /// <returns>The default child layer location.</returns>
     public static IItemLocation GetChildLayerDefaultLocation()
     {
       return new ItemLocationDirect
@@ -409,6 +479,9 @@ namespace Altaxo.Graph.Gdi
       };
     }
 
+    /// <summary>
+    /// Gets or sets the item location of this layer.
+    /// </summary>
     public IItemLocation Location
     {
       get
@@ -462,6 +535,11 @@ namespace Altaxo.Graph.Gdi
       get { return _cachedParentLayerSize; }
     }
 
+    /// <summary>
+    /// Sets the parent size used to calculate cached size and position values.
+    /// </summary>
+    /// <param name="newParentSize">The new parent size.</param>
+    /// <param name="isTriggeringChangedEvent">If set to <c>true</c>, raises a changed event when the size changed.</param>
     public void SetParentSize(PointD2D newParentSize, bool isTriggeringChangedEvent)
     {
       var oldParentSize = _cachedParentLayerSize;
@@ -479,6 +557,9 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets or sets the layer position in parent coordinates.
+    /// </summary>
     public PointD2D Position
     {
       get { return _cachedLayerPosition; }
@@ -500,6 +581,9 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets or sets the layer size.
+    /// </summary>
     public PointD2D Size
     {
       get { return _cachedLayerSize; }
@@ -521,6 +605,9 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets or sets the rotation of the layer.
+    /// </summary>
     public double Rotation
     {
       get { return _location.Rotation; }
@@ -537,6 +624,9 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets or sets the x-shear of the layer.
+    /// </summary>
     public double ShearX
     {
       get { return _location.ShearX; }
@@ -553,6 +643,9 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets or sets the x-scale of the layer.
+    /// </summary>
     public double ScaleX
     {
       get { return _location.ScaleX; }
@@ -569,6 +662,9 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets or sets the y-scale of the layer.
+    /// </summary>
     public double ScaleY
     {
       get { return _location.ScaleY; }
@@ -585,6 +681,9 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Recalculates the cached transformation matrix of this layer.
+    /// </summary>
     protected void CalculateMatrix()
     {
       _transformation.Reset();
@@ -600,11 +699,21 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Transforms coordinates from the parent layer to this layer.
+    /// </summary>
+    /// <param name="pagecoordinates">The parent coordinates.</param>
+    /// <returns>The coordinates in this layer.</returns>
     public PointD2D TransformCoordinatesFromParentToHere(PointD2D pagecoordinates)
     {
       return _transformation.InverseTransformPoint(pagecoordinates);
     }
 
+    /// <summary>
+    /// Transforms coordinates from the root layer to this layer.
+    /// </summary>
+    /// <param name="pagecoordinates">The root coordinates.</param>
+    /// <returns>The coordinates in this layer.</returns>
     public PointD2D TransformCoordinatesFromRootToHere(PointD2D pagecoordinates)
     {
       foreach (var layer in this.TakeFromRootToHere())
@@ -612,6 +721,10 @@ namespace Altaxo.Graph.Gdi
       return pagecoordinates;
     }
 
+    /// <summary>
+    /// Gets the transformation from root coordinates to this layer.
+    /// </summary>
+    /// <returns>The transformation matrix.</returns>
     public MatrixD2D TransformationFromRootToHere()
     {
       var result = new MatrixD2D();
@@ -620,6 +733,11 @@ namespace Altaxo.Graph.Gdi
       return result;
     }
 
+    /// <summary>
+    /// Transforms a cross from graph coordinates to layer coordinates.
+    /// </summary>
+    /// <param name="x">The cross in graph coordinates.</param>
+    /// <returns>The transformed cross.</returns>
     public CrossF GraphToLayerCoordinates(CrossF x)
     {
       return new CrossF()
@@ -681,6 +799,11 @@ namespace Altaxo.Graph.Gdi
       return _transformation.TransformPoint(layerCoordinates);
     }
 
+    /// <summary>
+    /// Transforms coordinates from this layer to root coordinates.
+    /// </summary>
+    /// <param name="coordinates">The coordinates in this layer.</param>
+    /// <returns>The coordinates in root space.</returns>
     public PointD2D TransformCoordinatesFromHereToRoot(PointD2D coordinates)
     {
       foreach (var layer in this.TakeFromHereToRoot())
@@ -688,6 +811,13 @@ namespace Altaxo.Graph.Gdi
       return coordinates;
     }
 
+    /// <summary>
+    /// Sets position and size in a single operation.
+    /// </summary>
+    /// <param name="x">The x-position.</param>
+    /// <param name="y">The y-position.</param>
+    /// <param name="width">The width.</param>
+    /// <param name="height">The height.</param>
     public void SetPositionSize(RADouble x, RADouble y, RADouble width, RADouble height)
     {
       ItemLocationDirect newlocation;
@@ -761,6 +891,9 @@ namespace Altaxo.Graph.Gdi
 
     #region Grid creation
 
+    /// <summary>
+    /// Gets the grid used to arrange child layers.
+    /// </summary>
     public GridPartitioning Grid
     {
       get
@@ -978,12 +1111,18 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets or sets the parent layer.
+    /// </summary>
     public HostLayer? ParentLayer
     {
       get { return _parent as HostLayer; }
       set { ParentObject = value; }
     }
 
+    /// <summary>
+    /// Gets the graphics objects contained in this layer.
+    /// </summary>
     public GraphicCollection GraphObjects
     {
       get { return _graphObjects; }
@@ -1037,6 +1176,9 @@ namespace Altaxo.Graph.Gdi
     /// <value>
     /// The layer number.
     /// </value>
+    /// <summary>
+    /// Gets the cached layer number.
+    /// </summary>
     public int LayerNumber { get { return _cachedLayerNumber; } }
 
     /// <summary>
@@ -1069,6 +1211,10 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Removes the specified graphic object from this layer.
+    /// </summary>
+    /// <param name="go">The graphic object to remove.</param>
     public virtual void Remove(GraphicBase go)
     {
       if (_graphObjects.Contains(go))
@@ -1091,6 +1237,11 @@ namespace Altaxo.Graph.Gdi
         hl.VisitDocumentReferences(Report);
     }
 
+    /// <summary>
+    /// Determines whether this layer is compatible with the specified parent.
+    /// </summary>
+    /// <param name="parent">The parent object.</param>
+    /// <returns><c>true</c> if the layer is compatible; otherwise, <c>false</c>.</returns>
     public virtual bool IsCompatibleWithParent(object parent)
     {
       return true;
@@ -1138,6 +1289,11 @@ namespace Altaxo.Graph.Gdi
         obj.PaintPostprocessing();
     }
 
+    /// <summary>
+    /// Paints the layer.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="context">The paint context.</param>
     public virtual void Paint(Graphics g, IPaintContext context)
     {
       GraphicsState savedgstate = g.Save();
@@ -1163,17 +1319,33 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Applies the layer transformation to a hit-test object.
+    /// </summary>
+    /// <param name="o">The hit-test object.</param>
+    /// <returns>The transformed hit-test object.</returns>
     protected IHitTestObject ForwardTransform(IHitTestObject o)
     {
       o.Transform(_transformation);
       return o;
     }
 
+    /// <summary>
+    /// Performs hit testing with point-based hit data.
+    /// </summary>
+    /// <param name="hitData">The hit test data.</param>
+    /// <returns>The hit test object, or <c>null</c>.</returns>
     public virtual IHitTestObject? HitTest(HitTestPointData hitData)
     {
       return HitTest(hitData, false);
     }
 
+    /// <summary>
+    /// Performs hit testing with point-based hit data.
+    /// </summary>
+    /// <param name="parentCoord">The hit test data in parent coordinates.</param>
+    /// <param name="plotItemsOnly">If set to <c>true</c>, only plot items are tested.</param>
+    /// <returns>The hit test object, or <c>null</c>.</returns>
     public virtual IHitTestObject? HitTest(HitTestPointData parentCoord, bool plotItemsOnly)
     {
       IHitTestObject? hit;
@@ -1295,6 +1467,9 @@ namespace Altaxo.Graph.Gdi
 
     #region Editor methods
 
+    /// <summary>
+    /// Gets or sets the double-click handler used to edit the layer position.
+    /// </summary>
     public static DoubleClickHandler? LayerPositionEditorMethod;
 
     #endregion Editor methods
@@ -1329,6 +1504,7 @@ namespace Altaxo.Graph.Gdi
         PositionChanged(this, new System.EventArgs());
     }
 
+    /// <inheritdoc />
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (sender is IItemLocation)
@@ -1341,6 +1517,7 @@ namespace Altaxo.Graph.Gdi
 
     #region IDocumentNode Members
 
+    /// <inheritdoc />
     public override Main.IDocumentNode? ParentObject
     {
       get
@@ -1379,6 +1556,7 @@ namespace Altaxo.Graph.Gdi
       return stb.ToString();
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       // despite the fact that _childLayers is only a partial view of _graphObjects, we use it here because if it is found here, it is never searched for in _graphObjects
@@ -1411,6 +1589,7 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <inheritdoc />
     protected override void Dispose(bool isDisposing)
     {
       if (_graphObjects is not null)
@@ -1430,6 +1609,10 @@ namespace Altaxo.Graph.Gdi
       base.Dispose(isDisposing);
     }
 
+    /// <summary>
+    /// Fixes and verifies the parent-child relationships of all child layers.
+    /// </summary>
+    /// <returns><c>true</c> if the relationships are valid after the operation; otherwise, <c>false</c>.</returns>
     public virtual bool FixAndTestParentChildRelationShipOfLayers()
     {
       return this.FixAndTestParentChildRelations((l, p) => l.ParentLayer = p);

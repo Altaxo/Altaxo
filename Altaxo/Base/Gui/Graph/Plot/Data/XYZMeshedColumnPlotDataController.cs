@@ -28,16 +28,23 @@ using Altaxo.Graph.Plot.Data;
 
 namespace Altaxo.Gui.Graph.Plot.Data
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="XYZMeshedColumnPlotDataController"/>.
+  /// </summary>
   public interface IXYZMeshedColumnPlotDataView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="XYZMeshedColumnPlotData"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IXYZMeshedColumnPlotDataView))]
   [UserControllerForObject(typeof(XYZMeshedColumnPlotData))]
   public class XYZMeshedColumnPlotDataController : MVCANControllerEditOriginalDocBase<XYZMeshedColumnPlotData, IXYZMeshedColumnPlotDataView>
   {
 
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_dataProxyController, () => _dataProxyController = null);
@@ -47,6 +54,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     private IMVCANController _dataProxyController;
 
+    /// <summary>
+    /// Gets or sets the controller for the data proxy.
+    /// </summary>
     public IMVCANController DataProxyController
     {
       get => _dataProxyController;
@@ -64,6 +74,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -75,6 +86,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (false == _dataProxyController.Apply(disposeController))

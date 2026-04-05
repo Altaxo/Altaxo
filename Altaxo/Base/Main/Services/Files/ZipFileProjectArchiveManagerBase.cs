@@ -43,6 +43,9 @@ namespace Altaxo.Main.Services
     private const string ClonedProjectRelativePath = "CurrProj";
     private const string ClonedProjectFileName = "CurrProj";
     private bool _isDisposed;
+    /// <summary>
+    /// The storage settings associated with this archive manager.
+    /// </summary>
     protected StorageSettings? _storageSettings;
 
     /// <summary>
@@ -61,6 +64,9 @@ namespace Altaxo.Main.Services
     protected abstract ProjectArchiveCreationFunction CreateProjectArchive { get; }
 
 
+    /// <summary>
+    /// Occurs when the file or folder name changes.
+    /// </summary>
     public event EventHandler<NameChangedEventArgs>? FileOrFolderNameChanged;
 
     /// <summary>
@@ -81,6 +87,7 @@ namespace Altaxo.Main.Services
     /// <value>
     /// The name of the file or folder, if known. Otherwise, null is returned.
     /// </value>
+    /// <inheritdoc/>
     public PathName? FileOrFolderName => FileName.Create(_originalFileStream?.Name);
 
     /// <inheritdoc/>

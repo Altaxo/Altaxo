@@ -81,6 +81,9 @@ namespace Altaxo.Main.Services
 
     #region ModifiedForAltaxo
 
+    /// <summary>
+    /// Gets the raw dictionary entries stored in this container.
+    /// </summary>
     public IEnumerable<KeyValuePair<string, object>> DictionaryEntries
     {
       get
@@ -89,12 +92,18 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <summary>
+    /// Gets the number of stored entries.
+    /// </summary>
     public int Count { get { return _dict.Count; } }
 
     #endregion ModifiedForAltaxo
 
     #region Constructor
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Properties"/> class.
+    /// </summary>
     public Properties()
     {
       _syncRoot = new object();
@@ -110,6 +119,9 @@ namespace Altaxo.Main.Services
 
     #region PropertyChanged
 
+    /// <summary>
+    /// Occurs when a property value changes.
+    /// </summary>
     public event PropertyChangedEventHandler? PropertyChanged;
 
     private void OnPropertyChanged(string key)
@@ -358,36 +370,75 @@ namespace Altaxo.Main.Services
       SetSerializedValue(key, serializedArray);
     }
 
+    /// <summary>
+    /// Obsolete array-based accessor. Use <c>GetList</c> instead.
+    /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <param name="key">The property key.</param>
+    /// <param name="defaultValue">The default value.</param>
+    /// <returns>The requested value.</returns>
     [Obsolete("Use the GetList method instead", true)]
     public T[] Get<T>(string key, T[] defaultValue)
     {
       throw new InvalidOperationException();
     }
 
+    /// <summary>
+    /// Obsolete array-based mutator. Use <c>SetList</c> instead.
+    /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <param name="key">The property key.</param>
+    /// <param name="value">The value to store.</param>
     [Obsolete("Use the SetList method instead", true)]
     public void Set<T>(string key, T[] value)
     {
       throw new InvalidOperationException();
     }
 
+    /// <summary>
+    /// Obsolete list-based accessor. Use <c>GetList</c> instead.
+    /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <param name="key">The property key.</param>
+    /// <param name="defaultValue">The default value.</param>
+    /// <returns>The requested value.</returns>
     [Obsolete("Use the GetList method instead", true)]
     public List<T> Get<T>(string key, List<T> defaultValue)
     {
       throw new InvalidOperationException();
     }
 
+    /// <summary>
+    /// Obsolete list-based mutator. Use <c>SetList</c> instead.
+    /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <param name="key">The property key.</param>
+    /// <param name="value">The value to store.</param>
     [Obsolete("Use the SetList method instead", true)]
     public void Set<T>(string key, List<T> value)
     {
       throw new InvalidOperationException();
     }
 
+    /// <summary>
+    /// Obsolete <see cref="ArrayList"/> accessor. Use <c>GetList</c> instead.
+    /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <param name="key">The property key.</param>
+    /// <param name="defaultValue">The default value.</param>
+    /// <returns>The requested value.</returns>
     [Obsolete("Use the GetList method instead", true)]
     public ArrayList Get<T>(string key, ArrayList defaultValue)
     {
       throw new InvalidOperationException();
     }
 
+    /// <summary>
+    /// Obsolete <see cref="ArrayList"/> mutator. Use <c>SetList</c> instead.
+    /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <param name="key">The property key.</param>
+    /// <param name="value">The value to store.</param>
     [Obsolete("Use the SetList method instead", true)]
     public void Set<T>(string key, ArrayList value)
     {
@@ -487,12 +538,23 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <summary>
+    /// Obsolete nested-properties accessor. Use <see cref="NestedProperties(string)"/> instead.
+    /// </summary>
+    /// <param name="key">The property key.</param>
+    /// <param name="defaultValue">The default value.</param>
+    /// <returns>The requested nested properties container.</returns>
     [Obsolete("Use the NestedProperties method instead", true)]
     public Properties Get(string key, Properties defaultValue)
     {
       throw new InvalidOperationException();
     }
 
+    /// <summary>
+    /// Obsolete nested-properties mutator. Use <c>SetNestedProperties</c> instead.
+    /// </summary>
+    /// <param name="key">The property key.</param>
+    /// <param name="value">The nested properties container to store.</param>
     [Obsolete("Use the SetNestedProperties method instead", true)]
     public void Set(string key, Properties value)
     {
@@ -645,11 +707,21 @@ namespace Altaxo.Main.Services
 
     #region Load/Save
 
+    /// <summary>
+    /// Loads a properties container from the specified file.
+    /// </summary>
+    /// <param name="fileName">The file to load.</param>
+    /// <returns>The loaded properties container.</returns>
     public static Properties Load(FileName fileName)
     {
       return Load(XDocument.Load(fileName).Root!);
     }
 
+    /// <summary>
+    /// Loads a properties container from the specified XML element.
+    /// </summary>
+    /// <param name="element">The XML element to load.</param>
+    /// <returns>The loaded properties container.</returns>
     public static Properties Load(XElement element)
     {
       var properties = new Properties();
@@ -710,11 +782,19 @@ namespace Altaxo.Main.Services
       return result.ToArray();
     }
 
+    /// <summary>
+    /// Saves the properties container to the specified file.
+    /// </summary>
+    /// <param name="fileName">The target file.</param>
     public void Save(FileName fileName)
     {
       new XDocument(Save()).Save(fileName);
     }
 
+    /// <summary>
+    /// Saves the properties container to an XML element.
+    /// </summary>
+    /// <returns>The XML representation of the properties container.</returns>
     public XElement Save()
     {
       lock (_syncRoot)

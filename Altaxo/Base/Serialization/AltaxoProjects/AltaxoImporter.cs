@@ -32,13 +32,20 @@ namespace Altaxo.Serialization.AltaxoProjects
   /// </summary>
   public record class AltaxoImporter
   {
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets the supported file extensions and their description.
+    /// </summary>
+    /// <returns>The supported file extensions and their description.</returns>
     public /*override*/ (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
     {
       return ([".axoprj"], "Altaxo project files (*.axoprj)");
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Determines the probability that the specified file or directory is an Altaxo project.
+    /// </summary>
+    /// <param name="fileName">The file or directory name to inspect.</param>
+    /// <returns>A probability value between 0 and 1.</returns>
     public /*override*/ double GetProbabilityForBeingThisFileFormat(string fileName)
     {
       // we have a speciality here: filename can either be a folder or a file

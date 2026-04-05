@@ -32,8 +32,33 @@ namespace Altaxo.Worksheet
   using Altaxo.Drawing;
   using Geometry;
 
+  /// <summary>
+  /// Identifies the style role of a worksheet column area.
+  /// </summary>
   [Serializable]
-  public enum ColumnStyleType { RowHeader, ColumnHeader, PropertyHeader, PropertyCell, DataCell }
+  public enum ColumnStyleType
+  {
+    /// <summary>
+    /// The row header area.
+    /// </summary>
+    RowHeader,
+    /// <summary>
+    /// The column header area.
+    /// </summary>
+    ColumnHeader,
+    /// <summary>
+    /// The property header area.
+    /// </summary>
+    PropertyHeader,
+    /// <summary>
+    /// The property cell area.
+    /// </summary>
+    PropertyCell,
+    /// <summary>
+    /// The data cell area.
+    /// </summary>
+    DataCell
+  }
 
   /// <summary>
   /// Altaxo.Worksheet.ColumnStyle provides the data for visualization of the column
@@ -45,28 +70,79 @@ namespace Altaxo.Worksheet
     Main.SuspendableDocumentNodeWithEventArgs,
     System.ICloneable
   {
+    /// <summary>
+    /// The default brush for normal background.
+    /// </summary>
     protected static BrushX _defaultNormalBackgroundBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.Window));
+    /// <summary>
+    /// The default brush for header background.
+    /// </summary>
     protected static BrushX _defaultHeaderBackgroundBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.Control));
+    /// <summary>
+    /// The default brush for selected background.
+    /// </summary>
     protected static BrushX _defaultSelectedBackgroundBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.Highlight));
+    /// <summary>
+    /// The default brush for normal text.
+    /// </summary>
     protected static BrushX _defaultNormalTextBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.WindowText));
+    /// <summary>
+    /// The default brush for selected text.
+    /// </summary>
     protected static BrushX _defaultSelectedTextBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.HighlightText));
+    /// <summary>
+    /// The default pen for cell borders.
+    /// </summary>
     protected static PenX _defaultCellPen = new PenX(GdiColorHelper.ToNamedColor(SystemColors.InactiveBorder), 1);
+    /// <summary>
+    /// The default font for text.
+    /// </summary>
     protected static FontX _defaultTextFont = GdiFontManager.GetFontXGenericSansSerif(9, FontXStyle.Regular);
 
+    /// <summary>
+    /// The style type of the column.
+    /// </summary>
     protected ColumnStyleType _columnStyleType;
 
+    /// <summary>
+    /// The size of the column.
+    /// </summary>
     protected int _columnSize = 80;
+    /// <summary>
+    /// The string format used for text rendering.
+    /// </summary>
     protected StringFormat _textFormat = new StringFormat();
 
+    /// <summary>
+    /// Indicates whether a custom cell pen is used.
+    /// </summary>
     protected bool _isCellPenCustom;
+    /// <summary>
+    /// The pen used for drawing cell borders.
+    /// </summary>
     protected PenX _cellPen;
 
+    /// <summary>
+    /// The font used for text rendering.
+    /// </summary>
     protected FontX _textFont = _defaultTextFont;
 
+    /// <summary>
+    /// Indicates whether a custom text brush is used.
+    /// </summary>
     protected bool _isTextBrushCustom;
+    /// <summary>
+    /// The brush used for drawing text.
+    /// </summary>
     private BrushX _textBrush;
 
+    /// <summary>
+    /// Indicates whether a custom background brush is used.
+    /// </summary>
     protected bool _isBackgroundBrushCustom;
+    /// <summary>
+    /// The brush used for drawing the background.
+    /// </summary>
     protected BrushX _backgroundBrush;
 
     #region Serialization
@@ -74,6 +150,7 @@ namespace Altaxo.Worksheet
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Worksheet.ColumnStyle", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         /*
@@ -90,6 +167,7 @@ namespace Altaxo.Worksheet
         throw new ApplicationException("Programming error, please contact the programmer");
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (ColumnStyle?)o ?? throw new ArgumentNullException(nameof(o)); ;
@@ -114,6 +192,7 @@ namespace Altaxo.Worksheet
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColumnStyle), 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ColumnStyle)obj;
@@ -138,6 +217,7 @@ namespace Altaxo.Worksheet
           info.AddValue("Font", s._textFont);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (ColumnStyle?)o ?? throw new ArgumentNullException(nameof(o));
@@ -200,6 +280,10 @@ namespace Altaxo.Worksheet
     }
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColumnStyle"/> class.
+    /// </summary>
+    /// <param name="type">The column style type.</param>
     public ColumnStyle(ColumnStyleType type)
     {
       _cellPen = new PenX(GdiColorHelper.ToNamedColor(SystemColors.InactiveBorder), 1);
@@ -214,11 +298,16 @@ namespace Altaxo.Worksheet
       SetDefaultTextFont();
     }
 
+    /// <inheritdoc/>
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Changes the style role and resets default resources when they are not customized.
+    /// </summary>
+    /// <param name="type">The new style type.</param>
     public void ChangeTypeTo(ColumnStyleType type)
     {
       _columnStyleType = type;
@@ -235,6 +324,10 @@ namespace Altaxo.Worksheet
       SetDefaultTextFont();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColumnStyle"/> class by copying another style.
+    /// </summary>
+    /// <param name="s">The style to copy.</param>
     public ColumnStyle(ColumnStyle s)
     {
       _columnStyleType = s._columnStyleType;
@@ -255,7 +348,8 @@ namespace Altaxo.Worksheet
     /// <summary>
     /// Get a clone of the default cell border.
     /// </summary>
-    /// <returns></returns>
+    /// <param name="type">The column style type.</param>
+    /// <returns>The default border for the specified type.</returns>
     public static PenX GetDefaultCellBorder(ColumnStyleType type)
     {
       if (type == ColumnStyleType.DataCell || type == ColumnStyleType.PropertyCell)
@@ -264,12 +358,20 @@ namespace Altaxo.Worksheet
         return new PenX(GdiColorHelper.ToNamedColor(SystemColors.ControlDarkDark), 1);
     }
 
+    /// <summary>
+    /// Restores the default cell border.
+    /// </summary>
     public void SetDefaultCellBorder()
     {
       CellBorder = GetDefaultCellBorder(_columnStyleType);
       _isCellPenCustom = false;
     }
 
+    /// <summary>
+    /// Gets the default text brush for the specified style type.
+    /// </summary>
+    /// <param name="type">The column style type.</param>
+    /// <returns>The default text brush.</returns>
     public static BrushX GetDefaultTextBrush(ColumnStyleType type)
     {
       if (type == ColumnStyleType.DataCell || type == ColumnStyleType.PropertyCell)
@@ -278,12 +380,20 @@ namespace Altaxo.Worksheet
         return new BrushX(GdiColorHelper.ToNamedColor(SystemColors.ControlText));
     }
 
+    /// <summary>
+    /// Restores the default text brush.
+    /// </summary>
     public void SetDefaultTextBrush()
     {
       TextBrush = GetDefaultTextBrush(_columnStyleType);
       _isTextBrushCustom = false;
     }
 
+    /// <summary>
+    /// Gets the default background brush for the specified style type.
+    /// </summary>
+    /// <param name="type">The column style type.</param>
+    /// <returns>The default background brush.</returns>
     public static BrushX GetDefaultBackgroundBrush(ColumnStyleType type)
     {
       if (type == ColumnStyleType.DataCell)
@@ -292,22 +402,36 @@ namespace Altaxo.Worksheet
         return _defaultHeaderBackgroundBrush;
     }
 
+    /// <summary>
+    /// Restores the default background brush.
+    /// </summary>
     public void SetDefaultBackgroundBrush()
     {
       BackgroundBrush = GetDefaultBackgroundBrush(_columnStyleType);
       _isBackgroundBrushCustom = false;
     }
 
+    /// <summary>
+    /// Gets the default text font for the specified style type.
+    /// </summary>
+    /// <param name="type">The column style type.</param>
+    /// <returns>The default text font.</returns>
     public static FontX GetDefaultTextFont(ColumnStyleType type)
     {
       return _defaultTextFont;
     }
 
+    /// <summary>
+    /// Restores the default text font.
+    /// </summary>
     public void SetDefaultTextFont()
     {
       TextFont = GetDefaultTextFont(_columnStyleType);
     }
 
+    /// <summary>
+    /// Gets or sets the column width in device units.
+    /// </summary>
     public int Width
     {
       get
@@ -320,6 +444,9 @@ namespace Altaxo.Worksheet
       }
     }
 
+    /// <summary>
+    /// Gets or sets the column width as a double.
+    /// </summary>
     public double WidthD
     {
       get
@@ -332,6 +459,9 @@ namespace Altaxo.Worksheet
       }
     }
 
+    /// <summary>
+    /// Gets or sets the cell border pen.
+    /// </summary>
     public PenX CellBorder
     {
       get
@@ -350,6 +480,9 @@ namespace Altaxo.Worksheet
       }
     }
 
+    /// <summary>
+    /// Gets or sets the background brush.
+    /// </summary>
     public BrushX BackgroundBrush
     {
       get
@@ -369,6 +502,9 @@ namespace Altaxo.Worksheet
       }
     }
 
+    /// <summary>
+    /// Gets the default selected background brush.
+    /// </summary>
     public BrushX DefaultSelectedBackgroundBrush
     {
       get
@@ -377,6 +513,9 @@ namespace Altaxo.Worksheet
       }
     }
 
+    /// <summary>
+    /// Gets the default selected text brush.
+    /// </summary>
     public BrushX DefaultSelectedTextBrush
     {
       get
@@ -390,6 +529,9 @@ namespace Altaxo.Worksheet
       _isBackgroundBrushCustom = true;
     }
 
+    /// <summary>
+    /// Gets or sets the text brush.
+    /// </summary>
     public BrushX TextBrush
     {
       get
@@ -411,6 +553,9 @@ namespace Altaxo.Worksheet
       _isTextBrushCustom = true;
     }
 
+    /// <summary>
+    /// Gets or sets the text font.
+    /// </summary>
     public FontX TextFont
     {
       get
@@ -426,6 +571,9 @@ namespace Altaxo.Worksheet
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether a custom font is used.
+    /// </summary>
     public bool IsCustomFont
     {
       get
@@ -434,10 +582,19 @@ namespace Altaxo.Worksheet
       }
     }
 
+    /// <summary>
+    /// Paints the cell using an abstract drawing context.
+    /// </summary>
     public abstract void Paint(System.Type dctype, object dc, RectangleD2D cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected);
 
+    /// <summary>
+    /// Paints the cell using a GDI graphics context.
+    /// </summary>
     public abstract void Paint(Graphics dc, Rectangle cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected);
 
+    /// <summary>
+    /// Paints the background and border of a cell.
+    /// </summary>
     public virtual void PaintBackground(Graphics dc, Rectangle cellRectangle, bool bSelected)
     {
       if (bSelected)
@@ -462,13 +619,21 @@ namespace Altaxo.Worksheet
       }
     }
 
+    /// <inheritdoc/>
     public abstract object Clone();
 
     // public abstract void Paint(Graphics dc, Rectangle cell, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
+    /// <summary>
+    /// Gets the cell value formatted as text.
+    /// </summary>
     public abstract string GetColumnValueAtRow(int nRow, Altaxo.Data.DataColumn data);
 
+    /// <summary>
+    /// Sets the cell value from its textual representation.
+    /// </summary>
     public abstract void SetColumnValueAtRow(string s, int nRow, Altaxo.Data.DataColumn data);
 
+    /// <inheritdoc/>
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (object.ReferenceEquals(sender, _cellPen))

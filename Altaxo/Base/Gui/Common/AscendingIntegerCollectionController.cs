@@ -30,25 +30,57 @@ using Altaxo.Collections;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// View interface for editing an <see cref="AscendingIntegerCollection"/>.
+  /// </summary>
   public interface IAscendingIntegerCollectionView
   {
+    /// <summary>
+    /// Sets the source of the range list.
+    /// </summary>
+    /// <param name="source">The source items.</param>
     void SetRangeListSource(IEnumerable<object> source);
 
+    /// <summary>
+    /// Switches between easy and advanced view.
+    /// </summary>
+    /// <param name="showAdvanced">If <see langword="true"/>, shows the advanced view.</param>
     void SwitchEasyAdvanced(bool showAdvanced);
 
+    /// <summary>
+    /// Gets or sets the first value of the easy range.
+    /// </summary>
     int EasyRangeFrom { get; set; }
 
+    /// <summary>
+    /// Gets or sets the last value of the easy range.
+    /// </summary>
     int EasyRangeTo { get; set; }
 
+    /// <summary>
+    /// Occurs when the view should switch to the advanced mode.
+    /// </summary>
     event Action? SwitchToAdvandedView;
 
+    /// <summary>
+    /// Occurs when a new range item is initialized.
+    /// </summary>
     event Action<object>? InitializingNewRangeItem;
 
+    /// <summary>
+    /// Occurs when a range should be added in advanced mode.
+    /// </summary>
     event Action<int, int>? AdvancedAddRange;
 
+    /// <summary>
+    /// Occurs when a range should be removed in advanced mode.
+    /// </summary>
     event Action<int, int>? AdvancedRemoveRange;
   }
 
+  /// <summary>
+  /// Controller for editing an <see cref="AscendingIntegerCollection"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IAscendingIntegerCollectionView))]
   [UserControllerForObject(typeof(AscendingIntegerCollection))]
   public class AscendingIntegerCollectionController : MVCANControllerEditOriginalDocBase<AscendingIntegerCollection, IAscendingIntegerCollectionView>
@@ -219,11 +251,13 @@ namespace Altaxo.Gui.Common
     private RangeCollection _ranges = new RangeCollection();
     private bool _isInAdvancedView;
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -251,6 +285,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (_doc is null)
@@ -282,6 +317,7 @@ namespace Altaxo.Gui.Common
       return ApplyEnd(true, disposeController);
     }
 
+    /// <inheritdoc/>
     protected override void AttachView()
     {
       if (_view is null) throw CreateNoViewException;
@@ -293,6 +329,7 @@ namespace Altaxo.Gui.Common
       _view.AdvancedRemoveRange += EhAdvancedRemoveRange;
     }
 
+    /// <inheritdoc/>
     protected override void DetachView()
     {
       if (_view is null) throw CreateNoViewException;

@@ -72,11 +72,11 @@ namespace Altaxo.Text.Renderers
     /// </summary>
     private Dictionary<int, string> _headerGuids = new Dictionary<int, string>();
 
-    /// The Guids of all headers.
+    /// <summary>
+    /// Gets the GUIDs of all headers.
     /// Key is the span start of the header block.
-    /// Value is the calculated Guid of the header.
-    /// Guids that will not change with every rendering are essential in order to check in the created files in a version control system.
-    /// By calculating Guids from the header titles we create unique Guids that will only change if the header title change.
+    /// Value is the calculated GUID of the header.
+    /// </summary>
     public IDictionary<int, string> HeaderGuids { get { return _headerGuids; } }
 
     /// <summary>
@@ -148,6 +148,9 @@ namespace Altaxo.Text.Renderers
     /// </summary>
     public bool AutoOutline { get; }
 
+    /// <summary>
+    /// Gets a value indicating whether HTML escaping is enabled.
+    /// </summary>
     public bool EnableHtmlEscape { get; }
 
     /// <summary>
@@ -200,8 +203,14 @@ namespace Altaxo.Text.Renderers
     /// <summary>
     /// After rendering, this list contains all links that could not be resolved.
     /// </summary>
+    /// <summary>
+    /// Gets unresolved links collected during rendering.
+    /// </summary>
     public List<LinkInline> UnresolvedLinks { get; } = new();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MamlRenderer"/> class.
+    /// </summary>
     public MamlRenderer(
       string projectOrContentFileName,
       string contentFolderName,
@@ -289,6 +298,11 @@ namespace Altaxo.Text.Renderers
 
     }
 
+    /// <summary>
+    /// Finds a fragment link target inside the rendered MAML files.
+    /// </summary>
+    /// <param name="url">The fragment URL.</param>
+    /// <returns>The target file GUID and address, or <c>null</c> values if not found.</returns>
     public (string? fileGuid, string? address) FindFragmentLink(string url)
     {
       if (_markdownDocument is null)
@@ -321,6 +335,7 @@ namespace Altaxo.Text.Renderers
       return (null, null);
     }
 
+    /// <inheritdoc/>
     public override object? Render(MarkdownObject markdownObject)
     {
       object? result = null;
@@ -357,11 +372,20 @@ namespace Altaxo.Text.Renderers
       return result;
     }
 
+    /// <summary>
+    /// Pushes a Maml element onto the stack.
+    /// </summary>
+    /// <param name="mamlElement">The Maml element to push.</param>
     public void Push(Maml.MamlElement mamlElement)
     {
       Push(mamlElement, null);
     }
 
+    /// <summary>
+    /// Pushes a Maml element with attributes onto the stack.
+    /// </summary>
+    /// <param name="mamlElement">The Maml element to push.</param>
+    /// <param name="attributes">The attributes for the element.</param>
     public void Push(Maml.MamlElement mamlElement, IEnumerable<KeyValuePair<string, string>>? attributes)
     {
       _currentElementStack.Add(mamlElement);
@@ -390,6 +414,14 @@ namespace Altaxo.Text.Renderers
         WriteLine();
     }
 
+    /// <summary>
+    /// Pops the top Maml element from the stack.
+    /// </summary>
+    /// <returns>The popped Maml element.</returns>
+    /// <summary>
+    /// Pops the top MAML element from the stack.
+    /// </summary>
+    /// <returns>The popped MAML element.</returns>
     public Maml.MamlElement Pop()
     {
       if (_currentElementStack.Count <= 0)
@@ -408,12 +440,19 @@ namespace Altaxo.Text.Renderers
       return ele;
     }
 
+    /// <summary>
+    /// Pops all elements from the current element stack.
+    /// </summary>
     public void PopAll()
     {
       while (_currentElementStack.Count > 0)
         Pop();
     }
 
+    /// <summary>
+    /// Pops elements from the stack until the specified element is found and popped.
+    /// </summary>
+    /// <param name="mamlElement">The element to pop to.</param>
     public void PopTo(Maml.MamlElement mamlElement)
     {
       Maml.MamlElement? ele = null;
@@ -428,6 +467,10 @@ namespace Altaxo.Text.Renderers
         throw new InvalidOperationException("Could not pop to Maml element " + mamlElement.Name);
     }
 
+    /// <summary>
+    /// Pops elements from the stack until just before the specified element is on top.
+    /// </summary>
+    /// <param name="mamlElement">The element to pop to before.</param>
     public void PopToBefore(Maml.MamlElement mamlElement)
     {
       while (_currentElementStack.Count > 0)
@@ -442,11 +485,21 @@ namespace Altaxo.Text.Renderers
         throw new InvalidOperationException("Could not pop to before element " + mamlElement.Name);
     }
 
+    /// <summary>
+    /// Determines whether the element stack contains the specified element.
+    /// </summary>
+    /// <param name="mamlElement">The element to check for.</param>
+    /// <returns>True if the element is on the stack; otherwise, false.</returns>
     public bool ElementStackContains(Maml.MamlElement mamlElement)
     {
       return _currentElementStack.Contains(mamlElement);
     }
 
+    /// <summary>
+    /// Gets the number of times the specified element appears on the stack.
+    /// </summary>
+    /// <param name="mamlElement">The element to count.</param>
+    /// <returns>The number of occurrences of the element on the stack.</returns>
     public int NumberOfElementsOnStack(Maml.MamlElement mamlElement)
     {
       int result = 0;
@@ -597,6 +650,11 @@ namespace Altaxo.Text.Renderers
       }
     }
 
+    /// <summary>
+    /// Extracts the text content from the specified leaf block.
+    /// </summary>
+    /// <param name="leafBlock">The leaf block to extract text from.</param>
+    /// <returns>The extracted text content.</returns>
     public string ExtractTextContentFrom(LeafBlock leafBlock)
     {
       var result = string.Empty;

@@ -30,7 +30,7 @@ using System.Text;
 namespace Altaxo.Main.Services.PropertyReflection
 {
   /// <summary>
-  ///
+  /// Marks a property so that its nested members are displayed inline instead of hierarchically.
   /// </summary>
   /// <remarks>
   /// <para>This class originated from the 'WPG Property Grid' project (<see href="http://wpg.codeplex.com"/>), licensed under Ms-PL.</para>

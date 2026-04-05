@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -27,1030 +27,1041 @@ using System;
 
 namespace Altaxo.Gui
 {
+  /// <summary>
+  /// Specifies keyboard keys used by Altaxo.
+  /// </summary>
   public enum AltaxoKeyboardKey
   {
-    //
-    // Summary:
-    //     No key pressed.
+    /// <summary>
+    /// No key pressed.
+    /// </summary>
     None = 0,
 
-    //
-    // Summary:
-    //     The Cancel key.
+    /// <summary>
+    /// The Cancel key.
+    /// </summary>
     Cancel = 1,
 
-    //
-    // Summary:
-    //     The Backspace key.
+    /// <summary>
+    /// The Backspace key.
+    /// </summary>
     Back = 2,
 
-    //
-    // Summary:
-    //     The Tab key.
+    /// <summary>
+    /// The Tab key.
+    /// </summary>
     Tab = 3,
 
-    //
-    // Summary:
-    //     The Linefeed key.
+    /// <summary>
+    /// The Linefeed key.
+    /// </summary>
     LineFeed = 4,
 
-    //
-    // Summary:
-    //     The Clear key.
+    /// <summary>
+    /// The Clear key.
+    /// </summary>
     Clear = 5,
 
-    //
-    // Summary:
-    //     The Return key.
+    /// <summary>
+    /// The Return key.
+    /// </summary>
     Return = 6,
 
-    //
-    // Summary:
-    //     The Enter key.
+    /// <summary>
+    /// The Enter key.
+    /// </summary>
     Enter = 6,
 
-    //
-    // Summary:
-    //     The Pause key.
+    /// <summary>
+    /// The Pause key.
+    /// </summary>
     Pause = 7,
 
-    //
-    // Summary:
-    //     The Caps Lock key.
+    /// <summary>
+    /// The Caps Lock key.
+    /// </summary>
     Capital = 8,
 
-    //
-    // Summary:
-    //     The Caps Lock key.
+    /// <summary>
+    /// The Caps Lock key.
+    /// </summary>
     CapsLock = 8,
 
-    //
-    // Summary:
-    //     The IME Kana mode key.
+    /// <summary>
+    /// The IME Kana mode key.
+    /// </summary>
     KanaMode = 9,
 
-    //
-    // Summary:
-    //     The IME Hangul mode key.
+    /// <summary>
+    /// The IME Hangul mode key.
+    /// </summary>
     HangulMode = 9,
 
-    //
-    // Summary:
-    //     The IME Junja mode key.
+    /// <summary>
+    /// The IME Junja mode key.
+    /// </summary>
     JunjaMode = 10,
 
-    //
-    // Summary:
-    //     The IME Final mode key.
+    /// <summary>
+    /// The IME Final mode key.
+    /// </summary>
     FinalMode = 11,
 
-    //
-    // Summary:
-    //     The IME Hanja mode key.
+    /// <summary>
+    /// The IME Hanja mode key.
+    /// </summary>
     HanjaMode = 12,
 
-    //
-    // Summary:
-    //     The IME Kanji mode key.
+    /// <summary>
+    /// The IME Kanji mode key.
+    /// </summary>
     KanjiMode = 12,
 
-    //
-    // Summary:
-    //     The ESC key.
+    /// <summary>
+    /// The ESC key.
+    /// </summary>
     Escape = 13,
 
-    //
-    // Summary:
-    //     The IME Convert key.
+    /// <summary>
+    /// The IME Convert key.
+    /// </summary>
     ImeConvert = 14,
 
-    //
-    // Summary:
-    //     The IME NonConvert key.
+    /// <summary>
+    /// The IME NonConvert key.
+    /// </summary>
     ImeNonConvert = 15,
 
-    //
-    // Summary:
-    //     The IME Accept key.
+    /// <summary>
+    /// The IME Accept key.
+    /// </summary>
     ImeAccept = 16,
 
-    //
-    // Summary:
-    //     The IME Mode change request.
+    /// <summary>
+    /// The IME Mode change request.
+    /// </summary>
     ImeModeChange = 17,
 
-    //
-    // Summary:
-    //     The Spacebar key.
+    /// <summary>
+    /// The Spacebar key.
+    /// </summary>
     Space = 18,
 
-    //
-    // Summary:
-    //     The Page Up key.
+    /// <summary>
+    /// The Page Up key.
+    /// </summary>
     Prior = 19,
 
-    //
-    // Summary:
-    //     The Page Up key.
+    /// <summary>
+    /// The Page Up key.
+    /// </summary>
     PageUp = 19,
 
-    //
-    // Summary:
-    //     The Page Down key.
+    /// <summary>
+    /// The Page Down key.
+    /// </summary>
     Next = 20,
 
-    //
-    // Summary:
-    //     The Page Down key.
+    /// <summary>
+    /// The Page Down key.
+    /// </summary>
     PageDown = 20,
 
-    //
-    // Summary:
-    //     The End key.
+    /// <summary>
+    /// The End key.
+    /// </summary>
     End = 21,
 
-    //
-    // Summary:
-    //     The Home key.
+    /// <summary>
+    /// The Home key.
+    /// </summary>
     Home = 22,
 
-    //
-    // Summary:
-    //     The Left Arrow key.
+    /// <summary>
+    /// The Left Arrow key.
+    /// </summary>
     Left = 23,
 
-    //
-    // Summary:
-    //     The Up Arrow key.
+    /// <summary>
+    /// The Up Arrow key.
+    /// </summary>
     Up = 24,
 
-    //
-    // Summary:
-    //     The Right Arrow key.
+    /// <summary>
+    /// The Right Arrow key.
+    /// </summary>
     Right = 25,
 
-    //
-    // Summary:
-    //     The Down Arrow key.
+    /// <summary>
+    /// The Down Arrow key.
+    /// </summary>
     Down = 26,
 
-    //
-    // Summary:
-    //     The Select key.
+    /// <summary>
+    /// The Select key.
+    /// </summary>
     Select = 27,
 
-    //
-    // Summary:
-    //     The Print key.
+    /// <summary>
+    /// The Print key.
+    /// </summary>
     Print = 28,
 
-    //
-    // Summary:
-    //     The Execute key.
+    /// <summary>
+    /// The Execute key.
+    /// </summary>
     Execute = 29,
 
-    //
-    // Summary:
-    //     The Print Screen key.
+    /// <summary>
+    /// The Print Screen key.
+    /// </summary>
     Snapshot = 30,
 
-    //
-    // Summary:
-    //     The Print Screen key.
+    /// <summary>
+    /// The Print Screen key.
+    /// </summary>
     PrintScreen = 30,
 
-    //
-    // Summary:
-    //     The Insert key.
+    /// <summary>
+    /// The Insert key.
+    /// </summary>
     Insert = 31,
 
-    //
-    // Summary:
-    //     The Delete key.
+    /// <summary>
+    /// The Delete key.
+    /// </summary>
     Delete = 32,
 
-    //
-    // Summary:
-    //     The Help key.
+    /// <summary>
+    /// The Help key.
+    /// </summary>
     Help = 33,
 
-    //
-    // Summary:
-    //     The 0 (zero) key.
+    /// <summary>
+    /// The 0 (zero) key.
+    /// </summary>
     D0 = 34,
 
-    //
-    // Summary:
-    //     The 1 (one) key.
+    /// <summary>
+    /// The 1 (one) key.
+    /// </summary>
     D1 = 35,
 
-    //
-    // Summary:
-    //     The 2 key.
+    /// <summary>
+    /// The 2 key.
+    /// </summary>
     D2 = 36,
 
-    //
-    // Summary:
-    //     The 3 key.
+    /// <summary>
+    /// The 3 key.
+    /// </summary>
     D3 = 37,
 
-    //
-    // Summary:
-    //     The 4 key.
+    /// <summary>
+    /// The 4 key.
+    /// </summary>
     D4 = 38,
 
-    //
-    // Summary:
-    //     The 5 key.
+    /// <summary>
+    /// The 5 key.
+    /// </summary>
     D5 = 39,
 
-    //
-    // Summary:
-    //     The 6 key.
+    /// <summary>
+    /// The 6 key.
+    /// </summary>
     D6 = 40,
 
-    //
-    // Summary:
-    //     The 7 key.
+    /// <summary>
+    /// The 7 key.
+    /// </summary>
     D7 = 41,
 
-    //
-    // Summary:
-    //     The 8 key.
+    /// <summary>
+    /// The 8 key.
+    /// </summary>
     D8 = 42,
 
-    //
-    // Summary:
-    //     The 9 key.
+    /// <summary>
+    /// The 9 key.
+    /// </summary>
     D9 = 43,
 
-    //
-    // Summary:
-    //     The A key.
+    /// <summary>
+    /// The A key.
+    /// </summary>
     A = 44,
 
-    //
-    // Summary:
-    //     The B key.
+    /// <summary>
+    /// The B key.
+    /// </summary>
     B = 45,
 
-    //
-    // Summary:
-    //     The C key.
+    /// <summary>
+    /// The C key.
+    /// </summary>
     C = 46,
 
-    //
-    // Summary:
-    //     The D key.
+    /// <summary>
+    /// The D key.
+    /// </summary>
     D = 47,
 
-    //
-    // Summary:
-    //     The E key.
+    /// <summary>
+    /// The E key.
+    /// </summary>
     E = 48,
 
-    //
-    // Summary:
-    //     The F key.
+    /// <summary>
+    /// The F key.
+    /// </summary>
     F = 49,
 
-    //
-    // Summary:
-    //     The G key.
+    /// <summary>
+    /// The G key.
+    /// </summary>
     G = 50,
 
-    //
-    // Summary:
-    //     The H key.
+    /// <summary>
+    /// The H key.
+    /// </summary>
     H = 51,
 
-    //
-    // Summary:
-    //     The I key.
+    /// <summary>
+    /// The I key.
+    /// </summary>
     I = 52,
 
-    //
-    // Summary:
-    //     The J key.
+    /// <summary>
+    /// The J key.
+    /// </summary>
     J = 53,
 
-    //
-    // Summary:
-    //     The K key.
+    /// <summary>
+    /// The K key.
+    /// </summary>
     K = 54,
 
-    //
-    // Summary:
-    //     The L key.
+    /// <summary>
+    /// The L key.
+    /// </summary>
     L = 55,
 
-    //
-    // Summary:
-    //     The M key.
+    /// <summary>
+    /// The M key.
+    /// </summary>
     M = 56,
 
-    //
-    // Summary:
-    //     The N key.
+    /// <summary>
+    /// The N key.
+    /// </summary>
     N = 57,
 
-    //
-    // Summary:
-    //     The O key.
+    /// <summary>
+    /// The O key.
+    /// </summary>
     O = 58,
 
-    //
-    // Summary:
-    //     The P key.
+    /// <summary>
+    /// The P key.
+    /// </summary>
     P = 59,
 
-    //
-    // Summary:
-    //     The Q key.
+    /// <summary>
+    /// The Q key.
+    /// </summary>
     Q = 60,
 
-    //
-    // Summary:
-    //     The R key.
+    /// <summary>
+    /// The R key.
+    /// </summary>
     R = 61,
 
-    //
-    // Summary:
-    //     The S key.
+    /// <summary>
+    /// The S key.
+    /// </summary>
     S = 62,
 
-    //
-    // Summary:
-    //     The T key.
+    /// <summary>
+    /// The T key.
+    /// </summary>
     T = 63,
 
-    //
-    // Summary:
-    //     The U key.
+    /// <summary>
+    /// The U key.
+    /// </summary>
     U = 64,
 
-    //
-    // Summary:
-    //     The V key.
+    /// <summary>
+    /// The V key.
+    /// </summary>
     V = 65,
 
-    //
-    // Summary:
-    //     The W key.
+    /// <summary>
+    /// The W key.
+    /// </summary>
     W = 66,
 
-    //
-    // Summary:
-    //     The X key.
+    /// <summary>
+    /// The X key.
+    /// </summary>
     X = 67,
 
-    //
-    // Summary:
-    //     The Y key.
+    /// <summary>
+    /// The Y key.
+    /// </summary>
     Y = 68,
 
-    //
-    // Summary:
-    //     The Z key.
+    /// <summary>
+    /// The Z key.
+    /// </summary>
     Z = 69,
 
-    //
-    // Summary:
-    //     The left Windows logo key (Microsoft Natural Keyboard).
+    /// <summary>
+    /// The left Windows logo key (Microsoft Natural Keyboard).
+    /// </summary>
     LWin = 70,
 
-    //
-    // Summary:
-    //     The right Windows logo key (Microsoft Natural Keyboard).
+    /// <summary>
+    /// The right Windows logo key (Microsoft Natural Keyboard).
+    /// </summary>
     RWin = 71,
 
-    //
-    // Summary:
-    //     The Application key (Microsoft Natural Keyboard).
+    /// <summary>
+    /// The Application key (Microsoft Natural Keyboard).
+    /// </summary>
     Apps = 72,
 
-    //
-    // Summary:
-    //     The Computer Sleep key.
+    /// <summary>
+    /// The Computer Sleep key.
+    /// </summary>
     Sleep = 73,
 
-    //
-    // Summary:
-    //     The 0 key on the numeric keypad.
+    /// <summary>
+    /// The 0 key on the numeric keypad.
+    /// </summary>
     NumPad0 = 74,
 
-    //
-    // Summary:
-    //     The 1 key on the numeric keypad.
+    /// <summary>
+    /// The 1 key on the numeric keypad.
+    /// </summary>
     NumPad1 = 75,
 
-    //
-    // Summary:
-    //     The 2 key on the numeric keypad.
+    /// <summary>
+    /// The 2 key on the numeric keypad.
+    /// </summary>
     NumPad2 = 76,
 
-    //
-    // Summary:
-    //     The 3 key on the numeric keypad.
+    /// <summary>
+    /// The 3 key on the numeric keypad.
+    /// </summary>
     NumPad3 = 77,
 
-    //
-    // Summary:
-    //     The 4 key on the numeric keypad.
+    /// <summary>
+    /// The 4 key on the numeric keypad.
+    /// </summary>
     NumPad4 = 78,
 
-    //
-    // Summary:
-    //     The 5 key on the numeric keypad.
+    /// <summary>
+    /// The 5 key on the numeric keypad.
+    /// </summary>
     NumPad5 = 79,
 
-    //
-    // Summary:
-    //     The 6 key on the numeric keypad.
+    /// <summary>
+    /// The 6 key on the numeric keypad.
+    /// </summary>
     NumPad6 = 80,
 
-    //
-    // Summary:
-    //     The 7 key on the numeric keypad.
+    /// <summary>
+    /// The 7 key on the numeric keypad.
+    /// </summary>
     NumPad7 = 81,
 
-    //
-    // Summary:
-    //     The 8 key on the numeric keypad.
+    /// <summary>
+    /// The 8 key on the numeric keypad.
+    /// </summary>
     NumPad8 = 82,
 
-    //
-    // Summary:
-    //     The 9 key on the numeric keypad.
+    /// <summary>
+    /// The 9 key on the numeric keypad.
+    /// </summary>
     NumPad9 = 83,
 
-    //
-    // Summary:
-    //     The Multiply key.
+    /// <summary>
+    /// The Multiply key.
+    /// </summary>
     Multiply = 84,
 
-    //
-    // Summary:
-    //     The Add key.
+    /// <summary>
+    /// The Add key.
+    /// </summary>
     Add = 85,
 
-    //
-    // Summary:
-    //     The Separator key.
+    /// <summary>
+    /// The Separator key.
+    /// </summary>
     Separator = 86,
 
-    //
-    // Summary:
-    //     The Subtract key.
+    /// <summary>
+    /// The Subtract key.
+    /// </summary>
     Subtract = 87,
 
-    //
-    // Summary:
-    //     The Decimal key.
+    /// <summary>
+    /// The Decimal key.
+    /// </summary>
     Decimal = 88,
 
-    //
-    // Summary:
-    //     The Divide key.
+    /// <summary>
+    /// The Divide key.
+    /// </summary>
     Divide = 89,
 
-    //
-    // Summary:
-    //     The F1 key.
+    /// <summary>
+    /// The F1 key.
+    /// </summary>
     F1 = 90,
 
-    //
-    // Summary:
-    //     The F2 key.
+    /// <summary>
+    /// The F2 key.
+    /// </summary>
     F2 = 91,
 
-    //
-    // Summary:
-    //     The F3 key.
+    /// <summary>
+    /// The F3 key.
+    /// </summary>
     F3 = 92,
 
-    //
-    // Summary:
-    //     The F4 key.
+    /// <summary>
+    /// The F4 key.
+    /// </summary>
     F4 = 93,
 
-    //
-    // Summary:
-    //     The F5 key.
+    /// <summary>
+    /// The F5 key.
+    /// </summary>
     F5 = 94,
 
-    //
-    // Summary:
-    //     The F6 key.
+    /// <summary>
+    /// The F6 key.
+    /// </summary>
     F6 = 95,
 
-    //
-    // Summary:
-    //     The F7 key.
+    /// <summary>
+    /// The F7 key.
+    /// </summary>
     F7 = 96,
 
-    //
-    // Summary:
-    //     The F8 key.
+    /// <summary>
+    /// The F8 key.
+    /// </summary>
     F8 = 97,
 
-    //
-    // Summary:
-    //     The F9 key.
+    /// <summary>
+    /// The F9 key.
+    /// </summary>
     F9 = 98,
 
-    //
-    // Summary:
-    //     The F10 key.
+    /// <summary>
+    /// The F10 key.
+    /// </summary>
     F10 = 99,
 
-    //
-    // Summary:
-    //     The F11 key.
+    /// <summary>
+    /// The F11 key.
+    /// </summary>
     F11 = 100,
 
-    //
-    // Summary:
-    //     The F12 key.
+    /// <summary>
+    /// The F12 key.
+    /// </summary>
     F12 = 101,
 
-    //
-    // Summary:
-    //     The F13 key.
+    /// <summary>
+    /// The F13 key.
+    /// </summary>
     F13 = 102,
 
-    //
-    // Summary:
-    //     The F14 key.
+    /// <summary>
+    /// The F14 key.
+    /// </summary>
     F14 = 103,
 
-    //
-    // Summary:
-    //     The F15 key.
+    /// <summary>
+    /// The F15 key.
+    /// </summary>
     F15 = 104,
 
-    //
-    // Summary:
-    //     The F16 key.
+    /// <summary>
+    /// The F16 key.
+    /// </summary>
     F16 = 105,
 
-    //
-    // Summary:
-    //     The F17 key.
+    /// <summary>
+    /// The F17 key.
+    /// </summary>
     F17 = 106,
 
-    //
-    // Summary:
-    //     The F18 key.
+    /// <summary>
+    /// The F18 key.
+    /// </summary>
     F18 = 107,
 
-    //
-    // Summary:
-    //     The F19 key.
+    /// <summary>
+    /// The F19 key.
+    /// </summary>
     F19 = 108,
 
-    //
-    // Summary:
-    //     The F20 key.
+    /// <summary>
+    /// The F20 key.
+    /// </summary>
     F20 = 109,
 
-    //
-    // Summary:
-    //     The F21 key.
+    /// <summary>
+    /// The F21 key.
+    /// </summary>
     F21 = 110,
 
-    //
-    // Summary:
-    //     The F22 key.
+    /// <summary>
+    /// The F22 key.
+    /// </summary>
     F22 = 111,
 
-    //
-    // Summary:
-    //     The F23 key.
+    /// <summary>
+    /// The F23 key.
+    /// </summary>
     F23 = 112,
 
-    //
-    // Summary:
-    //     The F24 key.
+    /// <summary>
+    /// The F24 key.
+    /// </summary>
     F24 = 113,
 
-    //
-    // Summary:
-    //     The Num Lock key.
+    /// <summary>
+    /// The Num Lock key.
+    /// </summary>
     NumLock = 114,
 
-    //
-    // Summary:
-    //     The Scroll Lock key.
+    /// <summary>
+    /// The Scroll Lock key.
+    /// </summary>
     Scroll = 115,
 
-    //
-    // Summary:
-    //     The left Shift key.
+    /// <summary>
+    /// The left Shift key.
+    /// </summary>
     LeftShift = 116,
 
-    //
-    // Summary:
-    //     The right Shift key.
+    /// <summary>
+    /// The right Shift key.
+    /// </summary>
     RightShift = 117,
 
-    //
-    // Summary:
-    //     The left CTRL key.
+    /// <summary>
+    /// The left CTRL key.
+    /// </summary>
     LeftCtrl = 118,
 
-    //
-    // Summary:
-    //     The right CTRL key.
+    /// <summary>
+    /// The right CTRL key.
+    /// </summary>
     RightCtrl = 119,
 
-    //
-    // Summary:
-    //     The left ALT key.
+    /// <summary>
+    /// The left ALT key.
+    /// </summary>
     LeftAlt = 120,
 
-    //
-    // Summary:
-    //     The right ALT key.
+    /// <summary>
+    /// The right ALT key.
+    /// </summary>
     RightAlt = 121,
 
-    //
-    // Summary:
-    //     The Browser Back key.
+    /// <summary>
+    /// The Browser Back key.
+    /// </summary>
     BrowserBack = 122,
 
-    //
-    // Summary:
-    //     The Browser Forward key.
+    /// <summary>
+    /// The Browser Forward key.
+    /// </summary>
     BrowserForward = 123,
 
-    //
-    // Summary:
-    //     The Browser Refresh key.
+    /// <summary>
+    /// The Browser Refresh key.
+    /// </summary>
     BrowserRefresh = 124,
 
-    //
-    // Summary:
-    //     The Browser Stop key.
+    /// <summary>
+    /// The Browser Stop key.
+    /// </summary>
     BrowserStop = 125,
 
-    //
-    // Summary:
-    //     The Browser Search key.
+    /// <summary>
+    /// The Browser Search key.
+    /// </summary>
     BrowserSearch = 126,
 
-    //
-    // Summary:
-    //     The Browser Favorites key.
+    /// <summary>
+    /// The Browser Favorites key.
+    /// </summary>
     BrowserFavorites = 127,
 
-    //
-    // Summary:
-    //     The Browser Home key.
+    /// <summary>
+    /// The Browser Home key.
+    /// </summary>
     BrowserHome = 128,
 
-    //
-    // Summary:
-    //     The Volume Mute key.
+    /// <summary>
+    /// The Volume Mute key.
+    /// </summary>
     VolumeMute = 129,
 
-    //
-    // Summary:
-    //     The Volume Down key.
+    /// <summary>
+    /// The Volume Down key.
+    /// </summary>
     VolumeDown = 130,
 
-    //
-    // Summary:
-    //     The Volume Up key.
+    /// <summary>
+    /// The Volume Up key.
+    /// </summary>
     VolumeUp = 131,
 
-    //
-    // Summary:
-    //     The Media Next Track key.
+    /// <summary>
+    /// The Media Next Track key.
+    /// </summary>
     MediaNextTrack = 132,
 
-    //
-    // Summary:
-    //     The Media Previous Track key.
+    /// <summary>
+    /// The Media Previous Track key.
+    /// </summary>
     MediaPreviousTrack = 133,
 
-    //
-    // Summary:
-    //     The Media Stop key.
+    /// <summary>
+    /// The Media Stop key.
+    /// </summary>
     MediaStop = 134,
 
-    //
-    // Summary:
-    //     The Media Play Pause key.
+    /// <summary>
+    /// The Media Play Pause key.
+    /// </summary>
     MediaPlayPause = 135,
 
-    //
-    // Summary:
-    //     The Launch Mail key.
+    /// <summary>
+    /// The Launch Mail key.
+    /// </summary>
     LaunchMail = 136,
 
-    //
-    // Summary:
-    //     The Select Media key.
+    /// <summary>
+    /// The Select Media key.
+    /// </summary>
     SelectMedia = 137,
 
-    //
-    // Summary:
-    //     The Launch Application1 key.
+    /// <summary>
+    /// The Launch Application1 key.
+    /// </summary>
     LaunchApplication1 = 138,
 
-    //
-    // Summary:
-    //     The Launch Application2 key.
+    /// <summary>
+    /// The Launch Application2 key.
+    /// </summary>
     LaunchApplication2 = 139,
 
-    //
-    // Summary:
-    //     The OEM 1 key.
+    /// <summary>
+    /// The OEM 1 key.
+    /// </summary>
     Oem1 = 140,
 
-    //
-    // Summary:
-    //     The OEM Semicolon key.
+    /// <summary>
+    /// The OEM Semicolon key.
+    /// </summary>
     OemSemicolon = 140,
 
-    //
-    // Summary:
-    //     The OEM Addition key.
+    /// <summary>
+    /// The OEM Addition key.
+    /// </summary>
     OemPlus = 141,
 
-    //
-    // Summary:
-    //     The OEM Comma key.
+    /// <summary>
+    /// The OEM Comma key.
+    /// </summary>
     OemComma = 142,
 
-    //
-    // Summary:
-    //     The OEM Minus key.
+    /// <summary>
+    /// The OEM Minus key.
+    /// </summary>
     OemMinus = 143,
 
-    //
-    // Summary:
-    //     The OEM Period key.
+    /// <summary>
+    /// The OEM Period key.
+    /// </summary>
     OemPeriod = 144,
 
-    //
-    // Summary:
-    //     The OEM 2 key.
+    /// <summary>
+    /// The OEM 2 key.
+    /// </summary>
     Oem2 = 145,
 
-    //
-    // Summary:
-    //     The OEM Question key.
+    /// <summary>
+    /// The OEM Question key.
+    /// </summary>
     OemQuestion = 145,
 
-    //
-    // Summary:
-    //     The OEM 3 key.
+    /// <summary>
+    /// The OEM 3 key.
+    /// </summary>
     Oem3 = 146,
 
-    //
-    // Summary:
-    //     The OEM Tilde key.
+    /// <summary>
+    /// The OEM Tilde key.
+    /// </summary>
     OemTilde = 146,
 
-    //
-    // Summary:
-    //     The ABNT_C1 (Brazilian) key.
+    /// <summary>
+    /// The ABNT_C1 (Brazilian) key.
+    /// </summary>
     AbntC1 = 147,
 
-    //
-    // Summary:
-    //     The ABNT_C2 (Brazilian) key.
+    /// <summary>
+    /// The ABNT_C2 (Brazilian) key.
+    /// </summary>
     AbntC2 = 148,
 
-    //
-    // Summary:
-    //     The OEM 4 key.
+    /// <summary>
+    /// The OEM 4 key.
+    /// </summary>
     Oem4 = 149,
 
-    //
-    // Summary:
-    //     The OEM Open Brackets key.
+    /// <summary>
+    /// The OEM Open Brackets key.
+    /// </summary>
     OemOpenBrackets = 149,
 
-    //
-    // Summary:
-    //     The OEM 5 key.
+    /// <summary>
+    /// The OEM 5 key.
+    /// </summary>
     Oem5 = 150,
 
-    //
-    // Summary:
-    //     The OEM Pipe key.
+    /// <summary>
+    /// The OEM Pipe key.
+    /// </summary>
     OemPipe = 150,
 
-    //
-    // Summary:
-    //     The OEM 6 key.
+    /// <summary>
+    /// The OEM 6 key.
+    /// </summary>
     Oem6 = 151,
 
-    //
-    // Summary:
-    //     The OEM Close Brackets key.
+    /// <summary>
+    /// The OEM Close Brackets key.
+    /// </summary>
     OemCloseBrackets = 151,
 
-    //
-    // Summary:
-    //     The OEM 7 key.
+    /// <summary>
+    /// The OEM 7 key.
+    /// </summary>
     Oem7 = 152,
 
-    //
-    // Summary:
-    //     The OEM Quotes key.
+    /// <summary>
+    /// The OEM Quotes key.
+    /// </summary>
     OemQuotes = 152,
 
-    //
-    // Summary:
-    //     The OEM 8 key.
+    /// <summary>
+    /// The OEM 8 key.
+    /// </summary>
     Oem8 = 153,
 
-    //
-    // Summary:
-    //     The OEM 102 key.
+    /// <summary>
+    /// The OEM 102 key.
+    /// </summary>
     Oem102 = 154,
 
-    //
-    // Summary:
-    //     The OEM Backslash key.
+    /// <summary>
+    /// The OEM Backslash key.
+    /// </summary>
     OemBackslash = 154,
 
-    //
-    // Summary:
-    //     A special key masking the real key being processed by an IME.
+    /// <summary>
+    /// A special key masking the real key being processed by an IME.
+    /// </summary>
     ImeProcessed = 155,
 
-    //
-    // Summary:
-    //     A special key masking the real key being processed as a system key.
+    /// <summary>
+    /// A special key masking the real key being processed as a system key.
+    /// </summary>
     System = 156,
 
-    //
-    // Summary:
-    //     The OEM ATTN key.
+    /// <summary>
+    /// The OEM ATTN key.
+    /// </summary>
     OemAttn = 157,
 
-    //
-    // Summary:
-    //     The DBE_ALPHANUMERIC key.
+    /// <summary>
+    /// The DBE_ALPHANUMERIC key.
+    /// </summary>
     DbeAlphanumeric = 157,
 
-    //
-    // Summary:
-    //     The OEM FINISH key.
+    /// <summary>
+    /// The OEM FINISH key.
+    /// </summary>
     OemFinish = 158,
 
-    //
-    // Summary:
-    //     The DBE_KATAKANA key.
+    /// <summary>
+    /// The DBE_KATAKANA key.
+    /// </summary>
     DbeKatakana = 158,
 
-    //
-    // Summary:
-    //     The OEM COPY key.
+    /// <summary>
+    /// The OEM COPY key.
+    /// </summary>
     OemCopy = 159,
 
-    //
-    // Summary:
-    //     The DBE_HIRAGANA key.
+    /// <summary>
+    /// The DBE_HIRAGANA key.
+    /// </summary>
     DbeHiragana = 159,
 
-    //
-    // Summary:
-    //     The OEM AUTO key.
+    /// <summary>
+    /// The OEM AUTO key.
+    /// </summary>
     OemAuto = 160,
 
-    //
-    // Summary:
-    //     The DBE_SBCSCHAR key.
+    /// <summary>
+    /// The DBE_SBCSCHAR key.
+    /// </summary>
     DbeSbcsChar = 160,
 
-    //
-    // Summary:
-    //     The OEM ENLW key.
+    /// <summary>
+    /// The OEM ENLW key.
+    /// </summary>
     OemEnlw = 161,
 
-    //
-    // Summary:
-    //     The DBE_DBCSCHAR key.
+    /// <summary>
+    /// The DBE_DBCSCHAR key.
+    /// </summary>
     DbeDbcsChar = 161,
 
-    //
-    // Summary:
-    //     The OEM BACKTAB key.
+    /// <summary>
+    /// The OEM BACKTAB key.
+    /// </summary>
     OemBackTab = 162,
 
-    //
-    // Summary:
-    //     The DBE_ROMAN key.
+    /// <summary>
+    /// The DBE_ROMAN key.
+    /// </summary>
     DbeRoman = 162,
 
-    //
-    // Summary:
-    //     The ATTN key.
+    /// <summary>
+    /// The ATTN key.
+    /// </summary>
     Attn = 163,
 
-    //
-    // Summary:
-    //     The DBE_NOROMAN key.
+    /// <summary>
+    /// The DBE_NOROMAN key.
+    /// </summary>
     DbeNoRoman = 163,
 
-    //
-    // Summary:
-    //     The CRSEL key.
+    /// <summary>
+    /// The CRSEL key.
+    /// </summary>
     CrSel = 164,
 
-    //
-    // Summary:
-    //     The DBE_ENTERWORDREGISTERMODE key.
+    /// <summary>
+    /// The DBE_ENTERWORDREGISTERMODE key.
+    /// </summary>
     DbeEnterWordRegisterMode = 164,
 
-    //
-    // Summary:
-    //     The EXSEL key.
+    /// <summary>
+    /// The EXSEL key.
+    /// </summary>
     ExSel = 165,
 
-    //
-    // Summary:
-    //     The DBE_ENTERIMECONFIGMODE key.
+    /// <summary>
+    /// The DBE_ENTERIMECONFIGMODE key.
+    /// </summary>
     DbeEnterImeConfigureMode = 165,
 
-    //
-    // Summary:
-    //     The ERASE EOF key.
+    /// <summary>
+    /// The ERASE EOF key.
+    /// </summary>
     EraseEof = 166,
 
-    //
-    // Summary:
-    //     The DBE_FLUSHSTRING key.
+    /// <summary>
+    /// The DBE_FLUSHSTRING key.
+    /// </summary>
     DbeFlushString = 166,
 
-    //
-    // Summary:
-    //     The PLAY key.
+    /// <summary>
+    /// The PLAY key.
+    /// </summary>
     Play = 167,
 
-    //
-    // Summary:
-    //     The DBE_CODEINPUT key.
+    /// <summary>
+    /// The DBE_CODEINPUT key.
+    /// </summary>
     DbeCodeInput = 167,
 
-    //
-    // Summary:
-    //     The ZOOM key.
+    /// <summary>
+    /// The ZOOM key.
+    /// </summary>
     Zoom = 168,
 
-    //
-    // Summary:
-    //     The DBE_NOCODEINPUT key.
+    /// <summary>
+    /// The DBE_NOCODEINPUT key.
+    /// </summary>
     DbeNoCodeInput = 168,
 
-    //
-    // Summary:
-    //     A constant reserved for future use.
+    /// <summary>
+    /// A constant reserved for future use.
+    /// </summary>
     NoName = 169,
 
-    //
-    // Summary:
-    //     The DBE_DETERMINESTRING key.
+    /// <summary>
+    /// The DBE_DETERMINESTRING key.
+    /// </summary>
     DbeDetermineString = 169,
 
-    //
-    // Summary:
-    //     The PA1 key.
+    /// <summary>
+    /// The PA1 key.
+    /// </summary>
     Pa1 = 170,
 
-    //
-    // Summary:
-    //     The DBE_ENTERDLGCONVERSIONMODE key.
+    /// <summary>
+    /// The DBE_ENTERDLGCONVERSIONMODE key.
+    /// </summary>
     DbeEnterDialogConversionMode = 170,
 
-    //
-    // Summary:
-    //     The OEM Clear key.
+    /// <summary>
+    /// The OEM Clear key.
+    /// </summary>
     OemClear = 171,
 
-    //
-    // Summary:
-    //     The key is used with another key to create a single combined character.
+    /// <summary>
+    /// The key is used with another key to create a single combined character.
+    /// </summary>
     DeadCharProcessed = 172
   };
 
+  /// <summary>
+  /// Specifies modifier keys used together with keyboard keys.
+  /// </summary>
   [Flags]
   public enum AltaxoKeyboardModifierKeys
   {
+    /// <summary>No modifier key is pressed.</summary>
     None = 0,
 
+    /// <summary>The Alt key is pressed.</summary>
     Alt = 1,
 
+    /// <summary>The Control key is pressed.</summary>
     Control = 2,
 
+    /// <summary>The Shift key is pressed.</summary>
     Shift = 4,
 
+    /// <summary>The Windows key is pressed.</summary>
     Windows = 8
   }
 }

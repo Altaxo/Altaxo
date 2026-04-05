@@ -38,22 +38,52 @@ namespace Altaxo.Data
   {
     #region Enums
 
+    /// <summary>
+    /// Defines which data becomes the destination x-column.
+    /// </summary>
     public enum DestinationXColumn
     {
+      /// <summary>
+      /// Use the cycling-variable column as destination x-column.
+      /// </summary>
       CyclingVariable,
+      /// <summary>
+      /// Use the first averaged column as destination x-column.
+      /// </summary>
       FirstAveragedColumn
     }
 
+    /// <summary>
+    /// Defines how generated output columns are grouped.
+    /// </summary>
     public enum OutputFormat
     {
+      /// <summary>
+      /// Place each generated output column into its own group.
+      /// </summary>
       GroupOneColumn,
+      /// <summary>
+      /// Place all generated output columns into one group.
+      /// </summary>
       GroupAllColumns,
     }
 
+    /// <summary>
+    /// Defines the sorting applied to generated rows or columns.
+    /// </summary>
     public enum OutputSorting
     {
+      /// <summary>
+      /// Do not sort generated rows or columns.
+      /// </summary>
       None,
+      /// <summary>
+      /// Sort generated rows or columns in ascending order.
+      /// </summary>
       Ascending,
+      /// <summary>
+      /// Sort generated rows or columns in descending order.
+      /// </summary>
       Descending
     }
 
@@ -120,20 +150,29 @@ namespace Altaxo.Data
 
     #region Construction
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ExpandCyclingVariableColumnOptions"/> class.
+    /// </summary>
     public ExpandCyclingVariableColumnOptions()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ExpandCyclingVariableColumnOptions"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The source options.</param>
     public ExpandCyclingVariableColumnOptions(ExpandCyclingVariableColumnOptions from)
     {
       CopyFrom(from);
     }
 
+    /// <inheritdoc />
     public object Clone()
     {
       return new ExpandCyclingVariableColumnOptions(this);
     }
 
+    /// <inheritdoc />
     public virtual bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))

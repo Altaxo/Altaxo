@@ -31,6 +31,9 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
+  /// <summary>
+  /// Represents a line shape.
+  /// </summary>
   [Serializable]
   public class LineShape : OpenPathShapeBase
   {
@@ -38,6 +41,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     private class DeprecatedLineShape : ClosedPathShapeBase
     {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="DeprecatedLineShape"/> class during deserialization.
+      /// </summary>
+      /// <param name="info">The deserialization info.</param>
       public DeprecatedLineShape(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
         : base(new ItemLocationDirect(), info)
       {
@@ -52,11 +59,13 @@ namespace Altaxo.Graph.Gdi.Shapes
         throw new NotImplementedException();
       }
 
+      /// <inheritdoc />
       public override void Paint(Graphics g, IPaintContext paintContext)
       {
         throw new NotImplementedException();
       }
 
+      /// <inheritdoc />
       public override object Clone()
       {
         throw new NotImplementedException();
@@ -67,6 +76,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Shapes.LineShape", 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotSupportedException("Can not serialize old versions, maybe this is a programming error");
@@ -76,6 +86,7 @@ namespace Altaxo.Graph.Gdi.Shapes
                 */
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (DeprecatedLineShape?)o ?? new DeprecatedLineShape(info);
@@ -102,12 +113,14 @@ namespace Altaxo.Graph.Gdi.Shapes
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LineShape), 2)]
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (LineShape)obj;
         info.AddBaseValueEmbedded(s, typeof(LineShape).BaseType!);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (LineShape?)o ?? new LineShape(info);
@@ -121,33 +134,56 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LineShape"/> class during deserialization.
+    /// </summary>
+    /// <param name="info">The deserialization info.</param>
     protected LineShape(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
       : base(new ItemLocationDirect(), info)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LineShape"/> class.
+    /// </summary>
+    /// <param name="context">The property context.</param>
     public LineShape(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
       : base(new ItemLocationDirect(), context)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LineShape"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public LineShape(LineShape from)
       : base(from)
     {
       // No extra members to copy here!
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LineShape"/> class.
+    /// </summary>
+    /// <param name="startPosition">The start position.</param>
+    /// <param name="context">The property context.</param>
     public LineShape(PointD2D startPosition, Altaxo.Main.Properties.IReadOnlyPropertyBag? context)
       : base(new ItemLocationDirect(), context)
     {
       Position = startPosition;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LineShape"/> class.
+    /// </summary>
     public LineShape(double posX, double posY, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
       : this(new PointD2D(posX, posY), context)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LineShape"/> class.
+    /// </summary>
     public LineShape(PointD2D startPosition, PointD2D endPosition, Altaxo.Main.Properties.IReadOnlyPropertyBag? context)
       :
       this(startPosition, context)
@@ -156,18 +192,27 @@ namespace Altaxo.Graph.Gdi.Shapes
       _location.SizeY = RADouble.NewAbs(endPosition.Y - startPosition.Y);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LineShape"/> class.
+    /// </summary>
     public LineShape(double startX, double startY, PointD2D endPosition, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
       :
       this(new PointD2D(startX, startY), endPosition, context)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LineShape"/> class.
+    /// </summary>
     public LineShape(double startX, double startY, double endX, double endY, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
       :
       this(new PointD2D(startX, startY), new PointD2D(endX, endY), context)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LineShape"/> class.
+    /// </summary>
     public LineShape(PointD2D startPosition, PointD2D endPosition, double lineWidth, NamedColor lineColor)
       :
       this(startPosition, null)
@@ -177,6 +222,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       Pen = Pen.WithWidth(lineWidth).WithColor(lineColor);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LineShape"/> class.
+    /// </summary>
     public LineShape(double startX, double startY, double endX, double endY, double lineWidth, NamedColor lineColor)
       :
       this(new PointD2D(startX, startY), new PointD2D(endX, endY), null)
@@ -186,6 +234,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #endregion Constructors
 
+    /// <inheritdoc />
     public override bool AllowNegativeSize
     {
       get
@@ -194,11 +243,16 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new LineShape(this);
     }
 
+    /// <summary>
+    /// Gets the selection path.
+    /// </summary>
+    /// <returns>The selection path.</returns>
     public GraphicsPath GetSelectionPath()
     {
       return GetPath();
@@ -225,6 +279,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       return gp;
     }
 
+    /// <inheritdoc />
     public override IHitTestObject? HitTest(HitTestPointData htd)
     {
       HitTestObjectBase? result = null;
@@ -259,6 +314,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       return true;
     }
 
+    /// <inheritdoc />
     public override void Paint(Graphics g, IPaintContext paintContext)
     {
       GraphicsState gs = g.Save();
@@ -285,13 +341,21 @@ namespace Altaxo.Graph.Gdi.Shapes
       g.Restore(gs);
     }
 
+    /// <summary>
+    /// Represents the hit-test object for <see cref="LineShape"/>.
+    /// </summary>
     protected class LineShapeHitTestObject : GraphicBaseHitTestObject
     {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="LineShapeHitTestObject"/> class.
+      /// </summary>
+      /// <param name="parent">The parent line shape.</param>
       public LineShapeHitTestObject(LineShape parent)
         : base(parent)
       {
       }
 
+      /// <inheritdoc />
       public override IGripManipulationHandle[]? GetGrips(double pageScale, int gripLevel)
       {
         if (gripLevel <= 1)

@@ -33,7 +33,7 @@ using Altaxo.Geometry;
 namespace Altaxo.Graph.Graph3D.Lighting
 {
   /// <summary>
-  /// Represents directional lighting. All light rays are parallel to each other.
+  /// Represents a spot light source.
   /// </summary>
   public class SpotLight : IDiscreteLight
   {
@@ -59,9 +59,13 @@ namespace Altaxo.Graph.Graph3D.Lighting
     /// <summary>
     /// 2016-01-24 initial version.
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="SpotLight"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SpotLight), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (SpotLight)obj;
@@ -75,6 +79,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
         info.AddValue("InnerConeAngle", s._innerConeAngle);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (SpotLight?)o ?? new SpotLight(info);

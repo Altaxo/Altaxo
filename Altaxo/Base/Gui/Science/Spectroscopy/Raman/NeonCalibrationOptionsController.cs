@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Altaxo.Calc.Interpolation;
 using Altaxo.Gui.Calc.Interpolation;
@@ -11,14 +11,21 @@ using Altaxo.Science.Spectroscopy.Resampling;
 namespace Altaxo.Gui.Science.Spectroscopy.Raman
 {
 
+  /// <summary>
+  /// View interface for editing <see cref="NeonCalibrationOptions"/>.
+  /// </summary>
   public interface INeonCalibrationOptionsView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for editing <see cref="NeonCalibrationOptions"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(INeonCalibrationOptionsView))]
   [UserControllerForObject(typeof(NeonCalibrationOptions))]
   public class NeonCalibrationOptionsController : MVCANControllerEditImmutableDocBase<NeonCalibrationOptions, INeonCalibrationOptionsView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_peakFindingController, () => PeakFindingController = null);
@@ -28,6 +35,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
 
     private ItemsController<XAxisUnit> _XAxisUnit;
 
+    /// <summary>
+    /// Gets or sets the unit used for the x-axis in the calibration data.
+    /// </summary>
     public ItemsController<XAxisUnit> XAxisUnit
     {
       get => _XAxisUnit;
@@ -47,6 +57,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
 
     private double _laserWavelength_Nanometer;
 
+    /// <summary>
+    /// Gets or sets the laser wavelength in nanometers.
+    /// </summary>
     public double LaserWavelength_Nanometer
     {
       get => _laserWavelength_Nanometer;
@@ -61,6 +74,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the current laser wavelength value is valid for the selected x-axis unit.
+    /// </summary>
     public bool IsLaserWavelengthValid
     {
       get
@@ -73,6 +89,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
 
     private PeakSearchingAndFittingOptionsController _peakFindingController;
 
+    /// <summary>
+    /// Gets or sets the controller used to edit peak searching and fitting options.
+    /// </summary>
     public PeakSearchingAndFittingOptionsController PeakFindingController
     {
       get => _peakFindingController;
@@ -89,6 +108,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
 
     private bool _filterOutPeaksCorrespondingToMultipleNistPeaks;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether peaks corresponding to multiple NIST peaks should be filtered out.
+    /// </summary>
     public bool FilterOutPeaksCorrespondingToMultipleNistPeaks
     {
       get => _filterOutPeaksCorrespondingToMultipleNistPeaks;
@@ -104,6 +126,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
 
     private InterpolationFunctionOptionsController _interpolationMethod;
 
+    /// <summary>
+    /// Gets or sets the controller used to edit the interpolation method.
+    /// </summary>
     public InterpolationFunctionOptionsController InterpolationMethod
     {
       get => _interpolationMethod;
@@ -121,6 +146,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
 
     private bool _interpolationIgnoreVariance;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the interpolation should ignore variance / standard deviation.
+    /// </summary>
     public bool InterpolationIgnoreVariance
     {
       get => _interpolationIgnoreVariance;
@@ -136,6 +164,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
 
     private double _searchTolerance;
 
+    /// <summary>
+    /// Gets or sets the wavelength search tolerance.
+    /// </summary>
     public double SearchTolerance
     {
       get => _searchTolerance;
@@ -152,6 +183,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -176,6 +208,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
 
 
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (XAxisUnit.SelectedValue == Altaxo.Science.Spectroscopy.Raman.XAxisUnit.RelativeShiftInverseCentimeter &&

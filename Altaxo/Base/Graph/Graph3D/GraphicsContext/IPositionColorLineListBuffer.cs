@@ -32,12 +32,12 @@ using System.Threading.Tasks;
 namespace Altaxo.Graph.Graph3D.GraphicsContext
 {
   /// <summary>
-  /// Interface to a buffer that stores indexed triangle data consisting of position and color.
+  /// Interface to a buffer that stores colored line-list data consisting of position and color.
   /// </summary>
   public interface IPositionColorLineListBuffer
   {
     /// <summary>
-    /// Adds the specified vertex.
+    /// Adds a line segment.
     /// </summary>
     /// <param name="x0">The x position of line start point.</param>
     /// <param name="y0">The y position of line start point.</param>

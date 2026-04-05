@@ -24,10 +24,15 @@ using System.Resources;
 
 namespace Altaxo.Main.Services
 {
+  /// <summary>
+  /// Provides a fallback implementation of <see cref="IResourceService"/> that returns minimal default values.
+  /// </summary>
   internal sealed class FallbackResourceService : IResourceService
   {
+    /// <inheritdoc/>
     event EventHandler IResourceService.LanguageChanged { add { } remove { } }
 
+    /// <inheritdoc/>
     string IResourceService.Language
     {
       get { return "en"; }
@@ -37,36 +42,43 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <inheritdoc/>
     string IResourceService.GetString(string name)
     {
       return name;
     }
 
+    /// <inheritdoc/>
     object? IResourceService.GetImageResource(string name)
     {
       return null;
     }
 
+    /// <inheritdoc/>
     System.IO.Stream? IResourceService.GetResourceStream(string name)
     {
       return null;
     }
 
+    /// <inheritdoc/>
     void IResourceService.RegisterStrings(string baseResourceName, Assembly assembly)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     void IResourceService.RegisterNeutralStrings(ResourceManager stringManager, string debugInfo)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     void IResourceService.RegisterImages(string baseResourceName, Assembly assembly)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     void IResourceService.RegisterNeutralImages(ResourceManager imageManager, string debugInfo)
     {
       throw new NotImplementedException();
@@ -81,11 +93,13 @@ namespace Altaxo.Main.Services
     /// Example: the .resx file is located namespace Altaxo.Main.Services. The string resource's key is Foo. Then this string resource is registered with the name Altaxo.Main.Services.Foo.
     /// Image files directly included in the assembly have the name they are included with, but without extension.
     /// </remarks>
+    /// <inheritdoc/>
     void IResourceService.RegisterAssemblyResources(Assembly assembly)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public Bitmap GetBitmap(string name)
     {
       throw new NotImplementedException();

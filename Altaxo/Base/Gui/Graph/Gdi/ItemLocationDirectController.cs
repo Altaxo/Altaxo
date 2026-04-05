@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -32,12 +32,15 @@ using AUL = Altaxo.Units.Length;
 
 namespace Altaxo.Gui.Graph.Gdi
 {
+  /// <summary>
+  /// View contract for editing 2D item locations directly.
+  /// </summary>
   public interface IItemLocationDirectView : IDataContextAwareView
   {
   }
 
   /// <summary>
-  /// Summary description for LayerPositionController.
+  /// Controller for editing <see cref="ItemLocationDirect"/> values in 2D graphs.
   /// </summary>
   [ExpectedTypeOfView(typeof(IItemLocationDirectView))]
   [UserControllerForObject(typeof(ItemLocationDirect))]
@@ -51,6 +54,8 @@ namespace Altaxo.Gui.Graph.Gdi
     AnchoringController _localAnchoringController;
     AnchoringController _parentAnchoringController;
 
+ 
+    /// <inheritdoc />
     public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_localAnchoringController, () => _localAnchoringController = null);
@@ -63,6 +68,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private bool _areSizeElementsEnabled = true;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool AreSizeElementsEnabled
     {
       get => _areSizeElementsEnabled;
@@ -79,6 +87,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private bool _areSizeElementsVisible = true;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool AreSizeElementsVisible
     {
       get => _areSizeElementsVisible;
@@ -95,6 +106,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private QuantityWithUnitGuiEnvironment _xSizeEnvironment = SizeEnvironment.Instance;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment XSizeEnvironment
     {
       get => _xSizeEnvironment;
@@ -110,6 +124,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private DimensionfulQuantity _xSize;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity XSize
     {
       get => _xSize;
@@ -124,8 +141,14 @@ namespace Altaxo.Gui.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets or sets the s iz ex ch an ge d.
+    /// </summary>
     public event Action<RADouble> SizeXChanged;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public RADouble SizeX
     {
       get
@@ -148,6 +171,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private QuantityWithUnitGuiEnvironment _ySizeEnvironment = SizeEnvironment.Instance;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment YSizeEnvironment
     {
       get => _ySizeEnvironment;
@@ -163,6 +189,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private DimensionfulQuantity _ySize;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity YSize
     {
       get => _ySize;
@@ -177,8 +206,14 @@ namespace Altaxo.Gui.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets or sets the s iz ey ch an ge d.
+    /// </summary>
     public event Action<RADouble> SizeYChanged;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public RADouble SizeY
     {
       get
@@ -205,6 +240,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private bool _arePositionElementsEnabled = true;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool ArePositionElementsEnabled
     {
       get => _arePositionElementsEnabled;
@@ -220,6 +258,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private bool _arePositionElementsVisible = true;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool ArePositionElementsVisible
     {
       get => _arePositionElementsVisible;
@@ -236,6 +277,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private QuantityWithUnitGuiEnvironment _xPositionEnvironment = PositionEnvironment.Instance;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment XPositionEnvironment
     {
       get => _xPositionEnvironment;
@@ -251,6 +295,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private DimensionfulQuantity _xPosition;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity XPosition
     {
       get => _xPosition;
@@ -266,6 +313,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private QuantityWithUnitGuiEnvironment _yPositionEnvironment = PositionEnvironment.Instance;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment YPositionEnvironment
     {
       get => _yPositionEnvironment;
@@ -281,6 +331,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private DimensionfulQuantity _yPosition;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity YPosition
     {
       get => _yPosition;
@@ -301,11 +354,17 @@ namespace Altaxo.Gui.Graph.Gdi
 
     #region Rotation
 
+    /// <summary>
+    /// Gets the rotation environment.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment RotationEnvironment => AngleEnvironment.Instance;
 
 
     private DimensionfulQuantity _rotation;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity Rotation
     {
       get => _rotation;
@@ -323,11 +382,17 @@ namespace Altaxo.Gui.Graph.Gdi
 
     #region Shear
 
+    /// <summary>
+    /// Gets the shear environment.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment ShearEnvironment => RelationEnvironment.Instance;
 
 
     private DimensionfulQuantity _shear;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity Shear
     {
       get => _shear;
@@ -348,6 +413,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private bool _areScaleElementsEnabled = true;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool AreScaleElementsEnabled
     {
       get => _areScaleElementsEnabled;
@@ -363,6 +431,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private bool _areScaleElementsVisible = true;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool AreScaleElementsVisible
     {
       get => _areScaleElementsVisible;
@@ -376,10 +447,16 @@ namespace Altaxo.Gui.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets or sets the s ca le en vi ro nm en t.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment ScaleEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _xScale;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity XScale
     {
       get => _xScale;
@@ -394,6 +471,9 @@ namespace Altaxo.Gui.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public double ScaleX
     {
       get
@@ -408,6 +488,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private DimensionfulQuantity _yScale;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity YScale
     {
       get => _yScale;
@@ -422,6 +505,9 @@ namespace Altaxo.Gui.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public double ScaleY
     {
       get
@@ -434,15 +520,27 @@ namespace Altaxo.Gui.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets or sets the s ca le xc ha ng ed.
+    /// </summary>
     public event Action<double> ScaleXChanged;
+    /// <summary>
+    /// Gets or sets the s ca le yc ha ng ed.
+    /// </summary>
     public event Action<double> ScaleYChanged;
 
     #endregion
 
     #region Anchor
 
+    /// <summary>
+    /// Gets or sets the a re an ch or el em en ts en ab le d.
+    /// </summary>
     protected bool _areAnchorElementsEnabled = true;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool AreAnchorElementsEnabled
     {
       get => _areAnchorElementsEnabled;
@@ -458,6 +556,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
 
     bool _areAnchorElementsVisible = true;
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool AreAnchorElementsVisible
     {
       get => _areAnchorElementsVisible;
@@ -472,8 +573,14 @@ namespace Altaxo.Gui.Graph.Gdi
     }
 
 
+    /// <summary>
+    /// Gets or sets the l oc al an ch or in gc on tr ol le r.
+    /// </summary>
     public AnchoringController LocalAnchoringController => _localAnchoringController;
 
+    /// <summary>
+    /// Gets or sets the p ar en ta nc ho ri ng co nt ro ll er.
+    /// </summary>
     public AnchoringController ParentAnchoringController => _parentAnchoringController;
 
 
@@ -483,6 +590,8 @@ namespace Altaxo.Gui.Graph.Gdi
 
     #endregion
 
+ 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -527,6 +636,8 @@ namespace Altaxo.Gui.Graph.Gdi
       }
     }
 
+ 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       try
@@ -590,24 +701,36 @@ namespace Altaxo.Gui.Graph.Gdi
     #region Service members
 
 
+    /// <summary>
+    /// Performs the s ho ws iz ee le me nt s operation.
+    /// </summary>
     public void ShowSizeElements(bool isVisible, bool isEnabled)
     {
       AreSizeElementsVisible = isVisible;
       AreSizeElementsEnabled = isEnabled;
     }
 
+    /// <summary>
+    /// Performs the s ho ws ca le el em en ts operation.
+    /// </summary>
     public void ShowScaleElements(bool isVisible, bool isEnabled)
     {
       AreScaleElementsVisible = isVisible;
       AreScaleElementsEnabled = isEnabled;
     }
 
+    /// <summary>
+    /// Performs the s ho wp os it io ne le me nt s operation.
+    /// </summary>
     public void ShowPositionElements(bool isVisible, bool isEnabled)
     {
       ArePositionElementsVisible = isVisible;
       ArePositionElementsEnabled = isEnabled;
     }
 
+    /// <summary>
+    /// Performs the s ho wa nc ho re le me nt s operation.
+    /// </summary>
     public void ShowAnchorElements(bool isVisible, bool isEnabled)
     {
       AreAnchorElementsVisible = isVisible;

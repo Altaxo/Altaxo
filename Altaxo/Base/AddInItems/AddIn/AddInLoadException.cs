@@ -29,18 +29,35 @@ namespace Altaxo.AddInItems
   [Serializable]
   public class AddInLoadException : BaseException
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AddInLoadException"/> class.
+    /// </summary>
     public AddInLoadException() : base()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AddInLoadException"/> class.
+    /// </summary>
+    /// <param name="message">The exception message.</param>
     public AddInLoadException(string message) : base(message)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AddInLoadException"/> class.
+    /// </summary>
+    /// <param name="message">The exception message.</param>
+    /// <param name="innerException">The inner exception.</param>
     public AddInLoadException(string message, Exception innerException) : base(message, innerException)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AddInLoadException"/> class from serialized data.
+    /// </summary>
+    /// <param name="info">The serialization information.</param>
+    /// <param name="context">The streaming context.</param>
     protected AddInLoadException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
     }

@@ -43,7 +43,7 @@ namespace Altaxo.Main.Properties
     protected Action<T>? _applicationOfProperty;
 
     /// <summary>
-    /// If not null, this function is called if the property needs to be edited. The argument is the original property value, the return al
+    /// If not null, this function is called if the property needs to be edited. The argument is the original property value.
     /// </summary>
     protected Func<T, Gui.IMVCANController>? _editingControllerCreation;
 
@@ -64,7 +64,7 @@ namespace Altaxo.Main.Properties
     /// <param name="guidString">The unique identifier string used as a key string for this property.</param>
     /// <param name="propertyName">Name of the property. This name can contain backslashes, so that the property keys can be grouped by categories.</param>
     /// <param name="applicationLevel">The application level of this property.</param>
-    /// <param name="CreateBuiltinValue">Procedure to create the value that is stored in the BuiltinSettings when this constructor is called.</param>
+    /// <param name="CreateBuiltinValue">Procedure to create the value that is stored in the built-in settings when this constructor is called.</param>
     public PropertyKey(string guidString, string propertyName, PropertyLevel applicationLevel, Func<T> CreateBuiltinValue)
       : this(guidString, propertyName, applicationLevel, null, CreateBuiltinValue)
     {
@@ -89,7 +89,7 @@ namespace Altaxo.Main.Properties
     /// <param name="propertyName">Name of the property. This name can contain backslashes, so that the property keys can be grouped by categories.</param>
     /// <param name="applicationLevel">The application level of this property.</param>
     /// <param name="applicationItemType">Type of the application item (only useful if the application level contains <see cref="PropertyLevel.Document"/>). Can be <c>null</c> otherwise.</param>
-    /// <param name="CreateBuiltinValue">Procedure to create the value that is stored in the BuiltinSettings when this constructor is called.</param>
+    /// <param name="CreateBuiltinValue">Procedure to create the value that is stored in the built-in settings when this constructor is called.</param>
     public PropertyKey(string guidString, string propertyName, PropertyLevel applicationLevel, Type? applicationItemType, Func<T>? CreateBuiltinValue)
       : base(typeof(T), guidString, propertyName, applicationLevel, applicationItemType)
     {
@@ -132,10 +132,10 @@ namespace Altaxo.Main.Properties
     }
 
     /// <summary>
-    /// Function to get a Gui controller in order to edit a property value.
+    /// Function to get a GUI controller in order to edit a property value.
     /// </summary>
-    /// <param name="originalValue">The orignal property value.</param>
-    /// <returns>The Gui controller used to edit this value, or null if such a controller could not be created, or the <see cref="EditingControllerCreation"/> value was not set.</returns>
+    /// <param name="originalValue">The original property value.</param>
+    /// <returns>The GUI controller used to edit this value, or <c>null</c> if such a controller could not be created or the <see cref="EditingControllerCreation"/> value was not set.</returns>
     public virtual Gui.IMVCANController? CreateEditingController(T originalValue)
     {
       if (_editingControllerCreation is not null)
@@ -149,17 +149,17 @@ namespace Altaxo.Main.Properties
     }
 
     /// <summary>
-    /// Function to get a Gui controller in order to edit a property value.
+    /// Function to get a GUI controller in order to edit a property value.
     /// </summary>
-    /// <param name="originalValue">The orignal property value.</param>
-    /// <returns>The Gui controller used to edit this value, or null if such a controller could not be created, or the <see cref="EditingControllerCreation"/> value was not set.</returns>
+    /// <param name="originalValue">The original property value.</param>
+    /// <returns>The GUI controller used to edit this value, or <c>null</c> if such a controller could not be created or the <see cref="EditingControllerCreation"/> value was not set.</returns>
     public override Gui.IMVCANController? CreateEditingController(object originalValue)
     {
       return CreateEditingController((T)originalValue);
     }
 
     /// <summary>
-    /// Sets a function, that provides a Gui controller for the property value.
+    /// Sets a function that provides a GUI controller for the property value.
     /// </summary>
     /// <value>
     /// The edit property function.
@@ -172,6 +172,9 @@ namespace Altaxo.Main.Properties
       }
     }
 
+    /// <summary>
+    /// Gets or sets the application action.
+    /// </summary>
     public Action<T>? ApplicationAction
     {
       get

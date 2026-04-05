@@ -29,22 +29,73 @@ using Altaxo.Collections;
 namespace Altaxo.Data
 {
   /// <summary>
-  /// Contain statistic commands applied to the table.
+  /// Contains statistical commands applied to tables.
   /// </summary>
   public static class Statistics
   {
+    /// <summary>
+    /// Default column name used for the source-column-name output column.
+    /// </summary>
     public static readonly string DefaultColumnNameColumnName = "Col";
+
+    /// <summary>
+    /// Default column name used for the row-number output column.
+    /// </summary>
     public static readonly string DefaultRowNumberColumnName = "Row";
+
+    /// <summary>
+    /// Default column name used for mean values.
+    /// </summary>
     public static readonly string DefaultMeanColumnName = "Mean";
+
+    /// <summary>
+    /// Default column name used for standard deviations.
+    /// </summary>
     public static readonly string DefaultStandardDeviationColumnName = "sd";
+
+    /// <summary>
+    /// Default column name used for standard errors.
+    /// </summary>
     public static readonly string DefaultStandardErrorColumnName = "se";
+
+    /// <summary>
+    /// Default column name used for sums.
+    /// </summary>
     public static readonly string DefaultSumColumnName = "Sum";
+
+    /// <summary>
+    /// Default column name used for sums of squares.
+    /// </summary>
     public static readonly string DefaultSumSqrColumnName = "SumSqr";
+
+    /// <summary>
+    /// Default column name used for the number-of-items output column.
+    /// </summary>
     public static readonly string DefaultNumberOfItemsColumnName = "N";
+
+    /// <summary>
+    /// Default column name used for the one-sigma fraction output column.
+    /// </summary>
     public static readonly string DefaultFractionInOneSigmaColumnName = "FractionInOneSigma";
+
+    /// <summary>
+    /// Default column name used for the two-sigma fraction output column.
+    /// </summary>
     public static readonly string DefaultFractionInTwoSigmaColumnName = "FractionInTwoSigma";
+
+    /// <summary>
+    /// Default column name used for the three-sigma fraction output column.
+    /// </summary>
     public static readonly string DefaultFractionInThreeSigmaColumnName = "FractionInThreeSigma";
+
+    /// <summary>
+    /// Default column name used for minimum values.
+    /// </summary>
     public static readonly string DefaultMinimumColumnName = "Minimum";
+
+    /// <summary>
+    /// Default column name used for maximum values.
+    /// </summary>
     public static readonly string DefaultMaximumColumnName = "Maximum";
 
     /// <summary>

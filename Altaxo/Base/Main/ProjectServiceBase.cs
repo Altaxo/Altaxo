@@ -36,22 +36,49 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Dom
 {
+  /// <summary>
+  /// Base implementation of the project service.
+  /// </summary>
   public abstract class ProjectServiceBase : IProjectService
   {
+    /// <summary>
+    /// Holds the application name used in window titles.
+    /// </summary>
     protected string _applicationName = "Application";
 
+    /// <summary>
+    /// Holds the currently open project.
+    /// </summary>
     protected IProject? _currentProject;
 
+    /// <summary>
+    /// Holds the archive manager for the current project.
+    /// </summary>
     protected IProjectArchiveManager _currentProjectArchiveManager = new UnnamedProjectArchiveManager();
 
+    /// <summary>
+    /// Occurs when a project was opened.
+    /// </summary>
     public event EventHandler<ProjectEventArgs>? ProjectOpened;
 
+    /// <summary>
+    /// Occurs when a project was closed.
+    /// </summary>
     public event EventHandler<ProjectEventArgs>? ProjectClosed;
 
+    /// <summary>
+    /// Occurs when a project was renamed.
+    /// </summary>
     public event EventHandler<ProjectRenamedEventArgs>? ProjectRenamed;
 
+    /// <summary>
+    /// Occurs when the dirty state of the current project changes.
+    /// </summary>
     public event EventHandler<ProjectEventArgs>? ProjectDirtyChanged;
 
+    /// <summary>
+    /// Occurs when the current project changes in any relevant way.
+    /// </summary>
     public event EventHandler<ProjectEventArgs>? ProjectChanged;
 
     #region Current project and project file name handling
@@ -59,7 +86,7 @@ namespace Altaxo.Dom
     /// <summary>
     /// Fires the <see cref="ProjectChanged" /> event. This occurs <b>after</b> the events <see cref="ProjectOpened" />,
     /// <see cref="ProjectClosed" />, <see cref="ProjectRenamed" />, and <see cref="ProjectDirtyChanged" /> event. Usefull if
-    /// you not want to subscribe to the above mentioned single events.
+    /// you do not want to subscribe to the above-mentioned single events.
     /// </summary>
     protected virtual void OnProjectChanged(ProjectEventArgs e)
     {
@@ -169,6 +196,9 @@ namespace Altaxo.Dom
       return oldManager;
     }
 
+    /// <summary>
+    /// Handles changes of the current project file or folder name.
+    /// </summary>
     protected virtual void EhFileOrFolderNameChanged(object? sender, NameChangedEventArgs e)
     {
       if (_currentProject is null)
@@ -219,6 +249,9 @@ namespace Altaxo.Dom
       }
     }
 
+    /// <summary>
+    /// Handles changes of the dirty state of the current project.
+    /// </summary>
     protected virtual void EhProjectDirtyChanged(object? sender, EventArgs e)
     {
       OnProjectChanged(new Altaxo.Main.ProjectEventArgs(_currentProject, _currentProject?.Name, ProjectEventKind.ProjectDirtyChanged));
@@ -493,6 +526,10 @@ namespace Altaxo.Dom
 
     #endregion Project opening
 
+    /// <summary>
+    /// Closes all open views that display the specified document.
+    /// </summary>
+    /// <param name="document">The document whose views should be closed.</param>
     public void CloseDocumentViews(object document)
     {
       foreach (var viewContent in GetViewContentsForDocument(document).ToArray())
@@ -501,6 +538,11 @@ namespace Altaxo.Dom
       }
     }
 
+    /// <summary>
+    /// Closes the current project and creates a new empty one.
+    /// </summary>
+    /// <param name="forceClose"><see langword="true"/> to close without asking to save; otherwise, <see langword="false"/>.</param>
+    /// <returns><see langword="true"/> if the project was closed; otherwise, <see langword="false"/>.</returns>
     public virtual bool CloseProject(bool forceClose)
     {
       if (!(_currentProject is null) && _currentProject.IsDirty && !forceClose)
@@ -533,6 +575,9 @@ namespace Altaxo.Dom
       return true;
     }
 
+    /// <summary>
+    /// Creates the initial project for the application session.
+    /// </summary>
     public virtual void CreateInitialProject()
     {
       if (_currentProject is not null)
@@ -550,6 +595,9 @@ namespace Altaxo.Dom
     /// <returns>A new project.</returns>
     protected abstract IProject InternalCreateNewProject();
 
+    /// <summary>
+    /// Replaces the current project with a new unnamed project instance.
+    /// </summary>
     public void DisposeProjectAndSetToNull()
     {
       SetCurrentProject(InternalCreateNewProject(), asUnnamedProject: true);
@@ -612,11 +660,19 @@ namespace Altaxo.Dom
       return title.ToString();
     }
 
+    /// <summary>
+    /// Gets the set of documents that currently have open views.
+    /// </summary>
     public HashSet<object> GetOpenDocuments()
     {
       throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Determines whether the specified document currently has an open view.
+    /// </summary>
+    /// <param name="document">The document to inspect.</param>
+    /// <returns><see langword="true"/> if a view is open for the document; otherwise, <see langword="false"/>.</returns>
     public bool HasDocumentAnOpenView(object document)
     {
       return GetViewContentsForDocument(document).Any();
@@ -640,6 +696,11 @@ namespace Altaxo.Dom
       return false;
     }
 
+    /// <summary>
+    /// Shows a view for the specified document, creating one if necessary.
+    /// </summary>
+    /// <param name="document">The document to show.</param>
+    /// <returns>The shown view object, or <see langword="null"/> if no view could be created.</returns>
     public virtual object? ShowDocumentView(object document)
     {
       var viewcontent = Current.Workbench.GetViewModel<IViewContent>(document); // search for an already present view content
@@ -673,6 +734,11 @@ namespace Altaxo.Dom
 
 
 
+    /// <summary>
+    /// Deletes a project item on the UI thread.
+    /// </summary>
+    /// <param name="document">The project item to delete.</param>
+    /// <param name="force"><see langword="true"/> to delete without confirmation; otherwise, <see langword="false"/>.</param>
     protected virtual void DeleteDocument_Unsynchronized(Main.IProjectItem document, bool force)
     {
       if (!force &&
@@ -740,6 +806,11 @@ namespace Altaxo.Dom
       return Current.Dispatcher.InvokeIfRequired(OpenOrCreateViewContentForDocument_Unsynchronized, document);
     }
 
+    /// <summary>
+    /// Opens an existing view for the specified document or creates a new one on the UI thread.
+    /// </summary>
+    /// <param name="document">The document to show.</param>
+    /// <returns>The existing or newly created view content.</returns>
     protected object OpenOrCreateViewContentForDocument_Unsynchronized(IProjectItem document)
     {
       // make sure the document is contained in our current project
@@ -760,6 +831,11 @@ namespace Altaxo.Dom
       }
     }
 
+    /// <summary>
+    /// Creates a new view content for the specified document on the UI thread.
+    /// </summary>
+    /// <param name="document">The document for which to create a view.</param>
+    /// <returns>The created controller.</returns>
     protected IMVCController CreateNewViewContent_Unsynchronized(IProjectItem document)
     {
       if (document is null)
@@ -832,6 +908,9 @@ namespace Altaxo.Dom
     }
 
 
+    /// <summary>
+    /// Selects the first available open view.
+    /// </summary>
     protected void SelectFirstAvailableView()
     {
       var content = Current.Workbench.ViewContentCollection.FirstOrDefault();
@@ -843,6 +922,12 @@ namespace Altaxo.Dom
       }
     }
 
+    /// <summary>
+    /// Executes command-line-driven actions before the application starts its normal run loop.
+    /// </summary>
+    /// <param name="cmdArgs">The raw command arguments.</param>
+    /// <param name="cmdParameter">The parsed command parameters.</param>
+    /// <param name="cmdFiles">The files specified on the command line.</param>
     public abstract void ExecuteActionsImmediatelyBeforeRunningApplication(string[] cmdArgs, string[] cmdParameter, string[] cmdFiles);
   }
 }

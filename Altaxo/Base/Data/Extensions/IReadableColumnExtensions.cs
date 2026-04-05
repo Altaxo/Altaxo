@@ -27,6 +27,9 @@ using System.Collections.Generic;
 
 namespace Altaxo.Data
 {
+  /// <summary>
+  /// Extension methods for <see cref="IReadableColumn"/>.
+  /// </summary>
   public static class IReadableColumnExtensions
   {
     /// <summary>

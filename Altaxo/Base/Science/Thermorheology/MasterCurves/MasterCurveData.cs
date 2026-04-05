@@ -30,6 +30,9 @@ using Altaxo.Main;
 
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
+  /// <summary>
+  /// Stores the curve data used to build one or more master curves.
+  /// </summary>
   public class MasterCurveData : Main.SuspendableDocumentNodeWithSetOfEventArgs, IHasDocumentReferences, ICloneable
   {
 
@@ -47,6 +50,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MasterCurveData), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (MasterCurveData)obj;
@@ -68,6 +72,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         info.CommitArray(); // Groups
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = o as MasterCurveData ?? new MasterCurveData();
@@ -101,6 +106,11 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     #endregion
 
 
+    /// <summary>
+    /// Sets the curve data from grouped data columns.
+    /// </summary>
+    /// <param name="dataTable">The source data table.</param>
+    /// <param name="dataGroups">The grouped Y columns.</param>
     public void SetCurveData(DataTable dataTable, IReadOnlyList<IReadOnlyList<DataColumn?>> dataGroups)
     {
       var maxCount = dataGroups.Max(g => g.Count);
@@ -129,6 +139,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       CurveData = curveData;
     }
 
+    /// <inheritdoc />
     public object Clone()
     {
       var clone = new MasterCurveData();
@@ -143,6 +154,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       return clone;
     }
 
+    /// <inheritdoc />
     public void VisitDocumentReferences(DocNodeProxyReporter ReportProxies)
     {
       for (int i = 0; i < CurveData.Count; i++)
@@ -158,6 +170,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       }
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       for (int i = 0; i < CurveData.Count; i++)

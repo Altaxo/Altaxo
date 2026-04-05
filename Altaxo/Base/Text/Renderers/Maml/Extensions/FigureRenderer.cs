@@ -34,8 +34,14 @@ using Markdig.Extensions.Mathematics;
 
 namespace Altaxo.Text.Renderers.Maml.Extensions
 {
+  /// <summary>
+  /// MAML renderer for a figure block.
+  /// </summary>
   public class FigureRenderer : MamlObjectRenderer<Markdig.Extensions.Figures.Figure>
   {
+    /// <summary>
+    /// Writes a figure block.
+    /// </summary>
     protected override void Write(MamlRenderer renderer, Markdig.Extensions.Figures.Figure obj)
     {
       renderer.WriteChildren(obj);

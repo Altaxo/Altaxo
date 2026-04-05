@@ -31,6 +31,9 @@ using System.Text;
 
 namespace Altaxo.Graph.Scales.Ticks
 {
+  /// <summary>
+  /// Represents angular tick spacing using degree values.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Graph.Scales.Ticks.AngularDegreeTickSpacing}")]
   public class AngularDegreeTickSpacing : AngularTickSpacing
   {
@@ -39,12 +42,14 @@ namespace Altaxo.Graph.Scales.Ticks
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AngularDegreeTickSpacing), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         info.AddBaseValueEmbedded(obj, typeof(AngularTickSpacing));
         var s = (AngularDegreeTickSpacing)obj;
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (AngularDegreeTickSpacing?)o ?? new AngularDegreeTickSpacing();
@@ -57,25 +62,35 @@ namespace Altaxo.Graph.Scales.Ticks
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AngularDegreeTickSpacing"/> class.
+    /// </summary>
     public AngularDegreeTickSpacing()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AngularDegreeTickSpacing"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public AngularDegreeTickSpacing(AngularDegreeTickSpacing from)
       : base(from) // everything is done here, since CopyFrom is virtual!
     {
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new AngularDegreeTickSpacing(this);
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
     }
 
+    /// <inheritdoc />
     public override bool UseDegree
     {
       get { return true; }

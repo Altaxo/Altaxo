@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -34,15 +34,22 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Science.Spectroscopy.PeakSearching
 {
-  public interface IPeakSearchingByCwtView : IDataContextAwareView
+    /// <summary>
+/// Defines the contract for peak Searching By Cwt View.
+/// </summary>
+public interface IPeakSearchingByCwtView : IDataContextAwareView
   {
   }
 
-  [UserControllerForObject(typeof(PeakSearchingByCwt))]
+  /// <summary>
+/// Represents a controller for peak Searching By Cwt.
+/// </summary>
+[UserControllerForObject(typeof(PeakSearchingByCwt))]
   [ExpectedTypeOfView(typeof(IPeakSearchingByCwtView))]
   public class PeakSearchingByCwtController : MVCANControllerEditImmutableDocBase<PeakSearchingByCwt, IPeakSearchingByCwtView>
   {
-    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+        /// <inheritdoc />
+public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_subControllerPeakEnhancement, () => SubControllerPeakEnhancement = null);
     }
@@ -51,7 +58,13 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakSearching
 
     private ItemsController<Type> _wavelet;
 
-    public ItemsController<Type> Wavelet
+        /// <summary>
+/// Gets or sets the wavelet.
+/// </summary>
+/// <value>
+/// The wavelet.
+/// </value>
+public ItemsController<Type> Wavelet
     {
       get => _wavelet;
       set
@@ -66,7 +79,13 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakSearching
 
     private int _pointsPerOctave;
 
-    public int NumberOfPointsPerOctave
+        /// <summary>
+/// Gets or sets the number Of Points Per Octave.
+/// </summary>
+/// <value>
+/// The number Of Points Per Octave.
+/// </value>
+public int NumberOfPointsPerOctave
     {
       get => _pointsPerOctave;
       set
@@ -80,12 +99,24 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakSearching
     }
 
 
-    public QuantityWithUnitGuiEnvironment NumberOfOctavesEnvironment => RelationEnvironment.Instance;
+        /// <summary>
+/// Gets the number Of Octaves Environment.
+/// </summary>
+/// <value>
+/// The number Of Octaves Environment.
+/// </value>
+public QuantityWithUnitGuiEnvironment NumberOfOctavesEnvironment => RelationEnvironment.Instance;
 
 
     private DimensionfulQuantity _MinimalRidgeLengthInOctaves;
 
-    public DimensionfulQuantity MinimalRidgeLengthInOctaves
+        /// <summary>
+/// Gets or sets the minimal Ridge Length In Octaves.
+/// </summary>
+/// <value>
+/// The minimal Ridge Length In Octaves.
+/// </value>
+public DimensionfulQuantity MinimalRidgeLengthInOctaves
     {
       get => _MinimalRidgeLengthInOctaves;
       set
@@ -100,7 +131,13 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakSearching
 
     private DimensionfulQuantity _minimalWidthOfRidgeMaximumInOctaves;
 
-    public DimensionfulQuantity MinimalWidthOfRidgeMaximumInOctaves
+        /// <summary>
+/// Gets or sets the minimal Width Of Ridge Maximum In Octaves.
+/// </summary>
+/// <value>
+/// The minimal Width Of Ridge Maximum In Octaves.
+/// </value>
+public DimensionfulQuantity MinimalWidthOfRidgeMaximumInOctaves
     {
       get => _minimalWidthOfRidgeMaximumInOctaves;
       set
@@ -113,12 +150,24 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakSearching
       }
     }
 
-    public QuantityWithUnitGuiEnvironment RatioEnvironment => RelationEnvironment.Instance;
+        /// <summary>
+/// Gets the ratio Environment.
+/// </summary>
+/// <value>
+/// The ratio Environment.
+/// </value>
+public QuantityWithUnitGuiEnvironment RatioEnvironment => RelationEnvironment.Instance;
 
 
     private DimensionfulQuantity _minimalRelativeGaussianAmplitude;
 
-    public DimensionfulQuantity MinimalRelativeGaussianAmplitude
+        /// <summary>
+/// Gets or sets the minimal Relative Gaussian Amplitude.
+/// </summary>
+/// <value>
+/// The minimal Relative Gaussian Amplitude.
+/// </value>
+public DimensionfulQuantity MinimalRelativeGaussianAmplitude
     {
       get => _minimalRelativeGaussianAmplitude;
       set
@@ -133,7 +182,13 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakSearching
 
     private DimensionfulQuantity _minimalSignalToNoiseRatio;
 
-    public DimensionfulQuantity MinimalSignalToNoiseRatio
+        /// <summary>
+/// Gets or sets the minimal Signal To Noise Ratio.
+/// </summary>
+/// <value>
+/// The minimal Signal To Noise Ratio.
+/// </value>
+public DimensionfulQuantity MinimalSignalToNoiseRatio
     {
       get => _minimalSignalToNoiseRatio;
       set
@@ -148,7 +203,13 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakSearching
 
     private int? _maximalNumberOfPeaks;
 
-    public int? MaximalNumberOfPeaks
+        /// <summary>
+/// Gets or sets the maximal Number Of Peaks.
+/// </summary>
+/// <value>
+/// The maximal Number Of Peaks.
+/// </value>
+public int? MaximalNumberOfPeaks
     {
       get => _maximalNumberOfPeaks;
       set
@@ -163,7 +224,13 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakSearching
 
     private ItemsController<Type> _availablePeakEnhancementMethods;
 
-    public ItemsController<Type> AvailablePeakEnhancementMethods
+        /// <summary>
+/// Gets or sets the available Peak Enhancement Methods.
+/// </summary>
+/// <value>
+/// The available Peak Enhancement Methods.
+/// </value>
+public ItemsController<Type> AvailablePeakEnhancementMethods
     {
       get => _availablePeakEnhancementMethods;
       set
@@ -179,7 +246,13 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakSearching
 
     private IMVCANController? _subControllerPeakEnhancement;
 
-    public IMVCANController? SubControllerPeakEnhancement
+        /// <summary>
+/// Gets or sets the sub Controller Peak Enhancement.
+/// </summary>
+/// <value>
+/// The sub Controller Peak Enhancement.
+/// </value>
+public IMVCANController? SubControllerPeakEnhancement
     {
       get => _subControllerPeakEnhancement;
       set
@@ -197,7 +270,8 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakSearching
 
     #endregion
 
-    protected override void Initialize(bool initData)
+        /// <inheritdoc />
+protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
@@ -253,7 +327,8 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakSearching
 
     private class TypeSorter : IComparer<Type>
     {
-      public int Compare(Type x, Type y)
+            /// <inheritdoc />
+public int Compare(Type x, Type y)
       {
         var xn = x.Name.EndsWith("None");
         var yn = y.Name.EndsWith("None");
@@ -269,7 +344,8 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakSearching
       }
     }
 
-    public override bool Apply(bool disposeController)
+        /// <inheritdoc />
+public override bool Apply(bool disposeController)
     {
       try
       {

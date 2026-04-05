@@ -27,8 +27,15 @@ using Altaxo.DataConnection;
 
 namespace Altaxo.Data
 {
+  /// <summary>
+  /// Commands related to database-backed tables.
+  /// </summary>
   public static class DatabaseCommands
   {
+    /// <summary>
+    /// Shows the database import dialog for a table.
+    /// </summary>
+    /// <param name="dataTable">The target table.</param>
     public static void ShowImportDatabaseDialog(this DataTable dataTable)
     {
       var src = dataTable.DataSource as AltaxoOleDbDataSource;

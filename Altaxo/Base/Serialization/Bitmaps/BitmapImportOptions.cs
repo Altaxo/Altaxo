@@ -42,12 +42,12 @@ namespace Altaxo.Serialization.Bitmaps
     public bool IncludeFilePathAsProperty { get; init; } = true;
 
     /// <summary>
-    /// Gets a value indicating whether to include the dimensions ("DimensionX" and "DimensionY")
+    /// Gets a value indicating whether to include the dimension columns (`DimensionX` and `DimensionY`).
     /// </summary>
     public bool IncludeDimensionColumns { get; init; } = true;
 
     /// <summary>
-    /// Gets a value indicating whether to include the dimensions ("DimensionX" and "DimensionY")
+    /// Gets a value indicating whether to include the pixel number columns.
     /// </summary>
     public bool IncludePixelNumberColumns { get; init; } = false;
 
@@ -60,19 +60,19 @@ namespace Altaxo.Serialization.Bitmaps
     public bool ImportTransposed { get; init; }
 
     /// <summary>
-    /// Gets a value indicating which part of the color of each pixel to use for the value that imported.
+    /// Gets a value indicating which part of the color of each pixel to use for the imported value.
     /// </summary>
     public ColorChannel ColorChannel { get; init; }
 
     #region Serialization
 
     /// <summary>
-    /// 
+    /// XML serialization surrogate for <see cref="BitmapImportOptions"/>.
     /// </summary>
-    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BitmapImportOptions), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (BitmapImportOptions)obj;
@@ -84,6 +84,7 @@ namespace Altaxo.Serialization.Bitmaps
         info.AddEnum("ColorChannel", s.ColorChannel);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var neutralColumnName = info.GetString("NeutralColumnName");

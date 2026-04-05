@@ -49,7 +49,7 @@ namespace Altaxo.Graph.Graph3D.Background
     RectangleD3D Measure(RectangleD3D itemRectangle);
 
     /// <summary>
-    /// Draws the specified background
+    /// Draws the specified background.
     /// </summary>
     /// <param name="g">The drawing context.</param>
     /// <param name="itemRectangle">Position and size of the item for which this background is intended. For text, this is the position and size of the text rectangle, already with a margin around.
@@ -57,7 +57,7 @@ namespace Altaxo.Graph.Graph3D.Background
     void Draw(IGraphicsContext3D g, RectangleD3D itemRectangle);
 
     /// <summary>
-    /// Draws the specified background
+    /// Draws the specified background.
     /// </summary>
     /// <param name="g">The drawing context.</param>
     /// <param name="itemRectangle">Position and size of the item for which this background is intended. For text, this is the position and size of the text rectangle, already with a margin around.
@@ -79,7 +79,7 @@ namespace Altaxo.Graph.Graph3D.Background
     /// are free to chose the material, in this case the value is true.
     /// </summary>
     /// <value>
-    /// <c>true</c> if this background allows to chose the material;  otherwise <c>false</c>.
+    /// <c>true</c> if this background allows the user to choose the material; otherwise, <c>false</c>.
     /// </value>
     bool SupportsUserDefinedMaterial { get; set; }
 

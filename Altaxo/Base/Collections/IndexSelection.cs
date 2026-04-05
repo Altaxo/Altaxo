@@ -28,18 +28,26 @@ using System;
 namespace Altaxo.Collections
 {
   /// <summary>
-  /// Selection of indices, mimicking the behavior of selection in lists etc, using CTRL key to select single items and SHIFT to select multiple items.
+  /// Represents a selection of indices that mimics list selection behavior,
+  /// using the CTRL key to select single items and the SHIFT key to select multiple items.
   /// </summary>
   public class IndexSelection : Altaxo.Collections.AscendingIntegerCollection
   {
+    /// <summary>
+    /// Stores the most recently selected index.
+    /// </summary>
     protected int _lastSelectedIndex = 0;
+
+    /// <summary>
+    /// Stores whether extended selection behavior is used.
+    /// </summary>
     protected bool _useExtendedSelectionBehaviour = true;
 
     /// <summary>
     /// Gets the last selected index.
     /// </summary>
     /// <value>
-    /// The last selection.
+    /// The last selected index.
     /// </value>
     public int LastSelection
     {
@@ -50,9 +58,9 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
-    /// Determines whether the specified  index <paramref name="nIndex"/> is selected.
+    /// Determines whether the specified index <paramref name="nIndex"/> is selected.
     /// </summary>
-    /// <param name="nIndex">Index.</param>
+    /// <param name="nIndex">The index to test.</param>
     /// <returns>
     ///   <c>true</c> if the specified index is selected; otherwise, <c>false</c>.
     /// </returns>
@@ -64,9 +72,9 @@ namespace Altaxo.Collections
     /// <summary>
     /// Selects the specified index <paramref name="nIndex"/>, mimicking the behavior when using CTRL and SHIFT keys.
     /// </summary>
-    /// <param name="nIndex">Index to select.</param>
-    /// <param name="isShiftKeyActive">Set to true if the shift key is pressed. If the control key is pressed, this parameter is ignored.</param>
-    /// <param name="isControlKeyActive">Set to true if the control key is pressed. </param>
+    /// <param name="nIndex">The index to select.</param>
+    /// <param name="isShiftKeyActive">Set to <see langword="true"/> if the SHIFT key is pressed. If the CTRL key is pressed, this parameter is ignored.</param>
+    /// <param name="isControlKeyActive">Set to <see langword="true"/> if the CTRL key is pressed.</param>
     public void Select(int nIndex, bool isShiftKeyActive, bool isControlKeyActive)
     {
       if (isControlKeyActive) // Control pressed

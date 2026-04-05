@@ -34,6 +34,9 @@ using Altaxo.Graph.Scales.Ticks;
 
 namespace Altaxo.Graph.Gdi.Axis
 {
+  /// <summary>
+  /// Describes grid-line visibility and pens for an axis.
+  /// </summary>
   [Serializable]
   public class GridStyle
     :
@@ -100,16 +103,27 @@ namespace Altaxo.Graph.Gdi.Axis
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GridStyle"/> class.
+    /// </summary>
     public GridStyle()
     {
       _showGrid = true;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GridStyle"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public GridStyle(GridStyle from)
     {
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies the state from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public void CopyFrom(GridStyle from)
     {
       if (ReferenceEquals(this, from))
@@ -125,11 +139,15 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Gets or sets the pen used for major grid lines.
+    /// </summary>
     public PenX MajorPen
     {
       get
@@ -143,6 +161,9 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets the pen used for minor grid lines.
+    /// </summary>
     public PenX MinorPen
     {
       get
@@ -156,6 +177,9 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the grid is shown.
+    /// </summary>
     public bool ShowGrid
     {
       get { return _showGrid; }
@@ -169,6 +193,9 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether minor grid lines are shown.
+    /// </summary>
     public bool ShowMinor
     {
       get { return _showMinor; }
@@ -182,6 +209,9 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether only the zero grid line is shown.
+    /// </summary>
     public bool ShowZeroOnly
     {
       get { return _showZeroOnly; }
@@ -195,6 +225,12 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Paints the grid lines for the specified axis.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="layer">The plot layer.</param>
+    /// <param name="axisnumber">The axis number for which the grid is drawn.</param>
     public void Paint(Graphics g, IPlotArea layer, int axisnumber)
     {
       if (!_showGrid)
@@ -261,6 +297,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
     #region ICloneable Members
 
+    /// <inheritdoc />
     public object Clone()
     {
       return new GridStyle(this);
@@ -270,6 +307,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
     #region IRoutedPropertyReceiver Members
 
+    /// <inheritdoc />
     public IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName)
     {
       switch (propertyName)

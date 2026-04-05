@@ -28,8 +28,8 @@ using System;
 namespace Altaxo.Data
 {
   /// <summary>
-  /// Interface to a transformation that transformes an <see cref="AltaxoVariant"/> into another <see cref="AltaxoVariant"/>.
-  /// The class that implement this interface should be immutable.
+  /// Interface for a transformation that transforms one <see cref="AltaxoVariant"/> into another.
+  /// Implementations should be immutable.
   /// </summary>
   /// <seealso cref="Altaxo.Main.IImmutable" />
   public interface IVariantToVariantTransformation : Main.IImmutable

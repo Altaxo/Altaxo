@@ -32,6 +32,9 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.CS
 {
+  /// <summary>
+  /// Represents a projected 3D Cartesian coordinate system for GDI rendering.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Graph.Graph3D.CS.G3DCartesicCoordinateSystem}")]
    public class G3DCartesicCoordinateSystem : G2DCoordinateSystem
   {
@@ -54,6 +57,7 @@ namespace Altaxo.Graph.Gdi.CS
     /// Copies the member variables from another coordinate system.
     /// </summary>
     /// <param name="fromb">The coordinate system to copy from.</param>
+    /// <inheritdoc />
     public override void CopyFrom(G2DCoordinateSystem fromb)
     {
       if (ReferenceEquals(this, fromb))
@@ -93,21 +97,25 @@ namespace Altaxo.Graph.Gdi.CS
       _projectionMatrix.M23 = Math.Sqrt(0.5) * height;
     }
 
+    /// <inheritdoc />
     public override bool IsOrthogonal
     {
       get { return true; }
     }
 
+    /// <inheritdoc />
     public override bool IsAffine
     {
       get { return true; }
     }
 
+    /// <inheritdoc />
     public override bool Is3D
     {
       get { return true; }
     }
 
+    /// <inheritdoc />
     public override bool LogicalToLayerCoordinates(Logical3D r, out double xlocation, out double ylocation)
     {
       xlocation = _projectionMatrix.M11 * r.RX + _projectionMatrix.M12 * r.RY + _projectionMatrix.M13 * r.RZ;
@@ -117,6 +125,7 @@ namespace Altaxo.Graph.Gdi.CS
       return true;
     }
 
+    /// <inheritdoc />
     public override bool LogicalToLayerCoordinatesAndDirection(Logical3D r0, Logical3D r1, double t, out double ax, out double ay, out double adx, out double ady)
     {
       LogicalToLayerCoordinates(Logical3D.Interpolate(r0, r1, t), out ax, out ay);
@@ -128,11 +137,13 @@ namespace Altaxo.Graph.Gdi.CS
       return true;
     }
 
+    /// <inheritdoc />
     public override bool LayerToLogicalCoordinates(double xlocation, double ylocation, out Logical3D r)
     {
       throw new Exception("The method or operation is not implemented.");
     }
 
+    /// <inheritdoc />
     public override void GetIsoline(System.Drawing.Drawing2D.GraphicsPath path, Logical3D r0, Logical3D r1)
     {
       LogicalToLayerCoordinates(r0, out var x0, out var y0);
@@ -140,6 +151,7 @@ namespace Altaxo.Graph.Gdi.CS
       path.AddLine((float)x0, (float)y0, (float)x1, (float)y1);
     }
 
+    /// <inheritdoc />
     protected override void UpdateAxisInfo()
     {
       int horzAx = 0;
@@ -427,11 +439,13 @@ namespace Altaxo.Graph.Gdi.CS
     /// <param name="id">The axis identifier.</param>
     /// <param name="side">The axis side.</param>
     /// <returns>The name of the axis side for the axis line given by the identifier.</returns>
+    /// <inheritdoc />
     public override string GetAxisSideName(CSLineID id, CSAxisSide side)
     {
       return _axisNamesNormal[id.ParallelAxisNumber, (int)side];
     }
 
+    /// <inheritdoc />
     public override string GetNameOfPlane(CSPlaneID planeId)
     {
       var uv = GetUntransformedAxisPlaneVector(planeId);
@@ -468,6 +482,7 @@ namespace Altaxo.Graph.Gdi.CS
       return name;
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       var result = new G3DCartesicCoordinateSystem();
@@ -475,6 +490,7 @@ namespace Altaxo.Graph.Gdi.CS
       return result;
     }
 
+    /// <inheritdoc />
     public override Region GetRegion()
     {
       return new Region(new RectangleF(0, 0, (float)_projectionMatrix.M11, (float)_projectionMatrix.M22));

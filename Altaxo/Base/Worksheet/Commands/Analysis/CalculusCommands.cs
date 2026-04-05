@@ -36,12 +36,16 @@ using Altaxo.Science.Spectroscopy.Resampling;
 namespace Altaxo.Worksheet.Commands.Analysis
 {
   /// <summary>
-  /// Summary description for CalculusCommands.
+  /// Contains calculus-related worksheet commands.
   /// </summary>
   public class CalculusCommands
   {
     #region SavitzkyGolay
 
+    /// <summary>
+    /// Starts Savitzky-Golay filtering for the selected column.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
     public static void SavitzkyGolayFiltering(IWorksheetController ctrl)
     {
       if (ctrl.SelectedDataColumns.Count == 0)
@@ -60,11 +64,22 @@ namespace Altaxo.Worksheet.Commands.Analysis
       SavitzkyGolay(parameters, yCol, xCol);
     }
 
+    /// <summary>
+    /// Applies a Savitzky-Golay filter to a Y column.
+    /// </summary>
+    /// <param name="parameters">The filter parameters.</param>
+    /// <param name="yCol">The Y column.</param>
     public static void SavitzkyGolay(SavitzkyGolayParameters parameters, Altaxo.Data.DataColumn yCol)
     {
       SavitzkyGolay(parameters, yCol, null);
     }
 
+    /// <summary>
+    /// Applies a Savitzky-Golay filter to a Y column using an optional X column.
+    /// </summary>
+    /// <param name="parameters">The filter parameters.</param>
+    /// <param name="yCol">The Y column.</param>
+    /// <param name="xCol">The optional X column.</param>
     public static void SavitzkyGolay(SavitzkyGolayParameters parameters, Altaxo.Data.DataColumn yCol, Altaxo.Data.DataColumn? xCol)
     {
       double spacing = 1;
@@ -106,6 +121,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     #region Interpolation
 
+    /// <summary>
+    /// Interpolates the selected worksheet columns using dialog-provided parameters.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
     public static void Interpolation(IWorksheetController ctrl)
     {
       if (ctrl.SelectedDataColumns.Count == 0)
@@ -120,6 +139,11 @@ namespace Altaxo.Worksheet.Commands.Analysis
       Interpolation(ctrl, parameters);
     }
 
+    /// <summary>
+    /// Interpolates the selected worksheet columns using the specified parameters.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
+    /// <param name="parameters">The interpolation parameters.</param>
     public static void Interpolation(IWorksheetController ctrl, ResamplingByInterpolation parameters)
     {
       var _columnToGroupNumber = new Dictionary<DataColumn, int>();
@@ -154,6 +178,14 @@ namespace Altaxo.Worksheet.Commands.Analysis
       }
     }
 
+    /// <summary>
+    /// Interpolates a pair of source columns into result columns using the specified resampling parameters.
+    /// </summary>
+    /// <param name="xCol">The source x column.</param>
+    /// <param name="yCol">The source y column.</param>
+    /// <param name="parameters">The resampling parameters.</param>
+    /// <param name="xRes">The result x column.</param>
+    /// <param name="yRes">The result y column.</param>
     public static void Interpolation(Altaxo.Data.DataColumn xCol, Altaxo.Data.DataColumn yCol,
     ResamplingByInterpolation parameters,
     Altaxo.Data.DataColumn xRes, Altaxo.Data.DataColumn yRes)
@@ -165,6 +197,15 @@ namespace Altaxo.Worksheet.Commands.Analysis
         xRes, yRes);
     }
 
+    /// <summary>
+    /// Interpolates a pair of source columns into result columns using the specified interpolation function and sample points.
+    /// </summary>
+    /// <param name="xCol">The source x column.</param>
+    /// <param name="yCol">The source y column.</param>
+    /// <param name="interpolInstance">The interpolation function options.</param>
+    /// <param name="samplePoints">The sample points to evaluate.</param>
+    /// <param name="xRes">The result x column.</param>
+    /// <param name="yRes">The result y column.</param>
     public static void Interpolation(Altaxo.Data.DataColumn xCol, Altaxo.Data.DataColumn yCol,
       Calc.Interpolation.IInterpolationFunctionOptions interpolInstance, IReadOnlyList<double> samplePoints,
       Altaxo.Data.DataColumn xRes, Altaxo.Data.DataColumn yRes)
@@ -198,6 +239,11 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     #region Multivariate linear fit
 
+    /// <summary>
+    /// Performs a multivariate linear fit for the selected worksheet columns.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
+    /// <returns>The fit result, or <see langword="null"/> if no fit was performed.</returns>
     public static LinearFitBySvd? MultivariateLinearFit(IWorksheetController ctrl)
     {
       return Calc.Regression.Multivariate.MultivariateLinearRegression.ShowDialogAndRegress(ctrl.DataTable.DataColumns, ctrl.SelectedDataColumns);
@@ -207,6 +253,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     #region Prony fits
 
+    /// <summary>
+    /// Starts a Prony relaxation analysis in the time domain.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
     public static void PronyRelaxationTimeDomain(IWorksheetController ctrl)
     {
       (double xMin, double xMax, int numPoints)? retrievedData;
@@ -241,6 +291,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
       }
     }
 
+    /// <summary>
+    /// Starts a Prony retardation analysis in the time domain.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
     public static void PronyRetardationTimeDomain(IWorksheetController ctrl)
     {
       (double xMin, double xMax, int numPoints)? retrievedData;
@@ -321,6 +375,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
       }
     }
 
+    /// <summary>
+    /// Starts a Prony relaxation analysis in the frequency domain.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
     public static void PronyRelaxationFrequencyDomain(IWorksheetController ctrl)
     {
       (double xMin, double xMax, int numPoints)? retrievedData;
@@ -360,6 +418,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
       }
     }
 
+    /// <summary>
+    /// Starts a Prony retardation analysis in the frequency domain.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
     public static void PronyRetardationFrequencyDomain(IWorksheetController ctrl)
     {
       (double xMin, double xMax, int numPoints)? retrievedData;

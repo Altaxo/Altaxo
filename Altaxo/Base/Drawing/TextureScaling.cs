@@ -87,13 +87,14 @@ namespace Altaxo.Drawing
     #region Serialization
 
     /// <summary>
-    /// 2020-03-30 Moved from Altaxo.Graph.TextureScaling to Altaxo.Drawing.TextureScaling.
+    /// 2020-03-30 Moved from <c>Altaxo.Graph.TextureScaling</c> to <c>Altaxo.Drawing.TextureScaling</c>.
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.TextureScaling", 0)]
     [Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextureScaling), 1)]
     private class XmlSerializationSurrogate0 : Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (TextureScaling)obj;
@@ -103,6 +104,7 @@ namespace Altaxo.Drawing
         info.AddValue("Y", s.Y);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var scalingMode = (TextureScalingMode)info.GetEnum("Mode", typeof(TextureScalingMode));
@@ -133,6 +135,7 @@ namespace Altaxo.Drawing
 
     /// <summary>Returns a new <see cref="TextureScaling"/> instance with the <see cref="ScalingMode"/> value set to the provided value.</summary>
     /// <param name="scalingMode">The scaling mode, i.e. how the texture image should be scaled.</param>
+    /// <returns>A new <see cref="TextureScaling"/> instance with the updated scaling mode.</returns>
     public TextureScaling WithScalingMode(TextureScalingMode scalingMode)
     {
       if (!(ScalingMode == scalingMode))
@@ -149,6 +152,7 @@ namespace Altaxo.Drawing
 
     /// <summary>Returns a new <see cref="TextureScaling"/> instance with the <see cref="SourceAspectRatioPreserving"/> value set to the provided value.</summary>
     /// <param name="aspectPreserving">The aspect ratio preserving mode.</param>
+    /// <returns>A new <see cref="TextureScaling"/> instance with the updated aspect ratio mode.</returns>
     public TextureScaling WithSourceAspectRatioPreserving(AspectRatioPreservingMode aspectPreserving)
     {
       if (!(SourceAspectRatioPreserving == aspectPreserving))
@@ -164,6 +168,7 @@ namespace Altaxo.Drawing
     /// <summary>Returns a new <see cref="TextureScaling"/> instance with the <see cref="X"/> value set to the provided value.</summary>
     /// <param name="x">If <see cref="ScalingMode"/> is Absolute, this value is the horizontal size of the texture (repeat length) in Points (1/72 inch).
     /// Otherwise, it is the horizontal scaling factor related either to the source image width or the destination image width.</param>
+    /// <returns>A new <see cref="TextureScaling"/> instance with the updated horizontal value.</returns>
     public TextureScaling WithX(double x)
     {
       if (!(X == x))
@@ -180,6 +185,7 @@ namespace Altaxo.Drawing
     /// <summary>Returns a new <see cref="TextureScaling"/> instance with the <see cref="Y"/> value set to the provided value.</summary>
     /// <param name="y">If <see cref="ScalingMode"/> is Absolute, this value is the vertical size of the texture (repeat length) in Points (1/72 inch).
     /// Otherwise, it is the vertical scaling factor related either to the source image width or the destination image height.</param>
+    /// <returns>A new <see cref="TextureScaling"/> instance with the updated vertical value.</returns>
     public TextureScaling WithY(double y)
     {
       if (!(Y == y))
@@ -260,11 +266,13 @@ namespace Altaxo.Drawing
       return ScalingMode == other.ScalingMode && SourceAspectRatioPreserving == other.SourceAspectRatioPreserving && X == other.X && Y == other.Y;
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       return obj is TextureScaling other ? Equals(other) : false;
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return 17 * ScalingMode.GetHashCode() + 31 * SourceAspectRatioPreserving.GetHashCode() + 61 * X.GetHashCode() + 127 * Y.GetHashCode();

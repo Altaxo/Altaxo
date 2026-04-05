@@ -38,7 +38,7 @@ namespace Altaxo.Main.Services.Files
     private ZipArchiveEntry _entry;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ZipEntryAsProjectArchiveEntry"/> class.
+    /// Initializes a new instance of the <see cref="ZipEntryAsProjectArchiveEntryNative"/> class.
     /// </summary>
     /// <param name="entry">The zip archive entry to wrap.</param>
     /// <exception cref="ArgumentNullException">entry</exception>

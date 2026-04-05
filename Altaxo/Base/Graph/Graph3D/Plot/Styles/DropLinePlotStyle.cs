@@ -46,6 +46,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
   using Plot.Data;
   using Plot.Groups;
 
+  /// <summary>
+  /// Draws drop lines from plot points to one or more target planes.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.DropLinePlotStyle}")]
   public class DropLinePlotStyle
     :
@@ -61,8 +64,14 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <summary>Target(s) for the drop line.</summary>
     protected CSPlaneIDList _dropTargets;
 
+    /// <summary>
+    /// Indicates whether an additional user-defined drop target is enabled.
+    /// </summary>
     protected bool _additionalDropTargetIsEnabled;
 
+    /// <summary>
+    /// Stores the axis number perpendicular to the additional drop-target plane.
+    /// </summary>
     protected int _additionalDropTargetPerpendicularAxis = 2;
 
     /// <summary>
@@ -92,17 +101,37 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <summary>Pen width 1 for the drop line, either absolute or relative to the size of the scatter symbol.</summary>
     protected double _lineWidth1Offset;
 
+    /// <summary>
+    /// Factor used to calculate the first line width from the symbol size.
+    /// </summary>
     protected double _lineWidth1Factor;
 
     /// <summary>Pen width 2 for the drop line, either absolute or relative to the size of the scatter symbol.</summary>
     protected double _lineWidth2Offset;
 
+    /// <summary>
+    /// Factor used to calculate the second line width from the symbol size.
+    /// </summary>
     protected double _lineWidth2Factor;
 
+    /// <summary>
+    /// Absolute offset used to calculate the gap at the start of the drop line.
+    /// </summary>
     protected double _gapAtStartOffset;
+
+    /// <summary>
+    /// Factor used to calculate the gap at the start of the drop line from the symbol size.
+    /// </summary>
     protected double _gapAtStartFactor = 1.25;
 
+    /// <summary>
+    /// Absolute offset used to calculate the gap at the end of the drop line.
+    /// </summary>
     protected double _gapAtEndOffset;
+
+    /// <summary>
+    /// Factor used to calculate the gap at the end of the drop line from the symbol size.
+    /// </summary>
     protected double _gapAtEndFactor;
 
     /// <summary>The symbol size that is received from another substyle.</summary>
@@ -119,13 +148,17 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     #region Serialization
 
+    /// <remarks>
+    /// Initial version added on 2016-08-09.
+    /// </remarks>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate"/>
     /// <summary>
-    /// 2016-08-09 initial version.
+    /// Serializes <see cref="DropLinePlotStyle"/> instances.
     /// </summary>
-    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DropLinePlotStyle), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DropLinePlotStyle)obj;
@@ -190,6 +223,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         return s;
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         DropLinePlotStyle s = SDeserialize(o, info, parent);
@@ -213,6 +247,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     #endregion Serialization
 
+    /// <inheritdoc/>
     public bool CopyFrom(object obj, bool copyWithDataReferences)
     {
       if (ReferenceEquals(this, obj))
@@ -226,6 +261,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     }
 
 
+    /// <summary>
+    /// Copies the state from another drop-line style.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
+    /// <param name="eventFiring">Controls whether change events are raised while copying.</param>
     [MemberNotNull(nameof(_dropTargets), nameof(_pen))]
     public void CopyFrom(DropLinePlotStyle from, Main.EventFiring eventFiring)
     {
@@ -291,11 +331,20 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       return new DropLinePlotStyle(this);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DropLinePlotStyle"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The style to copy from.</param>
     public DropLinePlotStyle(DropLinePlotStyle from)
     {
       CopyFrom(from, Main.EventFiring.Suppressed);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DropLinePlotStyle"/> class.
+    /// </summary>
+    /// <param name="planeID">The initial drop-target plane.</param>
+    /// <param name="pen">The pen used for drawing.</param>
     public DropLinePlotStyle(CSPlaneID planeID, PenX3D pen)
     {
       if (pen is null)
@@ -309,6 +358,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       SetCachedValues();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DropLinePlotStyle"/> class from a property context.
+    /// </summary>
+    /// <param name="context">The property context.</param>
     public DropLinePlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       _dropTargets = new CSPlaneIDList(new[] { new CSPlaneID(2, 0) });
@@ -323,11 +376,15 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       _lineWidth2Factor = 0;
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this style produces visible output.
+    /// </summary>
     public bool IsVisible
     {
       get
@@ -336,6 +393,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the pen used to draw the drop lines.
+    /// </summary>
     public PenX3D Pen
     {
       get { return _pen; }
@@ -353,6 +413,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the drop-line color.
+    /// </summary>
     public NamedColor Color
     {
       get { return _pen.Material.Color; }
@@ -362,6 +425,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the line color is independent of group styles.
+    /// </summary>
     public bool IndependentColor
     {
       get
@@ -410,6 +476,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the absolute offset for the first line width.
+    /// </summary>
     public double LineWidth1Offset
     {
       get
@@ -426,6 +495,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the factor for the first line width relative to the symbol size.
+    /// </summary>
     public double LineWidth1Factor
     {
       get
@@ -442,6 +514,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the absolute offset for the second line width.
+    /// </summary>
     public double LineWidth2Offset
     {
       get
@@ -458,6 +533,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the factor for the second line width relative to the symbol size.
+    /// </summary>
     public double LineWidth2Factor
     {
       get
@@ -474,6 +552,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the absolute offset for the gap at the start of the drop line.
+    /// </summary>
     public double GapAtStartOffset
     {
       get
@@ -490,6 +571,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the factor for the gap at the start of the drop line relative to the symbol size.
+    /// </summary>
     public double GapAtStartFactor
     {
       get
@@ -506,6 +590,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the absolute offset for the gap at the end of the drop line.
+    /// </summary>
     public double GapAtEndOffset
     {
       get
@@ -522,6 +609,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the factor for the gap at the end of the drop line relative to the symbol size.
+    /// </summary>
     public double GapAtEndFactor
     {
       get
@@ -538,6 +628,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets how many points are skipped between painted drop lines.
+    /// </summary>
     public int SkipFrequency
     {
       get { return _skipFreq; }
@@ -552,6 +645,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the skip frequency is independent of group styles.
+    /// </summary>
     public bool IndependentSkipFrequency
     {
       get
@@ -581,6 +677,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the target planes for the drop lines.
+    /// </summary>
     public CSPlaneIDList DropTargets
     {
       get
@@ -600,6 +699,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether an additional user-defined drop target is enabled.
+    /// </summary>
     public bool AdditionalDropTargetIsEnabled
     {
       get { return _additionalDropTargetIsEnabled; }
@@ -613,6 +715,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the additional drop target uses a physical base value.
+    /// </summary>
     public bool AdditionalDropTargetUsePhysicalBaseValue
     {
       get
@@ -629,6 +734,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the axis number perpendicular to the additional drop-target plane.
+    /// </summary>
     public int AdditionalDropTargetPerpendicularAxisNumber
     {
       get
@@ -645,6 +753,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the base value for the additional drop target.
+    /// </summary>
     public AltaxoVariant AdditionalDropTargetBaseValue
     {
       get
@@ -661,12 +772,16 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Refreshes cached values derived from the current style settings.
+    /// </summary>
     protected void SetCachedValues()
     {
     }
 
     #region I3DPlotItem Members
 
+    /// <inheritdoc/>
     public bool IsColorProvider
     {
       get
@@ -675,11 +790,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <inheritdoc/>
     public bool IsColorReceiver
     {
       get { return !_independentColor; }
     }
 
+    /// <inheritdoc/>
     public bool IsSymbolSizeProvider
     {
       get
@@ -688,6 +805,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <inheritdoc/>
     public bool IsSymbolSizeReceiver
     {
       get
@@ -698,6 +816,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     #endregion I3DPlotItem Members
 
+    /// <inheritdoc/>
     public void Paint(IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData pdata, Processed3DPlotData? prevItemData, Processed3DPlotData? nextItemData)
     {
       if (pdata is null || !(pdata.RangeList is { } rangeList) || rangeList.Count == 0 || !(pdata.PlotPointsInAbsoluteLayerCoordinates is { } ptArray))
@@ -805,6 +924,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <inheritdoc/>
     public RectangleD3D PaintSymbol(IGraphicsContext3D g, RectangleD3D bounds)
     {
       return RectangleD3D.Empty;
@@ -820,6 +940,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     #region IPlotStyle Members
 
+    /// <inheritdoc/>
     public void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups)
     {
       if (IsColorProvider)
@@ -828,12 +949,14 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       ScatterSymbolGroupStyle.AddExternalGroupStyle(externalGroups);
     }
 
+    /// <inheritdoc/>
     public void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       ColorGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
       SkipFrequencyGroupStyle.AddLocalGroupStyle(externalGroups, localGroups); // (local group style only)
     }
 
+    /// <inheritdoc/>
     public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed3DPlotData pdata)
     {
       if (IsColorProvider)
@@ -846,6 +969,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         { return _skipFreq; });
     }
 
+    /// <inheritdoc/>
     public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       if (IsColorReceiver)

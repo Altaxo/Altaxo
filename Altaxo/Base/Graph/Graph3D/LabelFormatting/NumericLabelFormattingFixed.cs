@@ -29,21 +29,26 @@ using System.Collections.Generic;
 namespace Altaxo.Graph.Graph3D.LabelFormatting
 {
   /// <summary>
-  /// Summary description for NumericAxisLabelFormattingFixed.
+  /// Formats numeric labels using the default fixed-point string conversion.
   /// </summary>
   public class NumericLabelFormattingFixed : LabelFormattingBase
   {
     #region Serialization
 
+    /// <summary>
+    /// Serializes <see cref="NumericLabelFormattingFixed"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericLabelFormattingFixed), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (NumericLabelFormattingFixed)obj;
         info.AddBaseValueEmbedded(s, typeof(NumericLabelFormattingFixed).BaseType!);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (NumericLabelFormattingFixed?)o ?? new NumericLabelFormattingFixed();
@@ -54,25 +59,35 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NumericLabelFormattingFixed"/> class.
+    /// </summary>
     public NumericLabelFormattingFixed()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NumericLabelFormattingFixed"/> class by copying from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public NumericLabelFormattingFixed(NumericLabelFormattingFixed from)
       : base(from) // everything is done here, since CopyFrom is virtual
     {
     }
 
+    /// <inheritdoc/>
     public override object Clone()
     {
       return new NumericLabelFormattingFixed(this);
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
     }
 
+    /// <inheritdoc/>
     protected override string FormatItem(Altaxo.Data.AltaxoVariant item)
     {
       if (item.IsType(Altaxo.Data.AltaxoVariant.Content.VDouble))
@@ -81,6 +96,11 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
         return item.ToString();
     }
 
+    /// <summary>
+    /// Formats a numeric tick value.
+    /// </summary>
+    /// <param name="tick">The tick value.</param>
+    /// <returns>The formatted label.</returns>
     public string FormatItem(double tick)
     {
       return _prefix + tick.ToString() + SuffixText;

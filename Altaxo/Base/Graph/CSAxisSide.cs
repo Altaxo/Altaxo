@@ -46,5 +46,5 @@ namespace Altaxo.Graph
 
     /// <summary>Direction to higher logical values of the second alternate axis.</summary>
     SecondUp = 3
-  };
+  }
 }

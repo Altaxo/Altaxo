@@ -30,7 +30,7 @@ using System.Text;
 namespace Altaxo.Graph.Scales.Deprecated
 {
   /// <summary>
-  /// Scales a full circle, either by degree or by radian. The origin is choosable, and the ticks default to ratios of 180° (or Pi, respectively).
+  /// Represents the deprecated scale for a full circle, either in degrees or radians.
   /// </summary>
   public class AngularScale : NumericalScale
   {
@@ -73,8 +73,19 @@ namespace Altaxo.Graph.Scales.Deprecated
     /// </summary>
     protected double _cachedAxisOrg;
 
+    /// <summary>
+    /// Caches the current axis span.
+    /// </summary>
     protected double _cachedAxisSpan = 2 * Math.PI;
+
+    /// <summary>
+    /// Caches the reciprocal of the current axis span.
+    /// </summary>
     protected double _cachedOneByAxisSpan = 1 / (2 * Math.PI);
+
+    /// <summary>
+    /// Stores the data boundaries associated with this scale.
+    /// </summary>
     protected Boundaries.NumericalBoundaries _dataBounds = new Boundaries.DummyNumericalBoundaries();
 
     #region Serialization
@@ -82,6 +93,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Scales.AngularScale", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (AngularScale)obj;
@@ -93,6 +105,7 @@ namespace Altaxo.Graph.Scales.Deprecated
         info.AddValue("PosNegAngles", s._usePositiveNegativeAngles);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (AngularScale?)o ?? new AngularScale();
@@ -109,10 +122,17 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AngularScale"/> class.
+    /// </summary>
     public AngularScale()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AngularScale"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public AngularScale(AngularScale from)
     {
       _useDegree = from._useDegree;
@@ -125,6 +145,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       _cachedOneByAxisSpan = from._cachedOneByAxisSpan;
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_dataBounds is not null)
@@ -150,6 +171,9 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     #region Properties
 
+    /// <summary>
+    /// Gets or sets a value indicating whether degrees are used instead of radians.
+    /// </summary>
     public bool UseDegrees
     {
       get
@@ -162,6 +186,9 @@ namespace Altaxo.Graph.Scales.Deprecated
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether signed angular values are used.
+    /// </summary>
     public bool UseSignedValues
     {
       get
@@ -174,6 +201,9 @@ namespace Altaxo.Graph.Scales.Deprecated
       }
     }
 
+    /// <summary>
+    /// Gets or sets the scale origin in multiples of 90 degrees.
+    /// </summary>
     public int ScaleOrigin
     {
       get
@@ -187,6 +217,9 @@ namespace Altaxo.Graph.Scales.Deprecated
       }
     }
 
+    /// <summary>
+    /// Gets or sets the divider used for major ticks.
+    /// </summary>
     public int MajorTickDivider
     {
       get
@@ -199,6 +232,9 @@ namespace Altaxo.Graph.Scales.Deprecated
       }
     }
 
+    /// <summary>
+    /// Gets or sets the divider used for minor ticks.
+    /// </summary>
     public int MinorTickDivider
     {
       get
@@ -211,6 +247,10 @@ namespace Altaxo.Graph.Scales.Deprecated
       }
     }
 
+    /// <summary>
+    /// Gets the possible divider values.
+    /// </summary>
+    /// <returns>A copy of the possible divider values.</returns>
     public int[] GetPossibleDividers()
     {
       return (int[])_possibleDividers.Clone();
@@ -220,11 +260,13 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     #region NumericalScale
 
+    /// <inheritdoc />
     public override double PhysicalToNormal(double x)
     {
       return (x - _cachedAxisOrg) * _cachedOneByAxisSpan;
     }
 
+    /// <inheritdoc />
     public override double NormalToPhysical(double x)
     {
       return _cachedAxisOrg + x * _cachedAxisSpan;
@@ -241,6 +283,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       return _scaleOrigin * 90;
     }
 
+    /// <inheritdoc />
     public override double[] GetMajorTicks()
     {
       var result = new List<double>();
@@ -293,6 +336,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       return result.ToArray();
     }
 
+    /// <inheritdoc />
     public override double[] GetMinorTicks()
     {
       if (_minorTickDivider <= 0)
@@ -341,6 +385,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       return result.ToArray();
     }
 
+    /// <inheritdoc />
     public override Altaxo.Graph.Scales.Rescaling.NumericScaleRescaleConditions Rescaling
     {
       get
@@ -349,6 +394,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       }
     }
 
+    /// <inheritdoc />
     public override Altaxo.Graph.Scales.Boundaries.NumericalBoundaries DataBounds
     {
       get
@@ -357,6 +403,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       }
     }
 
+    /// <inheritdoc />
     public override double Org
     {
       get
@@ -374,6 +421,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       }
     }
 
+    /// <inheritdoc />
     public override double End
     {
       get
@@ -386,25 +434,30 @@ namespace Altaxo.Graph.Scales.Deprecated
       }
     }
 
+    /// <inheritdoc />
     public override void ProcessDataBounds(double org, bool orgfixed, double end, bool endfixed)
     {
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new AngularScale(this);
     }
 
+    /// <inheritdoc />
     public override double PhysicalVariantToNormal(Altaxo.Data.AltaxoVariant x)
     {
       return PhysicalToNormal(x.ToDouble());
     }
 
+    /// <inheritdoc />
     public override Altaxo.Data.AltaxoVariant NormalToPhysicalVariant(double x)
     {
       return new Altaxo.Data.AltaxoVariant(NormalToPhysical(x));
     }
 
+    /// <inheritdoc />
     public override void ProcessDataBounds()
     {
     }

@@ -33,6 +33,10 @@ namespace Altaxo.AddInItems
   /// </summary>
   public interface IBuildItemsModifier
   {
+    /// <summary>
+    /// Applies the modifier to the items that have been built so far.
+    /// </summary>
+    /// <param name="items">The collection of items to modify.</param>
     void Apply(IList items);
   }
 }

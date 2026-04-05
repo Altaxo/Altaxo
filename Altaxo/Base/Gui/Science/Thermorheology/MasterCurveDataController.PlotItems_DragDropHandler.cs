@@ -37,22 +37,34 @@ namespace Altaxo.Gui.Science.Thermorheology
 {
   public partial class MasterCurveDataController
   {
+    /// <summary>
+    /// Gets the drag-and-drop handler for plot items.
+    /// </summary>
     public IMVVMDragDropHandler PlotItemsDragDropHandler { get; }
 
+    /// <summary>
+    /// Drag-and-drop handler for master-curve plot items.
+    /// </summary>
     public class PlotItems_DragDropHandler : IMVVMDragDropHandler
     {
       MasterCurveDataController _parent;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="PlotItems_DragDropHandler"/> class.
+      /// </summary>
+      /// <param name="parent">The parent controller.</param>
       public PlotItems_DragDropHandler(MasterCurveDataController parent)
       {
         _parent = parent ?? throw new ArgumentNullException(nameof(parent));
       }
 
+      /// <inheritdoc />
       public bool CanStartDrag(IEnumerable items)
       {
         return items.OfType<SelectableListNode>().Any();
       }
 
+      /// <inheritdoc />
       public void StartDrag(IEnumerable items, out object data, out bool canCopy, out bool canMove)
       {
         data = new List<SelectableListNode>(items.OfType<SelectableListNode>());
@@ -60,14 +72,17 @@ namespace Altaxo.Gui.Science.Thermorheology
         canMove = true;
       }
 
+      /// <inheritdoc />
       public void DragEnded(bool isCopy, bool isMove)
       {
       }
 
+      /// <inheritdoc />
       public void DragCancelled()
       {
       }
 
+      /// <inheritdoc />
       public void DropCanAcceptData(object data, object targetObject, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool canCopy, out bool canMove, out bool itemIsSwallowingData)
       {
         if (data is IEnumerable<NGTreeNode> nodes1)
@@ -91,6 +106,7 @@ namespace Altaxo.Gui.Science.Thermorheology
         }
       }
 
+      /// <inheritdoc />
       public void Drop(object data, object targetObject, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool isCopy, out bool isMove)
       {
         isMove = false;

@@ -89,11 +89,18 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <summary>
     /// Default constructor. Defines neither a grid style nor an axis style.
     /// </summary>
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AxisStyleCollection"/> class.
+    /// </summary>
     public AxisStyleCollection()
     {
       _axisStyles = new List<AxisStyle>();
     }
 
+    /// <summary>
+    /// Copies the contents from another collection.
+    /// </summary>
+    /// <param name="from">The collection to copy from.</param>
     private void CopyFrom(AxisStyleCollection from)
     {
       if (ReferenceEquals(this, from))
@@ -109,6 +116,7 @@ namespace Altaxo.Graph.Gdi.Axis
       _cachedCoordinateSystem = from._cachedCoordinateSystem;
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_axisStyles is not null)
@@ -121,16 +129,28 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Gets the axis style at the specified index.
+    /// </summary>
+    /// <param name="idx">The zero-based index.</param>
+    /// <returns>The axis style at the specified index.</returns>
     public AxisStyle ItemAt(int idx)
     {
       return _axisStyles[idx];
     }
 
+    /// <summary>
+    /// Gets the number of axis styles in the collection.
+    /// </summary>
     public int Count
     {
       get { return _axisStyles.Count; }
     }
 
+    /// <summary>
+    /// Gets the axis style with the specified identifier.
+    /// </summary>
+    /// <param name="id">The axis style identifier.</param>
     public AxisStyle? this[CSLineID id]
     {
       get
@@ -143,17 +163,32 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Determines whether an axis style with the specified identifier exists.
+    /// </summary>
+    /// <param name="id">The axis style identifier.</param>
+    /// <returns><c>true</c> if the collection contains the specified style; otherwise, <c>false</c>.</returns>
     public bool Contains(CSLineID id)
     {
       return this[id] is not null;
     }
 
+    /// <summary>
+    /// Tries to get the axis style with the specified identifier.
+    /// </summary>
+    /// <param name="id">The axis style identifier.</param>
+    /// <param name="value">When this method returns <c>true</c>, contains the matching axis style.</param>
+    /// <returns><c>true</c> if a matching axis style was found; otherwise, <c>false</c>.</returns>
     public bool TryGetValue(CSLineID id, [MaybeNullWhen(false)] out AxisStyle value)
     {
       value = this[id];
       return value is not null;
     }
 
+    /// <summary>
+    /// Adds an axis style to the collection.
+    /// </summary>
+    /// <param name="value">The axis style to add.</param>
     public void Add(AxisStyle value)
     {
       if (value is not null)
@@ -167,6 +202,11 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Removes the axis style with the specified identifier.
+    /// </summary>
+    /// <param name="id">The axis style identifier.</param>
+    /// <returns><c>true</c> if a style was removed; otherwise, <c>false</c>.</returns>
     public bool Remove(CSLineID id)
     {
       int idx = -1;
@@ -198,6 +238,11 @@ namespace Altaxo.Graph.Gdi.Axis
       _axisStyles.Clear();
     }
 
+    /// <summary>
+    /// Gets the axis style with the specified identifier, creating an empty one if necessary.
+    /// </summary>
+    /// <param name="id">The axis style identifier.</param>
+    /// <returns>The existing or newly created axis style.</returns>
     public AxisStyle AxisStyleEnsured(CSLineID id)
     {
       if (_cachedCoordinateSystem is null)
@@ -240,6 +285,9 @@ namespace Altaxo.Graph.Gdi.Axis
 
 
 
+    /// <summary>
+    /// Gets the identifiers of all axis styles in the collection.
+    /// </summary>
     public IEnumerable<CSLineID> AxisStyleIDs
     {
       get
@@ -249,6 +297,10 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Updates the cached coordinate system and refreshes cached axis information for all styles.
+    /// </summary>
+    /// <param name="cs">The coordinate system.</param>
     public void UpdateCoordinateSystem(G2DCoordinateSystem cs)
     {
       _cachedCoordinateSystem = cs;
@@ -257,6 +309,11 @@ namespace Altaxo.Graph.Gdi.Axis
         style.CachedAxisInformation = _cachedCoordinateSystem.GetAxisStyleInformation(style.StyleID);
     }
 
+    /// <summary>
+    /// Tries to remove a child graphic object from one of the contained axis styles.
+    /// </summary>
+    /// <param name="go">The graphic object to remove.</param>
+    /// <returns><c>true</c> if the object was removed; otherwise, <c>false</c>.</returns>
     public bool Remove(GraphicBase go)
     {
       for (int i = 0; i < _axisStyles.Count; ++i)
@@ -266,24 +323,41 @@ namespace Altaxo.Graph.Gdi.Axis
       return false;
     }
 
+    /// <summary>
+    /// Updates internal caches of all contained axis styles for the specified layer.
+    /// </summary>
+    /// <param name="layer">The plot layer.</param>
     public void FixupInternalDataStructures(IPlotArea layer)
     {
       for (int i = 0; i < _axisStyles.Count; ++i)
         _axisStyles[i].FixupInternalDataStructures(layer);
     }
 
+    /// <summary>
+    /// Performs preprocessing for painting on all contained axis styles.
+    /// </summary>
+    /// <param name="layer">The plot layer.</param>
     public void PaintPreprocessing(IPlotArea layer)
     {
       for (int i = 0; i < _axisStyles.Count; ++i)
         _axisStyles[i].PaintPreprocessing(layer);
     }
 
+    /// <summary>
+    /// Paints all contained axis styles.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="paintContext">The paint context.</param>
+    /// <param name="layer">The plot layer.</param>
     public void Paint(Graphics g, IPaintContext paintContext, IPlotArea layer)
     {
       for (int i = 0; i < _axisStyles.Count; ++i)
         _axisStyles[i].Paint(g, paintContext, layer);
     }
 
+    /// <summary>
+    /// Performs postprocessing for painting on all contained axis styles.
+    /// </summary>
     public void PaintPostprocessing()
     {
       for (int i = 0; i < _axisStyles.Count; ++i)
@@ -292,6 +366,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
     #region ICloneable Members
 
+    /// <inheritdoc />
     public object Clone()
     {
       var result = new AxisStyleCollection();
@@ -303,6 +378,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
     #region IEnumerable<AxisStyle> Members
 
+    /// <inheritdoc />
     public IEnumerator<AxisStyle> GetEnumerator()
     {
       return _axisStyles.GetEnumerator();
@@ -312,6 +388,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
     #region IEnumerable Members
 
+    /// <inheritdoc />
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
       return _axisStyles.GetEnumerator();

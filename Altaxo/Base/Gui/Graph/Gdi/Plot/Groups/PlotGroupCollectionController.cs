@@ -30,6 +30,9 @@ using Altaxo.Graph.Gdi.Plot.Groups;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="PlotGroupCollectionController"/>.
+  /// </summary>
   public interface IPlotGroupCollectionView : IDataContextAwareView
   {
   }
@@ -40,8 +43,12 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
   [ExpectedTypeOfView(typeof(IPlotGroupCollectionView))]
   public class PlotGroupCollectionController : MVCANControllerEditOriginalDocBase<PlotGroupStyleCollection, IPlotGroupCollectionView>
   {
+    /// <summary>
+    /// Occurs when the group style changes.
+    /// </summary>
     public event Action GroupStyleChanged;
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_controllerAdvanced, () => { _controllerAdvanced = null; });
@@ -52,6 +59,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 
     private PlotGroupCollectionControllerAdvanced _controllerAdvanced;
 
+    /// <summary>
+    /// Gets or sets the advanced controller.
+    /// </summary>
     public PlotGroupCollectionControllerAdvanced ControllerAdvanced
     {
       get => _controllerAdvanced;
@@ -75,6 +85,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 
     private PlotGroupCollectionControllerSimple _controllerSimple;
 
+    /// <summary>
+    /// Gets or sets the simple controller.
+    /// </summary>
     public PlotGroupCollectionControllerSimple ControllerSimple
     {
       get => _controllerSimple;
@@ -91,6 +104,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
       }
     }
 
+    /// <summary>
+    /// Gets the currently active view.
+    /// </summary>
     public object CurrentView
     {
       get
@@ -114,25 +130,42 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the simple view is active.
+    /// </summary>
     public bool IsSimpleViewActive
     {
       get => _controllerSimple is not null;
     }
+    /// <summary>
+    /// Gets a value indicating whether the advanced view is active.
+    /// </summary>
     public bool IsAdvancedViewActive
     {
       get => _controllerAdvanced is not null;
     }
 
+    /// <summary>
+    /// Gets the command that switches to the simple view.
+    /// </summary>
     public ICommand CmdGotoSimple { get; }
+
+    /// <summary>
+    /// Gets the command that switches to the advanced view.
+    /// </summary>
     public ICommand CmdGotoAdvanced { get; }
     #endregion
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PlotGroupCollectionController"/> class.
+    /// </summary>
     public PlotGroupCollectionController()
     {
       CmdGotoSimple = new RelayCommand(EhView_GotoSimple);
       CmdGotoAdvanced = new RelayCommand(EhView_GotoAdvanced);
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -159,6 +192,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
       GroupStyleChanged?.Invoke();
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       bool result;
@@ -199,7 +233,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
       }
       else
       {
-        Current.Gui.ErrorMessageBox("Sorry, this collection is too complicate to be represented by a simple view.");
+        Current.Gui.ErrorMessageBox("Sorry, this collection is too complicated to be represented by a simple view.");
       }
     }
 

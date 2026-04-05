@@ -37,7 +37,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
   using Plot.Data;
 
   /// <summary>
-  ///
+  /// Stacks three-dimensional plot items by adding their z values as absolute values.
   /// </summary>
   public class AbsoluteStackTransform
     :
@@ -51,11 +51,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AbsoluteStackTransform), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (AbsoluteStackTransform)obj;
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (AbsoluteStackTransform?)o ?? new AbsoluteStackTransform();
@@ -65,26 +67,36 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AbsoluteStackTransform"/> class.
+    /// </summary>
     public AbsoluteStackTransform()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AbsoluteStackTransform"/> class by copying from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public AbsoluteStackTransform(AbsoluteStackTransform from)
     {
     }
 
     #region ICoordinateTransformingGroupStyle Members
 
+    /// <inheritdoc/>
     public void MergeXBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll)
     {
       CoordinateTransformingStyleBase.MergeXBoundsInto(pb, coll);
     }
 
+    /// <inheritdoc/>
     public void MergeYBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll)
     {
       CoordinateTransformingStyleBase.MergeYBoundsInto(pb, coll);
     }
 
+    /// <inheritdoc/>
     public void MergeZBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll)
     {
       var pbclone = (IPhysicalBoundaries)pb.Clone(); // before we can use CanUseStyle, we have to give physical y boundaries template
@@ -205,10 +217,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
       return idx >= 1;
     }
 
-    /// <summary>Adds the y-values of a plot item to an array of y-values..</summary>
-    /// <param name="vArray">The y array to be added to. If null, a new array will be allocated (and filled with the y-values of the plot item).</param>
-    /// <param name="pdata">The pdata.</param>
-    /// <returns>If the parameter <paramref name="vArray"/> was not null, then that <paramref name="vArray"/> is returned. Otherwise the newly allocated array is returned.</returns>
+    /// <summary>
+    /// Adds the z-values of a processed plot item to an accumulated array.
+    /// </summary>
+    /// <param name="vArray">The accumulated array, or <c>null</c> to create a new one.</param>
+    /// <param name="pdata">The processed plot data.</param>
+    /// <returns>The accumulated array.</returns>
     public static AltaxoVariant[] AddUp(AltaxoVariant[]? vArray, Processed3DPlotData pdata)
     {
       if (pdata is null)
@@ -239,6 +253,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
       return vArray;
     }
 
+    /// <inheritdoc/>
     public void PaintPreprocessing(IPaintContext paintContext, IPlotArea layer, PlotItemCollection coll)
     {
       if (!CanUseStyle(layer, coll, out var plotDataDict))
@@ -292,10 +307,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
       }
     }
 
+    /// <inheritdoc/>
     public void PaintPostprocessing()
     {
     }
 
+    /// <inheritdoc/>
     public void PaintChild(IGraphicsContext3D g, IPaintContext paintContext, IPlotArea layer, PlotItemCollection coll, int indexOfChild)
     {
       var plotDataDict = paintContext.GetValueOrDefault<Dictionary<G3DPlotItem, Processed3DPlotData>>(this);
@@ -364,6 +381,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
     #region ICloneable Members
 
+    /// <summary>
+    /// Creates a copy of this transform.
+    /// </summary>
+    /// <returns>A copy of this transform.</returns>
     public object Clone()
     {
       return new AbsoluteStackTransform(this);

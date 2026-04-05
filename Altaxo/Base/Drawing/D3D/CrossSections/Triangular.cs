@@ -32,6 +32,9 @@ namespace Altaxo.Drawing.D3D.CrossSections
 {
   using Geometry;
 
+  /// <summary>
+  /// Triangular cross section for 3D lines.
+  /// </summary>
   public class Triangular : ICrossSectionOfLine
   {
     private double _size1By2, _size2By2;
@@ -62,11 +65,19 @@ namespace Altaxo.Drawing.D3D.CrossSections
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Triangular"/> class with unit sizes.
+    /// </summary>
     public Triangular()
       : this(1, 1)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Triangular"/> class.
+    /// </summary>
+    /// <param name="size1">The first triangle size.</param>
+    /// <param name="size2">The second triangle size.</param>
     public Triangular(double size1, double size2)
     {
       if (!(size1 >= 0))
@@ -80,6 +91,7 @@ namespace Altaxo.Drawing.D3D.CrossSections
       _size2By2 = size2 / 2;
     }
 
+    /// <inheritdoc/>
     public double Size1
     {
       get
@@ -88,6 +100,7 @@ namespace Altaxo.Drawing.D3D.CrossSections
       }
     }
 
+    /// <inheritdoc/>
     public ICrossSectionOfLine WithSize1(double size1)
     {
       if (!(size1 >= 0))
@@ -107,6 +120,7 @@ namespace Altaxo.Drawing.D3D.CrossSections
       }
     }
 
+    /// <inheritdoc/>
     public double Size2
     {
       get
@@ -115,6 +129,7 @@ namespace Altaxo.Drawing.D3D.CrossSections
       }
     }
 
+    /// <inheritdoc/>
     public ICrossSectionOfLine WithSize2(double size2)
     {
       if (!(size2 >= 0))
@@ -134,6 +149,7 @@ namespace Altaxo.Drawing.D3D.CrossSections
       }
     }
 
+    /// <inheritdoc/>
     public ICrossSectionOfLine WithSize(double size1, double size2)
     {
       if (!(size1 >= 0))
@@ -157,16 +173,19 @@ namespace Altaxo.Drawing.D3D.CrossSections
       }
     }
 
+    /// <inheritdoc/>
     public double GetMaximalDistanceFromCenter()
     {
       return Math.Sqrt(_size1By2 * _size1By2 + _size2By2 * _size2By2);
     }
 
+    /// <inheritdoc/>
     public bool IsVertexSharp(int idx)
     {
       return true;
     }
 
+    /// <inheritdoc/>
     public int NumberOfNormals
     {
       get
@@ -175,6 +194,7 @@ namespace Altaxo.Drawing.D3D.CrossSections
       }
     }
 
+    /// <inheritdoc/>
     public VectorD2D Normals(int i)
     {
       switch (i)
@@ -198,6 +218,7 @@ namespace Altaxo.Drawing.D3D.CrossSections
       }
     }
 
+    /// <inheritdoc/>
     public int NumberOfVertices
     {
       get
@@ -209,6 +230,7 @@ namespace Altaxo.Drawing.D3D.CrossSections
     private static readonly double Cos30 = Math.Cos(Math.PI / 6);
     private static readonly double Sin30 = Math.Sin(Math.PI / 6);
 
+    /// <inheritdoc/>
     public PointD2D Vertices(int i)
     {
       switch (i)

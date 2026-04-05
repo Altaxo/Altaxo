@@ -30,6 +30,9 @@ using System.Text;
 
 namespace Altaxo.Drawing.D3D.Material
 {
+  /// <summary>
+  /// Material that has specular properties but no intrinsic color or texture.
+  /// </summary>
   public class MaterialWithoutColorOrTexture : MaterialBase
   {
     #region Serialization
@@ -63,10 +66,19 @@ namespace Altaxo.Drawing.D3D.Material
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MaterialWithoutColorOrTexture"/> class with default specular properties.
+    /// </summary>
     public MaterialWithoutColorOrTexture()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MaterialWithoutColorOrTexture"/> class.
+    /// </summary>
+    /// <param name="smoothness">The surface smoothness.</param>
+    /// <param name="metalness">The surface metalness.</param>
+    /// <param name="indexOfRefraction">The index of refraction.</param>
     public MaterialWithoutColorOrTexture(double smoothness, double metalness, double indexOfRefraction)
       : base(smoothness, metalness, indexOfRefraction)
     {
@@ -76,6 +88,7 @@ namespace Altaxo.Drawing.D3D.Material
 
     #region Color
 
+    /// <inheritdoc/>
     public override NamedColor Color
     {
       get
@@ -84,6 +97,7 @@ namespace Altaxo.Drawing.D3D.Material
       }
     }
 
+    /// <inheritdoc/>
     public override IMaterial WithColor(NamedColor color)
     {
       return this;
@@ -93,6 +107,7 @@ namespace Altaxo.Drawing.D3D.Material
 
     #region Infrastructure
 
+    /// <inheritdoc/>
     public override bool HasColor
     {
       get
@@ -101,6 +116,7 @@ namespace Altaxo.Drawing.D3D.Material
       }
     }
 
+    /// <inheritdoc/>
     public override bool HasTexture
     {
       get
@@ -109,6 +125,7 @@ namespace Altaxo.Drawing.D3D.Material
       }
     }
 
+    /// <inheritdoc/>
     public override bool IsVisible
     {
       get
@@ -117,6 +134,7 @@ namespace Altaxo.Drawing.D3D.Material
       }
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       // this material is considered to be equal to another material, if this material has exactly
@@ -133,6 +151,7 @@ namespace Altaxo.Drawing.D3D.Material
       return false;
     }
 
+    /// <inheritdoc/>
     public override bool Equals(IMaterial? obj)
     {
       // this material is considered to be equal to another material, if this material has exactly
@@ -148,6 +167,7 @@ namespace Altaxo.Drawing.D3D.Material
       return false;
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return 3 * _smoothness.GetHashCode() + 7 * _metalness.GetHashCode() + 13 * _indexOfRefraction.GetHashCode();

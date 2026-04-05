@@ -68,6 +68,9 @@ namespace Altaxo.Graph
       return filter;
     }
 
+    /// <summary>
+    /// Gets the graph export options used for file export.
+    /// </summary>
     public static GraphExportOptions _graphExportOptionsToFile { get; private set; } = new GraphExportOptions();
 
 
@@ -89,8 +92,10 @@ namespace Altaxo.Graph
       }
     }
 
-    /// <summary>Shows the dialog to choose the graph export options, and then the multi file export dialog.</summary>
-    /// <param name="documents">List with graph documents to export.</param>
+    /// <summary>
+    /// Shows the graph export options dialog and then the multiple-graph export dialog.
+    /// </summary>
+    /// <param name="documents">The graph documents to export.</param>
     public static void ShowExportMultipleGraphsDialogAndExportOptions(IEnumerable<Graph.GraphDocumentBase> documents)
     {
       if (ShowGraphExportOptionsDialog())
@@ -197,11 +202,22 @@ namespace Altaxo.Graph
       return (failedItems, errors);
     }
 
+    /// <summary>
+    /// Exports the specified graph document using the currently stored export options.
+    /// </summary>
+    /// <param name="doc">The graph document.</param>
+    /// <param name="fileName">The target file name.</param>
     public static void DoExportGraph(Graph.GraphDocumentBase doc, string fileName)
     {
       DoExportGraph(doc, fileName, _graphExportOptionsToFile);
     }
 
+    /// <summary>
+    /// Exports the specified graph document using the provided export options.
+    /// </summary>
+    /// <param name="doc">The graph document.</param>
+    /// <param name="fileName">The target file name.</param>
+    /// <param name="graphExportOptions">The export options.</param>
     public static void DoExportGraph(Graph.GraphDocumentBase doc, string fileName, Graph.Gdi.GraphExportOptions graphExportOptions)
     {
       if (!System.IO.Path.IsPathRooted(fileName))
@@ -226,6 +242,10 @@ namespace Altaxo.Graph
       }
     }
 
+    /// <summary>
+    /// Shows the export-options dialog followed by the file-export dialog for a graph.
+    /// </summary>
+    /// <param name="doc">The graph document.</param>
     public static void ShowFileExportSpecificDialog(this GraphDocumentBase doc)
     {
       object resopt = _graphExportOptionsToFile;
@@ -240,6 +260,11 @@ namespace Altaxo.Graph
       ShowFileExportDialog(doc, _graphExportOptionsToFile);
     }
 
+    /// <summary>
+    /// Shows the file-export dialog for a graph using the specified options.
+    /// </summary>
+    /// <param name="doc">The graph document.</param>
+    /// <param name="graphExportOptions">The export options.</param>
     public static void ShowFileExportDialog(this GraphDocumentBase doc, GraphExportOptions graphExportOptions)
     {
       var saveOptions = new Altaxo.Gui.SaveFileOptions();
@@ -260,6 +285,10 @@ namespace Altaxo.Graph
       } // end dlgresult ok
     }
 
+    /// <summary>
+    /// Shows the export dialog for enhanced metafile output.
+    /// </summary>
+    /// <param name="doc">The graph document.</param>
     public static void ShowFileExportMetafileDialog(this GraphDocument doc)
     {
       var opt = new GraphExportOptions();
@@ -267,6 +296,10 @@ namespace Altaxo.Graph
       ShowFileExportDialog(doc, opt);
     }
 
+    /// <summary>
+    /// Shows the export dialog for TIFF output.
+    /// </summary>
+    /// <param name="doc">The graph document.</param>
     public static void ShowFileExportTiffDialog(this GraphDocument doc)
     {
       var opt = new GraphExportOptions();
@@ -307,8 +340,10 @@ namespace Altaxo.Graph
 
     #region Export multiple graphs as Miniproject
 
-    /// <summary>Shows the multi file export dialog and exports the graphs as mini projects.</summary>
-    /// <param name="documents">List with graph documents to export.</param>
+    /// <summary>
+    /// Exports multiple graphs as mini projects.
+    /// </summary>
+    /// <param name="documents">The graph documents to export.</param>
     public static void ShowExportMultipleGraphsAsMiniProjectDialog(IEnumerable<Graph.GraphDocumentBase> documents)
     {
       var mrData = new MultiRenameData() { IsRenameOperationFileSystemBased = true };
@@ -411,7 +446,7 @@ namespace Altaxo.Graph
     /// Internal routine to save a mini project under a given name.
     /// </summary>
     /// <param name="projectToSave">The project to save.</param>
-    /// <param name="filename"></param>
+    /// <param name="filename">The target file name.</param>
     public static void SaveMiniProject(Altaxo.AltaxoDocument projectToSave, string filename)
     {
       using (var myStream = new System.IO.FileStream(filename, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.Write, System.IO.FileShare.None))

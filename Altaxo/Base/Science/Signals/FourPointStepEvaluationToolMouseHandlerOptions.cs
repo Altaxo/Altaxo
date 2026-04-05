@@ -33,7 +33,7 @@ namespace Altaxo.Science.Signals
   public record FourPointStepEvaluationToolMouseHandlerOptions : IImmutable
   {
     /// <summary>
-    /// If true, the options dialog is shown when the four point step evaluation tool is activated.
+    /// If true, the options dialog is shown when the four-point step evaluation tool is activated.
     /// </summary>
     public bool ShowOptionsWhenToolIsActivated { get; init; } = true;
 
@@ -76,6 +76,7 @@ namespace Altaxo.Science.Signals
     [Serialization.Xml.XmlSerializationSurrogateFor(typeof(FourPointStepEvaluationToolMouseHandlerOptions), 0)]
     public class SerializationSurrogate0 : Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (FourPointStepEvaluationToolMouseHandlerOptions)obj;
@@ -88,6 +89,7 @@ namespace Altaxo.Science.Signals
         info.AddValue("LinePen", s.LinePen);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var showOptionsWhenToolIsActivated = info.GetBoolean("ShowOptionsWhenToolIsActivated");

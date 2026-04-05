@@ -58,7 +58,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DimensionReductionAndRegressionDataSource), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      /// <inheritdoc/>
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DimensionReductionAndRegressionDataSource)obj;
@@ -71,7 +71,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
 
 
-      /// <inheritdoc/>
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (o is DimensionReductionAndRegressionDataSource s)
@@ -190,7 +190,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       return false;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public object Clone()
     {
       return new DimensionReductionAndRegressionDataSource(this);
@@ -198,7 +198,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     #region IAltaxoTableDataSource
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter reporter)
     {
       destinationTable.DataColumns.RemoveColumnsAll();
@@ -260,7 +260,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       }
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override Data.IDataSourceImportOptions ImportOptions
     {
       get
@@ -321,14 +321,14 @@ namespace Altaxo.Calc.Regression.Multivariate
       }
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     object IAltaxoTableDataSource.ProcessOptionsObject
     {
       get => _processOptions;
       set => ProcessOptions = (DimensionReductionAndRegressionOptions)value;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     object IAltaxoTableDataSource.ProcessDataObject
     {
       get => _processData;
@@ -337,7 +337,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     #region Change event handling
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (object.ReferenceEquals(_processData, sender)) // incoming call from data proxy

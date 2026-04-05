@@ -35,10 +35,19 @@ using Altaxo.Main;
 
 namespace Altaxo.Graph.Graph3D.Plot.Groups
 {
+  /// <summary>
+  /// Manages registered scatter-symbol lists for three-dimensional plots.
+  /// </summary>
   public class ScatterSymbolListManager : StyleListManagerBaseForClasses<ScatterSymbolList, IScatterSymbol, StyleListManagerBaseEntryValue<ScatterSymbolList, IScatterSymbol>>
   {
+    /// <summary>
+    /// Gets the property key used to persist user-defined scatter-symbol lists.
+    /// </summary>
     public static readonly Main.Properties.PropertyKey<ScatterSymbolListBag> PropertyKeyUserDefinedScatterSymbolLists;
 
+    /// <summary>
+    /// The singleton instance.
+    /// </summary>
     private static ScatterSymbolListManager _instance;
 
     static ScatterSymbolListManager()
@@ -53,6 +62,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
       Instance = new ScatterSymbolListManager();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScatterSymbolListManager"/> class.
+    /// </summary>
     protected ScatterSymbolListManager()
       : base(
           (list, level) => new StyleListManagerBaseEntryValue<ScatterSymbolList, IScatterSymbol>(list, level),
@@ -77,6 +89,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
       RebuildListEntryToListDictionary();
     }
 
+    /// <summary>
+    /// Gets or sets the singleton instance of the scatter-symbol-list manager.
+    /// </summary>
     public static ScatterSymbolListManager Instance
     {
       get
@@ -98,6 +113,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
       }
     }
 
+    /// <inheritdoc/>
     public override ScatterSymbolList CreateNewList(string name, IEnumerable<IScatterSymbol> symbols)
     {
       return new ScatterSymbolList(name, symbols);
@@ -105,6 +121,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
     #region User defined lists
 
+    /// <inheritdoc/>
     protected override void OnUserDefinedListAddedChangedRemoved([AllowNull] ScatterSymbolList list)
     {
       var listBag = new ScatterSymbolListBag(_allLists.Values.Where(entry => entry.Level == ItemDefinitionLevel.UserDefined).Select(entry => entry.List));

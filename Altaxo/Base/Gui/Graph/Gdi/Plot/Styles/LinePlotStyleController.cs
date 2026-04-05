@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
   
   /// <summary>
-  /// This view interface is for showing the options of the XYZPlotLineStyle
+  /// Provides the view contract for <see cref="LinePlotStyleController"/>.
   /// </summary>
   public interface ILinePlotStyleView : IDataContextAwareView
   {
@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 
   /// <summary>
-  /// Summary description for XYPlotLineStyleController.
+  /// Controller for <see cref="LinePlotStyle"/>.
   /// </summary>
   [UserControllerForObject(typeof(LinePlotStyle))]
   [ExpectedTypeOfView(typeof(ILinePlotStyleView))]
@@ -60,6 +60,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     /// <summary>Tracks the presence of a color group style in the parent collection.</summary>
     private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_linePen, () => LinePen = null);
@@ -69,6 +70,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private ItemsController<Type> _lineConnectChoices;
 
+    /// <summary>
+    /// Gets or sets the available line connection choices.
+    /// </summary>
     public ItemsController<Type> LineConnectChoices
     {
       get => _lineConnectChoices;
@@ -95,6 +99,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _independentLineColor;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the line color is independent of group styles.
+    /// </summary>
     public bool IndependentLineColor
     {
       get => _independentLineColor;
@@ -111,6 +118,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _independentDashStyle;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the dash style is independent of group styles.
+    /// </summary>
     public bool IndependentDashStyle
     {
       get => _independentDashStyle;
@@ -127,6 +137,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _independentSymbolSize;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the symbol size is independent of group styles.
+    /// </summary>
     public bool IndependentSymbolSize
     {
       get => _independentSymbolSize;
@@ -142,6 +155,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _ignoreMissingDataPoints;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether missing data points are ignored.
+    /// </summary>
     public bool IgnoreMissingDataPoints
     {
       get => _ignoreMissingDataPoints;
@@ -158,6 +174,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _independentOnShiftingGroupStyles;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether shifting group styles are ignored.
+    /// </summary>
     public bool IndependentOnShiftingGroupStyles
     {
       get => _independentOnShiftingGroupStyles;
@@ -173,6 +192,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _connectCircular;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the line is connected circularly.
+    /// </summary>
     public bool ConnectCircular
     {
       get => _connectCircular;
@@ -190,6 +212,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private ColorTypeThicknessPenController _linePen;
 
+    /// <summary>
+    /// Gets or sets the controller for the line pen.
+    /// </summary>
     public ColorTypeThicknessPenController LinePen
     {
       get => _linePen;
@@ -204,6 +229,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets the unit environment used for symbol sizes.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment SymbolSizeEnvironment => LineCapSizeEnvironment.Instance;
 
 
@@ -226,6 +254,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _useSymbolGap;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether a symbol gap is used.
+    /// </summary>
     public bool UseSymbolGap
     {
       get => _useSymbolGap;
@@ -239,11 +270,17 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets the unit environment used for symbol gap offsets.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment GapOffsetEnvironment => LineCapSizeEnvironment.Instance;
 
 
     private DimensionfulQuantity _symbolGapOffset;
 
+    /// <summary>
+    /// Gets or sets the symbol gap offset.
+    /// </summary>
     public DimensionfulQuantity SymbolGapOffset
     {
       get => _symbolGapOffset;
@@ -257,11 +294,17 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets the unit environment used for symbol gap factors.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment GapFactorEnvironment => RelationEnvironment.Instance;
 
 
     private DimensionfulQuantity _symbolGapFactor;
 
+    /// <summary>
+    /// Gets or sets the symbol gap factor.
+    /// </summary>
     public DimensionfulQuantity SymbolGapFactor
     {
       get => _symbolGapFactor;
@@ -277,6 +320,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     #endregion
 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       _colorGroupStyleTracker = null;
@@ -286,6 +330,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -329,6 +374,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       LineConnectChoices = new ItemsController<Type>(lineConnectChoices, EhLineConnectionChoiceChanged);
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       // don't trust user input, so all into a try statement

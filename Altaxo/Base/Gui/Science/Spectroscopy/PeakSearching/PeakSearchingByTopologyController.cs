@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -33,26 +33,33 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Science.Spectroscopy.PeakSearching
 {
-  public interface IPeakSearchingByTopologyView : IDataContextAwareView
+    /// <summary>Defines the contract for peak Searching By Topology View.</summary>
+public interface IPeakSearchingByTopologyView : IDataContextAwareView
   {
   }
 
-  [UserControllerForObject(typeof(PeakSearchingByTopology))]
+  /// <summary>Represents a controller for peak Searching By Topology.</summary>
+[UserControllerForObject(typeof(PeakSearchingByTopology))]
   [ExpectedTypeOfView(typeof(IPeakSearchingByTopologyView))]
   public class PeakSearchingByTopologyController : MVCANControllerEditImmutableDocBase<PeakSearchingByTopology, IPeakSearchingByTopologyView>
   {
-    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+        /// <inheritdoc />
+public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_subControllerPeakEnhancement, () => SubControllerPeakEnhancement = null);
     }
 
     #region Bindings
 
-    public QuantityWithUnitGuiEnvironment ProminenceEnvironment => RelationEnvironment.Instance;
+        /// <summary>Gets the prominence Environment.</summary>
+    /// <value>The prominence Environment.</value>
+public QuantityWithUnitGuiEnvironment ProminenceEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _minimalProminence;
 
-    public DimensionfulQuantity MinimalProminence
+        /// <summary>Gets or sets the minimal Prominence.</summary>
+    /// <value>The minimal Prominence.</value>
+public DimensionfulQuantity MinimalProminence
     {
       get => _minimalProminence;
       set
@@ -67,7 +74,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakSearching
 
     private bool _useMinimalProminence;
 
-    public bool UseMinimalProminence
+        /// <summary>Gets or sets a value indicating whether use Minimal Prominence.</summary>
+    /// <value>&lt;c&gt;true&lt;/c&gt; if use Minimal Prominence; otherwise, &lt;c&gt;false&lt;/c&gt;.</value>
+public bool UseMinimalProminence
     {
       get => _useMinimalProminence;
       set
@@ -82,7 +91,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakSearching
 
     private int? _maximalNumberOfPeaks;
 
-    public int? MaximalNumberOfPeaks
+        /// <summary>Gets or sets the maximal Number Of Peaks.</summary>
+    /// <value>The maximal Number Of Peaks.</value>
+public int? MaximalNumberOfPeaks
     {
       get => _maximalNumberOfPeaks;
       set
@@ -97,7 +108,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakSearching
 
     private ItemsController<Type> _availablePeakEnhancementMethods;
 
-    public ItemsController<Type> AvailablePeakEnhancementMethods
+        /// <summary>Gets or sets the available Peak Enhancement Methods.</summary>
+    /// <value>The available Peak Enhancement Methods.</value>
+public ItemsController<Type> AvailablePeakEnhancementMethods
     {
       get => _availablePeakEnhancementMethods;
       set
@@ -113,7 +126,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakSearching
 
     private IMVCANController? _subControllerPeakEnhancement;
 
-    public IMVCANController? SubControllerPeakEnhancement
+        /// <summary>Gets or sets the sub Controller Peak Enhancement.</summary>
+    /// <value>The sub Controller Peak Enhancement.</value>
+public IMVCANController? SubControllerPeakEnhancement
     {
       get => _subControllerPeakEnhancement;
       set
@@ -130,7 +145,8 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakSearching
 
     #endregion
 
-    protected override void Initialize(bool initData)
+        /// <inheritdoc />
+protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
@@ -180,7 +196,8 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakSearching
 
     private class TypeSorter : IComparer<Type>
     {
-      public int Compare(Type x, Type y)
+            /// <inheritdoc />
+public int Compare(Type x, Type y)
       {
         var xn = x.Name.EndsWith("None");
         var yn = y.Name.EndsWith("None");
@@ -196,7 +213,8 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakSearching
       }
     }
 
-    public override bool Apply(bool disposeController)
+        /// <inheritdoc />
+public override bool Apply(bool disposeController)
     {
       _doc = _doc with
       {

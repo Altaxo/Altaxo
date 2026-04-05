@@ -24,7 +24,7 @@ namespace Altaxo.Gui.Data
   {
 
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -163,7 +163,7 @@ namespace Altaxo.Gui.Data
 
     #endregion
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -271,7 +271,7 @@ namespace Altaxo.Gui.Data
       }
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (ParticipatingTables.Count == 0)

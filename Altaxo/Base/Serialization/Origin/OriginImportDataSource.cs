@@ -29,6 +29,9 @@ using Altaxo.Data;
 
 namespace Altaxo.Serialization.Origin
 {
+  /// <summary>
+  /// Table data source for importing Origin project files.
+  /// </summary>
   public class OriginImportDataSource : FileImportTableDataSourceBase<OriginImportOptions>
   {
     #region Serialization
@@ -41,6 +44,7 @@ namespace Altaxo.Serialization.Origin
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(OriginImportDataSource), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (OriginImportDataSource)obj;
@@ -50,6 +54,7 @@ namespace Altaxo.Serialization.Origin
         info.AddArray("ProcessData", s._files.ToArray(), s._files.Count);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (o is OriginImportDataSource s)
@@ -95,30 +100,42 @@ namespace Altaxo.Serialization.Origin
 
     #region Construction
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OriginImportDataSource"/> class for a single file.
+    /// </summary>
     public OriginImportDataSource(string fileName, OriginImportOptions options)
       : this(new string[] { fileName }, options)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OriginImportDataSource"/> class for multiple files.
+    /// </summary>
     public OriginImportDataSource(IEnumerable<string> fileNames, OriginImportOptions options)
       : base(fileNames)
     {
       _processOptions = options;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OriginImportDataSource"/> class by copying another instance.
+    /// </summary>
     public OriginImportDataSource(OriginImportDataSource from)
       : base(from)
     {
     }
 
+    /// <inheritdoc />
     public override object Clone() => new OriginImportDataSource(this);
 
     #endregion Construction
+    /// <inheritdoc />
     protected override void ImportFromFiles(string[] validFileNames, DataTable destinationTable, IProgressReporter reporter)
     {
       new OriginImporter().Import(validFileNames, destinationTable, _processOptions, attachDataSource: false);
     }
 
+    /// <inheritdoc />
     public override (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
     {
       return new OriginImporter().GetFileExtensions();

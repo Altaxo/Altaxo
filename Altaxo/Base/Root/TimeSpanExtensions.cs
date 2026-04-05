@@ -42,7 +42,7 @@ namespace Altaxo
     /// Constructs a TimeSpan from the provided seconds exactly (without rounding to milliseconds).
     /// </summary>
     /// <param name="seconds">The seconds.</param>
-    /// <returns></returns>
+    /// <returns>The resulting <see cref="TimeSpan"/>.</returns>
     public static TimeSpan FromSecondsAccurate(double seconds)
     {
       if (double.IsNaN(seconds))
@@ -55,6 +55,12 @@ namespace Altaxo
         return TimeSpan.FromTicks((long)(TimeSpan.TicksPerSecond * seconds));
     }
 
+    /// <summary>
+    /// Adds two time spans while clamping the result to the valid <see cref="TimeSpan"/> range.
+    /// </summary>
+    /// <param name="x">The first time span.</param>
+    /// <param name="y">The second time span.</param>
+    /// <returns>The clamped sum.</returns>
     public static TimeSpan SafeAddition(this TimeSpan x, TimeSpan y)
     {
       double result = x.Ticks + (double)y.Ticks;
@@ -67,6 +73,12 @@ namespace Altaxo
         return x + y;
     }
 
+    /// <summary>
+    /// Adds a number of seconds to a time span while clamping the result to the valid <see cref="TimeSpan"/> range.
+    /// </summary>
+    /// <param name="x">The original time span.</param>
+    /// <param name="y">The number of seconds to add.</param>
+    /// <returns>The clamped sum.</returns>
     public static TimeSpan SafeAddition(this TimeSpan x, double y)
     {
       double result = x.Ticks + y * TimeSpan.TicksPerSecond;
@@ -79,11 +91,23 @@ namespace Altaxo
         return TimeSpan.FromTicks((long)result);
     }
 
+    /// <summary>
+    /// Returns the larger of two time spans.
+    /// </summary>
+    /// <param name="x">The first time span.</param>
+    /// <param name="y">The second time span.</param>
+    /// <returns>The larger time span.</returns>
     public static TimeSpan Max(TimeSpan x, TimeSpan y)
     {
       return x > y ? x : y;
     }
 
+    /// <summary>
+    /// Returns the smaller of two time spans.
+    /// </summary>
+    /// <param name="x">The first time span.</param>
+    /// <param name="y">The second time span.</param>
+    /// <returns>The smaller time span.</returns>
     public static TimeSpan Min(TimeSpan x, TimeSpan y)
     {
       return x < y ? x : y;

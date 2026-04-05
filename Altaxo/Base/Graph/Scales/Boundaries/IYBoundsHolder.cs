@@ -28,15 +28,14 @@ using System;
 namespace Altaxo.Graph.Scales.Boundaries
 {
   /// <summary>
-  /// Implemented by objects that hold y bounds, for instance XYPlotAssociations.
+  /// Implemented by objects that hold Y bounds, for instance XY plot associations.
   /// </summary>
   public interface IYBoundsHolder
   {
     /// <summary>
-    /// This merges the y boundary of the object with the boundary pb. The boundary pb is updated so that
-    /// it now includes the y boundary range of the object.
+    /// Merges the Y boundary of the object with the boundary <paramref name="pb"/>.
     /// </summary>
-    /// <param name="pb">The boundary object pb which is updated to include the y boundaries of the object.</param>
+    /// <param name="pb">The boundary object that is updated to include the Y boundaries of the object.</param>
     void MergeYBoundsInto(IPhysicalBoundaries pb);
   }
 }

@@ -29,20 +29,42 @@ using Altaxo.Science.Thermorheology.MasterCurves;
 
 namespace Altaxo.Gui.Worksheet
 {
+  /// <summary>
+  /// View interface for <see cref="MasterCurveCreationMainController"/>.
+  /// </summary>
   public interface IMasterCurveCreationMainView
   {
+    /// <summary>
+    /// Initializes the data tab.
+    /// </summary>
     void InitializeDataTab(object guiControl);
 
+    /// <summary>
+    /// Initializes the edit tab.
+    /// </summary>
     void InitializeEditTab(object guiControl);
   }
 
+  /// <summary>
+  /// Main controller hosting the data and edit tabs for master curve creation.
+  /// </summary>
   [UserControllerForObject(typeof(MasterCurveCreationOptions))]
   [ExpectedTypeOfView(typeof(IMasterCurveCreationMainView))]
   internal class MasterCurveCreationMainController : IMVCANController
   {
+    /// <summary>
+    /// The edited document.
+    /// </summary>
     private MasterCurveCreationOptions _doc;
+
+    /// <summary>
+    /// The attached view.
+    /// </summary>
     private IMasterCurveCreationMainView _view;
 
+    /// <summary>
+    /// The controller for the data tab.
+    /// </summary>
     private IMVCANController _dataController;
 
     private void Initialize(bool initData)
@@ -61,6 +83,7 @@ namespace Altaxo.Gui.Worksheet
       }
     }
 
+    /// <inheritdoc/>
     public bool InitializeDocument(params object[] args)
     {
       if (args is null || 0 == args.Length || !(args[0] is MasterCurveCreationOptions))
@@ -71,11 +94,13 @@ namespace Altaxo.Gui.Worksheet
       return true;
     }
 
+    /// <inheritdoc/>
     public UseDocument UseDocumentCopy
     {
       set { }
     }
 
+    /// <inheritdoc/>
     public object ViewObject
     {
       get
@@ -93,26 +118,29 @@ namespace Altaxo.Gui.Worksheet
       }
     }
 
+    /// <inheritdoc/>
     public object ModelObject
     {
       get { return _doc; }
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
     }
 
+    /// <inheritdoc/>
     public bool Apply(bool disposeController)
     {
       return true;
     }
 
     /// <summary>
-    /// Try to revert changes to the model, i.e. restores the original state of the model.
+    /// Tries to revert changes to the model, i.e. restores the original state of the model.
     /// </summary>
     /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
     /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    ///   <c>true</c> if the revert operation was successful; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
     /// </returns>
     public bool Revert(bool disposeController)
     {

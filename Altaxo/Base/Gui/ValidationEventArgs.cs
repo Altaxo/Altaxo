@@ -27,25 +27,46 @@ using System;
 
 namespace Altaxo.Gui
 {
+  /// <summary>
+  /// Provides validation state and collected error messages for a value being validated.
+  /// </summary>
+  /// <typeparam name="T">The type of the value to validate.</typeparam>
   public class ValidationEventArgs<T> : EventArgs
   {
     private string? _errors;
     private T _valueToValidate;
 
+    /// <summary>
+    /// Gets the culture information to use during validation.
+    /// </summary>
     public System.Globalization.CultureInfo CultureInfo { get; private set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ValidationEventArgs{T}"/> class.
+    /// </summary>
+    /// <param name="valueToValidate">The value to validate.</param>
     public ValidationEventArgs(T valueToValidate)
     {
       _valueToValidate = valueToValidate;
       CultureInfo = System.Globalization.CultureInfo.InvariantCulture;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ValidationEventArgs{T}"/> class.
+    /// </summary>
+    /// <param name="valueToValidate">The value to validate.</param>
+    /// <param name="info">The culture information to use during validation.</param>
     public ValidationEventArgs(T valueToValidate, System.Globalization.CultureInfo info)
     {
       _valueToValidate = valueToValidate;
       CultureInfo = info;
     }
 
+    /// <summary>
+    /// Adds an error message to the validation result.
+    /// </summary>
+    /// <param name="format">The composite format string for the error message.</param>
+    /// <param name="args">The arguments used to format the error message.</param>
     public void AddError(string format, params object[] args)
     {
       if (_errors is null)
@@ -54,6 +75,9 @@ namespace Altaxo.Gui
         _errors += "\n" + string.Format(format, args);
     }
 
+    /// <summary>
+    /// Gets the value to validate.
+    /// </summary>
     public T ValueToValidate
     {
       get
@@ -62,6 +86,9 @@ namespace Altaxo.Gui
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether validation should be canceled.
+    /// </summary>
     public bool Cancel
     {
       get
@@ -70,6 +97,9 @@ namespace Altaxo.Gui
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether any validation errors have been collected.
+    /// </summary>
     public bool HasErrors
     {
       get
@@ -78,6 +108,9 @@ namespace Altaxo.Gui
       }
     }
 
+    /// <summary>
+    /// Gets the concatenated validation error text.
+    /// </summary>
     public string ErrorText
     {
       get
@@ -88,16 +121,16 @@ namespace Altaxo.Gui
   }
 
   /// <summary>
-  /// Event handler to validate content of Gui elements.
+  /// Represents an event handler used to validate content of GUI elements.
   /// </summary>
   /// <param name="sender">Sender of the validation request.</param>
-  /// <param name="e">Validating event args. In case that the validation is not successfull, the receiver has to add an error message to the event args.</param>
+  /// <param name="e">Validation event arguments. If validation is not successful, the receiver adds an error message to the event arguments.</param>
   public delegate void ValidatingEventHandler<T>(object sender, ValidationEventArgs<T> e);
 
   /// <summary>
-  /// Event handler to validate content of Gui elements that contain strings (like TextBox).
+  /// Represents an event handler used to validate content of GUI elements that contain strings, such as a text box.
   /// </summary>
   /// <param name="sender">Sender of the validation request.</param>
-  /// <param name="e">Validating event args. In case that the validation is not successfull, the receiver has to add an error message to the event args.</param>
+  /// <param name="e">Validation event arguments. If validation is not successful, the receiver adds an error message to the event arguments.</param>
   public delegate void ValidatingStringEventHandler(object sender, ValidationEventArgs<string> e);
 }

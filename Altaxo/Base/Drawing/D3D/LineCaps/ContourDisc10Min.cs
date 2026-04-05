@@ -31,6 +31,9 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Drawing.D3D.LineCaps
 {
+  /// <summary>
+  /// Contour-based 3D disc line cap with a minimum size constraint.
+  /// </summary>
   public class ContourDisc10Min : ContourShapedLineCapBase
   {
     private class Contour : ILineCapContour
@@ -142,12 +145,20 @@ namespace Altaxo.Drawing.D3D.LineCaps
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ContourDisc10Min"/> class with default minimum sizes.
+    /// </summary>
     public ContourDisc10Min()
     {
       _minimumAbsoluteSize = 8;
       _minimumRelativeSize = 2;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ContourDisc10Min"/> class.
+    /// </summary>
+    /// <param name="minAbsoluteSizePt">The minimum absolute disc size in points.</param>
+    /// <param name="minRelativeSize">The minimum disc size relative to the line thickness.</param>
     public ContourDisc10Min(double minAbsoluteSizePt, double minRelativeSize)
     {
       if (!(minAbsoluteSizePt >= 0))
@@ -159,6 +170,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
       _minimumRelativeSize = minRelativeSize;
     }
 
+    /// <inheritdoc/>
     public override double MinimumRelativeSize
     {
       get
@@ -167,6 +179,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
       }
     }
 
+    /// <inheritdoc/>
     public override double MinimumAbsoluteSizePt
     {
       get
@@ -175,6 +188,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
       }
     }
 
+    /// <inheritdoc/>
     public override ILineCap WithMinimumAbsoluteAndRelativeSize(double absoluteSizePt, double relativeSize)
     {
       if (!(absoluteSizePt >= 0))
@@ -195,11 +209,13 @@ namespace Altaxo.Drawing.D3D.LineCaps
       }
     }
 
+    /// <inheritdoc/>
     public override double GetAbsoluteBaseInset(double thickness1, double thickness2)
     {
       return -Math.Min(thickness1, thickness2);
     }
 
+    /// <inheritdoc/>
     public override void AddGeometry(Action<PointD3D, VectorD3D> AddPositionAndNormal, Action<int, int, int, bool> AddIndices, ref int vertexIndexOffset, bool isStartCap, PointD3D basePoint, VectorD3D eastVector, VectorD3D northVector, VectorD3D forwardVectorNormalized, ICrossSectionOfLine lineCrossSection, PointD3D[]? baseCrossSectionPositions, VectorD3D[]? baseCrossSectionNormals, ref object? temporaryStorageSpace)
     {
       double relSize = Math.Max(_minimumRelativeSize, _minimumAbsoluteSize / Math.Max(lineCrossSection.Size1, lineCrossSection.Size2));

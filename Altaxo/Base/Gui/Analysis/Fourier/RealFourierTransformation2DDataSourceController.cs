@@ -27,6 +27,9 @@ using Altaxo.Worksheet.Commands.Analysis;
 
 namespace Altaxo.Gui.Analysis.Fourier
 {
+  /// <summary>
+  /// Controller for <see cref="FourierTransformation2DDataSource"/>.
+  /// </summary>
   [UserControllerForObject(typeof(FourierTransformation2DDataSource))]
   public class RealFourierTransformation2DDataSourceController : DataSourceControllerBase<FourierTransformation2DDataSource>
   {

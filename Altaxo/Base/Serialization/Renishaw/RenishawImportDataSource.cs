@@ -30,6 +30,9 @@ using Altaxo.Data;
 
 namespace Altaxo.Serialization.Renishaw
 {
+  /// <summary>
+  /// Table data source for importing Renishaw files.
+  /// </summary>
   public class RenishawImportDataSource : FileImportTableDataSourceBase<RenishawImportOptions>
   {
     #region Serialization
@@ -42,6 +45,7 @@ namespace Altaxo.Serialization.Renishaw
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RenishawImportDataSource), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (RenishawImportDataSource)obj;
@@ -51,6 +55,7 @@ namespace Altaxo.Serialization.Renishaw
         info.AddArray("ProcessData", s._files.ToArray(), s._files.Count);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (o is RenishawImportDataSource s)
@@ -96,30 +101,42 @@ namespace Altaxo.Serialization.Renishaw
 
     #region Construction
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RenishawImportDataSource"/> class for a single file.
+    /// </summary>
     public RenishawImportDataSource(string fileName, RenishawImportOptions options)
       : this(new string[] { fileName }, options)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RenishawImportDataSource"/> class for multiple files.
+    /// </summary>
     public RenishawImportDataSource(IEnumerable<string> fileNames, RenishawImportOptions options)
       : base(fileNames)
     {
       _processOptions = options;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RenishawImportDataSource"/> class by copying another instance.
+    /// </summary>
     public RenishawImportDataSource(RenishawImportDataSource from)
       : base(from)
     {
     }
 
+    /// <inheritdoc />
     public override object Clone() => new RenishawImportDataSource(this);
 
     #endregion Construction
+    /// <inheritdoc />
     protected override void ImportFromFiles(string[] validFileNames, DataTable destinationTable, IProgressReporter reporter)
     {
       new RenishawImporter().Import(validFileNames, destinationTable, _processOptions, attachDataSource: false);
     }
 
+    /// <inheritdoc />
     public override (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
     {
       return new RenishawImporter().GetFileExtensions();

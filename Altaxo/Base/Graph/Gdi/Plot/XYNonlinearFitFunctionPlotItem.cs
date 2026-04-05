@@ -39,6 +39,9 @@ namespace Altaxo.Graph.Gdi.Plot
   using Graph.Plot.Data;
   using Styles;
 
+  /// <summary>
+  /// Represents a plot item for a nonlinear fit function.
+  /// </summary>
   public class XYNonlinearFitFunctionPlotItem : XYFunctionPlotItem
   {
     #region Serialization
@@ -86,6 +89,10 @@ namespace Altaxo.Graph.Gdi.Plot
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYNonlinearFitFunctionPlotItem"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public XYNonlinearFitFunctionPlotItem(XYNonlinearFitFunctionPlotItem from)
         : base(from)
     {
@@ -117,6 +124,7 @@ namespace Altaxo.Graph.Gdi.Plot
         throw new ArgumentNullException(nameof(ps));
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new XYNonlinearFitFunctionPlotItem(this);
@@ -139,6 +147,9 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <summary>
     /// A Guid string that is identical for all fit function elements within the same fit document.
     /// </summary>
+    /// <summary>
+    /// Gets the fit-document identifier shared by all elements of the same fit document.
+    /// </summary>
     public string FitDocumentIdentifier
     {
       get
@@ -148,6 +159,9 @@ namespace Altaxo.Graph.Gdi.Plot
     }
 
     /// <summary>Index of the fit element of the <see cref="FitDocumentCopy"/> this function belongs to.</summary>
+    /// <summary>
+    /// Gets the fit-element index.
+    /// </summary>
     public int FitElementIndex { get { return ((XYNonlinearFitFunctionPlotData)_plotData).FitElementIndex; } }
 
     /// <summary>
@@ -172,6 +186,7 @@ namespace Altaxo.Graph.Gdi.Plot
       }
     }
 
+    /// <inheritdoc />
     public override IXYFunctionPlotData Data
     {
       get { return _plotData; }
@@ -181,6 +196,7 @@ namespace Altaxo.Graph.Gdi.Plot
       }
     }
 
+    /// <inheritdoc />
     public override void VisitDocumentReferences(DocNodeProxyReporter Report)
     {
       _plotData.VisitDocumentReferences(Report);

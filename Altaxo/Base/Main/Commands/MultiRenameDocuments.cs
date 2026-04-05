@@ -63,8 +63,8 @@ namespace Altaxo.Main.Commands
     /// <summary>
     /// Renames the documents using the items and functions registered in <paramref name="renameData"/>.
     /// </summary>
-    /// <param name="renameData">Data that provideds the items to rename, the functions etc.</param>
-    /// <returns>If the action was successfull, an empty list. If the action was only partially successfull, the returned list contains those objects, for which the rename action failed.</returns>
+    /// <param name="renameData">Data that provides the items to rename and the required helper functions.</param>
+    /// <returns>If the action was successful, an empty list. If the action was only partially successful, the returned list contains those objects for which the rename action failed.</returns>
     public static List<object> RenameDocuments(Altaxo.Gui.Common.MultiRename.MultiRenameData renameData)
     {
       var renameFailedObjects = new List<object>();

@@ -33,13 +33,23 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public class TextChoice
   {
+    /// <summary>
+    /// The available choices.
+    /// </summary>
     protected string[] _choices;
+
+    /// <summary>
+    /// The selected choice index.
+    /// </summary>
     protected int _selection;
     private bool _allowFreeText;
     private string? _choosenText;
     private string _description = string.Empty;
     private Func<string, string>? _textValidationFunction;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextChoice"/> class.
+    /// </summary>
     public TextChoice(string[] choices, int selection, bool allowFreeText)
     {
       _choices = (string[])choices.Clone();
@@ -47,6 +57,9 @@ namespace Altaxo.Gui.Common
       _allowFreeText = allowFreeText;
     }
 
+    /// <summary>
+    /// Gets the available choices.
+    /// </summary>
     public string[] Choices
     {
       get
@@ -104,6 +117,9 @@ namespace Altaxo.Gui.Common
       set { _description = value; }
     }
 
+    /// <summary>
+    /// Gets or sets the text validation function.
+    /// </summary>
     public Func<string, string>? TextValidationFunction
     {
       get
@@ -117,22 +133,39 @@ namespace Altaxo.Gui.Common
     }
   }
 
+  /// <summary>
+  /// View interface for choosing either predefined text or free text.
+  /// </summary>
   public interface IFreeTextChoiceView
   {
     /// <summary>
     /// Fired if the user has changed the selection from the selection list.
     /// </summary>
-    event Action<int> SelectionChangeCommitted;
+    public event Action<int> SelectionChangeCommitted;
 
     /// <summary>Fired if free text was entered and needs to be validated. Make sure that this event is fired only,
     /// if free text was entered, and is not fired if the user has choosen from the selection list.</summary>
-    event Action<string, CancelEventArgs> TextValidating;
+    public event Action<string, CancelEventArgs> TextValidating;
 
-    void SetDescription(string value);
+    /// <summary>
+    /// Sets the description text.
+    /// </summary>
+    /// <param name="value">The description text.</param>
+    public void SetDescription(string value);
 
-    void SetChoices(string[] values, int initialselection, bool allowFreeText);
+    /// <summary>
+    /// Sets the available choices.
+    /// </summary>
+    /// <param name="values">The available choices.</param>
+    /// <param name="initialselection">The initial selection index.</param>
+    /// <param name="allowFreeText">If set to <see langword="true"/>, free text input is allowed.</param>
+    public void SetChoices(string[] values, int initialselection, bool allowFreeText);
   }
 
+
+  /// <summary>
+  /// Provides controller logic for editing <see cref="TextChoice"/> instances.
+  /// </summary>
   [UserControllerForObject(typeof(TextChoice))]
   [ExpectedTypeOfView(typeof(IFreeTextChoiceView))]
   public class TextChoiceController : IMVCANController
@@ -189,6 +222,7 @@ namespace Altaxo.Gui.Common
 
     #region IMVCANController Members
 
+    /// <inheritdoc/>
     public bool InitializeDocument(params object[] args)
     {
       if (args is null || 0 == args.Length || !(args[0] is TextChoice))
@@ -198,6 +232,7 @@ namespace Altaxo.Gui.Common
       return true;
     }
 
+    /// <inheritdoc/>
     public UseDocument UseDocumentCopy
     {
       set { }
@@ -207,6 +242,7 @@ namespace Altaxo.Gui.Common
 
     #region IMVCController Members
 
+    /// <inheritdoc/>
     public object? ViewObject
     {
       get
@@ -232,6 +268,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     public object ModelObject
     {
       get
@@ -242,6 +279,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
     }
@@ -250,6 +288,7 @@ namespace Altaxo.Gui.Common
 
     #region IApplyController Members
 
+    /// <inheritdoc/>
     public bool Apply(bool disposeController)
     {
       return true;
@@ -260,8 +299,9 @@ namespace Altaxo.Gui.Common
     /// </summary>
     /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
     /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    ///   <c>True</c> if the revert operation was successful; <c>false</c> if the revert operation was not possible, that is, because the controller has not stored the original state of the model.
     /// </returns>
+    /// <inheritdoc/>
     public bool Revert(bool disposeController)
     {
       return false;

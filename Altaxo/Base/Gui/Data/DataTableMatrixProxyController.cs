@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -36,10 +36,16 @@ using Altaxo.Science.Spectroscopy;
 
 namespace Altaxo.Gui.Data
 {
+  /// <summary>
+  /// Defines the view contract for editing <see cref="DataTableMatrixProxy"/> instances.
+  /// </summary>
   public interface IDataTableMatrixProxyView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="DataTableMatrixProxy"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IDataTableMatrixProxyView))]
   [UserControllerForObject(typeof(DataTableMatrixProxy))]
   public class DataTableMatrixProxyController : MVCANControllerEditOriginalDocBase<DataTableMatrixProxy, IDataTableMatrixProxyView>
@@ -47,11 +53,15 @@ namespace Altaxo.Gui.Data
     private int _maxPossiblePlotRangeTo;
 
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_rowsController, () => _rowsController = null);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DataTableMatrixProxyController"/> class.
+    /// </summary>
     public DataTableMatrixProxyController()
     {
       CmdTakeAsXColumn = new RelayCommand(EhUseSelectedItemAsXColumn);
@@ -66,16 +76,37 @@ namespace Altaxo.Gui.Data
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the command for assigning the selected column as x column.
+    /// </summary>
     public ICommand CmdTakeAsXColumn { get; }
+    /// <summary>
+    /// Gets the command for clearing the x column.
+    /// </summary>
     public ICommand CmdEraseXColumn { get; }
+    /// <summary>
+    /// Gets the command for assigning the selected column as y column.
+    /// </summary>
     public ICommand CmdTakeAsYColumn { get; }
+    /// <summary>
+    /// Gets the command for clearing the y column.
+    /// </summary>
     public ICommand CmdEraseYColumn { get; }
+    /// <summary>
+    /// Gets the command for assigning the selected columns as value columns.
+    /// </summary>
     public ICommand CmdTakeAsVColumns { get; }
+    /// <summary>
+    /// Gets the command for clearing the value columns.
+    /// </summary>
     public ICommand CmdEraseVColumns { get; }
 
 
     private ItemsController<DataTable> _dataTable;
 
+    /// <summary>
+    /// Gets or sets the selected data table.
+    /// </summary>
     public ItemsController<DataTable> DataTable
     {
       get => _dataTable;
@@ -91,6 +122,9 @@ namespace Altaxo.Gui.Data
 
     private ObservableCollection<int> _availableGroups;
 
+    /// <summary>
+    /// Gets or sets the available group numbers.
+    /// </summary>
     public ObservableCollection<int> AvailableGroups
     {
       get => _availableGroups;
@@ -106,6 +140,9 @@ namespace Altaxo.Gui.Data
 
     private int _selectedGroup = int.MinValue;
 
+    /// <summary>
+    /// Gets or sets the selected group number.
+    /// </summary>
     public int SelectedGroup
     {
       get => _selectedGroup;
@@ -122,6 +159,9 @@ namespace Altaxo.Gui.Data
 
     private bool _useAllAvailableVColumnsOfGroup = true;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether all available value columns of the group are used.
+    /// </summary>
     public bool UseAllAvailableVColumnsOfGroup
     {
       get => _useAllAvailableVColumnsOfGroup;
@@ -140,6 +180,9 @@ namespace Altaxo.Gui.Data
 
     private bool _showDataColumns = true;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether data columns are shown.
+    /// </summary>
     public bool ShowDataColumns
     {
       get => _showDataColumns;
@@ -155,6 +198,9 @@ namespace Altaxo.Gui.Data
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether property columns are shown.
+    /// </summary>
     public bool ShowPropertyColumns
     {
       get => !ShowDataColumns;
@@ -167,6 +213,9 @@ namespace Altaxo.Gui.Data
 
     private SelectableListNodeList _availableColumns;
 
+    /// <summary>
+    /// Gets or sets the available columns.
+    /// </summary>
     public SelectableListNodeList AvailableColumns
     {
       get => _availableColumns;
@@ -182,6 +231,9 @@ namespace Altaxo.Gui.Data
 
     private SelectableListNodeList _participatingVColumns;
 
+    /// <summary>
+    /// Gets or sets the participating value columns.
+    /// </summary>
     public SelectableListNodeList ParticipatingVColumns
     {
       get => _participatingVColumns;
@@ -197,6 +249,9 @@ namespace Altaxo.Gui.Data
 
     private SelectableListNode _participatingXColumn;
 
+    /// <summary>
+    /// Gets or sets the participating x column.
+    /// </summary>
     public SelectableListNode ParticipatingXColumn
     {
       get => _participatingXColumn;
@@ -212,6 +267,9 @@ namespace Altaxo.Gui.Data
 
     private SelectableListNode _participatingYColumn;
 
+    /// <summary>
+    /// Gets or sets the participating y column.
+    /// </summary>
     public SelectableListNode ParticipatingYColumn
     {
       get => _participatingYColumn;
@@ -227,6 +285,9 @@ namespace Altaxo.Gui.Data
 
     private bool _useAllAvailableDataRows;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether all available data rows are used.
+    /// </summary>
     public bool UseAllAvailableDataRows
     {
       get => _useAllAvailableDataRows;
@@ -243,6 +304,9 @@ namespace Altaxo.Gui.Data
 
     private Altaxo.Gui.Common.AscendingIntegerCollectionController _rowsController;
 
+    /// <summary>
+    /// Gets or sets the rows controller.
+    /// </summary>
     public Altaxo.Gui.Common.AscendingIntegerCollectionController RowsController
     {
       get => _rowsController;
@@ -260,6 +324,7 @@ namespace Altaxo.Gui.Data
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -435,6 +500,7 @@ namespace Altaxo.Gui.Data
     }
 
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc.DataTable = DataTable.SelectedValue;

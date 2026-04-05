@@ -85,11 +85,26 @@ namespace Altaxo.Main.Properties
     /// </value>
     public Type? ApplicationItemType { get { return _applicationItemType; } }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PropertyKeyBase"/> class.
+    /// </summary>
+    /// <param name="typeOfProperty">The type of the property value.</param>
+    /// <param name="guidString">The unique key string.</param>
+    /// <param name="propertyName">The display name of the property.</param>
+    /// <param name="applicationLevel">The application level at which the property applies.</param>
     protected PropertyKeyBase(System.Type typeOfProperty, string guidString, string propertyName, PropertyLevel applicationLevel)
       : this(typeOfProperty, guidString, propertyName, applicationLevel, null)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PropertyKeyBase"/> class.
+    /// </summary>
+    /// <param name="typeOfProperty">The type of the property value.</param>
+    /// <param name="guidString">The unique key string.</param>
+    /// <param name="propertyName">The display name of the property.</param>
+    /// <param name="applicationLevel">The application level at which the property applies.</param>
+    /// <param name="applicationItemType">The document item type this property applies to.</param>
     protected PropertyKeyBase(System.Type typeOfProperty, string guidString, string propertyName, PropertyLevel applicationLevel, Type? applicationItemType)
     {
       if (applicationLevel.HasFlag(PropertyLevel.Document) && applicationItemType is null)

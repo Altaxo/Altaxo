@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -30,9 +30,15 @@ using Altaxo.Science.Spectroscopy.Raman;
 
 namespace Altaxo.Gui.Science.Spectroscopy.Raman
 {
+  /// <summary>
+  /// View interface for editing <see cref="RamanCalibrationDataSource"/>.
+  /// </summary>
   public interface IRamanCalibrationDataSourceView : IDataContextAwareView { }
 
 
+  /// <summary>
+  /// Controller for editing a <see cref="RamanCalibrationDataSource"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IRamanCalibrationDataSourceView))]
   [UserControllerForObject(typeof(RamanCalibrationDataSource))]
   public class RamanCalibrationDataSourceController : MVCANControllerEditOriginalDocBase<RamanCalibrationDataSource, IRamanCalibrationDataSourceView>, IMVCSupportsApplyCallback
@@ -46,12 +52,19 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
     private IMVCANController _siliconCalibrationDataController;
     private IMVCANController _siliconCalibrationOptionsController;
 
+    /// <summary>
+    /// Occurs after the document was successfully applied.
+    /// </summary>
     public event Action SuccessfullyApplied;
 
+    /// <summary>Tab identifier for the input options section.</summary>
     public const string TabInputOptions = "InputOptions";
+    /// <summary>Tab identifier for the process options section.</summary>
     public const string TabProcessOptions = "ProcessOptions";
+    /// <summary>Tab identifier for process data section.</summary>
     public const string TabProcessData = "ProcessData";
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_inputOptionsController, () => InputOptionsController = null);
@@ -63,6 +76,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
       yield return new ControllerAndSetNullMethod(_siliconCalibrationDataController, () => SiliconCalibrationDataController = null);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RamanCalibrationDataSourceController"/> class.
+    /// </summary>
     public RamanCalibrationDataSourceController()
     {
       CmdRemoveNeonCalibration2 = new RelayCommand(EhRemoveNeonCalibration2, EhCanRemoveNeonCalibration2);
@@ -72,9 +88,15 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the command that removes the second neon calibration (if present).
+    /// </summary>
     public ICommand CmdRemoveNeonCalibration2 { get; }
 
 
+    /// <summary>
+    /// Gets or sets the controller responsible for editing the import options.
+    /// </summary>
     public IMVCANController InputOptionsController
     {
       get { return _inputOptionsController; }
@@ -89,6 +111,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
       }
     }
 
+    /// <summary>
+    /// Gets or sets the controller for neon calibration 1 options.
+    /// </summary>
     public IMVCANController NeonCalibrationOptions1Controller
     {
       get { return _neonCalibrationOptions1Controller; }
@@ -103,6 +128,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
       }
     }
 
+    /// <summary>
+    /// Gets or sets the controller for neon calibration 1 data.
+    /// </summary>
     public IMVCANController NeonCalibrationData1Controller
     {
       get { return _neonCalibrationData1Controller; }
@@ -117,6 +145,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
       }
     }
 
+    /// <summary>
+    /// Gets or sets the controller for neon calibration 2 options.
+    /// </summary>
     public IMVCANController NeonCalibrationOptions2Controller
     {
       get { return _neonCalibrationOptions2Controller; }
@@ -131,6 +162,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
       }
     }
 
+    /// <summary>
+    /// Gets or sets the controller for neon calibration 2 data.
+    /// </summary>
     public IMVCANController NeonCalibrationData2Controller
     {
       get { return _neonCalibrationData2Controller; }
@@ -145,6 +179,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
       }
     }
 
+    /// <summary>
+    /// Gets or sets the controller for silicon calibration options.
+    /// </summary>
     public IMVCANController SiliconCalibrationOptionsController
     {
       get { return _siliconCalibrationOptionsController; }
@@ -159,6 +196,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
       }
     }
 
+    /// <summary>
+    /// Gets or sets the controller for silicon calibration data.
+    /// </summary>
     public IMVCANController SiliconCalibrationDataController
     {
       get { return _siliconCalibrationDataController; }
@@ -177,6 +217,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -204,6 +245,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
 

@@ -37,6 +37,9 @@ namespace Altaxo.Settings
   /// </summary>
   public class AutoUpdateSettings : Main.ICopyFrom
   {
+    /// <summary>
+    /// Gets the property key for auto-update settings.
+    /// </summary>
     public static readonly PropertyKey<AutoUpdateSettings> PropertyKeyAutoUpdate = new PropertyKey<AutoUpdateSettings>("0E8C6ED2-32AF-4CE7-9FF6-1DE298DB0D2D", "AutoUpdate", PropertyLevel.Application);
 
     /// <summary>Gets or sets a value indicating whether to globally enable auto updates or not.</summary>
@@ -79,6 +82,9 @@ namespace Altaxo.Settings
     /// </value>
     public bool ShowInstallationWindow { get; set; }
 
+    /// <summary>
+    /// Gets or sets the installation window closing time.
+    /// </summary>
     public int InstallationWindowClosingTime { get; set; }
 
     #region Serialization
@@ -86,6 +92,7 @@ namespace Altaxo.Settings
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AutoUpdateSettings), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (AutoUpdateSettings)obj;
@@ -118,6 +125,7 @@ namespace Altaxo.Settings
         return s;
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
@@ -141,11 +149,16 @@ namespace Altaxo.Settings
       InstallationWindowClosingTime = int.MaxValue;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AutoUpdateSettings"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public AutoUpdateSettings(AutoUpdateSettings from)
     {
       CopyFrom(from);
     }
 
+    /// <inheritdoc/>
     public bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -169,6 +182,10 @@ namespace Altaxo.Settings
       return false;
     }
 
+    /// <summary>
+    /// Creates a copy of this instance.
+    /// </summary>
+    /// <returns>The cloned auto-update settings.</returns>
     public AutoUpdateSettings Clone()
     {
       return new AutoUpdateSettings(this);

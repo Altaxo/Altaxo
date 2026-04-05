@@ -28,8 +28,15 @@ namespace Altaxo.Main.Services
   /// </summary>
   public abstract class PathName
   {
+    /// <summary>
+    /// The normalized path.
+    /// </summary>
     protected readonly string _normalizedPath;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PathName"/> class.
+    /// </summary>
+    /// <param name="path">The path.</param>
     protected PathName(string path)
     {
       if (path is null)
@@ -39,6 +46,10 @@ namespace Altaxo.Main.Services
       _normalizedPath = FileUtility.NormalizePath(path);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PathName"/> class by copying another instance.
+    /// </summary>
+    /// <param name="path">The instance to copy.</param>
     protected PathName(PathName path)
     {
       if (path is null)
@@ -53,6 +64,11 @@ namespace Altaxo.Main.Services
     }
     */
 
+    /// <summary>
+    /// Converts a <see cref="PathName"/> to its string path.
+    /// </summary>
+    /// <param name="path">The path.</param>
+    /// <returns>The normalized string path.</returns>
     [return: MaybeNull]
     [return: NotNullIfNotNull("path")]
     public static implicit operator string(PathName? path)
@@ -61,6 +77,11 @@ namespace Altaxo.Main.Services
     }
 
 
+    /// <summary>
+    /// Converts a path instance to its string path.
+    /// </summary>
+    /// <param name="path">The path.</param>
+    /// <returns>The normalized string path.</returns>
     [return: MaybeNull]
     [return: NotNullIfNotNull("path")]
     public static string ToStringPath(PathName? path)
@@ -68,6 +89,7 @@ namespace Altaxo.Main.Services
       return path?._normalizedPath;
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return _normalizedPath;

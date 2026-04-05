@@ -71,9 +71,7 @@ namespace Altaxo.Gui
     /// <returns>An enumeration of controller/set-null-method pairs.</returns>
     public abstract IEnumerable<ControllerAndSetNullMethod> GetSubControllers();
 
-    /// <summary>
     /// <inheritdoc/>
-    /// </summary>
     /// <param name="args">The arguments necessary to create the controller. Normally, the first argument is the document, the second can be the parent of the document, and so on.</param>
     /// <returns>Returns <see langword="true"/> if successful; otherwise <see langword="false"/>.</returns>
     public virtual bool InitializeDocument(params object[] args)
@@ -198,9 +196,7 @@ namespace Altaxo.Gui
       return false;
     }
 
-    /// <summary>
     /// <inheritdoc/>
-    /// </summary>
     /// <remarks>
     /// If set to <see cref="UseDocument.Copy"/>, a copy of the document is used. If the controller is not applied, all changes can be reverted.
     /// If set to <see cref="UseDocument.Directly"/>, no copy is made. The document is changed directly by the controller, and changes cannot be reverted.
@@ -211,9 +207,7 @@ namespace Altaxo.Gui
       set { _useDocumentCopy = value == UseDocument.Copy; }
     }
 
-    /// <summary>
     /// <inheritdoc/>
-    /// </summary>
     public virtual object? ViewObject
     {
       get
@@ -241,9 +235,7 @@ namespace Altaxo.Gui
       }
     }
 
-    /// <summary>
     /// <inheritdoc/>
-    /// </summary>
     public virtual object ModelObject
     {
       get

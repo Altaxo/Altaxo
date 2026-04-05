@@ -30,10 +30,16 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
+  /// <summary>
+  /// View contract for editing a named color.
+  /// </summary>
   public interface INamedColorView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for editing <see cref="NamedColor"/> values.
+  /// </summary>
   [ExpectedTypeOfView(typeof(INamedColorView))]
   public class NamedColorController : MVCANControllerEditImmutableDocBase<NamedColor, INamedColorView>
   {
@@ -45,6 +51,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
     private NamedColor _initialColor;
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_subControllerColorModel, () => _subControllerColorModel = null);
@@ -56,6 +63,9 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
     private AxoColor _oldColor;
 
+    /// <summary>
+    /// Gets or sets the original color.
+    /// </summary>
     public AxoColor OldColor
     {
       get => _oldColor;
@@ -70,6 +80,9 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     }
     private AxoColor _newColor;
 
+    /// <summary>
+    /// Gets or sets the current color.
+    /// </summary>
     public AxoColor NewColor
     {
       get => _newColor;
@@ -84,6 +97,9 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     }
     private string _colorName;
 
+    /// <summary>
+    /// Gets or sets the color name.
+    /// </summary>
     public string ColorName
     {
       get => _colorName;
@@ -99,6 +115,9 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
     private ItemsController<IMVCAController> _subController;
 
+    /// <summary>
+    /// Gets or sets the selected sub-controller.
+    /// </summary>
     public ItemsController<IMVCAController> SubController
     {
       get => _subController;
@@ -114,6 +133,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
 
     #endregion
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -150,6 +170,10 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
 
 
+    /// <summary>
+    /// Gets the available tab names and controllers.
+    /// </summary>
+    /// <returns>The tab descriptors.</returns>
     private IEnumerable<(string TabName, IMVCAController Controller)> GetTabNamesAndControllers()
     {
       if (_subControllerColorModel is not null)
@@ -177,6 +201,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       var userColorName = ColorName;

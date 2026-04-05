@@ -35,7 +35,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
   using Geometry;
 
   /// <summary>
-  ///
+  /// Represents a solid ellipsoid shape.
   /// </summary>
   public class Ellipsoid : SolidBodyShapeBase
   {
@@ -53,15 +53,20 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// <summary>
     /// 2016-03-01 initial version
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="Ellipsoid"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Ellipsoid), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (Ellipsoid)obj;
         info.AddBaseValueEmbedded(s, typeof(Ellipsoid).BaseType!);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (Ellipsoid?)o ?? new Ellipsoid(info);
@@ -74,21 +79,30 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Ellipsoid"/> class.
+    /// </summary>
     public Ellipsoid()
     {
       Size = new Geometry.VectorD3D(100, 100, 100);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Ellipsoid"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The ellipsoid to copy from.</param>
     public Ellipsoid(Ellipsoid from)
       : base(from)
     {
     }
 
+    /// <inheritdoc/>
     public override object Clone()
     {
       return new Ellipsoid(this);
     }
 
+    /// <inheritdoc/>
     public override void Paint(IGraphicsContext3D g, IPaintContext context)
     {
       var buffers = g.GetPositionNormalIndexedTriangleBuffer(_material);
@@ -134,6 +148,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// </summary>
     /// <param name="localToWorldTransformation">The local to world transformation.</param>
     /// <returns></returns>
+    /// <inheritdoc/>
     public override IObjectOutlineForArrangements GetObjectOutlineForArrangements(Matrix4x3 localToWorldTransformation)
     {
       var bounds = Bounds;
@@ -165,11 +180,16 @@ namespace Altaxo.Graph.Graph3D.Shapes
     {
       private Matrix4x3 _transformation;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="SphericalObjectOutline"/> class.
+      /// </summary>
+      /// <param name="transformation">The ellipsoid transformation.</param>
       internal SphericalObjectOutline(Matrix4x3 transformation)
       {
         _transformation = transformation;
       }
 
+      /// <inheritdoc/>
       public RectangleD3D GetBounds()
       {
         var lx = new VectorD3D(_transformation.M11, _transformation.M21, _transformation.M31).Length;
@@ -179,6 +199,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
         return new RectangleD3D(new PointD3D(_transformation.M41 - lx, _transformation.M42 - ly, _transformation.M43 - lz), new VectorD3D(2 * lx, 2 * ly, 2 * lz));
       }
 
+      /// <inheritdoc/>
       public RectangleD3D GetBounds(Matrix3x3 additionalTransformation)
       {
         var t = _transformation.WithAppendedTransformation(additionalTransformation);

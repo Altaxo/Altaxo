@@ -42,6 +42,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
   /// <seealso cref="Altaxo.Main.IImmutable" />
   public class Segment3Connection : LineConnectionStyleBase
   {
+    /// <summary>
+    /// Gets the singleton instance.
+    /// </summary>
     public static Segment3Connection Instance { get; private set; } = new Segment3Connection();
 
     #region Serialization

@@ -39,7 +39,9 @@ namespace Altaxo.Main
       Main.IProjectItemCollection,
       ICollection<TItem> where TItem : TDictionaryItem where TDictionaryItem : IProjectItem
   {
-    // Data
+    /// <summary>
+    /// Stores the project items by their unique names.
+    /// </summary>
     protected SortedDictionary<string, TDictionaryItem> _itemsByName = new SortedDictionary<string, TDictionaryItem>();
 
     /// <summary>
@@ -59,16 +61,28 @@ namespace Altaxo.Main
     /// </value>
     public abstract string ItemBaseName { get; }
 
+    /// <summary>
+    /// Unwires event handlers from the specified item.
+    /// </summary>
+    /// <param name="item">The item to unwire.</param>
     public virtual void UnwireItem(TDictionaryItem item)
     {
     }
 
+    /// <summary>
+    /// Wires event handlers to the specified item.
+    /// </summary>
+    /// <param name="item">The item to wire.</param>
     public virtual void WireItem(TItem item)
     {
     }
 
     #endregion Abstract members
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ProjectItemCollectionBase{TItem, TDictionaryItem}"/> class.
+    /// </summary>
+    /// <param name="parent">The parent document node.</param>
     public ProjectItemCollectionBase(IDocumentNode parent)
     {
       _parent = parent;
@@ -76,6 +90,7 @@ namespace Altaxo.Main
 
     #region ICollection<DataTable> Members
 
+    /// <inheritdoc/>
     public virtual void Clear()
     {
       var items = _itemsByName.Values.ToArray();
@@ -94,11 +109,15 @@ namespace Altaxo.Main
       }
     }
 
+    /// <summary>
+    /// Clears the internal storage of items without disposing them.
+    /// </summary>
     protected virtual void InternalClear()
     {
       _itemsByName.Clear();
     }
 
+    /// <inheritdoc/>
     public bool Contains(TItem item)
     {
       if (item is null)
@@ -117,12 +136,14 @@ namespace Altaxo.Main
       return result && !(projectItem is null);
     }
 
+    /// <inheritdoc/>
     public void CopyTo(TItem[] array, int arrayIndex)
     {
       foreach (var item in _itemsByName.Values.OfType<TItem>())
         array[arrayIndex++] = item;
     }
 
+    /// <inheritdoc/>
     public bool IsReadOnly
     {
       get { return false; }
@@ -133,6 +154,7 @@ namespace Altaxo.Main
       return Remove(item);
     }
 
+    /// <inheritdoc/>
     public int Count
     {
       get { return _itemsByName.Values.OfType<TItem>().Count(); }
@@ -160,6 +182,7 @@ namespace Altaxo.Main
 
     #region Suspend and resume
 
+    /// <inheritdoc/>
     protected override void OnChanged(EventArgs e)
     {
       if (e is Main.NamedObjectCollectionChangedEventArgs nocc)
@@ -172,6 +195,9 @@ namespace Altaxo.Main
 
     #endregion Suspend and resume
 
+    /// <summary>
+    /// Gets a value indicating whether the collection contains accumulated change data.
+    /// </summary>
     public bool IsDirty
     {
       get
@@ -191,6 +217,10 @@ namespace Altaxo.Main
       return list.ToArray();
     }
 
+    /// <summary>
+    /// Gets the item with the specified name.
+    /// </summary>
+    /// <param name="name">The item name.</param>
     public TItem this[string name]
     {
       get
@@ -207,6 +237,12 @@ namespace Altaxo.Main
       }
     }
 
+    /// <summary>
+    /// Tries to get the item with the specified name.
+    /// </summary>
+    /// <param name="name">The item name.</param>
+    /// <param name="item">The matching item, if found.</param>
+    /// <returns><c>true</c> if the item was found; otherwise, <c>false</c>.</returns>
     public bool TryGetValue(string name, [MaybeNullWhen(false)] out TItem item)
     {
       if (_itemsByName.TryGetValue(name, out var result) && result is TItem item1)
@@ -222,9 +258,9 @@ namespace Altaxo.Main
     }
 
     /// <summary>
-    /// Determines whether the collection contains any project item with the specified name. This must not neccessarily
-    /// a item of the type that this collection stores (some collections can have a shared name dictionary).
-    /// In constrast, use <see cref="Contains(string)"/> to determine if the collection contains an item with the specified name and the native type that the collection stores.
+    /// Determines whether the collection contains any project item with the specified name. This must not necessarily
+    /// be an item of the type that this collection stores, because some collections can have a shared name dictionary.
+    /// In contrast, use <see cref="Contains(string)"/> to determine if the collection contains an item with the specified name and the native type that the collection stores.
     /// </summary>
     /// <param name="itemName">Name of the project item.</param>
     /// <returns>True if the collection contains any project item with the specified name.</returns>
@@ -243,6 +279,9 @@ namespace Altaxo.Main
       return itemName is not null && _itemsByName.TryGetValue(itemName, out var result) && result is TItem;
     }
 
+    /// <summary>
+    /// Gets the names of all stored items.
+    /// </summary>
     public IEnumerable<string> Names
     {
       get
@@ -251,6 +290,7 @@ namespace Altaxo.Main
       }
     }
 
+    /// <inheritdoc/>
     public virtual void Add(TItem item)
     {
       if (item is null)
@@ -273,6 +313,10 @@ namespace Altaxo.Main
       EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemAdded(item));
     }
 
+    /// <summary>
+    /// Adds the item to the internal storage without wiring events or raising notifications.
+    /// </summary>
+    /// <param name="item">The item to add.</param>
     protected virtual void InternalAdd(TItem item)
     {
       _itemsByName.Add(item.Name, item);
@@ -360,6 +404,11 @@ namespace Altaxo.Main
       oldItem.Dispose();
     }
 
+    /// <summary>
+    /// Exchanges the items in the internal storage without wiring events or raising notifications.
+    /// </summary>
+    /// <param name="oldItem">The item to remove.</param>
+    /// <param name="newItem">The item to add.</param>
     protected virtual void InternalExchange(TItem oldItem, TItem newItem)
     {
       _itemsByName.Remove(oldItem.Name);
@@ -474,6 +523,7 @@ namespace Altaxo.Main
       }
     }
 
+    /// <inheritdoc/>
     public override Main.IDocumentLeafNode? GetChildObjectNamed(string name)
     {
       if (_itemsByName.TryGetValue(name, out var result))
@@ -482,6 +532,7 @@ namespace Altaxo.Main
       return null;
     }
 
+    /// <inheritdoc/>
     public override string? GetNameOfChildObject(Main.IDocumentLeafNode obj)
     {
       if (obj is TItem item)
@@ -492,6 +543,7 @@ namespace Altaxo.Main
       return null;
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       foreach (var entry in _itemsByName)
@@ -499,6 +551,7 @@ namespace Altaxo.Main
           yield return new Main.DocumentNodeAndName(entry.Value, entry.Key);
     }
 
+    /// <inheritdoc/>
     protected override void Dispose(bool isDisposing)
     {
       if (!IsDisposed)

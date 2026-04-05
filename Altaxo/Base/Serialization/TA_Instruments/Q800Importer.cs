@@ -30,6 +30,9 @@ using Altaxo.Data;
 
 namespace Altaxo.Serialization.TA_Instruments
 {
+  /// <summary>
+  /// Importer for TA Instruments Q800 files.
+  /// </summary>
   public record Q800Importer : DataFileImporterBase, Main.IImmutable
   {
     /// <inheritdoc/>
@@ -84,7 +87,10 @@ namespace Altaxo.Serialization.TA_Instruments
     /// </summary>
     /// <param name="filenames">An array of filenames to import. Typically, only one file is imported.</param>
     /// <param name="table">The table the spectra should be imported to.</param>
+    /// <param name="importOptionsObj">The import options object.</param>
+    /// <param name="attachDataSource">Whether to attach a data source to the imported table.</param>
     /// <returns>Null if no error occurs, or an error description.</returns>
+    /// <inheritdoc />
     public override string? Import(IReadOnlyList<string> filenames, DataTable table, object importOptionsObj, bool attachDataSource = true)
     {
       var importOptions = (Q800ImportOptions)importOptionsObj;

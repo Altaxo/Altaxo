@@ -42,15 +42,33 @@ namespace Altaxo.Data
     where TOptions : Main.IImmutable
     where TData : IDocumentLeafNode, ICloneable
   {
+    /// <summary>
+    /// Stores the immutable processing options.
+    /// </summary>
     protected TOptions _processOptions;
+
+    /// <summary>
+    /// Stores the processing data used by the data source.
+    /// </summary>
     protected TData _processData;
+
+    /// <summary>
+    /// Stores the import options used to load the source data.
+    /// </summary>
     protected IDataSourceImportOptions _importOptions;
+    /// <summary>
+    /// Backing field for the <see cref="DataSourceChanged"/> event.
+    /// </summary>
     public Action<IAltaxoTableDataSource>? _dataSourceChanged;
 
     #region Serialization
 
+    /// <summary>
+    /// Base XML surrogate for immutable table data sources.
+    /// </summary>
     protected abstract class XmlSerializationSurrogateBase : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (TableDataSourceBaseImmutableOptions<TOptions, TData>)obj;
@@ -59,9 +77,15 @@ namespace Altaxo.Data
         info.AddValue("ImportOptions", s._importOptions);
       }
 
+      /// <inheritdoc/>
       public abstract object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TableDataSourceBaseImmutableOptions{TOptions, TData}"/> class from serialized data.
+    /// </summary>
+    /// <param name="info">The XML deserialization info.</param>
+    /// <param name="version">The serialized version number.</param>
     protected TableDataSourceBaseImmutableOptions(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     {
       var processData = info.GetValue<TData>("ProcessData", this);
@@ -112,6 +136,10 @@ namespace Altaxo.Data
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies the state from another immutable-options data source instance.
+    /// </summary>
+    /// <param name="from">The source instance.</param>
     [MemberNotNull(nameof(_importOptions), nameof(_processOptions), nameof(_processData))]
     public void CopyFrom(TableDataSourceBaseImmutableOptions<TOptions, TData> from)
     {

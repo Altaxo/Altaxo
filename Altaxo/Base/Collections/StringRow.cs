@@ -30,15 +30,29 @@ using System.Text;
 
 namespace Altaxo.Collections
 {
+  /// <summary>
+  /// Represents a row of string values.
+  /// </summary>
   public class StringRow
   {
+    /// <summary>
+    /// The string values stored in this row.
+    /// </summary>
     protected string[] _data;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StringRow"/> class.
+    /// </summary>
+    /// <param name="numCols">The number of columns in the row.</param>
     public StringRow(int numCols)
     {
       _data = new string[numCols];
     }
 
+    /// <summary>
+    /// Gets or sets the string at the specified column index.
+    /// </summary>
+    /// <param name="i">The zero-based column index.</param>
     public string this[int i]
     {
       get
@@ -51,6 +65,9 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <summary>
+    /// Gets or sets the value of column 0.
+    /// </summary>
     public string Column0
     {
       get
@@ -63,6 +80,9 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <summary>
+    /// Gets or sets the value of column 1.
+    /// </summary>
     public string Column1
     {
       get
@@ -75,6 +95,9 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <summary>
+    /// Gets or sets the value of column 2.
+    /// </summary>
     public string Column2
     {
       get
@@ -87,6 +110,9 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <summary>
+    /// Gets or sets the value of column 3.
+    /// </summary>
     public string Column3
     {
       get
@@ -99,6 +125,9 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <summary>
+    /// Gets or sets the value of column 4.
+    /// </summary>
     public string Column4
     {
       get
@@ -111,6 +140,9 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <summary>
+    /// Gets or sets the value of column 5.
+    /// </summary>
     public string Column5
     {
       get
@@ -124,16 +156,28 @@ namespace Altaxo.Collections
     }
   }
 
+  /// <summary>
+  /// Represents a <see cref="StringRow"/> with two columns.
+  /// </summary>
   public class TwoStringRow : StringRow
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TwoStringRow"/> class.
+    /// </summary>
     public TwoStringRow()
       : base(2)
     {
     }
   }
 
+  /// <summary>
+  /// Represents a <see cref="StringRow"/> with three columns.
+  /// </summary>
   public class ThreeStringRow : StringRow
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ThreeStringRow"/> class.
+    /// </summary>
     public ThreeStringRow()
       : base(3)
     {

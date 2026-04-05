@@ -32,19 +32,28 @@ using System.Text;
 namespace Altaxo.Drawing.LineCaps
 {
   /// <summary>
-  /// Draws a cap that is a line perpendicular to the end of the line, and on the left side of the line.
+  /// Draws a cap that is a line perpendicular to the line end and located on the left side.
   /// </summary>
   public class LeftBarLineCap : RightBarLineCap
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LeftBarLineCap"/> class.
+    /// </summary>
     public LeftBarLineCap()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LeftBarLineCap"/> class.
+    /// </summary>
+    /// <param name="minimumAbsoluteSizePt">The minimum absolute size in points.</param>
+    /// <param name="minimumRelativeSize">The minimum relative size.</param>
     public LeftBarLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
       : base(minimumAbsoluteSizePt, minimumRelativeSize)
     {
     }
 
+    /// <inheritdoc/>
     public override string Name { get { return "BarLeft"; } }
   }
 }

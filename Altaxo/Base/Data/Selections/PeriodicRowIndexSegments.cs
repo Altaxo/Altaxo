@@ -30,12 +30,24 @@ using Altaxo.Main;
 
 namespace Altaxo.Data.Selections
 {
+  /// <summary>
+  /// Selects fixed-length row segments repeated periodically.
+  /// </summary>
   public class PeriodicRowIndexSegments : Main.SuspendableDocumentLeafNodeWithEventArgs, IRowSelection, ICloneable
   {
+    /// <summary>
+    /// Stores the first selected row index, or a negative index relative to the end of the data.
+    /// </summary>
     public int _firstRowIndexInclusive;
 
+    /// <summary>
+    /// Stores the number of rows between the starts of consecutive selected segments.
+    /// </summary>
     public int _lengthOfPeriod;
 
+    /// <summary>
+    /// Stores the number of rows selected within each period.
+    /// </summary>
     public int _numberOfItemsPerPeriod;
 
     /// <summary>
@@ -115,6 +127,9 @@ namespace Altaxo.Data.Selections
       _numberOfItemsPerPeriod = itemsPerPeriod;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PeriodicRowIndexSegments"/> class with default settings.
+    /// </summary>
     public PeriodicRowIndexSegments()
     {
       _firstRowIndexInclusive = 0;
@@ -144,6 +159,7 @@ namespace Altaxo.Data.Selections
       _numberOfItemsPerPeriod = itemsPerPeriod;
     }
 
+    /// <inheritdoc />
     public object Clone()
     {
       return new PeriodicRowIndexSegments
@@ -167,11 +183,13 @@ namespace Altaxo.Data.Selections
       }
     }
 
+    /// <inheritdoc />
     public override int GetHashCode()
     {
       return 13 * _firstRowIndexInclusive.GetHashCode() + 17 * _lengthOfPeriod + 31 * _numberOfItemsPerPeriod.GetHashCode();
     }
 
+    /// <inheritdoc />
     public override bool Equals(object? obj)
     {
       if (obj is PeriodicRowIndexSegments from)

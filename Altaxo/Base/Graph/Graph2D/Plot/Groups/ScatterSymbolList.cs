@@ -33,6 +33,9 @@ using Altaxo.Graph.Graph2D.Plot.Styles;
 
 namespace Altaxo.Graph.Graph2D.Plot.Groups
 {
+  /// <summary>
+  /// Represents a named list of scatter symbols.
+  /// </summary>
   public class ScatterSymbolList : StyleListBase<IScatterSymbol>
   {
     /// <summary>First part of the key that is used during serialization to decide whether the set was already serialized before.</summary>
@@ -40,9 +43,13 @@ namespace Altaxo.Graph.Graph2D.Plot.Groups
 
     #region Serialization
 
+    /// <summary>
+    /// Serializes <see cref="ScatterSymbolList"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScatterSymbolList), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ScatterSymbolList)obj;
@@ -56,6 +63,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Groups
         info.CommitArray();
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         string name = info.GetString("Name");
@@ -72,6 +80,11 @@ namespace Altaxo.Graph.Graph2D.Plot.Groups
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScatterSymbolList"/> class.
+    /// </summary>
+    /// <param name="name">The list name.</param>
+    /// <param name="symbols">The symbols contained in the list.</param>
     public ScatterSymbolList(string name, IEnumerable<IScatterSymbol> symbols)
       : base(name, symbols.Select(instance => (IScatterSymbol)instance.Clone()))
     {

@@ -20,19 +20,19 @@ namespace Altaxo.Serialization
   /// </remarks>
   public abstract record DataFileImporterBase : IDataFileImporter, Main.IImmutable
   {
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public abstract object CheckOrCreateImportOptions(object? importOptions);
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public abstract IAltaxoTableDataSource? CreateTableDataSource(IReadOnlyList<string> fileNames, object importOptions);
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public abstract (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions();
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public abstract double GetProbabilityForBeingThisFileFormat(string fileName);
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public abstract string? Import(IReadOnlyList<string> fileNames, DataTable table, object importOptions, bool attachDataSource = true);
 
     /// <summary>
@@ -77,8 +77,8 @@ namespace Altaxo.Serialization
     }
 
     /// <summary>
-    /// Shows import dialogs, then performs the import.
-    /// in an existing worksheet or in another worksheet.
+    /// Shows import dialogs and then performs the import,
+    /// either in an existing worksheet or in another worksheet.
     /// </summary>
     /// <param name="activeViewContent">Content of the active view.</param>
     /// <param name="importer">The importer.</param>

@@ -23,25 +23,24 @@ using System.Diagnostics.CodeAnalysis;
 namespace Altaxo.Gui.Workbench
 {
   /// <summary>
-  /// The IPadContent interface is interface of the viewmodel of all "tool" windows.</summary>
+  /// Represents the view model of a tool window.
+  /// </summary>
   public interface IPadContent : IWorkbenchContent, IDisposable
   {
     /// <summary>
-    /// Returns the category (this is used for defining where the menu item to
-    /// this pad goes)
+    /// Gets or sets the category used to determine where the menu item for this pad is placed.
     /// </summary>
     [MaybeNull]
     string Category { get; set; }
 
     /// <summary>
-    /// Returns the icon bitmap resource name of the pad. May be an empty string
-    /// if the pad has no icon defined.
+    /// Gets the icon bitmap resource name of the pad. May be an empty string if the pad has no icon defined.
     /// </summary>
     [MaybeNull]
     string IconSource { get; }
 
     /// <summary>
-    /// Returns the menu shortcut for the view menu item.
+    /// Gets or sets the menu shortcut for the view menu item.
     /// </summary>
     [MaybeNull]
     string Shortcut { get; set; }

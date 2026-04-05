@@ -31,6 +31,9 @@ using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Worksheet
 {
+  /// <summary>
+  /// Represents the worksheet style used for text columns.
+  /// </summary>
   public class TextColumnStyle : Altaxo.Worksheet.ColumnStyle
   {
     #region Serialization
@@ -38,12 +41,14 @@ namespace Altaxo.Worksheet
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextColumnStyle), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (TextColumnStyle)obj;
         info.AddBaseValueEmbedded(s, typeof(TextColumnStyle).BaseType!);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         TextColumnStyle s = o is not null ? (TextColumnStyle)o : new TextColumnStyle();
@@ -54,6 +59,9 @@ namespace Altaxo.Worksheet
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextColumnStyle"/> class.
+    /// </summary>
     public TextColumnStyle()
       : base(ColumnStyleType.DataCell)
     {
@@ -61,22 +69,29 @@ namespace Altaxo.Worksheet
       _textFormat.FormatFlags = StringFormatFlags.LineLimit;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextColumnStyle"/> class by copying another instance.
+    /// </summary>
+    /// <param name="tcs">The instance to copy.</param>
     public TextColumnStyle(TextColumnStyle tcs)
       : base(tcs)
     {
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new TextColumnStyle(this);
     }
 
+    /// <inheritdoc />
     public override string GetColumnValueAtRow(int nRow, Altaxo.Data.DataColumn data)
     {
       string? val = ((Altaxo.Data.TextColumn)data)[nRow];
       return val ?? string.Empty;
     }
 
+    /// <inheritdoc />
     public override void SetColumnValueAtRow(string s, int nRow, Altaxo.Data.DataColumn data)
     {
       try
@@ -86,8 +101,12 @@ namespace Altaxo.Worksheet
       catch (Exception) { }
     }
 
-    public static Dictionary<System.Type, Action<TextColumnStyle, object, RectangleD2D, int, Altaxo.Data.DataColumn, bool>> RegisteredPaintMethods = new Dictionary<Type, Action<TextColumnStyle, object, RectangleD2D, int, Data.DataColumn, bool>>();
+    /// <summary>
+    /// Gets the registered paint methods for specific drawing contexts.
+    /// </summary>
+    public static Dictionary<System.Type, Action<TextColumnStyle, object, RectangleD2D, int, Altaxo.Data.DataColumn, bool>> RegisteredPaintMethods = new Dictionary<System.Type, Action<TextColumnStyle, object, RectangleD2D, int, Altaxo.Data.DataColumn, bool>>();
 
+    /// <inheritdoc />
     public override void Paint(System.Type dctype, object dc, RectangleD2D cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
     {
       if (RegisteredPaintMethods.TryGetValue(dctype, out var action))
@@ -96,6 +115,7 @@ namespace Altaxo.Worksheet
         throw new NotImplementedException("Paint method is not implemented for context type " + dc.GetType().ToString());
     }
 
+    /// <inheritdoc />
     public override void Paint(Graphics dc, Rectangle cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
     {
       PaintBackground(dc, cellRectangle, bSelected);

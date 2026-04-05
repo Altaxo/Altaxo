@@ -27,8 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Text;
 using Altaxo.Drawing;
 
 namespace Altaxo.Graph.Gdi.LineCaps
@@ -46,14 +44,31 @@ namespace Altaxo.Graph.Gdi.LineCaps
     /// </value>
     public abstract Type ExtendsType { get; }
 
+    /// <summary>
+    /// Creates the custom GDI line cap used for rendering.
+    /// </summary>
+    /// <param name="pen">The pen that will use the cap.</param>
+    /// <param name="size">The requested cap size.</param>
+    /// <param name="isEndCap"><see langword="true"/> to create an end cap; otherwise, a start cap.</param>
+    /// <returns>The custom line cap instance.</returns>
     protected abstract CustomLineCap GetCustomLineCap(Pen pen, float size, bool isEndCap);
 
+    /// <summary>
+    /// Sets the start cap on the specified pen.
+    /// </summary>
+    /// <param name="pen">The pen to modify.</param>
+    /// <param name="size">The cap size.</param>
     public virtual void SetStartCap(Pen pen, float size)
     {
       pen.StartCap = LineCap.Custom;
       pen.CustomStartCap = GetCustomLineCap(pen, size, false);
     }
 
+    /// <summary>
+    /// Sets the end cap on the specified pen.
+    /// </summary>
+    /// <param name="pen">The pen to modify.</param>
+    /// <param name="size">The cap size.</param>
     public virtual void SetEndCap(Pen pen, float size)
     {
       pen.EndCap = LineCap.Custom;
@@ -63,6 +78,11 @@ namespace Altaxo.Graph.Gdi.LineCaps
 
     #region Cap styles registry
 
+    /// <summary>
+    /// Sets the start cap on the specified pen using the registered GDI implementation.
+    /// </summary>
+    /// <param name="pen">The pen to modify.</param>
+    /// <param name="cap">The logical line cap.</param>
     public static void SetStartCap(Pen pen, ILineCap cap)
     {
       if (cap is null || !_registeredStyles.TryGetValue(cap.GetType(), out var implementation))
@@ -75,6 +95,11 @@ namespace Altaxo.Graph.Gdi.LineCaps
       }
     }
 
+    /// <summary>
+    /// Sets the end cap on the specified pen using the registered GDI implementation.
+    /// </summary>
+    /// <param name="pen">The pen to modify.</param>
+    /// <param name="cap">The logical line cap.</param>
     public static void SetEndCap(Pen pen, ILineCap cap)
     {
       if (cap is null || !_registeredStyles.TryGetValue(cap.GetType(), out var implementation))

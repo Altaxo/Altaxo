@@ -35,19 +35,29 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Graph3D
 {
+  /// <summary>
+  /// Provides the view for editing 3D graphic items.
+  /// </summary>
   public interface IGraphicItemsView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controls the editing of <see cref="GraphicCollection"/> instances.
+  /// </summary>
   [UserControllerForObject(typeof(GraphicCollection))]
   [ExpectedTypeOfView(typeof(IGraphicItemsView))]
   public class GraphicItemsController : MVCANControllerEditCopyOfDocBase<GraphicCollection, IGraphicItemsView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GraphicItemsController"/> class.
+    /// </summary>
     public GraphicItemsController()
     {
       CmdItemsUp = new RelayCommand(EhSelectedItemsUp);
@@ -58,13 +68,31 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the command that moves the selected items up.
+    /// </summary>
     public ICommand CmdItemsUp { get; }
+
+    /// <summary>
+    /// Gets the command that moves the selected items down.
+    /// </summary>
     public ICommand CmdItemsDown { get; }
+
+    /// <summary>
+    /// Gets the command that removes the selected items.
+    /// </summary>
     public ICommand CmdItemsRemove { get; }
+
+    /// <summary>
+    /// Gets the command that edits the selected item.
+    /// </summary>
     public ICommand CmdItemEdit { get; }
 
     private SelectableListNodeList _items;
 
+    /// <summary>
+    /// Gets or sets the items shown in the editor.
+    /// </summary>
     public SelectableListNodeList Items
     {
       get => _items;
@@ -81,12 +109,14 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     #endregion
 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       Items = null;
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -104,6 +134,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       using (var token = _doc.GetEventDisableToken())

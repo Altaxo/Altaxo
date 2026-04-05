@@ -29,12 +29,18 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Data
 {
+  /// <summary>
+  /// Table data source that converts X-Y-value data into a matrix table.
+  /// </summary>
   public class ConvertXYVToMatrixDataSource : TableDataSourceBase, Altaxo.Data.IAltaxoTableDataSource
   {
     private ConvertXYVToMatrixOptions _processOptions;
     private DataTableMultipleColumnProxy _processData;
     private IDataSourceImportOptions _importOptions;
 
+    /// <summary>
+    /// Raised when the data source changes.
+    /// </summary>
     public Action<IAltaxoTableDataSource>? _dataSourceChanged;
 
     #region Serialization
@@ -76,6 +82,11 @@ namespace Altaxo.Data
 
     #endregion Version 0
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConvertXYVToMatrixDataSource"/> class during XML deserialization.
+    /// </summary>
+    /// <param name="info">The XML deserialization info.</param>
+    /// <param name="version">The serialized version.</param>
     protected ConvertXYVToMatrixDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     {
       switch (version)
@@ -134,6 +145,10 @@ namespace Altaxo.Data
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies the state from another <see cref="ConvertXYVToMatrixDataSource"/> instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     [MemberNotNull(nameof(_importOptions), nameof(_processOptions), nameof(_processData))]
     public void CopyFrom(ConvertXYVToMatrixDataSource from)
     {
@@ -308,6 +323,7 @@ namespace Altaxo.Data
 
     #region Change event handling
 
+    /// <inheritdoc />
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (object.ReferenceEquals(_processData, sender)) // incoming call from data proxy
@@ -329,6 +345,7 @@ namespace Altaxo.Data
 
     #region Document Node functions
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_processData is not null)

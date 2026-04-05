@@ -32,25 +32,36 @@ using System.Text;
 namespace Altaxo.Drawing.LineCaps
 {
   /// <summary>
-  /// Draws a cap that is a line perpendicular to the end of the line, and on the right side of the line.
+  /// Draws a break-style cap at the end of a line.
   /// </summary>
   public class BreakLineCap : LineCapBase
   {
     private const double _designAngle = 45;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BreakLineCap"/> class.
+    /// </summary>
     public BreakLineCap()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BreakLineCap"/> class.
+    /// </summary>
+    /// <param name="minimumAbsoluteSizePt">The minimum absolute size in points.</param>
+    /// <param name="minimumRelativeSize">The minimum relative size.</param>
     public BreakLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
       : base(minimumAbsoluteSizePt, minimumRelativeSize)
     {
     }
 
+    /// <inheritdoc/>
     public override string Name { get { return "Break"; } }
 
+    /// <inheritdoc/>
     public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
 
+    /// <inheritdoc/>
     public override double DefaultMinimumRelativeSize { get { return 4; } }
   }
 }

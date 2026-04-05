@@ -37,20 +37,29 @@ namespace Altaxo.Gui.Graph.Graph3D
 {
   public partial class XYZPlotLayerContentsController
   {
+    /// <summary>
+    /// Drag-and-drop handler for 3D plot items.
+    /// </summary>
     public class PlotItems_DragDropHandler : IMVVMDragDropHandler
     {
       XYZPlotLayerContentsController _parent;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="PlotItems_DragDropHandler"/> class.
+      /// </summary>
+      /// <param name="parent">The parent controller.</param>
       public PlotItems_DragDropHandler(XYZPlotLayerContentsController parent)
       {
         _parent = parent ?? throw new ArgumentNullException(nameof(parent));
       }
 
+      /// <inheritdoc />
       public bool CanStartDrag(IEnumerable items)
       {
         return NGTreeNode.AreAllNodesFromSameLevel(items.OfType<NGTreeNode>());
       }
 
+      /// <inheritdoc />
       public void StartDrag(IEnumerable items, out object data, out bool canCopy, out bool canMove)
       {
         data = new List<NGTreeNode>(items.OfType<NGTreeNode>());
@@ -58,14 +67,17 @@ namespace Altaxo.Gui.Graph.Graph3D
         canMove = true;
       }
 
+      /// <inheritdoc />
       public void DragEnded(bool isCopy, bool isMove)
       {
       }
 
+      /// <inheritdoc />
       public void DragCancelled()
       {
       }
 
+      /// <inheritdoc />
       public void DropCanAcceptData(object data, object targetObject, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool canCopy, out bool canMove, out bool itemIsSwallowingData)
       {
         if (data is not IEnumerable<NGTreeNode> nodes)
@@ -103,6 +115,7 @@ namespace Altaxo.Gui.Graph.Graph3D
         }
       }
 
+      /// <inheritdoc />
       public void Drop(object data, object targetObject, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool isCopy, out bool isMove)
       {
         isMove = false;
@@ -117,11 +130,11 @@ namespace Altaxo.Gui.Graph.Graph3D
         int actualInsertIndex; // is updated every time the following delegate is called
         NGTreeNodeCollection parentNodeCollectionOfTargetNode = null;
 
-        if (canTargetSwallowNodes) // Target is plot item collectio node -> we can simply add the data to it
+        if (canTargetSwallowNodes) // Target is a plot-item collection node, so we can simply add the data to it.
         {
           AddNodeToTree = node => { targetNode.Nodes.Add(node); ((PlotItemCollection)targetNode.Tag).Add((IGPlotItem)node.Tag); };
         }
-        else if (targetNode is null) // no target node -> add data to the end of the colleciton
+        else if (targetNode is null) // no target node -> add data to the end of the collection
         {
           AddNodeToTree = node => { _parent._plotItemsRootNode.Nodes.Add(node); ((PlotItemCollection)_parent._plotItemsRootNode.Tag).Add((IGPlotItem)node.Tag); };
         }

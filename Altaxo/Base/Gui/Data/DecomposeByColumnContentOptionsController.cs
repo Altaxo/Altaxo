@@ -33,13 +33,25 @@ namespace Altaxo.Gui.Data
   using Altaxo.Collections;
   using Altaxo.Data;
 
+  /// <summary>
+  /// View contract for decomposing a table by column content.
+  /// </summary>
   public interface IDecomposeByColumnContentOptionsView
   {
+    /// <summary>
+    /// Initializes the selectable destination output formats.
+    /// </summary>
     void InitializeDestinationOutputFormat(SelectableListNodeList list);
 
+    /// <summary>
+    /// Initializes the selectable destination column sorting options.
+    /// </summary>
     void InitializeDestinationColumnSorting(SelectableListNodeList list);
   }
 
+  /// <summary>
+  /// Controller for editing options used to decompose data by column content.
+  /// </summary>
   [UserControllerForObject(typeof(DecomposeByColumnContentOptions))]
   [ExpectedTypeOfView(typeof(IDecomposeByColumnContentOptionsView))]
   public class DecomposeByColumnContentOptionsController : MVCANControllerEditOriginalDocBase<DecomposeByColumnContentOptions, IDecomposeByColumnContentOptionsView>
@@ -47,11 +59,13 @@ namespace Altaxo.Gui.Data
     private SelectableListNodeList _choicesDestinationOutputFormat;
     private SelectableListNodeList _choicesDestinationColSort;
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <inheritdoc/>
     public override void Dispose(bool isDisposing)
     {
       _choicesDestinationOutputFormat = null;
@@ -60,6 +74,7 @@ namespace Altaxo.Gui.Data
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -79,6 +94,7 @@ namespace Altaxo.Gui.Data
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc.DestinationOutput = (DecomposeByColumnContentOptions.OutputFormat)_choicesDestinationOutputFormat.FirstSelectedNode.Tag;

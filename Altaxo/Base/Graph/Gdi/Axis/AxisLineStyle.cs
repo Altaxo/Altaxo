@@ -74,6 +74,9 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <summary>Axis shift position, either provide as absolute values in point units, or as relative value relative to the layer size.</summary>
     protected RADouble _axisPosition; // if relative, then relative to layer size, if absolute then in points
 
+    /// <summary>
+    /// Cached axis style information for rendering.
+    /// </summary>
     protected CSAxisInformation? _cachedAxisStyleInfo;
 
     #region Serialization
@@ -177,11 +180,11 @@ namespace Altaxo.Graph.Gdi.Axis
 
     #endregion Serialization
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     /// <summary>
-    /// Initializes a new instance of the <see cref="AxisLineStyle"/> class for deserialization purposes only.
+    /// Initializes a new instance of the <see cref="AxisLineStyle"/> class for deserialization only.
     /// </summary>
     /// <param name="info">The deserialization information.</param>
-#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected AxisLineStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
@@ -217,6 +220,10 @@ namespace Altaxo.Graph.Gdi.Axis
     }
 
 
+    /// <summary>
+    /// Copies the state from another <see cref="AxisLineStyle"/> instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     [MemberNotNull(nameof(_axisPen), nameof(_majorTickPen), nameof(_minorTickPen))]
     private void CopyFrom(AxisLineStyle from)
     {
@@ -242,10 +249,7 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
-    /// <summary>
-    /// Copy operation.
-    /// </summary>
-    /// <param name="obj">The AxisStyle to copy from</param>
+    /// <inheritdoc />
     public bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -260,6 +264,7 @@ namespace Altaxo.Graph.Gdi.Axis
       return false;
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
@@ -274,6 +279,9 @@ namespace Altaxo.Graph.Gdi.Axis
       return new AxisLineStyle(this);
     }
 
+    /// <summary>
+    /// Gets the identifier of the cached axis information.
+    /// </summary>
     public CSLineID? AxisStyleID
     {
       get
@@ -282,6 +290,9 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets the cached axis information used for hit testing and painting.
+    /// </summary>
     public CSAxisInformation? CachedAxisInformation
     {
       get
@@ -294,12 +305,26 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Performs a point-based hit test on the axis line.
+    /// </summary>
+    /// <param name="layer">The plot layer.</param>
+    /// <param name="pt">The point to test.</param>
+    /// <param name="withTicks">If set to <c>true</c>, ticks are included in the hit test region.</param>
+    /// <returns>A hit test object if the point hits the axis; otherwise, <c>null</c>.</returns>
     public virtual IHitTestObject? HitTest(IPlotArea layer, PointD2D pt, bool withTicks)
     {
       GraphicsPath selectionPath = GetSelectionPath(layer, withTicks);
       return selectionPath.IsVisible(pt.ToGdi()) ? new HitTestObject(GetObjectPath(layer, withTicks), this) : null;
     }
 
+    /// <summary>
+    /// Performs a rectangular hit test on the axis line.
+    /// </summary>
+    /// <param name="layer">The plot layer.</param>
+    /// <param name="hitData">The rectangular hit test data.</param>
+    /// <param name="withTicks">If set to <c>true</c>, ticks are included in the hit test region.</param>
+    /// <returns>A hit test object if the rectangle covers the axis; otherwise, <c>null</c>.</returns>
     public virtual IHitTestObject? HitTest(IPlotArea layer, HitTestRectangularData hitData, bool withTicks)
     {
       GraphicsPath selectionPath = GetSelectionPath(layer, withTicks);
@@ -344,6 +369,9 @@ namespace Altaxo.Graph.Gdi.Axis
       //return (float)m_AxisPosition.GetValueRelativeTo(m_Edge.GetOppositeEdgeLength(layerSize));
     }
 
+    /// <summary>
+    /// Gets or sets the pen used to draw the axis line.
+    /// </summary>
     public PenX AxisPen
     {
       get { return _axisPen; }
@@ -360,6 +388,9 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets the pen used to draw the major ticks.
+    /// </summary>
     public PenX MajorPen
     {
       get { return _majorTickPen; }
@@ -375,6 +406,9 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets the pen used to draw the minor ticks.
+    /// </summary>
     public PenX MinorPen
     {
       get { return _minorTickPen; }
@@ -665,6 +699,11 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Handles forwarded pen change notifications.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The event arguments.</param>
     protected virtual void OnPenChangedEventHandler(object sender, EventArgs e)
     {
       EhSelfChanged(EventArgs.Empty);
@@ -672,6 +711,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
     #region IRoutedPropertyReceiver Members
 
+    /// <inheritdoc />
     public IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName)
     {
       switch (propertyName)

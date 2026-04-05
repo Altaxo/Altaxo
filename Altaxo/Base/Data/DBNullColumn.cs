@@ -28,16 +28,18 @@ using System;
 namespace Altaxo.Data
 {
   /// <summary>
-  /// AltaxoDBNullColumn serves as a placeholder in case the column
-  /// type is not yet known, but some attibutes of the column must
-  /// already been set
+  /// Placeholder column used when the actual column type is not yet known.
   /// </summary>
   public class DBNullColumn : DataColumn
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DBNullColumn"/> class.
+    /// </summary>
     public DBNullColumn()
     {
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new DBNullColumn();
@@ -51,6 +53,7 @@ namespace Altaxo.Data
     /// </value>
     public override Type ItemType { get { return typeof(object); } }
 
+    /// <inheritdoc />
     public override int Count
     {
       get
@@ -59,37 +62,45 @@ namespace Altaxo.Data
       }
     }
 
+    /// <inheritdoc />
     public override System.Type? GetColumnStyleType()
     {
       return null;
     }
 
+    /// <inheritdoc />
     public override void SetValueAt(int i, AltaxoVariant val)
     {
     }
 
+    /// <inheritdoc />
     public override AltaxoVariant GetVariantAt(int i)
     {
       return new AltaxoVariant((object?)null);
     }
 
+    /// <inheritdoc />
     public override bool IsElementEmpty(int i)
     {
       return true;
     }
 
+    /// <inheritdoc />
     public override void SetElementEmpty(int i)
     {
     }
 
+    /// <inheritdoc />
     public override void CopyDataFrom(object o)
     {
     }
 
+    /// <inheritdoc />
     public override void RemoveRows(int nFirstRow, int nCount) // removes nCount rows starting from nFirstRow
     {
     }
 
+    /// <inheritdoc />
     public override void InsertRows(int nBeforeRow, int nCount) // inserts additional empty rows
     {
     }

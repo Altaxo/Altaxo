@@ -32,14 +32,20 @@ using Altaxo.Geometry;
 namespace Altaxo.Graph.Gdi.LabelFormatting
 {
   /// <summary>
-  /// Base class that can be used to derive a label formatting class
+  /// Provides a base class for label formatting implementations.
   /// </summary>
   public abstract class LabelFormattingBase
     :
     Main.SuspendableDocumentNodeWithSetOfEventArgs,
     ILabelFormatting
   {
+    /// <summary>
+    /// The text prefixed to each formatted label.
+    /// </summary>
     protected string _prefix = string.Empty;
+    /// <summary>
+    /// The text suffixed to each formatted label.
+    /// </summary>
     protected string _suffix = string.Empty;
 
     #region Serialization
@@ -68,15 +74,23 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
     #region ILabelFormatting Members
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LabelFormattingBase"/> class.
+    /// </summary>
     protected LabelFormattingBase()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LabelFormattingBase"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     protected LabelFormattingBase(LabelFormattingBase from)
     {
       CopyFrom(from);
     }
 
+    /// <inheritdoc />
     public virtual bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -103,6 +117,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
     /// <returns>A new cloned instance of this class.</returns>
     public abstract object Clone();
 
+    /// <inheritdoc />
     public string PrefixText
     {
       get { return _prefix; }
@@ -116,6 +131,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
       }
     }
 
+    /// <inheritdoc />
     public string SuffixText
     {
       get { return _suffix; }
@@ -216,15 +232,33 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
       return litems;
     }
 
+    /// <summary>
+    /// Represents a measured single-line label item.
+    /// </summary>
     protected class MeasuredLabelItem : IMeasuredLabelItem
     {
+      /// <summary>
+      /// The label text.
+      /// </summary>
       protected string _text;
+      /// <summary>
+      /// The font used to measure and draw the label.
+      /// </summary>
       protected FontX _font;
+      /// <summary>
+      /// The string format used to draw the label.
+      /// </summary>
       protected System.Drawing.StringFormat _strfmt;
+      /// <summary>
+      /// The measured size.
+      /// </summary>
       protected SizeF _size;
 
       #region IMeasuredLabelItem Members
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="MeasuredLabelItem"/> class.
+      /// </summary>
       public MeasuredLabelItem(Graphics g, FontX font, StringFormat strfmt, string itemtext)
       {
         _text = itemtext;
@@ -233,6 +267,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
         _size = g.MeasureString(_text, GdiFontManager.ToGdi(_font), new PointF(0, 0), strfmt);
       }
 
+      /// <inheritdoc />
       public virtual SizeF Size
       {
         get
@@ -241,6 +276,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
         }
       }
 
+      /// <inheritdoc />
       public virtual void Draw(Graphics g, BrushXEnv brush, PointF point)
       {
         using (var gdibrush = BrushCacheGdi.Instance.BorrowBrush(brush))

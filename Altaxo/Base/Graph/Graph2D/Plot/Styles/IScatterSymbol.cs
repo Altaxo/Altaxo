@@ -30,7 +30,7 @@ using Clipper2Lib;
 namespace Altaxo.Graph.Graph2D.Plot.Styles
 {
   /// <summary>
-  /// Represents a symbol shape for a 3D scatter plot. Instances of this class have to be immutable. They still need to be cloneable,
+  /// Represents a symbol shape for a 2D scatter plot. Instances of this class must be immutable. They still need to be cloneable,
   /// because in a list of scatter symbols we need unique instances.
   /// </summary>
   /// <seealso cref="Altaxo.Main.IImmutable" />
@@ -44,6 +44,11 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles
     /// </value>
     ScatterSymbols.IScatterSymbolFrame? Frame { get; }
 
+    /// <summary>
+    /// Returns a copy of this symbol with the specified frame.
+    /// </summary>
+    /// <param name="frame">The frame to apply.</param>
+    /// <returns>A symbol instance with the specified frame.</returns>
     IScatterSymbol WithFrame(ScatterSymbols.IScatterSymbolFrame? frame);
 
     /// <summary>
@@ -54,15 +59,33 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles
     /// </value>
     ScatterSymbols.IScatterSymbolInset? Inset { get; }
 
+    /// <summary>
+    /// Returns a copy of this symbol with the specified inset.
+    /// </summary>
+    /// <param name="inset">The inset to apply.</param>
+    /// <returns>A symbol instance with the specified inset.</returns>
     IScatterSymbol WithInset(ScatterSymbols.IScatterSymbolInset? inset);
 
+    /// <summary>
+    /// Gets the fill color of the symbol.
+    /// </summary>
     NamedColor FillColor { get; }
 
+    /// <summary>
+    /// Returns a copy of this symbol with the specified fill color.
+    /// </summary>
+    /// <param name="fillColor">The fill color to apply.</param>
+    /// <returns>A symbol instance with the specified fill color.</returns>
     IScatterSymbol WithFillColor(NamedColor fillColor);
 
     /// <summary>Determines which colors of the scatter symbol are affected by the plot color.</summary>
     ScatterSymbols.PlotColorInfluence PlotColorInfluence { get; }
 
+    /// <summary>
+    /// Returns a copy of this symbol with the specified plot-color influence.
+    /// </summary>
+    /// <param name="plotColorInfluence">The plot-color influence to apply.</param>
+    /// <returns>A symbol instance with the specified plot-color influence.</returns>
     IScatterSymbol WithPlotColorInfluence(ScatterSymbols.PlotColorInfluence plotColorInfluence);
 
     /// <summary>
@@ -73,6 +96,11 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles
     /// </value>
     double RelativeStructureWidth { get; }
 
+    /// <summary>
+    /// Returns a copy of this symbol with the specified relative structure width.
+    /// </summary>
+    /// <param name="relativeStructureWidth">The relative width of internal structures.</param>
+    /// <returns>A symbol instance with the specified relative structure width.</returns>
     IScatterSymbol WithRelativeStructureWidth(double relativeStructureWidth);
 
     /// <summary>

@@ -26,12 +26,14 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
 
 namespace Altaxo.Graph.Gdi
 {
   using Background;
 
+  /// <summary>
+  /// Represents the background styling and padding for a layer.
+  /// </summary>
   public class LayerBackground
     :
     Main.SuspendableDocumentNodeWithEventArgs,
@@ -43,7 +45,7 @@ namespace Altaxo.Graph.Gdi
     private double _topPadding;
     private double _bottomPadding;
 
-    
+
     private void CopyFrom(LayerBackground from)
     {
       if (ReferenceEquals(this, from))
@@ -57,6 +59,7 @@ namespace Altaxo.Graph.Gdi
       _bottomPadding = from._bottomPadding;
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_background is not null)
@@ -85,7 +88,7 @@ namespace Altaxo.Graph.Gdi
       {
         var s = (LayerBackground?)o ?? new LayerBackground();
 
-        s.ChildSetMember(ref s._background , info.GetValueOrNull<Background.IBackgroundStyle> ("Background", s));
+        s.ChildSetMember(ref s._background, info.GetValueOrNull<Background.IBackgroundStyle>("Background", s));
         s._leftPadding = info.GetDouble("LeftPadding");
         s._topPadding = info.GetDouble("TopPadding");
         s._rightPadding = info.GetDouble("RightPadding");
@@ -105,30 +108,51 @@ namespace Altaxo.Graph.Gdi
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LayerBackground"/> class.
+    /// </summary>
     public LayerBackground()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LayerBackground"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public LayerBackground(LayerBackground from)
     {
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LayerBackground"/> class with the specified background style.
+    /// </summary>
+    /// <param name="style">The background style.</param>
     public LayerBackground(IBackgroundStyle style)
     {
       _background = style;
     }
 
+    /// <summary>
+    /// Creates a copy of this instance.
+    /// </summary>
+    /// <returns>The cloned instance.</returns>
     public LayerBackground Clone()
     {
       return new LayerBackground(this);
     }
 
+    /// <inheritdoc />
     object ICloneable.Clone()
     {
       return new LayerBackground(this);
     }
 
+    /// <summary>
+    /// Draws the background into the specified rectangle.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="rect">The rectangle to draw into.</param>
     public void Draw(Graphics g, RectangleF rect)
     {
     }

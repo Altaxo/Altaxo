@@ -35,10 +35,13 @@ namespace Altaxo.Scripting
 {
   #region interface
 
+  /// <summary>
+  /// Represents an object that stores editable script text.
+  /// </summary>
   public interface IPureScriptText : ICloneable
   {
     /// <summary>
-    /// Get / sets the script text
+    /// Gets or sets the script text.
     /// </summary>
     string ScriptText
     {
@@ -48,15 +51,21 @@ namespace Altaxo.Scripting
   }
 
   /// <summary>
-  /// Interface to a script, e.g. a table or column script
+  /// Represents a script, for example a table or column script.
   /// </summary>
   public interface IScriptText : IPureScriptText
   {
+    /// <summary>
+    /// Gets the script file name.
+    /// </summary>
     string ScriptName
     {
       get;
     }
 
+    /// <summary>
+    /// Gets the compiled script object, if available.
+    /// </summary>
     object? ScriptObject
     {
       get;
@@ -76,7 +85,7 @@ namespace Altaxo.Scripting
     }
 
     /// <summary>
-    /// Gets the line before the user code starts
+    /// Gets the text inserted before the user code starts.
     /// </summary>
     string CodeStart
     {
@@ -84,7 +93,7 @@ namespace Altaxo.Scripting
     }
 
     /// <summary>
-    /// Gets the default code (i.e. an code example)
+    /// Gets the default user code, for example a code sample.
     /// </summary>
     string CodeUserDefault
     {
@@ -92,7 +101,7 @@ namespace Altaxo.Scripting
     }
 
     /// <summary>
-    /// Gets the line after the user code ends
+    /// Gets the text inserted after the user code ends.
     /// </summary>
     string CodeEnd
     {
@@ -126,10 +135,15 @@ namespace Altaxo.Scripting
     /// <returns>True if successfully compiles, otherwise false.</returns>
     bool Compile();
 
+    /// <summary>
+    /// Sets the compiler result for this script.
+    /// </summary>
+    /// <param name="result">The compiler result.</param>
+    /// <returns><c>true</c> if the result indicates successful compilation; otherwise, <c>false</c>.</returns>
     bool SetCompilerResult(IScriptCompilerResult result);
 
     /// <summary>
-    /// Returns the compiler errors as array of strings.
+    /// Gets the compiler errors.
     /// </summary>
     IReadOnlyList<ICompilerDiagnostic> Errors
     {
@@ -150,9 +164,9 @@ namespace Altaxo.Scripting
     void CopyFrom(IScriptText script, bool forModification);
 
     /// <summary>
-    /// This clones the script so that the text can be modified.
+    /// Clones the script so that the text can be modified.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A writable clone of the script.</returns>
     IScriptText CloneForModification();
 
     /// <summary>
@@ -168,7 +182,7 @@ namespace Altaxo.Scripting
   #endregion interface
 
   /// <summary>
-  /// Holds the text, the module (=executable), and some properties of a column script.
+  /// Holds the text, compiled module, and related metadata of a script.
   /// </summary>
   public abstract class AbstractScript
     :
@@ -227,6 +241,7 @@ namespace Altaxo.Scripting
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Scripting.AbstractScript), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (AbstractScript)obj;
@@ -234,6 +249,7 @@ namespace Altaxo.Scripting
         info.AddValue("Text", s._scriptText);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (AbstractScript)(o ?? new ArgumentNullException(nameof(o)));
@@ -245,14 +261,14 @@ namespace Altaxo.Scripting
     #endregion Serialization
 
     /// <summary>
-    /// Creates an empty column script. Default Style is "Set Column".
+    /// Creates an empty script.
     /// </summary>
     public AbstractScript()
     {
     }
 
     /// <summary>
-    /// Creates a column script as a copy from another script.
+    /// Creates a script as a copy from another script.
     /// </summary>
     /// <param name="from">The script to copy from.</param>
     public AbstractScript(AbstractScript from)
@@ -261,7 +277,7 @@ namespace Altaxo.Scripting
     }
 
     /// <summary>
-    /// Creates a column script as a copy from another script.
+    /// Creates a script as a copy from another script.
     /// </summary>
     /// <param name="from">The script to copy from.</param>
     /// <param name="forModification">If false, the script incl. compiled assembly is copied. If true,
@@ -298,6 +314,7 @@ namespace Altaxo.Scripting
         EhSelfChanged(EventArgs.Empty);
     }
 
+    /// <inheritdoc/>
     void IScriptText.CopyFrom(IScriptText from, bool forModification)
     {
       CopyFrom((AbstractScript)from, forModification);
@@ -311,6 +328,10 @@ namespace Altaxo.Scripting
       get { return _errors; }
     }
 
+    /// <summary>
+    /// Returns the compiler errors as a formatted string.
+    /// </summary>
+    /// <returns>A formatted error string.</returns>
     public string GetErrorsAsString()
     {
       var stb = new StringBuilder();
@@ -325,11 +346,15 @@ namespace Altaxo.Scripting
       return stb.ToString();
     }
 
+    /// <inheritdoc/>
     public void ClearErrors()
     {
       _errors = ImmutableArray<ICompilerDiagnostic>.Empty;
     }
 
+    /// <summary>
+    /// Gets the compiled script assembly, if compilation succeeded.
+    /// </summary>
     public Assembly? ScriptAssembly
     {
       get
@@ -338,6 +363,7 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public object? ScriptObject
     {
       get
@@ -355,11 +381,16 @@ namespace Altaxo.Scripting
       set { _isDirty = value; }
     }
 
+    /// <summary>
+    /// Generates a unique script name without file extension.
+    /// </summary>
+    /// <returns>A unique script name.</returns>
     public static string GenerateScriptName()
     {
       return System.Guid.NewGuid().ToString();
     }
 
+    /// <inheritdoc/>
     public string ScriptName
     {
       get
@@ -371,6 +402,7 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public bool IsReadOnly
     {
       get
@@ -431,11 +463,13 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       return obj is AbstractScript from && this.ScriptText == from.ScriptText;
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return ScriptText.GetHashCode();
@@ -475,16 +509,19 @@ namespace Altaxo.Scripting
       get;
     }
 
+    /// <inheritdoc/>
     public abstract string CodeStart
     {
       get;
     }
 
+    /// <inheritdoc/>
     public abstract string CodeUserDefault
     {
       get;
     }
 
+    /// <inheritdoc/>
     public abstract string CodeEnd
     {
       get;
@@ -498,8 +535,10 @@ namespace Altaxo.Scripting
       get;
     }
 
+    /// <inheritdoc/>
     public abstract object Clone();
 
+    /// <inheritdoc/>
     public virtual IScriptText CloneForModification()
     {
       var result = (AbstractScript)Clone();
@@ -570,6 +609,7 @@ namespace Altaxo.Scripting
       return SetCompilerResult(scriptCompilerResult);
     }
 
+    /// <inheritdoc/>
     public virtual bool SetCompilerResult(IScriptCompilerResult result)
     {
       _scriptText = result.ScriptText(0);

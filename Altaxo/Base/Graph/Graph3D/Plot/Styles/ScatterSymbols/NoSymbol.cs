@@ -39,8 +39,14 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
   /// <seealso cref="Altaxo.Graph.Graph3D.Plot.Styles.IScatterSymbol" />
   public sealed class NoSymbol : ScatterSymbolShapeBase
   {
+    /// <summary>
+    /// Gets the shared instance of the <see cref="NoSymbol"/> symbol.
+    /// </summary>
     public static NoSymbol Instance { get; private set; } = new NoSymbol();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NoSymbol"/> class.
+    /// </summary>
     private NoSymbol()
     {
     }
@@ -50,14 +56,19 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
     /// <summary>
     /// 2016-05-09 initial version.
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="NoSymbol"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NoSymbol), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         SerializeV0((IScatterSymbol)obj, info);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return DeserializeV0(Instance, info, parent);
@@ -66,6 +77,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
 
     #endregion Serialization
 
+    /// <inheritdoc/>
     public override void Paint(IGraphicsContext3D g, IMaterial material, PointD3D centerLocation, double symbolSize)
     {
     }

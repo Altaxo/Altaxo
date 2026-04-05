@@ -45,7 +45,7 @@ namespace Altaxo.Graph.Procedures
     /// <summary>
     /// Retrieves the data points of the current active plot.
     /// </summary>
-    /// <param name="ctrl">The graph controller which controls the graph from which the points are to retrieve.</param>
+    /// <param name="ctrl">The graph controller that controls the graph from which the points are retrieved.</param>
     /// <param name="xarr">The array of the data point's x values.</param>
     /// <param name="yarr">The array of the data point's y values.</param>
     /// <returns>Null if all is ok, or error message if not.</returns>
@@ -181,6 +181,15 @@ namespace Altaxo.Graph.Procedures
       return LinearFitBySvd.FitPolymomialDestructive(order, xarr, yarr, earr, numberOfDataPoints);
     }
 
+    /// <summary>
+    /// Fits the active plot of the specified graph controller.
+    /// </summary>
+    /// <param name="ctrl">The graph controller.</param>
+    /// <param name="order">The polynomial order.</param>
+    /// <param name="fitCurveXmin">The minimum x value of the fit curve.</param>
+    /// <param name="fitCurveXmax">The maximum x value of the fit curve.</param>
+    /// <param name="showFormulaOnGraph">If set to <see langword="true"/>, the formula is shown on the graph.</param>
+    /// <returns>An error message, or <see langword="null"/> if successful.</returns>
     public static string? Fit(Altaxo.Gui.Graph.Gdi.Viewing.IGraphController ctrl, int order, double fitCurveXmin, double fitCurveXmax, bool showFormulaOnGraph)
     {
       var error = GetActivePlotPoints(ctrl, out var xarr, out var yarr);

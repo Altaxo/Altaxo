@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -49,17 +49,22 @@ namespace Altaxo.Graph.Scales
     Custom
   }
 
+  /// <summary>
+  /// XML serialization surrogate for <see cref="ScaleLinkType"/>.
+  /// </summary>
   [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLayer+AxisLinkType", 0)]
   [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.AxisLinkType", 1)]
   [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScaleLinkType), 2)]
   public class AxisLinkTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
   {
+    /// <inheritdoc/>
     public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
       var s = (ScaleLinkType)obj;
       info.SetNodeContent(s.ToString());
     }
 
+    /// <inheritdoc/>
     public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
     {
       string val = info.GetNodeContent();

@@ -32,7 +32,7 @@ namespace Altaxo.Main
 {
   /// <summary>
   /// Base class for a suspendable document node which has no children, i.e. is a leaf node of the document tree.
-  /// It implements most of the code neccessary to handle own change events and to accumulate data, if this object is suspended.
+  /// It implements most of the code necessary to handle its own change events and to accumulate data while suspended.
   /// </summary>
   public abstract class SuspendableDocumentLeafNode : SuspendableDocumentNodeBase
   {
@@ -44,8 +44,8 @@ namespace Altaxo.Main
     /// <summary>
     /// Suspend will increase the SuspendLevel.
     /// </summary>
-    /// <returns>An object, which must be handed to the resume function to decrease the suspend level. Alternatively,
-    /// the object can be used in an using statement. In this case, the call to the Resume function is not neccessary.</returns>
+    /// <returns>An object which must be handed to the resume function to decrease the suspend level. Alternatively,
+    /// the object can be used in a `using` statement. In this case, the call to the resume function is not necessary.</returns>
     public override ISuspendToken SuspendGetToken()
     {
       return new SuspendToken(this);
@@ -56,7 +56,7 @@ namespace Altaxo.Main
     /// The return value is a token that had 'absorbed' the suspend count of the object, resulting in the suspend count
     /// of the object dropped to 0 (zero). When the returned token is finally disposed, the suspend count of the object is increased again by the 'absorbed' suspend count.
     /// </summary>
-    /// <returns>A new token. As long as this token is not disposed, and not other process calls SuspendGetToken, the object is fre (not suspended). The object is suspended again when
+    /// <returns>A new token. As long as this token is not disposed, and no other process calls <see cref="SuspendGetToken"/>, the object is free (not suspended). The object is suspended again when
     /// the returned token is disposed.</returns>
     public override IDisposable ResumeCompleteTemporarilyGetToken()
     {
@@ -168,7 +168,7 @@ namespace Altaxo.Main
     #region Change event handling
 
     /// <summary>
-    /// Handles the cases when a child changes, but a reaction is neccessary only if the table is not suspended currently.
+    /// Handles the cases when a child changes, but a reaction is necessary only if the node is currently not suspended.
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
@@ -239,7 +239,7 @@ namespace Altaxo.Main
       }
 
       /// <summary>
-      /// Disarms this SuppressToken so that it can not raise the resume event anymore.
+      /// Disarms this suspend token so that it cannot raise the resume event anymore.
       /// </summary>
       public void ResumeSilently()
       {

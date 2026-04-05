@@ -31,6 +31,9 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Data
 {
+  /// <summary>
+  /// File-based table data source that imports data by executing a file import script.
+  /// </summary>
   public class FileImportScriptDataSource : FileImportTableDataSourceBase
   {
     private FileImportScript _importScript;
@@ -80,6 +83,11 @@ namespace Altaxo.Data
 
     #endregion Version 0
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileImportScriptDataSource"/> class during XML deserialization.
+    /// </summary>
+    /// <param name="info">The XML deserialization info.</param>
+    /// <param name="version">The serialized version.</param>
     protected FileImportScriptDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     {
       switch (version)
@@ -111,6 +119,7 @@ namespace Altaxo.Data
       }
     }
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -124,24 +133,41 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileImportScriptDataSource"/> class for a single file.
+    /// </summary>
+    /// <param name="fileName">The file name.</param>
+    /// <param name="script">The import script.</param>
     public FileImportScriptDataSource(string fileName, FileImportScript script)
       : this(new string[] { fileName }, script)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileImportScriptDataSource"/> class for multiple files.
+    /// </summary>
+    /// <param name="fileNames">The file names.</param>
+    /// <param name="script">The import script.</param>
     public FileImportScriptDataSource(IEnumerable<string> fileNames, FileImportScript script)
       : base(fileNames)
     {
       ChildCopyToMember(ref _importScript, script);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileImportScriptDataSource"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The source instance.</param>
     public FileImportScriptDataSource(FileImportScriptDataSource from)
       : base(from)
     {
       ChildCopyToMember(ref _importScript, from._importScript);
     }
 
+    /// <inheritdoc />
     public override object Clone() => new FileImportScriptDataSource(this);
+
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_importScript is not null)
@@ -151,6 +177,7 @@ namespace Altaxo.Data
 
     #endregion Construction
 
+    /// <inheritdoc />
     protected override void ImportFromFiles(string[] validFileNames, DataTable destinationTable, IProgressReporter reporter)
     {
       _importScript.ExecuteWithoutExceptionCatching(destinationTable, validFileNames, reporter);
@@ -158,6 +185,9 @@ namespace Altaxo.Data
 
     #region Properties
 
+    /// <summary>
+    /// Gets or sets the single source file name.
+    /// </summary>
     public string SourceFileName
     {
       get
@@ -183,6 +213,9 @@ namespace Altaxo.Data
       }
     }
 
+    /// <summary>
+    /// Gets or sets the import script.
+    /// </summary>
     public FileImportScript ImportScript
     {
       get
@@ -197,16 +230,19 @@ namespace Altaxo.Data
 
     #endregion Properties
 
+    /// <inheritdoc />
     public override void VisitDocumentReferences(Main.DocNodeProxyReporter ReportProxies)
     {
     }
 
+    /// <inheritdoc />
     public override object ProcessOptionsObject
     {
       get => _importScript;
       set => _importScript = (FileImportScript)value;
     }
 
+    /// <inheritdoc />
     public override (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
       => (Array.Empty<string>(), "");
   }

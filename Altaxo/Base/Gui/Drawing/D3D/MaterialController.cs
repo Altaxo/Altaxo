@@ -29,14 +29,21 @@ using Altaxo.Drawing.D3D;
 
 namespace Altaxo.Gui.Drawing.D3D
 {
+  /// <summary>
+  /// View contract for editing 3D material properties.
+  /// </summary>
   public interface IMaterialView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for editing <see cref="IMaterial"/> instances.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IMaterialView))]
   [UserControllerForObject(typeof(IMaterial))]
   public class MaterialController : MVCANControllerEditImmutableDocBase<IMaterial, IMaterialView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -46,6 +53,9 @@ namespace Altaxo.Gui.Drawing.D3D
 
     private double _indexOfRefraction;
 
+    /// <summary>
+    /// Gets or sets the index of refraction.
+    /// </summary>
     public double IndexOfRefraction
     {
       get => _indexOfRefraction;
@@ -60,6 +70,9 @@ namespace Altaxo.Gui.Drawing.D3D
     }
     private double _smoothness;
 
+    /// <summary>
+    /// Gets or sets the smoothness.
+    /// </summary>
     public double Smoothness
     {
       get => _smoothness;
@@ -74,6 +87,9 @@ namespace Altaxo.Gui.Drawing.D3D
     }
     private double _metalness;
 
+    /// <summary>
+    /// Gets or sets the metalness.
+    /// </summary>
     public double Metalness
     {
       get => _metalness;
@@ -90,6 +106,7 @@ namespace Altaxo.Gui.Drawing.D3D
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -102,6 +119,7 @@ namespace Altaxo.Gui.Drawing.D3D
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       try

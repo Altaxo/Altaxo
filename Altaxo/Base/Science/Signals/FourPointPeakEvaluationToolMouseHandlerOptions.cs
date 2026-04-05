@@ -28,12 +28,12 @@ using Altaxo.Main;
 namespace Altaxo.Science.Signals
 {
   /// <summary>
-  /// Options for the step evaluation tool mouse handler.
+  /// Options for the peak evaluation tool mouse handler.
   /// </summary>
   public record FourPointPeakEvaluationToolMouseHandlerOptions : IImmutable
   {
     /// <summary>
-    /// If true, the options dialog is shown when the four point step evaluation tool is activated.
+    /// If true, the options dialog is shown when the four-point peak evaluation tool is activated.
     /// </summary>
     public bool ShowOptionsWhenToolIsActivated { get; init; } = true;
 
@@ -42,6 +42,9 @@ namespace Altaxo.Science.Signals
     /// </summary>
     public PenX LinePen { get; init; } = new PenX(NamedColors.LightBlue, 2);
 
+    /// <summary>
+    /// Gets the brush that is used for filling the highlighted area.
+    /// </summary>
     public BrushX AreaBrush { get; init; } = new BrushX(NamedColors.LightBlue);
 
     #region Serialization
@@ -53,6 +56,7 @@ namespace Altaxo.Science.Signals
     [Serialization.Xml.XmlSerializationSurrogateFor(typeof(FourPointPeakEvaluationToolMouseHandlerOptions), 0)]
     public class SerializationSurrogate0 : Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (FourPointPeakEvaluationToolMouseHandlerOptions)obj;
@@ -62,6 +66,7 @@ namespace Altaxo.Science.Signals
         info.AddValue("AreaBrush", s.AreaBrush);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var showOptionsWhenToolIsActivated = info.GetBoolean("ShowOptionsWhenToolIsActivated");

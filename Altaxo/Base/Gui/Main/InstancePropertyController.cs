@@ -31,10 +31,16 @@ using Altaxo.Main.Services.PropertyReflection;
 
 namespace Altaxo.Gui.Main
 {
+  /// <summary>
+  /// View contract for editing reflected instance properties.
+  /// </summary>
   public interface IInstancePropertyView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller that builds property editors for an arbitrary object instance.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IInstancePropertyView))]
   public class InstancePropertyController : MVCANDControllerEditCopyOfDocBase<object, IInstancePropertyView>
   {
@@ -43,10 +49,14 @@ namespace Altaxo.Gui.Main
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the controllers exposed to the view.
+    /// </summary>
     public ObservableCollection<object> ControllerList { get; } = new();
 
     #endregion
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       if (_controllerList is not null)
@@ -60,7 +70,7 @@ namespace Altaxo.Gui.Main
 
     /// <summary>Initializes the document. In contrast to the base function here it is allowed to call this function with <c>null</c> as model.</summary>
     /// <param name="args">The arguments.</param>
-    /// <returns>True if the initialization was successfull, <c>False</c> otherwise.</returns>
+    /// <returns><c>true</c> if initialization was successful; otherwise, <c>false</c>.</returns>
     public override bool InitializeDocument(params object[] args)
     {
       if (IsDisposed)
@@ -80,6 +90,7 @@ namespace Altaxo.Gui.Main
       return true;
     }
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       // dont call base initialize here, because the _doc (document) may be null. For this controller, this is by design.
@@ -146,6 +157,7 @@ namespace Altaxo.Gui.Main
       return method;
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       foreach (var entry in _controllerList.Values)

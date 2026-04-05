@@ -36,7 +36,13 @@ namespace Altaxo.Serialization
   /// </summary>
   public class AbsoluteAndRelativeFileName : Main.ICopyFrom
   {
+    /// <summary>
+    /// The absolute file name.
+    /// </summary>
     private string _absoluteFileName;
+    /// <summary>
+    /// The file name relative to the project file.
+    /// </summary>
     private string? _relativeFileName;
 
     #region Serialization
@@ -47,6 +53,7 @@ namespace Altaxo.Serialization
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AbsoluteAndRelativeFileName), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (AbsoluteAndRelativeFileName)obj;
@@ -57,6 +64,9 @@ namespace Altaxo.Serialization
         info.AddValue("RelativeName", s._relativeFileName);
       }
 
+      /// <summary>
+      /// Deserializes into an existing instance.
+      /// </summary>
       protected virtual AbsoluteAndRelativeFileName SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var absoluteFilePath = info.GetString("AbsolutePath");
@@ -69,6 +79,7 @@ namespace Altaxo.Serialization
         return s;
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
@@ -95,6 +106,7 @@ namespace Altaxo.Serialization
     /// <returns>
     /// True if at least parts of the object could be copied, false if the object to copy from is incompatible.
     /// </returns>
+    /// <inheritdoc/>
     public bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -116,6 +128,10 @@ namespace Altaxo.Serialization
     /// <returns>
     /// A new object that is a copy of this instance.
     /// </returns>
+    /// <summary>
+    /// Creates a shallow copy of the current instance.
+    /// </summary>
+    /// <returns>A copy of this instance.</returns>
     public object Clone()
     {
       return MemberwiseClone();

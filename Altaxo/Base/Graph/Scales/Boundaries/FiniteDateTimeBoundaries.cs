@@ -33,7 +33,14 @@ namespace Altaxo.Graph.Scales.Boundaries
   [Serializable]
   public class FiniteDateTimeBoundaries : AbstractPhysicalBoundaries
   {
+    /// <summary>
+    /// The minimum tracked value.
+    /// </summary>
     protected DateTime _minValue = DateTime.MaxValue;
+
+    /// <summary>
+    /// The maximum tracked value.
+    /// </summary>
     protected DateTime _maxValue = DateTime.MinValue;
 
     [NonSerialized]
@@ -45,6 +52,7 @@ namespace Altaxo.Graph.Scales.Boundaries
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FiniteDateTimeBoundaries), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (FiniteDateTimeBoundaries)obj;
@@ -53,6 +61,7 @@ namespace Altaxo.Graph.Scales.Boundaries
         info.AddValue("MaxValue", s._maxValue);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (FiniteDateTimeBoundaries?)o ?? new FiniteDateTimeBoundaries();
@@ -67,12 +76,19 @@ namespace Altaxo.Graph.Scales.Boundaries
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FiniteDateTimeBoundaries"/> class.
+    /// </summary>
     public FiniteDateTimeBoundaries()
     {
       _minValue = DateTime.MaxValue;
       _maxValue = DateTime.MinValue;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FiniteDateTimeBoundaries"/> class by copying another instance.
+    /// </summary>
+    /// <param name="x">The instance to copy.</param>
     public FiniteDateTimeBoundaries(FiniteDateTimeBoundaries x)
       : base(x)
     {
@@ -81,7 +97,7 @@ namespace Altaxo.Graph.Scales.Boundaries
     }
 
     /// <summary>
-    /// Reset the internal data to the initialized state
+    /// <inheritdoc />
     /// </summary>
     public override void Reset()
     {
@@ -90,14 +106,20 @@ namespace Altaxo.Graph.Scales.Boundaries
       _maxValue = DateTime.MinValue;
     }
 
+    /// <summary>
+    /// Gets the lower date-time boundary.
+    /// </summary>
     public virtual DateTime LowerBound { get { return _minValue; } }
 
+    /// <summary>
+    /// Gets the upper date-time boundary.
+    /// </summary>
     public virtual DateTime UpperBound { get { return _maxValue; } }
 
     /// <summary>
-    /// merged boundaries of another object into this object
+    /// Merges the boundaries of another object into this object.
     /// </summary>
-    /// <param name="b">another physical boundary object of the same type as this</param>
+    /// <param name="b">Another physical boundary object of the same type as this instance.</param>
     public virtual void Add(FiniteDateTimeBoundaries b)
     {
       if (GetType() == b.GetType())
@@ -127,12 +149,14 @@ namespace Altaxo.Graph.Scales.Boundaries
 
     #region IPhysicalBoundaries Members
 
+    /// <inheritdoc />
     public override void Add(IPhysicalBoundaries b)
     {
       if (b is FiniteDateTimeBoundaries)
         Add((FiniteDateTimeBoundaries)b);
     }
 
+    /// <inheritdoc />
     public override bool Add(Altaxo.Data.IReadableColumn col, int idx)
     {
       // if column is not numeric, use the index instead
@@ -142,11 +166,17 @@ namespace Altaxo.Graph.Scales.Boundaries
         return Add(((Altaxo.Data.DateTimeColumn)col)[idx]);
     }
 
+    /// <inheritdoc />
     public override bool Add(Altaxo.Data.AltaxoVariant item)
     {
       return Add(item);
     }
 
+    /// <summary>
+    /// Adds a single <see cref="DateTime"/> value to the tracked boundaries.
+    /// </summary>
+    /// <param name="d">The value to add.</param>
+    /// <returns><see langword="true"/> if the value contributed to the boundaries; otherwise, <see langword="false"/>.</returns>
     public bool Add(DateTime d)
     {
       if (IsSuspended)  // when suspended: performance tweak, see overrides OnSuspended and OnResume for details (if suspended, we have saved the state of the instance for comparison when we resume).
@@ -182,6 +212,7 @@ namespace Altaxo.Graph.Scales.Boundaries
       return false;
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new FiniteDateTimeBoundaries(this);
@@ -191,6 +222,7 @@ namespace Altaxo.Graph.Scales.Boundaries
 
     #region Changed event handling
 
+    /// <inheritdoc />
     protected override void OnSuspended()
     {
       _savedNumberOfItems = _numberOfItems;
@@ -200,6 +232,7 @@ namespace Altaxo.Graph.Scales.Boundaries
       base.OnSuspended();
     }
 
+    /// <inheritdoc />
     protected override void OnResume()
     {
       BoundariesChangedData data = 0;

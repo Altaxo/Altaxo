@@ -36,6 +36,9 @@ using Altaxo.Gui.Graph.Scales;
 #nullable disable
 namespace Altaxo.Gui.Graph.Gdi
 {
+  /// <summary>
+  /// View interface for the 2D plot-layer controller.
+  /// </summary>
   public interface IXYPlotLayerView : IDataContextAwareView
   {
   }
@@ -58,12 +61,15 @@ namespace Altaxo.Gui.Graph.Gdi
 
 
   /// <summary>
-  /// Summary description for LayerController.
+  /// Controller for editing a 2D <see cref="XYPlotLayer"/>.
   /// </summary>
   [UserControllerForObject(typeof(XYPlotLayer))]
   [ExpectedTypeOfView(typeof(IXYPlotLayerView))]
   public class XYPlotLayerController : MVCANControllerEditOriginalDocBase<XYPlotLayer, IXYPlotLayerView>
   {
+    /// <summary>
+    /// Stores the initially selected tab tag.
+    /// </summary>
     protected string _initialTag;
 
     private int _currentScale; // which scale is choosen 0==X-AxisScale, 1==Y-AxisScale
@@ -73,11 +79,26 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private IMVCAController _currentController;
 
+    /// <summary>
+    /// Holds the controller for the coordinate system.
+    /// </summary>
     protected Altaxo.Gui.Graph.Gdi.CoordinateSystemController _coordinateController;
+    /// <summary>
+    /// Holds the controller for the layer position.
+    /// </summary>
     protected IMVCANController _layerPositionController;
+    /// <summary>
+    /// Holds the controller for the layer contents.
+    /// </summary>
     protected IMVCANController _layerContentsController;
+    /// <summary>
+    /// Holds the controllers for the axis scales.
+    /// </summary>
     protected IMVCAController[] _axisScaleController;
 
+    /// <summary>
+    /// Holds the controller for the graphic items on the layer.
+    /// </summary>
     protected IMVCANController _layerGraphItemsController;
 
     private Dictionary<CSLineID, AxisStyleController> _axisController = new Dictionary<CSLineID, AxisStyleController>();
@@ -89,17 +110,48 @@ namespace Altaxo.Gui.Graph.Gdi
     private SelectableListNodeList _listOfPlanes;
     private SelectableListNodeList _listOfUniqueItem;
 
+    /// <summary>
+    /// Tab tag for the position page.
+    /// </summary>
     public const string PositionTag = "Position";
+    /// <summary>
+    /// Tab tag for the graphic-items page.
+    /// </summary>
     public const string GraphItemsTag = "GraphicItems";
+    /// <summary>
+    /// Tab tag for the scale page.
+    /// </summary>
     public const string ScaleTag = "Scale";
+    /// <summary>
+    /// Tab tag for the coordinate-system page.
+    /// </summary>
     public const string CoordSystemTag = "CoordSys";
+    /// <summary>
+    /// Tab tag for the contents page.
+    /// </summary>
     public const string ContentsTag = "Content";
+    /// <summary>
+    /// Tab tag for the title-and-format page.
+    /// </summary>
     public const string TitleAndFormatTag = "TitleFormat";
+    /// <summary>
+    /// Tab tag for the major-labels page.
+    /// </summary>
     public const string MajorLabelsTag = "MajorLabels";
+    /// <summary>
+    /// Tab tag for the minor-labels page.
+    /// </summary>
     public const string MinorLabelsTag = "MinorLabels";
+    /// <summary>
+    /// Tab tag for the grid-style page.
+    /// </summary>
     public const string GridStyleTag = "GridStyle";
+    /// <summary>
+    /// Tag for the shared secondary-choice entry.
+    /// </summary>
     public const string SecondaryCommonTag = "2ndCommon";
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_coordinateController, () => _coordinateController = null);
@@ -128,6 +180,7 @@ namespace Altaxo.Gui.Graph.Gdi
       yield return new ControllerAndSetNullMethod(null, () => _axisController = null);
     }
 
+    /// <inheritdoc/>
     public override void Dispose(bool isDisposing)
     {
       _lastControllerApplied = null;
@@ -142,11 +195,17 @@ namespace Altaxo.Gui.Graph.Gdi
     }
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYPlotLayerController"/> class.
+    /// </summary>
     public XYPlotLayerController(XYPlotLayer layer, UseDocument useDocumentCopy)
       : this(layer, ScaleTag, 1, null, useDocumentCopy)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYPlotLayerController"/> class.
+    /// </summary>
     public XYPlotLayerController(XYPlotLayer layer, string currentPage, CSLineID id, UseDocument useDocumentCopy)
       : this(layer, currentPage, id.ParallelAxisNumber, id, useDocumentCopy)
     {
@@ -168,14 +227,29 @@ namespace Altaxo.Gui.Graph.Gdi
 
     #region Bindings
 
+    /// <summary>
+    /// Gets or sets the command that moves the current axis.
+    /// </summary>
     public ICommand CmdMoveAxis { get; set; }
+    /// <summary>
+    /// Gets or sets the command that creates an axis.
+    /// </summary>
     public ICommand CmdCreateAxis { get; set; }
+    /// <summary>
+    /// Gets or sets the command that deletes the current axis.
+    /// </summary>
     public ICommand CmdDeleteAxis { get; set; }
 
+    /// <summary>
+    /// Gets the tabs displayed by the controller.
+    /// </summary>
     public SelectableListNodeList Tabs { get; } = new();
 
     private string? _selectedTab;
 
+    /// <summary>
+    /// Gets or sets the selected tab.
+    /// </summary>
     public string? SelectedTab
     {
       get => _selectedTab;
@@ -190,6 +264,10 @@ namespace Altaxo.Gui.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Updates the secondary choices after the primary tab selection changed.
+    /// </summary>
+    /// <param name="selectedTab">The selected primary tab.</param>
     protected void EhPrimaryChoiceChanged(string selectedTab)
     {
       switch (selectedTab)
@@ -219,6 +297,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private SelectableListNodeList _secondaryChoices;
 
+    /// <summary>
+    /// Gets or sets the list of secondary choices.
+    /// </summary>
     public SelectableListNodeList SecondaryChoices
     {
       get => _secondaryChoices;
@@ -236,6 +317,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private object _selectedSecondaryChoice;
 
+    /// <summary>
+    /// Gets or sets the selected secondary choice.
+    /// </summary>
     public object SelectedSecondaryChoice
     {
       get => _selectedSecondaryChoice;
@@ -257,6 +341,10 @@ namespace Altaxo.Gui.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Handles a change of the selected secondary choice.
+    /// </summary>
+    /// <param name="value">The selected value.</param>
     public void EhSecondaryChoiceChanged(object value)
     {
       if (SelectedTab == ScaleTag && value is int currentScale)
@@ -278,6 +366,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private bool _areAxisButtonsVisible;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the axis buttons are visible.
+    /// </summary>
     public bool AreAxisButtonsVisible
     {
       get => _areAxisButtonsVisible;
@@ -293,6 +384,7 @@ namespace Altaxo.Gui.Graph.Gdi
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -321,6 +413,7 @@ namespace Altaxo.Gui.Graph.Gdi
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       ApplyCurrentController(true, disposeController);
@@ -620,16 +713,34 @@ namespace Altaxo.Gui.Graph.Gdi
 
     #region Dialog
 
+    /// <summary>
+    /// Shows the layer dialog with the default page.
+    /// </summary>
+    /// <param name="layer">The layer to edit.</param>
+    /// <returns><see langword="true"/> if the dialog was accepted; otherwise <see langword="false"/>.</returns>
     public static bool ShowDialog(XYPlotLayer layer)
     {
       return ShowDialog(layer, ScaleTag, new CSLineID(0, 0));
     }
 
+    /// <summary>
+    /// Shows the layer dialog and selects the specified page.
+    /// </summary>
+    /// <param name="layer">The layer to edit.</param>
+    /// <param name="currentPage">The page to show initially.</param>
+    /// <returns><see langword="true"/> if the dialog was accepted; otherwise <see langword="false"/>.</returns>
     public static bool ShowDialog(XYPlotLayer layer, string currentPage)
     {
       return ShowDialog(layer, currentPage, new CSLineID(0, 0));
     }
 
+    /// <summary>
+    /// Shows the layer dialog and selects the specified page and axis.
+    /// </summary>
+    /// <param name="layer">The layer to edit.</param>
+    /// <param name="currentPage">The page to show initially.</param>
+    /// <param name="currentEdge">The axis to select initially.</param>
+    /// <returns><see langword="true"/> if the dialog was accepted; otherwise <see langword="false"/>.</returns>
     public static bool ShowDialog(XYPlotLayer layer, string currentPage, CSLineID currentEdge)
     {
       var ctrl = new XYPlotLayerController(layer, currentPage, currentEdge, UseDocument.Copy);
@@ -640,6 +751,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     #region Edit Handlers
 
+    /// <summary>
+    /// Registers the edit handlers used for double-click editing.
+    /// </summary>
     public static void RegisterEditHandlers()
     {
       // register here editor methods
@@ -651,6 +765,11 @@ namespace Altaxo.Gui.Graph.Gdi
       XYPlotLayer.LayerPositionEditorMethod = new DoubleClickHandler(EhLayerPositionEdit);
     }
 
+    /// <summary>
+    /// Opens the layer-position page for the hit layer.
+    /// </summary>
+    /// <param name="hit">Information about the hit object.</param>
+    /// <returns>Always <see langword="false"/>.</returns>
     public static bool EhLayerPositionEdit(IHitTestObject hit)
     {
       var layer = hit.HittedObject as XYPlotLayer;
@@ -662,6 +781,11 @@ namespace Altaxo.Gui.Graph.Gdi
       return false;
     }
 
+    /// <summary>
+    /// Opens the scale page for the axis associated with the hit object.
+    /// </summary>
+    /// <param name="hit">Information about the hit object.</param>
+    /// <returns>Always <see langword="false"/>.</returns>
     public static bool EhAxisScaleEdit(IHitTestObject hit)
     {
       var style = hit.HittedObject as AxisLineStyle;
@@ -675,6 +799,11 @@ namespace Altaxo.Gui.Graph.Gdi
       return false;
     }
 
+    /// <summary>
+    /// Opens the title-and-format page for the axis associated with the hit object.
+    /// </summary>
+    /// <param name="hit">Information about the hit object.</param>
+    /// <returns>Always <see langword="false"/>.</returns>
     public static bool EhAxisStyleEdit(IHitTestObject hit)
     {
       var style = hit.HittedObject as AxisLineStyle;
@@ -688,6 +817,11 @@ namespace Altaxo.Gui.Graph.Gdi
       return false;
     }
 
+    /// <summary>
+    /// Opens the major-label settings for the axis associated with the hit object.
+    /// </summary>
+    /// <param name="hit">Information about the hit object.</param>
+    /// <returns>Always <see langword="false"/>.</returns>
     public static bool EhAxisLabelMajorStyleEdit(IHitTestObject hit)
     {
       var style = hit.HittedObject as AxisLabelStyle;
@@ -701,6 +835,11 @@ namespace Altaxo.Gui.Graph.Gdi
       return false;
     }
 
+    /// <summary>
+    /// Opens the minor-label settings for the axis associated with the hit object.
+    /// </summary>
+    /// <param name="hit">Information about the hit object.</param>
+    /// <returns>Always <see langword="false"/>.</returns>
     public static bool EhAxisLabelMinorStyleEdit(IHitTestObject hit)
     {
       var style = hit.HittedObject as AxisLabelStyle;

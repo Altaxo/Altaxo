@@ -36,12 +36,19 @@ using Altaxo.Science.Spectroscopy.Raman;
 
 namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 {
+  /// <summary>
+  /// View interface for x-calibration by data source.
+  /// </summary>
   public interface IXCalibrationByDataSourceView : IDataContextAwareView { }
 
+  /// <summary>
+  /// Controller for <see cref="XCalibrationByDataSource"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IXCalibrationByDataSourceView))]
   [UserControllerForObject(typeof(XCalibrationByDataSource))]
   public class XCalibrationByDataSourceController : MVCANControllerEditImmutableDocBase<XCalibrationByDataSource, IXCalibrationByDataSourceView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -51,6 +58,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 
     private ItemsController<DataTable> _availableCalibrationTables;
 
+    /// <summary>
+    /// Gets or sets the available calibration tables.
+    /// </summary>
     public ItemsController<DataTable> AvailableCalibrationTables
     {
       get => _availableCalibrationTables;
@@ -67,6 +77,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -106,6 +117,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
     }
 
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if(AvailableCalibrationTables.SelectedValue is { } calibTable)

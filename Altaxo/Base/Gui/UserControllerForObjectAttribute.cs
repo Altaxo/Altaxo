@@ -35,16 +35,28 @@ namespace Altaxo.Gui
   {
     private System.Type _type;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="UserControllerForObjectAttribute"/> class.
+    /// </summary>
+    /// <param name="type">The object type handled by the controller.</param>
     public UserControllerForObjectAttribute(System.Type type) : base(0)
     {
       _type = type;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="UserControllerForObjectAttribute"/> class.
+    /// </summary>
+    /// <param name="type">The object type handled by the controller.</param>
+    /// <param name="priority">The selection priority.</param>
     public UserControllerForObjectAttribute(System.Type type, int priority) : base(priority)
     {
       _type = type;
     }
 
+    /// <summary>
+    /// Gets the object type handled by the controller.
+    /// </summary>
     public System.Type TargetType
     {
       get { return _type; }

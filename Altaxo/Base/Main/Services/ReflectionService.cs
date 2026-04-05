@@ -526,8 +526,14 @@ namespace Altaxo.Main.Services
 
     #region Attribute handling - class searching
 
+    /// <summary>
+    /// Represents a list of attributes associated with their target classes.
+    /// </summary>
     public interface IAttributeForClassList : IEnumerable<KeyValuePair<Attribute, Type>>
     {
+      /// <summary>
+      /// Gets the target types.
+      /// </summary>
       public IEnumerable<Type> Types { get; }
     }
 

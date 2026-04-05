@@ -31,14 +31,21 @@ using Altaxo.Science.Spectroscopy.Cropping;
 
 namespace Altaxo.Gui.Science.Spectroscopy.Cropping
 {
+  /// <summary>
+  /// View interface for cropping by x-values.
+  /// </summary>
   public interface ICroppingByXValuesView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="CroppingByXValues"/>.
+  /// </summary>
   [UserControllerForObject(typeof(CroppingByXValues))]
   [ExpectedTypeOfView(typeof(ICroppingByXValuesView))]
   public class CroppingByXValuesController : MVCANControllerEditImmutableDocBase<CroppingByXValues, ICroppingByXValuesView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -48,6 +55,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Cropping
 
     private double _minimalValue;
 
+    /// <summary>
+    /// Gets or sets the minimal x value.
+    /// </summary>
     public double MinimalValue
     {
       get => _minimalValue;
@@ -63,6 +73,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Cropping
 
     private double _maximalValue;
 
+    /// <summary>
+    /// Gets or sets the maximal x value.
+    /// </summary>
     public double MaximalValue
     {
       get => _maximalValue;
@@ -81,6 +94,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Cropping
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -92,6 +106,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Cropping
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = _doc with { MinimalValue = MinimalValue, MaximalValue = MaximalValue };

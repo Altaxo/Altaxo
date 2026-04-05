@@ -28,9 +28,13 @@ using Altaxo.Science.Spectroscopy;
 
 namespace Altaxo.Gui.Science.Spectroscopy
 {
+  /// <summary>
+  /// Controller for <see cref="SpectralPreprocessingDataSource"/>.
+  /// </summary>
   [UserControllerForObject(typeof(SpectralPreprocessingDataSource))]
   public class SpectralPreprocessingDataSourceController : DataSourceControllerBase<SpectralPreprocessingDataSource>
   {
+    /// <inheritdoc />
     protected override IMVCANController GetProcessDataController()
     {
       var ctrl = new ListOfXAndYColumnController();

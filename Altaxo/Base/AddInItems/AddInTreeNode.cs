@@ -45,6 +45,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Adds a sequence of codons to this node.
+    /// </summary>
     public void AddCodons(IEnumerable<Codon> newCodons)
     {
       if (newCodons is null)
@@ -120,6 +123,9 @@ namespace Altaxo.AddInItems
       return items;
     }
 
+    /// <summary>
+    /// Builds the item represented by the specified codon.
+    /// </summary>
     public object? BuildChildItem(Codon codon, object? parameter, IEnumerable<ICondition>? additionalConditions = null)
     {
       if (codon is null)

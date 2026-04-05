@@ -32,6 +32,10 @@ namespace Altaxo.Main.Services
   [TypeConverter(typeof(FileNameConverter))]
   public sealed class FileName : PathName, IEquatable<FileName>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileName"/> class.
+    /// </summary>
+    /// <param name="path">The file path.</param>
     public FileName(string path)
       : base(path)
     {
@@ -50,6 +54,11 @@ namespace Altaxo.Main.Services
         return new FileName(fileName);
     }
 
+    /// <summary>
+    /// Converts a <see cref="FileName"/> to its string path.
+    /// </summary>
+    /// <param name="path">The file path.</param>
+    /// <returns>The normalized string path.</returns>
     [return: NotNullIfNotNull("path")]
     public static explicit operator string?(FileName? path)
     {
@@ -103,11 +112,13 @@ namespace Altaxo.Main.Services
 
     #region Equals and GetHashCode implementation
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       return Equals(obj as FileName);
     }
 
+    /// <inheritdoc/>
     public bool Equals(FileName? other)
     {
       if (other is null)
@@ -116,11 +127,15 @@ namespace Altaxo.Main.Services
         return string.Equals(_normalizedPath, other._normalizedPath, StringComparison.OrdinalIgnoreCase);
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return StringComparer.OrdinalIgnoreCase.GetHashCode(_normalizedPath);
     }
 
+    /// <summary>
+    /// Determines whether two file names are equal.
+    /// </summary>
     public static bool operator ==(FileName left, FileName right)
     {
       if (ReferenceEquals(left, right))
@@ -130,29 +145,44 @@ namespace Altaxo.Main.Services
       return left.Equals(right);
     }
 
+    /// <summary>
+    /// Determines whether two file names are not equal.
+    /// </summary>
     public static bool operator !=(FileName left, FileName right)
     {
       return !(left == right);
     }
 
+    /// <summary>
+    /// Determines whether a file name and a string path are equal.
+    /// </summary>
     [ObsoleteAttribute("Warning: comparing FileName with string results in case-sensitive comparison")]
     public static bool operator ==(FileName left, string right)
     {
       return (string?)left == right;
     }
 
+    /// <summary>
+    /// Determines whether a file name and a string path are not equal.
+    /// </summary>
     [ObsoleteAttribute("Warning: comparing FileName with string results in case-sensitive comparison")]
     public static bool operator !=(FileName left, string right)
     {
       return (string?)left != right;
     }
 
+    /// <summary>
+    /// Determines whether a string path and a file name are equal.
+    /// </summary>
     [ObsoleteAttribute("Warning: comparing FileName with string results in case-sensitive comparison")]
     public static bool operator ==(string left, FileName right)
     {
       return left == (string?)right;
     }
 
+    /// <summary>
+    /// Determines whether a string path and a file name are not equal.
+    /// </summary>
     [ObsoleteAttribute("Warning: comparing FileName with string results in case-sensitive comparison")]
     public static bool operator !=(string left, FileName right)
     {
@@ -183,18 +213,24 @@ namespace Altaxo.Main.Services
     }
   }
 
+  /// <summary>
+  /// Converts between strings and <see cref="FileName"/> instances.
+  /// </summary>
   public class FileNameConverter : TypeConverter
   {
+    /// <inheritdoc/>
     public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
     {
       return sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
     }
 
+    /// <inheritdoc/>
     public override bool CanConvertTo(ITypeDescriptorContext? context, Type? destinationType)
     {
       return destinationType == typeof(FileName) || base.CanConvertTo(context, destinationType);
     }
 
+    /// <inheritdoc/>
     public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object value)
     {
       if (value is string s)
@@ -204,6 +240,7 @@ namespace Altaxo.Main.Services
       return base.ConvertFrom(context, culture, value);
     }
 
+    /// <inheritdoc/>
     public override object? ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture,
                                      object? value, Type destinationType)
     {

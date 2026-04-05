@@ -27,22 +27,22 @@ using Altaxo.Data;
 namespace Altaxo.Science.Spectroscopy.Calibration
 {
   /// <summary>
-  /// Interface to a data source that may contain a x-axis calibration.
+  /// Interface to a data source that may contain an X-axis calibration.
   /// </summary>
   public interface IXCalibrationDataSource
   {
     /// <summary>
-    /// Determines whether the table belonging to the data source is containing a valid x-axis calibration.
+    /// Determines whether the table belonging to the data source contains a valid X-axis calibration.
     /// </summary>
     /// <param name="table">The table.</param>
     /// <returns>
-    ///   <c>true</c> if the table belonging to the data source is containing a valid x-axis calibration; otherwise, <c>false</c>.
+    ///   <c>true</c> if the table belonging to the data source contains a valid X-axis calibration; otherwise, <c>false</c>.
     /// </returns>
     bool IsContainingValidXAxisCalibration(DataTable table);
 
 
     /// <summary>
-    /// Gets the x axis calibration. Please use <see cref="IsContainingValidXAxisCalibration(DataTable)"/> to test beforehand, if an x-axis calibration is
+    /// Gets the X-axis calibration. Please use <see cref="IsContainingValidXAxisCalibration(DataTable)"/> beforehand to test whether an X-axis calibration is
     /// available.
     /// </summary>
     /// <param name="table">The table belonging to the data source.</param>

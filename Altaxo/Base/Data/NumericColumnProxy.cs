@@ -34,7 +34,7 @@ namespace Altaxo.Data
   public interface INumericColumnProxy : IReadableColumnProxy
   {
     /// <summary>
-    /// Returns the holded object. Null can be returned if the object is no longer available (e.g. disposed).
+    /// Returns the held object. Null can be returned if the object is no longer available, for example because it was disposed.
     /// </summary>
     new INumericColumn? Document();
   }
@@ -58,10 +58,18 @@ namespace Altaxo.Data
     }
   }
 
+  /// <summary>
+  /// Proxy for numeric columns that are not part of the document hierarchy.
+  /// </summary>
   public class NumericColumnProxyForStandaloneColumns : Main.SuspendableDocumentLeafNodeWithEventArgs, INumericColumnProxy
   {
     private INumericColumn? _column;
 
+    /// <summary>
+    /// Creates a proxy for a standalone numeric column.
+    /// </summary>
+    /// <param name="column">The standalone numeric column.</param>
+    /// <returns>A proxy for the specified column.</returns>
     public static NumericColumnProxyForStandaloneColumns FromColumn(INumericColumn? column)
     {
       if (column is IDocumentLeafNode colAsDocumentNode)
@@ -114,6 +122,7 @@ namespace Altaxo.Data
 
     #endregion Serialization
 
+    /// <inheritdoc />
     public INumericColumn? Document()
     {
       return _column;
@@ -129,26 +138,31 @@ namespace Altaxo.Data
       return _column?.FullName ?? string.Empty;
     }
 
+    /// <inheritdoc />
     public bool IsEmpty
     {
       get { return _column is null; }
     }
 
+    /// <inheritdoc />
     public object Clone()
     {
       return FromColumn(_column);
     }
 
+    /// <inheritdoc />
     public object? DocumentObject()
     {
       return _column;
     }
 
+    /// <inheritdoc />
     public AbsoluteDocumentPath DocumentPath()
     {
       return AbsoluteDocumentPath.DocumentPathOfRootNode;
     }
 
+    /// <inheritdoc />
     public bool ReplacePathParts(AbsoluteDocumentPath partToReplace, AbsoluteDocumentPath newPart, IDocumentLeafNode rootNode)
     {
       return false;
@@ -230,6 +244,11 @@ namespace Altaxo.Data
 
     #endregion Serialization
 
+    /// <summary>
+    /// Creates a proxy for a numeric column that belongs to the document hierarchy.
+    /// </summary>
+    /// <param name="column">The numeric column.</param>
+    /// <returns>A proxy for the specified numeric column.</returns>
     public static NumericColumnProxy FromColumn(INumericColumn column)
     {
       if (column is null)
@@ -268,8 +287,8 @@ namespace Altaxo.Data
     }
 
     /// <summary>
-    /// Tests whether or not the holded object is valid. Here the test returns true if the column
-    /// is either of type <see cref="INumericColumn" /> or the holded object is <c>null</c>.
+    /// Tests whether or not the held object is valid. Here the test returns true if the column
+    /// is either of type <see cref="INumericColumn"/> or the held object is <c>null</c>.
     /// </summary>
     /// <param name="obj">Object to test.</param>
     /// <returns>True if this is a valid document object.</returns>
@@ -279,7 +298,7 @@ namespace Altaxo.Data
     }
 
     /// <summary>
-    /// Returns the holded object. Null can be returned if the object is no longer available (e.g. disposed).
+    /// Returns the held object. Null can be returned if the object is no longer available, for example because it was disposed.
     /// </summary>
     public INumericColumn? Document()
     {

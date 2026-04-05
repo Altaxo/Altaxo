@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
+// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
@@ -24,6 +24,9 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.AddInItems
 {
+  /// <summary>
+  /// Represents the add-in tree that stores codons, doozers, and condition evaluators.
+  /// </summary>
   [GlobalService("SD.AddInTree")]
   public interface IAddInTree
   {
@@ -61,6 +64,9 @@ namespace Altaxo.AddInItems
     /// exist or does not point to an item.</exception>
     object BuildItem(string path, object? parameter);
 
+    /// <summary>
+    /// Builds a single item in the add-in tree using additional conditions.
+    /// </summary>
     object BuildItem(string path, object? parameter, IEnumerable<ICondition> additionalConditions);
 
     /// <summary>

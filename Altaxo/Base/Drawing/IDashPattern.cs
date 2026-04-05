@@ -30,6 +30,9 @@ using System.Text;
 
 namespace Altaxo.Drawing
 {
+  /// <summary>
+  /// Represents an immutable dash pattern.
+  /// </summary>
   public interface IDashPattern
     :
     IReadOnlyList<double>,
@@ -38,6 +41,9 @@ namespace Altaxo.Drawing
     ICloneable // Attention: although IDashPattern is immutable, different instances of the same pattern are neccessary to establish a membership into the DashPatternList!
 
   {
+    /// <summary>
+    /// Gets the dash offset.
+    /// </summary>
     double DashOffset { get; }
   }
 }

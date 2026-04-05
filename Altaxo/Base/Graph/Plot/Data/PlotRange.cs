@@ -87,6 +87,11 @@ namespace Altaxo.Graph.Plot.Data
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PlotRange"/> class.
+    /// </summary>
+    /// <param name="lower">The lower index of the range in the plot point array.</param>
+    /// <param name="upper">The upper index of the range in the plot point array, that is, one greater than the last included index.</param>
     public PlotRange(int lower, int upper)
     {
       _lowerBound = lower;
@@ -107,6 +112,10 @@ namespace Altaxo.Graph.Plot.Data
       _offsetToOriginal = offset;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PlotRange"/> class by copying another range.
+    /// </summary>
+    /// <param name="a">The range to copy.</param>
     public PlotRange(PlotRange a)
     {
       _lowerBound = a._lowerBound;
@@ -201,6 +210,7 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
+    /// <inheritdoc/>
     public int GetOriginalRowIndexFromPlotPointIndex(int plotPointIndex)
     {
 #if DEBUG
@@ -227,12 +237,15 @@ namespace Altaxo.Graph.Plot.Data
       get { return InnerList[i]; }
     }
 
+    /// <summary>
+    /// Gets the number of stored plot ranges.
+    /// </summary>
     public int Count { get { return InnerList.Count; } }
 
     /// <summary>
     /// Adds a plot range. This plot range should be above the previous added plot range.
     /// </summary>
-    /// <param name="a"></param>
+    /// <param name="a">The plot range to add.</param>
     public void Add(PlotRange a)
     {
       // test the argument
@@ -277,7 +290,7 @@ namespace Altaxo.Graph.Plot.Data
     /// By enumerating through this, you will get the original row indices (indices into the DataColumns).
     /// The number of items returned is equal to <see cref="PlotPointCount" />.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>An enumerable that yields the original row indices.</returns>
     public IEnumerable<int> OriginalRowIndices()
     {
       for (int i = 0; i < InnerList.Count; i++)
@@ -305,6 +318,7 @@ namespace Altaxo.Graph.Plot.Data
 
     #region IEnumerable<PlotRange> Members
 
+    /// <inheritdoc/>
     public IEnumerator<PlotRange> GetEnumerator()
     {
       return InnerList.GetEnumerator();
@@ -314,6 +328,7 @@ namespace Altaxo.Graph.Plot.Data
 
     #region IEnumerable Members
 
+    /// <inheritdoc/>
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
       return InnerList.GetEnumerator();

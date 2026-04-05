@@ -37,12 +37,12 @@ namespace Altaxo.Gui
     None = 0,
 
     /// <summary>
-    /// Interaction with the user only if errors occured. Warnings will be ignored.
+    /// Interaction with the user only if errors occurred. Warnings are ignored.
     /// </summary>
     InteractOnErrors = 1,
 
     /// <summary>
-    /// Interaction with the user only if errors or warnings occured.
+    /// Interaction with the user only if errors or warnings occurred.
     /// </summary>
     InteractOnWarningsAndErrors = 2,
 

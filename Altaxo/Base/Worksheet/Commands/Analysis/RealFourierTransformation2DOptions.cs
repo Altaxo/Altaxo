@@ -37,38 +37,99 @@ namespace Altaxo.Worksheet.Commands.Analysis
     ICloneable
   {
     // Input options
+    /// <summary>
+    /// The increment value for the rows.
+    /// </summary>
     protected double _rowIncrementValue;
 
+    /// <summary>
+    /// Indicates whether the row increment value is user-defined.
+    /// </summary>
     protected bool _isUserDefinedRowIncrementValue;
 
+    /// <summary>
+    /// The increment value for the columns.
+    /// </summary>
     protected double _columnIncrementValue;
+    /// <summary>
+    /// Indicates whether the column increment value is user-defined.
+    /// </summary>
     protected bool _isUserDefinedColumnIncrementValue;
 
+    /// <summary>
+    /// The replacement value for NaN matrix elements.
+    /// </summary>
     protected double? _replacementValueForNaNMatrixElements;
+    /// <summary>
+    /// The replacement value for infinite matrix elements.
+    /// </summary>
     protected double? _replacementValueForInfiniteMatrixElements;
+    /// <summary>
+    /// The order of data pretreatment correction.
+    /// </summary>
     protected int? _dataPretreatmentCorrectionOrder;
+    /// <summary>
+    /// The 2D Fourier window used for the transformation.
+    /// </summary>
     protected Altaxo.Calc.Fourier.Windows.IWindows2D? _fourierWindow;
 
     // Output options
+    /// <summary>
+    /// The kind of output result for the transformation.
+    /// </summary>
     protected RealFourierTransformationOutputKind _kindOfOutputResult = RealFourierTransformationOutputKind.Amplitude;
 
+    /// <summary>
+    /// Indicates whether the result is centered.
+    /// </summary>
     protected bool _centerResult;
+    /// <summary>
+    /// The resulting fraction of rows used in the transformation.
+    /// </summary>
     protected double _resultFractionOfRows = 1;
+    /// <summary>
+    /// The resulting fraction of columns used in the transformation.
+    /// </summary>
     protected double _resultFractionOfColumns = 1;
+    /// <summary>
+    /// Indicates whether frequency header columns are output.
+    /// </summary>
     protected bool _outputFrequencyHeaderColumns = true;
+    /// <summary>
+    /// The name of the frequency row header column.
+    /// </summary>
     protected string _frequencyRowHeaderColumnName = string.Empty;
+    /// <summary>
+    /// The name of the frequency column header column.
+    /// </summary>
     protected string _frequencyColumnHeaderColumnName = string.Empty;
+    /// <summary>
+    /// Indicates whether period header columns are output.
+    /// </summary>
     protected bool _outputPeriodHeaderColumns = false;
+    /// <summary>
+    /// The name of the period row header column.
+    /// </summary>
     protected string _periodRowHeaderColumnName = string.Empty;
+    /// <summary>
+    /// The name of the period column header column.
+    /// </summary>
     protected string _periodColumnHeaderColumnName = string.Empty;
 
     // Helper members - not serialized
+    /// <summary>
+    /// Message describing the row increment. Not serialized.
+    /// </summary>
     [NonSerialized]
     protected string? _rowIncrementMessage;
 
+    /// <summary>
+    /// Message describing the column increment. Not serialized.
+    /// </summary>
     [NonSerialized]
     protected string? _columnIncrementMessage;
 
+    /// <inheritdoc/>
     public object Clone()
     {
       return MemberwiseClone();
@@ -220,20 +281,44 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     #endregion Serialization
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the row increment value was defined by the user.
+    /// </summary>
     public bool IsUserDefinedRowIncrementValue { get { return _isUserDefinedRowIncrementValue; } set { _isUserDefinedRowIncrementValue = value; } }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the column increment value was defined by the user.
+    /// </summary>
     public bool IsUserDefinedColumnIncrementValue { get { return _isUserDefinedColumnIncrementValue; } set { _isUserDefinedColumnIncrementValue = value; } }
 
+    /// <summary>
+    /// Gets or sets the row increment value.
+    /// </summary>
     public double RowIncrementValue { get { return _rowIncrementValue; } set { SetMemberAndRaiseSelfChanged(ref _rowIncrementValue, value); } }
 
+    /// <summary>
+    /// Gets or sets the column increment value.
+    /// </summary>
     public double ColumnIncrementValue { get { return _columnIncrementValue; } set { SetMemberAndRaiseSelfChanged(ref _columnIncrementValue, value); } }
 
+    /// <summary>
+    /// Gets or sets the replacement value for NaN matrix elements.
+    /// </summary>
     public double? ReplacementValueForNaNMatrixElements { get { return _replacementValueForNaNMatrixElements; } set { SetMemberAndRaiseSelfChanged(ref _replacementValueForNaNMatrixElements, value); } }
 
+    /// <summary>
+    /// Gets or sets the replacement value for infinite matrix elements.
+    /// </summary>
     public double? ReplacementValueForInfiniteMatrixElements { get { return _replacementValueForInfiniteMatrixElements; } set { SetMemberAndRaiseSelfChanged(ref _replacementValueForInfiniteMatrixElements, value); } }
 
+    /// <summary>
+    /// Gets or sets the data-pretreatment correction order.
+    /// </summary>
     public int? DataPretreatmentCorrectionOrder { get { return _dataPretreatmentCorrectionOrder; } set { SetMemberAndRaiseSelfChanged(ref _dataPretreatmentCorrectionOrder, value); } }
 
+    /// <summary>
+    /// Gets or sets the Fourier window.
+    /// </summary>
     public Altaxo.Calc.Fourier.Windows.IWindows2D? FourierWindow
     {
       get { return _fourierWindow; }
@@ -247,10 +332,19 @@ namespace Altaxo.Worksheet.Commands.Analysis
       }
     }
 
+    /// <summary>
+    /// Gets or sets the output kind.
+    /// </summary>
     public Altaxo.Calc.Fourier.RealFourierTransformationOutputKind OutputKind { get { return _kindOfOutputResult; } set { SetMemberEnumAndRaiseSelfChanged(ref _kindOfOutputResult, value); } }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the result is centered.
+    /// </summary>
     public bool CenterResult { get { return _centerResult; } set { SetMemberAndRaiseSelfChanged(ref _centerResult, value); } }
 
+    /// <summary>
+    /// Gets or sets the resulting fraction of rows used in the transformation. Value must be between 0 and 1.
+    /// </summary>
     public double ResultingFractionOfRowsUsed
     {
       get { return _resultFractionOfRows; }
@@ -263,6 +357,9 @@ namespace Altaxo.Worksheet.Commands.Analysis
       }
     }
 
+    /// <summary>
+    /// Gets or sets the resulting fraction of columns used in the transformation. Value must be between 0 and 1.
+    /// </summary>
     public double ResultingFractionOfColumnsUsed
     {
       get { return _resultFractionOfColumns; }
@@ -275,20 +372,44 @@ namespace Altaxo.Worksheet.Commands.Analysis
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether frequency header columns are output.
+    /// </summary>
     public bool OutputFrequencyHeaderColumns { get { return _outputFrequencyHeaderColumns; } set { SetMemberAndRaiseSelfChanged(ref _outputFrequencyHeaderColumns, value); } }
 
+    /// <summary>
+    /// Gets or sets the name of the frequency row header column.
+    /// </summary>
     public string FrequencyRowHeaderColumnName { get { return _frequencyRowHeaderColumnName; } set { SetMemberAndRaiseSelfChanged(ref _frequencyRowHeaderColumnName, value); } }
 
+    /// <summary>
+    /// Gets or sets the name of the frequency column header column.
+    /// </summary>
     public string FrequencyColumnHeaderColumnName { get { return _frequencyColumnHeaderColumnName; } set { SetMemberAndRaiseSelfChanged(ref _frequencyColumnHeaderColumnName, value); } }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether period header columns are output.
+    /// </summary>
     public bool OutputPeriodHeaderColumns { get { return _outputPeriodHeaderColumns; } set { SetMemberAndRaiseSelfChanged(ref _outputPeriodHeaderColumns, value); } }
 
+    /// <summary>
+    /// Gets or sets the name of the period row header column.
+    /// </summary>
     public string PeriodRowHeaderColumnName { get { return _periodRowHeaderColumnName; } set { SetMemberAndRaiseSelfChanged(ref _periodRowHeaderColumnName, value); } }
 
+    /// <summary>
+    /// Gets or sets the name of the period column header column.
+    /// </summary>
     public string PeriodColumnHeaderColumnName { get { return _periodColumnHeaderColumnName; } set { SetMemberAndRaiseSelfChanged(ref _periodColumnHeaderColumnName, value); } }
 
+    /// <summary>
+    /// Gets or sets the message describing the row increment.
+    /// </summary>
     public string? RowIncrementMessage { get { return _rowIncrementMessage; } set { SetMemberAndRaiseSelfChanged(ref _rowIncrementMessage, value); } }
 
+    /// <summary>
+    /// Gets or sets the message describing the column increment.
+    /// </summary>
     public string? ColumnIncrementMessage { get { return _columnIncrementMessage; } set { SetMemberAndRaiseSelfChanged(ref _columnIncrementMessage, value); } }
   }
 }

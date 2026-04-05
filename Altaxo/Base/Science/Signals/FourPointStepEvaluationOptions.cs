@@ -25,9 +25,9 @@
 namespace Altaxo.Science.Signals
 {
   /// <summary>
-  /// Options for a step evaluation that uses 4 points on a curve. Two points on the curve define a left straight line, and two other points on the curve define a right straight line.
-  /// The step should be located inbetween the two inner points. The step position is then evaluated by building a regression
-  /// line of the curve between the inner points, but only from a certain level to another given leven (e.g., from 25% to 75% of the distance between left and right line).
+  /// Options for a step evaluation that uses four points on a curve. Two points on the curve define a left straight line, and two other points on the curve define a right straight line.
+  /// The step should be located in between the two inner points. The step position is then evaluated by building a regression
+  /// line of the curve between the inner points, but only from a certain level to another given level, for example from 25% to 75% of the distance between the left and right lines.
   /// </summary>
   public record FourPointStepEvaluationOptions : Main.IImmutable
   {
@@ -60,28 +60,28 @@ namespace Altaxo.Science.Signals
     /// Gets a value indicating whether the original (measured) data points should be included in the output.
     /// </summary>
     /// <value>
-    /// <c>true</c> if the orignal data points should be included in the output; otherwise, <c>false</c>.
+    /// <c>true</c> if the original data points should be included in the output; otherwise, <c>false</c>.
     /// </value>
     public bool IncludeOriginalPointsInOutput { get; init; }
 
 
     /// <summary>
-    /// Gets the index of the first point of the left line.
+    /// Gets the index of the left outer point.
     /// </summary>
     public double IndexLeftOuter { get; init; }
 
     /// <summary>
-    /// Gets the index of the second point of the left line.
+    /// Gets the index of the left inner point.
     /// </summary>
     public double IndexLeftInner { get; init; }
 
     /// <summary>
-    /// Gets the index of the first point of the right line.
+    /// Gets the index of the right outer point.
     /// </summary>
     public double IndexRightOuter { get; init; }
 
     /// <summary>
-    /// Gets the index of the second point of the right line.
+    /// Gets the index of the right inner point.
     /// </summary>
     public double IndexRightInner { get; init; }
 
@@ -94,6 +94,7 @@ namespace Altaxo.Science.Signals
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FourPointStepEvaluationOptions), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (FourPointStepEvaluationOptions)obj;
@@ -109,6 +110,7 @@ namespace Altaxo.Science.Signals
         info.AddValue("IndexRightOuter", s.IndexRightOuter);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var useRegressionForLeftAndRightLine = info.GetBoolean("UseRegressionForLeftAndRightLine");

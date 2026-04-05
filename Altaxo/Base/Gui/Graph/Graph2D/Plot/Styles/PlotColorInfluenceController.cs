@@ -31,23 +31,37 @@ using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols;
 
 namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
 {
+  /// <summary>
+  /// View interface for editing plot color influence options.
+  /// </summary>
   public interface IPlotColorInfluenceView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for editing <see cref="PlotColorInfluence"/> values.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IPlotColorInfluenceView))]
   [UserControllerForObject(typeof(PlotColorInfluence))]
   public class PlotColorInfluenceController : MVCANDControllerEditImmutableDocBase<PlotColorInfluence, IPlotColorInfluenceView>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PlotColorInfluenceController"/> class.
+    /// </summary>
     public PlotColorInfluenceController()
     {
 
     }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PlotColorInfluenceController"/> class.
+    /// </summary>
+    /// <param name="doc">The initial plot color influence value.</param>
     public PlotColorInfluenceController(PlotColorInfluence doc)
     {
       this.InitializeDocument(doc);
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -57,6 +71,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
 
     private bool _FillNone;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the fill color is not influenced by the plot color.
+    /// </summary>
     public bool FillNone
     {
       get => _FillNone;
@@ -74,6 +91,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
 
     private bool _FillFull;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the fill color fully follows the plot color.
+    /// </summary>
     public bool FillFull
     {
       get => _FillFull;
@@ -90,6 +110,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
     }
     private bool _FillAlpha;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the fill color preserves the plot color alpha channel.
+    /// </summary>
     public bool FillAlpha
     {
       get => _FillAlpha;
@@ -106,6 +129,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
     }
     private bool _FrameNone;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the frame color is not influenced by the plot color.
+    /// </summary>
     public bool FrameNone
     {
       get => _FrameNone;
@@ -124,6 +150,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
 
     private bool _FrameFull;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the frame color fully follows the plot color.
+    /// </summary>
     public bool FrameFull
     {
       get => _FrameFull;
@@ -140,6 +169,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
     }
     private bool _FrameAlpha;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the frame color preserves the plot color alpha channel.
+    /// </summary>
     public bool FrameAlpha
     {
       get => _FrameAlpha;
@@ -156,6 +188,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
 
     private bool _InsetNone;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the inset color is not influenced by the plot color.
+    /// </summary>
     public bool InsetNone
     {
       get => _InsetNone;
@@ -173,6 +208,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
 
     private bool _InsetAlpha;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the inset color preserves the plot color alpha channel.
+    /// </summary>
     public bool InsetAlpha
     {
       get => _InsetAlpha;
@@ -188,6 +226,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
     }
     private bool _InsetFull;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the inset color fully follows the plot color.
+    /// </summary>
     public bool InsetFull
     {
       get => _InsetFull;
@@ -205,6 +246,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
 
     #endregion
 
+    /// <summary>
+    /// Gets or sets the currently edited plot color influence value.
+    /// </summary>
     public PlotColorInfluence Doc
     {
       get
@@ -219,6 +263,7 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
 
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -229,12 +274,14 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
       }
     }
 
+    /// <inheritdoc />
     protected override void OnMadeDirty()
     {
       _doc = SelectedValue;
       base.OnMadeDirty();
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = SelectedValue;
@@ -242,6 +289,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
     }
 
 
+    /// <summary>
+    /// Gets or sets the plot color influence represented by the current controller state.
+    /// </summary>
     public PlotColorInfluence SelectedValue
     {
       get

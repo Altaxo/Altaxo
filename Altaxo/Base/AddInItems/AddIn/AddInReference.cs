@@ -39,6 +39,9 @@ namespace Altaxo.AddInItems
     private static Version? _entryVersion;
 
 
+    /// <summary>
+    /// Gets the minimum accepted version.
+    /// </summary>
     public Version MinimumVersion
     {
       get
@@ -47,6 +50,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Gets the maximum accepted version.
+    /// </summary>
     public Version MaximumVersion
     {
       get
@@ -55,11 +61,17 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the referenced add-in must be preloaded.
+    /// </summary>
     public bool RequirePreload
     {
       get { return _requirePreload; }
     }
 
+    /// <summary>
+    /// Gets or sets the add-in name.
+    /// </summary>
     public string Name
     {
       get
@@ -78,6 +90,9 @@ namespace Altaxo.AddInItems
     }
 
     /// <returns>Returns true when the reference is valid.</returns>
+    /// <summary>
+    /// Checks whether the reference can be satisfied from the specified add-ins.
+    /// </summary>
     public bool Check(Dictionary<string, Version> addIns, out Version? versionFound)
     {
       if (addIns.TryGetValue(_name, out versionFound))
@@ -120,6 +135,9 @@ namespace Altaxo.AddInItems
       return 0;
     }
 
+    /// <summary>
+    /// Creates an <see cref="AddInReference"/> from properties.
+    /// </summary>
     public static AddInReference Create(Properties properties, string? hintPath)
     {
       var reference = new AddInReference(properties["addin"]);
@@ -186,14 +204,23 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AddInReference"/> class.
+    /// </summary>
     public AddInReference(string name) : this(name, new Version(0, 0, 0, 0), new Version(int.MaxValue, int.MaxValue))
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AddInReference"/> class.
+    /// </summary>
     public AddInReference(string name, Version specificVersion) : this(name, specificVersion, specificVersion)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AddInReference"/> class.
+    /// </summary>
     public AddInReference(string name, Version minimumVersion, Version maximumVersion)
     {
       Name = name;
@@ -206,6 +233,7 @@ namespace Altaxo.AddInItems
       this._maximumVersion = maximumVersion;
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       if (!(obj is AddInReference))
@@ -214,11 +242,13 @@ namespace Altaxo.AddInItems
       return _name == b._name && _minimumVersion == b._minimumVersion && _maximumVersion == b._maximumVersion;
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return _name.GetHashCode() ^ _minimumVersion.GetHashCode() ^ _maximumVersion.GetHashCode();
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       if (_minimumVersion.ToString() == "0.0.0.0")
@@ -249,6 +279,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Creates a copy of this reference.
+    /// </summary>
     public AddInReference Clone()
     {
       return new AddInReference(_name, _minimumVersion, _maximumVersion);

@@ -30,8 +30,10 @@ using Altaxo.Geometry;
 namespace Altaxo.Graph.Gdi
 {
   /// <summary>
-  /// Handler type to process double click events
+  /// Represents a handler that processes double-click events on hit test objects.
   /// </summary>
+  /// <param name="o">The hit test object.</param>
+  /// <returns><c>true</c> if the object should be removed; otherwise, <c>false</c>.</returns>
   public delegate bool DoubleClickHandler(IHitTestObject o);
 
   /// <summary>
@@ -49,22 +51,24 @@ namespace Altaxo.Graph.Gdi
     GraphicsPath ObjectOutlineForArrangements { get; }
 
     /// <summary>
-    /// This will return the transformation matrix. This matrix translates from coordinates of the object to global coordinates.
+    /// Gets the transformation matrix from object coordinates to global coordinates.
     /// </summary>
     MatrixD2D Transformation { get; }
 
     /// <summary>
     /// Transform the internal positions according to the provided transformation matrix.
     /// </summary>
-    /// <param name="x"></param>
+    /// <param name="x">The transformation to apply.</param>
     void Transform(MatrixD2D x);
 
     /// <summary>
-    /// This will return the object itself, i.e. the object which corresponds to the selection path.
+    /// Gets or sets the object that corresponds to the selection path.
     /// </summary>
-    /// <returns></returns>
     object HittedObject { get; set; }
 
+    /// <summary>
+    /// Gets or sets the parent layer of the hit object.
+    /// </summary>
     HostLayer? ParentLayer { get; set; }
 
     /// <summary>
@@ -100,7 +104,7 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Shows the grips, i.e. the special areas for manipulation of the object.
     /// </summary>
-    /// <param name="pageScale"></param>
+    /// <param name="pageScale">The current page scale.</param>
     /// <param name="gripLevel">The grip level. For 0, only the translation grip is shown.</param>
     /// <returns>Grip manipulation handles that are used to show the grips and to manipulate the object.</returns>
     IGripManipulationHandle[]? GetGrips(double pageScale, int gripLevel);

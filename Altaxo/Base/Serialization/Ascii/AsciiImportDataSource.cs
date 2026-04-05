@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -68,11 +68,11 @@ namespace Altaxo.Serialization.Ascii
       }
     }
 
-    [MemberNotNull(nameof(_importOptions), nameof(_processOptions))]
     /// <summary>
     /// Deserializes version 0 of <see cref="AsciiImportDataSource"/>.
     /// </summary>
     /// <param name="info">The deserialization info.</param>
+    [MemberNotNull(nameof(_importOptions), nameof(_processOptions))]
     private void DeserializeSurrogate0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
       _isDeserializationInProgress = true;

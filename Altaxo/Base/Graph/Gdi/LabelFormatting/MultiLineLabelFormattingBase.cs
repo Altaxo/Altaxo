@@ -32,7 +32,7 @@ using Altaxo.Geometry;
 namespace Altaxo.Graph.Gdi.LabelFormatting
 {
   /// <summary>
-  /// Base class that can be used to derive a numeric abel formatting class
+  /// Provides a base class for multiline label formatting implementations.
   /// </summary>
   public abstract class MultiLineLabelFormattingBase : LabelFormattingBase
   {
@@ -65,15 +65,23 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MultiLineLabelFormattingBase"/> class.
+    /// </summary>
     protected MultiLineLabelFormattingBase()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MultiLineLabelFormattingBase"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     protected MultiLineLabelFormattingBase(MultiLineLabelFormattingBase from)
       : base(from) // everything is done here, since CopyFrom is virtual
     {
     }
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -90,6 +98,9 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
       return false;
     }
 
+    /// <summary>
+    /// Gets or sets the relative line spacing.
+    /// </summary>
     public double LineSpacing
     {
       get
@@ -102,6 +113,9 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
       }
     }
 
+    /// <summary>
+    /// Gets or sets the alignment of the multiline text block.
+    /// </summary>
     public StringAlignment TextBlockAlignment
     {
       get
@@ -150,21 +164,54 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
       return litems;
     }
 
+    /// <summary>
+    /// Represents a measured multiline label item.
+    /// </summary>
     protected new class MeasuredLabelItem : IMeasuredLabelItem
     {
+      /// <summary>
+      /// The text lines.
+      /// </summary>
       protected string[] _text;
+      /// <summary>
+      /// The measured size of each line.
+      /// </summary>
       protected PointD2D[] _stringSize;
+      /// <summary>
+      /// The font used to measure and draw the label.
+      /// </summary>
       protected FontX _font;
+      /// <summary>
+      /// The string format used to draw the label.
+      /// </summary>
       protected System.Drawing.StringFormat _strfmt;
+      /// <summary>
+      /// The total measured size.
+      /// </summary>
       protected PointD2D _size;
 
+      /// <summary>
+      /// The horizontal alignment.
+      /// </summary>
       protected StringAlignment _horizontalAlignment;
+      /// <summary>
+      /// The vertical alignment.
+      /// </summary>
       protected StringAlignment _verticalAlignment;
+      /// <summary>
+      /// The alignment of the multiline text block.
+      /// </summary>
       protected StringAlignment _textBlockAligment;
+      /// <summary>
+      /// The relative line spacing.
+      /// </summary>
       protected double _lineSpacing;
 
       #region IMeasuredLabelItem Members
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="MeasuredLabelItem"/> class.
+      /// </summary>
       public MeasuredLabelItem(Graphics g, FontX font, StringFormat strfmt, string itemtext, double lineSpacing, StringAlignment horizontalAlignment, StringAlignment verticalAlignment, StringAlignment textBlockAligment)
       {
         _text = itemtext.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
@@ -187,6 +234,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
         _size = bounds.Size;
       }
 
+      /// <inheritdoc />
       public virtual SizeF Size
       {
         get
@@ -195,6 +243,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
         }
       }
 
+      /// <inheritdoc />
       public virtual void Draw(Graphics g, BrushXEnv brush, PointF point)
       {
         var positionX = point.X + GetHorizontalOffset();

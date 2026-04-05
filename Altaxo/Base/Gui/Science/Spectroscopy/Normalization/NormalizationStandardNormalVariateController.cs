@@ -27,10 +27,14 @@ using Altaxo.Science.Spectroscopy.Normalization;
 
 namespace Altaxo.Gui.Science.Spectroscopy.Normalization
 {
+  /// <summary>
+  /// Controller for editing <see cref="NormalizationStandardNormalVariate"/> options.
+  /// </summary>
   [UserControllerForObject(typeof(NormalizationStandardNormalVariate))]
   [ExpectedTypeOfView(typeof(INormalizationAreaView))]
   public class NormalizationStandardNormalVariateController : MVCANControllerEditImmutableDocBase<NormalizationStandardNormalVariate, INormalizationAreaView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -39,6 +43,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Normalization
     #region Bindings
 
 
+    /// <summary>
+    /// Gets or sets the minimum x value of the normalization range.
+    /// </summary>
     public double MinimumXValue
     {
       get => field;
@@ -53,6 +60,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Normalization
     }
 
 
+    /// <summary>
+    /// Gets or sets the maximum x value of the normalization range.
+    /// </summary>
     public double MaximumXValue
     {
       get => field;
@@ -67,6 +77,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Normalization
     }
 
 
+    /// <summary>
+    /// Gets or sets a value indicating whether normalization is based on the minimum y value.
+    /// </summary>
     public bool BasedOnMinimumYValue
     {
       get => field;
@@ -80,11 +93,15 @@ namespace Altaxo.Gui.Science.Spectroscopy.Normalization
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether <see cref="BasedOnMinimumYValue"/> can be edited.
+    /// </summary>
     public bool IsBasedOnMinimumYValueEnabled => false;
 
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -96,6 +113,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Normalization
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = _doc with

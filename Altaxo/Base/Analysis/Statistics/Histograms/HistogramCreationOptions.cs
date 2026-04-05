@@ -73,7 +73,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
     public double? UpperBoundaryToIgnore { get; set; }
 
     /// <summary>
-    /// Designates whether the upper is boundary inclusive. If <c>true</c>, all values greater than or equal to <see cref="UpperBoundaryToIgnore"/> are ignored. If <c>false</c>, only values greater than <see cref="UpperBoundaryToIgnore"/> are ignored.
+    /// Designates whether the upper boundary is inclusive. If <c>true</c>, all values greater than or equal to <see cref="UpperBoundaryToIgnore"/> are ignored. If <c>false</c>, only values greater than <see cref="UpperBoundaryToIgnore"/> are ignored.
     /// </summary>
     public bool IsUpperBoundaryInclusive { get; set; }
 
@@ -115,8 +115,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
     /// <summary>
     /// Gets a function that can be used to determine whether a value of a data ensemble should be excluded.
     /// </summary>
-    /// <returns>Function that determines whether a value of a data set should be excluded. The argument of the returned function is the value from the data set. The return value of this function is
-    /// true if the value given in the argument should be excluded from further processing.</returns>
+    /// <returns>A function that determines whether a value of a data set should be excluded. The argument of the returned function is the value from the data set. The return value is <c>true</c> if the value should be excluded from further processing.</returns>
     public Func<double, bool> GetValueExcludingFunction()
     {
       Func<double, bool> IsExcluded;

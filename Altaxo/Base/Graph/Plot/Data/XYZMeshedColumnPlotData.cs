@@ -34,7 +34,7 @@ using Altaxo.Main;
 namespace Altaxo.Graph.Plot.Data
 {
   /// <summary>
-  /// Summary description for XYColumnPlotData.
+  /// Plot data for meshed XYZ column data.
   /// </summary>
   [Serializable]
   public class XYZMeshedColumnPlotData
@@ -42,18 +42,33 @@ namespace Altaxo.Graph.Plot.Data
     Main.SuspendableDocumentNodeWithSetOfEventArgs,
     System.ICloneable
   {
+    /// <summary>
+    /// Stores the matrix proxy that provides access to the plotted data.
+    /// </summary>
     protected DataTableMatrixProxy _matrixProxy;
 
     // cached or temporary data
+    /// <summary>
+    /// Stores the cached boundaries for x-values.
+    /// </summary>
     [NonSerialized]
     protected IPhysicalBoundaries _xBoundaries;
 
+    /// <summary>
+    /// Stores the cached boundaries for y-values.
+    /// </summary>
     [NonSerialized]
     protected IPhysicalBoundaries _yBoundaries;
 
+    /// <summary>
+    /// Stores the cached boundaries for value data.
+    /// </summary>
     [NonSerialized]
     protected IPhysicalBoundaries _vBoundaries;
 
+    /// <summary>
+    /// Indicates whether the cached boundary data is currently valid.
+    /// </summary>
     [NonSerialized]
     protected bool _isCachedDataValid = false;
 
@@ -73,6 +88,7 @@ namespace Altaxo.Graph.Plot.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Plot.Data.XYZMeshedColumnPlotData", 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new ApplicationException("Calling a deprecated serialization handler for XYZMeshedColumnPlotData");
@@ -128,6 +144,7 @@ namespace Altaxo.Graph.Plot.Data
 
       private XYZMeshedColumnPlotData? _plotAssociation = null;
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         bool bSurrogateUsed = false;
@@ -198,6 +215,7 @@ namespace Altaxo.Graph.Plot.Data
         return s;
       }
 
+      /// <inheritdoc />
       public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
       {
         bool bAllResolved = true;
@@ -258,6 +276,7 @@ namespace Altaxo.Graph.Plot.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Plot.Data.XYZMeshedColumnPlotData", 2)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old versions not supported.");
@@ -281,6 +300,7 @@ namespace Altaxo.Graph.Plot.Data
                 */
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         XYZMeshedColumnPlotData s = o is not null ? (XYZMeshedColumnPlotData)o : new XYZMeshedColumnPlotData(info);
@@ -356,12 +376,20 @@ namespace Altaxo.Graph.Plot.Data
     /// <summary>
     /// Deserialization constructor.
     /// </summary>
+    /// <param name="info">The deserialization information.</param>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected XYZMeshedColumnPlotData(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
     }
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYZMeshedColumnPlotData"/> class from the selected table data.
+    /// </summary>
+    /// <param name="table">The source data table.</param>
+    /// <param name="selectedDataRows">The selected data rows.</param>
+    /// <param name="selectedDataColumns">The selected data columns.</param>
+    /// <param name="selectedPropertyColumns">The selected property columns.</param>
     public XYZMeshedColumnPlotData(DataTable table, IAscendingIntegerCollection selectedDataRows, IAscendingIntegerCollection selectedDataColumns, IAscendingIntegerCollection selectedPropertyColumns)
     {
       _matrixProxy = new DataTableMatrixProxy(table, selectedDataRows, selectedDataColumns, selectedPropertyColumns) { ParentObject = this };
@@ -385,6 +413,7 @@ namespace Altaxo.Graph.Plot.Data
       SetVBoundsFromTemplate(new FiniteNumericalBoundaries());
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_matrixProxy is not null)
@@ -410,6 +439,9 @@ namespace Altaxo.Graph.Plot.Data
       return new XYZMeshedColumnPlotData(this);
     }
 
+    /// <summary>
+    /// Gets the matrix proxy that provides the underlying table data.
+    /// </summary>
     public DataTableMatrixProxy DataTableMatrix
     {
       get
@@ -418,6 +450,10 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
+    /// <summary>
+    /// Merges the cached x-boundaries into the supplied boundary accumulator.
+    /// </summary>
+    /// <param name="pb">The boundary accumulator.</param>
     public void MergeXBoundsInto(IPhysicalBoundaries pb)
     {
       if (!_isCachedDataValid)
@@ -425,6 +461,10 @@ namespace Altaxo.Graph.Plot.Data
       pb.Add(_xBoundaries);
     }
 
+    /// <summary>
+    /// Merges the cached y-boundaries into the supplied boundary accumulator.
+    /// </summary>
+    /// <param name="pb">The boundary accumulator.</param>
     public void MergeYBoundsInto(IPhysicalBoundaries pb)
     {
       if (!_isCachedDataValid)
@@ -432,6 +472,10 @@ namespace Altaxo.Graph.Plot.Data
       pb.Add(_yBoundaries);
     }
 
+    /// <summary>
+    /// Merges the cached value-boundaries into the supplied boundary accumulator.
+    /// </summary>
+    /// <param name="pb">The boundary accumulator.</param>
     public void MergeVBoundsInto(IPhysicalBoundaries pb)
     {
       if (!_isCachedDataValid)
@@ -439,6 +483,10 @@ namespace Altaxo.Graph.Plot.Data
       pb.Add(_vBoundaries);
     }
 
+    /// <summary>
+    /// Replaces the x-boundary template if the boundary type has changed.
+    /// </summary>
+    /// <param name="val">The boundary template.</param>
     [MemberNotNull(nameof(_xBoundaries))]
     public void SetXBoundsFromTemplate(IPhysicalBoundaries val)
     {
@@ -452,6 +500,10 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
+    /// <summary>
+    /// Replaces the y-boundary template if the boundary type has changed.
+    /// </summary>
+    /// <param name="val">The boundary template.</param>
     [MemberNotNull(nameof(_yBoundaries))]
     public void SetYBoundsFromTemplate(IPhysicalBoundaries val)
     {
@@ -466,6 +518,10 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
+    /// <summary>
+    /// Replaces the value-boundary template if the boundary type has changed.
+    /// </summary>
+    /// <param name="val">The boundary template.</param>
     [MemberNotNull(nameof(_vBoundaries))]
     public void SetVBoundsFromTemplate(IPhysicalBoundaries val)
     {
@@ -480,6 +536,9 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
+    /// <summary>
+    /// Gets the number of matrix rows.
+    /// </summary>
     public int RowCount
     {
       get
@@ -488,6 +547,9 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
+    /// <summary>
+    /// Gets the number of matrix columns.
+    /// </summary>
     public int ColumnCount
     {
       get
@@ -496,11 +558,19 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
+    /// <summary>
+    /// Gets a data column by index.
+    /// </summary>
+    /// <param name="i">The data-column index.</param>
+    /// <returns>The corresponding data column, if available.</returns>
     public Altaxo.Data.IReadableColumn? GetDataColumn(int i)
     {
       return _matrixProxy.GetDataColumnProxy(i).Document();
     }
 
+    /// <summary>
+    /// Gets the row-header column that supplies x-values.
+    /// </summary>
     public Altaxo.Data.IReadableColumn? XColumn
     {
       get
@@ -509,6 +579,9 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
+    /// <summary>
+    /// Gets the column-header column that supplies y-values.
+    /// </summary>
     public Altaxo.Data.IReadableColumn? YColumn
     {
       get
@@ -517,6 +590,7 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       var colCount = _matrixProxy.ColumnCount;
@@ -527,6 +601,12 @@ namespace Altaxo.Graph.Plot.Data
         return "Empty (no data)";
     }
 
+    /// <summary>
+    /// Updates the boundary templates and recalculates cached boundary data.
+    /// </summary>
+    /// <param name="xBounds">The x-boundary template.</param>
+    /// <param name="yBounds">The y-boundary template.</param>
+    /// <param name="zBounds">The optional value-boundary template.</param>
     public void CalculateCachedData(IPhysicalBoundaries xBounds, IPhysicalBoundaries yBounds, IPhysicalBoundaries? zBounds = null)
     {
       if (IsDisposeInProgress)
@@ -544,6 +624,9 @@ namespace Altaxo.Graph.Plot.Data
       CalculateCachedData();
     }
 
+    /// <summary>
+    /// Recalculates the cached x-, y-, and value-boundaries from the current matrix data.
+    /// </summary>
     public void CalculateCachedData()
     {
       if (IsDisposeInProgress)
@@ -580,6 +663,7 @@ namespace Altaxo.Graph.Plot.Data
 
     #region Changed event handling
 
+    /// <inheritdoc/>
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       // If it is BoundaryChangedEventArgs, we have to set a flag for which boundary is affected

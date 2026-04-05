@@ -50,6 +50,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Sorts codons according to their insertion dependencies.
+    /// </summary>
     public static List<Codon> Sort(IEnumerable<IEnumerable<Codon>> codonInput)
     {
       // Step 1: create nodes for graph

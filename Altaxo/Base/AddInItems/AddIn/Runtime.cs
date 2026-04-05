@@ -28,6 +28,9 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.AddInItems
 {
+  /// <summary>
+  /// Describes a runtime import declared by an add-in.
+  /// </summary>
   public class Runtime
   {
     private string? _hintPath;
@@ -47,6 +50,9 @@ namespace Altaxo.AddInItems
     private bool _isAssemblyLoaded;
     private readonly object _lockObj = new object(); // used to protect mutable parts of runtime
 
+    /// <summary>
+    /// Gets a value indicating whether this runtime is active.
+    /// </summary>
     public bool IsActive
     {
       get
@@ -63,6 +69,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Runtime"/> class.
+    /// </summary>
     public Runtime(IAddInTree addInTree, string assembly, string? hintPath, bool preloaded)
     {
       if (addInTree is null)
@@ -75,6 +84,9 @@ namespace Altaxo.AddInItems
       IsPreloaded = preloaded;
     }
 
+    /// <summary>
+    /// Gets the assembly reference string.
+    /// </summary>
     public string Assembly
     {
       get { return _assembly; }
@@ -149,6 +161,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Gets the loaded assembly, loading it on demand if necessary.
+    /// </summary>
     public Assembly? LoadedAssembly
     {
       get
@@ -165,6 +180,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Gets the doozers defined by this runtime.
+    /// </summary>
     public IEnumerable<KeyValuePair<string, IDoozer>> DefinedDoozers
     {
       get
@@ -173,6 +191,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Gets the condition evaluators defined by this runtime.
+    /// </summary>
     public IEnumerable<KeyValuePair<string, IConditionEvaluator>> DefinedConditionEvaluators
     {
       get
@@ -181,6 +202,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Finds a type by name in the loaded assembly.
+    /// </summary>
     public Type? FindType(string className)
     {
       return LoadedAssembly is { } asm ? asm.GetType(className) : null;
@@ -303,6 +327,11 @@ namespace Altaxo.AddInItems
       return runtime;
     }
 
+    /// <summary>
+    /// Loads an assembly from its display name.
+    /// </summary>
+    /// <param name="assemblyString">The assembly display name.</param>
+    /// <returns>The loaded assembly.</returns>
     protected virtual Assembly LoadAssembly(string assemblyString)
     {
       var assembly = AssemblyLoaderService.Instance.LoadAssemblyFromPartialName(assemblyString, this._hintPath ?? string.Empty);
@@ -317,6 +346,11 @@ namespace Altaxo.AddInItems
       return assembly;
     }
 
+    /// <summary>
+    /// Loads an assembly from the specified file.
+    /// </summary>
+    /// <param name="assemblyFile">The assembly file path.</param>
+    /// <returns>The loaded assembly.</returns>
     protected virtual Assembly LoadAssemblyFrom(string assemblyFile)
     {
       var assembly = AssemblyLoaderService.Instance.LoadAssemblyFromFullySpecifiedName(assemblyFile);
@@ -328,6 +362,10 @@ namespace Altaxo.AddInItems
 
     }
 
+    /// <summary>
+    /// Shows an error message.
+    /// </summary>
+    /// <param name="message">The message to show.</param>
     protected virtual void ShowError(string message)
     {
       Altaxo.Current.GetRequiredService<IMessageService>().ShowError(message);

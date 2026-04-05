@@ -34,6 +34,9 @@ using Altaxo.Graph.Graph3D;
 
 namespace Altaxo.Gui.Graph.Graph3D.Viewing
 {
+  /// <summary>
+  /// Provides a controller interface for 3D graph views.
+  /// </summary>
   public interface IGraphController : IMVCANController
   {
     /// <summary>
@@ -47,12 +50,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     HostLayer ActiveLayer { get; }
 
     /// <summary>
-    /// Get / sets the currently active plot by number.
+    /// Gets or sets the currently active plot number.
     /// </summary>
     int CurrentPlotNumber { get; set; }
 
     /// <summary>
-    /// check the validity of the CurrentLayerNumber and correct it
+    /// Checks the validity of the current layer number and corrects it if necessary.
     /// </summary>
     /// <returns>The currently active layer.</returns>
     HostLayer EnsureValidityOfCurrentLayerNumber();

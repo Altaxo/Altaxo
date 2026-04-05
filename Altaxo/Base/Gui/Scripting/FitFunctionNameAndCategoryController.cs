@@ -33,6 +33,9 @@ using Altaxo.Scripting;
 
 namespace Altaxo.Gui.Scripting
 {
+  /// <summary>
+  /// Controller for editing the name, category, and description of a <see cref="FitFunctionScript"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IMultiChildView))]
   public class FitFunctionNameAndCategoryController : MVCANControllerEditOriginalDocBase<FitFunctionScript, IMultiChildView>
   {
@@ -48,6 +51,7 @@ namespace Altaxo.Gui.Scripting
     private ISingleValueController _controllerDescription;
     private IBooleanValueController _controllerShouldSaveInUserData;
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_controllerName, () => _controllerName = null);
@@ -58,6 +62,7 @@ namespace Altaxo.Gui.Scripting
       yield return new ControllerAndSetNullMethod(_innerController, () => _innerController = null);
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -87,6 +92,7 @@ namespace Altaxo.Gui.Scripting
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       bool applyResult = false;
@@ -130,6 +136,7 @@ namespace Altaxo.Gui.Scripting
       return ApplyEnd(applyResult, disposeController);
     }
 
+    /// <inheritdoc />
     protected override void AttachView()
     {
       base.AttachView();
@@ -139,6 +146,7 @@ namespace Altaxo.Gui.Scripting
       }
     }
 
+    /// <inheritdoc />
     protected override void DetachView()
     {
       if (_innerController is not null)

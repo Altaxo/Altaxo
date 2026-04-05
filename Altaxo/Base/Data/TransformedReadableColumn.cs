@@ -27,6 +27,9 @@ using System;
 
 namespace Altaxo.Data
 {
+  /// <summary>
+  /// Readable column wrapper that applies a transformation to the values of another readable column.
+  /// </summary>
   public class TransformedReadableColumn : ITransformedReadableColumn, Main.IImmutable
   {
     private IReadableColumn _originalColumn;
@@ -39,6 +42,11 @@ namespace Altaxo.Data
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TransformedReadableColumn"/> class.
+    /// </summary>
+    /// <param name="column">The source column.</param>
+    /// <param name="transformation">The transformation applied to the source values.</param>
     public TransformedReadableColumn(IReadableColumn column, IVariantToVariantTransformation transformation)
     {
       if (column is null)
@@ -59,6 +67,7 @@ namespace Altaxo.Data
     /// </value>
     public Type ItemType { get { return _transformation.OutputValueType; } }
 
+    /// <inheritdoc/>
     public AltaxoVariant this[int i]
     {
       get
@@ -67,6 +76,7 @@ namespace Altaxo.Data
       }
     }
 
+    /// <inheritdoc/>
     public int? Count
     {
       get
@@ -75,6 +85,7 @@ namespace Altaxo.Data
       }
     }
 
+    /// <inheritdoc/>
     public string FullName
     {
       get
@@ -83,6 +94,7 @@ namespace Altaxo.Data
       }
     }
 
+    /// <inheritdoc/>
     public IReadableColumn UnderlyingReadableColumn
     {
       get
@@ -91,6 +103,7 @@ namespace Altaxo.Data
       }
     }
 
+    /// <inheritdoc/>
     public IVariantToVariantTransformation Transformation
     {
       get
@@ -99,11 +112,13 @@ namespace Altaxo.Data
       }
     }
 
+    /// <inheritdoc/>
     public object Clone()
     {
       return this; // this class is immutable
     }
 
+    /// <inheritdoc/>
     public bool IsElementEmpty(int i)
     {
       if (_originalColumn.IsElementEmpty(i))
@@ -117,6 +132,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc/>
     public ITransformedReadableColumn WithUnderlyingReadableColumn(IReadableColumn originalReadableColumn)
     {
       if (object.Equals(_originalColumn, originalReadableColumn))
@@ -133,6 +149,7 @@ namespace Altaxo.Data
       }
     }
 
+    /// <inheritdoc/>
     public ITransformedReadableColumn WithTransformation(IVariantToVariantTransformation transformation)
     {
       if (object.Equals(_transformation, transformation))

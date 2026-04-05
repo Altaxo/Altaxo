@@ -37,10 +37,16 @@ using Altaxo.Serialization.Clipboard;
 
 namespace Altaxo.Gui.Science.Thermorheology
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="MasterCurveDataController"/>.
+  /// </summary>
   public interface IMasterCurveDataView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="MasterCurveData"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IMasterCurveDataView))]
   [UserControllerForObject(typeof(MasterCurveData))]
   public partial class MasterCurveDataController : MVCANControllerEditCopyOfDocBase<MasterCurveData, IMasterCurveDataView>
@@ -49,11 +55,15 @@ namespace Altaxo.Gui.Science.Thermorheology
     string _property2Name;
 
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MasterCurveDataController"/> class.
+    /// </summary>
     public MasterCurveDataController()
     {
       CommandChangeTableForSelectedItems = new RelayCommand(EhChangeTableForSelectedItems, EhCanChangeTableForSelectedItems);
@@ -92,20 +102,34 @@ namespace Altaxo.Gui.Science.Thermorheology
       }
     }
 
+    /// <summary>
+    /// Determines whether the selected data items can be copied.
+    /// </summary>
+    /// <returns><see langword="true"/> if at least one item is selected; otherwise, <see langword="false"/>.</returns>
     public bool PlotItems_CanCopy()
     {
       return DataItems.Items.Any(node => node.IsSelected);
     }
+    /// <summary>
+    /// Copies the selected data items to the clipboard.
+    /// </summary>
     public void PlotItems_Copy()
     {
       var selNodes = DataItems.Items.Where(node => node.IsSelected).Select(node => node.Tag).ToList();
       ClipboardSerialization.PutObjectToClipboard("Altaxo.Data.ListOfXAndYColumn.AsXml", selNodes);
     }
 
+    /// <summary>
+    /// Determines whether the selected data items can be cut.
+    /// </summary>
+    /// <returns><see langword="true"/> if at least one item is selected; otherwise, <see langword="false"/>.</returns>
     public bool PlotItems_CanCut()
     {
       return DataItems.Items.Any(node => node.IsSelected);
     }
+    /// <summary>
+    /// Cuts the selected data items to the clipboard.
+    /// </summary>
     public void PlotItems_Cut()
     {
       var selNodes = DataItems.Items.Where(node => node.IsSelected).ToArray();
@@ -117,6 +141,10 @@ namespace Altaxo.Gui.Science.Thermorheology
       }
     }
 
+    /// <summary>
+    /// Determines whether compatible data items are available on the clipboard.
+    /// </summary>
+    /// <returns><see langword="true"/> if paste data is available; otherwise, <see langword="false"/>.</returns>
     public bool PlotItems_CanPaste()
     {
       object o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml");
@@ -131,6 +159,9 @@ namespace Altaxo.Gui.Science.Thermorheology
       return false;
     }
 
+    /// <summary>
+    /// Pastes compatible data items from the clipboard into the current group.
+    /// </summary>
     public void PlotItems_Paste()
     {
       var itemsToPast = new List<XAndYColumn>();
@@ -187,23 +218,72 @@ namespace Altaxo.Gui.Science.Thermorheology
     }
 
     #region Bindings
+    /// <summary>
+    /// Gets the command that changes the table for the selected items.
+    /// </summary>
     public ICommand CommandChangeTableForSelectedItems { get; }
+
+    /// <summary>
+    /// Gets the command that changes the columns for the selected items.
+    /// </summary>
     public ICommand CommandChangeColumnsForSelectedItems { get; }
 
+    /// <summary>
+    /// Gets the command that inserts selected available items above the current selection.
+    /// </summary>
     public ICommand CmdPutDataToPlotItemsUp { get; }
+
+    /// <summary>
+    /// Gets the command that inserts selected available items below the current selection.
+    /// </summary>
     public ICommand CmdPutDataToPlotItemsDown { get; }
+
+    /// <summary>
+    /// Gets the command that moves the selected items up.
+    /// </summary>
     public ICommand CmdPLotItemsMoveUpSelected { get; }
+
+    /// <summary>
+    /// Gets the command that moves the selected items down.
+    /// </summary>
     public ICommand CmdPLotItemsMoveDownSelected { get; }
+
+    /// <summary>
+    /// Gets the command that copies the selected items.
+    /// </summary>
     public ICommand CmdPlotItemsCopy { get; }
+
+    /// <summary>
+    /// Gets the command that cuts the selected items.
+    /// </summary>
     public ICommand CmdPlotItemsCut { get; }
+
+    /// <summary>
+    /// Gets the command that pastes items from the clipboard.
+    /// </summary>
     public ICommand CmdPlotItemsPaste { get; }
+
+    /// <summary>
+    /// Gets the command that deletes the selected items.
+    /// </summary>
     public ICommand CmdPlotItemsDelete { get; }
+
+    /// <summary>
+    /// Gets the command that opens the selected item.
+    /// </summary>
     public ICommand CmdPlotItemOpen { get; }
+
+    /// <summary>
+    /// Gets the command that handles a double-click on master-curve data.
+    /// </summary>
     public ICommand CmdMasterDataDoubleClick { get; }
 
 
     private ItemsController<int> _dataGroup;
 
+    /// <summary>
+    /// Gets or sets the controller for selecting the active data group.
+    /// </summary>
     public ItemsController<int> DataGroup
     {
       get => _dataGroup;
@@ -220,6 +300,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private ItemsController<XAndYColumn?> _dataItems;
 
+    /// <summary>
+    /// Gets or sets the controller for the items of the active data group.
+    /// </summary>
     public ItemsController<XAndYColumn?> DataItems
     {
       get => _dataItems;
@@ -264,6 +347,7 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -447,6 +531,12 @@ namespace Altaxo.Gui.Science.Thermorheology
       }
     }
 
+    /// <summary>
+    /// Updates the controller with externally suggested option values.
+    /// </summary>
+    /// <param name="numberOfGroups">The number of data groups to display.</param>
+    /// <param name="Property1">The name of the first property to show.</param>
+    /// <param name="Property2">The name of the second property to show.</param>
     public void HintOptionValues(int numberOfGroups, string Property1, string Property2)
     {
       if (_dataNodes.Count != numberOfGroups)
@@ -468,11 +558,15 @@ namespace Altaxo.Gui.Science.Thermorheology
       }
     }
 
+    /// <summary>
+    /// Starts a background task that refreshes the displayed property values of all GUI nodes.
+    /// </summary>
     public void StartTaskUpdateAllGuiNodesWithProperties()
     {
       Task.Run(() => { UpdateAllGuiNodesWithProperties(); });
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       int numberOfItems = 1 + _dataNodes.Max(x => x.IndexOfLast((n, i) => n.Tag is not null));

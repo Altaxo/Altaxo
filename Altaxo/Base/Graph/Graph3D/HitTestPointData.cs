@@ -32,7 +32,7 @@ using Altaxo.Geometry;
 namespace Altaxo.Graph.Graph3D
 {
   /// <summary>
-  /// Holds information about a hitted point on the screen.
+  /// Holds information about a hit point on the screen.
   /// </summary>
   public class HitTestPointData
   {
@@ -71,13 +71,18 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Copy constructor.
     /// </summary>
-    /// <param name="from">Another HitTestData object to copy from.</param>
+    /// <param name="from">Another <see cref="HitTestPointData"/> object to copy from.</param>
     public HitTestPointData(HitTestPointData from)
     {
       _hitTransformation = from._hitTransformation;
       _worldTransformation = from._worldTransformation;
     }
 
+    /// <summary>
+    /// Creates a new instance with an additional transformation.
+    /// </summary>
+    /// <param name="additionalTransformation">The additional transformation.</param>
+    /// <returns>A new hit-test data instance with the additional transformation applied.</returns>
     public HitTestPointData NewFromAdditionalTransformation(Matrix4x3 additionalTransformation)
     {
       return new HitTestPointData(_hitTransformation.WithPrependedTransformation(additionalTransformation), _worldTransformation.WithPrependedTransformation(additionalTransformation));
@@ -107,10 +112,10 @@ namespace Altaxo.Graph.Graph3D
     }
 
     /// <summary>
-    /// Gets the transformation of this item plus an additional transformation. Both together transform world coordinates to page coordinates.
+    /// Gets the hit transformation with an additional transformation prepended.
     /// </summary>
     /// <param name="additionalTransformation">The additional transformation matrix.</param>
-    /// <returns></returns>
+    /// <returns>The combined hit transformation.</returns>
     public Matrix4x4 GetHitTransformationWithAdditionalTransformation(Matrix4x3 additionalTransformation)
     {
       return _hitTransformation.WithPrependedTransformation(additionalTransformation);
@@ -278,6 +283,13 @@ namespace Altaxo.Graph.Graph3D
       return false;
     }
 
+    /// <summary>
+    /// Determines whether the specified line is hit by the ray represented by this instance.
+    /// </summary>
+    /// <param name="line">The line.</param>
+    /// <param name="thickness1">The thickness of the pen in east direction.</param>
+    /// <param name="thickness2">The thickness of the pen in north direction.</param>
+    /// <returns><see langword="true"/> if the line is hit; otherwise, <see langword="false"/>.</returns>
     public bool IsHit(LineD3D line, double thickness1, double thickness2)
     {
       if (!(line.Length > 0))

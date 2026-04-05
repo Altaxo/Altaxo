@@ -33,6 +33,10 @@ namespace Altaxo.Worksheet.Commands
   /// </summary>
   public static class WorksheetCommands
   {
+    /// <summary>
+    /// Duplicates the worksheet and opens it.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
     public static void Duplicate(IWorksheetController ctrl)
     {
       var clonedTable = (Altaxo.Data.DataTable)ctrl.DataTable.Clone();
@@ -73,6 +77,10 @@ namespace Altaxo.Worksheet.Commands
       }
     }
 
+    /// <summary>
+    /// Transposes the worksheet into a new table.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
     public static void Transpose(IWorksheetController ctrl)
     {
       var srcTable = ctrl.DataTable;
@@ -88,16 +96,28 @@ namespace Altaxo.Worksheet.Commands
       destTable.DataSource = new Altaxo.Data.DataTableTransposeDataSource(new Data.DataTableProxy(srcTable), options, new Data.DataSourceImportOptions());
     }
 
+    /// <summary>
+    /// Opens the dialog to add data columns.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
     public static void AddDataColumns(IWorksheetController ctrl)
     {
       ShowAddColumnsDialog(ctrl.DataTable, false);
     }
 
+    /// <summary>
+    /// Opens the dialog to add property columns.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
     public static void AddPropertyColumns(IWorksheetController ctrl)
     {
       ShowAddColumnsDialog(ctrl.DataTable, true);
     }
 
+    /// <summary>
+    /// Clears worksheet data and property column values.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
     public static void WorksheetClearData(IWorksheetController ctrl)
     {
       ctrl.DataTable.DataColumns.ClearData();
@@ -107,8 +127,8 @@ namespace Altaxo.Worksheet.Commands
     /// <summary>
     /// Shows a dialog to add columns to a table.
     /// </summary>
-    /// <param name="table">The table where to add the columns.</param>
-    /// <param name="bAddToPropertyColumns">If true, the columns are added to the property columns instead of the data columns collection.</param>
+    /// <param name="table">The table where the columns are added.</param>
+    /// <param name="bAddToPropertyColumns">If <see langword="true"/>, the columns are added to the property columns instead of the data columns collection.</param>
     public static void ShowAddColumnsDialog(Altaxo.Data.DataTable table, bool bAddToPropertyColumns)
     {
       var lbitems = new Altaxo.Collections.SelectableListNodeList
@@ -119,7 +139,7 @@ namespace Altaxo.Worksheet.Commands
       };
 
       var ct = new IntegerAndComboBoxController(
-        "Number of colums to add:", 1, int.MaxValue, 1,
+        "Number of columns to add:", 1, int.MaxValue, 1,
         "Type of columns to add:", lbitems, 0);
       Current.Gui.FindAndAttachControlTo(ct);
 

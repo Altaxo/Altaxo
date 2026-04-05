@@ -41,9 +41,13 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     #region Serialization
 
+    /// <summary>
+    /// Serializes <see cref="ShapeGroup"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ShapeGroup), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ShapeGroup)obj;
@@ -55,6 +59,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
         info.CommitArray();
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (ShapeGroup?)o ?? new ShapeGroup(info);
@@ -76,12 +81,19 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ShapeGroup"/> class during deserialization.
+    /// </summary>
+    /// <param name="info">The deserialization info.</param>
     private ShapeGroup(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
       : base(info)
     {
       _groupedObjects = new List<GraphicBase>();
     }
 
+    /// <summary>
+    /// Initializes a new empty instance of the <see cref="ShapeGroup"/> class.
+    /// </summary>
     private ShapeGroup()
       : base(new ItemLocationDirectAutoSize())
     {
@@ -113,6 +125,11 @@ namespace Altaxo.Graph.Graph3D.Shapes
       CopyFrom(from, false);
     }
 
+    /// <summary>
+    /// Copies values from another <see cref="ShapeGroup"/> instance.
+    /// </summary>
+    /// <param name="from">The group to copy from.</param>
+    /// <param name="withBaseMembers">If set to <c>true</c>, base members are copied as well.</param>
     [MemberNotNull(nameof(_groupedObjects))]
     protected void CopyFrom(ShapeGroup from, bool withBaseMembers)
     {
@@ -125,6 +142,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
         _groupedObjects.Add((GraphicBase)go.Clone());
     }
 
+    /// <inheritdoc/>
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -155,6 +173,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       return new ShapeGroup(this);
     }
 
+    /// <inheritdoc/>
     public override bool AutoSize
     {
       get
@@ -251,6 +270,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
     }
     */
 
+    /// <inheritdoc/>
     public override IHitTestObject? HitTest(HitTestPointData htd)
     {
       var result = base.HitTest(htd);
@@ -259,6 +279,11 @@ namespace Altaxo.Graph.Graph3D.Shapes
       return result;
     }
 
+    /// <summary>
+    /// Handles a double-click on a hit-tested shape group.
+    /// </summary>
+    /// <param name="o">The hit test object.</param>
+    /// <returns><see langword="true"/> if the double-click was handled; otherwise, <see langword="false"/>.</returns>
     protected static bool EhHitDoubleClick(IHitTestObject o)
     {
       object hitted = o.HittedObject;
@@ -305,6 +330,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     /// <summary>Gets access to the grouped objects. This function has to be used with care. No size/position update of the ShapeGroup is done if the position/size/rotation/share values of one of the grouped objects is changed.
     /// One the other hand, you can change other properties, like colors and brushes, of the individual grouped objects.</summary>
+    /// <summary>
+    /// Gets the grouped objects.
+    /// </summary>
     public IEnumerable<GraphicBase> GroupedObjects
     {
       get
@@ -395,23 +423,31 @@ namespace Altaxo.Graph.Graph3D.Shapes
     #region ObjectOutline
 
     /// <summary>
-    /// Represents the outline of an ellipsoid.
+    /// Represents the combined outline of all grouped shapes.
     /// </summary>
     /// <seealso cref="Altaxo.Graph.Graph3D.IObjectOutlineForArrangements" />
     private class ObjectOutline : IObjectOutlineForArrangements
     {
       private RectangleD3D _bounds;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ObjectOutline"/> class.
+      /// </summary>
       internal ObjectOutline()
       {
         _bounds = RectangleD3D.Empty;
       }
 
+      /// <summary>
+      /// Adds a bounds rectangle to the outline.
+      /// </summary>
+      /// <param name="bounds">The bounds to include.</param>
       public void Add(RectangleD3D bounds)
       {
         _bounds = _bounds.WithRectangleIncluded(bounds);
       }
 
+      /// <inheritdoc/>
       public RectangleD3D GetBounds()
       {
         
@@ -419,6 +455,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
         return _bounds;
       }
 
+      /// <inheritdoc/>
       public RectangleD3D GetBounds(Matrix3x3 additionalTransformation)
       {
         return _bounds;

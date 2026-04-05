@@ -32,13 +32,16 @@ using Altaxo.Geometry;
 namespace Altaxo.Graph.Gdi
 {
   /// <summary>
-  /// Responsible for retrieving native Gdi brushes from <see cref="BrushX"/> objects.
+  /// Responsible for retrieving native GDI pens from <see cref="PenX"/> objects.
   /// </summary>
   public partial class PenCacheGdi
   {
 
     private System.Collections.Concurrent.ConcurrentDictionary<PenXEnv, GdiPen> _dictionary = new System.Collections.Concurrent.ConcurrentDictionary<PenXEnv, GdiPen>();
 
+    /// <summary>
+    /// Gets the shared pen cache instance.
+    /// </summary>
     public static PenCacheGdi Instance { get; } = new PenCacheGdi();
 
     /// <summary>
@@ -83,6 +86,11 @@ namespace Altaxo.Graph.Gdi
       return BorrowPen(new PenXEnv(pen, boundingRectangle, GetEffectiveMaximumResolution(g, objectScale)));
     }
 
+    /// <summary>
+    /// Borrows a pen for temporary use with default environment settings.
+    /// </summary>
+    /// <param name="pen">The pen.</param>
+    /// <returns>A <see cref="GdiPen"/> object for temporary use.</returns>
     public GdiPen BorrowPen(PenX pen)
     {
       return BorrowPen(new PenXEnv(pen, RectangleD2D.Empty, 96));
@@ -102,7 +110,7 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Gets all pens currently in this dictionary.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The keys currently cached.</returns>
     public PenXEnv[] GetKeys()
     {
       return _dictionary.Keys.ToArray();

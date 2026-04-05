@@ -34,7 +34,7 @@ namespace Altaxo.Data
   public interface IReadableColumnProxy : IDocumentLeafNode, IProxy, ICloneable
   {
     /// <summary>
-    /// Returns the holded object. Null can be returned if the object is no longer available (e.g. disposed).
+    /// Returns the held object. Null can be returned if the object is no longer available, for example because it was disposed.
     /// </summary>
     IReadableColumn? Document();
 
@@ -79,7 +79,7 @@ namespace Altaxo.Data
   #region ReadableColumnProxy
 
   /// <summary>
-  /// Summary description for DataColumnPlaceHolder.
+  /// Proxy for a readable column that belongs to the document hierarchy.
   /// </summary>
   [Serializable]
   public class ReadableColumnProxy : DocNodeProxy2ndLevel, IReadableColumnProxy
@@ -149,6 +149,11 @@ namespace Altaxo.Data
 
     #endregion Serialization
 
+    /// <summary>
+    /// Creates a proxy for a readable column that belongs to the document hierarchy.
+    /// </summary>
+    /// <param name="column">The readable column.</param>
+    /// <returns>A proxy for the specified readable column.</returns>
     public static ReadableColumnProxy FromColumn(IReadableColumn column)
     {
       if (column is null)
@@ -160,6 +165,10 @@ namespace Altaxo.Data
       return new ReadableColumnProxy(colAsDocumentNode);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ReadableColumnProxy"/> class for the specified document column.
+    /// </summary>
+    /// <param name="column">The document column to proxy.</param>
     protected ReadableColumnProxy(IDocumentLeafNode column)
       : base(column)
     {
@@ -182,26 +191,37 @@ namespace Altaxo.Data
     {
     }
 
+    /// <inheritdoc />
     protected override bool IsValidDocument(object obj)
     {
       return (obj is IReadableColumn) || obj is null;
     }
 
+    /// <inheritdoc />
     public IReadableColumn? Document()
     {
       return (IReadableColumn?)base.DocumentObject();
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new ReadableColumnProxy(this);
     }
 
+    /// <inheritdoc />
     public string GetName(int level)
     {
       return GetName(level, Document(), InternalDocumentPath);
     }
 
+    /// <summary>
+    /// Gets a display name for the specified readable column and path at the requested detail level.
+    /// </summary>
+    /// <param name="level">The requested detail level.</param>
+    /// <param name="col">The readable column.</param>
+    /// <param name="InternalDocumentPath">The internal document path of the proxied object.</param>
+    /// <returns>A display name for the specified column.</returns>
     public static string GetName(int level, IReadableColumn? col, AbsoluteDocumentPath InternalDocumentPath)
     {
       if (col is Data.DataColumn datacol)

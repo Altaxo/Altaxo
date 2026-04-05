@@ -34,6 +34,9 @@ using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
+  /// <summary>
+  /// Provides serialization support and legacy conversion helpers for <see cref="ScatterPlotStyle"/>.
+  /// </summary>
   public partial class ScatterPlotStyle
   :
   Main.SuspendableDocumentNodeWithEventArgs,
@@ -112,6 +115,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotScatterStyle", 1)] // by accident this was never different from 0
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotSupportedException("Serialization of old versions is not supported, probably a programming error");
@@ -126,6 +130,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
                 */
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         const double Sqrt2 = 1.4142135623730950488016887242097;
@@ -156,6 +161,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotScatterStyle", 2)]
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotSupportedException("Serialization of old versions is not supported, probably a programming error");
@@ -168,6 +174,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
                 */
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         const double Sqrt2 = 1.4142135623730950488016887242097;
@@ -203,6 +210,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Plot.Styles.ScatterPlotStyle", 3)]
     private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotSupportedException("Serialization of old versions is not supported, probably a programming error");
@@ -221,6 +229,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
                 */
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         const double Sqrt2 = 1.4142135623730950488016887242097;
@@ -259,6 +268,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScatterPlotStyle), 4)]
     private class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ScatterPlotStyle)obj;
@@ -288,6 +298,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         info.AddValueOrNull("OverriddenInsetColor", s._overrideInsetColor);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (ScatterPlotStyle?)o ?? new ScatterPlotStyle(info);
@@ -340,16 +351,21 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       BarVert
     }
 
+    /// <summary>
+    /// Serialization surrogate for deprecated scatter plot shapes.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotScatterStyles.Shape", 0)]
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Shape", 1)]
     public class ShapeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old versions not allowed");
         // info.SetNodeContent(obj.ToString());
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         string val = info.GetNodeContent();
@@ -374,16 +390,21 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       BarVert
     }
 
+    /// <summary>
+    /// Serialization surrogate for deprecated scatter plot styles.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotScatterStyles.Style", 0)]
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Style", 1)]
     public class StyleXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old versions not allowed");
         //info.SetNodeContent(obj.ToString());
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         string val = info.GetNodeContent();
@@ -407,16 +428,21 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       All = Top | Bottom | Left | Right
     }
 
+    /// <summary>
+    /// Serialization surrogate for deprecated scatter plot drop-line styles.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotScatterStyles.DropLine", 0)]
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.DropLine", 1)]
     public class DropLineXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old versions not allowed");
         // info.SetNodeContent(obj.ToString());
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         string val = info.GetNodeContent();

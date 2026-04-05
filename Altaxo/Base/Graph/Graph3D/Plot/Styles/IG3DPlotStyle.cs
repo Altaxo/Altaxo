@@ -37,6 +37,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
   using Altaxo.Data;
   using Groups;
 
+  /// <summary>
+  /// Defines the behavior of a three-dimensional plot style.
+  /// </summary>
   public interface IG3DPlotStyle : Altaxo.Graph.Plot.Styles.IGPlotStyle
   {
     /// <summary>

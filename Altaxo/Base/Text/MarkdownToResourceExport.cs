@@ -31,14 +31,14 @@ using System.Resources;
 namespace Altaxo.Text
 {
   /// <summary>
-  /// Helper function to prepare the export of a markdown document, including the images, to a .resx resource file.
+  /// Helper functions to prepare the export of a markdown document, including its images, to a `.resx` resource file.
   /// The images are exported as byte arrays, and the Url of the images in the markdown document is changed, assuming that later on these
   /// images are available as resources.
   /// </summary>
   public static class MarkdownToResourceExport
   {
     /// <summary>
-    /// Exports the specified <see cref="TextDocument"/> to an external markdown file.
+    /// Exports the specified <see cref="TextDocument"/> to markdown text and resource images.
     /// </summary>
     /// <param name="document">The document to export.</param>
     /// <param name="resourceKeyOfDocument">The resource key of document.</param>

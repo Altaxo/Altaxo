@@ -45,7 +45,7 @@ namespace Altaxo.Data
     /// Exceptions are caught and will be written to the Notes of the destination data table.
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
-    /// <param name="reporter">The progress reporter (can be <see langword="null"/>).</param>
+    /// <param name="reporter">The progress reporter.</param>
     /// <returns>Null if no exception was caught during processing; otherwise an error message.</returns>
     string? FillData(Altaxo.Data.DataTable destinationTable, IProgressReporter reporter);
 
@@ -57,7 +57,7 @@ namespace Altaxo.Data
     /// The data source is represented by this instance; the destination table is provided in the argument <paramref name="destinationTable"/>.
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
-    /// <param name="reporter">The progress reporter (can be <see langword="null"/>).</param>
+    /// <param name="reporter">The progress reporter.</param>
     void FillData_Unchecked(Altaxo.Data.DataTable destinationTable, IProgressReporter reporter);
 
     /// <summary>
@@ -66,12 +66,12 @@ namespace Altaxo.Data
     IDataSourceImportOptions ImportOptions { get; set; }
 
     /// <summary>
-    /// Gets or sets the process options (strongly typed by the concrete data source) as an object.
+    /// Gets or sets the process options, strongly typed by the concrete data source, as an object.
     /// </summary>
     object ProcessOptionsObject { get; set; }
 
     /// <summary>
-    /// Gets or sets the process input data (strongly typed by the concrete data source) as an object.
+    /// Gets or sets the process input data, strongly typed by the concrete data source, as an object.
     /// </summary>
     object ProcessDataObject { get; set; }
 

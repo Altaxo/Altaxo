@@ -34,16 +34,25 @@ using Altaxo.Main;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
+  /// <summary>
+  /// View contract for editing color sets.
+  /// </summary>
   public interface IColorListView : IStyleListView
   {
   }
 
+  /// <summary>
+  /// Controller for editing <see cref="IColorSet"/> instances.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IColorListView))]
   [UserControllerForObject(typeof(IColorSet))]
   public class ColorSetController : StyleListController<ColorSetManager, IColorSet, NamedColor>
   {
     private NamedColorController _customColorController;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColorSetController"/> class.
+    /// </summary>
     public ColorSetController()
       : base(ColorSetManager.Instance)
     {
@@ -58,6 +67,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       CmdForAllSelectedItemsSetColorName = new RelayCommand(EhUserRequest_ForAllSelectedItemSetColorName);
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       IEnumerable<ControllerAndSetNullMethod> GetMySubControllers()
@@ -70,18 +80,42 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the command that adds the custom color to the current list.
+    /// </summary>
     public ICommand CmdAddCustomColorToList { get; }
 
+    /// <summary>
+    /// Gets the command that sets the opacity for all selected items.
+    /// </summary>
     public ICommand CmdForAllSelectedItemsSetOpacity { get; }
+    /// <summary>
+    /// Gets the command that shifts the hue for all selected items.
+    /// </summary>
     public ICommand CmdForAllSelectedItemsShiftHue { get; }
+    /// <summary>
+    /// Gets the command that sets the saturation for all selected items.
+    /// </summary>
     public ICommand CmdForAllSelectedItemsSetSaturation { get; }
+    /// <summary>
+    /// Gets the command that sets the brightness for all selected items.
+    /// </summary>
     public ICommand CmdForAllSelectedItemsSetBrightness { get; }
+    /// <summary>
+    /// Gets the command that sets the color name for all selected items.
+    /// </summary>
     public ICommand CmdForAllSelectedItemsSetColorName { get; }
 
+    /// <summary>
+    /// Gets the controller used for editing the custom color.
+    /// </summary>
     public NamedColorController CustomColorController => _customColorController;
 
     private double _opacity = 100;
 
+    /// <summary>
+    /// Gets or sets the opacity percentage to apply.
+    /// </summary>
     public double Opacity
     {
       get => _opacity;
@@ -97,6 +131,9 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
     private double _shiftHue = 100;
 
+    /// <summary>
+    /// Gets or sets the hue shift to apply.
+    /// </summary>
     public double ShiftHue
     {
       get => _shiftHue;
@@ -112,6 +149,9 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
     private double _saturation = 100;
 
+    /// <summary>
+    /// Gets or sets the saturation value to apply.
+    /// </summary>
     public double Saturation
     {
       get => _saturation;
@@ -127,6 +167,9 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
     private double _brighness = 100;
 
+    /// <summary>
+    /// Gets or sets the brightness value to apply.
+    /// </summary>
     public double Brighness
     {
       get => _brighness;
@@ -142,6 +185,9 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
     private string _colorName;
 
+    /// <summary>
+    /// Gets or sets the base name used when renaming selected colors.
+    /// </summary>
     public string ColorName
     {
       get => _colorName;
@@ -161,6 +207,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -330,11 +377,13 @@ namespace Altaxo.Gui.Drawing.ColorManagement
         SetListDirty();
     }
 
+    /// <inheritdoc/>
     protected override string ToDisplayName(NamedColor item)
     {
       return item.ToString();
     }
 
+    /// <inheritdoc/>
     protected override void Controller_AvailableItems_Initialize()
     {
       if (_availableItemsRootNode is null)
@@ -368,6 +417,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       }
     }
 
+    /// <inheritdoc/>
     protected override void Controller_CurrentItems_Initialize()
     {
       if (CurrentItems is null)
@@ -381,6 +431,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       }
     }
 
+    /// <inheritdoc/>
     protected override void EhAvailableItem_AddToCurrent()
     {
       var avNodes = _availableItemsRootNode.TakeFromHereToFirstLeaves(false).Where(node => node.IsSelected && node.Tag is NamedColor).Select(node => (NamedColor)node.Tag).ToArray();
@@ -392,6 +443,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       SetListDirty();
     }
 
+    /// <inheritdoc/>
     protected override bool IsItemEditable(Altaxo.Main.IImmutable item)
     {
       if (item is null)

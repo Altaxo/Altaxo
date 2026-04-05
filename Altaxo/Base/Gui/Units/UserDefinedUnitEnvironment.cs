@@ -32,6 +32,9 @@ using Altaxo.Gui;
 
 namespace Altaxo.Gui.Units
 {
+  /// <summary>
+  /// Associates a user-defined unit environment with a display name and quantity name.
+  /// </summary>
   public class UserDefinedUnitEnvironment
   {
     private string _name;
@@ -48,6 +51,7 @@ namespace Altaxo.Gui.Units
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(UserDefinedUnitEnvironment), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (UserDefinedUnitEnvironment)obj;
@@ -56,6 +60,7 @@ namespace Altaxo.Gui.Units
         info.AddValue("Environment", s.Environment);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var name = info.GetString("Name");
@@ -68,12 +73,27 @@ namespace Altaxo.Gui.Units
 
     #endregion Serialization
 
+    /// <summary>
+    /// Gets the environment name.
+    /// </summary>
     public string Name { get { return _name; } }
 
+    /// <summary>
+    /// Gets the quantity name.
+    /// </summary>
     public string Quantity { get { return _quantity; } }
 
+    /// <summary>
+    /// Gets the associated unit environment.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment Environment { get { return _environment; } }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="UserDefinedUnitEnvironment"/> class.
+    /// </summary>
+    /// <param name="environmentName">The environment name.</param>
+    /// <param name="quantityName">The quantity name.</param>
+    /// <param name="environment">The associated unit environment.</param>
     public UserDefinedUnitEnvironment(string environmentName, string quantityName, QuantityWithUnitGuiEnvironment environment)
     {
       _name = environmentName;
@@ -81,6 +101,9 @@ namespace Altaxo.Gui.Units
       _environment = environment;
     }
 
+    /// <summary>
+    /// Gets an empty user-defined unit environment.
+    /// </summary>
     public static UserDefinedUnitEnvironment Empty
     {
       get

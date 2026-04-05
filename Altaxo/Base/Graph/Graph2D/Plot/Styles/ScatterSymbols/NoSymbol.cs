@@ -28,6 +28,9 @@ using Clipper2Lib;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
+  /// <summary>
+  /// Represents the absence of a scatter symbol.
+  /// </summary>
   public class NoSymbol : SymbolBase, IScatterSymbol
   {
     #region Serialization
@@ -35,14 +38,19 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
     /// <summary>
     /// 2016-10-27 initial version.
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="NoSymbol"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NoSymbol), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         SerializeSetV0((IScatterSymbol)obj, info);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (NoSymbol?)o ?? new NoSymbol();
@@ -52,15 +60,19 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 
     #endregion Serialization
 
+    /// <inheritdoc/>
     public double DesignSize { get { return ClipperSymbolSize; } }
 
+    /// <inheritdoc/>
     public double RelativeStructureWidth { get { return 0.09375; } }
 
+    /// <inheritdoc/>
     IScatterSymbol IScatterSymbol.WithRelativeStructureWidth(double relativeStructureWidth)
     {
       return this;
     }
 
+    /// <inheritdoc/>
     public NamedColor FillColor
     {
       get
@@ -69,11 +81,13 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       }
     }
 
+    /// <inheritdoc/>
     IScatterSymbol IScatterSymbol.WithFillColor(NamedColor fillColor)
     {
       return this;
     }
 
+    /// <inheritdoc/>
     public IScatterSymbolFrame? Frame
     {
       get
@@ -82,11 +96,13 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       }
     }
 
+    /// <inheritdoc/>
     IScatterSymbol IScatterSymbol.WithFrame(IScatterSymbolFrame? frame)
     {
       return this;
     }
 
+    /// <inheritdoc/>
     public IScatterSymbolInset? Inset
     {
       get
@@ -95,11 +111,13 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       }
     }
 
+    /// <inheritdoc/>
     IScatterSymbol IScatterSymbol.WithInset(IScatterSymbolInset? inset)
     {
       return this;
     }
 
+    /// <inheritdoc/>
     public PlotColorInfluence PlotColorInfluence
     {
       get
@@ -108,11 +126,13 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       }
     }
 
+    /// <inheritdoc/>
     IScatterSymbol IScatterSymbol.WithPlotColorInfluence(PlotColorInfluence plotColorInfluence)
     {
       return this;
     }
 
+    /// <inheritdoc/>
     public void CalculatePolygons(double? relativeStructureWidth, out Paths64? framePolygon, out Paths64? insetPolygon, out Paths64? fillPolygon)
     {
       framePolygon = null;
@@ -120,6 +140,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       fillPolygon = null;
     }
 
+    /// <inheritdoc/>
     public object Clone()
     {
       return MemberwiseClone();

@@ -39,6 +39,11 @@ namespace Altaxo.DataConnection
     private string _selectionStatement;
     private static OleDbDataQuery _emptyInstance = new OleDbDataQuery(string.Empty, null);
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OleDbDataQuery"/> class.
+    /// </summary>
+    /// <param name="selectionStatement">The SQL selection statement.</param>
+    /// <param name="connectionString">The OLE DB connection string.</param>
     public OleDbDataQuery(string selectionStatement, AltaxoOleDbConnectionString? connectionString)
     {
       _selectionStatement = selectionStatement;
@@ -81,6 +86,9 @@ namespace Altaxo.DataConnection
 
     #endregion Version 0
 
+    /// <summary>
+    /// Gets the SQL selection statement.
+    /// </summary>
     public string SelectionStatement
     {
       get
@@ -89,11 +97,19 @@ namespace Altaxo.DataConnection
       }
     }
 
+    /// <summary>
+    /// Returns a copy of this query with a different selection statement.
+    /// </summary>
+    /// <param name="value">The new selection statement.</param>
+    /// <returns>A new query instance.</returns>
     public OleDbDataQuery WithSelectionStatement(string value)
     {
       return new OleDbDataQuery(value, _connectionString);
     }
 
+    /// <summary>
+    /// Gets the OLE DB connection string.
+    /// </summary>
     public AltaxoOleDbConnectionString ConnectionString
     {
       get
@@ -102,11 +118,19 @@ namespace Altaxo.DataConnection
       }
     }
 
+    /// <summary>
+    /// Returns a copy of this query with a different connection string.
+    /// </summary>
+    /// <param name="value">The new connection string.</param>
+    /// <returns>A new query instance.</returns>
     public OleDbDataQuery WithConnectionString(AltaxoOleDbConnectionString value)
     {
       return new OleDbDataQuery(_selectionStatement, value);
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this query is empty.
+    /// </summary>
     public bool IsEmpty
     {
       get
@@ -115,6 +139,9 @@ namespace Altaxo.DataConnection
       }
     }
 
+    /// <summary>
+    /// Gets an empty query instance.
+    /// </summary>
     public static OleDbDataQuery Empty
     {
       get
@@ -123,6 +150,10 @@ namespace Altaxo.DataConnection
       }
     }
 
+    /// <summary>
+    /// Reads data from the configured OLE DB connection.
+    /// </summary>
+    /// <param name="readAction">The action that consumes the data reader.</param>
     public void ReadDataFromOleDbConnection(Action<System.Data.Common.DbDataReader> readAction)
     {
       using (var connection = new System.Data.OleDb.OleDbConnection(_connectionString.ConnectionStringWithTemporaryCredentials))

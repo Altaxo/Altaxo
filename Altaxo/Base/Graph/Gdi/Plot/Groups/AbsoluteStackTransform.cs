@@ -35,7 +35,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
   using Plot.Data;
 
   /// <summary>
-  ///
+  /// Transforms grouped plot items by stacking their y-values absolutely.
   /// </summary>
   public class AbsoluteStackTransform
     :
@@ -47,11 +47,13 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AbsoluteStackTransform), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (AbsoluteStackTransform)obj;
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (AbsoluteStackTransform?)o ?? new AbsoluteStackTransform();
@@ -61,21 +63,30 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AbsoluteStackTransform"/> class.
+    /// </summary>
     public AbsoluteStackTransform()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AbsoluteStackTransform"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public AbsoluteStackTransform(AbsoluteStackTransform from)
     {
     }
 
     #region ICoordinateTransformingGroupStyle Members
 
+    /// <inheritdoc />
     public void MergeXBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll)
     {
       CoordinateTransformingStyleBase.MergeXBoundsInto(pb, coll);
     }
 
+    /// <inheritdoc />
     public void MergeYBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll)
     {
       var pbclone = (IPhysicalBoundaries)pb.Clone(); // before we can use CanUseStyle, we have to give physical y boundaries template
@@ -134,13 +145,12 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
     }
 
     /// <summary>
-    /// Determines whether the plot items in <paramref name="coll"/> can be plotted as stack. Presumption is that all plot items
-    /// have the same number of plot points, and that all items have the same order of x values associated with the plot points.
+    /// Determines whether the specified plot items can be stacked.
     /// </summary>
-    /// <param name="layer">Plot layer.</param>
-    /// <param name="coll">Collection of plot items.</param>
-    /// <param name="plotDataList">Output: dictionary with associates each plot item with a list of processed plot data.</param>
-    /// <returns>Returns <c>true</c> if the plot items in <paramref name="coll"/> can be plotted as stack; otherwise, <c>false</c>.</returns>
+    /// <param name="layer">The plot layer.</param>
+    /// <param name="coll">The plot item collection.</param>
+    /// <param name="plotDataList">Receives the processed plot data for each plot item.</param>
+    /// <returns><c>true</c> if the style can be used; otherwise, <c>false</c>.</returns>
     public static bool CanUseStyle(IPlotArea layer, PlotItemCollection coll, out Dictionary<G2DPlotItem, Processed2DPlotData> plotDataList)
     {
       plotDataList = new Dictionary<G2DPlotItem, Processed2DPlotData>();
@@ -222,6 +232,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       return yArray;
     }
 
+    /// <inheritdoc />
     public void PaintPreprocessing(System.Drawing.Graphics g, IPaintContext paintContext, IPlotArea layer, PlotItemCollection coll)
     {
       if (!CanUseStyle(layer, coll, out var plotDataDict))
@@ -273,10 +284,14 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       }
     }
 
+    /// <inheritdoc/>
+    /// <inheritdoc/>
     public void PaintPostprocessing()
     {
     }
 
+    /// <inheritdoc/>
+    /// <inheritdoc/>
     public void PaintChild(System.Drawing.Graphics g, IPaintContext paintContext, IPlotArea layer, PlotItemCollection coll, int indexOfChild)
     {
       var plotDataDict = paintContext.GetValueOrDefault<Dictionary<G2DPlotItem, Processed2DPlotData>>(this);
@@ -425,6 +440,14 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
     #region ICloneable Members
 
+    /// <summary>
+    /// Creates a copy of this transform.
+    /// </summary>
+    /// <returns>A copy of this transform.</returns>
+    /// <summary>
+    /// Creates a copy of this transform.
+    /// </summary>
+    /// <returns>A copy of this transform.</returns>
     public object Clone()
     {
       return new AbsoluteStackTransform(this);

@@ -37,13 +37,39 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 {
+  /// <summary>
+  /// View interface for selecting a scalar function.
+  /// </summary>
   public interface IScalarFunctionView : IDataContextAwareView { }
 
+  /// <summary>
+  /// Controller for <see cref="IScalarFunctionDD"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IScalarFunctionView))]
   public class ScalarFunctionController : MVCANControllerEditImmutableDocBase<IScalarFunctionDD, IScalarFunctionView>
   {
-    public enum TypeOfFunction { Peak, Polynomial, ExpressionString };
+    /// <summary>
+    /// Specifies the supported function categories.
+    /// </summary>
+    public enum TypeOfFunction
+    {
+      /// <summary>
+      /// A peak function.
+      /// </summary>
+      Peak,
 
+      /// <summary>
+      /// A polynomial function.
+      /// </summary>
+      Polynomial,
+
+      /// <summary>
+      /// A function defined by an expression string.
+      /// </summary>
+      ExpressionString
+    };
+
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -53,6 +79,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 
     private ItemsController<TypeOfFunction> _typeOfTheFunction;
 
+    /// <summary>
+    /// Gets or sets the selected function category.
+    /// </summary>
     public ItemsController<TypeOfFunction> TypeOfTheFunction
     {
       get => _typeOfTheFunction;
@@ -67,6 +96,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether a peak function is selected.
+    /// </summary>
     public bool IsPeakFunction
     {
       get
@@ -81,6 +113,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
         }
       }
     }
+    /// <summary>
+    /// Gets or sets a value indicating whether a polynomial is selected.
+    /// </summary>
     public bool IsPolynomial
     {
       get
@@ -96,6 +131,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether an expression string is selected.
+    /// </summary>
     public bool IsExpressionString
     {
       get
@@ -113,6 +151,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 
     private int _numberOfTerms;
 
+    /// <summary>
+    /// Gets or sets the number of terms used by the selected function.
+    /// </summary>
     public int NumberOfTerms
     {
       get => _numberOfTerms;
@@ -132,6 +173,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 
     private int _orderOfBaselinePolynomial;
 
+    /// <summary>
+    /// Gets or sets the order of the baseline polynomial.
+    /// </summary>
     public int OrderOfBaselinePolynomial
     {
       get => _orderOfBaselinePolynomial;
@@ -156,6 +200,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 
     private string _expressionString;
 
+    /// <summary>
+    /// Gets or sets the expression string.
+    /// </summary>
     public string ExpressionString
     {
       get => _expressionString;
@@ -173,6 +220,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 
     private ItemsController<Type> _availableShapes;
 
+    /// <summary>
+    /// Gets or sets the available peak-function shapes.
+    /// </summary>
     public ItemsController<Type> AvailableShapes
     {
       get => _availableShapes;
@@ -188,6 +238,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 
     private string _fitFunctionDescription = string.Empty;
 
+    /// <summary>
+    /// Gets or sets the description of the selected fit function.
+    /// </summary>
     public string FitFunctionDescription
     {
       get => _fitFunctionDescription;
@@ -201,10 +254,16 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
       }
     }
 
+    /// <summary>
+    /// Represents one editable function parameter.
+    /// </summary>
     public class ParameterItem : INotifyPropertyChanged
     {
       private string _name;
 
+        /// <summary>
+        /// Gets or sets the parameter name.
+        /// </summary>
       public string Name
       {
         get => _name;
@@ -222,8 +281,18 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 
       private double _value;
 
+      /// <summary>
+      /// Occurs when a property value changes.
+      /// </summary>
       public event PropertyChangedEventHandler? PropertyChanged;
+        /// <summary>
+        /// Raises the <see cref="PropertyChanged"/> event.
+        /// </summary>
+        /// <param name="propertyName">The name of the changed property.</param>
       protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        /// <summary>
+        /// Gets or sets the parameter value.
+        /// </summary>
       public double Value
       {
         get => _value;
@@ -239,11 +308,15 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 
     }
 
+    /// <summary>
+    /// Gets the editable parameters of the currently selected curve.
+    /// </summary>
     public ObservableCollection<ParameterItem> ParametersOfCurve { get; } = new ObservableCollection<ParameterItem>();
 
 
     #endregion Bindings
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -351,6 +424,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
       FitFunctionDescription = (attribs.Length == 0) ? string.Empty : StringParser.Parse(((System.ComponentModel.DescriptionAttribute)attribs[0]).Description);
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (IsExpressionString)

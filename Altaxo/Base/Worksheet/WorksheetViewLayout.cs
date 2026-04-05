@@ -52,12 +52,14 @@ namespace Altaxo.Worksheet
       private AbsoluteDocumentPath? _pathToLayout;
       private WorksheetViewLayout? _tableController;
 
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (WorksheetViewLayout)obj;
         info.AddValue("Layout", AbsoluteDocumentPath.GetAbsolutePath(s.WorksheetLayout));
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (WorksheetViewLayout?)o ?? new WorksheetViewLayout(info);
@@ -114,6 +116,10 @@ namespace Altaxo.Worksheet
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WorksheetViewLayout"/> class.
+    /// </summary>
+    /// <param name="worksheetLayout">The worksheet layout to present.</param>
     public WorksheetViewLayout(WorksheetLayout worksheetLayout)
     {
       _worksheetLayout = worksheetLayout;
@@ -121,6 +127,9 @@ namespace Altaxo.Worksheet
 
 
 
+    /// <summary>
+    /// Gets the worksheet layout represented by this view layout.
+    /// </summary>
     public WorksheetLayout WorksheetLayout
     {
       get

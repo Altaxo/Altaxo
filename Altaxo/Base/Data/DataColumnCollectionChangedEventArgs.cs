@@ -35,10 +35,29 @@ namespace Altaxo.Data
   /// </summary>
   public abstract class BaseColumnCollectionChangedEventArgs : Main.SelfAccumulateableEventArgs
   {
+    /// <summary>
+    /// The minimum changed column index.
+    /// </summary>
     protected int _minColChanged;
+
+    /// <summary>
+    /// The maximum changed column index.
+    /// </summary>
     protected int _maxColChanged;
+
+    /// <summary>
+    /// The minimum changed row index.
+    /// </summary>
     protected int _minRowChanged;
+
+    /// <summary>
+    /// The maximum changed row index.
+    /// </summary>
     protected int _maxRowChanged;
+
+    /// <summary>
+    /// A value indicating whether the row count decreased.
+    /// </summary>
     protected bool _hasRowCountDecreased;
 
     /// <summary>
@@ -53,7 +72,7 @@ namespace Altaxo.Data
     /// <param name="columnNumber">The number of the column that has changed.</param>
     /// <param name="minRow">The first number of row that has changed.</param>
     /// <param name="maxRow">The last number of row (plus one) that has changed.</param>
-    /// <param name="rowCountDecreased">If true, in one of the columns the row count has decreased, so a complete recalculation of the row count of the collection is neccessary.</param>
+    /// <param name="rowCountDecreased">If true, in one of the columns the row count has decreased, so a complete recalculation of the row count of the collection is necessary.</param>
     public BaseColumnCollectionChangedEventArgs(int columnNumber, int minRow, int maxRow, bool rowCountDecreased)
     {
       _minColChanged = columnNumber;
@@ -306,6 +325,9 @@ namespace Altaxo.Data
     }
   }
 
+  /// <summary>
+  /// Describes changes in the data columns of a collection.
+  /// </summary>
   public class DataColumnCollectionChangedEventArgs : BaseColumnCollectionChangedEventArgs
   {
     /// <summary>
@@ -320,12 +342,16 @@ namespace Altaxo.Data
     {
     }
 
+    /// <inheritdoc />
     public override void Add(Main.SelfAccumulateableEventArgs e)
     {
       Accumulate((DataColumnCollectionChangedEventArgs)e);
     }
   }
 
+  /// <summary>
+  /// Describes changes in the property columns of a collection.
+  /// </summary>
   public class PropertyColumnCollectionChangedEventArgs
         : BaseColumnCollectionChangedEventArgs
   {
@@ -341,6 +367,7 @@ namespace Altaxo.Data
     {
     }
 
+    /// <inheritdoc />
     public override void Add(Main.SelfAccumulateableEventArgs e)
     {
       Accumulate((PropertyColumnCollectionChangedEventArgs)e);

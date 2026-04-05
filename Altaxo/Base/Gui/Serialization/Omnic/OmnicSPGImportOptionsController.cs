@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -35,11 +35,11 @@ namespace Altaxo.Gui.Serialization.Omnic
   /// </summary>
   public interface IOmnicSPGImportOptionsView : IDataContextAwareView { }
 
-  [ExpectedTypeOfView(typeof(IOmnicSPGImportOptionsView))]
-  [UserControllerForObject(typeof(OmnicSPGImportOptions))]
   /// <summary>
   /// Controller for editing <see cref="OmnicSPGImportOptions"/>.
   /// </summary>
+  [ExpectedTypeOfView(typeof(IOmnicSPGImportOptionsView))]
+  [UserControllerForObject(typeof(OmnicSPGImportOptions))]
   public class OmnicSPGImportOptionsController : MVCANControllerEditImmutableDocBase<OmnicSPGImportOptions, IOmnicSPGImportOptionsView>
   {
     /// <inheritdoc/>

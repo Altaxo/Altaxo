@@ -36,6 +36,9 @@ namespace Altaxo.Graph.Gdi
   [Flags]
   public enum GraphCopyOptions
   {
+    /// <summary>
+    /// No options are selected.
+    /// </summary>
     None = 0x00,
 
     /// <summary>The notes will be copied.</summary>
@@ -51,20 +54,44 @@ namespace Altaxo.Graph.Gdi
     CopyChildLayers = 0x08,
 
     // now layer properties
+    /// <summary>
+    /// The size and position of the layers will be copied.
+    /// </summary>
     CopyLayerSizePosition = 0x20,
 
+    /// <summary>
+    /// The layer background will be copied.
+    /// </summary>
     CopyLayerBackground = 0x40,
 
+    /// <summary>
+    /// The layer grid will be copied.
+    /// </summary>
     CopyLayerGrid = 0x80,
 
+    /// <summary>
+    /// The layer scales will be copied.
+    /// </summary>
     CopyLayerScales = 0x100,
 
+    /// <summary>
+    /// The layer axes will be copied.
+    /// </summary>
     CopyLayerAxes = 0x200,
 
+    /// <summary>
+    /// The layer axis labels will be copied.
+    /// </summary>
     CopyLayerAxesLabels = 0x400,
 
+    /// <summary>
+    /// The layer legends will be copied.
+    /// </summary>
     CopyLayerLegends = 0x800,
 
+    /// <summary>
+    /// The graph items of the layer will be copied.
+    /// </summary>
     CopyLayerGraphItems = 0x1000,
 
     /// <summary>Plotitems inclusive all styles will be cloned.</summary>
@@ -73,11 +100,17 @@ namespace Altaxo.Graph.Gdi
     /// <summary>Only the plot styles, but not the plot items, will be copied</summary>
     CopyLayerPlotStyles = 0x4000,
 
+    /// <summary>
+    /// The links of the layer will be copied.
+    /// </summary>
     CopyLayerLinks = 0x8000,
 
     /// <summary>The layers will be copied from the other layers.</summary>
     CopyLayerAll = 0xFFE0, // all layer copy options into one variable
 
+    /// <summary>
+    /// All copy options are selected.
+    /// </summary>
     All = -1
   }
 }

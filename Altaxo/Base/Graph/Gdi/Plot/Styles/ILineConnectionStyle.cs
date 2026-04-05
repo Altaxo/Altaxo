@@ -40,7 +40,7 @@ using Altaxo.Graph.Plot.Data;
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
   /// <summary>
-  /// Represents a symbol shape for a 3D scatter plot. Instances of this class have to be immutable.
+  /// Represents an immutable line connection style for 2D plots.
   /// </summary>
   /// <seealso cref="Altaxo.Main.IImmutable" />
   public interface ILineConnectionStyle : Main.IImmutable

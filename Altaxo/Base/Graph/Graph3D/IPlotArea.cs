@@ -55,8 +55,14 @@ namespace Altaxo.Graph.Graph3D
     /// </summary>
     Scale ZAxis { get; }
 
+    /// <summary>
+    /// Gets the collection of scales used by the plot area.
+    /// </summary>
     ScaleCollection Scales { get; }
 
+    /// <summary>
+    /// Gets the coordinate system used by the plot area.
+    /// </summary>
     G3DCoordinateSystem CoordinateSystem { get; }
 
     /// <summary>
@@ -64,8 +70,21 @@ namespace Altaxo.Graph.Graph3D
     /// </summary>
     VectorD3D Size { get; }
 
+    /// <summary>
+    /// Converts a physical data accessor value into logical three-dimensional coordinates.
+    /// </summary>
+    /// <param name="acc">The physical-variant accessor.</param>
+    /// <param name="idx">The item index.</param>
+    /// <returns>The logical coordinates.</returns>
     Logical3D GetLogical3D(I3DPhysicalVariantAccessor acc, int idx);
 
+    /// <summary>
+    /// Converts physical values into logical three-dimensional coordinates.
+    /// </summary>
+    /// <param name="x">The x value.</param>
+    /// <param name="y">The y value.</param>
+    /// <param name="z">The z value.</param>
+    /// <returns>The logical coordinates.</returns>
     Logical3D GetLogical3D(AltaxoVariant x, AltaxoVariant y, AltaxoVariant z);
 
     /// <summary>

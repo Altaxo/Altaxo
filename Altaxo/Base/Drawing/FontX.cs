@@ -152,7 +152,7 @@ namespace Altaxo.Drawing
     }
 
     /// <summary>
-    /// Internal creates a <see cref="FontX"/> instance from an invariant description string. This function is intended to use only by FontManagers!
+    /// Internally creates a <see cref="FontX"/> instance from an invariant description string. This function is intended to be used only by font managers.
     /// </summary>
     /// <param name="descriptionString">The string describing the font.</param>
     /// <returns>The <see cref="FontX"/> instance created.</returns>
@@ -161,6 +161,13 @@ namespace Altaxo.Drawing
       return new FontX(descriptionString);
     }
 
+    /// <summary>
+    /// Internally creates a <see cref="FontX"/> instance from family name, size, and style information.
+    /// </summary>
+    /// <param name="fontFamilyName">The font family name.</param>
+    /// <param name="size">The font size.</param>
+    /// <param name="style">The font style.</param>
+    /// <returns>The created font instance.</returns>
     public static FontX InternalCreateFromNameSizeStyle(string fontFamilyName, double size, FontXStyle style)
     {
       return new FontX(fontFamilyName, size, style);

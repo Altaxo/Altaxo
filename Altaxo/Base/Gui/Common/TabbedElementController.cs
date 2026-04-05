@@ -32,7 +32,7 @@ namespace Altaxo.Gui.Common
   #region Interfaces
 
   /// <summary>
-  /// This interface is intended to provide a "shell" as a dialog which can host a couple of user controls in tab pages.
+  /// This interface is intended to provide a "shell" as a dialog which can host a couple of user controls on tab pages.
   /// </summary>
   public interface ITabbedElementView
   {
@@ -42,10 +42,10 @@ namespace Altaxo.Gui.Common
     void ClearTabs();
 
     /// <summary>
-    /// Adds a Tab page to the dialog
+    /// Adds a tab page to the dialog.
     /// </summary>
     /// <param name="title">The title of the tab page.</param>
-    /// <param name="view">The view (must be currently of type Control.</param>
+    /// <param name="view">The view. It must currently be of type <c>Control</c>.</param>
     void AddTab(string title, object view);
 
     /// <summary>
@@ -75,8 +75,15 @@ namespace Altaxo.Gui.Common
   {
   }
 
+  /// <summary>
+  /// Interface implemented by controllers that manage tabbed elements.
+  /// </summary>
   public interface ITabbedElementController : IMVCAController
   {
+    /// <summary>
+    /// Brings the specified tab to the front.
+    /// </summary>
+    /// <param name="i">The tab index.</param>
     void BringTabToFront(int i);
 
     /// <summary>
@@ -95,6 +102,9 @@ namespace Altaxo.Gui.Common
   [ExpectedTypeOfView(typeof(ITabbedElementView))]
   public class TabbedElementController : ITabbedElementViewEventSink, ITabbedElementController
   {
+    /// <summary>
+    /// The index of the currently active front tab.
+    /// </summary>
     protected int _frontTabIndex = 0;
     private ITabbedElementView? _view;
     private List<ControlViewElement> _tabs = new List<ControlViewElement>();
@@ -107,6 +117,9 @@ namespace Altaxo.Gui.Common
       SetElements(true);
     }
 
+    /// <summary>
+    /// Gets the number of tabs.
+    /// </summary>
     protected int TabCount
     {
       get
@@ -115,11 +128,15 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <summary>
+    /// Gets the tab at the specified index.
+    /// </summary>
     protected ControlViewElement Tab(int i)
     {
       return _tabs[i];
     }
 
+    /// <inheritdoc/>
     public void BringTabToFront(int i)
     {
       _frontTabIndex = i;
@@ -127,11 +144,15 @@ namespace Altaxo.Gui.Common
         _view.BringTabToFront(i);
     }
 
+    /// <summary>
+    /// Adds a tab to the controller.
+    /// </summary>
     public void AddTab(string title, IApplyController controller, object view)
     {
       _tabs.Add(new ControlViewElement(title, controller, view));
     }
 
+    /// <inheritdoc/>
     public void RemoveTabRange(int firstTab, int count)
     {
       _tabs.RemoveRange(firstTab, count);
@@ -152,12 +173,20 @@ namespace Altaxo.Gui.Common
       _lastActiveChildControl = null;
     }
 
+    /// <summary>
+    /// Handles a change of the active child control.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The event arguments.</param>
     protected virtual void EhView_ActiveChildControlChanged(object? sender, InstanceChangedEventArgs e)
     {
     }
 
     /// <summary>
     /// Get / sets the view of this controller.
+    /// </summary>
+    /// <summary>
+    /// Gets or sets the view of this controller.
     /// </summary>
     public ITabbedElementView? View
     {
@@ -182,6 +211,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     public object? ViewObject
     {
       get
@@ -194,6 +224,9 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <summary>
+    /// Synchronizes the tabs with the view.
+    /// </summary>
     protected void SetElements(bool bInit)
     {
       if (View is not null)
@@ -212,6 +245,7 @@ namespace Altaxo.Gui.Common
 
     #region IMVCController Members
 
+    /// <inheritdoc/>
     public virtual object ModelObject
     {
       get
@@ -220,6 +254,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
     }
@@ -228,6 +263,7 @@ namespace Altaxo.Gui.Common
 
     #region IApplyController Members
 
+    /// <inheritdoc/>
     public virtual bool Apply(bool disposeController)
     {
       for (int i = 0; i < _tabs.Count; i++)
@@ -246,8 +282,9 @@ namespace Altaxo.Gui.Common
     /// </summary>
     /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
     /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    ///   <c>True</c> if the revert operation was successful; <c>false</c> if the revert operation was not possible, that is, because the controller has not stored the original state of the model.
     /// </returns>
+    /// <inheritdoc/>
     public bool Revert(bool disposeController)
     {
       return false;

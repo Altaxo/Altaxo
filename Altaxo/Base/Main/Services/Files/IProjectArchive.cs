@@ -38,7 +38,7 @@ namespace Altaxo.Main.Services
   public interface IProjectArchive : IDisposable
   {
     /// <summary>
-    /// Gets the name of the file or folder. Can be null if no name is given yet.
+    /// Gets the name of the file or folder. Can be <c>null</c> if no name is assigned yet.
     /// </summary>
     /// <value>
     /// The name of the file / describing name of the location.
@@ -66,10 +66,10 @@ namespace Altaxo.Main.Services
 
 
     /// <summary>
-    /// Gets an already existing entry. If an entry with that name does not exist, the value Null is returned.
+    /// Gets an existing entry.
     /// </summary>
     /// <param name="entryName">Name of the entry.</param>
-    /// <returns>The entry (if existent); otherwise, null.</returns>
+    /// <returns>The entry, if it exists; otherwise, <c>null</c>.</returns>
     IProjectArchiveEntry? GetEntry(string entryName);
 
 
@@ -91,10 +91,10 @@ namespace Altaxo.Main.Services
     bool SupportsDeferredLoading { get; }
 
     /// <summary>
-    /// Gets a value indicating whether this type of archive supports the copying of entries from another archive. 
+    /// Gets a value indicating whether this type of archive supports copying entries from another archive.
     /// </summary>
     /// <param name="archive">The archive to potentially copy from.</param>
-    /// <returns>True if this archive supports the copying of entries from the archive given in the argument; otherwise, false. </returns>
+    /// <returns><c>true</c> if this archive supports copying entries from the specified archive; otherwise, <c>false</c>.</returns>
     bool SupportsCopyEntryFrom(IProjectArchive archive);
 
 
@@ -109,15 +109,15 @@ namespace Altaxo.Main.Services
 
 
     /// <summary>
-    /// Gets a memento that can later on used to read an entry of the archive.
+    /// Gets a memento that can later be used to read an archive entry.
     /// </summary>
     /// <param name="entryName">Name of the entry.</param>
-    /// <returns></returns>
+    /// <returns>A memento for the requested entry, or <c>null</c> if the entry does not exist.</returns>
     IProjectArchiveEntryMemento? GetEntryMemento(string entryName);
   }
 
   /// <summary>
-  /// Abstracts an entry in the <see cref="IProjectArchive"/>
+  /// Abstracts an entry in an <see cref="IProjectArchive"/>.
   /// </summary>
   public interface IProjectArchiveEntry
   {

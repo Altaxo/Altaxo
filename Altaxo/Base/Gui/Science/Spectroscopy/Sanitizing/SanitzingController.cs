@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -31,13 +31,20 @@ using Altaxo.Science.Spectroscopy.Sanitizing;
 
 namespace Altaxo.Gui.Science.Spectroscopy.Sanitizing
 {
+  /// <summary>
+  /// View interface for selecting and editing an <see cref="ISanitizer"/> implementation.
+  /// </summary>
   public interface ISanitizingView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller that allows selecting a sanitizing method and editing its parameters.
+  /// </summary>
   [ExpectedTypeOfView(typeof(ISanitizingView))]
   public class SanitizingController : MVCANControllerEditImmutableDocBase<ISanitizer, ISanitizingView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_subController, () => SubController = null);
@@ -47,6 +54,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Sanitizing
 
     private ItemsController<Type> _availableMethods;
 
+    /// <summary>
+    /// Gets or sets the available sanitizer method types.
+    /// </summary>
     public ItemsController<Type> AvailableMethods
     {
       get => _availableMethods;
@@ -63,6 +73,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Sanitizing
 
     private IMVCANController? _subController;
 
+    /// <summary>
+    /// Gets or sets the controller that edits the currently selected sanitizer.
+    /// </summary>
     public IMVCANController? SubController
     {
       get => _subController;
@@ -81,6 +94,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Sanitizing
     #endregion
 
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -121,6 +135,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Sanitizing
       CreateSubController();
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (SubController is not null)

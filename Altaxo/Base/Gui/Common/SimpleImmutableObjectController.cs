@@ -30,6 +30,9 @@ using System.Reflection;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// View interface for editing simple immutable objects.
+  /// </summary>
   public interface ISimpleImmutableObjectView
   {
     /// <summary>
@@ -42,7 +45,7 @@ namespace Altaxo.Gui.Common
     /// Gets the value at index idx.
     /// </summary>
     /// <param name="idx">The index.</param>
-    /// <returns></returns>
+    /// <returns>The value at the specified index.</returns>
     object Value_Get(int idx);
   }
 
@@ -75,6 +78,7 @@ namespace Altaxo.Gui.Common
 
 
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       if (_doc is null)
@@ -121,6 +125,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (_view is null)
@@ -136,6 +141,7 @@ namespace Altaxo.Gui.Common
       return ApplyEnd(true, disposeController);
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;

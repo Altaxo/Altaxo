@@ -40,17 +40,21 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Gdi.Axis
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="AxisLabelStyleController"/>.
+  /// </summary>
   public interface IAxisLabelStyleView : IDataContextAwareView
   {
   }
 
   /// <summary>
-  /// Summary description.
+  /// Controller for <see cref="AxisLabelStyle"/>.
   /// </summary>
   [UserControllerForObject(typeof(AxisLabelStyle))]
   [ExpectedTypeOfView(typeof(IAxisLabelStyleView))]
   public class AxisLabelStyleController : MVCANControllerEditOriginalDocBase<AxisLabelStyle, IAxisLabelStyleView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_labelFormattingSpecificController, () => _labelFormattingSpecificController = null);
@@ -62,6 +66,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     private FontXController _labelFontController;
 
+    /// <summary>
+    /// Gets or sets the controller for the label font.
+    /// </summary>
     public FontXController LabelFontController
     {
       get => _labelFontController;
@@ -78,6 +85,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     private BackgroundStyleController _backgroundController;
 
+    /// <summary>
+    /// Gets or sets the controller for the label background style.
+    /// </summary>
     public BackgroundStyleController BackgroundController
     {
       get => _backgroundController;
@@ -149,6 +159,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets the unit environment used for rotation values.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment RotationEnvironment { get; set; } = AngleEnvironment.Instance;
 
     private DimensionfulQuantity _rotation;
@@ -169,6 +182,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets the unit environment used for label offsets.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment OffsetEnvironment { get; set; } = RelationEnvironment.Instance;
 
     private DimensionfulQuantity _xOffset;
@@ -244,6 +260,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     private string _suppressedLabelsByNumber;
 
+    /// <summary>
+    /// Gets or sets the list of label numbers to suppress.
+    /// </summary>
     public string SuppressedLabelsByNumber
     {
       get => _suppressedLabelsByNumber;
@@ -258,6 +277,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     }
     private string _suppressedLabelsByValue;
 
+    /// <summary>
+    /// Gets or sets the list of label values to suppress.
+    /// </summary>
     public string SuppressedLabelsByValue
     {
       get => _suppressedLabelsByValue;
@@ -291,6 +313,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     private ItemsController<StringAlignment> _verticalAlignment;
 
+    /// <summary>
+    /// Gets or sets the available vertical alignment choices.
+    /// </summary>
     public ItemsController<StringAlignment> VerticalAlignment
     {
       get => _verticalAlignment;
@@ -306,6 +331,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     private ItemsController<Type> _labelStyle;
 
+    /// <summary>
+    /// Gets or sets the available label formatting styles.
+    /// </summary>
     public ItemsController<Type> LabelStyle
     {
       get => _labelStyle;
@@ -347,6 +375,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     private IMVCANController _labelFormattingSpecificController;
 
+    /// <summary>
+    /// Gets or sets the controller for label-format-specific options.
+    /// </summary>
     public IMVCANController LabelFormattingSpecificController
     {
       get => _labelFormattingSpecificController;
@@ -368,6 +399,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     #endregion
 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       _labelSides = null;
@@ -378,6 +410,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -432,6 +465,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (!_labelFontController.Apply(disposeController))

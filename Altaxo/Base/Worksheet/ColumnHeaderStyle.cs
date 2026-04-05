@@ -31,6 +31,9 @@ using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Worksheet
 {
+  /// <summary>
+  /// Represents the worksheet style used for column headers.
+  /// </summary>
   public class ColumnHeaderStyle : ColumnStyle
   {
     [NonSerialized]
@@ -44,12 +47,14 @@ namespace Altaxo.Worksheet
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColumnHeaderStyle), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ColumnHeaderStyle)obj;
         info.AddBaseValueEmbedded(s, typeof(ColumnHeaderStyle).BaseType!);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         ColumnHeaderStyle s = (ColumnHeaderStyle?)o ?? new ColumnHeaderStyle();
@@ -60,6 +65,9 @@ namespace Altaxo.Worksheet
 
     #endregion Serialization
 
+    /// <summary>
+    /// Gets or sets the height of the header row.
+    /// </summary>
     public int Height
     {
       get
@@ -72,6 +80,9 @@ namespace Altaxo.Worksheet
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColumnHeaderStyle"/> class.
+    /// </summary>
     public ColumnHeaderStyle()
       : base(ColumnStyleType.ColumnHeader)
     {
@@ -88,6 +99,10 @@ namespace Altaxo.Worksheet
       _rightUpperTextFormat.LineAlignment = StringAlignment.Far;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColumnHeaderStyle"/> class by copying another instance.
+    /// </summary>
+    /// <param name="chs">The instance to copy.</param>
     public ColumnHeaderStyle(ColumnHeaderStyle chs)
       : base(chs)
     {
@@ -95,6 +110,7 @@ namespace Altaxo.Worksheet
       _rightUpperTextFormat = (StringFormat)chs._rightUpperTextFormat.Clone();
     }
 
+    /// <inheritdoc />
     public override void Paint(Graphics dc, Rectangle cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
     {
       PaintBackground(dc, cellRectangle, bSelected);
@@ -122,8 +138,12 @@ namespace Altaxo.Worksheet
       }
     }
 
+    /// <summary>
+    /// Gets the registered paint methods for specific drawing contexts.
+    /// </summary>
     public static Dictionary<System.Type, Action<ColumnHeaderStyle, object, RectangleD2D, int, Altaxo.Data.DataColumn, bool>> RegisteredPaintMethods = new Dictionary<Type, Action<ColumnHeaderStyle, object, RectangleD2D, int, Data.DataColumn, bool>>();
 
+    /// <inheritdoc />
     public override void Paint(System.Type dctype, object dc, RectangleD2D cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
     {
       if (RegisteredPaintMethods.TryGetValue(dctype, out var action))
@@ -132,15 +152,18 @@ namespace Altaxo.Worksheet
         throw new NotImplementedException("Paint method is not implemented for context type " + dctype.ToString());
     }
 
+    /// <inheritdoc />
     public override string GetColumnValueAtRow(int nRow, Altaxo.Data.DataColumn datac)
     {
       return datac.Name;
     }
 
+    /// <inheritdoc />
     public override void SetColumnValueAtRow(string s, int nRow, Altaxo.Data.DataColumn data)
     {
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new ColumnHeaderStyle(this);

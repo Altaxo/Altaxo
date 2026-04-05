@@ -30,6 +30,9 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
+  /// <summary>
+  /// Represents a curly brace shape.
+  /// </summary>
   [Serializable]
   public class CurlyBraceShape : OpenPathShapeBase
   {
@@ -108,16 +111,28 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CurlyBraceShape"/> class from XML deserialization data.
+    /// </summary>
+    /// <param name="info">The XML deserialization information.</param>
     protected CurlyBraceShape(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
       : base(new ItemLocationDirect(), info)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CurlyBraceShape"/> class.
+    /// </summary>
+    /// <param name="context">The property context.</param>
     public CurlyBraceShape(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
       : base(new ItemLocationDirect(), context)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CurlyBraceShape"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public CurlyBraceShape(CurlyBraceShape from)
       :
       base(from)
@@ -125,6 +140,15 @@ namespace Altaxo.Graph.Gdi.Shapes
       // No extra members to copy here
     }
 
+    /// <summary>
+    /// Creates a curly brace shape from left/top/right/bottom coordinates.
+    /// </summary>
+    /// <param name="left">The left coordinate.</param>
+    /// <param name="top">The top coordinate.</param>
+    /// <param name="right">The right coordinate.</param>
+    /// <param name="bottom">The bottom coordinate.</param>
+    /// <param name="context">The property context.</param>
+    /// <returns>The created shape.</returns>
     public static CurlyBraceShape FromLTRB(double left, double top, double right, double bottom, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       if (left > right)
@@ -142,6 +166,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #endregion Constructors
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new CurlyBraceShape(this);
@@ -156,6 +181,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       return GetRectangularObjectOutline();
     }
 
+    /// <inheritdoc />
     public override void Paint(Graphics g, IPaintContext context)
     {
       GraphicsState gs = g.Save();
@@ -178,6 +204,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       g.Restore(gs);
     }
 
+    /// <inheritdoc />
     public override IHitTestObject? HitTest(HitTestPointData htd)
     {
       HitTestObjectBase? result = null;

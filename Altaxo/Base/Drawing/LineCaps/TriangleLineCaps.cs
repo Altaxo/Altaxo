@@ -32,44 +32,66 @@ using System.Text;
 namespace Altaxo.Drawing.LineCaps
 {
   /// <summary>
-  /// Draws a cap that is a open circle. The midpoint of the circle is the designated end of the line.
+  /// Draws an open triangular line cap whose center lies at the line end.
   /// </summary>
   public class TriangleOLineCap : LineCapBase
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TriangleOLineCap"/> class.
+    /// </summary>
     public TriangleOLineCap()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TriangleOLineCap"/> class.
+    /// </summary>
+    /// <param name="minimumAbsoluteSizePt">The minimum absolute size in points.</param>
+    /// <param name="minimumRelativeSize">The minimum relative size.</param>
     public TriangleOLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
       : base(minimumAbsoluteSizePt, minimumRelativeSize)
     {
     }
 
+    /// <inheritdoc/>
     public override string Name { get { return "TriangleO"; } }
 
+    /// <inheritdoc/>
     public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
 
+    /// <inheritdoc/>
     public override double DefaultMinimumRelativeSize { get { return 4; } }
   }
 
   /// <summary>
-  /// Draws a cap that is a open circle. The midpoint of the circle is the designated end of the line.
+  /// Draws a filled triangular line cap whose center lies at the line end.
   /// </summary>
   public class TriangleFLineCap : LineCapBase
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TriangleFLineCap"/> class.
+    /// </summary>
     public TriangleFLineCap()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TriangleFLineCap"/> class.
+    /// </summary>
+    /// <param name="minimumAbsoluteSizePt">The minimum absolute size in points.</param>
+    /// <param name="minimumRelativeSize">The minimum relative size.</param>
     public TriangleFLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
       : base(minimumAbsoluteSizePt, minimumRelativeSize)
     {
     }
 
+    /// <inheritdoc/>
     public override string Name { get { return "TriangleF"; } }
 
+    /// <inheritdoc/>
     public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
 
+    /// <inheritdoc/>
     public override double DefaultMinimumRelativeSize { get { return 4; } }
   }
 }

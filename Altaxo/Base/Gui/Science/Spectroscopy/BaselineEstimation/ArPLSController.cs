@@ -28,14 +28,21 @@ using Altaxo.Science.Spectroscopy.BaselineEstimation;
 
 namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
 {
+  /// <summary>
+  /// View interface for arPLS baseline estimation settings.
+  /// </summary>
   public interface IArPLSView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="ArPLSBase"/>.
+  /// </summary>
   [UserControllerForObject(typeof(ArPLSBase))]
   [ExpectedTypeOfView(typeof(IArPLSView))]
   public class ArPLSController : MVCANControllerEditImmutableDocBase<ArPLSBase, IArPLSView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -45,6 +52,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
 
     private double _lambda;
 
+    /// <summary>
+    /// Gets or sets the lambda parameter.
+    /// </summary>
     public double Lambda
     {
       get => _lambda;
@@ -60,6 +70,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
 
     private bool _scaleLambdaWithXUnits;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether lambda is scaled with X units.
+    /// </summary>
     public bool ScaleLambdaWithXUnits
     {
       get => _scaleLambdaWithXUnits;
@@ -75,6 +88,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
 
     private double _terminationRatio;
 
+    /// <summary>
+    /// Gets or sets the termination ratio.
+    /// </summary>
     public double TerminationRatio
     {
       get => _terminationRatio;
@@ -91,6 +107,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
 
     private int _maximalNumberOfIterations;
 
+    /// <summary>
+    /// Gets or sets the maximal number of iterations.
+    /// </summary>
     public int MaximalNumberOfIterations
     {
       get => _maximalNumberOfIterations;
@@ -106,6 +125,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
 
     private int _order;
 
+    /// <summary>
+    /// Gets or sets the polynomial order.
+    /// </summary>
     public int Order
     {
       get => _order;
@@ -121,6 +143,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -135,6 +158,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       try

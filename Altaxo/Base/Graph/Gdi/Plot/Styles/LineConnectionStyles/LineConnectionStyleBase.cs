@@ -37,8 +37,8 @@ using Altaxo.Graph.Plot.Data;
 namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 {
   /// <summary>
-  /// Represents a symbol shape for a 3D scatter plot. Instances of this class have to be immutable.
-  /// This base class implements Equals and GetHashCode.
+  /// Provides the base implementation for immutable 2D line connection styles.
+  /// This base class implements <see cref="object.Equals(object)"/> and <see cref="object.GetHashCode()"/>.
   /// </summary>
   /// <seealso cref="Altaxo.Main.IImmutable" />
   public abstract class LineConnectionStyleBase : ILineConnectionStyle
@@ -94,11 +94,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
       double logicalShiftY
       );
 
+    /// <inheritdoc />
     public override int GetHashCode()
     {
       return GetType().GetHashCode();
     }
 
+    /// <inheritdoc />
     public override bool Equals(object? obj)
     {
       return GetType() == obj?.GetType();
@@ -106,6 +108,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 
     #region Sub range enumeration
 
+    /// <summary>
+    /// Describes a contiguous segment range to render.
+    /// </summary>
     protected struct SegmentRange
     {
       /// <summary>
@@ -134,9 +139,21 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
       /// </summary>
       public double GapAtSubRangeEnd;
 
+      /// <summary>
+      /// Gets the length of the segment range.
+      /// </summary>
+      /// <summary>
+      /// Gets the length of the segment range.
+      /// </summary>
       public int Length { get { return IndexAtSubRangeEnd - IndexAtSubRangeStart; } }
     }
 
+    /// <summary>
+    /// Enumerates the line segments that should be rendered.
+    /// </summary>
+    /// <summary>
+    /// Enumerates the segment ranges that should be rendered.
+    /// </summary>
     protected static IEnumerable<SegmentRange> GetSegmentRanges(
       IPlotRange range,
       Func<int, double> symbolGap,

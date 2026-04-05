@@ -33,7 +33,7 @@ using Altaxo.Units;
 namespace Altaxo.Gui
 {
   /// <summary>
-  /// Provides possible units that will be recognized when entering a quantity with a unit in Gui elements. This class is designed to fast making clones of it,
+  /// Provides the units that are recognized when entering a quantity with a unit in GUI elements. This class is designed to support fast cloning,
   /// where the fixed units are shared among the clones, and the additional units can be set freely in each clone.
   /// </summary>
   public class QuantityWithUnitGuiEnvironment
@@ -142,21 +142,38 @@ namespace Altaxo.Gui
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="QuantityWithUnitGuiEnvironment"/> class.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment()
         : this(null)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="QuantityWithUnitGuiEnvironment"/> class.
+    /// </summary>
+    /// <param name="fixedUnits">The fixed units that are always available in this environment.</param>
     public QuantityWithUnitGuiEnvironment(IEnumerable<IUnit>? fixedUnits)
         : this(fixedUnits, new IUnit[] { })
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="QuantityWithUnitGuiEnvironment"/> class.
+    /// </summary>
+    /// <param name="fixedUnits">The fixed units that are always available in this environment.</param>
+    /// <param name="additionalUnit">An additional unit that is available in this environment.</param>
     public QuantityWithUnitGuiEnvironment(IEnumerable<IUnit>? fixedUnits, IUnit additionalUnit)
         : this(fixedUnits, new IUnit[] { additionalUnit })
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="QuantityWithUnitGuiEnvironment"/> class.
+    /// </summary>
+    /// <param name="fixedUnits">The fixed units that are always available in this environment.</param>
+    /// <param name="additionalUnits">The additional units that are available in this environment.</param>
     public QuantityWithUnitGuiEnvironment(IEnumerable<IUnit>? fixedUnits, IEnumerable<IUnit>? additionalUnits)
     {
       if (fixedUnits is not null)
@@ -174,6 +191,11 @@ namespace Altaxo.Gui
         DefaultUnit = new PrefixedUnit(SIPrefix.None, _additionalUnits[0]);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="QuantityWithUnitGuiEnvironment"/> class by reusing the fixed-unit configuration of another environment.
+    /// </summary>
+    /// <param name="from">The environment whose shared fixed-unit configuration is reused.</param>
+    /// <param name="additionalUnits">The additional units for the new environment.</param>
     public QuantityWithUnitGuiEnvironment(QuantityWithUnitGuiEnvironment from, IEnumerable<IUnit> additionalUnits)
     {
       _fixedUnits = from._fixedUnits;
@@ -208,6 +230,9 @@ namespace Altaxo.Gui
         return sx.Length < sy.Length ? 1 : -1;
     }
 
+    /// <summary>
+    /// Gets the fixed units that are always available in this environment.
+    /// </summary>
     public IEnumerable<IUnit> FixedUnits
     {
       get
@@ -216,6 +241,9 @@ namespace Altaxo.Gui
       }
     }
 
+    /// <summary>
+    /// Gets the additional units that are available in this environment.
+    /// </summary>
     public ObservableCollection<IUnit> AdditionalUnits
     {
       get
@@ -224,6 +252,9 @@ namespace Altaxo.Gui
       }
     }
 
+    /// <summary>
+    /// Gets all available units sorted by descending shortcut length.
+    /// </summary>
     public IEnumerable<IUnit> UnitsSortedByShortcutLengthDescending
     {
       get
@@ -232,6 +263,10 @@ namespace Altaxo.Gui
       }
     }
 
+    /// <summary>
+    /// Gets or sets the default unit displayed in GUI elements.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Thrown if the environment is still being created and no default unit is available yet.</exception>
     public IPrefixedUnit DefaultUnit
     {
       get
@@ -251,11 +286,17 @@ namespace Altaxo.Gui
       }
     }
 
+    /// <summary>
+    /// Raises the <see cref="DefaultUnitChanged"/> event.
+    /// </summary>
     protected virtual void OnDefaultUnitChanged()
     {
       DefaultUnitChanged?.Invoke(this, EventArgs.Empty);
     }
 
+    /// <summary>
+    /// Gets or sets the number of digits displayed in GUI boxes.
+    /// </summary>
     public int NumberOfDisplayedDigits
     {
       get { return _numberOfDisplayedDigits; }
@@ -273,16 +314,29 @@ namespace Altaxo.Gui
       }
     }
 
+    /// <summary>
+    /// Raises the <see cref="NumberOfDisplayedDigitsChanged"/> event.
+    /// </summary>
     protected virtual void OnNumberOfDisplayedDigitsChanged()
     {
       NumberOfDisplayedDigitsChanged?.Invoke(this, EventArgs.Empty);
     }
 
+    /// <summary>
+    /// Registers a named quantity-with-unit environment.
+    /// </summary>
+    /// <param name="name">The name of the environment.</param>
+    /// <param name="env">The environment to register.</param>
     public static void RegisterEnvironment(string name, QuantityWithUnitGuiEnvironment env)
     {
       _registry[name] = env;
     }
 
+    /// <summary>
+    /// Tries to get a registered quantity-with-unit environment by name.
+    /// </summary>
+    /// <param name="name">The name of the environment.</param>
+    /// <returns>The registered environment, or <c>null</c> if no environment with that name exists.</returns>
     public static QuantityWithUnitGuiEnvironment? TryGetEnvironment(string name)
     {
       if (_registry.TryGetValue(name, out var result))
@@ -296,10 +350,10 @@ namespace Altaxo.Gui
     /// <summary>
     /// Tries to get a prefixed unit from a shortcut, considering all units in this environment.
     /// </summary>
-    /// <param name="shortCut">The shortcut. Can be a compound of prefix and unit, e.g. 'mA'. An empty string is converted to <see cref="Altaxo.Units.Dimensionless.Unity.Instance"/></param>
-    /// <param name="result">If successfully, the resulting prefixed unit.</param>
-    /// <returns>True if the conversion was successful; false otherwise.</returns>
-    /// <exception cref="ArgumentNullException">s</exception>
+    /// <param name="shortCut">The shortcut. It can be a compound of prefix and unit, for example <c>mA</c>. An empty string is converted to <see cref="Altaxo.Units.Dimensionless.Unity.Instance"/>.</param>
+    /// <param name="result">If successful, the resulting prefixed unit.</param>
+    /// <returns><c>true</c> if the conversion was successful; otherwise, <c>false</c>.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="shortCut"/> is <c>null</c>.</exception>
     public bool TryGetPrefixedUnitFromShortcut(string shortCut, [MaybeNullWhen(false)] out IPrefixedUnit result)
     {
       if (shortCut is null)

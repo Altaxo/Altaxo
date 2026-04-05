@@ -33,24 +33,40 @@ namespace Altaxo.Gui.Graph.Plot.Data
 {
   #region Interfaces
 
+  /// <summary>
+  /// View interface for nonlinear-fit function plot data.
+  /// </summary>
   public interface IXYNonlinearFitFunctionPlotDataView
   {
+    /// <summary>
+    /// Occurs when the user requests to edit the text.
+    /// </summary>
     event EventHandler EditText;
 
+    /// <summary>
+    /// Initializes the function text.
+    /// </summary>
+    /// <param name="text">The text to display.</param>
+    /// <param name="editable">If set to <see langword="true"/>, the text is editable.</param>
     void InitializeFunctionText(string text, bool editable);
   }
 
   #endregion Interfaces
 
+  /// <summary>
+  /// Controller for <see cref="XYNonlinearFitFunctionPlotData"/>.
+  /// </summary>
   [UserControllerForObject(typeof(XYNonlinearFitFunctionPlotData), 101)]
   [ExpectedTypeOfView(typeof(IXYNonlinearFitFunctionPlotDataView))]
   internal class XYNonlinearFitFunctionPlotDataController : MVCANControllerEditOriginalDocBase<XYNonlinearFitFunctionPlotData, IXYNonlinearFitFunctionPlotDataView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -64,6 +80,10 @@ namespace Altaxo.Gui.Graph.Plot.Data
       }
     }
 
+    /// <summary>
+    /// Builds the description text for the current fit function.
+    /// </summary>
+    /// <returns>The description text.</returns>
     public string GetDescriptionText()
     {
       var stb = new StringBuilder();
@@ -144,17 +164,20 @@ namespace Altaxo.Gui.Graph.Plot.Data
       return stb.ToString();
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);
     }
 
+    /// <inheritdoc/>
     protected override void AttachView()
     {
       base.AttachView();
       _view.EditText += EhView_EditText;
     }
 
+    /// <inheritdoc/>
     protected override void DetachView()
     {
       _view.EditText -= EhView_EditText;

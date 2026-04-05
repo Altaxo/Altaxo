@@ -28,9 +28,12 @@ using Altaxo.Gui.Graph.Plot.Data;
 namespace Altaxo.Gui.Data
 {
   /// <summary>
-  /// Controls the data of a single <see cref="XAndYColumn"/>
+  /// Controls the data of a single <see cref="XAndYColumn"/>.
   /// </summary>
 
+  /// <summary>
+  /// Controller for <see cref="XAndYColumn"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IColumnPlotDataView))]
   public class XAndYColumnController
     :

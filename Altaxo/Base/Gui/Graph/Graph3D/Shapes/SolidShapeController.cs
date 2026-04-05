@@ -29,14 +29,21 @@ using Altaxo.Graph.Graph3D.Shapes;
 
 namespace Altaxo.Gui.Graph.Graph3D.Shapes
 {
+  /// <summary>
+  /// Provides the view for editing solid 3D shapes.
+  /// </summary>
   public interface ISolidShapeView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controls the editing of solid 3D body shapes.
+  /// </summary>
   [UserControllerForObject(typeof(SolidBodyShapeBase))]
   [ExpectedTypeOfView(typeof(ISolidShapeView))]
   public class ClosedPathShapeController : MVCANControllerEditOriginalDocBase<SolidBodyShapeBase, ISolidShapeView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_locationController, () => LocationController = null);
@@ -46,6 +53,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
 
     private IMVCANController _locationController;
 
+    /// <summary>
+    /// Gets or sets the controller for the shape location.
+    /// </summary>
     public IMVCANController LocationController
     {
       get => _locationController;
@@ -62,6 +72,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
 
     private Altaxo.Drawing.D3D.IMaterial _material;
 
+    /// <summary>
+    /// Gets or sets the material used to render the shape.
+    /// </summary>
     public Altaxo.Drawing.D3D.IMaterial Material
     {
       get => _material;
@@ -77,6 +90,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -90,6 +104,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (!_locationController.Apply(disposeController))

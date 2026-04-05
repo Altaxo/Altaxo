@@ -52,17 +52,29 @@ namespace Altaxo.Graph.Gdi
   {
     #region Member variables
 
+    /// <summary>
+    /// Stores the coordinate system of this layer.
+    /// </summary>
     protected G2DCoordinateSystem _coordinateSystem;
 
     private ScaleCollection _scales;
 
+    /// <summary>
+    /// Stores the grid planes of this layer.
+    /// </summary>
     protected GridPlaneCollection _gridPlanes;
 
+    /// <summary>
+    /// Stores the axis styles of this layer.
+    /// </summary>
     protected AxisStyleCollection _axisStyles;
 
     /// <summary>If true, the data are clipped to the frame.</summary>
     protected LayerDataClipping _dataClipping = LayerDataClipping.StrictToCS;
 
+    /// <summary>
+    /// Stores the plot items contained in this layer.
+    /// </summary>
     protected PlotItemCollection _plotItems;
 
     /// <summary>Number of times this event is disables, or 0 if it is enabled.</summary>
@@ -88,11 +100,11 @@ namespace Altaxo.Graph.Gdi
 
     #region Copying
 
-    /// <summary>
-    /// The copy constructor.
-    /// </summary>
-    /// <param name="from"></param>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYPlotLayer"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public XYPlotLayer(XYPlotLayer from)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
       : base(from)
@@ -148,6 +160,7 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <inheritdoc />
     protected override void InternalCopyGraphItems(HostLayer from, GraphCopyOptions options)
     {
       bool bGraphItems = options.HasFlag(GraphCopyOptions.CopyLayerGraphItems);
@@ -168,6 +181,7 @@ namespace Altaxo.Graph.Gdi
       InternalCopyGraphItems(from, options, criterium);
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new XYPlotLayer(this);
@@ -193,11 +207,20 @@ namespace Altaxo.Graph.Gdi
       };
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYPlotLayer"/> class.
+    /// </summary>
+    /// <param name="parentLayer">The parent layer.</param>
     public XYPlotLayer(HostLayer parentLayer)
       : this(parentLayer, GetChildLayerDefaultLocation(), new CS.G2DCartesicCoordinateSystem())
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYPlotLayer"/> class.
+    /// </summary>
+    /// <param name="parentLayer">The parent layer.</param>
+    /// <param name="coordinateSystem">The coordinate system.</param>
     public XYPlotLayer(HostLayer parentLayer, G2DCoordinateSystem coordinateSystem)
       : this(parentLayer, GetChildLayerDefaultLocation(), coordinateSystem)
     {
@@ -288,15 +311,23 @@ namespace Altaxo.Graph.Gdi
 
     #region IPlotLayer methods
 
+    /// <inheritdoc />
     public bool Is3D { get { return false; } }
 
+    /// <inheritdoc />
     public Scale? ZAxis { get { return null; } }
 
+    /// <summary>
+    /// Gets the scale at the specified index.
+    /// </summary>
+    /// <param name="i">The scale index.</param>
+    /// <returns>The scale instance.</returns>
     public Scale GetScale(int i)
     {
       return _scales[i];
     }
 
+    /// <inheritdoc />
     public Logical3D GetLogical3D(I3DPhysicalVariantAccessor acc, int idx)
     {
       Logical3D r;
@@ -306,6 +337,7 @@ namespace Altaxo.Graph.Gdi
       return r;
     }
 
+    /// <inheritdoc />
     public Logical3D GetLogical3D(AltaxoVariant x, AltaxoVariant y)
     {
       Logical3D r;
@@ -356,6 +388,9 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Collection of the axis styles for the left, bottom, right, and top axis.
     /// </summary>
+    /// <summary>
+    /// Gets the axis styles for this layer.
+    /// </summary>
     public AxisStyleCollection AxisStyles
     {
       get
@@ -373,6 +408,9 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets the scales of the layer.
+    /// </summary>
     public ScaleCollection Scales
     {
       get
@@ -407,6 +445,9 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets or sets the legend text graphic.
+    /// </summary>
     public TextGraphic? Legend
     {
       get
@@ -438,6 +479,7 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <inheritdoc />
     public override void Remove(GraphicBase go)
     {
       if (_axisStyles.Remove(go))
@@ -446,6 +488,7 @@ namespace Altaxo.Graph.Gdi
         base.Remove(go);
     }
 
+    /// <inheritdoc />
     protected override void OnGraphObjectsCollectionInstanceInitialized()
     {
       base.OnGraphObjectsCollectionInstanceInitialized();
@@ -460,6 +503,9 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets the plot items of the layer.
+    /// </summary>
     public PlotItemCollection PlotItems
     {
       get
@@ -480,6 +526,9 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Clears all legends from this layer.
     /// </summary>
+    /// <summary>
+    /// Clears all legends from this layer.
+    /// </summary>
     public void ClearLegends()
     {
       for (int i = GraphObjects.Count - 1; i >= 0; --i)
@@ -495,6 +544,9 @@ namespace Altaxo.Graph.Gdi
     /// <remarks>The position of the old legend is <b>only</b> used for the new legend if the old legend's position is
     /// inside the layer. This prevents a "stealth" legend in case it is not visible by accident.
     /// </remarks>
+    /// <summary>
+    /// Creates a new layer legend.
+    /// </summary>
     public void CreateNewLayerLegend()
     {
       // remove the legend if there are no plot curves on the layer
@@ -561,6 +613,12 @@ namespace Altaxo.Graph.Gdi
 
     #region Scale related
 
+    /// <summary>
+    /// Gets the tick spacing of the X axis.
+    /// </summary>
+    /// <summary>
+    /// Gets the X-axis tick spacing.
+    /// </summary>
     public TickSpacing XTicks
     {
       get
@@ -569,6 +627,12 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets the tick spacing of the Y axis.
+    /// </summary>
+    /// <summary>
+    /// Gets the Y-axis tick spacing.
+    /// </summary>
     public TickSpacing YTicks
     {
       get
@@ -579,6 +643,9 @@ namespace Altaxo.Graph.Gdi
 
     /// <summary>Gets or sets the x axis of this layer.</summary>
     /// <value>The x axis of the layer.</value>
+    /// <summary>
+    /// Gets or sets the X axis.
+    /// </summary>
     public Scale XAxis
     {
       get
@@ -593,6 +660,9 @@ namespace Altaxo.Graph.Gdi
 
     /// <summary>Indicates if x axis is linked to the linked layer x axis.</summary>
     /// <value>True if x axis is linked to the linked layer x axis.</value>
+    /// <summary>
+    /// Gets a value indicating whether the X axis is linked.
+    /// </summary>
     public bool IsXAxisLinked
     {
       get
@@ -610,6 +680,9 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Called when the user pressed the rescale button.
     /// </summary>
+    /// <summary>
+    /// Updates the layer after the user rescaled the axes.
+    /// </summary>
     public void OnUserRescaledAxes()
     {
       EhXBoundaryChangedEventFromPlotItem();
@@ -620,6 +693,9 @@ namespace Altaxo.Graph.Gdi
 
     /// <summary>Gets or sets the y axis of this layer.</summary>
     /// <value>The y axis of the layer.</value>
+    /// <summary>
+    /// Gets or sets the Y axis.
+    /// </summary>
     public Scale YAxis
     {
       get
@@ -634,6 +710,9 @@ namespace Altaxo.Graph.Gdi
 
     /// <summary>Indicates if y axis is linked to the linked layer y axis.</summary>
     /// <value>True if y axis is linked to the linked layer y axis.</value>
+    /// <summary>
+    /// Gets a value indicating whether the Y axis is linked.
+    /// </summary>
     public bool IsYAxisLinked
     {
       get
@@ -652,6 +731,9 @@ namespace Altaxo.Graph.Gdi
 
     #region Style properties
 
+    /// <summary>
+    /// Gets or sets how plot data are clipped to the coordinate system frame.
+    /// </summary>
     public LayerDataClipping ClipDataToFrame
     {
       get
@@ -668,6 +750,9 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets or sets the grid planes.
+    /// </summary>
     public GridPlaneCollection GridPlanes
     {
       get
@@ -787,6 +872,9 @@ namespace Altaxo.Graph.Gdi
       axisTitle.Location.PositionY = RADouble.NewAbs(distance * normDirection.Y);
     }
 
+    /// <summary>
+    /// Gets or sets the default title of the y-axis.
+    /// </summary>
     [MaybeNull]
     public string DefaultYAxisTitleString
     {
@@ -800,6 +888,9 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets or sets the default title of the x-axis.
+    /// </summary>
     [MaybeNull]
     public string DefaultXAxisTitleString
     {
@@ -890,6 +981,7 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Adjusts the internal data structures to ensure its validity.
     /// </summary>
+    /// <inheritdoc />
     public override void FixupInternalDataStructures()
     {
       base.FixupInternalDataStructures();
@@ -906,6 +998,7 @@ namespace Altaxo.Graph.Gdi
       EnsureAppropriatePlotItemPlaceHolders();
     }
 
+    /// <inheritdoc />
     public override void PaintPreprocessing(IPaintContext context)
     {
       context.PushHierarchicalValue<IPlotArea>(nameof(IPlotArea), this);
@@ -913,6 +1006,7 @@ namespace Altaxo.Graph.Gdi
       context.PopHierarchicalValue<IPlotArea>(nameof(IPlotArea));
     }
 
+    /// <inheritdoc />
     protected override void PaintInternal(Graphics g, IPaintContext paintContext)
     {
       // paint the background very first
@@ -926,6 +1020,7 @@ namespace Altaxo.Graph.Gdi
     /// This function is called when painting is finished. Can be used to release the resources
     /// not neccessary any more.
     /// </summary>
+    /// <inheritdoc />
     public override void PaintPostprocessing()
     {
       _plotItems.PaintPostprocessing();
@@ -933,6 +1028,7 @@ namespace Altaxo.Graph.Gdi
       base.PaintPostprocessing();
     }
 
+    /// <inheritdoc />
     public override IHitTestObject? HitTest(HitTestPointData parentHitTestData, bool plotItemsOnly)
     {
       IHitTestObject? hit;
@@ -985,10 +1081,25 @@ namespace Altaxo.Graph.Gdi
 
     #region Editor methods
 
+    /// <summary>
+    /// Gets or sets the double-click handler for axis scale editing.
+    /// </summary>
     public static DoubleClickHandler? AxisScaleEditorMethod;
+    /// <summary>
+    /// Gets or sets the double-click handler for axis style editing.
+    /// </summary>
     public static DoubleClickHandler? AxisStyleEditorMethod;
+    /// <summary>
+    /// Gets or sets the double-click handler for major axis-label style editing.
+    /// </summary>
     public static DoubleClickHandler? AxisLabelMajorStyleEditorMethod;
+    /// <summary>
+    /// Gets or sets the double-click handler for minor axis-label style editing.
+    /// </summary>
     public static DoubleClickHandler? AxisLabelMinorStyleEditorMethod;
+    /// <summary>
+    /// Gets or sets the double-click handler for plot-item editing.
+    /// </summary>
     public static DoubleClickHandler? PlotItemEditorMethod;
 
     private bool EhAxisLabelMajorStyleRemove(IHitTestObject o)
@@ -1019,6 +1130,7 @@ namespace Altaxo.Graph.Gdi
 
     #region Event firing
 
+    /// <inheritdoc />
     protected override void OnCachedResultingSizeChanged()
     {
       // first update out direct childs
@@ -1026,6 +1138,9 @@ namespace Altaxo.Graph.Gdi
       base.OnCachedResultingSizeChanged();
     }
 
+    /// <summary>
+    /// Updates dependent axis state after the coordinate system has changed.
+    /// </summary>
     protected virtual void OnCoordinateSystemChanged()
     {
       // if the coordinate system has changed, try to bring all axis titles back to their default position
@@ -1042,6 +1157,7 @@ namespace Altaxo.Graph.Gdi
 
     #region Handler of child events
 
+    /// <inheritdoc />
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (object.ReferenceEquals(sender, _coordinateSystem))
@@ -1050,6 +1166,7 @@ namespace Altaxo.Graph.Gdi
       return base.HandleHighPriorityChildChangeCases(sender, ref e);
     }
 
+    /// <inheritdoc />
     protected override void OnChanged(EventArgs e)
     {
       if (e is BoundariesChangedEventArgs)
@@ -1062,6 +1179,10 @@ namespace Altaxo.Graph.Gdi
       base.OnChanged(e);
     }
 
+    /// <summary>
+    /// Handles boundary-change notifications originating from plot items.
+    /// </summary>
+    /// <param name="boundaryChangedEventArgs">The boundary-change event arguments.</param>
     protected void EhBoundaryChangedEventFromPlotItem(BoundariesChangedEventArgs boundaryChangedEventArgs)
     {
       var data = boundaryChangedEventArgs.Data;
@@ -1293,11 +1414,13 @@ namespace Altaxo.Graph.Gdi
         yield return new Main.DocumentNodeAndName(_coordinateSystem, "CoordinateSystem");
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       return GetMyDocumentNodeChildrenWithName().Concat(base.GetDocumentNodeChildrenWithName());
     }
 
+    /// <inheritdoc />
     protected override void Dispose(bool isDisposing)
     {
       if (isDisposing)
@@ -1315,8 +1438,14 @@ namespace Altaxo.Graph.Gdi
 
     #region Inner types
 
+    /// <summary>
+    /// Gets a value indicating whether both axes are linear.
+    /// </summary>
     public bool IsLinear { get { return XAxis is LinearScale && YAxis is LinearScale; } }
 
+    /// <summary>
+    /// Gets or sets the coordinate system.
+    /// </summary>
     public G2DCoordinateSystem CoordinateSystem
     {
       get

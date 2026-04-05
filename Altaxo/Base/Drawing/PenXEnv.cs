@@ -31,7 +31,7 @@ using Altaxo.Geometry;
 namespace Altaxo.Drawing
 {
   /// <summary>
-  /// Represents an immutable <see cref="PenX"/> in its environment (rectangle and resolution). This structure is immutable itself.
+  /// Represents an immutable <see cref="PenX"/> together with its rendering environment.
   /// </summary>
   public struct PenXEnv : IEquatable<PenXEnv>
   {
@@ -69,11 +69,13 @@ namespace Altaxo.Drawing
       }
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return _cachedHashCode;
     }
 
+    /// <inheritdoc/>
     public bool Equals(PenXEnv other)
     {
       return
@@ -81,15 +83,22 @@ namespace Altaxo.Drawing
         PenX == other.PenX;
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       return obj is PenXEnv other ? Equals(other) : false;
     }
 
+    /// <summary>
+    /// Determines whether two <see cref="PenXEnv"/> values are equal.
+    /// </summary>
     public static bool operator ==(PenXEnv x, PenXEnv y)
     {
       return x.Equals(y);
     }
+    /// <summary>
+    /// Determines whether two <see cref="PenXEnv"/> values are not equal.
+    /// </summary>
     public static bool operator !=(PenXEnv x, PenXEnv y)
     {
       return !x.Equals(y);

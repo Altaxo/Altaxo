@@ -31,6 +31,9 @@ using Altaxo.Main;
 
 namespace Altaxo.Science.Spectroscopy.Calibration
 {
+  /// <summary>
+  /// Document node wrapper for Y-calibration options.
+  /// </summary>
   public class YCalibrationOptionsDocNode : SpectralPreprocessingOptionsDocNodeBase
   {
     #region Serialization
@@ -41,6 +44,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Science.Spectroscopy.Calibration.YCalibrationOptionsDocNode", 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
@@ -67,6 +71,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
         */
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var preprocessing = info.GetValue<SpectralPreprocessingOptionsBase>("SpectralPreprocessingOptions", null);
@@ -102,6 +107,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Science.Spectroscopy.Calibration.YCalibrationOptionsDocNode", 1)]
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
@@ -130,6 +136,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
         */
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var preprocessing = info.GetValue<SpectralPreprocessingOptionsBase>("SpectralPreprocessingOptions", null);
@@ -170,6 +177,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(YCalibrationOptionsDocNode), 2)]
     public class SerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (YCalibrationOptionsDocNode)obj;
@@ -179,6 +187,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
         SpectralPreprocessingOptionsDocNodeBase.SerializeProxiesVersion1(info, s, preprocessingOptions);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var options = info.GetValue<YCalibrationOptions>("Options", null);
@@ -189,26 +198,36 @@ namespace Altaxo.Science.Spectroscopy.Calibration
 
     #endregion
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="YCalibrationOptionsDocNode"/> class.
+    /// </summary>
+    /// <param name="options">The options object.</param>
+    /// <param name="proxyList">The proxy list.</param>
     protected YCalibrationOptionsDocNode(YCalibrationOptions options, List<(int number, IDocumentLeafNode proxy)> proxyList)
       : base(options, proxyList)
     {
     }
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="YCalibrationOptionsDocNode"/> class.
+    /// </summary>
+    /// <param name="options">The options object.</param>
     public YCalibrationOptionsDocNode(YCalibrationOptions options) : base(options)
     {
     }
 
     /// <summary>
-    /// Gets the wrapped spectral preprocessing options. When neccessary, the calibration is updated to reflect the content of the linked calibration table.
+    /// Gets the wrapped Y-calibration options. When necessary, preprocessing references are updated to reflect the linked calibration table.
     /// </summary>
-    /// <returns>The wrapped spectral preprocessing options</returns>
+    /// <returns>The wrapped Y-calibration options.</returns>
     public YCalibrationOptions GetYCalibrationOptions()
     {
       InternalSpectralPreprocessingOptions = InternalGetSpectralPreprocessingOptions();
       return (YCalibrationOptions)_optionsObject;
     }
 
+    /// <inheritdoc/>
     protected override SpectralPreprocessingOptionsBase InternalSpectralPreprocessingOptions
     {
       get

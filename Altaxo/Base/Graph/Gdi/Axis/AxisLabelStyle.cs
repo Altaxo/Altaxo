@@ -47,12 +47,27 @@ namespace Altaxo.Graph.Gdi.Axis
     IRoutedPropertyReceiver,
     Main.ICopyFrom
   {
+    /// <summary>
+    /// The font used to render axis labels.
+    /// </summary>
     protected FontX _font;
 
+    /// <summary>
+    /// The horizontal alignment of axis labels.
+    /// </summary>
     protected StringAlignment _horizontalAlignment;
+    /// <summary>
+    /// The vertical alignment of axis labels.
+    /// </summary>
     protected StringAlignment _verticalAlignment;
 
+    /// <summary>
+    /// The string format used to render labels.
+    /// </summary>
     protected StringFormat _stringFormat;
+    /// <summary>
+    /// The brush used to render labels.
+    /// </summary>
     protected BrushX _brush;
 
     /// <summary>The x offset in EM units.</summary>
@@ -67,8 +82,14 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <summary>The style for the background.</summary>
     protected Gdi.Background.IBackgroundStyle? _backgroundStyle;
 
+    /// <summary>
+    /// Indicates whether label alignment is shifted automatically for rotation.
+    /// </summary>
     protected bool _automaticRotationShift;
 
+    /// <summary>
+    /// The labels suppressed for rendering.
+    /// </summary>
     protected SuppressedTicks _suppressedLabels;
 
     private ILabelFormatting _labelFormatting;
@@ -409,11 +430,19 @@ namespace Altaxo.Graph.Gdi.Axis
     #endregion Serialization
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AxisLabelStyle"/> class for deserialization only.
+    /// </summary>
+    /// <param name="info">The deserialization information.</param>
     protected AxisLabelStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AxisLabelStyle"/> class.
+    /// </summary>
+    /// <param name="context">The property context used to obtain default values.</param>
     public AxisLabelStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag? context)
     {
       context ??= PropertyExtensions.GetPropertyContextOfProject();
@@ -428,11 +457,19 @@ namespace Altaxo.Graph.Gdi.Axis
       SetStringFormat();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AxisLabelStyle"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public AxisLabelStyle(AxisLabelStyle from)
     {
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies the state from another <see cref="AxisLabelStyle"/> instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     [MemberNotNull(nameof(_font), nameof(_stringFormat), nameof(_brush), nameof(_suppressedLabels), nameof(_labelFormatting))]
     protected void CopyFrom(AxisLabelStyle from)
     {
@@ -464,6 +501,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
     }
 
+    /// <inheritdoc />
     public virtual bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -477,11 +515,16 @@ namespace Altaxo.Graph.Gdi.Axis
       return false;
     }
 
+    /// <summary>
+    /// Creates a copy of this axis label style.
+    /// </summary>
+    /// <returns>The cloned instance.</returns>
     public virtual object Clone()
     {
       return new AxisLabelStyle(this);
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_labelFormatting is not null)
@@ -614,6 +657,9 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Gets the collection of suppressed labels.
+    /// </summary>
     public SuppressedTicks SuppressedLabels
     {
       get
@@ -622,6 +668,9 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets the label formatting strategy.
+    /// </summary>
     public ILabelFormatting LabelFormat
     {
       get
@@ -660,6 +709,9 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets the text prepended to each formatted label.
+    /// </summary>
     public string PrefixText
     {
       get
@@ -672,6 +724,9 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets the text appended to each formatted label.
+    /// </summary>
     public string SuffixText
     {
       get
@@ -732,6 +787,9 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the alignment is adjusted automatically from the rotation.
+    /// </summary>
     public bool AutomaticAlignment
     {
       get
@@ -784,6 +842,9 @@ namespace Altaxo.Graph.Gdi.Axis
 
     #endregion Properties
 
+    /// <summary>
+    /// Gets the identifier of the cached axis information.
+    /// </summary>
     public CSLineID AxisStyleID
     {
       get
@@ -794,6 +855,9 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets the cached axis information used during painting.
+    /// </summary>
     public CSAxisInformation? CachedAxisInformation
     {
       get
@@ -806,6 +870,12 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Performs a point-based hit test on the painted labels.
+    /// </summary>
+    /// <param name="layer">The plot layer.</param>
+    /// <param name="pt">The point to test.</param>
+    /// <returns>A hit test object if the point hits a label; otherwise, <c>null</c>.</returns>
     public virtual IHitTestObject? HitTest(IPlotArea layer, PointD2D pt)
     {
       GraphicsPath gp = GetSelectionPath();
@@ -815,6 +885,12 @@ namespace Altaxo.Graph.Gdi.Axis
         return null;
     }
 
+    /// <summary>
+    /// Performs a rectangular hit test on the painted labels.
+    /// </summary>
+    /// <param name="layer">The plot layer.</param>
+    /// <param name="parentHitData">The rectangular hit test data.</param>
+    /// <returns>A hit test object if the labels are covered; otherwise, <c>null</c>.</returns>
     public virtual IHitTestObject? HitTest(IPlotArea layer, HitTestRectangularData parentHitData)
     {
       GraphicsPath gp = GetSelectionPath();
@@ -824,6 +900,12 @@ namespace Altaxo.Graph.Gdi.Axis
         return null;
     }
 
+    /// <summary>
+    /// Adjusts a rectangle according to the specified horizontal and vertical alignment.
+    /// </summary>
+    /// <param name="r">The rectangle to adjust.</param>
+    /// <param name="horz">The horizontal alignment.</param>
+    /// <param name="vert">The vertical alignment.</param>
     public void AdjustRectangle(ref RectangleD2D r, StringAlignment horz, StringAlignment vert)
     {
       switch (vert)
@@ -855,9 +937,9 @@ namespace Altaxo.Graph.Gdi.Axis
     }
 
     /// <summary>
-    /// Gives the path where the hit test is successfull.
+    /// Gets the path that is used for hit testing.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The selection path.</returns>
     public virtual GraphicsPath GetSelectionPath()
     {
       return (GraphicsPath)_enclosingPath.Clone();
@@ -1007,6 +1089,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
     #region IRoutedPropertyReceiver Members
 
+    /// <inheritdoc />
     public IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName)
     {
       switch (propertyName)

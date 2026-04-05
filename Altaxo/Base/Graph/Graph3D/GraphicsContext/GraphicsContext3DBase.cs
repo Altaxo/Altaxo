@@ -36,8 +36,18 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
   using Drawing.D3D;
   using Gdi.Plot;
 
+  /// <summary>
+  /// Provides helpers for drawing low-level 3D primitives.
+  /// </summary>
   public class GraphicsContextD3DPrimitivesBase
   {
+    /// <summary>
+    /// Draws a line into the specified triangle buffers.
+    /// </summary>
+    /// <param name="buffers">The target buffers.</param>
+    /// <param name="pen">The pen that defines the line appearance.</param>
+    /// <param name="p0">The start point.</param>
+    /// <param name="p1">The end point.</param>
     public static void DrawLine(PositionNormalIndexedTriangleBuffers buffers, PenX3D pen, PointD3D p0, PointD3D p1)
     {
       var vertexIndexOffset = buffers.IndexedTriangleBuffer.VertexCount;
@@ -99,6 +109,13 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
       }
     }
 
+    /// <summary>
+    /// Draws a line into the specified indexed triangle buffer.
+    /// </summary>
+    /// <param name="buffer">The target buffer.</param>
+    /// <param name="pen">The pen used to draw the line.</param>
+    /// <param name="p0">The start point.</param>
+    /// <param name="p1">The end point.</param>
     public static void DrawLine(IIndexedTriangleBuffer buffer, PenX3D pen, PointD3D p0, PointD3D p1)
     {
       DrawLine(GetBuffers(buffer), pen, p0, p1);
@@ -116,34 +133,56 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
     }
   }
 
+  /// <summary>
+  /// Provides the base implementation for three-dimensional graphics contexts.
+  /// </summary>
   public abstract class GraphicsContext3DBase : GraphicsContextD3DPrimitivesBase, IGraphicsContext3D
   {
+    /// <inheritdoc/>
     public abstract object SaveGraphicsState();
 
+    /// <inheritdoc/>
     public abstract void RestoreGraphicsState(object graphicsState);
 
+    /// <inheritdoc/>
     public abstract void PrependTransform(Matrix4x3 m);
 
+    /// <inheritdoc/>
     public abstract void TranslateTransform(double x, double y, double z);
 
+    /// <inheritdoc/>
     public abstract void TranslateTransform(VectorD3D translation);
 
+    /// <inheritdoc/>
     public abstract void RotateTransform(double degreeX, double degreeY, double degreeZ);
 
+    /// <inheritdoc/>
     public abstract PositionIndexedTriangleBuffers GetPositionIndexedTriangleBuffer(IMaterial material);
 
+    /// <inheritdoc/>
     public abstract PositionNormalIndexedTriangleBuffers GetPositionNormalIndexedTriangleBufferWithClipping(IMaterial material, PlaneD3D[] planes);
 
+    /// <inheritdoc/>
     public abstract PositionNormalIndexedTriangleBuffers GetPositionNormalIndexedTriangleBuffer(IMaterial material);
 
+    /// <inheritdoc/>
     public abstract IPositionNormalUIndexedTriangleBuffer GetPositionNormalUIndexedTriangleBuffer(IMaterial material, PlaneD3D[]? clipPlanes, IColorProvider colorProvider);
 
+    /// <inheritdoc/>
     public abstract Matrix4x3 Transformation { get; }
 
+    /// <inheritdoc/>
     public abstract Matrix3x3 TransposedInverseTransformation { get; }
 
     #region Primitives rendering
 
+    /// <summary>
+    /// Draws a triangle using the specified material.
+    /// </summary>
+    /// <param name="material">The material.</param>
+    /// <param name="p0">The first point.</param>
+    /// <param name="p1">The second point.</param>
+    /// <param name="p2">The third point.</param>
     public void DrawTriangle(IMaterial material, PointD3D p0, PointD3D p1, PointD3D p2)
     {
       var buffers = GetPositionNormalIndexedTriangleBuffer(Materials.GetSolidMaterialWithoutColorOrTexture());
@@ -172,11 +211,13 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
       }
     }
 
+    /// <inheritdoc/>
     public virtual void DrawLine(PenX3D pen, PointD3D p0, PointD3D p1)
     {
       DrawLine(GetPositionNormalIndexedTriangleBuffer(pen.Material), pen, p0, p1);
     }
 
+    /// <inheritdoc/>
     public virtual void DrawLine(PenX3D pen, IPolylineD3D path)
     {
       var asStraightLine = path as StraightLineAsPolylineD3D;
@@ -236,11 +277,13 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
       return;
     }
 
+    /// <inheritdoc/>
     public virtual VectorD3D MeasureString(string text, FontX3D font, PointD3D pointD3D)
     {
       return FontManager3D.Instance.MeasureString(text, font);
     }
 
+    /// <inheritdoc/>
     public virtual void DrawString(string text, FontX3D font, IMaterial brush, PointD3D point, Alignment alignmentX, Alignment alignmentY, Alignment alignmentZ)
     {
       var stringSize = new VectorD3D(0, 0, font.Depth); // depth is already known, for this we don't need to call MeasureString
@@ -302,6 +345,13 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
       DrawString(text, font, brush, point);
     }
 
+    /// <summary>
+    /// Draws text at the specified position.
+    /// </summary>
+    /// <param name="text">The text to draw.</param>
+    /// <param name="font">The font.</param>
+    /// <param name="brush">The text material.</param>
+    /// <param name="point">The drawing position.</param>
     public virtual void DrawString(string text, FontX3D font, IMaterial brush, PointD3D point)
     {
       var txt = new SolidText(text, font);

@@ -30,14 +30,29 @@ using Altaxo.Main;
 
 namespace Altaxo.Data.Selections
 {
+  /// <summary>
+  /// Selects a contiguous range of row indices.
+  /// </summary>
   public class RangeOfRowIndices : Main.SuspendableDocumentLeafNodeWithEventArgs, IRowSelection, ICloneable
   {
+    /// <summary>
+    /// The first row index included in the range.
+    /// </summary>
     public int _firstRowIndexInclusive;
 
+    /// <summary>
+    /// The last row index included in the range.
+    /// </summary>
     public int _lastRowIndexInclusive;
 
+    /// <summary>
+    /// Gets the first row index included in the range.
+    /// </summary>
     public int Start { get { return _firstRowIndexInclusive; } }
 
+    /// <summary>
+    /// Gets the number of rows represented by this range.
+    /// </summary>
     public int Count { get; private set; }
 
     /// <summary>
@@ -105,12 +120,21 @@ namespace Altaxo.Data.Selections
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RangeOfRowIndices"/> class.
+    /// </summary>
     public RangeOfRowIndices()
     {
       _firstRowIndexInclusive = 0;
       _lastRowIndexInclusive = -1;
     }
 
+    /// <summary>
+    /// Creates a row selection from a start index and a row count.
+    /// </summary>
+    /// <param name="start">The first row index.</param>
+    /// <param name="count">The number of rows.</param>
+    /// <returns>A row selection covering the requested range.</returns>
     public static IRowSelection FromStartAndCount(int start, int count)
     {
       if (!(start >= 0))
@@ -129,11 +153,18 @@ namespace Altaxo.Data.Selections
         return new RangeOfRowIndices { _firstRowIndexInclusive = start, _lastRowIndexInclusive = endIncl };
     }
 
+    /// <summary>
+    /// Creates a row selection from the first and last included row indices.
+    /// </summary>
+    /// <param name="start">The first included row index.</param>
+    /// <param name="endInclusive">The last included row index.</param>
+    /// <returns>A row selection covering the requested range.</returns>
     public static RangeOfRowIndices FromStartAndEndInclusive(int start, int endInclusive)
     {
       return new RangeOfRowIndices { _firstRowIndexInclusive = start, _lastRowIndexInclusive = endInclusive };
     }
 
+    /// <inheritdoc/>
     public object Clone()
     {
       return new RangeOfRowIndices { _firstRowIndexInclusive = _firstRowIndexInclusive, _lastRowIndexInclusive = _lastRowIndexInclusive };
@@ -157,11 +188,13 @@ namespace Altaxo.Data.Selections
     /// </value>
     public bool IsSpanningAllRows { get { return 0 == Start && (int.MaxValue == _lastRowIndexInclusive || -1 == _lastRowIndexInclusive); } }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return 13 * _firstRowIndexInclusive.GetHashCode() + 31 * _lastRowIndexInclusive.GetHashCode();
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       var from = obj as RangeOfRowIndices;

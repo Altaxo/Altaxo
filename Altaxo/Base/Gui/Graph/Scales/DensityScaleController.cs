@@ -30,6 +30,9 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Scales
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="DensityScaleController"/>.
+  /// </summary>
   public interface IDensityScaleView : IDataContextAwareView
   {
   }
@@ -41,6 +44,7 @@ namespace Altaxo.Gui.Graph.Scales
   // [UserControllerForObject(typeof(NumericalScale),101)] // outcommented since this causes an infinite loop when searching for detailed scale controllers
   public class DensityScaleController : MVCANDControllerEditOriginalDocInstanceCanChangeBase<Scale, IDensityScaleView>
   {
+    /// <inheritdoc />
     public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_rescalingController, () => _rescalingController = null);
@@ -51,6 +55,9 @@ namespace Altaxo.Gui.Graph.Scales
 
     private ItemsController<Type> _scaleTypes;
 
+    /// <summary>
+    /// Gets or sets the available scale types.
+    /// </summary>
     public ItemsController<Type> ScaleTypes
     {
       get => _scaleTypes;
@@ -67,6 +74,9 @@ namespace Altaxo.Gui.Graph.Scales
 
     private IMVCAController _scaleController;
 
+    /// <summary>
+    /// Gets or sets the controller for the selected scale.
+    /// </summary>
     public IMVCAController ScaleController
     {
       get => _scaleController;
@@ -82,6 +92,9 @@ namespace Altaxo.Gui.Graph.Scales
 
     private IMVCAController _rescalingController;
 
+    /// <summary>
+    /// Gets or sets the controller for the rescaling settings.
+    /// </summary>
     public IMVCAController RescalingController
     {
       get => _rescalingController;
@@ -97,6 +110,7 @@ namespace Altaxo.Gui.Graph.Scales
 
     #endregion
 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       _scaleTypes?.Dispose();
@@ -105,11 +119,16 @@ namespace Altaxo.Gui.Graph.Scales
       base.Dispose(isDisposing);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DensityScaleController"/> class.
+    /// </summary>
+    /// <param name="SetInstanceInParentNode">The callback used when the edited scale instance changes.</param>
     public DensityScaleController(Action<Scale> SetInstanceInParentNode)
       : base(SetInstanceInParentNode)
     {
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -133,6 +152,7 @@ namespace Altaxo.Gui.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (_scaleController is not null)
@@ -150,11 +170,17 @@ namespace Altaxo.Gui.Graph.Scales
       return ApplyEnd(true, disposeController);
     }
 
+    /// <summary>
+    /// Initializes the controller responsible for editing the scale.
+    /// </summary>
     protected void InitScaleController()
     {
       ScaleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc }, typeof(IMVCAController), UseDocument.Directly);
     }
 
+    /// <summary>
+    /// Initializes the controller responsible for editing the rescaling object.
+    /// </summary>
     public void InitRescalingController()
     {
        if(_doc.RescalingObject is { } rescalingObject)
@@ -166,6 +192,10 @@ namespace Altaxo.Gui.Graph.Scales
 
     #region View event handlers
 
+    /// <summary>
+    /// Handles a change of the selected scale type.
+    /// </summary>
+    /// <param name="axistype">The selected scale type.</param>
     public void EhView_ScaleTypeChanged(Type axistype)
     {
       try

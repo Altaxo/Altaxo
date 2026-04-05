@@ -45,6 +45,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ShapeGroup), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ShapeGroup)obj;
@@ -56,6 +57,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         info.CommitArray();
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (ShapeGroup?)o ?? new ShapeGroup();
@@ -84,9 +86,9 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
 
     /// <summary>
-    /// Constructs a shape group from at least two objects.
+    /// Initializes a new instance of the <see cref="ShapeGroup"/> class from a collection of shapes.
     /// </summary>
-    /// <param name="objectsToGroup">Objects to group together. An exception is thrown if the list contains less than 2 items.</param>
+    /// <param name="objectsToGroup">The objects to group.</param>
     public ShapeGroup(ICollection<GraphicBase> objectsToGroup)
       : base(new ItemLocationDirectAutoSize())
     {
@@ -99,15 +101,20 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
 
     /// <summary>
-    /// Copy constructor.
+    /// Initializes a new instance of the <see cref="ShapeGroup"/> class by copying another instance.
     /// </summary>
-    /// <param name="from">Another shape group to copy from. The objects of this shape group are cloned before added to the new group.</param>
+    /// <param name="from">The instance to copy from.</param>
     public ShapeGroup(ShapeGroup from)
       : base(from)
     {
       CopyFrom(from, false);
     }
 
+    /// <summary>
+    /// Copies the values from another <see cref="ShapeGroup"/> instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
+    /// <param name="withBaseMembers">If set to <see langword="true"/>, base class members are copied as well.</param>
     [MemberNotNull(nameof(_groupedObjects))]
     protected void CopyFrom(ShapeGroup from, bool withBaseMembers)
     {
@@ -120,6 +127,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         _groupedObjects.Add((GraphicBase)go.Clone());
     }
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -150,6 +158,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       return new ShapeGroup(this);
     }
 
+    /// <inheritdoc />
     public override bool AutoSize
     {
       get
@@ -226,6 +235,10 @@ namespace Altaxo.Graph.Gdi.Shapes
       g.Restore(gs);
     }
 
+    /// <summary>
+    /// Gets the selection path.
+    /// </summary>
+    /// <returns>The selection path.</returns>
     public GraphicsPath GetSelectionPath()
     {
       var gp = new GraphicsPath();
@@ -242,6 +255,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       return gp;
     }
 
+    /// <inheritdoc />
     public override IHitTestObject? HitTest(HitTestPointData htd)
     {
       var result = base.HitTest(htd);
@@ -250,6 +264,11 @@ namespace Altaxo.Graph.Gdi.Shapes
       return result;
     }
 
+    /// <summary>
+    /// Handles a double-click on a hit-tested shape group.
+    /// </summary>
+    /// <param name="o">The hit test object.</param>
+    /// <returns><see langword="true"/> if the double-click was handled; otherwise, <see langword="false"/>.</returns>
     protected static bool EhHitDoubleClick(IHitTestObject o)
     {
       object hitted = o.HittedObject;

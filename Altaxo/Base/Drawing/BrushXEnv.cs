@@ -118,11 +118,17 @@ namespace Altaxo.Drawing
       }
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return _cachedHashCode;
     }
 
+    /// <summary>
+    /// Determines whether the current instance equals another instance.
+    /// </summary>
+    /// <param name="other">The other instance.</param>
+    /// <returns><c>true</c> if both instances are equal; otherwise, <c>false</c>.</returns>
     public bool Equals(BrushXEnv other)
     {
       return
@@ -131,15 +137,22 @@ namespace Altaxo.Drawing
         Equals(BrushX, other.BrushX);
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       return obj is BrushXEnv other ? Equals(other) : false;
     }
 
+    /// <summary>
+    /// Determines whether two <see cref="BrushXEnv"/> values are equal.
+    /// </summary>
     public static bool operator ==(BrushXEnv x, BrushXEnv y)
     {
       return x.Equals(y);
     }
+    /// <summary>
+    /// Determines whether two <see cref="BrushXEnv"/> values are not equal.
+    /// </summary>
     public static bool operator !=(BrushXEnv x, BrushXEnv y)
     {
       return !x.Equals(y);

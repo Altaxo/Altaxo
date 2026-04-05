@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -27,12 +27,19 @@ using Altaxo.Data;
 
 namespace Altaxo.Gui.Data
 {
+  /// <summary>
+  /// Defines the view contract for editing table cleaning options.
+  /// </summary>
   public interface IDataTableCleaningOptionsView : IDataContextAwareView { }
 
+  /// <summary>
+  /// Controller for <see cref="DataTableCleaningOptions"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IDataTableCleaningOptionsView))]
   [UserControllerForObject(typeof(DataTableCleaningOptions))]
   public class DataTableCleaningOptionsController : MVCANControllerEditImmutableDocBase<DataTableCleaningOptions, IDataTableCleaningOptionsView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -42,6 +49,9 @@ namespace Altaxo.Gui.Data
 
     private bool _clearData;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether data should be cleared.
+    /// </summary>
     public bool ClearData
     {
       get => _clearData;
@@ -57,6 +67,9 @@ namespace Altaxo.Gui.Data
 
     private bool _removeDataColumns;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether data columns should be removed.
+    /// </summary>
     public bool RemoveDataColumns
     {
       get => _removeDataColumns;
@@ -72,6 +85,9 @@ namespace Altaxo.Gui.Data
 
     private bool _clearColumnProperties;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether column properties should be cleared.
+    /// </summary>
     public bool ClearColumnProperties
     {
       get => _clearColumnProperties;
@@ -87,6 +103,9 @@ namespace Altaxo.Gui.Data
 
     private bool _removeColumnProperties;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether column properties should be removed.
+    /// </summary>
     public bool RemoveColumnProperties
     {
       get => _removeColumnProperties;
@@ -102,6 +121,9 @@ namespace Altaxo.Gui.Data
 
     private bool _clearNotes;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether notes should be cleared.
+    /// </summary>
     public bool ClearNotes
     {
       get => _clearNotes;
@@ -117,6 +139,9 @@ namespace Altaxo.Gui.Data
 
     private bool _clearTableProperties;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether table properties should be cleared.
+    /// </summary>
     public bool ClearTableProperties
     {
       get => _clearTableProperties;
@@ -132,6 +157,9 @@ namespace Altaxo.Gui.Data
 
     private bool _clearTableScript;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the table script should be cleared.
+    /// </summary>
     public bool ClearTableScript
     {
       get => _clearTableScript;
@@ -147,6 +175,9 @@ namespace Altaxo.Gui.Data
 
     private bool _clearDataSource;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the data source should be cleared.
+    /// </summary>
     public bool ClearDataSource
     {
       get => _clearDataSource;
@@ -163,6 +194,7 @@ namespace Altaxo.Gui.Data
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -180,6 +212,7 @@ namespace Altaxo.Gui.Data
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = _doc with

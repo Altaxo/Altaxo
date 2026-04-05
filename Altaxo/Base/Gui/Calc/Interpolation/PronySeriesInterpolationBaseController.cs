@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -28,12 +28,19 @@ using Altaxo.Calc.Interpolation;
 
 namespace Altaxo.Gui.Calc.Interpolation
 {
+  /// <summary>
+  /// Defines the view contract for editing <see cref="PronySeriesInterpolationBase"/> options.
+  /// </summary>
   public interface IPronySeriesInterpolationBaseView : IDataContextAwareView { }
 
+  /// <summary>
+  /// Controller for <see cref="PronySeriesInterpolationBase"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IPronySeriesInterpolationBaseView))]
   [UserControllerForObject(typeof(PronySeriesInterpolationBase))]
   public class PronySeriesInterpolationBaseController : MVCANControllerEditImmutableDocBase<PronySeriesInterpolationBase, IPronySeriesInterpolationBaseView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -43,6 +50,9 @@ namespace Altaxo.Gui.Calc.Interpolation
 
     private bool _isManuallySpecifiedXMinXMax;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the x minimum and maximum are specified manually.
+    /// </summary>
     public bool IsManuallySpecifiedXMinXMax
     {
       get => _isManuallySpecifiedXMinXMax;
@@ -61,6 +71,9 @@ namespace Altaxo.Gui.Calc.Interpolation
 
     private bool _isSpecificationPointsPerDecade;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the point density is specified in points per decade.
+    /// </summary>
     public bool IsSpecificationPointsPerDecade
     {
       get => _isSpecificationPointsPerDecade;
@@ -108,6 +121,9 @@ namespace Altaxo.Gui.Calc.Interpolation
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the number-of-points field is visible.
+    /// </summary>
     public bool IsNumberOfPointsVisible
     {
       get
@@ -115,6 +131,9 @@ namespace Altaxo.Gui.Calc.Interpolation
         return !(_isManuallySpecifiedXMinXMax && IsSpecificationPointsPerDecade);
       }
     }
+    /// <summary>
+    /// Gets a value indicating whether the number-of-points label is visible.
+    /// </summary>
     public bool IsNumberOfPointsLabelVisible
     {
       get
@@ -122,6 +141,9 @@ namespace Altaxo.Gui.Calc.Interpolation
         return !IsSpecificationPointsPerDecade;
       }
     }
+    /// <summary>
+    /// Gets a value indicating whether the maximum-number-of-points label is visible.
+    /// </summary>
     public bool IsMaximumNumberOfPointsLabelVisible
     {
       get
@@ -134,6 +156,9 @@ namespace Altaxo.Gui.Calc.Interpolation
 
     private double _XMinimum;
 
+    /// <summary>
+    /// Gets or sets the minimum x value.
+    /// </summary>
     public double XMinimum
     {
       get => _XMinimum;
@@ -148,6 +173,9 @@ namespace Altaxo.Gui.Calc.Interpolation
     }
     private double _XMaximum;
 
+    /// <summary>
+    /// Gets or sets the maximum x value.
+    /// </summary>
     public double XMaximum
     {
       get => _XMaximum;
@@ -163,6 +191,9 @@ namespace Altaxo.Gui.Calc.Interpolation
 
     private int _NumberOfPoints;
 
+    /// <summary>
+    /// Gets or sets the number of interpolation points.
+    /// </summary>
     public int NumberOfPoints
     {
       get => _NumberOfPoints;
@@ -178,6 +209,9 @@ namespace Altaxo.Gui.Calc.Interpolation
 
     private double _PointsPerDecade;
 
+    /// <summary>
+    /// Gets or sets the number of points per decade.
+    /// </summary>
     public double PointsPerDecade
     {
       get => _PointsPerDecade;
@@ -196,6 +230,9 @@ namespace Altaxo.Gui.Calc.Interpolation
 
     private bool _isRelaxation;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the interpolation describes a relaxation spectrum.
+    /// </summary>
     public bool IsRelaxation
     {
       get => _isRelaxation;
@@ -211,6 +248,9 @@ namespace Altaxo.Gui.Calc.Interpolation
 
     private bool _UseIntercept;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether an intercept is used.
+    /// </summary>
     public bool UseIntercept
     {
       get => _UseIntercept;
@@ -225,6 +265,9 @@ namespace Altaxo.Gui.Calc.Interpolation
     }
     private bool _allowNegativePronyCoefficients;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether negative Prony coefficients are allowed.
+    /// </summary>
     public bool AllowNegativePronyCoefficients
     {
       get => _allowNegativePronyCoefficients;
@@ -240,6 +283,9 @@ namespace Altaxo.Gui.Calc.Interpolation
 
     private double _regularizationParameter;
 
+    /// <summary>
+    /// Gets or sets the regularization parameter.
+    /// </summary>
     public double RegularizationParameter
     {
       get => _regularizationParameter;
@@ -258,6 +304,7 @@ namespace Altaxo.Gui.Calc.Interpolation
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -285,6 +332,7 @@ namespace Altaxo.Gui.Calc.Interpolation
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (IsManuallySpecifiedXMinXMax)

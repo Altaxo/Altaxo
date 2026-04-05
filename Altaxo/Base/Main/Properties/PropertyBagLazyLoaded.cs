@@ -33,7 +33,7 @@ namespace Altaxo.Main.Properties
   /// <summary>
   /// A property bag that loads its properties lazy. During deserialization the properties are temporarily stored as Xml documents.
   /// Only when trying to access a property, the Xml is then deserialized into the property.
-  /// This behavior is neccessary for the UserSettings. Without lazy loading, a class that is deserialized could require another
+  /// This behavior is necessary for the UserSettings. Without lazy loading, a class that is deserialized could require another
   /// property, but the property service is not ready when the UserSettings are loaded.
   /// </summary>
   /// <seealso cref="Altaxo.Main.Properties.PropertyBag" />
@@ -52,6 +52,7 @@ namespace Altaxo.Main.Properties
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PropertyBagLazyLoaded), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PropertyBagLazyLoaded)obj;
@@ -102,6 +103,9 @@ namespace Altaxo.Main.Properties
         info.CommitArray();
       }
 
+      /// <summary>
+      /// Deserializes into an existing instance.
+      /// </summary>
       public void Deserialize(PropertyBagLazyLoaded s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var assemblyVersionString = info.GetStringAttribute("AssemblyVersion");
@@ -120,6 +124,7 @@ namespace Altaxo.Main.Properties
         info.CloseArray(count);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = o as PropertyBagLazyLoaded ?? new PropertyBagLazyLoaded();
@@ -128,6 +133,10 @@ namespace Altaxo.Main.Properties
       }
     }
 
+    /// <summary>
+    /// Adds obsolete lazy properties from a legacy property dictionary.
+    /// </summary>
+    /// <param name="obsoleteProperties">The obsolete properties to import.</param>
     public void AddLazyPropertiesFromObsolete40XXProperties(Dictionary<string, string> obsoleteProperties)
     {
       if (obsoleteProperties is null)
@@ -175,7 +184,7 @@ namespace Altaxo.Main.Properties
 
       foreach (var key in keys)
       {
-        if (_propertiesLazyLoaded.TryGetValue(key, out var xml)) // Try neccessary here because during conversion other properties may get converted
+        if (_propertiesLazyLoaded.TryGetValue(key, out var xml)) // Try necessary here because during conversion other properties may get converted
           ConvertFromLazy(key, xml);
       }
     }
@@ -184,12 +193,14 @@ namespace Altaxo.Main.Properties
 
     #region Overrides Count and Clear
 
+    /// <inheritdoc/>
     public override void Clear()
     {
       _propertiesLazyLoaded.Clear();
       base.Clear();
     }
 
+    /// <inheritdoc/>
     public override int Count
     {
       get
@@ -205,7 +216,7 @@ namespace Altaxo.Main.Properties
     /// <summary>
     /// Gets the value of a property.
     /// </summary>
-    /// <typeparam name="T">The of the property.</typeparam>
+    /// <typeparam name="T">The type of the property.</typeparam>
     /// <param name="p">The property key.</param>
     /// <returns>
     /// The property.
@@ -220,6 +231,7 @@ namespace Altaxo.Main.Properties
       return base.GetValue<T>(p);
     }
 
+    /// <inheritdoc/>
     [return: MaybeNull]
     public override T GetValue<T>(PropertyKey<T> p, [MaybeNull] T defaultValue)
     {
@@ -235,7 +247,7 @@ namespace Altaxo.Main.Properties
     /// </summary>
     /// <typeparam name="T">Type of the property.</typeparam>
     /// <param name="p">The property key.</param>
-    /// <param name="value">If successfull, on return this value contains the property value.</param>
+    /// <param name="value">If successful, on return this value contains the property value.</param>
     /// <returns>
     ///   <c>True</c> if the property could be successfully retrieved, otherwise <c>false</c>.
     /// </returns>
@@ -271,7 +283,7 @@ namespace Altaxo.Main.Properties
     /// </summary>
     /// <typeparam name="T">Type of the property value.</typeparam>
     /// <param name="propName">The property name.</param>
-    /// <param name="value">If successfull, on return this value contains the property value.</param>
+    /// <param name="value">If successful, on return this value contains the property value.</param>
     /// <returns>
     ///   <c>True</c> if the property could be successfully retrieved, otherwise <c>false</c>.
     /// </returns>

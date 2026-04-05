@@ -30,8 +30,14 @@ namespace Altaxo.Gui.Data
 {
   #region Interfaces
 
+  /// <summary>
+  /// View interface for transpose options of a data table.
+  /// </summary>
   public interface IDataTableTransposeOptionsView
   {
+    /// <summary>
+    /// Gets or sets the column-naming prefix string.
+    /// </summary>
     string ColumnNamingPreString { get; set; }
 
     /// <summary>
@@ -44,19 +50,27 @@ namespace Altaxo.Gui.Data
     /// </summary>
     int PropertyColumnsMoveToDataColumns { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether data column names are stored in the first data column.
+    /// </summary>
     bool StoreDataColumnNamesInFirstDataColumn { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the first data column is used for column naming.
+    /// </summary>
     bool UseFirstDataColumnForColumnNaming { get; set; }
   }
 
   #endregion Interfaces
 
   /// <summary>
-  /// Summary description for TransposeWorksheetController.
+  /// Controller for <see cref="Altaxo.Data.DataTableTransposeOptions"/>.
   /// </summary>
   [ExpectedTypeOfView(typeof(IDataTableTransposeOptionsView))]
   [UserControllerForObject(typeof(Altaxo.Data.DataTableTransposeOptions))]
   public class DataTableTransposeOptionsController : MVCANControllerEditOriginalDocBase<Altaxo.Data.DataTableTransposeOptions, IDataTableTransposeOptionsView>
   {
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -71,6 +85,7 @@ namespace Altaxo.Gui.Data
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc.DataColumnsMoveToPropertyColumns = _view.DataColumnsMoveToPropertyColumns;
@@ -82,6 +97,7 @@ namespace Altaxo.Gui.Data
       return ApplyEnd(true, disposeController);
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;

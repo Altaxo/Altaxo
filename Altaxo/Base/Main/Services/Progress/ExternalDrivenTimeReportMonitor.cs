@@ -28,13 +28,14 @@ using System;
 namespace Altaxo.Main.Services
 {
   /// <summary>
-  /// Reports the progress time of an operation.
+  /// Reports the elapsed time of an operation through the progress text.
   /// </summary>
   /// <seealso cref="Altaxo.Main.Services.ExternalDrivenBackgroundMonitor" />
   public class ExternalDrivenTimeReportMonitor : ExternalDrivenBackgroundMonitor
   {
     private DateTime _timeBegin = DateTime.Now;
 
+    /// <inheritdoc/>
     public override void SetShouldReportNow()
     {
       _shouldReport = true;

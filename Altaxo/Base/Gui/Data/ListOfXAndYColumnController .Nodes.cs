@@ -32,6 +32,9 @@ namespace Altaxo.Gui.Data
 {
   public partial class ListOfXAndYColumnController
   {
+    /// <summary>
+    /// The GUI nodes representing the current curve data.
+    /// </summary>
     private SelectableListNodeList _dataNodes = [];
 
     /// <summary>
@@ -47,13 +50,13 @@ namespace Altaxo.Gui.Data
     private MyNode NewGuiNode(XAndYColumn xycol) => new MyNode(xycol?.GetName(0x21) ?? string.Empty, xycol, false);
 
     /// <summary>
-    /// Initializes the Gui usable list of the data items <see cref="_dataNodes"/> from the document's items
+    /// Initializes the GUI-usable list of data items <see cref="_dataNodes"/> from the document items.
     /// </summary>
     /// <param name="_doc">The document.</param>
     private void InitializeGuiNodesFromDocument(ListOfXAndYColumn _doc)
     {
       if (_dataNodes.Count > 0)
-        throw new NotImplementedException("We assumed that the list is empty (otherwise disposal of is neccessary)");
+        throw new NotImplementedException("The list is assumed to be empty; otherwise disposal is necessary.");
 
 
       int numberOfItems = _doc.CurveData.Count;
@@ -71,10 +74,9 @@ namespace Altaxo.Gui.Data
 
 
     /// <summary>
-    /// Appends and curve item to the Gui list.
+    /// Appends a curve item to the GUI list.
     /// </summary>
     /// <param name="curves">The curves to add.</param>
-    /// <param name="groupNumber">The group number to which to append.</param>
     /// <param name="toLast">If false, the item is put immediately before the first selected node (or at the top of the list).
     /// If true, the item is put immediately after the last selected node (or at the end of the list).</param>
     private void AddItemsToGuiList(IReadOnlyList<XAndYColumn> curves, bool toLast)
@@ -95,7 +97,7 @@ namespace Altaxo.Gui.Data
     }
 
     /// <summary>
-    /// Appends and curve item to the Gui list.
+    /// Appends a curve item to the GUI list.
     /// </summary>
     /// <param name="curves">The curves to add.</param>
     /// <param name="insertPosition">The index where to insert the items.</param>
@@ -122,12 +124,18 @@ namespace Altaxo.Gui.Data
     }
 
 
+    /// <summary>
+    /// Moves the selected plot items up.
+    /// </summary>
     public void PlotItems_MoveUpSelected()
     {
       var sublist = DataItems.Items;
       sublist.MoveSelectedItemsUp();
     }
 
+    /// <summary>
+    /// Moves the selected plot items down.
+    /// </summary>
     public void PlotItems_MoveDownSelected()
     {
       var sublist = DataItems.Items;
@@ -139,6 +147,9 @@ namespace Altaxo.Gui.Data
     private class MyNode : SelectableListNode
     {
       private int _index;
+      /// <summary>
+      /// Gets or sets the display index.
+      /// </summary>
       public int Index
       {
         get { return _index; }
@@ -152,10 +163,17 @@ namespace Altaxo.Gui.Data
           }
         }
       }
+      /// <summary>
+      /// Gets the represented curve.
+      /// </summary>
       public XAndYColumn? Curve => (XAndYColumn?)Tag;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="MyNode"/> class.
+      /// </summary>
       public MyNode(string text, XAndYColumn? curve, bool isSelected) : base(text, curve, isSelected) { }
 
+      /// <inheritdoc/>
       public override string? SubItemText(int i)
       {
         return i switch
@@ -165,6 +183,9 @@ namespace Altaxo.Gui.Data
         };
       }
 
+      /// <summary>
+      /// Updates the display name from the underlying curve.
+      /// </summary>
       public void UpdateName()
       {
         Text = Tag is XAndYColumn xycolumn ? xycolumn.GetName(0x21) : string.Empty;

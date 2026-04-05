@@ -22,15 +22,29 @@ using Altaxo.Main.Services.Implementation;
 
 namespace Altaxo.Main.Services
 {
+  /// <summary>
+  /// Defines the severity of a message.
+  /// </summary>
   public enum MessageLevel
   {
+    /// <summary>
+    /// Informational message.
+    /// </summary>
     Info,
+
+    /// <summary>
+    /// Warning message.
+    /// </summary>
     Warning,
+
+    /// <summary>
+    /// Error message.
+    /// </summary>
     Error
   }
 
   /// <summary>
-  /// Interface for the MessageService.
+  /// Provides methods for reporting messages, prompting the user, and displaying exceptions.
   /// </summary>
   [GlobalService("SD.MessageService", FallbackImplementation = typeof(FallbackMessageService))]
   public interface IMessageService
@@ -45,10 +59,31 @@ namespace Altaxo.Main.Services
     /// </summary>
     void ShowHandledException(Exception ex, string? message = null);
 
+    /// <summary>
+    /// Writes a message line.
+    /// </summary>
+    /// <param name="level">The message severity.</param>
+    /// <param name="source">The message source.</param>
+    /// <param name="message">The message text.</param>
     void WriteLine(MessageLevel level, string source, string message);
 
+    /// <summary>
+    /// Writes a formatted message line.
+    /// </summary>
+    /// <param name="messageLevel">The message severity.</param>
+    /// <param name="source">The message source.</param>
+    /// <param name="format">The composite format string.</param>
+    /// <param name="args">The format arguments.</param>
     void WriteLine(MessageLevel messageLevel, string source, string format, params object[] args);
 
+    /// <summary>
+    /// Writes a formatted message line using the specified format provider.
+    /// </summary>
+    /// <param name="messageLevel">The message severity.</param>
+    /// <param name="source">The message source.</param>
+    /// <param name="provider">The format provider.</param>
+    /// <param name="format">The composite format string.</param>
+    /// <param name="args">The format arguments.</param>
     void WriteLine(MessageLevel messageLevel, string source, System.IFormatProvider provider, string format, params object[] args);
 
     /// <summary>
@@ -77,8 +112,19 @@ namespace Altaxo.Main.Services
     /// </summary>
     void ShowWarningFormatted(string formatstring, params object[] formatitems);
 
+    /// <summary>
+    /// Shows a message.
+    /// </summary>
+    /// <param name="message">The message text.</param>
+    /// <param name="caption">The dialog caption.</param>
     void ShowMessage(string message, string? caption = null);
 
+    /// <summary>
+    /// Shows a formatted message.
+    /// </summary>
+    /// <param name="formatstring">The resource or format string.</param>
+    /// <param name="caption">The dialog caption.</param>
+    /// <param name="formatitems">The format arguments.</param>
     void ShowMessageFormatted(string formatstring, string? caption, params object[] formatitems);
 
     /// <summary>
@@ -107,10 +153,10 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Shows an input box.
     /// </summary>
-    /// <param name="caption"></param>
-    /// <param name="dialogText"></param>
-    /// <param name="defaultValue"></param>
-    /// <returns></returns>
+    /// <param name="caption">The dialog caption.</param>
+    /// <param name="dialogText">The text shown in the dialog.</param>
+    /// <param name="defaultValue">The initial input value.</param>
+    /// <returns>The entered string.</returns>
     string ShowInputBox(string caption, string dialogText, string defaultValue);
 
     /// <summary>
@@ -135,30 +181,65 @@ namespace Altaxo.Main.Services
     ChooseSaveErrorResult ChooseSaveError(PathName fileName, string message, string dialogName, Exception exceptionGot, bool chooseLocationEnabled);
   }
 
+  /// <summary>
+  /// Fallback implementation of <see cref="IMessageService"/> that writes to a text writer.
+  /// </summary>
   internal sealed class FallbackMessageService : TextWriterMessageService
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FallbackMessageService"/> class.
+    /// </summary>
     public FallbackMessageService() : base(Console.Out)
     {
     }
   }
 
+  /// <summary>
+  /// Represents a user's choice when handling a save error.
+  /// </summary>
   public sealed class ChooseSaveErrorResult
   {
+    /// <summary>
+    /// Gets a value indicating whether the operation should be retried.
+    /// </summary>
     public bool IsRetry { get; private set; }
+
+    /// <summary>
+    /// Gets a value indicating whether the error should be ignored.
+    /// </summary>
     public bool IsIgnore { get; private set; }
+
+    /// <summary>
+    /// Gets a value indicating whether an alternative file name was chosen.
+    /// </summary>
     public bool IsSaveAlternative { get { return AlternativeFileName is not null; } }
+
+    /// <summary>
+    /// Gets the alternative file name chosen by the user.
+    /// </summary>
     public PathName? AlternativeFileName { get; private set; }
 
     private ChooseSaveErrorResult()
     {
     }
 
+    /// <summary>
+    /// Gets the result that indicates a retry should be performed.
+    /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Justification = "ChooseSaveErrorResult is immutable")]
     public static readonly ChooseSaveErrorResult Retry = new ChooseSaveErrorResult { IsRetry = true };
 
+    /// <summary>
+    /// Gets the result that indicates the error should be ignored.
+    /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Justification = "ChooseSaveErrorResult is immutable")]
     public static readonly ChooseSaveErrorResult Ignore = new ChooseSaveErrorResult { IsIgnore = true };
 
+    /// <summary>
+    /// Creates a result that indicates an alternative file name should be used.
+    /// </summary>
+    /// <param name="alternativeFileName">The alternative file name.</param>
+    /// <returns>A save-error result for the alternative file name.</returns>
     public static ChooseSaveErrorResult SaveAlternative(PathName alternativeFileName)
     {
       if (alternativeFileName is null)

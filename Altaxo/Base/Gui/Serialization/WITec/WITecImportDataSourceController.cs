@@ -30,9 +30,13 @@ using Altaxo.Serialization.WITec;
 
 namespace Altaxo.Gui.Serialization.WITec
 {
+  /// <summary>
+  /// Controller for <see cref="WITecImportDataSource"/>.
+  /// </summary>
   [UserControllerForObject(typeof(WITecImportDataSource))]
   public class WITecImportDataSourceController : DataSourceControllerBase<WITecImportDataSource>
   {
+    /// <inheritdoc />
     protected override IMVCANController GetProcessDataController()
     {
       var processDataController = new MultipleFilesController();
@@ -42,7 +46,9 @@ namespace Altaxo.Gui.Serialization.WITec
       return processDataController;
     }
 
+    /// <inheritdoc />
     protected override bool IsProcessDataInitiallyExpanded() => true;
+    /// <inheritdoc />
     protected override bool IsProcessOptionsInitiallyExpanded() => false;
   }
 }

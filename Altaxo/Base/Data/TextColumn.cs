@@ -30,7 +30,7 @@ using System.Collections.Generic;
 namespace Altaxo.Data
 {
   /// <summary>
-  /// Summary description for Altaxo.Data.TextColumn.
+  /// Data column that stores text values.
   /// </summary>
   public class TextColumn
     :
@@ -40,12 +40,23 @@ namespace Altaxo.Data
     private string?[] _data = _emptyStringArray;
     private int _capacity; // shortcout to m_Array.Length;
     private int _count;
+
+    /// <summary>
+    /// Represents an empty text cell.
+    /// </summary>
     public static readonly string? NullValue = null;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextColumn"/> class.
+    /// </summary>
     public TextColumn()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextColumn"/> class with the specified initial capacity.
+    /// </summary>
+    /// <param name="initialcapacity">The initial capacity.</param>
     public TextColumn(int initialcapacity)
     {
       _count = 0;
@@ -53,6 +64,10 @@ namespace Altaxo.Data
       _capacity = initialcapacity;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextColumn"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The source column.</param>
     public TextColumn(TextColumn from)
     {
       _count = from._count;
@@ -60,6 +75,7 @@ namespace Altaxo.Data
       _data = from._data.Length == 0 ? _emptyStringArray : (string?[])from._data.Clone();
     }
 
+    /// <inheritdoc/>
     public override object Clone()
     {
       return new TextColumn(this);
@@ -109,6 +125,7 @@ namespace Altaxo.Data
     /// </value>
     public override Type ItemType { get { return typeof(string); } }
 
+    /// <inheritdoc/>
     public override int Count
     {
       get
@@ -117,6 +134,9 @@ namespace Altaxo.Data
       }
     }
 
+    /// <summary>
+    /// Gets or sets a copy of the column values as an array.
+    /// </summary>
     public string[] Array
     {
       get
@@ -136,16 +156,23 @@ namespace Altaxo.Data
       }
     }
 
+    /// <summary>
+    /// Gets the raw text value at the specified index without additional conversion.
+    /// </summary>
+    /// <param name="idx">The zero-based row index.</param>
+    /// <returns>The stored text value.</returns>
     protected internal string? GetValueDirect(int idx)
     {
       return _data[idx];
     }
 
+    /// <inheritdoc/>
     public override System.Type GetColumnStyleType()
     {
       return typeof(Altaxo.Worksheet.TextColumnStyle);
     }
 
+    /// <inheritdoc/>
     public override void CopyDataFrom(object o)
     {
       var oldCount = _count;
@@ -206,6 +233,10 @@ namespace Altaxo.Data
         ;
     }
 
+    /// <summary>
+    /// Ensures that the internal storage can hold at least the specified index.
+    /// </summary>
+    /// <param name="i">The target index.</param>
     protected void Realloc(int i)
     {
       int newcapacity1 = (int)(_capacity * _increaseFactor + _addSpace);
@@ -223,6 +254,7 @@ namespace Altaxo.Data
     }
 
     // indexers
+    /// <inheritdoc/>
     public override void SetValueAt(int i, AltaxoVariant val)
     {
       if (val.IsTypeOrNull(AltaxoVariant.Content.VString))
@@ -232,22 +264,30 @@ namespace Altaxo.Data
       // throw new ApplicationException("Error: Try to set " + this.TypeAndName + "[" + i + "] with " + val.ToString());
     }
 
+    /// <inheritdoc/>
     public override AltaxoVariant GetVariantAt(int i)
     {
       return new AltaxoVariant(this[i]);
     }
 
+    /// <inheritdoc/>
     public override bool IsElementEmpty(int i)
     {
       return i < _count ? (_data[i] is null) : true;
     }
 
+    /// <inheritdoc/>
     public override void SetElementEmpty(int i)
     {
       if (i < _count)
         this[i] = NullValue;
     }
 
+    /// <summary>
+    /// Gets or sets the text value at the specified row index.
+    /// </summary>
+    /// <param name="i">The zero-based row index.</param>
+    /// <returns>The text value stored at the specified index.</returns>
     public new string? this[int i]
     {
       get
@@ -315,6 +355,7 @@ namespace Altaxo.Data
       } // end set
     } // end indexer
 
+    /// <inheritdoc/>
     public override void InsertRows(int nInsBeforeColumn, int nInsCount)
     {
       if (nInsCount <= 0 || nInsBeforeColumn >= Count)
@@ -335,6 +376,7 @@ namespace Altaxo.Data
       EhSelfChanged(nInsBeforeColumn, _count, false);
     }
 
+    /// <inheritdoc/>
     public override void RemoveRows(int nDelFirstRow, int nDelCount)
     {
       if (nDelFirstRow < 0)
@@ -366,6 +408,12 @@ namespace Altaxo.Data
     // -----------------------------------------------------------------------------
 
     // ----------------------- Addition operator -----------------------------------
+    /// <summary>
+    /// Concatenates the corresponding text values of two text columns.
+    /// </summary>
+    /// <param name="c1">The first text column.</param>
+    /// <param name="c2">The second text column.</param>
+    /// <returns>A new column whose values are the concatenation of the input values.</returns>
     public static Altaxo.Data.TextColumn operator +(Altaxo.Data.TextColumn c1, Altaxo.Data.TextColumn c2)
     {
       int len = c1.Count < c2.Count ? c1.Count : c2.Count;
@@ -378,6 +426,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Concatenates the values of a text column with the string representation of a numeric column.
+    /// </summary>
+    /// <param name="c1">The text column.</param>
+    /// <param name="c2">The numeric column.</param>
+    /// <returns>A new column containing the concatenated values.</returns>
     public static Altaxo.Data.TextColumn operator +(Altaxo.Data.TextColumn c1, Altaxo.Data.DoubleColumn c2)
     {
       int len = c1.Count < c2.Count ? c1.Count : c2.Count;
@@ -392,6 +446,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Concatenates the values of a text column with the string representation of a date-time column.
+    /// </summary>
+    /// <param name="c1">The text column.</param>
+    /// <param name="c2">The date-time column.</param>
+    /// <returns>A new column containing the concatenated values.</returns>
     public static Altaxo.Data.TextColumn operator +(Altaxo.Data.TextColumn c1, Altaxo.Data.DateTimeColumn c2)
     {
       int len = c1.Count < c2.Count ? c1.Count : c2.Count;

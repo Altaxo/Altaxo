@@ -32,7 +32,7 @@ using Altaxo.Data;
 namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
 {
   /// <summary>
-  /// Table data source for applying the <see cref="PeakSearchingAndFittingOptions"/> to columns of a table.
+  /// Table data source for fitting multiple spectra by incremental peak addition.
   /// </summary>
   /// <seealso cref="Altaxo.Data.TableDataSourceBase" />
   /// <seealso cref="Altaxo.Data.IAltaxoTableDataSource" />
@@ -42,6 +42,9 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     private ListOfXAndYColumn _processData;
     private IDataSourceImportOptions _importOptions;
 
+    /// <summary>
+    /// Holds the subscribers for data-source-changed notifications.
+    /// </summary>
     public Action<IAltaxoTableDataSource>? _dataSourceChanged;
 
     #region Serialization
@@ -56,6 +59,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakFittingOfMultipleSpectraByIncrementalPeakAdditionDataSource), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PeakFittingOfMultipleSpectraByIncrementalPeakAdditionDataSource)obj;
@@ -65,6 +69,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
         info.AddValue("ImportOptions", s._importOptions);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (o is PeakFittingOfMultipleSpectraByIncrementalPeakAdditionDataSource s)
@@ -85,6 +90,11 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
 
     #endregion Version 0
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PeakFittingOfMultipleSpectraByIncrementalPeakAdditionDataSource"/> class from serialized data.
+    /// </summary>
+    /// <param name="info">The deserialization info.</param>
+    /// <param name="version">The serialized version.</param>
     protected PeakFittingOfMultipleSpectraByIncrementalPeakAdditionDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     {
       switch (version)
@@ -100,18 +110,12 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     #endregion Serialization
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ConvertXYVToMatrixDataSource"/> class.
+    /// Initializes a new instance of the <see cref="PeakFittingOfMultipleSpectraByIncrementalPeakAdditionDataSource"/> class.
     /// </summary>
     /// <param name="inputData">The input data designates the original source of data (used then for the processing).</param>
-    /// <param name="dataSourceOptions">The Fourier transformation options.</param>
+    /// <param name="dataSourceOptions">The peak-fitting options.</param>
     /// <param name="importOptions">The data source import options.</param>
-    /// <exception cref="System.ArgumentNullException">
-    /// inputData
-    /// or
-    /// transformationOptions
-    /// or
-    /// importOptions
-    /// </exception>
+    /// <exception cref="ArgumentNullException">One of the arguments is <see langword="null"/>.</exception>
     public PeakFittingOfMultipleSpectraByIncrementalPeakAdditionDataSource(ListOfXAndYColumn inputData, PeakFittingOfMultipleSpectraByIncrementalPeakAdditionOptions dataSourceOptions, IDataSourceImportOptions importOptions)
     {
       if (inputData is null)
@@ -136,6 +140,10 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies state from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     [MemberNotNull(nameof(_importOptions), nameof(_processOptions), nameof(_processData))]
     public void CopyFrom(PeakFittingOfMultipleSpectraByIncrementalPeakAdditionDataSource from)
     {
@@ -161,7 +169,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     /// Copies from another instance.
     /// </summary>
     /// <param name="obj">The object to copy from.</param>
-    /// <returns><c>True</c> if anything could be copied from the object, otherwise <c>false</c>.</returns>
+    /// <returns><c>True</c> if anything could be copied from the object; otherwise, <c>false</c>.</returns>
     public bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -196,7 +204,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     /// Fills (or refills) the data table with the processed data. The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable" />.
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
-    /// <param name="reporter"></param>
+    /// <param name="reporter">The progress reporter.</param>
     public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter reporter)
     {
       var peakFindingAndFittingOptions = _processOptions.GetPeakSearchingAndFittingOptions();
@@ -519,21 +527,33 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
 
     #region Peak table output
 
+    /// <summary>Gets the x-column name for a preprocessed spectrum.</summary>
     public static string PeakTable_PreprocessedColumnNameX(int numberOfSpectrum) => $"X_Preprocessed{numberOfSpectrum}";
+    /// <summary>Gets the y-column name for a preprocessed spectrum.</summary>
     public static string PeakTable_PreprocessedColumnNameY(int numberOfSpectrum) => $"Y_Preprocessed{numberOfSpectrum}";
+    /// <summary>Gets the column name that indicates whether a spectrum point was used for fitting.</summary>
     public static string PeakTable_UsedForFitColumnName(int numberOfSpectrum) => $"UsedForFit{numberOfSpectrum}";
 
+    /// <summary>Gets the x-column name for a fitted curve.</summary>
     public static string PeakTable_FitCurveColumnNameX(int numberOfSpectrum) => $"X_FitCurve{numberOfSpectrum}";
+    /// <summary>Gets the y-column name for a fitted curve.</summary>
     public static string PeakTable_FitCurveColumnNameY(int numberOfSpectrum) => $"Y_FitCurve{numberOfSpectrum}";
 
+    /// <summary>Gets the x-column name for a baseline curve.</summary>
     public static string PeakTable_BaselineCurveColumnNameX(int numberOfSpectrum) => $"X_BaselineCurve{numberOfSpectrum}";
+    /// <summary>Gets the y-column name for a baseline curve.</summary>
     public static string PeakTable_BaselineCurveColumnNameY(int numberOfSpectrum) => $"Y_BaselineCurve{numberOfSpectrum}";
 
+    /// <summary>Gets the x-column name for a residual curve.</summary>
     public static string PeakTable_ResidualCurveColumnNameX(int numberOfSpectrum) => $"X_ResidualCurve{numberOfSpectrum}";
+    /// <summary>Gets the y-column name for a residual curve.</summary>
     public static string PeakTable_ResidualCurveColumnNameY(int numberOfSpectrum) => $"Y_ResidualCurve{numberOfSpectrum}";
 
+    /// <summary>Gets the x-column name for separately output peak curves.</summary>
     public static string PeakTable_SeparatePeaksColumnNameX(int numberOfSpectrum) => $"X_PeakCurves{numberOfSpectrum}";
+    /// <summary>Gets the y-column name for separately output peak curves.</summary>
     public static string PeakTable_SeparatePeaksColumnNameY(int numberOfSpectrum) => $"Y_PeakCurves{numberOfSpectrum}";
+    /// <summary>Gets the identifier-column name for separately output peak curves.</summary>
     public static string PeakTable_SeparatePeaksColumnNameID(int numberOfSpectrum) => $"ID_PeakCurves{numberOfSpectrum}";
 
 
@@ -649,6 +669,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
 
     #region Change event handling
 
+    /// <inheritdoc />
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (sender is not null && object.ReferenceEquals(_processData, sender)) // incoming call from data proxy
@@ -670,6 +691,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
 
     #region Document Node functions
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_processOptions is not null)

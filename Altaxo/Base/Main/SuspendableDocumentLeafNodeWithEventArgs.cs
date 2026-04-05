@@ -32,6 +32,7 @@ namespace Altaxo.Main
   /// </summary>
   public class SuspendableDocumentLeafNodeWithEventArgs : SuspendableDocumentLeafNodeWithSingleAccumulatedData<EventArgs>
   {
+    /// <inheritdoc/>
     protected override void AccumulateChangeData(object? sender, EventArgs e)
     {
       if (e is not null)
@@ -41,7 +42,7 @@ namespace Altaxo.Main
     }
 
     /// <summary>
-    /// Calls EhSelfChanged with EventArgs.Empty
+    /// Calls <c>EhSelfChanged(EventArgs)</c> with <see cref="EventArgs.Empty"/>.
     /// </summary>
     public virtual void EhSelfChanged()
     {

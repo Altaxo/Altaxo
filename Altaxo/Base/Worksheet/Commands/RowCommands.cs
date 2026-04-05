@@ -126,7 +126,7 @@ namespace Altaxo.Worksheet.Commands
     }
 
     /// <summary>
-    /// Inserts a user choosen number of rows just before the first selected row.
+    /// Inserts a user-chosen number of rows just before the first selected row.
     /// If no row is selected, the row is inserted before the first row.
     /// </summary>
     /// <param name="ctrl">The worksheet controller.</param>

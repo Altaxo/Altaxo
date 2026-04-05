@@ -30,7 +30,7 @@ using System.ComponentModel;
 namespace Altaxo.Main.Services
 {
   /// <summary>
-  /// Interface for the other site of a <see cref="IProgressReporter"/>, i.e. the site that reads the progress and bring it to display.
+  /// Interface for the other side of an <see cref="IProgressReporter"/>, that is, the side that reads and displays the progress.
   /// </summary>
   public interface IProgressMonitor : INotifyPropertyChanged, IDisposable
   {

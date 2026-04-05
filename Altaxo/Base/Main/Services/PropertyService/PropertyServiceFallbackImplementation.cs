@@ -11,7 +11,7 @@ using Altaxo.Main.Properties;
 namespace Altaxo.Main.Services
 {
   /// <summary>
-  /// Fall back implementation of <see cref="IPropertyService"/> for use during debugging.
+  /// Fallback implementation of <see cref="IPropertyService"/> for use during debugging.
   /// </summary>
   /// <seealso cref="Altaxo.Main.Services.IPropertyService" />
   public class PropertyServiceFallbackImplementation : IPropertyService
@@ -102,6 +102,7 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Since this is the fallback implementation, this call has no effect.
     /// </summary>
+    /// <inheritdoc/>
     public void Save()
     {
       // Do nothing

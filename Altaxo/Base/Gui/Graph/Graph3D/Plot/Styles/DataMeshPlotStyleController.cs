@@ -34,17 +34,21 @@ using Altaxo.Gui.Graph.Scales;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="DataMeshPlotStyleController"/>.
+  /// </summary>
   public interface IDataMeshPlotStyleView : IDataContextAwareView
   {
   }
 
   /// <summary>
-  /// Controller for the density image plot style
+  /// Controller for <see cref="DataMeshPlotStyle"/>.
   /// </summary>
   [UserControllerForObject(typeof(DataMeshPlotStyle))]
   [ExpectedTypeOfView(typeof(IDataMeshPlotStyleView))]
   public class DataMeshPlotStyleController : MVCANControllerEditOriginalDocBase<DataMeshPlotStyle, IDataMeshPlotStyleView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_scaleController, () => ScaleController = null);
@@ -57,6 +61,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _isCustomColorScaleUsed;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether a custom color scale is used.
+    /// </summary>
     public bool IsCustomColorScaleUsed
     {
       get => _isCustomColorScaleUsed;
@@ -92,6 +99,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private IMVCANController _scaleController;
 
+    /// <summary>
+    /// Gets or sets the controller for the color scale.
+    /// </summary>
     public IMVCANController ScaleController
     {
       get => _scaleController;
@@ -108,6 +118,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private IMVCANController _colorProviderController;
 
+    /// <summary>
+    /// Gets or sets the controller for the color provider.
+    /// </summary>
     public IMVCANController ColorProviderController
     {
       get => _colorProviderController;
@@ -124,6 +137,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private IMVCANController _materialController;
 
+    /// <summary>
+    /// Gets or sets the controller for the material.
+    /// </summary>
     public IMVCANController MaterialController
     {
       get => _materialController;
@@ -143,6 +159,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -166,6 +183,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (!_scaleController.Apply(disposeController))

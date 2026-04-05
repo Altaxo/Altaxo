@@ -31,7 +31,9 @@ using Altaxo.Science.Spectroscopy;
 
 namespace Altaxo.Gui.Analysis.Multivariate
 {
-
+  /// <summary>
+  /// Defines the view contract for editing dimension-reduction options.
+  /// </summary>
   public interface IDimensionReductionOptionsView : IDataContextAwareView
   {
   }
@@ -45,6 +47,9 @@ namespace Altaxo.Gui.Analysis.Multivariate
   {
     private Dictionary<Type, ISingleSpectrumPreprocessor> _knownSingleSpectrumPreprocessors = new();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DimensionReductionOptionsController"/> class.
+    /// </summary>
     public DimensionReductionOptionsController()
     {
     }
@@ -59,6 +64,7 @@ namespace Altaxo.Gui.Analysis.Multivariate
       Initialize(true);
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_singleSpectrumPreprocessorController, () => SingleSpectrumPreprocessorController = null!);
@@ -70,6 +76,9 @@ namespace Altaxo.Gui.Analysis.Multivariate
 
     private IMVCANController _singleSpectrumPreprocessorController;
 
+    /// <summary>
+    /// Gets or sets the controller for single-spectrum preprocessing.
+    /// </summary>
     public IMVCANController SingleSpectrumPreprocessorController
     {
       get => _singleSpectrumPreprocessorController;
@@ -87,6 +96,9 @@ namespace Altaxo.Gui.Analysis.Multivariate
 
     private ItemsController<Type> _analysisMethods;
 
+    /// <summary>
+    /// Gets or sets the available analysis methods.
+    /// </summary>
     public ItemsController<Type> AnalysisMethods
     {
       get => _analysisMethods;
@@ -101,6 +113,9 @@ namespace Altaxo.Gui.Analysis.Multivariate
     }
 
 
+    /// <summary>
+    /// Gets or sets the controller for the selected method.
+    /// </summary>
     public IMVCANController MethodController
     {
       get => field;
@@ -116,6 +131,9 @@ namespace Altaxo.Gui.Analysis.Multivariate
     }
 
 
+    /// <summary>
+    /// Gets or sets the controller for output options.
+    /// </summary>
     public IMVCANController OutputOptionsController
     {
       get => field;
@@ -131,6 +149,7 @@ namespace Altaxo.Gui.Analysis.Multivariate
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -207,6 +226,7 @@ namespace Altaxo.Gui.Analysis.Multivariate
       MethodController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _currentMethod }, typeof(IMVCANController));
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (SingleSpectrumPreprocessorController is { } ctrl1)

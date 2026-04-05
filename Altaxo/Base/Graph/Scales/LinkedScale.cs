@@ -31,6 +31,9 @@ using Altaxo.Main;
 
 namespace Altaxo.Graph.Scales
 {
+  /// <summary>
+  /// Represents a scale whose bounds are linked to another scale.
+  /// </summary>
   [Serializable]
   public class LinkedScale : Scale
   {
@@ -84,6 +87,7 @@ namespace Altaxo.Graph.Scales
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Scales.LinkedScale", 2)]
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old versions not supported.");
@@ -96,6 +100,7 @@ namespace Altaxo.Graph.Scales
                 */
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
@@ -119,6 +124,11 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <summary>
+    /// Sets the linked layer index for legacy deserialization.
+    /// </summary>
+    /// <param name="linkedLayerIndex">The linked layer index.</param>
+    /// <param name="info">The deserialization helper.</param>
     [Obsolete]
     public void SetLinkedLayerIndex(int linkedLayerIndex, Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
@@ -174,6 +184,7 @@ namespace Altaxo.Graph.Scales
 
       private LinkedScale? _instance;
 
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old versions not supported.");
@@ -189,6 +200,7 @@ namespace Altaxo.Graph.Scales
                 */
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
@@ -251,6 +263,7 @@ namespace Altaxo.Graph.Scales
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Scales.LinkedScale", 4)]
     private class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (LinkedScale)obj;
@@ -260,6 +273,7 @@ namespace Altaxo.Graph.Scales
         info.AddValue("LinkParameters", s._linkParameters);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (LinkedScale?)o ?? new LinkedScale(info);
@@ -280,6 +294,7 @@ namespace Altaxo.Graph.Scales
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinkedScale), 5)]
     private class XmlSerializationSurrogate5 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (LinkedScale)obj;
@@ -291,6 +306,7 @@ namespace Altaxo.Graph.Scales
         info.AddValue("LinkTickSpacing", s._linkTickSpacing);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (LinkedScale?)o ?? new LinkedScale(info);
@@ -315,12 +331,21 @@ namespace Altaxo.Graph.Scales
     }
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinkedScale"/> class.
+    /// </summary>
+    /// <param name="scaleToWrap">The wrapped scale.</param>
     public LinkedScale(Scale scaleToWrap)
     {
       _linkParameters = new LinkedScaleParameters() { ParentObject = this };
       WrappedScale = scaleToWrap;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinkedScale"/> class for legacy deserialization.
+    /// </summary>
+    /// <param name="scaleToWrap">The wrapped scale.</param>
+    /// <param name="scaleNumberLinkedTo">The index of the linked scale.</param>
     [Obsolete("Only for old deserialization purposes")]
     public LinkedScale(Scale scaleToWrap, int scaleNumberLinkedTo)
     {
@@ -329,11 +354,19 @@ namespace Altaxo.Graph.Scales
       _linkedScaleIndex = scaleNumberLinkedTo;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinkedScale"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public LinkedScale(LinkedScale from)
     {
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies the state from another <see cref="LinkedScale"/> instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     [MemberNotNull(nameof(_linkParameters), nameof(_scaleWrapped))]
     protected void CopyFrom(LinkedScale from)
     {
@@ -352,6 +385,7 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -367,6 +401,7 @@ namespace Altaxo.Graph.Scales
       return false;
     }
 
+    /// <inheritdoc />
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_scaleWrapped is not null)
@@ -379,11 +414,15 @@ namespace Altaxo.Graph.Scales
         yield return new Main.DocumentNodeAndName(_scaleLinkedToProxy, () => _scaleLinkedToProxy = null!, "ScaleLinkedTo");
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new LinkedScale(this);
     }
 
+    /// <summary>
+    /// Gets or sets the scale to which this scale is linked.
+    /// </summary>
     [MaybeNull]
     public Scale ScaleLinkedTo
     {
@@ -412,21 +451,21 @@ namespace Altaxo.Graph.Scales
     }
 
     /// <summary>
-    /// Checks if the scale in the argument is dependend on this Scale. This would mean a circular dependency, which should be avoided.
+    /// Checks whether the scale in the argument is dependent on this scale. This would mean a circular dependency, which should be avoided.
     /// </summary>
     /// <param name="scaleToTest">The scale to check.</param>
-    /// <returns>True if the provided scale or one of its linked scales is dependend on this scale.</returns>
+    /// <returns><see langword="true"/> if the provided scale or one of its linked scales is dependent on this scale; otherwise, <see langword="false"/>.</returns>
     public bool IsScaleDependentOnMe(Scale scaleToTest)
     {
       return WouldScaleBeDependentOnMe(this, scaleToTest);
     }
 
     /// <summary>
-    /// Checks if the scale in the argument is dependend on this Scale. This would mean a circular dependency, which should be avoided.
+    /// Checks whether the scale in the argument is dependent on this scale. This would mean a circular dependency, which should be avoided.
     /// </summary>
     /// <param name="scaleThatWouldBecomeALinkedScale">Scale that is a linked scale or that would become a linked scale.</param>
     /// <param name="scaleToTest">The scale to check.</param>
-    /// <returns>True if the provided scale or one of its linked scales is dependend on this scale.</returns>
+    /// <returns><see langword="true"/> if the provided scale or one of its linked scales is dependent on this scale; otherwise, <see langword="false"/>.</returns>
     public static bool WouldScaleBeDependentOnMe(Scale scaleThatWouldBecomeALinkedScale, Scale scaleToTest)
     {
       if (object.ReferenceEquals(scaleThatWouldBecomeALinkedScale, scaleToTest))
@@ -447,7 +486,7 @@ namespace Altaxo.Graph.Scales
     }
 
     /// <summary>
-    /// If true, the type of wrapped scale is the same as the type of the scale linked to
+    /// Gets or sets a value indicating whether the type of the wrapped scale is synchronized with the linked scale type.
     /// </summary>
     public bool LinkScaleType
     {
@@ -468,7 +507,7 @@ namespace Altaxo.Graph.Scales
     }
 
     /// <summary>
-    /// If true, the tick spacing is used from the scale linked to 1:1
+    /// Gets or sets a value indicating whether the tick spacing is copied directly from the linked scale.
     /// </summary>
     public bool LinkTickSpacing
     {
@@ -488,6 +527,9 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the current link parameters describe a straight link.
+    /// </summary>
     public bool IsStraightLink
     {
       get
@@ -497,7 +539,7 @@ namespace Altaxo.Graph.Scales
     }
 
     /// <summary>
-    /// Set all parameters of the axis link by once.
+    /// Sets all parameters of the scale link at once.
     /// </summary>
     /// <param name="orgA">The value a of x-axis link for link of axis origin: org' = a + b*org.</param>
     /// <param name="orgB">The value b of x-axis link for link of axis origin: org' = a + b*org.</param>
@@ -508,11 +550,17 @@ namespace Altaxo.Graph.Scales
       _linkParameters.SetTo(orgA, orgB, endA, endB);
     }
 
+    /// <summary>
+    /// Sets the link parameters to a straight link.
+    /// </summary>
     public void SetLinkParameterToStraightLink()
     {
       _linkParameters.SetToStraightLink();
     }
 
+    /// <summary>
+    /// Gets or sets the link parameters.
+    /// </summary>
     public LinkedScaleParameters LinkParameters
     {
       get
@@ -526,6 +574,9 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <summary>
+    /// Gets or sets the additive term for the linked origin.
+    /// </summary>
     public double LinkOrgA
     {
       get { return _linkParameters.OrgA; }
@@ -535,6 +586,9 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <summary>
+    /// Gets or sets the multiplicative term for the linked origin.
+    /// </summary>
     public double LinkOrgB
     {
       get { return _linkParameters.OrgB; }
@@ -544,6 +598,9 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <summary>
+    /// Gets or sets the additive term for the linked end value.
+    /// </summary>
     public double LinkEndA
     {
       get { return _linkParameters.EndA; }
@@ -553,6 +610,9 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <summary>
+    /// Gets or sets the multiplicative term for the linked end value.
+    /// </summary>
     public double LinkEndB
     {
       get { return _linkParameters.EndB; }
@@ -563,6 +623,9 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <summary>
+    /// Gets or sets the wrapped scale.
+    /// </summary>
     public Scale WrappedScale
     {
       get
@@ -583,6 +646,7 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     public override Ticks.TickSpacing TickSpacing
     {
       get
@@ -595,21 +659,25 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     public override double PhysicalVariantToNormal(Altaxo.Data.AltaxoVariant x)
     {
       return _scaleWrapped.PhysicalVariantToNormal(x);
     }
 
+    /// <inheritdoc />
     public override Altaxo.Data.AltaxoVariant NormalToPhysicalVariant(double x)
     {
       return _scaleWrapped.NormalToPhysicalVariant(x);
     }
 
+    /// <inheritdoc />
     public override Rescaling.IScaleRescaleConditions? RescalingObject
     {
       get { return _scaleWrapped.RescalingObject; }
     }
 
+    /// <inheritdoc />
     public override IPhysicalBoundaries DataBoundsObject
     {
       get
@@ -628,6 +696,7 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     public override Altaxo.Data.AltaxoVariant OrgAsVariant
     {
       get
@@ -636,6 +705,7 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     public override Altaxo.Data.AltaxoVariant EndAsVariant
     {
       get
@@ -644,6 +714,7 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     public override void OnUserRescaled()
     {
       var scaleLinkedTo = ScaleLinkedTo;
@@ -652,11 +723,13 @@ namespace Altaxo.Graph.Scales
         scaleLinkedTo.OnUserRescaled();
     }
 
+    /// <inheritdoc />
     public override void OnUserZoomed(AltaxoVariant newZoomOrg, AltaxoVariant newZoomEnd)
     {
       // ignore this - we are linked
     }
 
+    /// <inheritdoc />
     protected override string? SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
     {
       var scaleLinkedTo = ScaleLinkedTo;
@@ -677,6 +750,7 @@ namespace Altaxo.Graph.Scales
 
     #region Changed event handling
 
+    /// <inheritdoc />
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (object.ReferenceEquals(sender, _linkParameters))
@@ -696,6 +770,9 @@ namespace Altaxo.Graph.Scales
       OnLinkPropertiesChanged();
     }
 
+    /// <summary>
+    /// Updates this scale after one of the link properties has changed.
+    /// </summary>
     protected virtual void OnLinkPropertiesChanged()
     {
       // calculate the new bounds

@@ -45,7 +45,7 @@ namespace Altaxo.Serialization.Omnic
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(OmnicSPGImportDataSource), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      /// <inheritdoc/>
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (OmnicSPGImportDataSource)obj;
@@ -55,7 +55,7 @@ namespace Altaxo.Serialization.Omnic
         info.AddArray("ProcessData", s._files.ToArray(), s._files.Count);
       }
 
-      /// <inheritdoc/>
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (o is OmnicSPGImportDataSource s)
@@ -122,20 +122,25 @@ namespace Altaxo.Serialization.Omnic
       _processOptions = options;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OmnicSPGImportDataSource"/> class by copying another instance.
+    /// </summary>
     public OmnicSPGImportDataSource(OmnicSPGImportDataSource from)
       : base(from)
     {
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override object Clone() => new OmnicSPGImportDataSource(this);
 
     #endregion Construction
+    /// <inheritdoc />
     protected override void ImportFromFiles(string[] validFileNames, DataTable destinationTable, IProgressReporter reporter)
     {
       new OmnicSPGImporter().Import(validFileNames, destinationTable, _processOptions, attachDataSource: false);
     }
 
+    /// <inheritdoc />
     public override (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
     {
       return new OmnicSPGImporter().GetFileExtensions();

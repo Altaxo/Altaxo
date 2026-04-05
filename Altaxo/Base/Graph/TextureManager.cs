@@ -100,6 +100,10 @@ namespace Altaxo.Graph
     {
     }
 
+    /// <summary>
+    /// Adds the specified texture if it is not already present.
+    /// </summary>
+    /// <param name="texture">The texture to add.</param>
     public void Add(ImageProxy texture)
     {
       var hash = texture.ContentHash;
@@ -107,6 +111,10 @@ namespace Altaxo.Graph
         _texturesByHash.Add(hash, texture);
     }
 
+    /// <summary>
+    /// Gets a texture by its content hash.
+    /// </summary>
+    /// <param name="hash">The content hash.</param>
     public ImageProxy this[string hash]
     {
       get
@@ -115,6 +123,11 @@ namespace Altaxo.Graph
       }
     }
 
+    /// <summary>
+    /// Determines whether a texture with the specified hash exists.
+    /// </summary>
+    /// <param name="hash">The content hash.</param>
+    /// <returns><c>true</c> if the texture exists; otherwise, <c>false</c>.</returns>
     public bool Contains(string hash)
     {
       return _texturesByHash.ContainsKey(hash);
@@ -122,6 +135,7 @@ namespace Altaxo.Graph
 
     #region IEnumerable<KeyValuePair<string,ImageProxy>> Members
 
+    /// <inheritdoc/>
     public IEnumerator<KeyValuePair<string, ImageProxy>> GetEnumerator()
     {
       var dict = new List<KeyValuePair<string, ImageProxy>>();

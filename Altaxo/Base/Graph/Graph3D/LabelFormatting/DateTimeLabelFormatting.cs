@@ -34,7 +34,26 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
   /// </summary>
   public class DateTimeLabelFormatting : MultiLineLabelFormattingBase
   {
-    public enum TimeConversion { Original, ToUtc, ToLocal };
+    /// <summary>
+    /// Determines how date-time values are converted before formatting.
+    /// </summary>
+    public enum TimeConversion
+    {
+      /// <summary>
+      /// Keep the original time value.
+      /// </summary>
+      Original,
+
+      /// <summary>
+      /// Convert the time value to UTC.
+      /// </summary>
+      ToUtc,
+
+      /// <summary>
+      /// Convert the time value to local time.
+      /// </summary>
+      ToLocal
+    };
 
     private string _formatString = "{0:T}";
     private string _formatStringAlternate = "{0:T}\r\n{0:d}";
@@ -46,9 +65,13 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 
     #region Serialization
 
+    /// <summary>
+    /// Serializes <see cref="DateTimeLabelFormatting"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DateTimeLabelFormatting), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DateTimeLabelFormatting)obj;
@@ -61,6 +84,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
         info.AddValue("FormatStringAlternate", s._formatStringAlternate);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (DateTimeLabelFormatting?)o ?? new DateTimeLabelFormatting();
@@ -78,15 +102,23 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DateTimeLabelFormatting"/> class.
+    /// </summary>
     public DateTimeLabelFormatting()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DateTimeLabelFormatting"/> class by copying from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public DateTimeLabelFormatting(DateTimeLabelFormatting from)
       : base(from) // everything is done here, since CopyFrom is virtual
     {
     }
 
+    /// <inheritdoc/>
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -107,16 +139,19 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
       return false;
     }
 
+    /// <inheritdoc/>
     public override object Clone()
     {
       return new DateTimeLabelFormatting(this);
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
     }
 
+    /// <inheritdoc/>
     protected override string FormatItem(AltaxoVariant item)
     {
       if (item.IsType(AltaxoVariant.Content.VDateTime) && !string.IsNullOrEmpty(_formatString))
@@ -151,6 +186,9 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 
     #region Properties
 
+    /// <summary>
+    /// Gets or sets the primary formatting string.
+    /// </summary>
     public string FormattingString
     {
       get
@@ -163,6 +201,9 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
       }
     }
 
+    /// <summary>
+    /// Gets or sets the alternate formatting string.
+    /// </summary>
     public string FormattingStringAlternate
     {
       get
@@ -175,6 +216,9 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether alternate formatting is used at midnight.
+    /// </summary>
     public bool ShowAlternateFormattingAtMidnight
     {
       get
@@ -187,6 +231,9 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether alternate formatting is used at noon.
+    /// </summary>
     public bool ShowAlternateFormattingAtNoon
     {
       get
@@ -199,6 +246,9 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
       }
     }
 
+    /// <summary>
+    /// Gets or sets the time conversion applied before formatting labels.
+    /// </summary>
     public TimeConversion LabelTimeConversion
     {
       get

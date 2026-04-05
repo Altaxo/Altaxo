@@ -28,8 +28,12 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Workbench
 {
+  /// <summary>
+  /// Coordinates the multi-stage shutdown of the application.
+  /// </summary>
   public class ShutdownService : IShutdownService
   {
+    /// <inheritdoc/>
     public bool IsApplicationClosing { get; private set; }
     private CancellationTokenSource _shutdownCancellationTokenSource = new CancellationTokenSource();
     private CancellationTokenSource _delayedShutdownCancellationTokenSource = new CancellationTokenSource();
@@ -64,22 +68,26 @@ namespace Altaxo.Gui.Workbench
     /// </summary>
     public WeakAsynchronousEvent ClosedAsync { get; } = new WeakAsynchronousEvent();
 
+    /// <inheritdoc/>
     public CancellationToken ShutdownToken
     {
       get { return _shutdownCancellationTokenSource.Token; }
     }
 
+    /// <inheritdoc/>
     public CancellationToken DelayedShutdownToken
     {
       get { return _delayedShutdownCancellationTokenSource.Token; }
     }
 
+    /// <inheritdoc/>
     public void SignalShutdownToken()
     {
       _shutdownCancellationTokenSource.Cancel();
       _delayedShutdownCancellationTokenSource.CancelAfter(2000);
     }
 
+    /// <inheritdoc/>
     public bool Shutdown()
     {
       Current.Workbench.Close();
@@ -88,6 +96,7 @@ namespace Altaxo.Gui.Workbench
 
     #region PreventShutdown
 
+    /// <inheritdoc/>
     public IDisposable PreventShutdown(string reason)
     {
       lock (_reasonsPreventingShutdown)
@@ -127,6 +136,7 @@ namespace Altaxo.Gui.Workbench
 
     #region Background Tasks
 
+    /// <inheritdoc/>
     public void AddBackgroundTask(Task task)
     {
       _backgroundTaskEvent.Reset();
@@ -141,6 +151,9 @@ namespace Altaxo.Gui.Workbench
           });
     }
 
+    /// <summary>
+    /// Waits until all registered background tasks have completed.
+    /// </summary>
     internal void WaitForBackgroundTasks()
     {
       if (!_backgroundTaskEvent.IsSet)
@@ -155,6 +168,9 @@ namespace Altaxo.Gui.Workbench
 
     #region Closing Stages
 
+    /// <summary>
+    /// Executes the multi-stage application shutdown.
+    /// </summary>
     public void OnClosing(CancelEventArgs e)
     {
       var propertyService = Current.PropertyService;
@@ -187,6 +203,10 @@ namespace Altaxo.Gui.Workbench
       OnClosingStage10_PropertyServiceSaveToFile(propertyService);
     }
 
+    /// <summary>
+    /// Executes shutdown stage 1, which checks whether shutdown is currently blocked.
+    /// </summary>
+    /// <param name="e">The cancel event arguments used to abort shutdown.</param>
     protected virtual void OnClosingStage1_ReasonsPreventingShutdown(CancelEventArgs e)
     {
       if (CurrentReasonPreventingShutdown is not null)
@@ -196,6 +216,10 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Executes shutdown stage 2, which closes the current project if necessary.
+    /// </summary>
+    /// <param name="e">The cancel event arguments used to abort shutdown.</param>
     protected virtual void OnClosingStage2_CloseProject(CancelEventArgs e)
     {
       Current.Workbench.SaveCompleteWorkbenchStateAndLayoutInPropertyService();
@@ -208,6 +232,9 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Executes shutdown stage 3, which signals the shutdown tokens and raises shutdown events.
+    /// </summary>
     protected virtual void OnClosingStage3_SignalShutdownToken()
     {
       SignalShutdownToken();
@@ -215,11 +242,17 @@ namespace Altaxo.Gui.Workbench
       ClosedAsync.InvokeParallel(CancellationToken.None).Wait();
     }
 
+    /// <summary>
+    /// Executes shutdown stage 4, which closes all views.
+    /// </summary>
     protected virtual void OnClosingStage4_CloseAllViews()
     {
       Current.Workbench.CloseAllViews();
     }
 
+    /// <summary>
+    /// Executes shutdown stage 5, which disposes all pads.
+    /// </summary>
     protected virtual void OnClosingStage5_DisposePads()
     {
       foreach (var pad in Current.Workbench.PadContentCollection)
@@ -228,26 +261,42 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Executes shutdown stage 6, which stops the local COM server.
+    /// </summary>
     protected virtual void OnClosingStage6_StopComServer()
     {
       Current.ComManager?.StopLocalServer();
     }
 
+    /// <summary>
+    /// Executes shutdown stage 7, which disposes the current project.
+    /// </summary>
     protected virtual void OnClosingStage7_DisposeProject()
     {
       Altaxo.Current.IProjectService?.DisposeProjectAndSetToNull();
     }
 
+    /// <summary>
+    /// Executes shutdown stage 8, which waits for background tasks to complete.
+    /// </summary>
     protected virtual void OnClosingStage8_WaitForBackgroundTasks()
     {
       WaitForBackgroundTasks();
     }
 
+    /// <summary>
+    /// Executes shutdown stage 9, which disposes registered services.
+    /// </summary>
     protected virtual void OnClosingStage9_DisposeServices()
     {
       Current.DisposeServicesAll();
     }
 
+    /// <summary>
+    /// Executes shutdown stage 10, which saves the property service to persistent storage.
+    /// </summary>
+    /// <param name="propertyService">The property service to save.</param>
     protected virtual void OnClosingStage10_PropertyServiceSaveToFile(IPropertyService propertyService)
     {
       propertyService.Save();

@@ -143,9 +143,9 @@ namespace Altaxo
     }
 
     /// <summary>
-    /// Gets the property bags 'UserSettings, 'ApplicationSettings' and 'BuiltinSettings' along with the bag information.
+    /// Gets the property bags 'UserSettings', 'ApplicationSettings', and 'BuiltinSettings' along with the bag information.
     /// </summary>
-    /// <returns>Property bags 'UserSettings, 'ApplicationSettings' and 'BuiltinSettings' along with the bag information.</returns>
+    /// <returns>Property bags 'UserSettings', 'ApplicationSettings', and 'BuiltinSettings' along with the bag information.</returns>
     public static IEnumerable<PropertyBagWithInformation> GetPropertyBagsStartingFromUserSettings()
     {
       // and now the user's settings
@@ -186,7 +186,7 @@ namespace Altaxo
     }
 
     /// <summary>
-    /// Gets the property bags in the hierarchal order. The first bag in the enumeration is the bag that owns the <paramref name="owner"/>. Then the bags of the folders
+    /// Gets the property bags in hierarchical order. The first bag in the enumeration is the bag that owns the <paramref name="owner"/>. Then the bags of the folders
     /// in which the owner is located, its parent folders, and then UserSettings, ApplicationSettings, and BuiltinSettings follow.
     /// </summary>
     /// <param name="owner">The owner of a property bag with which to start the enumeration.</param>
@@ -197,7 +197,7 @@ namespace Altaxo
     }
 
     /// <summary>
-    /// Gets the property bags in the hierarchal order. The first bag in the enumeration is the bag is in the provided project <paramref name="folder"/>. Then the bags of
+    /// Gets the property bags in hierarchical order. The first bag in the enumeration is the bag in the provided project <paramref name="folder"/>. Then the bags of
     /// its parent folders, and then UserSettings, ApplicationSettings, and BuiltinSettings follow.
     /// </summary>
     /// <param name="folder">The project folder with which to start the enumeration.</param>
@@ -249,7 +249,7 @@ namespace Altaxo
 
 #if !WORKBENCH4ALL
     /// <summary>
-    /// Gets the project folder property documents down the project folder hierarchie.
+    /// Gets the project folder property documents down the project folder hierarchy.
     /// </summary>
     /// <param name="namedOwner">The named owner. Can be any project item.</param>
     /// <returns>All project folder property documents, starting from the deepest folder level, and ending with the property document in the root folder (if there is any).</returns>

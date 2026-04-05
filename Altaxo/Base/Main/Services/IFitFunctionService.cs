@@ -72,6 +72,9 @@ namespace Altaxo.Main.Services
     bool SaveUserDefinedFitFunction(Altaxo.Scripting.FitFunctionScript doc);
   }
 
+  /// <summary>
+  /// Provides metadata and factory methods for a fit function.
+  /// </summary>
   public interface IFitFunctionInformation
   {
     /// <summary>
@@ -116,6 +119,14 @@ namespace Altaxo.Main.Services
     private string _description;
     private string _fileName;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileBasedFitFunctionInformation"/> class.
+    /// </summary>
+    /// <param name="category">The fit function category.</param>
+    /// <param name="name">The fit function name.</param>
+    /// <param name="creationTime">The creation time.</param>
+    /// <param name="description">The fit function description.</param>
+    /// <param name="fullfilename">The file name that stores the fit function.</param>
     public FileBasedFitFunctionInformation(string category, string name, DateTime creationTime, string description, string fullfilename)
     {
       _category = category;
@@ -125,31 +136,39 @@ namespace Altaxo.Main.Services
       _fileName = fullfilename;
     }
 
+    /// <inheritdoc/>
     public string Name
     {
       get { return _name; }
     }
 
+    /// <inheritdoc/>
     public string Category
     {
       get { return _category; }
     }
 
+    /// <inheritdoc/>
     public DateTime? CreationTime
     {
       get { return _creationTime; }
     }
 
+    /// <inheritdoc/>
     public string Description
     {
       get { return _description; }
     }
 
+    /// <summary>
+    /// Gets the full file name of the fit function script.
+    /// </summary>
     public string FileName
     {
       get { return _fileName; }
     }
 
+    /// <inheritdoc/>
     public Altaxo.Calc.Regression.Nonlinear.IFitFunction CreateFitFunction()
     {
       return FitFunctionService.ReadUserDefinedFitFunction(this) ??
@@ -157,42 +176,60 @@ namespace Altaxo.Main.Services
     }
   }
 
+  /// <summary>
+  /// Holds information about built-in fit functions.
+  /// </summary>
   public class BuiltinFitFunctionInformation : IFitFunctionInformation
   {
     private Altaxo.Calc.Regression.Nonlinear.FitFunctionCreatorAttribute _creatorAttrib;
     private System.Reflection.MethodInfo _method;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BuiltinFitFunctionInformation"/> class.
+    /// </summary>
+    /// <param name="creatorattrib">The creator attribute.</param>
+    /// <param name="method">The method that creates the fit function.</param>
     public BuiltinFitFunctionInformation(Altaxo.Calc.Regression.Nonlinear.FitFunctionCreatorAttribute creatorattrib, System.Reflection.MethodInfo method)
     {
       _creatorAttrib = creatorattrib;
       _method = method;
     }
 
+    /// <summary>
+    /// Gets the creator attribute that describes the built-in fit function.
+    /// </summary>
     public Altaxo.Calc.Regression.Nonlinear.FitFunctionCreatorAttribute CreatorAttrib
     {
       get { return _creatorAttrib; }
     }
 
+    /// <inheritdoc/>
     public string Name
     {
       get { return _creatorAttrib.Name; }
     }
 
+    /// <inheritdoc/>
     public string Category
     {
       get { return _creatorAttrib.Category; }
     }
 
+    /// <inheritdoc/>
     public DateTime? CreationTime
     {
       get { return null; }
     }
 
+    /// <summary>
+    /// Gets the method that creates the fit function.
+    /// </summary>
     public System.Reflection.MethodInfo Method
     {
       get { return _method; }
     }
 
+    /// <inheritdoc/>
     public string Description
     {
       get
@@ -202,6 +239,7 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <inheritdoc/>
     public Altaxo.Calc.Regression.Nonlinear.IFitFunction CreateFitFunction()
     {
       var result = _method.Invoke(null, new object[] { });
@@ -214,42 +252,54 @@ namespace Altaxo.Main.Services
   }
 
   /// <summary>
-  /// Holds information about file based user defined fit function scripts.
+  /// Holds information about fit function scripts stored in the current document.
   /// </summary>
   public class DocumentFitFunctionInformation : IFitFunctionInformation
   {
     private Altaxo.Scripting.FitFunctionScript _fitFunction;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DocumentFitFunctionInformation"/> class.
+    /// </summary>
+    /// <param name="script">The fit function script.</param>
     public DocumentFitFunctionInformation(Altaxo.Scripting.FitFunctionScript script)
     {
       _fitFunction = script;
     }
 
+    /// <inheritdoc/>
     public string Name
     {
       get { return _fitFunction.FitFunctionName; }
     }
 
+    /// <inheritdoc/>
     public string Category
     {
       get { return _fitFunction.FitFunctionCategory; }
     }
 
+    /// <inheritdoc/>
     public DateTime? CreationTime
     {
       get { return _fitFunction.CreationTime; }
     }
 
+    /// <inheritdoc/>
     public string Description
     {
       get { return _fitFunction.FitFunctionDescription; }
     }
 
+    /// <summary>
+    /// Gets the underlying fit function script.
+    /// </summary>
     public Altaxo.Scripting.FitFunctionScript FitFunction
     {
       get { return _fitFunction; }
     }
 
+    /// <inheritdoc/>
     public Altaxo.Calc.Regression.Nonlinear.IFitFunction CreateFitFunction()
     {
       return _fitFunction;

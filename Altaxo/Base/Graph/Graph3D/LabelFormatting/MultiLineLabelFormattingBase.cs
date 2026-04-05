@@ -33,7 +33,7 @@ using Altaxo.Graph.Graph3D.GraphicsContext;
 namespace Altaxo.Graph.Graph3D.LabelFormatting
 {
   /// <summary>
-  /// Base class that can be used to derive a numeric abel formatting class
+  /// Provides the base implementation for multi-line label-formatting classes.
   /// </summary>
   public abstract class MultiLineLabelFormattingBase : LabelFormattingBase
   {
@@ -42,9 +42,13 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 
     #region Serialization
 
+    /// <summary>
+    /// Serializes <see cref="MultiLineLabelFormattingBase"/> state.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MultiLineLabelFormattingBase), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (MultiLineLabelFormattingBase)obj;
@@ -53,6 +57,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
         info.AddEnum("BlockAlignment", s._textBlockAlignment);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (MultiLineLabelFormattingBase)(o ?? throw new ArgumentNullException(nameof(o)));
@@ -66,15 +71,23 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MultiLineLabelFormattingBase"/> class.
+    /// </summary>
     protected MultiLineLabelFormattingBase()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MultiLineLabelFormattingBase"/> class by copying from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     protected MultiLineLabelFormattingBase(MultiLineLabelFormattingBase from)
       : base(from) // everything is done here, since CopyFrom is virtual
     {
     }
 
+    /// <inheritdoc/>
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -92,6 +105,9 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
       return false;
     }
 
+    /// <summary>
+    /// Gets or sets the relative spacing between lines.
+    /// </summary>
     public double LineSpacing
     {
       get
@@ -104,6 +120,9 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
       }
     }
 
+    /// <summary>
+    /// Gets or sets the alignment of the text block.
+    /// </summary>
     public Alignment TextBlockAlignment
     {
       get
@@ -144,20 +163,57 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
       return litems;
     }
 
+    /// <summary>
+    /// Represents a measured multi-line label item.
+    /// </summary>
     protected new class MeasuredLabelItem : IMeasuredLabelItem
     {
+      /// <summary>
+      /// Stores the lines of text.
+      /// </summary>
       protected string[] _text;
+      /// <summary>
+      /// Stores the measured size of each line.
+      /// </summary>
       protected VectorD3D[] _stringSize;
+      /// <summary>
+      /// Stores the font used to draw the text.
+      /// </summary>
       protected FontX3D _font;
+      /// <summary>
+      /// Stores the total size of the measured label.
+      /// </summary>
       protected VectorD3D _size;
 
+      /// <summary>
+      /// Stores the horizontal alignment.
+      /// </summary>
       protected Alignment _horizontalAlignment;
+      /// <summary>
+      /// Stores the vertical alignment.
+      /// </summary>
       protected Alignment _verticalAlignment;
+      /// <summary>
+      /// Stores the alignment of the text block.
+      /// </summary>
       protected Alignment _textBlockAligment;
+      /// <summary>
+      /// Stores the relative line spacing.
+      /// </summary>
       protected double _lineSpacing;
 
       #region IMeasuredLabelItem Members
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="MeasuredLabelItem"/> class.
+      /// </summary>
+      /// <param name="g">The graphics context.</param>
+      /// <param name="font">The font.</param>
+      /// <param name="itemtext">The label text.</param>
+      /// <param name="lineSpacing">The relative line spacing.</param>
+      /// <param name="horizontalAlignment">The horizontal alignment.</param>
+      /// <param name="verticalAlignment">The vertical alignment.</param>
+      /// <param name="textBlockAligment">The alignment of the text block.</param>
       public MeasuredLabelItem(IGraphicsContext3D g, FontX3D font, string itemtext, double lineSpacing, Alignment horizontalAlignment, Alignment verticalAlignment, Alignment textBlockAligment)
       {
         _text = itemtext.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
@@ -179,6 +235,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
         _size = bounds.Size;
       }
 
+      /// <inheritdoc/>
       public virtual VectorD3D Size
       {
         get
@@ -187,6 +244,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
         }
       }
 
+      /// <inheritdoc/>
       public virtual void Draw(IGraphicsContext3D g, IMaterial brush, PointD3D point)
       {
         var positionX = point.X + GetHorizontalOffset();

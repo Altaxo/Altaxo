@@ -34,6 +34,9 @@ namespace Altaxo.Data.Selections
   /// <summary>
   /// Represents a selection of rows for data operations.
   /// </summary>
+  /// <remarks>
+  /// Implementations of this interface should provide mechanisms to define and retrieve selected rows based on various criteria.
+  /// </remarks>
   public interface IRowSelection : Main.IDocumentLeafNode, ICloneable, ITreeNode<IRowSelection>, IEquatable<IRowSelection>
   {
     /// <summary>

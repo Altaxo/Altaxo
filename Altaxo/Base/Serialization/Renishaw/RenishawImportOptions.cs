@@ -26,7 +26,7 @@
 namespace Altaxo.Serialization.Renishaw
 {
   /// <summary>
-  /// Import options for importing Galactic SPC files.
+  /// Import options for importing Renishaw files.
   /// </summary>
   public record RenishawImportOptions : Main.IImmutable
   {
@@ -51,10 +51,10 @@ namespace Altaxo.Serialization.Renishaw
     /// <summary>
     /// V0: 2023-12-08 Initial version
     /// </summary>
-    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RenishawImportOptions), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (RenishawImportOptions)obj;
@@ -63,6 +63,7 @@ namespace Altaxo.Serialization.Renishaw
         info.AddValue("IncludeFilePathAsProperty", s.IncludeFilePathAsProperty);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var useNeutralColumnName = info.GetBoolean("UseNeutralColumnName");

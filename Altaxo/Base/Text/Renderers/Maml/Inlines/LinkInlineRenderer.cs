@@ -34,6 +34,9 @@ namespace Altaxo.Text.Renderers.Maml.Inlines
   /// </summary>
   public class LinkInlineRenderer : MamlObjectRenderer<LinkInline>
   {
+    /// <summary>
+    /// Writes a link or image inline.
+    /// </summary>
     /// <inheritdoc/>
     protected override void Write(MamlRenderer renderer, LinkInline link)
     {
@@ -78,6 +81,12 @@ namespace Altaxo.Text.Renderers.Maml.Inlines
       }
     }
 
+    /// <summary>
+    /// Renders an image inline.
+    /// </summary>
+    /// <param name="renderer">The renderer.</param>
+    /// <param name="link">The link node.</param>
+    /// <param name="url">The resolved image URL.</param>
     private void RenderImage(MamlRenderer renderer, LinkInline link, string url)
     {
       double? width = null, height = null;

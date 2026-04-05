@@ -28,6 +28,9 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Serialization
 {
+  /// <summary>
+  /// Represents a supported length unit and provides unit-conversion helpers.
+  /// </summary>
   public class LengthUnit
   {
     private decimal _factorToMeter;
@@ -77,32 +80,70 @@ namespace Altaxo.Serialization
       _shortcut = shortcut;
     }
 
+    /// <summary>
+    /// Gets the display name of the unit.
+    /// </summary>
     public string Name { get { return _name; } }
 
+    /// <summary>
+    /// Gets the shortcut of the unit.
+    /// </summary>
     public string Shortcut { get { return _shortcut; } }
 
+    /// <summary>
+    /// Gets the size of the unit in meters.
+    /// </summary>
     public decimal UnitInMeter { get { return _factorToMeter; } }
 
+    /// <summary>
+    /// Converts a length value from the specified source unit into this unit.
+    /// </summary>
+    /// <param name="fromlength">The length value to convert.</param>
+    /// <param name="fromunit">The source unit.</param>
+    /// <returns>The converted length value.</returns>
     public double ConvertFrom(double fromlength, LengthUnit fromunit)
     {
       return fromlength * (double)(fromunit.UnitInMeter / UnitInMeter);
     }
 
+    /// <summary>
+    /// Gets the millimeter unit.
+    /// </summary>
     public static LengthUnit Millimeter { get { return _millimeter; } }
 
+    /// <summary>
+    /// Gets the centimeter unit.
+    /// </summary>
     public static LengthUnit Centimeter { get { return _centimeter; } }
 
+    /// <summary>
+    /// Gets the mil unit.
+    /// </summary>
     public static LengthUnit Mil { get { return _mil; } }
 
+    /// <summary>
+    /// Gets the typographic point unit.
+    /// </summary>
     public static LengthUnit Point { get { return _point; } }
 
+    /// <summary>
+    /// Gets the inch unit.
+    /// </summary>
     public static LengthUnit Inch { get { return _inch; } }
 
+    /// <summary>
+    /// Gets a length unit from its shortcut.
+    /// </summary>
+    /// <param name="shortcut">The unit shortcut.</param>
+    /// <returns>The matching length unit.</returns>
     public static LengthUnit FromShortcut(string shortcut)
     {
       return _shortcutToUnit[shortcut];
     }
 
+    /// <summary>
+    /// Gets the list of recognized unit shortcuts.
+    /// </summary>
     public static string[] Shortcuts
     {
       get

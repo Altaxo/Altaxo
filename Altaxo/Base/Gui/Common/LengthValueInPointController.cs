@@ -27,14 +27,23 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// Controller for editing length values stored in points.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IDimensionfulQuantityView))]
   public class LengthValueInPointController : ValueInSomeUnitControllerBase
   {
+    /// <summary>
+    /// Gets the base unit of the edited value.
+    /// </summary>
     protected override IUnit UnitOfValue
     {
       get { return Altaxo.Units.Length.Point.Instance; }
     }
 
+    /// <summary>
+    /// Gets the unit environment used for display and editing.
+    /// </summary>
     protected override QuantityWithUnitGuiEnvironment UnitEnvironment
     {
       get { return SizeEnvironment.Instance; }

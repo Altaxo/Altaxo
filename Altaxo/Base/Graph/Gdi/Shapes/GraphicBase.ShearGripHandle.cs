@@ -33,6 +33,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 {
   public abstract partial class GraphicBase
   {
+    /// <summary>
+    /// Grip handle used to shear a graphic object.
+    /// </summary>
     protected class ShearGripHandle : IGripManipulationHandle
     {
       private static readonly PointF[] _shapePoints;
@@ -48,6 +51,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       private GraphicBase GraphObject { get { return (GraphicBase)_parent.HittedObject; } }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ShearGripHandle"/> class.
+      /// </summary>
+      /// <param name="parent">The parent hit-test object.</param>
+      /// <param name="relPos">The relative grip position.</param>
+      /// <param name="spanningHalfYRhombus">The grip transformation matrix.</param>
       public ShearGripHandle(IHitTestObject parent, PointD2D relPos, MatrixD2D spanningHalfYRhombus)
       {
         _parent = parent;
@@ -59,6 +68,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       #region IGripManipulationHandle Members
 
+      /// <inheritdoc />
       public void Activate(PointD2D initialPosition, bool isActivatedUponCreation)
       {
         _initialMousePosition = _parent.Transformation.InverseTransformPoint(initialPosition);
@@ -73,6 +83,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         _hasMoved = false;
       }
 
+      /// <inheritdoc />
       public bool Deactivate()
       {
         if (_hasMoved)
@@ -81,6 +92,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         return false;
       }
 
+      /// <inheritdoc />
       public void MoveGrip(PointD2D newPosition)
       {
         newPosition = _parent.Transformation.InverseTransformPoint(newPosition);
@@ -100,12 +112,14 @@ namespace Altaxo.Graph.Gdi.Shapes
         g.FillPolygon(Brushes.Blue, pts);
       }
 
+      /// <inheritdoc />
       public bool IsGripHitted(PointD2D point)
       {
         point = _spanningHalfYRhombus.InverseTransformPoint(point);
         return Calc.RMath.IsInIntervalCC(point.X, 0, 2 * bigX) && Calc.RMath.IsInIntervalCC(point.Y, -bigY, bigY);
       }
 
+      /// <inheritdoc />
       public bool IsGrippedObjectDisposed
       {
         get

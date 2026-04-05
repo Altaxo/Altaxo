@@ -30,6 +30,9 @@ using Altaxo.Science.Spectroscopy.PeakSearching;
 
 namespace Altaxo.Science.Spectroscopy
 {
+  /// <summary>
+  /// Document node wrapper for peak-searching and fitting options.
+  /// </summary>
   public class PeakSearchingAndFittingOptionsDocNode : SpectralPreprocessingOptionsDocNodeBase
   {
 
@@ -41,6 +44,7 @@ namespace Altaxo.Science.Spectroscopy
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Science.Spectroscopy.PeakSearchingAndFittingOptionsDocNode", 0)]
     public new class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
@@ -53,6 +57,7 @@ namespace Altaxo.Science.Spectroscopy
         */
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var preprocessing = info.GetValue<SpectralPreprocessingOptionsBase>("SpectralPreprocessingOptions", null);
@@ -77,6 +82,7 @@ namespace Altaxo.Science.Spectroscopy
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Science.Spectroscopy.PeakSearchingAndFittingOptionsDocNode", 1)]
     public new class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
@@ -90,6 +96,7 @@ namespace Altaxo.Science.Spectroscopy
         */
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var preprocessing = info.GetValue<SpectralPreprocessingOptionsBase>("SpectralPreprocessingOptions", null);
@@ -116,6 +123,7 @@ namespace Altaxo.Science.Spectroscopy
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Science.Spectroscopy.PeakSearchingAndFittingOptionsDocNode", 2)]
     public class SerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
@@ -130,6 +138,7 @@ namespace Altaxo.Science.Spectroscopy
         */
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var preprocessing = info.GetValue<SpectralPreprocessingOptionsBase>("SpectralPreprocessingOptions", null);
@@ -156,6 +165,7 @@ namespace Altaxo.Science.Spectroscopy
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakSearchingAndFittingOptionsDocNode), 3)]
     public class SerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PeakSearchingAndFittingOptionsDocNode)obj;
@@ -165,6 +175,7 @@ namespace Altaxo.Science.Spectroscopy
         SpectralPreprocessingOptionsDocNodeBase.SerializeProxiesVersion1(info, s, preprocessingOptions);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var options = info.GetValue<PeakSearchingAndFittingOptions>("Options", null);
@@ -175,26 +186,36 @@ namespace Altaxo.Science.Spectroscopy
 
     #endregion
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PeakSearchingAndFittingOptionsDocNode"/> class.
+    /// </summary>
+    /// <param name="options">The options object.</param>
+    /// <param name="proxyList">The proxy list.</param>
     protected PeakSearchingAndFittingOptionsDocNode(PeakSearchingAndFittingOptions options, List<(int number, IDocumentLeafNode proxy)> proxyList)
       : base(options, proxyList)
     {
     }
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PeakSearchingAndFittingOptionsDocNode"/> class.
+    /// </summary>
+    /// <param name="options">The options object.</param>
     public PeakSearchingAndFittingOptionsDocNode(PeakSearchingAndFittingOptions options) : base(options)
     {
     }
 
     /// <summary>
-    /// Gets the wrapped spectral preprocessing options. When neccessary, the calibration is updated to reflect the content of the linked calibration table.
+    /// Gets the wrapped peak-searching and fitting options. When necessary, preprocessing references are updated to reflect the linked calibration table.
     /// </summary>
-    /// <returns>The wrapped spectral preprocessing options</returns>
+    /// <returns>The wrapped peak-searching and fitting options.</returns>
     public PeakSearchingAndFittingOptions GetPeakSearchingAndFittingOptions()
     {
       InternalSpectralPreprocessingOptions = InternalGetSpectralPreprocessingOptions();
       return (PeakSearchingAndFittingOptions)_optionsObject;
     }
 
+    /// <inheritdoc />
     protected override SpectralPreprocessingOptionsBase InternalSpectralPreprocessingOptions
     {
       get

@@ -34,19 +34,23 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
   using Scales;
 
 
+  /// <summary>
+  /// Provides the view contract for <see cref="DensityImagePlotStyleController"/>.
+  /// </summary>
   public interface IDensityImagePlotStyleView : IDataContextAwareView
   {
   }
 
 
   /// <summary>
-  /// Controller for the density image plot style
+  /// Controller for <see cref="DensityImagePlotStyle"/>.
   /// </summary>
   [UserControllerForObject(typeof(DensityImagePlotStyle))]
   [ExpectedTypeOfView(typeof(IDensityImagePlotStyleView))]
   public class DensityImagePlotStyleController : MVCANControllerEditOriginalDocBase<DensityImagePlotStyle, IDensityImagePlotStyleView>
   {
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_scaleController, () => _scaleController = null);
@@ -57,6 +61,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private DensityScaleController _scaleController;
 
+    /// <summary>
+    /// Gets or sets the density-scale controller.
+    /// </summary>
     public DensityScaleController ScaleController
     {
       get => _scaleController;
@@ -73,6 +80,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private IMVCANController _colorProviderController;
 
+    /// <summary>
+    /// Gets or sets the color-provider controller.
+    /// </summary>
     public IMVCANController ColorProviderController
     {
       get => _colorProviderController;
@@ -88,6 +98,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _clipToLayer;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether drawing is clipped to the layer.
+    /// </summary>
     public bool ClipToLayer
     {
       get => _clipToLayer;
@@ -104,6 +117,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 
     #endregion
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -119,6 +133,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (!_scaleController.Apply(disposeController))

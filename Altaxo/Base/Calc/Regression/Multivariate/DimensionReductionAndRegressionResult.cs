@@ -97,7 +97,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// XML serialization surrogate (version 1).
     /// </summary>
     /// <remarks>
-    /// V1: 2026-02-16 add AuxiliaryData from ensemble preprocessing</remarks>
+    /// V1: 2026-02-16 add AuxiliaryData from ensemble preprocessing.
+    /// </remarks>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DimensionReductionAndRegressionResult), 1)]
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {

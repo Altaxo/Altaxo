@@ -32,7 +32,7 @@ using System.Text;
 namespace Altaxo.Main.Services.PropertyReflection
 {
   /// <summary>
-  ///
+  /// Represents a property that can expand into child properties.
   /// </summary>
   /// <remarks>
   /// <para>This class originated from the 'WPG Property Grid' project (<see href="http://wpg.codeplex.com"/>), licensed under Ms-PL.</para>
@@ -43,6 +43,13 @@ namespace Altaxo.Main.Services.PropertyReflection
     private bool _automaticlyExpandObjects;
     private string _filter;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ExpandableProperty"/> class.
+    /// </summary>
+    /// <param name="instance">The object instance that owns the property.</param>
+    /// <param name="property">The property descriptor.</param>
+    /// <param name="automaticlyExpandObjects">Whether nested expandable objects should be expanded automatically.</param>
+    /// <param name="filter">The filter applied to child properties.</param>
     public ExpandableProperty(object instance, PropertyDescriptor property, bool automaticlyExpandObjects, string filter)
       : base(instance, property)
     {
@@ -50,6 +57,9 @@ namespace Altaxo.Main.Services.PropertyReflection
       _filter = filter;
     }
 
+    /// <summary>
+    /// Gets the child items of this expandable property.
+    /// </summary>
     public ObservableCollection<Item> Items
     {
       get

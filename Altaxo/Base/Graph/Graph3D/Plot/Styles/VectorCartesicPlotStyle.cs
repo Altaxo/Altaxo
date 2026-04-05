@@ -44,6 +44,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
   using GraphicsContext;
   using Groups;
 
+  /// <summary>
+  /// Draws three-dimensional vectors from cartesian component columns.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.VectorCartesicPlotStyle}")]
   public class VectorCartesicPlotStyle
     :
@@ -127,6 +130,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// </summary>
     protected int _skipFrequency;
 
+    /// <summary>
+    /// Indicates whether the skip frequency is controlled independently from group styles.
+    /// </summary>
     protected bool _independentSkipFrequency;
 
     /// <summary>Logical x shift between the location of the real data point and the point where the item is finally drawn.</summary>
@@ -148,9 +154,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     #region Serialization
 
+    /// <summary>
+    /// Serializes <see cref="VectorCartesicPlotStyle"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(VectorCartesicPlotStyle), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (VectorCartesicPlotStyle)obj;
@@ -227,6 +237,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         return s;
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         VectorCartesicPlotStyle s = SDeserialize(o, info, parent);
@@ -247,6 +258,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="VectorCartesicPlotStyle"/> class from a property context.
+    /// </summary>
+    /// <param name="context">The property context.</param>
     public VectorCartesicPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       var penWidth = GraphDocument.GetDefaultPenWidth(context);
@@ -260,11 +275,21 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       _strokePen = new PenX3D(color, penWidth).WithLineEndCap(new ContourArrow05());
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="VectorCartesicPlotStyle"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The style to copy from.</param>
+    /// <param name="copyWithDataReferences">If set to <c>true</c>, data references are copied as well.</param>
     public VectorCartesicPlotStyle(VectorCartesicPlotStyle from, bool copyWithDataReferences)
     {
       CopyFrom(from, copyWithDataReferences);
     }
 
+    /// <summary>
+    /// Copies values from another <see cref="VectorCartesicPlotStyle"/> instance.
+    /// </summary>
+    /// <param name="from">The style to copy from.</param>
+    /// <param name="copyWithDataReferences">If set to <c>true</c>, data references are copied as well.</param>
     [MemberNotNull(nameof(_strokePen))]
     protected void CopyFrom(VectorCartesicPlotStyle from, bool copyWithDataReferences)
     {
@@ -308,6 +333,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <inheritdoc/>
       public bool CopyFrom(object obj, bool copyWithDataReferences)
     {
       if (ReferenceEquals(this, obj))
@@ -326,6 +352,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// </summary>
     /// <param name="obj">Another instance to copy the data from.</param>
     /// <returns>True if data was copied, otherwise false.</returns>
+    /// <inheritdoc/>
     public bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -346,6 +373,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       return new VectorCartesicPlotStyle(this, true);
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_columnX is not null)
@@ -360,6 +388,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     #region Properties
 
+    /// <summary>
+    /// Gets or sets how the vector-column values are interpreted.
+    /// </summary>
     public ValueInterpretation MeaningOfValues
     {
       get
@@ -377,7 +408,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     }
 
     /// <summary>
-    /// Data that define the error in the positive direction.
+    /// Gets or sets the x-component column.
     /// </summary>
     public IReadableColumn? ColumnX
     {
@@ -411,7 +442,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     }
 
     /// <summary>
-    /// Data that define the error in the positive direction.
+    /// Gets or sets the y-component column.
     /// </summary>
     public IReadableColumn? ColumnY
     {
@@ -445,7 +476,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     }
 
     /// <summary>
-    /// Data that define the error in the negative direction.
+    /// Gets or sets the z-component column.
     /// </summary>
     public IReadableColumn? ColumnZ
     {
@@ -602,6 +633,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the absolute symbol-gap offset.
+    /// </summary>
     public double SymbolGapOffset
     {
       get
@@ -618,6 +652,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the factor used for symbol-gap calculation.
+    /// </summary>
     public double SymbolGapFactor
     {
       get
@@ -634,6 +671,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the first line-width offset.
+    /// </summary>
     public double LineWidth1Offset
     {
       get
@@ -650,6 +690,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the first line-width factor.
+    /// </summary>
     public double LineWidth1Factor
     {
       get
@@ -666,6 +709,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the second line-width offset.
+    /// </summary>
     public double LineWidth2Offset
     {
       get
@@ -682,6 +728,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the second line-width factor.
+    /// </summary>
     public double LineWidth2Factor
     {
       get
@@ -698,6 +747,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the end-cap size offset.
+    /// </summary>
     public double EndCapSizeOffset
     {
       get
@@ -714,6 +766,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the end-cap size factor.
+    /// </summary>
     public double EndCapSizeFactor
     {
       get
@@ -765,6 +820,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     }
 
     /// <summary>Pen used to draw the error bar.</summary>
+    /// <summary>
+    /// Gets or sets the pen used to draw the vectors.
+    /// </summary>
     public PenX3D Pen
     {
       get { return _strokePen; }
@@ -783,12 +841,14 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     #region IG3DPlotStyle Members
 
+    /// <inheritdoc/>
     public void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups)
     {
       if (!_independentColor)
         Graph.Plot.Groups.ColorGroupStyle.AddExternalGroupStyle(externalGroups);
     }
 
+    /// <inheritdoc/>
     public void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       if (!_independentColor)
@@ -798,6 +858,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         SkipFrequencyGroupStyle.AddLocalGroupStyle(externalGroups, localGroups); // (local group only)
     }
 
+    /// <inheritdoc/>
     public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed3DPlotData pdata)
     {
       if (!_independentColor)
@@ -812,6 +873,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       // this item can not be used as provider of a symbol size
     }
 
+    /// <inheritdoc/>
     public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       _cachedColorForIndexFunction = null;
@@ -862,6 +924,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <inheritdoc/>
     public void Paint(IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData pdata, Processed3DPlotData? prevItemData, Processed3DPlotData? nextItemData)
     {
       const double logicalClampMinimum = -10;

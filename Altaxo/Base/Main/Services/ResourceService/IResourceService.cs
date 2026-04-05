@@ -31,10 +31,13 @@ namespace Altaxo.Main.Services
   public interface IResourceService
   {
     /// <summary>
-    /// Gets/Sets the current UI language.
+    /// Gets or sets the current UI language.
     /// </summary>
     string Language { get; set; }
 
+    /// <summary>
+    /// Occurs when the current UI language changes.
+    /// </summary>
     event EventHandler LanguageChanged;
 
     /// <summary>
@@ -52,6 +55,11 @@ namespace Altaxo.Main.Services
     /// </exception>
     string GetString(string name);
 
+    /// <summary>
+    /// Gets an image resource.
+    /// </summary>
+    /// <param name="name">The name of the requested image resource.</param>
+    /// <returns>The requested image resource, or <c>null</c> if the resource was not found.</returns>
     object? GetImageResource(string name);
 
     /// <summary>
@@ -84,6 +92,11 @@ namespace Altaxo.Main.Services
     /// <example><c>ResourceService.RegisterStrings("TestAddin.Resources.StringResources", GetType().Assembly);</c></example>
     void RegisterStrings(string baseResourceName, Assembly assembly);
 
+    /// <summary>
+    /// Registers neutral string resources in the resource service.
+    /// </summary>
+    /// <param name="stringManager">The resource manager that provides the strings.</param>
+    /// <param name="debugInfo">Debug information associated with the registered resource manager.</param>
     void RegisterNeutralStrings(ResourceManager stringManager, string debugInfo);
 
     /// <summary>
@@ -94,6 +107,11 @@ namespace Altaxo.Main.Services
     /// <example><c>ResourceService.RegisterImages("TestAddin.Resources.BitmapResources", GetType().Assembly);</c></example>
     void RegisterImages(string baseResourceName, Assembly assembly);
 
+    /// <summary>
+    /// Registers neutral image resources in the resource service.
+    /// </summary>
+    /// <param name="imageManager">The resource manager that provides the images.</param>
+    /// <param name="debugInfo">Debug information associated with the registered resource manager.</param>
     void RegisterNeutralImages(ResourceManager imageManager, string debugInfo);
 
     /// <summary>

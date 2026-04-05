@@ -36,7 +36,7 @@ namespace Altaxo.Drawing
     /// <summary>Brush that has a single uniform color.</summary>
     SolidBrush,
 
-    /// <summary></summary>
+    /// <summary>Brush that paints using a hatch pattern.</summary>
     HatchBrush,
 
     /// <summary>Brush using an image.</summary>
@@ -65,19 +65,24 @@ namespace Altaxo.Drawing
   };
 
   /// <summary>
-  /// 2020-03-30 Version2: Moved from Altaxo.Graph.Gdi namespace to Altaxo.Drawing namespace
+  /// XML serialization surrogate for <see cref="BrushType"/>.
   /// </summary>
+  /// <remarks>
+  /// 2020-03-30 Version 2: moved from the <c>Altaxo.Graph.Gdi</c> namespace to the <c>Altaxo.Drawing</c> namespace.
+  /// </remarks>
   /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
   [Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.BrushType", 0)]
   [Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.BrushType", 1)]
   [Serialization.Xml.XmlSerializationSurrogateFor(typeof(BrushType), 2)]
   public class BrushTypeXmlSerializationSurrogate0 : Serialization.Xml.IXmlSerializationSurrogate
   {
+    /// <inheritdoc/>
     public void Serialize(object obj, Serialization.Xml.IXmlSerializationInfo info)
     {
       info.SetNodeContent(obj.ToString() ?? string.Empty);
     }
 
+    /// <inheritdoc/>
     public object Deserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
     {
       var val = info.GetNodeContent();

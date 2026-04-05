@@ -33,14 +33,21 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
   using GraphicsContext;
 
   /// <summary>
-  /// Base class that can be used to derive a label formatting class
+  /// Provides the base implementation for label-formatting classes.
   /// </summary>
   public abstract class LabelFormattingBase
     :
     Main.SuspendableDocumentNodeWithSetOfEventArgs,
     ILabelFormatting
   {
+    /// <summary>
+    /// The prefix text.
+    /// </summary>
     protected string _prefix = string.Empty;
+
+    /// <summary>
+    /// The suffix text.
+    /// </summary>
     protected string _suffix = string.Empty;
 
     #region Serialization
@@ -48,9 +55,13 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
     /// <summary>
     /// 2015-11-14 initial version.
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="LabelFormattingBase"/> state.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LabelFormattingBase), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (LabelFormattingBase)obj;
@@ -58,6 +69,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
         info.AddValue("Suffix", s._suffix);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (LabelFormattingBase)(o ?? throw new ArgumentNullException(nameof(o)));
@@ -71,15 +83,23 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 
     #region ILabelFormatting Members
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LabelFormattingBase"/> class.
+    /// </summary>
     protected LabelFormattingBase()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LabelFormattingBase"/> class by copying from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     protected LabelFormattingBase(LabelFormattingBase from)
     {
       CopyFrom(from);
     }
 
+    /// <inheritdoc/>
     public virtual bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -105,6 +125,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
     /// <returns>A new cloned instance of this class.</returns>
     public abstract object Clone();
 
+    /// <inheritdoc/>
     public string PrefixText
     {
       get { return _prefix; }
@@ -118,6 +139,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
       }
     }
 
+    /// <inheritdoc/>
     public string SuffixText
     {
       get { return _suffix; }
@@ -211,14 +233,34 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
       return litems;
     }
 
+    /// <summary>
+    /// Represents a measured label item.
+    /// </summary>
     protected class MeasuredLabelItem : IMeasuredLabelItem
     {
+      /// <summary>
+      /// The label text.
+      /// </summary>
       protected string _text;
+
+      /// <summary>
+      /// The font used for the label.
+      /// </summary>
       protected FontX3D _font;
+
+      /// <summary>
+      /// The measured label size.
+      /// </summary>
       protected VectorD3D _size;
 
       #region IMeasuredLabelItem Members
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MeasuredLabelItem"/> class.
+        /// </summary>
+        /// <param name="g">The graphics context.</param>
+        /// <param name="font">The font.</param>
+        /// <param name="itemtext">The label text.</param>
       public MeasuredLabelItem(IGraphicsContext3D g, FontX3D font, string itemtext)
       {
         _text = itemtext;
@@ -226,6 +268,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
         _size = g.MeasureString(_text, _font, new PointD3D(0, 0, 0));
       }
 
+        /// <inheritdoc/>
       public virtual VectorD3D Size
       {
         get
@@ -234,6 +277,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
         }
       }
 
+        /// <inheritdoc/>
       public virtual void Draw(IGraphicsContext3D g, IMaterial brush, PointD3D point)
       {
         g.DrawString(_text, _font, brush, point);

@@ -43,6 +43,9 @@ namespace Altaxo.Data
   {
     #region Inner classes
 
+    /// <summary>
+    /// Stores metadata and column proxies for one bundle of columns.
+    /// </summary>
     internal class ColumnBundleInfo : ICloneable
     {
       private List<IReadableColumnProxy> _dataColumns = new List<IReadableColumnProxy>();
@@ -507,6 +510,11 @@ namespace Altaxo.Data
       }
     }
 
+    /// <summary>
+    /// Ensures that a bundle exists for the specified identifier.
+    /// </summary>
+    /// <param name="identifier">The bundle identifier.</param>
+    /// <param name="maximumNumberOfColumns">The maximum number of columns allowed in the bundle.</param>
     public void EnsureExistenceOfIdentifier(string identifier, int maximumNumberOfColumns)
     {
       if (identifier is null)
@@ -515,6 +523,10 @@ namespace Altaxo.Data
         _dataColumnBundles.Add(identifier, new ColumnBundleInfo(maximumNumberOfColumns));
     }
 
+    /// <summary>
+    /// Ensures that a bundle exists for the specified identifier.
+    /// </summary>
+    /// <param name="identifier">The bundle identifier.</param>
     public void EnsureExistenceOfIdentifier(string identifier)
     {
       EnsureExistenceOfIdentifier(identifier, int.MaxValue);
@@ -873,7 +885,7 @@ namespace Altaxo.Data
     /// <param name="ColumnX">The column identifier of the x-column.</param>
     /// <param name="ColumnsV">The column identifier of the y-columns.</param>
     /// <param name="cloneTheProxies">If <c>true</c>, the proxies in the resulting ListOfXAndYColumn are clones of the proxies in this instance. If <c>false</c>, the proxies are directly used from this instance. ATTENTION: use <c>false</c> only if the <see cref="DataTableMultipleColumnProxy"/> is not needed anymore!</param>
-    /// <returns>A <<see cref="ListOfXAndYColumn"/> list.</returns>
+    /// <returns>A <see cref="ListOfXAndYColumn"/> list.</returns>
     public ListOfXAndYColumn TransformToListOfXAndYColumn(string ColumnX, string ColumnsV, bool cloneTheProxies)
     {
       if (_isDirty)
@@ -919,7 +931,7 @@ namespace Altaxo.Data
     /// <param name="ColumnX">The column identifier of the x-column.</param>
     /// <param name="ColumnsV">The column identifier of the y-columns.</param>
     /// <param name="cloneTheProxies">If <c>true</c>, the proxies in the resulting ListOfXAndYColumn are clones of the proxies in this instance. If <c>false</c>, the proxies are directly used from this instance. ATTENTION: use <c>false</c> only if the <see cref="DataTableMultipleColumnProxy"/> is not needed anymore!</param>
-    /// <returns>A <<see cref="ListOfXAndYColumn"/> list.</returns>
+    /// <returns>A <see cref="ListOfXAndYColumn"/> list.</returns>
     public ListOfXAndYColumn TransformToListOfXAndYColumn(DataColumn ColumnX, string ColumnsV, bool cloneTheProxies)
     {
       if (_isDirty)
@@ -966,6 +978,7 @@ namespace Altaxo.Data
 
     #region Change event handling
 
+    /// <inheritdoc />
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       _isDirty = true;
@@ -976,6 +989,7 @@ namespace Altaxo.Data
 
     #region Document Node functions
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_dataTable is not null)

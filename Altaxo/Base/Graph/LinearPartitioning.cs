@@ -34,6 +34,9 @@ using Altaxo.Calc;
 
 namespace Altaxo.Graph
 {
+  /// <summary>
+  /// Represents a linear partitioning consisting of absolute and relative segment sizes.
+  /// </summary>
   public class LinearPartitioning
     :
     Main.SuspendableDocumentLeafNodeWithSetOfEventArgs,
@@ -55,9 +58,13 @@ namespace Altaxo.Graph
     /// <summary>
     /// 2013-09-25 initial version.
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="LinearPartitioning"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinearPartitioning), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (LinearPartitioning)obj;
@@ -68,6 +75,13 @@ namespace Altaxo.Graph
         info.CommitArray();
       }
 
+      /// <summary>
+      /// Deserializes version 0 data into a <see cref="LinearPartitioning"/> instance.
+      /// </summary>
+      /// <param name="o">The existing instance, if any.</param>
+      /// <param name="info">The deserialization info.</param>
+      /// <param name="parent">The parent object.</param>
+      /// <returns>The deserialized partitioning.</returns>
       protected virtual LinearPartitioning SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (LinearPartitioning?)o ?? new LinearPartitioning();
@@ -80,6 +94,7 @@ namespace Altaxo.Graph
         return s;
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
@@ -91,6 +106,9 @@ namespace Altaxo.Graph
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new empty instance of the <see cref="LinearPartitioning"/> class.
+    /// </summary>
     public LinearPartitioning()
     {
       _innerList = new System.Collections.ObjectModel.ObservableCollection<RADouble>();
@@ -98,6 +116,10 @@ namespace Altaxo.Graph
       ((INotifyPropertyChanged)_innerList).PropertyChanged += EhInnerList_PropertyChanged;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinearPartitioning"/> class from an existing sequence.
+    /// </summary>
+    /// <param name="list">The partition entries.</param>
     public LinearPartitioning(IEnumerable<RADouble> list)
     {
       _innerList = new System.Collections.ObjectModel.ObservableCollection<RADouble>(list);
@@ -105,6 +127,7 @@ namespace Altaxo.Graph
       ((INotifyPropertyChanged)_innerList).PropertyChanged += EhInnerList_PropertyChanged;
     }
 
+    /// <inheritdoc/>
     public object Clone()
     {
       return new LinearPartitioning(_innerList);
@@ -122,6 +145,7 @@ namespace Altaxo.Graph
       EhSelfChanged(e);
     }
 
+    /// <inheritdoc/>
     protected override void OnChanged(EventArgs e)
     {
       var e1 = e as NotifyCollectionChangedEventArgs;
@@ -338,41 +362,49 @@ namespace Altaxo.Graph
 
     #region ICollection<RADouble>
 
+    /// <inheritdoc/>
     public void Add(RADouble item)
     {
       _innerList.Add(item);
     }
 
+    /// <inheritdoc/>
     public void Clear()
     {
       _innerList.Clear();
     }
 
+    /// <inheritdoc/>
     public bool Contains(RADouble item)
     {
       return _innerList.Contains(item);
     }
 
+    /// <inheritdoc/>
     public void CopyTo(RADouble[] array, int arrayIndex)
     {
       _innerList.CopyTo(array, arrayIndex);
     }
 
+    /// <inheritdoc/>
     public int Count
     {
       get { return _innerList.Count; }
     }
 
+    /// <inheritdoc/>
     public bool IsReadOnly
     {
       get { return false; }
     }
 
+    /// <inheritdoc/>
     public bool Remove(RADouble item)
     {
       return _innerList.Remove(item);
     }
 
+    /// <inheritdoc/>
     public IEnumerator<RADouble> GetEnumerator()
     {
       return _innerList.GetEnumerator();
@@ -387,33 +419,39 @@ namespace Altaxo.Graph
 
     #region INotifyCollectionChanged
 
+    /// <inheritdoc/>
     public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
     #endregion INotifyCollectionChanged
 
     #region INotifyPropertyChanged
 
+    /// <inheritdoc/>
     public event PropertyChangedEventHandler? PropertyChanged;
 
     #endregion INotifyPropertyChanged
 
     #region IList<RADouble>
 
+    /// <inheritdoc/>
     public int IndexOf(RADouble item)
     {
       return _innerList.IndexOf(item);
     }
 
+    /// <inheritdoc/>
     public void Insert(int index, RADouble item)
     {
       _innerList.Insert(index, item);
     }
 
+    /// <inheritdoc/>
     public void RemoveAt(int index)
     {
       RemoveAt(index);
     }
 
+    /// <inheritdoc/>
     public RADouble this[int index]
     {
       get
@@ -430,31 +468,37 @@ namespace Altaxo.Graph
 
     #region IList
 
+    /// <inheritdoc/>
     public int Add(object? value)
     {
       return ((IList)_innerList).Add(value);
     }
 
+    /// <inheritdoc/>
     public bool Contains(object? value)
     {
       return ((IList)_innerList).Contains(value);
     }
 
+    /// <inheritdoc/>
     public int IndexOf(object? value)
     {
       return ((IList)_innerList).IndexOf(value);
     }
 
+    /// <inheritdoc/>
     public void Insert(int index, object? value)
     {
       ((IList)_innerList).Insert(index, value);
     }
 
+    /// <inheritdoc/>
     public bool IsFixedSize
     {
       get { return ((IList)_innerList).IsFixedSize; }
     }
 
+    /// <inheritdoc/>
     public void Remove(object? value)
     {
       ((IList)_innerList).Remove(value);
@@ -472,16 +516,19 @@ namespace Altaxo.Graph
       }
     }
 
+    /// <inheritdoc/>
     public void CopyTo(Array array, int index)
     {
       ((IList)_innerList).CopyTo(array, index);
     }
 
+    /// <inheritdoc/>
     public bool IsSynchronized
     {
       get { return ((IList)_innerList).IsSynchronized; }
     }
 
+    /// <inheritdoc/>
     public object SyncRoot
     {
       get { return ((IList)_innerList).SyncRoot; }

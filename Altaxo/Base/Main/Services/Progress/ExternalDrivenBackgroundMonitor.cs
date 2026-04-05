@@ -30,8 +30,7 @@ using System.Threading;
 namespace Altaxo.Main.Services
 {
   /// <summary>
-  /// Background monitor that can be externally driven (e.g. by a timer) to set <see cref="ShouldReportNow"/>.
-  /// 
+  /// Background monitor that can be externally driven, for example by a timer, to set <see cref="ShouldReportNow"/>.
   /// </summary>
   /// <seealso cref="Altaxo.Main.Services.IExternalDrivenBackgroundMonitor" />
   public partial class ExternalDrivenBackgroundMonitor : IExternalDrivenBackgroundMonitor
@@ -50,9 +49,11 @@ namespace Altaxo.Main.Services
     private CancellationTokenSource _cancellationTokenSourceSoft;
     private CancellationTokenSource _cancellationTokenSourceHard;
     private DateTimeOffset _startTimeUtc = DateTimeOffset.UtcNow;
+    /// <inheritdoc/>
     public event PropertyChangedEventHandler? PropertyChanged;
 
 
+    /// <inheritdoc/>
     public string TaskName { get; init; } = nameof(ExternalDrivenBackgroundMonitor);
 
     #region ShouldReport
@@ -63,12 +64,19 @@ namespace Altaxo.Main.Services
     /// </summary>
     public bool ShouldSetShouldReportAutomatically { get; init; }
 
+    /// <summary>
+    /// Indicates whether a progress update should be reported.
+    /// </summary>
     protected bool _shouldReport;
 
+    /// <summary>
+    /// Gets a value indicating whether the monitor should be queried for a progress update.
+    /// </summary>
     public bool ShouldReportNow => _shouldReport;
 
 
 
+    /// <inheritdoc/>
     public virtual void SetShouldReportNow()
     {
       _shouldReport = true;
@@ -76,12 +84,19 @@ namespace Altaxo.Main.Services
 
     #endregion
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ExternalDrivenBackgroundMonitor"/> class.
+    /// </summary>
     public ExternalDrivenBackgroundMonitor()
     {
       _cancellationTokenSourceSoft = new CancellationTokenSource();
       _cancellationTokenSourceHard = new CancellationTokenSource();
     }
 
+    /// <summary>
+    /// Creates a new monitor together with a matching progress reporter.
+    /// </summary>
+    /// <returns>A tuple containing the created monitor and reporter.</returns>
     public static (ExternalDrivenBackgroundMonitor monitor, IProgressReporter reporter) NewMonitorAndReporter()
     {
       var monitor = new ExternalDrivenBackgroundMonitor();
@@ -93,6 +108,7 @@ namespace Altaxo.Main.Services
 
     private bool _isDisposed;
 
+    /// <inheritdoc/>
     public bool IsDisposed
     {
       get => _isDisposed;
@@ -108,6 +124,7 @@ namespace Altaxo.Main.Services
 
     private OperationStatus _status;
 
+    /// <inheritdoc/>
     public OperationStatus Status
     {
       get => _status;
@@ -125,6 +142,7 @@ namespace Altaxo.Main.Services
 
     private double _progress;
 
+    /// <inheritdoc/>
     public double Progress
     {
       get
@@ -145,6 +163,9 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <summary>
+    /// Gets the progress text including an estimated completion time, if possible.
+    /// </summary>
     public string ProgressAndETA
     {
       get
@@ -165,6 +186,7 @@ namespace Altaxo.Main.Services
 
     private string _text0 = "An operation is not yet completed. If you feel that the operation takes unusual long time, you can interrupt it.";
 
+    /// <inheritdoc/>
     public string Text0
     {
       get
@@ -186,6 +208,9 @@ namespace Altaxo.Main.Services
 
     private string _text1 = string.Empty;
 
+    /// <summary>
+    /// Gets or sets the progress text on level 1.
+    /// </summary>
     public string Text1
     {
       get
@@ -208,6 +233,9 @@ namespace Altaxo.Main.Services
 
     private string _text2 = string.Empty;
 
+    /// <summary>
+    /// Gets or sets the progress text on level 2.
+    /// </summary>
     public string Text2
     {
       get
@@ -255,23 +283,30 @@ namespace Altaxo.Main.Services
       SetShouldReportNow();
     }
 
+    /// <inheritdoc/>
     public void SetCancellationPendingHard()
     {
       _cancellationTokenSourceSoft.Cancel();
       _cancellationTokenSourceHard.Cancel();
     }
 
+    /// <inheritdoc/>
     public void SetCancellationPendingSoft()
     {
       _cancellationTokenSourceSoft.Cancel();
     }
 
+    /// <summary>
+    /// Gets a progress reporter for this monitor.
+    /// </summary>
+    /// <returns>A new progress reporter connected to this monitor.</returns>
     public IProgressReporter GetProgressReporter()
     {
       _startTimeUtc = DateTime.UtcNow;
       return new Reporter(this, null, 0, 1, this.GetType().Name, _cancellationTokenSourceSoft.Token, _cancellationTokenSourceHard.Token);
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
       IsDisposed = true;

@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -34,37 +34,47 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
+  /// <summary>
+  /// RGB color model implementation for the color management UI.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorModelRGB}")]
   public class ColorModelRGB : IColorModel
   {
+    /// <inheritdoc/>
     public AxoColor GetColorFor1DColorSurfaceFromRelativePosition(double relativePosition)
     {
       return AxoColor.FromAhsb(1, (float)relativePosition, 1, 1);
     }
 
+    /// <inheritdoc/>
     public AxoColor GetColorFor2DColorSurfaceFromRelativePosition(PointD2D relativePosition, AxoColor c)
     {
       return AxoColor.FromAhsb(1, c.GetHue(), (float)(relativePosition.X), (float)(relativePosition.Y));
     }
 
+    /// <inheritdoc/>
     public (double position1D, PointD2D position2D) GetRelativePositionsFor1Dand2DColorSurfaceFromColor(AxoColor color)
     {
       var (alpha, hue, saturation, brightness) = color.ToAhsb();
       return (hue, new PointD2D(saturation, brightness));
     }
 
+    /// <inheritdoc/>
     public bool IsUsingByteComponents { get { return true; } }
 
+    /// <inheritdoc/>
     public double[] GetComponentsForColor(AxoColor color)
     {
       return new double[] { color.R, color.G, color.B };
     }
 
+    /// <inheritdoc/>
     public AxoColor GetColorFromComponents(double[] components)
     {
       return AxoColor.FromArgb(255, (byte)components[0], (byte)components[1], (byte)components[2]);
     }
 
+    /// <inheritdoc/>
     public string[] GetNamesOfComponents()
     {
       return new string[] { "R", "G", "B" };

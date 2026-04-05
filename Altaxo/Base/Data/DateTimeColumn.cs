@@ -31,7 +31,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Altaxo.Data
 {
   /// <summary>
-  /// Summary description for Altaxo.Data.DateTimeColumn.
+  /// Data column that stores <see cref="DateTime"/> values.
   /// </summary>
   public class DateTimeColumn
     :
@@ -42,12 +42,22 @@ namespace Altaxo.Data
     private DateTime[] _data = _emptyDateTimeArray;
     private int _capacity; // shortcut to _data.Length;
     private int _count;
+    /// <summary>
+    /// Represents an empty value in this column.
+    /// </summary>
     public static readonly DateTime NullValue = DateTime.MinValue;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DateTimeColumn"/> class.
+    /// </summary>
     public DateTimeColumn()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DateTimeColumn"/> class with the specified initial capacity.
+    /// </summary>
+    /// <param name="initialcapacity">The initial capacity.</param>
     public DateTimeColumn(int initialcapacity)
     {
       _count = 0;
@@ -55,6 +65,10 @@ namespace Altaxo.Data
       _capacity = initialcapacity;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DateTimeColumn"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The source column.</param>
     public DateTimeColumn(DateTimeColumn from)
     {
       _count = from._count;
@@ -62,6 +76,7 @@ namespace Altaxo.Data
       _data = from._data.Length == 0 ? _emptyDateTimeArray : (DateTime[])from._data.Clone();
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new DateTimeColumn(this);
@@ -110,6 +125,7 @@ namespace Altaxo.Data
     /// </value>
     public override Type ItemType { get { return typeof(DateTime); } }
 
+    /// <inheritdoc />
     public override int Count
     {
       get
@@ -118,6 +134,9 @@ namespace Altaxo.Data
       }
     }
 
+    /// <summary>
+    /// Gets or sets the data as a cloned array.
+    /// </summary>
     public DateTime[] Array
     {
       get
@@ -137,16 +156,23 @@ namespace Altaxo.Data
       }
     }
 
+    /// <summary>
+    /// Gets the raw value stored at the specified index.
+    /// </summary>
+    /// <param name="idx">The zero-based row index.</param>
+    /// <returns>The stored value.</returns>
     protected internal DateTime GetValueDirect(int idx)
     {
       return _data[idx];
     }
 
+    /// <inheritdoc />
     public override System.Type GetColumnStyleType()
     {
       return typeof(Altaxo.Worksheet.DateTimeColumnStyle);
     }
 
+    /// <inheritdoc />
     public override void CopyDataFrom(object o)
     {
       var oldCount = _count;
@@ -218,6 +244,10 @@ namespace Altaxo.Data
         ;
     }
 
+    /// <summary>
+    /// Reallocates the internal storage so that the specified index can be addressed.
+    /// </summary>
+    /// <param name="i">The required index.</param>
     protected void Realloc(int i)
     {
       int newcapacity1 = (int)(_capacity * _increaseFactor + _addSpace);
@@ -235,6 +265,7 @@ namespace Altaxo.Data
     }
 
     // indexers
+    /// <inheritdoc />
     public override void SetValueAt(int i, AltaxoVariant val)
     {
       try
@@ -247,6 +278,7 @@ namespace Altaxo.Data
       }
     }
 
+    /// <inheritdoc />
     public override AltaxoVariant GetVariantAt(int i)
     {
       return new AltaxoVariant(this[i]);
@@ -268,17 +300,23 @@ namespace Altaxo.Data
       }
     }
 
+    /// <inheritdoc />
     public override bool IsElementEmpty(int i)
     {
       return i < _count ? (DateTime.MinValue == _data[i]) : true;
     }
 
+    /// <inheritdoc />
     public override void SetElementEmpty(int i)
     {
       if (i < _count)
         this[i] = NullValue;
     }
 
+    /// <summary>
+    /// Gets or sets the <see cref="DateTime"/> value at the specified row index.
+    /// </summary>
+    /// <param name="i">The zero-based row index.</param>
     public new DateTime this[int i]
     {
       get
@@ -346,6 +384,7 @@ namespace Altaxo.Data
       } // end set
     } // end indexer
 
+    /// <inheritdoc />
     public override void InsertRows(int nInsBeforeColumn, int nInsCount)
     {
       if (nInsCount <= 0 || nInsBeforeColumn >= Count)
@@ -366,6 +405,7 @@ namespace Altaxo.Data
       EhSelfChanged(nInsBeforeColumn, _count, false);
     }
 
+    /// <inheritdoc />
     public override void RemoveRows(int nDelFirstRow, int nDelCount)
     {
       if (nDelFirstRow < 0)
@@ -397,6 +437,12 @@ namespace Altaxo.Data
     // -----------------------------------------------------------------------------
 
     // ----------------------- Addition operator -----------------------------------
+    /// <summary>
+    /// Adds a column of second offsets to a date-time column.
+    /// </summary>
+    /// <param name="c1">The date-time column.</param>
+    /// <param name="c2">The offset column in seconds.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DateTimeColumn operator +(Altaxo.Data.DateTimeColumn c1, Altaxo.Data.DoubleColumn c2)
     {
       int len = c1.Count < c2.Count ? c1.Count : c2.Count;
@@ -411,6 +457,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Adds a constant second offset to a date-time column.
+    /// </summary>
+    /// <param name="c1">The date-time column.</param>
+    /// <param name="c2">The offset in seconds.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DateTimeColumn operator +(Altaxo.Data.DateTimeColumn c1, double c2)
     {
       int len = c1._count;
@@ -425,11 +477,23 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Subtracts one date-time column from another.
+    /// </summary>
+    /// <param name="c1">The minuend column.</param>
+    /// <param name="c2">The subtrahend column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator -(Altaxo.Data.DateTimeColumn c1, Altaxo.Data.DateTimeColumn c2)
     {
       return Altaxo.Data.DoubleColumn.Subtraction(c1, c2);
     }
 
+    /// <summary>
+    /// Subtracts a column of second offsets from a date-time column.
+    /// </summary>
+    /// <param name="c1">The date-time column.</param>
+    /// <param name="c2">The offset column in seconds.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DateTimeColumn operator -(Altaxo.Data.DateTimeColumn c1, Altaxo.Data.DoubleColumn c2)
     {
       int len = c1.Count < c2.Count ? c1.Count : c2.Count;
@@ -444,6 +508,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Subtracts a constant second offset from a date-time column.
+    /// </summary>
+    /// <param name="c1">The date-time column.</param>
+    /// <param name="c2">The offset in seconds.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DateTimeColumn operator -(Altaxo.Data.DateTimeColumn c1, double c2)
     {
       var c3 = new Altaxo.Data.DateTimeColumn(c1._count);
@@ -458,16 +528,29 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Subtracts a constant date-time value from a date-time column.
+    /// </summary>
+    /// <param name="c1">The date-time column.</param>
+    /// <param name="c2">The constant date-time value.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator -(Altaxo.Data.DateTimeColumn c1, DateTime c2)
     {
       return Altaxo.Data.DoubleColumn.Subtraction(c1, c2);
     }
 
+    /// <summary>
+    /// Subtracts a date-time column from a constant date-time value.
+    /// </summary>
+    /// <param name="c1">The constant date-time value.</param>
+    /// <param name="c2">The date-time column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator -(DateTime c1, Altaxo.Data.DateTimeColumn c2)
     {
       return Altaxo.Data.DoubleColumn.Subtraction(c1, c2);
     }
 
+    /// <inheritdoc />
     public override bool vop_Subtraction(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DateTimeColumn)
@@ -479,6 +562,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_Subtraction_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DateTimeColumn)
@@ -490,6 +574,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_Subtraction(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDateTime))
@@ -502,6 +587,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_Subtraction_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDateTime))

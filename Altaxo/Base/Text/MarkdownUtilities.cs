@@ -61,7 +61,7 @@ namespace Altaxo.Text
     /// Enumerates all objects in a markdown parse tree recursively, starting with the given element.
     /// </summary>
     /// <param name="startElement">The start element.</param>
-    /// <returns>All text element (the given text element and all its childs).</returns>
+    /// <returns>All markdown objects, including the given start element and all its children.</returns>
     public static IEnumerable<Markdig.Syntax.MarkdownObject> EnumerateAllMarkdownObjectsRecursively(this Markdig.Syntax.MarkdownObject startElement)
     {
       yield return startElement;
@@ -76,10 +76,10 @@ namespace Altaxo.Text
     }
 
     /// <summary>
-    /// Gets the childs of a markdown object. Null is returned if no childs were to be found.
+    /// Gets the children of a markdown object. <c>null</c> is returned if no children can be found.
     /// </summary>
-    /// <param name="parent">The markdown object from which to get the childs.</param>
-    /// <returns>The childs of the given markdown object, or null.</returns>
+    /// <param name="parent">The markdown object from which to get the children.</param>
+    /// <returns>The children of the given markdown object, or <c>null</c>.</returns>
     public static IEnumerable<Markdig.Syntax.MarkdownObject>? GetChilds(this Markdig.Syntax.MarkdownObject parent)
     {
       if (parent is Markdig.Syntax.LeafBlock leafBlock)
@@ -93,10 +93,10 @@ namespace Altaxo.Text
     }
 
     /// <summary>
-    /// Gets the childs of a markdown object. Null is returned if no childs were to be found.
+    /// Gets the children of a markdown object. <c>null</c> is returned if no children can be found.
     /// </summary>
-    /// <param name="parent">The markdown object from which to get the childs.</param>
-    /// <returns>The childs of the given markdown object, or null.</returns>
+    /// <param name="parent">The markdown object from which to get the children.</param>
+    /// <returns>The children of the given markdown object, or <c>null</c>.</returns>
     public static IReadOnlyList<Markdig.Syntax.MarkdownObject>? GetChildList(this Markdig.Syntax.MarkdownObject parent)
     {
       if (parent is Markdig.Syntax.LeafBlock leafBlock)
@@ -110,10 +110,11 @@ namespace Altaxo.Text
     }
 
     /// <summary>
-    /// Gets a list of all referenced image Urls.
+    /// Gets a list of all referenced image URLs.
     /// We use this only in the serialization code to serialize only those local images which are referenced in the markdown.
     /// </summary>
-    /// <returns>A new list containing all image Urls together with the begin and and of the Url span.</returns>
+    /// <param name="markdownDocument">The markdown document to inspect.</param>
+    /// <returns>A new list containing all image URLs together with the beginning and end of the URL span.</returns>
     public static List<(string Url, int urlSpanStart, int urlSpanEnd)> GetReferencedImageUrls(MarkdownDocument markdownDocument)
     {
       var list = new List<(string Url, int urlSpanStart, int urlSpanEnd)>();

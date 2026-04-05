@@ -29,17 +29,35 @@ namespace Altaxo.Gui.Common
 {
   #region Interfaces
 
+  /// <summary>
+  /// Defines the view contract for editing a single string-backed value.
+  /// </summary>
   public interface ISingleValueView
   {
+    /// <summary>
+    /// Sets the description text.
+    /// </summary>
     string DescriptionText { set; }
 
+    /// <summary>
+    /// Gets or sets the value text.
+    /// </summary>
     string ValueText { get; set; }
 
+    /// <summary>
+    /// Occurs when the value text is being validated.
+    /// </summary>
     event Action<ValidationEventArgs<string>> ValueText_Validating;
   }
 
+  /// <summary>
+  /// Defines the controller contract for single-value editors.
+  /// </summary>
   public interface ISingleValueController : IMVCAController
   {
+    /// <summary>
+    /// Gets or sets the description text.
+    /// </summary>
     string DescriptionText { get; set; }
   }
 
@@ -52,18 +70,39 @@ namespace Altaxo.Gui.Common
   [ExpectedTypeOfView(typeof(ISingleValueView))]
   public class SingleValueController : ISingleValueController
   {
+    /// <summary>
+    /// The attached view.
+    /// </summary>
     protected ISingleValueView? _view;
+
+    /// <summary>
+    /// The committed value string.
+    /// </summary>
     protected string _value1String;
+
+    /// <summary>
+    /// The temporary value string.
+    /// </summary>
     protected string _value1StringTemporary;
 
+    /// <summary>
+    /// The description text.
+    /// </summary>
     protected string _descriptionText = "Enter value:";
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SingleValueController"/> class.
+    /// </summary>
+    /// <param name="val">The initial text value.</param>
     public SingleValueController(string val)
     {
       _value1String = val;
       _value1StringTemporary = val;
     }
 
+    /// <summary>
+    /// Initializes the view from the current controller state.
+    /// </summary>
     protected virtual void Initialize()
     {
       if (_view is not null)
@@ -73,6 +112,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     public string DescriptionText
     {
       get
@@ -91,6 +131,7 @@ namespace Altaxo.Gui.Common
 
     #region IMVCController Members
 
+    /// <inheritdoc/>
     public virtual object? ViewObject
     {
       get
@@ -112,6 +153,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     public virtual object ModelObject
     {
       get
@@ -120,6 +162,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
     }
@@ -128,19 +171,14 @@ namespace Altaxo.Gui.Common
 
     #region IApplyController Members
 
+    /// <inheritdoc/>
     public virtual bool Apply(bool disposeController)
     {
       _value1String = _value1StringTemporary;
       return true;
     }
 
-    /// <summary>
-    /// Try to revert changes to the model, i.e. restores the original state of the model.
-    /// </summary>
-    /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-    /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-    /// </returns>
+    /// <inheritdoc/>
     public bool Revert(bool disposeController)
     {
       return false;
@@ -150,6 +188,9 @@ namespace Altaxo.Gui.Common
 
     #region ISingleValueViewEventSink Members
 
+    /// <summary>
+    /// Handles validation of the value text.
+    /// </summary>
     public virtual void EhView_ValidatingValue1(ValidationEventArgs<string> e)
     {
       _value1StringTemporary = e.ValueToValidate;

@@ -29,6 +29,9 @@ using Clipper2Lib;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
+  /// <summary>
+  /// Represents an open vertical-bar scatter symbol.
+  /// </summary>
   public class VerticalBar : OpenSymbolBase
   {
     #region Serialization
@@ -36,9 +39,13 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
     /// <summary>
     /// 2016-10-27 initial version.
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="VerticalBar"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(VerticalBar), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         info.AddBaseValueEmbedded(obj, obj.GetType().BaseType!);
@@ -46,6 +53,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
         SerializeSetV0((IScatterSymbol)obj, info);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (VerticalBar?)o ?? new VerticalBar();
@@ -57,15 +65,24 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="VerticalBar"/> class.
+    /// </summary>
     public VerticalBar()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="VerticalBar"/> class.
+    /// </summary>
+    /// <param name="fillColor">The fill color.</param>
+    /// <param name="isFillColorInfluencedByPlotColor">If set to <c>true</c>, the fill color is influenced by the plot color.</param>
     public VerticalBar(NamedColor fillColor, bool isFillColorInfluencedByPlotColor)
       : base(fillColor, isFillColorInfluencedByPlotColor)
     {
     }
 
+    /// <inheritdoc/>
     public override Paths64 GetCopyOfOuterPolygon(double relativeStructureWidth)
     {
       relativeStructureWidth = Altaxo.Calc.RMath.ClampToInterval(relativeStructureWidth, 0, 0.5);

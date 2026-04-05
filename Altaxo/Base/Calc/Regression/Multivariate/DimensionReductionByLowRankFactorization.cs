@@ -57,7 +57,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DimensionReductionByLowRankFactorization), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      /// <inheritdoc/>
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DimensionReductionByLowRankFactorization)obj;
@@ -65,7 +65,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         info.AddValue("Method", s.Method);
       }
 
-      /// <inheritdoc/>
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var maxNumberOfFactors = info.GetInt32("MaximumNumberOfFactors");
@@ -81,7 +81,11 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
     #endregion
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets a display name for the specified factorization method type.
+    /// </summary>
+    /// <param name="t">The factorization method type.</param>
+    /// <returns>A user-friendly display name.</returns>
     public static string GetDisplayName(System.Type t)
     {
       switch (t)
@@ -101,18 +105,18 @@ namespace Altaxo.Calc.Regression.Multivariate
       }
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public virtual string DisplayName
     {
       get => GetDisplayName(Method.GetType());
 
     }
 
-    /// <inheritdoc/>
-    public virtual IDimensionReductionResult ExecuteDimensionReduction(IROMatrix<double> matrixX)
+    /// <inheritdoc />
+    public virtual IDimensionReductionResult ExecuteDimensionReduction(IROMatrix<double> processData)
     {
-      var matrix = CreateMatrix.Dense<double>(matrixX.RowCount, matrixX.ColumnCount);
-      MatrixMath.Copy(matrixX, matrix);
+      var matrix = CreateMatrix.Dense<double>(processData.RowCount, processData.ColumnCount);
+      MatrixMath.Copy(processData, matrix);
       var (scores, loadings) = Method.Factorize(matrix, MaximumNumberOfFactors);
       return new DimensionReductionByFactorizationResult(scores, loadings, null, null);
     }

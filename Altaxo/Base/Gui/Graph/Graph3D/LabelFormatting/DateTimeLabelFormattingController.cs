@@ -30,10 +30,14 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Graph3D.LabelFormatting
 {
+  /// <summary>
+  /// Controls date and time label formatting for 3D graphs.
+  /// </summary>
   [ExpectedTypeOfView(typeof(Graph.Gdi.LabelFormatting.IDateTimeLabelFormattingView))]
   [UserControllerForObject(typeof(DateTimeLabelFormatting), 110)]
   public class DateTimeLabelFormattingController : MVCANControllerEditOriginalDocBase<DateTimeLabelFormatting, Graph.Gdi.LabelFormatting.IDateTimeLabelFormattingView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_baseController, () => _baseController = null);
@@ -43,6 +47,9 @@ namespace Altaxo.Gui.Graph.Graph3D.LabelFormatting
 
     private bool _showAlternateFormattingOnMidnight;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether alternate formatting is used at midnight.
+    /// </summary>
     public bool ShowAlternateFormattingOnMidnight
     {
       get => _showAlternateFormattingOnMidnight;
@@ -57,6 +64,9 @@ namespace Altaxo.Gui.Graph.Graph3D.LabelFormatting
     }
     private bool _showAlternateFormattingOnNoon;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether alternate formatting is used at noon.
+    /// </summary>
     public bool ShowAlternateFormattingOnNoon
     {
       get => _showAlternateFormattingOnNoon;
@@ -72,6 +82,9 @@ namespace Altaxo.Gui.Graph.Graph3D.LabelFormatting
 
     private string _FormattingString;
 
+    /// <summary>
+    /// Gets or sets the primary formatting string.
+    /// </summary>
     public string FormattingString
     {
       get => _FormattingString;
@@ -86,6 +99,9 @@ namespace Altaxo.Gui.Graph.Graph3D.LabelFormatting
     }
     private string _FormattingStringAlternate;
 
+    /// <summary>
+    /// Gets or sets the alternate formatting string.
+    /// </summary>
     public string FormattingStringAlternate
     {
       get => _FormattingStringAlternate;
@@ -101,6 +117,9 @@ namespace Altaxo.Gui.Graph.Graph3D.LabelFormatting
 
     private MultiLineLabelFormattingBaseController _baseController;
 
+    /// <summary>
+    /// Gets or sets the controller for the shared multiline formatting settings.
+    /// </summary>
     public MultiLineLabelFormattingBaseController BaseController
     {
       get => _baseController;
@@ -117,6 +136,9 @@ namespace Altaxo.Gui.Graph.Graph3D.LabelFormatting
 
     private SingleSelectableListNodeList _timeConversionChoices;
 
+    /// <summary>
+    /// Gets or sets the available time conversion choices.
+    /// </summary>
     public SingleSelectableListNodeList TimeConversionChoices
     {
       get => _timeConversionChoices;
@@ -133,12 +155,14 @@ namespace Altaxo.Gui.Graph.Graph3D.LabelFormatting
     #endregion
 
 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       _timeConversionChoices = null;
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -158,6 +182,7 @@ namespace Altaxo.Gui.Graph.Graph3D.LabelFormatting
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (!_baseController.Apply(disposeController))

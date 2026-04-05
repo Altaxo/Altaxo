@@ -31,22 +31,58 @@ using Altaxo.Data;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
+  /// <summary>
+  /// Stores parameters for a multivariate linear regression.
+  /// </summary>
   public class MultivariateLinearFitParameters
   {
+    /// <summary>
+    /// The table containing the data columns.
+    /// </summary>
     protected DataColumnCollection _table;
+
+    /// <summary>
+    /// The selected data columns.
+    /// </summary>
     protected IAscendingIntegerCollection _selectedDataColumns;
+
+    /// <summary>
+    /// The index of the dependent column within the selected data columns.
+    /// </summary>
     protected int _DependentColumnIndexIntoSelection;
+
+    /// <summary>
+    /// A value indicating whether an intercept is included in the fit.
+    /// </summary>
     protected bool _IncludeIntercept;
+
+    /// <summary>
+    /// A value indicating whether regression values are generated.
+    /// </summary>
     protected bool _GenerateRegressionValues;
+
+    /// <summary>
+    /// A value indicating whether residual values are generated.
+    /// </summary>
     protected bool _GenerateResidualValues;
+
+    /// <summary>
+    /// The selected data rows, or <c>null</c> if all rows are used.
+    /// </summary>
     protected IAscendingIntegerCollection? _selectedDataRows;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MultivariateLinearFitParameters"/> class.
+    /// </summary>
     public MultivariateLinearFitParameters(DataColumnCollection table, IAscendingIntegerCollection selectedDataColumns)
     {
       _table = table;
       _selectedDataColumns = selectedDataColumns;
     }
 
+    /// <summary>
+    /// Gets the table that contains the regression data.
+    /// </summary>
     public DataColumnCollection Table
     {
       get
@@ -55,6 +91,9 @@ namespace Altaxo.Calc.Regression.Multivariate
       }
     }
 
+    /// <summary>
+    /// Gets the selected data columns.
+    /// </summary>
     public IAscendingIntegerCollection SelectedDataColumns
     {
       get
@@ -63,6 +102,9 @@ namespace Altaxo.Calc.Regression.Multivariate
       }
     }
 
+    /// <summary>
+    /// Gets or sets the selected data rows.
+    /// </summary>
     public IAscendingIntegerCollection? SelectedDataRows
     {
       get
@@ -75,6 +117,9 @@ namespace Altaxo.Calc.Regression.Multivariate
       }
     }
 
+    /// <summary>
+    /// Gets or sets the index of the dependent column within the selected columns.
+    /// </summary>
     public int DependentColumnIndexIntoSelection
     {
       get
@@ -87,6 +132,9 @@ namespace Altaxo.Calc.Regression.Multivariate
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether an intercept should be included.
+    /// </summary>
     public bool IncludeIntercept
     {
       get
@@ -99,6 +147,9 @@ namespace Altaxo.Calc.Regression.Multivariate
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether regression values should be generated.
+    /// </summary>
     public bool GenerateRegressionValues
     {
       get
@@ -111,6 +162,9 @@ namespace Altaxo.Calc.Regression.Multivariate
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether residual values should be generated.
+    /// </summary>
     public bool GenerateResidualValues
     {
       get
@@ -129,6 +183,9 @@ namespace Altaxo.Calc.Regression.Multivariate
   /// </summary>
   public class MultivariateLinearRegression
   {
+    /// <summary>
+    /// Shows the regression dialog and executes the regression if confirmed.
+    /// </summary>
     public static LinearFitBySvd? ShowDialogAndRegress(DataColumnCollection table, IAscendingIntegerCollection selectedColumns)
     {
       if (selectedColumns.Count < 2)
@@ -146,6 +203,9 @@ namespace Altaxo.Calc.Regression.Multivariate
       return result;
     }
 
+    /// <summary>
+    /// Performs the regression and returns the fit together with the parameter names.
+    /// </summary>
     public static LinearFitBySvd Regress(MultivariateLinearFitParameters parameters, out string[] paramNames)
     {
       DataColumnCollection table = parameters.Table;
@@ -199,6 +259,9 @@ namespace Altaxo.Calc.Regression.Multivariate
       return fit;
     }
 
+    /// <summary>
+    /// Performs the regression and optionally outputs the results.
+    /// </summary>
     public static LinearFitBySvd Regress(MultivariateLinearFitParameters parameters, bool outputResults)
     {
       LinearFitBySvd fit = Regress(parameters, out var paramNames);
@@ -215,6 +278,9 @@ namespace Altaxo.Calc.Regression.Multivariate
       return fit;
     }
 
+    /// <summary>
+    /// Generates regression and residual columns from the fit result.
+    /// </summary>
     public static void GenerateValues(MultivariateLinearFitParameters parameters, LinearFitBySvd fit)
     {
       DataColumn dependentColumn = parameters.Table[parameters.SelectedDataColumns[parameters.DependentColumnIndexIntoSelection]];
@@ -235,6 +301,9 @@ namespace Altaxo.Calc.Regression.Multivariate
       }
     }
 
+    /// <summary>
+    /// Creates a textual description of the fit result.
+    /// </summary>
     public static string GetFitResultsDescription(LinearFitBySvd fit, string[] paramNames)
     {
       var stb = new System.Text.StringBuilder();
@@ -301,6 +370,9 @@ namespace Altaxo.Calc.Regression.Multivariate
       return stb.ToString();
     }
 
+    /// <summary>
+    /// Writes the fit result description to the console.
+    /// </summary>
     public static string? OutputFitResults(LinearFitBySvd fit, string[] paramNames)
     {
       // Output of results

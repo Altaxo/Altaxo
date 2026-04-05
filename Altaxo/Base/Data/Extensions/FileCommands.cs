@@ -103,7 +103,7 @@ namespace Altaxo.Data
     /// <summary>
     /// Asks for file name(s) and imports the file(s) into multiple worksheets.
     /// </summary>
-    /// <param name="dataTable">The data table to import to. Can be null (in this case the data are imported into a new data table).</param>
+    /// <param name="dataTable">The data table to import to.</param>
     public static void ShowImportAsciiDialogAndOptions(this DataTable dataTable)
     {
       ShowImportAsciiDialogAndOptions(dataTable, true, false);

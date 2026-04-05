@@ -32,44 +32,66 @@ using System.Text;
 namespace Altaxo.Drawing.LineCaps
 {
   /// <summary>
-  /// Draws a cap that is a open circle. The midpoint of the circle is the designated end of the line.
+  /// Draws an open circular line cap whose center lies at the line end.
   /// </summary>
   public class CircleOLineCap : LineCapBase
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CircleOLineCap"/> class.
+    /// </summary>
     public CircleOLineCap()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CircleOLineCap"/> class.
+    /// </summary>
+    /// <param name="minimumAbsoluteSizePt">The minimum absolute size in points.</param>
+    /// <param name="minimumRelativeSize">The minimum relative size.</param>
     public CircleOLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
       : base(minimumAbsoluteSizePt, minimumRelativeSize)
     {
     }
 
+    /// <inheritdoc/>
     public override string Name { get { return "CircleO"; } }
 
+    /// <inheritdoc/>
     public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
 
+    /// <inheritdoc/>
     public override double DefaultMinimumRelativeSize { get { return 4; } }
   }
 
   /// <summary>
-  /// Draws a cap that is a open circle. The midpoint of the circle is the designated end of the line.
+  /// Draws a filled circular line cap whose center lies at the line end.
   /// </summary>
   public class CircleFLineCap : LineCapBase
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CircleFLineCap"/> class.
+    /// </summary>
     public CircleFLineCap()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CircleFLineCap"/> class.
+    /// </summary>
+    /// <param name="minimumAbsoluteSizePt">The minimum absolute size in points.</param>
+    /// <param name="minimumRelativeSize">The minimum relative size.</param>
     public CircleFLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
       : base(minimumAbsoluteSizePt, minimumRelativeSize)
     {
     }
 
+    /// <inheritdoc/>
     public override string Name { get { return "CircleF"; } }
 
+    /// <inheritdoc/>
     public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
 
+    /// <inheritdoc/>
     public override double DefaultMinimumRelativeSize
     {
       get { return 4; }

@@ -30,7 +30,7 @@ using System.Text;
 namespace Altaxo.Graph.Plot.Groups
 {
   /// <summary>
-  /// This group style is intended to publish the symbol size to all interested
+  /// This group style is intended to publish the skip frequency to all interested
   /// plot styles.
   /// </summary>
   public class SkipFrequencyGroupStyle
@@ -63,10 +63,16 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SkipFrequencyGroupStyle"/> class.
+    /// </summary>
     public SkipFrequencyGroupStyle()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SkipFrequencyGroupStyle"/> class by copying another instance.
+    /// </summary>
     public SkipFrequencyGroupStyle(SkipFrequencyGroupStyle from)
     {
       _isInitialized = from._isInitialized;
@@ -77,6 +83,9 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region ICloneable Members
 
+    /// <summary>
+    /// Creates a copy of this style.
+    /// </summary>
     public SkipFrequencyGroupStyle Clone()
     {
       return new SkipFrequencyGroupStyle(this);
@@ -91,6 +100,7 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region IGroupStyle Members
 
+    /// <inheritdoc/>
     public void TransferFrom(IPlotGroupStyle fromb)
     {
       var from = (SkipFrequencyGroupStyle)fromb;
@@ -98,19 +108,23 @@ namespace Altaxo.Graph.Plot.Groups
       _skipFrequency = from._skipFrequency;
     }
 
+    /// <inheritdoc/>
     public void BeginPrepare()
     {
       _isInitialized = false;
     }
 
+    /// <inheritdoc/>
     public void PrepareStep()
     {
     }
 
+    /// <inheritdoc/>
     public void EndPrepare()
     {
     }
 
+    /// <inheritdoc/>
     public bool CanCarryOver
     {
       get
@@ -119,6 +133,7 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <inheritdoc/>
     public bool CanStep
     {
       get
@@ -127,6 +142,7 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <inheritdoc/>
     public int Step(int step)
     {
       return 0;
@@ -150,6 +166,9 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region Other members
 
+    /// <summary>
+    /// Gets a value indicating whether this style was initialized.
+    /// </summary>
     public bool IsInitialized
     {
       get
@@ -158,12 +177,19 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <summary>
+    /// Initializes the skip frequency.
+    /// </summary>
+    /// <param name="skipFrequency">The skip frequency.</param>
     public void Initialize(int skipFrequency)
     {
       _isInitialized = true;
       _skipFrequency = skipFrequency;
     }
 
+    /// <summary>
+    /// Gets the skip frequency.
+    /// </summary>
     public int SkipFrequency
     {
       get
@@ -176,11 +202,19 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region Static helpers
 
+    /// <summary>
+    /// Adds the external group style when applicable.
+    /// </summary>
     public static void AddExternalGroupStyle(IPlotGroupStyleCollection externalGroups)
     {
       // this group style is local only, so no addition is made here
     }
 
+    /// <summary>
+    /// Adds the local group style when applicable.
+    /// </summary>
+    /// <param name="externalGroups">The external group styles.</param>
+    /// <param name="localGroups">The local group styles.</param>
     public static void AddLocalGroupStyle(
      IPlotGroupStyleCollection externalGroups,
      IPlotGroupStyleCollection localGroups)
@@ -189,8 +223,14 @@ namespace Altaxo.Graph.Plot.Groups
         localGroups.Add(new SkipFrequencyGroupStyle());
     }
 
+    /// <summary>
+    /// Represents a delegate that returns an integer function value.
+    /// </summary>
     public delegate int Int32FunctionValueGetter();
 
+    /// <summary>
+    /// Prepares the skip-frequency style.
+    /// </summary>
     public static void PrepareStyle(
       IPlotGroupStyleCollection externalGroups,
       IPlotGroupStyleCollection localGroups,
@@ -213,15 +253,18 @@ namespace Altaxo.Graph.Plot.Groups
         grpStyle.Initialize(getter());
     }
 
+    /// <summary>
+    /// Represents a delegate that stores an integer value.
+    /// </summary>
     public delegate void Int32ValueSetter(int c);
 
     /// <summary>
-    /// Try to apply the symbol size group style. Returns true if successfull applied.
+    /// Tries to apply the skip-frequency group style.
     /// </summary>
     /// <param name="externalGroups"></param>
     /// <param name="localGroups"></param>
     /// <param name="setter"></param>
-    /// <returns></returns>
+    /// <returns><c>true</c> if successfully applied; otherwise, <c>false</c>.</returns>
     public static bool ApplyStyle(
       IPlotGroupStyleCollection externalGroups,
       IPlotGroupStyleCollection localGroups,

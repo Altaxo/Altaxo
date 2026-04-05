@@ -68,6 +68,7 @@ namespace Altaxo.Main.Services.Files
     }
 
     /// <inheritdoc/>
+    /// <inheritdoc/>
     public string EntryName
     {
       get
@@ -100,6 +101,10 @@ namespace Altaxo.Main.Services.Files
     /// <returns>
     /// The archive entry.
     /// </returns>
+    /// <summary>
+    /// Gets the archive entry referenced by this memento.
+    /// </summary>
+    /// <returns>The archive entry.</returns>
     public IProjectArchiveEntry GetArchiveEntry()
     {
       if (_archiveManager is not null)

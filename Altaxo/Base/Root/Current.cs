@@ -31,6 +31,9 @@ using Altaxo.Main.Services;
 
 namespace Altaxo
 {
+  /// <summary>
+  /// Provides access to globally registered services and commonly used application state.
+  /// </summary>
   public partial class Current
   {
     /// <summary>
@@ -90,6 +93,9 @@ namespace Altaxo
     /// <summary>The service provider that is used. Initially set to the fallback service provider.</summary>
     private static volatile IServiceProvider instance = fallbackServiceProvider;
 
+    /// <summary>
+    /// Gets the fallback service provider.
+    /// </summary>
     public static IServiceProvider FallbackServiceProvider { get { return fallbackServiceProvider; } }
 
     /// <summary>
@@ -104,6 +110,11 @@ namespace Altaxo
       }
     }
 
+    /// <summary>
+    /// Adds a service of type <typeparamref name="T"/>.
+    /// </summary>
+    /// <typeparam name="T">The service type.</typeparam>
+    /// <param name="service">The service instance.</param>
     public static void AddService<T>(T service)
     {
       if (instance is IServiceContainer container)
@@ -115,6 +126,9 @@ namespace Altaxo
       ServiceChanged?.Invoke();
     }
 
+    /// <summary>
+    /// Adds a service instance under two service types.
+    /// </summary>
     public static void AddService<T, U>(T service)
     {
       if (instance is IServiceContainer container)
@@ -127,6 +141,9 @@ namespace Altaxo
       ServiceChanged?.Invoke();
     }
 
+    /// <summary>
+    /// Adds a service instance under three service types.
+    /// </summary>
     public static void AddService<T, U, V>(T service)
     {
       if (instance is IServiceContainer container)
@@ -140,6 +157,10 @@ namespace Altaxo
       ServiceChanged?.Invoke();
     }
 
+    /// <summary>
+    /// Removes a service of type <typeparamref name="T"/>.
+    /// </summary>
+    /// <typeparam name="T">The service type.</typeparam>
     public static void RemoveService<T>()
     {
       Services.RemoveService(typeof(T));
@@ -147,6 +168,9 @@ namespace Altaxo
       ServiceChanged?.Invoke();
     }
 
+    /// <summary>
+    /// Disposes all registered services if the service provider supports disposal.
+    /// </summary>
     public static void DisposeServicesAll()
     {
       (instance as IDisposable)?.Dispose();
@@ -192,12 +216,18 @@ namespace Altaxo
     /// <summary>
     /// Gets a service. Returns null if service is not found.
     /// </summary>
+    /// <summary>
+    /// Gets a service. Returns <c>null</c> if the service is not found.
+    /// </summary>
     public static T? GetService<T>() where T : class
     {
       var service = instance.GetService(typeof(T));
       return (T?)service;
     }
 
+    /// <summary>
+    /// Gets a service, optionally using a fallback service type.
+    /// </summary>
     public static T? GetService<T, U>() where T : class, U
     {
       var serviceObj = instance.GetService(typeof(T));
@@ -296,6 +326,9 @@ namespace Altaxo
 
     #region Gui factory service
 
+    /// <summary>
+    /// Gets the GUI factory service.
+    /// </summary>
     public static IGuiFactoryService Gui
     {
       get
@@ -326,6 +359,9 @@ namespace Altaxo
 
     #region ResourceService
 
+    /// <summary>
+    /// Gets the resource service.
+    /// </summary>
     public static Altaxo.Main.Services.IResourceService ResourceService
     {
       get
@@ -362,6 +398,9 @@ namespace Altaxo
       }
     }
 
+    /// <summary>
+    /// Gets the logging service.
+    /// </summary>
     public static ILoggingService Log
     {
       get
@@ -370,6 +409,9 @@ namespace Altaxo
       }
     }
 
+    /// <summary>
+    /// Gets the status bar service.
+    /// </summary>
     public static IStatusBarService StatusBar
     {
       get
@@ -378,6 +420,9 @@ namespace Altaxo
       }
     }
 
+    /// <summary>
+    /// Gets the GUI timer service.
+    /// </summary>
     public static IGuiTimerService GuiTimer
     {
       get
@@ -408,6 +453,9 @@ namespace Altaxo
 
     #region Com Manager
 
+    /// <summary>
+    /// Gets the current COM manager.
+    /// </summary>
     public static Main.IComManager? ComManager
     {
       get

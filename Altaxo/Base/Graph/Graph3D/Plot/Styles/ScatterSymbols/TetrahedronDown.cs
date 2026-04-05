@@ -34,11 +34,14 @@ using Altaxo.Serialization;
 namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
 {
   /// <summary>
-  /// Represents the null symbol in a scatter plot, i.e. this symbol is not visible.
+  /// Represents a tetrahedral scatter symbol pointing downward.
   /// </summary>
   /// <seealso cref="Altaxo.Graph.Graph3D.Plot.Styles.IScatterSymbol" />
   public sealed class TetrahedronDown : ScatterSymbolShapeBase
   {
+    /// <summary>
+    /// Gets the shared instance of the <see cref="TetrahedronDown"/> symbol.
+    /// </summary>
     public static TetrahedronDown Instance { get; private set; } = new TetrahedronDown();
 
     private static readonly double SinArcCos1By3 = Math.Sin(Math.Acos(1 / 3.0)); // Radius of an arm if projected to the x-y-plane
@@ -51,14 +54,19 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
     /// <summary>
     /// 2016-07-01 initial version.
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="TetrahedronDown"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TetrahedronDown), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         SerializeV0((IScatterSymbol)obj, info);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return DeserializeV0(Instance, info, parent);
@@ -67,6 +75,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
 
     #endregion Serialization
 
+    /// <inheritdoc/>
     public override void Paint(IGraphicsContext3D g, IMaterial material, PointD3D centerLocation, double symbolSize)
     {
       var radius = symbolSize / 2;
@@ -90,6 +99,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
       }
     }
 
+    /// <summary>
+    /// Gets the tetrahedron vertices together with their normals.
+    /// </summary>
+    /// <returns>The vertex and normal pairs.</returns>
     public static IEnumerable<Tuple<VectorD3D, VectorD3D>> GetVerticesAndNormals()
     {
       var pt0 = new VectorD3D(0, -SinArcCos1By3, MinusOneBy3);
@@ -117,6 +130,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
       yield return new Tuple<VectorD3D, VectorD3D>(-pt0, pt1);
     }
 
+    /// <summary>
+    /// Gets the triangle indices for the tetrahedron mesh.
+    /// </summary>
+    /// <returns>The triangle indices.</returns>
     public static IEnumerable<Tuple<int, int, int>> GetTriangleIndices()
     {
       yield return new Tuple<int, int, int>(0, 1, 2);

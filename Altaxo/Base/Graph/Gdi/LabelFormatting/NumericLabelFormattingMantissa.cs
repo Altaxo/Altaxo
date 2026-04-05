@@ -55,25 +55,35 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NumericLabelFormattingMantissa"/> class.
+    /// </summary>
     public NumericLabelFormattingMantissa()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NumericLabelFormattingMantissa"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public NumericLabelFormattingMantissa(NumericLabelFormattingMantissa from)
       : base(from) // everything is done here, since CopyFrom is virtual
     {
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new NumericLabelFormattingMantissa();
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
     }
 
+    /// <inheritdoc />
     protected override string FormatItem(Altaxo.Data.AltaxoVariant item)
     {
       if (item.IsType(Altaxo.Data.AltaxoVariant.Content.VDouble))
@@ -82,6 +92,11 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
         return item.ToString();
     }
 
+    /// <summary>
+    /// Formats a numeric value by returning only its mantissa.
+    /// </summary>
+    /// <param name="tick">The numeric value.</param>
+    /// <returns>The formatted mantissa string.</returns>
     public string FormatItem(double tick)
     {
       string result = string.Format("{0:E0}", tick);

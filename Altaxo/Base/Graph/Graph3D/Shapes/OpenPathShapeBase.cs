@@ -43,12 +43,13 @@ namespace Altaxo.Graph.Graph3D.Shapes
     #region Serialization
 
     /// <summary>
+    /// Serializes <see cref="OpenPathShapeBase"/> instances.
     /// 2016-04-19 Initial version
     /// </summary>
-    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(OpenPathShapeBase), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (OpenPathShapeBase)obj;
@@ -57,6 +58,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
         info.AddValue("LinePen", s._linePen);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (OpenPathShapeBase)(o ?? throw new ArgumentNullException(nameof(o)));
@@ -69,6 +71,10 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OpenPathShapeBase"/> class during deserialization.
+    /// </summary>
+    /// <param name="info">The deserialization info.</param>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected OpenPathShapeBase(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
@@ -76,6 +82,11 @@ namespace Altaxo.Graph.Graph3D.Shapes
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OpenPathShapeBase"/> class.
+    /// </summary>
+    /// <param name="location">The item location.</param>
+    /// <param name="context">The optional property context.</param>
     protected OpenPathShapeBase(ItemLocationDirect location, Altaxo.Main.Properties.IReadOnlyPropertyBag? context)
       : base(location)
     {
@@ -87,12 +98,21 @@ namespace Altaxo.Graph.Graph3D.Shapes
       _linePen = new PenX3D(foreColor, penWidth);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OpenPathShapeBase"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The shape to copy from.</param>
     public OpenPathShapeBase(OpenPathShapeBase from)
       : base(from)
     {
       CopyFrom(from, false);
     }
 
+    /// <summary>
+    /// Copies values from another <see cref="OpenPathShapeBase"/> instance.
+    /// </summary>
+    /// <param name="from">The shape to copy from.</param>
+    /// <param name="withBaseMembers">If set to <c>true</c>, base members are copied as well.</param>
     [MemberNotNull(nameof(_linePen))]
     protected void CopyFrom(OpenPathShapeBase from, bool withBaseMembers)
     {
@@ -102,6 +122,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       _linePen = from._linePen;
     }
 
+    /// <inheritdoc/>
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -126,11 +147,15 @@ namespace Altaxo.Graph.Graph3D.Shapes
       yield break;
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       return base.GetDocumentNodeChildrenWithName().Concat(GetMyDocumentNodeChildrenWithName());
     }
 
+    /// <summary>
+    /// Gets or sets the pen used to draw the path.
+    /// </summary>
     public virtual PenX3D Pen
     {
       get
@@ -149,6 +174,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       }
     }
 
+    /// <inheritdoc/>
     public override IHitTestObject? HitTest(HitTestPointData htd)
     {
       var result = base.HitTest(htd);

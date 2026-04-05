@@ -28,14 +28,14 @@
 namespace Altaxo.Main.Services
 {
   /// <summary>
-  /// Interface to both a means to cancel an operation, and to report the progress of that operation.
+  /// Interface that provides both cancellation support and progress reporting for an operation.
   /// </summary>
-  /// <seealso cref="Altaxo.IProgressReporter" />
+  /// <seealso cref="IProgressMonitor" />
   /// <seealso cref="Altaxo.Main.Services.IProgressMonitor" />
   public interface IExternalDrivenBackgroundMonitor : IProgressMonitor
   {
     /// <summary>
-    /// Sets the <see cref="IProgressReporter.ShouldReportNow"/> flag to <c>True</c> to indicate that the worker thread should report its progress.
+    /// Sets the <c>ShouldReportNow</c> flag to <c>true</c> to indicate that the worker thread should report its progress.
     /// </summary>
     void SetShouldReportNow();
 

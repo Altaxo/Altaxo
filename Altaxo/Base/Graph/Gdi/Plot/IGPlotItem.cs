@@ -50,14 +50,14 @@ namespace Altaxo.Graph.Gdi.Plot
     string GetName(string style);
 
     /// <summary>
-    /// The collection where this plot item belongs to. Can be null for the root item.
+    /// Gets the collection to which this plot item belongs. Can be <see langword="null"/> for the root item.
     /// </summary>
     PlotItemCollection? ParentCollection { get; }
 
     /// <summary>
     /// Collects all possible group styles that can be applied to this plot item in
     /// styles. The styles collected here should be only external styles, i.e. such styles
-    /// that are indended to be share between different plot items.
+    /// that are intended to be shared between different plot items.
     /// </summary>
     /// <param name="styles">The collection of group styles where to add external group styles.</param>
     void CollectStyles(PlotGroupStyleCollection styles);
@@ -123,12 +123,12 @@ namespace Altaxo.Graph.Gdi.Plot
     void PaintSymbol(Graphics g, RectangleF location);
 
     /// <summary>
-    /// Test wether the mouse hits a plot item. The default implementation returns null.
+    /// Tests whether the mouse hits a plot item. The default implementation returns <see langword="null"/>.
     /// If you want to have a reaction on mouse click on a curve, return a <see cref="IHitTestObject"/>.
     /// </summary>
     /// <param name="layer">The layer in which this plot item is drawn into.</param>
     /// <param name="hitpoint">The point where the mouse is pressed.</param>
-    /// <returns>Null if no hit, or a <see cref="IHitTestObject" /> if there was a hit.</returns>
+    /// <returns><see langword="null"/> if there is no hit, or an <see cref="IHitTestObject"/> if there was a hit.</returns>
     IHitTestObject? HitTest(IPlotArea layer, PointD2D hitpoint);
   }
 }

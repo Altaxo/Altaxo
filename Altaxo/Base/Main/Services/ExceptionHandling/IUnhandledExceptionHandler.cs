@@ -32,6 +32,9 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Main.Services.ExceptionHandling
 {
+  /// <summary>
+  /// Defines handlers for otherwise unhandled exceptions raised by supported application hosts.
+  /// </summary>
   public interface IUnhandledExceptionHandler
   {
     /// <summary>

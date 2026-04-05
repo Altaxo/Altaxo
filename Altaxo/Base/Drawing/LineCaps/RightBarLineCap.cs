@@ -32,23 +32,34 @@ using System.Text;
 namespace Altaxo.Drawing.LineCaps
 {
   /// <summary>
-  /// Draws a cap that is a line perpendicular to the end of the line, and on the right side of the line.
+  /// Draws a cap that is a line perpendicular to the line end and located on the right side.
   /// </summary>
   public class RightBarLineCap : LineCapBase
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RightBarLineCap"/> class.
+    /// </summary>
     public RightBarLineCap()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RightBarLineCap"/> class.
+    /// </summary>
+    /// <param name="minimumAbsoluteSizePt">The minimum absolute size in points.</param>
+    /// <param name="minimumRelativeSize">The minimum relative size.</param>
     public RightBarLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
       : base(minimumAbsoluteSizePt, minimumRelativeSize)
     {
     }
 
+    /// <inheritdoc/>
     public override string Name { get { return "BarRight"; } }
 
+    /// <inheritdoc/>
     public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
 
+    /// <inheritdoc/>
     public override double DefaultMinimumRelativeSize { get { return 4; } }
   }
 }

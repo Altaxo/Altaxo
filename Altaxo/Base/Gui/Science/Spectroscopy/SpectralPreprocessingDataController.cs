@@ -37,16 +37,26 @@ namespace Altaxo.Gui.Science.Spectroscopy
   using Altaxo.Gui.Common;
   using Altaxo.Science.Spectroscopy;
 
+  /// <summary>
+  /// View interface for selecting preprocessing input data (table, group, and columns).
+  /// </summary>
   public interface ISpectralPreprocessingDataView : IDataContextAwareView  {  }
 
+  /// <summary>
+  /// Controller for editing a <see cref="DataTableMultipleColumnProxy"/> used as input for spectral preprocessing.
+  /// </summary>
   [ExpectedTypeOfView(typeof(ISpectralPreprocessingDataView))]
   public class SpectralPreprocessingDataController : MVCANControllerEditOriginalDocBase<DataTableMultipleColumnProxy, ISpectralPreprocessingDataView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SpectralPreprocessingDataController"/> class.
+    /// </summary>
     public SpectralPreprocessingDataController()
     {
       CmdAddToParticipatingColumns = new RelayCommand(EhAddToParticipatingColumns);
@@ -57,13 +67,31 @@ namespace Altaxo.Gui.Science.Spectroscopy
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the command that adds columns to the participating list.
+    /// </summary>
     public ICommand CmdAddToParticipatingColumns { get; }
+
+    /// <summary>
+    /// Gets the command that removes columns from the participating list.
+    /// </summary>
     public ICommand CmdRemoveFromParticipatingColumns { get; }
+
+    /// <summary>
+    /// Gets the command that moves participating columns up.
+    /// </summary>
     public ICommand CmdParticipatingColumnsUp { get; }
+
+    /// <summary>
+    /// Gets the command that moves participating columns down.
+    /// </summary>
     public ICommand CmdParticipatingColumnsDown { get; }
 
     private ItemsController<DataTable> _dataTable;
 
+    /// <summary>
+    /// Gets or sets the data table selection.
+    /// </summary>
     public ItemsController<DataTable> DataTable
     {
       get => _dataTable;
@@ -80,6 +108,9 @@ namespace Altaxo.Gui.Science.Spectroscopy
 
     private ObservableCollection<int> _availableGroups;
 
+    /// <summary>
+    /// Gets or sets available column groups.
+    /// </summary>
     public ObservableCollection<int> AvailableGroups
     {
       get => _availableGroups;
@@ -95,6 +126,9 @@ namespace Altaxo.Gui.Science.Spectroscopy
 
     private int _selectedGroup = int.MinValue;
 
+    /// <summary>
+    /// Gets or sets the selected group number.
+    /// </summary>
     public int SelectedGroup
     {
       get => _selectedGroup;
@@ -111,6 +145,9 @@ namespace Altaxo.Gui.Science.Spectroscopy
 
     private ItemsController<DataColumn> _xColumn;
 
+    /// <summary>
+    /// Gets or sets the x-column selection.
+    /// </summary>
     public ItemsController<DataColumn> XColumn
     {
       get => _xColumn;
@@ -128,6 +165,9 @@ namespace Altaxo.Gui.Science.Spectroscopy
 
     private SelectableListNodeList _availableColumns;
 
+    /// <summary>
+    /// Gets or sets the list of available columns for the selected group.
+    /// </summary>
     public SelectableListNodeList AvailableColumns
     {
       get => _availableColumns;
@@ -143,6 +183,9 @@ namespace Altaxo.Gui.Science.Spectroscopy
 
     private SelectableListNodeList _selectedColumns;
 
+    /// <summary>
+    /// Gets or sets the list of columns participating in preprocessing.
+    /// </summary>
     public SelectableListNodeList ParticipatingColumns
     {
       get => _selectedColumns;
@@ -161,6 +204,7 @@ namespace Altaxo.Gui.Science.Spectroscopy
 
     
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -261,6 +305,7 @@ namespace Altaxo.Gui.Science.Spectroscopy
         participatingColNames.Where(cn => columnDict.ContainsKey(cn)).Select(cn => new SelectableListNode(cn, columnDict[cn], false)));
 }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       var dataTable = DataTable.SelectedValue;

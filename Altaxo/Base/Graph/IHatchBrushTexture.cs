@@ -28,6 +28,9 @@ using Altaxo.Drawing;
 
 namespace Altaxo.Graph
 {
+  /// <summary>
+  /// Defines a repeatable hatch-brush texture.
+  /// </summary>
   public interface IHatchBrushTexture : ISyntheticRepeatableTexture
   {
     /// <summary>

@@ -76,12 +76,19 @@ namespace Altaxo.Drawing.D3D
     int NumberOfVertices { get; }
   }
 
+  /// <summary>
+  /// Provides predefined line cap contours.
+  /// </summary>
   public class LineCapContour
   {
     private PointD2D[] _vertices;
     private bool[] _isVertexSharp;
     private VectorD2D[] _normals;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LineCapContour"/> class.
+    /// </summary>
+    /// <param name="numberOfVertices">The number of vertices.</param>
     protected LineCapContour(int numberOfVertices)
     {
       _vertices = new PointD2D[numberOfVertices];
@@ -89,6 +96,12 @@ namespace Altaxo.Drawing.D3D
       _normals = new VectorD2D[numberOfVertices];
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LineCapContour"/> class.
+    /// </summary>
+    /// <param name="numberOfVertices">The number of vertices.</param>
+    /// <param name="numberOfIsVertexSharp">The number of sharp-vertex flags.</param>
+    /// <param name="numberOfNormals">The number of normals.</param>
     protected LineCapContour(int numberOfVertices, int numberOfIsVertexSharp, int numberOfNormals)
     {
       _vertices = new PointD2D[numberOfVertices];
@@ -96,11 +109,26 @@ namespace Altaxo.Drawing.D3D
       _normals = new VectorD2D[numberOfNormals];
     }
 
+    /// <summary>
+    /// Gets the contour vertices.
+    /// </summary>
     public PointD2D[] Vertices { get { return _vertices; } }
+    /// <summary>
+    /// Gets flags indicating whether the corresponding vertices are sharp.
+    /// </summary>
     public bool[] IsVertexSharp { get { return _isVertexSharp; } }
+    /// <summary>
+    /// Gets the contour normals.
+    /// </summary>
     public VectorD2D[] Normals { get { return _normals; } }
 
+    /// <summary>
+    /// Gets the number of vertices.
+    /// </summary>
     public int NumberOfVertices { get { return _vertices.Length; } }
+    /// <summary>
+    /// Gets the number of normals.
+    /// </summary>
     public int NumberOfNormals { get { return _normals.Length; } }
 
     private void NormalizeNormals()
@@ -109,6 +137,9 @@ namespace Altaxo.Drawing.D3D
         _normals[i] = _normals[i].Normalized;
     }
 
+    /// <summary>
+    /// Gets a ball-shaped contour.
+    /// </summary>
     public static LineCapContour Ball
     {
       get
@@ -135,6 +166,9 @@ namespace Altaxo.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Gets a triangular contour.
+    /// </summary>
     public static LineCapContour Triangle
     {
       get
@@ -150,6 +184,9 @@ namespace Altaxo.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Gets an arrow-shaped contour.
+    /// </summary>
     public static LineCapContour Arrow
     {
       get
@@ -174,6 +211,9 @@ namespace Altaxo.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Gets a large arrow-shaped contour.
+    /// </summary>
     public static LineCapContour BigArrow
     {
       get
@@ -199,6 +239,9 @@ namespace Altaxo.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Gets a block-shaped contour.
+    /// </summary>
     public static LineCapContour Block
     {
       get

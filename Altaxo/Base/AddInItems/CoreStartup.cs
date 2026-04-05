@@ -219,11 +219,15 @@ namespace Altaxo.AddInItems
     {
       private string _appName;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ApplicationNameProvider"/> class.
+      /// </summary>
       public ApplicationNameProvider(string applicationName)
       {
         _appName = applicationName;
       }
 
+      /// <inheritdoc/>
       public string? ProvideString(string tag, StringTagPair[]? customTags)
       {
         if (string.Equals(tag, "AppName", StringComparison.OrdinalIgnoreCase))

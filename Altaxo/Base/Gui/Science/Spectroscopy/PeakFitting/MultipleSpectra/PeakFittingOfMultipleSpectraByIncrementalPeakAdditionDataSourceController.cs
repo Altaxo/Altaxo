@@ -27,9 +27,13 @@ using Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra;
 
 namespace Altaxo.Gui.Science.Spectroscopy.MultipleSpectra
 {
+  /// <summary>
+  /// Controller for <see cref="PeakFittingOfMultipleSpectraByIncrementalPeakAdditionDataSource"/>.
+  /// </summary>
   [UserControllerForObject(typeof(PeakFittingOfMultipleSpectraByIncrementalPeakAdditionDataSource))]
   public class PeakFittingOfMultipleSpectraByIncrementalPeakAdditionDataSourceController : DataSourceControllerBase<PeakFittingOfMultipleSpectraByIncrementalPeakAdditionDataSource>
   {
+    /// <inheritdoc />
     protected override IMVCANController GetProcessDataController()
     {
       var ctrl = new ListOfXAndYColumnController();

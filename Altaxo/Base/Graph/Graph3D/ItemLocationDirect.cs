@@ -32,33 +32,72 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D
 {
+  /// <summary>
+  /// Represents an item location defined directly by position, size, anchors, and transforms.
+  /// </summary>
   [Serializable]
   public class ItemLocationDirect : Main.SuspendableDocumentLeafNodeWithEventArgs, IItemLocation
   {
     #region Members
 
+    /// <summary>
+    /// Stores the width component.
+    /// </summary>
     protected RADouble _sizeX;
 
+    /// <summary>
+    /// Stores the height component.
+    /// </summary>
     protected RADouble _sizeY;
 
+    /// <summary>
+    /// Stores the depth component.
+    /// </summary>
     protected RADouble _sizeZ;
 
+    /// <summary>
+    /// Stores the x position component.
+    /// </summary>
     protected RADouble _positionX;
 
+    /// <summary>
+    /// Stores the y position component.
+    /// </summary>
     protected RADouble _positionY;
 
+    /// <summary>
+    /// Stores the z position component.
+    /// </summary>
     protected RADouble _positionZ;
 
+    /// <summary>
+    /// Stores the local x anchor.
+    /// </summary>
     protected RADouble _localAnchorX;
 
+    /// <summary>
+    /// Stores the local y anchor.
+    /// </summary>
     protected RADouble _localAnchorY;
 
+    /// <summary>
+    /// Stores the local z anchor.
+    /// </summary>
     protected RADouble _localAnchorZ;
 
+    /// <summary>
+    /// Stores the parent x anchor.
+    /// </summary>
     protected RADouble _parentAnchorX;
 
+    /// <summary>
+    /// Stores the parent y anchor.
+    /// </summary>
     protected RADouble _parentAnchorY;
 
+    /// <summary>
+    /// Stores the parent z anchor.
+    /// </summary>
     protected RADouble _parentAnchorZ;
 
     /// <summary>The rotation angle (in degrees) of the layer.</summary>
@@ -70,21 +109,39 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>The rotation angle (in degrees) of the layer.</summary>
     protected double _rotationZ; // Rotation around z axis
 
+    /// <summary>
+    /// Stores the x shear factor.
+    /// </summary>
     protected double _shearX; // Shear in the y-z plane
 
+    /// <summary>
+    /// Stores the y shear factor.
+    /// </summary>
     protected double _shearY; // Shear in the y-z plane
 
+    /// <summary>
+    /// Stores the z shear factor.
+    /// </summary>
     protected double _shearZ; // Shear in the x-y plane
 
     /// <summary>The scaling factor of the layer, normally 1.</summary>
     protected double _scaleX;  // X-Scale
 
+    /// <summary>
+    /// Stores the y scaling factor.
+    /// </summary>
     protected double _scaleY; // Y-Scale
 
+    /// <summary>
+    /// Stores the z scaling factor.
+    /// </summary>
     protected double _scaleZ; // Y-Scale
 
     // Cached and not-to-serialize members
 
+    /// <summary>
+    /// Stores the size of the parent container.
+    /// </summary>
     protected VectorD3D _parentSize;
 
     #endregion Members
@@ -94,9 +151,13 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// 2015-11-14 initial version.
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="ItemLocationDirect"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ItemLocationDirect), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ItemLocationDirect)obj;
@@ -169,6 +230,7 @@ namespace Altaxo.Graph.Graph3D
         return s;
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         ItemLocationDirect s = SDeserialize(o, info, parent);
@@ -180,6 +242,9 @@ namespace Altaxo.Graph.Graph3D
 
     #region Construction and copying
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ItemLocationDirect"/> class.
+    /// </summary>
     public ItemLocationDirect()
     {
       _localAnchorX = RADouble.NewRel(0);
@@ -193,16 +258,25 @@ namespace Altaxo.Graph.Graph3D
       _scaleZ = 1;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ItemLocationDirect"/> class by copying from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public ItemLocationDirect(ItemLocationDirect from)
     {
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ItemLocationDirect"/> class from another item location.
+    /// </summary>
+    /// <param name="from">The item location to copy from.</param>
     public ItemLocationDirect(IItemLocation from)
     {
       CopyFrom(from);
     }
 
+    /// <inheritdoc/>
     public virtual bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -268,6 +342,10 @@ namespace Altaxo.Graph.Graph3D
       return new ItemLocationDirect(this);
     }
 
+    /// <summary>
+    /// Creates a strongly typed copy of this item location.
+    /// </summary>
+    /// <returns>A cloned item location.</returns>
     public virtual ItemLocationDirect Clone()
     {
       return new ItemLocationDirect(this);
@@ -277,6 +355,11 @@ namespace Altaxo.Graph.Graph3D
 
     #region Properties
 
+    /// <summary>
+    /// Updates the cached parent size.
+    /// </summary>
+    /// <param name="parentSize">The new parent size.</param>
+    /// <param name="shouldTriggerChangedEvent">If set to <see langword="true"/>, a change event is raised when needed.</param>
     public virtual void SetParentSize(VectorD3D parentSize, bool shouldTriggerChangedEvent)
     {
       var oldValue = _parentSize;
@@ -286,6 +369,9 @@ namespace Altaxo.Graph.Graph3D
         EhSelfChanged();
     }
 
+    /// <summary>
+    /// Gets the cached parent size.
+    /// </summary>
     public VectorD3D ParentSize
     {
       get
@@ -536,6 +622,9 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Sets position and size in one operation.
+    /// </summary>
     public virtual void SetPositionAndSize(RADouble x, RADouble y, RADouble z, RADouble size_x, RADouble size_y, RADouble size_z)
     {
       bool isChanged = x != _positionX || y != _positionY || size_x != _sizeX || size_y != _sizeY;
@@ -550,6 +639,9 @@ namespace Altaxo.Graph.Graph3D
         EhSelfChanged();
     }
 
+    /// <summary>
+    /// Updates the x scale without raising change notifications.
+    /// </summary>
     protected virtual bool InternalSetScaleXSilent(double value)
     {
       bool chg = _scaleX != value;
@@ -557,6 +649,9 @@ namespace Altaxo.Graph.Graph3D
       return chg;
     }
 
+    /// <summary>
+    /// Updates the y scale without raising change notifications.
+    /// </summary>
     protected virtual bool InternalSetScaleYSilent(double value)
     {
       bool chg = _scaleY != value;
@@ -564,6 +659,9 @@ namespace Altaxo.Graph.Graph3D
       return chg;
     }
 
+    /// <summary>
+    /// Updates the z scale without raising change notifications.
+    /// </summary>
     protected virtual bool InternalSetScaleZSilent(double value)
     {
       bool chg = _scaleZ != value;
@@ -571,6 +669,9 @@ namespace Altaxo.Graph.Graph3D
       return chg;
     }
 
+    /// <summary>
+    /// Updates all scale components without raising change notifications.
+    /// </summary>
     protected virtual bool InternalSetScaleSilent(VectorD3D value)
     {
       bool chg = _scaleX != value.X || _scaleY != value.Y || _scaleZ != value.Z;
@@ -748,21 +849,33 @@ namespace Altaxo.Graph.Graph3D
       return RectangleD3D.NewRectangleIncludingAllPoints(r.Vertices.Select(p => m.Transform(p)));
     }
 
+    /// <summary>
+    /// Updates the width value without raising change notifications.
+    /// </summary>
     protected virtual void InternalSetSizeXSilent(RADouble value)
     {
       _sizeX = value;
     }
 
+    /// <summary>
+    /// Updates the height value without raising change notifications.
+    /// </summary>
     protected virtual void InternalSetSizeYSilent(RADouble value)
     {
       _sizeY = value;
     }
 
+    /// <summary>
+    /// Updates the depth value without raising change notifications.
+    /// </summary>
     protected virtual void InternalSetSizeZSilent(RADouble value)
     {
       _sizeZ = value;
     }
 
+    /// <summary>
+    /// Updates all size components without raising change notifications.
+    /// </summary>
     protected virtual void InternalSetSizeSilent(RADouble valueX, RADouble valueY, RADouble valueZ)
     {
       _sizeX = valueX;
@@ -770,6 +883,9 @@ namespace Altaxo.Graph.Graph3D
       _sizeZ = valueZ;
     }
 
+    /// <summary>
+    /// Updates the absolute width without raising change notifications.
+    /// </summary>
     protected virtual void InternalSetAbsoluteSizeXSilent(double value)
     {
       if (_sizeX.IsAbsolute)
@@ -780,6 +896,9 @@ namespace Altaxo.Graph.Graph3D
         throw new InvalidOperationException("_parentSize.X is undefined or zero");
     }
 
+    /// <summary>
+    /// Updates the absolute height without raising change notifications.
+    /// </summary>
     protected virtual void InternalSetAbsoluteSizeYSilent(double value)
     {
       if (_sizeY.IsAbsolute)
@@ -790,6 +909,9 @@ namespace Altaxo.Graph.Graph3D
         throw new InvalidOperationException("_parentSize.Y is undefined or zero");
     }
 
+    /// <summary>
+    /// Updates the absolute depth without raising change notifications.
+    /// </summary>
     protected virtual void InternalSetAbsoluteSizeZSilent(double value)
     {
       if (_sizeZ.IsAbsolute)
@@ -800,6 +922,9 @@ namespace Altaxo.Graph.Graph3D
         throw new InvalidOperationException("_parentSize.Z is undefined or zero");
     }
 
+    /// <summary>
+    /// Updates the absolute size without raising change notifications.
+    /// </summary>
     protected virtual void InternalSetAbsoluteSizeSilent(VectorD3D value)
     {
       RADouble sizeX, sizeY, sizeZ;
@@ -828,6 +953,9 @@ namespace Altaxo.Graph.Graph3D
       InternalSetSizeSilent(sizeX, sizeY, sizeZ);
     }
 
+    /// <summary>
+    /// Gets or sets the absolute width.
+    /// </summary>
     public virtual double AbsoluteSizeX
     {
       get
@@ -843,6 +971,9 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the absolute height.
+    /// </summary>
     public virtual double AbsoluteSizeY
     {
       get
@@ -858,6 +989,9 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the absolute depth.
+    /// </summary>
     public virtual double AbsoluteSizeZ
     {
       get
@@ -873,6 +1007,9 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the absolute size.
+    /// </summary>
     public virtual VectorD3D AbsoluteSize
     {
       get
@@ -885,6 +1022,11 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Sets the absolute size.
+    /// </summary>
+    /// <param name="value">The absolute size.</param>
+    /// <param name="eventFiring">Controls whether a change event is raised.</param>
     public virtual void SetAbsoluteSize(VectorD3D value, Main.EventFiring eventFiring)
     {
       var oldSizeX = _sizeX;
@@ -932,6 +1074,9 @@ namespace Altaxo.Graph.Graph3D
         throw new InvalidOperationException("_parentSize.Z is undefined or zero");
     }
 
+    /// <summary>
+    /// Gets or sets the absolute x position.
+    /// </summary>
     public double AbsolutePositionX
     {
       get
@@ -948,6 +1093,9 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the absolute y position.
+    /// </summary>
     public double AbsolutePositionY
     {
       get
@@ -964,6 +1112,9 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the absolute z position.
+    /// </summary>
     public double AbsolutePositionZ
     {
       get
@@ -980,6 +1131,9 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the absolute position.
+    /// </summary>
     public PointD3D AbsolutePosition
     {
       get
@@ -1103,6 +1257,9 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the absolute pivot position.
+    /// </summary>
     public PointD3D AbsolutePivotPosition
     {
       get
@@ -1115,6 +1272,11 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Sets the absolute pivot position.
+    /// </summary>
+    /// <param name="value">The new pivot position.</param>
+    /// <param name="eventFiring">Controls whether a change event is raised.</param>
     public void SetAbsolutePivotPosition(PointD3D value, Main.EventFiring eventFiring)
     {
       var oldValueX = _positionX;
@@ -1146,6 +1308,11 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Converts absolute size and position values into relative values.
+    /// </summary>
+    /// <param name="absSize">The absolute size.</param>
+    /// <param name="absPos">The absolute position.</param>
     public virtual void SetRelativeSizePositionFromAbsoluteValues(VectorD3D absSize, PointD3D absPos)
     {
       var oldSizeX = SizeX;
@@ -1176,6 +1343,9 @@ namespace Altaxo.Graph.Graph3D
         EhSelfChanged();
     }
 
+    /// <summary>
+    /// Converts relative size values to absolute values.
+    /// </summary>
     public void ChangeRelativeSizeValuesToAbsoluteSizeValues()
     {
       if (_sizeX.IsRelative)
@@ -1186,6 +1356,9 @@ namespace Altaxo.Graph.Graph3D
         _sizeZ = RADouble.NewAbs(AbsoluteSizeZ);
     }
 
+    /// <summary>
+    /// Converts relative position values to absolute values.
+    /// </summary>
     public void ChangeRelativePositionValuesToAbsolutePositionValues()
     {
       if (_positionX.IsRelative)
@@ -1196,6 +1369,9 @@ namespace Altaxo.Graph.Graph3D
         _positionZ = RADouble.NewAbs(AbsolutePositionZ);
     }
 
+    /// <summary>
+    /// Changes the parent anchor while keeping the absolute position constant.
+    /// </summary>
     public void ChangeParentAnchorButKeepPosition(RADouble newParentAnchorX, RADouble newParentAnchorY, RADouble newParentAnchorZ)
     {
       var oldRefX = _parentAnchorX.GetValueRelativeTo(_parentSize.X);
@@ -1214,6 +1390,9 @@ namespace Altaxo.Graph.Graph3D
       _parentAnchorZ = newParentAnchorZ;
     }
 
+    /// <summary>
+    /// Changes the parent anchor to the left-top-front corner while keeping the absolute position constant.
+    /// </summary>
     public void ChangeParentAnchorToLeftTopButKeepPosition()
     {
       ChangeParentAnchorButKeepPosition(RADouble.NewRel(0), RADouble.NewRel(0), RADouble.NewRel(0));

@@ -33,16 +33,27 @@ namespace Altaxo.Gui.Science.Thermorheology
 {
   public partial class MasterCurveDataController
   {
+    /// <summary>
+    /// Gets the drag handler for available items.
+    /// </summary>
     public IMVVMDragHandler AvailableItemsDragHandler { get; }
 
+    /// <summary>
+    /// Drag handler for available master-curve items.
+    /// </summary>
     public class AvailableItems_DragHandler : IMVVMDragHandler
     {
       MasterCurveDataController _parent;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="AvailableItems_DragHandler"/> class.
+      /// </summary>
+      /// <param name="parent">The parent controller.</param>
       public AvailableItems_DragHandler(MasterCurveDataController parent)
       {
         _parent = parent ?? throw new ArgumentNullException(nameof(parent));
       }
+      /// <inheritdoc />
       public bool CanStartDrag(IEnumerable items)
       {
         var selNodes = items.OfType<NGTreeNode>();
@@ -55,6 +66,7 @@ namespace Altaxo.Gui.Science.Thermorheology
         return isAnythingSelected && !isAnythingForbiddenSelected;
       }
 
+      /// <inheritdoc />
       public void StartDrag(IEnumerable items, out object data, out bool canCopy, out bool canMove)
       {
         data = new List<NGTreeNode>(items.OfType<NGTreeNode>().Where(node => (node.IsSelected && node.Tag is Altaxo.Data.DataColumn)));
@@ -62,10 +74,12 @@ namespace Altaxo.Gui.Science.Thermorheology
         canMove = false;
       }
 
+      /// <inheritdoc />
       public void DragEnded(bool isCopy, bool isMove)
       {
       }
 
+      /// <inheritdoc />
       public void DragCancelled()
       {
       }

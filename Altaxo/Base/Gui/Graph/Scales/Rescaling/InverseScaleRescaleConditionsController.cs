@@ -35,10 +35,14 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Gui.Graph.Scales.Rescaling
 {
+  /// <summary>
+  /// Controller for <see cref="InverseScaleRescaleConditions"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(ILinearScaleRescaleConditionsView))]
   [UserControllerForObject(typeof(InverseScaleRescaleConditions))]
   public class InverseScaleRescaleConditionsController : MVCANControllerEditOriginalDocBase<InverseScaleRescaleConditions, ILinearScaleRescaleConditionsView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -48,6 +52,9 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
     private ItemsController<BoundaryRescaling> _orgRescaling;
 
+    /// <summary>
+    /// Gets or sets the rescaling mode for the origin boundary.
+    /// </summary>
     public ItemsController<BoundaryRescaling> OrgRescaling
     {
       get => _orgRescaling;
@@ -62,6 +69,9 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
     }
     private ItemsController<BoundaryRescaling> _endRescaling;
 
+    /// <summary>
+    /// Gets or sets the rescaling mode for the end boundary.
+    /// </summary>
     public ItemsController<BoundaryRescaling> EndRescaling
     {
       get => _endRescaling;
@@ -77,6 +87,9 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
     private ItemsController<BoundariesRelativeTo> _orgRelativeTo;
 
+    /// <summary>
+    /// Gets or sets the reference mode for the origin boundary.
+    /// </summary>
     public ItemsController<BoundariesRelativeTo> OrgRelativeTo
     {
       get => _orgRelativeTo;
@@ -92,6 +105,9 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
     private ItemsController<BoundariesRelativeTo> _endRelativeTo;
 
+    /// <summary>
+    /// Gets or sets the reference mode for the end boundary.
+    /// </summary>
     public ItemsController<BoundariesRelativeTo> EndRelativeTo
     {
       get => _endRelativeTo;
@@ -107,6 +123,9 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
     private double _orgValue;
 
+    /// <summary>
+    /// Gets or sets the origin boundary value.
+    /// </summary>
     public double OrgValue
     {
       get => _orgValue;
@@ -132,6 +151,9 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
     private double _endValue;
 
+    /// <summary>
+    /// Gets or sets the end boundary value.
+    /// </summary>
     public double EndValue
     {
       get => _endValue;
@@ -158,6 +180,7 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
     #endregion
 
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -173,6 +196,7 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       var orgRescaling = OrgRescaling.SelectedValue;

@@ -59,30 +59,41 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NumericLabelFormattingAuto"/> class.
+    /// </summary>
     public NumericLabelFormattingAuto()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NumericLabelFormattingAuto"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public NumericLabelFormattingAuto(NumericLabelFormattingAuto from)
       : base(from) // everything is done here, since CopyFrom is virtual
     {
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new NumericLabelFormattingAuto(this);
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
     }
 
+    /// <inheritdoc />
     protected override string FormatItem(Altaxo.Data.AltaxoVariant item)
     {
       return item.ToString();
     }
 
+    /// <inheritdoc />
     protected override string[] FormatItems(Altaxo.Data.AltaxoVariant[] items)
     {
       try
@@ -103,6 +114,11 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
       return sitems;
     }
 
+    /// <summary>
+    /// Formats numeric items automatically using fixed or exponential notation as appropriate.
+    /// </summary>
+    /// <param name="majorticks">The numeric items to format.</param>
+    /// <returns>The formatted strings.</returns>
     public static string[] FormatItems(double[] majorticks)
     {
       // print the major ticks

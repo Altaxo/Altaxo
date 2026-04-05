@@ -44,12 +44,12 @@ namespace Altaxo
     }
 
     /// <summary>
-    /// Try to copy one object to another object.
+    /// Tries to copy one object to another object.
     /// </summary>
     /// <typeparam name="T">The type of the object to copy.</typeparam>
     /// <param name="to">Reference where to copy to.</param>
     /// <param name="from">Object to copy from.</param>
-    /// <returns></returns>
+    /// <returns><c>true</c> if copying succeeded; otherwise, <c>false</c>.</returns>
     public static bool TryCopy<T>([MaybeNull] ref T to, [MaybeNull] T from)
     {
       var fromC = from as ICloneable;
@@ -155,7 +155,7 @@ namespace Altaxo
     /// <param name="from">Object to copy.</param>
     public static void CopyI<T>([NotNullIfNotNull("from")][AllowNull] ref T to, [MaybeNull] T from) where T : Main.IImmutable?
     {
-        to = from;
+      to = from;
     }
 
 
@@ -177,7 +177,7 @@ namespace Altaxo
     /// </summary>
     /// <typeparam name="T">Type of the enumeration members.</typeparam>
     /// <param name="toClone">Input enumeration.</param>
-    /// <returns>Output enumeration with cloned members of the input enumeration.</returns>
+    /// <returns>An output enumeration with cloned members of the input enumeration.</returns>
     public static IEnumerable<T?> GetEnumerationMembersCloned<T>(IEnumerable<T?> toClone) where T : class, ICloneable
     {
       foreach (var e in toClone)
@@ -195,7 +195,7 @@ namespace Altaxo
     /// </summary>
     /// <typeparam name="T">Type of the enumeration members.</typeparam>
     /// <param name="toClone">Input enumeration.</param>
-    /// <returns>Output enumeration with cloned members of the input enumeration.</returns>
+    /// <returns>An output enumeration with cloned members of the input enumeration.</returns>
     public static IEnumerable<T> GetEnumerationMembersNotNullCloned<T>(IEnumerable<T?> toClone) where T : class, ICloneable
     {
       foreach (var e in toClone)

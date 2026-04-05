@@ -31,7 +31,7 @@ namespace Altaxo.Main
   /// <summary>
   /// Base class for a suspendable document node. This class stores a single object to accumulate event data.
   /// This class supports document nodes that have children,
-  /// and implements most of the code neccessary to handle child events and to suspend the childs when the parent is suspended.
+  /// and implements most of the code necessary to handle child events and to suspend child nodes when the parent is suspended.
   /// </summary>
   /// <typeparam name="T">Type of accumulated event data, of type <see cref="EventArgs"/> or any derived type.</typeparam>
   public abstract class SuspendableDocumentNodeWithSingleAccumulatedData<T> : SuspendableDocumentNode where T : EventArgs
@@ -97,11 +97,11 @@ namespace Altaxo.Main
     }
 
     /// <summary>
-    /// Accumulates the change data of the child. Currently only a flag is set to signal that the table has changed.
+    /// Accumulates the change data of the child.
     /// </summary>
     /// <param name="sender">The sender of the change notification (currently unused).</param>
     /// <param name="e">The change event args can provide details of the change (currently unused).</param>
-    /// <exception cref="System.ArgumentNullException">Argument e is null</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="e"/> is <c>null</c>.</exception>
     /// <exception cref="System.ArgumentException"></exception>
     protected override void AccumulateChangeData(object? sender, EventArgs e)
     {

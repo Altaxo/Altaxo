@@ -37,6 +37,18 @@ namespace Altaxo.Drawing.D3D
   /// </summary>
   public class SolidCube
   {
+    /// <summary>
+    /// Adds the geometry of a cube to the supplied vertex and index targets.
+    /// </summary>
+    /// <param name="_x">The x-coordinate of the cube origin.</param>
+    /// <param name="_y">The y-coordinate of the cube origin.</param>
+    /// <param name="_z">The z-coordinate of the cube origin.</param>
+    /// <param name="_dx">The cube size in x-direction.</param>
+    /// <param name="_dy">The cube size in y-direction.</param>
+    /// <param name="_dz">The cube size in z-direction.</param>
+    /// <param name="AddPositionAndNormal">The callback that receives a position and its normal.</param>
+    /// <param name="AddIndices">The callback that receives one triangle as three indices.</param>
+    /// <param name="offset">The vertex offset.</param>
     public static void Add(double _x, double _y, double _z, double _dx, double _dy, double _dz,
       Action<PointD3D, VectorD3D> AddPositionAndNormal, Action<int, int, int> AddIndices, ref int offset)
     {

@@ -32,15 +32,30 @@ using Altaxo.Worksheet.Commands;
 
 namespace Altaxo.Gui.Worksheet
 {
+  /// <summary>
+  /// View contract for <see cref="PlotCommonColumnsController"/>.
+  /// </summary>
   public interface IPlotCommonColumnsView
   {
+    /// <summary>
+    /// Initializes the selectable common X columns.
+    /// </summary>
     void InitializeXCommonColumns(SelectableListNodeList list);
 
+    /// <summary>
+    /// Initializes the selectable common Y columns.
+    /// </summary>
     void InitializeYCommonColumns(SelectableListNodeList list);
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the current X column should be used.
+    /// </summary>
     bool UseCurrentXColumn { get; set; }
   }
 
+  /// <summary>
+  /// Controller for <see cref="PlotCommonColumnsCommand"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IPlotCommonColumnsView))]
   [UserControllerForObject(typeof(PlotCommonColumnsCommand))]
   public class PlotCommonColumnsController : IMVCANController
@@ -51,6 +66,11 @@ namespace Altaxo.Gui.Worksheet
     private SelectableListNodeList _xCommonColumns;
     private SelectableListNodeList _yCommonColumns;
 
+    /// <summary>
+    /// Initializes the controller with a document.
+    /// </summary>
+    /// <param name="args">Initialization arguments.</param>
+    /// <returns><see langword="true"/> if initialization succeeded; otherwise, <see langword="false"/>.</returns>
     public bool InitializeDocument(params object[] args)
     {
       if (args is null || args.Length == 0 || !(args[0] is PlotCommonColumnsCommand))
@@ -61,6 +81,7 @@ namespace Altaxo.Gui.Worksheet
       return true;
     }
 
+    /// <inheritdoc/>
     public UseDocument UseDocumentCopy
     {
       set { }
@@ -91,6 +112,7 @@ namespace Altaxo.Gui.Worksheet
       }
     }
 
+    /// <inheritdoc/>
     public object ViewObject
     {
       get
@@ -112,15 +134,18 @@ namespace Altaxo.Gui.Worksheet
       }
     }
 
+    /// <inheritdoc/>
     public object ModelObject
     {
       get { return _doc; }
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
     }
 
+    /// <inheritdoc/>
     public bool Apply(bool disposeController)
     {
       if (_view.UseCurrentXColumn)
@@ -140,7 +165,7 @@ namespace Altaxo.Gui.Worksheet
     /// </summary>
     /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
     /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    ///   <c>True</c> if the revert operation was successful; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
     /// </returns>
     public bool Revert(bool disposeController)
     {

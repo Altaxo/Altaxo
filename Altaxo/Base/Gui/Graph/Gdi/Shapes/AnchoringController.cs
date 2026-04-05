@@ -6,20 +6,41 @@ using AUL = Altaxo.Units.Length;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
+  /// <summary>
+  /// View interface for editing 2D anchoring.
+  /// </summary>
   public interface IAnchoringView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Immutable model for 2D anchoring settings.
+  /// </summary>
   public record AnchoringModel
   {
+    /// <summary>
+    /// Gets the x pivot.
+    /// </summary>
     public RADouble PivotX { get; init; }
+    /// <summary>
+    /// Gets the y pivot.
+    /// </summary>
     public RADouble PivotY { get; init; }
 
+    /// <summary>
+    /// Gets the reference size.
+    /// </summary>
     public PointD2D ReferenceSize { get; init; }
 
+    /// <summary>
+    /// Gets the title.
+    /// </summary>
     public string Title { get; init; }
   }
 
+  /// <summary>
+  /// Controller for editing 2D anchoring.
+  /// </summary>
   public class AnchoringController : MVCANControllerEditImmutableDocBase<AnchoringModel, IAnchoringView>
   {
 
@@ -28,12 +49,16 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     private ChangeableRelativePercentUnit _percentLayerXSizeUnit = new ChangeableRelativePercentUnit("% X-Size", "%", new DimensionfulQuantity(1, AUL.Point.Instance));
     private ChangeableRelativePercentUnit _percentLayerYSizeUnit = new ChangeableRelativePercentUnit("% Y-Size", "%", new DimensionfulQuantity(1, AUL.Point.Instance));
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AnchoringController"/> class.
+    /// </summary>
     public AnchoringController()
     {
       CmdSwitchToRadioView = new RelayCommand(() => IsRadioViewVisible = true);
       CmdSwitchToNumericView = new RelayCommand(() => IsRadioViewVisible = false);
     }
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -53,17 +78,32 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     #region Bindings
 
+    /// <summary>
+    /// Gets or sets the command to switch to radio view.
+    /// </summary>
     public ICommand CmdSwitchToRadioView { get; set; }
+    /// <summary>
+    /// Gets or sets the command to switch to numeric view.
+    /// </summary>
     public ICommand CmdSwitchToNumericView { get; set; }
 
+    /// <summary>
+    /// Gets or sets the radio button command.
+    /// </summary>
     public ICommand CmdRadioButtion { get; init; }
 
 
+    /// <summary>
+    /// Gets the title of the document.
+    /// </summary>
     public string? Title => _doc?.Title;
 
 
     private bool _isRadioViewVisible;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the radio view is visible.
+    /// </summary>
     public bool IsRadioViewVisible
     {
       get => _isRadioViewVisible;
@@ -81,6 +121,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether switching to radio view is enabled.
+    /// </summary>
     public bool IsSwitchToRadioViewEnabled
     {
       get
@@ -91,6 +134,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         return useRadioView;
       }
     }
+    /// <summary>
+    /// Gets or sets a value indicating whether the numeric view is visible.
+    /// </summary>
     public bool IsNumericViewVisible
     {
       get => !_isRadioViewVisible;
@@ -104,6 +150,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
 
 
+    /// <summary>
+    /// Gets the environment for the X pivot quantity.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment PivotXEnvironment
     {
       get => _xSizeEnvironment;
@@ -112,6 +161,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private DimensionfulQuantity _pivotXQuantity;
 
+    /// <summary>
+    /// Gets or sets the quantity for the X pivot.
+    /// </summary>
     public DimensionfulQuantity PivotXQuantity
     {
       get => _pivotXQuantity;
@@ -160,6 +212,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     }
 
 
+    /// <summary>
+    /// Gets the environment for the Y pivot quantity.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment PivotYEnvironment
     {
       get => _ySizeEnvironment;
@@ -167,6 +222,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private DimensionfulQuantity _pivotYQuantity;
 
+    /// <summary>
+    /// Gets or sets the quantity for the Y pivot.
+    /// </summary>
     public DimensionfulQuantity PivotYQuantity
     {
       get => _pivotYQuantity;
@@ -217,6 +275,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the pivot is anchored to the left top.
+    /// </summary>
     public bool IsLeftTop
     {
       get => PivotX.IsRelative && PivotY.IsRelative && PivotX.Value == 0 && PivotY.Value == 0;
@@ -229,6 +290,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         }
       }
     }
+    /// <summary>
+    /// Gets or sets a value indicating whether the pivot is anchored to the left center.
+    /// </summary>
     public bool IsLeftCenter
     {
       get => PivotX.IsRelative && PivotY.IsRelative && PivotX.Value == 0 && PivotY.Value == 0.5;
@@ -241,6 +305,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         }
       }
     }
+    /// <summary>
+    /// Gets or sets a value indicating whether the pivot is anchored to the left bottom.
+    /// </summary>
     public bool IsLeftBottom
     {
       get => PivotX.IsRelative && PivotY.IsRelative && PivotX.Value == 0 && PivotY.Value == 1;
@@ -254,6 +321,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the pivot is anchored to the center top.
+    /// </summary>
     public bool IsCenterTop
     {
       get => PivotX.IsRelative && PivotY.IsRelative && PivotX.Value == 0.5 && PivotY.Value == 0;
@@ -266,6 +336,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         }
       }
     }
+    /// <summary>
+    /// Gets or sets a value indicating whether the pivot is anchored to the center center.
+    /// </summary>
     public bool IsCenterCenter
     {
       get => PivotX.IsRelative && PivotY.IsRelative && PivotX.Value == 0.5 && PivotY.Value == 0.5;
@@ -278,6 +351,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         }
       }
     }
+    /// <summary>
+    /// Gets or sets a value indicating whether the pivot is anchored to the center bottom.
+    /// </summary>
     public bool IsCenterBottom
     {
       get => PivotX.IsRelative && PivotY.IsRelative && PivotX.Value == 0.5 && PivotY.Value == 1;
@@ -291,6 +367,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the pivot is anchored to the right top.
+    /// </summary>
     public bool IsRightTop
     {
       get => PivotX.IsRelative && PivotY.IsRelative && PivotX.Value == 1 && PivotY.Value == 0;
@@ -303,6 +382,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         }
       }
     }
+    /// <summary>
+    /// Gets or sets a value indicating whether the pivot is anchored to the right center.
+    /// </summary>
     public bool IsRightCenter
     {
       get => PivotX.IsRelative && PivotY.IsRelative && PivotX.Value == 1 && PivotY.Value == 0.5;
@@ -315,6 +397,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         }
       }
     }
+    /// <summary>
+    /// Gets or sets a value indicating whether the pivot is anchored to the right bottom.
+    /// </summary>
     public bool IsRightBottom
     {
       get => PivotX.IsRelative && PivotY.IsRelative && PivotX.Value == 1 && PivotY.Value == 1;
@@ -332,12 +417,14 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     #endregion
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = new AnchoringModel() { ReferenceSize = _doc.ReferenceSize, Title = _doc.Title, PivotX = PivotX, PivotY = PivotY };
       return ApplyEnd(true, disposeController);
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;

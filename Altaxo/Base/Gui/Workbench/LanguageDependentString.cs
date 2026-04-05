@@ -33,13 +33,23 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Workbench
 {
+  /// <summary>
+  /// Represents a string that is re-evaluated whenever the UI language changes.
+  /// </summary>
   public class LanguageDependentString
   {
     private string _originalString;
     private string _transformedString;
 
+    /// <summary>
+    /// Occurs when the transformed value changes due to a language change.
+    /// </summary>
     public event EventHandler? ValueChanged;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LanguageDependentString"/> class.
+    /// </summary>
+    /// <param name="originalString">The original string containing resource expressions.</param>
     public LanguageDependentString(string originalString)
     {
       _originalString = originalString ?? throw new ArgumentNullException(nameof(originalString));
@@ -54,6 +64,9 @@ namespace Altaxo.Gui.Workbench
       ValueChanged?.Invoke(this, EventArgs.Empty);
     }
 
+    /// <summary>
+    /// Gets the transformed string value for the current language.
+    /// </summary>
     public string Value
     {
       get

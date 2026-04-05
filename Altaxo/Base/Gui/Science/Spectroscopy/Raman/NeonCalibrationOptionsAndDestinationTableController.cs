@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -34,45 +34,80 @@ using Altaxo.Science.Spectroscopy.Raman;
 
 namespace Altaxo.Gui.Science.Spectroscopy.Raman
 {
+  /// <summary>
+  /// Combines processing options with a destination <see cref="DataTable"/>.
+  /// </summary>
+  /// <typeparam name="T">Type of the options document.</typeparam>
   public abstract class OptionsAndDestinationTable<T> where T: class
   {
+    /// <summary>
+    /// Gets the label that should be shown in the UI for the options section.
+    /// </summary>
     public virtual string OptionsLabel { get; } 
 
+    /// <summary>
+    /// Gets or sets the options document.
+    /// </summary>
     public T Options { get; set; }
 
+    /// <summary>
+    /// Gets or sets the destination table.
+    /// </summary>
     public DataTable DestinationTable { get; set; }
   }
 
   
 
+  /// <summary>
+  /// UI model that combines <see cref="NeonCalibrationOptions"/> with a destination table.
+  /// </summary>
   public class NeonCalibrationOptionsAndDestinationTable : OptionsAndDestinationTable<NeonCalibrationOptions>
   {
+    /// <inheritdoc/>
     public override string OptionsLabel => "Neon calibration options:";
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NeonCalibrationOptionsAndDestinationTable"/> class.
+    /// </summary>
     public NeonCalibrationOptionsAndDestinationTable()
     {
       Options = new NeonCalibrationOptions();
     }
   }
 
+  /// <summary>
+  /// UI model that combines <see cref="SiliconCalibrationOptions"/> with a destination table.
+  /// </summary>
   public class SiliconCalibrationOptionsAndDestinationTable : OptionsAndDestinationTable<SiliconCalibrationOptions>
   {
+    /// <inheritdoc/>
     public override string OptionsLabel => "Silicon calibration options:";
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SiliconCalibrationOptionsAndDestinationTable"/> class.
+    /// </summary>
     public SiliconCalibrationOptionsAndDestinationTable()
       {
       Options = new SiliconCalibrationOptions();
       }
   }
 
+  /// <summary>
+  /// View interface for editing an options-and-destination-table document.
+  /// </summary>
   public interface IOptionsAndDestinationTableView : IDataContextAwareView
   {
   }
 
 
+  /// <summary>
+  /// Controller for editing an <see cref="OptionsAndDestinationTable{T}"/> instance.
+  /// </summary>
+  /// <typeparam name="T">Type of the wrapped options document.</typeparam>
   [ExpectedTypeOfView(typeof(IOptionsAndDestinationTableView))]
   public class OptionsAndDestinationTableController<T> : MVCANControllerEditImmutableDocBase<OptionsAndDestinationTable<T>, IOptionsAndDestinationTableView> where T: class
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_optionsController, () => OptionsController = null);
@@ -83,6 +118,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
 
     private string _optionsLabel;
 
+    /// <summary>
+    /// Gets or sets the label shown for the options section.
+    /// </summary>
     public string OptionsLabel
     {
       get => _optionsLabel;
@@ -99,6 +137,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
 
     private IMVCANController _optionsController;
 
+    /// <summary>
+    /// Gets or sets the controller responsible for editing the options document.
+    /// </summary>
     public IMVCANController OptionsController
     {
       get => _optionsController;
@@ -116,6 +157,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
 
     private ItemsController<DataTable> _destinationTable;
 
+    /// <summary>
+    /// Gets or sets the controller that provides the selectable destination tables.
+    /// </summary>
     public ItemsController<DataTable> DestinationTable
     {
       get => _destinationTable;
@@ -132,6 +176,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -165,6 +210,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
     }
 
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (!OptionsController.Apply(disposeController))

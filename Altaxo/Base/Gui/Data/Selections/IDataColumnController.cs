@@ -38,10 +38,22 @@ namespace Altaxo.Gui.Data.Selections
     /// <param name="idx">The index.</param>
     void SetIndex(int idx);
 
+    /// <summary>
+    /// Sets the controlled data column.
+    /// </summary>
+    /// <param name="column">The data column.</param>
+    /// <param name="supposedParentDataTable">The supposed parent data table.</param>
+    /// <param name="supposedGroupNumber">The supposed group number.</param>
     void SetDataColumn(IReadableColumn column, DataTable supposedParentDataTable, int supposedGroupNumber);
 
+    /// <summary>
+    /// Gets the controlled column.
+    /// </summary>
     IReadableColumn Column { get; }
 
+    /// <summary>
+    /// Gets the name of the controlled column.
+    /// </summary>
     string ColumnName { get; }
   }
 }

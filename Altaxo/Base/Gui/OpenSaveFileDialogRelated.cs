@@ -52,7 +52,7 @@ namespace Altaxo.Gui
     }
 
     /// <summary>
-    /// Provides read-only to the filter list.
+    /// Provides read-only access to the filter list.
     /// </summary>
     /// <value>
     /// The filter list.
@@ -114,6 +114,9 @@ namespace Altaxo.Gui
     public string[] FileNames { get; set; } = _emptyStringArray;
 
     private static readonly string[] _emptyStringArray = new string[0];
+    /// <summary>
+    /// Gets an empty string array.
+    /// </summary>
     public static string[] EmptyStringArray => _emptyStringArray;
     /// <summary>
     /// Gets or sets the name of the file the user has chosen.
@@ -129,18 +132,30 @@ namespace Altaxo.Gui
   /// </summary>
   public class SaveFileOptions : OpenFileOptions
   {
+    /// <summary>
+    /// Gets or sets a value indicating whether an overwrite prompt is shown.
+    /// </summary>
     public bool OverwritePrompt { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the extension is added automatically.
+    /// </summary>
     public bool AddExtension { get; set; }
 
     /// <summary>
-    /// Gets or sets the default extension
+    /// Gets or sets the default extension.
     /// </summary>
     /// <value>
     /// The default extension.
     /// </value>
     public string DefaultExt { get; set; } = string.Empty;
 
+    /// <summary>
+    /// Adds a file filter string to show in the save file dialog.
+    /// </summary>
+    /// <param name="filter">The file filter string.</param>
+    /// <param name="description">The filter description.</param>
+    /// <returns>The current options instance.</returns>
     public new SaveFileOptions AddFilter(string filter, string description)
     {
       base.AddFilter(filter, description);
@@ -148,14 +163,29 @@ namespace Altaxo.Gui
     }
   }
 
+  /// <summary>
+  /// Data to control the folder selection dialog and to get the result.
+  /// </summary>
   public class FolderChoiceOptions
   {
+    /// <summary>
+    /// Gets or sets the selected path.
+    /// </summary>
     public string SelectedPath { get; set; } = string.Empty;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the button for creating a new folder is shown.
+    /// </summary>
     public bool ShowNewFolderButton { get; set; } = true;
 
+    /// <summary>
+    /// Gets or sets the description text.
+    /// </summary>
     public string Description { get; set; } = string.Empty;
 
+    /// <summary>
+    /// Gets or sets the root folder.
+    /// </summary>
     public System.Environment.SpecialFolder? RootFolder { get; set; }
   }
 }

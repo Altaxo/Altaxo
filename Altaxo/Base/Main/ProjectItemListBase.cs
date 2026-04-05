@@ -38,19 +38,28 @@ namespace Altaxo.Main
   /// <seealso cref="Altaxo.Main.ProjectItemCollectionBase{TItem}" />
   public abstract class ProjectItemListBase<TItem> : ProjectItemCollectionBase<TItem> where TItem : IProjectItem
   {
+    /// <summary>
+    /// Stores item names in index order.
+    /// </summary>
     protected List<string> _nameList = new List<string>();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ProjectItemListBase{TItem}"/> class.
+    /// </summary>
+    /// <param name="parent">The parent document node.</param>
     public ProjectItemListBase(IDocumentNode parent)
         : base(parent)
     {
     }
 
+    /// <inheritdoc/>
     protected override void InternalAdd(TItem item)
     {
       base.InternalAdd(item);
       _nameList.Add(item.Name);
     }
 
+    /// <inheritdoc/>
     protected override bool InternalRemove(TItem item)
     {
       var success = base.InternalRemove(item);
@@ -59,12 +68,17 @@ namespace Altaxo.Main
       return success;
     }
 
+    /// <inheritdoc/>
     protected override void InternalClear()
     {
       _nameList.Clear();
       base.Clear();
     }
 
+    /// <summary>
+    /// Gets the item at the specified index.
+    /// </summary>
+    /// <param name="idx">The zero-based index.</param>
     public virtual TItem this[int idx]
     {
       get
@@ -73,11 +87,21 @@ namespace Altaxo.Main
       }
     }
 
+    /// <summary>
+    /// Gets the index of the specified item.
+    /// </summary>
+    /// <param name="item">The item to search for.</param>
+    /// <returns>The zero-based index, or -1 if the item was not found.</returns>
     public int IndexOf(TItem item)
     {
       return IndexOf(item.Name);
     }
 
+    /// <summary>
+    /// Gets the index of the item with the specified name.
+    /// </summary>
+    /// <param name="itemName">The item name.</param>
+    /// <returns>The zero-based index, or -1 if no item with that name was found.</returns>
     public int IndexOf(string itemName)
     {
       for (int i = _nameList.Count - 1; i >= 0; --i)
@@ -88,6 +112,7 @@ namespace Altaxo.Main
       return -1;
     }
 
+    /// <inheritdoc/>
     protected override void InternalExchange(TItem oldItem, TItem newItem)
     {
       base.InternalExchange(oldItem, newItem);

@@ -45,6 +45,9 @@ namespace Altaxo.Graph.Graph3D.Plot
   using GraphicsContext;
   using Groups;
 
+  /// <summary>
+  /// Represents a hierarchical collection of three-dimensional plot items together with shared group styles.
+  /// </summary>
   [Serializable]
   public class PlotItemCollection
     :
@@ -69,9 +72,13 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <summary>
     /// 2015-11-14 initial version.
     /// </summary>
+    /// <summary>
+    /// Serializes version 0 of <see cref="PlotItemCollection"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Graph3D.Plot.PlotItemCollection", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PlotItemCollection)obj;
@@ -84,6 +91,7 @@ namespace Altaxo.Graph.Graph3D.Plot
         info.AddValue("GroupStyles", s._plotGroupStyles);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (PlotItemCollection?)o ?? new PlotItemCollection(info);
@@ -108,9 +116,13 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// 2016-11-19 Now the group styles are serialized before the plot items. Because the group styles save
     /// the style sets anyway, we spare saving the style sets in both the first plot item and the group style.
     /// </summary>
+    /// <summary>
+    /// Serializes version 1 of <see cref="PlotItemCollection"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotItemCollection), 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PlotItemCollection)obj;
@@ -123,6 +135,7 @@ namespace Altaxo.Graph.Graph3D.Plot
         info.CommitArray();
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (PlotItemCollection?)o ?? new PlotItemCollection(info);
@@ -142,6 +155,10 @@ namespace Altaxo.Graph.Graph3D.Plot
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PlotItemCollection"/> class during deserialization.
+    /// </summary>
+    /// <param name="info">The deserialization info.</param>
     protected PlotItemCollection(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
       _plotItems = new ObservableList<IGPlotItem>();
@@ -151,6 +168,9 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PlotItemCollection"/> class.
+    /// </summary>
     public PlotItemCollection()
     {
       _plotItems = new ObservableList<IGPlotItem>();
@@ -168,6 +188,10 @@ namespace Altaxo.Graph.Graph3D.Plot
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PlotItemCollection"/> class with the specified owner.
+    /// </summary>
+    /// <param name="owner">The owning plot layer.</param>
     public PlotItemCollection(XYZPlotLayer owner)
     {
       _parent = owner;
@@ -196,6 +220,9 @@ namespace Altaxo.Graph.Graph3D.Plot
       ChildCopyToMember(ref _plotGroupStyles, plotItems._plotGroupStyles);
     }
 
+    /// <summary>
+    /// Gets the flattened list of plot items without nested collections.
+    /// </summary>
     public IGPlotItem[] Flattened
     {
       get
@@ -222,16 +249,25 @@ namespace Altaxo.Graph.Graph3D.Plot
           list.Add(pi);
     }
 
+    /// <summary>
+    /// Gets the number of direct child plot items.
+    /// </summary>
     public int Count
     {
       get { return _plotItems.Count; }
     }
 
+    /// <summary>
+    /// Removes all plot items from the collection.
+    /// </summary>
     public void ClearPlotItems()
     {
       _plotItems.Clear();
     }
 
+    /// <summary>
+    /// Removes all plot items and all group styles from the collection.
+    /// </summary>
     public void ClearPlotItemsAndGroupStyles()
     {
       _plotItems.Clear();
@@ -239,11 +275,18 @@ namespace Altaxo.Graph.Graph3D.Plot
       OnCollectionChanged();
     }
 
+    /// <summary>
+    /// Gets the plot item at the specified index.
+    /// </summary>
+    /// <param name="i">The zero-based index.</param>
     public IGPlotItem this[int i]
     {
       get { return _plotItems[i]; }
     }
 
+    /// <summary>
+    /// Gets the child plot items as a list.
+    /// </summary>
     public IList<IGPlotItem> ChildNodes
     {
       get
@@ -268,6 +311,7 @@ namespace Altaxo.Graph.Graph3D.Plot
       }
     }
 
+    /// <inheritdoc/>
     public PlotItemCollection? ParentCollection
     {
       get
@@ -276,6 +320,9 @@ namespace Altaxo.Graph.Graph3D.Plot
       }
     }
 
+    /// <summary>
+    /// Gets the parent <see cref="XYZPlotLayer"/> that contains this collection.
+    /// </summary>
     public XYZPlotLayer ParentLayer
     {
       get
@@ -284,11 +331,16 @@ namespace Altaxo.Graph.Graph3D.Plot
       }
     }
 
+    /// <summary>
+    /// Returns an enumerator for the contained plot items.
+    /// </summary>
+    /// <returns>An enumerator over the plot items.</returns>
     public IEnumerator<IGPlotItem> GetEnumerator()
     {
       return _plotItems.GetEnumerator();
     }
 
+    /// <inheritdoc/>
     public void MergeXBoundsInto(IPhysicalBoundaries pb)
     {
       if (_plotGroupStyles.CoordinateTransformingStyle is { } coordTransStyle)
@@ -297,6 +349,7 @@ namespace Altaxo.Graph.Graph3D.Plot
         CoordinateTransformingStyleBase.MergeXBoundsInto(pb, this);
     }
 
+    /// <inheritdoc/>
     public void MergeYBoundsInto(IPhysicalBoundaries pb)
     {
       if (_plotGroupStyles.CoordinateTransformingStyle is { } coordTransStyle)
@@ -305,6 +358,7 @@ namespace Altaxo.Graph.Graph3D.Plot
         CoordinateTransformingStyleBase.MergeYBoundsInto(pb, this);
     }
 
+    /// <inheritdoc/>
     public void MergeZBoundsInto(IPhysicalBoundaries pb)
     {
       if (_plotGroupStyles.CoordinateTransformingStyle is { } coordTransStyle)
@@ -313,11 +367,13 @@ namespace Altaxo.Graph.Graph3D.Plot
         CoordinateTransformingStyleBase.MergeZBoundsInto(pb, this);
     }
 
+    /// <inheritdoc/>
     public void PaintSymbol(IGraphicsContext3D g, RectangleD3D symbolRect)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       var index = 0;
@@ -333,6 +389,10 @@ namespace Altaxo.Graph.Graph3D.Plot
       }
     }
 
+    /// <summary>
+    /// Disposes this collection and all contained items.
+    /// </summary>
+    /// <param name="isDisposing">Indicates whether managed resources should be disposed.</param>
     protected override void Dispose(bool isDisposing)
     {
       if (_plotItems is not null)
@@ -357,12 +417,16 @@ namespace Altaxo.Graph.Graph3D.Plot
       return _plotItems.GetEnumerator();
     }
 
+    /// <inheritdoc/>
     public void PrepareScales(Graph3D.IPlotArea layer)
     {
       foreach (IGPlotItem pi in _plotItems)
         pi.PrepareScales(layer);
     }
 
+    /// <summary>
+    /// Gets or sets the group styles associated with this collection.
+    /// </summary>
     public PlotGroupStyleCollection GroupStyles
     {
       get
@@ -378,11 +442,13 @@ namespace Altaxo.Graph.Graph3D.Plot
       }
     }
 
+    /// <inheritdoc/>
     public void PrepareGroupStyles(PlotGroupStyleCollection? parentPlotGroupStyles, Graph3D.IPlotArea layer)
     {
       PrepareGroupStylesForward_HierarchyUpOnly(parentPlotGroupStyles, layer);
     }
 
+    /// <inheritdoc/>
     public void ApplyGroupStyles(PlotGroupStyleCollection? parentPlotGroupStyles)
     {
       ApplyGroupStylesForward_HierarchyUpOnly(parentPlotGroupStyles);
@@ -705,6 +771,9 @@ namespace Altaxo.Graph.Graph3D.Plot
       }
     }
 
+    /// <summary>
+    /// Performs postprocessing for all contained plot items.
+    /// </summary>
     public void PaintPostprocessing()
     {
       foreach (var pi in _plotItems)
@@ -722,6 +791,9 @@ namespace Altaxo.Graph.Graph3D.Plot
         item.VisitDocumentReferences(Report);
     }
 
+    /// <summary>
+    /// Copies plot-style information from another collection according to the specified options.
+    /// </summary>
     public void CopyFrom(PlotItemCollection from, Gdi.GraphCopyOptions options)
     {
       if (ReferenceEquals(this, from))
@@ -739,16 +811,25 @@ namespace Altaxo.Graph.Graph3D.Plot
       }
     }
 
+    /// <summary>
+    /// Gets a generated name for this collection.
+    /// </summary>
     public string GetName(int level)
     {
       return string.Format("<Collection of {0} plot items>", _plotItems.Count);
     }
 
+    /// <summary>
+    /// Gets a generated name for this collection.
+    /// </summary>
     public string GetName(string style)
     {
       return string.Format("<Collection of {0} plot items>", _plotItems.Count);
     }
 
+    /// <summary>
+    /// Copies from another object when supported.
+    /// </summary>
     public bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -767,6 +848,10 @@ namespace Altaxo.Graph.Graph3D.Plot
       return new PlotItemCollection(this);
     }
 
+    /// <summary>
+    /// Creates a strongly typed copy of this collection.
+    /// </summary>
+    /// <returns>A cloned plot-item collection.</returns>
     public PlotItemCollection Clone()
     {
       return new PlotItemCollection(this);
@@ -816,6 +901,9 @@ namespace Altaxo.Graph.Graph3D.Plot
       }
     }
 
+    /// <summary>
+    /// Performs preprocessing for painting.
+    /// </summary>
     public void PaintPreprocessing(IPaintContext context)
     {
       var coordTransStyle = _plotGroupStyles.CoordinateTransformingStyle;
@@ -831,6 +919,9 @@ namespace Altaxo.Graph.Graph3D.Plot
       }
     }
 
+    /// <summary>
+    /// Paints all contained plot items.
+    /// </summary>
     public void Paint(IGraphicsContext3D g, IPaintContext context, Graph3D.IPlotArea layer, IGPlotItem? previousPlotItem, IGPlotItem? nextPlotItem)
     {
       var coordinateTransformingStyle = _plotGroupStyles.CoordinateTransformingStyle;
@@ -856,6 +947,9 @@ namespace Altaxo.Graph.Graph3D.Plot
         pi.PaintPostprocessing();
     }
 
+    /// <summary>
+    /// Performs hit testing for the collection.
+    /// </summary>
     public IHitTestObject HitTest(IPlotArea layer, HitTestPointData hitpoint)
     {
       throw new NotImplementedException();
@@ -863,6 +957,9 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     #region Collection methods
 
+    /// <summary>
+    /// Adds a plot item to the collection.
+    /// </summary>
     public void Add(IGPlotItem item)
     {
       if (item is null)
@@ -881,6 +978,9 @@ namespace Altaxo.Graph.Graph3D.Plot
       OnCollectionChanged();
     }
 
+    /// <summary>
+    /// Called when the collection contents change.
+    /// </summary>
     protected virtual void OnCollectionChanged()
     {
       _cachedPlotItemsFlattened = null; // invalidate _cachedPlotItemsFlattened

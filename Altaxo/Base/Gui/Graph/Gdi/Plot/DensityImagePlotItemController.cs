@@ -31,6 +31,9 @@ using Altaxo.Gui.Graph.Plot.Data;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot
 {
+  /// <summary>
+  /// Controller for <see cref="DensityImagePlotItem"/>.
+  /// </summary>
   [UserControllerForObject(typeof(DensityImagePlotItem))]
   [ExpectedTypeOfView(typeof(ITabbedElementViewDC))]
   public class DensityImagePlotItemController : MVCANControllerEditOriginalDocBase<DensityImagePlotItem, ITabbedElementViewDC>
@@ -43,6 +46,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
     /// <summary>Controls the data view, in which the user can chose which columns to use in the plot item.</summary>
     private IMVCANController _dataController;
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_styleController, () => _styleController = null);
@@ -52,6 +56,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the available tabs.
+    /// </summary>
     public SelectableListNodeList Tabs { get; } = new();
 
     private int? _selectedTab;
@@ -78,6 +85,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -91,6 +99,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (_styleController is not null)

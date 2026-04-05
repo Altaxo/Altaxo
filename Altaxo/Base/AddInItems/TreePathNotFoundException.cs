@@ -30,29 +30,34 @@ namespace Altaxo.AddInItems
   public class TreePathNotFoundException : BaseException
   {
     /// <summary>
-    /// Constructs a new <see cref="TreePathNotFoundException"/>
+    /// Initializes a new instance of the <see cref="TreePathNotFoundException"/> class.
     /// </summary>
+    /// <param name="path">The missing tree path.</param>
     public TreePathNotFoundException(string path) : base("Treepath not found: " + path)
     {
     }
 
     /// <summary>
-    /// Constructs a new <see cref="TreePathNotFoundException"/>
+    /// Initializes a new instance of the <see cref="TreePathNotFoundException"/> class.
     /// </summary>
     public TreePathNotFoundException() : base()
     {
     }
 
     /// <summary>
-    /// Constructs a new <see cref="TreePathNotFoundException"/>
+    /// Initializes a new instance of the <see cref="TreePathNotFoundException"/> class.
     /// </summary>
+    /// <param name="message">The exception message.</param>
+    /// <param name="innerException">The inner exception.</param>
     public TreePathNotFoundException(string message, Exception innerException) : base(message, innerException)
     {
     }
 
     /// <summary>
-    /// Deserializes a <see cref="TreePathNotFoundException"/>
+    /// Initializes a new instance of the <see cref="TreePathNotFoundException"/> class from serialized data.
     /// </summary>
+    /// <param name="info">The serialization information.</param>
+    /// <param name="context">The streaming context.</param>
     protected TreePathNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
     }

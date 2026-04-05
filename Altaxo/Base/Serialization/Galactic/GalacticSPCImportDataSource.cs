@@ -30,6 +30,9 @@ using Altaxo.Data;
 
 namespace Altaxo.Serialization.Galactic
 {
+  /// <summary>
+  /// Table data source for importing Galactic SPC files.
+  /// </summary>
   public class GalacticSPCImportDataSource : FileImportTableDataSourceBase<GalacticSPCImportOptions>
   {
     #region Serialization
@@ -42,6 +45,7 @@ namespace Altaxo.Serialization.Galactic
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GalacticSPCImportDataSource), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (GalacticSPCImportDataSource)obj;
@@ -51,6 +55,7 @@ namespace Altaxo.Serialization.Galactic
         info.AddArray("ProcessData", s._files.ToArray(), s._files.Count);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (o is GalacticSPCImportDataSource s)
@@ -96,30 +101,42 @@ namespace Altaxo.Serialization.Galactic
 
     #region Construction
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GalacticSPCImportDataSource"/> class for a single file.
+    /// </summary>
     public GalacticSPCImportDataSource(string fileName, GalacticSPCImportOptions options)
       : this(new string[] { fileName }, options)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GalacticSPCImportDataSource"/> class for multiple files.
+    /// </summary>
     public GalacticSPCImportDataSource(IEnumerable<string> fileNames, GalacticSPCImportOptions options)
       : base(fileNames)
     {
       _processOptions = options;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GalacticSPCImportDataSource"/> class by copying another instance.
+    /// </summary>
     public GalacticSPCImportDataSource(GalacticSPCImportDataSource from)
       : base(from)
     {
     }
 
+    /// <inheritdoc />
     public override object Clone() => new GalacticSPCImportDataSource(this);
 
     #endregion Construction
+    /// <inheritdoc />
     protected override void ImportFromFiles(string[] validFileNames, DataTable destinationTable, IProgressReporter reporter)
     {
       new GalacticSPCImporter().Import(validFileNames, destinationTable, _processOptions, attachDataSource: false);
     }
 
+    /// <inheritdoc />
     public override (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
     {
       return new GalacticSPCImporter().GetFileExtensions();

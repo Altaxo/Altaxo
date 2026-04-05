@@ -29,11 +29,15 @@ namespace Altaxo.Main.Services
   {
     private readonly object obj;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PropertyObjectTagProvider"/> class.
+    /// </summary>
     public PropertyObjectTagProvider(object obj)
     {
       this.obj = obj ?? throw new ArgumentNullException(nameof(obj));
     }
 
+    /// <inheritdoc/>
     public string? ProvideString(string tag, StringTagPair[]? customTags)
     {
       Type type = obj.GetType();

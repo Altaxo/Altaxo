@@ -32,6 +32,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
 {
   public abstract partial class GraphicBase
   {
+    /// <summary>
+    /// Provides hit-testing behavior for <see cref="GraphicBase"/> instances.
+    /// </summary>
     protected class GraphicBaseHitTestObject : HitTestObjectBase
     {
       /// <summary>
@@ -61,6 +64,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
         }
       }
 
+      /// <inheritdoc/>
       public override void ChangeSize(double? x, double? y, double? z)
       {
         var hit = _hitobject as GraphicBase;
@@ -94,6 +98,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
                 */
       }
 
+      /// <inheritdoc/>
       public override IObjectOutlineForArrangements ObjectOutlineForArrangements
       {
         get
@@ -110,6 +115,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
         }
       }
 
+      /// <inheritdoc/>
       public override int GetNextGripLevel(int currentGripLevel)
       {
         int newLevel = 1 + currentGripLevel;
@@ -119,6 +125,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
         return newLevel;
       }
 
+      /// <inheritdoc/>
       public override IGripManipulationHandle[]? GetGrips(int gripLevel)
       {
         if (((GraphicBase)_hitobject).AutoSize)

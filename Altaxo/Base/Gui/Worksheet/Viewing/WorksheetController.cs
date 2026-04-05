@@ -32,6 +32,9 @@ using Altaxo.Worksheet;
 
 namespace Altaxo.Gui.Worksheet.Viewing
 {
+  /// <summary>
+  /// Controller for worksheet views.
+  /// </summary>
   [UserControllerForObject(typeof(WorksheetLayout))]
   [UserControllerForObject(typeof(WorksheetViewLayout))]
   [ExpectedTypeOfView(typeof(IWorksheetView))]
@@ -40,10 +43,24 @@ namespace Altaxo.Gui.Worksheet.Viewing
     /// <summary>Holds the data table cached from the layout.</summary>
     protected Altaxo.Data.DataTable _table;
 
+    /// <summary>
+    /// Holds the worksheet layout controlled by this instance.
+    /// </summary>
     protected Altaxo.Worksheet.WorksheetLayout _worksheetLayout;
 
+    /// <summary>
+    /// Weak event handler for changes on the worksheet table.
+    /// </summary>
     protected WeakEventHandler? _weakEventHandlerForTable_Changed;
+
+    /// <summary>
+    /// Weak event handler for tunneled events raised by the worksheet table.
+    /// </summary>
     protected WeakActionHandler<object, object, TunnelingEventArgs>? _weakEventHandlerForTable_TunneledEvent;
+
+    /// <summary>
+    /// Weak event handler for tunneled events raised by the worksheet layout.
+    /// </summary>
     protected WeakActionHandler<object, object, TunnelingEventArgs>? _weakEventHandlerForLayout_TunneledEvent;
 
 
@@ -51,6 +68,10 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WorksheetController"/> class for the specified table.
+    /// </summary>
+    /// <param name="table">The table to show.</param>
     public WorksheetController(Altaxo.Data.DataTable table)
       : this(new Altaxo.Worksheet.WorksheetLayout(table ?? throw new ArgumentNullException(nameof(table))))
     {
@@ -59,6 +80,10 @@ namespace Altaxo.Gui.Worksheet.Viewing
       Current.Project.TableLayouts.Add(WorksheetLayout);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WorksheetController"/> class for the specified view layout.
+    /// </summary>
+    /// <param name="viewLayout">The worksheet view layout.</param>
     public WorksheetController(WorksheetViewLayout viewLayout)
     : this(viewLayout?.WorksheetLayout ?? throw new ArgumentNullException(nameof(viewLayout)))
     {
@@ -74,6 +99,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
       WorksheetLayout = layout ?? throw new ArgumentNullException("Leaving the layout null in constructor is not supported here");
     }
 
+    /// <inheritdoc/>
     public bool InitializeDocument(params object[] args)
     {
       if (args is null || args.Length == 0)
@@ -88,11 +114,16 @@ namespace Altaxo.Gui.Worksheet.Viewing
       return true;
     }
 
+    /// <inheritdoc/>
     public UseDocument UseDocumentCopy
     {
       set { }
     }
 
+    /// <summary>
+    /// Initializes the controller with the specified worksheet layout.
+    /// </summary>
+    /// <param name="value">The worksheet layout to control.</param>
     [MemberNotNull(nameof(_worksheetLayout), nameof(_table))]
     protected virtual void InternalInitializeWorksheetLayout(WorksheetLayout value)
     {
@@ -145,6 +176,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
       SetCachedNumberOfPropertyColumns();
     }
 
+    /// <inheritdoc />
     public override void Dispose()
     {
       var view = _view;
@@ -168,6 +200,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     #region IWorksheetController Members
 
+    /// <inheritdoc/>
     public Altaxo.Data.DataTable DataTable
     {
       get
@@ -176,11 +209,13 @@ namespace Altaxo.Gui.Worksheet.Viewing
       }
     }
 
+    /// <inheritdoc/>
     public void TableAreaInvalidate()
     {
       _view?.TableArea_TriggerRedrawing();
     }
 
+    /// <inheritdoc/>
     public WorksheetLayout WorksheetLayout
     {
       get { return _worksheetLayout; }
@@ -192,6 +227,11 @@ namespace Altaxo.Gui.Worksheet.Viewing
       }
     }
 
+    /// <summary>
+    /// Handles changes of the worksheet table, for example table renaming.
+    /// </summary>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The event arguments.</param>
     public void EhTable_Changed(object? sender, EventArgs e)
     {
       if (e is Altaxo.Main.NamedObjectCollectionChangedEventArgs eAsCCEA && object.ReferenceEquals(eAsCCEA.Item, _table))
@@ -241,6 +281,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
       _view.Controller = null;
     }
 
+    /// <inheritdoc/>
     public override object? ViewObject
     {
       get
@@ -276,6 +317,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
       }
     }
 
+    /// <inheritdoc/>
     public override object ModelObject
     {
       get
@@ -284,6 +326,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
       }
     }
 
+    /// <inheritdoc/>
     public bool Apply(bool disposeController)
     {
       return true;

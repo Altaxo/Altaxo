@@ -30,6 +30,9 @@ using Altaxo.Main;
 
 namespace Altaxo.Data.Selections
 {
+  /// <summary>
+  /// Row selection that includes all available rows.
+  /// </summary>
   public class AllRows : Main.SuspendableDocumentLeafNodeWithEventArgs, IRowSelection
   {
     #region Serialization
@@ -52,10 +55,14 @@ namespace Altaxo.Data.Selections
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AllRows"/> class.
+    /// </summary>
     public AllRows()
     {
     }
 
+    /// <inheritdoc />
     public object Clone()
     {
       return new AllRows();
@@ -70,11 +77,13 @@ namespace Altaxo.Data.Selections
         yield return (startIndex, endExclusive);
     }
 
+    /// <inheritdoc />
     public override int GetHashCode()
     {
       return GetType().GetHashCode();
     }
 
+    /// <inheritdoc />
     public override bool Equals(object? obj)
     {
       return GetType() == obj?.GetType();

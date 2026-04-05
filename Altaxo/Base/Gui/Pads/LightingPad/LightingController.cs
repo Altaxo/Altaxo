@@ -30,16 +30,29 @@ using Altaxo.Gui.Workbench;
 
 namespace Altaxo.Gui.Pads.LightingPad
 {
+  /// <summary>
+  /// View contract for the lighting pad.
+  /// </summary>
   public interface ILightingView
   {
+    /// <summary>
+    /// Gets or sets the lighting settings.
+    /// </summary>
     LightSettings Lighting { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the lighting view is enabled.
+    /// </summary>
     bool IsEnabled { get; set; }
 
+    /// <summary>
+    /// Occurs when the lighting settings change.
+    /// </summary>
     event EventHandler LightingChanged;
   }
 
   /// <summary>
-  /// Responsible for showing the notes of worksheets and graph windows.
+  /// Responsible for showing and editing lighting settings for 3D graphs.
   /// </summary>
   [ExpectedTypeOfView(typeof(ILightingView))]
   public class LightingController : AbstractPadContent
@@ -49,6 +62,9 @@ namespace Altaxo.Gui.Pads.LightingPad
     /// <summary>The currently active view content to which the text belongs.</summary>
     private WeakReference _currentActiveViewContent = new WeakReference(null);
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LightingController"/> class.
+    /// </summary>
     public LightingController()
     {
       Current.Workbench.ActiveViewContentChanged += new WeakEventHandler(EhWorkbenchActiveViewContentChanged, Current.Workbench, nameof(Current.Workbench.ActiveViewContentChanged));
@@ -136,6 +152,7 @@ namespace Altaxo.Gui.Pads.LightingPad
       _view.LightingChanged -= EhView_LightingChanged;
     }
 
+    /// <inheritdoc/>
     public override object ViewObject
     {
       get
@@ -157,6 +174,7 @@ namespace Altaxo.Gui.Pads.LightingPad
       }
     }
 
+    /// <inheritdoc/>
     public override object ModelObject
     {
       get
@@ -169,6 +187,7 @@ namespace Altaxo.Gui.Pads.LightingPad
 
     #region IDisposable Members
 
+    /// <inheritdoc/>
     public override void Dispose()
     {
       _view = null;

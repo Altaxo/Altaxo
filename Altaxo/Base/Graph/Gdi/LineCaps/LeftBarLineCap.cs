@@ -36,14 +36,17 @@ namespace Altaxo.Graph.Gdi.LineCaps
   /// </summary>
   public class LeftBarLineCap : RightBarLineCap
   {
+    /// <inheritdoc />
     public override Type ExtendsType => typeof(Altaxo.Drawing.LineCaps.LeftBarLineCap);
 
+    /// <inheritdoc />
     public override void SetStartCap(Pen pen, float size)
     {
       pen.StartCap = LineCap.Custom;
       pen.CustomStartCap = GetCustomLineCap(pen, size, true);
     }
 
+    /// <inheritdoc />
     public override void SetEndCap(Pen pen, float size)
     {
       pen.EndCap = LineCap.Custom;

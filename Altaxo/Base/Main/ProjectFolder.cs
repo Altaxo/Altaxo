@@ -48,14 +48,10 @@ namespace Altaxo.Main
       Name = name;
     }
 
-    /// <summary>Gets the full folder name. The root folder is represented by an empty string. All other returned names end with an <see cref="DirectorySeparatorChar"/>.</summary>
+    /// <inheritdoc/>
     public string Name { get; private set; }
 
-    /// <summary>
-    /// Test if this item already has a name.
-    /// </summary>
-    /// <param name="name">On success, returns the name of the item.</param>
-    /// <returns>True if the item already has a name; otherwise false.</returns>
+    /// <inheritdoc/>
     public virtual bool TryGetName([MaybeNullWhen(false)] out string name)
     {
       name = Name;
@@ -68,16 +64,19 @@ namespace Altaxo.Main
       get { return RootFolderName == Name; }
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return Name;
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return Name.GetHashCode();
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       if (obj is ProjectFolder a)
@@ -122,6 +121,11 @@ namespace Altaxo.Main
       return folder == string.Empty;
     }
 
+    /// <summary>
+    /// Determines whether the specified string is a valid folder name.
+    /// </summary>
+    /// <param name="folder">The folder name to validate.</param>
+    /// <returns><c>true</c> if the folder name is valid; otherwise, <c>false</c>.</returns>
     public static bool IsValidFolderName(string folder)
     {
       return (folder is not null) && (folder == string.Empty || folder.EndsWith(DirectorySeparatorString));
@@ -174,8 +178,8 @@ namespace Altaxo.Main
     /// If the name of a item is provided, the item's directory name is returned.
     /// If a full folder path is provided  (i.e. either an empty string or a string ending with a <see cref="DirectorySeparatorChar"/>), the unchanged argument is returned.
     /// </summary>
-    /// <param name="fullName"></param>
-    /// <returns></returns>
+    /// <param name="fullName">The full item or folder name.</param>
+    /// <returns>The folder portion of <paramref name="fullName"/>.</returns>
     public static string GetFolderPart(string fullName)
     {
       if (fullName is null)
@@ -220,8 +224,8 @@ namespace Altaxo.Main
     /// If the name of a item (worksheet or graph) is provided, the item's name without folder name is returned (thus containing no <see cref="DirectorySeparatorChar"/>)directory name is returned.
     /// If a full folder path is provided (i.e. either an empty string or a string ending with a <see cref="DirectorySeparatorChar"/>), the name of the last folder of the full folder path (!) is returned.
     /// </summary>
-    /// <param name="fullName"></param>
-    /// <returns></returns>
+    /// <param name="fullName">The full item or folder name.</param>
+    /// <returns>The name portion of <paramref name="fullName"/>.</returns>
     public static string GetNamePart(string fullName)
     {
       if (fullName is null)
@@ -286,7 +290,7 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="directoryPart">Folder name (normally with trailing <see cref="DirectorySeparatorChar"/>, but here it is tolerated also without trailing <see cref="DirectorySeparatorChar"/>).</param>
     /// <param name="namePart">Name part of the item (without any <see cref="DirectorySeparatorChar"/>)s.</param>
-    /// <returns>The full name of the item. (directoryPart + <see cref="DirectorySeparatorChar"/> + namePart.</returns>
+    /// <returns>The full item name composed from <paramref name="directoryPart"/> and <paramref name="namePart"/>.</returns>
     public static string Combine(string directoryPart, string namePart)
     {
       if (directoryPart is not null && directoryPart.Length > 0 && directoryPart[directoryPart.Length - 1] != DirectorySeparatorChar)
@@ -343,9 +347,9 @@ namespace Altaxo.Main
     /// Creates a new name starting from a oldfullNameOrDir and a newName. Retrieves the directory information
     /// from the oldFullNameOrDir and combines it with the newName to form a new full name.
     /// </summary>
-    /// <param name="oldFullNameOrDir"></param>
-    /// <param name="newName"></param>
-    /// <returns></returns>
+    /// <param name="oldFullNameOrDir">The original full item name or folder path.</param>
+    /// <param name="newName">The new name part.</param>
+    /// <returns>A full name composed from the original folder part and the new name.</returns>
     public static string CreateFullName(string oldFullNameOrDir, string newName)
     {
       return Combine(GetFolderPart(oldFullNameOrDir), newName);
@@ -356,7 +360,7 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="oldFullName">The full original name.</param>
     /// <param name="prependString">A string that is to be prepended to the name part of the original name.</param>
-    /// <returns></returns>
+    /// <returns>A new full name with <paramref name="prependString"/> inserted before the original name part.</returns>
     public static string PrependToName(string oldFullName, string prependString)
     {
       return CreateFullName(oldFullName, prependString + GetNamePart(oldFullName));
@@ -366,8 +370,8 @@ namespace Altaxo.Main
     /// Appends a string to a full name (by appending to the name part only).
     /// </summary>
     /// <param name="oldFullName">The full original name.</param>
-    /// <param name="prependString">A string that is to be prepended to the name part of the original name.</param>
-    /// <returns></returns>
+    /// <param name="prependString">A string that is to be appended to the name part of the original name.</param>
+    /// <returns>A new full name with <paramref name="prependString"/> appended to the original name part.</returns>
     public static string AppendToName(string oldFullName, string prependString)
     {
       return CreateFullName(oldFullName, GetNamePart(oldFullName) + prependString);
@@ -376,8 +380,8 @@ namespace Altaxo.Main
     #region Gui Helpers
 
     /// <summary>
-    /// Converts a folder name (i.e. either an empty string or a string with a trailing <see cref="DirectorySeparatorChar"/>) to a
-    /// name which can be used to display on the display.
+    /// Converts a folder name (that is, either an empty string or a string with a trailing <see cref="DirectorySeparatorChar"/>) to a
+    /// name suitable for display.
     /// </summary>
     /// <param name="folderName">The name of the folder.</param>
     /// <returns>A name that can be displayed. The root folder name is converted to "\", and all other folder names are stripped off the trailing <see cref="DirectorySeparatorChar"/>.</returns>
@@ -395,7 +399,7 @@ namespace Altaxo.Main
     /// name which can be used to display. Only the last part of the folder name is returned here.
     /// </summary>
     /// <param name="folderName">The name of the folder.</param>
-    /// <returns>The last part of a full folder name name that can be displayed. The root folder name is converted an empty string, and all other folder names are stripped off the trailing <see cref="DirectorySeparatorChar"/>.</returns>
+    /// <returns>The last part of a full folder name that can be displayed. The root folder name is converted to an empty string, and all other folder names are stripped of the trailing <see cref="DirectorySeparatorChar"/>.</returns>
     public static string ConvertFolderNameToDisplayFolderLastPart(string folderName)
     {
       var name = ProjectFolder.GetFoldersLastFolderPart(folderName);
@@ -451,7 +455,7 @@ namespace Altaxo.Main
     /// Gets the common folder of the provided item names.
     /// </summary>
     /// <param name="itemNames">The item names.</param>
-    /// <returns>The common folder of the items. This it at least the root folder (see <see cref="RootFolderName"/>).</returns>
+    /// <returns>The common folder of the items. This is at least the root folder (see <see cref="RootFolderName"/>).</returns>
     /// <exception cref="System.ArgumentException">itemNames enumeration was empty</exception>
     public static string GetCommonFolderOfNames(IEnumerable<string> itemNames)
     {

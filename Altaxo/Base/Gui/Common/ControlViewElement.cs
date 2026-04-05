@@ -27,28 +27,46 @@ using System;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// Describes a view element backed by a controller.
+  /// </summary>
   public class ControlViewElement : ViewDescriptionElement, ICloneable
   {
+    /// <summary>
+    /// The controller responsible for applying changes.
+    /// </summary>
     public IApplyController Controller;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ControlViewElement"/> class by copying another instance.
+    /// </summary>
     public ControlViewElement(ControlViewElement from)
       : base(from)
     {
       Controller = from.Controller;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ControlViewElement"/> class.
+    /// </summary>
     public ControlViewElement(string title, IApplyController controller, object view)
       : base(title, view)
     {
       Controller = controller;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ControlViewElement"/> class.
+    /// </summary>
     public ControlViewElement(string title, IMVCAController controller)
       : base(title, controller.ViewObject ?? throw new InvalidOperationException("The controller provided in the argument has no view yet!"))
     {
       Controller = controller;
     }
 
+    /// <summary>
+    /// Creates a typed clone of this instance.
+    /// </summary>
     public new ControlViewElement Clone()
     {
       return new ControlViewElement(this);

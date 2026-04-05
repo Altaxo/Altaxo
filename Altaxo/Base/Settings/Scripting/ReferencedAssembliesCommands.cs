@@ -33,7 +33,7 @@ namespace Altaxo.Settings.Scripting
   using Altaxo.Gui;
 
   /// <summary>
-  /// Contains commands related to addition/removal of referenced assemblies
+  /// Contains commands related to the addition and removal of referenced assemblies.
   /// </summary>
   public static class ReferencedAssembliesCommands
   {

@@ -29,11 +29,18 @@ using Altaxo.Calc;
 namespace Altaxo.Graph.Scales.Rescaling
 {
   /// <summary>
-  /// Summary description for LogarithmicAxisRescaleConditions.
+  /// Stores rescaling conditions for logarithmic scales.
   /// </summary>
   public class LogarithmicScaleRescaleConditions : NumericScaleRescaleConditions
   {
+    /// <summary>
+    /// Gets the default origin value for logarithmic scales.
+    /// </summary>
     public const double DefaultOrgValue = 1;
+
+    /// <summary>
+    /// Gets the default end value for logarithmic scales.
+    /// </summary>
     public const double DefaultEndValue = 10;
 
     #region Serialization
@@ -91,22 +98,31 @@ namespace Altaxo.Graph.Scales.Rescaling
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LogarithmicScaleRescaleConditions"/> class.
+    /// </summary>
     public LogarithmicScaleRescaleConditions()
     {
       _dataBoundsOrg = _resultingOrg = DefaultOrgValue;
       _dataBoundsEnd = _resultingEnd = DefaultEndValue;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LogarithmicScaleRescaleConditions"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public LogarithmicScaleRescaleConditions(LogarithmicScaleRescaleConditions from)
       : base(from) // all is done here, since CopyFrom is virtual!
     {
     }
 
+    /// <inheritdoc/>
     public override object Clone()
     {
       return new LogarithmicScaleRescaleConditions(this);
     }
 
+    /// <inheritdoc />
     public override void SetUserParameters(BoundaryRescaling orgRescaling, BoundariesRelativeTo orgRelativeTo, double orgValue, BoundaryRescaling endRescaling, BoundariesRelativeTo endRelativeTo, double endValue)
     {
       if (double.IsNaN(orgValue) || !(orgValue.IsFinite()) || orgValue <= 0)
@@ -143,6 +159,7 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <inheritdoc />
     protected override double GetDataBoundsScaleMean()
     {
       return Math.Sqrt(_dataBoundsOrg * _dataBoundsEnd);
@@ -150,6 +167,7 @@ namespace Altaxo.Graph.Scales.Rescaling
 
     #region Resulting Org/End to/fron User Org/End
 
+    /// <inheritdoc />
     protected override double GetResultingOrgFromUserProvidedOrg()
     {
       switch (_userProvidedOrgRelativeTo)
@@ -171,6 +189,7 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <inheritdoc />
     protected override double GetUserProvidedOrgFromResultingOrg(double resultingOrg)
     {
       switch (_userProvidedOrgRelativeTo)
@@ -192,6 +211,7 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <inheritdoc />
     protected override double GetResultingEndFromUserProvidedEnd()
     {
       switch (_userProvidedEndRelativeTo)
@@ -213,6 +233,7 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <inheritdoc />
     protected override double GetUserProvidedEndFromResultingEnd(double resultingEnd)
     {
       switch (_userProvidedEndRelativeTo)
@@ -236,6 +257,7 @@ namespace Altaxo.Graph.Scales.Rescaling
 
     #endregion Resulting Org/End to/fron User Org/End
 
+    /// <inheritdoc />
     protected override void FixValuesForUserZoomed(ref double zoomOrg, ref double zoomEnd)
     {
       if (zoomOrg > zoomEnd)
@@ -267,6 +289,11 @@ namespace Altaxo.Graph.Scales.Rescaling
 
     #region Helper functions for dialog
 
+    /// <summary>
+    /// Gets the origin value to display in the rescaling dialog.
+    /// </summary>
+    /// <param name="currentResultingOrg">The currently resulting origin value.</param>
+    /// <returns>The origin value that should be shown to the user.</returns>
     public double GetOrgValueToShowInDialog(double currentResultingOrg)
     {
       if (_orgRescaling == BoundaryRescaling.Auto)
@@ -295,6 +322,11 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <summary>
+    /// Gets the end value to display in the rescaling dialog.
+    /// </summary>
+    /// <param name="currentResultingEnd">The currently resulting end value.</param>
+    /// <returns>The end value that should be shown to the user.</returns>
     public double GetEndValueToShowInDialog(double currentResultingEnd)
     {
       if (_endRescaling == BoundaryRescaling.Auto)

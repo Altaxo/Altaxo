@@ -32,6 +32,9 @@ namespace Altaxo.Drawing.D3D.CrossSections
 {
   using Geometry;
 
+  /// <summary>
+  /// Octagonal cross section for 3D lines.
+  /// </summary>
   public class Octagonal : ICrossSectionOfLine
   {
     private double _size1By2, _size2By2;
@@ -79,11 +82,19 @@ namespace Altaxo.Drawing.D3D.CrossSections
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Octagonal"/> class with unit sizes.
+    /// </summary>
     public Octagonal()
       : this(1, 1)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Octagonal"/> class.
+    /// </summary>
+    /// <param name="size1">The first octagon size.</param>
+    /// <param name="size2">The second octagon size.</param>
     public Octagonal(double size1, double size2)
     {
       if (!(size1 >= 0))
@@ -97,6 +108,7 @@ namespace Altaxo.Drawing.D3D.CrossSections
       _size2By2 = size2 / 2;
     }
 
+    /// <inheritdoc/>
     public double Size1
     {
       get
@@ -105,6 +117,7 @@ namespace Altaxo.Drawing.D3D.CrossSections
       }
     }
 
+    /// <inheritdoc/>
     public ICrossSectionOfLine WithSize1(double size1)
     {
       if (!(size1 >= 0))
@@ -124,6 +137,7 @@ namespace Altaxo.Drawing.D3D.CrossSections
       }
     }
 
+    /// <inheritdoc/>
     public double Size2
     {
       get
@@ -132,6 +146,7 @@ namespace Altaxo.Drawing.D3D.CrossSections
       }
     }
 
+    /// <inheritdoc/>
     public ICrossSectionOfLine WithSize2(double size2)
     {
       if (!(size2 >= 0))
@@ -151,6 +166,7 @@ namespace Altaxo.Drawing.D3D.CrossSections
       }
     }
 
+    /// <inheritdoc/>
     public ICrossSectionOfLine WithSize(double size1, double size2)
     {
       if (!(size1 >= 0))
@@ -174,16 +190,19 @@ namespace Altaxo.Drawing.D3D.CrossSections
       }
     }
 
+    /// <inheritdoc/>
     public double GetMaximalDistanceFromCenter()
     {
       return Math.Sqrt(_size1By2 * _size1By2 + _size2By2 * _size2By2);
     }
 
+    /// <inheritdoc/>
     public bool IsVertexSharp(int idx)
     {
       return true;
     }
 
+    /// <inheritdoc/>
     public int NumberOfNormals
     {
       get
@@ -192,12 +211,14 @@ namespace Altaxo.Drawing.D3D.CrossSections
       }
     }
 
+    /// <inheritdoc/>
     public VectorD2D Normals(int i)
     {
       var rawN = _normalsRaw[i];
       return new VectorD2D(rawN.X * _size2By2, rawN.Y * _size1By2).Normalized;
     }
 
+    /// <inheritdoc/>
     public int NumberOfVertices
     {
       get
@@ -206,6 +227,7 @@ namespace Altaxo.Drawing.D3D.CrossSections
       }
     }
 
+    /// <inheritdoc/>
     public PointD2D Vertices(int i)
     {
       var rawP = _verticesRaw[i];

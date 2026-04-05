@@ -32,44 +32,66 @@ using System.Text;
 namespace Altaxo.Drawing.LineCaps
 {
   /// <summary>
-  /// Draws a cap that is a open circle. The midpoint of the circle is the designated end of the line.
+  /// Draws an open square line cap whose center lies at the line end.
   /// </summary>
   public class SquareOLineCap : LineCapBase
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SquareOLineCap"/> class.
+    /// </summary>
     public SquareOLineCap()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SquareOLineCap"/> class.
+    /// </summary>
+    /// <param name="minimumAbsoluteSizePt">The minimum absolute size in points.</param>
+    /// <param name="minimumRelativeSize">The minimum relative size.</param>
     public SquareOLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
       : base(minimumAbsoluteSizePt, minimumRelativeSize)
     {
     }
 
+    /// <inheritdoc/>
     public override string Name { get { return "SquareO"; } }
 
+    /// <inheritdoc/>
     public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
 
+    /// <inheritdoc/>
     public override double DefaultMinimumRelativeSize { get { return 4; } }
   }
 
   /// <summary>
-  /// Draws a cap that is a open circle. The midpoint of the circle is the designated end of the line.
+  /// Draws a filled square line cap whose center lies at the line end.
   /// </summary>
   public class SquareFLineCap : LineCapBase
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SquareFLineCap"/> class.
+    /// </summary>
     public SquareFLineCap()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SquareFLineCap"/> class.
+    /// </summary>
+    /// <param name="minimumAbsoluteSizePt">The minimum absolute size in points.</param>
+    /// <param name="minimumRelativeSize">The minimum relative size.</param>
     public SquareFLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
       : base(minimumAbsoluteSizePt, minimumRelativeSize)
     {
     }
 
+    /// <inheritdoc/>
     public override string Name { get { return "SquareF"; } }
 
+    /// <inheritdoc/>
     public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
 
+    /// <inheritdoc/>
     public override double DefaultMinimumRelativeSize { get { return 4; } }
   }
 }

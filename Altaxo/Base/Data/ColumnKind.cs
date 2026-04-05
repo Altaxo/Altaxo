@@ -34,7 +34,7 @@ namespace Altaxo.Data
   public enum ColumnKind
   {
     /// <summary>
-    /// Column values are the dependent variable (usually y in 2D-Plots, z in 3D-plots)
+    /// Column values are the dependent variable, usually y in 2D plots or z in 3D plots.
     /// </summary>
     V = 0,
 
@@ -54,7 +54,7 @@ namespace Altaxo.Data
     Z = 3,
 
     /// <summary>
-    /// Column values are +- error values.
+    /// Column values are ± error values.
     /// </summary>
     Err = 4,
 
@@ -79,19 +79,33 @@ namespace Altaxo.Data
     Condition = 8
   }
 
+  /// <summary>
+  /// Provides data for a column kind change event.
+  /// </summary>
   public class ColumnKindChangeEventArgs : System.EventArgs
   {
     private ColumnKind _oldKind;
     private ColumnKind _newKind;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColumnKindChangeEventArgs"/> class.
+    /// </summary>
+    /// <param name="oldKind">The previous column kind.</param>
+    /// <param name="newKind">The new column kind.</param>
     public ColumnKindChangeEventArgs(ColumnKind oldKind, ColumnKind newKind)
     {
       _oldKind = oldKind;
       _newKind = newKind;
     }
 
+    /// <summary>
+    /// Gets the previous column kind.
+    /// </summary>
     public ColumnKind OldKind { get { return _oldKind; } }
 
+    /// <summary>
+    /// Gets the new column kind.
+    /// </summary>
     public ColumnKind NewKind { get { return _newKind; } }
   }
 }

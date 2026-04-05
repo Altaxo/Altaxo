@@ -36,15 +36,23 @@ namespace Altaxo.Main.Services.ScriptCompilation
   /// </summary>
   public class CompilerDiagnostic : ICompilerDiagnostic
   {
+    /// <inheritdoc/>
     public int? Line { get; private set; }
+    /// <inheritdoc/>
     public int? Column { get; private set; }
 
+    /// <inheritdoc/>
     public DiagnosticSeverity Severity { get; private set; }
 
+    /// <inheritdoc/>
     public string SeverityText { get; private set; }
 
+    /// <inheritdoc/>
     public string MessageText { get; private set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CompilerDiagnostic"/> class.
+    /// </summary>
     public CompilerDiagnostic(int? line, int? column, DiagnosticSeverity severity, string message)
     {
       Line = line;

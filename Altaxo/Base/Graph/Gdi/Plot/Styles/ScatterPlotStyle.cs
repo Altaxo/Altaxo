@@ -46,6 +46,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   using Plot.Data;
   using Plot.Groups;
 
+  /// <summary>
+  /// Draws scatter symbols for 2D plot data.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Graph.Gdi.Plot.Styles.ScatterPlotStyle}")]
   public partial class ScatterPlotStyle
     :
@@ -69,6 +72,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>If true, group styles that shift the logical position of the items (for instance <see cref="BarSizePosition3DGroupStyle"/>) are not applied. I.e. when true, the position of the item remains unperturbed.</summary>
     private bool _independentOnShiftingGroupStyles = true;
 
+    /// <summary>
+    /// Stores whether the scatter symbol is controlled independently from group styles.
+    /// </summary>
     protected bool _independentScatterSymbol;
 
     /// <summary>
@@ -102,16 +108,39 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     private PlotColorInfluence? _overridePlotColorInfluence;
 
+    /// <summary>
+    /// Stores the fill-color override for the scatter symbol.
+    /// </summary>
     protected NamedColor? _overrideFillColor;
 
+    /// <summary>
+    /// Stores the frame-color override for the scatter symbol.
+    /// </summary>
     protected NamedColor? _overrideFrameColor;
 
+    /// <summary>
+    /// Stores the inset-color override for the scatter symbol.
+    /// </summary>
     protected NamedColor? _overrideInsetColor;
 
+    /// <summary>
+    /// Stores whether the scatter-symbol frame is overridden.
+    /// </summary>
     protected bool _overrideFrame;
+
+    /// <summary>
+    /// Stores the overridden scatter-symbol frame.
+    /// </summary>
     protected IScatterSymbolFrame? _overriddenFrame;
 
+    /// <summary>
+    /// Stores whether the scatter-symbol inset is overridden.
+    /// </summary>
     protected bool _overrideInset;
+
+    /// <summary>
+    /// Stores the overridden scatter-symbol inset.
+    /// </summary>
     protected IScatterSymbolInset? _overriddenInset;
 
     // cached values:
@@ -211,6 +240,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     #endregion Copying
 
     // (Altaxo.Main.Properties.IReadOnlyPropertyBag)null
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScatterPlotStyle"/> class during deserialization.
+    /// </summary>
+    /// <param name="info">The deserialization info.</param>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected ScatterPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
@@ -231,11 +264,19 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       _skipFreq = 1;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScatterPlotStyle"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public ScatterPlotStyle(ScatterPlotStyle from)
     {
       CopyFrom(from, Main.EventFiring.Suppressed);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScatterPlotStyle"/> class.
+    /// </summary>
+    /// <param name="context">The property context.</param>
     public ScatterPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       double penWidth = GraphDocument.GetDefaultPenWidth(context);
@@ -249,11 +290,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       _skipFreq = 1;
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the scatter symbol is independent from group styles.
+    /// </summary>
     public bool IndependentScatterSymbol
     {
       get
@@ -270,6 +315,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the scatter symbol.
+    /// </summary>
     public IScatterSymbol ScatterSymbol
     {
       get { return _scatterSymbol; }
@@ -287,6 +335,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this style is visible.
+    /// </summary>
     public bool IsVisible
     {
       get
@@ -295,6 +346,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the plot color.
+    /// </summary>
     public NamedColor Color
     {
       get { return _color; }
@@ -308,6 +362,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the color is independent from group styles.
+    /// </summary>
     public bool IndependentColor
     {
       get
@@ -324,6 +381,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the symbol size is independent from group styles.
+    /// </summary>
     public bool IndependentSymbolSize
     {
       get
@@ -340,6 +400,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the symbol size.
+    /// </summary>
     public double SymbolSize
     {
       get { return _symbolSize; }
@@ -356,6 +419,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the frame is overridden.
+    /// </summary>
     public bool OverrideFrame
     {
       get
@@ -372,6 +438,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the overridden frame.
+    /// </summary>
     public IScatterSymbolFrame? OverriddenFrame
     {
       get
@@ -388,6 +457,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the inset is overridden.
+    /// </summary>
     public bool OverrideInset
     {
       get
@@ -404,6 +476,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the overridden inset.
+    /// </summary>
     public IScatterSymbolInset? OverriddenInset
     {
       get
@@ -420,6 +495,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the structure-width offset override.
+    /// </summary>
     public double? OverrideStructureWidthOffset
     {
       get
@@ -439,6 +517,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the structure-width factor override.
+    /// </summary>
     public double? OverrideStructureWidthFactor
     {
       get
@@ -458,6 +539,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the skip frequency is independent from group styles.
+    /// </summary>
     public bool IndependentSkipFrequency
     {
       get
@@ -474,6 +558,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the skip frequency.
+    /// </summary>
     public int SkipFrequency
     {
       get { return _skipFreq; }
@@ -529,6 +616,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the override for plot-color influence.
+    /// </summary>
     public PlotColorInfluence? OverridePlotColorInfluence
     {
       get
@@ -545,6 +635,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the fill-color override.
+    /// </summary>
     public NamedColor? OverrideFillColor
     {
       get
@@ -561,6 +654,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the frame-color override.
+    /// </summary>
     public NamedColor? OverrideFrameColor
     {
       get
@@ -577,6 +673,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the inset-color override.
+    /// </summary>
     public NamedColor? OverrideInsetColor
     {
       get
@@ -595,6 +694,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region I2DPlotItem Members
 
+    /// <summary>
+    /// Gets a value indicating whether this style can provide colors.
+    /// </summary>
     public bool IsColorProvider
     {
       get
@@ -603,11 +705,17 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this style can receive colors.
+    /// </summary>
     public bool IsColorReceiver
     {
       get { return !_independentColor; }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this style can provide symbol sizes.
+    /// </summary>
     public bool IsSymbolSizeProvider
     {
       get
@@ -616,6 +724,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this style can receive symbol sizes.
+    /// </summary>
     public bool IsSymbolSizeReceiver
     {
       get
@@ -626,6 +737,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #endregion I2DPlotItem Members
 
+    /// <summary>
+    /// Converts a Clipper polygon to GDI points for the specified symbol size.
+    /// </summary>
+    /// <param name="list">The polygon points.</param>
+    /// <param name="symbolSize">The symbol size.</param>
+    /// <returns>The converted points.</returns>
     public static PointF[] ToPointFArray(List<Point64> list, double symbolSize)
     {
       var scale = SymbolBase.InverseClipperScalingToSymbolSize1 * symbolSize;
@@ -636,11 +753,29 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     private struct CachedPathData
     {
+      /// <summary>
+      /// Gets or sets the cached symbol size.
+      /// </summary>
       public double SymbolSize;
+
+      /// <summary>
+      /// Gets or sets the cached fill path.
+      /// </summary>
       public GraphicsPath? FillPath;
+
+      /// <summary>
+      /// Gets or sets the cached frame path.
+      /// </summary>
       public GraphicsPath? FramePath;
+
+      /// <summary>
+      /// Gets or sets the cached inset path.
+      /// </summary>
       public GraphicsPath? InsetPath;
 
+      /// <summary>
+      /// Clears and disposes the cached paths.
+      /// </summary>
       public void Clear()
       {
         SymbolSize = 0;
@@ -655,11 +790,29 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     private struct CachedBrushData
     {
+      /// <summary>
+      /// Gets or sets the cached plot color.
+      /// </summary>
       public NamedColor? PlotColor;
+
+      /// <summary>
+      /// Gets or sets the cached fill brush.
+      /// </summary>
       public Brush? FillBrush;
+
+      /// <summary>
+      /// Gets or sets the cached frame brush.
+      /// </summary>
       public Brush? FrameBrush;
+
+      /// <summary>
+      /// Gets or sets the cached inset brush.
+      /// </summary>
       public Brush? InsetBrush;
 
+      /// <summary>
+      /// Clears and disposes the cached brushes.
+      /// </summary>
       public void Clear()
       {
         PlotColor = null;
@@ -896,6 +1049,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       g.Restore(gs); // Restore the graphics state
     }
 
+    /// <inheritdoc />
     public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData? prevItemData, Processed2DPlotData? nextItemData)
     {
       // adjust the skip frequency if it was not set appropriate
@@ -942,6 +1096,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       cachedPathData.Clear();
     }
 
+    /// <inheritdoc />
     public RectangleF PaintSymbol(System.Drawing.Graphics g, System.Drawing.RectangleF bounds)
     {
       if (_scatterSymbol is NoSymbol)
@@ -986,6 +1141,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region IPlotStyle Members
 
+    /// <inheritdoc />
     public void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups)
     {
       if (IsColorProvider)
@@ -998,6 +1154,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         ScatterSymbolGroupStyle.AddExternalGroupStyle(externalGroups);
     }
 
+    /// <inheritdoc />
     public void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       ColorGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
@@ -1007,6 +1164,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       IgnoreMissingDataPointsGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
     }
 
+    /// <inheritdoc />
     public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
     {
       if (IsColorProvider)
@@ -1029,6 +1187,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       IgnoreMissingDataPointsGroupStyle.PrepareStyle(externalGroups, localGroups, () => _ignoreMissingDataPoints);
     }
 
+    /// <inheritdoc />
     public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       // IgnoreMissingDataPoints is the same for all sub plot styles
@@ -1110,6 +1269,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region IRoutedPropertyReceiver Members
 
+    /// <inheritdoc />
     public IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName)
     {
       switch (propertyName)

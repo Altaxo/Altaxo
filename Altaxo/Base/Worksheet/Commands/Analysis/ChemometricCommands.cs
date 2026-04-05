@@ -44,12 +44,16 @@ using Altaxo.Gui.Worksheet.Viewing;
 namespace Altaxo.Worksheet.Commands.Analysis
 {
   /// <summary>
-  /// Contain commands concerning chemometric operations like PLS and PCA.
+  /// Contains commands concerning chemometric operations like PLS and PCA.
   /// </summary>
   public class ChemometricCommands
   {
     #region MultiplyColumnsToMatrix
 
+    /// <summary>
+    /// Multiplies selected columns to form a matrix.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
     public static void MultiplyColumnsToMatrix(IWorksheetController ctrl)
     {
       var err = MultiplyColumnsToMatrix(Current.Project, ctrl.DataTable, ctrl.SelectedDataColumns);
@@ -60,9 +64,9 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <summary>
     /// Multiplies selected columns to form a matrix.
     /// </summary>
-    /// <param name="mainDocument"></param>
-    /// <param name="srctable"></param>
-    /// <param name="selectedColumns"></param>
+    /// <param name="mainDocument">The main document.</param>
+    /// <param name="srctable">The source table.</param>
+    /// <param name="selectedColumns">The selected columns.</param>
     /// <returns>Null if successful, else the description of the error.</returns>
     /// <remarks>The user must select an even number of columns. All columns of the first half of the selection
     /// must have the same number of rows, and all columns of the second half of selection must also have the same
@@ -162,6 +166,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     #region PCA
 
+    /// <summary>
+    /// Starts a principal component analysis using the selected worksheet rows.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
     public static void PCAOnRows(IWorksheetController ctrl)
     {
       int maxFactors = 3;
@@ -178,6 +186,14 @@ namespace Altaxo.Worksheet.Commands.Analysis
     }
     /*
 
+    /// <summary>
+    /// Starts a principal component analysis using the selected worksheet columns.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
+    /// <summary>
+    /// Performs Principal Component Analysis (PCA) on the selected columns of the worksheet.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
     public static void PCAOnColumns(IWorksheetController ctrl)
     {
       int maxFactors = 3;
@@ -194,6 +210,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
     }
     */
 
+    /// <summary>
+    /// Starts a principal component analysis using the selected worksheet columns.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
     public static void PCAOnColumns(IWorksheetController ctrl)
     {
       if (false == CheckSelectedColumnsForDimensionReductionShowErrorMessageBox(ctrl))
@@ -263,6 +283,11 @@ namespace Altaxo.Worksheet.Commands.Analysis
       return true;
     }
 
+    /// <summary>
+    /// Prompts the user for PCA analysis options.
+    /// </summary>
+    /// <param name="options">Receives the selected options.</param>
+    /// <returns><see langword="true"/> if the user confirmed the dialog; otherwise, <see langword="false"/>.</returns>
     public static bool QuestPCAAnalysisOptions(out DimensionReductionOptions options)
     {
       var o = new DimensionReductionOptions();
@@ -465,7 +490,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       var err = analysis.ExecuteAnalysis(Current.Project, ctrl.DataTable, ctrl.SelectedDataColumns, ctrl.SelectedDataRows, ctrl.SelectedPropertyColumns, true, options, preprocessOptions);
       if (!string.IsNullOrEmpty(err))
-        Current.Gui.ErrorMessageBox(err, "An error occured");
+        Current.Gui.ErrorMessageBox(err, "An error occurred");
     }
     */
 
@@ -523,6 +548,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
       return true;
     }
 
+    /// <summary>
+    /// Starts a PLS analysis using the selected worksheet columns.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
     public static void PLSOnColumns(IWorksheetController ctrl)
     {
       if (false == CheckSelectedColumnsShowErrorMessageBox(ctrl))
@@ -586,6 +615,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     #region PLS Model Export
 
+    /// <summary>
+    /// Exports a PLS calibration model from the specified table.
+    /// </summary>
+    /// <param name="table">The table that contains the calibration model.</param>
     public static void ExportPLSCalibration(Altaxo.Data.DataTable table)
     {
       // quest the number of factors to export
@@ -611,6 +644,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     #region PLS Retrieving original data
 
+    /// <summary>
+    /// Gets the available tables that contain PLS calibration models.
+    /// </summary>
+    /// <returns>The available calibration tables.</returns>
     public static IEnumerable<DataTable> GetAvailablePLSCalibrationTables()
     {
       foreach (Altaxo.Data.DataTable table in Current.Project.DataTableCollection)
@@ -637,6 +674,11 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     #region PLS Plot Commands
 
+    /// <summary>
+    /// Gets the worksheet analysis stored in the specified model table.
+    /// </summary>
+    /// <param name="table">The model table.</param>
+    /// <returns>The worksheet analysis.</returns>
     public static WorksheetAnalysis GetAnalysis(DataTable table)
     {
       if (!IsDimensionReductionAndRegressionModel(table, out var dataSource))
@@ -645,6 +687,11 @@ namespace Altaxo.Worksheet.Commands.Analysis
       return dataSource.ProcessOptions.WorksheetAnalysis;
     }
 
+    /// <summary>
+    /// Prompts the user for PLS analysis options.
+    /// </summary>
+    /// <param name="options">Receives the selected options.</param>
+    /// <returns><see langword="true"/> if the user confirmed the dialog; otherwise, <see langword="false"/>.</returns>
     public static bool QuestPLSAnalysisOptions(out DimensionReductionAndRegressionOptions options)
     {
       var o = new DimensionReductionAndRegressionOptions();
@@ -926,6 +973,11 @@ namespace Altaxo.Worksheet.Commands.Analysis
       QuestPreferredNumberOfFactors(dsource);
     }
 
+    /// <summary>
+    /// Prompts the user for the preferred number of factors for the specified analysis result.
+    /// </summary>
+    /// <param name="dsource">The dimension reduction and regression data source.</param>
+    /// <returns>The preferred number of factors.</returns>
     public static int QuestPreferredNumberOfFactors(DimensionReductionAndRegressionDataSource? dsource)
     {
       int preferredNumberOfFactors = dsource?.ProcessResult?.PreferredNumberOfFactors ?? 1;
@@ -945,6 +997,11 @@ namespace Altaxo.Worksheet.Commands.Analysis
       return preferredNumberOfFactors;
     }
 
+    /// <summary>
+    /// Gets the preferred number of factors for the specified table, prompting the user if necessary.
+    /// </summary>
+    /// <param name="table">The model table.</param>
+    /// <returns>The preferred number of factors, or a negative value if unavailable.</returns>
     public static int GetOrQuestPreferredNumberOfFactors(Altaxo.Data.DataTable table)
     {
       if (!IsDimensionReductionAndRegressionModel(table, out var dsource))
@@ -956,6 +1013,11 @@ namespace Altaxo.Worksheet.Commands.Analysis
       return preferredNumberOfFactors;
     }
 
+    /// <summary>
+    /// Gets the preferred number of factors together with the number of concentration data columns.
+    /// </summary>
+    /// <param name="table">The model table.</param>
+    /// <returns>The preferred number of factors and the number of concentration data columns.</returns>
     public static (int preferredNumberOfFactors, int numberOfConcentrationData) GetPreferredNumberOfFactorsAndNumberOfConcentrations(DataTable table)
     {
       if (!IsDimensionReductionAndRegressionModel(table, out var dsource))
@@ -1163,6 +1225,13 @@ namespace Altaxo.Worksheet.Commands.Analysis
       PlotCrossPRESSValue(table, graphctrl.Doc.GetFirstXYPlotLayer());
     }
 
+    /// <summary>
+    /// Creates a new graph with a single XY layer.
+    /// </summary>
+    /// <param name="context">The property context to use for the graph.</param>
+    /// <param name="preferredName">The preferred graph name.</param>
+    /// <param name="anyNameInSameFolder">A name used to determine the target folder.</param>
+    /// <returns>The created graph controller.</returns>
     public static Altaxo.Gui.Graph.Gdi.Viewing.IGraphController CreateNewGraphWithXYLayer(Main.Properties.IReadOnlyPropertyBag context, string preferredName, string anyNameInSameFolder)
     {
       var graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(

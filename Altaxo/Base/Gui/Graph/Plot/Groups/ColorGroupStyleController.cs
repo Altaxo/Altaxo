@@ -34,12 +34,16 @@ using Altaxo.Gui.Drawing.ColorManagement;
 
 namespace Altaxo.Gui.Graph.Plot.Groups
 {
+  /// <summary>
+  /// Controller for editing <see cref="ColorGroupStyle"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IStyleListView))]
   [UserControllerForObject(typeof(ColorGroupStyle))]
   public class ColorGroupStyleController : MVCANControllerEditOriginalDocBase<ColorGroupStyle, IStyleListView>
   {
     private ColorSetController _listController;
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -56,6 +60,7 @@ namespace Altaxo.Gui.Graph.Plot.Groups
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (!_listController.Apply(disposeController))
@@ -73,6 +78,7 @@ namespace Altaxo.Gui.Graph.Plot.Groups
       return ApplyEnd(true, disposeController);
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_listController, () => _listController = null);

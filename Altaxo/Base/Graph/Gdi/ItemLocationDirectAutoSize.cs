@@ -31,6 +31,9 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi
 {
+  /// <summary>
+  /// Represents a direct item location whose size is determined automatically.
+  /// </summary>
   public class ItemLocationDirectAutoSize : ItemLocationDirect, ICloneable
   {
     #region Serialization
@@ -60,25 +63,38 @@ namespace Altaxo.Graph.Gdi
 
     #region Construction and copying
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ItemLocationDirectAutoSize"/> class.
+    /// </summary>
     public ItemLocationDirectAutoSize()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ItemLocationDirectAutoSize"/> class from another direct item location.
+    /// </summary>
+    /// <param name="from">The source item location.</param>
     public ItemLocationDirectAutoSize(ItemLocationDirect from)
     {
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ItemLocationDirectAutoSize"/> class from another item location.
+    /// </summary>
+    /// <param name="from">The source item location.</param>
     public ItemLocationDirectAutoSize(IItemLocation from)
     {
       CopyFrom(from);
     }
 
+    /// <inheritdoc />
     object System.ICloneable.Clone()
     {
       return new ItemLocationDirectAutoSize(this);
     }
 
+    /// <inheritdoc />
     public override ItemLocationDirect Clone()
     {
       return new ItemLocationDirectAutoSize(this);
@@ -120,6 +136,7 @@ namespace Altaxo.Graph.Gdi
 
     #region overrides
 
+    /// <inheritdoc />
     public override bool IsAutoSized
     {
       get
@@ -128,16 +145,19 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <inheritdoc />
     protected override void InternalSetSizeXSilent(RADouble value)
     {
       throw new InvalidOperationException("Setting the size is not supported in AutoSize mode. (internally the function SetSizeInAutoSizeMode should be used)");
     }
 
+    /// <inheritdoc />
     protected override void InternalSetSizeYSilent(RADouble value)
     {
       throw new InvalidOperationException("Setting the size is not supported in AutoSize mode. (internally the function SetSizeInAutoSizeMode should be used)");
     }
 
+    /// <inheritdoc />
     protected override void InternalSetSizeSilent(RADouble valueX, RADouble valueY)
     {
       throw new InvalidOperationException("Setting the size is not supported in AutoSize mode. (internally the function SetSizeInAutoSizeMode should be used)");

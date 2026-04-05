@@ -43,7 +43,7 @@ namespace Altaxo.Main
     private Dictionary<string, HashSet<object>> _directories = new Dictionary<string, HashSet<object>>();
 
     /// <summary>
-    /// Fired if a item or a directory is added or removed. Arguments are the type of change, the item, the old name and the new name.
+    /// Fired if an item or a directory is added or removed. Arguments are the type of change, the item, the old name, and the new name.
     /// Note that for directories the item is of type string: it is the directory name.
     /// </summary>
     public event EventHandler<Main.NamedObjectCollectionChangedEventArgs>? CollectionChanged;
@@ -64,6 +64,7 @@ namespace Altaxo.Main
       _parent = doc; // Parent last because we dont want the changes above to be monitored by the parent
     }
 
+    /// <inheritdoc/>
     protected override void Dispose(bool isDisposing)
     {
       var doc = AltaxoDocument;
@@ -81,6 +82,7 @@ namespace Altaxo.Main
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc/>
     public override IDocumentNode? ParentObject
     {
       get
@@ -624,6 +626,7 @@ namespace Altaxo.Main
         DirectoryRemoved(parDir);
     }
 
+    /// <inheritdoc/>
     protected override void OnChanged(EventArgs e)
     {
       var eAsNOCC = e as Main.NamedObjectCollectionChangedEventArgs;
@@ -635,6 +638,10 @@ namespace Altaxo.Main
       base.OnChanged(e);
     }
 
+    /// <summary>
+    /// Raises the collection changed event.
+    /// </summary>
+    /// <param name="args">The event arguments.</param>
     protected void OnCollectionChanged(Main.NamedObjectCollectionChangedEventArgs args)
     {
       var ev = CollectionChanged;
@@ -721,11 +728,15 @@ namespace Altaxo.Main
     /// </summary>
     public class FolderIsNewValidator : Altaxo.Gui.Common.TextValueInputController.NonEmptyStringValidator
     {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="FolderIsNewValidator"/> class.
+      /// </summary>
       public FolderIsNewValidator()
         : base("The folder name you provided is empty!")
       {
       }
 
+      /// <inheritdoc/>
       public override string? Validate(string name)
       {
         string? err = base.Validate(name);

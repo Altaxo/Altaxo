@@ -48,6 +48,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
   #region Error bar (abstract, for implementations see below)
 
+  /// <summary>
+  /// Provides the base implementation for three-dimensional error-bar styles.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.ErrorBarPlotStyle}")]
   public abstract class ErrorBarPlotStyle
     :
@@ -68,6 +71,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       AbsoluteValue = 2
     }
 
+    /// <summary>
+    /// Indicates whether a single error column is used for both directions.
+    /// </summary>
     protected bool _useCommonErrorColumn = true;
 
     private IReadableColumnProxy? _commonErrorColumn;
@@ -138,6 +144,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// </summary>
     protected int _skipFrequency;
 
+    /// <summary>
+    /// Indicates whether the skip frequency is independent of group styles.
+    /// </summary>
     protected bool _independentSkipFrequency;
 
     /// <summary>Logical x shift between the location of the real data point and the point where the item is finally drawn.</summary>
@@ -159,9 +168,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     #region Serialization
 
+    /// <summary>
+    /// Serializes <see cref="ErrorBarPlotStyle"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ErrorBarPlotStyle), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ErrorBarPlotStyle)obj;
@@ -255,6 +268,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         return s;
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         ErrorBarPlotStyle s = SDeserialize(o, info, parent);
@@ -275,6 +289,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ErrorBarPlotStyle"/> class from a property context.
+    /// </summary>
+    /// <param name="context">The property context.</param>
     public ErrorBarPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       var penWidth = GraphDocument.GetDefaultPenWidth(context);
@@ -288,11 +306,21 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       _pen = new PenX3D(color, penWidth).WithLineEndCap(new ContourDisc10Min());
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ErrorBarPlotStyle"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The style to copy from.</param>
+    /// <param name="copyWithDataReferences">If set to <c>true</c>, data references are copied as well.</param>
     public ErrorBarPlotStyle(ErrorBarPlotStyle from, bool copyWithDataReferences)
     {
       CopyFrom(from, copyWithDataReferences);
     }
 
+    /// <summary>
+    /// Copies the state from another error-bar style.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
+    /// <param name="copyWithDataReferences">If set to <c>true</c>, data references are copied as well.</param>
     [MemberNotNull(nameof(_pen))]
     protected void CopyFrom(ErrorBarPlotStyle from, bool copyWithDataReferences)
     {
@@ -334,6 +362,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       _cachedLogicalShiftZ = from._cachedLogicalShiftZ;
     }
 
+    /// <inheritdoc/>
     public bool CopyFrom(object obj, bool copyWithDataReferences)
     {
       if (ReferenceEquals(this, obj))
@@ -360,6 +389,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       return CopyFrom(obj, true);
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_commonErrorColumn is not null)
@@ -372,12 +402,17 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         yield return new Main.DocumentNodeAndName(_negativeErrorColumn, nameof(NegativeErrorColumn));
     }
 
+    /// <inheritdoc/>
     public abstract object Clone();
 
+    /// <inheritdoc/>
     public abstract object Clone(bool copyWithDataReferences);
 
     #region Properties
 
+    /// <summary>
+    /// Gets or sets how the error values are interpreted.
+    /// </summary>
     public ValueInterpretation MeaningOfValues
     {
       get
@@ -475,6 +510,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the absolute symbol-gap offset.
+    /// </summary>
     public double SymbolGapOffset
     {
       get
@@ -491,6 +529,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the factor used for symbol-gap calculation.
+    /// </summary>
     public double SymbolGapFactor
     {
       get
@@ -507,6 +548,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the absolute offset for the first line width.
+    /// </summary>
     public double LineWidth1Offset
     {
       get
@@ -523,6 +567,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the factor for the first line width relative to the symbol size.
+    /// </summary>
     public double LineWidth1Factor
     {
       get
@@ -539,6 +586,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the absolute offset for the second line width.
+    /// </summary>
     public double LineWidth2Offset
     {
       get
@@ -555,6 +605,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the factor for the second line width relative to the symbol size.
+    /// </summary>
     public double LineWidth2Factor
     {
       get
@@ -571,6 +624,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the absolute offset for the end-cap size.
+    /// </summary>
     public double EndCapSizeOffset
     {
       get
@@ -587,6 +643,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the factor for the end-cap size relative to the symbol size.
+    /// </summary>
     public double EndCapSizeFactor
     {
       get
@@ -692,6 +751,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether a single error column is used for both directions.
+    /// </summary>
     public bool UseCommonErrorColumn
     {
       get
@@ -851,12 +913,14 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     #region IG3DPlotStyle Members
 
+    /// <inheritdoc/>
     public void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups)
     {
       if (!_independentColor)
         Graph.Plot.Groups.ColorGroupStyle.AddExternalGroupStyle(externalGroups);
     }
 
+    /// <inheritdoc/>
     public void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       if (!_independentColor)
@@ -866,6 +930,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         SkipFrequencyGroupStyle.AddLocalGroupStyle(externalGroups, localGroups); // (local group only)
     }
 
+    /// <inheritdoc/>
     public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed3DPlotData pdata)
     {
       if (!_independentColor)
@@ -880,6 +945,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       // this item can not be used as provider of a symbol size
     }
 
+    /// <inheritdoc/>
     public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       _cachedColorForIndexFunction = null;
@@ -937,11 +1003,19 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <inheritdoc/>
     public void Paint(IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData pdata, Processed3DPlotData? prevItemData, Processed3DPlotData? nextItemData)
     {
       PaintErrorBars(AxisNumber, g, layer, pdata);
     }
 
+    /// <summary>
+    /// Paints the error bars for the specified axis.
+    /// </summary>
+    /// <param name="axisNumber">The axis number.</param>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="layer">The plot area.</param>
+    /// <param name="pdata">The processed plot data.</param>
     protected void PaintErrorBars(int axisNumber, IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData pdata)
     {
       const double logicalClampMinimum = -10;
@@ -1179,9 +1253,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
   #region Error bar x
 
+  /// <summary>
+  /// Error-bar plot style for the X axis.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.ErrorBarXPlotStyle}")]
   public class ErrorBarXPlotStyle : ErrorBarPlotStyle
   {
+    /// <inheritdoc/>
     public override int AxisNumber { get { return 0; } }
 
     #region Serialization
@@ -1212,10 +1290,19 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ErrorBarXPlotStyle"/> class.
+    /// </summary>
+    /// <param name="context">The property context.</param>
     public ErrorBarXPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context) : base(context)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ErrorBarXPlotStyle"/> class by copying another style.
+    /// </summary>
+    /// <param name="from">The style to copy from.</param>
+    /// <param name="copyWithDataReferences">If set to <see langword="true"/>, data references are copied as well.</param>
     public ErrorBarXPlotStyle(ErrorBarPlotStyle from, bool copyWithDataReferences) : base(from, copyWithDataReferences)
     {
     }
@@ -1237,9 +1324,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
   #region Error bar y
 
+  /// <summary>
+  /// Error-bar plot style for the Y axis.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.ErrorBarYPlotStyle}")]
   public class ErrorBarYPlotStyle : ErrorBarPlotStyle
   {
+    /// <inheritdoc/>
     public override int AxisNumber { get { return 1; } }
 
     #region Serialization
@@ -1270,10 +1361,19 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ErrorBarYPlotStyle"/> class.
+    /// </summary>
+    /// <param name="context">The property context.</param>
     public ErrorBarYPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context) : base(context)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ErrorBarYPlotStyle"/> class by copying another style.
+    /// </summary>
+    /// <param name="from">The style to copy from.</param>
+    /// <param name="copyWithDataReferences">If set to <see langword="true"/>, data references are copied as well.</param>
     public ErrorBarYPlotStyle(ErrorBarPlotStyle from, bool copyWithDataReferences) : base(from, copyWithDataReferences)
     {
     }
@@ -1295,9 +1395,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
   #region Error bar z
 
+  /// <summary>
+  /// Error-bar plot style for the Z axis.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.ErrorBarZPlotStyle}")]
   public class ErrorBarZPlotStyle : ErrorBarPlotStyle
   {
+    /// <inheritdoc/>
     public override int AxisNumber { get { return 2; } }
 
     #region Serialization
@@ -1328,10 +1432,19 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ErrorBarZPlotStyle"/> class.
+    /// </summary>
+    /// <param name="context">The property context.</param>
     public ErrorBarZPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context) : base(context)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ErrorBarZPlotStyle"/> class by copying another style.
+    /// </summary>
+    /// <param name="from">The style to copy from.</param>
+    /// <param name="copyWithDataReferences">If set to <see langword="true"/>, data references are copied as well.</param>
     public ErrorBarZPlotStyle(ErrorBarPlotStyle from, bool copyWithDataReferences) : base(from, copyWithDataReferences)
     {
     }

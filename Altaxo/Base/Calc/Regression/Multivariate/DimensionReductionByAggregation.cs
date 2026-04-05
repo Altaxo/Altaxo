@@ -52,7 +52,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DimensionReductionByAggregation), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      /// <inheritdoc/>
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DimensionReductionByAggregation)obj;
@@ -62,7 +62,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         info.CommitArray();
       }
 
-      /// <inheritdoc/>
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         int count = info.OpenArray("AggregationKinds");
@@ -81,23 +81,23 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
     #endregion
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public virtual string DisplayName
     {
       get => "Data aggregation";
 
     }
 
-    /// <inheritdoc/>
-    public virtual IDimensionReductionResult ExecuteDimensionReduction(IROMatrix<double> x)
+    /// <inheritdoc />
+    public virtual IDimensionReductionResult ExecuteDimensionReduction(IROMatrix<double> processData)
     {
-      var result = CreateMatrix.Dense<double>(x.RowCount, AggregationKinds.Count);
-      var aggregation = new double[x.ColumnCount];
+      var result = CreateMatrix.Dense<double>(processData.RowCount, AggregationKinds.Count);
+      var aggregation = new double[processData.ColumnCount];
       var c = new double[AggregationKinds.Count];
 
-      for (int idxRow = 0; idxRow < x.RowCount; idxRow++)
+      for (int idxRow = 0; idxRow < processData.RowCount; idxRow++)
       {
-        MatrixMath.CopyRow(x, idxRow, aggregation);
+        MatrixMath.CopyRow(processData, idxRow, aggregation);
 
         for (int idxCol = 0; idxCol < AggregationKinds.Count; idxCol++)
         {

@@ -43,6 +43,6 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="xValuesOfPreprocessedSpectra">X values associated with the preprocessed spectra.</param>
     /// <param name="preprocessedSpectra">The matrix of preprocessed spectra.</param>
     /// <param name="auxiliaryData">Auxiliary data resulting from ensemble processing.</param>
-    public void SaveResultToTable(DimensionReductionOutputOptions outputOptions, DataTable sourceTable, DataTable destinationTable, int[] columnNumbersOfSpectraInSourceTable, double[] xValuesOfPreprocessedSpectra, Matrix<double> preprocessedSpectra, IEnsembleProcessingAuxiliaryData auxiliaryData);
+    void SaveResultToTable(DimensionReductionOutputOptions outputOptions, DataTable sourceTable, DataTable destinationTable, int[] columnNumbersOfSpectraInSourceTable, double[] xValuesOfPreprocessedSpectra, Matrix<double> preprocessedSpectra, IEnsembleProcessingAuxiliaryData auxiliaryData);
   }
 }

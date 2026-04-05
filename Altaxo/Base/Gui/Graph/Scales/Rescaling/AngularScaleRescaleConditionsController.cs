@@ -32,14 +32,21 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Scales.Rescaling
 {
+  /// <summary>
+  /// View contract for angular scale rescaling conditions.
+  /// </summary>
   public interface IAngularScaleRescaleConditionsView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for editing <see cref="AngularRescaleConditions"/>.
+  /// </summary>
   [UserControllerForObject(typeof(AngularRescaleConditions))]
   [ExpectedTypeOfView(typeof(IAngularScaleRescaleConditionsView))]
   public class AngularScaleRescaleConditionsController : MVCANControllerEditOriginalDocBase<AngularRescaleConditions, IAngularScaleRescaleConditionsView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -51,6 +58,9 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
     private ItemsController<int> _origin;
 
+    /// <summary>
+    /// Gets or sets the scale origin.
+    /// </summary>
     public ItemsController<int> Origin
     {
       get => _origin;
@@ -66,12 +76,14 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
     #endregion
 
+    /// <inheritdoc/>
     public override void Dispose(bool isDisposing)
     {
       _origin?.Dispose();
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -84,12 +96,17 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc.ScaleOrigin = Origin.SelectedValue;
       return ApplyEnd(true, disposeController);
     }
 
+    /// <summary>
+    /// Builds the list of selectable scale origins.
+    /// </summary>
+    /// <returns>The selectable origin list.</returns>
     private SelectableListNodeList BuildOriginList()
     {
       var result = new SelectableListNodeList(DefaultScaleOrigins.Select(sc => new SelectableListNode($"{sc}°", sc, false)));

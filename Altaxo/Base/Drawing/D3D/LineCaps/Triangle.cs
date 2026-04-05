@@ -31,6 +31,9 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Drawing.D3D.LineCaps
 {
+  /// <summary>
+  /// Triangular 3D line cap.
+  /// </summary>
   public class Triangle : ContourShapedLineCapBase
   {
     private class TriangleContour : ILineCapContour
@@ -99,11 +102,13 @@ namespace Altaxo.Drawing.D3D.LineCaps
 
     #endregion Serialization
 
+    /// <inheritdoc/>
     public override double GetAbsoluteBaseInset(double thickness1, double thickness2)
     {
       return -0.5 * Math.Max(thickness1, thickness2);
     }
 
+    /// <inheritdoc/>
     public override void AddGeometry(Action<PointD3D, VectorD3D> AddPositionAndNormal, Action<int, int, int, bool> AddIndices, ref int vertexIndexOffset, bool isStartCap, PointD3D basePoint, VectorD3D eastVector, VectorD3D northVector, VectorD3D forwardVectorNormalized, ICrossSectionOfLine lineCrossSection, PointD3D[]? baseCrossSectionPositions, VectorD3D[]? baseCrossSectionNormals, ref object? temporaryStorageSpace)
     {
       Add(

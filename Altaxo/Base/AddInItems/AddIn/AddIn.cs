@@ -26,6 +26,9 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.AddInItems
 {
+  /// <summary>
+  /// Represents a loaded add-in together with its manifest, runtimes, and extension paths.
+  /// </summary>
   public sealed class AddIn
   {
     private IAddInTree _addInTree;
@@ -55,6 +58,9 @@ namespace Altaxo.AddInItems
       get { return _addInTree; }
     }
 
+    /// <summary>
+    /// Creates an object from the specified class name.
+    /// </summary>
     public object? CreateObject(string className)
     {
       Type? t = FindType(className);
@@ -64,6 +70,9 @@ namespace Altaxo.AddInItems
         return null;
     }
 
+    /// <summary>
+    /// Finds the type with the specified class name in the add-in runtimes.
+    /// </summary>
     public Type? FindType(string className)
     {
       foreach (Runtime runtime in _runtimes)
@@ -93,6 +102,9 @@ namespace Altaxo.AddInItems
       return null;
     }
 
+    /// <summary>
+    /// Gets a manifest resource stream from the add-in assemblies.
+    /// </summary>
     public Stream? GetManifestResourceStream(string resourceName)
     {
       LoadDependencies();
@@ -111,6 +123,9 @@ namespace Altaxo.AddInItems
       return null;
     }
 
+    /// <summary>
+    /// Loads all active runtime assemblies of the add-in.
+    /// </summary>
     public void LoadRuntimeAssemblies()
     {
       LoadDependencies();
@@ -158,6 +173,7 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return "[AddIn: " + Name + "]";
@@ -193,54 +209,84 @@ namespace Altaxo.AddInItems
       set { _action = value; }
     }
 
+    /// <summary>
+    /// Gets the runtime definitions of the add-in.
+    /// </summary>
     public IReadOnlyList<Runtime> Runtimes
     {
       get { return _runtimes; }
     }
 
+    /// <summary>
+    /// Gets the primary add-in version.
+    /// </summary>
     public Version? Version
     {
       get { return _manifest.PrimaryVersion; }
     }
 
+    /// <summary>
+    /// Gets or sets the add-in file name.
+    /// </summary>
     public string? FileName
     {
       get { return _addInFileName; }
       set { _addInFileName = value; }
     }
 
+    /// <summary>
+    /// Gets the add-in name.
+    /// </summary>
     public string Name
     {
       get { return _properties["name"]; }
     }
 
+    /// <summary>
+    /// Gets the add-in manifest.
+    /// </summary>
     public AddInManifest Manifest
     {
       get { return _manifest; }
     }
 
+    /// <summary>
+    /// Gets the extension paths declared by the add-in.
+    /// </summary>
     public Dictionary<string, ExtensionPath> Paths
     {
       get { return _paths; }
     }
 
+    /// <summary>
+    /// Gets the add-in properties.
+    /// </summary>
     public Properties Properties
     {
       get { return _properties; }
     }
 
+    /// <summary>
+    /// Gets or sets the bitmap resource file names.
+    /// </summary>
     public List<string> BitmapResources
     {
       get { return _bitmapResources; }
       set { _bitmapResources = value; }
     }
 
+    /// <summary>
+    /// Gets or sets the string resource file names.
+    /// </summary>
     public List<string> StringResources
     {
       get { return _stringResources; }
       set { _stringResources = value; }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the add-in is enabled.
+    /// </summary>
     public bool Enabled
     {
       get { return _enabled; }
@@ -337,6 +383,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Gets the extension path with the specified name.
+    /// </summary>
     public ExtensionPath GetExtensionPath(string pathName)
     {
       if (!_paths.ContainsKey(pathName))
@@ -346,6 +395,9 @@ namespace Altaxo.AddInItems
       return _paths[pathName];
     }
 
+    /// <summary>
+    /// Loads an add-in from a text reader.
+    /// </summary>
     public static AddIn Load(IAddInTree addInTree, TextReader textReader, string? hintPath = null, XmlNameTable? nameTable = null)
     {
       if (nameTable is null)
@@ -380,6 +432,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Loads an add-in from the specified file.
+    /// </summary>
     public static AddIn Load(IAddInTree addInTree, string fileName, XmlNameTable? nameTable = null)
     {
       try

@@ -25,7 +25,7 @@ using System.Threading.Tasks;
 namespace Altaxo.Main.Services
 {
   /// <summary>
-  /// Represents a thread running a message loop. This is the non-Gui part of the interface. The Gui interface
+  /// Represents a thread running a message loop. This is the non-GUI part of the interface. The GUI interface
   /// will contain a dispatcher object, and additional possibilities to set the priority.
   /// </summary>
   public interface IDispatcherMessageLoop : ISynchronizeInvoke
@@ -66,14 +66,14 @@ namespace Altaxo.Main.Services
     void InvokeIfRequired(Action callback);
 
     /// <summary>
-    /// Executes an action synchronously with the GUI.
+    /// Executes an action synchronously on the message loop thread.
     /// </summary>
     /// <param name="action">The action to execute.</param>
     /// <param name="arg">The argument of the action.</param>
     void InvokeIfRequired<T>(Action<T> action, T arg);
 
     /// <summary>
-    /// Executes an action synchronously with the GUI.
+    /// Executes an action synchronously on the message loop thread.
     /// </summary>
     /// <param name="action">The action to execute.</param>
     /// <param name="arg1">The first argument of the action.</param>
@@ -81,7 +81,7 @@ namespace Altaxo.Main.Services
     void InvokeIfRequired<T1, T2>(Action<T1, T2> action, T1 arg1, T2 arg2);
 
     /// <summary>
-    /// Executes an action synchronously with the GUI.
+    /// Executes an action synchronously on the message loop thread.
     /// </summary>
     /// <param name="action">The action to execute.</param>
     /// <param name="arg1">The 1st argument of the action.</param>
@@ -90,7 +90,7 @@ namespace Altaxo.Main.Services
     void InvokeIfRequired<T1, T2, T3>(Action<T1, T2, T3> action, T1 arg1, T2 arg2, T3 arg3);
 
     /// <summary>
-    /// Executes an action synchronously with the GUI.
+    /// Executes an action synchronously on the message loop thread.
     /// </summary>
     /// <param name="action">The action to execute.</param>
     /// <param name="arg1">The first argument of the action.</param>
@@ -100,7 +100,7 @@ namespace Altaxo.Main.Services
     void InvokeIfRequired<T1, T2, T3, T4>(Action<T1, T2, T3, T4> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4);
 
     /// <summary>
-    /// Executes an action synchronously with the Gui.
+    /// Executes an action synchronously on the message loop thread.
     /// </summary>
     /// <param name="action">The action to execute.</param>
     /// <param name="arg1">The first argument of the action.</param>
@@ -122,25 +122,43 @@ namespace Altaxo.Main.Services
     T InvokeIfRequired<T>(Func<T> callback);
 
     /// <summary>
-    /// Evaluates a function synchronously with the Gui.
+    /// Evaluates a function synchronously on the message loop thread.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The type of the function argument.</typeparam>
     /// <typeparam name="TResult">The type of function result.</typeparam>
     /// <param name="function">The function to execute.</param>
     /// <param name="arg">The 1st function argument.</param>
     /// <returns>The result of the function evaluation.</returns>
     TResult InvokeIfRequired<T, TResult>(Func<T, TResult> function, T arg);
 
+    /// <summary>
+    /// Evaluates a function synchronously on the message loop thread.
+    /// </summary>
     TResult InvokeIfRequired<T1, T2, TResult>(Func<T1, T2, TResult> function, T1 arg1, T2 arg2);
 
+    /// <summary>
+    /// Evaluates a function synchronously on the message loop thread.
+    /// </summary>
     TResult InvokeIfRequired<T1, T2, T3, TResult>(Func<T1, T2, T3, TResult> function, T1 arg1, T2 arg2, T3 arg3);
 
+    /// <summary>
+    /// Evaluates a function synchronously on the message loop thread.
+    /// </summary>
     TResult InvokeIfRequired<T1, T2, T3, T4, TResult>(Func<T1, T2, T3, T4, TResult> function, T1 arg1, T2 arg2, T3 arg3, T4 arg4);
 
+    /// <summary>
+    /// Evaluates a function synchronously on the message loop thread.
+    /// </summary>
     TResult InvokeIfRequired<T1, T2, T3, T4, T5, TResult>(Func<T1, T2, T3, T4, T5, TResult> function, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5);
 
+    /// <summary>
+    /// Evaluates a function synchronously on the message loop thread.
+    /// </summary>
     TResult InvokeIfRequired<T1, T2, T3, T4, T5, T6, TResult>(Func<T1, T2, T3, T4, T5, T6, TResult> function, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6);
 
+    /// <summary>
+    /// Evaluates a function synchronously on the message loop thread.
+    /// </summary>
     TResult InvokeIfRequired<T1, T2, T3, T4, T5, T6, T7, TResult>(Func<T1, T2, T3, T4, T5, T6, T7, TResult> function, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7);
 
     #endregion InvokeIfRequired (Functions)
@@ -158,14 +176,14 @@ namespace Altaxo.Main.Services
     void InvokeAndForget(Action callback);
 
     /// <summary>
-    /// Executes an action synchronously with the Gui without waiting.
+    /// Executes an action asynchronously on the message loop thread without waiting.
     /// </summary>
     /// <param name="action">The action to execute.</param>
     /// <param name="arg">The argument of the action.</param>
     void InvokeAndForget<T>(Action<T> action, T arg);
 
     /// <summary>
-    /// Executes an action synchronously with the Gui without waiting.
+    /// Executes an action asynchronously on the message loop thread without waiting.
     /// </summary>
     /// <param name="action">The action to execute.</param>
     /// <param name="arg1">The first argument of the action.</param>
@@ -173,7 +191,7 @@ namespace Altaxo.Main.Services
     void InvokeAndForget<T1, T2>(Action<T1, T2> action, T1 arg1, T2 arg2);
 
     /// <summary>
-    /// Executes an action synchronously with the Gui without waiting.
+    /// Executes an action asynchronously on the message loop thread without waiting.
     /// </summary>
     /// <param name="action">The action to execute.</param>
     /// <param name="arg1">The 1st argument of the action.</param>
@@ -182,7 +200,7 @@ namespace Altaxo.Main.Services
     void InvokeAndForget<T1, T2, T3>(Action<T1, T2, T3> action, T1 arg1, T2 arg2, T3 arg3);
 
     /// <summary>
-    /// Executes an action synchronously with the Gui without waiting.
+    /// Executes an action asynchronously on the message loop thread without waiting.
     /// </summary>
     /// <param name="action">The action to execute.</param>
     /// <param name="arg1">The first argument of the action.</param>
@@ -192,7 +210,7 @@ namespace Altaxo.Main.Services
     void InvokeAndForget<T1, T2, T3, T4>(Action<T1, T2, T3, T4> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4);
 
     /// <summary>
-    /// Executes an action synchronously with the Gui without waiting.
+    /// Executes an action asynchronously on the message loop thread without waiting.
     /// </summary>
     /// <param name="action">The action to execute.</param>
     /// <param name="arg1">The first argument of the action.</param>

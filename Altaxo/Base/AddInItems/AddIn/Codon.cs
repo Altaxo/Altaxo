@@ -35,6 +35,9 @@ namespace Altaxo.AddInItems
     private Properties _properties;
     private IReadOnlyList<ICondition> _conditions;
 
+    /// <summary>
+    /// Gets the codon name.
+    /// </summary>
     public string Name
     {
       get
@@ -43,6 +46,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Gets the add-in that owns the codon.
+    /// </summary>
     public AddIn AddIn
     {
       get
@@ -51,6 +57,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Gets the codon identifier.
+    /// </summary>
     public string Id
     {
       get
@@ -59,6 +68,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Gets the identifier of the codon that this codon should be inserted after.
+    /// </summary>
     public string InsertAfter
     {
       get
@@ -67,6 +79,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Gets the identifier of the codon that this codon should be inserted before.
+    /// </summary>
     public string InsertBefore
     {
       get
@@ -75,6 +90,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Gets a property value by key.
+    /// </summary>
     public string this[string key]
     {
       get
@@ -83,6 +101,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Gets the codon properties.
+    /// </summary>
     public Properties Properties
     {
       get
@@ -91,6 +112,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Gets the conditions attached to the codon.
+    /// </summary>
     public IReadOnlyList<ICondition> Conditions
     {
       get
@@ -99,6 +123,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Codon"/> class.
+    /// </summary>
     public Codon(AddIn addIn, string name, Properties properties, IReadOnlyList<ICondition> conditions)
     {
       if (name is null)
@@ -127,6 +154,7 @@ namespace Altaxo.AddInItems
       return doozer.BuildItem(args);
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return string.Format("[Codon: name = {0}, id = {1}, addIn={2}]",

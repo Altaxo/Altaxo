@@ -28,10 +28,14 @@ using Altaxo.Graph.Graph3D.LabelFormatting;
 
 namespace Altaxo.Gui.Graph.Graph3D.LabelFormatting
 {
+  /// <summary>
+  /// Controls free-form label formatting for 3D graphs.
+  /// </summary>
   [ExpectedTypeOfView(typeof(Gdi.LabelFormatting.IFreeLabelFormattingView))]
   [UserControllerForObject(typeof(FreeLabelFormatting), 110)]
   public class FreeLabelFormattingController : MVCANControllerEditOriginalDocBase<FreeLabelFormatting, Gdi.LabelFormatting.IFreeLabelFormattingView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_baseController, () => _baseController = null);
@@ -41,6 +45,9 @@ namespace Altaxo.Gui.Graph.Graph3D.LabelFormatting
 
     private string _formatString;
 
+    /// <summary>
+    /// Gets or sets the format string used for labels.
+    /// </summary>
     public string FormatString
     {
       get => _formatString;
@@ -56,6 +63,9 @@ namespace Altaxo.Gui.Graph.Graph3D.LabelFormatting
 
     private MultiLineLabelFormattingBaseController _baseController;
 
+    /// <summary>
+    /// Gets or sets the controller for the shared multiline formatting settings.
+    /// </summary>
     public MultiLineLabelFormattingBaseController BaseController
     {
       get => _baseController;
@@ -74,11 +84,13 @@ namespace Altaxo.Gui.Graph.Graph3D.LabelFormatting
     #endregion
 
 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -92,6 +104,7 @@ namespace Altaxo.Gui.Graph.Graph3D.LabelFormatting
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (!_baseController.Apply(disposeController))

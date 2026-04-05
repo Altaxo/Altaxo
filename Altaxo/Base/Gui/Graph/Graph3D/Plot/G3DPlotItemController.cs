@@ -42,6 +42,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
 {
   #region Interfaces
 
+  /// <summary>
+  /// Provides the view contract for <see cref="G3DPlotItemController"/>.
+  /// </summary>
   public interface IG3DPlotItemView : IDataContextAwareView
   {
   }
@@ -49,7 +52,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
   #endregion Interfaces
 
   /// <summary>
-  /// Summary description for XYColumnPlotItemController.
+  /// Controller for <see cref="G3DPlotItem"/>.
   /// </summary>
   [UserControllerForObject(typeof(G3DPlotItem))]
   [ExpectedTypeOfView(typeof(IG3DPlotItemView))]
@@ -65,6 +68,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
 
     private Dictionary<IG3DPlotStyle, IMVCANController> _styleControllerDictionary = new Dictionary<IG3DPlotStyle, IMVCANController>();
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_plotGroupController, () => _plotGroupController = null);
@@ -92,6 +96,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
 
     private IXYZPlotStyleCollectionController _styleCollectionController;
 
+    /// <summary>
+    /// Gets or sets the controller for the plot-style collection.
+    /// </summary>
     public IXYZPlotStyleCollectionController StyleCollectionController
     {
       get => _styleCollectionController;
@@ -122,6 +129,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
     /// <summary>Controller for the <see cref="PlotGroupStyleCollection"/> that is associated with the parent of this plot item.</summary>
     private PlotGroupCollectionController _plotGroupController;
 
+    /// <summary>
+    /// Gets or sets the controller for the associated plot-group collection.
+    /// </summary>
     public PlotGroupCollectionController PlotGroupController
     {
       get => _plotGroupController;
@@ -136,6 +146,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
       }
     }
 
+    /// <summary>
+    /// Gets the tab definitions displayed by the controller.
+    /// </summary>
     public SelectableListNodeList Tabs { get; } = new();
 
     private int? _selectedTab;
@@ -161,6 +174,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
       }
     }
 
+    /// <summary>
+    /// Gets the controller associated with the specified tab tag.
+    /// </summary>
+    /// <param name="tag">The tag of the tab.</param>
+    /// <returns>The controller associated with the tag, or <see langword="null"/>.</returns>
     public IMVCAController? GetControllerFromTag(int? tag)
     {
       if (tag is { } selIndex && Tabs is { } tabs)
@@ -180,7 +198,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
 
 
     /// <summary>
-    /// We have to override GetSuspendTokenForControllerDocument here because we want to suspend the parent plot item collection instead of the plot item.
+    /// Overrides the suspend-token retrieval to suspend the parent plot-item collection instead of the plot item.
     /// This is because we also want to change for instance the plot groups, or distribute style changes to other plot items.
     /// </summary>
     /// <returns>
@@ -196,6 +214,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
         return null;
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -224,7 +243,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
       }
     }
 
-    // have this here as controller too
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (_applySuspend++ > 0)
@@ -289,6 +308,11 @@ end_of_function:
 
     private SuspendableObject _disablerOfActiveChildControlChanged = new SuspendableObject();
 
+    /// <summary>
+    /// Applies pending changes when the active child control changes.
+    /// </summary>
+    /// <param name="selectedTab">The newly selected tab.</param>
+    /// <param name="oldSelectedTab">The previously selected tab.</param>
     protected void EhView_ActiveChildControlChanged(int? selectedTab, int? oldSelectedTab)
     {
       if (_disablerOfActiveChildControlChanged.IsSuspended)
@@ -467,6 +491,10 @@ end_of_function:
       BringTabToFront(styleIndex);
     }
 
+    /// <summary>
+    /// Brings the tab for the specified style to the front.
+    /// </summary>
+    /// <param name="styleIndex">The index of the style whose tab should be selected.</param>
     protected void BringTabToFront(int styleIndex)
     {
       SelectedTab = styleIndex;

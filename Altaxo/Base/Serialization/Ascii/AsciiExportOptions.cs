@@ -37,7 +37,7 @@ namespace Altaxo.Serialization.Ascii
   public record AsciiExportOptions
   {
     /// <summary>
-    /// Property key used to store <see cref="AsciiExportOptions"/> per table.
+    /// Gets the property key used to store <see cref="AsciiExportOptions"/> per table.
     /// </summary>
     public static readonly PropertyKey<AsciiExportOptions> PropertyKeyAsciiExportOptions = new(
       "12CFB92C-8D90-4A34-A481-7C30B15654AB",
@@ -121,7 +121,7 @@ namespace Altaxo.Serialization.Ascii
     }
 
     /// <summary>
-    /// Creates default options: Separator char is Tab, Substitute char is Space, FormatProvider is the CurrentCulture.
+    /// Creates default options: the separator character is tab, the substitute character is space, and the culture is the GUI culture.
     /// </summary>
     public AsciiExportOptions()
     {
@@ -135,7 +135,7 @@ namespace Altaxo.Serialization.Ascii
 
 
     /// <summary>
-    /// Sets the separator char and chooses the substitute char automatically.
+    /// Sets the separator character and chooses the substitute character automatically.
     /// </summary>
     /// <param name="separatorChar">The separator char.</param>
     public AsciiExportOptions WithSeparator(char separatorChar)

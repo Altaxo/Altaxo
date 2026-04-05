@@ -32,7 +32,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
   using GraphicsContext;
 
   /// <summary>
-  /// Interface for an label item that is ready to draw and was already measured.
+  /// Represents a label item that has already been measured and is ready to draw.
   /// </summary>
   public interface IMeasuredLabelItem
   {

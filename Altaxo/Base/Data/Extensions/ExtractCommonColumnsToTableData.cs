@@ -52,6 +52,7 @@ namespace Altaxo.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ExtractCommonColumnsToTableData), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ExtractCommonColumnsToTableData)obj;
@@ -61,6 +62,7 @@ namespace Altaxo.Data
         info.AddArray("YColumnNames", s.YColumnNames, s.YColumnNames.Length);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
 
@@ -74,6 +76,12 @@ namespace Altaxo.Data
 
     #endregion
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ExtractCommonColumnsToTableData"/> class.
+    /// </summary>
+    /// <param name="tables">The tables to process.</param>
+    /// <param name="xColumnName">The common x-column name.</param>
+    /// <param name="yColumnNames">The y-column names to extract.</param>
     public ExtractCommonColumnsToTableData(IEnumerable<DataTableProxy> tables, string xColumnName, ImmutableArray<string> yColumnNames)
     {
       _tables = new List<DataTableProxy>();
@@ -87,6 +95,7 @@ namespace Altaxo.Data
       _yColumnNames = yColumnNames;
     }
 
+    /// <inheritdoc />
     public object Clone()
     {
       return new ExtractCommonColumnsToTableData(
@@ -113,6 +122,7 @@ namespace Altaxo.Data
 
    
 
+    /// <inheritdoc />
     protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_tables is { } tables)
@@ -122,6 +132,10 @@ namespace Altaxo.Data
       }
     }
 
+    /// <summary>
+    /// Visits all document references.
+    /// </summary>
+    /// <param name="reportProxies">The callback used to report proxies.</param>
     public void VisitDocumentReferences(DocNodeProxyReporter reportProxies)
     {
       for (int i = _tables.Count - 1; i >= 0; i--)

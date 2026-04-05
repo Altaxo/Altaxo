@@ -28,9 +28,8 @@ using System;
 namespace Altaxo.Data
 {
   /// <summary>
-  /// This is a column with elements, which can be treated as numeric values. This is truly the case
-  /// for columns which hold integer values or floating point values. Also true for DateTime columns, since they
-  /// can converted in seconds since a given reference date.
+  /// Represents a column whose elements can be treated as numeric values.
+  /// This includes integer and floating-point columns and also <see cref="DateTime"/>-based columns that can be converted to seconds since a reference date.
   /// </summary>
   public interface INumericColumn : IReadableColumn, ICloneable, Altaxo.Calc.LinearAlgebra.INumericSequence<double>
   {

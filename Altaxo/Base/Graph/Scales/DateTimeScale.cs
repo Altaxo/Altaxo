@@ -34,7 +34,7 @@ namespace Altaxo.Graph.Scales
   using Rescaling;
 
   /// <summary>
-  /// Summary description for DateTimeAxis.
+  /// Represents a scale for <see cref="DateTime"/> values.
   /// </summary>
   [Serializable]
   [DisplayName("${res:ClassNames.Altaxo.Graph.Scales.DateTimeScale}")]
@@ -50,8 +50,14 @@ namespace Altaxo.Graph.Scales
     /// <summary>Holds the <see cref="NumericalBoundaries"/> for that axis.</summary>
     protected FiniteDateTimeBoundaries _dataBounds;
 
+    /// <summary>
+    /// Holds the rescaling conditions for this scale.
+    /// </summary>
     protected DateTimeScaleRescaleConditions _rescaling;
 
+    /// <summary>
+    /// Holds the tick spacing for this scale.
+    /// </summary>
     protected Ticks.DateTimeTickSpacing _tickSpacing;
 
     #region Serialization
@@ -59,6 +65,7 @@ namespace Altaxo.Graph.Scales
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Scales.DateTimeScale", 2)]
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
@@ -72,6 +79,7 @@ namespace Altaxo.Graph.Scales
                 */
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (DateTimeScale?)o ?? new DateTimeScale(info);
@@ -94,6 +102,7 @@ namespace Altaxo.Graph.Scales
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DateTimeScale), 3)]
     private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DateTimeScale)obj;
@@ -105,6 +114,7 @@ namespace Altaxo.Graph.Scales
         info.AddValue("TickSpacing", s._tickSpacing);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (DateTimeScale?)o ?? new DateTimeScale(info);
@@ -125,11 +135,19 @@ namespace Altaxo.Graph.Scales
 
     #region ICloneable Members
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DateTimeScale"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public DateTimeScale(DateTimeScale from)
     {
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies the values from another <see cref="DateTimeScale"/> instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     [MemberNotNull(nameof(_dataBounds), nameof(_rescaling), nameof(_tickSpacing))]
     protected void CopyFrom(DateTimeScale from)
     {
@@ -147,6 +165,7 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -170,6 +189,9 @@ namespace Altaxo.Graph.Scales
     }
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DateTimeScale"/> class.
+    /// </summary>
     public DateTimeScale()
     {
       _dataBounds = new FiniteDateTimeBoundaries() { ParentObject = this };
@@ -184,6 +206,7 @@ namespace Altaxo.Graph.Scales
     /// Creates a copy of the axis.
     /// </summary>
     /// <returns>The cloned copy of the axis.</returns>
+    /// <inheritdoc />
     public override object Clone()
     {
       return new DateTimeScale(this);
@@ -191,6 +214,7 @@ namespace Altaxo.Graph.Scales
 
     #endregion ICloneable Members
 
+    /// <inheritdoc />
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_dataBounds is not null)
@@ -260,6 +284,7 @@ namespace Altaxo.Graph.Scales
       return new Altaxo.Data.AltaxoVariant(NormalToPhysical(x));
     }
 
+    /// <inheritdoc />
     public override AltaxoVariant OrgAsVariant
     {
       get
@@ -268,6 +293,7 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     public override AltaxoVariant EndAsVariant
     {
       get
@@ -276,6 +302,7 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     protected override string? SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
     {
       var o = (DateTime)org;
@@ -323,6 +350,7 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     public override Ticks.TickSpacing TickSpacing
     {
       get
@@ -381,16 +409,19 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     public override void OnUserRescaled()
     {
       Rescaling.OnUserRescaled();
     }
 
+    /// <inheritdoc />
     public override void OnUserZoomed(AltaxoVariant newZoomOrg, AltaxoVariant newZoomEnd)
     {
       _rescaling.OnUserZoomed(newZoomOrg, newZoomEnd);
     }
 
+    /// <inheritdoc />
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (object.ReferenceEquals(sender, DataBounds)) // Data bounds have changed
@@ -412,6 +443,11 @@ namespace Altaxo.Graph.Scales
       return base.HandleHighPriorityChildChangeCases(sender, ref e);
     }
 
+    /// <summary>
+    /// Adjusts the resulting origin and end values so that they form a valid non-empty interval.
+    /// </summary>
+    /// <param name="resultingOrg">The resulting origin.</param>
+    /// <param name="resultingEnd">The resulting end.</param>
     protected virtual void AdjustResultingOrgEndToValidValues(ref DateTime resultingOrg, ref DateTime resultingEnd)
     {
       if (resultingEnd < resultingOrg)
@@ -435,6 +471,9 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <summary>
+    /// Updates ticks, origin, and end values using the current rescaling object.
+    /// </summary>
     protected virtual void UpdateTicksAndOrgEndUsingRescalingObject()
     {
       DateTime org = Rescaling.ResultingOrg, end = Rescaling.ResultingEnd;

@@ -31,14 +31,21 @@ using Altaxo.Science.Spectroscopy.EnsembleProcessing;
 
 namespace Altaxo.Gui.Science.Spectroscopy.EnsembleProcessing
 {
+  /// <summary>
+  /// View interface for selecting an ensemble-processing method.
+  /// </summary>
   public interface IEnsembleProcessingView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="IEnsemblePreprocessor"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IEnsembleProcessingView))]
 
   public class EnsembleProcessingController : MVCANControllerEditImmutableDocBase<IEnsemblePreprocessor, IEnsembleProcessingView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_subController, () => SubController = null);
@@ -48,6 +55,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.EnsembleProcessing
 
     private ItemsController<Type> _availableMethods;
 
+    /// <summary>
+    /// Gets or sets the available ensemble-processing methods.
+    /// </summary>
     public ItemsController<Type> AvailableMethods
     {
       get => _availableMethods;
@@ -64,6 +74,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.EnsembleProcessing
 
     private IMVCANController? _subController;
 
+    /// <summary>
+    /// Gets or sets the controller for the selected ensemble-processing method.
+    /// </summary>
     public IMVCANController? SubController
     {
       get => _subController;
@@ -82,6 +95,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.EnsembleProcessing
     #endregion
 
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -122,6 +136,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.EnsembleProcessing
       CreateSubController();
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (SubController is not null)
@@ -138,8 +153,12 @@ namespace Altaxo.Gui.Science.Spectroscopy.EnsembleProcessing
 
     #region TypeSorter
 
+    /// <summary>
+    /// Sorts ensemble-processing types for display.
+    /// </summary>
     class TypeSorter : IComparer<Type>
     {
+      /// <inheritdoc/>
       public int Compare(Type x, Type y)
       {
         var xn = x.Name.EndsWith("None");

@@ -40,10 +40,19 @@ namespace Altaxo.Settings
   /// </summary>
   public class CultureSettings : Main.ICopyFrom
   {
+    /// <summary>
+    /// Gets the property key for the document culture.
+    /// </summary>
     public static readonly PropertyKey<CultureSettings> PropertyKeyDocumentCulture = new PropertyKey<CultureSettings>("04A3950C-1AA0-4E66-A734-A278C51BD04B", "Language\\DocumentCulture", PropertyLevel.All, typeof(object), () => new CultureSettings(CultureSettingsAtStartup.StartupDocumentCultureInfo)) { ApplicationAction = ApplyDocumentCulture };
 
+    /// <summary>
+    /// Gets the property key for the UI culture.
+    /// </summary>
     public static readonly PropertyKey<CultureSettings> PropertyKeyUICulture = new PropertyKey<CultureSettings>("AB6F72E7-2879-47F4-9F79-3D2A0F7C1C55", "Language\\UICulture", PropertyLevel.Application, () => new CultureSettings(CultureSettingsAtStartup.StartupUICultureInfo)) { ApplicationAction = ApplyDocumentCulture };
 
+    /// <summary>
+    /// The invariant culture identifier.
+    /// </summary>
     protected static readonly int InvariantCultureID = CultureInfo.InvariantCulture.LCID;
 
     /// <summary>Value that uniquely identifies a culture.</summary>
@@ -58,6 +67,9 @@ namespace Altaxo.Settings
     /// <summary>Gets or sets the number group separator.</summary>
     protected string _numberGroupSeparator;
 
+    /// <summary>
+    /// The cached culture as a read-only <see cref="CultureInfo"/>.
+    /// </summary>
     protected CultureInfo _cachedCultureAsReadOnly;
 
     #region Serialization
@@ -116,6 +128,10 @@ namespace Altaxo.Settings
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CultureSettings"/> class.
+    /// </summary>
+    /// <param name="c">The culture info to use.</param>
     public CultureSettings(CultureInfo c)
     {
       _cachedCultureAsReadOnly = CultureInfo.ReadOnly(c);
@@ -137,6 +153,7 @@ namespace Altaxo.Settings
       CopyFrom(from);
     }
 
+    /// <inheritdoc/>
     public bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -154,6 +171,10 @@ namespace Altaxo.Settings
       return false;
     }
 
+    /// <summary>
+    /// Creates a copy of this instance.
+    /// </summary>
+    /// <returns>The cloned culture settings.</returns>
     public CultureSettings Clone()
     {
       return new CultureSettings(this);
@@ -164,6 +185,9 @@ namespace Altaxo.Settings
       return new CultureSettings(this);
     }
 
+    /// <summary>
+    /// Gets the culture identifier.
+    /// </summary>
     public int CultureID
     {
       get
@@ -204,6 +228,9 @@ namespace Altaxo.Settings
       get { return _numberGroupSeparator; }
     }
 
+    /// <summary>
+    /// Gets the culture info represented by this instance.
+    /// </summary>
     public CultureInfo Culture
     {
       get
@@ -231,6 +258,10 @@ namespace Altaxo.Settings
       _cachedCultureAsReadOnly = CultureInfo.ReadOnly(result);
     }
 
+    /// <summary>
+    /// Returns a string representation of the culture settings.
+    /// </summary>
+    /// <returns>A string containing the culture name, decimal separator, and group separator.</returns>
     public override string ToString()
     {
       return string.Format("{0} | {1} | {2}", _cultureName, _numberDecimalSeparator, _numberGroupSeparator);
@@ -238,6 +269,10 @@ namespace Altaxo.Settings
 
     #region Static methods
 
+    /// <summary>
+    /// Applies the UI culture settings.
+    /// </summary>
+    /// <param name="culture">The culture settings to apply.</param>
     public static void ApplyUICulture(CultureSettings culture)
     {
       // first we set the properties that Sharpdevelop awaits to change its language,
@@ -246,6 +281,10 @@ namespace Altaxo.Settings
       Altaxo.Serialization.GUIConversion.CultureSettings = culture.Culture;
     }
 
+    /// <summary>
+    /// Applies the document culture settings.
+    /// </summary>
+    /// <param name="culture">The culture settings to apply.</param>
     public static void ApplyDocumentCulture(CultureSettings culture)
     {
       System.Threading.Thread.CurrentThread.CurrentCulture = culture.Culture;
@@ -255,7 +294,7 @@ namespace Altaxo.Settings
   }
 
   /// <summary>
-  /// Static helper class to provide the current Gui culture both at runtime, but also at design time.
+  /// Static helper class to provide the current GUI culture both at runtime and at design time.
   /// </summary>
   public static class GuiCulture
   {
@@ -283,6 +322,9 @@ namespace Altaxo.Settings
     private static CultureInfo? _startupDocumentCultureInfo;
     private static CultureInfo? _startupUICultureInfo;
 
+    /// <summary>
+    /// Gets or sets the startup document culture info.
+    /// </summary>
     public static CultureInfo StartupDocumentCultureInfo
     {
       get
@@ -306,6 +348,9 @@ namespace Altaxo.Settings
       }
     }
 
+    /// <summary>
+    /// Gets or sets the startup UI culture info.
+    /// </summary>
     public static CultureInfo StartupUICultureInfo
     {
       get

@@ -31,12 +31,17 @@ using Altaxo.Scripting;
 
 namespace Altaxo.Gui.Data
 {
+  /// <summary>
+  /// Controller for <see cref="FileImportScriptDataSource"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IImportDataSourceView))]
   [UserControllerForObject(typeof(FileImportScriptDataSource))]
   public class FileImportScriptDataSourceController : MVCANControllerEditOriginalDocBase<FileImportScriptDataSource, IImportDataSourceView>, IMVCSupportsApplyCallback
   {
+    /// <inheritdoc/>
     public event Action SuccessfullyApplied;
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_commonImportOptionsController, () => _commonImportOptionsController = null);
@@ -48,6 +53,9 @@ namespace Altaxo.Gui.Data
 
     private string _commonImportOptionsControlHeader;
 
+    /// <summary>
+    /// Gets or sets the header for the common import options control.
+    /// </summary>
     public string CommonImportOptionsControlHeader
     {
       get => _commonImportOptionsControlHeader;
@@ -64,6 +72,9 @@ namespace Altaxo.Gui.Data
 
     private IMVCANController _commonImportOptionsController;
 
+    /// <summary>
+    /// Gets or sets the controller for the common import options.
+    /// </summary>
     public IMVCANController CommonImportOptionsController
     {
       get => _commonImportOptionsController;
@@ -80,6 +91,9 @@ namespace Altaxo.Gui.Data
 
     private string _specificImportOptionsControlHeader;
 
+    /// <summary>
+    /// Gets or sets the header for the specific import options control.
+    /// </summary>
     public string SpecificImportOptionsControlHeader
     {
       get => _specificImportOptionsControlHeader;
@@ -96,6 +110,9 @@ namespace Altaxo.Gui.Data
 
     private IMVCANController _specificImportOptionsController;
 
+    /// <summary>
+    /// Gets or sets the controller for the specific import options.
+    /// </summary>
     public IMVCANController SpecificImportOptionsController
     {
       get => _specificImportOptionsController;
@@ -112,6 +129,9 @@ namespace Altaxo.Gui.Data
 
     private string _specificImportSourceControlHeader;
 
+    /// <summary>
+    /// Gets or sets the header for the specific import source control.
+    /// </summary>
     public string SpecificImportSourceControlHeader
     {
       get => _specificImportSourceControlHeader;
@@ -128,6 +148,9 @@ namespace Altaxo.Gui.Data
 
     private MultipleFilesController _specificImportSourceController;
 
+    /// <summary>
+    /// Gets or sets the controller for the import source files.
+    /// </summary>
     public MultipleFilesController SpecificImportSourceController
     {
       get => _specificImportSourceController;
@@ -147,6 +170,7 @@ namespace Altaxo.Gui.Data
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -166,6 +190,7 @@ namespace Altaxo.Gui.Data
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       bool result;

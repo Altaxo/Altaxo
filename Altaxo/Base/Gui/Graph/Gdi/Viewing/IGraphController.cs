@@ -34,10 +34,13 @@ using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing
 {
+  /// <summary>
+  /// Provides the view contract for 2D graph views.
+  /// </summary>
   public interface IGraphView
   {
     /// <summary>
-    /// Sets the controller of the view;
+    /// Sets the controller of the view.
     /// </summary>
     IGraphViewEventSink Controller { set; }
 
@@ -55,7 +58,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     bool ShowGraphScrollBars { set; }
 
     /// <summary>
-    /// Get /sets the scroll position of the graph
+    /// Gets the scroll position of the graph.
     /// </summary>
     PointD2D GraphScrollPosition { get; }
 
@@ -102,10 +105,19 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     /// </summary>
     object GuiInitiallyFocusedElement { get; }
 
+    /// <summary>
+    /// Captures the mouse on the graph canvas.
+    /// </summary>
     void CaptureMouseOnCanvas();
 
+    /// <summary>
+    /// Releases mouse capture on the graph canvas.
+    /// </summary>
     void ReleaseCaptureMouseOnCanvas();
 
+    /// <summary>
+    /// Sets the focus to the graph panel.
+    /// </summary>
     void FocusOnGraphPanel();
 
     /// <summary>
@@ -114,8 +126,14 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     /// <param name="cursor">The cursor (must be of the appropriate Gui type).</param>
     void SetPanelCursor(object cursor);
 
+    /// <summary>
+    /// Requests rendering of the current overlay.
+    /// </summary>
     void EhRenderOverlayTriggered();
 
+    /// <summary>
+    /// Gets or sets the current graph tool type.
+    /// </summary>
     GraphToolType CurrentGraphTool { get; set; }
 
     /// <summary>
@@ -126,8 +144,14 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     /// </value>
     IList<IHitTestObject> SelectedObjects { get; }
 
+    /// <summary>
+    /// Gets a value indicating whether overlay painting is required for the current mouse state.
+    /// </summary>
     bool MouseState_IsOverlayPaintingRequired { get; }
 
+    /// <summary>
+    /// Performs mouse-state specific painting after the graph has been rendered.
+    /// </summary>
     void MouseState_AfterPaint(System.Drawing.Graphics g);
 
     /// <summary>
@@ -137,10 +161,19 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     void AnnounceContentVisibilityChanged(bool isVisible);
   }
 
+  /// <summary>
+  /// Provides the event sink contract used by <see cref="IGraphView"/>.
+  /// </summary>
   public interface IGraphViewEventSink
   {
+    /// <summary>
+    /// Gets the graph document associated with the view.
+    /// </summary>
     GraphDocument Doc { get; }
 
+    /// <summary>
+    /// Gets the currently active host layer.
+    /// </summary>
     HostLayer ActiveLayer { get; }
 
     /// <summary>
@@ -153,13 +186,25 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     /// <summary>Handles the event when the size of the graph area is changed.</summary>
     void EhView_GraphPanelSizeChanged();
 
+    /// <summary>
+    /// Handles scrolling of the graph view.
+    /// </summary>
     void EhView_Scroll();
 
+    /// <summary>
+    /// Handles a change of the current graph tool.
+    /// </summary>
     void EhView_CurrentGraphToolChanged();
 
+    /// <summary>
+    /// Shows the data context menu for the specified layer.
+    /// </summary>
     void EhView_ShowDataContextMenu(int[] layerNumber, object guiParent, Point pt);
   }
 
+  /// <summary>
+  /// Provides the controller contract for 2D graph views.
+  /// </summary>
   public interface IGraphController : IMVCANController
   {
     /// <summary>
@@ -173,7 +218,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     HostLayer ActiveLayer { get; }
 
     /// <summary>
-    /// Get / sets the currently active plot by number.
+    /// Gets or sets the currently active plot number.
     /// </summary>
     int CurrentPlotNumber { get; set; }
 
@@ -183,7 +228,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     ITool? GraphTool { get; }
 
     /// <summary>
-    /// check the validity of the CurrentLayerNumber and correct it
+    /// Checks the validity of the current layer number and corrects it if necessary.
     /// </summary>
     /// <returns>The currently active layer.</returns>
     HostLayer EnsureValidityOfCurrentLayerNumber();

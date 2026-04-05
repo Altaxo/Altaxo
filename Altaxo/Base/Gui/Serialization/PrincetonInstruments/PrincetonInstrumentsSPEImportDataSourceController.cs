@@ -30,9 +30,13 @@ using Altaxo.Serialization.PrincetonInstruments;
 
 namespace Altaxo.Gui.Serialization.PrincetonInstruments
 {
+  /// <summary>
+  /// Controller for <see cref="PrincetonInstrumentsSPEImportDataSource"/>.
+  /// </summary>
   [UserControllerForObject(typeof(PrincetonInstrumentsSPEImportDataSource))]
   public class PrincetonInstrumentsSPEImportDataSourceController : DataSourceControllerBase<PrincetonInstrumentsSPEImportDataSource>
   {
+    /// <inheritdoc />
     protected override IMVCANController GetProcessDataController()
     {
       var processDataController = new MultipleFilesController();
@@ -42,7 +46,9 @@ namespace Altaxo.Gui.Serialization.PrincetonInstruments
       return processDataController;
     }
 
+    /// <inheritdoc />
     protected override bool IsProcessDataInitiallyExpanded() => true;
+    /// <inheritdoc />
     protected override bool IsProcessOptionsInitiallyExpanded() => false;
   }
 }

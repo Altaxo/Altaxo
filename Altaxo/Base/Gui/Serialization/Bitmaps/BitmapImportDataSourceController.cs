@@ -29,9 +29,13 @@ using Altaxo.Serialization.Bitmaps;
 
 namespace Altaxo.Gui.Serialization.Bitmaps
 {
+  /// <summary>
+  /// Controller for <see cref="BitmapImportDataSource"/>.
+  /// </summary>
   [UserControllerForObject(typeof(BitmapImportDataSource))]
   public class BitmapImportDataSourceController : DataSourceControllerBase<BitmapImportDataSource>
   {
+    /// <inheritdoc />
     protected override IMVCANController GetProcessDataController()
     {
       var processDataController = new MultipleFilesController();
@@ -41,7 +45,9 @@ namespace Altaxo.Gui.Serialization.Bitmaps
       return processDataController;
     }
 
+    /// <inheritdoc />
     protected override bool IsProcessDataInitiallyExpanded() => true;
+    /// <inheritdoc />
     protected override bool IsProcessOptionsInitiallyExpanded() => false;
   }
 }

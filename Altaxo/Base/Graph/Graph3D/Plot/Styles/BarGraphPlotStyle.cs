@@ -44,7 +44,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
   using Plot.Groups;
 
   /// <summary>
-  ///
+  /// Draws three-dimensional data points as bars.
   /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.BarGraphPlotStyle}")]
   public class BarGraphPlotStyle
@@ -147,9 +147,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     #region Serialization
 
+    /// <summary>
+    /// Serializes <see cref="BarGraphPlotStyle"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BarGraphPlotStyle), 0)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (BarGraphPlotStyle)obj;
@@ -191,6 +195,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         return s;
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         BarGraphPlotStyle s = SDeserialize(o, info, parent);
@@ -200,6 +205,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     #endregion Serialization
 
+    /// <summary>
+    /// Copies the values from another <see cref="BarGraphPlotStyle"/> instance.
+    /// </summary>
+    /// <param name="from">The style to copy from.</param>
     [MemberNotNull(nameof(_pen))]
     protected void CopyFrom(BarGraphPlotStyle from)
     {
@@ -226,6 +235,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     }
 
 
+    /// <summary>
+    /// Copies values from another instance.
+    /// </summary>
+    /// <param name="obj">The source object.</param>
+    /// <param name="copyWithDataReferences">Unused flag kept for interface compatibility.</param>
+    /// <returns><see langword="true"/> if copying succeeded; otherwise, <see langword="false"/>.</returns>
     public virtual bool CopyFrom(object obj, bool copyWithDataReferences)
     {
       if (ReferenceEquals(this, obj))
@@ -262,33 +277,51 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     }
 
     /// <inheritdoc/>
+    /// <inheritdoc/>
     public object Clone()
     {
       return new BarGraphPlotStyle(this, true);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BarGraphPlotStyle"/> class during deserialization.
+    /// </summary>
+    /// <param name="info">The deserialization info.</param>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected BarGraphPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BarGraphPlotStyle"/> class from a property context.
+    /// </summary>
+    /// <param name="context">The property context.</param>
     public BarGraphPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       var color = GraphDocument.GetDefaultPlotColor(context);
       _pen = new PenX3D(color, 1);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BarGraphPlotStyle"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The style to copy from.</param>
+    /// <param name="copyWithDataReferences">Unused for this style because it does not own additional data references.</param>
     public BarGraphPlotStyle(BarGraphPlotStyle from, bool copyWithDataReferences)
     {
       CopyFrom(from);
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Gets or sets the strategy used to shift grouped bars.
+    /// </summary>
     public BarShiftStrategy3D BarShiftStrategy
     {
       get
@@ -305,6 +338,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the maximum number of shifted items in one direction for manual bar shifting.
+    /// </summary>
     public int BarShiftMaxItemsInOneDirection
     {
       get
@@ -324,6 +360,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this style accepts colors from group styles.
+    /// </summary>
     public bool IsColorReceiver
     {
       get
@@ -332,6 +371,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the bar color is independent of group styles.
+    /// </summary>
     public bool IndependentColor
     {
       get
@@ -347,6 +389,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the pen used to draw the bars.
+    /// </summary>
     public PenX3D Pen
     {
       get { return _pen; }
@@ -359,6 +404,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether both bar cross-section thicknesses must be equal.
+    /// </summary>
     public bool UseUniformCrossSectionThickness
     {
       get
@@ -375,6 +423,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the relative inner gap in x direction.
+    /// </summary>
     public double InnerGapX
     {
       get { return _relInnerGapX; }
@@ -388,6 +439,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the relative outer gap in x direction.
+    /// </summary>
     public double OuterGapX
     {
       get { return _relOuterGapX; }
@@ -401,6 +455,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the relative inner gap in y direction.
+    /// </summary>
     public double InnerGapY
     {
       get
@@ -417,6 +474,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the relative outer gap in y direction.
+    /// </summary>
     public double OuterGapY
     {
       get { return _relOuterGapY; }
@@ -430,6 +490,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the logical gap to the previous item along the value axis.
+    /// </summary>
     public double PreviousItemGapV
     {
       get { return _previousItemZGap; }
@@ -442,6 +505,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether bars start at the previous item.
+    /// </summary>
     public bool StartAtPreviousItem
     {
       get { return _startAtPreviousItem; }
@@ -454,6 +520,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether <see cref="BaseValue"/> is interpreted as a physical value.
+    /// </summary>
     public bool UsePhysicalBaseValue
     {
       get { return _usePhysicalBaseValue; }
@@ -466,6 +535,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the base value used when painting bars.
+    /// </summary>
     public Altaxo.Data.AltaxoVariant BaseValue
     {
       get { return _baseValue; }
@@ -480,16 +552,25 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     #region IG3DPlotStyle Members
 
+    /// <summary>
+    /// Collects external group styles required by this plot style.
+    /// </summary>
     public void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups)
     {
       BarSizePosition3DGroupStyle.AddExternalGroupStyle(externalGroups);
     }
 
+    /// <summary>
+    /// Collects local group styles required by this plot style.
+    /// </summary>
     public void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       BarSizePosition3DGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
     }
 
+    /// <summary>
+    /// Prepares the group styles for bar positioning and coloring.
+    /// </summary>
     public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed3DPlotData pdata)
     {
       // first, we have to calculate the span of logical values from the minimum logical value to the maximum logical value
@@ -529,6 +610,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         { return _pen.Color; });
     }
 
+    /// <summary>
+    /// Applies the prepared group styles.
+    /// </summary>
     public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       _cachedColorForIndexFunction = null;
@@ -551,6 +635,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Paints the bars for the specified processed plot data.
+    /// </summary>
     public void Paint(IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData pdata, Processed3DPlotData? prevItemData, Processed3DPlotData? nextItemData)
     {
       if (pdata is null || !(pdata.RangeList is { } rangeList) || rangeList.Count == 0 || !(pdata.PlotPointsInAbsoluteLayerCoordinates is { } ptArray))
@@ -627,6 +714,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Paints a legend symbol and returns the used bounds.
+    /// </summary>
     public RectangleD3D PaintSymbol(IGraphicsContext3D g, RectangleD3D bounds)
     {
       bounds = bounds.WithPadding(0, 0, -bounds.SizeZ / 4);

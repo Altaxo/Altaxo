@@ -32,8 +32,14 @@ using Altaxo.Main.Properties;
 
 namespace Altaxo.Graph.Gdi.GraphTemplates
 {
+  /// <summary>
+  /// Provides creation helpers for graph templates with a polar x-y plot layer.
+  /// </summary>
   public static class TemplateWithXYPlotLayerWithG2DPolarCoordinateSystem
   {
+    /// <summary>
+    /// Gets the property key for the default polar graph template.
+    /// </summary>
     public static readonly Main.Properties.PropertyKey<GraphDocument> PropertyKeyDefaultTemplate =
     new Main.Properties.PropertyKey<GraphDocument>(
     "F3BF6A1C-7929-4120-A1A7-2E8A5745E7C4",

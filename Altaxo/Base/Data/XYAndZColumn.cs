@@ -34,6 +34,11 @@ namespace Altaxo.Data
   {
     #region Serialization
 
+    /// <summary>
+    /// Initializes a new instance from XML deserialization data.
+    /// </summary>
+    /// <param name="info">The deserialization info.</param>
+    /// <param name="version">The serialized version.</param>
     protected XYAndZColumn(IXmlDeserializationInfo info, int version) : base(info, version)
     {
     }
@@ -45,6 +50,7 @@ namespace Altaxo.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYAndZColumn), 0)]
     protected class SerializationSurrogate0 : IndependentAndDependentColumns.XmlSerializationSurrogate0
     {
+      /// <inheritdoc/>
       public override object? Deserialize(object? o, IXmlDeserializationInfo info, object? parentobject)
       {
         if (o is XYAndZColumn s)
@@ -77,6 +83,14 @@ namespace Altaxo.Data
 
 
 
+    /// <summary>
+    /// Initializes a new instance for the specified X, Y, and Z columns.
+    /// </summary>
+    /// <param name="table">The data table that contains the columns.</param>
+    /// <param name="groupNumber">The group number applied to the columns.</param>
+    /// <param name="xColumn">The X column.</param>
+    /// <param name="yColumn">The Y column.</param>
+    /// <param name="vColumn">The Z column.</param>
     public XYAndZColumn(DataTable table, int groupNumber, Altaxo.Data.IReadableColumn xColumn, Altaxo.Data.IReadableColumn yColumn, Altaxo.Data.IReadableColumn vColumn)
      : base(table, groupNumber, 2, 1)
     {
@@ -86,14 +100,15 @@ namespace Altaxo.Data
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="IndependentAndDependentColumns"/> class from given proxies of DataTable and columns.
-    /// This constructor is intended for internal use only, e.g. for creating copies of existing instances.
-    /// ATTENTION: The proxies are not cloned! 
+    /// Initializes a new instance of the <see cref="XYAndZColumn"/> class from the given table and column proxies.
+    /// This constructor is intended for internal use only, for example when creating copies of existing instances.
+    /// Attention: the proxies are not cloned.
     /// </summary>
     /// <param name="table">The table proxy.</param>
     /// <param name="groupNumber">The group number of the x- and y-column.</param>
     /// <param name="xCol">The proxy of the x-column.</param>
     /// <param name="yCol">The proxy of the y-column.</param>
+    /// <param name="zCol">The proxy of the z-column.</param>
     protected XYAndZColumn(DataTableProxy table, int groupNumber, IReadableColumnProxy xCol, IReadableColumnProxy yCol, IReadableColumnProxy zCol)
       : base(table, groupNumber, xCol, yCol, zCol)
     {
@@ -106,11 +121,13 @@ namespace Altaxo.Data
       return new XYAndZColumn(this);
     }
 
+    /// <inheritdoc/>
     protected override string GetIndependentVariableName(int idx)
     {
       return idx == 0 ? "X" : "Y";
     }
 
+    /// <inheritdoc/>
     protected override string GetDependentVariableName(int idx)
     {
       return "Z";
@@ -308,6 +325,7 @@ namespace Altaxo.Data
     /// <param name="groupNumber">The group number for X and Y.</param>
     /// <param name="xCol">The X column proxy.</param>
     /// <param name="yCol">The Y column proxy.</param>
+    /// <param name="zCol">The Z column proxy.</param>
     /// <returns>A new <see cref="XYAndZColumn"/> instance bound to the provided proxies.</returns>
     public static XYAndZColumn CreateFromProxies(DataTableProxy table, int groupNumber, IReadableColumnProxy xCol, IReadableColumnProxy yCol, IReadableColumnProxy zCol)
     {

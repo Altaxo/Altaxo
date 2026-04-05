@@ -33,7 +33,7 @@ using Altaxo.Collections;
 namespace Altaxo.Data
 {
   /// <summary>
-  /// Class that helps to assembly numerical matrix data from a <see cref="DataTable" /> and selected data columns, seclected data rows, and selected property columns /&gt;.
+  /// Helper class that assembles numerical matrix data from a <see cref="DataTable"/>, selected data columns, selected data rows, and selected property columns.
   /// </summary>
   public class DataTableToMatrixConverter
   {
@@ -52,7 +52,7 @@ namespace Altaxo.Data
     protected IAscendingIntegerCollection? _selectedPropertyColumns;
 
     /// <summary>
-    /// Function that is used to generate a writeable matrix. First argument is number of rows, the 2nd argument is the number of columns of the matrix. The result shold be a writeable matrix with the corresponding number of rows and columns.
+    /// Function that is used to generate a writeable matrix. The first argument is the number of rows, the second argument is the number of columns of the matrix. The result should be a writeable matrix with the corresponding number of rows and columns.
     /// </summary>
     protected Func<int, int, IMatrix<double>> _matrixGenerator;
 

@@ -33,14 +33,21 @@ using Altaxo.Gui.Common.Drawing;
 
 namespace Altaxo.Gui.Graph.Gdi.Axis
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="GridPlaneController"/>.
+  /// </summary>
   public interface IGridPlanView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="GridPlane"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IGridPlanView))]
   [UserControllerForObject(typeof(GridPlane))]
   public class GridPlaneController : MVCANControllerEditOriginalDocBase<GridPlane, IGridPlanView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_grid1, () => _grid1 = null);
@@ -52,6 +59,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     private IMVCANController _grid1;
 
+    /// <summary>
+    /// Gets or sets the controller for the first grid.
+    /// </summary>
     public IMVCANController Grid1Controller
     {
       get => _grid1;
@@ -67,6 +77,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     private string _Grid1Name;
 
+    /// <summary>
+    /// Gets or sets the display name of the first grid.
+    /// </summary>
     public string Grid1Name
     {
       get => _Grid1Name;
@@ -83,6 +96,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     private IMVCANController _grid2;
 
+    /// <summary>
+    /// Gets or sets the controller for the second grid.
+    /// </summary>
     public IMVCANController Grid2Controller
     {
       get => _grid2;
@@ -98,6 +114,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     private string _Grid2Name;
 
+    /// <summary>
+    /// Gets or sets the display name of the second grid.
+    /// </summary>
     public string Grid2Name
     {
       get => _Grid2Name;
@@ -114,6 +133,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     private IMVCANController _background;
 
+    /// <summary>
+    /// Gets or sets the controller for the plane background.
+    /// </summary>
     public IMVCANController BackgroundController
     {
       get => _background;
@@ -128,11 +150,15 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Gets the view for the plane background controller.
+    /// </summary>
     public object? BackgroundView => _background?.ViewObject;
 
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -156,6 +182,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (!_grid1.Apply(disposeController))

@@ -28,15 +28,17 @@ using System.Diagnostics.CodeAnalysis;
 namespace Altaxo.Data
 {
   /// <summary>
-  /// Summary description for OperatableObject.
+  /// Base class for objects that expose virtual hooks for arithmetic, logical, and comparison operators.
   /// </summary>
   public abstract class OperatableObject
   {
+    /// <inheritdoc/>
     public override bool Equals(object? o)
     {
       return base.Equals(o);
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return base.GetHashCode();
@@ -47,128 +49,251 @@ namespace Altaxo.Data
     // names seems to be used by the compiler for the operators itself
     // so we use here vopAddition and so on (the v from virtual)
 
+    /// <summary>
+    /// Tries to apply addition with the specified right-hand operand.
+    /// </summary>
     public virtual bool vop_Addition(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tries to apply addition with the specified left-hand operand.
+    /// </summary>
     public virtual bool vop_Addition_Rev(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tries to apply subtraction with the specified right-hand operand.
+    /// </summary>
     public virtual bool vop_Subtraction(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tries to apply subtraction with the specified left-hand operand.
+    /// </summary>
     public virtual bool vop_Subtraction_Rev(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tries to apply multiplication with the specified right-hand operand.
+    /// </summary>
     public virtual bool vop_Multiplication(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tries to apply multiplication with the specified left-hand operand.
+    /// </summary>
     public virtual bool vop_Multiplication_Rev(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tries to apply division with the specified right-hand operand.
+    /// </summary>
     public virtual bool vop_Division(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tries to apply division with the specified left-hand operand.
+    /// </summary>
     public virtual bool vop_Division_Rev(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tries to apply modulo with the specified right-hand operand.
+    /// </summary>
     public virtual bool vop_Modulo(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tries to apply modulo with the specified left-hand operand.
+    /// </summary>
     public virtual bool vop_Modulo_Rev(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tries to apply bitwise/logical AND with the specified right-hand operand.
+    /// </summary>
     public virtual bool vop_And(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tries to apply bitwise/logical AND with the specified left-hand operand.
+    /// </summary>
     public virtual bool vop_And_Rev(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tries to apply bitwise/logical OR with the specified right-hand operand.
+    /// </summary>
     public virtual bool vop_Or(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tries to apply bitwise/logical OR with the specified left-hand operand.
+    /// </summary>
     public virtual bool vop_Or_Rev(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tries to apply XOR with the specified right-hand operand.
+    /// </summary>
     public virtual bool vop_Xor(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tries to apply XOR with the specified left-hand operand.
+    /// </summary>
     public virtual bool vop_Xor_Rev(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tries to apply a left shift with the specified operand.
+    /// </summary>
     public virtual bool vop_ShiftLeft(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tries to apply a reversed left shift with the specified operand.
+    /// </summary>
     public virtual bool vop_ShiftLeft_Rev(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tries to apply a right shift with the specified operand.
+    /// </summary>
     public virtual bool vop_ShiftRight(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tries to apply a reversed right shift with the specified operand.
+    /// </summary>
     public virtual bool vop_ShiftRight_Rev(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tries to compare for equality with the specified operand.
+    /// </summary>
     public virtual bool vop_Equal(object a, out bool b)
     { b = Equals(a); return true; }
 
+    /// <summary>
+    /// Tries to compare for equality with the specified operand in reversed order.
+    /// </summary>
     public virtual bool vop_Equal_Rev(object a, out bool b)
     { b = a.Equals(this); return true; }
 
+    /// <summary>
+    /// Tries to compare for inequality with the specified operand.
+    /// </summary>
     public virtual bool vop_NotEqual(object a, out bool b)
     { b = !Equals(a); return true; }
 
+    /// <summary>
+    /// Tries to compare for inequality with the specified operand in reversed order.
+    /// </summary>
     public virtual bool vop_NotEqual_Rev(object a, out bool b)
     { b = !a.Equals(this); return true; }
 
+    /// <summary>
+    /// Tries to compare whether this instance is less than the specified operand.
+    /// </summary>
     public virtual bool vop_Lesser(object a, out bool b)
     { b = false; return false; }
 
+    /// <summary>
+    /// Tries to compare whether this instance is greater than the specified operand in reversed order.
+    /// </summary>
     public virtual bool vop_Lesser_Rev(object a, out bool b)
     { b = false; return false; }
 
+    /// <summary>
+    /// Tries to compare whether this instance is greater than the specified operand.
+    /// </summary>
     public virtual bool vop_Greater(object a, out bool b)
     { b = false; return false; }
 
+    /// <summary>
+    /// Tries to compare whether this instance is less than the specified operand in reversed order.
+    /// </summary>
     public virtual bool vop_Greater_Rev(object a, out bool b)
     { b = false; return false; }
 
+    /// <summary>
+    /// Tries to compare whether this instance is less than or equal to the specified operand.
+    /// </summary>
     public virtual bool vop_LesserOrEqual(object a, out bool b)
     { b = false; return false; }
 
+    /// <summary>
+    /// Tries to compare whether this instance is greater than or equal to the specified operand in reversed order.
+    /// </summary>
     public virtual bool vop_LesserOrEqual_Rev(object a, out bool b)
     { b = false; return false; }
 
+    /// <summary>
+    /// Tries to compare whether this instance is greater than or equal to the specified operand.
+    /// </summary>
     public virtual bool vop_GreaterOrEqual(object a, out bool b)
     { b = false; return false; }
 
+    /// <summary>
+    /// Tries to compare whether this instance is less than or equal to the specified operand in reversed order.
+    /// </summary>
     public virtual bool vop_GreaterOrEqual_Rev(object a, out bool b)
     { b = false; return false; }
 
     // Unary operators
 
+    /// <summary>
+    /// Tries to apply the unary plus operator.
+    /// </summary>
     public virtual bool vop_Plus([MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tries to apply the unary minus operator.
+    /// </summary>
     public virtual bool vop_Minus([MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tries to apply the logical negation operator.
+    /// </summary>
     public virtual bool vop_Not([MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tries to apply the bitwise complement operator.
+    /// </summary>
     public virtual bool vop_Complement([MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tries to apply the increment operator.
+    /// </summary>
     public virtual bool vop_Increment([MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tries to apply the decrement operator.
+    /// </summary>
     public virtual bool vop_Decrement([MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tries to evaluate the instance for the <c>true</c> operator.
+    /// </summary>
     public virtual bool vop_True(out bool b)
     { b = false; return false; }
 
+    /// <summary>
+    /// Tries to evaluate the instance for the <c>false</c> operator.
+    /// </summary>
     public virtual bool vop_False(out bool b)
     { b = false; return false; }
 
+    /// <summary>
+    /// Applies the binary addition operator.
+    /// </summary>
     public static OperatableObject operator +(OperatableObject c1, object c2)
     {
 
@@ -180,6 +305,9 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to add " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies the binary addition operator with operands in reversed order.
+    /// </summary>
     public static OperatableObject operator +(object c1, OperatableObject c2)
     {
 
@@ -191,6 +319,9 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to add " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies the binary subtraction operator.
+    /// </summary>
     public static OperatableObject operator -(OperatableObject c1, object c2)
     {
 
@@ -202,6 +333,9 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to subtract " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies the binary multiplication operator.
+    /// </summary>
     public static OperatableObject operator *(OperatableObject c1, object c2)
     {
 
@@ -213,6 +347,9 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to multiply " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies the binary division operator.
+    /// </summary>
     public static OperatableObject operator /(OperatableObject c1, object c2)
     {
 
@@ -224,6 +361,9 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to divide " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies the binary modulo operator.
+    /// </summary>
     public static OperatableObject operator %(OperatableObject c1, object c2)
     {
 
@@ -235,6 +375,9 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to take modulus of " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies the binary AND operator.
+    /// </summary>
     public static OperatableObject operator &(OperatableObject c1, object c2)
     {
 
@@ -246,6 +389,9 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply and operator to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies the binary OR operator.
+    /// </summary>
     public static OperatableObject operator |(OperatableObject c1, object c2)
     {
 
@@ -257,6 +403,9 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply or operator to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies the binary XOR operator.
+    /// </summary>
     public static OperatableObject operator ^(OperatableObject c1, object c2)
     {
 
@@ -268,6 +417,9 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply xor operator to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies the left-shift operator.
+    /// </summary>
     public static OperatableObject operator <<(OperatableObject c1, int c2)
     {
 
@@ -276,6 +428,9 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to shift left " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies the right-shift operator.
+    /// </summary>
     public static OperatableObject operator >>(OperatableObject c1, int c2)
     {
 
@@ -285,6 +440,9 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to shift right " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies the equality operator.
+    /// </summary>
     public static bool operator ==(OperatableObject c1, object c2)
     {
       if (c1 is null && c2 is null)
@@ -299,6 +457,9 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator equal to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies the inequality operator.
+    /// </summary>
     public static bool operator !=(OperatableObject c1, object c2)
     {
 
@@ -314,6 +475,9 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator notequal to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies the less-than operator.
+    /// </summary>
     public static bool operator <(OperatableObject c1, object c2)
     {
 
@@ -325,6 +489,9 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator lesser to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies the greater-than operator.
+    /// </summary>
     public static bool operator >(OperatableObject c1, object c2)
     {
 
@@ -336,6 +503,9 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator greater to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies the less-than-or-equal operator.
+    /// </summary>
     public static bool operator <=(OperatableObject c1, object c2)
     {
 
@@ -347,6 +517,9 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator LesserOrEqual to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies the greater-than-or-equal operator.
+    /// </summary>
     public static bool operator >=(OperatableObject c1, object c2)
     {
 
@@ -358,6 +531,9 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator GreaterOrEqual to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies unary plus.
+    /// </summary>
     public static OperatableObject operator +(OperatableObject c1)
     {
 
@@ -367,6 +543,9 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator plus to " + c1.ToString() + " (" + c1.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies unary minus.
+    /// </summary>
     public static OperatableObject operator -(OperatableObject c1)
     {
 
@@ -376,6 +555,9 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator minus to " + c1.ToString() + " (" + c1.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies logical negation.
+    /// </summary>
     public static OperatableObject operator !(OperatableObject c1)
     {
 
@@ -385,6 +567,9 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator not to " + c1.ToString() + " (" + c1.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies bitwise complement.
+    /// </summary>
     public static OperatableObject operator ~(OperatableObject c1)
     {
 
@@ -394,6 +579,9 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator complement to " + c1.ToString() + " (" + c1.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies increment.
+    /// </summary>
     public static OperatableObject operator ++(OperatableObject c1)
     {
 
@@ -403,6 +591,9 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator increment to " + c1.ToString() + " (" + c1.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies decrement.
+    /// </summary>
     public static OperatableObject operator --(OperatableObject c1)
     {
 
@@ -412,6 +603,9 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator decrement to " + c1.ToString() + " (" + c1.GetType() + ")");
     }
 
+    /// <summary>
+    /// Evaluates the instance for boolean <c>true</c>.
+    /// </summary>
     public static bool operator true(OperatableObject c1)
     {
 
@@ -421,6 +615,9 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator TRUE to " + c1.ToString() + " (" + c1.GetType() + ")");
     }
 
+    /// <summary>
+    /// Evaluates the instance for boolean <c>false</c>.
+    /// </summary>
     public static bool operator false(OperatableObject c1)
     {
 

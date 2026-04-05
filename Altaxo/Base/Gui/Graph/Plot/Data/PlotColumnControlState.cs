@@ -24,10 +24,16 @@
 
 namespace Altaxo.Gui.Graph.Plot.Data
 {
+  /// <summary>
+  /// Indicates the validation state of a plot-column control.
+  /// </summary>
   public enum PlotColumnControlState
   {
+    /// <summary>The control is in a normal state.</summary>
     Normal,
+    /// <summary>The control indicates a warning.</summary>
     Warning,
+    /// <summary>The control indicates an error.</summary>
     Error
   }
 }

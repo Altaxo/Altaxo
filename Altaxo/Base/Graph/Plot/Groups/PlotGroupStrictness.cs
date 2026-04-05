@@ -49,6 +49,9 @@ namespace Altaxo.Graph.Plot.Groups
     /// The style of the master item is copyied exactly to the style of all other items in the plot group (including all substyles). Then
     /// the plot groups are applied.
     /// </summary>
+    /// <summary>
+    /// The style of the master item is copied exactly to the style of all other items in the plot group, including all substyles. Then the plot groups are applied.
+    /// </summary>
     Strict = 2
   }
 }

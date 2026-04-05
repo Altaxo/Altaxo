@@ -36,6 +36,9 @@ namespace Altaxo.Graph.Gdi.Plot
   using Graph.Plot.Groups;
   using Groups;
 
+  /// <summary>
+  /// Provides the base implementation for plot items.
+  /// </summary>
   [Serializable]
   public abstract class PlotItem
   :
@@ -43,10 +46,14 @@ namespace Altaxo.Graph.Gdi.Plot
     IGPlotItem,
     Main.INamedObjectCollection
   {
+    /// <summary>
+    /// Copies state from another plot item.
+    /// </summary>
     protected void CopyFrom(PlotItem from, bool withBaseMembers)
     {
     }
 
+    /// <inheritdoc />
     public virtual bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -64,6 +71,9 @@ namespace Altaxo.Graph.Gdi.Plot
     /// </summary>
     public abstract IDocumentLeafNode StyleObject { get; set; }
 
+    /// <summary>
+    /// Gets the data object of this plot.
+    /// </summary>
     public abstract IDocumentLeafNode DataObject { get; }
 
     /// <summary>
@@ -124,6 +134,9 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <remarks>The data (DataColumns which belongs to a table in the document's DataTableCollection) are not cloned, only the reference to this columns is cloned.</remarks>
     public abstract object Clone();
 
+    /// <summary>
+    /// Gets the parent plot item collection.
+    /// </summary>
     public virtual PlotItemCollection? ParentCollection
     {
       get
@@ -191,10 +204,13 @@ namespace Altaxo.Graph.Gdi.Plot
 
     #region IPlotItem Members
 
+    /// <inheritdoc />
     public abstract void CollectStyles(PlotGroupStyleCollection styles);
 
+    /// <inheritdoc />
     public abstract void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, IPlotArea layer);
 
+    /// <inheritdoc />
     public abstract void ApplyGroupStyles(PlotGroupStyleCollection externalGroups);
 
     /// <summary>

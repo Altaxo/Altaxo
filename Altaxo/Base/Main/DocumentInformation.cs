@@ -27,6 +27,9 @@ using System;
 
 namespace Altaxo.Main
 {
+  /// <summary>
+  /// Stores descriptive information about a document, such as its identifier, notes, and originating Altaxo version.
+  /// </summary>
   public class DocumentInformation
   {
     private string _documentIdentifier = string.Empty;
@@ -40,6 +43,7 @@ namespace Altaxo.Main
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Main.DocumentInformation", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DocumentInformation)obj;
@@ -48,6 +52,7 @@ namespace Altaxo.Main
         info.AddValue("Notes", s.DocumentNotes);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         DocumentInformation s = SDeserialize(o, info, parent);
@@ -69,6 +74,7 @@ namespace Altaxo.Main
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DocumentInformation), 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DocumentInformation)obj;
@@ -80,6 +86,7 @@ namespace Altaxo.Main
         info.AddValue("AltaxoVersion", version.ToString());
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         DocumentInformation s = SDeserialize(o, info, parent);
@@ -101,12 +108,18 @@ namespace Altaxo.Main
     #endregion Serialization
 
 
+    /// <summary>
+    /// Gets or sets the document identifier.
+    /// </summary>
     public string DocumentIdentifier
     {
       get { return _documentIdentifier ?? string.Empty; }
       set { _documentIdentifier = value ?? string.Empty; }
     }
 
+    /// <summary>
+    /// Gets or sets the document notes.
+    /// </summary>
     public string DocumentNotes
     {
       get { return _documentNotes; }

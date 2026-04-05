@@ -91,6 +91,11 @@ namespace Altaxo.Serialization.AutoUpdates
     }
 
 
+    /// <summary>
+    /// Determines whether the current system meets the specified architecture requirement.
+    /// </summary>
+    /// <param name="value">The required architecture.</param>
+    /// <returns><c>true</c> if the requirement is met; otherwise, <c>false</c>.</returns>
     public static bool MeetsArchitectureRequirements(Architecture value)
     {
       var thisArchitecture = System.Runtime.InteropServices.RuntimeInformation.OSArchitecture;
@@ -98,6 +103,11 @@ namespace Altaxo.Serialization.AutoUpdates
       return value == thisArchitecture;
     }
 
+    /// <summary>
+    /// Determines whether the current operating system meets the specified requirement.
+    /// </summary>
+    /// <param name="value">The required operating system platform and version.</param>
+    /// <returns><c>true</c> if the requirement is met; otherwise, <c>false</c>.</returns>
     public static bool MeetsOSRequirements((OSPlatform osPlatForm, Version osVersion) value)
     {
       if (!RuntimeInformation.IsOSPlatform(value.osPlatForm))
@@ -128,7 +138,7 @@ namespace Altaxo.Serialization.AutoUpdates
     /// Gets the highest version that is possible to install; or null, if such a version does not exist.
     /// </summary>
     /// <param name="packageInfos">The package infos.</param>
-    /// <returns></returns>
+    /// <returns>The highest installable package, or <c>null</c> if none matches.</returns>
     public static PackageInfo? TryGetHighestVersion(PackageInfo[] packageInfos)
     {
       // from all parsed versions, choose that one that matches the requirements

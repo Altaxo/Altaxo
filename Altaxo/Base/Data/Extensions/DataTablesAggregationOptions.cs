@@ -28,7 +28,7 @@ using System.Collections.Immutable;
 namespace Altaxo.Data
 {
   /// <summary>
-  /// Options for aggregating data from one or multiple tables, see also <see cref="DataTablesAggregationDataSource"/>.
+  /// Options for aggregating data from one or more tables. See also <see cref="DataTablesAggregationDataSource"/>.
   /// </summary>
   public record DataTablesAggregationOptions : Main.IImmutable
   {
@@ -43,12 +43,12 @@ namespace Altaxo.Data
     public ImmutableList<string> AggregatedColumnNames { get; init; } = ImmutableList<string>.Empty;
 
     /// <summary>
-    /// If true, the table scripts of the tables are executed before aggregation.
+    /// Gets a value indicating whether the table scripts of the tables are executed before aggregation.
     /// </summary>
     public bool ExecuteTablesTableScriptBeforeAggregation { get; init; } = false;
 
     /// <summary>
-    /// If true, the data sources of the tables are executed before aggregation.
+    /// Gets a value indicating whether the data sources of the tables are executed before aggregation.
     /// </summary>
     public bool ExecuteTablesDataSourceBeforeAggregation { get; init; } = false;
 

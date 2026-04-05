@@ -33,29 +33,70 @@ namespace Altaxo.Gui.Data
   using Altaxo.Collections;
   using Altaxo.Data;
 
+  /// <summary>
+  /// Provides the view contract for <see cref="ExpandCyclingVariableDataController"/>.
+  /// </summary>
   public interface IExpandCyclingVariableDataView
   {
+    /// <summary>
+    /// Initializes the selectable cycling-variable column list.
+    /// </summary>
+    /// <param name="list">The available cycling-variable columns.</param>
     void InitializeCyclingVariableColumn(SelectableListNodeList list);
 
+    /// <summary>
+    /// Initializes the selectable columns-to-average list.
+    /// </summary>
+    /// <param name="list">The columns that can be averaged.</param>
     void InitializeColumnsToAverage(SelectableListNodeList list);
 
+    /// <summary>
+    /// Occurs when the selected source table changes.
+    /// </summary>
     event Action SelectedTableChanged;
 
+    /// <summary>
+    /// Occurs when the selected group number changes.
+    /// </summary>
     event Action SelectedGroupNumberChanged;
 
+    /// <summary>
+    /// Occurs when the selected available columns should be added as participating columns.
+    /// </summary>
     event Action UseSelectedAvailableColumnsAsParticipatingColumns;
 
+    /// <summary>
+    /// Occurs when the selected participating columns should be removed.
+    /// </summary>
     event Action DeleteSelectedParticipatingColumn;
 
+    /// <summary>
+    /// Initializes the selectable source table list.
+    /// </summary>
+    /// <param name="items">The available tables.</param>
     void InitializeAvailableTables(SelectableListNodeList items);
 
+    /// <summary>
+    /// Gets or sets the selected group number.
+    /// </summary>
     int GroupNumber { get; set; }
 
+    /// <summary>
+    /// Initializes the selectable available column list.
+    /// </summary>
+    /// <param name="items">The available columns.</param>
     void InitializeAvailableColumns(SelectableListNodeList items);
 
+    /// <summary>
+    /// Initializes the participating column list.
+    /// </summary>
+    /// <param name="items">The participating columns.</param>
     void InitializeParticipatingColumns(SelectableListNodeList items);
   }
 
+  /// <summary>
+  /// Controller for editing <see cref="DataTableMultipleColumnProxy"/> data used to expand a cycling variable.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IExpandCyclingVariableDataView))]
   public class ExpandCyclingVariableDataController : MVCANControllerEditOriginalDocBase<DataTableMultipleColumnProxy, IExpandCyclingVariableDataView>
   {
@@ -65,11 +106,13 @@ namespace Altaxo.Gui.Data
     private SelectableListNodeList _availableTables = new SelectableListNodeList();
     private SelectableListNodeList _availableColumns = new SelectableListNodeList();
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       _choicesCyclingVar = null;
@@ -81,6 +124,7 @@ namespace Altaxo.Gui.Data
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -119,6 +163,7 @@ namespace Altaxo.Gui.Data
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       _doc.DataTable = _availableTables.FirstSelectedNode.Tag as DataTable;
@@ -139,6 +184,7 @@ namespace Altaxo.Gui.Data
       return ApplyEnd(true, disposeController);
     }
 
+    /// <inheritdoc />
     protected override void AttachView()
     {
       base.AttachView();
@@ -149,6 +195,7 @@ namespace Altaxo.Gui.Data
       _view.DeleteSelectedParticipatingColumn += EhClearVColumns;
     }
 
+    /// <inheritdoc />
     protected override void DetachView()
     {
       _view.SelectedTableChanged -= EhSelectedTableChanged;

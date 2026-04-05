@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -27,12 +27,19 @@ using Altaxo.Serialization.Jcamp;
 
 namespace Altaxo.Gui.Serialization.Jcamp
 {
+  /// <summary>
+  /// View interface for editing <see cref="JcampImportOptions"/>.
+  /// </summary>
   public interface IJcampImportOptionsView : IDataContextAwareView { }
 
+  /// <summary>
+  /// Controller for editing <see cref="JcampImportOptions"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IJcampImportOptionsView))]
   [UserControllerForObject(typeof(JcampImportOptions))]
   public class JcampImportOptionsController : MVCANControllerEditImmutableDocBase<JcampImportOptions, IJcampImportOptionsView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -42,6 +49,9 @@ namespace Altaxo.Gui.Serialization.Jcamp
 
     private bool _useNeutralColumnName;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the imported y-column names should be neutral (constant).
+    /// </summary>
     public bool UseNeutralColumnName
     {
       get => _useNeutralColumnName;
@@ -57,6 +67,9 @@ namespace Altaxo.Gui.Serialization.Jcamp
 
     private string _neutralColumnName;
 
+    /// <summary>
+    /// Gets or sets the neutral base name for imported y-columns.
+    /// </summary>
     public string NeutralColumnName
     {
       get => _neutralColumnName;
@@ -72,6 +85,9 @@ namespace Altaxo.Gui.Serialization.Jcamp
 
     private bool _includeFilePathAsProperty;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the imported file path should be stored as a column property.
+    /// </summary>
     public bool IncludeFilePathAsProperty
     {
       get => _includeFilePathAsProperty;
@@ -88,6 +104,7 @@ namespace Altaxo.Gui.Serialization.Jcamp
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -100,6 +117,7 @@ namespace Altaxo.Gui.Serialization.Jcamp
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = _doc with

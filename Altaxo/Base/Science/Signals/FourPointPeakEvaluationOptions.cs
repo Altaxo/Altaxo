@@ -43,22 +43,22 @@ namespace Altaxo.Science.Signals
 
 
     /// <summary>
-    /// Gets the index of the first point of the left line.
+    /// Gets the index of the left outer point.
     /// </summary>
     public double IndexLeftOuter { get; init; }
 
     /// <summary>
-    /// Gets the index of the second point of the left line.
+    /// Gets the index of the left inner point.
     /// </summary>
     public double IndexLeftInner { get; init; }
 
     /// <summary>
-    /// Gets the index of the first point of the right line.
+    /// Gets the index of the right outer point.
     /// </summary>
     public double IndexRightOuter { get; init; }
 
     /// <summary>
-    /// Gets the index of the second point of the right line.
+    /// Gets the index of the right inner point.
     /// </summary>
     public double IndexRightInner { get; init; }
 
@@ -71,6 +71,7 @@ namespace Altaxo.Science.Signals
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FourPointPeakEvaluationOptions), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (FourPointPeakEvaluationOptions)obj;
@@ -82,6 +83,7 @@ namespace Altaxo.Science.Signals
         info.AddValue("IndexRightOuter", s.IndexRightOuter);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var includeOriginalPointsInOutput = info.GetBoolean("IncludeOriginalPointsInOutput");

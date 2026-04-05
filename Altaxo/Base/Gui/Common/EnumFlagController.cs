@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -28,10 +28,16 @@ using Altaxo.Collections;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// Defines the view contract for editing flags enumerations.
+  /// </summary>
   public interface IEnumFlagView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Legacy controller for flags enumerations.
+  /// </summary>
   [Obsolete("Use Altaxo.Gui.Common.BasicTypes.EnumValueController")]
   public class EnumFlagController : IMVCANController
   {
@@ -49,6 +55,9 @@ namespace Altaxo.Gui.Common
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the available flag choices.
+    /// </summary>
     public SelectableListNodeList Choices
     {
       get => _list;
@@ -140,6 +149,7 @@ namespace Altaxo.Gui.Common
 
     #region IMVCANController Members
 
+    /// <inheritdoc/>
     public bool InitializeDocument(params object[] args)
     {
       if (args.Length == 0 || !(args[0] is System.Enum))
@@ -153,6 +163,7 @@ namespace Altaxo.Gui.Common
       return true;
     }
 
+    /// <inheritdoc/>
     public UseDocument UseDocumentCopy
     {
       set { }
@@ -162,6 +173,7 @@ namespace Altaxo.Gui.Common
 
     #region IMVCController Members
 
+    /// <inheritdoc/>
     public object? ViewObject
     {
       get
@@ -193,6 +205,7 @@ namespace Altaxo.Gui.Common
         view.DataContext = null;
     }
 
+    /// <inheritdoc/>
     public object ModelObject
     {
       get
@@ -201,6 +214,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
       DetachView();
@@ -210,6 +224,7 @@ namespace Altaxo.Gui.Common
 
     #region IApplyController Members
 
+    /// <inheritdoc/>
     public bool Apply(bool disposeController)
     {
       if (_doc is null) throw NoDocumentException;

@@ -32,6 +32,9 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Gui.Common.BasicTypes
 {
+  /// <summary>
+  /// Defines the view contract for editing integral values.
+  /// </summary>
   public interface IIntegerValueView : IDataContextAwareView
   {
   }
@@ -59,8 +62,15 @@ namespace Altaxo.Gui.Common.BasicTypes
     private BigInteger? _userMinimum;
     private BigInteger? _userMaximum;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IntegerValueController"/> class.
+    /// </summary>
     public IntegerValueController() { _originalObject = null!; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IntegerValueController"/> class.
+    /// </summary>
+    /// <param name="integer">The initial integer value.</param>
     public IntegerValueController(object integer)
     {
       _originalObject = integer;
@@ -71,6 +81,7 @@ namespace Altaxo.Gui.Common.BasicTypes
       }
     }
 
+    /// <inheritdoc/>
     public override bool InitializeDocument(params object[] args)
     {
       if (args[0] is null)
@@ -132,15 +143,30 @@ namespace Altaxo.Gui.Common.BasicTypes
       return true;
     }
 
+    /// <summary>
+    /// Gets or sets the user-defined minimum value.
+    /// </summary>
     public BigInteger? UserMinimum { get => _userMinimum; set => _userMinimum = value; }
+    /// <summary>
+    /// Gets or sets the user-defined maximum value.
+    /// </summary>
     public BigInteger? UserMaximum { get => _userMaximum; set => _userMaximum = value; }
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the effective minimum value.
+    /// </summary>
     public BigInteger? Minimum => _typeMinimum.HasValue && _userMinimum.HasValue ? BigInteger.Max(_typeMinimum.Value, _userMinimum.Value) : _typeMinimum ?? _userMinimum;
 
+    /// <summary>
+    /// Gets the effective maximum value.
+    /// </summary>
     public BigInteger? Maximum => _typeMaximum.HasValue && _userMaximum.HasValue ? BigInteger.Min(_typeMaximum.Value, _userMaximum.Value) : _typeMaximum ?? _userMaximum;
 
+    /// <summary>
+    /// Gets or sets the current integer value.
+    /// </summary>
     public BigInteger Value
     {
       get => _doc;
@@ -160,13 +186,22 @@ namespace Altaxo.Gui.Common.BasicTypes
     }
 
     private string _minimumReplacementText = "Min";
+    /// <summary>
+    /// Gets or sets the replacement text for the minimum button.
+    /// </summary>
     public string MinimumReplacementText { get => _minimumReplacementText; set { _minimumReplacementText = value; } }
 
     private string _maximumReplacementText = "Max";
+    /// <summary>
+    /// Gets or sets the replacement text for the maximum button.
+    /// </summary>
     public string MaximumReplacementText { get => _maximumReplacementText; set { _maximumReplacementText = value; } }
 
     private bool _isGotoMinimumMaximumVisible = true;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the minimum and maximum shortcut controls are visible.
+    /// </summary>
     public bool IsGotoMinimumAndMaximumVisible
     {
       get
@@ -182,6 +217,7 @@ namespace Altaxo.Gui.Common.BasicTypes
 
     #endregion
 
+    /// <inheritdoc/>
     public override object ModelObject
     {
       get
@@ -212,11 +248,13 @@ namespace Altaxo.Gui.Common.BasicTypes
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;

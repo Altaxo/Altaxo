@@ -30,6 +30,9 @@ using System.Text;
 
 namespace Altaxo.Graph
 {
+  /// <summary>
+  /// Defines common functionality of a coordinate system.
+  /// </summary>
   public interface ICoordinateSystem
   {
     /// <summary>
@@ -37,6 +40,11 @@ namespace Altaxo.Graph
     /// </summary>
     IEnumerable<CSAxisInformation> AxisStyles { get; }
 
+    /// <summary>
+    /// Gets the axis-style information for the specified axis identifier.
+    /// </summary>
+    /// <param name="styleID">The style identifier.</param>
+    /// <returns>The axis-style information.</returns>
     CSAxisInformation GetAxisStyleInformation(CSLineID styleID);
   }
 }

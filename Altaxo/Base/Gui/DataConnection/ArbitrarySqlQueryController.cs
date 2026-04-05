@@ -31,16 +31,34 @@ using Altaxo.DataConnection;
 
 namespace Altaxo.Gui.DataConnection
 {
+  /// <summary>
+  /// View interface for editing and testing an arbitrary SQL query.
+  /// </summary>
   public interface IArbitrarySqlQueryView
   {
+    /// <summary>
+    /// Occurs when the SQL should be checked.
+    /// </summary>
     event Action CheckSql;
 
+    /// <summary>
+    /// Occurs when the query results should be previewed.
+    /// </summary>
     event Action ViewResults;
 
+    /// <summary>
+    /// Occurs when the query text should be cleared.
+    /// </summary>
     event Action ClearQuery;
 
+    /// <summary>
+    /// Occurs when the SQL text changes.
+    /// </summary>
     event Action SqlTextChanged;
 
+    /// <summary>
+    /// Gets or sets the SQL text.
+    /// </summary>
     string SqlText { get; set; }
 
     /// <summary>
@@ -51,6 +69,9 @@ namespace Altaxo.Gui.DataConnection
     void UpdateStatus(bool isConnectionStringEmpty, bool isSelectionStatementEmpty);
   }
 
+  /// <summary>
+  /// Controller for composing and validating arbitrary SQL queries.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IArbitrarySqlQueryView))]
   public class ArbitrarySqlQueryController : IMVCAController
   {
@@ -63,6 +84,9 @@ namespace Altaxo.Gui.DataConnection
     private string _selectionStatement;
     private OleDbSchema _schema;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ArbitrarySqlQueryController"/> class.
+    /// </summary>
     public ArbitrarySqlQueryController()
     {
       _schema = new OleDbSchema();
@@ -91,6 +115,9 @@ namespace Altaxo.Gui.DataConnection
       }
     }
 
+    /// <summary>
+    /// Gets or sets the selection statement.
+    /// </summary>
     public string SelectionStatement
     {
       get
@@ -202,6 +229,7 @@ namespace Altaxo.Gui.DataConnection
       _view.SqlTextChanged -= EhSqlTextChanged;
     }
 
+    /// <inheritdoc/>
     public object ViewObject
     {
       get
@@ -225,16 +253,19 @@ namespace Altaxo.Gui.DataConnection
       }
     }
 
+    /// <inheritdoc/>
     public object ModelObject
     {
       get { throw new NotImplementedException(); }
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
       ViewObject = null;
     }
 
+    /// <inheritdoc/>
     public bool Apply(bool disposeController)
     {
       return _connectionString is not null && !_connectionString.IsEmpty && !string.IsNullOrEmpty(_selectionStatement);
@@ -245,8 +276,9 @@ namespace Altaxo.Gui.DataConnection
     /// </summary>
     /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
     /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    ///   <c>True</c> if the revert operation was successful; <c>false</c> if the revert operation was not possible, that is, because the controller has not stored the original state of the model.
     /// </returns>
+    /// <inheritdoc/>
     public bool Revert(bool disposeController)
     {
       return false;

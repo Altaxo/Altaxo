@@ -30,7 +30,7 @@ using Altaxo.Main.Services.ScriptCompilation;
 namespace Altaxo.Scripting
 {
   /// <summary>
-  /// Holds the text, the module (=executable), and some properties of a column script.
+  /// Holds the text, the executable module, and additional properties of a table script.
   /// </summary>
   public class TableScript
     :
@@ -42,6 +42,7 @@ namespace Altaxo.Scripting
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Scripting.TableScript), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (TableScript)obj;
@@ -49,6 +50,7 @@ namespace Altaxo.Scripting
         info.AddValue("Text", s.ScriptText);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (TableScript?)o ?? new TableScript();
@@ -61,14 +63,14 @@ namespace Altaxo.Scripting
     #endregion Serialization
 
     /// <summary>
-    /// Creates an empty column script. Default Style is "Set Column".
+    /// Creates an empty table script.
     /// </summary>
     public TableScript()
     {
     }
 
     /// <summary>
-    /// Creates a column script as a copy from another script.
+    /// Creates a table script as a copy from another script.
     /// </summary>
     /// <param name="b">The script to copy from.</param>
     public TableScript(TableScript b)
@@ -77,7 +79,7 @@ namespace Altaxo.Scripting
     }
 
     /// <summary>
-    /// Creates a column script as a copy from another script.
+    /// Creates a table script as a copy from another script.
     /// </summary>
     /// <param name="b">The script to copy from.</param>
     /// <param name="forModification">If true, the new script text can be modified.</param>
@@ -87,7 +89,7 @@ namespace Altaxo.Scripting
     }
 
     /// <summary>
-    /// Gives the type of the script object (full name), which is created after successfull compilation.
+    /// Gives the type of the script object (full name), which is created after successful compilation.
     /// </summary>
     public override string ScriptObjectType
     {
@@ -122,6 +124,7 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <inheritdoc />
     public override string CodeStart
     {
       get
@@ -132,6 +135,7 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <inheritdoc />
     public override string CodeUserDefault
     {
       get
@@ -147,6 +151,7 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <inheritdoc />
     public override string CodeEnd
     {
       get
@@ -315,6 +320,13 @@ namespace Altaxo.Scripting
       return bSucceeded;
     }
 
+    /// <summary>
+    /// Executes the script with suspended notifications while showing a background progress dialog.
+    /// </summary>
+    /// <param name="myTable">The data table this script is working on.</param>
+    /// <returns>
+    /// An exception if execution was canceled or failed before completion; otherwise, <see langword="null" />.
+    /// </returns>
     public Exception? ExecuteWithBackgroundDialogAndSuspendNotifications(Altaxo.Data.DataTable myTable)
     {
       return Current.Gui.ExecuteAsUserCancellable(1000, (reporter) => ExecuteWithSuspendedNotifications(myTable, reporter));

@@ -49,6 +49,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   /// with a single data point in the table. Splining of data is not implemented here. Beause of this limitation, the image can only be shown
   /// on linear axes.
   /// </summary>
+  /// <summary>
+  /// Renders meshed xyz data as a density image in 2D plots.
+  /// </summary>
   [Serializable]
   [DisplayName("${res:ClassNames.Altaxo.Graph.Gdi.Plot.Styles.DensityImagePlotStyle}")]
   public class DensityImagePlotStyle
@@ -113,6 +116,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.DensityImagePlotStyle", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DensityImagePlotStyle)obj;
@@ -120,6 +124,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         // nothing to save up to now
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (DensityImagePlotStyle?)o ?? new DensityImagePlotStyle();
@@ -134,6 +139,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Plot.Styles.DensityImagePlotStyle", 2)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotImplementedException("This function should not be called, since a newer serialization version is available");
@@ -150,6 +156,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
                 */
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (DensityImagePlotStyle?)o ?? new DensityImagePlotStyle();
@@ -181,6 +188,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DensityImagePlotStyle), 3)]
     private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DensityImagePlotStyle)obj;
@@ -190,6 +198,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         info.AddValue("Colorization", s._colorProvider);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (DensityImagePlotStyle?)o ?? new DensityImagePlotStyle();
@@ -232,6 +241,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies the values from another <see cref="DensityImagePlotStyle"/> instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     [MemberNotNull(nameof(_colorProvider), nameof(_scale))]
     protected void CopyFrom(DensityImagePlotStyle from)
     {
@@ -241,6 +254,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       _imageType = CachedImageType.None;
     }
 
+    /// <inheritdoc />
     public bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -261,17 +275,22 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       return false;
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_scale is not null)
         yield return new Main.DocumentNodeAndName(_scale, "Scale");
     }
 
+    /// <inheritdoc />
     public object Clone()
     {
       return new DensityImagePlotStyle(this);
     }
 
+    /// <summary>
+    /// Gets or sets the numerical scale used to normalize data values.
+    /// </summary>
     public NumericalScale Scale
     {
       get
@@ -294,6 +313,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the color provider used to colorize the density image.
+    /// </summary>
     public IColorProvider ColorProvider
     {
       get { return _colorProvider; }
@@ -311,6 +333,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether drawing is clipped to the layer region.
+    /// </summary>
     public bool ClipToLayer
     {
       get { return _clipToLayer; }
@@ -335,10 +360,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
     /// <summary>
-    /// Called by the parent plot item to indicate that the associated data has changed. Used to invalidate the cached bitmap to force
-    /// rebuilding the bitmap from new data.
+    /// Invalidates the cached image after the underlying data changed.
     /// </summary>
-    /// <param name="sender">The sender of the message.</param>
+    /// <param name="sender">The sender of the change notification.</param>
     public void EhDataChanged(object sender)
     {
       _imageType = CachedImageType.None;
@@ -390,11 +414,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
     /// <summary>
-    /// Paint the density image in the layer.
+    /// Paints the density image for the specified plot object.
     /// </summary>
-    /// <param name="gfrx">The graphics context painting in.</param>
-    /// <param name="gl">The layer painting in.</param>
-    /// <param name="plotObject">The data to plot.</param>
+    /// <param name="gfrx">The graphics context.</param>
+    /// <param name="gl">The plot layer.</param>
+    /// <param name="plotObject">The plot data object.</param>
     public void Paint(Graphics gfrx, IPlotArea gl, object plotObject) // plots the curve with the choosen style
     {
       if (plotObject is XYZMeshedColumnPlotData myPlotAssociation)
@@ -408,11 +432,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
     /// <summary>
-    /// Paint the density image in the layer.
+    /// Paints the density image for meshed column data.
     /// </summary>
-    /// <param name="gfrx">The graphics context painting in.</param>
-    /// <param name="gl">The layer painting in.</param>
-    /// <param name="plotObject">The data to plot.</param>
+    /// <param name="gfrx">The graphics context.</param>
+    /// <param name="gl">The plot layer.</param>
+    /// <param name="myPlotAssociation">The meshed column plot data.</param>
     public void Paint(Graphics gfrx, IPlotArea gl, XYZMeshedColumnPlotData myPlotAssociation) // plots the curve with the choosen style
     {
       myPlotAssociation.DataTableMatrix.GetWrappers(
@@ -429,11 +453,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
     /// <summary>
-    /// Paint the density image in the layer.
+    /// Paints the density image for column plot data.
     /// </summary>
-    /// <param name="gfrx">The graphics context painting in.</param>
-    /// <param name="gl">The layer painting in.</param>
-    /// <param name="plotData">The data to plot.</param>
+    /// <param name="gfrx">The graphics context.</param>
+    /// <param name="gl">The plot layer.</param>
+    /// <param name="plotData">The column plot data.</param>
     public void Paint(Graphics gfrx, IPlotArea gl, XYZColumnPlotData plotData) // plots the curve with the choosen style
     {
       // Find out if the plot data can be treated as meshed column data
@@ -449,7 +473,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         // TODO use a bivariate Radial Spline interpolation to get a smooth image
         // what we need here is (i) a list of x-y values, at which to determine the z value, and (ii) a list of z values
         // (i) a closed polygon, which determines the x-y range of the plot (we do not plot data outside this polynom)
-        // and (iii) a spline that can be used to evaluate the data
+        // and (ii) a spline that can be used to evaluate the data
 
 
         PaintIrregularData(gfrx, gl, plotData, gl.XAxis.PhysicalVariantToNormal, gl.YAxis.PhysicalVariantToNormal, _scale.PhysicalVariantToNormal);
@@ -580,6 +604,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
 
+    /// <summary>
+    /// Paints the density image from matrix data and logical coordinates.
+    /// </summary>
+    /// <param name="gfrx">The graphics context.</param>
+    /// <param name="gl">The plot layer.</param>
+    /// <param name="matrix">The matrix values.</param>
+    /// <param name="logicalRowHeaderValues">The logical row coordinates.</param>
+    /// <param name="logicalColumnHeaderValues">The logical column coordinates.</param>
     public void Paint(Graphics gfrx, IPlotArea gl, IROMatrix<double> matrix, IReadOnlyList<double> logicalRowHeaderValues, IReadOnlyList<double> logicalColumnHeaderValues) // plots the curve with the choosen style
     {
 
@@ -675,6 +707,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       private Type xtype, ytype;
       private Type cstype;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ImageTypeEquiLinearMemento"/> class.
+      /// </summary>
+      /// <param name="gl">The plot area.</param>
       public ImageTypeEquiLinearMemento(IPlotArea gl)
       {
         xtype = gl.XAxis.GetType();
@@ -682,6 +718,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         cstype = gl.CoordinateSystem.GetType();
       }
 
+      /// <inheritdoc />
       public override bool Equals(object? obj)
       {
         return obj is ImageTypeEquiLinearMemento from &&
@@ -691,6 +728,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
           ;
       }
 
+      /// <inheritdoc />
       public override int GetHashCode()
       {
         return base.GetHashCode() + 13 * xtype.GetHashCode() + 31 * ytype.GetHashCode();
@@ -706,6 +744,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       private double x00, x10, x01, x11, x32;
       private double y00, y10, y01, y11, y32;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ImageTypeOtherMemento"/> class.
+      /// </summary>
+      /// <param name="gl">The plot area.</param>
       public ImageTypeOtherMemento(IPlotArea gl)
       {
         xtype = gl.XAxis.GetType();
@@ -724,6 +766,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(0.3, 0.2), out x32, out y32);
       }
 
+      /// <inheritdoc />
       public override bool Equals(object? obj)
       {
         var from = obj as ImageTypeOtherMemento;
@@ -749,6 +792,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
             y32 == from.y32;
       }
 
+      /// <inheritdoc />
       public override int GetHashCode()
       {
         return base.GetHashCode() + 13 * xtype.GetHashCode() + 31 * ytype.GetHashCode();
@@ -1002,6 +1046,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region Changed event handling
 
+    /// <inheritdoc/>
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (object.ReferenceEquals(sender, _scale))

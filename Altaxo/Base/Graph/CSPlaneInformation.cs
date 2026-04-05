@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -30,23 +30,38 @@ using System.Text;
 
 namespace Altaxo.Graph
 {
+  /// <summary>
+  /// Stores descriptive information for a coordinate-system plane.
+  /// </summary>
   public class CSPlaneInformation : ICloneable
   {
     private CSPlaneID _identifier;
     private string _name;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CSPlaneInformation"/> class.
+    /// </summary>
+    /// <param name="identifier">The plane identifier.</param>
     public CSPlaneInformation(CSPlaneID identifier)
     {
       _identifier = identifier;
       _name = string.Empty;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CSPlaneInformation"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public CSPlaneInformation(CSPlaneInformation from)
     {
       _identifier = from._identifier;
       CopyWithoutIdentifierFrom(from);
     }
 
+    /// <summary>
+    /// Copies all information from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public void CopyFrom(CSPlaneInformation from)
     {
       if (ReferenceEquals(this, from))
@@ -56,12 +71,19 @@ namespace Altaxo.Graph
       CopyWithoutIdentifierFrom(from);
     }
 
+    /// <summary>
+    /// Copies all information except the identifier from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     [MemberNotNull(nameof(_name))]
     public void CopyWithoutIdentifierFrom(CSPlaneInformation from)
     {
       _name = from._name;
     }
 
+    /// <summary>
+    /// Sets default values derived from the current plane identifier.
+    /// </summary>
     public void SetDefaultValues()
     {
       switch (_identifier.PerpendicularAxisNumber)
@@ -86,16 +108,24 @@ namespace Altaxo.Graph
       _name += string.Format(" (at L={0})", _identifier.LogicalValue.ToString());
     }
 
+    /// <summary>
+    /// Creates a copy of this instance.
+    /// </summary>
+    /// <returns>The cloned instance.</returns>
     public CSPlaneInformation Clone()
     {
       return new CSPlaneInformation(this);
     }
 
+    /// <inheritdoc />
     object ICloneable.Clone()
     {
       return new CSPlaneInformation(this);
     }
 
+    /// <summary>
+    /// Gets the plane identifier.
+    /// </summary>
     public CSPlaneID Identifier
     {
       get { return _identifier; }

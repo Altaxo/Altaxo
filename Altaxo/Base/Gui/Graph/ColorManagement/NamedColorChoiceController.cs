@@ -28,13 +28,20 @@ using Altaxo.Drawing;
 
 namespace Altaxo.Gui.Graph.ColorManagement
 {
+  /// <summary>
+  /// View contract for choosing a named color.
+  /// </summary>
   public interface INamedColorChoiceView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for selecting a <see cref="NamedColor"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(INamedColorChoiceView))]
   public class NamedColorChoiceController : MVCANControllerEditImmutableDocBase<NamedColor, INamedColorChoiceView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -44,6 +51,9 @@ namespace Altaxo.Gui.Graph.ColorManagement
 
     private bool _ShowPlotColorsOnly;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether only plot colors are allowed.
+    /// </summary>
     public bool ShowPlotColorsOnly
     {
       get => _ShowPlotColorsOnly;
@@ -58,6 +68,9 @@ namespace Altaxo.Gui.Graph.ColorManagement
     }
 
 
+    /// <summary>
+    /// Gets or sets the selected color.
+    /// </summary>
     public NamedColor SelectedColor
     {
       get => _doc;
@@ -74,6 +87,7 @@ namespace Altaxo.Gui.Graph.ColorManagement
 
     #endregion
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (ShowPlotColorsOnly && _doc.ParentColorSet is null)

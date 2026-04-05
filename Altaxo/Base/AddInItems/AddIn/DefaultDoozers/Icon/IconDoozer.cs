@@ -54,6 +54,7 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <inheritdoc/>
     public object BuildItem(BuildItemArgs args)
     {
       return new IconDescriptor(args.Codon);

@@ -32,6 +32,9 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Graph.Graph3D
 {
+  /// <summary>
+  /// Controller for selecting and editing 3D coordinate systems.
+  /// </summary>
   [UserControllerForObject(typeof(G3DCoordinateSystem))]
   [ExpectedTypeOfView(typeof(ITypeAndInstanceView))]
   public class CoordinateSystemController : MVCANDControllerEditImmutableDocBase<G3DCoordinateSystem, ITypeAndInstanceView>, ITypeAndInstanceController
@@ -39,6 +42,7 @@ namespace Altaxo.Gui.Graph.Graph3D
     /// <summary>Holds all instantiable subtypes of G2DCoordinateSystem</summary>
     private Type[] _cosSubTypes;
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_instanceController, () => _instanceController = null);
@@ -46,10 +50,12 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     #region Bindings
 
+    /// <inheritdoc/>
     public string TypeLabel => "Type:";
 
     private ItemsController<Type> _typeNames;
 
+    /// <inheritdoc/>
     public ItemsController<Type> TypeNames
     {
       get => _typeNames;
@@ -65,6 +71,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private IMVCAController _instanceController;
 
+    /// <inheritdoc/>
     public IMVCAController InstanceController
     {
       get => _instanceController;
@@ -82,6 +89,7 @@ namespace Altaxo.Gui.Graph.Graph3D
     #endregion
 
 
+    /// <inheritdoc/>
     public override void Dispose(bool isDisposing)
     {
       _typeNames = null;
@@ -90,6 +98,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -120,6 +129,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       bool result = _instanceController is null || _instanceController.Apply(disposeController);

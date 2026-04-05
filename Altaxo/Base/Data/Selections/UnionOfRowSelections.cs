@@ -150,6 +150,10 @@ namespace Altaxo.Data.Selections
     public IEnumerable<IRowSelection>? ChildNodes => _rowSelections;
 
 
+    /// <summary>
+    /// Creates a deep copy of this row-selection collection.
+    /// </summary>
+    /// <returns>A deep copy of this instance.</returns>
     /// <inheritdoc/>
     public object Clone()
     {

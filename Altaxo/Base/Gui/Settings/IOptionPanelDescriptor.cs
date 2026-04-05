@@ -22,6 +22,9 @@ using System.Collections.Generic;
 
 namespace Altaxo.Gui.Settings
 {
+  /// <summary>
+  /// Describes an option panel entry in the settings hierarchy.
+  /// </summary>
   public interface IOptionPanelDescriptor
   {
     /// <value>

@@ -32,13 +32,24 @@ using Altaxo.Graph.Graph3D.Plot.Styles;
 
 namespace Altaxo.Graph.Graph3D.Plot.Groups
 {
+  /// <summary>
+  /// Represents a bag of named scatter-symbol lists.
+  /// </summary>
   public class ScatterSymbolListBag : StyleListBag<ScatterSymbolList, IScatterSymbol>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScatterSymbolListBag"/> class.
+    /// </summary>
+    /// <param name="lists">The lists contained in the bag.</param>
     public ScatterSymbolListBag(IEnumerable<ScatterSymbolList> lists)
       : base(lists)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScatterSymbolListBag"/> class during deserialization.
+    /// </summary>
+    /// <param name="info">The deserialization info.</param>
     protected ScatterSymbolListBag(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
       : base(info)
     {
@@ -48,15 +59,20 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
     /// 2016-08-22 Initial version
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    /// <summary>
+    /// Serializes <see cref="ScatterSymbolListBag"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScatterSymbolListBag), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ScatterSymbolListBag)obj;
         s.Serialize(info);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new ScatterSymbolListBag(info);

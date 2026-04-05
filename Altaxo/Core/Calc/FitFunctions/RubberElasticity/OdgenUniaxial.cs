@@ -102,7 +102,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     /// Creates a new instance of the fit function.
     /// </summary>
     /// <returns>A new <see cref="OdgenUniaxial"/> instance.</returns>
-    [FitFunctionCreator("Odgen (uniaxial loading)", "RubberElasticity", 1, 1, 2)]
+    [FitFunctionCreator("Odgen (uniaxial loading)", "RubberElasticity", 1, 1, 6)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.RubberElasticity.OdgenUniaxial}")]
     public static IFitFunction Create()
     {

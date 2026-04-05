@@ -45,9 +45,12 @@ namespace Altaxo.Graph.Scales.Deprecated
     /// <summary>Number of decades per major tick.</summary>
     private int _decadesPerMajorTick = 1; // how many decades is one major tick
 
-    /// <summary>The boundary object. It collectes only positive values for the axis is logarithmic.</summary>
+    /// <summary>The boundary object. It collects only positive values because the axis is logarithmic.</summary>
     protected NumericalBoundaries _dataBounds;
 
+    /// <summary>
+    /// Stores the rescaling conditions for this logarithmic scale.
+    /// </summary>
     protected LogarithmicScaleRescaleConditions _rescaling;
 
     #region Serialization
@@ -55,6 +58,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Log10Axis", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (Log10Scale)obj;
@@ -68,6 +72,7 @@ namespace Altaxo.Graph.Scales.Deprecated
         info.AddValue("Bounds", s._dataBounds);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (Log10Scale?)o ?? new Log10Scale();
@@ -94,6 +99,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Scales.Log10Scale", 2)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (Log10Scale)obj;
@@ -110,6 +116,7 @@ namespace Altaxo.Graph.Scales.Deprecated
         info.AddValue("Rescaling", s._rescaling);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (Log10Scale?)o ?? new Log10Scale();
@@ -163,6 +170,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       _rescaling.ParentObject = this;
     }
 
+    /// <inheritdoc />
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_dataBounds is not null)
@@ -182,7 +190,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     }
 
     /// <summary>
-    /// Returns the rescaling conditions for this axis
+    /// Gets the rescaling conditions for this axis.
     /// </summary>
     public override NumericScaleRescaleConditions Rescaling
     {
@@ -469,11 +477,13 @@ namespace Altaxo.Graph.Scales.Deprecated
       }
     }
 
+    /// <inheritdoc />
     public override NumericalBoundaries DataBounds
     {
       get { return _dataBounds; }
     } // return a PhysicalBoundarie object that is associated with that axis
 
+    /// <inheritdoc />
     public override double Org
     {
       get { return Math.Pow(10, _log10Org); }
@@ -486,6 +496,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       }
     }
 
+    /// <inheritdoc />
     public override double End
     {
       get { return Math.Pow(10, _log10End); }
@@ -529,6 +540,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       _log10End = log10end;
     }
 
+    /// <inheritdoc />
     public override void ProcessDataBounds()
     {
       if (_dataBounds is null || _dataBounds.IsEmpty)
@@ -537,12 +549,23 @@ namespace Altaxo.Graph.Scales.Deprecated
       ProcessDataBounds(_dataBounds.LowerBound, _dataBounds.UpperBound, _rescaling);
     }
 
+    /// <summary>
+    /// Updates the scale from data bounds and the specified rescaling conditions.
+    /// </summary>
+    /// <param name="xorg">The lower data bound.</param>
+    /// <param name="xend">The upper data bound.</param>
+    /// <param name="rescaling">The rescaling conditions to apply.</param>
     public void ProcessDataBounds(double xorg, double xend, NumericScaleRescaleConditions rescaling)
     {
       rescaling.OnDataBoundsChanged(xorg, xend);
       ProcessDataBounds(rescaling.ResultingOrg, rescaling.IsResultingOrgFixed, rescaling.ResultingEnd, rescaling.IsResultingEndFixed);
     }
 
+    /// <summary>
+    /// Handles boundary changes by recalculating the scale bounds.
+    /// </summary>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The event arguments.</param>
     protected void OnBoundariesChanged(object sender, BoundariesChangedEventArgs e)
     {
       bool bIsRelevant = true;

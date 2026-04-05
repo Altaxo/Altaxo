@@ -30,12 +30,16 @@ using Altaxo.Science.Spectroscopy.PeakSearching;
 
 namespace Altaxo.Gui.Science.Spectroscopy
 {
+  /// <summary>
+  /// Controller for editing <see cref="PeakSearchingAndFittingOptions"/>.
+  /// </summary>
   [UserControllerForObject(typeof(PeakSearchingAndFittingOptions))]
   [ExpectedTypeOfView(typeof(ISpectralPreprocessingOptionsView))]
   public class PeakSearchingAndFittingOptionsController : SpectralPreprocessingControllerBase<PeakSearchingAndFittingOptions>
   {
 
 
+    /// <inheritdoc/>
     protected override IEnumerable<(string Label, object Doc, Func<IMVCANController> GetController)> GetComponents()
     {
       foreach (var pair in SpectralPreprocessingController.GetComponents(_doc.Preprocessing))
@@ -46,6 +50,7 @@ namespace Altaxo.Gui.Science.Spectroscopy
       yield return ("Output", _doc.OutputOptions, () => new PeakSearchingAndFittingOutputOptionsController());
     }
 
+    /// <inheritdoc/>
     protected override void UpdateDoc(object model, int index)
     {
       var pre = SpectralPreprocessingController.UpdateDoc(_doc.Preprocessing, model, index);
@@ -66,6 +71,7 @@ namespace Altaxo.Gui.Science.Spectroscopy
       }
     }
 
+    /// <inheritdoc/>
     protected override bool ApplyEnd(bool applyResult, bool disposeController)
     {
       // clean the SpectralPreprocessingOptionsList by dropping non-elements
@@ -80,6 +86,7 @@ namespace Altaxo.Gui.Science.Spectroscopy
       return base.ApplyEnd(applyResult, disposeController);
     }
 
+    /// <inheritdoc/>
     protected override SpectralPreprocessingOptionsBase InternalPreprocessingOptions
     {
       get => _doc.Preprocessing;

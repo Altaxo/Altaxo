@@ -34,7 +34,7 @@ namespace Altaxo.Collections
   /// <summary>
   /// Implements a list that can be used to navigate forward or backward using stored navigation points.
   /// </summary>
-  /// <typeparam name="T">Type of parameter that is used to restore the navigation points. In order to compare a navigation point to add with the current already present navigation point, the type must implement <see cref="IEquatable&lt;T&gt;"/> </typeparam>
+  /// <typeparam name="T">Type of parameter that is used to restore the navigation points. In order to compare a navigation point to add with the current already present navigation point, the type must implement <see cref="IEquatable&lt;T&gt;"/>.</typeparam>
   /// <remarks>Although this list can also be used for other purposes, it is developed for minimum storage requirements, but not for optimal performance. Internally,
   /// a list is used, so that removing of navigation points is relatively time consuming.</remarks>
   public class NavigationList<T> where T : IEquatable<T>

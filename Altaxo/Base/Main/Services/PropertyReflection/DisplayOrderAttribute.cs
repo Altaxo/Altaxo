@@ -30,16 +30,26 @@ using System.Text;
 
 namespace Altaxo.Main.Services.PropertyReflection
 {
+  /// <summary>
+  /// Specifies the display order of a reflected property.
+  /// </summary>
   [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
   public sealed class DisplayOrderAttribute : Attribute
   {
     private int _orderIndex;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DisplayOrderAttribute"/> class.
+    /// </summary>
+    /// <param name="orderIndex">The display order index.</param>
     public DisplayOrderAttribute(int orderIndex)
     {
       _orderIndex = orderIndex;
     }
 
+    /// <summary>
+    /// Gets the display order index.
+    /// </summary>
     public int OrderIndex
     {
       get { return _orderIndex; }

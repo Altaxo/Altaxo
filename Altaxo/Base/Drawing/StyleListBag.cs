@@ -43,11 +43,18 @@ namespace Altaxo.Drawing
     /// </summary>
     protected TList[] _styleLists;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StyleListBag{TList, TItem}"/> class.
+    /// </summary>
+    /// <param name="styleLists">The style lists to store.</param>
     public StyleListBag(IEnumerable<TList> styleLists)
     {
       _styleLists = styleLists.ToArray();
     }
 
+    /// <summary>
+    /// Gets the style lists stored in this bag.
+    /// </summary>
     public IEnumerable<TList> StyleLists
     {
       get
@@ -58,6 +65,10 @@ namespace Altaxo.Drawing
 
     #region Serialization Helper
 
+    /// <summary>
+    /// Serializes this instance.
+    /// </summary>
+    /// <param name="info">The serialization target.</param>
     public void Serialize(Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
       info.CreateArray("StyleLists", _styleLists.Length);
@@ -69,6 +80,10 @@ namespace Altaxo.Drawing
       info.CommitArray();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StyleListBag{TList, TItem}"/> class from serialized data.
+    /// </summary>
+    /// <param name="info">The deserialization source.</param>
     protected StyleListBag(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
       int count = info.OpenArray("StyleLists");

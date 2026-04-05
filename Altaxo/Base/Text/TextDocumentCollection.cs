@@ -37,6 +37,10 @@ namespace Altaxo.Text
     ProjectItemCollectionBase<TextDocument>,
     IEnumerable<TextDocument>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextDocumentCollection"/> class.
+    /// </summary>
+    /// <param name="parent">The parent project document.</param>
     public TextDocumentCollection(AltaxoDocument parent)
       : base(parent)
     {
@@ -61,10 +65,10 @@ namespace Altaxo.Text
     public override string ItemBaseName { get { return "Text"; } }
 
     /// <summary>
-    /// Gets the parent NotesDocumentCollection of a child NotesDocument.
+    /// Gets the parent <see cref="TextDocumentCollection"/> of a child <see cref="TextDocument"/>.
     /// </summary>
-    /// <param name="child">A NotesDocument for which the parent collection is searched.</param>
-    /// <returns>The parent NotesDocumentCollection, if it exists, or null otherwise.</returns>
+    /// <param name="child">A text document for which the parent collection is searched.</param>
+    /// <returns>The parent <see cref="TextDocumentCollection"/>, if it exists; otherwise, <see langword="null"/>.</returns>
     public static TextDocumentCollection? GetParentTextDocumentCollectionOf(Main.IDocumentLeafNode child)
     {
       return (TextDocumentCollection?)Main.AbsoluteDocumentPath.GetRootNodeImplementing(child, typeof(TextDocumentCollection));

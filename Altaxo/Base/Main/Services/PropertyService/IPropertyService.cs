@@ -40,10 +40,10 @@ namespace Altaxo.Main.Services
     /// <summary>Look in user settings, then application settings, and finally built-in settings.</summary>
     UserAndApplicationAndBuiltin,
 
-    /// <summary>Look application settings, and finally built-in settings.</summary>
+    /// <summary>Look in application settings, and finally in built-in settings.</summary>
     ApplicationAndBuiltin,
 
-    /// <summary>Look int built-in settings.</summary>
+    /// <summary>Look in built-in settings.</summary>
     Builtin
   }
 
@@ -137,7 +137,7 @@ namespace Altaxo.Main.Services
     /// <param name="p">The property key.</param>
     /// <param name="kind">Kind of search.</param>
     /// <param name="ValueCreationIfNotFound">Function used to create a default value if the property value was not found.</param>
-    /// <returns></returns>
+    /// <returns>The property value, or a value created by <paramref name="ValueCreationIfNotFound"/> if none was found.</returns>
     [return: NotNullIfNotNull("ValueCreationIfNotFound")]
     [return: MaybeNull]
     T GetValue<T>(PropertyKey<T> p, RuntimePropertyKind kind, Func<T>? ValueCreationIfNotFound) where T : notnull;

@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 {
   #region Interfaces
 
+  /// <summary>
+  /// View contract for editing 3D item locations in a grid.
+  /// </summary>
   public interface IItemLocationByGridView : IDataContextAwareView
   {
   }
@@ -38,7 +41,7 @@ namespace Altaxo.Gui.Graph.Graph3D
   #endregion Interfaces
 
   /// <summary>
-  /// Summary description for LayerPositionController.
+  /// Controller for editing <see cref="ItemLocationByGrid"/> values in 3D graphs.
   /// </summary>
   [ExpectedTypeOfView(typeof(IItemLocationByGridView))]
   [UserControllerForObject(typeof(ItemLocationByGrid))]
@@ -46,11 +49,15 @@ namespace Altaxo.Gui.Graph.Graph3D
   {
     private GridPartitioning _parentLayerGrid;
 
+ 
+    /// <inheritdoc />
     public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+ 
+    /// <inheritdoc />
     public override bool InitializeDocument(params object[] args)
     {
       if (args.Length < 2)
@@ -64,10 +71,16 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the rotation environment.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment RotationEnvironment => AngleEnvironment.Instance;
 
     private DimensionfulQuantity _rotationX;
 
+    /// <summary>
+    /// Provides access to the rotation around the X-axis.
+    /// </summary>
     public DimensionfulQuantity RotationX
     {
       get => _rotationX;
@@ -83,6 +96,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private DimensionfulQuantity _rotationY;
 
+    /// <summary>
+    /// Provides access to the rotation around the Y-axis.
+    /// </summary>
     public DimensionfulQuantity RotationY
     {
       get => _rotationY;
@@ -98,6 +114,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private DimensionfulQuantity _rotationZ;
 
+    /// <summary>
+    /// Provides access to the rotation around the Z-axis.
+    /// </summary>
     public DimensionfulQuantity RotationZ
     {
       get => _rotationZ;
@@ -113,10 +132,16 @@ namespace Altaxo.Gui.Graph.Graph3D
 
 
 
+    /// <summary>
+    /// Gets the shear environment.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment ShearEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _shearX;
 
+    /// <summary>
+    /// Provides access to the shear in the X-direction.
+    /// </summary>
     public DimensionfulQuantity ShearX
     {
       get => _shearX;
@@ -132,6 +157,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private DimensionfulQuantity _shearY;
 
+    /// <summary>
+    /// Provides access to the shear in the Y-direction.
+    /// </summary>
     public DimensionfulQuantity ShearY
     {
       get => _shearY;
@@ -147,6 +175,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private DimensionfulQuantity _shearZ;
 
+    /// <summary>
+    /// Provides access to the shear in the Z-direction.
+    /// </summary>
     public DimensionfulQuantity ShearZ
     {
       get => _shearZ;
@@ -162,10 +193,16 @@ namespace Altaxo.Gui.Graph.Graph3D
 
 
 
+    /// <summary>
+    /// Gets the scale environment.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment ScaleEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _scaleX;
 
+    /// <summary>
+    /// Provides access to the scale factor in the X-direction.
+    /// </summary>
     public DimensionfulQuantity ScaleX
     {
       get => _scaleX;
@@ -182,6 +219,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private DimensionfulQuantity _scaleY;
 
+    /// <summary>
+    /// Provides access to the scale factor in the Y-direction.
+    /// </summary>
     public DimensionfulQuantity ScaleY
     {
       get => _scaleY;
@@ -197,6 +237,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private DimensionfulQuantity _scaleZ;
 
+    /// <summary>
+    /// Provides access to the scale factor in the Z-direction.
+    /// </summary>
     public DimensionfulQuantity ScaleZ
     {
       get => _scaleZ;
@@ -213,6 +256,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private bool _ForceFitIntoCell;
 
+    /// <summary>
+    /// Indicates whether the item should be forced to fit into the cell.
+    /// </summary>
     public bool ForceFitIntoCell
     {
       get => _ForceFitIntoCell;
@@ -230,6 +276,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private double _gridPosX;
 
+    /// <summary>
+    /// Provides access to the grid position in the X-direction.
+    /// </summary>
     public double GridPosX
     {
       get => _gridPosX;
@@ -244,6 +293,9 @@ namespace Altaxo.Gui.Graph.Graph3D
     }
     private double _gridSpanX;
 
+    /// <summary>
+    /// Provides access to the grid span (size) in the X-direction.
+    /// </summary>
     public double GridSpanX
     {
       get => _gridSpanX;
@@ -259,6 +311,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private double _gridPosY;
 
+    /// <summary>
+    /// Provides access to the grid position in the Y-direction.
+    /// </summary>
     public double GridPosY
     {
       get => _gridPosY;
@@ -274,6 +329,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private double _gridSpanY;
 
+    /// <summary>
+    /// Provides access to the grid span (size) in the Y-direction.
+    /// </summary>
     public double GridSpanY
     {
       get => _gridSpanY;
@@ -290,6 +348,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private double _gridPosZ;
 
+    /// <summary>
+    /// Provides access to the grid position in the Z-direction.
+    /// </summary>
     public double GridPosZ
     {
       get => _gridPosZ;
@@ -305,12 +366,15 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private double _gridSpanZ;
 
+    /// <summary>
+    /// Provides access to the grid span (size) in the Z-direction.
+    /// </summary>
     public double GridSpanZ
     {
       get => _gridSpanZ;
       set
       {
-        if (!(_gridSpanZ == value))
+        if (!(_gridPosZ == value))
         {
           _gridSpanZ = value;
           OnPropertyChanged(nameof(GridSpanZ));
@@ -322,6 +386,8 @@ namespace Altaxo.Gui.Graph.Graph3D
     #endregion
 
 
+ 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -353,6 +419,8 @@ namespace Altaxo.Gui.Graph.Graph3D
       }
     }
 
+ 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       try

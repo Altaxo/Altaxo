@@ -28,6 +28,9 @@ using Clipper2Lib;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
 {
+  /// <summary>
+  /// Represents a circular outline inset for a scatter symbol.
+  /// </summary>
   public class CirclePointInset : InsetBase
   {
     #region Serialization
@@ -35,14 +38,19 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
     /// <summary>
     /// 2016-10-27 initial version.
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="CirclePointInset"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CirclePointInset), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         info.AddBaseValueEmbedded(obj, obj.GetType().BaseType!);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (CirclePointInset?)o ?? new CirclePointInset();
@@ -53,6 +61,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
 
     #endregion Serialization
 
+    /// <inheritdoc/>
     public override Paths64 GetCopyOfClipperPolygon(double relativeWidth)
     {
       var radius = relativeWidth * ClipperScalingDouble;

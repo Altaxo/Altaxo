@@ -34,15 +34,30 @@ using Altaxo.Serialization.Ascii;
 
 namespace Altaxo.Gui.Serialization.Ascii
 {
+  /// <summary>
+  /// View contract for editing ASCII document-analysis options.
+  /// </summary>
   public interface IAsciiDocumentAnalysisOptionsView
   {
+    /// <summary>
+    /// Gets or sets the number of lines to analyze.
+    /// </summary>
     int NumberOfLinesToAnalyze { get; set; }
 
+    /// <summary>
+    /// Sets the number formats that can be analyzed.
+    /// </summary>
     void SetNumberFormatsToAnalyze(SelectableListNodeList availableFormats, ObservableCollection<Boxed<SelectableListNode>> currentlySelectedItems);
 
+    /// <summary>
+    /// Sets the date/time formats that can be analyzed.
+    /// </summary>
     void SetDateTimeFormatsToAnalyze(SelectableListNodeList availableFormats, ObservableCollection<Boxed<SelectableListNode>> currentlySelectedItems);
   }
 
+  /// <summary>
+  /// Controller for editing ASCII document-analysis options.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IAsciiDocumentAnalysisOptionsView))]
   [UserControllerForObject(typeof(AsciiDocumentAnalysisOptions))]
   public class AsciiDocumentAnalysisOptionsController : MVCANControllerEditImmutableDocBase<AsciiDocumentAnalysisOptions, IAsciiDocumentAnalysisOptionsView>
@@ -52,11 +67,13 @@ namespace Altaxo.Gui.Serialization.Ascii
     private System.Collections.ObjectModel.ObservableCollection<Boxed<SelectableListNode>> _numberFormatsToAnalyze;
     private System.Collections.ObjectModel.ObservableCollection<Boxed<SelectableListNode>> _dateTimeFormatsToAnalyze;
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <inheritdoc/>
     public override void Dispose(bool isDisposing)
     {
       _numberFormatsToAnalyze = null;
@@ -65,6 +82,7 @@ namespace Altaxo.Gui.Serialization.Ascii
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -93,6 +111,7 @@ namespace Altaxo.Gui.Serialization.Ascii
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = _doc with
@@ -105,11 +124,17 @@ namespace Altaxo.Gui.Serialization.Ascii
       return ApplyEnd(true, disposeController);
     }
 
+    /// <summary>
+    /// Compares cultures by display name.
+    /// </summary>
     private int CompareCultures(CultureInfo x, CultureInfo y)
     {
       return string.Compare(x.DisplayName, y.DisplayName);
     }
 
+    /// <summary>
+    /// Gets the available cultures.
+    /// </summary>
     private void GetAvailableCultures(ref SelectableListNodeList list)
     {
       list = new SelectableListNodeList();
@@ -126,6 +151,9 @@ namespace Altaxo.Gui.Serialization.Ascii
         list[0].IsSelected = true;
     }
 
+    /// <summary>
+    /// Adds a culture to the selectable culture list.
+    /// </summary>
     private void AddCulture(SelectableListNodeList cultureList, CultureInfo cult, bool isSelected)
     {
       cultureList.Add(new SelectableListNode(cult.DisplayName, cult, isSelected));

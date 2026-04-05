@@ -86,11 +86,18 @@ namespace Altaxo.Graph
     /// <summary>Designates where the graph will be printed.</summary>
     private SingleGraphPrintLocation _printLocation;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SingleGraphPrintOptions"/> class.
+    /// </summary>
     public SingleGraphPrintOptions()
     {
       _zoomFactor = 1;
     }
 
+    /// <summary>
+    /// Copies values from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public void CopyFrom(SingleGraphPrintOptions from)
     {
       if (ReferenceEquals(this, from))
@@ -106,6 +113,10 @@ namespace Altaxo.Graph
       _printLocation = from._printLocation;
     }
 
+    /// <summary>
+    /// Creates a copy of this instance.
+    /// </summary>
+    /// <returns>A copy of this instance.</returns>
     public object Clone()
     {
       var r = new SingleGraphPrintOptions();
@@ -113,6 +124,10 @@ namespace Altaxo.Graph
       return r;
     }
 
+    /// <summary>
+    /// Raises the <see cref="PropertyChanged"/> event.
+    /// </summary>
+    /// <param name="propertyName">The name of the changed property.</param>
     protected virtual void OnPropertyChanged(string propertyName)
     {
       if (PropertyChanged is not null)
@@ -231,14 +246,14 @@ namespace Altaxo.Graph
     }
 
     /// <summary>
-    /// Get the scale factor and the start location of an docoment onto a page.
+    /// Gets the scale factor and the start location of a document on a page.
     /// </summary>
     /// <param name="PageBounds">Bounds of the page in 1/100 inch.</param>
     /// <param name="MarginBounds">Margins of the page in 1/100 inch.</param>
     /// <param name="graphSize">Size of the document in 1/72 inch.</param>
     /// <param name="zoom">Returns the zoom factor to use for the document.</param>
     /// <param name="startLocationOnPage">Returns the start location onto the page in 1/100 inch.</param>
-    /// <param name="usePrintingUnits">If <c>true</c> use printing units (1/100 inch) instead of points.</param>
+    /// <param name="usePrintingUnits">If <see langword="true"/>, use printing units (1/100 inch) instead of points.</param>
     public void GetZoomAndStartLocation(RectangleF PageBounds, RectangleF MarginBounds, SizeF graphSize, out float zoom, out PointF startLocationOnPage, bool usePrintingUnits)
     {
       // First the size of the graph

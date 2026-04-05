@@ -32,18 +32,27 @@ namespace Altaxo.AddInItems
   /// </summary>
   public static class AddInTree
   {
+    /// <summary>
+    /// Builds all items at the specified add-in tree path.
+    /// </summary>
     public static List<T> BuildItems<T>(string path, object? parameter, bool throwOnNotFound = true)
     {
       var addInTree = Altaxo.Current.GetRequiredService<IAddInTree>();
       return addInTree.BuildItems<T>(path, parameter, throwOnNotFound).ToList();
     }
 
+    /// <summary>
+    /// Gets the add-in tree node for the specified path.
+    /// </summary>
     public static AddInTreeNode GetTreeNode(string path)
     {
       var addInTree = Altaxo.Current.GetRequiredService<IAddInTree>();
       return addInTree.GetTreeNode(path, true)!;
     }
 
+    /// <summary>
+    /// Gets the add-in tree node for the specified path.
+    /// </summary>
     public static AddInTreeNode? GetTreeNode(string path, bool throwOnNotFound = true)
     {
       var addInTree = Altaxo.Current.GetRequiredService<IAddInTree>();
@@ -62,6 +71,9 @@ namespace Altaxo.AddInItems
     private ConcurrentDictionary<string, IDoozer> doozers = new ConcurrentDictionary<string, IDoozer>();
     private ConcurrentDictionary<string, IConditionEvaluator> conditionEvaluators = new ConcurrentDictionary<string, IConditionEvaluator>();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AddInTreeImpl"/> class.
+    /// </summary>
     public AddInTreeImpl(ApplicationStateInfoService applicationStateService)
     {
       doozers.TryAdd("Class", new ClassDoozer());
@@ -198,6 +210,9 @@ namespace Altaxo.AddInItems
       return BuildItem(path, parameter, null);
     }
 
+    /// <summary>
+    /// Builds a single item in the add-in tree using additional conditions.
+    /// </summary>
     public object BuildItem(string path, object? parameter, IEnumerable<ICondition>? additionalConditions)
     {
       int pos = path.LastIndexOf('/');

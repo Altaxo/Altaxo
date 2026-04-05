@@ -30,6 +30,9 @@ using Altaxo.Units.Length;
 
 namespace Altaxo.Gui
 {
+  /// <summary>
+  /// Provides the length units available in the GUI.
+  /// </summary>
   public static class GuiLengthUnits
   {
     private static ReadOnlyCollection<IUnit> _instance;
@@ -46,7 +49,7 @@ namespace Altaxo.Gui
     }
 
     /// <summary>
-    /// Gets a read-only collection of the units that can be used for the Gui when a physical distance is needed.
+    /// Gets a read-only collection of the units that can be used in the GUI when a physical distance is needed.
     /// </summary>
     public static IList<IUnit> Collection
     {

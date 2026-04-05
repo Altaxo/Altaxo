@@ -31,7 +31,7 @@ using System.Text;
 namespace Altaxo.Drawing
 {
   /// <summary>
-  /// Designates an alignment, for instance of strings.
+  /// Specifies an alignment, for instance for strings.
   /// </summary>
   public enum Alignment
   {

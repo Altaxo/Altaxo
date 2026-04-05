@@ -31,8 +31,17 @@ using Altaxo.Collections;
 namespace Altaxo.Data
 {
 
+  /// <summary>
+  /// Actions for expanding tables that contain a cycling-variable column.
+  /// </summary>
   public static class ExpandCyclingVariableColumnActions
   {
+    /// <summary>
+    /// Shows the dialog for expanding a table that contains a cycling-variable column.
+    /// </summary>
+    /// <param name="srcTable">The source table.</param>
+    /// <param name="selectedDataRows">The selected data rows.</param>
+    /// <param name="selectedDataColumns">The selected data columns.</param>
     public static void ShowExpandCyclingVariableColumnDialog(this DataTable srcTable, IAscendingIntegerCollection selectedDataRows, IAscendingIntegerCollection selectedDataColumns)
     {
       DataTableMultipleColumnProxy? proxy = null;

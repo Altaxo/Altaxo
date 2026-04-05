@@ -77,8 +77,7 @@ namespace Altaxo.Serialization.Omnic
         info.AddValue("UseNeutralColumnName", s.UseNeutralColumnName);
         info.AddValue("NeutralColumnName", s.NeutralColumnName);
         info.AddValue("IncludeFilePathAsProperty", s.IncludeFilePathAsProperty);
-        info.AddArray("IndicesOfImportedGraphs", s.IndicesOfImportedSpectra, s.IndicesOfImportedSpectra.Count);
-
+         info.AddArray("IndicesOfImportedGraphs", s.IndicesOfImportedSpectra, s.IndicesOfImportedSpectra.Count);
       }
 
       /// <inheritdoc/>
@@ -88,7 +87,6 @@ namespace Altaxo.Serialization.Omnic
         var neutralColumnName = info.GetString("NeutralColumnName");
         var includeFilePathAsProperty = info.GetBoolean("IncludeFilePathAsProperty");
         info.GetArray("IndicesOfImportedGraphs", out int[] indicesOfImportedGraphs);
-
 
         return o is null ? new OmnicSPGImportOptions
         {

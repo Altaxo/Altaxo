@@ -35,6 +35,9 @@ using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Graph.Graph3D
 {
+  /// <summary>
+  /// Provides export-related extension methods for three-dimensional graph documents.
+  /// </summary>
   public static class GraphDocumentExportActions
   {
     /// <summary>
@@ -51,6 +54,13 @@ namespace Altaxo.Graph.Graph3D
       return RenderAsBitmap(doc, backbrush, null, pixelformat, sourceDpiResolution, destinationDpiResolution);
     }
 
+    /// <summary>
+    /// Renders the graph document as a bitmap using the specified embedded-object rendering options.
+    /// </summary>
+    /// <param name="document">The graph document to render.</param>
+    /// <param name="renderingOptions">The rendering options.</param>
+    /// <param name="pixelFormat">The pixel format.</param>
+    /// <returns>The rendered bitmap, or <c>null</c> if rendering was unsuccessful.</returns>
     public static Bitmap? RenderAsBitmap(this GraphDocument document, EmbeddedObjectRenderingOptions renderingOptions, PixelFormat pixelFormat = PixelFormat.Format32bppArgb)
     {
       BrushX? opaqueGround = null;

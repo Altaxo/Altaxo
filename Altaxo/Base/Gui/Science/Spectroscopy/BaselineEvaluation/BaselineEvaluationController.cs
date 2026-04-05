@@ -32,9 +32,13 @@ using Altaxo.Science.Spectroscopy.BaselineEvaluation;
 
 namespace Altaxo.Gui.Science.Spectroscopy.BaselineEvaluation
 {
+  /// <summary>
+  /// Controller for selecting and configuring a baseline-evaluation method.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IBaselineEstimationView))]
   public class BaselineEvaluationController : MVCANControllerEditImmutableDocBase<IBaselineEvaluation, IBaselineEstimationView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_subController, () => SubController = null);
@@ -44,6 +48,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEvaluation
 
     private ItemsController<Type> _availableMethods;
 
+    /// <summary>
+    /// Gets or sets the available baseline-evaluation methods.
+    /// </summary>
     public ItemsController<Type> AvailableMethods
     {
       get => _availableMethods;
@@ -60,6 +67,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEvaluation
 
     private IMVCANController? _subController;
 
+    /// <summary>
+    /// Gets or sets the sub-controller for the selected method.
+    /// </summary>
     public IMVCANController? SubController
     {
       get => _subController;
@@ -78,6 +88,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEvaluation
     #endregion
 
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -98,6 +109,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEvaluation
       }
     }
 
+    /// <summary>
+    /// Creates the sub-controller for the current baseline-evaluation method.
+    /// </summary>
     private void CreateSubController()
     {
       var subController = (IMVCANController)Current.Gui.GetController(new object[] { _doc }, typeof(IMVCANController));
@@ -112,12 +126,17 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEvaluation
       SubController = subController;
     }
 
+    /// <summary>
+    /// Handles changes of the selected baseline-evaluation type.
+    /// </summary>
+    /// <param name="newMethodType">The newly selected method type.</param>
     private void EhMethodTypeChanged(Type newMethodType)
     {
       _doc = (IBaselineEvaluation)Activator.CreateInstance(newMethodType);
       CreateSubController();
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (SubController is not null)
@@ -136,6 +155,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEvaluation
 
     class TypeSorter : IComparer<Type>
     {
+      /// <inheritdoc/>
       public int Compare(Type x, Type y)
       {
         var xn = x.Name.EndsWith("None");

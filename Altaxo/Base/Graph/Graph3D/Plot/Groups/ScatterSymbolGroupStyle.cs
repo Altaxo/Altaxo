@@ -34,6 +34,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
   using Graph.Plot.Groups;
   using Styles;
 
+  /// <summary>
+  /// Provides group-style handling for scatter symbols in three-dimensional plots.
+  /// </summary>
   public class ScatterSymbolGroupStyle
     :
     Main.SuspendableDocumentLeafNodeWithEventArgs,
@@ -55,9 +58,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
     /// 2016-08-24 Initial version.
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    /// <summary>
+    /// Serializes <see cref="ScatterSymbolGroupStyle"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScatterSymbolGroupStyle), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ScatterSymbolGroupStyle)obj;
@@ -68,6 +75,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
         info.AddValue("ListOfValues", s._listOfValues);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (ScatterSymbolGroupStyle?)o ?? new ScatterSymbolGroupStyle();
@@ -89,12 +97,19 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScatterSymbolGroupStyle"/> class.
+    /// </summary>
     public ScatterSymbolGroupStyle()
     {
       _listOfValues = ScatterSymbolListManager.Instance.BuiltinDefault;
       _value = _listOfValues[0];
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScatterSymbolGroupStyle"/> class by copying from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public ScatterSymbolGroupStyle(ScatterSymbolGroupStyle from)
     {
       _isStepEnabled = from._isStepEnabled;
@@ -106,11 +121,16 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
     #region ICloneable Members
 
+    /// <summary>
+    /// Creates a strongly typed clone of this group style.
+    /// </summary>
+    /// <returns>A cloned group style.</returns>
     public ScatterSymbolGroupStyle Clone()
     {
       return new ScatterSymbolGroupStyle(this);
     }
 
+    /// <inheritdoc/>
     object ICloneable.Clone()
     {
       return new ScatterSymbolGroupStyle(this);
@@ -120,6 +140,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
     #region IGroupStyle Members
 
+    /// <inheritdoc/>
     public void TransferFrom(IPlotGroupStyle fromb)
     {
       var from = (ScatterSymbolGroupStyle)fromb;
@@ -127,19 +148,23 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
       _listOfValues = from._listOfValues;
     }
 
+    /// <inheritdoc/>
     public void BeginPrepare()
     {
       _isInitialized = false;
     }
 
+    /// <inheritdoc/>
     public void PrepareStep()
     {
     }
 
+    /// <inheritdoc/>
     public void EndPrepare()
     {
     }
 
+    /// <inheritdoc/>
     public bool CanCarryOver
     {
       get
@@ -148,6 +173,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
       }
     }
 
+    /// <inheritdoc/>
     public bool CanStep
     {
       get
@@ -156,6 +182,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
       }
     }
 
+    /// <inheritdoc/>
     public int Step(int step)
     {
       if (0 == step)
@@ -220,6 +247,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
       }
     }
 
+    /// <summary>
+    /// Coerces the current value to the active symbol list if stepping is enabled.
+    /// </summary>
+    /// <param name="value">The candidate scatter symbol.</param>
     private void SetValueCoercedToGroup(IScatterSymbol value)
     {
       if (_isStepEnabled)
@@ -237,6 +268,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
     #region Other members
 
+    /// <summary>
+    /// Gets a value indicating whether the style has been initialized with a symbol.
+    /// </summary>
     public bool IsInitialized
     {
       get
@@ -245,6 +279,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
       }
     }
 
+    /// <summary>
+    /// Initializes the group style with the specified scatter symbol.
+    /// </summary>
+    /// <param name="value">The scatter symbol.</param>
     public void Initialize(IScatterSymbol value)
     {
       if (value is null)
@@ -261,6 +299,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
       SetValueCoercedToGroup(value);
     }
 
+    /// <summary>
+    /// Gets the current scatter symbol shape and style.
+    /// </summary>
     public IScatterSymbol ShapeAndStyle
     {
       get
@@ -273,6 +314,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
     #region Static helpers
 
+    /// <summary>
+    /// Adds the external scatter-symbol group style when required.
+    /// </summary>
     public static void AddExternalGroupStyle(IPlotGroupStyleCollection externalGroups)
     {
       if (PlotGroupStyle.ShouldAddExternalGroupStyle(externalGroups, typeof(ScatterSymbolGroupStyle)))
@@ -285,6 +329,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
       }
     }
 
+    /// <summary>
+    /// Adds the local scatter-symbol group style when required.
+    /// </summary>
     public static void AddLocalGroupStyle(
      IPlotGroupStyleCollection externalGroups,
      IPlotGroupStyleCollection localGroups)
@@ -293,8 +340,14 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
         localGroups.Add(new ScatterSymbolGroupStyle());
     }
 
+    /// <summary>
+    /// Represents a callback that reads a scatter symbol.
+    /// </summary>
     public delegate IScatterSymbol Getter();
 
+    /// <summary>
+    /// Prepares the scatter-symbol group style using the supplied getter.
+    /// </summary>
     public static void PrepareStyle(
       IPlotGroupStyleCollection externalGroups,
       IPlotGroupStyleCollection localGroups,
@@ -317,8 +370,14 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
         grpStyle.Initialize(getter());
     }
 
+    /// <summary>
+    /// Represents a callback that writes a scatter symbol.
+    /// </summary>
     public delegate void Setter(IScatterSymbol val);
 
+    /// <summary>
+    /// Applies the scatter-symbol group style using the supplied setter.
+    /// </summary>
     public static void ApplyStyle(
       IPlotGroupStyleCollection externalGroups,
       IPlotGroupStyleCollection localGroups,

@@ -32,7 +32,7 @@ namespace Altaxo.Graph.Plot.Groups
 {
   /// <summary>
   /// This group style is intended to make sure that all substyles have the same line connection.
-  /// Thus it is only intended for local use (only amound substyles of a single plot item).
+  /// Thus it is only intended for local use, only among substyles of a single plot item.
   /// plot styles.
   /// </summary>
   public class IgnoreMissingDataPointsGroupStyle
@@ -69,10 +69,20 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IgnoreMissingDataPointsGroupStyle"/> class.
+    /// </summary>
     public IgnoreMissingDataPointsGroupStyle()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IgnoreMissingDataPointsGroupStyle"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IgnoreMissingDataPointsGroupStyle"/> class by copying another instance.
+    /// </summary>
     public IgnoreMissingDataPointsGroupStyle(IgnoreMissingDataPointsGroupStyle from)
     {
       _isInitialized = from._isInitialized;
@@ -83,6 +93,9 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region ICloneable Members
 
+    /// <summary>
+    /// Creates a copy of this style.
+    /// </summary>
     public IgnoreMissingDataPointsGroupStyle Clone()
     {
       return new IgnoreMissingDataPointsGroupStyle(this);
@@ -97,6 +110,7 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region IGroupStyle Members
 
+    /// <inheritdoc/>
     public void TransferFrom(IPlotGroupStyle fromb)
     {
       var from = (IgnoreMissingDataPointsGroupStyle)fromb;
@@ -104,19 +118,23 @@ namespace Altaxo.Graph.Plot.Groups
       _ignoreMissingDataPoints = from._ignoreMissingDataPoints;
     }
 
+    /// <inheritdoc/>
     public void BeginPrepare()
     {
       _isInitialized = false;
     }
 
+    /// <inheritdoc/>
     public void PrepareStep()
     {
     }
 
+    /// <inheritdoc/>
     public void EndPrepare()
     {
     }
 
+    /// <inheritdoc/>
     public bool CanCarryOver
     {
       get
@@ -125,6 +143,7 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <inheritdoc/>
     public bool CanStep
     {
       get
@@ -133,6 +152,7 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <inheritdoc/>
     public int Step(int step)
     {
       return 0;
@@ -156,6 +176,9 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region Other members
 
+    /// <summary>
+    /// Gets a value indicating whether this style was initialized.
+    /// </summary>
     public bool IsInitialized
     {
       get
@@ -164,12 +187,19 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <summary>
+    /// Initializes the style.
+    /// </summary>
+    /// <param name="ignoreMissingDataPoints">If set to <c>true</c>, missing data points are ignored.</param>
     public void Initialize(bool ignoreMissingDataPoints)
     {
       _isInitialized = true;
       _ignoreMissingDataPoints = ignoreMissingDataPoints;
     }
 
+    /// <summary>
+    /// Gets a value indicating whether missing data points are ignored.
+    /// </summary>
     public bool IgnoreMissingDataPoints
     {
       get
@@ -182,11 +212,19 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region Static helpers
 
+    /// <summary>
+    /// Adds the external group style when applicable.
+    /// </summary>
     public static void AddExternalGroupStyle(IPlotGroupStyleCollection externalGroups)
     {
       // this group style is local only, so no addition is made here
     }
 
+    /// <summary>
+    /// Adds the ignore-missing-data-points group style to the local collection when required.
+    /// </summary>
+    /// <param name="externalGroups">The external group-style collection.</param>
+    /// <param name="localGroups">The local group-style collection.</param>
     public static void AddLocalGroupStyle(
      IPlotGroupStyleCollection externalGroups,
      IPlotGroupStyleCollection localGroups)
@@ -195,6 +233,12 @@ namespace Altaxo.Graph.Plot.Groups
         localGroups.Add(new IgnoreMissingDataPointsGroupStyle());
     }
 
+    /// <summary>
+    /// Prepares an ignore-missing-data-points group style for later application.
+    /// </summary>
+    /// <param name="externalGroups">The external group-style collection.</param>
+    /// <param name="localGroups">The local group-style collection.</param>
+    /// <param name="getter">The delegate that supplies the current setting.</param>
     public static void PrepareStyle(
       IPlotGroupStyleCollection externalGroups,
       IPlotGroupStyleCollection localGroups,

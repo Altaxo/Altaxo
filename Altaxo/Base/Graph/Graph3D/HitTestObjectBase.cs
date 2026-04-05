@@ -28,6 +28,9 @@ using Altaxo.Graph.Graph3D.GraphicsContext;
 
 namespace Altaxo.Graph.Graph3D
 {
+  /// <summary>
+  /// Provides the base implementation for three-dimensional hit-test objects.
+  /// </summary>
   public abstract class HitTestObjectBase : IHitTestObject
   {
     #region Internal classes
@@ -39,6 +42,10 @@ namespace Altaxo.Graph.Graph3D
     {
       private IObjectOutline _displayPath;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NoopGrip"/> class.
+        /// </summary>
+        /// <param name="displayPath">The outline to display for the grip.</param>
       public NoopGrip(IObjectOutline displayPath)
       {
         _displayPath = displayPath;
@@ -56,11 +63,13 @@ namespace Altaxo.Graph.Graph3D
       {
       }
 
+        /// <inheritdoc/>
       public bool Deactivate()
       {
         return false;
       }
 
+        /// <inheritdoc/>
       public void MoveGrip(HitTestPointData newPosition)
       {
       }
@@ -76,6 +85,7 @@ namespace Altaxo.Graph.Graph3D
         }
       }
 
+        /// <inheritdoc/>
       public bool IsGripHit(HitTestPointData point)
       {
         return false;
@@ -119,12 +129,16 @@ namespace Altaxo.Graph.Graph3D
       get { return _matrix; }
     }
 
+    /// <inheritdoc/>
     public object HittedObject
     {
       get { return _hitobject; }
       set { _hitobject = value; }
     }
 
+    /// <summary>
+    /// Gets the outline used for arrangement operations.
+    /// </summary>
     public abstract IObjectOutlineForArrangements ObjectOutlineForArrangements { get; }
 
     /// <summary>
@@ -134,6 +148,7 @@ namespace Altaxo.Graph.Graph3D
     /// <returns>Grip manipulation handles that are used to show the grips and to manipulate the object.</returns>
     public abstract IGripManipulationHandle[]? GetGrips(int gripLevel);
 
+    /// <inheritdoc/>
     public virtual int GetNextGripLevel(int currentGripLevel)
     {
       return currentGripLevel;
@@ -157,6 +172,7 @@ namespace Altaxo.Graph.Graph3D
 
     private DoubleClickHandler? _DoubleClick;
 
+    /// <inheritdoc/>
     public DoubleClickHandler? DoubleClick
     {
       get { return _DoubleClick; }
@@ -171,6 +187,7 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Handler to remove the hitted object. Should return true if the object is removed, otherwise false.
     /// </summary>
+    /// <inheritdoc/>
     public DoubleClickHandler? Remove
     {
       get { return _Remove; }
@@ -181,6 +198,7 @@ namespace Altaxo.Graph.Graph3D
     /// This handles the double-click event
     /// </summary>
     /// <returns>False normally, true if the HitTestObject should be removed from the list of selected objects (i.e. because the object was deleted).</returns>
+    /// <inheritdoc/>
     public virtual bool OnDoubleClick()
     {
       if (DoubleClick is not null)
@@ -195,6 +213,7 @@ namespace Altaxo.Graph.Graph3D
     /// <value>
     /// The parent layer.
     /// </value>
+    /// <inheritdoc/>
     public HostLayer? ParentLayer
     {
       get { return _parentLayer; }

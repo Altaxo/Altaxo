@@ -31,6 +31,9 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
+  /// <summary>
+  /// Controller for <see cref="OpenCardinalSpline"/>.
+  /// </summary>
   [UserControllerForObject(typeof(OpenCardinalSpline), 110)]
   [ExpectedTypeOfView(typeof(ITabbedElementViewDC))]
   public class OpenCardinalSplineController : MVCANControllerEditOriginalDocBase<OpenCardinalSpline, ITabbedElementViewDC>
@@ -38,6 +41,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     private OpenPathShapeController _lineCtrl;
     private CardinalSplinePointsController _splinePointsCtrl;
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_lineCtrl, () => _lineCtrl = null);
@@ -46,6 +50,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the available tabs.
+    /// </summary>
     public SelectableListNodeList Tabs { get; } = new();
 
     private int? _selectedTab;
@@ -72,6 +79,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -94,6 +102,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (!_lineCtrl.Apply(disposeController))

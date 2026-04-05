@@ -28,14 +28,21 @@ using Altaxo.Science.Signals;
 
 namespace Altaxo.Gui.Science.Signals
 {
+  /// <summary>
+  /// View interface for Prony-series retardation settings.
+  /// </summary>
   public interface IPronySeriesRetardationView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="PronySeriesRetardation"/>.
+  /// </summary>
   [UserControllerForObject(typeof(PronySeriesRetardation))]
   [ExpectedTypeOfView(typeof(IPronySeriesRetardationView))]
   public class PronySeriesRetardationController : MVCANControllerEditImmutableDocBase<PronySeriesRetardation, IPronySeriesRetardationView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -45,6 +52,9 @@ namespace Altaxo.Gui.Science.Signals
 
     private double _timeMinimum;
 
+    /// <summary>
+    /// Gets or sets the minimum retardation time.
+    /// </summary>
     public double TimeMinimum
     {
       get => _timeMinimum;
@@ -60,6 +70,9 @@ namespace Altaxo.Gui.Science.Signals
 
     private double _timeMaximum;
 
+    /// <summary>
+    /// Gets or sets the maximum retardation time.
+    /// </summary>
     public double TimeMaximum
     {
       get => _timeMaximum;
@@ -76,6 +89,9 @@ namespace Altaxo.Gui.Science.Signals
 
     private int _numberOfRelaxationTimes;
 
+    /// <summary>
+    /// Gets or sets the number of retardation times.
+    /// </summary>
     public int NumberOfRelaxationTimes
     {
       get => _numberOfRelaxationTimes;
@@ -91,6 +107,9 @@ namespace Altaxo.Gui.Science.Signals
 
     private double _regularizationParameter;
 
+    /// <summary>
+    /// Gets or sets the regularization parameter.
+    /// </summary>
     public double RegularizationParameter
     {
       get => _regularizationParameter;
@@ -106,6 +125,9 @@ namespace Altaxo.Gui.Science.Signals
 
     private bool _useIntercept;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether an intercept is used.
+    /// </summary>
     public bool UseIntercept
     {
       get => _useIntercept;
@@ -121,6 +143,9 @@ namespace Altaxo.Gui.Science.Signals
 
     private bool _useFlowTerm;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the flow term is used.
+    /// </summary>
     public bool UseFlowTerm
     {
       get => _useFlowTerm;
@@ -137,6 +162,9 @@ namespace Altaxo.Gui.Science.Signals
 
     private bool _isDielectricSpectrum;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the data represent a dielectric spectrum.
+    /// </summary>
     public bool IsDielectricSpectrum
     {
       get => _isDielectricSpectrum;
@@ -154,6 +182,7 @@ namespace Altaxo.Gui.Science.Signals
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -170,6 +199,7 @@ namespace Altaxo.Gui.Science.Signals
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       try

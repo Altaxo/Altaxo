@@ -60,9 +60,13 @@ namespace Altaxo.Graph.Graph3D.Lighting
     /// <summary>
     /// 2016-01-24 initial version.
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="HemisphericAmbientLight"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(HemisphericAmbientLight), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (HemisphericAmbientLight)obj;
@@ -73,6 +77,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
         info.AddValue("DirectionBelowToAbove", s._directionBelowToAbove);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (HemisphericAmbientLight?)o ?? new HemisphericAmbientLight(info);

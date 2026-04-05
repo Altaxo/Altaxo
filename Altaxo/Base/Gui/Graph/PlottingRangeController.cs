@@ -30,26 +30,38 @@ using Altaxo.Collections;
 
 namespace Altaxo.Gui.Graph
 {
+  /// <summary>
+  /// View contract for editing a plotting range.
+  /// </summary>
   public interface IPlottingRangeView : IDataContextAwareView
   {
   }
 
   /// <summary>
-  /// Summary description.
+  /// Controller for editing a contiguous non-negative integer plotting range.
   /// </summary>
   [UserControllerForObject(typeof(ContiguousNonNegativeIntegerRange))]
   [ExpectedTypeOfView(typeof(IPlottingRangeView))]
   public class PlottingRangeController : MVCANControllerEditOriginalDocBase<ContiguousNonNegativeIntegerRange, IPlottingRangeView>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PlottingRangeController"/> class.
+    /// </summary>
     public PlottingRangeController()
     {
     }
-      public PlottingRangeController(ContiguousNonNegativeIntegerRange doc)
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PlottingRangeController"/> class.
+    /// </summary>
+    /// <param name="doc">The plotting range document.</param>
+    public PlottingRangeController(ContiguousNonNegativeIntegerRange doc)
     {
       _doc = doc;
       Initialize(true);
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -59,6 +71,9 @@ namespace Altaxo.Gui.Graph
 
     private int _start;
 
+    /// <summary>
+    /// Gets or sets the start index.
+    /// </summary>
     public int Start
     {
       get => _start;
@@ -74,6 +89,9 @@ namespace Altaxo.Gui.Graph
 
     private int _last;
 
+    /// <summary>
+    /// Gets or sets the last index.
+    /// </summary>
     public int Last
     {
       get => _last;
@@ -89,6 +107,7 @@ namespace Altaxo.Gui.Graph
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -104,6 +123,7 @@ namespace Altaxo.Gui.Graph
     }
 
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       try

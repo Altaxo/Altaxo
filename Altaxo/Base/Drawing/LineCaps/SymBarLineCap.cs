@@ -32,23 +32,34 @@ using System.Text;
 namespace Altaxo.Drawing.LineCaps
 {
   /// <summary>
-  /// Draws a cap that is a line perpendicular to the end of the line, and on the right side of the line.
+  /// Draws a symmetric bar cap centered on the line end.
   /// </summary>
   public class SymBarLineCap : LineCapBase
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SymBarLineCap"/> class.
+    /// </summary>
     public SymBarLineCap()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SymBarLineCap"/> class.
+    /// </summary>
+    /// <param name="minimumAbsoluteSizePt">The minimum absolute size in points.</param>
+    /// <param name="minimumRelativeSize">The minimum relative size.</param>
     public SymBarLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
       : base(minimumAbsoluteSizePt, minimumRelativeSize)
     {
     }
 
+    /// <inheritdoc/>
     public override string Name { get { return "BarSym"; } }
 
+    /// <inheritdoc/>
     public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
 
+    /// <inheritdoc/>
     public override double DefaultMinimumRelativeSize { get { return 4; } }
   }
 }

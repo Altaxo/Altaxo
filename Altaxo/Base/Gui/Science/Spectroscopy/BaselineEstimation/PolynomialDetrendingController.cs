@@ -27,14 +27,21 @@ using Altaxo.Science.Spectroscopy.BaselineEstimation;
 
 namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
 {
+  /// <summary>
+  /// View interface for polynomial detrending settings.
+  /// </summary>
   public interface IPolynomialDetrendingView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="PolynomialDetrendingBase"/>.
+  /// </summary>
   [UserControllerForObject(typeof(PolynomialDetrendingBase))]
   [ExpectedTypeOfView(typeof(IPolynomialDetrendingView))]
   public class PolynomialDetrendingController : MVCANControllerEditImmutableDocBase<PolynomialDetrendingBase, IPolynomialDetrendingView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -44,6 +51,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
 
     private int _detrendingOrder;
 
+    /// <summary>
+    /// Gets or sets the detrending order.
+    /// </summary>
     public int DetrendingOrder
     {
       get => _detrendingOrder;
@@ -59,6 +69,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -69,6 +80,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = _doc with { DetrendingOrder = DetrendingOrder };

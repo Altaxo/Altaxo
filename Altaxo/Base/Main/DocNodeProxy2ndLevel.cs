@@ -98,6 +98,10 @@ namespace Altaxo.Main
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DocNodeProxy2ndLevel"/> class.
+    /// </summary>
+    /// <param name="docNode">The document node.</param>
     public DocNodeProxy2ndLevel(IDocumentLeafNode docNode)
       : base(docNode, isCalledFromConstructor: true)
     {
@@ -113,6 +117,10 @@ namespace Altaxo.Main
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DocNodeProxy2ndLevel"/> class for a path.
+    /// </summary>
+    /// <param name="docNodePath">The document path.</param>
     protected DocNodeProxy2ndLevel(Main.AbsoluteDocumentPath docNodePath)
       : base(docNodePath.ParentPath)
     {
@@ -131,6 +139,7 @@ namespace Altaxo.Main
 
     #endregion
 
+    /// <inheritdoc/>
     public override object Clone()
     {
       return new DocNodeProxy2ndLevel(this);
@@ -161,6 +170,9 @@ namespace Altaxo.Main
       base.SetDocNode(value);
     }
 
+    /// <summary>
+    /// Determines whether the specified object is a valid document for this proxy.
+    /// </summary>
     protected override bool InternalIsValidDocument(object obj, bool isCalledFromConstructor)
     {
       if (_childName is null && IsValidDocument(obj))
@@ -230,6 +242,7 @@ namespace Altaxo.Main
 
     }
 
+    /// <inheritdoc/>
     public override Main.AbsoluteDocumentPath DocumentPath()
     {
       lock (this)

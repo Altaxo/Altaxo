@@ -33,6 +33,9 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Analysis.Multivariate
 {
+  /// <summary>
+  /// Defines the view contract for editing low-rank factorization dimension-reduction settings.
+  /// </summary>
   public interface IDimensionReductionByFactorizationMethodView : IDataContextAwareView
   {
   }
@@ -45,7 +48,7 @@ namespace Altaxo.Gui.Analysis.Multivariate
 
   public class DimensionReductionByFactorizationMethodController : MVCANControllerEditImmutableDocBase<DimensionReductionByLowRankFactorization, IDimensionReductionByFactorizationMethodView>
   {
-
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(DetailsController, () => DetailsController = null!);
@@ -54,6 +57,9 @@ namespace Altaxo.Gui.Analysis.Multivariate
     #region Bindings
 
 
+    /// <summary>
+    /// Gets or sets the available factorization methods.
+    /// </summary>
     public ItemsController<ILowRankMatrixFactorization> Method
     {
       get => field;
@@ -67,6 +73,9 @@ namespace Altaxo.Gui.Analysis.Multivariate
       }
     }
 
+    /// <summary>
+    /// Gets or sets the maximum number of factors.
+    /// </summary>
     public int MaximumNumberOfFactors
     {
       get => field;
@@ -81,6 +90,9 @@ namespace Altaxo.Gui.Analysis.Multivariate
     }
 
 
+    /// <summary>
+    /// Gets or sets the controller for method-specific settings.
+    /// </summary>
     public IMVCANController? DetailsController
     {
       get => field;
@@ -97,6 +109,7 @@ namespace Altaxo.Gui.Analysis.Multivariate
 
     #endregion Bindings
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -128,6 +141,7 @@ namespace Altaxo.Gui.Analysis.Multivariate
       DetailsController = (IMVCANController?)Current.Gui.GetControllerAndControl([factorization], typeof(IMVCANController));
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (DetailsController is { } controller)

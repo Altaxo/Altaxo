@@ -10,12 +10,19 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Data
 {
+  /// <summary>
+  /// View contract for editing options when extracting common columns into a table.
+  /// </summary>
   public interface IExtractCommonColumnsToTableOptionsView : IDataContextAwareView { }
 
+  /// <summary>
+  /// Controller for editing options when extracting common columns into a table.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IExtractCommonColumnsToTableOptionsView))]
   [UserControllerForObject(typeof(ExtractCommonColumnsToTableOptions))]
   public class ExtractCommonColumnsToTableOptionsController : MVCANControllerEditImmutableDocBase<ExtractCommonColumnsToTableOptions, IExtractCommonColumnsToTableOptionsView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_interpolationDetails, () => InterpolationDetails = null);
@@ -25,6 +32,9 @@ namespace Altaxo.Gui.Data
 
     private bool _intersectXValues;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether X values should be intersected.
+    /// </summary>
     public bool IntersectXValues
     {
       get => _intersectXValues;
@@ -40,6 +50,9 @@ namespace Altaxo.Gui.Data
 
     private bool _useUserDefinedNameForXColumn;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether a user-defined name should be used for the X column.
+    /// </summary>
     public bool UseUserDefinedNameForXColumn
     {
       get => _useUserDefinedNameForXColumn;
@@ -55,6 +68,9 @@ namespace Altaxo.Gui.Data
 
     private string _userDefinedNameForXColumn;
 
+    /// <summary>
+    /// Gets or sets the user-defined name for the X column.
+    /// </summary>
     public string UserDefinedNameForXColumn
     {
       get => _userDefinedNameForXColumn;
@@ -70,6 +86,9 @@ namespace Altaxo.Gui.Data
 
     private bool _useUserDefinedNamesForYColumns;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether user-defined names should be used for the Y columns.
+    /// </summary>
     public bool UseUserDefinedNamesForYColumns
     {
       get => _useUserDefinedNamesForYColumns;
@@ -85,6 +104,9 @@ namespace Altaxo.Gui.Data
 
     private string _userDefinedNamesForYColumns;
 
+    /// <summary>
+    /// Gets or sets the user-defined names for the Y columns.
+    /// </summary>
     public string UserDefinedNamesForYColumns
     {
       get => _userDefinedNamesForYColumns;
@@ -100,6 +122,9 @@ namespace Altaxo.Gui.Data
 
     private bool _placeMultipleYColumnsAdjacentInDestinationTable;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether multiple Y columns should be placed adjacently in the destination table.
+    /// </summary>
     public bool PlaceMultipleYColumnsAdjacentInDestinationTable
     {
       get => _placeMultipleYColumnsAdjacentInDestinationTable;
@@ -115,6 +140,9 @@ namespace Altaxo.Gui.Data
 
     private bool _createPropertyColumnWithSourceTableName;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether a property column with the source table name should be created.
+    /// </summary>
     public bool CreatePropertyColumnWithSourceTableName
     {
       get => _createPropertyColumnWithSourceTableName;
@@ -130,6 +158,9 @@ namespace Altaxo.Gui.Data
 
     private bool _copyColumnProperties;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether column properties should be copied to the destination table.
+    /// </summary>
     public bool CopyColumnProperties
     {
       get => _copyColumnProperties;
@@ -145,6 +176,9 @@ namespace Altaxo.Gui.Data
 
     private bool _useResampling;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether resampling should be used.
+    /// </summary>
     public bool UseResampling
     {
       get => _useResampling;
@@ -160,6 +194,9 @@ namespace Altaxo.Gui.Data
 
     private ItemsController<Type> _interpolationFunction;
 
+    /// <summary>
+    /// Gets or sets the interpolation function controller item list.
+    /// </summary>
     public ItemsController<Type> InterpolationFunction
     {
       get => _interpolationFunction;
@@ -175,6 +212,9 @@ namespace Altaxo.Gui.Data
 
     private double _interpolationInterval;
 
+    /// <summary>
+    /// Gets or sets the interpolation interval.
+    /// </summary>
     public double InterpolationInterval
     {
       get => _interpolationInterval;
@@ -190,6 +230,9 @@ namespace Altaxo.Gui.Data
 
     private bool _useUserDefinedInterpolationRangeStart;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether a user-defined interpolation range start should be used.
+    /// </summary>
     public bool UseUserDefinedInterpolationRangeStart
     {
       get => _useUserDefinedInterpolationRangeStart;
@@ -205,6 +248,9 @@ namespace Altaxo.Gui.Data
 
     private double? _interpolationRangeStart;
 
+    /// <summary>
+    /// Gets or sets the user-defined interpolation range start.
+    /// </summary>
     public double? InterpolationRangeStart
     {
       get => _interpolationRangeStart;
@@ -221,6 +267,9 @@ namespace Altaxo.Gui.Data
 
     private bool _useUserDefinedInterpolationRangeEnd;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether a user-defined interpolation range end should be used.
+    /// </summary>
     public bool UseUserDefinedInterpolationRangeEnd
     {
       get => _useUserDefinedInterpolationRangeEnd;
@@ -236,6 +285,9 @@ namespace Altaxo.Gui.Data
 
     private double?  _interpolationRangeEnd;
 
+    /// <summary>
+    /// Gets or sets the user-defined interpolation range end.
+    /// </summary>
     public double?  InterpolationRangeEnd
     {
       get => _interpolationRangeEnd;
@@ -251,6 +303,9 @@ namespace Altaxo.Gui.Data
 
     private IMVCANController _interpolationDetails;
 
+    /// <summary>
+    /// Gets or sets the controller for editing interpolation-specific options.
+    /// </summary>
     public IMVCANController InterpolationDetails
     {
       get => _interpolationDetails;
@@ -269,6 +324,7 @@ namespace Altaxo.Gui.Data
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -308,6 +364,11 @@ namespace Altaxo.Gui.Data
       }
     }
 
+    /// <summary>
+    /// Trims a trailing `Options` suffix from a type name.
+    /// </summary>
+    /// <param name="name">The name to trim.</param>
+    /// <returns>The trimmed name.</returns>
     static string TrimOptionsFromName(string name)
     {
       if (name.EndsWith("Options"))
@@ -330,6 +391,7 @@ namespace Altaxo.Gui.Data
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       var userDefinedY = UserDefinedNamesForYColumns.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)

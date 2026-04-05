@@ -79,6 +79,7 @@ namespace Altaxo.Graph.Graph3D.GuiModels
         info.AddNullableEnum("RootLayerMarkersVisibility", s._rootLayerMarkersVisibility);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (GraphViewOptions?)o ?? new GraphViewOptions(info);
@@ -112,8 +113,12 @@ namespace Altaxo.Graph.Graph3D.GuiModels
     /// <summary>Get the instance of the graph document that is shown in the view.</summary>
     public GraphDocument GraphDocument { get { return _graphDocument; } }
 
+    /// <summary>
+    /// Gets the visibility override for root-layer markers.
+    /// </summary>
     public RootLayerMarkersVisibility? RootLayerMarkersVisibility { get { return _rootLayerMarkersVisibility; } }
 
+    /// <inheritdoc/>
     IProjectItem IProjectItemPresentationModel.Document
     {
       get

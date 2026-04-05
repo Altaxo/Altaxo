@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -32,6 +32,9 @@ using Altaxo.Gui.Common.BasicTypes;
 
 namespace Altaxo.Gui.Worksheet
 {
+  /// <summary>
+  /// Defines the view contract for configuring the start of a PLS analysis.
+  /// </summary>
   public interface IPLSStartAnalysisView : IDataContextAwareView
   {
   }
@@ -39,20 +42,31 @@ namespace Altaxo.Gui.Worksheet
   /// <summary>
   /// Summary description for PLSStartAnalysisController.
   /// </summary>
+  /// <summary>
+  /// Controller for <see cref="MultivariateAnalysisOptions"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IPLSStartAnalysisView))]
    [UserControllerForObject(typeof(MultivariateAnalysisOptions))]
   public class PLSStartAnalysisController : MVCANControllerEditImmutableDocBase<MultivariateAnalysisOptions, IPLSStartAnalysisView>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PLSStartAnalysisController"/> class.
+    /// </summary>
     public PLSStartAnalysisController()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PLSStartAnalysisController"/> class.
+    /// </summary>
+    /// <param name="options">The analysis options.</param>
     public PLSStartAnalysisController(MultivariateAnalysisOptions options)
     {
       _doc = options;
       Initialize(true);
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -61,6 +75,9 @@ namespace Altaxo.Gui.Worksheet
     #region Bindings
 
     private int  _numberOfFactors;
+    /// <summary>
+    /// Gets or sets the maximum number of factors.
+    /// </summary>
     public int  NumberOfFactors
     {
       get => _numberOfFactors;
@@ -78,6 +95,9 @@ namespace Altaxo.Gui.Worksheet
 
     private ItemsController<Type> _analysisMethods;
 
+    /// <summary>
+    /// Gets or sets the available analysis methods.
+    /// </summary>
     public ItemsController<Type> AnalysisMethods
     {
       get => _analysisMethods;
@@ -93,6 +113,9 @@ namespace Altaxo.Gui.Worksheet
 
     private ItemsController<Type> _CROSSPressCalculationTypes;
 
+    /// <summary>
+    /// Gets or sets the available cross-validation grouping strategies.
+    /// </summary>
     public ItemsController<Type> CROSSPressCalculationTypes
     {
       get => _CROSSPressCalculationTypes;
@@ -108,6 +131,7 @@ namespace Altaxo.Gui.Worksheet
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -120,6 +144,7 @@ namespace Altaxo.Gui.Worksheet
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = new MultivariateAnalysisOptions()

@@ -37,10 +37,16 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Gui.Graph.Gdi
 {
+  /// <summary>
+  /// Provides the view for editing <see cref="GraphExportOptions"/>.
+  /// </summary>
   public interface IGraphExportOptionsView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controls the editing of <see cref="GraphExportOptions"/> instances.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IGraphExportOptionsView))]
   [UserControllerForObject(typeof(GraphExportOptions))]
   public class GraphExportOptionsController : MVCANControllerEditOriginalDocBase<GraphExportOptions, IGraphExportOptionsView>
@@ -92,6 +98,7 @@ namespace Altaxo.Gui.Graph.Gdi
       System.Drawing.Imaging.PixelFormat.PAlpha
     };
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -101,6 +108,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private ItemsController<double> _sourceDpi;
 
+    /// <summary>
+    /// Gets or sets the selectable source DPI values.
+    /// </summary>
     public ItemsController<double> SourceDpi
     {
       get => _sourceDpi;
@@ -116,6 +126,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private string _sourceDpiText;
 
+    /// <summary>
+    /// Gets or sets the source DPI value as editable text.
+    /// </summary>
     public string SourceDpiText
     {
       get => _sourceDpiText;
@@ -131,6 +144,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private ItemsController<double> _DestinationDpi;
 
+    /// <summary>
+    /// Gets or sets the selectable destination DPI values.
+    /// </summary>
     public ItemsController<double> DestinationDpi
     {
       get => _DestinationDpi;
@@ -145,6 +161,9 @@ namespace Altaxo.Gui.Graph.Gdi
     }
     private string _DestinationDpiText;
 
+    /// <summary>
+    /// Gets or sets the destination DPI value as editable text.
+    /// </summary>
     public string DestinationDpiText
     {
       get => _DestinationDpiText;
@@ -162,6 +181,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private ItemsController<ImageFormat> _imageFormat;
 
+    /// <summary>
+    /// Gets or sets the selected image format.
+    /// </summary>
     public ItemsController<ImageFormat> ImageFormat
     {
       get => _imageFormat;
@@ -178,6 +200,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private ItemsController<PixelFormat> _pixelFormat;
 
+    /// <summary>
+    /// Gets or sets the selected pixel format.
+    /// </summary>
     public ItemsController<PixelFormat> PixelFormat
     {
       get => _pixelFormat;
@@ -197,6 +222,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private BrushX _backgroundBrush;
 
+    /// <summary>
+    /// Gets or sets the background brush used for exported raster images.
+    /// </summary>
     public BrushX BackgroundBrush
     {
       get => _backgroundBrush;
@@ -212,6 +240,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private bool _enableClipboardFormat;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether clipboard-specific format options are enabled.
+    /// </summary>
     public bool EnableClipboardFormat
     {
       get => _enableClipboardFormat;
@@ -228,6 +259,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private IMVCANController _clipboardFormatController;
 
+    /// <summary>
+    /// Gets or sets the controller for clipboard-specific export options.
+    /// </summary>
     public IMVCANController ClipboardFormatController
     {
       get => _clipboardFormatController;
@@ -243,6 +277,7 @@ namespace Altaxo.Gui.Graph.Gdi
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -293,6 +328,7 @@ namespace Altaxo.Gui.Graph.Gdi
 
     #region IApplyController Members
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (!GUIConversion.IsDouble(SourceDpiText, out var sr))

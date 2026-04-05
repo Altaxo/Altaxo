@@ -32,47 +32,103 @@ namespace Altaxo.Gui.Serialization.Galactic
 {
   #region Interfaces
 
+  /// <summary>
+  /// Provides the view contract for exporting Galactic SPC files.
+  /// </summary>
   public interface IExportGalacticSpcFileView
   {
+    /// <summary>
+    /// Gets or sets a value indicating whether one spectrum is created from each row.
+    /// </summary>
     bool CreateSpectrumFromRow { get; set; }
 
+    /// <summary>
+    /// Gets a value indicating whether one spectrum is created from each column.
+    /// </summary>
     bool CreateSpectrumFromColumn { get; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether x values are generated as a continuous number.
+    /// </summary>
     bool XValuesContinuousNumber { get; set; }
 
+    /// <summary>
+    /// Gets a value indicating whether x values are taken from a column.
+    /// </summary>
     bool XValuesFromColumn { get; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the file name is extended with a continuous number.
+    /// </summary>
     bool ExtendFileName_ContinuousNumber { get; set; }
 
+    /// <summary>
+    /// Gets a value indicating whether the file name is extended with values from a column.
+    /// </summary>
     bool ExtendFileName_ByColumn { get; }
 
+    /// <summary>
+    /// Gets or sets the base file name used for export.
+    /// </summary>
     string BasicFileName { get; set; }
 
+    /// <summary>
+    /// Fills the selector for the x-values column.
+    /// </summary>
+    /// <param name="list">The list of selectable columns.</param>
     void FillXValuesColumnBox(SelectableListNodeList list);
 
+    /// <summary>
+    /// Sets a value indicating whether the x-values column selector is enabled.
+    /// </summary>
     bool EnableXValuesColumnBox { set; }
 
+    /// <summary>
+    /// Gets the name of the selected x-values column.
+    /// </summary>
     string XValuesColumnName { get; }
 
+    /// <summary>
+    /// Fills the selector for the file-name extension column.
+    /// </summary>
+    /// <param name="list">The list of selectable columns.</param>
     void FillExtFileNameColumnBox(SelectableListNodeList list);
 
+    /// <summary>
+    /// Sets a value indicating whether the file-name extension column selector is enabled.
+    /// </summary>
     bool EnableExtFileNameColumnBox { set; }
 
+    /// <summary>
+    /// Gets the name of the selected file-name extension column.
+    /// </summary>
     string ExtFileNameColumnName { get; }
 
+    /// <summary>
+    /// Occurs when the user wants to choose the basic file name and path.
+    /// </summary>
     event Action BasicFileNameAndPathChoose;
 
+    /// <summary>
+    /// Occurs when the option for creating spectra from rows or columns changes.
+    /// </summary>
     event Action Change_CreateSpectrumFrom;
 
+    /// <summary>
+    /// Occurs when the option for obtaining x values changes.
+    /// </summary>
     event Action Change__XValuesFromOption;
 
+    /// <summary>
+    /// Occurs when the option for extending the file name changes.
+    /// </summary>
     event Action Change_ExtendFileNameOptions;
   }
 
   #endregion Interfaces
 
   /// <summary>
-  /// The controller class which is responsible for showing a dialog to export into the Galactic SPC file format.
+  /// Controller that shows a dialog to export data into the Galactic SPC file format.
   /// </summary>
   [ExpectedTypeOfView(typeof(IExportGalacticSpcFileView))]
   public class ExportGalacticSpcFileDialogController : IMVCAController
@@ -395,6 +451,7 @@ namespace Altaxo.Gui.Serialization.Galactic
 
     #region IMVCController Members
 
+    /// <inheritdoc/>
     public object ViewObject
     {
       get
@@ -425,11 +482,13 @@ namespace Altaxo.Gui.Serialization.Galactic
       }
     }
 
+    /// <inheritdoc/>
     public object ModelObject
     {
       get { return null; }
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
     }

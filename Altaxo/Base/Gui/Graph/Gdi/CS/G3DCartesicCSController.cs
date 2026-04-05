@@ -32,30 +32,45 @@ namespace Altaxo.Gui.Graph.Gdi.CS
 {
   #region Interfaces
 
+  /// <summary>
+  /// View contract for the GDI 3D cartesian coordinate system controller.
+  /// </summary>
   public interface IG3DCartesicCSView : IDataContextAwareView // view doesn't exist because there is nothing to show
   {
   }
 
   #endregion Interfaces
 
+  /// <summary>
+  /// Controller for <see cref="G3DCartesicCoordinateSystem"/> in the GDI graph layer.
+  /// </summary>
   [UserControllerForObject(typeof(G3DCartesicCoordinateSystem), 101)]
   [ExpectedTypeOfView(typeof(IG3DCartesicCSView))]
   public class G3DCartesicCSController : MVCANControllerEditOriginalDocBase<G3DCartesicCoordinateSystem, IG3DCartesicCSView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="G3DCartesicCSController"/> class.
+    /// </summary>
     public G3DCartesicCSController()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="G3DCartesicCSController"/> class.
+    /// </summary>
+    /// <param name="doc">The coordinate system document.</param>
     public G3DCartesicCSController(G2DCartesicCoordinateSystem doc)
     {
       InitializeDocument(doc);
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);

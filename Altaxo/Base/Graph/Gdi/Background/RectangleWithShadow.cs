@@ -33,7 +33,7 @@ using Altaxo.Geometry;
 namespace Altaxo.Graph.Gdi.Background
 {
   /// <summary>
-  /// Backs the item with a color filled rectangle.
+  /// Draws a filled rectangle with a drop shadow.
   /// </summary>
   [Serializable]
   public class RectangleWithShadow
@@ -41,9 +41,18 @@ namespace Altaxo.Graph.Gdi.Background
     Main.SuspendableDocumentNodeWithEventArgs,
     IBackgroundStyle
   {
+    /// <summary>
+    /// The main background brush.
+    /// </summary>
     protected BrushX _brush;
+    /// <summary>
+    /// The shadow length.
+    /// </summary>
     protected double _shadowLength = 5;
 
+    /// <summary>
+    /// Cached brush used to render the shadow.
+    /// </summary>
     [NonSerialized]
     protected BrushX? _cachedShadowBrush;
 
@@ -95,21 +104,36 @@ namespace Altaxo.Graph.Gdi.Background
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RectangleWithShadow"/> class.
+    /// </summary>
     public RectangleWithShadow()
     {
       _brush = new BrushX(NamedColors.White);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RectangleWithShadow"/> class with the specified fill color.
+    /// </summary>
+    /// <param name="c">The fill color.</param>
     public RectangleWithShadow(NamedColor c)
     {
       Brush = new BrushX(c);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RectangleWithShadow"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public RectangleWithShadow(RectangleWithShadow from)
     {
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies the state from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     [MemberNotNull(nameof(_brush))]
     public void CopyFrom(RectangleWithShadow from)
     {
@@ -121,11 +145,13 @@ namespace Altaxo.Graph.Gdi.Background
       Brush = from._brush;
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
     }
 
+    /// <inheritdoc />
     public object Clone()
     {
       return new RectangleWithShadow(this);
@@ -164,6 +190,7 @@ namespace Altaxo.Graph.Gdi.Background
 
     #region IBackgroundStyle Members
 
+    /// <inheritdoc />
     public RectangleD2D MeasureItem(System.Drawing.Graphics g, RectangleD2D innerArea)
     {
       innerArea.Inflate(_shadowLength / 2, _shadowLength / 2);
@@ -172,11 +199,13 @@ namespace Altaxo.Graph.Gdi.Background
       return innerArea;
     }
 
+    /// <inheritdoc />
     public void Draw(System.Drawing.Graphics g, RectangleD2D innerArea)
     {
       Draw(g, _brush, innerArea);
     }
 
+    /// <inheritdoc />
     public void Draw(System.Drawing.Graphics g, BrushX brush, RectangleD2D innerArea)
     {
       BrushX? shadowBrush = null;
@@ -216,6 +245,7 @@ namespace Altaxo.Graph.Gdi.Background
       }
     }
 
+    /// <inheritdoc />
     public bool SupportsBrush
     {
       get
@@ -224,6 +254,7 @@ namespace Altaxo.Graph.Gdi.Background
       }
     }
 
+    /// <inheritdoc />
     public BrushX Brush
     {
       get

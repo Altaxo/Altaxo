@@ -35,6 +35,9 @@ namespace Altaxo.Graph.Scales
   /// <summary>
   /// Represents a logarithmic axis, i.e. the physical values v correspond to logical values l by v=a*10^(b*l).
   /// </summary>
+  /// <summary>
+  /// Represents a base-10 logarithmic numerical scale.
+  /// </summary>
   [Serializable]
   [DisplayName("${res:ClassNames.Altaxo.Graph.Scales.Log10Scale}")]
   public class Log10Scale : NumericalScale
@@ -54,8 +57,14 @@ namespace Altaxo.Graph.Scales
     /// <summary>The boundary object. It collectes only positive values for the axis is logarithmic.</summary>
     protected NumericalBoundaries _dataBounds;
 
+    /// <summary>
+    /// Holds the rescaling conditions for this scale.
+    /// </summary>
     protected LogarithmicScaleRescaleConditions _rescaling;
 
+    /// <summary>
+    /// Holds the tick spacing for this scale.
+    /// </summary>
     protected Ticks.TickSpacing _tickSpacing;
 
     #region Serialization
@@ -63,6 +72,7 @@ namespace Altaxo.Graph.Scales
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Scales.Log10Scale", 3)]
     private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new ArgumentOutOfRangeException("Serialization of old version");
@@ -77,6 +87,7 @@ namespace Altaxo.Graph.Scales
                 */
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (Log10Scale?)o ?? new Log10Scale(info);
@@ -109,6 +120,7 @@ namespace Altaxo.Graph.Scales
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Log10Scale), 4)]
     private class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (Log10Scale)obj;
@@ -123,6 +135,7 @@ namespace Altaxo.Graph.Scales
         info.AddValue("TickSpacing", s._tickSpacing);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (Log10Scale?)o ?? new Log10Scale(info);
@@ -181,6 +194,10 @@ namespace Altaxo.Graph.Scales
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies the values from another <see cref="Log10Scale"/> instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     [MemberNotNull(nameof(_dataBounds), nameof(_rescaling), nameof(_tickSpacing))]
     protected void CopyFrom(Log10Scale from)
     {
@@ -200,6 +217,7 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -214,6 +232,7 @@ namespace Altaxo.Graph.Scales
       return false;
     }
 
+    /// <inheritdoc />
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_dataBounds is not null)
@@ -246,6 +265,7 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     public override Ticks.TickSpacing TickSpacing
     {
       get
@@ -321,16 +341,19 @@ namespace Altaxo.Graph.Scales
       return new Altaxo.Data.AltaxoVariant(NormalToPhysical(x));
     }
 
+    /// <inheritdoc />
     public override NumericalBoundaries DataBounds
     {
       get { return _dataBounds; }
     } // return a PhysicalBoundarie object that is associated with that axis
 
+    /// <inheritdoc />
     public override double Org
     {
       get { return _cachedOrg; }
     }
 
+    /// <inheritdoc />
     public override double End
     {
       get { return _cachedEnd; }
@@ -371,6 +394,7 @@ namespace Altaxo.Graph.Scales
         EhSelfChanged(EventArgs.Empty);
     }
 
+    /// <inheritdoc/>
     protected override string? SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
     {
       double o = org.ToDouble();

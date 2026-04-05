@@ -32,14 +32,21 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Scales.Ticks
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="AngularTickSpacingController"/>.
+  /// </summary>
   public interface IAngularTickSpacingView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="AngularTickSpacing"/>.
+  /// </summary>
   [UserControllerForObject(typeof(AngularTickSpacing), 200)]
   [ExpectedTypeOfView(typeof(IAngularTickSpacingView))]
   public class AngularTickSpacingController : MVCANControllerEditOriginalDocBase<AngularTickSpacing, IAngularTickSpacingView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -49,6 +56,9 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
     private bool _UsePositiveNegativeValues;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether positive and negative values are used.
+    /// </summary>
     public bool UsePositiveNegativeValues
     {
       get => _UsePositiveNegativeValues;
@@ -64,6 +74,9 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
     private ItemsController<int> _MajorTicks;
 
+    /// <summary>
+    /// Gets or sets the available major-tick settings.
+    /// </summary>
     public ItemsController<int> MajorTicks
     {
       get => _MajorTicks;
@@ -86,6 +99,9 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
     private ItemsController<int> _MinorTicks;
 
+    /// <summary>
+    /// Gets or sets the available minor-tick settings.
+    /// </summary>
     public ItemsController<int> MinorTicks
     {
       get => _MinorTicks;
@@ -102,6 +118,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
     #endregion
 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       MajorTicks = null;
@@ -109,6 +126,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -122,6 +140,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       _doc.UseSignedValues = UsePositiveNegativeValues;

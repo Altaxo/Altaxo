@@ -38,18 +38,47 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// </summary>
     protected class PathNodeGripHandle : IGripManipulationHandle
     {
-      protected PointD2D _gripCenter;
-      protected double _gripRadius;
-      protected IHitTestObject _parent;
-      protected PointD2D _drawrPosition;
-      protected PointD2D _fixrPosition;
-      protected PointD2D _fixaPosition;
+       /// <summary>
+       /// The grip center.
+       /// </summary>
+       protected PointD2D _gripCenter;
+
+       /// <summary>
+       /// The grip radius.
+       /// </summary>
+       protected double _gripRadius;
+
+       /// <summary>
+       /// The parent hit-test object.
+       /// </summary>
+       protected IHitTestObject _parent;
+
+       /// <summary>
+       /// The relative position of the moved point.
+       /// </summary>
+       protected PointD2D _drawrPosition;
+
+       /// <summary>
+       /// The relative fixed position.
+       /// </summary>
+       protected PointD2D _fixrPosition;
+
+       /// <summary>
+       /// The absolute fixed position.
+       /// </summary>
+       protected PointD2D _fixaPosition;
 
       private Action<PointD2D>? _moveAction;
       private bool _hasMoved;
 
-      public static Pen PathOutlinePen = new Pen(Color.Blue, 0);
+       /// <summary>
+       /// Gets the pen used to draw the path outline.
+       /// </summary>
+       public static Pen PathOutlinePen = new Pen(Color.Blue, 0);
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="PathNodeGripHandle"/> class.
+      /// </summary>
       public PathNodeGripHandle(IHitTestObject parent, PointD2D relPos, PointD2D gripCenter, double gripRadius)
       {
         _parent = parent;
@@ -61,13 +90,19 @@ namespace Altaxo.Graph.Gdi.Shapes
         _gripRadius = gripRadius;
       }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="PathNodeGripHandle"/> class.
+      /// </summary>
       public PathNodeGripHandle(IHitTestObject parent, PointD2D relPos, PointD2D gripCenter, double gripRadius, Action<PointD2D> moveAction)
         : this(parent, relPos, gripCenter, gripRadius)
       {
         _moveAction = moveAction;
       }
 
-      protected GraphicBase GraphObject { get { return (GraphicBase)_parent.HittedObject; } }
+       /// <summary>
+       /// Gets the graphic object associated with this grip handle.
+       /// </summary>
+       protected GraphicBase GraphObject { get { return (GraphicBase)_parent.HittedObject; } }
 
       #region IGripManipulationHandle Members
 
@@ -86,7 +121,8 @@ namespace Altaxo.Graph.Gdi.Shapes
       /// Announces the deactivation of this grip.
       /// </summary>
       /// <returns>The grip level, that should be displayed next, or -1 when the level should not change.</returns>
-      public virtual bool Deactivate()
+       /// <inheritdoc />
+       public virtual bool Deactivate()
       {
         if (_hasMoved)
           GraphObject.EhSelfChanged(EventArgs.Empty);
@@ -94,7 +130,10 @@ namespace Altaxo.Graph.Gdi.Shapes
         return false;
       }
 
-      public virtual void MoveGrip(PointD2D newPosition)
+       /// <summary>
+       /// Moves the grip to the specified position.
+       /// </summary>
+       public virtual void MoveGrip(PointD2D newPosition)
       {
         if (_moveAction is not null)
         {
@@ -112,7 +151,8 @@ namespace Altaxo.Graph.Gdi.Shapes
       /// <summary>Draws the grip in the graphics context.</summary>
       /// <param name="g">Graphics context.</param>
       /// <param name="pageScale">Current zoom factor that can be used to calculate pen width etc. for displaying the handle. Attention: this factor must not be used to transform the path of the handle.</param>
-      public void Show(Graphics g, double pageScale)
+       /// <inheritdoc />
+       public void Show(Graphics g, double pageScale)
       {
         g.FillEllipse(Brushes.Blue,
           (float)(_gripCenter.X - _gripRadius),
@@ -122,12 +162,18 @@ namespace Altaxo.Graph.Gdi.Shapes
           );
       }
 
-      public bool IsGripHitted(PointD2D point)
+       /// <summary>
+       /// Determines whether the specified point hits the grip.
+       /// </summary>
+       public bool IsGripHitted(PointD2D point)
       {
         return (Calc.RMath.Pow2(point.X - _gripCenter.X) + Calc.RMath.Pow2(point.Y - _gripCenter.Y)) < Calc.RMath.Pow2(_gripRadius);
       }
 
-      public bool IsGrippedObjectDisposed
+       /// <summary>
+       /// Gets a value indicating whether the gripped object has been disposed.
+       /// </summary>
+       public bool IsGrippedObjectDisposed
       {
         get
         {

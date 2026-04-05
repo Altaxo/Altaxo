@@ -24,10 +24,8 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Text;
 
 namespace Altaxo.Graph.Gdi.LineCaps
 {
@@ -36,9 +34,11 @@ namespace Altaxo.Graph.Gdi.LineCaps
   /// </summary>
   public class SquareOLineCap : GdiLineCapBase
   {
+    /// <inheritdoc />
     public override Type ExtendsType => typeof(Altaxo.Drawing.LineCaps.SquareOLineCap);
 
 
+    /// <inheritdoc />
     protected override CustomLineCap GetCustomLineCap(Pen pen, float size, bool isEndCap)
     {
       float endPoint;
@@ -68,9 +68,11 @@ namespace Altaxo.Graph.Gdi.LineCaps
   /// </summary>
   public class SquareFLineCap : GdiLineCapBase
   {
+    /// <inheritdoc />
     public override Type ExtendsType => typeof(Altaxo.Drawing.LineCaps.SquareFLineCap);
 
 
+    /// <inheritdoc />
     protected override CustomLineCap GetCustomLineCap(Pen pen, float size, bool isEndCap)
     {
       float scale = pen.Width == 0 ? 1 : size / (pen.Width * 2);

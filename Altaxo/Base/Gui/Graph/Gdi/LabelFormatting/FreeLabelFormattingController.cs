@@ -28,14 +28,21 @@ using Altaxo.Graph.Gdi.LabelFormatting;
 
 namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
 {
+  /// <summary>
+  /// Provides the view for editing free-form label formatting.
+  /// </summary>
   public interface IFreeLabelFormattingView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controls free-form label formatting for 2D graphs.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IFreeLabelFormattingView))]
   [UserControllerForObject(typeof(FreeLabelFormatting), 110)]
   public class FreeLabelFormattingController : MVCANControllerEditOriginalDocBase<FreeLabelFormatting, IFreeLabelFormattingView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_baseController, () => _baseController = null);
@@ -45,6 +52,9 @@ namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
 
     private string _formatString;
 
+    /// <summary>
+    /// Gets or sets the format string used for labels.
+    /// </summary>
     public string FormatString
     {
       get => _formatString;
@@ -60,6 +70,9 @@ namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
 
     private MultiLineLabelFormattingBaseController _baseController;
 
+    /// <summary>
+    /// Gets or sets the controller for the shared multiline formatting settings.
+    /// </summary>
     public MultiLineLabelFormattingBaseController BaseController
     {
       get => _baseController;
@@ -79,6 +92,7 @@ namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
 
 
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -92,6 +106,7 @@ namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (!_baseController.Apply(disposeController))

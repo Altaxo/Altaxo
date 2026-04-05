@@ -38,8 +38,19 @@ namespace Altaxo.Graph.Gdi.Shapes
   [Serializable]
   public class SimpleTextGraphic : GraphicBase
   {
+    /// <summary>
+    /// The font.
+    /// </summary>
     protected FontX _font;
+
+    /// <summary>
+    /// The text content.
+    /// </summary>
     protected string _text = "";
+
+    /// <summary>
+    /// The text color.
+    /// </summary>
     protected Color _color = Color.Black;
 
     #region Serialization
@@ -75,12 +86,19 @@ namespace Altaxo.Graph.Gdi.Shapes
     #region Constructors
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SimpleTextGraphic"/> class for deserialization.
+    /// </summary>
     protected SimpleTextGraphic(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
       : base(new ItemLocationDirectAutoSize())
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SimpleTextGraphic"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public SimpleTextGraphic(SimpleTextGraphic from)
       :
       base(from)
@@ -88,6 +106,11 @@ namespace Altaxo.Graph.Gdi.Shapes
       CopyFrom(from, false);
     }
 
+    /// <summary>
+    /// Copies the values from another <see cref="SimpleTextGraphic"/> instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
+    /// <param name="withBaseMembers">If set to <see langword="true"/>, base class members are copied as well.</param>
     [MemberNotNull(nameof(_font))]
     protected void CopyFrom(SimpleTextGraphic from, bool withBaseMembers)
     {
@@ -99,6 +122,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       _color = from._color;
     }
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -120,6 +144,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SimpleTextGraphic"/> class.
+    /// </summary>
     public SimpleTextGraphic(PointD2D graphicPosition, string text,
       FontX textFont, Color textColor)
       : base(new ItemLocationDirectAutoSize())
@@ -130,12 +157,18 @@ namespace Altaxo.Graph.Gdi.Shapes
       Color = textColor;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SimpleTextGraphic"/> class.
+    /// </summary>
     public SimpleTextGraphic(double posX, double posY,
       string text, FontX textFont, Color textColor)
       : this(new PointD2D(posX, posY), text, textFont, textColor)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SimpleTextGraphic"/> class.
+    /// </summary>
     public SimpleTextGraphic(PointD2D graphicPosition,
       string text, FontX textFont,
       Color textColor, double Rotation)
@@ -144,6 +177,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       this.Rotation = Rotation;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SimpleTextGraphic"/> class.
+    /// </summary>
     public SimpleTextGraphic(double posX, double posY,
       string text,
       FontX textFont,
@@ -154,11 +190,15 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #endregion Constructors
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new SimpleTextGraphic(this);
     }
 
+    /// <summary>
+    /// Gets or sets the font.
+    /// </summary>
     public FontX Font
     {
       get
@@ -173,6 +213,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets the text.
+    /// </summary>
     public string Text
     {
       get
@@ -185,6 +228,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets the text color.
+    /// </summary>
     public System.Drawing.Color Color
     {
       get
@@ -206,6 +252,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       return GetRectangularObjectOutline();
     }
 
+    /// <inheritdoc />
     public override void Paint(Graphics g, IPaintContext paintContext)
     {
       System.Drawing.Drawing2D.GraphicsState gs = g.Save();

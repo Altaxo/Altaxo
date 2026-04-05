@@ -297,6 +297,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// is executed later.
     /// </summary>
     /// <param name="ctrl">The control.</param>
+    /// <param name="reporter">The reporter to report progress and cancellation.</param>
     public static void ExecuteAllDataSources(this ProjectBrowseController ctrl, IProgressReporter reporter)
     {
       // find all selected tables with data sources in it

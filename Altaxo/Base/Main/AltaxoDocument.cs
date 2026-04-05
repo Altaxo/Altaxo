@@ -33,7 +33,7 @@ using Altaxo.Serialization;
 namespace Altaxo
 {
   /// <summary>
-  /// Summary description for AltaxoDocument.
+  /// Represents an Altaxo project document and owns all project item collections stored in the project.
   /// </summary>
   public class AltaxoDocument
     :
@@ -62,6 +62,9 @@ namespace Altaxo
     /// <summary>A short string to identify the document. This string can be shown for instance in the graph windows.</summary>
     private DocumentInformation _documentInformation = new DocumentInformation();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AltaxoDocument"/> class.
+    /// </summary>
     public AltaxoDocument()
     {
       _dataTables = new Altaxo.Data.DataTableCollection(this);
@@ -343,6 +346,11 @@ namespace Altaxo
       return dictionary;
     }
 
+    /// <summary>
+    /// Restores the document contents from a project archive.
+    /// </summary>
+    /// <param name="zipFile">The project archive to read from.</param>
+    /// <param name="info">The deserialization helper.</param>
     public void RestoreFromZippedFile(IProjectArchive zipFile, Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info)
     {
       var errorText = new System.Text.StringBuilder();
@@ -483,36 +491,57 @@ namespace Altaxo
 
     #endregion Serialization
 
+    /// <summary>
+    /// Gets the collection of data tables stored in the document.
+    /// </summary>
     public Altaxo.Data.DataTableCollection DataTableCollection
     {
       get { return _dataTables; }
     }
 
+    /// <summary>
+    /// Gets the collection of 2D graph documents stored in the document.
+    /// </summary>
     public Altaxo.Graph.Gdi.GraphDocumentCollection GraphDocumentCollection
     {
       get { return _graphs; }
     }
 
+    /// <summary>
+    /// Gets the collection of 3D graph documents stored in the document.
+    /// </summary>
     public Altaxo.Graph.Graph3D.GraphDocumentCollection Graph3DDocumentCollection
     {
       get { return _graphs3D; }
     }
 
+    /// <summary>
+    /// Gets the collection of text documents stored in the document.
+    /// </summary>
     public Altaxo.Text.TextDocumentCollection TextDocumentCollection
     {
       get { return _textDocuments; }
     }
 
+    /// <summary>
+    /// Gets the collection of worksheet layouts stored in the document.
+    /// </summary>
     public Altaxo.Worksheet.WorksheetLayoutCollection TableLayouts
     {
       get { return _tableLayouts; }
     }
 
+    /// <summary>
+    /// Gets the collection of fit function scripts stored in the document.
+    /// </summary>
     public Altaxo.Scripting.FitFunctionScriptCollection FitFunctionScripts
     {
       get { return _fitFunctionScripts; }
     }
 
+    /// <summary>
+    /// Gets or sets the document identifier.
+    /// </summary>
     public string DocumentIdentifier
     {
       get
@@ -532,6 +561,7 @@ namespace Altaxo
     /// </summary>
     /// <param name="archiveManager">The archive manager that currently manages the archive in which the project is stored.</param>
     /// <param name="entryNameToItemDictionary">A dictionary where the keys are the archive entry names that where used to store the project items that are the values. The dictionary contains only those project items that need further handling (e.g. late load handling).</param>
+    /// <inheritdoc />
     public override void ClearIsDirty(IProjectArchiveManager archiveManager, IDictionary<string, IProjectItem>? entryNameToItemDictionary)
     {
       if (archiveManager is not null && entryNameToItemDictionary is not null)
@@ -547,17 +577,20 @@ namespace Altaxo
       base.ClearIsDirty(archiveManager, entryNameToItemDictionary);
     }
 
+    /// <inheritdoc />
     protected override bool HandleLowPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       IsDirty = true;
       return base.HandleLowPriorityChildChangeCases(sender, ref e);
     }
 
+    /// <inheritdoc />
     protected override void AccumulateChangeData(object? sender, EventArgs e)
     {
       _accumulatedEventData = e ?? EventArgs.Empty;
     }
 
+    /// <inheritdoc />
     public override Main.IDocumentNode? ParentObject
     {
       get
@@ -571,6 +604,7 @@ namespace Altaxo
       }
     }
 
+    /// <inheritdoc />
     public override string Name
     {
       get
@@ -604,6 +638,11 @@ namespace Altaxo
       return dt1;
     }
 
+    /// <summary>
+    /// Creates a new worksheet layout for the specified table and adds it to the project.
+    /// </summary>
+    /// <param name="table">The table for which the layout is created.</param>
+    /// <returns>The newly created worksheet layout.</returns>
     public Altaxo.Worksheet.WorksheetLayout CreateNewTableLayout(Altaxo.Data.DataTable table)
     {
       if (!_dataTables.Contains(table))
@@ -614,6 +653,7 @@ namespace Altaxo
       return layout;
     }
 
+    /// <inheritdoc />
     public override IDocumentLeafNode? GetChildObjectNamed(string name)
     {
       switch (name)
@@ -645,6 +685,7 @@ namespace Altaxo
       return null;
     }
 
+    /// <inheritdoc />
     public override string GetNameOfChildObject(IDocumentLeafNode o)
     {
       if (o is null)
@@ -669,6 +710,7 @@ namespace Altaxo
         return string.Empty;
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_dataTables is not null)
@@ -704,6 +746,9 @@ namespace Altaxo
     /// <value>
     /// The project item types.
     /// </value>
+    /// <summary>
+    /// Gets the project item types currently supported in the document.
+    /// </summary>
     public IEnumerable<System.Type> ProjectItemTypes
     {
       get
@@ -716,6 +761,9 @@ namespace Altaxo
       }
     }
 
+    /// <summary>
+    /// Gets the project item collections currently owned by the document.
+    /// </summary>
     public IEnumerable<IProjectItemCollection> ProjectItemCollections
     {
       get
@@ -756,7 +804,7 @@ namespace Altaxo
     /// Make sure to dispose the returned document after usage.
     /// </summary>
     /// <param name="fullFileNameOfAltaxoProject">The full file name of the Altaxo project to load.</param>
-    /// <returns>The <see cref="AltaxoDocument"/> loaed from the file</returns>
+    /// <returns>The <see cref="AltaxoDocument"/> loaded from the file.</returns>
     /// <remarks>The file is opened in read-only mode.</remarks>
     public static AltaxoDocument LoadStandaloneFromFile(string fullFileNameOfAltaxoProject)
     {

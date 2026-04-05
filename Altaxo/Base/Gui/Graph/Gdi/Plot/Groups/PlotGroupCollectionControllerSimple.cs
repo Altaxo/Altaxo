@@ -34,16 +34,20 @@ using Altaxo.Gui.Common;
 namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 {
   /// <summary>
-  /// This view interface is for showing the options of the XYLineScatterPlotStyle
+  /// Provides the view contract for the simple plot-group collection controller.
   /// </summary>
   public interface IPlotGroupCollectionViewSimple : IDataContextAwareView
   {
   }
 
 
+  /// <summary>
+  /// Controller for editing a simple set of plot-group styles.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IPlotGroupCollectionViewSimple))]
   public class PlotGroupCollectionControllerSimple : MVCANControllerEditOriginalDocBase<PlotGroupStyleCollection, IPlotGroupCollectionViewSimple>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -53,6 +57,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 
     private bool _PlotGroupColor;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether grouping by color is enabled.
+    /// </summary>
     public bool PlotGroupColor
     {
       get => _PlotGroupColor;
@@ -67,6 +74,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
     }
     private bool _PlotGroupLineType;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether grouping by line type is enabled.
+    /// </summary>
     public bool PlotGroupLineType
     {
       get => _PlotGroupLineType;
@@ -81,6 +91,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
     }
     private bool _PlotGroupSymbol;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether grouping by symbol is enabled.
+    /// </summary>
     public bool PlotGroupSymbol
     {
       get => _PlotGroupSymbol;
@@ -95,6 +108,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
     }
     private bool _plotGroupSequential;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether serial grouping is enabled.
+    /// </summary>
     public bool PlotGroupSequential
     {
       get => _plotGroupSequential;
@@ -110,6 +126,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 
     private ItemsController<PlotGroupStrictness>  _plotGroupStrictness;
 
+    /// <summary>
+    /// Gets or sets the controller for the plot group strictness.
+    /// </summary>
     public ItemsController<PlotGroupStrictness> PlotGroupStrictness
     {
       get => _plotGroupStrictness;
@@ -126,6 +145,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -143,6 +163,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       bool color = PlotGroupColor;
@@ -184,7 +205,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
     }
 
     /// <summary>
-    /// Determines if a PlotGroupStyleCollection fullfills the requirements to be presented by a simple controller.
+    /// Determines whether a <see cref="PlotGroupStyleCollection"/> fulfils the requirements to be presented by a simple controller.
     /// </summary>
     /// <param name="plotGroupStyles">The <see cref="PlotGroupStyleCollection"/> to investigate.</param>
     /// <returns>True if the <see cref="PlotGroupStyleCollection"/> can be presented by a simple controller, otherwise False.</returns>

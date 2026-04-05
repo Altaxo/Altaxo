@@ -31,7 +31,7 @@ using System.Text;
 namespace Altaxo.Graph.Plot.Groups
 {
   /// <summary>
-  /// Interface to a group style that needs to shift the items, e.g. the <see cref="BarSizePosition3DGroupStyle"/>. The shift is independet on the row index of the underlying data.
+  /// Interface to a group style that needs to shift the items, for example the <see cref="BarSizePosition3DGroupStyle"/>. The shift is independent of the row index of the underlying data.
   /// </summary>
   public interface IShiftLogicalXYGroupStyle
   {
@@ -44,14 +44,14 @@ namespace Altaxo.Graph.Plot.Groups
     bool IsConstant { get; }
 
     /// <summary>
-    /// Get the logical shift values applied to the items. Use this function if <see cref="IsConstant"/> returns true.
+    /// Gets the logical shift values applied to the items. Use this function if <see cref="IsConstant"/> returns <see langword="true"/>.
     /// </summary>
     /// <param name="logicalShiftX">The logical shift x applied to the items.</param>
     /// <param name="logicalShiftY">The logical shift y applied to the items.</param>
     void Apply(out double logicalShiftX, out double logicalShiftY);
 
     /// <summary>
-    /// Get the logical shift values applied to the items. Use this function if <see cref="IsConstant"/> returns false.
+    /// Gets the logical shift values applied to the items. Use this function if <see cref="IsConstant"/> returns <see langword="false"/>.
     /// </summary>
     /// <param name="logicalShiftX">The function to get the logical shift x applied to the items. Parameter is the original row index of the item.</param>
     /// <param name="logicalShiftY">The function to get the logical shift y applied to the items. Parameter is the original row index of the item.</param>

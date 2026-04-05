@@ -32,20 +32,30 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Gdi
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="DefaultLineScatterGraphDocumentController"/>.
+  /// </summary>
   public interface IDefaultLineScatterGraphDocumentView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for choosing a default line/scatter graph document template.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IDefaultLineScatterGraphDocumentView))]
   public class DefaultLineScatterGraphDocumentController : MVCANControllerEditOriginalDocBase<GraphDocument, IDefaultLineScatterGraphDocumentView>
   {
 
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DefaultLineScatterGraphDocumentController"/> class.
+    /// </summary>
     public DefaultLineScatterGraphDocumentController()
     {
       CmdGraphFromProjectSelected = new RelayCommand(EhGraphFromProjectSelected);
@@ -53,10 +63,16 @@ namespace Altaxo.Gui.Graph.Gdi
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the command that selects a graph from the project.
+    /// </summary>
     public ICommand CmdGraphFromProjectSelected { get; }
 
     private ItemsController<GraphDocument> _graphsInProject;
 
+    /// <summary>
+    /// Gets or sets the graphs available in the project.
+    /// </summary>
     public ItemsController<GraphDocument> GraphsInProject
     {
       get => _graphsInProject;
@@ -73,6 +89,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private string _previewTitle;
 
+    /// <summary>
+    /// Gets or sets the preview title.
+    /// </summary>
     public string PreviewTitle
     {
       get => _previewTitle;
@@ -88,6 +107,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private System.Drawing.Bitmap _previewBitmap;
 
+    /// <summary>
+    /// Gets or sets the preview bitmap.
+    /// </summary>
     public System.Drawing.Bitmap PreviewBitmap
     {
       get => _previewBitmap;
@@ -106,6 +128,7 @@ namespace Altaxo.Gui.Graph.Gdi
 
     #endregion
 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       GraphsInProject = null;
@@ -113,6 +136,7 @@ namespace Altaxo.Gui.Graph.Gdi
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -130,6 +154,7 @@ namespace Altaxo.Gui.Graph.Gdi
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);

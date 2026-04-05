@@ -36,7 +36,7 @@ namespace Altaxo.Main
   public abstract class SuspendableDocumentNodeWithEventArgs : SuspendableDocumentNodeWithSingleAccumulatedData<EventArgs>
   {
     /// <summary>
-    /// Calls EhSelfChanged with EventArgs.Empty
+    /// Calls <c>EhSelfChanged(EventArgs)</c> with <see cref="EventArgs.Empty"/>.
     /// </summary>
     public virtual void EhSelfChanged()
     {

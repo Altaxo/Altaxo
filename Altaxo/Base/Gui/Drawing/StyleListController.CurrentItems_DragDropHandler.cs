@@ -37,10 +37,17 @@ namespace Altaxo.Gui.Drawing
     where TList : IStyleList<TItem>
     where TManager : IStyleListManager<TList, TItem>
   {
+    /// <summary>
+    /// Handles drag-and-drop interactions for the current-items list.
+    /// </summary>
     public class CurrentItems_DragDropHandler : IMVVMDragDropHandler
     {
       StyleListController<TManager, TList, TItem> _parent;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="CurrentItems_DragDropHandler"/> class.
+      /// </summary>
+      /// <param name="parent">The owning style-list controller.</param>
       public CurrentItems_DragDropHandler(StyleListController<TManager, TList, TItem> parent)
       {
         _parent = parent ?? throw new ArgumentNullException(nameof(parent));
@@ -48,11 +55,13 @@ namespace Altaxo.Gui.Drawing
 
       #region Drag current items
 
+      /// <inheritdoc/>
       public void DragCancelled()
       {
         _draggedNode = null;
       }
 
+      /// <inheritdoc/>
       public void DragEnded(bool isCopy, bool isMove)
       {
         if (isMove && _draggedNode is not null)
@@ -66,6 +75,7 @@ namespace Altaxo.Gui.Drawing
 
       private SelectableListNode _draggedNode;
 
+      /// <inheritdoc/>
       public void StartDrag(IEnumerable items, out object data, out bool canCopy, out bool canMove)
       {
        
@@ -78,6 +88,7 @@ namespace Altaxo.Gui.Drawing
         
       }
 
+      /// <inheritdoc/>
       public bool CanStartDrag(IEnumerable items)
       {
         var selNode = items.OfType<SelectableListNode>().FirstOrDefault();
@@ -89,6 +100,7 @@ namespace Altaxo.Gui.Drawing
 
       #region Drop onto current items
 
+      /// <inheritdoc/>
       public void DropCanAcceptData(object data, object targetItem, DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool canCopy, out bool canMove, out bool itemIsSwallowingData)
       {
        
@@ -117,6 +129,7 @@ namespace Altaxo.Gui.Drawing
         }
       }
 
+      /// <inheritdoc/>
       public void Drop(object data, object targetItem, DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool isCopy, out bool isMove)
       {
        

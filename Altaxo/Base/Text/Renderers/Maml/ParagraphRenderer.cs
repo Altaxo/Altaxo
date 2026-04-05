@@ -33,6 +33,9 @@ namespace Altaxo.Text.Renderers.Maml
   /// <seealso cref="MamlObjectRenderer{T}" />
   public class ParagraphRenderer : MamlObjectRenderer<ParagraphBlock>
   {
+    /// <summary>
+    /// Writes a paragraph block.
+    /// </summary>
     protected override void Write(MamlRenderer renderer, ParagraphBlock obj)
     {
       if (!renderer.IsFirstInContainer)

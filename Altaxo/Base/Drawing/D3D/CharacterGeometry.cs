@@ -31,23 +31,53 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Drawing.D3D
 {
+  /// <summary>
+  /// Stores the 2D contour and front-face triangulation of a rendered character.
+  /// </summary>
   public class CharacterGeometry
   {
     private List<PolygonClosedWithNormalsD2D> _characterContour;
 
     private IndexedTriangles _frontFace;
 
+    /// <summary>
+    /// Gets the contour polygons of the character.
+    /// </summary>
     public IList<PolygonClosedWithNormalsD2D> CharacterContour { get { return _characterContour; } }
 
+    /// <summary>
+    /// Gets the triangulated front face of the character.
+    /// </summary>
     public IndexedTriangles FrontFace { get { return _frontFace; } }
 
+    /// <summary>
+    /// Gets the font size used to generate the geometry.
+    /// </summary>
     public double FontSize { get; protected set; }
+    /// <summary>
+    /// Gets the line spacing used to generate the geometry.
+    /// </summary>
     public double LineSpacing { get; protected set; }
+    /// <summary>
+    /// Gets the baseline position.
+    /// </summary>
     public double BaseLine { get; protected set; }
+    /// <summary>
+    /// Gets the advance width of the character.
+    /// </summary>
     public double AdvanceWidth { get; protected set; }
+    /// <summary>
+    /// Gets the left side bearing.
+    /// </summary>
     public double LeftSideBearing { get; protected set; }
+    /// <summary>
+    /// Gets the right side bearing.
+    /// </summary>
     public double RightSideBearing { get; protected set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CharacterGeometry"/> class.
+    /// </summary>
     public CharacterGeometry(List<PolygonClosedWithNormalsD2D> characterContour, IndexedTriangles frontFace,
       double fontSize, double lineSpacing, double baseLine,
       double advanceWidth, double leftSideBearing, double rightSideBearing)

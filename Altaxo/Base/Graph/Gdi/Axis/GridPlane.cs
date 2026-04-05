@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -32,6 +32,9 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.Axis
 {
+  /// <summary>
+  /// Represents a grid plane together with its grid styles and optional background.
+  /// </summary>
   [Serializable]
   public class GridPlane :
     Main.SuspendableDocumentNodeWithSetOfEventArgs,
@@ -60,6 +63,10 @@ namespace Altaxo.Graph.Gdi.Axis
     [NonSerialized]
     private GridIndexer _cachedIndexer;
 
+    /// <summary>
+    /// Copies the state from another <see cref="GridPlane"/> instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     [MemberNotNull(nameof(_planeID))]
     private void CopyFrom(GridPlane from)
     {
@@ -113,18 +120,27 @@ namespace Altaxo.Graph.Gdi.Axis
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GridPlane"/> class.
+    /// </summary>
+    /// <param name="id">The plane identifier.</param>
     public GridPlane(CSPlaneID id)
     {
       _cachedIndexer = new GridIndexer(this);
       _planeID = id;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GridPlane"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public GridPlane(GridPlane from)
     {
       _cachedIndexer = new GridIndexer(this);
       CopyFrom(from);
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_grid1 is not null)
@@ -133,16 +149,24 @@ namespace Altaxo.Graph.Gdi.Axis
         yield return new Main.DocumentNodeAndName(_grid2, "Grid2");
     }
 
+    /// <summary>
+    /// Creates a copy of this grid plane.
+    /// </summary>
+    /// <returns>The cloned grid plane.</returns>
     public GridPlane Clone()
     {
       return new GridPlane(this);
     }
 
+    /// <inheritdoc />
     object ICloneable.Clone()
     {
       return new GridPlane(this);
     }
 
+    /// <summary>
+    /// Gets the plane identifier.
+    /// </summary>
     public CSPlaneID PlaneID
     {
       get
@@ -151,6 +175,9 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets the grid style for the first in-plane axis.
+    /// </summary>
     public GridStyle? GridStyleFirst
     {
       get { return _grid1; }
@@ -163,6 +190,9 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets the grid style for the second in-plane axis.
+    /// </summary>
     public GridStyle? GridStyleSecond
     {
       get { return _grid2; }
@@ -175,11 +205,17 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Gets indexed access to the two grid styles of this plane.
+    /// </summary>
     public Altaxo.Collections.IArray<GridStyle?> GridStyle
     {
       get { return _cachedIndexer; }
     }
 
+    /// <summary>
+    /// Gets or sets the background brush of the grid plane.
+    /// </summary>
     public BrushX? Background
     {
       get { return _background; }
@@ -202,6 +238,11 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Paints the background of the plane.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="layer">The plot layer.</param>
     public void PaintBackground(Graphics g, IPlotArea layer)
     {
       Region region = layer.CoordinateSystem.GetRegion();
@@ -225,6 +266,11 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Paints the grid lines of the plane.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="layer">The plot layer.</param>
     public void PaintGrid(Graphics g, IPlotArea layer)
     {
       Region region = layer.CoordinateSystem.GetRegion();
@@ -237,6 +283,11 @@ namespace Altaxo.Graph.Gdi.Axis
       g.Clip = oldClipRegion;
     }
 
+    /// <summary>
+    /// Paints the plane background and grid lines.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="layer">The plot layer.</param>
     public void Paint(Graphics g, IPlotArea layer)
     {
       PaintBackground(g, layer);
@@ -249,6 +300,10 @@ namespace Altaxo.Graph.Gdi.Axis
     {
       private GridPlane _parent;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="GridIndexer"/> class.
+      /// </summary>
+      /// <param name="parent">The owning grid plane.</param>
       public GridIndexer(GridPlane parent)
       {
         _parent = parent;
@@ -256,6 +311,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
       #region IArray<GridStyle> Members
 
+      /// <inheritdoc />
       public GridStyle? this[int i]
       {
         get
@@ -278,6 +334,7 @@ namespace Altaxo.Graph.Gdi.Axis
         }
       }
 
+      /// <inheritdoc />
       public int Count
       {
         get { return 2; }

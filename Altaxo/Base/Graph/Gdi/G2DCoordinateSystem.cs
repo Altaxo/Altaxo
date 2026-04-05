@@ -32,6 +32,9 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi
 {
+  /// <summary>
+  /// Provides the base implementation for 2D and projected coordinate systems used by GDI graph rendering.
+  /// </summary>
   [Serializable]
   public abstract class G2DCoordinateSystem
     :
@@ -39,9 +42,18 @@ namespace Altaxo.Graph.Gdi
     ICoordinateSystem,
     ICloneable
   {
+    /// <summary>
+    /// The width of the layer area.
+    /// </summary>
     protected double _layerWidth;
+    /// <summary>
+    /// The height of the layer area.
+    /// </summary>
     protected double _layerHeight;
 
+    /// <summary>
+    /// Cached axis style information.
+    /// </summary>
     protected List<CSAxisInformation> _axisStyleInformation = new List<CSAxisInformation>();
 
     /// <summary>
@@ -133,13 +145,26 @@ namespace Altaxo.Graph.Gdi
     /// <returns>The name of the axis side for the axis line given by the identifier.</returns>
     public abstract string GetAxisSideName(CSLineID id, CSAxisSide side);
 
+    /// <summary>
+    /// Gets the display name of the specified plane.
+    /// </summary>
+    /// <param name="planeId">The plane identifier.</param>
+    /// <returns>The plane name.</returns>
     public abstract string GetNameOfPlane(CSPlaneID planeId);
 
+    /// <summary>
+    /// Gets plane information for the specified plane identifier.
+    /// </summary>
+    /// <param name="planeID">The plane identifier.</param>
+    /// <returns>The plane information.</returns>
     public CSPlaneInformation GetPlaneInformation(CSPlaneID planeID)
     {
       return new CSPlaneInformation(planeID) { Name = GetNameOfPlane(planeID) };
     }
 
+    /// <summary>
+    /// Clears cached coordinate-system data.
+    /// </summary>
     protected virtual void ClearCachedObjects()
     {
       _axisStyleInformation.Clear();
@@ -147,6 +172,10 @@ namespace Altaxo.Graph.Gdi
 
     #region ICloneable Members
 
+    /// <summary>
+    /// Creates a copy of this coordinate system.
+    /// </summary>
+    /// <returns>The cloned coordinate system.</returns>
     public abstract object Clone();
 
     #endregion ICloneable Members
@@ -275,6 +304,12 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets the layer point corresponding to a logical point constrained to the specified plane.
+    /// </summary>
+    /// <param name="id">The plane identifier.</param>
+    /// <param name="r">The logical point.</param>
+    /// <returns>The point in layer coordinates.</returns>
     public PointD2D GetPointOnPlane(CSPlaneID id, Logical3D r)
     {
       double x, y;
@@ -487,6 +522,11 @@ namespace Altaxo.Graph.Gdi
       return -1;
     }
 
+    /// <summary>
+    /// Gets the axis style information for the specified axis identifier.
+    /// </summary>
+    /// <param name="styleID">The axis identifier.</param>
+    /// <returns>The axis style information.</returns>
     public CSAxisInformation GetAxisStyleInformation(CSLineID styleID)
     {
       if (_axisStyleInformation.Count == 0)
@@ -552,6 +592,11 @@ namespace Altaxo.Graph.Gdi
       return result;
     }
 
+    /// <summary>
+    /// Gets the untransformed perpendicular vector of the specified plane.
+    /// </summary>
+    /// <param name="id">The plane identifier.</param>
+    /// <returns>The untransformed perpendicular vector.</returns>
     public static VectorD2D GetUntransformedAxisPlaneVector(CSPlaneID id)
     {
       switch (id.PerpendicularAxisNumber)
@@ -567,6 +612,12 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets the union of known axis identifiers and the specified identifier lists.
+    /// </summary>
+    /// <param name="list1">The first sequence of axis identifiers.</param>
+    /// <param name="list2">The second sequence of axis identifiers.</param>
+    /// <returns>The merged sequence of axis identifiers.</returns>
     public IEnumerable<CSLineID> GetJoinedAxisStyleIdentifier(IEnumerable<CSLineID> list1, IEnumerable<CSLineID> list2)
     {
       var dict = new Dictionary<CSLineID, object?>();
@@ -602,6 +653,12 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets the union of planes derived from known axes and the specified plane identifiers.
+    /// </summary>
+    /// <param name="list1">A sequence of axis identifiers whose parallel planes are included.</param>
+    /// <param name="list2">A sequence of plane identifiers to include.</param>
+    /// <returns>The merged sequence of plane identifiers.</returns>
     public IEnumerable<CSPlaneID> GetJoinedPlaneIdentifier(IEnumerable<CSLineID> list1, IEnumerable<CSPlaneID> list2)
     {
       var dict = new HashSet<CSPlaneID>();

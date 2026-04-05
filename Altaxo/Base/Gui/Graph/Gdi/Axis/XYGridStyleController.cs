@@ -30,12 +30,15 @@ using Altaxo.Gui.Common.Drawing;
 
 namespace Altaxo.Gui.Graph.Gdi.Axis
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="XYGridStyleController"/>.
+  /// </summary>
   public interface IXYGridStyleView : IDataContextAwareView
   {
   }
 
   /// <summary>
-  /// Summary description for XYGridStyleController.
+  /// Controller for <see cref="GridStyle"/>.
   /// </summary>
   [UserControllerForObject(typeof(GridStyle))]
   [ExpectedTypeOfView(typeof(IXYGridStyleView))]
@@ -43,6 +46,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
   {
    
 
+    /// <inheritdoc />
     public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_majorController, () => _majorController = null);
@@ -53,6 +57,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     private bool  _showGrid;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the grid is shown.
+    /// </summary>
     public bool  ShowGrid
     {
       get => _showGrid;
@@ -71,6 +78,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     private bool _showZeroOnly;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether only the zero grid line is shown.
+    /// </summary>
     public bool ShowZeroOnly
     {
       get => _showZeroOnly;
@@ -88,6 +98,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     private bool _showMinorGrid;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether minor grid lines are shown.
+    /// </summary>
     public bool ShowMinorGrid
     {
       get => _showMinorGrid;
@@ -121,6 +134,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     private IMVCANDController _majorController;
     
 
+    /// <summary>
+    /// Gets or sets the controller for the major grid pen.
+    /// </summary>
     public IMVCANDController MajorController
     {
       get => _majorController;
@@ -136,6 +152,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     private IMVCANDController _minorController;
 
+    /// <summary>
+    /// Gets or sets the controller for the minor grid pen.
+    /// </summary>
     public IMVCANDController MinorController
     {
       get => _minorController;
@@ -155,6 +174,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -171,6 +191,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (!_majorController.Apply(disposeController))

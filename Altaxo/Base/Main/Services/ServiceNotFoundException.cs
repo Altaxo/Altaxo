@@ -29,22 +29,37 @@ namespace Altaxo.Main.Services
   [Serializable()]
   public class ServiceNotFoundException : BaseException
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ServiceNotFoundException"/> class.
+    /// </summary>
     public ServiceNotFoundException() : base()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ServiceNotFoundException"/> class.
+    /// </summary>
     public ServiceNotFoundException(Type serviceType) : base("Required service not found: " + serviceType.FullName)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ServiceNotFoundException"/> class.
+    /// </summary>
     public ServiceNotFoundException(string message) : base(message)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ServiceNotFoundException"/> class.
+    /// </summary>
     public ServiceNotFoundException(string message, Exception innerException) : base(message, innerException)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ServiceNotFoundException"/> class from serialized data.
+    /// </summary>
     protected ServiceNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
     }

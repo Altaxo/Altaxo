@@ -27,8 +27,15 @@
 
 namespace Altaxo.Data
 {
+  /// <summary>
+  /// Commands for creating and initializing data tables.
+  /// </summary>
   public static class DataTableCommands
   {
+    /// <summary>
+    /// Adds the standard x and value columns to a table.
+    /// </summary>
+    /// <param name="table">The table to initialize.</param>
     public static void AddStandardColumns(this DataTable table)
     {
       table.DataColumns.Add(new DoubleColumn(), "A", ColumnKind.X, 0);

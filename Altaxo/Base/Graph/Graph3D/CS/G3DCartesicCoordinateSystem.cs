@@ -32,6 +32,9 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D.CS
 {
+  /// <summary>
+  /// Represents a Cartesian coordinate system for three-dimensional graphs.
+  /// </summary>
   public class G3DCartesicCoordinateSystem : G3DCoordinateSystem
   {
     private static Dictionary<G3DCartesicCoordinateSystem, IList<CSAxisInformation>> _axisInformationLists;
@@ -65,9 +68,13 @@ namespace Altaxo.Graph.Graph3D.CS
     /// <summary>
     /// 2015-11-14 initial version.
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="G3DCartesicCoordinateSystem"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(G3DCartesicCoordinateSystem), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (G3DCartesicCoordinateSystem)obj;
@@ -78,6 +85,7 @@ namespace Altaxo.Graph.Graph3D.CS
         info.AddValue("XYInterchanged", s._isXYInterchanged);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (G3DCartesicCoordinateSystem?)o ?? new G3DCartesicCoordinateSystem();
@@ -97,8 +105,12 @@ namespace Altaxo.Graph.Graph3D.CS
 
     #region Construction and cloning
 
+    /// <summary>
+    /// Provides value-based equality for cached Cartesian coordinate-system instances.
+    /// </summary>
     private class ComparerForStaticDictionary : IEqualityComparer<G3DCartesicCoordinateSystem>
     {
+      /// <inheritdoc/>
       public bool Equals(G3DCartesicCoordinateSystem? x, G3DCartesicCoordinateSystem? y)
       {
         return (x is null && y is null) ||
@@ -111,6 +123,7 @@ namespace Altaxo.Graph.Graph3D.CS
           );
       }
 
+      /// <inheritdoc/>
       public int GetHashCode(G3DCartesicCoordinateSystem obj)
       {
         return
@@ -131,6 +144,7 @@ namespace Altaxo.Graph.Graph3D.CS
 
     #region Properties
 
+    /// <inheritdoc/>
     public override bool Is3D
     {
       get
@@ -139,6 +153,7 @@ namespace Altaxo.Graph.Graph3D.CS
       }
     }
 
+    /// <inheritdoc/>
     public override bool IsAffine
     {
       get
@@ -147,6 +162,7 @@ namespace Altaxo.Graph.Graph3D.CS
       }
     }
 
+    /// <inheritdoc/>
     public override bool IsOrthogonal
     {
       get
@@ -155,6 +171,14 @@ namespace Altaxo.Graph.Graph3D.CS
       }
     }
 
+    /// <summary>
+    /// Returns a copy of this coordinate system with the specified axis-orientation settings.
+    /// </summary>
+    /// <param name="isXYInterchanged">If set to <c>true</c>, the x- and y-axes are interchanged.</param>
+    /// <param name="isXReversed">If set to <c>true</c>, the x-axis is reversed.</param>
+    /// <param name="isYReversed">If set to <c>true</c>, the y-axis is reversed.</param>
+    /// <param name="isZReversed">If set to <c>true</c>, the z-axis is reversed.</param>
+    /// <returns>The existing instance if nothing changes; otherwise, a modified copy.</returns>
     public G3DCartesicCoordinateSystem WithXYInterchangedAndXYZReversed(bool isXYInterchanged, bool isXReversed, bool isYReversed, bool isZReversed)
     {
       if (
@@ -185,6 +209,11 @@ namespace Altaxo.Graph.Graph3D.CS
       get { return _isXYInterchanged; }
     }
 
+    /// <summary>
+    /// Returns a copy of this coordinate system with the specified x/y interchange flag.
+    /// </summary>
+    /// <param name="isXYInterchanged">If set to <c>true</c>, the x- and y-axes are interchanged.</param>
+    /// <returns>The existing instance if nothing changes; otherwise, a modified copy.</returns>
     public G3DCartesicCoordinateSystem WithXYInterchanged(bool isXYInterchanged)
     {
       if (_isXYInterchanged == isXYInterchanged)
@@ -207,6 +236,11 @@ namespace Altaxo.Graph.Graph3D.CS
       get { return _isXreversed; }
     }
 
+    /// <summary>
+    /// Returns a copy of this coordinate system with the specified x-axis direction.
+    /// </summary>
+    /// <param name="isXreversed">If set to <c>true</c>, the x-axis is reversed.</param>
+    /// <returns>The existing instance if nothing changes; otherwise, a modified copy.</returns>
     public G3DCartesicCoordinateSystem WithXReversed(bool isXreversed)
     {
       if (_isXreversed == isXreversed)
@@ -229,6 +263,11 @@ namespace Altaxo.Graph.Graph3D.CS
       get { return _isYreversed; }
     }
 
+    /// <summary>
+    /// Returns a copy of this coordinate system with the specified y-axis direction.
+    /// </summary>
+    /// <param name="isYreversed">If set to <c>true</c>, the y-axis is reversed.</param>
+    /// <returns>The existing instance if nothing changes; otherwise, a modified copy.</returns>
     public G3DCartesicCoordinateSystem WithYReversed(bool isYreversed)
     {
       if (_isYreversed == isYreversed)
@@ -251,6 +290,11 @@ namespace Altaxo.Graph.Graph3D.CS
       get { return _isZreversed; }
     }
 
+    /// <summary>
+    /// Returns a copy of this coordinate system with the specified z-axis direction.
+    /// </summary>
+    /// <param name="isZreversed">If set to <c>true</c>, the z-axis is reversed.</param>
+    /// <returns>The existing instance if nothing changes; otherwise, a modified copy.</returns>
     public G3DCartesicCoordinateSystem WithZReversed(bool isZreversed)
     {
       if (_isZreversed == isZreversed)
@@ -269,6 +313,7 @@ namespace Altaxo.Graph.Graph3D.CS
 
     #region Logical to physical conversion and vice versa
 
+    /// <inheritdoc />
     public override IPolylineD3D GetIsoline(Logical3D r0, Logical3D r1)
     {
       LogicalToLayerCoordinates(r0, out var pt0);
@@ -276,6 +321,7 @@ namespace Altaxo.Graph.Graph3D.CS
       return new StraightLineAsPolylineD3D(pt0, pt1);
     }
 
+    /// <inheritdoc />
     public override bool LayerToLogicalCoordinates(PointD3D location, out Logical3D r)
     {
       double rx = location.X / _layerSize.X;
@@ -296,6 +342,7 @@ namespace Altaxo.Graph.Graph3D.CS
       return !double.IsNaN(rx) && !double.IsNaN(ry) && !double.IsNaN(rz);
     }
 
+    /// <inheritdoc />
     public override bool LogicalToLayerCoordinates(Logical3D r, out PointD3D location)
     {
       double rx = _isXreversed ? 1 - r.RX : r.RX;
@@ -312,6 +359,7 @@ namespace Altaxo.Graph.Graph3D.CS
       return !double.IsNaN(rx) && !double.IsNaN(ry) && !double.IsNaN(rz);
     }
 
+    /// <inheritdoc />
     public override bool LogicalToLayerCoordinatesAndDirection(Logical3D r0, Logical3D r1, double t, out PointD3D position, out VectorD3D direction)
     {
       LogicalToLayerCoordinates(r0, out var pt0);
@@ -325,6 +373,7 @@ namespace Altaxo.Graph.Graph3D.CS
 
     #region Axis naming
 
+    /// <inheritdoc />
     public override IEnumerable<CSAxisInformation> AxisStyles
     {
       get
@@ -341,6 +390,7 @@ namespace Altaxo.Graph.Graph3D.CS
       }
     }
 
+    /// <inheritdoc />
     public override IEnumerable<CSPlaneInformation> PlaneStyles
     {
       get
@@ -383,6 +433,11 @@ namespace Altaxo.Graph.Graph3D.CS
       }
     }
 
+    /// <summary>
+    /// Gets the untransformed normal vector of an axis plane.
+    /// </summary>
+    /// <param name="id">The plane identifier.</param>
+    /// <returns>The untransformed plane normal vector.</returns>
     public static VectorD3D GetUntransformedAxisPlaneVector(CSPlaneID id)
     {
       switch (id.PerpendicularAxisNumber)
@@ -599,6 +654,7 @@ namespace Altaxo.Graph.Graph3D.CS
         throw new ArgumentOutOfRangeException("The vector v was expected to have only one element either being +1 or -1");
     }
 
+    /// <inheritdoc />
     public override string GetAxisSideName(CSLineID id, CSAxisSide side)
     {
       var v = GetUntransformedAxisSideVector(id, side);
@@ -607,6 +663,11 @@ namespace Altaxo.Graph.Graph3D.CS
       return name;
     }
 
+    /// <summary>
+    /// Gets the display name of an axis line from its direction vector.
+    /// </summary>
+    /// <param name="v">The axis-line vector.</param>
+    /// <returns>The axis-line name.</returns>
     public string GetAxisLineName(VectorD3D v)
     {
       string specname;
@@ -656,6 +717,11 @@ namespace Altaxo.Graph.Graph3D.CS
       return specname;
     }
 
+    /// <summary>
+    /// Gets the display name of an axis line.
+    /// </summary>
+    /// <param name="id">The axis-line identifier.</param>
+    /// <returns>The axis-line name.</returns>
     public string GetAxisLineName(CSLineID id)
     {
       var v = GetUntransformedAxisLineVector(id);
@@ -664,6 +730,11 @@ namespace Altaxo.Graph.Graph3D.CS
       return name;
     }
 
+    /// <summary>
+    /// Gets the preferred label side for an axis-line vector.
+    /// </summary>
+    /// <param name="v">The axis-line vector.</param>
+    /// <returns>The preferred label-side vector.</returns>
     public VectorD3D GetPreferredLabelSide(VectorD3D v)
     {
       VectorD3D result;
@@ -713,6 +784,11 @@ namespace Altaxo.Graph.Graph3D.CS
       return result;
     }
 
+    /// <summary>
+    /// Gets the preferred label side for an axis line.
+    /// </summary>
+    /// <param name="id">The axis-line identifier.</param>
+    /// <returns>The preferred label side.</returns>
     public CSAxisSide GetPreferredLabelSide(CSLineID id)
     {
       var u_axisVector = GetUntransformedAxisLineVector(id);
@@ -793,6 +869,7 @@ namespace Altaxo.Graph.Graph3D.CS
       return axisStyleInformations.AsReadOnly();
     }
 
+    /// <inheritdoc />
     public override string GetNameOfPlane(CSPlaneID planeId)
     {
       string name = "";

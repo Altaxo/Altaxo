@@ -69,7 +69,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
     public double CenterPosition { get { return _centerPosition; } }
 
     /// <summary>
-    /// Gets the number of ensenble data that were sorted into this bin.
+    /// Gets the number of ensemble data points that were sorted into this bin.
     /// </summary>
     /// <value>
     /// The number of data in this bin.

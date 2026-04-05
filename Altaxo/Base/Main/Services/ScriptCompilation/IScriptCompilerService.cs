@@ -46,7 +46,9 @@ namespace Altaxo.Main.Services.ScriptCompilation
     /// If you provide a text that was already compiled before, the already compiled assembly is returned instead
     /// of a freshly compiled assembly.
     /// </summary>
-    /// <returns>True if successfully compiles, otherwise false.</returns>
+    /// <param name="scriptText">The script source texts to compile.</param>
+    /// <param name="cancellationToken">The cancellation token that can be used to cancel compilation.</param>
+    /// <returns>The compiler result for the supplied script text.</returns>
     Task<IScriptCompilerResult> Compile(string[] scriptText, CancellationToken cancellationToken);
   }
 }

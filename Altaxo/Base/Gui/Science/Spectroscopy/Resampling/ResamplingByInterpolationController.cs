@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -30,12 +30,19 @@ using Altaxo.Science.Spectroscopy.Resampling;
 
 namespace Altaxo.Gui.Science.Spectroscopy.Resampling
 {
+  /// <summary>
+  /// View interface for editing <see cref="ResamplingByInterpolation"/>.
+  /// </summary>
   public interface IResamplingByInterpolationView : IDataContextAwareView { }
 
+  /// <summary>
+  /// Controller for editing <see cref="ResamplingByInterpolation"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IResamplingByInterpolationView))]
   [UserControllerForObject(typeof(ResamplingByInterpolation))]
   public class ResamplingByInterpolationController : MVCANControllerEditImmutableDocBase<ResamplingByInterpolation, IResamplingByInterpolationView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_interpolation, () => Interpolation = null);
@@ -46,6 +53,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Resampling
 
     private InterpolationFunctionOptionsController _interpolation;
 
+    /// <summary>
+    /// Gets or sets the controller used to edit the interpolation options.
+    /// </summary>
     public InterpolationFunctionOptionsController Interpolation
     {
       get => _interpolation;
@@ -62,6 +72,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Resampling
 
     private Altaxo.Gui.Common.EquallySpacedIntervalController _samplingPoints;
 
+    /// <summary>
+    /// Gets or sets the controller used to edit the sampling points.
+    /// </summary>
     public Altaxo.Gui.Common.EquallySpacedIntervalController SamplingPoints
     {
       get => _samplingPoints;
@@ -79,6 +92,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Resampling
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -100,6 +114,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Resampling
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (Interpolation.Apply(disposeController))

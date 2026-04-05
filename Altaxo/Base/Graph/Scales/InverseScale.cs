@@ -48,8 +48,14 @@ namespace Altaxo.Graph.Scales
     /// <summary>Holds the <see cref="NumericalBoundaries"/> for that axis.</summary>
     protected NumericalBoundaries _dataBounds;
 
+    /// <summary>
+    /// Holds the rescaling conditions for this scale.
+    /// </summary>
     protected InverseScaleRescaleConditions _rescaling;
 
+    /// <summary>
+    /// Holds the tick spacing for this scale.
+    /// </summary>
     protected Ticks.TickSpacing _tickSpacing;
 
     // cached values
@@ -70,6 +76,7 @@ namespace Altaxo.Graph.Scales
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Scales.InverseScale", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
@@ -82,6 +89,7 @@ namespace Altaxo.Graph.Scales
                 */
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (InverseScale?)o ?? new InverseScale(info);
@@ -114,6 +122,7 @@ namespace Altaxo.Graph.Scales
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(InverseScale), 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (InverseScale)obj;
@@ -124,6 +133,7 @@ namespace Altaxo.Graph.Scales
         info.AddValue("TickSpacing", s._tickSpacing);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (InverseScale?)o ?? new InverseScale(info);
@@ -179,6 +189,10 @@ namespace Altaxo.Graph.Scales
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies the values from another <see cref="InverseScale"/> instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     [MemberNotNull(nameof(_dataBounds), nameof(_rescaling), nameof(_tickSpacing))]
     protected void CopyFrom(InverseScale from)
     {
@@ -198,6 +212,7 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -213,11 +228,13 @@ namespace Altaxo.Graph.Scales
       return false;
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new InverseScale(this);
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_dataBounds is not null)
@@ -267,6 +284,7 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     public override Ticks.TickSpacing TickSpacing
     {
       get
@@ -283,6 +301,7 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     public override void OnUserRescaled()
     {
       _rescaling.OnUserRescaled();
@@ -306,6 +325,7 @@ namespace Altaxo.Graph.Scales
       return ((1 / x) - _cachedAxisOrgInv) * _cachedOneByAxisSpanInv;
     }
 
+    /// <inheritdoc />
     public override double NormalToPhysical(double x)
     {
       return 1 / (_cachedAxisOrgInv + x * _cachedAxisSpanInv);
@@ -349,6 +369,7 @@ namespace Altaxo.Graph.Scales
       end = 1;
     }
 
+    /// <inheritdoc/>
     protected override string? SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
     {
       double o = org.ToDouble();

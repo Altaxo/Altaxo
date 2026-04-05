@@ -32,7 +32,9 @@ using Altaxo.Science.Spectroscopy.EnsembleProcessing;
 
 namespace Altaxo.Gui.Analysis.Multivariate
 {
-
+  /// <summary>
+  /// Defines the view contract for editing dimension-reduction and regression options.
+  /// </summary>
   public interface IDimensionReductionAndRegressionOptionsView : IDataContextAwareView
   {
   }
@@ -47,6 +49,9 @@ namespace Altaxo.Gui.Analysis.Multivariate
     private Dictionary<Type, ISingleSpectrumPreprocessor> _knownSingleSpectrumPreprocessors = new();
     private Dictionary<Type, IEnsembleMeanScalePreprocessor> _knownEnsembleMeanScalePreprocessors = new();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DimensionReductionAndRegressionOptionsController"/> class.
+    /// </summary>
     public DimensionReductionAndRegressionOptionsController()
     {
     }
@@ -61,6 +66,7 @@ namespace Altaxo.Gui.Analysis.Multivariate
       Initialize(true);
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_singleSpectrumPreprocessorController, () => SingleSpectrumPreprocessorController = null);
@@ -70,6 +76,9 @@ namespace Altaxo.Gui.Analysis.Multivariate
     #region Bindings
 
     private int _numberOfFactors;
+    /// <summary>
+    /// Gets or sets the maximum number of factors.
+    /// </summary>
     public int NumberOfFactors
     {
       get => _numberOfFactors;
@@ -85,6 +94,9 @@ namespace Altaxo.Gui.Analysis.Multivariate
 
     private IMVCANController _singleSpectrumPreprocessorController;
 
+    /// <summary>
+    /// Gets or sets the controller for single-spectrum preprocessing.
+    /// </summary>
     public IMVCANController SingleSpectrumPreprocessorController
     {
       get => _singleSpectrumPreprocessorController;
@@ -102,6 +114,9 @@ namespace Altaxo.Gui.Analysis.Multivariate
 
     private ItemsController<Type> _EnsembleMeanScalePreprocessor;
 
+    /// <summary>
+    /// Gets or sets the selectable ensemble mean/scale preprocessors.
+    /// </summary>
     public ItemsController<Type> EnsembleMeanScalePreprocessor
     {
       get => _EnsembleMeanScalePreprocessor;
@@ -118,6 +133,9 @@ namespace Altaxo.Gui.Analysis.Multivariate
 
     private IMVCANController _ensembleMeanScalePreprocessorController;
 
+    /// <summary>
+    /// Gets or sets the controller for the selected ensemble mean/scale preprocessor.
+    /// </summary>
     public IMVCANController EnsembleMeanScalePreprocessorController
     {
       get => _ensembleMeanScalePreprocessorController;
@@ -133,6 +151,9 @@ namespace Altaxo.Gui.Analysis.Multivariate
 
     private ItemsController<Type> _analysisMethods;
 
+    /// <summary>
+    /// Gets or sets the available worksheet-analysis methods.
+    /// </summary>
     public ItemsController<Type> AnalysisMethods
     {
       get => _analysisMethods;
@@ -148,6 +169,9 @@ namespace Altaxo.Gui.Analysis.Multivariate
 
     private ItemsController<Type> _CROSSPressCalculationTypes;
 
+    /// <summary>
+    /// Gets or sets the available cross-validation grouping strategies.
+    /// </summary>
     public ItemsController<Type> CROSSPressCalculationTypes
     {
       get => _CROSSPressCalculationTypes;
@@ -163,6 +187,7 @@ namespace Altaxo.Gui.Analysis.Multivariate
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -292,6 +317,7 @@ namespace Altaxo.Gui.Analysis.Multivariate
       return ass.FullName == System.Reflection.Assembly.GetCallingAssembly().FullName;
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (SingleSpectrumPreprocessorController is { } ctrl1)

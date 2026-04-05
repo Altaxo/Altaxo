@@ -46,6 +46,9 @@ namespace Altaxo.Text
     /// </summary>
     public int LineNumber { get; set; }
 
+    /// <summary>
+    /// Gets or sets the column number.
+    /// </summary>
     public int ColumnNumber { get; set; }
 
     /// <summary>
@@ -53,6 +56,7 @@ namespace Altaxo.Text
     /// </summary>
     public string? AltaxoDocumentName { get; set; }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       var stb = new StringBuilder();

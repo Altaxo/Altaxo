@@ -31,19 +31,49 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Graph3D.GraphicsContext
 {
+  /// <summary>
+  /// Groups indexed triangle buffers that use positions and normals, with optional color or UV data.
+  /// </summary>
   public struct PositionNormalIndexedTriangleBuffers
   {
+    /// <summary>
+    /// Gets or sets the base indexed triangle buffer.
+    /// </summary>
     public IIndexedTriangleBuffer IndexedTriangleBuffer;
+    /// <summary>
+    /// Gets or sets the position-normal indexed triangle buffer.
+    /// </summary>
     public IPositionNormalIndexedTriangleBuffer? PositionNormalIndexedTriangleBuffer;
+    /// <summary>
+    /// Gets or sets the position-normal-color indexed triangle buffer.
+    /// </summary>
     public IPositionNormalColorIndexedTriangleBuffer? PositionNormalColorIndexedTriangleBuffer;
+    /// <summary>
+    /// Gets or sets the position-normal-UV indexed triangle buffer.
+    /// </summary>
     public IPositionNormalUVIndexedTriangleBuffer? PositionNormalUVIndexedTriangleBuffer;
   }
 
+  /// <summary>
+  /// Groups indexed triangle buffers that use positions, with optional color or UV data.
+  /// </summary>
   public struct PositionIndexedTriangleBuffers
   {
+    /// <summary>
+    /// Gets or sets the base indexed triangle buffer.
+    /// </summary>
     public IIndexedTriangleBuffer IndexedTriangleBuffer;
+    /// <summary>
+    /// Gets or sets the position indexed triangle buffer.
+    /// </summary>
     public IPositionIndexedTriangleBuffer PositionIndexedTriangleBuffer;
+    /// <summary>
+    /// Gets or sets the position-color indexed triangle buffer.
+    /// </summary>
     public IPositionColorIndexedTriangleBuffer PositionColorIndexedTriangleBuffer;
+    /// <summary>
+    /// Gets or sets the position-UV indexed triangle buffer.
+    /// </summary>
     public IPositionUVIndexedTriangleBuffer PositionUVIndexedTriangleBuffer;
   }
 }

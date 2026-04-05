@@ -34,13 +34,20 @@ using Altaxo.Science.Spectroscopy.BaselineEstimation;
 
 namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
 {
+  /// <summary>
+  /// View interface for selecting a baseline-estimation method.
+  /// </summary>
   public interface IBaselineEstimationView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="IBaselineEstimation"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IBaselineEstimationView))]
   public class BaselineEstimationController : MVCANControllerEditImmutableDocBase<IBaselineEstimation, IBaselineEstimationView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_subController, () => SubController = null);
@@ -50,6 +57,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
 
     private ItemsController<Type> _availableMethods;
 
+    /// <summary>
+    /// Gets or sets the available baseline-estimation methods.
+    /// </summary>
     public ItemsController<Type> AvailableMethods
     {
       get => _availableMethods;
@@ -66,6 +76,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
 
     private IMVCANController? _subController;
 
+    /// <summary>
+    /// Gets or sets the sub-controller for the selected method.
+    /// </summary>
     public IMVCANController? SubController
     {
       get => _subController;
@@ -84,6 +97,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
     #endregion
 
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -104,6 +118,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
       }
     }
 
+    /// <summary>
+    /// Creates the sub-controller for the current baseline-estimation method.
+    /// </summary>
     private void CreateSubController()
     {
       var subController = (IMVCANController)Current.Gui.GetController(new object[] { _doc }, typeof(IMVCANController));
@@ -118,12 +135,16 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
       SubController = subController;
     }
 
+    /// <summary>
+    /// Handles changes of the selected baseline-estimation type.
+    /// </summary>
     private void EhMethodTypeChanged(Type newMethodType)
     {
       _doc = (IBaselineEstimation)Activator.CreateInstance(newMethodType);
       CreateSubController();
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if(SubController is not null)
@@ -140,8 +161,12 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
 
     #region TypeSorter
 
+    /// <summary>
+    /// Sorts method types for display.
+    /// </summary>
     class TypeSorter : IComparer<Type>
     {
+      /// <inheritdoc/>
       public int Compare(Type x, Type y)
       {
         var xn = x.Name.EndsWith("None");

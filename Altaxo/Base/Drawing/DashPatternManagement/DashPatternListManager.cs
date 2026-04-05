@@ -37,8 +37,14 @@ using Altaxo.Main;
 
 namespace Altaxo.Drawing.DashPatternManagement
 {
+  /// <summary>
+  /// Manages registered dash pattern lists for the application.
+  /// </summary>
   public class DashPatternListManager : StyleListManagerBaseForClasses<DashPatternList, IDashPattern, StyleListManagerBaseEntryValue<DashPatternList, IDashPattern>>
   {
+    /// <summary>
+    /// Property key used to persist user-defined dash pattern lists.
+    /// </summary>
     public static readonly Main.Properties.PropertyKey<DashPatternListBag> PropertyKeyUserDefinedDashPatternLists;
 
     private static DashPatternListManager _instance;
@@ -55,6 +61,9 @@ namespace Altaxo.Drawing.DashPatternManagement
       Instance = new DashPatternListManager();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DashPatternListManager"/> class.
+    /// </summary>
     protected DashPatternListManager()
       : base(
           (list, level) => new StyleListManagerBaseEntryValue<DashPatternList, IDashPattern>(list, level),
@@ -108,6 +117,9 @@ namespace Altaxo.Drawing.DashPatternManagement
     /// </summary>
     public IDashPattern BuiltinDefaultDashDotDot { get { return BuiltinDefault[4]; } }
 
+    /// <summary>
+    /// Gets or sets the singleton dash pattern list manager instance.
+    /// </summary>
     public static DashPatternListManager Instance
     {
       get
@@ -129,11 +141,13 @@ namespace Altaxo.Drawing.DashPatternManagement
       }
     }
 
+    /// <inheritdoc/>
     public override DashPatternList CreateNewList(string name, IEnumerable<IDashPattern> symbols)
     {
       return new DashPatternList(name, symbols);
     }
 
+    /// <inheritdoc/>
     protected override void OnUserDefinedListAddedChangedRemoved(DashPatternList? list)
     {
       var listBag = new DashPatternListBag(_allLists.Values.Where(entry => entry.Level == ItemDefinitionLevel.UserDefined).Select(entry => entry.List));

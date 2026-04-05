@@ -72,9 +72,14 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     /// </summary>
     /// <param name="relativePosition">The relative position. Both components have to be in the range [0, 1].</param>
     /// <param name="baseColor">Base color, i.e. the color returned from the 1D color surface.</param>
-    /// <returns></returns>
+    /// <returns>The color for the specified 2D relative position.</returns>
     AxoColor GetColorFor2DColorSurfaceFromRelativePosition(PointD2D relativePosition, AxoColor baseColor);
 
+    /// <summary>
+    /// Gets the relative positions on the 1D and 2D color surfaces for the specified color.
+    /// </summary>
+    /// <param name="color">The color.</param>
+    /// <returns>The relative positions on the 1D and 2D color surfaces.</returns>
     (double position1D, PointD2D position2D) GetRelativePositionsFor1Dand2DColorSurfaceFromColor(AxoColor color);
 
     /// <summary>
@@ -83,8 +88,18 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     /// <returns>Names of the color components of this model.</returns>
     string[] GetNamesOfComponents();
 
+    /// <summary>
+    /// Gets the numeric color components of the specified color.
+    /// </summary>
+    /// <param name="color">The color.</param>
+    /// <returns>The numeric color components.</returns>
     double[] GetComponentsForColor(AxoColor color);
 
+    /// <summary>
+    /// Gets a color from its numeric components.
+    /// </summary>
+    /// <param name="components">The color components.</param>
+    /// <returns>The resulting color.</returns>
     AxoColor GetColorFromComponents(double[] components);
 
     /// <summary>

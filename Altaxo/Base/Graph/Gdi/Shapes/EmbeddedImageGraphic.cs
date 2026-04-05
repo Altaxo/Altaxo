@@ -33,9 +33,15 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
+  /// <summary>
+  /// Represents an embedded image graphic.
+  /// </summary>
   [Serializable]
   public class EmbeddedImageGraphic : ImageGraphic
   {
+    /// <summary>
+    /// The embedded image proxy.
+    /// </summary>
     protected ImageProxy? _imageProxy;
 
     #region Serialization
@@ -64,12 +70,20 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EmbeddedImageGraphic"/> class.
+    /// </summary>
     public EmbeddedImageGraphic()
       :
       base()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EmbeddedImageGraphic"/> class.
+    /// </summary>
+    /// <param name="graphicPosition">The graphic position.</param>
+    /// <param name="startingImage">The starting image.</param>
     public EmbeddedImageGraphic(PointD2D graphicPosition, ImageProxy startingImage)
       :
       this()
@@ -78,12 +92,24 @@ namespace Altaxo.Graph.Gdi.Shapes
       Image = startingImage;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EmbeddedImageGraphic"/> class.
+    /// </summary>
+    /// <param name="posX">The X position.</param>
+    /// <param name="posY">The Y position.</param>
+    /// <param name="startingImage">The starting image.</param>
     public EmbeddedImageGraphic(double posX, double posY, ImageProxy startingImage)
       :
       this(new PointD2D(posX, posY), startingImage)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EmbeddedImageGraphic"/> class.
+    /// </summary>
+    /// <param name="graphicPosition">The graphic position.</param>
+    /// <param name="graphicSize">The graphic size.</param>
+    /// <param name="startingImage">The starting image.</param>
     public EmbeddedImageGraphic(PointD2D graphicPosition, PointD2D graphicSize, ImageProxy startingImage)
       :
       this(graphicPosition, startingImage)
@@ -91,18 +117,27 @@ namespace Altaxo.Graph.Gdi.Shapes
       SetSize(graphicSize.X, graphicSize.Y, Main.EventFiring.Suppressed);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EmbeddedImageGraphic"/> class.
+    /// </summary>
     public EmbeddedImageGraphic(double posX, double posY, PointD2D graphicSize, ImageProxy startingImage)
       :
       this(new PointD2D(posX, posY), graphicSize, startingImage)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EmbeddedImageGraphic"/> class.
+    /// </summary>
     public EmbeddedImageGraphic(double posX, double posY, double width, double height, ImageProxy startingImage)
       :
       this(new PointD2D(posX, posY), new PointD2D(width, height), startingImage)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EmbeddedImageGraphic"/> class.
+    /// </summary>
     public EmbeddedImageGraphic(PointD2D graphicPosition, double Rotation, ImageProxy startingImage)
       :
       this(graphicPosition, startingImage)
@@ -110,12 +145,18 @@ namespace Altaxo.Graph.Gdi.Shapes
       this.Rotation = Rotation;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EmbeddedImageGraphic"/> class.
+    /// </summary>
     public EmbeddedImageGraphic(double posX, double posY, double Rotation, ImageProxy startingImage)
       :
       this(new PointD2D(posX, posY), Rotation, startingImage)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EmbeddedImageGraphic"/> class.
+    /// </summary>
     public EmbeddedImageGraphic(PointD2D graphicPosition, PointD2D graphicSize, double Rotation, ImageProxy startingImage)
       :
       this(graphicPosition, Rotation, startingImage)
@@ -123,18 +164,28 @@ namespace Altaxo.Graph.Gdi.Shapes
       SetSize(graphicSize.X, graphicSize.Y, Main.EventFiring.Suppressed);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EmbeddedImageGraphic"/> class.
+    /// </summary>
     public EmbeddedImageGraphic(double posX, double posY, PointD2D graphicSize, double Rotation, ImageProxy startingImage)
       :
       this(new PointD2D(posX, posY), graphicSize, Rotation, startingImage)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EmbeddedImageGraphic"/> class.
+    /// </summary>
     public EmbeddedImageGraphic(double posX, double posY, double width, double height, double Rotation, ImageProxy startingImage)
       :
       this(new PointD2D(posX, posY), new PointD2D(width, height), Rotation, startingImage)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EmbeddedImageGraphic"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public EmbeddedImageGraphic(EmbeddedImageGraphic from)
       :
       base(from) // all is done here, since CopyFrom is virtual!
@@ -142,6 +193,11 @@ namespace Altaxo.Graph.Gdi.Shapes
       CopyFrom(from, false);
     }
 
+    /// <summary>
+    /// Copies the values from another <see cref="EmbeddedImageGraphic"/> instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
+    /// <param name="withBaseMembers">If set to <see langword="true"/>, base class members are copied as well.</param>
     protected void CopyFrom(EmbeddedImageGraphic from, bool withBaseMembers)
     {
       if (withBaseMembers)
@@ -150,6 +206,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       Image = from._imageProxy;
     }
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -171,6 +228,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #endregion Constructors
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new EmbeddedImageGraphic(this);
@@ -196,11 +254,13 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <inheritdoc />
     public override PointD2D GetImageSizePt()
     {
       return _imageProxy is null ? new PointD2D(1, 1) : (PointD2D)_imageProxy.Size;
     }
 
+    /// <inheritdoc />
     public override Image? GetImage()
     {
       if (_imageProxy is { } imgproxy)
@@ -214,6 +274,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <inheritdoc />
     public override void Paint(Graphics g, IPaintContext context)
     {
       GraphicsState gs = g.Save();

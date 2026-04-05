@@ -53,7 +53,7 @@ namespace Altaxo.Data
 
       var mrData = new MultiRenameData() { IsRenameOperationFileSystemBased = true, ShowExistingFileInformation = true };
       MultiRenameDocuments.RegisterCommonDocumentShortcutsForFileOperations(mrData);
-      mrData.RegisterStringShortcut("E", (o, i) => ".txt", "File extension (fixed here to .txt");
+      mrData.RegisterStringShortcut("E", (o, i) => ".txt", "File extension (fixed here to .txt)");
 
       mrData.RegisterRenameActionHandler(DoImportFiles);
 

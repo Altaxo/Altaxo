@@ -24,7 +24,6 @@
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing
 {
-
   /// <summary>
   /// Interface for the four-points on a plot curve tool, for instance the step evaluation tool or the peak evaluation tool.
   /// </summary>

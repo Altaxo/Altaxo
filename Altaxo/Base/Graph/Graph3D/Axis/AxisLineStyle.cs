@@ -88,8 +88,14 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <summary>Axis shift position, either provide as absolute values in point units, or as relative value relative to the layer size.</summary>
     protected RADouble _axisPosition1; // if relative, then relative to layer size, if absolute then in points
 
+    /// <summary>
+    /// Axis shift position along the second perpendicular direction, either absolute in points or relative to the layer size.
+    /// </summary>
     protected RADouble _axisPosition2; // if relative, then relative to layer size, if absolute then in points
 
+    /// <summary>
+    /// Cached information about the axis represented by this style.
+    /// </summary>
     protected CSAxisInformation? _cachedAxisStyleInfo;
 
     /// <summary>
@@ -109,9 +115,13 @@ namespace Altaxo.Graph.Graph3D.Axis
     #region Serialization
 
     // 2015-09-10 initial version
+    /// <summary>
+    /// Serializes <see cref="AxisLineStyle"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisLineStyle), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (AxisLineStyle)obj;
@@ -132,6 +142,7 @@ namespace Altaxo.Graph.Graph3D.Axis
         info.AddValue("Minor2Dw", s._showSecondDownMinorTicks);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (AxisLineStyle?)o ?? new AxisLineStyle(info);
@@ -227,6 +238,10 @@ namespace Altaxo.Graph.Graph3D.Axis
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies values from another <see cref="AxisLineStyle"/> instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     [MemberNotNull(nameof(_axisPen), nameof(_majorTickPen), nameof(_minorTickPen))]
     void CopyFrom(AxisLineStyle from)
       {
@@ -277,6 +292,7 @@ namespace Altaxo.Graph.Graph3D.Axis
       return false;
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
@@ -291,6 +307,9 @@ namespace Altaxo.Graph.Graph3D.Axis
       return new AxisLineStyle(this);
     }
 
+    /// <summary>
+    /// Gets the identifier of the axis style, if available.
+    /// </summary>
     public CSLineID? AxisStyleID
     {
       get
@@ -300,6 +319,9 @@ namespace Altaxo.Graph.Graph3D.Axis
     }
 
   
+    /// <summary>
+    /// Gets or sets cached information about the associated axis.
+    /// </summary>
     public CSAxisInformation? CachedAxisInformation
     {
       get
@@ -352,6 +374,9 @@ namespace Altaxo.Graph.Graph3D.Axis
       return retVal;
     }
 
+    /// <summary>
+    /// Gets or sets the pen used for the main axis line.
+    /// </summary>
     public PenX3D AxisPen
     {
       get { return _axisPen; }
@@ -370,6 +395,9 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets the pen used for major ticks.
+    /// </summary>
     public PenX3D MajorPen
     {
       get { return _majorTickPen; }
@@ -388,6 +416,9 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets the pen used for minor ticks.
+    /// </summary>
     public PenX3D MinorPen
     {
       get { return _minorTickPen; }
@@ -759,6 +790,12 @@ namespace Altaxo.Graph.Graph3D.Axis
       _cachedMinorTickLinesUsedForHitTesting = minorTickLinesUsedForHitTesting.ToArray();
     }
 
+    /// <summary>
+    /// Performs hit testing against the axis line or its tick lines.
+    /// </summary>
+    /// <param name="hitData">The hit-test data.</param>
+    /// <param name="testTickLines">If set to <see langword="true"/>, tick lines are tested instead of the main axis line.</param>
+    /// <returns>The hit-test object if a hit was found; otherwise, <see langword="null"/>.</returns>
     public IHitTestObject? HitTest(HitTestPointData hitData, bool testTickLines)
     {
       if (!testTickLines)
@@ -804,6 +841,11 @@ namespace Altaxo.Graph.Graph3D.Axis
       return null;
     }
 
+    /// <summary>
+    /// Handles pen changes by notifying listeners that the style changed.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The event arguments.</param>
     protected virtual void OnPenChangedEventHandler(object sender, EventArgs e)
     {
       EhSelfChanged(EventArgs.Empty);
@@ -811,6 +853,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     #region IRoutedPropertyReceiver Members
 
+    /// <inheritdoc />
     public IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName)
     {
       switch (propertyName)

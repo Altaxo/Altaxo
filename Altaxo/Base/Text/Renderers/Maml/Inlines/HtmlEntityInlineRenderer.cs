@@ -33,6 +33,9 @@ namespace Altaxo.Text.Renderers.Maml.Inlines
   /// <seealso cref="MamlObjectRenderer{T}" />
   public class HtmlEntityInlineRenderer : MamlObjectRenderer<HtmlEntityInline>
   {
+    /// <summary>
+    /// Writes an HTML entity.
+    /// </summary>
     protected override void Write(MamlRenderer renderer, HtmlEntityInline obj)
     {
       renderer.WriteEscape(obj.Transcoded);

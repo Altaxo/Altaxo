@@ -29,7 +29,7 @@ using System.Collections.Generic;
 namespace Altaxo.Worksheet
 {
   /// <summary>
-  /// Summary description for WorksheetLayoutCollection.
+  /// Represents a collection of <see cref="WorksheetLayout"/> instances.
   /// </summary>
   public class WorksheetLayoutCollection
     :
@@ -37,6 +37,9 @@ namespace Altaxo.Worksheet
     Main.INamedObjectCollection,
     ICollection<WorksheetLayout>
   {
+    /// <summary>
+    /// The worksheet layouts keyed by name.
+    /// </summary>
     protected Dictionary<string, WorksheetLayout> _items;
 
     #region Serialization
@@ -44,6 +47,7 @@ namespace Altaxo.Worksheet
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WorksheetLayoutCollection), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (WorksheetLayoutCollection)obj;
@@ -54,6 +58,7 @@ namespace Altaxo.Worksheet
         info.CommitArray();
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         WorksheetLayoutCollection s = (WorksheetLayoutCollection?)o ?? new WorksheetLayoutCollection();
@@ -74,22 +79,39 @@ namespace Altaxo.Worksheet
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WorksheetLayoutCollection"/> class.
+    /// </summary>
     protected WorksheetLayoutCollection()
     {
       _items = new Dictionary<string, WorksheetLayout>();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WorksheetLayoutCollection"/> class.
+    /// </summary>
+    /// <param name="documentParent">The parent document node.</param>
     public WorksheetLayoutCollection(Main.IDocumentNode documentParent)
     {
       _items = new Dictionary<string, WorksheetLayout>();
       _parent = documentParent;
     }
 
+    /// <summary>
+    /// Gets the worksheet layout with the specified identifier.
+    /// </summary>
+    /// <param name="guid">The layout identifier.</param>
+    /// <returns>The worksheet layout.</returns>
     public WorksheetLayout this[System.Guid guid]
     {
       get { return _items[guid.ToString()]; }
     }
 
+    /// <summary>
+    /// Gets the worksheet layout with the specified identifier string.
+    /// </summary>
+    /// <param name="guidAsString">The layout identifier as string.</param>
+    /// <returns>The worksheet layout.</returns>
     public WorksheetLayout this[string guidAsString]
     {
       get { return _items[guidAsString]; }
@@ -106,6 +128,7 @@ namespace Altaxo.Worksheet
 
     #region IDocumentNode Members
 
+    /// <inheritdoc />
     public override Main.IDocumentNode? ParentObject
     {
       get
@@ -125,11 +148,13 @@ namespace Altaxo.Worksheet
 
     #region INamedObjectCollection Members
 
+    /// <inheritdoc />
     public override Main.IDocumentLeafNode GetChildObjectNamed(string name)
     {
       return this[name];
     }
 
+    /// <inheritdoc />
     public override string? GetNameOfChildObject(Main.IDocumentLeafNode o)
     {
       var layout = o as WorksheetLayout;
@@ -140,12 +165,14 @@ namespace Altaxo.Worksheet
       return layout.Guid.ToString();
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       foreach (var entry in _items)
         yield return new Main.DocumentNodeAndName(entry.Value, entry.Key);
     }
 
+    /// <inheritdoc />
     protected override void Dispose(bool isDisposing)
     {
       if (isDisposing)
@@ -171,6 +198,7 @@ namespace Altaxo.Worksheet
 
     #region Collection changing methods
 
+    /// <inheritdoc />
     public void Add(WorksheetLayout layout)
     {
       if (layout is null)
@@ -192,6 +220,7 @@ namespace Altaxo.Worksheet
       EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemAdded(layout));
     }
 
+    /// <inheritdoc />
     public bool Remove(WorksheetLayout item)
     {
       bool wasRemoved = _items.Remove(item.Guid.ToString());
@@ -207,6 +236,7 @@ namespace Altaxo.Worksheet
       return wasRemoved;
     }
 
+    /// <inheritdoc />
     public void Clear()
     {
       var items = _items;
@@ -226,21 +256,25 @@ namespace Altaxo.Worksheet
 
     #endregion Collection changing methods
 
+    /// <inheritdoc />
     public bool Contains(WorksheetLayout item)
     {
       return _items.ContainsKey(item.Guid.ToString());
     }
 
+    /// <inheritdoc />
     public void CopyTo(WorksheetLayout[] array, int arrayIndex)
     {
       _items.Values.CopyTo(array, arrayIndex);
     }
 
+    /// <inheritdoc />
     public int Count
     {
       get { return _items.Count; }
     }
 
+    /// <inheritdoc />
     public bool IsReadOnly
     {
       get { return false; }
@@ -250,6 +284,7 @@ namespace Altaxo.Worksheet
 
     #region IEnumerable<WorksheetLayout> Members
 
+    /// <inheritdoc />
     public IEnumerator<WorksheetLayout> GetEnumerator()
     {
       return _items.Values.GetEnumerator();

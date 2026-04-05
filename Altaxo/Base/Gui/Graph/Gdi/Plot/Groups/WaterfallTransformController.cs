@@ -32,15 +32,22 @@ using Altaxo.Units;
 namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 {
 
+  /// <summary>
+  /// Provides the view contract for <see cref="WaterfallTransformController"/>.
+  /// </summary>
   public interface IWaterfallTransformView : IDataContextAwareView
   {
   }
 
 
+  /// <summary>
+  /// Controller for <see cref="WaterfallTransform"/>.
+  /// </summary>
   [UserControllerForObject(typeof(WaterfallTransform))]
   [ExpectedTypeOfView(typeof(IWaterfallTransformView))]
   public class WaterfallTransformController : MVCANControllerEditOriginalDocBase<WaterfallTransform, IWaterfallTransformView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -48,10 +55,16 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the unit environment for the X scale.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment XScaleEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _xScale;
 
+    /// <summary>
+    /// Gets or sets the X scale.
+    /// </summary>
     public DimensionfulQuantity XScale
     {
       get => _xScale;
@@ -66,10 +79,16 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
     }
 
 
+    /// <summary>
+    /// Gets the unit environment for the Y scale.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment YScaleEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _yScale;
 
+    /// <summary>
+    /// Gets or sets the Y scale.
+    /// </summary>
     public DimensionfulQuantity YScale
     {
       get => _yScale;
@@ -85,6 +104,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 
     private bool _useClipping;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether clipping is used.
+    /// </summary>
     public bool UseClipping
     {
       get => _useClipping;
@@ -100,6 +122,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -112,6 +135,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       try

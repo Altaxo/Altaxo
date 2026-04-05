@@ -34,10 +34,16 @@ using Altaxo.Gui.Drawing;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
 {
+  /// <summary>
+  /// Controls the editing of scatter symbol lists for 3D plots.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IStyleListView))]
   [UserControllerForObject(typeof(ScatterSymbolList))]
   public class ScatterSymbolListController : StyleListController<ScatterSymbolListManager, ScatterSymbolList, IScatterSymbol>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScatterSymbolListController"/> class.
+    /// </summary>
     public ScatterSymbolListController()
       : base(ScatterSymbolListManager.Instance)
     {

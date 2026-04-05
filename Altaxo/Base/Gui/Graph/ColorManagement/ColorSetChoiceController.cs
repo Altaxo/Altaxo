@@ -29,17 +29,27 @@ using Altaxo.Drawing.ColorManagement;
 
 namespace Altaxo.Gui.Graph.ColorManagement
 {
+  /// <summary>
+  /// View contract for choosing a color set.
+  /// </summary>
   public interface IColorSetsView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for selecting a <see cref="ColorSetIdentifier"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IColorSetsView))]
   public class ColorSetChoiceController : MVCANControllerEditImmutableDocBase<ColorSetIdentifier, IColorSetsView>
   {
     private NGTreeNode _treeRootNode = new NGTreeNode();
 
+    /// <summary>
+    /// Gets or sets a value indicating whether only plot colors are shown.
+    /// </summary>
     public bool ShowPlotColorsOnly { get; set; }
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -47,11 +57,15 @@ namespace Altaxo.Gui.Graph.ColorManagement
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the color-set tree.
+    /// </summary>
     public NGTreeNodeCollection ColorSetTree => _treeRootNode.Nodes;
 
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -64,6 +78,7 @@ namespace Altaxo.Gui.Graph.ColorManagement
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       var selNode = _treeRootNode.AnyBetweenHereAndLeaves(node => node.IsSelected);

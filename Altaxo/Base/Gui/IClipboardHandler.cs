@@ -32,39 +32,69 @@ namespace Altaxo.Gui
   /// </summary>
   public interface IClipboardHandler
   {
+    /// <summary>
+    /// Gets a value indicating whether cutting is enabled.
+    /// </summary>
     bool EnableCut
     {
       get;
     }
 
+    /// <summary>
+    /// Gets a value indicating whether copying is enabled.
+    /// </summary>
     bool EnableCopy
     {
       get;
     }
 
+    /// <summary>
+    /// Gets a value indicating whether pasting is enabled.
+    /// </summary>
     bool EnablePaste
     {
       get;
     }
 
+    /// <summary>
+    /// Gets a value indicating whether deleting is enabled.
+    /// </summary>
     bool EnableDelete
     {
       get;
     }
 
+    /// <summary>
+    /// Gets a value indicating whether selecting all is enabled.
+    /// </summary>
     bool EnableSelectAll
     {
       get;
     }
 
+    /// <summary>
+    /// Cuts the current selection.
+    /// </summary>
     void Cut();
 
+    /// <summary>
+    /// Copies the current selection.
+    /// </summary>
     void Copy();
 
+    /// <summary>
+    /// Pastes clipboard content.
+    /// </summary>
     void Paste();
 
+    /// <summary>
+    /// Deletes the current selection.
+    /// </summary>
     void Delete();
 
+    /// <summary>
+    /// Selects all items.
+    /// </summary>
     void SelectAll();
   }
 }

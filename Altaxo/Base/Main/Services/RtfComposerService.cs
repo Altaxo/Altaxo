@@ -32,6 +32,9 @@ using System.Text;
 
 namespace Altaxo.Main.Services
 {
+  /// <summary>
+  /// Provides helper methods for composing rich text format output that can embed MathML content as images.
+  /// </summary>
   public class RtfComposerService
   {
     /*
@@ -48,6 +51,14 @@ namespace Altaxo.Main.Services
     private static readonly string imageheader = @"{\pict\wmetafile8 ";
     private static readonly string imagetrailer = "}";
 
+    /// <summary>
+    /// Creates an RTF string from plain text that may contain embedded MathML fragments.
+    /// </summary>
+    /// <param name="rawtext">The raw text that may contain <c>&lt;math&gt;</c> elements.</param>
+    /// <param name="gr">The graphics object used for rendering MathML content.</param>
+    /// <param name="backcolor">The background color used during MathML rendering.</param>
+    /// <param name="fontsize">The font size used for MathML rendering.</param>
+    /// <returns>The generated RTF text.</returns>
     public static string GetRtfText(string rawtext, Graphics gr, Color backcolor, int fontsize)
     {
       var _mmlRendering = new MathML.Rendering.WinGraphicsRenderer
@@ -158,9 +169,9 @@ namespace Altaxo.Main.Services
     /// Metafile, and finally appends the bits of the Windows Metafile in HEX
     /// to a string and returns the string.
     /// </summary>
-    /// <param name="image"></param>
+    /// <param name="image">The image to convert to RTF picture data.</param>
     /// <returns>
-    /// A string containing the bits of a Windows Metafile in HEX
+    /// A string containing the bits of a Windows Metafile in hexadecimal form.
     /// </returns>
     public static string GetRtfImage(Image image)
     {

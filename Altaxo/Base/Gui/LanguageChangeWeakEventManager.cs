@@ -23,7 +23,7 @@ using Altaxo.Main.Services;
 namespace Altaxo.Gui
 {
   /// <summary>
-  /// Static class that can be used to weakly bind to the <see cref="LanguageChanged"/> event that is fired if the Gui language has changed.
+  /// Static class that can be used to weakly bind to the <see cref="LanguageChanged"/> event that is fired when the GUI language changes.
   /// </summary>
   public static class LanguageChangeWeakEventManager
   {
@@ -31,7 +31,7 @@ namespace Altaxo.Gui
     private static IResourceService? _resourceService;
 
     /// <summary>
-    /// Occurs when the Gui language has changed. The event is hold weak, thus you can safely add your handler without running in memory leaks.
+    /// Occurs when the GUI language has changed. The event is held weakly, so you can safely add your handler without causing memory leaks.
     /// </summary>
     public static event Action LanguageChanged
     {

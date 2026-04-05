@@ -49,14 +49,25 @@ namespace Altaxo.Graph.Scales.Ticks
       private double _org, _end;
       private HashSet<double> _coll = new HashSet<double>();
 
+      /// <summary>
+      /// Gets or sets the n um be ro fe nt ri es wi th in bo un ds.
+      /// </summary>
       public int NumberOfEntriesWithinBounds { get; private set; }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ProbabilityList"/> class.
+      /// </summary>
+      /// <param name="org">The lower boundary.</param>
+      /// <param name="end">The upper boundary.</param>
       public ProbabilityList(double org, double end)
       {
         _org = org;
         _end = end;
       }
 
+      /// <summary>
+      /// Performs the a dd operation.
+      /// </summary>
       public void Add(double x)
       {
         if (_coll.Add(x))
@@ -66,12 +77,22 @@ namespace Altaxo.Graph.Scales.Ticks
         }
       }
 
+      /// <summary>
+      /// Adds all probabilities in the specified sequence.
+      /// </summary>
+      /// <param name="plist">The probabilities to add.</param>
       public void AddRange(IEnumerable<double> plist)
       {
         foreach (var p in plist)
           Add(p);
       }
 
+      /// <summary>
+      /// Returns the elements between the specified origin and end values.
+      /// </summary>
+      /// <param name="org">The lower boundary.</param>
+      /// <param name="end">The upper boundary.</param>
+      /// <returns>The matching probabilities.</returns>
       public IEnumerable<double> ElementsInbetweenOrgAndEnd(double org, double end)
       {
         const double delta = 1.0 / 65536.0;
@@ -85,6 +106,9 @@ namespace Altaxo.Graph.Scales.Ticks
             yield return p;
       }
 
+      /// <summary>
+      /// Provides access to this member.
+      /// </summary>
       public int Count
       {
         get
@@ -93,6 +117,9 @@ namespace Altaxo.Graph.Scales.Ticks
         }
       }
 
+      /// <summary>
+      /// Provides access to this member.
+      /// </summary>
       public bool IsReadOnly
       {
         get
@@ -101,26 +128,41 @@ namespace Altaxo.Graph.Scales.Ticks
         }
       }
 
+      /// <summary>
+      /// Performs the c le ar operation.
+      /// </summary>
       public void Clear()
       {
         _coll.Clear();
       }
 
+      /// <summary>
+      /// Performs the c on ta in s operation.
+      /// </summary>
       public bool Contains(double item)
       {
         return _coll.Contains(item);
       }
 
+      /// <summary>
+      /// Performs the c op yt o operation.
+      /// </summary>
       public void CopyTo(double[] array, int arrayIndex)
       {
         _coll.CopyTo(array, arrayIndex);
       }
 
+      /// <summary>
+      /// Performs the r em ov e operation.
+      /// </summary>
       public bool Remove(double item)
       {
         return _coll.Remove(item);
       }
 
+      /// <summary>
+      /// Gets the e nu me ra to r.
+      /// </summary>
       public IEnumerator<double> GetEnumerator()
       {
         return _coll.GetEnumerator();
@@ -134,14 +176,31 @@ namespace Altaxo.Graph.Scales.Ticks
 
     private class ProbabilityListMajor : ProbabilityList
     {
+      /// <summary>
+      /// Gets or sets the s ta rt id xl ow er.
+      /// </summary>
       public int StartIdxLower { get; set; }
 
+      /// <summary>
+      /// Gets or sets the s ki ps te pl ow er.
+      /// </summary>
       public int SkipStepLower { get; set; }
 
+      /// <summary>
+      /// Gets or sets the s ta rt id xu pp er.
+      /// </summary>
       public int StartIdxUpper { get; set; }
 
+      /// <summary>
+      /// Gets or sets the s ki ps te pu pp er.
+      /// </summary>
       public int SkipStepUpper { get; set; }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ProbabilityListMajor"/> class.
+      /// </summary>
+      /// <param name="org">The lower boundary.</param>
+      /// <param name="end">The upper boundary.</param>
       public ProbabilityListMajor(double org, double end)
         : base(org, end)
       { }
@@ -180,10 +239,19 @@ namespace Altaxo.Graph.Scales.Ticks
     // Cached values
     private class CachedMajorMinor : ICloneable
     {
+      /// <summary>
+      /// Gets or sets the e nd.
+      /// </summary>
       public double Org, End;
 
+      /// <summary>
+      /// Gets or sets the t ic kg en er at in ge nd.
+      /// </summary>
       public double TickGeneratingOrg, TickGeneratingEnd;
 
+      /// <summary>
+      /// Initializes a new instance.
+      /// </summary>
       public CachedMajorMinor(double org, double end, double tickGeneratingOrg, double tickGeneratingEnd)
       {
         Org = org;
@@ -193,6 +261,9 @@ namespace Altaxo.Graph.Scales.Ticks
         TickGeneratingEnd = tickGeneratingEnd;
       }
 
+      /// <summary>
+      /// Creates a copy of this instance.
+      /// </summary>
       public object Clone()
       {
         return MemberwiseClone();
@@ -206,6 +277,7 @@ namespace Altaxo.Graph.Scales.Ticks
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CumulativeProbabilityTickSpacing), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (CumulativeProbabilityTickSpacing)obj;
@@ -242,12 +314,16 @@ namespace Altaxo.Graph.Scales.Ticks
           info.AddValueOrNull("AdditionalMinorTicks", s._additionalMinorTicks);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         CumulativeProbabilityTickSpacing s = SDeserialize(o, info, parent);
         return s;
       }
 
+      /// <summary>
+      /// Performs the s de se ri al iz e operation.
+      /// </summary>
       protected virtual CumulativeProbabilityTickSpacing SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (CumulativeProbabilityTickSpacing?)o ?? new CumulativeProbabilityTickSpacing();
@@ -273,6 +349,9 @@ namespace Altaxo.Graph.Scales.Ticks
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CumulativeProbabilityTickSpacing"/> class.
+    /// </summary>
     public CumulativeProbabilityTickSpacing()
     {
       _majorTicks = new List<double>();
@@ -283,6 +362,10 @@ namespace Altaxo.Graph.Scales.Ticks
       _additionalMinorTicks = new AdditionalTicks() { ParentObject = this };
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CumulativeProbabilityTickSpacing"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     public CumulativeProbabilityTickSpacing(CumulativeProbabilityTickSpacing from)
       : base(from) // everything is done here, since CopyFrom is virtual!
@@ -290,6 +373,7 @@ namespace Altaxo.Graph.Scales.Ticks
     }
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -330,6 +414,7 @@ namespace Altaxo.Graph.Scales.Ticks
       return true;
     }
 
+    /// <inheritdoc />
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_suppressedMajorTicks is not null)
@@ -343,11 +428,15 @@ namespace Altaxo.Graph.Scales.Ticks
         yield return new Main.DocumentNodeAndName(_additionalMinorTicks, "AdditionalMinorTicks");
     }
 
+
+    /// <inheritdoc />
     public override object Clone()
     {
       return new CumulativeProbabilityTickSpacing(this);
     }
 
+
+    /// <inheritdoc />
     public override bool Equals(object? obj)
     {
       if (ReferenceEquals(this, obj))
@@ -394,6 +483,8 @@ namespace Altaxo.Graph.Scales.Ticks
       return true;
     }
 
+
+    /// <inheritdoc />
     public override int GetHashCode()
     {
       return base.GetHashCode() + 13 * _targetNumberOfMajorTicks + 31 * _targetNumberOfMinorTicks;
@@ -445,6 +536,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public BoundaryTickSnapping SnapOrgToTick
     {
       get
@@ -460,6 +554,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public BoundaryTickSnapping SnapEndToTick
     {
       get
@@ -475,6 +572,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public int TargetNumberOfMajorTicks
     {
       get
@@ -490,6 +590,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public int TargetNumberOfMinorTicks
     {
       get
@@ -505,6 +608,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public double TransformationDivider
     {
       get
@@ -520,6 +626,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool TransformationOperationIsMultiply
     {
       get
@@ -534,6 +643,9 @@ namespace Altaxo.Graph.Scales.Ticks
           EhSelfChanged();
       }
     }
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     [AllowNull]
     public SuppressedTicks SuppressedMajorTicks
     {
@@ -548,6 +660,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     [AllowNull]
     public SuppressedTicks SuppressedMinorTicks
     {
@@ -562,6 +677,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     [AllowNull]
     public AdditionalTicks AdditionalMajorTicks
     {
@@ -576,6 +694,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     [AllowNull]
     public AdditionalTicks AdditionalMinorTicks
     {
@@ -628,6 +749,8 @@ namespace Altaxo.Graph.Scales.Ticks
       return _minorTicks.ToArray();
     }
 
+
+    /// <inheritdoc />
     public override double[] GetMajorTicksNormal(Scale scale)
     {
       double[] r = new double[_majorTicks.Count];
@@ -637,6 +760,8 @@ namespace Altaxo.Graph.Scales.Ticks
       return r;
     }
 
+
+    /// <inheritdoc />
     public override double[] GetMinorTicksNormal(Scale scale)
     {
       double[] r = new double[_minorTicks.Count];

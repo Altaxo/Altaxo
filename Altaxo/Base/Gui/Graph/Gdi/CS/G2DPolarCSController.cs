@@ -30,19 +30,30 @@ using Altaxo.Graph.Gdi.CS;
 
 namespace Altaxo.Gui.Graph.Gdi.CS
 {
+  /// <summary>
+  /// Controller for editing <see cref="G2DPolarCoordinateSystem"/>.
+  /// </summary>
   [UserControllerForObject(typeof(G2DPolarCoordinateSystem), 101)]
   [ExpectedTypeOfView(typeof(IG2DCartesicCSView))]
   public class G2DPolarCSController : MVCANControllerEditOriginalDocBase<G2DPolarCoordinateSystem, IG2DCartesicCSView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="G2DPolarCSController"/> class.
+    /// </summary>
     public G2DPolarCSController()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="G2DPolarCSController"/> class.
+    /// </summary>
+    /// <param name="doc">The coordinate system document.</param>
     public G2DPolarCSController(G2DPolarCoordinateSystem doc)
     {
       InitializeDocument(doc);
@@ -52,6 +63,9 @@ namespace Altaxo.Gui.Graph.Gdi.CS
 
     private bool _exchangeXY;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether X and Y are exchanged.
+    /// </summary>
     public bool ExchangeXY
     {
       get => _exchangeXY;
@@ -66,6 +80,9 @@ namespace Altaxo.Gui.Graph.Gdi.CS
     }
     private bool _reverseX;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the X direction is reversed.
+    /// </summary>
     public bool ReverseX
     {
       get => _reverseX;
@@ -80,6 +97,9 @@ namespace Altaxo.Gui.Graph.Gdi.CS
     }
     private bool _reverseY;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the Y direction is reversed.
+    /// </summary>
     public bool ReverseY
     {
       get => _reverseY;
@@ -96,6 +116,7 @@ namespace Altaxo.Gui.Graph.Gdi.CS
     #endregion
 
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -108,6 +129,7 @@ namespace Altaxo.Gui.Graph.Gdi.CS
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc.IsXYInterchanged = ExchangeXY;

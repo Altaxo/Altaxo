@@ -93,6 +93,9 @@ using Altaxo.Main.PegParser;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
+  /// <summary>
+  /// Enumerates the parser rules for the Altaxo label grammar.
+  /// </summary>
   enum EAltaxo_LabelV1
   {
     MainSentence = 1, Sentence = 2, SentenceNC = 3, WordSpanExt = 4,
@@ -100,6 +103,9 @@ namespace Altaxo.Graph.Gdi.Shapes
     Word = 10, Space = 11, PositiveInteger = 12, EscSeq4 = 13, EscSeq3 = 14,
     EscSeq2 = 15, EscSeq1 = 16, QuotedString = 17, StringContent = 18
   };
+  /// <summary>
+  /// Parser for the Altaxo label grammar.
+  /// </summary>
   class Altaxo_LabelV1 : PegCharParser
   {
 
@@ -108,11 +114,19 @@ namespace Altaxo.Graph.Gdi.Shapes
     public static UnicodeDetection unicodeDetection = UnicodeDetection.notApplicable;
     #endregion Input Properties
     #region Constructors
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Altaxo_LabelV1"/> class.
+    /// </summary>
     public Altaxo_LabelV1()
         : base()
     {
 
     }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Altaxo_LabelV1"/> class.
+    /// </summary>
+    /// <param name="src">The source text.</param>
+    /// <param name="FerrOut">The error writer.</param>
     public Altaxo_LabelV1(string src, TextWriter FerrOut)
   : base(src, FerrOut)
     {
@@ -120,6 +134,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
     #endregion Constructors
     #region Overrides
+    /// <inheritdoc/>
     public override string GetRuleNameFromId(int id)
     {
       try
@@ -141,6 +156,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         return base.GetRuleNameFromId(id);
       }
     }
+    /// <inheritdoc/>
     public override void GetProperties(out EncodingClass encoding, out UnicodeDetection detection)
     {
       encoding = encodingClass;

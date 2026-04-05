@@ -91,6 +91,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColumnDrivenColorPlotStyle), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ColumnDrivenColorPlotStyle)obj;
@@ -105,6 +106,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         info.AddValue("AppliesToBackground", s._appliesToBackground);
       }
 
+      /// <summary>
+      /// Deserializes the specified color-driven plot style instance.
+      /// </summary>
+      /// <param name="o">The existing instance, if any.</param>
+      /// <param name="info">The deserialization info.</param>
+      /// <param name="parent">The parent object.</param>
+      /// <returns>The deserialized style.</returns>
       protected virtual ColumnDrivenColorPlotStyle SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (ColumnDrivenColorPlotStyle?)o ?? new ColumnDrivenColorPlotStyle();
@@ -126,6 +134,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         return s;
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return SDeserialize(o, info, parent);
@@ -155,6 +164,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       CopyFrom(from, copyWithDataReferences);
     }
 
+    /// <summary>
+    /// Copies the values from another <see cref="ColumnDrivenColorPlotStyle"/> instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
+    /// <param name="copyWithDataReferences">If set to <see langword="true"/>, data references are copied.</param>
     [MemberNotNull(nameof(_scale), nameof(_colorProvider))]
     protected void CopyFrom(ColumnDrivenColorPlotStyle from, bool copyWithDataReferences)
     {
@@ -170,6 +184,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Copies values from another instance.
+    /// </summary>
+    /// <param name="obj">The source object.</param>
+    /// <param name="copyWithDataReferences">If set to <c>true</c>, data references are copied.</param>
+    /// <returns><c>true</c> if the copy succeeded; otherwise, <c>false</c>.</returns>
     public bool CopyFrom(object obj, bool copyWithDataReferences)
     {
       if (ReferenceEquals(this, obj))
@@ -213,6 +233,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       return new ColumnDrivenColorPlotStyle(this, true);
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_dataColumnProxy is not null)
@@ -260,6 +281,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
     #region Changed event handling
 
+    /// <inheritdoc/>
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (object.ReferenceEquals(_dataColumnProxy, sender))
@@ -377,6 +399,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the color provider.
+    /// </summary>
     public IColorProvider ColorProvider
     {
       get { return _colorProvider; }
@@ -413,62 +438,74 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <inheritdoc />
     public void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups)
     {
       // this is only for internal use inside one plot item
     }
 
+    /// <inheritdoc />
     public void CollectExternalGroupStyles(Graph3D.Plot.Groups.PlotGroupStyleCollection externalGroups)
     {
       // this is only for internal use inside one plot item
     }
 
+    /// <inheritdoc />
     public void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       VariableColorGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
     }
 
+    /// <inheritdoc />
     public void CollectLocalGroupStyles(Graph3D.Plot.Groups.PlotGroupStyleCollection externalGroups, Graph3D.Plot.Groups.PlotGroupStyleCollection localGroups)
     {
       VariableColorGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
     }
 
+    /// <inheritdoc />
     public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
     {
       VariableColorGroupStyle.PrepareStyle(externalGroups, localGroups, GetColor);
     }
 
+    /// <inheritdoc />
     public void PrepareGroupStyles(Graph3D.Plot.Groups.PlotGroupStyleCollection externalGroups, Graph3D.Plot.Groups.PlotGroupStyleCollection localGroups, Graph3D.IPlotArea layer, Graph3D.Plot.Data.Processed3DPlotData pdata)
     {
       VariableColorGroupStyle.PrepareStyle(externalGroups, localGroups, GetColor);
     }
 
+    /// <inheritdoc />
     public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       // there is nothing to apply here, because it is only a provider
     }
 
+    /// <inheritdoc />
     public void ApplyGroupStyles(Graph3D.Plot.Groups.PlotGroupStyleCollection externalGroups, Graph3D.Plot.Groups.PlotGroupStyleCollection localGroups)
     {
       // there is nothing to apply here, because it is only a provider
     }
 
+    /// <inheritdoc />
     public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData? prevItemData, Processed2DPlotData? nextItemData)
     {
       // this is not a visible style, thus doing nothing
     }
 
+    /// <inheritdoc />
     public void Paint(IGraphicsContext3D g, Graph3D.IPlotArea layer, Graph3D.Plot.Data.Processed3DPlotData pdata, Graph3D.Plot.Data.Processed3DPlotData? prevItemData, Graph3D.Plot.Data.Processed3DPlotData? nextItemData)
     {
       // this is not a visible style, thus doing nothing
     }
 
+    /// <inheritdoc />
     public RectangleF PaintSymbol(Graphics g, RectangleF bounds)
     {
       // this is not a visible style, thus doing nothing
       return RectangleF.Empty;
     }
 
+    /// <inheritdoc />
     public RectangleD3D PaintSymbol(IGraphicsContext3D g, RectangleD3D bounds)
     {
       // this is not a visible style, thus doing nothing
@@ -508,6 +545,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// to change a plot so that the plot items refer to another table.
     /// </summary>
     /// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
+    /// <inheritdoc />
     public void VisitDocumentReferences(DocNodeProxyReporter Report)
     {
       Report(_dataColumnProxy, this, "DataColumn");

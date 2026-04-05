@@ -32,6 +32,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
   #region Interfaces
 
+  /// <summary>
+  /// Defines the view contract for editing a fit ensemble.
+  /// </summary>
   public interface IFitEnsembleView : IDataContextAwareView
   {
   }
@@ -41,23 +44,33 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
   /// <summary>
   /// Summary description for FitEnsembleController.
   /// </summary>
+  /// <summary>
+  /// Controller for <see cref="FitEnsemble"/>.
+  /// </summary>
   [UserControllerForObject(typeof(FitEnsemble))]
   [ExpectedTypeOfView(typeof(IFitEnsembleView))]
   public class FitEnsembleController : MVCANControllerEditImmutableDocBase<FitEnsemble, IFitEnsembleView>
   {
     private int _currentFitFunctionSelIndex;
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FitEnsembleController"/> class.
+    /// </summary>
     public FitEnsembleController(FitEnsemble doc)
     {
       _doc = doc;
       Initialize(true);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FitEnsembleController"/> class.
+    /// </summary>
     public FitEnsembleController()
     {
     }
@@ -66,6 +79,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private SelectableListNodeList    _fitElementControllers;
 
+    /// <summary>
+    /// Gets or sets the controllers for the fit elements.
+    /// </summary>
     public SelectableListNodeList FitElementControllers
     {
       get => _fitElementControllers;
@@ -82,6 +98,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     #endregion
 
+    /// <inheritdoc/>
     public override void Dispose(bool isDisposing)
     {
       base.Dispose(isDisposing);
@@ -100,6 +117,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
     }
 
+   /// <inheritdoc/>
    protected override void Initialize(bool initData)
     {
       if (initData)
@@ -166,11 +184,15 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
    
 
+    /// <summary>
+    /// Rebuilds the list of fit-element controllers.
+    /// </summary>
     public void Refresh()
     {
       Initialize(true);
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);

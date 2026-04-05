@@ -29,19 +29,25 @@ using Altaxo.Drawing;
 using Altaxo.Graph.Gdi;
 using Altaxo.Gui.Common.Drawing;
 using Altaxo.Gui.Graph.Gdi.Background;
-using Altaxo.Main;
 using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="TextGraphicController"/>.
+  /// </summary>
   public interface ITextGraphicView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="Altaxo.Graph.Gdi.Shapes.TextGraphic"/>.
+  /// </summary>
   [UserControllerForObject(typeof(Altaxo.Graph.Gdi.Shapes.TextGraphic))]
   [ExpectedTypeOfView(typeof(ITextGraphicView))]
   public class TextGraphicController : MVCANControllerEditOriginalDocBase<Altaxo.Graph.Gdi.Shapes.TextGraphic, ITextGraphicView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_locationController, () => LocationController = null);
@@ -49,6 +55,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       yield return new ControllerAndSetNullMethod(_fontController, () => FontController = null);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextGraphicController"/> class.
+    /// </summary>
     public TextGraphicController()
     {
       CmdNormal = new RelayCommand(EhView_NormalClick);
@@ -65,18 +74,48 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the command that removes the selected text modifiers.
+    /// </summary>
     public ICommand CmdNormal { get; }
+    /// <summary>
+    /// Gets the command that applies bold formatting to the selected text.
+    /// </summary>
     public ICommand CmdBold { get; }
+    /// <summary>
+    /// Gets the command that applies italic formatting to the selected text.
+    /// </summary>
     public ICommand CmdItalic { get; }
+    /// <summary>
+    /// Gets the command that applies underline formatting to the selected text.
+    /// </summary>
     public ICommand CmdUnderline { get; }
+    /// <summary>
+    /// Gets the command that applies strikeout formatting to the selected text.
+    /// </summary>
     public ICommand CmdStrikeout { get; }
+    /// <summary>
+    /// Gets the command that applies superscript formatting to the selected text.
+    /// </summary>
     public ICommand CmdSupIndex { get; }
+    /// <summary>
+    /// Gets the command that applies subscript formatting to the selected text.
+    /// </summary>
     public ICommand CmdSubIndex { get; }
+    /// <summary>
+    /// Gets the command that applies Greek text formatting to the selected text.
+    /// </summary>
     public ICommand CmdGreek { get; }
+    /// <summary>
+    /// Gets the command that appends additional text modifiers.
+    /// </summary>
     public ICommand CmdMoreModifiers { get; }
 
     private IMVCANController _locationController;
 
+    /// <summary>
+    /// Gets or sets the location controller.
+    /// </summary>
     public IMVCANController LocationController
     {
       get => _locationController;
@@ -93,6 +132,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private string _editText;
 
+    /// <summary>
+    /// Gets or sets the editable text.
+    /// </summary>
     public string EditText
     {
       get => _editText;
@@ -110,6 +152,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private (int Start, int Length) _textSelection;
 
+    /// <summary>
+    /// Gets or sets the current text selection.
+    /// </summary>
     public (int Start, int Length) TextSelection
     {
       get => _textSelection;
@@ -125,6 +170,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private BackgroundStyleController _backgroundController;
 
+    /// <summary>
+    /// Gets or sets the background controller.
+    /// </summary>
     public BackgroundStyleController BackgroundController
     {
       get => _backgroundController;
@@ -156,6 +204,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private FontXController _fontController;
 
+    /// <summary>
+    /// Gets or sets the font controller.
+    /// </summary>
     public FontXController FontController
     {
       get => _fontController;
@@ -178,6 +229,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Updates the document after the font controller changed.
+    /// </summary>
     public void EhFontChanged(IMVCAController _)
     {
       _doc.Font = FontController.Doc;
@@ -186,6 +240,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private BrushX _fontBrush;
 
+    /// <summary>
+    /// Gets or sets the brush used to draw the text.
+    /// </summary>
     public BrushX FontBrush
     {
       get => _fontBrush;
@@ -202,10 +259,16 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     }
 
 
+    /// <summary>
+    /// Gets the environment for line spacing values.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment LineSpacingEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _lineSpacing;
 
+    /// <summary>
+    /// Gets or sets the line spacing.
+    /// </summary>
     public DimensionfulQuantity LineSpacing
     {
       get => _lineSpacing;
@@ -223,6 +286,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private int _documentVersion;
 
+    /// <summary>
+    /// Gets or sets the document version.
+    /// </summary>
     public int DocumentVersion
     {
       get => _documentVersion;
@@ -241,6 +307,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -262,6 +329,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (!_locationController.Apply(disposeController))
@@ -273,6 +341,11 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       return ApplyEnd(true, disposeController);
     }
 
+    /// <summary>
+    /// Inserts text before and after the selected text.
+    /// </summary>
+    /// <param name="insbefore">The text to insert before the selection.</param>
+    /// <param name="insafter">The text to insert after the selection.</param>
     public void InsertBeforeAndAfterSelectedText(string insbefore, string insafter)
     {
       if (0 != TextSelection.Length)
@@ -289,9 +362,12 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Removes the formatting modifiers from the selected text.
+    /// </summary>
     public void RevertToNormal()
     {
-      // remove a backslash x ( at the beginning and the closing brace at the end of the selection
+      // remove a backslash x (at the beginning and the closing brace at the end of the selection
       if (TextSelection.Length >= 4)
       {
         int len = TextSelection.Length;
@@ -310,53 +386,81 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Applies bold formatting to the selected text.
+    /// </summary>
     public void EhView_BoldClick()
     {
       // insert \b( at beginning of selection and ) at the end of the selection
       InsertBeforeAndAfterSelectedText("\\b(", ")");
     }
 
+    /// <summary>
+    /// Applies italic formatting to the selected text.
+    /// </summary>
     public void EhView_ItalicClick()
     {
       // insert \b( at beginning of selection and ) at the end of the selection
       InsertBeforeAndAfterSelectedText("\\i(", ")");
     }
 
+    /// <summary>
+    /// Applies underline formatting to the selected text.
+    /// </summary>
     public void EhView_UnderlineClick()
     {
       // insert \b( at beginning of selection and ) at the end of the selection
       InsertBeforeAndAfterSelectedText("\\u(", ")");
     }
 
+    /// <summary>
+    /// Applies superscript formatting to the selected text.
+    /// </summary>
     public void EhView_SupIndexClick()
     {
       // insert \b( at beginning of selection and ) at the end of the selection
       InsertBeforeAndAfterSelectedText("\\+(", ")");
     }
 
+    /// <summary>
+    /// Applies subscript formatting to the selected text.
+    /// </summary>
     public void EhView_SubIndexClick()
     {
       // insert \b( at beginning of selection and ) at the end of the selection
       InsertBeforeAndAfterSelectedText("\\-(", ")");
     }
 
+    /// <summary>
+    /// Applies Greek text formatting to the selected text.
+    /// </summary>
     public void EhView_GreekClick()
     {
       // insert \b( at beginning of selection and ) at the end of the selection
       InsertBeforeAndAfterSelectedText("\\g(", ")");
     }
 
+    /// <summary>
+    /// Appends the specified text modifier.
+    /// </summary>
+    /// <param name="parameter">The modifier text to append.</param>
     public void EhView_MoreModifiersClick(string parameter)
     {
       // insert \b( at beginning of selection and ) at the end of the selection
       EditText = EditText + (string)parameter;
     }
 
+    /// <summary>
+    /// Removes the formatting modifiers from the selected text.
+    /// </summary>
     public void EhView_NormalClick()
     {
       RevertToNormal();
     }
 
+    /// <summary>
+    /// Applies strikeout formatting to the selected text.
+    /// </summary>
     public void EhView_StrikeoutClick()
     {
       // insert \b( at beginning of selection and ) at the end of the selection

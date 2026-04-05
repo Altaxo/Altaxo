@@ -32,17 +32,24 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Main.Services.Files
 {
+  /// <summary>
+  /// Project archive manager that stores archives in file system folders.
+  /// </summary>
   public class FileSystemFolderProjectArchiveManager : IFolderBasedProjectArchiveManager
   {
     private DirectoryName? _folderName;
     private bool _isDisposed;
 
+    /// <inheritdoc/>
     public PathName? FileOrFolderName => _folderName;
 
+    /// <inheritdoc/>
     public bool IsDisposed => _isDisposed;
 
+    /// <inheritdoc/>
     public event EventHandler<NameChangedEventArgs>? FileOrFolderNameChanged;
 
+    /// <inheritdoc/>
     public void Dispose()
     {
       _isDisposed = true;
@@ -69,6 +76,7 @@ namespace Altaxo.Main.Services.Files
       }
     }
 
+    /// <inheritdoc/>
     public void Save(SaveProjectAndWindowsStateDelegate saveProjectAndWindowsState)
     {
       if (_folderName is null)
@@ -82,6 +90,7 @@ namespace Altaxo.Main.Services.Files
 
     }
 
+    /// <inheritdoc/>
     public IDictionary<string, IProjectItem> SaveAs(DirectoryName folderName, SaveProjectAndWindowsStateDelegate saveProjectAndWindowsState)
     {
       var oldName = _folderName;
@@ -104,6 +113,7 @@ namespace Altaxo.Main.Services.Files
       return dictionaryResult;
     }
 
+    /// <inheritdoc/>
     public IProjectArchive GetArchiveReadOnlyThreadSave(object claimer)
     {
       if (_folderName is null)
@@ -113,11 +123,16 @@ namespace Altaxo.Main.Services.Files
     }
 
 
+    /// <inheritdoc/>
     public void ReleaseArchiveThreadSave(object claimer, ref IProjectArchive? archive)
     {
       archive?.Dispose();
     }
 
+    /// <summary>
+    /// Ensures that the target directory exists and is empty enough to safely store a project.
+    /// </summary>
+    /// <param name="folderName">The target folder name.</param>
     private static void EnsureDirectoryCreatedAndEmpty(DirectoryName folderName)
     {
       var dir = new DirectoryInfo(folderName);

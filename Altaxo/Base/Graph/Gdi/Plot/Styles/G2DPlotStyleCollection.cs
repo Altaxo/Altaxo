@@ -38,6 +38,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   using Graph.Plot.Groups;
   using Plot.Groups;
 
+  /// <summary>
+  /// Represents a collection of two-dimensional plot styles.
+  /// </summary>
   public class G2DPlotStyleCollection
       :
       Main.SuspendableDocumentNodeWithSingleAccumulatedData<PlotItemStyleChangedEventArgs>,
@@ -55,6 +58,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Plot.Styles.G2DPlotStyleCollection", 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotSupportedException("Serialization of old versions is not supported");
@@ -68,6 +72,7 @@ info.CommitArray();
 */
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         int count = info.OpenArray();
@@ -96,6 +101,7 @@ info.CommitArray();
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(G2DPlotStyleCollection), 2)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (G2DPlotStyleCollection)obj;
@@ -106,6 +112,7 @@ info.CommitArray();
         info.CommitArray();
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (G2DPlotStyleCollection?)o ?? new G2DPlotStyleCollection();
@@ -134,6 +141,10 @@ info.CommitArray();
 
     #region Copying
 
+    /// <summary>
+    /// Copies all styles from another collection.
+    /// </summary>
+    /// <param name="from">The source collection.</param>
     [MemberNotNull(nameof(_innerList))]
     public void CopyFrom(G2DPlotStyleCollection from)
     {
@@ -155,13 +166,10 @@ info.CommitArray();
     }
 
     /// <summary>
-    /// Copies all styles 1:1 from a template collection, but try to reuse the data columns from
-    /// the old styles collection. This function is used if the user has selected the <see cref="PlotGroupStrictness.Strict"/>.
+    /// Copies styles from a template collection while attempting to reuse existing data references.
     /// </summary>
-    /// <param name="from">The template style collection to copy from.</param>
-    /// <returns>On return, this collection has exactly the same styles as the template collection, in
-    /// exactly the same order and with the same properties, except for the data of the styles. The style data
-    /// are tried to reuse from the old styles. If this is not possible, the data references will be left empty.</returns>
+    /// <param name="from">The template collection.</param>
+    /// <returns><c>true</c> if the operation completed.</returns>
     public bool CopyFromTemplateCollection(G2DPlotStyleCollection from)
     {
       if (ReferenceEquals(this, from))
@@ -201,7 +209,7 @@ info.CommitArray();
       return true;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool CopyFrom(object obj, bool copyWithDataReferences)
     {
       if (ReferenceEquals(this, obj))
@@ -215,7 +223,7 @@ info.CommitArray();
       return false;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -229,7 +237,7 @@ info.CommitArray();
       return false;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public object Clone(bool copyWithDataReferences)
     {
       return new G2DPlotStyleCollection(this);
@@ -241,6 +249,10 @@ info.CommitArray();
       return new G2DPlotStyleCollection(this);
     }
 
+    /// <summary>
+    /// Creates a copy of this collection.
+    /// </summary>
+    /// <returns>The cloned collection.</returns>
     public G2DPlotStyleCollection Clone()
     {
       return new G2DPlotStyleCollection(this);
@@ -249,13 +261,17 @@ info.CommitArray();
     #endregion Copying
 
     /// <summary>
-    /// Creates an empty collection, i.e. without any styles (so the item is not visible). You must manually add styles to make the plot item visible.
+    /// Initializes a new empty instance of the <see cref="G2DPlotStyleCollection"/> class.
     /// </summary>
     public G2DPlotStyleCollection()
     {
       _innerList = new List<IG2DPlotStyle>();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="G2DPlotStyleCollection"/> class with the specified styles.
+    /// </summary>
+    /// <param name="styles">The styles to add.</param>
     public G2DPlotStyleCollection(IG2DPlotStyle?[] styles)
     {
       _innerList = new List<IG2DPlotStyle>();
@@ -264,11 +280,20 @@ info.CommitArray();
           Add(style, false);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="G2DPlotStyleCollection"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public G2DPlotStyleCollection(G2DPlotStyleCollection from)
     {
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="G2DPlotStyleCollection"/> class based on a predefined kind.
+    /// </summary>
+    /// <param name="kind">The style collection kind.</param>
+    /// <param name="context">The property context.</param>
     public G2DPlotStyleCollection(LineScatterPlotStyleKind kind, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       _innerList = new List<IG2DPlotStyle>();
@@ -290,6 +315,11 @@ info.CommitArray();
       }
     }
 
+    /// <summary>
+    /// Sets this collection from a template collection.
+    /// </summary>
+    /// <param name="from">The template collection.</param>
+    /// <param name="strictness">The template-application strictness.</param>
     public void SetFromTemplate(G2DPlotStyleCollection from, PlotGroupStrictness strictness)
     {
       if (strictness == PlotGroupStrictness.Strict)
@@ -323,6 +353,7 @@ info.CommitArray();
       }
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_innerList is not null)
@@ -335,6 +366,7 @@ info.CommitArray();
       }
     }
 
+    /// <inheritdoc />
     public IEnumerable<(
       string ColumnLabel, // Column label
       IReadableColumn? Column, // the column as it was at the time of this call
@@ -345,6 +377,10 @@ info.CommitArray();
       yield break; // no additionally used columns
     }
 
+    /// <summary>
+    /// Gets the style at the specified index.
+    /// </summary>
+    /// <param name="i">The style index.</param>
     public IG2DPlotStyle this[int i]
     {
       get
@@ -353,6 +389,9 @@ info.CommitArray();
       }
     }
 
+    /// <summary>
+    /// Gets the number of styles in the collection.
+    /// </summary>
     public int Count
     {
       get
@@ -361,6 +400,9 @@ info.CommitArray();
       }
     }
 
+    /// <summary>
+    /// Gets the styles contained in this collection.
+    /// </summary>
     public IReadOnlyList<IG2DPlotStyle> Styles
     {
       get
@@ -369,11 +411,20 @@ info.CommitArray();
       }
     }
 
+    /// <summary>
+    /// Adds a style to the collection.
+    /// </summary>
+    /// <param name="toadd">The style to add.</param>
     public void Add(IG2DPlotStyle toadd)
     {
       Add(toadd, true);
     }
 
+    /// <summary>
+    /// Adds a style to the collection with optional reorganization and event handling.
+    /// </summary>
+    /// <param name="toadd">The style to add.</param>
+    /// <param name="withReorganizationAndEvents">If set to <see langword="true"/>, change events are raised.</param>
     protected void Add(IG2DPlotStyle toadd, bool withReorganizationAndEvents)
     {
       if (toadd is not null)
@@ -388,6 +439,12 @@ info.CommitArray();
       }
     }
 
+    /// <summary>
+    /// Replaces the style at the specified index with optional reorganization and event handling.
+    /// </summary>
+    /// <param name="ps">The replacement style.</param>
+    /// <param name="idx">The index to replace.</param>
+    /// <param name="withReorganizationAndEvents">If set to <see langword="true"/>, change events are raised.</param>
     protected void Replace(IG2DPlotStyle ps, int idx, bool withReorganizationAndEvents)
     {
       if (ps is not null)
@@ -402,6 +459,10 @@ info.CommitArray();
       }
     }
 
+    /// <summary>
+    /// Adds a range of styles to the collection.
+    /// </summary>
+    /// <param name="toadd">The styles to add.</param>
     public void AddRange(IG2DPlotStyle[] toadd)
     {
       if (toadd is not null)
@@ -416,6 +477,11 @@ info.CommitArray();
       }
     }
 
+    /// <summary>
+    /// Inserts a style at the specified position.
+    /// </summary>
+    /// <param name="whichposition">The insertion index.</param>
+    /// <param name="toinsert">The style to insert.</param>
     public void Insert(int whichposition, IG2DPlotStyle toinsert)
     {
       if (toinsert is not null)
@@ -427,6 +493,9 @@ info.CommitArray();
       }
     }
 
+    /// <summary>
+    /// Removes all styles from the collection.
+    /// </summary>
     public void Clear()
     {
       if (_innerList is not null)
@@ -437,6 +506,10 @@ info.CommitArray();
       }
     }
 
+    /// <summary>
+    /// Removes the style at the specified index.
+    /// </summary>
+    /// <param name="idx">The index to remove.</param>
     public void RemoveAt(int idx)
     {
       IG2DPlotStyle removed = this[idx];
@@ -445,6 +518,11 @@ info.CommitArray();
       EhSelfChanged(EventArgs.Empty);
     }
 
+    /// <summary>
+    /// Exchanges the positions of two styles.
+    /// </summary>
+    /// <param name="pos1">The first position.</param>
+    /// <param name="pos2">The second position.</param>
     public void ExchangeItemPositions(int pos1, int pos2)
     {
       IG2DPlotStyle item1 = this[pos1];
@@ -454,11 +532,13 @@ info.CommitArray();
       EhSelfChanged(EventArgs.Empty);
     }
 
+    /// <inheritdoc />
     protected override void AccumulateChangeData(object? sender, EventArgs e)
     {
       _accumulatedEventData = PlotItemStyleChangedEventArgs.Empty;
     }
 
+    /// <inheritdoc />
     public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData? prevItemData, Processed2DPlotData? nextItemData)
     {
       if (pdata is null)
@@ -470,6 +550,7 @@ info.CommitArray();
       }
     }
 
+    /// <inheritdoc />
     public RectangleF PaintSymbol(System.Drawing.Graphics g, System.Drawing.RectangleF bounds)
     {
       for (int i = _innerList.Count - 1; i >= 0; i--)
@@ -480,6 +561,7 @@ info.CommitArray();
       return bounds;
     }
 
+    /// <inheritdoc />
     public void PrepareScales(IPlotArea layer)
     {
       for (int i = 0; i < _innerList.Count; ++i)
@@ -489,11 +571,11 @@ info.CommitArray();
     }
 
     /// <summary>
-    /// Distibute changes made to one group style of the collection (at index <c>pivot</c> to all other members of the collection.
+    /// Distributes changes from one sub-style to the other styles in the collection.
     /// </summary>
-    /// <param name="pivot">Index of the group style that was changed. This style keeps it's properties.</param>
-    /// <param name="layer"></param>
-    /// <param name="pdata"></param>
+    /// <param name="pivot">The index of the changed sub-style.</param>
+    /// <param name="layer">The plot layer.</param>
+    /// <param name="pdata">The processed plot data.</param>
     public void DistributeSubStyleChange(int pivot, IPlotArea layer, Processed2DPlotData pdata)
     {
       var externGroup = new PlotGroupStyleCollection();
@@ -516,12 +598,11 @@ info.CommitArray();
     }
 
     /// <summary>
-    /// Prepares a new substyle (one that is not already in the collection) for becoming member of the collection. The substyle will get
-    /// all distributes group properties (local only) of this style collection.
+    /// Prepares a new sub-style so that it can be added consistently to the collection.
     /// </summary>
-    /// <param name="newSubStyle">Sub style to prepare.</param>
-    /// <param name="layer"></param>
-    /// <param name="pdata"></param>
+    /// <param name="newSubStyle">The new sub-style.</param>
+    /// <param name="layer">The plot layer.</param>
+    /// <param name="pdata">The processed plot data.</param>
     public void PrepareNewSubStyle(IG2DPlotStyle newSubStyle, IPlotArea layer, Processed2DPlotData pdata)
     {
       var externGroup = new PlotGroupStyleCollection();
@@ -544,6 +625,10 @@ info.CommitArray();
 
     #region IEnumerable<IPlotStyle> Members
 
+    /// <summary>
+    /// Returns an enumerator for the styles in the collection.
+    /// </summary>
+    /// <returns>An enumerator.</returns>
     public IEnumerator<IG2DPlotStyle> GetEnumerator()
     {
       return _innerList.GetEnumerator();
@@ -562,24 +647,28 @@ info.CommitArray();
 
     #region IPlotStyle Members
 
+    /// <inheritdoc />
     public void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups)
     {
       foreach (IG2DPlotStyle ps in this)
         ps.CollectExternalGroupStyles(externalGroups);
     }
 
+    /// <inheritdoc />
     public void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       foreach (IG2DPlotStyle ps in this)
         ps.CollectLocalGroupStyles(externalGroups, localGroups);
     }
 
+    /// <inheritdoc />
     public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
     {
       foreach (IG2DPlotStyle ps in this)
         ps.PrepareGroupStyles(externalGroups, localGroups, layer, pdata);
     }
 
+    /// <inheritdoc />
     public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       foreach (IG2DPlotStyle ps in this)
@@ -595,6 +684,7 @@ info.CommitArray();
     /// to change a plot so that the plot items refer to another table.
     /// </summary>
     /// <param name="options">Information what to replace.</param>
+    /// <inheritdoc />
     public void VisitDocumentReferences(DocNodeProxyReporter options)
     {
       foreach (var s in this)

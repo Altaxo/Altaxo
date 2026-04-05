@@ -42,8 +42,14 @@ namespace Altaxo.Graph.Scales
     /// <summary>Holds the <see cref="NumericalBoundaries"/> for that axis.</summary>
     protected NumericalBoundaries _dataBounds;
 
+    /// <summary>
+    /// Stores the rescaling conditions for this scale.
+    /// </summary>
     protected NumericScaleRescaleConditions _rescaling;
 
+    /// <summary>
+    /// Stores the tick-spacing settings for this scale.
+    /// </summary>
     protected Ticks.TickSpacing _tickSpacing;
 
     // cached values
@@ -64,6 +70,7 @@ namespace Altaxo.Graph.Scales
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Scales.LinearScale", 3)]
     private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
@@ -76,6 +83,7 @@ namespace Altaxo.Graph.Scales
                  */
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (LinearScale?)o ?? new LinearScale(info);
@@ -103,6 +111,7 @@ namespace Altaxo.Graph.Scales
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinearScale), 4)]
     private class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (LinearScale)obj;
@@ -113,6 +122,7 @@ namespace Altaxo.Graph.Scales
         info.AddValue("TickSpacing", s._tickSpacing);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (LinearScale?)o ?? new LinearScale(info);
@@ -165,6 +175,10 @@ namespace Altaxo.Graph.Scales
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies the state from another linear scale.
+    /// </summary>
+    /// <param name="from">The scale to copy from.</param>
     [MemberNotNull(nameof(_dataBounds), nameof(_rescaling), nameof(_tickSpacing))]
     protected void CopyFrom(LinearScale from)
     {
@@ -184,6 +198,7 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -197,6 +212,7 @@ namespace Altaxo.Graph.Scales
       return false;
     }
 
+    /// <inheritdoc />
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_dataBounds is not null)
@@ -209,6 +225,7 @@ namespace Altaxo.Graph.Scales
         yield return new Main.DocumentNodeAndName(_tickSpacing, () => _tickSpacing = null!, "TickSpacing");
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new LinearScale(this);
@@ -249,6 +266,7 @@ namespace Altaxo.Graph.Scales
       get { return _dataBounds; }
     }
 
+    /// <inheritdoc />
     public override Ticks.TickSpacing TickSpacing
     {
       get
@@ -275,6 +293,7 @@ namespace Altaxo.Graph.Scales
       return (x - _cachedAxisOrg) * _cachedOneByAxisSpan;
     }
 
+    /// <inheritdoc />
     public override double NormalToPhysical(double x)
     {
       return _cachedAxisOrg + x * _cachedAxisSpan;
@@ -318,6 +337,7 @@ namespace Altaxo.Graph.Scales
       end = 1;
     }
 
+    /// <inheritdoc />
     protected override string? SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
     {
       double o = org.ToDouble();

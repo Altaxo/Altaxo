@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -30,10 +30,10 @@ using Altaxo.Serialization.Omnic;
 
 namespace Altaxo.Gui.Serialization.Omnic
 {
-  [UserControllerForObject(typeof(OmnicSPGImportDataSource))]
   /// <summary>
   /// Controller for configuring an <see cref="OmnicSPGImportDataSource"/>.
   /// </summary>
+  [UserControllerForObject(typeof(OmnicSPGImportDataSource))]
   public class OmnicSPGImportDataSourceController : DataSourceControllerBase<OmnicSPGImportDataSource>
   {
     /// <inheritdoc/>

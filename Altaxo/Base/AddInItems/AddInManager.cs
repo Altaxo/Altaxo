@@ -145,6 +145,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Gets the add-in tree service used to register and unregister add-ins.
+    /// </summary>
     private static AddInTreeImpl AddInTree
     {
       get { return (AddInTreeImpl)Altaxo.Current.GetRequiredService<IAddInTree>(); }
@@ -353,8 +356,7 @@ namespace Altaxo.AddInItems
     /// Removes the specified external AddIns from the list of registered external
     /// AddIns.
     /// </summary>
-    /// The list of AddIns to remove.
-    /// (use external AddIns from the <see cref="IAddInTree.AddIns"/> collection).
+    /// <param name="addIns">The list of add-ins to remove. Use external add-ins from the <see cref="IAddInTree.AddIns"/> collection.</param>
     public static void RemoveExternalAddIns(IList<AddIn> addIns)
     {
       var addInFiles = new List<string>();
@@ -386,6 +388,7 @@ namespace Altaxo.AddInItems
     /// Marks the specified AddIns as enabled (will take effect after
     /// next application restart).
     /// </summary>
+    /// <param name="addIns">The add-ins to enable.</param>
     public static void Enable(IList<AddIn> addIns)
     {
       var addInFiles = new List<string>();
@@ -426,6 +429,7 @@ namespace Altaxo.AddInItems
     /// Marks the specified AddIns as disabled (will take effect after
     /// next application restart).
     /// </summary>
+    /// <param name="addIns">The add-ins to disable.</param>
     public static void Disable(IList<AddIn> addIns)
     {
       var addInFiles = new List<string>();

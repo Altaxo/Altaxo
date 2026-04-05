@@ -47,12 +47,7 @@ namespace Altaxo.Main.Services
       _clock.Start();
     }
 
-    /// <summary>
-    /// Gets the current time. This is a relative value, e.g. relative to the start of the timer.
-    /// </summary>
-    /// <value>
-    /// The current time value.
-    /// </value>
+    /// <inheritdoc/>
     public TimeSpan CurrentTime
     {
       get { return _clock.Elapsed; }

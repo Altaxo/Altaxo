@@ -29,6 +29,9 @@ using Clipper2Lib;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
+  /// <summary>
+  /// Represents a right-pointing triangular closed scatter symbol.
+  /// </summary>
   public class RightTriangle : ClosedSymbolBase
   {
     #region Serialization
@@ -36,9 +39,13 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
     /// <summary>
     /// 2016-10-27 initial version.
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="RightTriangle"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RightTriangle), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         info.AddBaseValueEmbedded(obj, obj.GetType().BaseType!);
@@ -46,6 +53,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
         SerializeSetV0((IScatterSymbol)obj, info);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (RightTriangle?)o ?? new RightTriangle();
@@ -57,15 +65,24 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RightTriangle"/> class.
+    /// </summary>
     public RightTriangle()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RightTriangle"/> class.
+    /// </summary>
+    /// <param name="fillColor">The fill color.</param>
+    /// <param name="isFillColorInfluencedByPlotColor">If set to <c>true</c>, the fill color is influenced by the plot color.</param>
     public RightTriangle(NamedColor fillColor, bool isFillColorInfluencedByPlotColor)
       : base(fillColor, isFillColorInfluencedByPlotColor)
     {
     }
 
+    /// <inheritdoc/>
     public override Paths64 GetCopyOfOuterPolygon()
     {
       var list = new Path64(3);

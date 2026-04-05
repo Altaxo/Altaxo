@@ -27,11 +27,24 @@ using System.Reflection;
 
 namespace Altaxo.Main.Services.ScriptCompilation
 {
+  /// <summary>
+  /// Represents a successful script-compilation result.
+  /// </summary>
   public class ScriptCompilerSuccessfulResult : IScriptCompilerSuccessfulResult
   {
+    /// <inheritdoc/>
     public Assembly ScriptAssembly { get; private set; }
+
+    /// <summary>
+    /// Gets the script texts together with their hash.
+    /// </summary>
     public CodeTextsWithHash CodeText { get; private set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScriptCompilerSuccessfulResult"/> class.
+    /// </summary>
+    /// <param name="codeText">The script texts together with their hash.</param>
+    /// <param name="assembly">The compiled assembly.</param>
     public ScriptCompilerSuccessfulResult(CodeTextsWithHash codeText, Assembly assembly)
     {
       CodeText = codeText ?? throw new ArgumentNullException(nameof(codeText));
@@ -40,6 +53,7 @@ namespace Altaxo.Main.Services.ScriptCompilation
 
     #region IScriptCompilerResult Members
 
+    /// <inheritdoc/>
     public string ScriptTextHash
     {
       get
@@ -48,6 +62,7 @@ namespace Altaxo.Main.Services.ScriptCompilation
       }
     }
 
+    /// <inheritdoc/>
     public int ScriptTextCount
     {
       get
@@ -56,6 +71,7 @@ namespace Altaxo.Main.Services.ScriptCompilation
       }
     }
 
+    /// <inheritdoc/>
     public string ScriptText(int i)
     {
       return CodeText.CodeTexts[i];

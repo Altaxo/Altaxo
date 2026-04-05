@@ -43,6 +43,9 @@ namespace Altaxo.Drawing.D3D
 
     private SolidPolylineDashSegment _dashSegment;
 
+    /// <summary>
+    /// Adds solid polyline geometry with normals for the specified pen and polyline points.
+    /// </summary>
     public void AddWithNormals(
     Action<PointD3D, VectorD3D> AddPositionAndNormal,
     Action<int, int, int, bool> AddIndices,

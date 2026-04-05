@@ -28,8 +28,15 @@ namespace Altaxo.Gui.Common
 {
   #region Interfaces
 
+  /// <summary>
+  /// Event sink for single-choice view notifications.
+  /// </summary>
   public interface ISingleChoiceViewEventSink
   {
+    /// <summary>
+    /// Handles a change of the selected choice.
+    /// </summary>
+    /// <param name="newchoice">The new choice index.</param>
     void EhChoiceChanged(int newchoice);
   }
 
@@ -58,24 +65,47 @@ namespace Altaxo.Gui.Common
     void InitializeChoice(string[] values, int initialchoice);
   }
 
+  /// <summary>
+  /// Provides a model for a single selection among several choices.
+  /// </summary>
   public interface ISingleChoiceObject
   {
+    /// <summary>
+    /// Gets the available choices.
+    /// </summary>
     string[] Choices { get; }
 
+    /// <summary>
+    /// Gets or sets the selected choice index.
+    /// </summary>
     int Selection { get; set; }
   }
 
+  /// <summary>
+  /// Default implementation of <see cref="ISingleChoiceObject"/>.
+  /// </summary>
   public class SingleChoiceObject : ISingleChoiceObject
   {
+    /// <summary>
+    /// The available choices.
+    /// </summary>
     protected string[] _choices;
+
+    /// <summary>
+    /// The selected choice index.
+    /// </summary>
     protected int _selection;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SingleChoiceObject"/> class.
+    /// </summary>
     public SingleChoiceObject(string[] choices, int selection)
     {
       _choices = (string[])choices.Clone();
       _selection = selection;
     }
 
+    /// <inheritdoc/>
     public string[] Choices
     {
       get
@@ -84,6 +114,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     public int Selection
     {
       get
@@ -102,30 +133,65 @@ namespace Altaxo.Gui.Common
   /// <summary>
   /// Controller for a single value. This is a string here, but in derived classes, that can be anything that can be converted to and from a string.
   /// </summary>
+  /// <summary>
+  /// Controller for a single choice selection.
+  /// </summary>
   public class SingleChoiceController : IMVCAController, ISingleChoiceViewEventSink
   {
+    /// <summary>
+    /// The attached view.
+    /// </summary>
     protected ISingleChoiceView? _view;
+
+    /// <summary>
+    /// The selectable values.
+    /// </summary>
     protected string[] _values = new string[0];
+
+    /// <summary>
+    /// The committed choice index.
+    /// </summary>
     protected int _choice;
+
+    /// <summary>
+    /// The temporary choice index.
+    /// </summary>
     protected int _choiceTemp;
 
+    /// <summary>
+    /// The description text shown by the controller.
+    /// </summary>
     protected string _descriptionText = "Your choice:";
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SingleChoiceController"/> class.
+    /// </summary>
+    /// <param name="values">The selectable values.</param>
+    /// <param name="selected">The initially selected index.</param>
     public SingleChoiceController(string[] values, int selected)
     {
       Initialize(values, selected);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SingleChoiceController"/> class.
+    /// </summary>
     protected SingleChoiceController()
     {
     }
 
+    /// <summary>
+    /// Initializes the selectable values and the selected index.
+    /// </summary>
     protected void Initialize(string[] values, int selected)
     {
       _values = values;
       _choice = _choiceTemp = selected;
     }
 
+    /// <summary>
+    /// Initializes the view from the current controller state.
+    /// </summary>
     protected virtual void Initialize()
     {
       if (_view is not null)
@@ -135,6 +201,9 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <summary>
+    /// Gets or sets the description text.
+    /// </summary>
     public string DescriptionText
     {
       get
@@ -153,6 +222,7 @@ namespace Altaxo.Gui.Common
 
     #region IMVCController Members
 
+    /// <inheritdoc/>
     public virtual object? ViewObject
     {
       get
@@ -173,6 +243,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     public virtual object ModelObject
     {
       get
@@ -181,6 +252,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
     }
@@ -189,6 +261,7 @@ namespace Altaxo.Gui.Common
 
     #region IApplyController Members
 
+    /// <inheritdoc/>
     public virtual bool Apply(bool disposeController)
     {
       _choice = _choiceTemp;
@@ -200,8 +273,9 @@ namespace Altaxo.Gui.Common
     /// </summary>
     /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
     /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    ///   <c>True</c> if the revert operation was successful; <c>false</c> if the revert operation was not possible, that is, because the controller has not stored the original state of the model.
     /// </returns>
+    /// <inheritdoc/>
     public bool Revert(bool disposeController)
     {
       return false;
@@ -211,6 +285,7 @@ namespace Altaxo.Gui.Common
 
     #region ISingleChoiceViewEventSink Members
 
+    /// <inheritdoc/>
     public virtual void EhChoiceChanged(int val)
     {
       _choiceTemp = val;

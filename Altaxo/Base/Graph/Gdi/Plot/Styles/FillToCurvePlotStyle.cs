@@ -39,6 +39,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   using Graph.Plot.Data;
   using Plot.Data;
 
+  /// <summary>
+  /// Fills the area between one curve and an adjacent curve.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Graph.Gdi.Plot.Styles.FillToCurvePlotStyle}")]
   public class FillToCurvePlotStyle
     :
@@ -157,6 +160,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     #endregion Serialization
 
     #region ICloneable Members
+    /// <summary>
+    /// Copies the state from another <see cref="FillToCurvePlotStyle"/> instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
+    /// <param name="copyWithDataReferences">If set to <see langword="true"/>, data references are copied as well.</param>
+    /// <param name="eventFiring">Controls how change events are fired during the copy operation.</param>
     [MemberNotNull(nameof(_fillBrush))]
     public void CopyFrom(FillToCurvePlotStyle from, bool copyWithDataReferences, Main.EventFiring eventFiring)
     {
@@ -205,11 +214,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       return CopyFrom(obj, true);
     }
 
+    /// <inheritdoc />
     public object Clone()
     {
       return new FillToCurvePlotStyle(this, true);
     }
 
+    /// <inheritdoc />
     public object Clone(bool copyWithDataReferences)
     {
       return new FillToCurvePlotStyle(this, copyWithDataReferences);
@@ -231,18 +242,28 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       FillBrush = new BrushX(NamedColors.Aqua);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FillToCurvePlotStyle"/> class.
+    /// </summary>
+    /// <param name="context">The plot-context property bag.</param>
     public FillToCurvePlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       _cachedPaintOneRange = StraightConnection_PaintOneRange;
       FillBrush = new BrushX(NamedColors.Aqua); // Exception: do not use one of the colors of the default plot color set. Instead, use a light color.
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FillToCurvePlotStyle"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
+    /// <param name="copyWithDataReferences">Unused copy option retained for interface compatibility.</param>
     public FillToCurvePlotStyle(FillToCurvePlotStyle from, bool copyWithDataReferences)
     {
       _cachedPaintOneRange = StraightConnection_PaintOneRange;
       CopyFrom(from, copyWithDataReferences, Main.EventFiring.Suppressed);
     }
 
+    /// <inheritdoc/>
     protected override System.Collections.Generic.IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
@@ -252,6 +273,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region Properties
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the fill color is independent from group styles.
+    /// </summary>
     public bool IndependentFillColor
     {
       get
@@ -267,6 +291,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the fill brush.
+    /// </summary>
     public BrushX FillBrush
     {
       get
@@ -284,6 +311,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the frame color is independent from group styles.
+    /// </summary>
     public bool IndependentFrameColor
     {
       get
@@ -299,6 +329,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the frame pen.
+    /// </summary>
     public PenX? FramePen
     {
       get { return _framePen; }
@@ -312,6 +345,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether filling to the previous plot item is enabled.
+    /// </summary>
     public bool FillToPreviousItem
     {
       get
@@ -327,6 +363,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether filling to the next plot item is enabled.
+    /// </summary>
     public bool FillToNextItem
     {
       get
@@ -370,26 +409,31 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region IG2DPlotStyle Members
 
+    /// <inheritdoc />
     public void CollectExternalGroupStyles(Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection externalGroups)
     {
       // nothing to collect here
     }
 
+    /// <inheritdoc />
     public void CollectLocalGroupStyles(Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection externalGroups, Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection localGroups)
     {
       // nothing to collect here
     }
 
+    /// <inheritdoc />
     public void PrepareGroupStyles(Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection externalGroups, Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection localGroups, IPlotArea layer, Altaxo.Graph.Gdi.Plot.Data.Processed2DPlotData pdata)
     {
       // nothing to collect here
     }
 
+    /// <inheritdoc />
     public void ApplyGroupStyles(Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection externalGroups, Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection localGroups)
     {
       // nothing to collect here
     }
 
+    /// <inheritdoc />
     public void Paint(Graphics g, IPlotArea layer, Altaxo.Graph.Gdi.Plot.Data.Processed2DPlotData pdata, Processed2DPlotData? prevItemData, Processed2DPlotData? nextItemData)
     {
       if (_fillToPrevPlotItem && prevItemData is not null)
@@ -429,6 +473,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <inheritdoc />
     public RectangleF PaintSymbol(Graphics g, RectangleF bounds)
     {
       return Rectangle.Empty;
@@ -448,6 +493,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region StraightConnection
 
+    /// <summary>
+    /// Paints the fill region between one range and the corresponding range of the previous curve.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="pdata">The current processed plot data.</param>
+    /// <param name="range">The plot range.</param>
+    /// <param name="layer">The plot layer.</param>
+    /// <param name="previousData">The processed plot data of the reference curve.</param>
+    /// <param name="fillBrush">The fill brush.</param>
     public void StraightConnection_PaintOneRange(
       Graphics g,
       Processed2DPlotData pdata,
@@ -532,6 +586,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region IRoutedPropertyReceiver Members
 
+    /// <inheritdoc />
     public IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName)
     {
       switch (propertyName)

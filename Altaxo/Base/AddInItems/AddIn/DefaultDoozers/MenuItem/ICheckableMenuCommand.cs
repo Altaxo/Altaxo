@@ -22,8 +22,16 @@ using System.Windows.Input;
 
 namespace Altaxo.AddInItems
 {
+  /// <summary>
+  /// Represents a menu command that can expose a checked state.
+  /// </summary>
   public interface ICheckableMenuCommand : ICommand
   {
+    /// <summary>
+    /// Determines whether the command is checked for the specified parameter.
+    /// </summary>
+    /// <param name="parameter">The command parameter.</param>
+    /// <returns><see langword="true"/> if the command is checked; otherwise, <see langword="false"/>.</returns>
     bool IsChecked(object parameter);
 
     /// <summary>

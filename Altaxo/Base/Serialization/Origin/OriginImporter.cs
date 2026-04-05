@@ -31,8 +31,12 @@ using Altaxo.Data;
 
 namespace Altaxo.Serialization.Origin
 {
+  /// <summary>
+  /// Importer for Origin project files.
+  /// </summary>
   public record OriginImporter : DataFileImporterBase
   {
+    /// <inheritdoc />
     public override (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
     {
       return ([".opj"], "Origin project files (*.opj)");
@@ -44,12 +48,14 @@ namespace Altaxo.Serialization.Origin
       return (importOptions as OriginImportOptions) ?? new OriginImportOptions();
     }
 
+    /// <inheritdoc />
     public override IAltaxoTableDataSource? CreateTableDataSource(IReadOnlyList<string> fileNames, object importOptions)
     {
       return new OriginImportDataSource(fileNames, (OriginImportOptions)importOptions);
     }
 
 
+    /// <inheritdoc />
     public override double GetProbabilityForBeingThisFileFormat(string fileName)
     {
       double p = 0;
@@ -78,6 +84,7 @@ namespace Altaxo.Serialization.Origin
       return p;
     }
 
+    /// <inheritdoc />
     public override string? Import(IReadOnlyList<string> fileNames, DataTable table, object importOptionsObj, bool attachDataSource = true)
     {
       var importOptions = (OriginImportOptions)importOptionsObj;
@@ -110,6 +117,7 @@ namespace Altaxo.Serialization.Origin
       return null;
     }
 
+    /// <inheritdoc />
     public override string? Import(IReadOnlyList<string> fileNames, ImportOptionsInitial initialOptions)
     {
       var stb = new StringBuilder();
@@ -189,6 +197,9 @@ namespace Altaxo.Serialization.Origin
     }
 
 
+    /// <summary>
+    /// Stores operational data used while importing a table.
+    /// </summary>
     public class ImportOperationalDataForTable
     {
       /// <summary>
@@ -205,6 +216,7 @@ namespace Altaxo.Serialization.Origin
       /// <summary>
       /// Creates a double data column with a specified name. If a column with the name already exists, a postfix number is appended to the name to ensure a unique column name.
       /// </summary>
+      /// <param name="column">The data column to add.</param>
       /// <param name="columnName">Name of the column.</param>
       /// <param name="kind">The kind.</param>
       /// <param name="groupNumber">The group number.</param>

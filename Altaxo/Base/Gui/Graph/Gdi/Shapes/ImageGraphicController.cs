@@ -34,10 +34,16 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
+  /// <summary>
+  /// View contract for editing image graphics.
+  /// </summary>
   public interface IImageGraphicView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for editing <see cref="ImageGraphic"/> instances.
+  /// </summary>
   [UserControllerForObject(typeof(ImageGraphic))]
   [ExpectedTypeOfView(typeof(IImageGraphicView))]
   public class ImageGraphicController : MVCANControllerEditOriginalDocBase<ImageGraphic, IImageGraphicView>
@@ -45,6 +51,8 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     private PointD2D _docScale;
     private ItemLocationDirect _docLocation;
 
+ 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_locationController, () => _locationController = null);
@@ -54,6 +62,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private ItemLocationDirectController _locationController;
 
+    /// <summary>
+    /// Gets or sets the location controller.
+    /// </summary>
     public ItemLocationDirectController LocationController
     {
       get => _locationController;
@@ -67,9 +78,15 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets the source size environment.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment SrcSizeEnvironment = SizeEnvironment.Instance;
     private DimensionfulQuantity _srcSizeX;
 
+    /// <summary>
+    /// Gets or sets the source width.
+    /// </summary>
     public DimensionfulQuantity SrcSizeX
     {
       get => _srcSizeX;
@@ -85,6 +102,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private DimensionfulQuantity _srcSizeY;
 
+    /// <summary>
+    /// Gets or sets the source height.
+    /// </summary>
     public DimensionfulQuantity SrcSizeY
     {
       get => _srcSizeY;
@@ -100,6 +120,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private ItemsController<AspectRatioPreservingMode> _keepAspect;
 
+    /// <summary>
+    /// Gets or sets the aspect ratio preservation options.
+    /// </summary>
     public ItemsController<AspectRatioPreservingMode> KeepAspect
     {
       get => _keepAspect;
@@ -115,6 +138,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private bool _isSizeCalculationBasedOnSourceSize;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the size calculation is based on the source size.
+    /// </summary>
     public bool IsSizeCalculationBasedOnSourceSize
     {
       get => _isSizeCalculationBasedOnSourceSize;
@@ -129,6 +155,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         }
       }
     }
+    /// <summary>
+    /// Gets or sets a value indicating whether the size calculation uses absolute dimensions.
+    /// </summary>
     public bool IsSizeCalculationAbsolute
     {
       get => !IsSizeCalculationBasedOnSourceSize;
@@ -151,6 +180,8 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       }
     }
 
+ 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -189,6 +220,8 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       }
     }
 
+ 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (!_locationController.Apply(disposeController))

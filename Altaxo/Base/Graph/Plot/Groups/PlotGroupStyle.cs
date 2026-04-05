@@ -31,8 +31,17 @@ using System.Text;
 
 namespace Altaxo.Graph.Plot.Groups
 {
+  /// <summary>
+  /// Provides helper methods for working with plot group styles from local and external collections.
+  /// </summary>
   public static class PlotGroupStyle
   {
+    /// <summary>
+    /// Determines whether an external group style of the specified type should be added.
+    /// </summary>
+    /// <param name="externalGroups">The external group styles.</param>
+    /// <param name="type">The group style type.</param>
+    /// <returns><c>true</c> if the type is not already present; otherwise, <c>false</c>.</returns>
     public static bool ShouldAddExternalGroupStyle(
   IPlotGroupStyleCollection externalGroups,
   System.Type type)
@@ -40,6 +49,13 @@ namespace Altaxo.Graph.Plot.Groups
       return !externalGroups.ContainsType(type);
     }
 
+    /// <summary>
+    /// Determines whether a local group style of the specified type should be added.
+    /// </summary>
+    /// <param name="externalGroups">The external group styles.</param>
+    /// <param name="localGroups">The local group styles.</param>
+    /// <param name="type">The group style type.</param>
+    /// <returns><c>true</c> if the style should be added locally; otherwise, <c>false</c>.</returns>
     public static bool ShouldAddLocalGroupStyle(
       IPlotGroupStyleCollection externalGroups,
       IPlotGroupStyleCollection localGroups,
@@ -53,6 +69,13 @@ namespace Altaxo.Graph.Plot.Groups
 
       return (!found && localGroups is not null);
     }
+    /// <summary>
+    /// Gets a style instance of type <typeparamref name="T"/> that still needs initialization.
+    /// </summary>
+    /// <typeparam name="T">The group style type.</typeparam>
+    /// <param name="externalGroups">The external group styles.</param>
+    /// <param name="localGroups">The local group styles.</param>
+    /// <returns>The style to initialize, or <c>null</c> if no uninitialized style is available.</returns>
     [return: MaybeNull]
     public static T GetStyleToInitialize<T>(
       IPlotGroupStyleCollection externalGroups,
@@ -113,7 +136,7 @@ namespace Altaxo.Graph.Plot.Groups
     /// Looks first in externalGroups, then in localGroups for the type of PlotGroupStyle to apply.
     /// In contrast to <see cref="GetStyleToApply{T}(IPlotGroupStyleCollection, IPlotGroupStyleCollection)"/>, we are searching here only for an interface,
     /// and return the first plot group style found that implements that interface.
-    /// If an instance with this interface found, this instance is returned. If found, the containig collection
+    /// If an instance with this interface is found, this instance is returned. If found, the containing collection
     /// is informed that this group style will be applied now by calling OnBeforeApplication.
     /// </summary>
     /// <typeparam name="T">Type of the interface to look for.</typeparam>

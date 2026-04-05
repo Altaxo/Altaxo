@@ -26,7 +26,6 @@
 using System;
 using System.Collections.Generic;
 using Altaxo.Data;
-using Altaxo.Drawing;
 using Altaxo.Drawing.D3D;
 using Altaxo.Geometry;
 using Altaxo.Graph.Graph3D.GraphicsContext;
@@ -42,12 +41,17 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 
     #region Serialization
 
+
     /// <summary>
-    /// 2016-03-02 initial version.
+    /// Serializes <see cref="NumericLabelFormattingScientific"/> instances.
     /// </summary>
+    /// <remarks>
+    /// Initial version added on 2016-03-02.
+    /// </remarks>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericLabelFormattingScientific), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (NumericLabelFormattingScientific)obj;
@@ -55,6 +59,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
         info.AddValue("ShowExponentAlways", s._showExponentAlways);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (NumericLabelFormattingScientific?)o ?? new NumericLabelFormattingScientific();
@@ -66,15 +71,23 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NumericLabelFormattingScientific"/> class.
+    /// </summary>
     public NumericLabelFormattingScientific()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NumericLabelFormattingScientific"/> class by copying from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public NumericLabelFormattingScientific(NumericLabelFormattingScientific from)
       : base(from) // everything is done here, since CopyFrom is virtual
     {
     }
 
+    /// <inheritdoc/>
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -82,7 +95,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 
       if (base.CopyFrom(obj))
       {
-        if (obj is NumericLabelFormattingScientific from )
+        if (obj is NumericLabelFormattingScientific from)
         {
           _showExponentAlways = from._showExponentAlways;
         }
@@ -91,11 +104,13 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
       return false;
     }
 
+    /// <inheritdoc/>
     public override object Clone()
     {
       return new NumericLabelFormattingScientific(this);
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
@@ -120,16 +135,30 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
       }
     }
 
+    /// <inheritdoc/>
     protected override string FormatItem(Altaxo.Data.AltaxoVariant item)
     {
       throw new ApplicationException("Programming error: this function must not be called because the item can not be formatted as a string");
     }
 
+    /// <summary>
+    /// Formats the specified numeric tick value.
+    /// </summary>
+    /// <param name="tick">The tick value to format.</param>
+    /// <returns>The formatted tick label.</returns>
     public string FormatItem(double tick)
     {
       throw new ApplicationException("Programming error: this function must not be called because the item can not be formatted as a string");
     }
 
+    /// <summary>
+    /// Splits a numeric value into mantissa text and exponent text.
+    /// </summary>
+    /// <param name="ditem">The numeric value.</param>
+    /// <param name="firstpart">The text before the exponent part.</param>
+    /// <param name="mant">The mantissa value.</param>
+    /// <param name="middelpart">The separator text between mantissa and exponent.</param>
+    /// <param name="exponent">The exponent text.</param>
     protected void SplitInFirstPartAndExponent(double ditem, out string firstpart, out double mant, out string middelpart, out string exponent)
     {
       string sitem1 = ditem.ToString("E");
@@ -173,6 +202,9 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
       }
     }
 
+    /// <summary>
+    /// Measures the specified item.
+    /// </summary>
     public override VectorD3D MeasureItem(IGraphicsContext3D g, FontX3D font, Altaxo.Data.AltaxoVariant mtick, PointD3D morg)
     {
       SplitInFirstPartAndExponent(mtick, out var firstpart, out var mant, out var middelpart, out var exponent);
@@ -184,6 +216,9 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
       return new VectorD3D(size1.X + size2.X + size3.X, size1.Y, font.Depth);
     }
 
+    /// <summary>
+    /// Draws the specified item.
+    /// </summary>
     public override void DrawItem(IGraphicsContext3D g, IMaterial brush, FontX3D font, Altaxo.Data.AltaxoVariant item, PointD3D morg)
     {
       SplitInFirstPartAndExponent(item, out var firstpart, out var mant, out var middelpart, out var exponent);
@@ -206,6 +241,9 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
       }
     }
 
+    /// <summary>
+    /// Gets measured label items for the provided values.
+    /// </summary>
     public override IMeasuredLabelItem[] GetMeasuredItems(IGraphicsContext3D g, FontX3D font, AltaxoVariant[] items)
     {
       var litems = new MeasuredLabelItem[items.Length];
@@ -265,20 +303,53 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
       return litems;
     }
 
+    /// <summary>
+    /// Represents a measured scientific label item.
+    /// </summary>
     protected new class MeasuredLabelItem : IMeasuredLabelItem
     {
+      /// <summary>
+      /// Stores the mantissa text.
+      /// </summary>
       protected string _firstpart;
+      /// <summary>
+      /// Stores the exponent text.
+      /// </summary>
       protected string _exponent;
+      /// <summary>
+      /// Stores the suffix text.
+      /// </summary>
       protected string _lastpart;
+      /// <summary>
+      /// Stores the main font.
+      /// </summary>
       protected FontX3D _font1;
+      /// <summary>
+      /// Stores the exponent font.
+      /// </summary>
       protected FontX3D _font2;
+      /// <summary>
+      /// Stores the measured size of the mantissa part.
+      /// </summary>
       protected VectorD3D _size1;
+      /// <summary>
+      /// Stores the measured size of the exponent part.
+      /// </summary>
       protected VectorD3D _size2;
+      /// <summary>
+      /// Stores the measured size of the suffix part.
+      /// </summary>
       protected VectorD3D _size3;
+      /// <summary>
+      /// Stores the right padding used to align exponents.
+      /// </summary>
       protected double _rightPadding;
 
       #region IMeasuredLabelItem Members
 
+      /// <summary>
+      /// Initializes a new measured scientific label item.
+      /// </summary>
       public MeasuredLabelItem(IGraphicsContext3D g, FontX3D font1, FontX3D font2, string firstpart, string exponent, string lastpart, double maxexposize)
       {
         _firstpart = firstpart;
@@ -292,6 +363,9 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
         _rightPadding = maxexposize - _size2.X;
       }
 
+      /// <summary>
+      /// Gets the measured size of the label.
+      /// </summary>
       public virtual VectorD3D Size
       {
         get
@@ -300,6 +374,9 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
         }
       }
 
+      /// <summary>
+      /// Draws the measured label.
+      /// </summary>
       public virtual void Draw(IGraphicsContext3D g, IMaterial brush, PointD3D point)
       {
         g.DrawString(_firstpart, _font1, brush, point);

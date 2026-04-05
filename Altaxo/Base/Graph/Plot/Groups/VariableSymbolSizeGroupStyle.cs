@@ -68,11 +68,17 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="VariableSymbolSizeGroupStyle"/> class.
+    /// </summary>
     public VariableSymbolSizeGroupStyle()
     {
       _symbolSizeForIndex = (i) => 0;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="VariableSymbolSizeGroupStyle"/> class by copying another instance.
+    /// </summary>
     public VariableSymbolSizeGroupStyle(VariableSymbolSizeGroupStyle from)
     {
       _isInitialized = from._isInitialized;
@@ -83,6 +89,9 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region ICloneable Members
 
+    /// <summary>
+    /// Creates a copy of this style.
+    /// </summary>
     public VariableSymbolSizeGroupStyle Clone()
     {
       return new VariableSymbolSizeGroupStyle(this);
@@ -97,6 +106,7 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region IGroupStyle Members
 
+    /// <inheritdoc/>
     public void TransferFrom(IPlotGroupStyle fromb)
     {
       var from = (VariableSymbolSizeGroupStyle)fromb;
@@ -104,19 +114,23 @@ namespace Altaxo.Graph.Plot.Groups
       _symbolSizeForIndex = from._symbolSizeForIndex;
     }
 
+    /// <inheritdoc/>
     public void BeginPrepare()
     {
       _isInitialized = false;
     }
 
+    /// <inheritdoc/>
     public void PrepareStep()
     {
     }
 
+    /// <inheritdoc/>
     public void EndPrepare()
     {
     }
 
+    /// <inheritdoc/>
     public bool CanCarryOver
     {
       get
@@ -125,6 +139,7 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <inheritdoc/>
     public bool CanStep
     {
       get
@@ -133,6 +148,7 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <inheritdoc/>
     public int Step(int step)
     {
       return 0;
@@ -156,6 +172,9 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region Other members
 
+    /// <summary>
+    /// Gets a value indicating whether this style was initialized.
+    /// </summary>
     public bool IsInitialized
     {
       get
@@ -164,12 +183,19 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <summary>
+    /// Initializes the symbol-size function.
+    /// </summary>
+    /// <param name="symbolSizeForIndex">The symbol-size function.</param>
     public void Initialize(Func<int, double> symbolSizeForIndex)
     {
       _isInitialized = true;
       _symbolSizeForIndex = symbolSizeForIndex;
     }
 
+    /// <summary>
+    /// Gets the symbol-size function.
+    /// </summary>
     public Func<int, double> SymbolSizeForIndex
     {
       get
@@ -183,7 +209,7 @@ namespace Altaxo.Graph.Plot.Groups
     #region Static helpers
 
     /// <summary>
-    /// If neccessary, adds this group style to localGroups.
+    /// If necessary, adds this group style to local groups.
     /// </summary>
     /// <param name="externalGroups">External group styles.</param>
     /// <param name="localGroups">Local group styles.</param>
@@ -195,6 +221,9 @@ namespace Altaxo.Graph.Plot.Groups
         localGroups.Add(new VariableSymbolSizeGroupStyle());
     }
 
+    /// <summary>
+    /// Prepares the variable symbol-size style.
+    /// </summary>
     public static void PrepareStyle(
       IPlotGroupStyleCollection externalGroups,
       IPlotGroupStyleCollection localGroups,
@@ -218,7 +247,7 @@ namespace Altaxo.Graph.Plot.Groups
     }
 
     /// <summary>
-    /// Try to apply the symbol size group style. Returns true if successfull applied.
+    /// Tries to apply the variable symbol-size group style.
     /// </summary>
     /// <param name="externalGroups"></param>
     /// <param name="localGroups"></param>

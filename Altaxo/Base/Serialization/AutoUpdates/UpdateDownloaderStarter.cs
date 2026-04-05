@@ -29,12 +29,12 @@ using System.IO;
 namespace Altaxo.Serialization.AutoUpdates
 {
   /// <summary>
-  /// Responsible to start the download of auto update files.
+  /// Responsible for starting the download of auto-update files.
   /// </summary>
   public class UpdateDownloaderStarter
   {
     /// <summary>
-    /// Starts the downloader.
+    /// Starts the downloader process if update settings allow it.
     /// </summary>
     public static void Run()
     {

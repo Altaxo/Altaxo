@@ -70,6 +70,7 @@ namespace Altaxo.Main.Properties
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PropertyBag), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PropertyBag)obj;
@@ -102,6 +103,9 @@ namespace Altaxo.Main.Properties
         info.CommitArray();
       }
 
+      /// <summary>
+      /// Deserializes into an existing instance.
+      /// </summary>
       public void Deserialize(PropertyBag s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var assemblyVersionString = info.GetStringAttributeOrNull("AssemblyVersion");
@@ -136,6 +140,7 @@ namespace Altaxo.Main.Properties
         info.CloseArray(count);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = o is not null ? (PropertyBag)o : new PropertyBag();
@@ -157,7 +162,7 @@ namespace Altaxo.Main.Properties
     /// <summary>
     /// Initializes a new instance of the <see cref="PropertyBag"/> class by copying the properties from another instance.
     /// </summary>
-    /// <param name="from">From.</param>
+    /// <param name="from">The instance to copy from.</param>
     public PropertyBag(PropertyBag from)
     {
       _properties = new Dictionary<string, object?>();
@@ -168,7 +173,7 @@ namespace Altaxo.Main.Properties
     /// Copies the properties from another instance.
     /// </summary>
     /// <param name="obj">The object to copy from.</param>
-    /// <returns>True if anything could be copyied.</returns>
+    /// <returns><c>true</c> if anything could be copied.</returns>
     public virtual bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -207,6 +212,7 @@ namespace Altaxo.Main.Properties
       return false;
     }
 
+    /// <inheritdoc/>
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       foreach (var entry in _properties)
@@ -217,6 +223,7 @@ namespace Altaxo.Main.Properties
       }
     }
 
+    /// <inheritdoc/>
     object ICloneable.Clone()
     {
       return new PropertyBag(this);
@@ -232,8 +239,8 @@ namespace Altaxo.Main.Properties
     }
 
     /// <summary>
-    /// Get a string that designates a temporary property (i.e. a property that is not stored permanently). If any property key starts with this prefix,
-    /// the propery is not serialized when saving the project to file.
+    /// Gets a string that designates a temporary property, i.e. a property that is not stored permanently. If any property key starts with this prefix,
+    /// the property is not serialized when saving the project to a file.
     /// </summary>
     /// <value>
     /// Temporary property prefix.
@@ -312,7 +319,7 @@ namespace Altaxo.Main.Properties
     /// <summary>
     /// Gets the value of a property.
     /// </summary>
-    /// <typeparam name="T">The of the property.</typeparam>
+    /// <typeparam name="T">The type of the property.</typeparam>
     /// <param name="p">The property key.</param>
     /// <returns>
     /// The property.
@@ -337,6 +344,13 @@ namespace Altaxo.Main.Properties
       }
     }
 
+    /// <summary>
+    /// Gets the value for the specified property key.
+    /// </summary>
+    /// <typeparam name="T">The value type.</typeparam>
+    /// <param name="p">The property key.</param>
+    /// <param name="defaultValue">The default value returned when the key is not found.</param>
+    /// <returns>The stored value, or <paramref name="defaultValue"/> if the key is not present.</returns>
     [return: MaybeNull]
     public virtual T GetValue<T>(PropertyKey<T> p, [MaybeNull] T defaultValue)
     {

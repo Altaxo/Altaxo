@@ -26,7 +26,7 @@
 namespace Altaxo.Serialization.Omnic
 {
   /// <summary>
-  /// Import options for importing Galactic SPC files.
+  /// Import options for importing Omnic SPA files.
   /// </summary>
   public record OmnicSPAImportOptions : Main.IImmutable
   {
@@ -56,6 +56,7 @@ namespace Altaxo.Serialization.Omnic
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(OmnicSPAImportOptions), 1)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (OmnicSPAImportOptions)obj;
@@ -64,6 +65,7 @@ namespace Altaxo.Serialization.Omnic
         info.AddValue("IncludeFilePathAsProperty", s.IncludeFilePathAsProperty);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var useNeutralColumnName = info.GetBoolean("UseNeutralColumnName");

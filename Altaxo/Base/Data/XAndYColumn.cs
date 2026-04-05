@@ -34,6 +34,11 @@ namespace Altaxo.Data
   {
     #region Serialization
 
+    /// <summary>
+    /// Initializes a new instance from XML deserialization data.
+    /// </summary>
+    /// <param name="info">The deserialization info.</param>
+    /// <param name="version">The serialized version.</param>
     protected XAndYColumn(IXmlDeserializationInfo info, int version) : base(info, version)
     {
     }
@@ -45,6 +50,7 @@ namespace Altaxo.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XAndYColumn), 0)]
     protected class SerializationSurrogate0 : IndependentAndDependentColumns.XmlSerializationSurrogate0
     {
+      /// <inheritdoc/>
       public override object? Deserialize(object? o, IXmlDeserializationInfo info, object? parentobject)
       {
         if (o is XAndYColumn s)
@@ -76,6 +82,13 @@ namespace Altaxo.Data
 
 
 
+    /// <summary>
+    /// Initializes a new instance for the specified X and Y columns.
+    /// </summary>
+    /// <param name="table">The data table that contains the columns.</param>
+    /// <param name="groupNumber">The group number applied to both columns.</param>
+    /// <param name="xColumn">The X column.</param>
+    /// <param name="yColumn">The Y column.</param>
     public XAndYColumn(DataTable table, int groupNumber, Altaxo.Data.IReadableColumn xColumn, Altaxo.Data.IReadableColumn yColumn)
      : base(table, groupNumber, 1, 1)
     {
@@ -84,9 +97,9 @@ namespace Altaxo.Data
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="IndependentAndDependentColumns"/> class from given proxies of DataTable and columns.
-    /// This constructor is intended for internal use only, e.g. for creating copies of existing instances.
-    /// ATTENTION: The proxies are not cloned! 
+    /// Initializes a new instance of the <see cref="XAndYColumn"/> class from the given table and column proxies.
+    /// This constructor is intended for internal use only, for example when creating copies of existing instances.
+    /// Attention: the proxies are not cloned.
     /// </summary>
     /// <param name="table">The table proxy.</param>
     /// <param name="groupNumber">The group number of the x- and y-column.</param>
@@ -104,10 +117,12 @@ namespace Altaxo.Data
       return new XAndYColumn(this);
     }
 
+    /// <inheritdoc/>
     protected override string GetIndependentVariableName(int idx)
     {
       return "X";
     }
+    /// <inheritdoc/>
     protected override string GetDependentVariableName(int idx)
     {
       return "Y";

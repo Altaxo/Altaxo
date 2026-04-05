@@ -55,6 +55,7 @@ namespace Altaxo.Main.Properties
       _propertyBags = new List<PropertyBagWithInformation>(tuplesBagnameWithBag);
     }
 
+    /// <inheritdoc/>
     public object Clone()
     {
       return new PropertyHierarchy(_propertyBags);
@@ -75,9 +76,9 @@ namespace Altaxo.Main.Properties
     /// </summary>
     /// <typeparam name="T">Type of the property value to search for.</typeparam>
     /// <param name="p">The property key.</param>
-    /// <param name="value">On successfull return, this contains the retrieved property value.</param>
-    /// <param name="bag">On successfull return, this contains the property bag from which the property value was retrieved.</param>
-    /// <param name="bagInfo">On successfull return, this contains the information about the property bag from which the property value was retrieved.</param>
+    /// <param name="value">On successful return, this contains the retrieved property value.</param>
+    /// <param name="bag">On successful return, this contains the property bag from which the property value was retrieved.</param>
+    /// <param name="bagInfo">On successful return, this contains the information about the property bag from which the property value was retrieved.</param>
     /// <returns><c>True</c> if the property value could be successfully retrieved; <c>false</c> otherwise.</returns>
     public bool TryGetValue<T>(PropertyKey<T> p, [MaybeNull] out T value, [MaybeNullWhen(false)] out IPropertyBag bag, [MaybeNullWhen(false)] out PropertyBagInformation bagInfo)
     {
@@ -102,9 +103,9 @@ namespace Altaxo.Main.Properties
     /// </summary>
     /// <typeparam name="T">Type of the property value to search for.</typeparam>
     /// <param name="propName">The property key as string value.</param>
-    /// <param name="value">On successfull return, this contains the retrieved property value.</param>
-    /// <param name="bag">On successfull return, this contains the property bag from which the property value was retrieved.</param>
-    /// <param name="bagInfo">On successfull return, this contains the information about the property bag from which the property value was retrieved.</param>
+    /// <param name="value">On successful return, this contains the retrieved property value.</param>
+    /// <param name="bag">On successful return, this contains the property bag from which the property value was retrieved.</param>
+    /// <param name="bagInfo">On successful return, this contains the information about the property bag from which the property value was retrieved.</param>
     /// <returns><c>True</c> if the property value could be successfully retrieved; <c>false</c> otherwise.</returns>
     public bool TryGetValue<T>(string propName, [MaybeNull] out T value, [MaybeNullWhen(false)] out IPropertyBag bag, [MaybeNullWhen(false)] out PropertyBagInformation bagInfo)
     {
@@ -116,7 +117,7 @@ namespace Altaxo.Main.Properties
     /// </summary>
     /// <typeparam name="T">Type of the property value to search for.</typeparam>
     /// <param name="p">The property key.</param>
-    /// <param name="value">On successfull return, this contains the retrieved property value.</param>
+    /// <param name="value">On successful return, this contains the retrieved property value.</param>
     /// <returns><c>True</c> if the property value could be successfully retrieved; <c>false</c> otherwise.</returns>
     public bool TryGetValue<T>(PropertyKey<T> p, [MaybeNull] out T value)
     {
@@ -214,8 +215,8 @@ namespace Altaxo.Main.Properties
     }
 
     /// <summary>
-    /// Creates a copy of this property hierarchy. The topmost bag is cloned, the other bags are only copyied (shallow) to the new hierarchy.
-    /// This function is intended for use with the Gui system, were all properties in the hierarchy should be displayed, but only the topmost bag should be edited.
+    /// Creates a copy of this property hierarchy. The topmost bag is cloned, the other bags are only copied shallowly to the new hierarchy.
+    /// This function is intended for use with the GUI system, where all properties in the hierarchy should be displayed, but only the topmost bag should be edited.
     /// </summary>
     /// <returns>Copy of this property hierarchy with the topmost bag cloned.</returns>
     public PropertyHierarchy CreateCopyWithOnlyTopmostBagCloned()

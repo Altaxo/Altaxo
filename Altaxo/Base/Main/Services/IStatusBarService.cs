@@ -23,7 +23,7 @@ using System.Threading;
 namespace Altaxo.Main.Services
 {
   /// <summary>
-  /// Minimum requirements to a status bar.
+  /// Defines the minimum functionality required from a status bar service.
   /// </summary>
   [GlobalService("StatusBar")]
   public interface IStatusBarService : IDisposable
@@ -39,8 +39,8 @@ namespace Altaxo.Main.Services
     /// Sets the message shown in the left-most pane in the status bar.
     /// </summary>
     /// <param name="message">The message text.</param>
-    /// <param name="highlighted">Whether to highlight the text</param>
-    /// <param name="icon">Icon to show next to the text. If this parameter is a string, it will be interpreted as a resource string.</param>
+    /// <param name="highlighted">Whether to highlight the text.</param>
+    /// <param name="icon">Icon to show next to the text. If this parameter is a string, it is interpreted as a resource string.</param>
     void SetMessage(string message, bool highlighted = false, object? icon = null);
 
     /// <summary>
@@ -49,13 +49,13 @@ namespace Altaxo.Main.Services
     /// </summary>
     /// <param name="cancellationToken">Cancellation token to use for
     /// <see cref="IProgressReporter.CancellationToken"/></param>
-    /// <returns>The new IProgressMonitor instance. This return value must be disposed
-    /// once the background task has completed.</returns>
+    /// <returns>The new <see cref="IProgressReporter"/> instance. This return value must be disposed once the background task has completed.</returns>
     IProgressReporter CreateProgressReporter(CancellationToken cancellationToken = default(CancellationToken));
 
     /// <summary>
-    /// Shows progress for the specified ProgressCollector in the status bar.
+    /// Shows progress for the specified progress monitor in the status bar.
     /// </summary>
+    /// <param name="progress">The progress monitor to show.</param>
     void AddProgress(IProgressMonitor progress);
   }
 }

@@ -32,6 +32,9 @@ using Altaxo.Main;
 
 namespace Altaxo.Science.Spectroscopy.Calibration
 {
+  /// <summary>
+  /// Data source that calculates Y-axis calibration data.
+  /// </summary>
   public class YCalibrationDataSource : TableDataSourceBase, IAltaxoTableDataSource, IYCalibrationDataSource, IHasDocumentReferences
   {
     /// <summary>Name of the column that represents the x-values of the signal after preprocessing.</summary>
@@ -56,6 +59,9 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     private YCalibrationOptionsDocNode _processOptions;
     private DataTableXYColumnProxy? _processData;
 
+    /// <summary>
+    /// Holds the subscribers for the data-source-changed notification.
+    /// </summary>
     public Action<IAltaxoTableDataSource>? _dataSourceChanged;
 
     #region Serialization
@@ -70,6 +76,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(YCalibrationDataSource), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (YCalibrationDataSource)obj;
@@ -79,6 +86,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
         info.AddValue("ImportOptions", s._importOptions);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (o is YCalibrationDataSource s)
@@ -99,6 +107,11 @@ namespace Altaxo.Science.Spectroscopy.Calibration
 
     #endregion Version 0
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="YCalibrationDataSource"/> class from serialized data.
+    /// </summary>
+    /// <param name="info">The deserialization info.</param>
+    /// <param name="version">The serialized version.</param>
     protected YCalibrationDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     {
       switch (version)
@@ -118,13 +131,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     /// Initializes a new instance of the <see cref="YCalibrationDataSource"/> class.
     /// </summary>
     /// <param name="importOptions">The data source import options.</param>
-    /// <exception cref="ArgumentNullException">
-    /// inputData
-    /// or
-    /// transformationOptions
-    /// or
-    /// importOptions
-    /// </exception>
+    /// <exception cref="ArgumentNullException"><paramref name="importOptions"/> is <see langword="null"/>.</exception>
     public YCalibrationDataSource(IDataSourceImportOptions importOptions)
     {
       if (importOptions is null)
@@ -133,6 +140,12 @@ namespace Altaxo.Science.Spectroscopy.Calibration
       _importOptions = importOptions;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="YCalibrationDataSource"/> class.
+    /// </summary>
+    /// <param name="inputData">The input data.</param>
+    /// <param name="dataSourceOptions">The calibration options.</param>
+    /// <param name="importOptions">The data source import options.</param>
     public YCalibrationDataSource(DataTableXYColumnProxy? inputData, YCalibrationOptions dataSourceOptions, IDataSourceImportOptions importOptions)
     {
       if (inputData is null)
@@ -156,6 +169,10 @@ namespace Altaxo.Science.Spectroscopy.Calibration
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies state from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     [MemberNotNull(nameof(_importOptions), nameof(_processOptions), nameof(_processData))]
     public void CopyFrom(YCalibrationDataSource from)
     {
@@ -181,7 +198,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     /// Copies from another instance.
     /// </summary>
     /// <param name="obj">The object to copy from.</param>
-    /// <returns><c>True</c> if anything could be copied from the object, otherwise <c>false</c>.</returns>
+    /// <returns><c>True</c> if anything could be copied from the object; otherwise, <c>false</c>.</returns>
     public bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -213,7 +230,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     /// Fills (or refills) the data table with the processed data. The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable" />.
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
-    /// <param name="reporter"></param>
+    /// <param name="reporter">The progress reporter.</param>
     public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter reporter)
     {
       FillData(destinationTable, CancellationToken.None);
@@ -337,6 +354,11 @@ namespace Altaxo.Science.Spectroscopy.Calibration
       }
     }
 
+    /// <summary>
+    /// Determines whether the specified table contains a valid y-axis calibration.
+    /// </summary>
+    /// <param name="table">The table to inspect.</param>
+    /// <returns><see langword="true"/> if a valid calibration is present; otherwise, <see langword="false"/>.</returns>
     public bool IsContainingValidYAxisCalibration(DataTable table)
     {
       var xColumn = table.DataColumns.TryGetColumn(ColumnName_Group0_SpectrumX);
@@ -344,6 +366,11 @@ namespace Altaxo.Science.Spectroscopy.Calibration
       return xColumn is not null && sColumn is not null && Math.Min(xColumn.Count, sColumn.Count) >= 2;
     }
 
+    /// <summary>
+    /// Gets the y-axis calibration from the specified table.
+    /// </summary>
+    /// <param name="table">The table that contains the calibration.</param>
+    /// <returns>The calibration pairs of x values and scaling factors.</returns>
     public (double x, double yScalingFactor)[] GetYAxisCalibration(DataTable table)
     {
       var xColumn = table.DataColumns.TryGetColumn(ColumnName_Group0_SpectrumX);
@@ -449,6 +476,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
 
     #region Change event handling
 
+    /// <inheritdoc />
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (sender is not null && object.ReferenceEquals(_processData, sender)) // incoming call from data proxy
@@ -470,6 +498,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
 
     #region Document Node functions
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_processOptions is not null)

@@ -37,8 +37,8 @@ using Altaxo.Graph.Plot.Data;
 namespace Altaxo.Graph.Graph3D.Plot.Styles.LineConnectionStyles
 {
   /// <summary>
-  /// Represents a symbol shape for a 3D scatter plot. Instances of this class have to be immutable.
-  /// This base class implements Equals and GetHashCode.
+  /// Provides the base implementation for immutable three-dimensional line-connection styles.
+  /// This base class implements <see cref="Equals(object?)"/> and <see cref="GetHashCode()"/>.
   /// </summary>
   /// <seealso cref="Altaxo.Main.IImmutable" />
   public abstract class LineConnectionStyleBase : ILineConnectionStyle
@@ -55,6 +55,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.LineConnectionStyles
     /// This function is null if no symbol gap is required.</param>
     /// <param name="skipFrequency">Skip frequency. Normally 1, thus all gaps are taken into account. If 2, only every 2nd gap is taken into account, and so on.</param>
     /// <param name="connectCircular">If true, the end of the line is connected with the start of the line.</param>
+    /// <inheritdoc/>
     public abstract void Paint(
       IGraphicsContext3D g,
       Processed3DPlotData pdata,
@@ -65,11 +66,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.LineConnectionStyles
       int skipFrequency,
       bool connectCircular);
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return GetType().GetHashCode();
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       return GetType() == obj?.GetType();

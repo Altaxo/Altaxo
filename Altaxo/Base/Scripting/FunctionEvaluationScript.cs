@@ -29,6 +29,9 @@ using Altaxo.Main.Services.ScriptCompilation;
 
 namespace Altaxo.Scripting
 {
+  /// <summary>
+  /// Represents a script that evaluates a scalar function value.
+  /// </summary>
   public interface IFunctionEvaluationScriptText : IScriptText
   {
     /// <summary>
@@ -42,7 +45,7 @@ namespace Altaxo.Scripting
   }
 
   /// <summary>
-  /// Holds the text, the module (=executable), and some properties of a property column script.
+  /// Holds the text, the compiled module, and related metadata of a function-evaluation script.
   /// </summary>
 
   public class FunctionEvaluationScript : AbstractScript, IFunctionEvaluationScriptText, Altaxo.Calc.IScalarFunctionDD
@@ -52,6 +55,7 @@ namespace Altaxo.Scripting
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Scripting.FunctionEvaluationScript), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (AbstractScript)obj;
@@ -59,6 +63,7 @@ namespace Altaxo.Scripting
         info.AddBaseValueEmbedded(s, typeof(AbstractScript));
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         FunctionEvaluationScript s = (FunctionEvaluationScript?)o ?? new FunctionEvaluationScript();
@@ -80,7 +85,7 @@ namespace Altaxo.Scripting
     }
 
     /// <summary>
-    /// Creates a column script as a copy from another script.
+    /// Creates a function-evaluation script as a copy from another script.
     /// </summary>
     /// <param name="b">The script to copy from.</param>
     public FunctionEvaluationScript(FunctionEvaluationScript b)
@@ -89,7 +94,7 @@ namespace Altaxo.Scripting
     }
 
     /// <summary>
-    /// Creates a column script as a copy from another script.
+    /// Creates a function-evaluation script as a copy from another script.
     /// </summary>
     /// <param name="b">The script to copy from.</param>
     /// <param name="forModification">If true, the new script text can be modified.</param>
@@ -128,6 +133,7 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public override string CodeStart
     {
       get
@@ -138,6 +144,7 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public override string CodeUserDefault
     {
       get
@@ -150,6 +157,7 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public override string CodeEnd
     {
       get
@@ -186,10 +194,10 @@ namespace Altaxo.Scripting
     }
 
     /// <summary>
-    ///
+    /// Evaluates the script for the specified input value.
     /// </summary>
-    /// <param name="x"></param>
-    /// <returns></returns>
+    /// <param name="x">The input value.</param>
+    /// <returns>The computed function value, or <see cref="double.NaN"/> if evaluation fails.</returns>
     public double Evaluate(double x)
     {
       if (_scriptObject is null && !_wasTriedToCompile)

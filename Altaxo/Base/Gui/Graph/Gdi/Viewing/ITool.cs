@@ -29,6 +29,5 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
   /// </summary>
   public interface ITool
   {
-
   }
 }

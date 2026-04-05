@@ -75,7 +75,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.Regression.Multivariate.DimensionReductionAndRegressionOptions", 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      /// <inheritdoc/>
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new System.InvalidOperationException("Serialization of old version");
@@ -109,7 +109,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         */
       }
 
-      /// <inheritdoc/>
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var singlePreprocessing = info.GetValue<ISingleSpectrumPreprocessor>("SinglePreprocessing", null);
@@ -191,7 +191,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DimensionReductionAndRegressionOptions), 1)]
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      /// <inheritdoc/>
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DimensionReductionAndRegressionOptions)obj;
@@ -221,7 +221,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         info.CommitArray(); // ColumnsToCalculate
       }
 
-      /// <inheritdoc/>
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var singlePreprocessing = info.GetValue<ISingleSpectrumPreprocessor>("SinglePreprocessing", null);

@@ -38,7 +38,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 {
 
   /// <summary>
-  /// This view interface is for showing the options of the XYZPlotLineStyle
+  /// Provides the view contract for <see cref="LinePlotStyleController"/>.
   /// </summary>
   public interface ILinePlotStyleView : IDataContextAwareView
   {
@@ -47,7 +47,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
 
   /// <summary>
-  /// Summary description for XYPlotLineStyleController.
+  /// Controller for <see cref="LinePlotStyle"/>.
   /// </summary>
   [UserControllerForObject(typeof(LinePlotStyle))]
   [ExpectedTypeOfView(typeof(ILinePlotStyleView))]
@@ -56,6 +56,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     /// <summary>Tracks the presence of a color group style in the parent collection.</summary>
     private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -65,6 +66,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private ItemsController<Type> _lineConnectChoices;
 
+    /// <summary>
+    /// Gets or sets the available line connection choices.
+    /// </summary>
     public ItemsController<Type> LineConnectChoices
     {
       get => _lineConnectChoices;
@@ -80,17 +84,17 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
 
     /// <summary>
-    /// Gets or sets a value indicating whether the line is shown or not. By definition here, the line is not shown only if the connection style is "Noline".
-    /// When setting this property, this influences not the connection style in the _view, but only the IsEnabled property of all Gui items associated with the line.
+    /// Gets a value indicating whether the line is shown or not. The line is not shown only if the connection style is "Noline".
+    /// This property influences only the IsEnabled property of all GUI items associated with the line.
     /// </summary>
-    /// <value>
-    /// 	<c>true</c> if the line used; otherwise, <c>false</c>.
-    /// </value>
     public bool IsLineUsed => LineConnectChoices.SelectedValue != typeof(NoConnection);
 
 
     private bool _independentLineColor;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the line color is independent from the group style.
+    /// </summary>
     public bool IndependentLineColor
     {
       get => _independentLineColor;
@@ -107,6 +111,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _independentDashStyle;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the dash style is independent from the group style.
+    /// </summary>
     public bool IndependentDashStyle
     {
       get => _independentDashStyle;
@@ -123,6 +130,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _independentSymbolSize;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the symbol size is independent from the group style.
+    /// </summary>
     public bool IndependentSymbolSize
     {
       get => _independentSymbolSize;
@@ -138,6 +148,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _ignoreMissingDataPoints;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether to ignore missing data points.
+    /// </summary>
     public bool IgnoreMissingDataPoints
     {
       get => _ignoreMissingDataPoints;
@@ -154,6 +167,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _independentOnShiftingGroupStyles;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the style is independent on shifting group styles.
+    /// </summary>
     public bool IndependentOnShiftingGroupStyles
     {
       get => _independentOnShiftingGroupStyles;
@@ -169,6 +185,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _connectCircular;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether to connect the plot circularly.
+    /// </summary>
     public bool ConnectCircular
     {
       get => _connectCircular;
@@ -186,6 +205,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private PenAllPropertiesController _linePen;
 
+    /// <summary>
+    /// Gets or sets the controller for all properties of the line pen.
+    /// </summary>
     public PenAllPropertiesController LinePen
     {
       get => _linePen;
@@ -200,6 +222,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets the environment for the symbol size quantity with unit.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment SymbolSizeEnvironment => LineCapSizeEnvironment.Instance;
 
 
@@ -222,6 +247,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _useSymbolGap;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether to use a gap between symbols.
+    /// </summary>
     public bool UseSymbolGap
     {
       get => _useSymbolGap;
@@ -235,11 +263,17 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets the environment for the symbol gap offset quantity with unit.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment GapOffsetEnvironment => LineCapSizeEnvironment.Instance;
 
 
     private DimensionfulQuantity _symbolGapOffset;
 
+    /// <summary>
+    /// Gets or sets the offset of the gap between symbols.
+    /// </summary>
     public DimensionfulQuantity SymbolGapOffset
     {
       get => _symbolGapOffset;
@@ -253,11 +287,17 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets the environment for the symbol gap factor quantity, which is dimensionless.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment GapFactorEnvironment => RelationEnvironment.Instance;
 
 
     private DimensionfulQuantity _symbolGapFactor;
 
+    /// <summary>
+    /// Gets or sets the factor of the gap between symbols.
+    /// </summary>
     public DimensionfulQuantity SymbolGapFactor
     {
       get => _symbolGapFactor;
@@ -274,6 +314,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     #endregion
 
 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       _colorGroupStyleTracker = null;
@@ -283,6 +324,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -325,6 +367,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       LineConnectChoices = new ItemsController<Type>(lineConnectChoices, EhLineConnectionChoiceChanged);
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       // don't trust user input, so all into a try statement

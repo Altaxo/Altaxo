@@ -35,7 +35,7 @@ using Altaxo.Main;
 namespace Altaxo.Drawing
 {
   /// <summary>
-  /// PenX is a graphics framework independent pen object. Use <see cref="Altaxo.Graph.Gdi.PenCacheGdi.Instance"/> to convert it into a Gdi pen.
+  /// Graphics-framework-independent pen definition. Use <see cref="Altaxo.Graph.Gdi.PenCacheGdi.Instance"/> to convert it into a GDI pen.
   /// </summary>
   [Serializable]
   public class PenX : IImmutable, IEquatable<PenX>
@@ -49,22 +49,61 @@ namespace Altaxo.Drawing
 
     /// <summary>The alignment of the pen.</summary>
     protected PenAlignment _alignment;
+    /// <summary>
+    /// The line-join style.
+    /// </summary>
     protected LineJoin _lineJoin;
+    /// <summary>
+    /// The miter limit.
+    /// </summary>
     protected double _miterLimit;
+    /// <summary>
+    /// The start cap.
+    /// </summary>
     protected ILineCap _startCap;
+    /// <summary>
+    /// The end cap.
+    /// </summary>
     protected ILineCap _endCap;
+    /// <summary>
+    /// The dash pattern.
+    /// </summary>
     protected IDashPattern _dashPattern;
+    /// <summary>
+    /// The dash cap style.
+    /// </summary>
     protected DashCap _dashCap;
 
+    /// <summary>
+    /// The optional compound array.
+    /// </summary>
     protected double[]? _compoundArray;
+    /// <summary>
+    /// The optional transformation.
+    /// </summary>
     protected Matrix3x2Class? _transformation;
 
+    /// <summary>
+    /// Cached hash code.
+    /// </summary>
     protected int? _cachedHashCode;
 
 
+    /// <summary>
+    /// The default pen width.
+    /// </summary>
     public const double DefaultWidth = 1;
+    /// <summary>
+    /// The default pen alignment.
+    /// </summary>
     public const PenAlignment DefaultAlignment = PenAlignment.Center;
+    /// <summary>
+    /// The default line join.
+    /// </summary>
     public const LineJoin DefaultLineJoin = LineJoin.Miter;
+    /// <summary>
+    /// The default miter limit.
+    /// </summary>
     public const double DefaultMiterLimit = 10;
 
     #region "ConfiguredProperties"
@@ -818,21 +857,38 @@ if (0 != (cp & PenX.Configured.Width))
 
     #region Construction
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PenX"/> class with default settings.
+    /// </summary>
     public PenX()
       : this(BrushesX.Black, DefaultWidth)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PenX"/> class with the specified solid color.
+    /// </summary>
+    /// <param name="c">The pen color.</param>
     public PenX(NamedColor c)
         : this(c, DefaultWidth)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PenX"/> class with the specified solid color and width.
+    /// </summary>
+    /// <param name="c">The pen color.</param>
+    /// <param name="width">The pen width.</param>
     public PenX(NamedColor c, double width)
       : this(NamedColors.Black == c ? BrushesX.Black : new BrushX(c), width)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PenX"/> class with the specified brush and width.
+    /// </summary>
+    /// <param name="brush">The pen brush.</param>
+    /// <param name="width">The pen width.</param>
     public PenX(BrushX brush, double width)
     {
       _brush = brush ?? throw new ArgumentNullException(nameof(brush));
@@ -849,11 +905,19 @@ if (0 != (cp & PenX.Configured.Width))
 
     #region Properties
 
+    /// <summary>
+    /// Gets the pen alignment.
+    /// </summary>
     public PenAlignment Alignment
     {
       get { return _alignment; }
     }
 
+    /// <summary>
+    /// Returns a copy of this pen with a different alignment.
+    /// </summary>
+    /// <param name="value">The new alignment.</param>
+    /// <returns>A pen with the updated alignment.</returns>
     public PenX WithAlignment(PenAlignment value)
     {
       if (!(_alignment == value))
@@ -890,6 +954,9 @@ if (0 != (cp & PenX.Configured.Width))
       }
     }
 
+    /// <summary>
+    /// Gets the brush used by the pen.
+    /// </summary>
     public BrushX Brush
     {
       get
@@ -898,6 +965,11 @@ if (0 != (cp & PenX.Configured.Width))
       }
     }
 
+    /// <summary>
+    /// Returns a copy of this pen with a different brush.
+    /// </summary>
+    /// <param name="value">The new brush.</param>
+    /// <returns>A pen with the updated brush.</returns>
     public PenX WithBrush(BrushX value)
     {
       if (value is null)
@@ -915,6 +987,9 @@ if (0 != (cp & PenX.Configured.Width))
       }
     }
 
+    /// <summary>
+    /// Gets the foreground color of the pen brush.
+    /// </summary>
     public NamedColor Color
     {
       get
@@ -923,6 +998,11 @@ if (0 != (cp & PenX.Configured.Width))
       }
     }
 
+    /// <summary>
+    /// Returns a copy of this pen with a different foreground color.
+    /// </summary>
+    /// <param name="value">The new color.</param>
+    /// <returns>A pen with the updated color.</returns>
     public PenX WithColor(NamedColor value)
     {
       if (!(Color == value))
@@ -937,11 +1017,19 @@ if (0 != (cp & PenX.Configured.Width))
       }
     }
 
+    /// <summary>
+    /// Gets the compound array used by the pen.
+    /// </summary>
     public double[]? CompoundArray
     {
       get { return _compoundArray; }
     }
 
+    /// <summary>
+    /// Returns a copy of this pen with a different compound array.
+    /// </summary>
+    /// <param name="value">The new compound array.</param>
+    /// <returns>A pen with the updated compound array.</returns>
     public PenX WithCompoundArray(double[]? value)
     {
       if (!(_compoundArray == value))
@@ -957,11 +1045,19 @@ if (0 != (cp & PenX.Configured.Width))
       }
     }
 
+    /// <summary>
+    /// Gets the dash cap style.
+    /// </summary>
     public DashCap DashCap
     {
       get { return _dashCap; }
     }
 
+    /// <summary>
+    /// Returns a copy of this pen with a different dash cap style.
+    /// </summary>
+    /// <param name="value">The new dash cap style.</param>
+    /// <returns>A pen with the updated dash cap style.</returns>
     public PenX WithDashCap(DashCap value)
     {
       if (!(_dashCap == value))
@@ -976,6 +1072,9 @@ if (0 != (cp & PenX.Configured.Width))
       }
     }
 
+    /// <summary>
+    /// Gets the start cap.
+    /// </summary>
     public ILineCap StartCap
     {
       get
@@ -984,6 +1083,11 @@ if (0 != (cp & PenX.Configured.Width))
       }
     }
 
+    /// <summary>
+    /// Returns a copy of this pen with a different start cap.
+    /// </summary>
+    /// <param name="value">The new start cap.</param>
+    /// <returns>A pen with the updated start cap.</returns>
     public PenX WithStartCap(ILineCap value)
     {
       if (value is null)
@@ -1001,6 +1105,9 @@ if (0 != (cp & PenX.Configured.Width))
       }
     }
 
+    /// <summary>
+    /// Gets the end cap.
+    /// </summary>
     public ILineCap EndCap
     {
       get
@@ -1009,6 +1116,11 @@ if (0 != (cp & PenX.Configured.Width))
       }
     }
 
+    /// <summary>
+    /// Returns a copy of this pen with a different end cap.
+    /// </summary>
+    /// <param name="value">The new end cap.</param>
+    /// <returns>A pen with the updated end cap.</returns>
     public PenX WithEndCap(ILineCap value)
     {
       if (value is null)
@@ -1026,6 +1138,9 @@ if (0 != (cp & PenX.Configured.Width))
       }
     }
 
+    /// <summary>
+    /// Gets the dash pattern.
+    /// </summary>
     public IDashPattern DashPattern
     {
       get
@@ -1034,6 +1149,11 @@ if (0 != (cp & PenX.Configured.Width))
       }
     }
 
+    /// <summary>
+    /// Returns a copy of this pen with a different dash pattern.
+    /// </summary>
+    /// <param name="value">The new dash pattern.</param>
+    /// <returns>A pen with the updated dash pattern.</returns>
     public PenX WithDashPattern(IDashPattern value)
     {
       if (value is null)
@@ -1051,11 +1171,19 @@ if (0 != (cp & PenX.Configured.Width))
       }
     }
 
+    /// <summary>
+    /// Gets the line-join style.
+    /// </summary>
     public LineJoin LineJoin
     {
       get { return _lineJoin; }
     }
 
+    /// <summary>
+    /// Returns a copy of this pen with a different line join.
+    /// </summary>
+    /// <param name="value">The new line join.</param>
+    /// <returns>A pen with the updated line join.</returns>
     public PenX WithLineJoin(LineJoin value)
     {
       if (!(_lineJoin == value))
@@ -1070,11 +1198,19 @@ if (0 != (cp & PenX.Configured.Width))
       }
     }
 
+    /// <summary>
+    /// Gets the miter limit.
+    /// </summary>
     public double MiterLimit
     {
       get { return _miterLimit; }
     }
 
+    /// <summary>
+    /// Returns a copy of this pen with a different miter limit.
+    /// </summary>
+    /// <param name="value">The new miter limit.</param>
+    /// <returns>A pen with the updated miter limit.</returns>
     public PenX WithMiterLimit(double value)
     {
       if (!(_miterLimit == value))
@@ -1089,11 +1225,19 @@ if (0 != (cp & PenX.Configured.Width))
       }
     }
 
+    /// <summary>
+    /// Gets the optional transformation matrix.
+    /// </summary>
     public Matrix3x2Class? Transformation
     {
       get { return _transformation; }
     }
 
+    /// <summary>
+    /// Returns a copy of this pen with a different transformation matrix.
+    /// </summary>
+    /// <param name="value">The new transformation matrix.</param>
+    /// <returns>A pen with the updated transformation.</returns>
     public PenX WithTransformation(Matrix3x2Class? value)
     {
       if (value is null || value.Matrix.IsIdentity)
@@ -1111,11 +1255,19 @@ if (0 != (cp & PenX.Configured.Width))
       }
     }
 
+    /// <summary>
+    /// Gets the pen width.
+    /// </summary>
     public double Width
     {
       get { return _width; }
     }
 
+    /// <summary>
+    /// Returns a copy of this pen with a different width.
+    /// </summary>
+    /// <param name="value">The new width.</param>
+    /// <returns>A pen with the updated width.</returns>
     public PenX WithWidth(double value)
     {
       if (!(_width == value))
@@ -1180,30 +1332,48 @@ if (0 != (cp & PenX.Configured.Width))
       return true;
     }
 
+    /// <inheritdoc/>
     public bool Equals(PenX? other)
     {
       return Equals(other, true);
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       return Equals(obj as PenX, true);
     }
 
+    /// <summary>
+    /// Determines whether two <see cref="PenX"/> instances are equal.
+    /// </summary>
     public static bool operator ==(PenX? x, PenX? y)
     {
       return object.ReferenceEquals(x, y) || (x is not null && y is not null && x.Equals(y, true));
     }
+    /// <summary>
+    /// Determines whether two <see cref="PenX"/> instances are not equal.
+    /// </summary>
     public static bool operator !=(PenX? x, PenX? y)
     {
       return !(x == y);
     }
 
+    /// <summary>
+    /// Determines whether two pens are equal when width differences are ignored.
+    /// </summary>
+    /// <param name="x">The first pen.</param>
+    /// <param name="y">The second pen.</param>
+    /// <returns><see langword="true"/> if the pens are equal except for width; otherwise, <see langword="false"/>.</returns>
     public static bool AreEqualUnlessWidth(PenX x, PenX y)
     {
       return object.ReferenceEquals(x, y) || (x is not null && y is not null && x.Equals(y, false));
     }
 
+    /// <summary>
+    /// Calculates the hash code for the current pen state.
+    /// </summary>
+    /// <returns>The calculated hash code.</returns>
     protected int CalculateHash()
     {
       var result = _brush.GetHashCode();
@@ -1238,6 +1408,7 @@ if (0 != (cp & PenX.Configured.Width))
       return result;
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       if (!_cachedHashCode.HasValue)

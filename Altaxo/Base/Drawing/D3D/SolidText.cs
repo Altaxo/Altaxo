@@ -44,6 +44,11 @@ namespace Altaxo.Drawing.D3D
     private FontX3D _font;
     private const double distanceCutThreshold = 0.0001;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SolidText"/> class.
+    /// </summary>
+    /// <param name="text">The text to render.</param>
+    /// <param name="font">The 3D font definition.</param>
     public SolidText(string text, FontX3D font)
     {
       _text = text ?? string.Empty;
@@ -95,6 +100,13 @@ namespace Altaxo.Drawing.D3D
       return Math.Sqrt(dx * dx + dy * dy);
     }
 
+    /// <summary>
+    /// Adds the triangulated text geometry with vertex normals.
+    /// </summary>
+    /// <param name="GetCharacterGeometry">Resolves the geometry for a character in the specified font.</param>
+    /// <param name="AddPositionAndNormal">Adds a vertex position together with its normal vector.</param>
+    /// <param name="AddIndices">Adds the vertex indices for a triangle.</param>
+    /// <param name="startIndex">The running vertex index offset.</param>
     public void AddWithNormals(Func<FontX, char, CharacterGeometry> GetCharacterGeometry, Action<PointD3D, VectorD3D> AddPositionAndNormal, Action<int, int, int> AddIndices, ref int startIndex)
     {
       double positionX = 0;

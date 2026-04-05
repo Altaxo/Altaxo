@@ -30,6 +30,9 @@ using Altaxo.Data;
 
 namespace Altaxo.Serialization.Jcamp
 {
+  /// <summary>
+  /// Importer for JCAMP-DX files.
+  /// </summary>
   public record JcampImporter : DataFileImporterBase, Main.IImmutable
   {
     /// <inheritdoc/>
@@ -84,7 +87,10 @@ namespace Altaxo.Serialization.Jcamp
     /// </summary>
     /// <param name="filenames">An array of filenames to import.</param>
     /// <param name="table">The table the spectra should be imported to.</param>
+    /// <param name="importOptionsObj">The import options object.</param>
+    /// <param name="attachDataSource">Whether to attach a data source to the imported table.</param>
     /// <returns>Null if no error occurs, or an error description.</returns>
+    /// <inheritdoc />
     public override string? Import(IReadOnlyList<string> filenames, DataTable table, object importOptionsObj, bool attachDataSource = true)
     {
       var importOptions = (JcampImportOptions)importOptionsObj;
@@ -221,6 +227,7 @@ namespace Altaxo.Serialization.Jcamp
     /// <summary>
     /// Imports the data of this <see cref="JcampReader"/> instance into a <see cref="DataTable"/>.
     /// </summary>
+    /// <param name="reader">The reader that provides the JCAMP blocks.</param>
     /// <param name="table">The table.</param>
     public void ToDataTable(JcampReader reader, DataTable table)
     {

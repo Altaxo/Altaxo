@@ -32,11 +32,18 @@ namespace Altaxo.Main.Services
   [TypeConverter(typeof(DirectoryNameConverter))]
   public sealed class DirectoryName : PathName
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DirectoryName"/> class.
+    /// </summary>
+    /// <param name="path">The directory path.</param>
     public DirectoryName(string path)
       : base(path)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DirectoryName"/> class from an existing directory name.
+    /// </summary>
     [Obsolete("The input already is a DirectoryName")]
     public DirectoryName(DirectoryName path)
       : base(path)
@@ -56,6 +63,9 @@ namespace Altaxo.Main.Services
         return new DirectoryName(directoryName);
     }
 
+    /// <summary>
+    /// Returns the specified directory name instance.
+    /// </summary>
     [Obsolete("The input already is a DirectoryName")]
     public static DirectoryName Create(DirectoryName directoryName)
     {
@@ -141,6 +151,11 @@ namespace Altaxo.Main.Services
         return _normalizedPath + "\\";
     }
 
+    /// <summary>
+    /// Converts a <see cref="DirectoryName"/> to its string path.
+    /// </summary>
+    /// <param name="path">The directory path.</param>
+    /// <returns>The normalized string path.</returns>
     [return: NotNullIfNotNull("path")]
     public static implicit operator string?(DirectoryName? path)
     {
@@ -149,11 +164,15 @@ namespace Altaxo.Main.Services
 
     #region Equals and GetHashCode implementation
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       return Equals(obj as DirectoryName);
     }
 
+    /// <summary>
+    /// Determines whether this instance and another directory name are equal.
+    /// </summary>
     public bool Equals(DirectoryName? other)
     {
       if (other is null)
@@ -162,39 +181,58 @@ namespace Altaxo.Main.Services
         return string.Equals(_normalizedPath, other._normalizedPath, StringComparison.OrdinalIgnoreCase);
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return StringComparer.OrdinalIgnoreCase.GetHashCode(_normalizedPath);
     }
 
+    /// <summary>
+    /// Determines whether two directory names are equal.
+    /// </summary>
     public static bool operator ==(DirectoryName? left, DirectoryName? right)
     {
       return ReferenceEquals(left, right) || (left is not null && right is not null && left.Equals(right));
     }
 
+    /// <summary>
+    /// Determines whether two directory names are not equal.
+    /// </summary>
     public static bool operator !=(DirectoryName left, DirectoryName right)
     {
       return !(left == right);
     }
 
+    /// <summary>
+    /// Determines whether a directory name and a string path are equal.
+    /// </summary>
     [ObsoleteAttribute("Warning: comparing DirectoryName with string results in case-sensitive comparison")]
     public static bool operator ==(DirectoryName left, string right)
     {
       return (string?)left == right;
     }
 
+    /// <summary>
+    /// Determines whether a directory name and a string path are not equal.
+    /// </summary>
     [ObsoleteAttribute("Warning: comparing DirectoryName with string results in case-sensitive comparison")]
     public static bool operator !=(DirectoryName left, string right)
     {
       return (string?)left != right;
     }
 
+    /// <summary>
+    /// Determines whether a string path and a directory name are equal.
+    /// </summary>
     [ObsoleteAttribute("Warning: comparing DirectoryName with string results in case-sensitive comparison")]
     public static bool operator ==(string left, DirectoryName right)
     {
       return left == (string?)right;
     }
 
+    /// <summary>
+    /// Determines whether a string path and a directory name are not equal.
+    /// </summary>
     [ObsoleteAttribute("Warning: comparing DirectoryName with string results in case-sensitive comparison")]
     public static bool operator !=(string left, DirectoryName right)
     {
@@ -214,18 +252,24 @@ namespace Altaxo.Main.Services
 
   }
 
+  /// <summary>
+  /// Converts between strings and <see cref="DirectoryName"/> instances.
+  /// </summary>
   public class DirectoryNameConverter : TypeConverter
   {
+    /// <inheritdoc/>
     public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
     {
       return sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
     }
 
+    /// <inheritdoc/>
     public override bool CanConvertTo(ITypeDescriptorContext? context, Type? destinationType)
     {
       return destinationType == typeof(DirectoryName) || base.CanConvertTo(context, destinationType);
     }
 
+    /// <inheritdoc/>
     public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object value)
     {
       if (value is string s)
@@ -235,6 +279,7 @@ namespace Altaxo.Main.Services
       return base.ConvertFrom(context, culture, value);
     }
 
+    /// <inheritdoc/>
     public override object? ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture,
                                      object? value, Type destinationType)
     {

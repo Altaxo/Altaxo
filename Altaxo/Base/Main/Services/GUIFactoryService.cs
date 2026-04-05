@@ -221,7 +221,7 @@ namespace Altaxo.Main.Services
     }
 
     /// <summary>
-    /// Searchs for a appropriate control for a given controller with restriction to a given type.
+    /// Searches for an appropriate control for a given controller with restriction to a given type.
     /// The control is not (!) attached to the controller. You have to do this manually.
     /// </summary>
     /// <param name="controller">The controller a control is searched for.</param>
@@ -244,7 +244,7 @@ namespace Altaxo.Main.Services
     }
 
     /// <summary>
-    /// Searchs for a appropriate control for a given controller and attaches the control to the controller.
+    /// Searches for an appropriate control for a given controller and attaches the control to the controller.
     /// </summary>
     /// <param name="controller">The controller a control is searched for.</param>
     public void FindAndAttachControlTo(IMVCController controller)
@@ -279,7 +279,7 @@ namespace Altaxo.Main.Services
     }
 
     /// <summary>
-    /// Searchs for a appropriate control for a given controller and attaches the control to the controller.
+    /// Searches for an appropriate control for a given controller and attaches the control to the controller.
     /// </summary>
     /// <param name="controller">The controller a control is searched for.</param>
     /// <param name="guiControlType">Base type of the underlying Gui system.</param>
@@ -483,6 +483,7 @@ namespace Altaxo.Main.Services
 
     #endregion Commands
 
+    /// <inheritdoc/>
     public bool ShowDialog(ref System.Enum arg, string title)
     {
       System.Type type = arg.GetType();
@@ -506,6 +507,7 @@ namespace Altaxo.Main.Services
         return false;
     }
 
+    /// <inheritdoc/>
     public bool ShowDialogForEnumFlag(ref System.Enum arg, string title)
     {
       var ctrl = new Altaxo.Gui.Common.BasicTypes.EnumValueController();
@@ -772,12 +774,30 @@ namespace Altaxo.Main.Services
     /// <summary>Gets the screen resolution that is set in windows in dots per inch.</summary>
     public abstract PointD2D ScreenResolutionDpi { get; }
 
+    /// <summary>
+    /// Shows an open-file dialog.
+    /// </summary>
+    /// <param name="options">The dialog options.</param>
+    /// <returns><see langword="true"/> if the user accepted the dialog; otherwise, <see langword="false"/>.</returns>
     public abstract bool ShowOpenFileDialog(OpenFileOptions options);
 
+    /// <summary>
+    /// Shows a save-file dialog.
+    /// </summary>
+    /// <param name="options">The dialog options.</param>
+    /// <returns><see langword="true"/> if the user accepted the dialog; otherwise, <see langword="false"/>.</returns>
     public abstract bool ShowSaveFileDialog(SaveFileOptions options);
 
+    /// <summary>
+    /// Shows a folder-selection dialog.
+    /// </summary>
+    /// <param name="options">The dialog options.</param>
+    /// <returns><see langword="true"/> if the user accepted the dialog; otherwise, <see langword="false"/>.</returns>
     public abstract bool ShowFolderDialog(FolderChoiceOptions options);
 
+    /// <summary>
+    /// Invalidates the command-query state so command enablement can be refreshed.
+    /// </summary>
     public abstract void InvalidateRequerySuggested();
 
     /// <summary>
@@ -816,6 +836,9 @@ namespace Altaxo.Main.Services
     /// </summary>
     public Dictionary<System.Type, Action<object, object, string, double, double>> RegisteredContextMenuProviders = new Dictionary<Type, Action<object, object, string, double, double>>();
 
+    /// <summary>
+    /// Gets the registered GUI root types supported by this factory service.
+    /// </summary>
     public List<System.Type> RegisteredGuiTechnologies = new List<Type>();
 
     /// <summary>
@@ -829,6 +852,13 @@ namespace Altaxo.Main.Services
     /// <returns>The context menu. Returns Null if there is no registered context menu provider</returns>
     public abstract void ShowContextMenu(object parent, object owner, string addInTreePath, double x, double y);
 
+    /// <summary>
+    /// Shows a cancellable background-operation dialog for a newly started thread.
+    /// </summary>
+    /// <param name="millisecondsDelay">The delay before showing the dialog.</param>
+    /// <param name="threadstart">The thread entry point.</param>
+    /// <param name="monitor">The monitor that reports progress and cancellation state.</param>
+    /// <returns><see langword="true"/> if the operation completed successfully; otherwise, <see langword="false"/>.</returns>
     public virtual bool ShowBackgroundCancelDialog(int millisecondsDelay, System.Threading.ThreadStart threadstart, IExternalDrivenBackgroundMonitor monitor)
     {
       var t = new System.Threading.Thread(threadstart);
@@ -836,15 +866,47 @@ namespace Altaxo.Main.Services
       return ShowBackgroundCancelDialog(millisecondsDelay, t, monitor);
     }
 
+    /// <summary>
+    /// Shows a cancellable background-operation dialog for an existing thread.
+    /// </summary>
     public abstract bool ShowBackgroundCancelDialog(int millisecondsDelay, Thread thread, IExternalDrivenBackgroundMonitor monitor);
+
+    /// <summary>
+    /// Shows a cancellable dialog for a task-based background operation.
+    /// </summary>
     public abstract bool ShowTaskCancelDialog(int millisecondsDelay, System.Threading.Tasks.Task task, IExternalDrivenBackgroundMonitor monitor);
+
+    /// <summary>
+    /// Executes a user-cancellable action.
+    /// </summary>
+    /// <param name="millisecondsDelay">The delay before showing cancellation UI.</param>
+    /// <param name="action">The action to execute.</param>
+    /// <returns>The exception thrown by the action, or <see langword="null"/> if execution finished without an exception.</returns>
     public abstract Exception? ExecuteAsUserCancellable(int millisecondsDelay, Action<IProgressReporter> action);
 
+    /// <summary>
+    /// Contains information about the usable work area of a screen.
+    /// </summary>
     public struct ScreenInformation
     {
+      /// <summary>
+      /// The x-coordinate of the work area.
+      /// </summary>
       public double WorkAreaX;
+
+      /// <summary>
+      /// The y-coordinate of the work area.
+      /// </summary>
       public double WorkAreaY;
+
+      /// <summary>
+      /// The width of the work area.
+      /// </summary>
       public double WorkAreaWidth;
+
+      /// <summary>
+      /// The height of the work area.
+      /// </summary>
       public double WorkAreaHeight;
     }
 

@@ -34,34 +34,48 @@ using Altaxo.Drawing;
 namespace Altaxo.Drawing.LineCaps
 {
 
+  /// <summary>
+  /// Base class for immutable line cap definitions.
+  /// </summary>
   [System.ComponentModel.ImmutableObject(true)]
   public abstract class LineCapBase : ILineCap
   {
     private double _minimumAbsoluteSizePt;
     private double _minimumRelativeSize;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LineCapBase"/> class using default size settings.
+    /// </summary>
     protected LineCapBase()
     {
       _minimumAbsoluteSizePt = DefaultMinimumAbsoluteSizePt;
       _minimumRelativeSize = DefaultMinimumRelativeSize;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LineCapBase"/> class.
+    /// </summary>
+    /// <param name="minimumAbsoluteSizePt">The minimum absolute cap size in points.</param>
+    /// <param name="minimumRelativeSize">The minimum relative cap size.</param>
     protected LineCapBase(double minimumAbsoluteSizePt, double minimumRelativeSize)
     {
       _minimumAbsoluteSizePt = minimumAbsoluteSizePt;
       _minimumRelativeSize = minimumRelativeSize;
     }
 
+    /// <inheritdoc/>
     public virtual double MinimumAbsoluteSizePt
     {
       get { return _minimumAbsoluteSizePt; }
     }
 
+    /// <inheritdoc/>
     public virtual double MinimumRelativeSize
     {
       get { return _minimumRelativeSize; }
     }
 
+    /// <inheritdoc/>
     public abstract string Name { get; }
 
     /// <summary>Gets the default minimum absolute size in points (1/72 inch).</summary>
@@ -93,12 +107,16 @@ namespace Altaxo.Drawing.LineCaps
       }
     }
 
+    /// <summary>
+    /// Adjusts stored size values to the constraints of the specific line-cap type.
+    /// </summary>
     protected virtual void CoerceSizeValues()
     {
 
     }
 
 
+    /// <inheritdoc/>
     public bool Equals(ILineCap other)
     {
       if (other is null)
@@ -115,11 +133,13 @@ namespace Altaxo.Drawing.LineCaps
 
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       return obj is ILineCap lc && Equals(lc);
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       unchecked
@@ -128,11 +148,17 @@ namespace Altaxo.Drawing.LineCaps
       }
     }
 
+    /// <summary>
+    /// Determines whether two <see cref="LineCapBase"/> instances are equal.
+    /// </summary>
     public static bool operator ==(LineCapBase a, LineCapBase b)
     {
       return a is { } _ ? a.Equals(b) : b is { } _ ? b.Equals(a) : true;
     }
 
+    /// <summary>
+    /// Determines whether two <see cref="LineCapBase"/> instances are not equal.
+    /// </summary>
     public static bool operator !=(LineCapBase a, LineCapBase b)
     {
       return !(a == b);
@@ -144,16 +170,29 @@ namespace Altaxo.Drawing.LineCaps
     private static System.Collections.Generic.List<ILineCap> _registeredStylesSortedByName;
     private static System.Collections.Generic.SortedDictionary<string, ILineCap> _deprecatedGdiStyles;
 
+    /// <summary>
+    /// Gets the default flat line cap.
+    /// </summary>
     public static ILineCap Flat
     {
       get { return FlatCap.Instance; }
     }
 
+    /// <summary>
+    /// Determines whether the specified cap is the default style.
+    /// </summary>
+    /// <param name="cap">The cap to test.</param>
+    /// <returns><see langword="true"/> if the cap is the default style; otherwise, <see langword="false"/>.</returns>
     public static bool IsDefaultStyle(ILineCap cap)
     {
       return cap is FlatCap;
     }
 
+    /// <summary>
+    /// Gets a registered line cap by name.
+    /// </summary>
+    /// <param name="name">The registered line-cap name.</param>
+    /// <returns>The matching line cap.</returns>
     public static ILineCap FromName(string name)
     {
       if (_registeredStyles.TryGetValue(name, out var currentStyle))
@@ -168,6 +207,12 @@ namespace Altaxo.Drawing.LineCaps
         throw new ArgumentException(string.Format("Unknown LineCapEx style: {0}", name), "name");
     }
 
+    /// <summary>
+    /// Gets a registered line cap by name and assigns an absolute size.
+    /// </summary>
+    /// <param name="name">The registered line-cap name.</param>
+    /// <param name="sizePt">The absolute size in points.</param>
+    /// <returns>The matching line cap.</returns>
     public static ILineCap FromNameAndAbsSize(string name, double sizePt)
     {
 
@@ -183,6 +228,13 @@ namespace Altaxo.Drawing.LineCaps
         throw new ArgumentException(string.Format("Unknown LineCapEx style: {0}", name), "name");
     }
 
+    /// <summary>
+    /// Gets a registered line cap by name and assigns absolute and relative sizes.
+    /// </summary>
+    /// <param name="name">The registered line-cap name.</param>
+    /// <param name="sizePt">The absolute size in points.</param>
+    /// <param name="relSize">The relative size.</param>
+    /// <returns>The matching line cap.</returns>
     public static ILineCap FromNameAndAbsAndRelSize(string name, double sizePt, double relSize)
     {
 
@@ -200,6 +252,10 @@ namespace Altaxo.Drawing.LineCaps
       }
     }
 
+    /// <summary>
+    /// Gets all registered line-cap values.
+    /// </summary>
+    /// <returns>The registered line caps.</returns>
     public static IEnumerable<ILineCap> GetRegisteredValues()
     {
       return _registeredStylesSortedByName;

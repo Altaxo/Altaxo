@@ -36,7 +36,7 @@ namespace Altaxo.Graph.Plot.Data
   using Altaxo.Data.Transformations;
 
   /// <summary>
-  /// Summary description for XYFunctionPlotData.
+  /// Plot data for a nonlinear-fit confidence or prediction band.
   /// </summary>
   [Serializable]
   public class XYNonlinearFitFunctionConfidenceBandPlotData : XYFunctionPlotDataBase
@@ -125,6 +125,7 @@ namespace Altaxo.Graph.Plot.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Plot.Data.XYNonlinearFitFunctionConfidenceBandPlotData", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidProgramException("Serialization of old version");
@@ -156,6 +157,7 @@ namespace Altaxo.Graph.Plot.Data
 */
       }
 
+      /// <inheritdoc />
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (XYNonlinearFitFunctionConfidenceBandPlotData?)o ?? new XYNonlinearFitFunctionConfidenceBandPlotData(info);
@@ -198,6 +200,7 @@ namespace Altaxo.Graph.Plot.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYNonlinearFitFunctionConfidenceBandPlotData), 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (XYNonlinearFitFunctionConfidenceBandPlotData)obj;
@@ -226,6 +229,7 @@ namespace Altaxo.Graph.Plot.Data
         }
       }
 
+      /// <inheritdoc />
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (XYNonlinearFitFunctionConfidenceBandPlotData?)o ?? new XYNonlinearFitFunctionConfidenceBandPlotData(info);
@@ -316,13 +320,14 @@ namespace Altaxo.Graph.Plot.Data
     /// Initializes a new instance of the <see cref="XYNonlinearFitFunctionConfidenceBandPlotData"/> class.
     /// </summary>
     /// <param name="isPredictionBand">If true, the prediction band is displayed instead of the confidence band. The prediction band is a little wider, because the sigma of the data points give an additional contribution.</param>
-    /// <param name="isLowerBand">True if this data present the lower confidence (or prediction) band; true if the data represent the upper confidence (or prediction) band.</param>
+    /// <param name="isLowerBand">True if this data represents the lower confidence (or prediction) band; false if the data represent the upper confidence (or prediction) band.</param>
     /// <param name="confidenceLevel">A number greater than 0 and less than 1 representing the confidence level. Usual values are e.g. 0.95, 0.99, 0.999.</param>
     /// <param name="fitDocumentIdentifier">The fit document identifier.</param>
     /// <param name="fitDocument">The fit document. The document will be cloned before stored in this instance.</param>
     /// <param name="fitElementIndex">Index of the fit element.</param>
     /// <param name="dependentVariableIndex">Index of the dependent variable of the fit element.</param>
-    /// <param name="dependentVariableTransformation">Transformation, which is applied to the result of the fit function to be then shown in the plot. Can be null.</param>
+    /// <param name="dependentVariableFitFunctionTransformation">Transformation that is applied to the result of the fit function before it is shown in the plot. Can be null.</param>
+    /// <param name="dependentVariableValueTransformationInverse">Inverse transformation that is applied to the dependent variable values. Can be null.</param>
     /// <param name="independentVariableIndex">Index of the independent variable of the fit element.</param>
     /// <param name="independentVariableTransformation">Transformation, which is applied to the x value before it is applied to the fit function. Can be null.</param>
     /// <param name="numberOfFittedPoints">Number of points that were used for fitting. Needed to calculate the Student's distribution quantile.</param>
@@ -386,16 +391,23 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
+    /// <inheritdoc/>
     public override object Clone()
     {
       return new XYNonlinearFitFunctionConfidenceBandPlotData(this);
     }
 
+    /// <summary>
+    /// Initializes a new instance by copying another confidence-band plot data object.
+    /// </summary>
     public XYNonlinearFitFunctionConfidenceBandPlotData(XYNonlinearFitFunctionConfidenceBandPlotData from)
     {
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies all confidence-band settings from another instance.
+    /// </summary>
     [MemberNotNull(nameof(_fitDocumentIdentifier), nameof(_fitDocument), nameof(_cachedParameters), nameof(_cachedParametersForJacobianEvaluation), nameof(_cachedJacobian), nameof(_functionValues), nameof(_covarianceMatrix), nameof(_cachedIndicesOfVaryingParametersOfThisFitElement))]
     protected void CopyFrom(XYNonlinearFitFunctionConfidenceBandPlotData from)
     {
@@ -418,6 +430,7 @@ namespace Altaxo.Graph.Plot.Data
       _covarianceMatrix = (double[,])from._covarianceMatrix.Clone();
     }
 
+    /// <inheritdoc/>
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -436,11 +449,13 @@ namespace Altaxo.Graph.Plot.Data
 
     #endregion Construction and Copying
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return string.Format("NLFit {0} {1} band {2}%, FitElement: {3}, DependentVariable: {4}", IsLowerBand ? "lower" : "upper", IsPredictionBand ? "prediction" : "confidence", 100 * _confidenceLevel, _fitElementIndex, _dependentVariableIndex);
     }
 
+    /// <inheritdoc/>
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_fitDocument is not null)
@@ -498,6 +513,9 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
+    /// <summary>
+    /// Gets or sets the confidence level used to compute the band.
+    /// </summary>
     public double ConfidenceLevel
     {
       get

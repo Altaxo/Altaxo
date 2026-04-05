@@ -32,13 +32,16 @@ using AUL = Altaxo.Units.Length;
 
 namespace Altaxo.Gui.Graph.Graph3D
 {
+  /// <summary>
+  /// View contract for editing 3D item locations directly.
+  /// </summary>
   public interface IItemLocationDirectView : IDataContextAwareView
   {
   }
 
 
   /// <summary>
-  /// Summary description for LayerPositionController.
+  /// Controller for editing <see cref="ItemLocationDirect"/> values in 3D graphs.
   /// </summary>
   [ExpectedTypeOfView(typeof(IItemLocationDirectView))]
   [UserControllerForObject(typeof(ItemLocationDirect))]
@@ -53,6 +56,8 @@ namespace Altaxo.Gui.Graph.Graph3D
     AnchoringController _localAnchoringController;
     AnchoringController _parentAnchoringController;
 
+ 
+    /// <inheritdoc />
     public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_localAnchoringController, () => _localAnchoringController = null);
@@ -65,6 +70,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private bool _areSizeElementsEnabled = true;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the size-related UI elements are enabled.
+    /// </summary>
     public bool AreSizeElementsEnabled
     {
       get => _areSizeElementsEnabled;
@@ -81,6 +89,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private bool _areSizeElementsVisible = true;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the size-related UI elements are visible.
+    /// </summary>
     public bool AreSizeElementsVisible
     {
       get => _areSizeElementsVisible;
@@ -97,6 +108,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private QuantityWithUnitGuiEnvironment _xSizeEnvironment = SizeEnvironment.Instance;
 
+    /// <summary>
+    /// Gets or sets the environment for the X size value, including available units.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment XSizeEnvironment
     {
       get => _xSizeEnvironment;
@@ -112,6 +126,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private DimensionfulQuantity _xSize;
 
+    /// <summary>
+    /// Gets or sets the X size value.
+    /// </summary>
     public DimensionfulQuantity XSize
     {
       get => _xSize;
@@ -126,8 +143,14 @@ namespace Altaxo.Gui.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Occurs when the X size value changes.
+    /// </summary>
     public event Action<RADouble> SizeXChanged;
 
+    /// <summary>
+    /// Gets the X size value in relative or absolute terms.
+    /// </summary>
     public RADouble SizeX
     {
       get
@@ -150,6 +173,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private QuantityWithUnitGuiEnvironment _ySizeEnvironment = SizeEnvironment.Instance;
 
+    /// <summary>
+    /// Gets or sets the environment for the Y size value, including available units.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment YSizeEnvironment
     {
       get => _ySizeEnvironment;
@@ -165,6 +191,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private DimensionfulQuantity _ySize;
 
+    /// <summary>
+    /// Gets or sets the Y size value.
+    /// </summary>
     public DimensionfulQuantity YSize
     {
       get => _ySize;
@@ -179,8 +208,14 @@ namespace Altaxo.Gui.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Occurs when the Y size value changes.
+    /// </summary>
     public event Action<RADouble> SizeYChanged;
 
+    /// <summary>
+    /// Gets the Y size value in relative or absolute terms.
+    /// </summary>
     public RADouble SizeY
     {
       get
@@ -203,6 +238,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private QuantityWithUnitGuiEnvironment _zSizeEnvironment = SizeEnvironment.Instance;
 
+    /// <summary>
+    /// Gets or sets the environment for the Z size value, including available units.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment ZSizeEnvironment
     {
       get => _zSizeEnvironment;
@@ -219,6 +257,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private DimensionfulQuantity _zSize;
 
+    /// <summary>
+    /// Gets or sets the Z size value.
+    /// </summary>
     public DimensionfulQuantity ZSize
     {
       get => _zSize;
@@ -233,8 +274,14 @@ namespace Altaxo.Gui.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Occurs when the Z size value changes.
+    /// </summary>
     public event Action<RADouble> SizeZChanged;
 
+    /// <summary>
+    /// Gets the Z size value in relative or absolute terms.
+    /// </summary>
     public RADouble SizeZ
     {
       get
@@ -261,6 +308,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private bool _arePositionElementsEnabled = true;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the position-related UI elements are enabled.
+    /// </summary>
     public bool ArePositionElementsEnabled
     {
       get => _arePositionElementsEnabled;
@@ -276,6 +326,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private bool _arePositionElementsVisible = true;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the position-related UI elements are visible.
+    /// </summary>
     public bool ArePositionElementsVisible
     {
       get => _arePositionElementsVisible;
@@ -292,6 +345,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private QuantityWithUnitGuiEnvironment _xPositionEnvironment = PositionEnvironment.Instance;
 
+    /// <summary>
+    /// Gets or sets the environment for the X position value, including available units.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment XPositionEnvironment
     {
       get => _xPositionEnvironment;
@@ -307,6 +363,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private DimensionfulQuantity _xPosition;
 
+    /// <summary>
+    /// Gets or sets the X position value.
+    /// </summary>
     public DimensionfulQuantity XPosition
     {
       get => _xPosition;
@@ -322,6 +381,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private QuantityWithUnitGuiEnvironment _yPositionEnvironment = PositionEnvironment.Instance;
 
+    /// <summary>
+    /// Gets or sets the environment for the Y position value, including available units.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment YPositionEnvironment
     {
       get => _yPositionEnvironment;
@@ -337,6 +399,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private DimensionfulQuantity _yPosition;
 
+    /// <summary>
+    /// Gets or sets the Y position value.
+    /// </summary>
     public DimensionfulQuantity YPosition
     {
       get => _yPosition;
@@ -354,6 +419,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private QuantityWithUnitGuiEnvironment _zPositionEnvironment = PositionEnvironment.Instance;
 
+    /// <summary>
+    /// Gets or sets the environment for the Z position value, including available units.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment ZPositionEnvironment
     {
       get => _zPositionEnvironment;
@@ -369,6 +437,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private DimensionfulQuantity _zPosition;
 
+    /// <summary>
+    /// Gets or sets the Z position value.
+    /// </summary>
     public DimensionfulQuantity ZPosition
     {
       get => _zPosition;
@@ -389,11 +460,17 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     #region Rotation
 
+    /// <summary>
+    /// Gets the rotation environment, which provides the available units for rotation.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment RotationEnvironment => AngleEnvironment.Instance;
 
 
     private DimensionfulQuantity _xRotation;
 
+    /// <summary>
+    /// Gets or sets the X rotation value.
+    /// </summary>
     public DimensionfulQuantity XRotation
     {
       get => _xRotation;
@@ -409,6 +486,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private DimensionfulQuantity _yRotation;
 
+    /// <summary>
+    /// Gets or sets the Y rotation value.
+    /// </summary>
     public DimensionfulQuantity YRotation
     {
       get => _yRotation;
@@ -424,6 +504,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private DimensionfulQuantity _zRotation;
 
+    /// <summary>
+    /// Gets or sets the Z rotation value.
+    /// </summary>
     public DimensionfulQuantity ZRotation
     {
       get => _zRotation;
@@ -441,11 +524,17 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     #region Shear
 
+    /// <summary>
+    /// Gets or sets the shear environment, which provides the available units for shear.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment ShearEnvironment => RelationEnvironment.Instance;
 
 
     private DimensionfulQuantity _xShear;
 
+    /// <summary>
+    /// Gets or sets the X shear value.
+    /// </summary>
     public DimensionfulQuantity XShear
     {
       get => _xShear;
@@ -460,6 +549,9 @@ namespace Altaxo.Gui.Graph.Graph3D
     }
 
     private DimensionfulQuantity _yShear;
+    /// <summary>
+    /// Gets or sets the Y shear value.
+    /// </summary>
     public DimensionfulQuantity YShear
     {
       get => _yShear;
@@ -475,6 +567,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private DimensionfulQuantity _zShear;
 
+    /// <summary>
+    /// Gets or sets the Z shear value.
+    /// </summary>
     public DimensionfulQuantity ZShear
     {
       get => _zShear;
@@ -495,6 +590,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private bool _areScaleElementsEnabled = true;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the scale-related UI elements are enabled.
+    /// </summary>
     public bool AreScaleElementsEnabled
     {
       get => _areScaleElementsEnabled;
@@ -510,6 +608,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private bool _areScaleElementsVisible = true;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the scale-related UI elements are visible.
+    /// </summary>
     public bool AreScaleElementsVisible
     {
       get => _areScaleElementsVisible;
@@ -523,10 +624,16 @@ namespace Altaxo.Gui.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the scale environment, which provides the available units for scale.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment ScaleEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _xScale;
 
+    /// <summary>
+    /// Gets or sets the X scale value.
+    /// </summary>
     public DimensionfulQuantity XScale
     {
       get => _xScale;
@@ -541,6 +648,9 @@ namespace Altaxo.Gui.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public double ScaleX
     {
       get
@@ -555,6 +665,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private DimensionfulQuantity _yScale;
 
+    /// <summary>
+    /// Gets or sets the Y scale value.
+    /// </summary>
     public DimensionfulQuantity YScale
     {
       get => _yScale;
@@ -569,6 +682,9 @@ namespace Altaxo.Gui.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public double ScaleY
     {
       get
@@ -584,6 +700,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private DimensionfulQuantity _zScale;
 
+    /// <summary>
+    /// Gets or sets the Z scale value.
+    /// </summary>
     public DimensionfulQuantity ZScale
     {
       get => _zScale;
@@ -598,6 +717,9 @@ namespace Altaxo.Gui.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public double ScaleZ
     {
       get
@@ -610,16 +732,31 @@ namespace Altaxo.Gui.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Occurs when the X scale value changes.
+    /// </summary>
     public event Action<double> ScaleXChanged;
+    /// <summary>
+    /// Occurs when the Y scale value changes.
+    /// </summary>
     public event Action<double> ScaleYChanged;
+    /// <summary>
+    /// Occurs when the Z scale value changes.
+    /// </summary>
     public event Action<double> ScaleZChanged;
 
     #endregion
 
     #region Anchor
 
+    /// <summary>
+    /// Gets or sets the value indicating whether the anchor-related UI elements are enabled.
+    /// </summary>
     protected bool _areAnchorElementsEnabled = true;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool AreAnchorElementsEnabled
     {
       get => _areAnchorElementsEnabled;
@@ -635,6 +772,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
 
     bool _areAnchorElementsVisible = true;
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool AreAnchorElementsVisible
     {
       get => _areAnchorElementsVisible;
@@ -649,8 +789,14 @@ namespace Altaxo.Gui.Graph.Graph3D
     }
 
 
+    /// <summary>
+    /// Gets or sets the local anchoring controller, which manages the item's local anchor.
+    /// </summary>
     public AnchoringController LocalAnchoringController => _localAnchoringController;
 
+    /// <summary>
+    /// Gets or sets the parental anchoring controller, which manages the item's anchor in the context of its parent.
+    /// </summary>
     public AnchoringController ParentAnchoringController => _parentAnchoringController;
 
 
@@ -661,6 +807,8 @@ namespace Altaxo.Gui.Graph.Graph3D
     #endregion
 
 
+ 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -720,6 +868,8 @@ namespace Altaxo.Gui.Graph.Graph3D
       }
     }
 
+ 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       try
@@ -802,24 +952,44 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     #region Service members
 
+    /// <summary>
+    /// Shows or hides the size-related UI elements and sets their enabled state.
+    /// </summary>
+    /// <param name="isVisible">If set to <c>true</c>, size elements are made visible.</param>
+    /// <param name="isEnabled">If set to <c>true</c>, size elements are enabled.</param>
     public void ShowSizeElements(bool isVisible, bool isEnabled)
     {
       AreSizeElementsVisible = isVisible;
       AreSizeElementsEnabled = isEnabled;
     }
 
+    /// <summary>
+    /// Shows or hides the scale-related UI elements and sets their enabled state.
+    /// </summary>
+    /// <param name="isVisible">If set to <c>true</c>, scale elements are made visible.</param>
+    /// <param name="isEnabled">If set to <c>true</c>, scale elements are enabled.</param>
     public void ShowScaleElements(bool isVisible, bool isEnabled)
     {
       AreScaleElementsVisible = isVisible;
       AreScaleElementsEnabled = isEnabled;
     }
 
+    /// <summary>
+    /// Shows or hides the position-related UI elements and sets their enabled state.
+    /// </summary>
+    /// <param name="isVisible">If set to <c>true</c>, position elements are made visible.</param>
+    /// <param name="isEnabled">If set to <c>true</c>, position elements are enabled.</param>
     public void ShowPositionElements(bool isVisible, bool isEnabled)
     {
       ArePositionElementsVisible = isVisible;
       ArePositionElementsEnabled = isEnabled;
     }
 
+    /// <summary>
+    /// Shows or hides the anchor-related UI elements and sets their enabled state.
+    /// </summary>
+    /// <param name="isVisible">If set to <c>true</c>, anchor elements are made visible.</param>
+    /// <param name="isEnabled">If set to <c>true</c>, anchor elements are enabled.</param>
     public void ShowAnchorElements(bool isVisible, bool isEnabled)
     {
       AreAnchorElementsVisible = isVisible;

@@ -40,14 +40,23 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
 {
+  /// <summary>
+  /// Provides the view for editing scatter symbol lists.
+  /// </summary>
   public interface IScatterSymbolListView : IStyleListView
   {
   }
 
+  /// <summary>
+  /// Controls the editing of scatter symbol lists for 2D plots.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IScatterSymbolListView))]
   [UserControllerForObject(typeof(ScatterSymbolList))]
   public class ScatterSymbolListController : StyleListController<ScatterSymbolListManager, ScatterSymbolList, IScatterSymbol>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScatterSymbolListController"/> class.
+    /// </summary>
     public ScatterSymbolListController()
       : base(ScatterSymbolListManager.Instance)
     {
@@ -63,19 +72,56 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the command that applies the selected structure width to all selected symbols.
+    /// </summary>
     public ICommand CmdSetStructureWidth { get; }
+
+    /// <summary>
+    /// Gets the command that applies the selected symbol shape to all selected symbols.
+    /// </summary>
     public ICommand CmdSetShape { get; }
+
+    /// <summary>
+    /// Gets the command that applies the selected frame to all selected symbols.
+    /// </summary>
     public ICommand CmdSetFrame { get; }
+
+    /// <summary>
+    /// Gets the command that applies the selected inset to all selected symbols.
+    /// </summary>
     public ICommand CmdSetInset { get; }
+
+    /// <summary>
+    /// Gets the command that applies the selected plot color influence to all selected symbols.
+    /// </summary>
     public ICommand CmdSetPlotColorInfluence { get; }
+
+    /// <summary>
+    /// Gets the command that applies the selected fill color to all selected symbols.
+    /// </summary>
     public ICommand CmdSetFillColor { get; }
+
+    /// <summary>
+    /// Gets the command that applies the selected frame color to all selected symbols.
+    /// </summary>
     public ICommand CmdSetFrameColor { get; }
+
+    /// <summary>
+    /// Gets the command that applies the selected inset color to all selected symbols.
+    /// </summary>
     public ICommand CmdSetInsetColor { get; }
 
+    /// <summary>
+    /// Gets the quantity environment used for relative structure widths.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment RelativeStructureWidthEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _relativeStructureWidth;
 
+    /// <summary>
+    /// Gets or sets the relative structure width applied to selected symbols.
+    /// </summary>
     public DimensionfulQuantity RelativeStructureWidth
     {
       get => _relativeStructureWidth;
@@ -92,6 +138,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
 
     private ItemsController<Type?> _shapes;
 
+    /// <summary>
+    /// Gets or sets the available symbol shapes.
+    /// </summary>
     public ItemsController<Type?> Shapes
     {
       get => _shapes;
@@ -108,6 +157,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
 
     private ItemsController<Type?> _insets;
 
+    /// <summary>
+    /// Gets or sets the available symbol insets.
+    /// </summary>
     public ItemsController<Type?> Insets
     {
       get => _insets;
@@ -123,6 +175,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
 
     private ItemsController<Type?> _frames;
 
+    /// <summary>
+    /// Gets or sets the available symbol frames.
+    /// </summary>
     public ItemsController<Type?> Frames
     {
       get => _frames;
@@ -139,6 +194,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
 
     private PlotColorInfluenceController _plotColorInfluence;
 
+    /// <summary>
+    /// Gets or sets the controller for plot color influence settings.
+    /// </summary>
     public PlotColorInfluenceController PlotColorInfluence
     {
       get => _plotColorInfluence;
@@ -156,6 +214,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
 
     private NamedColor _fillColor;
 
+    /// <summary>
+    /// Gets or sets the fill color applied to selected symbols.
+    /// </summary>
     public NamedColor FillColor
     {
       get => _fillColor;
@@ -171,6 +232,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
 
     private NamedColor _frameColor;
 
+    /// <summary>
+    /// Gets or sets the frame color applied to selected symbols.
+    /// </summary>
     public NamedColor FrameColor
     {
       get => _frameColor;
@@ -185,6 +249,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
     }
     private NamedColor _insetColor;
 
+    /// <summary>
+    /// Gets or sets the inset color applied to selected symbols.
+    /// </summary>
     public NamedColor InsetColor
     {
       get => _insetColor;
@@ -200,6 +267,7 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);

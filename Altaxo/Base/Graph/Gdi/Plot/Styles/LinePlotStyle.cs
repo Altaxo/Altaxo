@@ -43,25 +43,45 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
   namespace XYPlotLineStyles
   {
+    /// <summary>
+    /// Specifies the direction used to fill an area relative to a line plot.
+    /// </summary>
     [Serializable]
     public enum FillDirection
     {
+      /// <summary>
+      /// Fill to the left.
+      /// </summary>
       Left = 0,
+      /// <summary>
+      /// Fill to the bottom.
+      /// </summary>
       Bottom = 1,
+      /// <summary>
+      /// Fill to the right.
+      /// </summary>
       Right = 2,
+      /// <summary>
+      /// Fill to the top.
+      /// </summary>
       Top = 3
     }
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="FillDirection"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLineStyles.FillDirection", 0)]
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FillDirection), 1)]
     public class FillDirectionXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (FillDirection)obj;
         info.SetNodeContent(s.ToString());
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         string val = info.GetNodeContent();
@@ -69,15 +89,20 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// XML serialization surrogate for old connection-style values.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLineStyles.ConnectionStyle", 0)]
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Plot.Styles.XYPlotLineStyles.ConnectionStyle", 1)]
     public class ConnectionStyleXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         string val = info.GetNodeContent();
@@ -121,7 +146,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   }
 
   /// <summary>
-  /// Summary description for XYPlotLineStyle.
+  /// Plot style for drawing lines in a 2D plot.
   /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Graph.Gdi.Plot.Styles.LinePlotStyle}")]
   public class LinePlotStyle
@@ -144,12 +169,24 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>If true, group styles that shift the logical position of the items (for instance <see cref="BarSizePosition3DGroupStyle"/>) are not applied. I.e. when true, the position of the item remains unperturbed.</summary>
     private bool _independentOnShiftingGroupStyles = true;
 
+    /// <summary>
+    /// Stores whether the line color is controlled independently from group styles.
+    /// </summary>
     protected bool _independentColor;
 
+    /// <summary>
+    /// Stores whether the dash style is controlled independently from group styles.
+    /// </summary>
     protected bool _independentDashStyle;
 
+    /// <summary>
+    /// Stores the pen used to draw the line.
+    /// </summary>
     protected PenX _linePen;
 
+    /// <summary>
+    /// Stores the connection style used to connect line points.
+    /// </summary>
     protected ILineConnectionStyle _connectionStyle;
 
     /// <summary>
@@ -163,6 +200,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>If true, the start and the end point of the line are connected too.</summary>
     protected bool _connectCircular;
 
+    /// <summary>
+    /// Stores whether a gap is left around the plot symbol.
+    /// </summary>
     protected bool _useSymbolGap;
 
     /// <summary>
@@ -200,6 +240,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLineStyle", 1)] // by accident, it was never different from 0
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version not allowed");
@@ -215,12 +256,20 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
                 */
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
         return s;
       }
 
+      /// <summary>
+      /// Deserializes the specified legacy line plot style instance.
+      /// </summary>
+      /// <param name="o">The existing instance, if any.</param>
+      /// <param name="info">The deserialization info.</param>
+      /// <param name="parent">The parent object.</param>
+      /// <returns>The deserialized line plot style or replacement styles.</returns>
       public virtual object SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (LinePlotStyle?)o ?? new LinePlotStyle(info);
@@ -244,6 +293,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         }
       }
 
+      /// <summary>
+      /// Converts a legacy fill direction to the corresponding coordinate-system plane identifier.
+      /// </summary>
+      /// <param name="fillDir">The legacy fill direction.</param>
+      /// <returns>The corresponding plane identifier.</returns>
       public static CSPlaneID GetFillDirection(XYPlotLineStyles.FillDirection fillDir)
       {
         switch (fillDir)
@@ -269,6 +323,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLineStyle", 2)]
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Try to serialize old version");
@@ -279,6 +334,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
                 */
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (LinePlotStyle?)o ?? new LinePlotStyle(info);
@@ -307,6 +363,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Plot.Styles.LinePlotStyle", 3)]
     private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Try to serialize old version");
@@ -319,6 +376,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
                 */
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (LinePlotStyle?)o ?? new LinePlotStyle(info);
@@ -353,6 +411,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Plot.Styles.LinePlotStyle", 4)]
     private class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version not allowed");
@@ -365,6 +424,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
                 */
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (LinePlotStyle?)o ?? new LinePlotStyle(info);
@@ -398,6 +458,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinePlotStyle), 5)]
     private class XmlSerializationSurrogate5 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (LinePlotStyle)obj;
@@ -423,6 +484,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         info.AddValue("SymbolGapFactor", s._symbolGapFactor);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (LinePlotStyle?)o ?? new LinePlotStyle(info);
@@ -455,6 +517,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region Construction and copying
 
+    /// <summary>
+    /// Copies values from another <see cref="LinePlotStyle"/> instance.
+    /// </summary>
     [MemberNotNull(nameof(_linePen), nameof(_connectionStyle))]
     public void CopyFrom(LinePlotStyle from, Main.EventFiring eventFiring)
     {
@@ -527,6 +592,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinePlotStyle"/> class for deserialization.
+    /// </summary>
     protected LinePlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
@@ -534,6 +602,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinePlotStyle"/> class for old-format deserialization.
+    /// </summary>
     internal LinePlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, bool oldDeserializationRequiresFullConstruction)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
@@ -547,6 +618,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       _independentColor = false;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinePlotStyle"/> class.
+    /// </summary>
     public LinePlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       var penWidth = GraphDocument.GetDefaultPenWidth(context);
@@ -558,11 +632,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       _independentColor = false;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinePlotStyle"/> class by copying another instance.
+    /// </summary>
     public LinePlotStyle(LinePlotStyle from)
     {
       CopyFrom(from, Main.EventFiring.Suppressed);
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
@@ -630,6 +708,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the line connection style.
+    /// </summary>
     public ILineConnectionStyle Connection
     {
       get { return _connectionStyle; }
@@ -665,6 +746,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets an additional offset used for the symbol gap.
+    /// </summary>
     public double SymbolGapOffset
     {
       get
@@ -681,6 +765,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the factor used for the symbol gap.
+    /// </summary>
     public double SymbolGapFactor
     {
       get
@@ -697,6 +784,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the line connects the last point back to the first point.
+    /// </summary>
     public bool ConnectCircular
     {
       get
@@ -735,6 +825,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the line color is independent of group styles.
+    /// </summary>
     public bool IndependentLineColor
     {
       get
@@ -750,6 +843,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the dash style is independent of group styles.
+    /// </summary>
     public bool IndependentDashStyle
     {
       get
@@ -765,6 +861,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the pen used to draw the line.
+    /// </summary>
     public PenX LinePen
     {
       get { return _linePen; }
@@ -809,6 +908,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the style is visible.
+    /// </summary>
     public bool IsVisible
     {
       get
@@ -832,6 +934,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
     }
 
+    /// <summary>
+    /// Paints a sample symbol for this plot style.
+    /// </summary>
     public RectangleF PaintSymbol(System.Drawing.Graphics g, System.Drawing.RectangleF bounds)
     {
       if (!LineConnectionStyles.NoConnection.Instance.Equals(_connectionStyle))
@@ -863,6 +968,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       return bounds;
     }
 
+    /// <summary>
+    /// Paints the line plot.
+    /// </summary>
     public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData? prevItemData, Processed2DPlotData? nextItemData)
     {
       if (_connectionStyle is LineConnectionStyles.NoConnection)
@@ -951,6 +1059,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Adds the fill path for this line plot to the specified graphics path.
+    /// </summary>
     public void GetFillPath(GraphicsPath gp, IPlotArea layer, Processed2DPlotData pdata, CSPlaneID fillDirection)
     {
 
@@ -988,11 +1099,17 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #endregion Painting
 
+    /// <summary>
+    /// Gets a value indicating whether this style acts as a color provider.
+    /// </summary>
     public bool IsColorProvider
     {
       get { return !_independentColor; }
     }
 
+    /// <summary>
+    /// Gets or sets the line color.
+    /// </summary>
     public NamedColor Color
     {
       get
@@ -1009,6 +1126,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this style receives colors from group styles.
+    /// </summary>
     public bool IsColorReceiver
     {
       get { return !_independentColor; }
@@ -1016,10 +1136,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region IG2DPlotStyle Members
 
+    /// <inheritdoc/>
     public void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups)
     {
     }
 
+    /// <inheritdoc/>
     public void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       ColorGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
@@ -1028,6 +1150,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       LineConnection2DGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
     }
 
+    /// <inheritdoc/>
     public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
     {
       if (IsColorProvider)
@@ -1042,6 +1165,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       LineConnection2DGroupStyle.PrepareStyle(externalGroups, localGroups, () => new Tuple<ILineConnectionStyle, bool>(_connectionStyle, _connectCircular));
     }
 
+    /// <inheritdoc/>
     public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       // IgnoreMissingDataPoints is the same for all sub plot styles
@@ -1119,8 +1243,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     #region IDocumentNode Members
 
     /// <summary>
-    /// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
-    /// to change a plot so that the plot items refer to another table.
+    /// Reports document references used by this style.
     /// </summary>
     /// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
     public void VisitDocumentReferences(DocNodeProxyReporter Report)
@@ -1142,6 +1265,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region IRoutedPropertyReceiver Members
 
+    /// <inheritdoc/>
     public IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName)
     {
       switch (propertyName)

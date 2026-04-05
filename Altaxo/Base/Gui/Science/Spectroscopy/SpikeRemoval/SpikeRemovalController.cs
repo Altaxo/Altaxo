@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -34,13 +34,20 @@ using Altaxo.Science.Spectroscopy.SpikeRemoval;
 
 namespace Altaxo.Gui.Science.Spectroscopy.SpikeRemoval
 {
+  /// <summary>
+  /// View interface for selecting and editing an <see cref="ISpikeRemoval"/> implementation.
+  /// </summary>
   public interface ISpikeRemovalView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller that allows selecting a spike removal method and editing its parameters.
+  /// </summary>
   [ExpectedTypeOfView(typeof(ISpikeRemovalView))]
   public class SpikeRemovalController : MVCANControllerEditImmutableDocBase<ISpikeRemoval, ISpikeRemovalView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_subController, () => SubController = null);
@@ -50,6 +57,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.SpikeRemoval
 
     private ItemsController<Type> _availableMethods;
 
+    /// <summary>
+    /// Gets or sets the available spike removal method types.
+    /// </summary>
     public ItemsController<Type> AvailableMethods
     {
       get => _availableMethods;
@@ -66,6 +76,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.SpikeRemoval
 
     private IMVCANController? _subController;
 
+    /// <summary>
+    /// Gets or sets the controller that edits the currently selected spike removal method.
+    /// </summary>
     public IMVCANController? SubController
     {
       get => _subController;
@@ -84,6 +97,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.SpikeRemoval
     #endregion
 
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -124,6 +138,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.SpikeRemoval
       CreateSubController();
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if(SubController is not null)

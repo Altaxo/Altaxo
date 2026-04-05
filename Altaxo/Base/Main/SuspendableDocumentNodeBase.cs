@@ -31,7 +31,7 @@ using Altaxo.Main.Services;
 namespace Altaxo.Main
 {
   /// <summary>
-  ///
+  /// Base class for suspendable document nodes.
   /// </summary>
   public abstract class SuspendableDocumentNodeBase : Main.IDocumentLeafNode
   {
@@ -44,12 +44,14 @@ namespace Altaxo.Main
     protected IDocumentNode? _parent;
 
     /// <summary>Fired when something in the object has changed, and the object is not suspended.</summary>
+    /// <inheritdoc/>
     [field: NonSerialized]
     public event EventHandler? Changed;
 
     /// <summary>
     /// The event that is fired when the object is disposed. First argument is the sender, second argument is the original source, and third argument is the event arg.
     /// </summary>
+    /// <inheritdoc/>
     [field: NonSerialized]
     public event Action<object, object, Main.TunnelingEventArgs>? TunneledEvent;
 
@@ -208,10 +210,10 @@ namespace Altaxo.Main
     protected abstract void AccumulateChangeData(object? sender, EventArgs e);
 
     /// <summary>
-    /// Increase the SuspendLevel by one, and return a token that, if disposed, will resume the object.
+    /// Increases the suspend level by one and returns a token that will resume the object when disposed.
     /// </summary>
-    /// <returns>A token, which must be handed to the resume function to decrease the suspend level. Alternatively,
-    /// the object can be used in an using statement. In this case, the call to the Resume function is not neccessary.</returns>
+    /// <returns>A token which must be handed to the resume function to decrease the suspend level. Alternatively,
+    /// the token can be used in a `using` statement. In this case, the call to the resume function is not necessary.</returns>
     public abstract ISuspendToken SuspendGetToken();
 
     /// <summary>
@@ -219,7 +221,7 @@ namespace Altaxo.Main
     /// The return value is a token that had 'absorbed' the suspend count of the object, resulting in the suspend count
     /// of the object dropped to 0 (zero). When the returned token is finally disposed, the suspend count of the object is increased again by the 'absorbed' suspend count.
     /// </summary>
-    /// <returns>A new token. As long as this token is not disposed, and not other process calls SuspendGetToken, the object is fre (not suspended). The object is suspended again when
+    /// <returns>A new token. As long as this token is not disposed, and no other process calls <see cref="SuspendGetToken"/>, the object is free (not suspended). The object is suspended again when
     /// the returned token is disposed.</returns>
     public abstract IDisposable ResumeCompleteTemporarilyGetToken();
 
@@ -272,13 +274,12 @@ namespace Altaxo.Main
 
     #region Implementation of a set of accumulated event data
 
+    /// <summary>
+    /// Represents a mutable set of accumulated event data.
+    /// </summary>
     protected class SetOfEventData : Dictionary<EventArgs, EventArgs>, ISetOfEventData
     {
-      /// <summary>
-      /// Puts the specified item in the collection, regardless whether it is already contained or not. If it is not already contained, it is added to the collection.
-      /// If it is already contained, and is of type <see cref="SelfAccumulateableEventArgs"/>, the <see cref="SelfAccumulateableEventArgs.Add"/> function is used to add the item to the already contained item.
-      /// </summary>
-      /// <param name="item">The <see cref="EventArgs"/> instance containing the event data.</param>
+      /// <inheritdoc/>
       public void SetOrAccumulate(EventArgs item)
       {
         if (base.TryGetValue(item, out var containedItem))
@@ -293,26 +294,31 @@ namespace Altaxo.Main
         }
       }
 
+      /// <inheritdoc/>
       public void Add(EventArgs item)
       {
         Add(item, item);
       }
 
+      /// <inheritdoc/>
       public bool Contains(EventArgs item)
       {
         return base.ContainsKey(item);
       }
 
+      /// <inheritdoc/>
       public void CopyTo(EventArgs[] array, int arrayIndex)
       {
         base.Values.CopyTo(array, arrayIndex);
       }
 
+      /// <inheritdoc/>
       public bool IsReadOnly
       {
         get { return false; }
       }
 
+      /// <inheritdoc/>
       public new IEnumerator<EventArgs> GetEnumerator()
       {
         return base.Values.GetEnumerator();
@@ -585,6 +591,9 @@ namespace Altaxo.Main
 
 #if DEBUG && TRACEDOCUMENTNODES
 
+    /// <summary>
+    /// Holds weak references to all document nodes created while tracing is enabled.
+    /// </summary>
     protected static LinkedList<WeakReference> _allDocumentNodes = new LinkedList<WeakReference>();
 
     private static int _nextID;
@@ -592,10 +601,19 @@ namespace Altaxo.Main
     private string _releasedBy;
     private int _instanceID = _nextID++;
 
+    /// <summary>
+    /// Gets the captured construction stack trace for this node.
+    /// </summary>
     public string ConstructedBy { get { return _constructedBy; } }
 
+    /// <summary>
+    /// Gets the captured release stack trace for this node.
+    /// </summary>
     public string ReleasedBy { get { return _releasedBy; } }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SuspendableDocumentNodeBase"/> class while document-node tracing is enabled.
+    /// </summary>
     public SuspendableDocumentNodeBase()
     {
       _allDocumentNodes.AddLast(new WeakReference(this));
@@ -621,6 +639,9 @@ namespace Altaxo.Main
       _constructedBy = stb.ToString();
     }
 
+    /// <summary>
+    /// Gets all currently reachable traced document nodes.
+    /// </summary>
     public static IEnumerable<SuspendableDocumentNodeBase> AllDocumentNodes
     {
       get

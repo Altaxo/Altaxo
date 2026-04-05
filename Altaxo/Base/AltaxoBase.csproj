@@ -6,9 +6,15 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <nullable>enable</nullable>
-    <NoWarn>1591;CA1416</NoWarn>
+    <NoWarn>CA1416</NoWarn>
     <DefineConstants></DefineConstants>
     <CoreCompileDependsOn>GenAssInfo</CoreCompileDependsOn>
+  </PropertyGroup>
+
+  <!-- Enforce XML documentation and treat specific warnings as errors    -->
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <WarningsAsErrors>CS1571;CS1572;CS1573;CS1574;CS1580;CS1584;CS1587;CS1591</WarningsAsErrors> 
   </PropertyGroup>
 
   <ItemGroup>

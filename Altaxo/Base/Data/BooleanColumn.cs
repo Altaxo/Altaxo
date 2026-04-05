@@ -29,6 +29,9 @@ using System.Collections.Generic;
 
 namespace Altaxo.Data
 {
+  /// <summary>
+  /// Data column that stores nullable boolean values.
+  /// </summary>
   public class BooleanColumn : DataColumn, IReadOnlyList<bool?>
   {
     static readonly BitArray _emptyBitArray = new BitArray(0);
@@ -82,11 +85,18 @@ namespace Altaxo.Data
 
     #region Construction
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BooleanColumn"/> class.
+    /// </summary>
     public BooleanColumn()
     {
 
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BooleanColumn"/> class with the specified initial capacity.
+    /// </summary>
+    /// <param name="initialcapacity">The initial capacity.</param>
     public BooleanColumn(int initialcapacity)
     {
       _count = 0;
@@ -95,6 +105,10 @@ namespace Altaxo.Data
       _capacity = initialcapacity;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BooleanColumn"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public BooleanColumn(BooleanColumn from)
     {
       _count = from._count;
@@ -107,6 +121,10 @@ namespace Altaxo.Data
 
     #region Access
 
+    /// <summary>
+    /// Gets or sets the nullable Boolean value at the specified row index.
+    /// </summary>
+    /// <param name="i">The zero-based row index.</param>
     public new bool? this[int i]
     {
       get
@@ -186,6 +204,10 @@ namespace Altaxo.Data
       } // end set
     } // end indexer
 
+    /// <summary>
+    /// Reallocates the internal storage so that the specified row index can be addressed.
+    /// </summary>
+    /// <param name="i">The required row index.</param>
     protected void Realloc(int i)
     {
       int newcapacity1 = (int)(_capacity * _increaseFactor + _addSpace);
@@ -214,11 +236,13 @@ namespace Altaxo.Data
 
     #region Overridden functions
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new BooleanColumn(this);
     }
 
+    /// <inheritdoc />
     public override int Count
     {
       get { return _count; }
@@ -232,6 +256,7 @@ namespace Altaxo.Data
     }
 
     // indexers
+    /// <inheritdoc />
     public override void SetValueAt(int i, AltaxoVariant val)
     {
       try
@@ -244,23 +269,27 @@ namespace Altaxo.Data
       }
     }
 
+    /// <inheritdoc />
     public override AltaxoVariant GetVariantAt(int i)
     {
       var v = this[i];
       return v.HasValue ? (v.Value ? new AltaxoVariant(1.0) : new AltaxoVariant(0.0)) : new AltaxoVariant();
     }
 
+    /// <inheritdoc />
     public override bool IsElementEmpty(int i)
     {
       return i >= _inUse.Length || !_inUse[i];
     }
 
+    /// <inheritdoc />
     public override void SetElementEmpty(int i)
     {
       if (i < _count)
         this[i] = null;
     }
 
+    /// <inheritdoc />
     public override void RemoveRows(int nDelFirstRow, int nDelCount)
     {
       if (nDelFirstRow < 0)
@@ -286,6 +315,7 @@ namespace Altaxo.Data
         EhSelfChanged(nDelFirstRow, prevCount, true);
     }
 
+    /// <inheritdoc />
     public override void InsertRows(int nInsBeforeColumn, int nInsCount)
     {
       if (nInsCount <= 0 || nInsBeforeColumn >= Count)
@@ -312,6 +342,7 @@ namespace Altaxo.Data
       EhSelfChanged(nInsBeforeColumn, _count, false);
     }
 
+    /// <inheritdoc />
     public override void CopyDataFrom(object o)
     {
       var oldCount = _count;
@@ -378,6 +409,7 @@ namespace Altaxo.Data
         ;
     }
 
+    /// <inheritdoc />
     public override System.Type GetColumnStyleType()
     {
       return typeof(Altaxo.Worksheet.BooleanColumnStyle);
@@ -386,6 +418,7 @@ namespace Altaxo.Data
     #endregion Overridden functions
 
 
+    /// <inheritdoc />
     public override Type ItemType => typeof(bool?);
 
 

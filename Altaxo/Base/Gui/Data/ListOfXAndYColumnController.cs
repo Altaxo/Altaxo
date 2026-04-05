@@ -34,19 +34,29 @@ using Altaxo.Serialization.Clipboard;
 
 namespace Altaxo.Gui.Data
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="ListOfXAndYColumnController"/>.
+  /// </summary>
   public interface IListOfXAndYColumnView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="ListOfXAndYColumn"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IListOfXAndYColumnView))]
   [UserControllerForObject(typeof(ListOfXAndYColumn))]
   public partial class ListOfXAndYColumnController : MVCANControllerEditCopyOfDocBase<ListOfXAndYColumn, IListOfXAndYColumnView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ListOfXAndYColumnController"/> class.
+    /// </summary>
     public ListOfXAndYColumnController()
     {
       CommandChangeTableForSelectedItems = new RelayCommand(EhChangeTableForSelectedItems, EhCanChangeTableForSelectedItems);
@@ -85,20 +95,34 @@ namespace Altaxo.Gui.Data
       }
     }
 
+    /// <summary>
+    /// Determines whether the selected plot items can be copied.
+    /// </summary>
+    /// <returns><c>true</c> if at least one plot item is selected; otherwise, <c>false</c>.</returns>
     public bool PlotItems_CanCopy()
     {
       return DataItems.Items.Any(node => node.IsSelected);
     }
+    /// <summary>
+    /// Copies the selected plot items to the clipboard.
+    /// </summary>
     public void PlotItems_Copy()
     {
       var selNodes = DataItems.Items.Where(node => node.IsSelected).Select(node => node.Tag).ToList();
       ClipboardSerialization.PutObjectToClipboard("Altaxo.Data.ListOfXAndYColumn.AsXml", selNodes);
     }
 
+    /// <summary>
+    /// Determines whether the selected plot items can be cut.
+    /// </summary>
+    /// <returns><c>true</c> if at least one plot item is selected; otherwise, <c>false</c>.</returns>
     public bool PlotItems_CanCut()
     {
       return DataItems.Items.Any(node => node.IsSelected);
     }
+    /// <summary>
+    /// Cuts the selected plot items to the clipboard.
+    /// </summary>
     public void PlotItems_Cut()
     {
       var selNodes = DataItems.Items.Where(node => node.IsSelected).ToArray();
@@ -110,6 +134,10 @@ namespace Altaxo.Gui.Data
       }
     }
 
+    /// <summary>
+    /// Determines whether plot items can be pasted from the clipboard.
+    /// </summary>
+    /// <returns><c>true</c> if compatible clipboard content is available; otherwise, <c>false</c>.</returns>
     public bool PlotItems_CanPaste()
     {
       object o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml");
@@ -124,6 +152,9 @@ namespace Altaxo.Gui.Data
       return false;
     }
 
+    /// <summary>
+    /// Pastes plot items from the clipboard.
+    /// </summary>
     public void PlotItems_Paste()
     {
       var itemsToPast = new List<XAndYColumn>();
@@ -168,22 +199,61 @@ namespace Altaxo.Gui.Data
     }
 
     #region Bindings
+    /// <summary>
+    /// Gets the command that changes the source table for the selected items.
+    /// </summary>
     public ICommand CommandChangeTableForSelectedItems { get; }
+    /// <summary>
+    /// Gets the command that changes the columns for the selected items.
+    /// </summary>
     public ICommand CommandChangeColumnsForSelectedItems { get; }
 
+    /// <summary>
+    /// Gets the command that inserts selected available items before the current selection.
+    /// </summary>
     public ICommand CmdPutDataToPlotItemsUp { get; }
+    /// <summary>
+    /// Gets the command that inserts selected available items after the current selection.
+    /// </summary>
     public ICommand CmdPutDataToPlotItemsDown { get; }
+    /// <summary>
+    /// Gets the command that moves selected plot items upward.
+    /// </summary>
     public ICommand CmdPLotItemsMoveUpSelected { get; }
+    /// <summary>
+    /// Gets the command that moves selected plot items downward.
+    /// </summary>
     public ICommand CmdPLotItemsMoveDownSelected { get; }
+    /// <summary>
+    /// Gets the command that copies selected plot items.
+    /// </summary>
     public ICommand CmdPlotItemsCopy { get; }
+    /// <summary>
+    /// Gets the command that cuts selected plot items.
+    /// </summary>
     public ICommand CmdPlotItemsCut { get; }
+    /// <summary>
+    /// Gets the command that pastes plot items.
+    /// </summary>
     public ICommand CmdPlotItemsPaste { get; }
+    /// <summary>
+    /// Gets the command that deletes selected plot items.
+    /// </summary>
     public ICommand CmdPlotItemsDelete { get; }
+    /// <summary>
+    /// Gets the command that opens the selected plot item for editing.
+    /// </summary>
     public ICommand CmdPlotItemOpen { get; }
+    /// <summary>
+    /// Gets the command that opens the selected master data item.
+    /// </summary>
     public ICommand CmdMasterDataDoubleClick { get; }
 
     private ItemsController<XAndYColumn?> _dataItems;
 
+    /// <summary>
+    /// Gets or sets the controller for the current plot data items.
+    /// </summary>
     public ItemsController<XAndYColumn?> DataItems
     {
       get => _dataItems;
@@ -228,6 +298,7 @@ namespace Altaxo.Gui.Data
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -390,6 +461,7 @@ namespace Altaxo.Gui.Data
 
 
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       int numberOfItems = _dataNodes.Count;

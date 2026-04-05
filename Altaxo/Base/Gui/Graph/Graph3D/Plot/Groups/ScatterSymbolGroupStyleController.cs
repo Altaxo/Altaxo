@@ -32,14 +32,21 @@ using Altaxo.Gui.Drawing;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
 {
+  /// <summary>
+  /// Provides the view for editing scatter symbol group styles.
+  /// </summary>
   public interface IScatterSymbolGroupStyleView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controls the editing of <see cref="ScatterSymbolGroupStyle"/> instances.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IScatterSymbolGroupStyleView))]
   [UserControllerForObject(typeof(ScatterSymbolGroupStyle))]
   public class ScatterSymbolGroupStyleController : MVCANControllerEditOriginalDocBase<ScatterSymbolGroupStyle, IScatterSymbolGroupStyleView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_listController, () => ListController = null);
@@ -49,6 +56,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
 
     private ScatterSymbolListController _listController;
 
+    /// <summary>
+    /// Gets or sets the controller for the list of scatter symbols.
+    /// </summary>
     public ScatterSymbolListController ListController
     {
       get => _listController;
@@ -66,6 +76,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -79,6 +90,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (!_listController.Apply(disposeController))

@@ -27,11 +27,13 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Text;
 using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.CS
 {
+  /// <summary>
+  /// Represents a 2D polar coordinate system.
+  /// </summary>
   [Serializable]
   public class G2DPolarCoordinateSystem : G2DCoordinateSystem
   {
@@ -50,14 +52,24 @@ namespace Altaxo.Graph.Gdi.CS
     /// </summary>
     protected bool _isYreverse;
 
+    /// <summary>
+    /// The radius of the polar plot area.
+    /// </summary>
     protected double _radius;
+    /// <summary>
+    /// The X coordinate of the polar center.
+    /// </summary>
     protected double _midX;
+    /// <summary>
+    /// The Y coordinate of the polar center.
+    /// </summary>
     protected double _midY;
 
     /// <summary>
     /// Copies the member variables from another coordinate system.
     /// </summary>
     /// <param name="fromb">The coordinate system to copy from.</param>
+    /// <inheritdoc />
     public override void CopyFrom(G2DCoordinateSystem fromb)
     {
       if (ReferenceEquals(this, fromb))
@@ -117,6 +129,9 @@ namespace Altaxo.Graph.Gdi.CS
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="G2DPolarCoordinateSystem"/> class.
+    /// </summary>
     public G2DPolarCoordinateSystem()
     {
     }
@@ -188,6 +203,7 @@ namespace Altaxo.Graph.Gdi.CS
     /// </summary>
     public override bool Is3D { get { return false; } }
 
+    /// <inheritdoc />
     protected override void UpdateAxisInfo()
     {
       int horzAx;
@@ -317,6 +333,7 @@ namespace Altaxo.Graph.Gdi.CS
       }
     }
 
+    /// <inheritdoc />
     public override string GetNameOfPlane(CSPlaneID planeId)
     {
       string name = "";
@@ -403,6 +420,7 @@ namespace Altaxo.Graph.Gdi.CS
       return !double.IsNaN(xlocation) && !double.IsNaN(ylocation);
     }
 
+    /// <inheritdoc />
     public override bool LogicalToLayerCoordinatesAndDirection(
       Logical3D r0, Logical3D r1,
       double t,
@@ -481,6 +499,7 @@ namespace Altaxo.Graph.Gdi.CS
       return !double.IsNaN(r.RX) && !double.IsNaN(r.RY);
     }
 
+    /// <inheritdoc />
     public override void GetIsoline(System.Drawing.Drawing2D.GraphicsPath g, Logical3D r0, Logical3D r1)
     {
       if (LogicalToLayerCoordinates(r0, out var ax0, out var ay0) && LogicalToLayerCoordinates(r1, out var ax1, out var ay1))
@@ -539,6 +558,7 @@ namespace Altaxo.Graph.Gdi.CS
       return new Region(path);
     }
 
+    /// <inheritdoc />
     public override void UpdateAreaSize(PointD2D size)
     {
       base.UpdateAreaSize(size);
@@ -547,6 +567,7 @@ namespace Altaxo.Graph.Gdi.CS
       _radius = Math.Min(_midX, _midY);
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       var result = new G2DPolarCoordinateSystem();

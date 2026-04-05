@@ -31,15 +31,22 @@ using Altaxo.Graph.Gdi.Plot.ColorProvider;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 {
+  /// <summary>
+  /// View contract for editing an AHSB gradient color provider.
+  /// </summary>
   public interface IColorProviderAHSBGradientView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for editing <see cref="ColorProviderAHSBGradient"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IColorProviderAHSBGradientView))]
   [UserControllerForObject(typeof(ColorProviderAHSBGradient), 110)]
   public class ColorProviderAHSBGradientController : MVCANDControllerEditImmutableDocBase<ColorProviderAHSBGradient, IColorProviderAHSBGradientView>
   {
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_baseController, () => _baseController = null);
@@ -49,6 +56,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 
     private ColorProviderBaseController _baseController;
 
+    /// <summary>
+    /// Gets or sets the base controller.
+    /// </summary>
     public ColorProviderBaseController BaseController
     {
       get => _baseController;
@@ -67,6 +77,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 
     private decimal _hue0;
 
+    /// <summary>
+    /// Gets or sets the starting hue.
+    /// </summary>
     public decimal Hue0
     {
       get => _hue0;
@@ -83,6 +96,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 
     private decimal _hue1;
 
+    /// <summary>
+    /// Gets or sets the ending hue.
+    /// </summary>
     public decimal Hue1
     {
       get => _hue1;
@@ -99,6 +115,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 
     private decimal _saturation0;
 
+    /// <summary>
+    /// Gets or sets the starting saturation.
+    /// </summary>
     public decimal Saturation0
     {
       get => _saturation0;
@@ -114,6 +133,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
     }
     private decimal _saturation1;
 
+    /// <summary>
+    /// Gets or sets the ending saturation.
+    /// </summary>
     public decimal Saturation1
     {
       get => _saturation1;
@@ -129,6 +151,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
     }
     private decimal _brightness0;
 
+    /// <summary>
+    /// Gets or sets the starting brightness.
+    /// </summary>
     public decimal Brightness0
     {
       get => _brightness0;
@@ -144,6 +169,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
     }
     private decimal _brightness1;
 
+    /// <summary>
+    /// Gets or sets the ending brightness.
+    /// </summary>
     public decimal Brightness1
     {
       get => _brightness1;
@@ -159,6 +187,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
     }
     private decimal _opaqueness0;
 
+    /// <summary>
+    /// Gets or sets the starting opaqueness.
+    /// </summary>
     public decimal Opaqueness0
     {
       get => _opaqueness0;
@@ -174,6 +205,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
     }
     private decimal _opaqueness1;
 
+    /// <summary>
+    /// Gets or sets the ending opaqueness.
+    /// </summary>
     public decimal Opaqueness1
     {
       get => _opaqueness1;
@@ -190,6 +224,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -213,6 +248,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
       
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (!_baseController.Apply(disposeController))

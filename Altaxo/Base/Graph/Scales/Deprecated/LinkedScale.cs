@@ -28,6 +28,9 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Graph.Scales.Deprecated
 {
+  /// <summary>
+  /// Represents the deprecated wrapper that links one scale to another.
+  /// </summary>
   [Serializable]
   public class LinkedScale : Main.SuspendableDocumentNodeWithSetOfEventArgs
   {
@@ -68,6 +71,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Scales.LinkedScale", 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (LinkedScale)obj;
@@ -80,6 +84,7 @@ namespace Altaxo.Graph.Scales.Deprecated
         info.AddValue("EndB", s._linkEndB);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (LinkedScale?)o ?? new LinkedScale();
@@ -99,6 +104,9 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinkedScale"/> class.
+    /// </summary>
     public LinkedScale()
     {
       Scale = new LinearScale();
@@ -108,6 +116,10 @@ namespace Altaxo.Graph.Scales.Deprecated
       _linkEndB = 1;
     }
 
+    /// <summary>
+    /// Copies the state from another <see cref="LinkedScale"/> instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     private void CopyFrom(LinkedScale from)
     {
       if (ReferenceEquals(this, from))
@@ -120,6 +132,10 @@ namespace Altaxo.Graph.Scales.Deprecated
       _linkEndB = from._linkEndB;
     }
 
+    /// <summary>
+    /// Creates a strongly typed clone of this instance.
+    /// </summary>
+    /// <returns>A cloned <see cref="LinkedScale"/>.</returns>
     public LinkedScale Clone()
     {
       var result = new LinkedScale();
@@ -127,6 +143,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       return result;
     }
 
+    /// <inheritdoc />
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_scale is not null)
@@ -159,7 +176,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     }
 
     /// <summary>
-    /// Set all parameters of the axis link by once.
+    /// Sets all parameters of the axis link at once.
     /// </summary>
     /// <param name="linktype">The type of the axis link, i.e. None, Straight or Custom.</param>
     /// <param name="orgA">The value a of x-axis link for link of axis origin: org' = a + b*org.</param>
@@ -191,6 +208,9 @@ namespace Altaxo.Graph.Scales.Deprecated
       }
     }
 
+    /// <summary>
+    /// Gets or sets the additive term for the linked origin.
+    /// </summary>
     public double LinkOrgA
     {
       get { return _linkOrgA; }
@@ -202,6 +222,9 @@ namespace Altaxo.Graph.Scales.Deprecated
       }
     }
 
+    /// <summary>
+    /// Gets or sets the multiplicative term for the linked origin.
+    /// </summary>
     public double LinkOrgB
     {
       get { return _linkOrgB; }
@@ -213,6 +236,9 @@ namespace Altaxo.Graph.Scales.Deprecated
       }
     }
 
+    /// <summary>
+    /// Gets or sets the additive term for the linked end.
+    /// </summary>
     public double LinkEndA
     {
       get { return _linkEndA; }
@@ -224,6 +250,9 @@ namespace Altaxo.Graph.Scales.Deprecated
       }
     }
 
+    /// <summary>
+    /// Gets or sets the multiplicative term for the linked end.
+    /// </summary>
     public double LinkEndB
     {
       get { return _linkEndB; }
@@ -235,6 +264,9 @@ namespace Altaxo.Graph.Scales.Deprecated
       }
     }
 
+    /// <summary>
+    /// Gets or sets the wrapped scale.
+    /// </summary>
     public Scale Scale
     {
       get
@@ -287,11 +319,17 @@ namespace Altaxo.Graph.Scales.Deprecated
       }
     }
 
+    /// <summary>
+    /// Raises the <see cref="ScaleInstanceChanged"/> event.
+    /// </summary>
     protected virtual void OnScaleInstanceChanged()
     {
       ScaleInstanceChanged?.Invoke(this, EventArgs.Empty);
     }
 
+    /// <summary>
+    /// Raises the <see cref="LinkPropertiesChanged"/> event.
+    /// </summary>
     protected virtual void OnLinkPropertiesChanged()
     {
       LinkPropertiesChanged?.Invoke(this, EventArgs.Empty);

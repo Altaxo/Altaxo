@@ -30,7 +30,7 @@ using Altaxo.Main.Services.ScriptCompilation;
 namespace Altaxo.Scripting
 {
   /// <summary>
-  /// Holds the text, the module (=executable), and some properties of a data column script.
+  /// Holds the text, the executable module, and properties of a data-column script.
   /// </summary>
 
   public class DataColumnScript : AbstractScript, IColumnScriptText
@@ -41,6 +41,7 @@ namespace Altaxo.Scripting
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Scripting.DataColumnScript), 2)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (AbstractScript)obj;
@@ -48,6 +49,7 @@ namespace Altaxo.Scripting
         info.AddBaseValueEmbedded(s, typeof(AbstractScript));
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         DataColumnScript s = o is not null ? (DataColumnScript)o : new DataColumnScript();
@@ -137,7 +139,7 @@ namespace Altaxo.Scripting
     }
 
     /// <summary>
-    /// Gives the type of the script object (full name), which is created after successfull compilation.
+    /// Gives the type of the script object (full name), which is created after successful compilation.
     /// </summary>
     public override string ScriptObjectType
     {
@@ -173,6 +175,7 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public override string CodeStart
     {
       get
@@ -183,6 +186,7 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public override string CodeUserDefault
     {
       get
@@ -195,6 +199,7 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public override string CodeEnd
     {
       get
@@ -230,12 +235,12 @@ namespace Altaxo.Scripting
     }
 
     /// <summary>
-    /// Executes the script. If no instance of the script object exists, a error message will be stored and the return value is false.
+    /// Executes the script. If no instance of the script object exists, an error message is stored and the return value is false.
     /// If the script object exists, the Execute function of this script object is called.
     /// </summary>
     /// <param name="myColumn">The data table this script is working on.</param>
     /// <param name="reporter">Progress reporter that can be used by the script to report the progress of its work.</param>
-    /// <returns>True if executed without exceptions, otherwise false.</returns>
+    /// <returns>True if executed without exceptions; otherwise, false.</returns>
     /// <remarks>If exceptions were thrown during execution, the exception messages are stored
     /// inside the column script and can be recalled by the Errors property.</remarks>
     public bool Execute(Altaxo.Data.DataColumn myColumn, IProgressReporter reporter)
@@ -262,13 +267,13 @@ namespace Altaxo.Scripting
     }
 
     /// <summary>
-    /// Executes the script. If no instance of the script object exists, a error message will be stored and the return value is false.
-    /// If the script object exists, the data change notifications will be switched of (for all tables).
+    /// Executes the script. If no instance of the script object exists, an error message is stored and the return value is false.
+    /// If the script object exists, the data change notifications are switched off for all tables.
     /// Then the Execute function of this script object is called. Afterwards, the data changed notifications are switched on again.
     /// </summary>
     /// <param name="myColumn">The property column this script is working on.</param>
     /// <param name="reporter">Progress reporter that can be used by the script to report the progress of its work.</param>
-    /// <returns>True if executed without exceptions, otherwise false.</returns>
+    /// <returns>True if executed without exceptions; otherwise, false.</returns>
     /// <remarks>If exceptions were thrown during execution, the exception messages are stored
     /// inside the column script and can be recalled by the Errors property.</remarks>
     public bool ExecuteWithSuspendedNotifications(Altaxo.Data.DataColumn myColumn, IProgressReporter reporter)
@@ -322,12 +327,12 @@ namespace Altaxo.Scripting
     }
 
     /// <summary>
-    /// Executes the script in the background with showing the background dialog. If no instance of the script object exists, a error message will be stored and the return value is false.
-    /// If the script object exists, the data change notifications will be switched of (for all tables).
+    /// Executes the script in the background while showing the background dialog. If no instance of the script object exists, an error message is stored and the return value is false.
+    /// If the script object exists, the data change notifications are switched off for all tables.
     /// Then the Execute function of this script object is called. Afterwards, the data changed notifications are switched on again.
     /// </summary>
     /// <param name="myColumn">The property column this script is working on.</param>
-    /// <returns>True if executed without exceptions, otherwise false.</returns>
+    /// <returns>True if executed without exceptions; otherwise, false.</returns>
     /// <remarks>If exceptions were thrown during execution, the exception messages are stored
     /// inside the column script and can be recalled by the Errors property.</remarks>
     public Exception? ExecuteWithBackgroundDialogAndSuspendNotifications(Altaxo.Data.DataColumn myColumn)

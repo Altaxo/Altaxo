@@ -29,6 +29,9 @@ using System.Text;
 
 namespace Altaxo.Graph.Scales.Boundaries
 {
+  /// <summary>
+  /// Represents numerical boundaries that intentionally ignore all values.
+  /// </summary>
   public class DummyNumericalBoundaries : NumericalBoundaries
   {
     #region Serialization
@@ -36,10 +39,12 @@ namespace Altaxo.Graph.Scales.Boundaries
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DummyNumericalBoundaries), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (DummyNumericalBoundaries?)o ?? new DummyNumericalBoundaries();
@@ -49,30 +54,41 @@ namespace Altaxo.Graph.Scales.Boundaries
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DummyNumericalBoundaries"/> class.
+    /// </summary>
     public DummyNumericalBoundaries()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DummyNumericalBoundaries"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public DummyNumericalBoundaries(DummyNumericalBoundaries from)
       : base(from)
     {
     }
 
+    /// <inheritdoc />
     public override bool Add(Altaxo.Data.IReadableColumn col, int idx)
     {
       return true;
     }
 
+    /// <inheritdoc />
     public override bool Add(Altaxo.Data.AltaxoVariant item)
     {
       return true;
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new DummyNumericalBoundaries(this);
     }
 
+    /// <inheritdoc />
     protected override void AccumulateChangeData(object? sender, EventArgs e)
     {
     }

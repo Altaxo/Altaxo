@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -30,14 +30,21 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Data
 {
+  /// <summary>
+  /// Defines the view contract for editing data source import options.
+  /// </summary>
   public interface IDataSourceImportOptionsView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="DataSourceImportOptions"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IDataSourceImportOptionsView))]
   [UserControllerForObject(typeof(IDataSourceImportOptions))]
   public class DataSourceImportOptionsController : MVCANControllerEditImmutableDocBase<DataSourceImportOptions, IDataSourceImportOptionsView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -45,10 +52,16 @@ namespace Altaxo.Gui.Data
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the environment used for time values.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment TimeEnvironment => Altaxo.Gui.TimeEnvironment.Instance;
 
     private DimensionfulQuantity _minimumWaitingTimeAfterUpdate;
 
+    /// <summary>
+    /// Gets or sets the minimum waiting time after an update.
+    /// </summary>
     public DimensionfulQuantity MinimumWaitingTimeAfterUpdate
     {
       get => _minimumWaitingTimeAfterUpdate;
@@ -64,6 +77,9 @@ namespace Altaxo.Gui.Data
 
     private DimensionfulQuantity _maximumWaitingTimeAfterUpdate;
 
+    /// <summary>
+    /// Gets or sets the maximum waiting time after an update.
+    /// </summary>
     public DimensionfulQuantity MaximumWaitingTimeAfterUpdate
     {
       get => _maximumWaitingTimeAfterUpdate;
@@ -79,6 +95,9 @@ namespace Altaxo.Gui.Data
 
     private DimensionfulQuantity _minimumWaitingTimeAfterFirstTrigger;
 
+    /// <summary>
+    /// Gets or sets the minimum waiting time after the first trigger.
+    /// </summary>
     public DimensionfulQuantity MinimumWaitingTimeAfterFirstTrigger
     {
       get => _minimumWaitingTimeAfterFirstTrigger;
@@ -94,6 +113,9 @@ namespace Altaxo.Gui.Data
 
     private DimensionfulQuantity _maximumWaitingTimeAfterFirstTrigger;
 
+    /// <summary>
+    /// Gets or sets the maximum waiting time after the first trigger.
+    /// </summary>
     public DimensionfulQuantity MaximumWaitingTimeAfterFirstTrigger
     {
       get => _maximumWaitingTimeAfterFirstTrigger;
@@ -109,6 +131,9 @@ namespace Altaxo.Gui.Data
 
     private DimensionfulQuantity _minimumWaitingTimeAfterLastTrigger;
 
+    /// <summary>
+    /// Gets or sets the minimum waiting time after the last trigger.
+    /// </summary>
     public DimensionfulQuantity MinimumWaitingTimeAfterLastTrigger
     {
       get => _minimumWaitingTimeAfterLastTrigger;
@@ -124,6 +149,9 @@ namespace Altaxo.Gui.Data
 
     private bool _doNotSaveTableData;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether imported table data should not be saved.
+    /// </summary>
     public bool DoNotSaveTableData
     {
       get => _doNotSaveTableData;
@@ -139,6 +167,9 @@ namespace Altaxo.Gui.Data
 
     private bool _executeScriptAfterImport;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether a script should be executed after import.
+    /// </summary>
     public bool ExecuteScriptAfterImport
     {
       get => _executeScriptAfterImport;
@@ -154,6 +185,9 @@ namespace Altaxo.Gui.Data
 
     private ItemsController<ImportTriggerSource> _triggerSource;
 
+    /// <summary>
+    /// Gets or sets the trigger source.
+    /// </summary>
     public ItemsController<ImportTriggerSource> TriggerSource
     {
       get => _triggerSource;
@@ -171,6 +205,7 @@ namespace Altaxo.Gui.Data
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -189,6 +224,7 @@ namespace Altaxo.Gui.Data
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
 

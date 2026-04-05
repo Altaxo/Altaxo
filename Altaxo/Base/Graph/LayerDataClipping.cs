@@ -29,6 +29,9 @@ using System.Text;
 
 namespace Altaxo.Graph
 {
+  /// <summary>
+  /// Specifies how plot data is clipped to the layer.
+  /// </summary>
   public enum LayerDataClipping
   {
     /// <summary>No data clipping.</summary>
@@ -45,11 +48,13 @@ namespace Altaxo.Graph
   [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LayerDataClipping), 0)]
   internal class BrushTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
   {
+    /// <inheritdoc/>
     public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
       info.SetNodeContent(obj.ToString() ?? string.Empty);
     }
 
+    /// <inheritdoc/>
     public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
     {
       string val = info.GetNodeContent();

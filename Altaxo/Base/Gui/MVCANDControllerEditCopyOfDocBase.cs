@@ -48,11 +48,11 @@ namespace Altaxo.Gui
     public event Action<IMVCANDController>? MadeDirty;
 
     /// <summary>
-    /// Initialize the controller with the document. If successfull, the function has to return true.
+    /// Initialize the controller with the document. If successful, the function has to return true.
     /// </summary>
-    /// <param name="args">The arguments neccessary to create the controller. Normally, the first argument is the document, the second can be the parent of the document and so on.</param>
+    /// <param name="args">The arguments necessary to create the controller. Normally, the first argument is the document, the second can be the parent of the document and so on.</param>
     /// <returns>
-    /// Returns <see langword="true" /> if successfull; otherwise <see langword="false" />.
+    /// Returns <see langword="true" /> if successful; otherwise <see langword="false" />.
     /// </returns>
     public override bool InitializeDocument(params object[] args)
     {
@@ -70,9 +70,7 @@ namespace Altaxo.Gui
       return true;
     }
 
-    /// <summary>
-    /// Returns the Gui element that shows the model to the user.
-    /// </summary>
+    /// <inheritdoc/>
     public override object? ViewObject
     {
       get
@@ -117,6 +115,9 @@ namespace Altaxo.Gui
 
     /// <summary>
     /// Gets the provisional model object. This is the model object that is based on the current user input.
+    /// </summary>
+    /// <summary>
+    /// Gets the provisional model object. This is the model object based on the current user input.
     /// </summary>
     public object ProvisionalModelObject
     {

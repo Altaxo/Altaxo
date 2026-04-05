@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -30,12 +30,19 @@ using Altaxo.Serialization.WITec;
 
 namespace Altaxo.Gui.Serialization.WITec
 {
+  /// <summary>
+  /// View interface for editing <see cref="WITecImportOptions"/>.
+  /// </summary>
   public interface IWITecImportOptionsView : IDataContextAwareView { }
 
+  /// <summary>
+  /// Controller for editing <see cref="WITecImportOptions"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IWITecImportOptionsView))]
   [UserControllerForObject(typeof(WITecImportOptions))]
   public class WITecImportOptionsController : MVCANControllerEditImmutableDocBase<WITecImportOptions, IWITecImportOptionsView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -45,6 +52,9 @@ namespace Altaxo.Gui.Serialization.WITec
 
     private bool _useNeutralColumnName;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the imported y-column names should be neutral (constant).
+    /// </summary>
     public bool UseNeutralColumnName
     {
       get => _useNeutralColumnName;
@@ -60,6 +70,9 @@ namespace Altaxo.Gui.Serialization.WITec
 
     private string _neutralColumnName;
 
+    /// <summary>
+    /// Gets or sets the neutral base name for imported y-columns.
+    /// </summary>
     public string NeutralColumnName
     {
       get => _neutralColumnName;
@@ -75,6 +88,9 @@ namespace Altaxo.Gui.Serialization.WITec
 
     private bool _includeFilePathAsProperty;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the imported file path should be stored as a column property.
+    /// </summary>
     public bool IncludeFilePathAsProperty
     {
       get => _includeFilePathAsProperty;
@@ -90,6 +106,9 @@ namespace Altaxo.Gui.Serialization.WITec
 
     private bool _ignoreSecondaryData;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether secondary data should be ignored.
+    /// </summary>
     public bool IgnoreSecondaryData
     {
       get => _ignoreSecondaryData;
@@ -103,8 +122,14 @@ namespace Altaxo.Gui.Serialization.WITec
       }
     }
 
+    /// <summary>
+    /// Model class used for binding a single graph index in the UI.
+    /// </summary>
     public class IndexClass
     {
+      /// <summary>
+      /// Gets or sets the graph index.
+      /// </summary>
       public int Index { get; set; }
 
 
@@ -112,6 +137,9 @@ namespace Altaxo.Gui.Serialization.WITec
 
     private ObservableCollection<IndexClass> _indicesOfGraphs;
 
+    /// <summary>
+    /// Gets or sets the indices of graphs to import.
+    /// </summary>
     public ObservableCollection<IndexClass> IndicesOfGraphs
     {
       get => _indicesOfGraphs;
@@ -130,6 +158,7 @@ namespace Altaxo.Gui.Serialization.WITec
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -144,6 +173,7 @@ namespace Altaxo.Gui.Serialization.WITec
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = _doc with

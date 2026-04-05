@@ -78,6 +78,11 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     #region Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FitElement"/> class during XML deserialization.
+    /// </summary>
+    /// <param name="info">The XML deserialization info.</param>
+    /// <param name="version">The serialized version.</param>
     protected FitElement(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     {
       switch (version)
@@ -99,6 +104,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.Regression.Nonlinear.FitElement", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (o is FitElement s)
@@ -108,6 +114,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         return s;
       }
 
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version now allowed");
@@ -179,6 +186,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.Regression.Nonlinear.FitElement", 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (FitElement)obj;
@@ -198,6 +206,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         info.AddValue("ParameterNameStart", s._parameterNameStart);
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (o is FitElement s)
@@ -261,6 +270,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FitElement), 2)]
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (FitElement)obj;
@@ -280,6 +290,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         info.AddValue("ParameterNameStart", s._parameterNameStart);
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (o is FitElement s)
@@ -341,6 +352,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FitElement"/> class by copying another fit element.
+    /// </summary>
     public FitElement(FitElement from)
     {
       if (from._fitFunction is ICloneable fromFitFunc1)
@@ -379,10 +393,16 @@ namespace Altaxo.Calc.Regression.Nonlinear
       _parameterNameStart = from._parameterNameStart;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FitElement"/> class with the specified fit function.
+    /// </summary>
     public FitElement(IFitFunction fitFunction) : this(fitFunction, new AllRows())
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FitElement"/> class with the specified fit function and row selection.
+    /// </summary>
     public FitElement(IFitFunction fitFunction, IRowSelection? rowSelection)
     {
       if (fitFunction is null)
@@ -401,6 +421,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       _rangeOfRows = rowSelection is null ? new AllRows() : (IRowSelection)(rowSelection.Clone());
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FitElement"/> class from a fit function and source columns.
+    /// </summary>
     public FitElement(IFitFunction fitFunction, DataTable table, int groupNumber, IRowSelection rowSelection, IReadableColumn xColumn, IReadableColumn yColumn)
     {
       if (fitFunction is null)
@@ -426,6 +449,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       _parameterNames = new string[_fitFunction.NumberOfParameters];
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FitElement"/> class from source columns without a fit function.
+    /// </summary>
     public FitElement(DataTable table, int groupNumber, IRowSelection rowSelection, IReadableColumn xColumn, IReadableColumn yColumn)
     {
       if (rowSelection is null)
@@ -479,6 +505,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+    /// <summary>
+    /// Gets or sets the source data table.
+    /// </summary>
     [MaybeNull]
     public DataTable DataTable
     {
@@ -501,6 +530,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+    /// <summary>
+    /// Gets or sets the group number of the associated data columns.
+    /// </summary>
     public int GroupNumber
     {
       get
@@ -599,6 +631,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+    /// <summary>
+    /// Gets the dependent variable column at the specified index.
+    /// </summary>
     public IReadableColumn? GetDependentVariable(int i)
     {
       return (_dependentVariables is not null && i < _dependentVariables.Length) ? _dependentVariables[i]?.Document() : null;
@@ -789,6 +824,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+    /// <summary>
+    /// Evaluates the fit function for the specified matrix of independent values.
+    /// </summary>
     public void FitFunctionEvaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       FitFunction!.Evaluate(independent, parameters, FV, dependentVariableChoice);
@@ -1084,6 +1122,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     #region Document node functions
 
+    /// <inheritdoc/>
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_dataTable is not null)

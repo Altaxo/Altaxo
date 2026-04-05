@@ -31,10 +31,16 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Gdi
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="ClipboardRenderingOptionsController"/>.
+  /// </summary>
   public interface IClipboardRenderingOptionsView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="ClipboardRenderingOptions"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IClipboardRenderingOptionsView))]
   [UserControllerForObject(typeof(ClipboardRenderingOptions), 101)]
   public class ClipboardRenderingOptionsController : MVCANControllerEditOriginalDocBase<ClipboardRenderingOptions, IClipboardRenderingOptionsView>
@@ -85,6 +91,7 @@ namespace Altaxo.Gui.Graph.Gdi
       PixelFormat.PAlpha
     };
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_embeddedController, () => _embeddedController = null);
@@ -94,6 +101,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private EmbeddedObjectRenderingOptionsController _embeddedController;
 
+    /// <summary>
+    /// Gets or sets the embedded-object rendering controller.
+    /// </summary>
     public EmbeddedObjectRenderingOptionsController EmbeddedController
     {
       get => _embeddedController;
@@ -110,6 +120,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private bool _renderDropFile;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether a drop file is rendered.
+    /// </summary>
     public bool RenderDropFile
     {
       get => _renderDropFile;
@@ -125,6 +138,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private ItemsController<ImageFormat> _dropFileImageFormat;
 
+    /// <summary>
+    /// Gets or sets the image format for rendered drop files.
+    /// </summary>
     public ItemsController<ImageFormat> DropFileImageFormat
     {
       get => _dropFileImageFormat;
@@ -141,6 +157,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private ItemsController<PixelFormat> _dropFilePixelFormat;
 
+    /// <summary>
+    /// Gets or sets the pixel format for rendered drop files.
+    /// </summary>
     public ItemsController<PixelFormat> DropFilePixelFormat
     {
       get => _dropFilePixelFormat;
@@ -160,6 +179,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private bool _renderEmbeddedObject;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether embedded objects are rendered.
+    /// </summary>
     public bool RenderEmbeddedObject
     {
       get => _renderEmbeddedObject;
@@ -176,6 +198,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private bool _renderLinkedObject;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether linked objects are rendered.
+    /// </summary>
     public bool RenderLinkedObject
     {
       get => _renderLinkedObject;
@@ -192,6 +217,7 @@ namespace Altaxo.Gui.Graph.Gdi
 
 
     #endregion
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       DropFileImageFormat = null;
@@ -199,6 +225,7 @@ namespace Altaxo.Gui.Graph.Gdi
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -234,6 +261,7 @@ namespace Altaxo.Gui.Graph.Gdi
     }
 
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (!_embeddedController.Apply(disposeController))

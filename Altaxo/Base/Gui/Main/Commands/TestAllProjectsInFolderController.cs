@@ -31,24 +31,41 @@ using Altaxo.Main.Commands;
 
 namespace Altaxo.Gui.Common.Tools
 {
+  /// <summary>
+  /// View interface for testing all projects in a folder.
+  /// </summary>
   public interface ITestAllProjectsInFolderView
   {
+    /// <summary>
+    /// Gets or sets the folder paths.
+    /// </summary>
     string FolderPaths { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether saving and reopening should be tested.
+    /// </summary>
     bool TestSavingAndReopening { get; set; }
 
+    /// <summary>
+    /// Gets or sets the protocol file name.
+    /// </summary>
     string ProtocolFileName { get; set; }
   }
 
+  /// <summary>
+  /// Controller for <see cref="TestAllProjectsInFolderOptions"/>.
+  /// </summary>
   [UserControllerForObject(typeof(TestAllProjectsInFolderOptions))]
   [ExpectedTypeOfView(typeof(ITestAllProjectsInFolderView))]
   public class TestAllProjectsInFolderController : MVCANControllerEditOriginalDocBase<TestAllProjectsInFolderOptions, ITestAllProjectsInFolderView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -61,6 +78,7 @@ namespace Altaxo.Gui.Common.Tools
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc.TestSavingAndReopening = _view.TestSavingAndReopening;

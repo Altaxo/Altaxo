@@ -32,7 +32,7 @@ namespace Altaxo.Graph.Plot.Groups
 {
   /// <summary>
   /// This group style is intended to make sure that all substyles have the same line connection.
-  /// Thus it is only intended for local use (only amound substyles of a single plot item).
+   /// Thus it is only intended for local use (only among substyles of a single plot item).
   /// plot styles.
   /// </summary>
   public class LineConnection2DGroupStyle
@@ -56,11 +56,13 @@ namespace Altaxo.Graph.Plot.Groups
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LineConnection2DGroupStyle), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+    /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (LineConnection2DGroupStyle)obj;
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (LineConnection2DGroupStyle?)o ?? new LineConnection2DGroupStyle();
@@ -72,11 +74,18 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LineConnection2DGroupStyle"/> class.
+    /// </summary>
     public LineConnection2DGroupStyle()
     {
       _lineConnectionStyle = Gdi.Plot.Styles.LineConnectionStyles.NoConnection.Instance;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LineConnection2DGroupStyle"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public LineConnection2DGroupStyle(LineConnection2DGroupStyle from)
     {
       _isInitialized = from._isInitialized;
@@ -87,11 +96,13 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region ICloneable Members
 
+    /// <inheritdoc />
     public LineConnection2DGroupStyle Clone()
     {
       return new LineConnection2DGroupStyle(this);
     }
 
+    /// <inheritdoc />
     object ICloneable.Clone()
     {
       return new LineConnection2DGroupStyle(this);
@@ -101,6 +112,7 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region IGroupStyle Members
 
+    /// <inheritdoc />
     public void TransferFrom(IPlotGroupStyle fromb)
     {
       var from = (LineConnection2DGroupStyle)fromb;
@@ -108,19 +120,23 @@ namespace Altaxo.Graph.Plot.Groups
       _lineConnectionStyle = from._lineConnectionStyle;
     }
 
+    /// <inheritdoc />
     public void BeginPrepare()
     {
       _isInitialized = false;
     }
 
+    /// <inheritdoc />
     public void PrepareStep()
     {
     }
 
+    /// <inheritdoc />
     public void EndPrepare()
     {
     }
 
+    /// <inheritdoc />
     public bool CanCarryOver
     {
       get
@@ -129,6 +145,7 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <inheritdoc />
     public bool CanStep
     {
       get
@@ -137,13 +154,14 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <inheritdoc />
     public int Step(int step)
     {
       return 0;
     }
 
     /// <summary>
-    /// Get/sets whether or not stepping is allowed.
+    /// <inheritdoc />
     /// </summary>
     public bool IsStepEnabled
     {
@@ -160,6 +178,9 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region Other members
 
+    /// <summary>
+    /// Gets a value indicating whether this group style has already been initialized.
+    /// </summary>
     public bool IsInitialized
     {
       get
@@ -168,6 +189,11 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <summary>
+    /// Initializes the group style with the specified line connection settings.
+    /// </summary>
+    /// <param name="lineConnectionStyle">The line connection style to use.</param>
+    /// <param name="connectCircular">If set to <see langword="true"/>, the line connection is circular.</param>
     public void Initialize(ILineConnectionStyle lineConnectionStyle, bool connectCircular)
     {
       _isInitialized = true;
@@ -175,6 +201,9 @@ namespace Altaxo.Graph.Plot.Groups
       _connectCircular = connectCircular;
     }
 
+    /// <summary>
+    /// Gets the line connection style stored in this group style.
+    /// </summary>
     public ILineConnectionStyle LineConnectionStyle
     {
       get
@@ -183,6 +212,9 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the line connection is circular.
+    /// </summary>
     public bool ConnectCircular
     {
       get
@@ -195,11 +227,20 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region Static helpers
 
+    /// <summary>
+    /// Adds the external group style if required.
+    /// </summary>
+    /// <param name="externalGroups">The external group style collection.</param>
     public static void AddExternalGroupStyle(IPlotGroupStyleCollection externalGroups)
     {
       // this group style is local only, so no addition is made here
     }
 
+    /// <summary>
+    /// Adds the local group style if required.
+    /// </summary>
+    /// <param name="externalGroups">The external group style collection.</param>
+    /// <param name="localGroups">The local group style collection.</param>
     public static void AddLocalGroupStyle(
      IPlotGroupStyleCollection externalGroups,
      IPlotGroupStyleCollection localGroups)
@@ -240,12 +281,12 @@ namespace Altaxo.Graph.Plot.Groups
     }
 
     /// <summary>
-    /// Try to apply the symbol size group style. Returns true if successfull applied.
+    /// Tries to apply the line connection group style.
     /// </summary>
-    /// <param name="externalGroups"></param>
-    /// <param name="localGroups"></param>
-    /// <param name="setter"></param>
-    /// <returns></returns>
+    /// <param name="externalGroups">The external group style collection.</param>
+    /// <param name="localGroups">The local group style collection.</param>
+    /// <param name="setter">The callback that applies the extracted settings.</param>
+    /// <returns><see langword="true"/> if the style was applied; otherwise, <see langword="false"/>.</returns>
     public static bool ApplyStyle(
       IPlotGroupStyleCollection externalGroups,
       IPlotGroupStyleCollection localGroups,

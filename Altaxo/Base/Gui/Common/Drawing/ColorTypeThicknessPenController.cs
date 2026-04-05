@@ -30,6 +30,9 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Common.Drawing
 {
+  /// <summary>
+  /// Defines the view contract for editing a pen by color, type, and thickness.
+  /// </summary>
   public interface IColorTypeThicknessPenView : IDataContextAwareView
   {
   }
@@ -37,9 +40,13 @@ namespace Altaxo.Gui.Common.Drawing
   /// <summary>
   /// Summary description for ColorTypeWidthPenController.
   /// </summary>
+  [ExpectedTypeOfView(typeof(IColorTypeThicknessPenView))]
   public class ColorTypeThicknessPenController : MVCANDControllerEditImmutableDocBase<PenX, object>
   {
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColorTypeThicknessPenController"/> class.
+    /// </summary>
     public ColorTypeThicknessPenController()
     {
       CmdShowCustomPen = new RelayCommand(EhShowCustomPen);
@@ -47,6 +54,10 @@ namespace Altaxo.Gui.Common.Drawing
 
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColorTypeThicknessPenController"/> class.
+    /// </summary>
+    /// <param name="pen">The pen to edit.</param>
     public ColorTypeThicknessPenController(PenX pen) : this()
     {
       _doc = _originalDoc = pen ?? throw new ArgumentNullException(nameof(pen));
@@ -73,6 +84,7 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -81,8 +93,14 @@ namespace Altaxo.Gui.Common.Drawing
     #region Bindings
 
     private bool _showPlotColorsOnly;
+    /// <summary>
+    /// Gets or sets a value indicating whether only plot colors are shown.
+    /// </summary>
     public bool ShowPlotColorsOnly { get => _showPlotColorsOnly; set { if (!(ShowPlotColorsOnly == value)) { _showPlotColorsOnly = value; OnPropertyChanged(nameof(ShowPlotColorsOnly)); } } }
 
+    /// <summary>
+    /// Gets or sets the brush used by the pen.
+    /// </summary>
     public BrushX Brush
     {
       get => _doc.Brush;
@@ -97,7 +115,13 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets or sets the environment used for line thickness.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment LineThicknessEnvironment { get; set; } = Altaxo.Gui.LineThicknessEnvironment.Instance;
+    /// <summary>
+    /// Gets or sets the line thickness.
+    /// </summary>
     public DimensionfulQuantity LineThickness
     {
       get => new DimensionfulQuantity(_doc.Width, Altaxo.Units.Length.Point.Instance).AsQuantityIn(LineThicknessEnvironment.DefaultUnit);
@@ -112,6 +136,9 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets or sets the dash pattern.
+    /// </summary>
     public IDashPattern DashPattern
     {
       get => _doc.DashPattern;
@@ -126,10 +153,14 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets the command for opening the full pen editor.
+    /// </summary>
     public ICommand CmdShowCustomPen { get; }
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void OnMadeDirty()
     {
       base.OnMadeDirty();
@@ -153,6 +184,7 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);

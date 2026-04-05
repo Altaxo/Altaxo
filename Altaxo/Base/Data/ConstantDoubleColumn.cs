@@ -54,16 +54,26 @@ namespace Altaxo.Data
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConstantDoubleColumn"/> class with the specified value.
+    /// </summary>
+    /// <param name="value">The constant value.</param>
     public ConstantDoubleColumn(double value)
     {
       _constantValue = value;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConstantDoubleColumn"/> class.
+    /// </summary>
     public ConstantDoubleColumn()
     {
       _constantValue = 0;
     }
 
+    /// <summary>
+    /// Gets the constant value returned by this column.
+    /// </summary>
     public double ConstantValue
     {
       get
@@ -72,6 +82,11 @@ namespace Altaxo.Data
       }
     }
 
+    /// <summary>
+    /// Returns a copy of this column with a different constant value.
+    /// </summary>
+    /// <param name="constantValue">The constant value for the returned column.</param>
+    /// <returns>A column with the specified constant value.</returns>
     public ConstantDoubleColumn WithConstantValue(double constantValue)
     {
       if (constantValue == _constantValue)
@@ -139,6 +154,9 @@ namespace Altaxo.Data
       get { return string.Format(Altaxo.Settings.GuiCulture.Instance, "Constant, value = {0}", _constantValue); }
     }
 
+    /// <summary>
+    /// Gets the number of rows if known.
+    /// </summary>
     public int? Count
     {
       get
@@ -147,11 +165,15 @@ namespace Altaxo.Data
       }
     }
 
+    /// <inheritdoc />
     public override string ToString()
     {
       return string.Format(Altaxo.Settings.GuiCulture.Instance, "Constant, value = {0}", _constantValue);
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the column is editable.
+    /// </summary>
     public bool IsEditable { get { return true; } }
   }
 }

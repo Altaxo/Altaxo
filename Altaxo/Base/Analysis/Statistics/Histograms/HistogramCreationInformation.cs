@@ -35,10 +35,13 @@ namespace Altaxo.Analysis.Statistics.Histograms
   {
     private System.Collections.ObjectModel.ObservableCollection<string> _warnings = new System.Collections.ObjectModel.ObservableCollection<string>();
     private System.Collections.ObjectModel.ObservableCollection<string> _errors = new System.Collections.ObjectModel.ObservableCollection<string>();
+    /// <summary>
+    /// The options used to create the histogram.
+    /// </summary>
     protected HistogramCreationOptions _creationOptions = new HistogramCreationOptions();
 
     /// <summary>
-    /// Gets the list of errors that occured during the histogram creation.
+    /// Gets the list of errors that occurred during histogram creation.
     /// </summary>
     /// <value>
     /// List of errors.
@@ -46,7 +49,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
     public IList<string> Errors { get { return _errors; } }
 
     /// <summary>
-    /// Gets the list of warnings that occured during the histogram creation.
+    /// Gets the list of warnings that occurred during histogram creation.
     /// </summary>
     /// <value>
     /// List of warnings.

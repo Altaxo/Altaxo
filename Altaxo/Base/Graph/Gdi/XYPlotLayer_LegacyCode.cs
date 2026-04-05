@@ -32,6 +32,9 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi
 {
+  /// <summary>
+  /// Contains legacy serialization support for <see cref="XYPlotLayer"/>.
+  /// </summary>
   public partial class XYPlotLayer
     :
     HostLayer,
@@ -66,17 +69,33 @@ namespace Altaxo.Graph.Gdi
       RelativeToLinkedLayer
     }
 
+    /// <summary>
+    /// Serializes legacy <see cref="XYPlotLayerSizeType"/> values.
+    /// </summary>
+    /// <remarks>This class is used for XML serialization of size types in XY plot layers.</remarks>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLayer+SizeType", 0)]
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLayerSizeType", 1)]
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.XYPlotLayerSizeType", 2)]
     public class SizeTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <summary>
+      /// Serializes the specified enum value.
+      /// </summary>
+      /// <param name="obj">The enum value to serialize.</param>
+      /// <param name="info">The serialization target.</param>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (XYPlotLayerSizeType)obj;
         info.SetNodeContent(s.ToString());
       }
 
+      /// <summary>
+      /// Deserializes a legacy enum value.
+      /// </summary>
+      /// <param name="o">The existing instance, if any.</param>
+      /// <param name="info">The deserialization source.</param>
+      /// <param name="parent">The parent object.</param>
+      /// <returns>The deserialized <see cref="XYPlotLayerSizeType"/> value.</returns>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         string val = info.GetNodeContent();
@@ -112,7 +131,7 @@ namespace Altaxo.Graph.Gdi
       /// The value relates the near edge (either upper or left) of this layer to the near edge of the linked layer.
       /// </summary>
       /// <remarks> The values are relative to the size of the linked layer.
-      /// This means that for instance for a x position value of 0 the left edges of both layers are on the same position, for a value of 1
+      /// This means that, for instance, for an x-position value of 0, the left edges of both layers are at the same position; for a value of 1,
       /// this means that the left edge of this layer is on the right edge of the linked layer.
       /// </remarks>
       [Description("${res:ClassNames.Altaxo.Graph.Gdi.XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear}")]
@@ -122,8 +141,8 @@ namespace Altaxo.Graph.Gdi
       /// The value relates the near edge (either upper or left) of this layer to the far edge (either right or bottom) of the linked layer.
       /// </summary>
       /// <remarks> The values are relative to the size of the linked layer.
-      /// This means that for instance for a x position value of 0 the left edges of this layer is on the right edge of the linked layer,
-      /// for a value of 1
+      /// This means that, for instance, for an x-position value of 0, the left edge of this layer is on the right edge of the linked layer;
+      /// for a value of 1,
       /// this means that the left edge of this layer is one width away from the right edge of the linked layer.
       /// </remarks>
       [Description("${res:ClassNames.Altaxo.Graph.Gdi.XYPlotLayerPositionType.RelativeThisNearToLinkedLayerFar}")]
@@ -133,9 +152,9 @@ namespace Altaxo.Graph.Gdi
       /// The value relates the far edge (either right or bottom) of this layer to the near edge (either left or top) of the linked layer.
       /// </summary>
       /// <remarks> The values are relative to the size of the linked layer.
-      /// This means that for instance for a x position value of 0 the right edge of this layer is on the left edge of the linked layer,
-      /// for a value of 1
-      /// this means that the right edge of this layer is one width away (to the right) from the leftt edge of the linked layer.
+      /// This means that, for instance, for an x-position value of 0, the right edge of this layer is on the left edge of the linked layer;
+      /// for a value of 1,
+      /// this means that the right edge of this layer is one width away (to the right) from the left edge of the linked layer.
       /// </remarks>
       [Description("${res:ClassNames.Altaxo.Graph.Gdi.XYPlotLayerPositionType.RelativeThisFarToLinkedLayerNear}")]
       RelativeThisFarToLinkedLayerNear,
@@ -144,10 +163,10 @@ namespace Altaxo.Graph.Gdi
       /// The value relates the far edge (either right or bottom) of this layer to the far edge (either right or bottom) of the linked layer.
       /// </summary>
       /// <remarks> The values are relative to the size of the linked layer.
-      /// This means that for instance for a x position value of 0 the right edge of this layer is on the right edge of the linked layer,
-      /// for a value of 1
-      /// this means that the right edge of this layer is one width away from the right edge of the linked layer, for a x value of -1 this
-      /// means that the right edge of this layer is one width away to the left from the right edge of the linked layer and this falls together
+      /// This means that, for instance, for an x-position value of 0, the right edge of this layer is on the right edge of the linked layer;
+      /// for a value of 1,
+      /// this means that the right edge of this layer is one width away from the right edge of the linked layer. For an x value of -1, this
+      /// means that the right edge of this layer is one width away to the left from the right edge of the linked layer, and this coincides
       /// with the left edge of the linked layer.
       /// </remarks>
       [Description("${res:ClassNames.Altaxo.Graph.Gdi.XYPlotLayerPositionType.RelativeThisFarToLinkedLayerFar}")]
@@ -158,12 +177,14 @@ namespace Altaxo.Graph.Gdi
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.XYPlotLayerPositionType", 1)]
     private class PositionTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (XYPlotLayerPositionType)obj;
         info.SetNodeContent(s.ToString());
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         string val = info.GetNodeContent();
@@ -226,10 +247,26 @@ namespace Altaxo.Graph.Gdi
       /// <summary>The scaling factor of the layer, normally 1.</summary>
       private double _layerScale = 1;  // Scale
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="XYPlotLayerPositionAndSize_V0"/> class.
+      /// </summary>
       public XYPlotLayerPositionAndSize_V0()
       {
       }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="XYPlotLayerPositionAndSize_V0"/> class with explicit legacy values.
+      /// </summary>
+      /// <param name="xzt">The x size type.</param>
+      /// <param name="xs">The x size value.</param>
+      /// <param name="yzt">The y size type.</param>
+      /// <param name="ys">The y size value.</param>
+      /// <param name="xpt">The x position type.</param>
+      /// <param name="xp">The x position value.</param>
+      /// <param name="ypt">The y position type.</param>
+      /// <param name="yp">The y position value.</param>
+      /// <param name="rotation">The rotation angle.</param>
+      /// <param name="scale">The scale factor.</param>
       public XYPlotLayerPositionAndSize_V0(XYPlotLayerSizeType xzt, double xs, XYPlotLayerSizeType yzt, double ys, XYPlotLayerPositionType xpt, double xp, XYPlotLayerPositionType ypt, double yp, double rotation, double scale)
       {
         _layerWidthType = xzt;
@@ -246,6 +283,12 @@ namespace Altaxo.Graph.Gdi
         _layerScale = scale;
       }
 
+      /// <summary>
+      /// Converts the legacy position and size information to the current item-location representation.
+      /// </summary>
+      /// <param name="cachedLayerSize">The cached layer size.</param>
+      /// <param name="cachedLayerPosition">The cached layer position.</param>
+      /// <returns>The converted item location.</returns>
       public IItemLocation ConvertToCurrentLocationVersion(PointD2D cachedLayerSize, PointD2D cachedLayerPosition)
       {
         var newLoc = new ItemLocationDirect();
@@ -321,6 +364,7 @@ namespace Altaxo.Graph.Gdi
       [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.XYPlotLayerPositionAndSize", 1)]
       private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
       {
+        /// <inheritdoc />
         public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
         {
           var s = (XYPlotLayerPositionAndSize_V0)obj;
@@ -338,6 +382,13 @@ namespace Altaxo.Graph.Gdi
           info.AddEnum("YPosType", s._layerYPositionType);
         }
 
+        /// <summary>
+        /// Deserializes the specified legacy position-and-size structure.
+        /// </summary>
+        /// <param name="o">The existing instance, if any.</param>
+        /// <param name="info">The deserialization info.</param>
+        /// <param name="parent">The parent object.</param>
+        /// <returns>The deserialized legacy structure.</returns>
         protected virtual XYPlotLayerPositionAndSize_V0 SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
           var s = (XYPlotLayerPositionAndSize_V0?)o ?? new XYPlotLayerPositionAndSize_V0();
@@ -357,6 +408,7 @@ namespace Altaxo.Graph.Gdi
           return s;
         }
 
+        /// <inheritdoc />
         public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
           var s = SDeserialize(o, info, parent);
@@ -371,9 +423,15 @@ namespace Altaxo.Graph.Gdi
 
     #region XYPlotLayerCollection
 
+    /// <summary>
+    /// Represents a legacy collection of plot layers used during deserialization.
+    /// </summary>
     [Obsolete("Used only for deserialization of old Altaxo projects.")]
     public class XYPlotLayerCollection : List<XYPlotLayer>
     {
+      /// <summary>
+      /// Gets the graph size stored alongside the legacy collection.
+      /// </summary>
       public SizeF GraphSize { get; private set; }
 
       #region "Serialization"
@@ -382,7 +440,8 @@ namespace Altaxo.Graph.Gdi
       [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.XYPlotLayerCollection", 1)]
       private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
       {
-        public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      /// <inheritdoc/>
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
         {
           throw new InvalidOperationException();
           /*
@@ -395,7 +454,8 @@ namespace Altaxo.Graph.Gdi
                     */
         }
 
-        public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      /// <inheritdoc/>
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
           var s = (XYPlotLayerCollection?)o ?? new XYPlotLayerCollection();
 
@@ -414,6 +474,7 @@ namespace Altaxo.Graph.Gdi
       [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.XYPlotLayerCollection", 2)]
       private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
       {
+        /// <inheritdoc />
         public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
         {
           throw new InvalidOperationException();
@@ -429,6 +490,7 @@ namespace Altaxo.Graph.Gdi
                     */
         }
 
+        /// <inheritdoc/>
         public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
           var s = (XYPlotLayerCollection?)o ?? new XYPlotLayerCollection();

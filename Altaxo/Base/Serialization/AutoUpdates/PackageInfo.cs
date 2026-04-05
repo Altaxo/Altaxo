@@ -60,7 +60,7 @@ namespace Altaxo.Serialization.AutoUpdates
     public const string PropertyKeyNetFrameworkVersion = "RequiredNetFrameworkVersion";
 
     /// <summary>
-    /// Property key for the required dotnet runtime version
+    /// Property key for the required .NET runtime version.
     /// </summary>
     public const string PropertyKeyDotNetVersion = "RequiredDotNetVersion";
 
@@ -140,7 +140,7 @@ namespace Altaxo.Serialization.AutoUpdates
     // Properties
 
     /// <summary>
-    /// Returns either 'Unstable' or 'Stable'
+    /// Gets either <c>Unstable</c> or <c>Stable</c>.
     /// </summary>
     public string UnstableOrStableName => IsUnstableVersion ? UnstableIdentifier : StableIdentifier;
 
@@ -235,10 +235,12 @@ namespace Altaxo.Serialization.AutoUpdates
       }
     }
 
-    /// <summary>Gets the name of the package file.
+    /// <summary>
+    /// Gets the name of the package file.
     /// If the property <see cref="FileNameOfPackageZipFileOverride"/> is not set, the file name is automatically evaluated from
     /// the properties of the package (see also <see cref="FileNameOfPackageZipFileWithoutExtension"/>). If the property <see cref="FileNameOfPackageZipFileOverride"/>
     /// is set, the value of this property is returned.
+    /// </summary>
     /// <value>The package file name.</value>
     public string FileNameOfPackageZipFile
     {

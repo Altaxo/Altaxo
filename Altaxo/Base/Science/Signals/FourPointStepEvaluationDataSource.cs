@@ -29,37 +29,70 @@ using Altaxo.Data;
 
 namespace Altaxo.Science.Signals
 {
+  /// <summary>
+  /// Data source that evaluates a step using a four-point method.
+  /// </summary>
   public class FourPointStepEvaluationDataSource : TableDataSourceBaseImmutableOptions<FourPointStepEvaluationOptions, XAndYColumn>
   {
+    /// <summary>Column name for the left evaluation line x-values.</summary>
     public const string ColumnNameLeftX = "LeftX";
+    /// <summary>Column name for the left evaluation line y-values.</summary>
     public const string ColumnNameLeftY = "LeftY";
+    /// <summary>Column name for the right evaluation line x-values.</summary>
     public const string ColumnNameRightX = "RightX";
+    /// <summary>Column name for the right evaluation line y-values.</summary>
     public const string ColumnNameRightY = "RightY";
+    /// <summary>Column name for the middle evaluation line x-values.</summary>
     public const string ColumnNameMiddleX = "MiddleX";
+    /// <summary>Column name for the middle evaluation line y-values.</summary>
     public const string ColumnNameMiddleY = "MiddleY";
+    /// <summary>Column name for the optional original-curve x-values.</summary>
     public const string ColumnNameCurveX = "CurveX";
+    /// <summary>Column name for the optional original-curve y-values.</summary>
     public const string ColumnNameCurveY = "CurveY";
+    /// <summary>Column name for parameter names.</summary>
     public const string ColumnNameParameterName = "ParameterName";
+    /// <summary>Column name for parameter values.</summary>
     public const string ColumnNameParameterValue = "ParameterValue";
+    /// <summary>Column group number for the left evaluation line.</summary>
     public const int ColumnGroupNumberLeft = 0;
+    /// <summary>Column group number for the right evaluation line.</summary>
     public const int ColumnGroupNumberRight = 1;
+    /// <summary>Column group number for the middle evaluation line.</summary>
     public const int ColumnGroupNumberMiddle = 2;
+    /// <summary>Column group number for calculated parameters.</summary>
     public const int ColumnGroupParameter = 3;
+    /// <summary>Column group number for optional curve values.</summary>
     public const int ColumnGroupCurveValues = 4;
 
+    /// <summary>Parameter name for the x-coordinate of the step midpoint.</summary>
     public const string ParameterNameMiddleX = "StepMiddleX";
+    /// <summary>Parameter name for the y-coordinate of the step midpoint.</summary>
     public const string ParameterNameMiddleY = "StepMiddleY";
+    /// <summary>Parameter name for the slope of the middle step line.</summary>
     public const string ParameterNameStepMiddleSlope = "StepMiddleSlope";
+    /// <summary>Parameter name for the step height.</summary>
     public const string ParameterNameStepHeight = "StepHeight";
+    /// <summary>Parameter name for the significance of the step.</summary>
     public const string ParameterNameStepSignificance = "StepSignificance";
+    /// <summary>Parameter name for the step width.</summary>
     public const string ParameterNameStepWidth = "StepWidth";
+    /// <summary>Parameter name for the left x-position of the step.</summary>
     public const string ParameterNameStepLeftX = "StepLeftX";
+    /// <summary>Parameter name for the left y-position of the step.</summary>
     public const string ParameterNameStepLeftY = "StepLeftY";
+    /// <summary>Parameter name for the slope of the left regression line.</summary>
     public const string ParameterNameStepLeftSlope = "StepLeftSlope";
+    /// <summary>Parameter name for the right x-position of the step.</summary>
     public const string ParameterNameStepRightX = "StepRightX";
+    /// <summary>Parameter name for the right y-position of the step.</summary>
     public const string ParameterNameStepRightY = "StepRightY";
+    /// <summary>Parameter name for the slope of the right regression line.</summary>
     public const string ParameterNameStepRightSlope = "StepRightSlope";
 
+    /// <summary>
+    /// Gets all parameter names written by this data source.
+    /// </summary>
     public IEnumerable<string> AllParameterNames
     {
       get
@@ -89,12 +122,18 @@ namespace Altaxo.Science.Signals
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FourPointStepEvaluationDataSource), 0)]
     private class XmlSerializationSurrogate0 : XmlSerializationSurrogateBase
     {
+      /// <inheritdoc />
       public override object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new FourPointStepEvaluationDataSource(info, 0);
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FourPointStepEvaluationDataSource"/> class from serialized data.
+    /// </summary>
+    /// <param name="info">The deserialization info.</param>
+    /// <param name="version">The serialized version.</param>
     protected FourPointStepEvaluationDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     : base(info, version)
     {
@@ -105,10 +144,10 @@ namespace Altaxo.Science.Signals
     #endregion Serialization
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ConvertXYVToMatrixDataSource"/> class.
+    /// Initializes a new instance of the <see cref="FourPointStepEvaluationDataSource"/> class.
     /// </summary>
     /// <param name="inputData">The input data designates the original source of data (used then for the processing).</param>
-    /// <param name="dataSourceOptions">The Fourier transformation options.</param>
+    /// <param name="dataSourceOptions">The evaluation options.</param>
     /// <param name="importOptions">The data source import options.</param>
     public FourPointStepEvaluationDataSource(XAndYColumn inputData, FourPointStepEvaluationOptions dataSourceOptions, IDataSourceImportOptions importOptions)
         : base(inputData, dataSourceOptions, importOptions)
@@ -128,7 +167,7 @@ namespace Altaxo.Science.Signals
     /// Fills (or refills) the data table with the processed data. The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable" />.
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
-    /// <param name="reporter"></param>
+    /// <param name="reporter">The progress reporter.</param>
     public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter reporter)
     {
       destinationTable.DataColumns.RemoveColumnsAll();
@@ -271,6 +310,11 @@ namespace Altaxo.Science.Signals
       }
     }
 
+    /// <summary>
+    /// Reports an evaluation error.
+    /// </summary>
+    /// <param name="destinationTable">The destination table.</param>
+    /// <param name="message">The error message.</param>
     protected void ReportError(DataTable destinationTable, string message)
     {
       Current.Console.WriteLine($"Error in StepEvaluationDataSource: {message}");

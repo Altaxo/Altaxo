@@ -26,6 +26,9 @@
 
 namespace Altaxo.Data
 {
+  /// <summary>
+  /// Extension methods for transformed readable columns.
+  /// </summary>
   public static class TransformedReadableColumnExtensions
   {
     /// <summary>

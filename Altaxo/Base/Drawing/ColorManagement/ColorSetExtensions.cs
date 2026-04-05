@@ -30,6 +30,9 @@ using System.Text;
 
 namespace Altaxo.Drawing.ColorManagement
 {
+  /// <summary>
+  /// Extension methods for navigating within color sets.
+  /// </summary>
   public static class ColorSetExtensions
   {
     /// <summary>

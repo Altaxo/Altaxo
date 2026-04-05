@@ -34,6 +34,9 @@ using Altaxo.Main;
 
 namespace Altaxo.Gui.Drawing
 {
+  /// <summary>
+  /// View contract for editing style lists.
+  /// </summary>
   public interface IStyleListView : IDataContextAwareView
   {
   }
@@ -43,42 +46,93 @@ namespace Altaxo.Gui.Drawing
   /// </summary>
   public interface IStyleListController
   {
+    /// <summary>
+    /// Gets the available style lists.
+    /// </summary>
     public NGTreeNodeCollection AvailableLists { get; }
 
+    /// <summary>
+    /// Gets the available style items.
+    /// </summary>
     public NGTreeNodeCollection AvailableItems { get; }
 
+    /// <summary>
+    /// Gets the current items of the edited list.
+    /// </summary>
     SelectableListNodeList CurrentItems { get; }
 
+    /// <summary>
+    /// Gets or sets the proposed name for the current list.
+    /// </summary>
     string NewListNameText { get; set; }
 
+    /// <summary>
+    /// Gets or sets the tooltip shown for the list name.
+    /// </summary>
     string NewListNameToolTip { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the list name can be edited.
+    /// </summary>
     bool NewListNameIsEnabled { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the list name should be visually marked.
+    /// </summary>
     bool NewListNameIsMarked { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the list should be stored in user settings.
+    /// </summary>
     bool StoreInUserSettings { get; set; }
 
+    /// <summary>
+    /// Gets the command that stores the current list.
+    /// </summary>
     ICommand CmdCurrentList_Store { get; }
 
+    /// <summary>
+    /// Gets the command that adds selected available items to the current list.
+    /// </summary>
     ICommand CmdAvailableItem_AddToCurrent { get; }
 
 
+    /// <summary>
+    /// Gets the command that removes selected current items.
+    /// </summary>
     ICommand CmdCurrentItem_Remove { get; }
 
+    /// <summary>
+    /// Gets the command that moves selected current items up.
+    /// </summary>
     ICommand CmdCurrentItem_MoveUp { get; }
 
+    /// <summary>
+    /// Gets the command that moves selected current items down.
+    /// </summary>
     ICommand CmdCurrentItem_MoveDown { get; }
 
 
+    /// <summary>
+    /// Gets the command that edits the selected current item.
+    /// </summary>
     ICommand CmdCurrentItem_Edit { get; }
 
+    /// <summary>
+    /// Gets the drag-and-drop handler for available items.
+    /// </summary>
     IMVVMDragDropHandler AvailableItemsDragDropHandler { get; }
+    /// <summary>
+    /// Gets the drag-and-drop handler for current items.
+    /// </summary>
     IMVVMDragDropHandler CurrentItemsDragDropHandler { get; }
 
 
   }
 
+  /// <summary>
+  /// Controller for editing named style lists.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IStyleListView))]
   public partial class StyleListController<TManager, TList, TItem>
     :
@@ -90,12 +144,20 @@ namespace Altaxo.Gui.Drawing
     private TManager _manager;
 
     private NGTreeNode _availableListsRootNode;
+
+    /// <summary>
+    /// Root node for the tree of available style items.
+    /// </summary>
     protected NGTreeNode _availableItemsRootNode;
     // protected SelectableListNodeList _currentItems;
 
     private bool _currentItems_IsDirty;
     private bool _isNameOfNewListValid;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StyleListController{TManager, TList, TItem}"/> class.
+    /// </summary>
+    /// <param name="managerInstance">The style-list manager.</param>
     public StyleListController(TManager managerInstance)
     {
       _manager = managerInstance;
@@ -112,12 +174,21 @@ namespace Altaxo.Gui.Drawing
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the available style lists.
+    /// </summary>
     public NGTreeNodeCollection AvailableLists => _availableListsRootNode.Nodes;
 
+    /// <summary>
+    /// Gets the available style items.
+    /// </summary>
     public NGTreeNodeCollection AvailableItems => _availableItemsRootNode.Nodes;
 
     private SelectableListNodeList _currentItems;
 
+    /// <summary>
+    /// Gets or sets the items in the current editable list.
+    /// </summary>
     public SelectableListNodeList CurrentItems
     {
       get => _currentItems;
@@ -133,6 +204,9 @@ namespace Altaxo.Gui.Drawing
 
     private string _newListNameText;
 
+    /// <summary>
+    /// Gets or sets the proposed name of the current list.
+    /// </summary>
     public string NewListNameText
     {
       get => _newListNameText;
@@ -149,6 +223,9 @@ namespace Altaxo.Gui.Drawing
 
     private string _newListNameToolTip = "Enter a unique name for the new list.";
 
+    /// <summary>
+    /// Gets or sets the tooltip shown for the list name.
+    /// </summary>
     public string NewListNameToolTip
     {
       get => _newListNameToolTip;
@@ -164,6 +241,9 @@ namespace Altaxo.Gui.Drawing
 
     private bool _newListNameIsEnabled;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the list name can be edited.
+    /// </summary>
     public bool NewListNameIsEnabled
     {
       get => _newListNameIsEnabled;
@@ -178,6 +258,9 @@ namespace Altaxo.Gui.Drawing
     }
     private bool _newListNameIsMarked;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the list name should be highlighted.
+    /// </summary>
     public bool NewListNameIsMarked
     {
       get => _newListNameIsMarked;
@@ -194,6 +277,9 @@ namespace Altaxo.Gui.Drawing
 
     private bool _storeInUserSettings;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the list should be stored at user level.
+    /// </summary>
     public bool StoreInUserSettings
     {
       get => _storeInUserSettings;
@@ -207,23 +293,32 @@ namespace Altaxo.Gui.Drawing
       }
     }
 
+    /// <inheritdoc/>
     public ICommand CmdCurrentList_Store { get; }
 
+    /// <inheritdoc/>
     public ICommand CmdAvailableItem_AddToCurrent { get; }
 
+    /// <inheritdoc/>
     public ICommand CmdCurrentItem_Remove { get; }
 
+    /// <inheritdoc/>
     public ICommand CmdCurrentItem_MoveUp { get; }
 
+    /// <inheritdoc/>
     public ICommand CmdCurrentItem_MoveDown { get; }
 
+    /// <inheritdoc/>
     public ICommand CmdCurrentItem_Edit { get; }
 
+    /// <inheritdoc/>
     public IMVVMDragDropHandler AvailableItemsDragDropHandler { get; }
+    /// <inheritdoc/>
     public IMVVMDragDropHandler CurrentItemsDragDropHandler { get; }
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -263,6 +358,7 @@ namespace Altaxo.Gui.Drawing
       return entry.Level == ItemDefinitionLevel.UserDefined;
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (_currentItems_IsDirty && false == TryToStoreList())
@@ -271,6 +367,7 @@ namespace Altaxo.Gui.Drawing
       return ApplyEnd(true, disposeController);
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -278,12 +375,22 @@ namespace Altaxo.Gui.Drawing
 
     #region How to display items
 
+    /// <summary>
+    /// Converts a style item to the display text shown in the UI.
+    /// </summary>
+    /// <param name="item">The style item.</param>
+    /// <returns>The display text.</returns>
     protected virtual string ToDisplayName(TItem item)
     {
       return ToDisplayName(item.GetType());
       ;
     }
 
+    /// <summary>
+    /// Converts a style item type to the display text shown in the UI.
+    /// </summary>
+    /// <param name="item">The style item type.</param>
+    /// <returns>The display text.</returns>
     protected virtual string ToDisplayName(Type item)
     {
       return item.Name;
@@ -324,6 +431,9 @@ namespace Altaxo.Gui.Drawing
 
     #region AvailableItens
 
+    /// <summary>
+    /// Initializes the collection of available style items.
+    /// </summary>
     protected virtual void Controller_AvailableItems_Initialize()
     {
       _availableItemsRootNode = new NGTreeNode();
@@ -341,6 +451,9 @@ namespace Altaxo.Gui.Drawing
 
     #region Current items
 
+    /// <summary>
+    /// Initializes the collection of items in the current list.
+    /// </summary>
     protected virtual void Controller_CurrentItems_Initialize()
     {
 
@@ -418,6 +531,11 @@ namespace Altaxo.Gui.Drawing
       }
     }
 
+    /// <summary>
+    /// Determines whether the specified item can be edited.
+    /// </summary>
+    /// <param name="item">The item to inspect.</param>
+    /// <returns><see langword="true"/> if the item can be edited; otherwise, <see langword="false"/>.</returns>
     protected virtual bool IsItemEditable(Altaxo.Main.IImmutable item)
     {
       if (item is null)
@@ -428,6 +546,9 @@ namespace Altaxo.Gui.Drawing
       return (bool)prop.GetValue(item, null);
     }
 
+    /// <summary>
+    /// Edits the currently selected item.
+    /// </summary>
     protected virtual void EhCurrentItem_Edit()
     {
       var node = CurrentItems.FirstSelectedNode;
@@ -475,6 +596,9 @@ namespace Altaxo.Gui.Drawing
       SetListDirty();
     }
 
+    /// <summary>
+    /// Adds the currently selected available item to the current list.
+    /// </summary>
     protected virtual void EhAvailableItem_AddToCurrent()
     {
       var avNode = _availableItemsRootNode.FirstSelectedNode;
@@ -538,6 +662,9 @@ namespace Altaxo.Gui.Drawing
       SetListDirty();
     }
 
+    /// <summary>
+    /// Marks the current list as dirty and updates the associated UI state.
+    /// </summary>
     protected void SetListDirty()
     {
       if (_manager.TryGetListByMembers(CurrentItems.Select(node => (TItem)node.Tag), null, out var existingName))

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,18 +9,32 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Calc.Interpolation
 {
+  /// <summary>
+  /// Defines the view contract for editing interpolation function options.
+  /// </summary>
   public interface IInterpolationFunctionOptionsView : IDataContextAwareView { }
 
+  /// <summary>
+  /// Controller for <see cref="IInterpolationFunctionOptions"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IInterpolationFunctionOptionsView))]
   public class InterpolationFunctionOptionsController : MVCANControllerEditImmutableDocBase<IInterpolationFunctionOptions, IInterpolationFunctionOptionsView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_interpolationDetailsController, () => InterpolationDetailsController = null);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="InterpolationFunctionOptionsController"/> class.
+    /// </summary>
     public InterpolationFunctionOptionsController() { }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="InterpolationFunctionOptionsController"/> class.
+    /// </summary>
+    /// <param name="doc">The interpolation options.</param>
     public InterpolationFunctionOptionsController(IInterpolationFunctionOptions doc)
     {
       _doc = _originalDoc = doc;
@@ -31,6 +45,9 @@ namespace Altaxo.Gui.Calc.Interpolation
 
     private ItemsController<Type> _interpolationMethod;
 
+    /// <summary>
+    /// Gets or sets the available interpolation methods.
+    /// </summary>
     public ItemsController<Type> InterpolationMethod
     {
       get => _interpolationMethod;
@@ -46,6 +63,9 @@ namespace Altaxo.Gui.Calc.Interpolation
 
     private IMVCANController _interpolationDetailsController;
 
+    /// <summary>
+    /// Gets or sets the controller for interpolation-method details.
+    /// </summary>
     public IMVCANController InterpolationDetailsController
     {
       get => _interpolationDetailsController;
@@ -62,6 +82,7 @@ namespace Altaxo.Gui.Calc.Interpolation
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -108,6 +129,7 @@ namespace Altaxo.Gui.Calc.Interpolation
       return name;
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if(InterpolationDetailsController is not null)

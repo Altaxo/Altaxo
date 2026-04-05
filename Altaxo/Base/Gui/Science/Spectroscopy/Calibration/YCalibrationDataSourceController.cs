@@ -28,9 +28,13 @@ using Altaxo.Science.Spectroscopy.Calibration;
 
 namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 {
+  /// <summary>
+  /// Controller for <see cref="YCalibrationDataSource"/>.
+  /// </summary>
   [UserControllerForObject(typeof(YCalibrationDataSource))]
   public class YCalibrationDataSourceController : DataSourceControllerBase<YCalibrationDataSource>
   {
+    /// <inheritdoc />
     protected override IMVCANController GetProcessDataController()
     {
       var ctrl = new DataTableXYColumnProxyController();

@@ -30,6 +30,9 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
+  /// <summary>
+  /// Represents an ellipse shape.
+  /// </summary>
   [Serializable]
   public class EllipseShape : ClosedPathShapeBase
   {
@@ -39,12 +42,14 @@ namespace Altaxo.Graph.Gdi.Shapes
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(EllipseShape), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (EllipseShape)obj;
         info.AddBaseValueEmbedded(s, typeof(EllipseShape).BaseType!);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (EllipseShape?)o ?? new EllipseShape(info);
@@ -58,16 +63,27 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EllipseShape"/> class for deserialization.
+    /// </summary>
     protected EllipseShape(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
       : base(new ItemLocationDirect(), info)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EllipseShape"/> class.
+    /// </summary>
+    /// <param name="context">The property context.</param>
     public EllipseShape(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
       : base(new ItemLocationDirect(), context)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EllipseShape"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public EllipseShape(EllipseShape from)
       :
       base(from)
@@ -77,6 +93,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #endregion Constructors
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new EllipseShape(this);
@@ -94,6 +111,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       return gp;
     }
 
+    /// <inheritdoc />
     public override void Paint(Graphics g, IPaintContext context)
     {
       GraphicsState gs = g.Save();

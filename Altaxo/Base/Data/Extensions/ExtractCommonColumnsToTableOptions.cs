@@ -29,6 +29,9 @@ using Altaxo.Calc.Interpolation;
 
 namespace Altaxo.Data
 {
+  /// <summary>
+  /// Options for extracting common columns from multiple tables into a single table.
+  /// </summary>
   public record ExtractCommonColumnsToTableOptions
   {
     /// <summary>
@@ -68,6 +71,9 @@ namespace Altaxo.Data
     /// </summary>
     public bool CopyColumnProperties { get; init; } = false;
 
+    /// <summary>
+    /// Gets a value indicating whether resampling is enabled.
+    /// </summary>
     public bool UseResampling => Interpolation is not null;
 
     /// <summary>
@@ -103,6 +109,7 @@ namespace Altaxo.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ExtractCommonColumnsToTableOptions), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ExtractCommonColumnsToTableOptions)obj;
@@ -123,6 +130,7 @@ namespace Altaxo.Data
         }
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var userDefinedXColumn = info.GetString("UserDefinedNameForXColumn");

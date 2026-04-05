@@ -61,12 +61,12 @@ namespace Altaxo.Graph.Gdi.Background
     void Draw(Graphics g, BrushX brush, RectangleD2D innerArea);
 
     /// <summary>
-    /// True if the classes color property can be set/reset;
+    /// Gets a value indicating whether the class brush property can be set.
     /// </summary>
     bool SupportsBrush { get; }
 
     /// <summary>
-    /// Get/sets the color. Can be null if this instance does not support a brush.
+    /// Gets or sets the brush. Can be null if this instance does not support a brush.
     /// </summary>
     [MaybeNull]
     BrushX Brush { get; set; }

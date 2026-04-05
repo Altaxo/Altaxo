@@ -35,8 +35,12 @@ namespace Altaxo.Gui
   /// <seealso cref="Altaxo.AddInItems.ICheckableMenuCommand" />
   public abstract class SimpleCheckableCommand : SimpleCommand, ICheckableMenuCommand
   {
+    /// <summary>
+    /// Gets or sets a value indicating whether the command is checked.
+    /// </summary>
     public virtual bool IsChecked { get; set; }
 
+    /// <inheritdoc/>
     public override void Execute(object? parameter)
     {
       IsChecked = !IsChecked;

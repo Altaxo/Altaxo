@@ -27,6 +27,9 @@ using Altaxo.Main;
 
 namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
 {
+  /// <summary>
+  /// Document node wrapper for peak fitting of multiple spectra by incremental peak addition.
+  /// </summary>
   public class PeakFittingOfMultipleSpectraByIncrementalPeakAdditionOptionsDocNode : SpectralPreprocessingOptionsDocNodeBase
   {
 
@@ -38,6 +41,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakFittingOfMultipleSpectraByIncrementalPeakAdditionOptionsDocNode), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PeakFittingOfMultipleSpectraByIncrementalPeakAdditionOptionsDocNode)obj;
@@ -47,6 +51,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
         SpectralPreprocessingOptionsDocNodeBase.SerializeProxiesVersion1(info, s, preprocessingOptions);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var options = info.GetValue<PeakFittingOfMultipleSpectraByIncrementalPeakAdditionOptions>("Options", null);
@@ -57,26 +62,36 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
 
     #endregion
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PeakFittingOfMultipleSpectraByIncrementalPeakAdditionOptionsDocNode"/> class.
+    /// </summary>
+    /// <param name="options">The options object.</param>
+    /// <param name="proxyList">The proxy list.</param>
     protected PeakFittingOfMultipleSpectraByIncrementalPeakAdditionOptionsDocNode(PeakFittingOfMultipleSpectraByIncrementalPeakAdditionOptions options, List<(int number, IDocumentLeafNode proxy)> proxyList)
       : base(options, proxyList)
     {
     }
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PeakFittingOfMultipleSpectraByIncrementalPeakAdditionOptionsDocNode"/> class.
+    /// </summary>
+    /// <param name="options">The options object.</param>
     public PeakFittingOfMultipleSpectraByIncrementalPeakAdditionOptionsDocNode(PeakFittingOfMultipleSpectraByIncrementalPeakAdditionOptions options) : base(options)
     {
     }
 
     /// <summary>
-    /// Gets the wrapped spectral preprocessing options. When neccessary, the calibration is updated to reflect the content of the linked calibration table.
+    /// Gets the wrapped peak-searching and fitting options. When necessary, preprocessing references are updated to reflect the linked tables.
     /// </summary>
-    /// <returns>The wrapped spectral preprocessing options</returns>
+    /// <returns>The wrapped peak-searching and fitting options.</returns>
     public PeakFittingOfMultipleSpectraByIncrementalPeakAdditionOptions GetPeakSearchingAndFittingOptions()
     {
       InternalSpectralPreprocessingOptions = InternalGetSpectralPreprocessingOptions();
       return (PeakFittingOfMultipleSpectraByIncrementalPeakAdditionOptions)_optionsObject;
     }
 
+    /// <inheritdoc />
     protected override SpectralPreprocessingOptionsBase InternalSpectralPreprocessingOptions
     {
       get

@@ -33,11 +33,20 @@ namespace Altaxo.Gui.Main
   using Altaxo.Collections;
   using Altaxo.Main.Properties;
 
+  /// <summary>
+  /// View contract for displaying the contents of a property bag.
+  /// </summary>
   public interface IPropertyBagView
   {
+    /// <summary>
+    /// Sets the property list shown by the view.
+    /// </summary>
     SelectableListNodeList PropertyList { set; }
   }
 
+  /// <summary>
+  /// Controller for viewing the contents of a <see cref="PropertyBag"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IPropertyBagView))]
   [UserControllerForObject(typeof(PropertyBag))]
   public class PropertyBagController : MVCANControllerEditOriginalDocBase<PropertyBag, IPropertyBagView>
@@ -48,11 +57,17 @@ namespace Altaxo.Gui.Main
     {
       private string[] _subText = new string[3];
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="MyListNode"/> class.
+      /// </summary>
+      /// <param name="text">The display text.</param>
+      /// <param name="tag">The associated tag value.</param>
       public MyListNode(string text, object tag)
         : base(text, tag, false)
       {
       }
 
+      /// <inheritdoc/>
       public override int SubItemCount
       {
         get
@@ -61,15 +76,25 @@ namespace Altaxo.Gui.Main
         }
       }
 
+      /// <inheritdoc/>
       public override string SubItemText(int i)
       {
         return _subText[i - 1];
       }
 
+      /// <summary>
+      /// Sets the first sub-item text.
+      /// </summary>
       public string Text1a { set { _subText[0] = value; } }
 
+      /// <summary>
+      /// Sets the second sub-item text.
+      /// </summary>
       public string Text2a { set { _subText[1] = value; } }
 
+      /// <summary>
+      /// Sets the third sub-item text.
+      /// </summary>
       public string Text3a { set { _subText[2] = value; } }
     }
 
@@ -77,17 +102,20 @@ namespace Altaxo.Gui.Main
 
     private SelectableListNodeList _propertyList;
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <inheritdoc/>
     public override void Dispose(bool isDisposing)
     {
       _propertyList = null;
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -115,6 +143,7 @@ namespace Altaxo.Gui.Main
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);

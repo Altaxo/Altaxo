@@ -29,10 +29,16 @@ using Altaxo.Collections;
 
 namespace Altaxo.Gui.Common.BasicTypes
 {
+  /// <summary>
+  /// Defines the view contract for editing enumeration values.
+  /// </summary>
   public interface IEnumValueView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for enumeration values, including flags enumerations.
+  /// </summary>
   [UserControllerForObject(typeof(System.Enum))]
   [ExpectedTypeOfView(typeof(IEnumValueView))]
   public class EnumValueController : IMVCANController, INotifyPropertyChanged
@@ -44,7 +50,13 @@ namespace Altaxo.Gui.Common.BasicTypes
     private SelectableListNodeList _list = new SelectableListNodeList();
     private int _checkedChangeLock = 0;
 
+    /// <inheritdoc/>
     public event PropertyChangedEventHandler PropertyChanged;
+
+    /// <summary>
+    /// Raises the <see cref="PropertyChanged"/> event.
+    /// </summary>
+    /// <param name="propertyName">The name of the changed property.</param>
     protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
     /// <summary>
@@ -59,11 +71,18 @@ namespace Altaxo.Gui.Common.BasicTypes
 
     private Exception NotInitializedException => new InvalidProgramException("This controller has a document, but was not properly initialized!");
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EnumValueController"/> class.
+    /// </summary>
     public EnumValueController()
     {
 
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EnumValueController"/> class.
+    /// </summary>
+    /// <param name="value">The initial enumeration value.</param>
     public EnumValueController(Enum value)
     {
       InitializeDocument(value);
@@ -71,16 +90,43 @@ namespace Altaxo.Gui.Common.BasicTypes
 
     #region Bindings
 
+    /// <summary>
+    /// Gets a value indicating whether the edited enumeration is a flags enumeration.
+    /// </summary>
     public bool IsFlagsEnum => _isFlagsEnum;
+    /// <summary>
+    /// Gets a value indicating whether the flags enumeration uses the compact representation.
+    /// </summary>
     public bool IsShortFlagsEnum => (_list.Count >= MaximumNumberOfEntriesForShortDesign) && _isFlagsEnum;
+    /// <summary>
+    /// Gets a value indicating whether the flags enumeration uses the expanded representation.
+    /// </summary>
     public bool IsLongFlagsEnum => !(_list.Count >= MaximumNumberOfEntriesForShortDesign) && _isFlagsEnum;
+    /// <summary>
+    /// Gets a value indicating whether the non-flags enumeration uses the compact representation.
+    /// </summary>
     public bool IsShortNonFlagsEnum => !(_list.Count >= MaximumNumberOfEntriesForShortDesign) && !_isFlagsEnum;
+    /// <summary>
+    /// Gets a value indicating whether the non-flags enumeration uses the expanded representation.
+    /// </summary>
     public bool IsLongNonFlagsEnum => (_list.Count >= MaximumNumberOfEntriesForShortDesign) && !_isFlagsEnum;
 
+    /// <summary>
+    /// Gets the items for flags enumerations.
+    /// </summary>
     public SelectableListNodeList? ItemsFlagsEnum => IsFlagsEnum ? _list : null;
+    /// <summary>
+    /// Gets the items for short non-flags enumerations.
+    /// </summary>
     public SelectableListNodeList? ItemsShortNonFlagsEnum => IsShortNonFlagsEnum ? _list : null;
+    /// <summary>
+    /// Gets the items for long non-flags enumerations.
+    /// </summary>
     public SelectableListNodeList? ItemsLongNonFlagsEnum => IsLongNonFlagsEnum ? _list : null;
 
+    /// <summary>
+    /// Gets or sets the selected item for non-flags enumerations.
+    /// </summary>
     public SelectableListNode? SelectedItemNonFlagsEnum
     {
       get => _list.FirstSelectedNode;
@@ -201,6 +247,7 @@ namespace Altaxo.Gui.Common.BasicTypes
 
     #region IMVCANController Members
 
+    /// <inheritdoc/>
     public bool InitializeDocument(params object[] args)
     {
       if (args.Length == 0 || args[0] is not System.Enum enu)
@@ -214,6 +261,7 @@ namespace Altaxo.Gui.Common.BasicTypes
       return true;
     }
 
+    /// <inheritdoc/>
     public UseDocument UseDocumentCopy
     {
       set { }
@@ -223,6 +271,7 @@ namespace Altaxo.Gui.Common.BasicTypes
 
     #region IMVCController Members
 
+    /// <inheritdoc/>
     public object? ViewObject
     {
       get
@@ -248,6 +297,7 @@ namespace Altaxo.Gui.Common.BasicTypes
       }
     }
 
+    /// <inheritdoc/>
     public object ModelObject
     {
       get
@@ -257,6 +307,7 @@ namespace Altaxo.Gui.Common.BasicTypes
       }
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
     }
@@ -265,6 +316,7 @@ namespace Altaxo.Gui.Common.BasicTypes
 
     #region IApplyController Members
 
+    /// <inheritdoc/>
     public bool Apply(bool disposeController)
     {
       if (_doc is null) throw NoDocumentException;

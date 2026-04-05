@@ -54,7 +54,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DimensionReductionAndRegressionPreprocessedXDataSource), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      /// <inheritdoc/>
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DimensionReductionAndRegressionPreprocessedXDataSource)obj;
@@ -65,7 +65,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
 
 
-      /// <inheritdoc/>
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (o is DimensionReductionAndRegressionPreprocessedXDataSource s)
@@ -140,6 +140,10 @@ namespace Altaxo.Calc.Regression.Multivariate
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies state from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     [MemberNotNull(nameof(_importOptions), nameof(_processData))]
     void CopyFrom(DimensionReductionAndRegressionPreprocessedXDataSource from)
     {
@@ -174,7 +178,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       return false;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public object Clone()
     {
       return new DimensionReductionAndRegressionPreprocessedXDataSource(this);
@@ -260,7 +264,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// Gets or sets the data source options.
     /// </summary>
     /// <remarks>
-    /// This data source does not use additional options; therefore, the getter always returns <c>null</c> and the setter is ignored.
+    /// This data source does not use additional options; therefore, the getter always returns <see langword="null"/> and the setter is ignored.
     /// </remarks>
     /// <value>
     /// The data source options.

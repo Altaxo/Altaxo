@@ -59,15 +59,23 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FreeLabelFormatting"/> class.
+    /// </summary>
     public FreeLabelFormatting()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FreeLabelFormatting"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public FreeLabelFormatting(FreeLabelFormatting from)
       : base(from) // everything is done here, since CopyFrom is virtual
     {
     }
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -84,16 +92,21 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
       return isCopied;
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new FreeLabelFormatting(this);
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Gets or sets the .NET format string.
+    /// </summary>
     public string FormatString
     {
       get
@@ -106,6 +119,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
       }
     }
 
+    /// <inheritdoc />
     protected override string FormatItem(AltaxoVariant item)
     {
       if (!string.IsNullOrEmpty(_formatString))

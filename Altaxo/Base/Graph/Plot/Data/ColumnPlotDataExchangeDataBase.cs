@@ -41,7 +41,7 @@ namespace Altaxo.Graph.Plot.Data
     public IEnumerable<object> PlotItemsOrPlotData { get; protected set; } = new object[0];
 
     /// <summary>
-    /// Enumerates all data columns used by an <see cref="Altaxo.Graph.Plot.IGPlotItem"/>
+    /// Enumerates all data columns used by an <see cref="Altaxo.Graph.Plot.IGPlotItem"/>.
     /// </summary>
     /// <param name="plotItem">The plot item for which to enumerate the data columns in use.</param>
     /// <param name="predicate">The predicate. Should return true if the data column provided in the argument should be enumerated.</param>
@@ -129,7 +129,7 @@ namespace Altaxo.Graph.Plot.Data
     }
 
     /// <summary>
-    /// Enumerates all data columns used by an <see cref="Altaxo.Graph.Plot.IGPlotItem"/>
+    /// Enumerates all data columns used by an <see cref="Altaxo.Graph.Plot.IGPlotItem"/>.
     /// </summary>
     /// <param name="data">The <see cref="IColumnPlotData"/> item.</param>
     /// <param name="predicate">The predicate. Should return true if the data column provided in the argument should be enumerated.</param>

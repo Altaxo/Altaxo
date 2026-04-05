@@ -38,6 +38,7 @@ namespace Altaxo.Calc.Fourier
   {
     private class XmlSerializationSurrogateForEmptyClasses<T> : Altaxo.Serialization.Xml.IXmlSerializationSurrogate where T : new()
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         TypeSafeSerialize((T)obj, info);
@@ -51,6 +52,7 @@ namespace Altaxo.Calc.Fourier
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = o is null ? new T() : (T)o;
@@ -81,11 +83,13 @@ namespace Altaxo.Calc.Fourier
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GaussWindow2D), 0)]
     private class XmlSerializationSurrogateGaussWindow2D : XmlSerializationSurrogateForEmptyClasses<GaussWindow2D>
     {
+      /// <inheritdoc/>
       protected override void TypeSafeSerialize(GaussWindow2D s, Serialization.Xml.IXmlSerializationInfo info)
       {
         info.AddValue("Sigma", s.Sigma);
       }
 
+      /// <inheritdoc/>
       protected override void TypeSafeDeserialize(GaussWindow2D s, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         s.Sigma = info.GetDouble("Sigma");
@@ -96,11 +100,13 @@ namespace Altaxo.Calc.Fourier
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SuperGaussWindow2D), 0)]
     private class XmlSerializationSurrogateSuperGaussWindow2D : XmlSerializationSurrogateForEmptyClasses<SuperGaussWindow2D>
     {
+      /// <inheritdoc/>
       protected override void TypeSafeSerialize(SuperGaussWindow2D s, Serialization.Xml.IXmlSerializationInfo info)
       {
         info.AddValue("Kappa", s.Kappa);
       }
 
+      /// <inheritdoc/>
       protected override void TypeSafeDeserialize(SuperGaussWindow2D s, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         s.Kappa = info.GetDouble("Kappa");

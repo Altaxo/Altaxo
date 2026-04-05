@@ -24,16 +24,13 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Drawing;
 using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi
 {
   /// <summary>
-  /// Location of an item which has an original size, and for which the aspect ratio should be preserved, for instance an image object.
+  /// Represents an item location that preserves the aspect ratio of the original item.
   /// </summary>
   public class ItemLocationDirectAspectPreserving : ItemLocationDirect, ICloneable
   {
@@ -79,35 +76,53 @@ namespace Altaxo.Graph.Gdi
 
     #region Construction and copying
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ItemLocationDirectAspectPreserving"/> class.
+    /// </summary>
     public ItemLocationDirectAspectPreserving()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ItemLocationDirectAspectPreserving"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public ItemLocationDirectAspectPreserving(ItemLocationDirectAspectPreserving from)
     {
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ItemLocationDirectAspectPreserving"/> class from another direct item location.
+    /// </summary>
+    /// <param name="from">The source item location.</param>
     public ItemLocationDirectAspectPreserving(ItemLocationDirect from)
     {
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ItemLocationDirectAspectPreserving"/> class from another item location.
+    /// </summary>
+    /// <param name="from">The source item location.</param>
     public ItemLocationDirectAspectPreserving(IItemLocation from)
     {
       CopyFrom(from);
     }
 
+    /// <inheritdoc />
     object System.ICloneable.Clone()
     {
       return new ItemLocationDirectAspectPreserving(this);
     }
 
+    /// <inheritdoc />
     public override ItemLocationDirect Clone()
     {
       return new ItemLocationDirectAspectPreserving(this);
     }
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -155,6 +170,9 @@ namespace Altaxo.Graph.Gdi
 
     #region New functions/properties
 
+    /// <summary>
+    /// Gets or sets the aspect-ratio preserving mode.
+    /// </summary>
     public AspectRatioPreservingMode AspectRatioPreserving
     {
       get
@@ -183,6 +201,9 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets or sets the original item size used for aspect-ratio preservation.
+    /// </summary>
     public PointD2D OriginalItemSize
     {
       get
@@ -218,6 +239,7 @@ namespace Altaxo.Graph.Gdi
 
     #region Overrides
 
+    /// <inheritdoc />
     public override bool IsAutoSized
     {
       get
@@ -226,6 +248,7 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <inheritdoc />
     public override void SetParentSize(PointD2D parentSize, bool shouldTriggerChangedEvent)
     {
       var oldValue = _parentSize;
@@ -246,6 +269,7 @@ namespace Altaxo.Graph.Gdi
         EhSelfChanged();
     }
 
+    /// <inheritdoc />
     protected override void InternalSetSizeXSilent(RADouble value)
     {
       _sizeX = value;
@@ -253,6 +277,7 @@ namespace Altaxo.Graph.Gdi
         InternalSetAbsoluteSizeYSilentHere(AbsoluteSizeX * _originalItemSize.Y / _originalItemSize.X);
     }
 
+    /// <inheritdoc />
     protected override void InternalSetSizeYSilent(RADouble value)
     {
       _sizeY = value;
@@ -260,6 +285,7 @@ namespace Altaxo.Graph.Gdi
         InternalSetAbsoluteSizeXSilentHere(AbsoluteSizeY * _originalItemSize.X / _originalItemSize.Y);
     }
 
+    /// <inheritdoc />
     protected override void InternalSetSizeSilent(RADouble valueX, RADouble valueY)
     {
       _sizeX = valueX;
@@ -276,6 +302,7 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <inheritdoc />
     protected override bool InternalSetScaleXSilent(double value)
     {
       _scaleX = 1;
@@ -287,6 +314,7 @@ namespace Altaxo.Graph.Gdi
       return false;
     }
 
+    /// <inheritdoc />
     protected override bool InternalSetScaleYSilent(double value)
     {
       _scaleY = 1;
@@ -298,6 +326,7 @@ namespace Altaxo.Graph.Gdi
       return false;
     }
 
+    /// <inheritdoc />
     protected override bool InternalSetScaleSilent(PointD2D value)
     {
       _scaleX = 1;

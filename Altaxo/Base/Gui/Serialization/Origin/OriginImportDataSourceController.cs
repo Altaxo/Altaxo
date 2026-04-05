@@ -29,9 +29,13 @@ using Altaxo.Serialization.Origin;
 
 namespace Altaxo.Gui.Serialization.Origin
 {
+  /// <summary>
+  /// Controller for <see cref="OriginImportDataSource"/>.
+  /// </summary>
   [UserControllerForObject(typeof(OriginImportDataSource))]
   public class OriginImportDataSourceController : DataSourceControllerBase<OriginImportDataSource>
   {
+    /// <inheritdoc />
     protected override IMVCANController GetProcessDataController()
     {
       var processDataController = new MultipleFilesController();
@@ -41,7 +45,9 @@ namespace Altaxo.Gui.Serialization.Origin
       return processDataController;
     }
 
+    /// <inheritdoc />
     protected override bool IsProcessDataInitiallyExpanded() => true;
+    /// <inheritdoc />
     protected override bool IsProcessOptionsInitiallyExpanded() => false;
   }
 }

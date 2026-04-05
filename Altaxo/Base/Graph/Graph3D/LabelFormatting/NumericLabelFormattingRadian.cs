@@ -29,19 +29,27 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph3D.LabelFormatting
 {
+  /// <summary>
+  /// Formats numeric labels as fractions of <c>π</c> where possible.
+  /// </summary>
   public class NumericLabelFormattingRadian : LabelFormattingBase
   {
     #region Serialization
 
+    /// <summary>
+    /// Serializes <see cref="NumericLabelFormattingRadian"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericLabelFormattingRadian), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (NumericLabelFormattingRadian)obj;
         info.AddBaseValueEmbedded(s, typeof(NumericLabelFormattingRadian).BaseType!);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (NumericLabelFormattingRadian?)o ?? new NumericLabelFormattingRadian();
@@ -52,20 +60,29 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 
     #endregion Serialization
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NumericLabelFormattingRadian"/> class.
+    /// </summary>
     public NumericLabelFormattingRadian()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NumericLabelFormattingRadian"/> class by copying from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public NumericLabelFormattingRadian(NumericLabelFormattingRadian from)
       : base(from) // everything is done here, since CopyFrom is virtual
     {
     }
 
+    /// <inheritdoc/>
     protected override string FormatItem(Altaxo.Data.AltaxoVariant item)
     {
       const double tolerance = 1E-8;
@@ -107,6 +124,11 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
       return item.ToString();
     }
 
+    /// <summary>
+    /// Simplifies a fraction represented by numerator and denominator.
+    /// </summary>
+    /// <param name="nominator">The numerator.</param>
+    /// <param name="denominator">The denominator.</param>
     private void Shorten(ref int nominator, ref int denominator)
     {
       if (nominator % 2 == 0 && denominator % 2 == 0)
@@ -129,6 +151,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
       }
     }
 
+    /// <inheritdoc/>
     public override object Clone()
     {
       return new NumericLabelFormattingRadian(this);

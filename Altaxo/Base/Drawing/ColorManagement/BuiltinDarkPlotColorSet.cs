@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -30,6 +30,9 @@ using System.Text;
 
 namespace Altaxo.Drawing.ColorManagement
 {
+  /// <summary>
+  /// Obsolete compatibility type for the built-in dark plot color set.
+  /// </summary>
   [Obsolete]
   internal class BuiltinDarkPlotColorSet
   {

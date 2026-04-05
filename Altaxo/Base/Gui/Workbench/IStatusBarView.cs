@@ -31,17 +31,50 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Gui.Workbench
 {
+  /// <summary>
+  /// Defines the view contract for the workbench status bar.
+  /// </summary>
   public interface IStatusBarView
   {
+    /// <summary>
+    /// Sets a value indicating whether the status bar is visible.
+    /// </summary>
     bool IsStatusBarVisible { set; }
+
+    /// <summary>
+    /// Sets the content of the cursor status panel.
+    /// </summary>
     object CursorStatusBarPanelContent { set; }
+
+    /// <summary>
+    /// Sets the content of the selection status panel.
+    /// </summary>
     object? SelectionStatusBarPanelContent { set; }
+
+    /// <summary>
+    /// Sets the content of the mode status panel.
+    /// </summary>
     object ModeStatusBarPanelContent { set; }
 
+    /// <summary>
+    /// Displays a status message.
+    /// </summary>
+    /// <param name="message">The message text.</param>
+    /// <param name="highlighted">Whether the message should be highlighted.</param>
+    /// <param name="icon">An optional icon.</param>
     void SetMessage(string message, bool highlighted, object? icon);
 
+    /// <summary>
+    /// Hides the progress display.
+    /// </summary>
     void HideProgress();
 
+    /// <summary>
+    /// Displays progress information.
+    /// </summary>
+    /// <param name="taskName">The task name.</param>
+    /// <param name="progress">The progress value.</param>
+    /// <param name="status">The operation status.</param>
     void DisplayProgress(string taskName, double progress, OperationStatus status);
   }
 }

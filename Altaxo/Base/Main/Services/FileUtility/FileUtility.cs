@@ -27,23 +27,58 @@ using Altaxo.Collections;
 
 namespace Altaxo.Main.Services
 {
+  /// <summary>
+  /// Defines how file-operation errors should be reported to the user.
+  /// </summary>
   public enum FileErrorPolicy
   {
+    /// <summary>
+    /// Inform the user about the error without offering an alternative target.
+    /// </summary>
     Inform,
+
+    /// <summary>
+    /// Allow the user to provide an alternative target when an error occurs.
+    /// </summary>
     ProvideAlternative
   }
 
+  /// <summary>
+  /// Represents the result of an observed file operation.
+  /// </summary>
   public enum FileOperationResult
   {
+    /// <summary>
+    /// The operation completed successfully.
+    /// </summary>
     OK,
+
+    /// <summary>
+    /// The operation failed.
+    /// </summary>
     Failed,
+
+    /// <summary>
+    /// The operation succeeded after saving to an alternative location.
+    /// </summary>
     SavedAlternatively
   }
 
+  /// <summary>
+  /// Represents a file operation without parameters.
+  /// </summary>
   public delegate void FileOperationDelegate();
 
+  /// <summary>
+  /// Represents a file operation that takes a <see cref="FileName"/>.
+  /// </summary>
+  /// <param name="fileName">The file name argument.</param>
   public delegate void NamedFileOperationDelegate(FileName fileName);
 
+  /// <summary>
+  /// Represents a file or folder operation that takes a <see cref="PathName"/>.
+  /// </summary>
+  /// <param name="fileName">The file or folder name argument.</param>
   public delegate void NamedFileOrFolderOperationDelegate(PathName fileName);
 
 
@@ -56,6 +91,9 @@ namespace Altaxo.Main.Services
     private static string? applicationRootPath = AppDomain.CurrentDomain.BaseDirectory;
     private const string fileNameRegEx = @"^([a-zA-Z]:)?[^:]+$";
 
+    /// <summary>
+    /// Gets or sets the application root path.
+    /// </summary>
     public static string ApplicationRootPath
     {
       get
@@ -68,6 +106,11 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <summary>
+    /// Determines whether the specified path is a URL.
+    /// </summary>
+    /// <param name="path">The path to test.</param>
+    /// <returns><c>true</c> if the path is a URL; otherwise, <c>false</c>.</returns>
     public static bool IsUrl(string path)
     {
       if (path is null)
@@ -75,11 +118,23 @@ namespace Altaxo.Main.Services
       return path.IndexOf("://", StringComparison.Ordinal) > 0;
     }
 
+    /// <summary>
+    /// Determines whether two file names are equal.
+    /// </summary>
+    /// <param name="fileName1">The first file name.</param>
+    /// <param name="fileName2">The second file name.</param>
+    /// <returns><c>true</c> if both file names are equal; otherwise, <c>false</c>.</returns>
     public static bool IsEqualFileName(FileName fileName1, FileName fileName2)
     {
       return fileName1 == fileName2;
     }
 
+    /// <summary>
+    /// Gets the common base directory shared by two directories.
+    /// </summary>
+    /// <param name="dir1">The first directory.</param>
+    /// <param name="dir2">The second directory.</param>
+    /// <returns>The common base directory, or <c>null</c> if none exists.</returns>
     public static string? GetCommonBaseDirectory(string dir1, string dir2)
     {
       if (dir1 is null || dir2 is null)
@@ -117,8 +172,11 @@ namespace Altaxo.Main.Services
 
     /// <summary>
     /// Converts a given absolute path and a given base path to a path that leads
-    /// from the base path to the absoulte path. (as a relative path)
+    /// from the base path to the absolute path as a relative path.
     /// </summary>
+    /// <param name="baseDirectoryPath">The base directory path.</param>
+    /// <param name="absPath">The absolute path.</param>
+    /// <returns>The relative path from <paramref name="baseDirectoryPath"/> to <paramref name="absPath"/>.</returns>
     public static string GetRelativePath(string baseDirectoryPath, string absPath)
     {
       if (string.IsNullOrEmpty(baseDirectoryPath))
@@ -166,11 +224,21 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Combines baseDirectoryPath with relPath and normalizes the resulting path.
     /// </summary>
+    /// <param name="baseDirectoryPath">The base directory path.</param>
+    /// <param name="relPath">The relative path.</param>
+    /// <returns>The normalized absolute path.</returns>
     public static string GetAbsolutePath(string baseDirectoryPath, string relPath)
     {
       return NormalizePath(Path.Combine(baseDirectoryPath, relPath));
     }
 
+    /// <summary>
+    /// Replaces the base directory of a path if it starts with a specified source directory.
+    /// </summary>
+    /// <param name="fileName">The path to update.</param>
+    /// <param name="oldDirectory">The original base directory.</param>
+    /// <param name="newDirectory">The new base directory.</param>
+    /// <returns>The updated path, or the original path if the base directory does not match.</returns>
     public static string RenameBaseDirectory(string fileName, string oldDirectory, string newDirectory)
     {
       fileName = NormalizePath(fileName);
@@ -187,6 +255,12 @@ namespace Altaxo.Main.Services
       return fileName;
     }
 
+    /// <summary>
+    /// Copies a directory and all its contents recursively.
+    /// </summary>
+    /// <param name="sourceDirectory">The source directory.</param>
+    /// <param name="destinationDirectory">The destination directory.</param>
+    /// <param name="overwrite">If set to <c>true</c>, existing files are overwritten.</param>
     public static void DeepCopy(string sourceDirectory, string destinationDirectory, bool overwrite)
     {
       if (!Directory.Exists(destinationDirectory))
@@ -204,6 +278,14 @@ namespace Altaxo.Main.Services
     }
 
 
+    /// <summary>
+    /// Lazily enumerates files in a directory that match the specified mask.
+    /// </summary>
+    /// <param name="directory">The directory to search.</param>
+    /// <param name="filemask">The search pattern.</param>
+    /// <param name="searchSubdirectories">If set to <c>true</c>, subdirectories are searched as well.</param>
+    /// <param name="ignoreHidden">If set to <c>true</c>, hidden files and folders are ignored.</param>
+    /// <returns>A lazy sequence of matching file names.</returns>
     public static IEnumerable<FileName> LazySearchDirectory(string directory, string filemask, bool searchSubdirectories = true, bool ignoreHidden = true)
     {
       return SearchDirectoryInternal(directory, filemask, searchSubdirectories, ignoreHidden);
@@ -281,11 +363,16 @@ namespace Altaxo.Main.Services
 
     // This is an arbitrary limitation built into the .NET Framework.
     // Windows supports paths up to 32k length.
+    /// <summary>
+    /// Gets the maximum path length supported by this utility.
+    /// </summary>
     public static readonly int MaxPathLength = 260;
 
     /// <summary>
     /// This method checks if a path (full or relative) is valid.
     /// </summary>
+    /// <param name="fileName">The path to validate.</param>
+    /// <returns><c>true</c> if the path is valid; otherwise, <c>false</c>.</returns>
     public static bool IsValidPath(string? fileName)
     {
       // Fixme: 260 is the hardcoded maximal length for a path on my Windows XP system
@@ -354,6 +441,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Checks that a single directory name (not the full path) is valid.
     /// </summary>
+    /// <param name="name">The directory entry name to validate.</param>
+    /// <returns><c>true</c> if the directory entry name is valid; otherwise, <c>false</c>.</returns>
     public static bool IsValidDirectoryEntryName(string name)
     {
       if (!IsValidPath(name))
@@ -371,6 +460,11 @@ namespace Altaxo.Main.Services
       return true;
     }
 
+    /// <summary>
+    /// Tests whether the specified file exists and shows a warning if it does not.
+    /// </summary>
+    /// <param name="filename">The file name to test.</param>
+    /// <returns><c>true</c> if the file exists; otherwise, <c>false</c>.</returns>
     public static bool TestFileExists(string filename)
     {
       if (!File.Exists(filename))
@@ -382,6 +476,11 @@ namespace Altaxo.Main.Services
       return true;
     }
 
+    /// <summary>
+    /// Determines whether the specified path refers to an existing directory.
+    /// </summary>
+    /// <param name="filename">The path to test.</param>
+    /// <returns><c>true</c> if the path refers to an existing directory; otherwise, <c>false</c>.</returns>
     public static bool IsDirectory(string filename)
     {
       if (!Directory.Exists(filename))
@@ -452,6 +551,12 @@ namespace Altaxo.Main.Services
       return MatchN(src, 0, pattern, 0);
     }
 
+    /// <summary>
+    /// Determines whether a file name matches one or more wildcard patterns.
+    /// </summary>
+    /// <param name="filename">The file name to test.</param>
+    /// <param name="pattern">The semicolon-separated wildcard pattern list.</param>
+    /// <returns><c>true</c> if the file name matches at least one pattern; otherwise, <c>false</c>.</returns>
     public static bool MatchesPattern(string filename, string pattern)
     {
       filename = filename.ToUpperInvariant();
@@ -468,6 +573,14 @@ namespace Altaxo.Main.Services
     }
 
     // Observe SAVE functions
+    /// <summary>
+    /// Executes a save operation and reports failures according to the specified policy.
+    /// </summary>
+    /// <param name="saveFile">The save operation.</param>
+    /// <param name="fileName">The target file or folder name.</param>
+    /// <param name="message">The message shown when an error occurs.</param>
+    /// <param name="policy">The error-handling policy.</param>
+    /// <returns>The result of the save operation.</returns>
     public static FileOperationResult ObservedSave(FileOperationDelegate saveFile, PathName fileName, string message, FileErrorPolicy policy = FileErrorPolicy.Inform)
     {
       System.Diagnostics.Debug.Assert(IsValidPath(fileName));
@@ -511,6 +624,13 @@ namespace Altaxo.Main.Services
       return FileOperationResult.Failed;
     }
 
+    /// <summary>
+    /// Executes a save operation for a file and reports failures according to the specified policy.
+    /// </summary>
+    /// <param name="saveFile">The save operation.</param>
+    /// <param name="fileName">The target file name.</param>
+    /// <param name="policy">The error-handling policy.</param>
+    /// <returns>The result of the save operation.</returns>
     public static FileOperationResult ObservedSave(FileOperationDelegate saveFile, FileName fileName, FileErrorPolicy policy = FileErrorPolicy.Inform)
     {
       return ObservedSave(
@@ -520,6 +640,14 @@ namespace Altaxo.Main.Services
         policy);
     }
 
+    /// <summary>
+    /// Executes a save-as operation and reports failures according to the specified policy.
+    /// </summary>
+    /// <param name="saveFileAs">The save-as operation.</param>
+    /// <param name="fileName">The target file or folder name.</param>
+    /// <param name="message">The message shown when an error occurs.</param>
+    /// <param name="policy">The error-handling policy.</param>
+    /// <returns>The result of the save-as operation.</returns>
     public static FileOperationResult ObservedSave(NamedFileOrFolderOperationDelegate saveFileAs, PathName fileName, string message, FileErrorPolicy policy = FileErrorPolicy.Inform)
     {
       System.Diagnostics.Debug.Assert(IsValidPath(fileName));
@@ -572,6 +700,13 @@ namespace Altaxo.Main.Services
       return FileOperationResult.Failed;
     }
 
+    /// <summary>
+    /// Executes a save-as operation and reports failures using a standard save error message.
+    /// </summary>
+    /// <param name="saveFileAs">The save-as operation.</param>
+    /// <param name="fileName">The target file or folder name.</param>
+    /// <param name="policy">The error-handling policy.</param>
+    /// <returns>The result of the save-as operation.</returns>
     public static FileOperationResult ObservedSave(NamedFileOrFolderOperationDelegate saveFileAs, PathName fileName, FileErrorPolicy policy = FileErrorPolicy.Inform)
     {
       return ObservedSave(
@@ -582,6 +717,14 @@ namespace Altaxo.Main.Services
     }
 
     // Observe LOAD functions
+    /// <summary>
+    /// Executes a load operation and reports failures according to the specified policy.
+    /// </summary>
+    /// <param name="loadFile">The load operation.</param>
+    /// <param name="fileName">The source file name.</param>
+    /// <param name="message">The message shown when an error occurs.</param>
+    /// <param name="policy">The error-handling policy.</param>
+    /// <returns>The result of the load operation.</returns>
     public static FileOperationResult ObservedLoad(FileOperationDelegate loadFile, FileName fileName, string message, FileErrorPolicy policy)
     {
       try
@@ -625,6 +768,13 @@ namespace Altaxo.Main.Services
       return FileOperationResult.Failed;
     }
 
+    /// <summary>
+    /// Executes a load operation and reports failures using a standard load error message.
+    /// </summary>
+    /// <param name="loadFile">The load operation.</param>
+    /// <param name="fileName">The source file name.</param>
+    /// <param name="policy">The error-handling policy.</param>
+    /// <returns>The result of the load operation.</returns>
     public static FileOperationResult ObservedLoad(FileOperationDelegate loadFile, FileName fileName, FileErrorPolicy policy = FileErrorPolicy.Inform)
     {
       return ObservedLoad(
@@ -634,12 +784,27 @@ namespace Altaxo.Main.Services
         policy);
     }
 
+    /// <summary>
+    /// Executes a load operation that accepts a file name and reports failures according to the specified policy.
+    /// </summary>
+    /// <param name="saveFileAs">The load operation.</param>
+    /// <param name="fileName">The source file name.</param>
+    /// <param name="message">The message shown when an error occurs.</param>
+    /// <param name="policy">The error-handling policy.</param>
+    /// <returns>The result of the load operation.</returns>
     public static FileOperationResult ObservedLoad(NamedFileOperationDelegate saveFileAs, FileName fileName, string message, FileErrorPolicy policy = FileErrorPolicy.Inform)
     {
       return ObservedLoad(new FileOperationDelegate(delegate
       { saveFileAs(fileName); }), fileName, message, policy);
     }
 
+    /// <summary>
+    /// Executes a load operation that accepts a file name and reports failures using a standard load error message.
+    /// </summary>
+    /// <param name="saveFileAs">The load operation.</param>
+    /// <param name="fileName">The source file name.</param>
+    /// <param name="policy">The error-handling policy.</param>
+    /// <returns>The result of the load operation.</returns>
     public static FileOperationResult ObservedLoad(NamedFileOperationDelegate saveFileAs, FileName fileName, FileErrorPolicy policy = FileErrorPolicy.Inform)
     {
       return ObservedLoad(
@@ -654,13 +819,23 @@ namespace Altaxo.Main.Services
       FileLoaded?.Invoke(null, e);
     }
 
+    /// <summary>
+    /// Raises the <see cref="FileSaved"/> event.
+    /// </summary>
+    /// <param name="e">The event arguments.</param>
     public static void RaiseFileSaved(PathNameEventArgs e)
     {
       FileSaved?.Invoke(null, e);
     }
 
+    /// <summary>
+    /// Occurs after a file has been loaded successfully.
+    /// </summary>
     public static event EventHandler<PathNameEventArgs>? FileLoaded;
 
+    /// <summary>
+    /// Occurs after a file has been saved successfully.
+    /// </summary>
     public static event EventHandler<PathNameEventArgs>? FileSaved;
   }
 }

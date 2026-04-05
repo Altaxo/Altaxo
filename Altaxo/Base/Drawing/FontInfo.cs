@@ -32,18 +32,37 @@ using System.Threading.Tasks;
 namespace Altaxo.Drawing
 {
   /// <summary>
-  /// Holds Information about the metrics of a font.
+  /// Holds information about the metrics of a font.
   /// </summary>
   public class FontInfo
   {
+    /// <summary>
+    /// Gets the cached line spacing value of the font.
+    /// </summary>
     public double cyLineSpace { get; private set; } // cached linespace value of the font
 
+    /// <summary>
+    /// Gets the cached ascent value of the font.
+    /// </summary>
     public double cyAscent { get; private set; }    // cached ascent value of the font
 
+    /// <summary>
+    /// Gets the cached descent value of the font.
+    /// </summary>
     public double cyDescent { get; private set; } /// cached descent value of the font
 
+    /// <summary>
+    /// Gets the font size.
+    /// </summary>
     public double Size { get; private set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FontInfo"/> class.
+    /// </summary>
+    /// <param name="cylinespace">The line spacing.</param>
+    /// <param name="cyascent">The ascent.</param>
+    /// <param name="cydescent">The descent.</param>
+    /// <param name="size">The font size.</param>
     public FontInfo(double cylinespace, double cyascent, double cydescent, double size)
     {
       cyLineSpace = cylinespace;

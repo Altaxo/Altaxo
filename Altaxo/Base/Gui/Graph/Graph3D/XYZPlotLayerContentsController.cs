@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
 
   /// <summary>
-  /// Controls the content of a <see cref="PlotItemCollection" />
+  /// Controls the content of a <see cref="PlotItemCollection"/>.
   /// </summary>
   [UserControllerForObject(typeof(PlotItemCollection))]
   [ExpectedTypeOfView(typeof(Gdi.Plot.IXYPlotLayerContentsView))]
@@ -64,12 +64,21 @@ namespace Altaxo.Gui.Graph.Graph3D
     private NGTreeNodeCollection _plotItemsTree;
     private NGTreeNode _availableItemsRootNode;
     private SelectableListNodeList _dataClippingChoices;
+    /// <summary>
+    /// Gets or sets the c om ma nd ch an ge ta bl ef or se le ct ed it e m s.
+    /// </summary>
     public ICommand CommandChangeTableForSelectedItems { get; protected set; }
+    /// <summary>
+    /// Gets or sets the c om ma nd ch an ge co lu mn sf or se le ct ed it e m s.
+    /// </summary>
     public ICommand CommandChangeColumnsForSelectedItems { get; protected set; }
 
     private bool _showRange = false;
     */
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYZPlotLayerContentsController"/> class.
+    /// </summary>
     public XYZPlotLayerContentsController()
     {
       CommandChangeTableForSelectedItems = new RelayCommand(EhChangeTableForSelectedItems, EhCanChangeTableForSelectedItems);
@@ -91,6 +100,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       AvailableItemsDragHandler = new AvailableItems_DragHandler(this);
     }
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -98,25 +108,73 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the c om ma nd ch an ge ta bl ef or se le ct ed it e m s.
+    /// </summary>
     public ICommand CommandChangeTableForSelectedItems { get; }
+    /// <summary>
+    /// Gets the c om ma nd ch an ge co lu mn sf or se le ct ed it e m s.
+    /// </summary>
     public ICommand CommandChangeColumnsForSelectedItems { get; }
 
+    /// <summary>
+    /// Gets the c md pu td at at op lo ti te m s.
+    /// </summary>
     public ICommand CmdPutDataToPlotItems { get; }
+    /// <summary>
+    /// Gets the c md pl ot it em sm ov eu ps el ec t e d.
+    /// </summary>
     public ICommand CmdPLotItemsMoveUpSelected { get; }
+    /// <summary>
+    /// Gets the c md pl ot it em sm ov ed ow ns el ec t e d.
+    /// </summary>
     public ICommand CmdPLotItemsMoveDownSelected { get; }
+    /// <summary>
+    /// Gets the c md pl ot it em op e n.
+    /// </summary>
     public ICommand CmdPlotItemOpen { get; }
+    /// <summary>
+    /// Gets the c md pl ot it em sg ro u p.
+    /// </summary>
     public ICommand CmdPlotItemsGroup { get; }
+    /// <summary>
+    /// Gets the c md pl ot it em su ng ro u p.
+    /// </summary>
     public ICommand CmdPlotItemsUngroup { get; }
+    /// <summary>
+    /// Gets the c md pl ot it em se di tr an g e.
+    /// </summary>
     public ICommand CmdPlotItemsEditRange { get; }
+    /// <summary>
+    /// Gets the c md pl ot it em sc o p y.
+    /// </summary>
     public ICommand CmdPlotItemsCopy { get; }
+    /// <summary>
+    /// Gets the c md pl ot it em sc u t.
+    /// </summary>
     public ICommand CmdPlotItemsCut { get; }
+    /// <summary>
+    /// Gets the c md pl ot it em sp as t e.
+    /// </summary>
     public ICommand CmdPlotItemsPaste { get; }
+    /// <summary>
+    /// Gets the c md pl ot it em sd el e t e.
+    /// </summary>
     public ICommand CmdPlotItemsDelete { get; }
 
+    /// <summary>
+    /// Gets the c md pl ot it em do ub le cl i c k.
+    /// </summary>
     public ICommand CmdPlotItemDoubleClick { get; }
 
+    /// <summary>
+    /// Gets the p lo ti te ms dr ag dr op ha nd l e r.
+    /// </summary>
     public IMVVMDragDropHandler PlotItemsDragDropHandler { get; }
 
+    /// <summary>
+    /// Gets the a va il ab le it em sd ra gh an dl e r.
+    /// </summary>
     public IMVVMDragHandler AvailableItemsDragHandler { get; }
 
 
@@ -176,6 +234,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private bool _showRange;
 
+    /// <summary>
+    /// The s ho wr an g e.
+    /// </summary>
     public bool ShowRange
     {
       get => _showRange;
@@ -190,6 +251,9 @@ namespace Altaxo.Gui.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Performs the e hs ho wr an ge ch an g e d operation.
+    /// </summary>
     public void EhShowRangeChanged(bool value)
     {
       _plotItemsRootNode.Nodes.Clear();
@@ -217,6 +281,7 @@ namespace Altaxo.Gui.Graph.Graph3D
     #endregion
 
 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       _plotItemsRootNode = null;
@@ -225,6 +290,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -262,6 +328,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
 #if VERIFY_TREESYNCHRONIZATION
@@ -499,6 +566,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     #region ILineScatterLayerContentsController Members
 
+    /// <summary>
+    /// Performs the e hv i e w d at aa va il ab le be fo re ex pa n d operation.
+    /// </summary>
     public void EhView_DataAvailableBeforeExpand(NGTreeNode node)
     {
       DataTable dt = Current.Project.DataTableCollection[node.Text];
@@ -596,6 +666,9 @@ namespace Altaxo.Gui.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Performs the p lo ti te m s m ov eu ps el ec t e d operation.
+    /// </summary>
     public void PlotItems_MoveUpSelected()
     {
       var selNodes = PlotItemsSelected.ToArray();
@@ -606,6 +679,9 @@ namespace Altaxo.Gui.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Performs the p lo ti te m s m ov ed ow ns el ec t e d operation.
+    /// </summary>
     public void PlotItems_MoveDownSelected()
     {
       var selNodes = PlotItemsSelected.ToArray();
@@ -616,6 +692,9 @@ namespace Altaxo.Gui.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Performs the c on te nt sl is tb o x m ov eu pd o w n operation.
+    /// </summary>
     public void ContentsListBox_MoveUpDown(int iDelta, NGTreeNode[] selNodes)
     {
       if (NGTreeNode.HaveSameParent(selNodes))
@@ -719,6 +798,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 #endif
     }
 
+    /// <summary>
+    /// Performs the p lo ti te m s u ng ro up cl i c k operation.
+    /// </summary>
     public void PlotItems_UngroupClick()
     {
       var selNodes = PlotItemsSelected.ToArray();
@@ -772,6 +854,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 #endif
     }
 
+    /// <summary>
+    /// Performs the p lo ti t e m d ou bl ec li c k operation.
+    /// </summary>
     public void PlotItem_DoubleClick()
     {
       if (!PlotItemsSelected.TryGetSingleElement(out var selNode))
@@ -799,6 +884,9 @@ namespace Altaxo.Gui.Graph.Graph3D
       selNode.Tag = pi;
     }
 
+    /// <summary>
+    /// Performs the p lo ti te m s e di tr an ge cl i c k operation.
+    /// </summary>
     public void PlotItems_EditRangeClick()
     {
       var selNodes = PlotItemsSelected.ToArray();
@@ -892,17 +980,26 @@ namespace Altaxo.Gui.Graph.Graph3D
       return result;
     }
 
+    /// <summary>
+    /// Performs the p lo ti t e m o p e n operation.
+    /// </summary>
     public void PlotItem_Open()
     {
       PlotItem_DoubleClick();
     }
 
+    /// <summary>
+    /// Performs the p lo ti te m s c an de le t e operation.
+    /// </summary>
     public bool PlotItems_CanDelete()
     {
       var anySelected = _plotItemsRootNode.TakeFromHereToFirstLeaves(false).Where(node => node.IsSelected).FirstOrDefault() is not null;
       return anySelected;
     }
 
+    /// <summary>
+    /// Performs the p lo ti te m s d el e t e operation.
+    /// </summary>
     public void PlotItems_Delete()
     {
       var selNodes = PlotItemsSelected;
@@ -917,10 +1014,16 @@ namespace Altaxo.Gui.Graph.Graph3D
         throw new InvalidProgramException("Trees of plot items and model nodes are not structural equivalent");
 #endif
     }
+    /// <summary>
+    /// Performs the p lo ti te m s c an co p y operation.
+    /// </summary>
     public bool PlotItems_CanCopy()
     {
       return PlotItemsSelected.Any();
     }
+    /// <summary>
+    /// Performs the p lo ti te m s c o p y operation.
+    /// </summary>
     public void PlotItems_Copy()
     {
       var selNodes = NGTreeNode.FilterIndependentNodes(PlotItemsSelected.ToArray());
@@ -930,10 +1033,16 @@ namespace Altaxo.Gui.Graph.Graph3D
       ClipboardSerialization.PutObjectToClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml", coll);
     }
 
+    /// <summary>
+    /// Performs the p lo ti te m s c an c u t operation.
+    /// </summary>
     public bool PlotItems_CanCut()
     {
       return PlotItemsSelected.Any();
     }
+    /// <summary>
+    /// Performs the p lo ti te m s c u t operation.
+    /// </summary>
     public void PlotItems_Cut()
     {
       var selNodes = PlotItemsSelected;
@@ -950,6 +1059,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 #endif
     }
 
+    /// <summary>
+    /// Performs the p lo ti te m s c an pa s t e operation.
+    /// </summary>
     public bool PlotItems_CanPaste()
     {
       object o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml");
@@ -957,6 +1069,9 @@ namespace Altaxo.Gui.Graph.Graph3D
       return coll is not null;
     }
 
+    /// <summary>
+    /// Performs the p lo ti te m s p as t e operation.
+    /// </summary>
     public void PlotItems_Paste()
     {
       object o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml");
@@ -986,11 +1101,17 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     #region Plot items
 
+    /// <summary>
+    /// Performs the p lo ti te m s c an st ar td r a g operation.
+    /// </summary>
     public bool PlotItems_CanStartDrag(IEnumerable items)
     {
       return NGTreeNode.AreAllNodesFromSameLevel(items.OfType<NGTreeNode>());
     }
 
+    /// <summary>
+    /// Performs the p lo ti te m s s ta rt dr a g operation.
+    /// </summary>
     public void PlotItems_StartDrag(IEnumerable items, out object data, out bool canCopy, out bool canMove)
     {
       data = new List<NGTreeNode>(items.OfType<NGTreeNode>());
@@ -998,14 +1119,23 @@ namespace Altaxo.Gui.Graph.Graph3D
       canMove = true;
     }
 
+    /// <summary>
+    /// Performs the p lo ti te m s d ra ge nd e d operation.
+    /// </summary>
     public void PlotItems_DragEnded(bool isCopy, bool isMove)
     {
     }
 
+    /// <summary>
+    /// Performs the p lo ti te m s d ra gc an ce ll e d operation.
+    /// </summary>
     public void PlotItems_DragCancelled()
     {
     }
 
+    /// <summary>
+    /// Performs the p lo ti te m s d ro pc an ac ce pt da t a operation.
+    /// </summary>
     public void PlotItems_DropCanAcceptData(object data, NGTreeNode targetItem, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool canCopy, out bool canMove, out bool itemIsSwallowingData)
     {
       var nodes = data as IEnumerable<NGTreeNode>;
@@ -1042,6 +1172,9 @@ namespace Altaxo.Gui.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Performs the p lo ti te m s d r o p operation.
+    /// </summary>
     public void PlotItems_Drop(object data, NGTreeNode targetNode, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool isCopy, out bool isMove)
     {
       isMove = false;
@@ -1138,6 +1271,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     #region Available items
 
+    /// <summary>
+    /// Performs the a va il ab le it e m s c an st ar td r a g operation.
+    /// </summary>
     public bool AvailableItems_CanStartDrag(IEnumerable items)
     {
       var selNodes = items.OfType<NGTreeNode>();
@@ -1150,6 +1286,9 @@ namespace Altaxo.Gui.Graph.Graph3D
       return isAnythingSelected && !isAnythingForbiddenSelected;
     }
 
+    /// <summary>
+    /// Performs the a va il ab le it e m s s ta rt dr a g operation.
+    /// </summary>
     public void AvailableItems_StartDrag(IEnumerable items, out object data, out bool canCopy, out bool canMove)
     {
       data = new List<NGTreeNode>(items.OfType<NGTreeNode>().Where(node => (node.IsSelected && node.Tag is Altaxo.Data.DataColumn)));
@@ -1157,10 +1296,16 @@ namespace Altaxo.Gui.Graph.Graph3D
       canMove = false;
     }
 
+    /// <summary>
+    /// Performs the a va il ab le it e m s d ra ge nd e d operation.
+    /// </summary>
     public void AvailableItems_DragEnded(bool isCopy, bool isMove)
     {
     }
 
+    /// <summary>
+    /// Performs the a va il ab le it e m s d ra gc an ce ll e d operation.
+    /// </summary>
     public void AvailableItems_DragCancelled()
     {
     }
@@ -1173,76 +1318,121 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private class DummyPlotItem : Altaxo.Main.SuspendableDocumentLeafNode, IGPlotItem
     {
+      /// <summary>
+      /// Gets the g et na m e.
+      /// </summary>
       public string GetName(int level)
       {
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// Gets the g et na m e.
+      /// </summary>
       public string GetName(string style)
       {
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// The p ar en tc ol le ct i o n.
+      /// </summary>
       public PlotItemCollection ParentCollection
       {
         get { throw new NotImplementedException(); }
       }
 
+      /// <summary>
+      /// Performs the c ol le ct st yl e s operation.
+      /// </summary>
       public void CollectStyles(Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection styles)
       {
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// Performs the p re pa re gr ou ps ty l e s operation.
+      /// </summary>
       public void PrepareGroupStyles(Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection styles, IPlotArea layer)
       {
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// Performs the a pp ly gr ou ps ty l e s operation.
+      /// </summary>
       public void ApplyGroupStyles(Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection styles)
       {
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// Sets the s et pl ot st yl ef ro mt em pl a t e.
+      /// </summary>
       public void SetPlotStyleFromTemplate(IGPlotItem template, Altaxo.Graph.Plot.Groups.PlotGroupStrictness strictness)
       {
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// Performs the p re pa re sc al e s operation.
+      /// </summary>
       public void PrepareScales(IPlotArea layer)
       {
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// Performs the p ai nt pr ep ro ce ss i n g operation.
+      /// </summary>
       public void PaintPreprocessing(Altaxo.Graph.IPaintContext context)
       {
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// Performs the p ai n t operation.
+      /// </summary>
       public void Paint(Graphics g, Altaxo.Graph.IPaintContext context, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem)
       {
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// Performs the p ai nt po st pr oc es si n g operation.
+      /// </summary>
       public void PaintPostprocessing()
       {
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// Performs the p ai nt sy mb o l operation.
+      /// </summary>
       public void PaintSymbol(Graphics g, RectangleF location)
       {
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// Performs the h it te s t operation.
+      /// </summary>
       public IHitTestObject HitTest(IPlotArea layer, HitTestPointData hitpoint)
       {
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// Performs the v is it do cu me nt re fe re nc e s operation.
+      /// </summary>
       public void VisitDocumentReferences(Altaxo.Main.DocNodeProxyReporter Report)
       {
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// Performs the c op yf r o m operation.
+      /// </summary>
       public bool CopyFrom(object obj)
       {
         if (ReferenceEquals(this, obj))
@@ -1251,16 +1441,25 @@ namespace Altaxo.Gui.Graph.Graph3D
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// Performs the c lo n e operation.
+      /// </summary>
       public object Clone()
       {
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// The c hi ld no d e s.
+      /// </summary>
       public IEnumerable<Altaxo.Main.IDocumentLeafNode> ChildNodes
       {
         get { throw new NotImplementedException(); }
       }
 
+      /// <summary>
+      /// The p ar en tn o d e.
+      /// </summary>
       public Altaxo.Main.IDocumentLeafNode ParentNode
       {
         get { throw new NotImplementedException(); }
@@ -1281,63 +1480,92 @@ namespace Altaxo.Gui.Graph.Graph3D
         get { return _parent as IGPlotItem; }
       }
 
+ 
       protected override bool AccumulatedEventData_HasZeroOrOneEventArg(out EventArgs singleEventArg)
       {
         throw new NotImplementedException();
       }
 
+      /// <inheritdoc/>
       protected override IEnumerable<EventArgs> AccumulatedEventData
       {
         get { throw new NotImplementedException(); }
       }
 
+      /// <inheritdoc/>
       protected override void AccumulatedEventData_Clear()
       {
         throw new NotImplementedException();
       }
 
+      /// <inheritdoc/>
       protected override void AccumulateChangeData(object sender, EventArgs e)
       {
         throw new NotImplementedException();
       }
 
+      /// <inheritdoc/>
       protected override void AccumulatedChangeData_SetBackAfterResumeAndSuspend(params EventArgs[] e)
       {
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// Performs the c ol le ct st yl e s operation.
+      /// </summary>
       public void CollectStyles(PlotGroupStyleCollection styles)
       {
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// Performs the p re pa re gr ou ps ty l e s operation.
+      /// </summary>
       public void PrepareGroupStyles(PlotGroupStyleCollection styles, IPlotArea layer)
       {
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// Performs the a pp ly gr ou ps ty l e s operation.
+      /// </summary>
       public void ApplyGroupStyles(PlotGroupStyleCollection styles)
       {
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// Performs the p ai n t operation.
+      /// </summary>
       public void Paint(IGraphicsContext3D g, IPaintContext context, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem)
       {
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// Performs the p ai nt sy mb o l operation.
+      /// </summary>
       public void PaintSymbol(IGraphicsContext3D g, RectangleD3D location)
       {
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// Performs the h it te s t operation.
+      /// </summary>
       public IHitTestObject HitTest(IPlotArea layer, Ray3D hitpoint)
       {
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// Gets the d at ao bj e c t.
+      /// </summary>
       public IDocumentLeafNode DataObject { get { return null; } }
 
+      /// <summary>
+      /// Gets the s ty le ob je c t.
+      /// </summary>
       public IDocumentLeafNode StyleObject { get { return null; } }
     }
 

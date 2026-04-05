@@ -29,14 +29,29 @@ using System;
 namespace Altaxo.Serialization.Xml
 {
   /// <summary>
-  /// Used to point to the target type for which this class provides a serialization surrogate.
+  /// Identifies a deserialization helper method for a target type and version.
   /// </summary>
   [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
   public class XmlDeserializationCodeForAttribute : Attribute
   {
+    /// <summary>
+    /// The version of the target type.
+    /// </summary>
     protected int _version;
+
+    /// <summary>
+    /// The target serialization type, if available.
+    /// </summary>
     protected System.Type? _serializationType;
+
+    /// <summary>
+    /// The short assembly name of the target type.
+    /// </summary>
     protected string? _assemblyName;
+
+    /// <summary>
+    /// The full name of the target type.
+    /// </summary>
     protected string? _typeName;
 
     /// <summary>
@@ -51,12 +66,12 @@ namespace Altaxo.Serialization.Xml
     }
 
     /// <summary>
-    /// Constructor. Used when the target type is deprecated and no longer available. The class this attribute is applied for is then
-    /// responsible for deserialization
+    /// Constructor. Used when the target type is deprecated and no longer available. The attributed method is then
+    /// responsible for deserialization.
     /// </summary>
-    /// <param name="assembly"></param>
-    /// <param name="typename"></param>
-    /// <param name="version"></param>
+    /// <param name="assembly">The short assembly name.</param>
+    /// <param name="typename">The full type name.</param>
+    /// <param name="version">The supported serialization version.</param>
     public XmlDeserializationCodeForAttribute(string assembly, string typename, int version)
     {
       _version = version;
@@ -65,7 +80,7 @@ namespace Altaxo.Serialization.Xml
     }
 
     /// <summary>
-    /// returns the version of the class, for which the surrogate is intended
+    /// Gets the version of the class for which the deserialization code is intended.
     /// </summary>
     public int Version
     {
@@ -73,7 +88,7 @@ namespace Altaxo.Serialization.Xml
     }
 
     /// <summary>
-    ///Returns the target type for which the class this attribute is applied for is the serialization surrogate.
+    /// Gets the target type for which the attributed method provides deserialization code.
     /// </summary>
     public System.Type? SerializationType
     {
@@ -81,7 +96,7 @@ namespace Altaxo.Serialization.Xml
     }
 
     /// <summary>
-    /// Returns the assembly name (short form) of the target class type.
+    /// Gets the short assembly name of the target type.
     /// </summary>
     public string? AssemblyName
     {
@@ -102,7 +117,7 @@ namespace Altaxo.Serialization.Xml
     }
 
     /// <summary>
-    /// Returns the name of the target type (the full name inclusive namespaces).
+    /// Gets the fully qualified name of the target type.
     /// </summary>
     public string TypeName
     {
@@ -111,5 +126,5 @@ namespace Altaxo.Serialization.Xml
         return _serializationType?.ToString() ?? _typeName ?? throw new InvalidOperationException();
       }
     }
-  } // end class SerializationCodeForAttribute
+  }
 }

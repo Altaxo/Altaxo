@@ -164,6 +164,10 @@ namespace Altaxo.Data
 
     }
 
+    /// <summary>
+    /// Creates an empty instance for legacy deserialization scenarios.
+    /// </summary>
+    /// <returns>An empty proxy instance.</returns>
     [Obsolete("This is intended for legacy deserialization (of XYZMeshedColumnPlotData) only.")]
     public static DataTableMatrixProxy CreateEmptyInstance()
     {
@@ -181,6 +185,12 @@ namespace Altaxo.Data
       return result;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DataTableMatrixProxy"/> class for legacy deserialization scenarios.
+    /// </summary>
+    /// <param name="xColumn">The row-header column proxy.</param>
+    /// <param name="yColumn">The column-header column proxy.</param>
+    /// <param name="dataColumns">The data-column proxies.</param>
     [Obsolete("This is intended for legacy deserialization (of XYZMeshedColumnPlotData) only.")]
     public DataTableMatrixProxy(IReadableColumnProxy xColumn, IReadableColumnProxy yColumn, IReadableColumnProxy[] dataColumns)
       : base(xColumn, yColumn, dataColumns)
@@ -188,7 +198,7 @@ namespace Altaxo.Data
     }
 
 
-    /// <summary>Column that correlate each column of the resulting matrix to a corresponding physical value. This value can be used for instance for calculating the x- or y- position in the coordinate system.</summary>
+    /// <summary>Gets or sets the column that correlates each column of the resulting matrix to a corresponding physical value. This value can be used, for instance, for calculating the x- or y-position in the coordinate system.</summary>
     [MaybeNull]
     public IReadableColumn ColumnHeaderColumn
     {

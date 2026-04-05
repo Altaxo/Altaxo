@@ -23,12 +23,6 @@
 #endregion Copyright
 
 #nullable enable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Altaxo.Main
 {
   /// <summary>
@@ -42,7 +36,7 @@ namespace Altaxo.Main
     /// If the return value is false, we terminate the application immediately.
     /// </summary>
     /// <param name="args">The startup arguments.</param>
-    /// <returns>True if the application startup should be proceeded; false if the application should exit immediately.</returns>
+    /// <returns><c>true</c> if application startup should proceed;  <c>false</c> if the application should exit immediately.</returns>
     bool ProcessStartupArguments(params string[] args);
 
     /// <summary>
@@ -54,7 +48,7 @@ namespace Altaxo.Main
     bool ApplicationWasStartedWithEmbeddingArg { get; }
 
     /// <summary>
-    /// Gets a value indicating whether Altaxo is in embedded mode, i.e. a object (graph document) is embedded in another application. If <c>true</c>, the properties
+    /// Gets a value indicating whether Altaxo is in embedded mode, i.e. an object (graph document) is embedded in another application. If <c>true</c>, the properties
     /// <see cref="ContainerApplicationName"/>, <see cref="ContainerDocumentName"/> and <see cref="EmbeddedObject"/> can be used to set the title in the title bar of Altaxo.
     /// </summary>
     /// <value>

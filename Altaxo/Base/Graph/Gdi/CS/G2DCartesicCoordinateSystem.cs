@@ -31,6 +31,9 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.CS
 {
+  /// <summary>
+  /// Represents a 2D Cartesian coordinate system.
+  /// </summary>
   [Serializable]
   public class G2DCartesicCoordinateSystem : G2DCoordinateSystem
   {
@@ -53,6 +56,7 @@ namespace Altaxo.Graph.Gdi.CS
     /// Copies the member variables from another coordinate system.
     /// </summary>
     /// <param name="fromb">The coordinate system to copy from.</param>
+    /// <inheritdoc />
     public override void CopyFrom(G2DCoordinateSystem fromb)
     {
       if (ReferenceEquals(this, fromb))
@@ -173,6 +177,7 @@ namespace Altaxo.Graph.Gdi.CS
     /// </summary>
     public override bool Is3D { get { return false; } }
 
+    /// <inheritdoc />
     protected override void UpdateAxisInfo()
     {
       int horzAx;
@@ -300,6 +305,11 @@ namespace Altaxo.Graph.Gdi.CS
       }
     }
 
+    /// <summary>
+    /// Gets the display name of the specified axis.
+    /// </summary>
+    /// <param name="id">The axis identifier.</param>
+    /// <returns>The axis name.</returns>
     public string GetAxisName(CSLineID id)
     {
       if (id.Is3DIdentifier)
@@ -360,6 +370,7 @@ namespace Altaxo.Graph.Gdi.CS
       }
     }
 
+    /// <inheritdoc />
     public override string GetNameOfPlane(CSPlaneID planeId)
     {
       string name = "";
@@ -444,6 +455,7 @@ namespace Altaxo.Graph.Gdi.CS
       return !double.IsNaN(xlocation) && !double.IsNaN(ylocation);
     }
 
+    /// <inheritdoc />
     public override bool LogicalToLayerCoordinatesAndDirection(
      Logical3D r0, Logical3D r1,
      double t,
@@ -509,6 +521,7 @@ namespace Altaxo.Graph.Gdi.CS
       return !double.IsNaN(r.RX) && !double.IsNaN(r.RY);
     }
 
+    /// <inheritdoc />
     public override void GetIsoline(System.Drawing.Drawing2D.GraphicsPath g, Logical3D r0, Logical3D r1)
     {
       if (LogicalToLayerCoordinates(r0, out var ax0, out var ay0) && LogicalToLayerCoordinates(r1, out var ax1, out var ay1))
@@ -527,6 +540,7 @@ namespace Altaxo.Graph.Gdi.CS
       return new Region(new RectangleF(0, 0, (float)_layerWidth, (float)_layerHeight));
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       var result = new G2DCartesicCoordinateSystem();

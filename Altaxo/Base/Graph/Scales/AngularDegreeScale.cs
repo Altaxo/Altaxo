@@ -31,6 +31,9 @@ using System.Text;
 
 namespace Altaxo.Graph.Scales
 {
+  /// <summary>
+  /// Represents an angular scale that uses degrees.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Graph.Scales.AngularDegreeScale}")]
   public class AngularDegreeScale : AngularScale
   {
@@ -39,12 +42,14 @@ namespace Altaxo.Graph.Scales
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AngularDegreeScale), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         info.AddBaseValueEmbedded(obj, typeof(AngularScale));
         var s = (AngularDegreeScale)obj;
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         AngularDegreeScale s = SDeserialize(o, info, parent);
@@ -69,21 +74,30 @@ namespace Altaxo.Graph.Scales
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AngularDegreeScale"/> class.
+    /// </summary>
     public AngularDegreeScale()
       : base(new Ticks.AngularDegreeTickSpacing())
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AngularDegreeScale"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public AngularDegreeScale(AngularDegreeScale from)
       : base(from)
     {
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new AngularDegreeScale(this);
     }
 
+    /// <inheritdoc />
     protected override bool UseDegree
     {
       get { return true; }

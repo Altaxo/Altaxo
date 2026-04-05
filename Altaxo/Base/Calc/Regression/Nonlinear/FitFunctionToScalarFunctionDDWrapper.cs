@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -49,9 +49,13 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     #region Serialization
 
+    /// <summary>
+    /// Serialization surrogate for version 0 of <see cref="FitFunctionToScalarFunctionDDWrapper"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.Regression.Nonlinear.FitFunctionToScalarFunctionDDWrapper", 0)]
     public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old versions not allowed.");
@@ -69,6 +73,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
                     */
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         int independentVariable = info.GetInt32("IndependentVariable");
@@ -105,9 +110,13 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// 2017-01-05 Added: _independentVariableTransformation and _dependentVariableTransformation
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    /// <summary>
+    /// Serialization surrogate for version 1 of <see cref="FitFunctionToScalarFunctionDDWrapper"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FitFunctionToScalarFunctionDDWrapper), 1)]
     public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (FitFunctionToScalarFunctionDDWrapper)obj;
@@ -124,6 +133,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
           info.AddValue("FitFunction", new Altaxo.Serialization.Xml.AssemblyAndTypeSurrogate(s._fitFunction));
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         int independentVariable = info.GetInt32("IndependentVariable");
@@ -163,32 +173,48 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FitFunctionToScalarFunctionDDWrapper"/> class.
+    /// </summary>
     public FitFunctionToScalarFunctionDDWrapper(IFitFunction? fitFunction, int dependentVariable, IVariantToVariantTransformation? dependentVariableTransformation, int independentVariable, IVariantToVariantTransformation? independentVariableTransformation, double[] parameter)
     {
       Initialize(fitFunction, dependentVariable, dependentVariableTransformation, independentVariable, independentVariableTransformation, parameter);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FitFunctionToScalarFunctionDDWrapper"/> class.
+    /// </summary>
     public FitFunctionToScalarFunctionDDWrapper(IFitFunction? fitFunction, int dependentVariable, int independentVariable, double[] parameter)
     {
       Initialize(fitFunction, dependentVariable, null, independentVariable, null, parameter);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FitFunctionToScalarFunctionDDWrapper"/> class.
+    /// </summary>
     public FitFunctionToScalarFunctionDDWrapper(IFitFunction? fitFunction, int dependentVariable, IVariantToVariantTransformation? dependentVariableTransformation, double[] parameter)
     {
       Initialize(fitFunction, dependentVariable, dependentVariableTransformation, 0, null, parameter);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FitFunctionToScalarFunctionDDWrapper"/> class.
+    /// </summary>
     public FitFunctionToScalarFunctionDDWrapper(IFitFunction? fitFunction, int dependentVariable, double[] parameter)
     {
       Initialize(fitFunction, dependentVariable, null, 0, null, parameter);
     }
 
+    /// <inheritdoc/>
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_fitFunction is Main.IDocumentLeafNode && object.ReferenceEquals(((Main.IDocumentLeafNode)_fitFunction).ParentObject, this))
         yield return new Main.DocumentNodeAndName((Main.IDocumentLeafNode)_fitFunction, () => _fitFunction = null, "WrappedFitFunction");
     }
 
+    /// <summary>
+    /// Initializes the wrapper state from the specified fit function and parameter values.
+    /// </summary>
     [MemberNotNull(nameof(_x), nameof(_y), nameof(_parameter))]
     public void Initialize(IFitFunction? fitFunction, int dependentVariable, IVariantToVariantTransformation? dependentVariableTransformation, int independentVariable, IVariantToVariantTransformation? independentVariableTransformation, double[] parameter)
     {
@@ -221,8 +247,14 @@ namespace Altaxo.Calc.Regression.Nonlinear
         _parameter[i] = parameter[i];
     }
 
+    /// <summary>
+    /// Gets the wrapped fit function.
+    /// </summary>
     public IFitFunction? FitFunction => _fitFunction;
 
+    /// <summary>
+    /// Gets the current parameter values.
+    /// </summary>
     public double[] Parameter
     {
       get
@@ -231,6 +263,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+    /// <summary>
+    /// Gets the buffer used for independent variable values.
+    /// </summary>
     public double[] X
     {
       get
@@ -239,6 +274,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+    /// <summary>
+    /// Gets or sets the selected dependent variable index.
+    /// </summary>
     public int DependentVariable
     {
       get
@@ -251,6 +289,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+    /// <summary>
+    /// Gets the transformation applied to the dependent variable.
+    /// </summary>
     public IVariantToVariantTransformation? DependentVariableTransformation
     {
       get
@@ -259,6 +300,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+    /// <summary>
+    /// Gets or sets the selected independent variable index.
+    /// </summary>
     public int IndependentVariable
     {
       get
@@ -271,6 +315,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+    /// <summary>
+    /// Gets the transformation applied to the independent variable.
+    /// </summary>
     public IVariantToVariantTransformation? IndependentVariableTransformation
     {
       get
@@ -281,6 +328,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     #region IScalarFunctionDD Members
 
+    /// <inheritdoc/>
     public double Evaluate(double x)
     {
       if (_fitFunction is not null)

@@ -35,22 +35,37 @@ namespace Altaxo.Gui
     private System.Type _type;
     private int _priority = 0;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ExpectedTypeOfViewAttribute"/> class.
+    /// </summary>
+    /// <param name="type">The expected view type.</param>
     public ExpectedTypeOfViewAttribute(System.Type type)
     {
       _type = type;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ExpectedTypeOfViewAttribute"/> class.
+    /// </summary>
+    /// <param name="type">The expected view type.</param>
+    /// <param name="priority">The selection priority.</param>
     public ExpectedTypeOfViewAttribute(System.Type type, int priority)
     {
       _type = type;
       _priority = priority;
     }
 
+    /// <summary>
+    /// Gets the expected view type.
+    /// </summary>
     public System.Type TargetType
     {
       get { return _type; }
     }
 
+    /// <summary>
+    /// Gets the selection priority.
+    /// </summary>
     public int Priority
     {
       get { return _priority; }
@@ -58,6 +73,7 @@ namespace Altaxo.Gui
 
     #region IComparable Members
 
+    /// <inheritdoc/>
     public int CompareTo(object? obj)
     {
       if (obj is ExpectedTypeOfViewAttribute to)

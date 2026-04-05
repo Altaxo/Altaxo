@@ -38,19 +38,27 @@ namespace Altaxo.Drawing.LineCaps
   /// <seealso cref="Altaxo.Drawing.ILineCap" />
   public class FlatCap : ILineCap
   {
+    /// <summary>
+    /// Gets the shared instance of the flat cap.
+    /// </summary>
     public static FlatCap Instance { get; } = new FlatCap();
 
+    /// <inheritdoc/>
     public double MinimumAbsoluteSizePt => 0;
 
+    /// <inheritdoc/>
     public double MinimumRelativeSize => 0;
 
+    /// <inheritdoc/>
     public string Name => "Flat";
 
+    /// <inheritdoc/>
     public bool Equals(ILineCap? other)
     {
       return other is FlatCap;
     }
 
+    /// <inheritdoc/>
     public ILineCap WithMinimumAbsoluteAndRelativeSize(double minimumAbsoluteSizePt, double minimumRelativeSize)
     {
       return Instance;

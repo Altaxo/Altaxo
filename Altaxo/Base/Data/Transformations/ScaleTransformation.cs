@@ -27,6 +27,9 @@ using System;
 
 namespace Altaxo.Data.Transformations
 {
+  /// <summary>
+  /// Multiplies a value by a constant scale factor.
+  /// </summary>
   public class ScaleTransformation : IDoubleToDoubleTransformation
   {
     /// <summary>
@@ -64,21 +67,30 @@ namespace Altaxo.Data.Transformations
     /// <inheritdoc/>
     public Type OutputValueType { get { return typeof(double); } }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScaleTransformation"/> class with unit scale.
+    /// </summary>
     public ScaleTransformation()
     {
       _scale = 1;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScaleTransformation"/> class.
+    /// </summary>
+    /// <param name="scale">The scale factor.</param>
     public ScaleTransformation(double scale)
     {
       _scale = scale;
     }
 
+    /// <inheritdoc/>
     public AltaxoVariant Transform(AltaxoVariant value)
     {
       return _scale * value;
     }
 
+    /// <inheritdoc/>
     public double Transform(double value)
     {
       return _scale * value;
@@ -90,16 +102,19 @@ namespace Altaxo.Data.Transformations
       return (_scale * y, _scale * dydx);
     }
 
+    /// <inheritdoc/>
     public string RepresentationAsFunction
     {
       get { return GetRepresentationAsFunction("x"); }
     }
 
+    /// <inheritdoc/>
     public string GetRepresentationAsFunction(string arg)
     {
       return Altaxo.Serialization.GUIConversion.ToString(_scale) + " * " + arg;
     }
 
+    /// <inheritdoc/>
     public string RepresentationAsOperator
     {
       get
@@ -108,6 +123,7 @@ namespace Altaxo.Data.Transformations
       }
     }
 
+    /// <inheritdoc/>
     public IVariantToVariantTransformation BackTransformation
     {
       get
@@ -116,6 +132,9 @@ namespace Altaxo.Data.Transformations
       }
     }
 
+    /// <summary>
+    /// Gets the scale factor applied by the transformation.
+    /// </summary>
     public double Scale
     {
       get
@@ -124,6 +143,11 @@ namespace Altaxo.Data.Transformations
       }
     }
 
+    /// <summary>
+    /// Returns a transformation with the specified scale factor.
+    /// </summary>
+    /// <param name="scale">The scale factor to apply.</param>
+    /// <returns>The current instance if the scale is unchanged; otherwise, a new instance.</returns>
     public ScaleTransformation WithScale(double scale)
     {
       if (scale == _scale)
@@ -132,16 +156,19 @@ namespace Altaxo.Data.Transformations
         return new ScaleTransformation(scale);
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       return obj is ScaleTransformation from ? _scale == from._scale : false;
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return GetType().GetHashCode() + 17 * _scale.GetHashCode();
     }
 
+    /// <inheritdoc/>
     public bool IsEditable { get { return true; } }
   }
 }

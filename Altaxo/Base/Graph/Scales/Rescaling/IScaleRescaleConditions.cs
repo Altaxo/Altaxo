@@ -46,10 +46,22 @@ namespace Altaxo.Graph.Scales.Rescaling
     //bool IsResultingEndFixed { get; }
   }
 
+  /// <summary>
+  /// Interface for unbound numeric scale rescaling conditions.
+  /// </summary>
   public interface IUnboundNumericScaleRescaleConditions
       :
     IScaleRescaleConditions
   {
+    /// <summary>
+    /// Sets the user-defined rescaling parameters.
+    /// </summary>
+    /// <param name="orgRescaling">The origin rescaling mode.</param>
+    /// <param name="orgRelativeTo">The origin reference.</param>
+    /// <param name="orgValue">The origin value.</param>
+    /// <param name="endRescaling">The end rescaling mode.</param>
+    /// <param name="endRelativeTo">The end reference.</param>
+    /// <param name="endValue">The end value.</param>
     void SetUserParameters(BoundaryRescaling orgRescaling, BoundariesRelativeTo orgRelativeTo, AltaxoVariant orgValue, BoundaryRescaling endRescaling, BoundariesRelativeTo endRelativeTo, AltaxoVariant endValue);
   }
 }

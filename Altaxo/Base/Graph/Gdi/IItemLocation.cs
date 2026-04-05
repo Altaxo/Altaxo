@@ -30,17 +30,32 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi
 {
+  /// <summary>
+  /// Describes the position, size, and transformation of an item within its parent.
+  /// </summary>
   public interface IItemLocation
   :
   Altaxo.Main.IDocumentLeafNode,
   Altaxo.Main.ICopyFrom
   {
+    /// <summary>
+    /// Gets or sets the rotation angle in degrees.
+    /// </summary>
     double Rotation { get; set; }
 
+    /// <summary>
+    /// Gets or sets the shear factor in x-direction.
+    /// </summary>
     double ShearX { get; set; }
 
+    /// <summary>
+    /// Gets or sets the scaling factor in x-direction.
+    /// </summary>
     double ScaleX { get; set; }
 
+    /// <summary>
+    /// Gets or sets the scaling factor in y-direction.
+    /// </summary>
     double ScaleY { get; set; }
   }
 }

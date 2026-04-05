@@ -38,6 +38,10 @@ namespace Altaxo.Graph.Plot.Data
   {
     private IPlotRange[] _ranges;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PlotRangeCompound"/> class.
+    /// </summary>
+    /// <param name="ranges">The ranges to combine into a single compound range.</param>
     public PlotRangeCompound(IEnumerable<IPlotRange> ranges)
     {
       if (ranges is null)
@@ -70,6 +74,7 @@ namespace Altaxo.Graph.Plot.Data
     private int _lastPlotPointIndex;
     private int _lastRangeIndex;
 
+    /// <inheritdoc/>
     public int GetOriginalRowIndexFromPlotPointIndex(int plotPointIndex)
     {
       if (plotPointIndex >= _lastPlotPointIndex)
@@ -114,6 +119,7 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
+    /// <inheritdoc/>
     public int OriginalLastPoint
     {
       get

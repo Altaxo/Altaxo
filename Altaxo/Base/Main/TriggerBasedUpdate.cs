@@ -60,6 +60,9 @@ namespace Altaxo.Main
     private TimeSpan _timeOfLastDueTime = TimeSpan.MinValue;
     private TimeSpan _timeOfNextDueTime;
 
+    /// <summary>
+    /// Stores the update callback to invoke when a due trigger fires.
+    /// </summary>
     public Action? _updateAction;
 
     /// <summary>Reference to the timer queue.</summary>
@@ -85,6 +88,9 @@ namespace Altaxo.Main
 
     #region Properties
 
+    /// <summary>
+    /// Occurs when an update is due.
+    /// </summary>
     public event Action UpdateAction
     {
       add
@@ -384,6 +390,7 @@ namespace Altaxo.Main
       return x < y ? x : y;
     }
 
+    /// <inheritdoc/>
     protected override void Dispose(bool disposing)
     {
       if (!_isDisposed)

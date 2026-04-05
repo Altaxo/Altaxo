@@ -30,12 +30,16 @@ using Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra;
 
 namespace Altaxo.Gui.Science.Spectroscopy.MultipleSpectra
 {
+  /// <summary>
+  /// Controller for editing incremental-peak-addition fitting options for multiple spectra.
+  /// </summary>
   [UserControllerForObject(typeof(PeakFittingOfMultipleSpectraByIncrementalPeakAdditionOptions))]
   [ExpectedTypeOfView(typeof(ISpectralPreprocessingOptionsView))]
   public class PeakFittingOfMultipleSpectraByIncrementalPeakAdditionOptionsController : SpectralPreprocessingControllerBase<PeakFittingOfMultipleSpectraByIncrementalPeakAdditionOptions>
   {
 
 
+    /// <inheritdoc/>
     protected override IEnumerable<(string Label, object Doc, Func<IMVCANController> GetController)> GetComponents()
     {
       foreach (var pair in SpectralPreprocessingController.GetComponents(_doc.Preprocessing))
@@ -45,6 +49,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.MultipleSpectra
       yield return ("Output", _doc.OutputOptions, () => new PeakSearchingAndFittingOutputOptionsController());
     }
 
+    /// <inheritdoc/>
     protected override void UpdateDoc(object model, int index)
     {
       var pre = SpectralPreprocessingController.UpdateDoc(_doc.Preprocessing, model, index);
@@ -61,6 +66,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.MultipleSpectra
       }
     }
 
+    /// <inheritdoc/>
     protected override bool ApplyEnd(bool applyResult, bool disposeController)
     {
       // clean the SpectralPreprocessingOptionsList by dropping non-elements
@@ -75,6 +81,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.MultipleSpectra
       return base.ApplyEnd(applyResult, disposeController);
     }
 
+    /// <inheritdoc/>
     protected override SpectralPreprocessingOptionsBase InternalPreprocessingOptions
     {
       get => _doc.Preprocessing;

@@ -31,10 +31,16 @@ using AUL = Altaxo.Units.Length;
 
 namespace Altaxo.Gui.Common.Drawing
 {
+  /// <summary>
+  /// Defines the view contract for editing texture scaling.
+  /// </summary>
   public interface ITextureScalingView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="TextureScaling"/>.
+  /// </summary>
   public class TextureScalingController : MVCANDControllerEditImmutableDocBase<TextureScaling, ITextureScalingView>
   {
     /// <summary>
@@ -42,11 +48,13 @@ namespace Altaxo.Gui.Common.Drawing
     /// </summary>
     private VectorD2D? _sourceTextureSize;
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -54,6 +62,9 @@ namespace Altaxo.Gui.Common.Drawing
 
     #region Binding
 
+    /// <summary>
+    /// Gets or sets a value indicating whether scaling uses the source size.
+    /// </summary>
     public bool ScalingModeSource
     {
       get => _doc.ScalingMode == TextureScalingMode.Source;
@@ -70,6 +81,9 @@ namespace Altaxo.Gui.Common.Drawing
         }
       }
     }
+    /// <summary>
+    /// Gets or sets a value indicating whether scaling uses the destination size.
+    /// </summary>
     public bool ScalingModeDestination
     {
       get => _doc.ScalingMode == TextureScalingMode.Destination;
@@ -86,6 +100,9 @@ namespace Altaxo.Gui.Common.Drawing
         }
       }
     }
+    /// <summary>
+    /// Gets or sets a value indicating whether scaling uses absolute size.
+    /// </summary>
     public bool ScalingModeAbsolute
     {
       get => _doc.ScalingMode == TextureScalingMode.Absolute;
@@ -103,6 +120,9 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating that the aspect ratio is not preserved.
+    /// </summary>
     public bool AspectModeNone
     {
       get => _doc.SourceAspectRatioPreserving == AspectRatioPreservingMode.None;
@@ -118,6 +138,9 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating that the aspect ratio preserves x with priority.
+    /// </summary>
     public bool AspectModeXPriority
     {
       get => _doc.SourceAspectRatioPreserving == AspectRatioPreservingMode.PreserveXPriority;
@@ -133,6 +156,9 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating that the aspect ratio preserves y with priority.
+    /// </summary>
     public bool AspectModeYPriority
     {
       get => _doc.SourceAspectRatioPreserving == AspectRatioPreservingMode.PreserveYPriority;
@@ -188,9 +214,15 @@ namespace Altaxo.Gui.Common.Drawing
       OnMadeDirty();
     }
 
+    /// <summary>
+    /// Gets the size environment.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment SizeEnvironment => Altaxo.Gui.SizeEnvironment.Instance;
 
 
+    /// <summary>
+    /// Gets or sets the absolute width.
+    /// </summary>
     public DimensionfulQuantity SizeX
     {
       get => new DimensionfulQuantity(_doc.X, AUL.Point.Instance).AsQuantityIn(SizeEnvironment.DefaultUnit);
@@ -214,6 +246,9 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets or sets the absolute height.
+    /// </summary>
     public DimensionfulQuantity SizeY
     {
       get => new DimensionfulQuantity(_doc.Y, AUL.Point.Instance).AsQuantityIn(SizeEnvironment.DefaultUnit);
@@ -237,9 +272,15 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets or sets the environment used for x scaling.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment ScaleXEnvironment { get; set; } = RelationEnvironment.Instance;
 
 
+    /// <summary>
+    /// Gets or sets the x scale.
+    /// </summary>
     public DimensionfulQuantity ScaleX
     {
       get => new DimensionfulQuantity(_doc.X, AUD.Unity.Instance).AsQuantityIn(ScaleXEnvironment.DefaultUnit);
@@ -264,8 +305,14 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets or sets the environment used for y scaling.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment ScaleYEnvironment { get; set; } = RelationEnvironment.Instance;
 
+    /// <summary>
+    /// Gets or sets the y scale.
+    /// </summary>
     public DimensionfulQuantity ScaleY
     {
       get => new DimensionfulQuantity(_doc.Y, AUD.Unity.Instance).AsQuantityIn(ScaleYEnvironment.DefaultUnit);
@@ -291,6 +338,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     #endregion Binding
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);

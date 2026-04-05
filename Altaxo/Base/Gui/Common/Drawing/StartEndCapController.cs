@@ -39,6 +39,10 @@ namespace Altaxo.Gui.Common.Drawing
     #region Bindings
 
     bool _isForEndCap;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the controller edits an end cap.
+    /// </summary>
     public bool IsForEndCap
     {
       get => _isForEndCap;
@@ -52,6 +56,9 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets or sets the line cap.
+    /// </summary>
     public ILineCap LineCap
     {
       get => _doc;
@@ -68,8 +75,14 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets or sets the environment for the minimum absolute size.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment MinimumAbsoluteSizeEnvironment { get; set; } = Altaxo.Gui.LineCapSizeEnvironment.Instance;
 
+    /// <summary>
+    /// Gets or sets the minimum absolute size.
+    /// </summary>
     public DimensionfulQuantity MinimumAbsoluteSize
     {
       get => new DimensionfulQuantity(_doc.MinimumAbsoluteSizePt, Altaxo.Units.Length.Point.Instance).AsQuantityIn(MinimumAbsoluteSizeEnvironment.DefaultUnit);
@@ -84,8 +97,14 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets or sets the environment for the minimum relative size.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment MinimumRelativeSizeEnvironment { get; set; } = Altaxo.Gui.RelationEnvironment.Instance;
 
+    /// <summary>
+    /// Gets or sets the minimum relative size.
+    /// </summary>
     public DimensionfulQuantity MinimumRelativeSize
     {
       get => new DimensionfulQuantity(_doc.MinimumRelativeSize, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(MinimumRelativeSizeEnvironment.DefaultUnit);
@@ -102,11 +121,13 @@ namespace Altaxo.Gui.Common.Drawing
 
     #endregion
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;

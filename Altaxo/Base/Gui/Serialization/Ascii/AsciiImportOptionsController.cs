@@ -33,58 +33,121 @@ using Altaxo.Serialization.Ascii;
 
 namespace Altaxo.Gui.Serialization.Ascii
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="AsciiImportOptionsController"/>.
+  /// </summary>
   public interface IAsciiImportOptionsView : IDataContextAwareView
   {
+    /// <summary>
+    /// Occurs when analysis of the ASCII input is requested.
+    /// </summary>
     public event Action DoAnalyze;
 
+    /// <summary>
+    /// Occurs when the selected separation strategy changes.
+    /// </summary>
     public event Action SeparationStrategyChanged;
 
+    /// <summary>
+    /// Gets or sets the number of main header lines.
+    /// </summary>
     public int? NumberOfMainHeaderLines { get; set; }
 
+    /// <summary>
+    /// Gets or sets the index of the caption line.
+    /// </summary>
     public int? IndexOfCaptionLine { get; set; }
 
+    /// <summary>
+    /// Sets the list of available separation strategies.
+    /// </summary>
+    /// <param name="list">The selectable list of separation strategies.</param>
     public void SetGuiSeparationStrategy(SelectableListNodeList list);
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the separation strategy is known.
+    /// </summary>
     public bool GuiSeparationStrategyIsKnown { get; set; }
 
+    /// <summary>
+    /// Sets the list of available number-format cultures.
+    /// </summary>
+    /// <param name="list">The selectable list of cultures.</param>
     public void SetNumberFormatCulture(SelectableListNodeList list);
 
-    public bool NumberFormatCultureIsKnowm { get; set; }
+    /// <summary>
+    /// Gets or sets a value indicating whether the number-format culture is known.
+    /// </summary>
+    public bool NumberFormatCultureIsKnown { get; set; }
 
+    /// <summary>
+    /// Sets the list of available date/time-format cultures.
+    /// </summary>
+    /// <param name="list">The selectable list of cultures.</param>
     public void SetDateTimeFormatCulture(SelectableListNodeList list);
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the date/time-format culture is known.
+    /// </summary>
     public bool DateTimeFormatCultureIsKnown { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the table structure is known.
+    /// </summary>
     public bool TableStructureIsKnown { get; set; }
 
+    /// <summary>
+    /// Sets the detected table structure.
+    /// </summary>
     public System.Collections.ObjectModel.ObservableCollection<Boxed<AsciiColumnType>> TableStructure { set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether columns are renamed from header names.
+    /// </summary>
     public bool RenameColumnsWithHeaderNames { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the worksheet is renamed from the file name.
+    /// </summary>
     public bool RenameWorksheetWithFileName { get; set; }
 
+    /// <summary>
+    /// Sets the possible destinations for header lines.
+    /// </summary>
     public SelectableListNodeList HeaderLinesDestination { set; }
 
+    /// <summary>
+    /// Sets the detail view for the selected separation strategy.
+    /// </summary>
     public object AsciiSeparationStrategyDetailView { set; }
 
+    /// <summary>
+    /// Gets the view for the ASCII document analysis options.
+    /// </summary>
     public object AsciiDocumentAnalysisOptionsView { get; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether multiple ASCII streams are imported vertically.
+    /// </summary>
     public bool ImportMultipleAsciiVertically { get; set; }
   }
 
   /// <summary>
-  /// Supports getting a stream of analysis data. Any function using the <see cref="AsciiImportOptionsController"/> can create an object which implemnts
-  /// this interface, and providing this object as second argument to the InitializeDocument function of the controller.
+  /// Supports getting a stream of analysis data. Any function using the <see cref="AsciiImportOptionsController"/> can create an object that implements
+  /// this interface and provide this object as second argument to the <c>InitializeDocument</c> function of the controller.
   /// </summary>
   public interface IAsciiImportOptionsAnalysisDataProvider
   {
     /// <summary>
-    /// Gets a stream for analysis of the ASCII file. If the stream could not be opened (file unavailable), this function will return null without throwinga an exception.
+    /// Gets a stream for analysis of the ASCII file. If the stream could not be opened (file unavailable), this function returns <see langword="null"/> without throwing an exception.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The stream for analysis, or <see langword="null"/>.</returns>
     public System.IO.Stream GetStreamForAnalysis();
   }
 
+  /// <summary>
+  /// Controller for <see cref="AsciiImportOptions"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IAsciiImportOptionsView))]
   [UserControllerForObject(typeof(AsciiImportOptions))]
   public class AsciiImportOptionsController : MVCANControllerEditImmutableDocBase<AsciiImportOptions, IAsciiImportOptionsView>
@@ -105,6 +168,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 
     private AsciiDocumentAnalysisOptions _analysisOptions;
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_separationStrategyInstanceController, () => _separationStrategyInstanceController = null);
@@ -113,6 +177,9 @@ namespace Altaxo.Gui.Serialization.Ascii
 
     #region Bindings
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the encoding is detected from byte-order marks.
+    /// </summary>
     public bool DetectEncodingFromByteOrderMarks
     {
       get => field;
@@ -126,6 +193,9 @@ namespace Altaxo.Gui.Serialization.Ascii
       }
     }
 
+    /// <summary>
+    /// Gets or sets the controller for selecting the code page.
+    /// </summary>
     public ItemsController<int> CodePage
     {
       get => field;
@@ -144,6 +214,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 
     #endregion
 
+    /// <inheritdoc />
     public override bool InitializeDocument(params object[] args)
     {
       if (args is not null && args.Length >= 2 && args[1] is System.IO.Stream)
@@ -159,6 +230,7 @@ namespace Altaxo.Gui.Serialization.Ascii
       return base.InitializeDocument(args);
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -219,7 +291,7 @@ namespace Altaxo.Gui.Serialization.Ascii
         _view.SetGuiSeparationStrategy(_separationStrategyList);
         EhSeparationStrategyChanged();
 
-        _view.NumberFormatCultureIsKnowm = _doc.NumberFormatCulture is not null;
+        _view.NumberFormatCultureIsKnown = _doc.NumberFormatCulture is not null;
         _view.DateTimeFormatCultureIsKnown = _doc.DateTimeFormatCulture is not null;
         _view.TableStructureIsKnown = _doc.RecognizedStructure is not null;
 
@@ -254,7 +326,7 @@ namespace Altaxo.Gui.Serialization.Ascii
         RenameColumns = _view.RenameColumnsWithHeaderNames,
         RenameWorksheet = _view.RenameWorksheetWithFileName,
         ImportMultipleStreamsVertically = _view.ImportMultipleAsciiVertically,
-        NumberFormatCulture = _view.NumberFormatCultureIsKnowm ? (CultureInfo)_numberFormatList.FirstSelectedNode.Tag : null,
+        NumberFormatCulture = _view.NumberFormatCultureIsKnown ? (CultureInfo)_numberFormatList.FirstSelectedNode.Tag : null,
         DateTimeFormatCulture = _view.DateTimeFormatCultureIsKnown ? (CultureInfo)_dateTimeFormatList.FirstSelectedNode.Tag : null,
         SeparationStrategy = newSeparationStrategy,
         RecognizedStructure = _view.TableStructureIsKnown ? (recognizedStructure.Count == 0 ? null : recognizedStructure) : null,
@@ -264,6 +336,7 @@ namespace Altaxo.Gui.Serialization.Ascii
       return true;
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (!ApplyWithoutClosing())
@@ -283,6 +356,7 @@ namespace Altaxo.Gui.Serialization.Ascii
       return ApplyEnd(true, disposeController);
     }
 
+    /// <inheritdoc />
     protected override void AttachView()
     {
       base.AttachView();
@@ -291,6 +365,7 @@ namespace Altaxo.Gui.Serialization.Ascii
       _view.SeparationStrategyChanged += EhSeparationStrategyChanged;
     }
 
+    /// <inheritdoc />
     protected override void DetachView()
     {
       _view.DoAnalyze -= EhDoAsciiAnalysis;

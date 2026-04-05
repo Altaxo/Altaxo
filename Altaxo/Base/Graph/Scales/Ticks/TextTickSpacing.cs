@@ -33,6 +33,9 @@ using Altaxo.Data;
 
 namespace Altaxo.Graph.Scales.Ticks
 {
+  /// <summary>
+  /// Represents tick-spacing settings for text scales.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Graph.Scales.Ticks.TextTickSpacing}")]
   public class TextTickSpacing : TickSpacing
   {
@@ -45,11 +48,13 @@ namespace Altaxo.Graph.Scales.Ticks
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextTickSpacing), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (TextTickSpacing)obj;
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (TextTickSpacing?)o ?? new TextTickSpacing();
@@ -61,6 +66,9 @@ namespace Altaxo.Graph.Scales.Ticks
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextTickSpacing"/> class.
+    /// </summary>
     public TextTickSpacing()
     {
       _majorTicks = new List<AltaxoVariant>();
@@ -69,12 +77,20 @@ namespace Altaxo.Graph.Scales.Ticks
     }
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextTickSpacing"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public TextTickSpacing(TextTickSpacing from)
       : base(from)// everything is done here, since CopyFrom is virtual!
     {
     }
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
+    /// <summary>
+    /// Copies the state from another <see cref="TextTickSpacing"/> instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     protected void CopyFrom(TextTickSpacing from)
     {
       using (var suspendToken = SuspendGetToken())
@@ -88,6 +104,7 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -102,21 +119,25 @@ namespace Altaxo.Graph.Scales.Ticks
       return false;
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new TextTickSpacing(this);
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
     }
 
+    /// <inheritdoc />
     public override bool PreProcessScaleBoundaries(ref Altaxo.Data.AltaxoVariant org, ref Altaxo.Data.AltaxoVariant end, bool isOrgExtendable, bool isEndExtendable)
     {
       return false;
     }
 
+    /// <inheritdoc />
     public override void FinalProcessScaleBoundaries(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end, Scale scale)
     {
       _minorTicks.Clear();
@@ -167,16 +188,19 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <inheritdoc />
     public override Altaxo.Data.AltaxoVariant[] GetMajorTicksAsVariant()
     {
       return _majorTextTicks.ToArray();
     }
 
+    /// <inheritdoc />
     public override Altaxo.Data.AltaxoVariant[] GetMinorTicksAsVariant()
     {
       return _minorTicks.ToArray();
     }
 
+    /// <inheritdoc />
     public override double[] GetMajorTicksNormal(Scale scale)
     {
       double[] result = new double[_majorTicks.Count];

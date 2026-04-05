@@ -31,6 +31,9 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Main
 {
+  /// <summary>
+  /// Describes the kind of project-related event.
+  /// </summary>
   public enum ProjectEventKind
   {
     /// <summary>Occurs before a new project is opened from file. Not fired when a new project is created internally.</summary>
@@ -53,7 +56,7 @@ namespace Altaxo.Main
   }
 
   /// <summary>
-  /// Usefull to indicate the change of an Altaxo project.
+  /// Provides information about a change of an Altaxo project.
   /// </summary>
   public class ProjectEventArgs : EventArgs
   {
@@ -77,7 +80,7 @@ namespace Altaxo.Main
     public string? NewName { get; private set; }
 
     /// <summary>
-    /// Constructor.
+    /// Initializes a new instance of the <see cref="ProjectEventArgs"/> class.
     /// </summary>
     /// <param name="project">The project which was changed.</param>
     /// <param name="fileName">The file name of the project.</param>
@@ -91,17 +94,17 @@ namespace Altaxo.Main
   }
 
   /// <summary>
-  /// Usefull to indicate the renaming of an Altaxo project.
+  /// Provides information about the renaming of an Altaxo project.
   /// </summary>
   public class ProjectRenamedEventArgs : ProjectEventArgs
   {
     /// <summary>
-    /// The name of the project before renaming. Null if the project 
+    /// Gets the name of the project before renaming.
     /// </summary>
     public string? OldName { get; private set; }
 
     /// <summary>
-    /// Constructor.
+    /// Initializes a new instance of the <see cref="ProjectRenamedEventArgs"/> class.
     /// </summary>
     /// <param name="renamedProject">The project renamed.</param>
     /// <param name="oldName">The old name of the project.</param>
@@ -348,134 +351,169 @@ namespace Altaxo.Main
     void ExecuteActionsImmediatelyBeforeRunningApplication(string[] cmdArgs, string[] cmdParameter, string[] cmdFiles);
   }
 
+  /// <summary>
+  /// Fallback implementation of <see cref="IProjectService"/> that throws <see cref="NotImplementedException"/> for all members.
+  /// </summary>
   public class ProjectServiceDummyImpl : IProjectService
   {
+    /// <inheritdoc/>
     public IProject CurrentProject => throw new NotImplementedException();
 
+    /// <inheritdoc/>
     public PathName CurrentProjectFileName => throw new NotImplementedException();
 
+    /// <inheritdoc/>
     public IProjectArchiveManager CurrentProjectArchiveManager => throw new NotImplementedException();
 
+    /// <inheritdoc/>
     public IEnumerable<string> ProjectFileExtensions => throw new NotImplementedException();
 
 #pragma warning disable CS0067
+    /// <inheritdoc/>
     public event EventHandler<ProjectEventArgs>? ProjectOpened;
+    /// <inheritdoc/>
     public event EventHandler<ProjectEventArgs>? ProjectClosed;
+    /// <inheritdoc/>
     public event EventHandler<ProjectRenamedEventArgs>? ProjectRenamed;
+    /// <inheritdoc/>
     public event EventHandler<ProjectEventArgs>? ProjectDirtyChanged;
+    /// <inheritdoc/>
     public event EventHandler<ProjectEventArgs>? ProjectChanged;
 #pragma warning restore CS0067
 
+    /// <inheritdoc/>
     public void AskForSavingOfProject(CancelEventArgs e)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public void CloseDocumentViews(object document)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public bool CloseProject(bool forceClose)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public void CloseViewContent(IViewContent content)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public void CreateInitialProject()
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public void DeleteDocument(IProjectItem document, bool force)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public void DisposeProjectAndSetToNull()
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public IProjectArchiveManager? ExchangeCurrentProjectArchiveManagerTemporarilyWithoutDisposing(IProjectArchiveManager? newManager)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public void ExecuteActionsImmediatelyBeforeRunningApplication(string[] cmdArgs, string[] cmdParameter, string[] cmdFiles)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public string GetMainWindowTitle()
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public HashSet<object> GetOpenDocuments()
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public bool HasDocumentAnOpenView(object document)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public bool IsProjectFileExtension(string extension)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public object OpenOrCreateViewContentForDocument(IProjectItem document)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public void OpenProject(PathName pathName, bool showUserInteraction)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public void OpenProjectFromArchive(IProjectArchive istream)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public void SaveProject(PathName fileOrFolderName)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public IDictionary<string, IProjectItem> SaveProject(IProjectArchive archive)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public void SaveProject()
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public void SaveProjectAs()
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public void SaveProjectCopyAs()
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public object? ShowDocumentView(object document)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public bool TryOpenProjectItemFile(FileName fileName, bool forceTrialRegardlessOfExtension)
     {
       throw new NotImplementedException();

@@ -35,6 +35,9 @@ namespace Altaxo.Graph.Plot.Data
   /// </summary>
   public class ColumnPlotDataExchangeColumnsData : ColumnPlotDataExchangeDataBase, ICloneable
   {
+    /// <summary>
+    /// The common column definitions shared by the selected plot items.
+    /// </summary>
     protected List<(string ColumnGroup, string ColumnLabel, string? ColumnName, string? NewColumnName)> _columns = new List<(string ColumnGroup, string ColumnLabel, string? ColumnName, string? NewColumnName)>();
 
     /// <summary>
@@ -46,8 +49,14 @@ namespace Altaxo.Graph.Plot.Data
     /// </value>
     public IReadOnlyList<(string ColumnGroup, string ColumnLabel, string? ColumnName, string? NewColumnName)> Columns { get { return _columns; } }
 
+    /// <summary>
+    /// The tables participating in the column exchange operation.
+    /// </summary>
     protected List<DataTable> _tables = new List<DataTable>();
 
+    /// <summary>
+    /// Gets or sets the group number used when applying exchanged columns.
+    /// </summary>
     public int GroupNumber { get; set; }
 
     /// <summary>

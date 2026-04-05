@@ -30,6 +30,9 @@ using Altaxo.Data;
 
 namespace Altaxo.Serialization.WITec
 {
+  /// <summary>
+  /// Table data source for importing WITec project files.
+  /// </summary>
   public class WITecImportDataSource : FileImportTableDataSourceBase<WITecImportOptions>
   {
     #region Serialization
@@ -42,6 +45,7 @@ namespace Altaxo.Serialization.WITec
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WITecImportDataSource), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (WITecImportDataSource)obj;
@@ -51,6 +55,7 @@ namespace Altaxo.Serialization.WITec
         info.AddArray("ProcessData", s._files.ToArray(), s._files.Count);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (o is WITecImportDataSource s)
@@ -96,30 +101,42 @@ namespace Altaxo.Serialization.WITec
 
     #region Construction
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WITecImportDataSource"/> class for a single file.
+    /// </summary>
     public WITecImportDataSource(string fileName, WITecImportOptions options)
       : this(new string[] { fileName }, options)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WITecImportDataSource"/> class for multiple files.
+    /// </summary>
     public WITecImportDataSource(IEnumerable<string> fileNames, WITecImportOptions options)
       : base(fileNames)
     {
       _processOptions = options;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WITecImportDataSource"/> class by copying another instance.
+    /// </summary>
     public WITecImportDataSource(WITecImportDataSource from)
       : base(from)
     {
     }
 
+    /// <inheritdoc />
     public override object Clone() => new WITecImportDataSource(this);
 
     #endregion Construction
+    /// <inheritdoc />
     protected override void ImportFromFiles(string[] validFileNames, DataTable destinationTable, IProgressReporter reporter)
     {
       new WITecImporter().Import(validFileNames, destinationTable, _processOptions, attachDataSource: false);
     }
 
+    /// <inheritdoc />
     public override (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
     {
       return new WITecImporter().GetFileExtensions();

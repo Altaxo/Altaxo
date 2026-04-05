@@ -29,6 +29,9 @@ using Altaxo.Calc;
 
 namespace Altaxo.Analysis.Statistics.Histograms
 {
+  /// <summary>
+  /// Represents logarithmic binning with equally spaced bins on a logarithmic scale.
+  /// </summary>
   public class LogarithmicBinning : IBinning
   {
     #region Inner classes
@@ -42,6 +45,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
         _parent = b;
       }
 
+      /// <inheritdoc/>
       public override Bin this[int index]
       {
         get
@@ -54,6 +58,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
         }
       }
 
+      /// <inheritdoc/>
       public override int Count
       {
         get { return _parent._binCounts.Length; }
@@ -62,12 +67,33 @@ namespace Altaxo.Analysis.Statistics.Histograms
 
     #endregion Inner classes
 
+    /// <summary>
+    /// The logarithmic bin offset.
+    /// </summary>
     protected double _lgBinOffset = double.NaN;
+
+    /// <summary>
+    /// The logarithmic bin width.
+    /// </summary>
     protected double _lgBinWidth = double.NaN;
+
+    /// <summary>
+    /// The number of bins.
+    /// </summary>
     protected int _numberOfBins = 0;
+
+    /// <summary>
+    /// The lower index of the first populated bin.
+    /// </summary>
     protected int _binLowerIndex;
+    /// <summary>
+    /// The number of items in each bin.
+    /// </summary>
     protected int[] _binCounts = new int[0];
     private BinList _binListProxy;
+    /// <summary>
+    /// The total number of data items in the ensemble.
+    /// </summary>
     protected int _ensembleDataCount = 0;
 
     /// <summary>

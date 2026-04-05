@@ -33,6 +33,9 @@ namespace Altaxo.Graph.Plot.Groups
   using Drawing;
   using Drawing.DashPatternManagement;
 
+  /// <summary>
+  /// Style used to group plot items by dash pattern.
+  /// </summary>
   public class DashPatternGroupStyle
     :
     Main.SuspendableDocumentLeafNodeWithEventArgs,
@@ -114,12 +117,19 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DashPatternGroupStyle"/> class.
+    /// </summary>
     public DashPatternGroupStyle()
     {
       _listOfValues = DashPatternListManager.Instance.BuiltinDefault;
       _value = _listOfValues[0];
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DashPatternGroupStyle"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public DashPatternGroupStyle(DashPatternGroupStyle from)
     {
       _isStepEnabled = from._isStepEnabled;
@@ -127,6 +137,7 @@ namespace Altaxo.Graph.Plot.Groups
       _listOfValues = from._listOfValues;
     }
 
+    /// <inheritdoc/>
     public void TransferFrom(IPlotGroupStyle fromb)
     {
       var from = (DashPatternGroupStyle)fromb;
@@ -138,6 +149,10 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region ICloneable Members
 
+    /// <summary>
+    /// Creates a strongly typed clone of this group style.
+    /// </summary>
+    /// <returns>A cloned group style.</returns>
     public DashPatternGroupStyle Clone()
     {
       return new DashPatternGroupStyle(this);
@@ -152,19 +167,23 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region IGroupStyle Members
 
+    /// <inheritdoc/>
     public void BeginPrepare()
     {
       _isInitialized = false;
     }
 
+    /// <inheritdoc/>
     public void PrepareStep()
     {
     }
 
+    /// <inheritdoc/>
     public void EndPrepare()
     {
     }
 
+    /// <inheritdoc/>
     public bool CanCarryOver
     {
       get
@@ -173,6 +192,7 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <inheritdoc/>
     public bool CanStep
     {
       get
@@ -181,6 +201,7 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <inheritdoc/>
     public int Step(int step)
     {
       if (0 == step)
@@ -262,6 +283,9 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region Other members
 
+    /// <summary>
+    /// Gets a value indicating whether the style has been initialized.
+    /// </summary>
     public bool IsInitialized
     {
       get
@@ -270,6 +294,10 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <summary>
+    /// Initializes the style with the specified dash pattern.
+    /// </summary>
+    /// <param name="value">The dash pattern.</param>
     public void Initialize(IDashPattern value)
     {
       if (value is null)
@@ -286,6 +314,9 @@ namespace Altaxo.Graph.Plot.Groups
       SetValueCoercedToGroup(value);
     }
 
+    /// <summary>
+    /// Gets the current dash pattern.
+    /// </summary>
     public IDashPattern DashStyle
     {
       get
@@ -298,6 +329,11 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region Static helpers
 
+    /// <summary>
+    /// Adds the dash-pattern group style to the local collection when required.
+    /// </summary>
+    /// <param name="externalGroups">The external group-style collection.</param>
+    /// <param name="localGroups">The local group-style collection.</param>
     public static void AddLocalGroupStyle(
    IPlotGroupStyleCollection externalGroups,
    IPlotGroupStyleCollection localGroups)
@@ -306,8 +342,17 @@ namespace Altaxo.Graph.Plot.Groups
         localGroups.Add(new DashPatternGroupStyle());
     }
 
+    /// <summary>
+    /// Represents a delegate that returns a dash pattern.
+    /// </summary>
     public delegate IDashPattern Getter();
 
+    /// <summary>
+    /// Prepares a dash-pattern group style for later application.
+    /// </summary>
+    /// <param name="externalGroups">The external group-style collection.</param>
+    /// <param name="localGroups">The local group-style collection.</param>
+    /// <param name="getter">The delegate that supplies the dash pattern.</param>
     public static void PrepareStyle(
       IPlotGroupStyleCollection externalGroups,
       IPlotGroupStyleCollection localGroups,
@@ -330,8 +375,18 @@ namespace Altaxo.Graph.Plot.Groups
         grpStyle.Initialize(getter());
     }
 
+    /// <summary>
+    /// Represents a delegate that applies a dash pattern.
+    /// </summary>
+    /// <param name="c">The dash pattern to apply.</param>
     public delegate void Setter(IDashPattern c);
 
+    /// <summary>
+    /// Applies the prepared dash-pattern group style.
+    /// </summary>
+    /// <param name="externalGroups">The external group-style collection.</param>
+    /// <param name="localGroups">The local group-style collection.</param>
+    /// <param name="setter">The delegate that applies the dash pattern.</param>
     public static void ApplyStyle(
       IPlotGroupStyleCollection externalGroups,
       IPlotGroupStyleCollection localGroups,

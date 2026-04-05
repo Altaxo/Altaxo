@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -30,12 +30,19 @@ using Altaxo.Serialization.Origin;
 
 namespace Altaxo.Gui.Serialization.Origin
 {
+  /// <summary>
+  /// View interface for editing <see cref="OriginImportOptions"/>.
+  /// </summary>
   public interface IOriginImportOptionsView : IDataContextAwareView { }
 
+  /// <summary>
+  /// Controller for editing <see cref="OriginImportOptions"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IOriginImportOptionsView))]
   [UserControllerForObject(typeof(OriginImportOptions))]
   public class OriginImportOptionsController : MVCANControllerEditImmutableDocBase<OriginImportOptions, IOriginImportOptionsView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -45,6 +52,9 @@ namespace Altaxo.Gui.Serialization.Origin
 
     private bool _useNeutralColumnName;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the imported y-column names should be neutral (constant).
+    /// </summary>
     public bool UseNeutralColumnName
     {
       get => _useNeutralColumnName;
@@ -60,6 +70,9 @@ namespace Altaxo.Gui.Serialization.Origin
 
     private string _neutralColumnName;
 
+    /// <summary>
+    /// Gets or sets the neutral base name for imported y-columns.
+    /// </summary>
     public string NeutralColumnName
     {
       get => _neutralColumnName;
@@ -75,6 +88,9 @@ namespace Altaxo.Gui.Serialization.Origin
 
     private bool _includeFilePathAsProperty;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the imported file path should be stored as a column property.
+    /// </summary>
     public bool IncludeFilePathAsProperty
     {
       get => _includeFilePathAsProperty;
@@ -90,6 +106,9 @@ namespace Altaxo.Gui.Serialization.Origin
 
     private bool _ignoreSecondaryData;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether secondary data should be ignored.
+    /// </summary>
     public bool IgnoreSecondaryData
     {
       get => _ignoreSecondaryData;
@@ -103,13 +122,22 @@ namespace Altaxo.Gui.Serialization.Origin
       }
     }
 
+    /// <summary>
+    /// Model class used for binding a single Origin path string in the UI.
+    /// </summary>
     public class IndexClass
     {
+      /// <summary>
+      /// Gets or sets the origin path identifier.
+      /// </summary>
       public string Index { get; set; }
     }
 
     private ObservableCollection<IndexClass> _indicesOfGraphs;
 
+    /// <summary>
+    /// Gets or sets the list of graph indices / paths to import.
+    /// </summary>
     public ObservableCollection<IndexClass> IndicesOfGraphs
     {
       get => _indicesOfGraphs;
@@ -128,6 +156,7 @@ namespace Altaxo.Gui.Serialization.Origin
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -141,6 +170,7 @@ namespace Altaxo.Gui.Serialization.Origin
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = _doc with

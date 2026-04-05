@@ -27,7 +27,7 @@ using System.Collections.Generic;
 namespace Altaxo.Data
 {
   /// <summary>
-  /// Options for clearing one or multiple data tables.
+  /// Options for clearing one or more data tables.
   /// </summary>
   public record DataTableCleaningOptions
   {

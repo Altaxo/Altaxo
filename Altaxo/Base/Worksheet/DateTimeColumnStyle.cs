@@ -31,6 +31,9 @@ using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Worksheet
 {
+  /// <summary>
+  /// Represents the worksheet style used for date-time data columns.
+  /// </summary>
   public class DateTimeColumnStyle : Altaxo.Worksheet.ColumnStyle
   {
     #region Serialization
@@ -38,12 +41,14 @@ namespace Altaxo.Worksheet
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DateTimeColumnStyle), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DateTimeColumnStyle)obj;
         info.AddBaseValueEmbedded(s, typeof(DateTimeColumnStyle).BaseType!);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         DateTimeColumnStyle s = o is not null ? (DateTimeColumnStyle)o : new DateTimeColumnStyle();
@@ -54,6 +59,9 @@ namespace Altaxo.Worksheet
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DateTimeColumnStyle"/> class.
+    /// </summary>
     public DateTimeColumnStyle()
       : base(ColumnStyleType.DataCell)
     {
@@ -61,22 +69,29 @@ namespace Altaxo.Worksheet
       _textFormat.FormatFlags = StringFormatFlags.LineLimit;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DateTimeColumnStyle"/> class by copying another instance.
+    /// </summary>
+    /// <param name="dtcs">The instance to copy.</param>
     public DateTimeColumnStyle(DateTimeColumnStyle dtcs)
       : base(dtcs)
     {
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new DateTimeColumnStyle(this);
     }
 
+    /// <inheritdoc />
     public override string GetColumnValueAtRow(int nRow, Altaxo.Data.DataColumn data)
     {
       DateTime val = ((Altaxo.Data.DateTimeColumn)data)[nRow];
       return val == Altaxo.Data.DateTimeColumn.NullValue ? "" : val.ToString("o", Altaxo.Settings.GuiCulture.Instance);
     }
 
+    /// <inheritdoc />
     public override void SetColumnValueAtRow(string s, int nRow, Altaxo.Data.DataColumn data)
     {
       if (!DateTime.TryParse(s, Altaxo.Settings.GuiCulture.Instance, System.Globalization.DateTimeStyles.RoundtripKind, out var newval))
@@ -85,6 +100,7 @@ namespace Altaxo.Worksheet
       ((Altaxo.Data.DateTimeColumn)data)[nRow] = newval;
     }
 
+    /// <inheritdoc />
     public override void Paint(Graphics dc, Rectangle cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
     {
       PaintBackground(dc, cellRectangle, bSelected);
@@ -105,8 +121,12 @@ namespace Altaxo.Worksheet
 
     }
 
+    /// <summary>
+    /// Gets the registered paint methods for specific drawing contexts.
+    /// </summary>
     public static Dictionary<System.Type, Action<DateTimeColumnStyle, object, RectangleD2D, int, Altaxo.Data.DataColumn, bool>> RegisteredPaintMethods = new Dictionary<Type, Action<DateTimeColumnStyle, object, RectangleD2D, int, Data.DataColumn, bool>>();
 
+    /// <inheritdoc />
     public override void Paint(System.Type dctype, object dc, RectangleD2D cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
     {
       if (RegisteredPaintMethods.TryGetValue(dctype, out var action))

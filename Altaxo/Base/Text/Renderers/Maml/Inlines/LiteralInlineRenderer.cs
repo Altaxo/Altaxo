@@ -33,6 +33,9 @@ namespace Altaxo.Text.Renderers.Maml.Inlines
   /// <seealso cref="MamlObjectRenderer{T}" />
   public class LiteralInlineRenderer : MamlObjectRenderer<LiteralInline>
   {
+    /// <summary>
+    /// Writes a literal inline.
+    /// </summary>
     /// <inheritdoc/>
     protected override void Write(MamlRenderer renderer, LiteralInline obj)
     {

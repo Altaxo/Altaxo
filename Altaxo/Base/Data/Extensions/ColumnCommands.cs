@@ -28,6 +28,9 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Data
 {
+  /// <summary>
+  /// Commands operating on data columns.
+  /// </summary>
   public static class ColumnCommands
   {
     #region Rename column
@@ -108,6 +111,13 @@ namespace Altaxo.Data
       }
     }
 
+    /// <summary>
+    /// Sets the group number for the selected data and property columns of a table.
+    /// </summary>
+    /// <param name="dataTable">The table containing the columns.</param>
+    /// <param name="selectedDataColumns">The selected data columns.</param>
+    /// <param name="selectedPropColumns">The selected property columns.</param>
+    /// <param name="nGroup">The target group number.</param>
     public static void SetColumnGroupNumber(
       this DataTable dataTable,
       IAscendingIntegerCollection selectedDataColumns,
@@ -119,11 +129,12 @@ namespace Altaxo.Data
     }
 
     /// <summary>
-    /// Sets the group number of the selected column
+    /// Shows a dialog for setting the group number of the selected columns.
     /// </summary>
-    /// <param name="dataTable">The data table</param>
-    /// <param name="selectedDataColumns">Indices of the currently selected data column of the table</param>
+    /// <param name="dataTable">The data table.</param>
+    /// <param name="selectedDataColumns">Indices of the currently selected data columns of the table.</param>
     /// <param name="selectedPropColumns">Indices of the currently selected property columns of the table.</param>
+    /// <returns><c>true</c> if the group number was changed; otherwise, <c>false</c>.</returns>
     public static bool ShowSetColumnGroupNumberDialog(this DataTable dataTable,
       IAscendingIntegerCollection selectedDataColumns,
       IAscendingIntegerCollection selectedPropColumns)

@@ -30,6 +30,9 @@ using System.Text;
 
 namespace Altaxo.Drawing.DashPatterns
 {
+  /// <summary>
+  /// Built-in dash-dot-dot pattern.
+  /// </summary>
   public class DashDotDot : DashPatternBase
   {
     /// <summary>
@@ -62,6 +65,7 @@ namespace Altaxo.Drawing.DashPatterns
 
     #endregion Serialization
 
+    /// <inheritdoc/>
     public override double this[int index]
     {
       get
@@ -96,6 +100,7 @@ namespace Altaxo.Drawing.DashPatterns
       }
     }
 
+    /// <inheritdoc/>
     public override int Count
     {
       get

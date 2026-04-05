@@ -29,12 +29,19 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
 {
+  /// <summary>
+  /// View interface for peak fitting by incremental peak addition.
+  /// </summary>
   public interface IPeakFittingByIncrementalPeakAdditionView : IDataContextAwareView { }
 
+  /// <summary>
+  /// Controller for <see cref="PeakFittingByIncrementalPeakAddition"/>.
+  /// </summary>
   [UserControllerForObject(typeof(PeakFittingByIncrementalPeakAddition))]
   [ExpectedTypeOfView(typeof(IPeakFittingByIncrementalPeakAdditionView))]
   public class PeakFittingByIncrementalPeakAdditionController : PeakFittingBaseController<PeakFittingByIncrementalPeakAddition, IPeakFittingByIncrementalPeakAdditionView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -44,6 +51,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
 
     private int _orderOfBaselinePolynomial;
 
+    /// <summary>
+    /// Gets or sets the order of the baseline polynomial.
+    /// </summary>
     public int OrderOfBaselinePolynomial
     {
       get => _orderOfBaselinePolynomial;
@@ -59,6 +69,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
 
     private int _maximumNumberOfPeaks;
 
+    /// <summary>
+    /// Gets or sets the maximum number of peaks.
+    /// </summary>
     public int MaximumNumberOfPeaks
     {
       get => _maximumNumberOfPeaks;
@@ -73,10 +86,16 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
     }
 
 
+    /// <summary>
+    /// Gets the unit environment for relative-height values.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment MinimalRelativeHeightEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _minimalRelativeHeight;
 
+    /// <summary>
+    /// Gets or sets the minimal relative height.
+    /// </summary>
     public DimensionfulQuantity MinimalRelativeHeight
     {
       get => _minimalRelativeHeight;
@@ -92,6 +111,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
 
     private DimensionfulQuantity _minimalSignalToNoiseRatio;
 
+    /// <summary>
+    /// Gets or sets the minimal signal-to-noise ratio.
+    /// </summary>
     public DimensionfulQuantity MinimalSignalToNoiseRatio
     {
       get => _minimalSignalToNoiseRatio;
@@ -108,6 +130,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
 
     private bool _useSeparatePeaksForErrorEvaluation;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether separate peaks are used for error evaluation.
+    /// </summary>
     public bool UseSeparatePeaksForErrorEvaluation
     {
       get => _useSeparatePeaksForErrorEvaluation;
@@ -123,6 +148,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
 
     private DimensionfulQuantity _prunePeaksSumChiSquareFactor;
 
+    /// <summary>
+    /// Gets or sets the prune-peaks chi-square factor.
+    /// </summary>
     public DimensionfulQuantity PrunePeaksSumChiSquareFactor
     {
       get => _prunePeaksSumChiSquareFactor;
@@ -139,6 +167,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -166,6 +195,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       try

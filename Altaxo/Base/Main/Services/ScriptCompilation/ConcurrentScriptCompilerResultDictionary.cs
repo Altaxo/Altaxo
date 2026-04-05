@@ -34,8 +34,8 @@ using System.Threading.Tasks;
 namespace Altaxo.Main.Services.ScriptCompilation
 {
   /// <summary>
-  /// Stores results of the script compilation process. Both successfull and unsuccessful results are stored, in
-  /// order to avoid unneccessary compilation attempts.
+  /// Stores results of the script compilation process. Both successful and unsuccessful results are stored in
+  /// order to avoid unnecessary compilation attempts.
   /// </summary>
   public class ConcurrentScriptCompilerResultDictionary
   {
@@ -111,7 +111,7 @@ namespace Altaxo.Main.Services.ScriptCompilation
     /// </summary>
     /// <param name="assembly">The compiled assembly.</param>
     /// <param name="result">Returns the compilation result corresponding to the assembly (always a successful compilation result).</param>
-    /// <returns>True if the compulation result corresponding to this assembly could be found, otherwise, false.</returns>
+    /// <returns><c>true</c> if the compilation result corresponding to this assembly could be found; otherwise, <c>false</c>.</returns>
     public bool TryGetValue(Assembly assembly, [MaybeNullWhen(false)] out ScriptCompilerSuccessfulResult result)
     {
       if (assembly is null)

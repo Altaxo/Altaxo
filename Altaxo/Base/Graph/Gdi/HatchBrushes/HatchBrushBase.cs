@@ -32,10 +32,22 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.HatchBrushes
 {
+  /// <summary>
+  /// Provides the base implementation for repeatable hatch brush textures.
+  /// </summary>
   public abstract class HatchBrushBase : ImageProxy, IHatchBrushTexture
   {
+    /// <summary>
+    /// The default effective resolution in dpi.
+    /// </summary>
     protected const double DefaultEffectiveResolution = 300;
+    /// <summary>
+    /// The default background color for generated hatch textures.
+    /// </summary>
     protected static readonly NamedColor _defaultBackColor = NamedColors.Transparent;
+    /// <summary>
+    /// The default foreground color for generated hatch textures.
+    /// </summary>
     protected static readonly NamedColor _defaultForeColor = NamedColors.Black;
 
     /// <summary>
@@ -74,8 +86,16 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
 
     #endregion Serialization
 
+    /// <summary>
+    /// Creates the hatch image for the specified resolution and colors.
+    /// </summary>
+    /// <param name="maxEffectiveResolutionDpi">The maximum effective resolution in DPI.</param>
+    /// <param name="foreColor">The foreground color.</param>
+    /// <param name="backColor">The background color.</param>
+    /// <returns>The generated image.</returns>
     protected abstract Image GetImage(double maxEffectiveResolutionDpi, NamedColor foreColor, NamedColor backColor);
 
+    /// <inheritdoc />
     public virtual System.IO.Stream GetContentStream(double maxEffectiveResolutionDpi, NamedColor foreColor, NamedColor backColor)
     {
       var str = new System.IO.MemoryStream();
@@ -88,11 +108,15 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
       return str;
     }
 
+    /// <inheritdoc />
     public override VectorD2D Size
     {
       get { return new VectorD2D(_repeatLengthPt, _repeatLengthPt); }
     }
 
+    /// <summary>
+    /// Gets the repeat length in points.
+    /// </summary>
     [System.ComponentModel.Editor(typeof(Altaxo.Gui.Common.LengthValueInPointController), typeof(Altaxo.Gui.IMVCANController))]
     [Altaxo.Main.Services.PropertyReflection.DisplayOrder(1)]
     public double RepeatLength
@@ -100,6 +124,11 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
       get { return _repeatLengthPt; }
     }
 
+    /// <summary>
+    /// Creates a copy with a different repeat length.
+    /// </summary>
+    /// <param name="repeatLength">The repeat length in points.</param>
+    /// <returns>The updated instance or this instance if unchanged.</returns>
     public HatchBrushBase WithRepeatLength(double repeatLength)
     {
       if (!(_repeatLengthPt == repeatLength))
@@ -114,6 +143,9 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
       }
     }
 
+    /// <summary>
+    /// Gets the structure factor.
+    /// </summary>
     [System.ComponentModel.Editor(typeof(Altaxo.Gui.Common.RelationValueInUnityController), typeof(Altaxo.Gui.IMVCANController))]
     [Altaxo.Main.Services.PropertyReflection.DisplayOrder(2)]
     public double StructureFactor
@@ -121,6 +153,11 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
       get { return _structureFactor; }
     }
 
+    /// <summary>
+    /// Creates a copy with a different structure factor.
+    /// </summary>
+    /// <param name="structureFactor">The structure factor.</param>
+    /// <returns>The updated instance or this instance if unchanged.</returns>
     public HatchBrushBase WithStructureFactor(double structureFactor)
     {
       if (!(_structureFactor == structureFactor))
@@ -135,6 +172,11 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
       }
     }
 
+    /// <summary>
+    /// Calculates the bitmap dimension used to generate the hatch texture.
+    /// </summary>
+    /// <param name="maxEffectiveResolutionDpi">The maximum effective resolution in dpi.</param>
+    /// <returns>The bitmap dimension in pixels.</returns>
     protected int GetPixelDimensions(double maxEffectiveResolutionDpi)
     {
       // use a factor of 2 for safety, thus we have at least two pixels of the bitmap mapping to 1 pixel of the drawing
@@ -145,6 +187,7 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
       return pixels;
     }
 
+    /// <inheritdoc />
     public override string ContentHash
     {
       get
@@ -153,6 +196,7 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
       }
     }
 
+    /// <inheritdoc />
     public override string Name
     {
       get { return GetType().ToString(); }
@@ -160,16 +204,19 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
 
 
 
+    /// <inheritdoc />
     public virtual System.IO.Stream GetContentStream(double maxEffectiveResolutionDpi)
     {
       return GetContentStream(maxEffectiveResolutionDpi, _defaultForeColor, _defaultBackColor);
     }
 
+    /// <inheritdoc />
     public override System.IO.Stream GetContentStream()
     {
       return GetContentStream(300);
     }
 
+    /// <inheritdoc />
     public override bool IsValid
     {
       get { return true; }

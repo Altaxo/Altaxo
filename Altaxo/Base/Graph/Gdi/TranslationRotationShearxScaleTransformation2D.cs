@@ -287,14 +287,15 @@ namespace Altaxo.Graph.Gdi
     }
 
     /// <summary>
-    /// Sets the value for translation, roation, shear and scale from a transformation matrix.
+    /// Sets translation, rotation, shear, and scale from a transformation matrix.
     /// </summary>
-    /// <param name="transformation"></param>
+    /// <param name="transformation">The transformation matrix.</param>
     public void SetFrom(MatrixD2D transformation)
     {
       SetTranslationRotationShearxScale(transformation.X, transformation.Y, transformation.Rotation, transformation.Shear, transformation.ScaleX, transformation.ScaleY);
     }
 
+    /// <inheritdoc />
     public override void EhSelfChanged()
     {
       _transformation.SetTranslationRotationShearxScale(_x, _y, _rotationDeg, _shearX, _scaleX, _scaleY);

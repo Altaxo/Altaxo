@@ -30,7 +30,7 @@ using Altaxo.Collections;
 namespace Altaxo.Gui.Common
 {
   /// <summary>
-  /// Helper class for list boxed and other item controls with single selection mode.
+  /// Helper class for list boxes and other item controls with single-selection mode.
   /// </summary>
   /// <typeparam name="TItem">The type of the item.</typeparam>
   public class ItemsController<TItem> : INotifyPropertyChanged, IDisposable
@@ -39,11 +39,17 @@ namespace Altaxo.Gui.Common
     /// Occurs when a property value changes.
     /// </summary>
     public event PropertyChangedEventHandler? PropertyChanged;
+    /// <summary>
+    /// Raises the <see cref="PropertyChanged"/> event.
+    /// </summary>
     protected virtual void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
     Action<TItem>? _onSelectedValueChanged;
     Action<(TItem OldSelection, int OldIndex, TItem NewSelection, int NewIndex)>? _onSelectedValueChangedEx;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ItemsController{TItem}"/> class.
+    /// </summary>
     public ItemsController()
     {
     }
@@ -71,6 +77,11 @@ namespace Altaxo.Gui.Common
       Initialize(list, OnSelectedItemChanged);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ItemsController{TItem}"/> class.
+    /// </summary>
+    /// <param name="list">The list of selectable nodes.</param>
+    /// <param name="OnSelectedItemChanged">An optional callback that receives old and new selection information.</param>
     public ItemsController(SelectableListNodeList list, Action<(TItem OldSelection, int OldIndex, TItem NewSelection, int NewIndex)> OnSelectedItemChanged)
     {
       _onSelectedValueChangedEx = OnSelectedItemChanged;
@@ -112,6 +123,7 @@ namespace Altaxo.Gui.Common
       OnPropertyChanged(nameof(SelectedValue));
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
       // The order of the calls is important here
@@ -201,6 +213,9 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <summary>
+    /// Gets the index of the specified item.
+    /// </summary>
     protected int GetIndexOf(SelectableListNode item)
     {
       int result = -1;

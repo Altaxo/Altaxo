@@ -34,6 +34,9 @@ using Altaxo.Graph.Scales.Ticks;
 
 namespace Altaxo.Graph.Graph3D.Axis
 {
+  /// <summary>
+  /// Represents the drawing style of grid lines on a three-dimensional grid plane.
+  /// </summary>
   [Serializable]
   public class GridStyle
     :
@@ -52,9 +55,13 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <summary>
     /// 2015-11-14 initial version.
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="GridStyle"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GridStyle), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (GridStyle)obj;
@@ -70,6 +77,7 @@ namespace Altaxo.Graph.Graph3D.Axis
         }
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         GridStyle s = SDeserialize(o, info, parent);
@@ -99,16 +107,27 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GridStyle"/> class.
+    /// </summary>
     public GridStyle()
     {
       _showGrid = true;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GridStyle"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public GridStyle(GridStyle from)
     {
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies values from another <see cref="GridStyle"/> instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public void CopyFrom(GridStyle from)
     {
       if (ReferenceEquals(this, from))
@@ -121,11 +140,15 @@ namespace Altaxo.Graph.Graph3D.Axis
       _showZeroOnly = from._showZeroOnly;
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Gets or sets the pen used for major grid lines.
+    /// </summary>
     public PenX3D MajorPen
     {
       get
@@ -139,6 +162,9 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets the pen used for minor grid lines.
+    /// </summary>
     public PenX3D MinorPen
     {
       get
@@ -152,6 +178,9 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether grid lines are shown.
+    /// </summary>
     public bool ShowGrid
     {
       get { return _showGrid; }
@@ -165,6 +194,9 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether minor grid lines are shown.
+    /// </summary>
     public bool ShowMinor
     {
       get { return _showMinor; }
@@ -178,6 +210,9 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether only the zero grid line is shown.
+    /// </summary>
     public bool ShowZeroOnly
     {
       get { return _showZeroOnly; }
@@ -191,6 +226,13 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Paints the grid lines according to this style.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="layer">The plot area.</param>
+    /// <param name="plane">The grid plane identifier.</param>
+    /// <param name="axisnumber">The axis number.</param>
     public void Paint(IGraphicsContext3D g, IPlotArea layer, CSPlaneID plane, int axisnumber)
     {
       if (!_showGrid)
@@ -251,6 +293,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     #region ICloneable Members
 
+    /// <inheritdoc/>
     public object Clone()
     {
       return new GridStyle(this);

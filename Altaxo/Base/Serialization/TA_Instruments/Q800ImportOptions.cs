@@ -25,11 +25,25 @@
 
 namespace Altaxo.Serialization.TA_Instruments
 {
+  /// <summary>
+  /// Defines where imported metadata should be stored.
+  /// </summary>
   public enum MetadataDestination
   {
-    Ignore,  // Ignore the metadata
-    PropertyColumn,  // Add the metadata as a column property
-    Notes,  // Add the metadata to the notes of the table
+    /// <summary>
+    /// Ignore the metadata.
+    /// </summary>
+    Ignore,
+
+    /// <summary>
+    /// Add the metadata as a column property.
+    /// </summary>
+    PropertyColumn,
+
+    /// <summary>
+    /// Add the metadata to the notes of the table.
+    /// </summary>
+    Notes,
   };
 
 
@@ -48,6 +62,9 @@ namespace Altaxo.Serialization.TA_Instruments
     /// </summary>
     public bool IncludeFilePathAsProperty { get; init; } = true;
 
+    /// <summary>
+    /// Gets the destination for header-line metadata.
+    /// </summary>
     public MetadataDestination HeaderLinesDestination { get; init; } = MetadataDestination.Ignore;
 
     #region Serialization
@@ -58,6 +75,7 @@ namespace Altaxo.Serialization.TA_Instruments
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Q800ImportOptions), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (Q800ImportOptions)obj;
@@ -66,6 +84,7 @@ namespace Altaxo.Serialization.TA_Instruments
         info.AddEnum("HeaderLinesDestination", s.HeaderLinesDestination);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var convertUnitsToSIUnits = info.GetBoolean("ConvertUnitsToSIUnits");

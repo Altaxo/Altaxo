@@ -34,12 +34,16 @@ namespace Altaxo.Main.Services
   public class DummyProgressReporter
     : IProgressReporter
   {
+    /// <summary>
+    /// Gets the shared dummy reporter instance.
+    /// </summary>
     public static DummyProgressReporter Instance { get; } = new DummyProgressReporter();
 
     private DummyProgressReporter() { }
 
     #region IBackgroundMonitor Members
 
+    /// <inheritdoc/>
     public bool ShouldReportNow
     {
       get
@@ -48,51 +52,62 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <inheritdoc/>
     public void ReportProgress(string text)
     {
     }
 
+    /// <inheritdoc/>
     public void ReportProgress(string text, double progressFraction)
     {
     }
 
+    /// <inheritdoc/>
     public IProgressReporter GetSubTask(double workAmount)
     {
       return this;
     }
 
+    /// <inheritdoc/>
     public IProgressReporter CreateSubTask(double workAmount, CancellationToken cancellationToken)
     {
       return this;
     }
 
+    /// <inheritdoc/>
     public void Report(double value)
     {
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
     }
 
+    /// <inheritdoc/>
     public IProgressReporter GetSubTask(double workAmount, CancellationToken cancellationTokenSoft, CancellationToken cancellationTokenHard)
     {
       return this;
     }
 
+    /// <inheritdoc/>
     public void Report(string value)
     {
 
     }
 
+    /// <inheritdoc/>
     public void Report((string text, double progressFraction) value)
     {
 
     }
 
+    /// <inheritdoc/>
     public void ReportStatus(OperationStatus status)
     {
     }
 
+    /// <inheritdoc/>
     public string ReportText
     {
       get
@@ -101,6 +116,7 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <inheritdoc/>
     public bool CancellationPending
     {
       get
@@ -109,6 +125,7 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <inheritdoc/>
     public double Progress
     {
       get
@@ -120,6 +137,7 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <inheritdoc/>
     public OperationStatus Status
     {
       get
@@ -131,10 +149,13 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <inheritdoc/>
     public string TaskName { get; set; } = string.Empty;
 
+    /// <inheritdoc/>
     public CancellationToken CancellationToken => CancellationToken.None;
 
+    /// <inheritdoc/>
     public CancellationToken CancellationTokenHard => CancellationToken.None;
 
     #endregion IBackgroundMonitor Members

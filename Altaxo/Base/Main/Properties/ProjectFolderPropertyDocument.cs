@@ -53,6 +53,7 @@ namespace Altaxo.Main.Properties
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ProjectFolderPropertyDocument), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ProjectFolderPropertyDocument)obj;
@@ -63,6 +64,9 @@ namespace Altaxo.Main.Properties
         info.AddValueOrNull("Properties", s._propertyBag);
       }
 
+      /// <summary>
+      /// Deserializes into an existing instance.
+      /// </summary>
       public void Deserialize(ProjectFolderPropertyDocument s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         s._name = info.GetString("Name");
@@ -71,6 +75,7 @@ namespace Altaxo.Main.Properties
         s.PropertyBag = info.GetValueOrNull<Main.Properties.PropertyBag>("Properties", s);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = o is not null ? (ProjectFolderPropertyDocument)o : new ProjectFolderPropertyDocument(string.Empty);
@@ -108,7 +113,7 @@ namespace Altaxo.Main.Properties
     /// Copies name and properties from another instance.
     /// </summary>
     /// <param name="obj">The object to copy from.</param>
-    /// <returns><c>True</c> if anything could be copyied.</returns>
+    /// <returns><c>true</c> if anything could be copied.</returns>
     public virtual bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -131,6 +136,7 @@ namespace Altaxo.Main.Properties
       return false;
     }
 
+    /// <inheritdoc/>
     object ICloneable.Clone()
     {
       return new ProjectFolderPropertyDocument(this);
@@ -278,6 +284,7 @@ namespace Altaxo.Main.Properties
       }
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_propertyBag is not null)
@@ -296,6 +303,7 @@ namespace Altaxo.Main.Properties
 
     #region Suspend
 
+    /// <inheritdoc/>
     protected override void AccumulateChangeData(object? sender, EventArgs e)
     {
       _accumulatedEventData = EventArgs.Empty;

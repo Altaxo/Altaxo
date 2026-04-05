@@ -43,6 +43,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   using Geometry;
   using Groups;
 
+  /// <summary>
+  /// Draws 2D vectors from X/Y vector component columns.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Graph.Gdi.Plot.Styles.VectorCartesicPlotStyle}")]
   public class VectorCartesicPlotStyle
     :
@@ -149,6 +152,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(VectorCartesicPlotStyle), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (VectorCartesicPlotStyle)obj;
@@ -182,6 +186,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         info.AddValue("SymbolGapFactor", s._symbolGapFactor);
       }
 
+      /// <summary>
+      /// Deserializes the specified vector plot style instance.
+      /// </summary>
+      /// <param name="o">The existing instance, if any.</param>
+      /// <param name="info">The deserialization info.</param>
+      /// <param name="parent">The parent object.</param>
+      /// <returns>The deserialized vector plot style.</returns>
       protected virtual VectorCartesicPlotStyle SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (VectorCartesicPlotStyle?)o ?? new VectorCartesicPlotStyle(info);
@@ -224,6 +235,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         return s;
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         VectorCartesicPlotStyle s = SDeserialize(o, info, parent);
@@ -244,6 +256,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="VectorCartesicPlotStyle"/> class.
+    /// </summary>
+    /// <param name="context">The property context.</param>
     public VectorCartesicPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       var penWidth = GraphDocument.GetDefaultPenWidth(context);
@@ -255,11 +271,21 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       _strokePen = new PenX(color, penWidth).WithEndCap(new Altaxo.Drawing.LineCaps.ArrowF10LineCap());
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="VectorCartesicPlotStyle"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
+    /// <param name="copyWithDataReferences">If set to <c>true</c>, data references are copied.</param>
     public VectorCartesicPlotStyle(VectorCartesicPlotStyle from, bool copyWithDataReferences)
     {
       CopyFrom(from, copyWithDataReferences);
     }
 
+    /// <summary>
+    /// Copies the values from another <see cref="VectorCartesicPlotStyle"/> instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
+    /// <param name="copyWithDataReferences">If set to <see langword="true"/>, data references are copied.</param>
     [MemberNotNull(nameof(_strokePen))]
     protected void CopyFrom(VectorCartesicPlotStyle from, bool copyWithDataReferences)
     {
@@ -301,6 +327,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <inheritdoc />
     public bool CopyFrom(object obj, bool copyWithDataReferences)
     {
       if (ReferenceEquals(this, obj))
@@ -342,6 +369,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       return new VectorCartesicPlotStyle(this, true);
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_columnX is not null)
@@ -353,6 +381,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region Properties
 
+    /// <summary>
+    /// Gets or sets how vector-column values are interpreted.
+    /// </summary>
     public ValueInterpretation MeaningOfValues
     {
       get
@@ -561,6 +592,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the symbol-gap offset.
+    /// </summary>
     public double SymbolGapOffset
     {
       get
@@ -577,6 +611,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the symbol-gap factor.
+    /// </summary>
     public double SymbolGapFactor
     {
       get
@@ -593,6 +630,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the line-width offset.
+    /// </summary>
     public double LineWidth1Offset
     {
       get
@@ -609,6 +649,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the line-width factor.
+    /// </summary>
     public double LineWidth1Factor
     {
       get
@@ -625,6 +668,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the end-cap size offset.
+    /// </summary>
     public double EndCapSizeOffset
     {
       get
@@ -641,6 +687,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the end-cap size factor.
+    /// </summary>
     public double EndCapSizeFactor
     {
       get
@@ -715,6 +764,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
     /// <summary>Pen used to draw the error bar.</summary>
+    /// <summary>
+    /// Gets or sets the pen used to draw the vectors.
+    /// </summary>
     public PenX Pen
     {
       get { return _strokePen; }
@@ -735,12 +787,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region IG3DPlotStyle Members
 
+    /// <inheritdoc />
     public void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups)
     {
       if (!_independentColor)
         Graph.Plot.Groups.ColorGroupStyle.AddExternalGroupStyle(externalGroups);
     }
 
+    /// <inheritdoc />
     public void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       if (!_independentColor)
@@ -753,6 +807,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       IgnoreMissingDataPointsGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
     }
 
+    /// <inheritdoc />
     public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
     {
       if (!_independentColor)
@@ -770,6 +825,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       // this item can not be used as provider of a symbol size
     }
 
+    /// <inheritdoc />
     public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       // IgnoreMissingDataPoints is the same for all sub plot styles
@@ -822,6 +878,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <inheritdoc />
     public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData? prevItemData, Processed2DPlotData? nextItemData)
     {
       // adjust the skip frequency if it was not set appropriate
@@ -854,6 +911,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Paints one plot range.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="layer">The plot area.</param>
+    /// <param name="range">The range to paint.</param>
+    /// <param name="pdata">The processed plot data.</param>
     protected void PaintOneRange(Graphics g, IPlotArea layer, IPlotRange range, Processed2DPlotData pdata)
     {
       const double logicalClampMinimum = -10;
@@ -1054,6 +1118,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region IRoutedPropertyReceiver Members
 
+    /// <inheritdoc />
     public IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName)
     {
       switch (propertyName)

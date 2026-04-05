@@ -12,8 +12,14 @@ using Markdig.Extensions.Tables;
 
 namespace Altaxo.Gui.Data
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="ProcessSourceTablesScriptDataController"/>.
+  /// </summary>
   public interface IProcessSourceTablesScriptDataView : IDataContextAwareView { }
 
+  /// <summary>
+  /// Controller for editing <see cref="ProcessSourceTablesScriptData"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IProcessSourceTablesScriptDataView))]
   [UserControllerForObject(typeof(ProcessSourceTablesScriptData))]
   public class ProcessSourceTablesScriptDataController : MVCANControllerEditCopyOfDocBase<ProcessSourceTablesScriptData, IProcessSourceTablesScriptDataView>
@@ -24,11 +30,15 @@ namespace Altaxo.Gui.Data
       public override string? Text0 => ((DataTable)Tag).Name;
     }
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ProcessSourceTablesScriptDataController"/> class.
+    /// </summary>
     public ProcessSourceTablesScriptDataController()
     {
       CmdAddToParticipatingTables = new RelayCommand(EhAddToParticipatingDataTable);
@@ -40,15 +50,37 @@ namespace Altaxo.Gui.Data
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the command that adds selected tables to the participating list.
+    /// </summary>
     public ICommand CmdAddToParticipatingTables { get; }
+
+    /// <summary>
+    /// Gets the command that removes selected participating tables.
+    /// </summary>
     public ICommand CmdRemoveFromParticipatingTables { get; }
+
+    /// <summary>
+    /// Gets the command that moves participating tables up.
+    /// </summary>
     public ICommand CmdParticipatingTablesUp { get; }
+
+    /// <summary>
+    /// Gets the command that moves participating tables down.
+    /// </summary>
     public ICommand CmdParticipatingTablesDown { get; }
+
+    /// <summary>
+    /// Gets the command that automatically renames participating tables.
+    /// </summary>
     public ICommand CmdAutoRename { get; }
 
 
     private SelectableListNodeList _availableTables;
 
+    /// <summary>
+    /// Gets or sets the available tables.
+    /// </summary>
     public SelectableListNodeList AvailableTables
     {
       get => _availableTables;
@@ -64,6 +96,9 @@ namespace Altaxo.Gui.Data
 
     private SelectableListNodeList _participatingTables;
 
+    /// <summary>
+    /// Gets or sets the participating tables.
+    /// </summary>
     public SelectableListNodeList ParticipatingTables
     {
       get => _participatingTables;
@@ -79,6 +114,7 @@ namespace Altaxo.Gui.Data
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -147,6 +183,7 @@ namespace Altaxo.Gui.Data
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (ParticipatingTables.Count == 0)

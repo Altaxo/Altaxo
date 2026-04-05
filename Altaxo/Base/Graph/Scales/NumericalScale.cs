@@ -32,7 +32,7 @@ namespace Altaxo.Graph.Scales
   using Rescaling;
 
   /// <summary>
-  /// Axis is the abstract base class of all axis types including linear axis, logarithmic axis and so on.
+  /// Provides the abstract base class for all numerical scales.
   /// </summary>
   [Serializable]
   public abstract class NumericalScale : Scale
@@ -63,6 +63,7 @@ namespace Altaxo.Graph.Scales
     /// </summary>
     public abstract NumericScaleRescaleConditions? Rescaling { get; }
 
+    /// <inheritdoc />
     public override Rescaling.IScaleRescaleConditions? RescalingObject
     {
       get
@@ -76,6 +77,7 @@ namespace Altaxo.Graph.Scales
     /// </summary>
     public abstract NumericalBoundaries DataBounds { get; } // return a PhysicalBoundarie object that is associated with that axis
 
+    /// <inheritdoc />
     public override IPhysicalBoundaries DataBoundsObject
     {
       get { return DataBounds; }
@@ -87,6 +89,7 @@ namespace Altaxo.Graph.Scales
     /// <summary>The axis end point in physical units.</summary>
     public abstract double End { get; }
 
+    /// <inheritdoc />
     public override AltaxoVariant OrgAsVariant
     {
       get
@@ -95,6 +98,7 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     public override AltaxoVariant EndAsVariant
     {
       get
@@ -103,16 +107,19 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     public override void OnUserZoomed(AltaxoVariant newZoomOrg, AltaxoVariant newZoomEnd)
     {
       Rescaling?.OnUserZoomed(newZoomOrg, newZoomEnd);
     }
 
+    /// <inheritdoc />
     public override void OnUserRescaled()
     {
       Rescaling?.OnUserRescaled();
     }
 
+    /// <inheritdoc />
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (object.ReferenceEquals(sender, DataBounds)) // Data bounds have changed
@@ -133,6 +140,9 @@ namespace Altaxo.Graph.Scales
       return base.HandleHighPriorityChildChangeCases(sender, ref e);
     }
 
+    /// <summary>
+    /// Updates the scale bounds and ticks using the current rescaling object.
+    /// </summary>
     protected virtual void UpdateTicksAndOrgEndUsingRescalingObject()
     {
       if (Rescaling is { } rescaling)

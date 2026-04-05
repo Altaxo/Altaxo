@@ -26,34 +26,64 @@
 
 namespace Altaxo.Geometry
 {
+  /// <summary>
+  /// Provides conversion helpers between Altaxo geometry types and System.Drawing types.
+  /// </summary>
   public static class GeometryToSystemDrawingConversions
   {
+    /// <summary>
+    /// Converts a <see cref="PointD2D"/> to a GDI point.
+    /// </summary>
     public static System.Drawing.PointF ToGdi(this PointD2D pt) => new System.Drawing.PointF((float)pt.X, (float)pt.Y);
 
+    /// <summary>
+    /// Converts a <see cref="PointD2D"/> to a GDI size.
+    /// </summary>
     public static System.Drawing.SizeF ToGdiSize(this PointD2D pt) => new System.Drawing.SizeF((float)pt.X, (float)pt.Y);
 
+    /// <summary>
+    /// Converts a GDI point to a <see cref="PointD2D"/>.
+    /// </summary>
     public static PointD2D FromGdi(this System.Drawing.PointF pt) => new PointD2D(pt.X, pt.Y);
 
+    /// <summary>
+    /// Converts a GDI size to a <see cref="PointD2D"/>.
+    /// </summary>
     public static PointD2D ToPointD2D(this System.Drawing.SizeF pt) => new PointD2D(pt.Width, pt.Height);
+    /// <summary>
+    /// Converts a GDI point to a <see cref="PointD2D"/>.
+    /// </summary>
     public static PointD2D ToPointD2D(this System.Drawing.PointF pt) => new PointD2D(pt.X, pt.Y);
 
     #region Rectangle
 
+    /// <summary>
+    /// Converts a <see cref="RectangleD2D"/> to a GDI rectangle.
+    /// </summary>
     public static System.Drawing.RectangleF ToGdi(this RectangleD2D r)
     {
       return new System.Drawing.RectangleF((float)r.X, (float)r.Y, (float)r.Width, (float)r.Height);
     }
 
+    /// <summary>
+    /// Converts a <see cref="RectangleD2D"/> to an integer GDI rectangle.
+    /// </summary>
     public static System.Drawing.Rectangle ToGdiRectangle(this RectangleD2D r)
     {
       return new System.Drawing.Rectangle((int)r.X, (int)r.Y, (int)r.Width, (int)r.Height);
     }
 
+    /// <summary>
+    /// Converts a GDI rectangle to a <see cref="RectangleD2D"/>.
+    /// </summary>
     public static RectangleD2D ToAxo(this System.Drawing.RectangleF r)
     {
       return new RectangleD2D(r.X, r.Y, r.Width, r.Height);
     }
 
+    /// <summary>
+    /// Converts an integer GDI rectangle to a <see cref="RectangleD2D"/>.
+    /// </summary>
     public static RectangleD2D ToAxo(this System.Drawing.Rectangle r)
     {
       return new RectangleD2D(r.X, r.Y, r.Width, r.Height);
@@ -63,11 +93,17 @@ namespace Altaxo.Geometry
 
     #region MatrixD2D transformations
 
+    /// <summary>
+    /// Transforms a GDI point with the specified matrix.
+    /// </summary>
     public static System.Drawing.PointF TransformPoint(this MatrixD2D m, System.Drawing.PointF pt)
     {
       return new System.Drawing.PointF((float)(pt.X * m.SX + pt.Y * m.RX + m.DX), (float)(pt.X * m.RY + pt.Y * m.SY + m.DY));
     }
 
+    /// <summary>
+    /// Transforms an array of GDI points with the specified matrix.
+    /// </summary>
     public static void TransformPoints(this MatrixD2D m, System.Drawing.PointF[] pts)
     {
       for (int i = 0; i < pts.Length; i++)
@@ -76,32 +112,50 @@ namespace Altaxo.Geometry
       }
     }
 
+    /// <summary>
+    /// Transforms a vector with the specified matrix, ignoring translation.
+    /// </summary>
     public static System.Drawing.PointF TransformVector(this MatrixD2D m, System.Drawing.PointF pt)
     {
       return new System.Drawing.PointF((float)(pt.X * m.SX + pt.Y * m.RX), (float)(pt.X * m.RY + pt.Y * m.SY));
     }
 
+    /// <summary>
+    /// Applies the inverse transformation to a point.
+    /// </summary>
     public static System.Drawing.PointF InverseTransformPoint(this MatrixD2D m, System.Drawing.PointF pt)
     {
       return new System.Drawing.PointF((float)(((pt.X - m.DX) * m.SY + (m.DY - pt.Y) * m.RX) / m.Determinant), (float)(((m.DX - pt.X) * m.RY + (pt.Y - m.DY) * m.SX) / m.Determinant));
     }
 
+    /// <summary>
+    /// Applies the inverse transformation to a vector, ignoring translation.
+    /// </summary>
     public static System.Drawing.PointF InverseTransformVector(this MatrixD2D m, System.Drawing.PointF pt)
     {
       return new System.Drawing.PointF((float)(((pt.X) * m.SY + (-pt.Y) * m.RX) / m.Determinant), (float)(((-pt.X) * m.RY + (pt.Y) * m.SX) / m.Determinant));
     }
 
+    /// <summary>
+    /// Prepends a GDI matrix transformation to the specified matrix.
+    /// </summary>
     public static void PrependTransform(this MatrixD2D m, System.Drawing.Drawing2D.Matrix t)
     {
       var e = t.Elements;
       m.PrependTransform(e[0], e[1], e[2], e[3], e[4], e[5]);
     }
 
+    /// <summary>
+    /// Converts a <see cref="MatrixD2D"/> to a GDI matrix.
+    /// </summary>
     public static System.Drawing.Drawing2D.Matrix ToGdi(this MatrixD2D m)
     {
       return new System.Drawing.Drawing2D.Matrix((float)m.SX, (float)m.RY, (float)m.RX, (float)m.SY, (float)m.DX, (float)m.DY);
     }
 
+    /// <summary>
+    /// Transforms a graphics path with the specified matrix.
+    /// </summary>
     public static void TransformPath(this MatrixD2D m, System.Drawing.Drawing2D.GraphicsPath path)
     {
       path.Transform(m.ToGdi());

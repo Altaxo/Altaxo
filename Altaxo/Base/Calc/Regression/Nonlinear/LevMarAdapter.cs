@@ -69,6 +69,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       /// </summary>
       public IAscendingIntegerCollection ValidRows;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="CachedFitElementInfo"/> class.
+      /// </summary>
       public CachedFitElementInfo(
         double[] parameters,
         double[] xs,
@@ -557,6 +560,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+    /// <summary>
+    /// Evaluates the current chi-square value for the cached varying parameters.
+    /// </summary>
     public double EvaluateChiSquare()
     {
       int info = 0;
@@ -581,11 +587,15 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       private LevMarAdapter _adapter;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="NelderMeadCostFunction"/> class.
+      /// </summary>
       public NelderMeadCostFunction(LevMarAdapter adapter)
       {
         _adapter = adapter;
       }
 
+      /// <inheritdoc/>
       public override double Value(Vector<double> x)
       {
         for (int i = 0; i < _adapter._cachedVaryingParameters.Length; ++i)
@@ -595,6 +605,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+    /// <summary>
+    /// Runs Nelder-Mead minimization for the current model.
+    /// </summary>
     public void DoSimplexMinimization(System.Threading.CancellationToken cancellationToken, Action<double> newMinimalCostValueFound)
     {
       var nm = new Altaxo.Calc.Optimization.NelderMead(new NelderMeadCostFunction(this));
@@ -619,6 +632,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       return true;
     }
 
+    /// <summary>
+    /// Executes the nonlinear fit.
+    /// </summary>
     public void Fit(CancellationToken cancellationToken)
     {
       /* Up to new Fit2 is very slow, so we not use it until it is clear what causes this slow convergence
@@ -629,6 +645,9 @@ else
       Fit1(cancellationToken);
     }
 
+    /// <summary>
+    /// Executes the Levenberg-Marquardt fit implementation.
+    /// </summary>
     public void Fit1(CancellationToken cancellationToken)
     {
       int info = 0;
@@ -665,6 +684,9 @@ else
       NLFit.ComputeCovariances(new NLFit.LMFunction(EvaluateFitDifferences), _cachedVaryingParameters, NumberOfData, _cachedVaryingParameters.Length, _resultingCovariances, out _resultingSumChiSquare, out _resultingSigmaSquare);
     }
 
+    /// <summary>
+    /// Gets the resulting chi-square value after fitting.
+    /// </summary>
     public double ResultingChiSquare
     {
       get
@@ -673,6 +695,9 @@ else
       }
     }
 
+    /// <summary>
+    /// Gets the resulting sigma-square value after fitting.
+    /// </summary>
     public double ResultingSigmaSquare
     {
       get
@@ -681,6 +706,9 @@ else
       }
     }
 
+    /// <summary>
+    /// Copies the fitted parameter values back to the specified parameter set.
+    /// </summary>
     public void CopyParametersBackTo(ParameterSet pset)
     {
       if (pset.Count != _constantParameters.Length)

@@ -29,7 +29,7 @@ using System.Collections.Immutable;
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
   /// <summary>
-  /// Contains options for improving the master after it was created.
+  /// Contains options for creating and improving a master curve.
   /// </summary>
   public abstract record MasterCurveCreationOptionsBase : Main.IImmutable
   {
@@ -43,6 +43,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// </summary>
     public OptimizationMethod OptimizationMethod { get; init; } = OptimizationMethod.OptimizeSquaredDifferenceByBruteForce;
 
+    /// <summary>
+    /// Backing field for <see cref="NumberOfIterations"/>.
+    /// </summary>
     protected int _numberOfIterations = 40;
 
     /// <summary>
@@ -66,6 +69,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       }
     }
 
+    /// <summary>
+    /// Backing field for <see cref="RequiredRelativeOverlap"/>.
+    /// </summary>
     protected double _requiredRelativeOverlap = 0;
 
     /// <summary>
@@ -88,6 +94,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       }
     }
 
+    /// <summary>
+    /// Gets or sets the choice that determines how group-specific master-curve options are provided.
+    /// </summary>
     public MasterCurveGroupOptionsChoice MasterCurveGroupOptionsChoice { get; init; } = MasterCurveGroupOptionsChoice.SameForAllGroups;
 
     /// <summary>

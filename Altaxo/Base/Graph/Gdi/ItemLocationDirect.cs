@@ -24,47 +24,80 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Calc;
 using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi
 {
+  /// <summary>
+  /// Represents an item location using direct coordinates, anchors, and transformations.
+  /// </summary>
   [Serializable]
   public class ItemLocationDirect : Main.SuspendableDocumentLeafNodeWithEventArgs, IItemLocation
   {
     #region Members
 
+    /// <summary>
+    /// The width specification.
+    /// </summary>
     protected RADouble _sizeX;
 
+    /// <summary>
+    /// The height specification.
+    /// </summary>
     protected RADouble _sizeY;
 
+    /// <summary>
+    /// The X position specification.
+    /// </summary>
     protected RADouble _positionX;
 
+    /// <summary>
+    /// The Y position specification.
+    /// </summary>
     protected RADouble _positionY;
 
+    /// <summary>
+    /// The local X anchor specification.
+    /// </summary>
     protected RADouble _localAnchorX;
 
+    /// <summary>
+    /// The local Y anchor specification.
+    /// </summary>
     protected RADouble _localAnchorY;
 
+    /// <summary>
+    /// The parent X anchor specification.
+    /// </summary>
     protected RADouble _parentAnchorX;
 
+    /// <summary>
+    /// The parent Y anchor specification.
+    /// </summary>
     protected RADouble _parentAnchorY;
 
     /// <summary>The rotation angle (in degrees) of the layer.</summary>
     protected double _rotation; // Rotation
 
+    /// <summary>
+    /// The shear factor.
+    /// </summary>
     protected double _shear; // Shear
 
     /// <summary>The scaling factor of the layer, normally 1.</summary>
     protected double _scaleX;  // X-Scale
 
+    /// <summary>
+    /// The Y scale factor.
+    /// </summary>
     protected double _scaleY; // Y-Scale
 
     // Cached and not-to-serialize members
 
+    /// <summary>
+    /// The cached parent size.
+    /// </summary>
     protected PointD2D _parentSize;
 
     #endregion Members
@@ -140,6 +173,9 @@ namespace Altaxo.Graph.Gdi
 
     #region Construction and copying
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ItemLocationDirect"/> class.
+    /// </summary>
     public ItemLocationDirect()
     {
       _localAnchorX = RADouble.NewRel(0);
@@ -150,16 +186,25 @@ namespace Altaxo.Graph.Gdi
       _scaleY = 1;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ItemLocationDirect"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public ItemLocationDirect(ItemLocationDirect from)
     {
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ItemLocationDirect"/> class from another item location.
+    /// </summary>
+    /// <param name="from">The source item location.</param>
     public ItemLocationDirect(IItemLocation from)
     {
       CopyFrom(from);
     }
 
+    /// <inheritdoc />
     public virtual bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -198,11 +243,16 @@ namespace Altaxo.Graph.Gdi
       return false;
     }
 
+    /// <inheritdoc />
     object System.ICloneable.Clone()
     {
       return new ItemLocationDirect(this);
     }
 
+    /// <summary>
+    /// Creates a copy of this instance.
+    /// </summary>
+    /// <returns>The cloned instance.</returns>
     public virtual ItemLocationDirect Clone()
     {
       return new ItemLocationDirect(this);
@@ -212,6 +262,11 @@ namespace Altaxo.Graph.Gdi
 
     #region Properties
 
+    /// <summary>
+    /// Sets the parent size used to resolve relative values.
+    /// </summary>
+    /// <param name="parentSize">The parent size.</param>
+    /// <param name="shouldTriggerChangedEvent">If set to <c>true</c>, raises a changed event when the value changes.</param>
     public virtual void SetParentSize(PointD2D parentSize, bool shouldTriggerChangedEvent)
     {
       var oldValue = _parentSize;
@@ -221,6 +276,9 @@ namespace Altaxo.Graph.Gdi
         EhSelfChanged();
     }
 
+    /// <summary>
+    /// Gets the current parent size used to resolve relative values.
+    /// </summary>
     public PointD2D ParentSize
     {
       get
@@ -395,6 +453,13 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Sets the position and size.
+    /// </summary>
+    /// <param name="x">The x position.</param>
+    /// <param name="y">The y position.</param>
+    /// <param name="width">The width.</param>
+    /// <param name="height">The height.</param>
     public virtual void SetPositionAndSize(RADouble x, RADouble y, RADouble width, RADouble height)
     {
       bool isChanged = x != _positionX || y != _positionY || width != _sizeX || height != _sizeY;
@@ -408,6 +473,11 @@ namespace Altaxo.Graph.Gdi
         EhSelfChanged();
     }
 
+    /// <summary>
+    /// Sets the x-axis scale factor without raising a change event.
+    /// </summary>
+    /// <param name="value">The new x-axis scale factor.</param>
+    /// <returns><see langword="true"/> if the scale changed; otherwise, <see langword="false"/>.</returns>
     protected virtual bool InternalSetScaleXSilent(double value)
     {
       bool chg = _scaleX != value;
@@ -415,6 +485,11 @@ namespace Altaxo.Graph.Gdi
       return chg;
     }
 
+    /// <summary>
+    /// Sets the y-axis scale factor without raising a change event.
+    /// </summary>
+    /// <param name="value">The new y-axis scale factor.</param>
+    /// <returns><see langword="true"/> if the scale changed; otherwise, <see langword="false"/>.</returns>
     protected virtual bool InternalSetScaleYSilent(double value)
     {
       bool chg = _scaleY != value;
@@ -422,6 +497,11 @@ namespace Altaxo.Graph.Gdi
       return chg;
     }
 
+    /// <summary>
+    /// Sets both scale factors without raising a change event.
+    /// </summary>
+    /// <param name="value">The new scale factors.</param>
+    /// <returns><see langword="true"/> if either scale factor changed; otherwise, <see langword="false"/>.</returns>
     protected virtual bool InternalSetScaleSilent(PointD2D value)
     {
       bool chg = _scaleX != value.X || _scaleY != value.Y;
@@ -536,22 +616,39 @@ namespace Altaxo.Graph.Gdi
       return r;
     }
 
+    /// <summary>
+    /// Sets the width without raising a change event.
+    /// </summary>
+    /// <param name="value">The new width value.</param>
     protected virtual void InternalSetSizeXSilent(RADouble value)
     {
       _sizeX = value;
     }
 
+    /// <summary>
+    /// Sets the height without raising a change event.
+    /// </summary>
+    /// <param name="value">The new height value.</param>
     protected virtual void InternalSetSizeYSilent(RADouble value)
     {
       _sizeY = value;
     }
 
+    /// <summary>
+    /// Sets the width and height without raising a change event.
+    /// </summary>
+    /// <param name="valueX">The new width value.</param>
+    /// <param name="valueY">The new height value.</param>
     protected virtual void InternalSetSizeSilent(RADouble valueX, RADouble valueY)
     {
       _sizeX = valueX;
       _sizeY = valueY;
     }
 
+    /// <summary>
+    /// Sets the absolute width without raising a change event.
+    /// </summary>
+    /// <param name="value">The new absolute width.</param>
     protected virtual void InternalSetAbsoluteSizeXSilent(double value)
     {
       if (_sizeX.IsAbsolute)
@@ -562,6 +659,10 @@ namespace Altaxo.Graph.Gdi
         throw new InvalidOperationException("_parentSize.X is undefined or zero");
     }
 
+    /// <summary>
+    /// Sets the absolute height without raising a change event.
+    /// </summary>
+    /// <param name="value">The new absolute height.</param>
     protected virtual void InternalSetAbsoluteSizeYSilent(double value)
     {
       if (_sizeY.IsAbsolute)
@@ -572,6 +673,10 @@ namespace Altaxo.Graph.Gdi
         throw new InvalidOperationException("_parentSize.Y is undefined or zero");
     }
 
+    /// <summary>
+    /// Sets the absolute size without raising a change event.
+    /// </summary>
+    /// <param name="value">The new absolute size.</param>
     protected virtual void InternalSetAbsoluteSizeSilent(PointD2D value)
     {
       RADouble sizeX, sizeY;
@@ -593,6 +698,9 @@ namespace Altaxo.Graph.Gdi
       InternalSetSizeSilent(sizeX, sizeY);
     }
 
+    /// <summary>
+    /// Gets or sets the absolute width.
+    /// </summary>
     public virtual double AbsoluteSizeX
     {
       get
@@ -608,6 +716,9 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets or sets the absolute height.
+    /// </summary>
     public virtual double AbsoluteSizeY
     {
       get
@@ -623,6 +734,9 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets or sets the absolute size.
+    /// </summary>
     public virtual PointD2D AbsoluteSize
     {
       get
@@ -635,6 +749,11 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Sets the absolute size.
+    /// </summary>
+    /// <param name="value">The absolute size.</param>
+    /// <param name="eventFiring">Controls whether change events are fired.</param>
     public virtual void SetAbsoluteSize(PointD2D value, Main.EventFiring eventFiring)
     {
       var oldSizeX = _sizeX;
@@ -670,6 +789,9 @@ namespace Altaxo.Graph.Gdi
         throw new InvalidOperationException("_parentSize.Y is undefined or zero");
     }
 
+    /// <summary>
+    /// Gets or sets the absolute x position of the upper-left corner.
+    /// </summary>
     public double AbsolutePositionX
     {
       get
@@ -686,6 +808,9 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets or sets the absolute y position of the upper-left corner.
+    /// </summary>
     public double AbsolutePositionY
     {
       get
@@ -702,6 +827,9 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets or sets the absolute position of the upper-left corner.
+    /// </summary>
     public PointD2D AbsolutePosition
     {
       get
@@ -789,6 +917,9 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets or sets the absolute pivot position.
+    /// </summary>
     public PointD2D AbsolutePivotPosition
     {
       get
@@ -801,6 +932,11 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Sets the absolute pivot position.
+    /// </summary>
+    /// <param name="value">The pivot position.</param>
+    /// <param name="eventFiring">Controls whether change events are fired.</param>
     public void SetAbsolutePivotPosition(PointD2D value, Main.EventFiring eventFiring)
     {
       var oldValueX = _positionX;
@@ -829,6 +965,11 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Sets relative size and position values from absolute values.
+    /// </summary>
+    /// <param name="absSize">The absolute size.</param>
+    /// <param name="absPos">The absolute position.</param>
     public virtual void SetRelativeSizePositionFromAbsoluteValues(PointD2D absSize, PointD2D absPos)
     {
       var oldSizeX = SizeX;
@@ -853,6 +994,9 @@ namespace Altaxo.Graph.Gdi
         EhSelfChanged();
     }
 
+    /// <summary>
+    /// Converts relative size values to absolute size values.
+    /// </summary>
     public void ChangeRelativeSizeValuesToAbsoluteSizeValues()
     {
       if (_sizeX.IsRelative)
@@ -861,6 +1005,9 @@ namespace Altaxo.Graph.Gdi
         _sizeY = RADouble.NewAbs(AbsoluteSizeY);
     }
 
+    /// <summary>
+    /// Converts relative position values to absolute position values.
+    /// </summary>
     public void ChangeRelativePositionValuesToAbsolutePositionValues()
     {
       if (_positionX.IsRelative)
@@ -869,6 +1016,11 @@ namespace Altaxo.Graph.Gdi
         _positionY = RADouble.NewAbs(AbsolutePositionY);
     }
 
+    /// <summary>
+    /// Changes the parent anchor while preserving the absolute position.
+    /// </summary>
+    /// <param name="newParentAnchorX">The new parent anchor x value.</param>
+    /// <param name="newParentAnchorY">The new parent anchor y value.</param>
     public void ChangeParentAnchorButKeepPosition(RADouble newParentAnchorX, RADouble newParentAnchorY)
     {
       var oldRefX = _parentAnchorX.GetValueRelativeTo(_parentSize.X);
@@ -883,6 +1035,9 @@ namespace Altaxo.Graph.Gdi
       _parentAnchorY = newParentAnchorY;
     }
 
+    /// <summary>
+    /// Changes the parent anchor to the top-left corner while preserving the absolute position.
+    /// </summary>
     public void ChangeParentAnchorToLeftTopButKeepPosition()
     {
       ChangeParentAnchorButKeepPosition(RADouble.NewRel(0), RADouble.NewRel(0));

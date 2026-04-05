@@ -28,6 +28,9 @@ using System.Collections.Generic;
 
 namespace Altaxo.Gui.Common.BasicTypes
 {
+  /// <summary>
+  /// Defines the view contract for editing decimal values.
+  /// </summary>
   public interface IDecimalValueView : IDataContextAwareView { }
 
   /// <summary>
@@ -51,6 +54,9 @@ namespace Altaxo.Gui.Common.BasicTypes
 
     #region Bindings
 
+    /// <summary>
+    /// Gets or sets the value.
+    /// </summary>
     public decimal Value
     {
       get => _doc;
@@ -65,6 +71,9 @@ namespace Altaxo.Gui.Common.BasicTypes
       }
     }
 
+    /// <summary>
+    /// Gets or sets the minimum permitted value.
+    /// </summary>
     public decimal Minimum
     {
       get => _minimumValue;
@@ -78,6 +87,9 @@ namespace Altaxo.Gui.Common.BasicTypes
       }
     }
 
+    /// <summary>
+    /// Gets or sets the maximum permitted value.
+    /// </summary>
     public decimal Maximum
     {
       get => _maximumValue;
@@ -91,6 +103,9 @@ namespace Altaxo.Gui.Common.BasicTypes
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the minimum is inclusive.
+    /// </summary>
     public bool IsMinimumValueInclusive
     {
       get => _isMinimumValueInclusive;
@@ -104,6 +119,9 @@ namespace Altaxo.Gui.Common.BasicTypes
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the maximum is inclusive.
+    /// </summary>
     public bool IsMaximumValueInclusive
     {
       get => _isMaximumValueInclusive;
@@ -119,22 +137,31 @@ namespace Altaxo.Gui.Common.BasicTypes
 
     #endregion
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DecimalValueController"/> class.
+    /// </summary>
     public DecimalValueController()
     {
 
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DecimalValueController"/> class.
+    /// </summary>
+    /// <param name="val">The initial value.</param>
     public DecimalValueController(decimal val)
     {
       _doc = _originalDoc = val;
       Initialize(true);
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;

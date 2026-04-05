@@ -26,9 +26,18 @@ using System;
 
 namespace Altaxo.Gui.Main
 {
+  /// <summary>
+  /// Describes the binding between a project-item type and a view-content type.
+  /// </summary>
   public interface IProjectItemDisplayBindingDescriptor
   {
+    /// <summary>
+    /// Gets the project-item type.
+    /// </summary>
     Type ProjectItemType { get; }
+    /// <summary>
+    /// Gets the view-content type.
+    /// </summary>
     Type ViewContentType { get; }
   }
 }

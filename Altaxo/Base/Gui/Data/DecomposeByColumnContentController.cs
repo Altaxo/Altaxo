@@ -32,13 +32,25 @@ namespace Altaxo.Gui.Data
 {
   using Altaxo.Data;
 
+  /// <summary>
+  /// View contract for decomposing data by column content.
+  /// </summary>
   public interface IDecomposeByColumnContentView
   {
+    /// <summary>
+    /// Sets the view for the data configuration.
+    /// </summary>
     void SetDataControl(object control);
 
+    /// <summary>
+    /// Sets the view for the options configuration.
+    /// </summary>
     void SetOptionsControl(object control);
   }
 
+  /// <summary>
+  /// Controller for <see cref="DecomposeByColumnContentDataAndOptions"/>.
+  /// </summary>
   [UserControllerForObject(typeof(DecomposeByColumnContentDataAndOptions))]
   [ExpectedTypeOfView(typeof(IDecomposeByColumnContentView))]
   public class DecomposeByColumnContentController : MVCANControllerEditOriginalDocBase<DecomposeByColumnContentDataAndOptions, IDecomposeByColumnContentView>
@@ -46,12 +58,14 @@ namespace Altaxo.Gui.Data
     private IMVCANController _dataController;
     private IMVCANController _optionsController;
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_dataController, () => _dataController = null);
       yield return new ControllerAndSetNullMethod(_optionsController, () => _optionsController = null);
     }
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -73,6 +87,7 @@ namespace Altaxo.Gui.Data
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (!_dataController.Apply(disposeController))

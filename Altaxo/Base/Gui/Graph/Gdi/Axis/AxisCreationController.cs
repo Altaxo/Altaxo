@@ -39,6 +39,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
   public class AxisCreationArguments : ICloneable
   {
     // Input arguments
+    /// <summary>
+    /// Gets or sets the available axis styles.
+    /// </summary>
     public List<CSAxisInformation> AxisStyles { get; set; }
 
     /// <summary>Before showing the axis creation dialog, this property should be set to
@@ -59,6 +62,11 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     /// </value>
     public bool MoveAxis { get; set; }
 
+    /// <summary>
+    /// Initializes the list of available axis information.
+    /// </summary>
+    /// <param name="cs">The coordinate system.</param>
+    /// <param name="currentAxisStyles">The current axis styles.</param>
     public void InitializeAxisInformationList(ICoordinateSystem cs, AxisStyleCollection currentAxisStyles)
     {
       var dict = new Dictionary<CSLineID, CSAxisInformation>();
@@ -92,6 +100,11 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Adds an axis to the collection according to the supplied creation arguments.
+    /// </summary>
+    /// <param name="collection">The axis-style collection.</param>
+    /// <param name="creationArgs">The creation arguments.</param>
     public static void AddAxis(AxisStyleCollection collection, AxisCreationArguments creationArgs)
     {
       var context = collection.GetPropertyContext();
@@ -105,6 +118,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       collection.Add(axstyle);
     }
 
+    /// <inheritdoc />
     public object Clone()
     {
       var result = (AxisCreationArguments)MemberwiseClone();
@@ -113,14 +127,22 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     }
   }
 
+  /// <summary>
+  /// Provides the view contract for <see cref="AxisCreationController"/>.
+  /// </summary>
   public interface IAxisCreationView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for creating 2D axes.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IAxisCreationView))]
   [UserControllerForObject(typeof(AxisCreationArguments))]
   public class AxisCreationController : MVCANControllerEditOriginalDocBase<AxisCreationArguments, IAxisCreationView>
   {
+    /// <inheritdoc />
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -130,6 +152,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     private bool _usePhysicalValue;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the new axis position uses a physical value.
+    /// </summary>
     public bool UsePhysicalValue
     {
       get => _usePhysicalValue;
@@ -143,10 +168,16 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Gets the quantity environment used for logical axis positions.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment AxisPositionLogicalValueEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _axisPositionLogicalValue;
 
+    /// <summary>
+    /// Gets or sets the logical axis position.
+    /// </summary>
     public DimensionfulQuantity AxisPositionLogicalValue
     {
       get => _axisPositionLogicalValue;
@@ -161,6 +192,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     }
     private double _axisPositionPhysicalValue;
 
+    /// <summary>
+    /// Gets or sets the physical axis position.
+    /// </summary>
     public double AxisPositionPhysicalValue
     {
       get => _axisPositionPhysicalValue;
@@ -175,6 +209,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     }
     private bool _moveAxis;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the template axis should be moved instead of copied.
+    /// </summary>
     public bool MoveAxis
     {
       get => _moveAxis;
@@ -190,6 +227,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     private ItemsController<CSAxisInformation> _axisTemplates;
 
+    /// <summary>
+    /// Gets or sets the selectable axis templates.
+    /// </summary>
     public ItemsController<CSAxisInformation> AxisTemplates
     {
       get => _axisTemplates;
@@ -212,6 +252,8 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     #endregion
 
+    /// <inheritdoc />
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -257,6 +299,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     }
 
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       _doc.MoveAxis = MoveAxis;

@@ -63,12 +63,12 @@ namespace Altaxo.Serialization.WITec
     #region Serialization
 
     /// <summary>
-    /// 
+    /// XML serialization surrogate for <see cref="WITecImportOptions"/>.
     /// </summary>
-    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WITecImportOptions), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (WITecImportOptions)obj;
@@ -79,6 +79,7 @@ namespace Altaxo.Serialization.WITec
         info.AddArray("IndicesOfImportedGraphs", s.IndicesOfImportedGraphs, s.IndicesOfImportedGraphs.Count);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var useNeutralColumnName = info.GetBoolean("UseNeutralColumnName");

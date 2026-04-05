@@ -31,6 +31,9 @@ using Altaxo.Data;
 
 namespace Altaxo.Graph.Scales.Ticks
 {
+  /// <summary>
+  /// Provides the abstract base class for angular tick-spacing implementations.
+  /// </summary>
   public abstract class AngularTickSpacing : NumericTickSpacing
   {
     /// <summary>
@@ -69,11 +72,13 @@ namespace Altaxo.Graph.Scales.Ticks
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AngularTickSpacing), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (AngularTickSpacing)obj;
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (AngularTickSpacing)(o ?? throw new ArgumentNullException(nameof(o)));
@@ -83,6 +88,9 @@ namespace Altaxo.Graph.Scales.Ticks
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AngularTickSpacing"/> class.
+    /// </summary>
     public AngularTickSpacing()
     {
       _majorTickDivider = 8;
@@ -92,6 +100,10 @@ namespace Altaxo.Graph.Scales.Ticks
     }
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AngularTickSpacing"/> class from a numeric tick spacing.
+    /// </summary>
+    /// <param name="from">The numeric tick spacing to copy from.</param>
     public AngularTickSpacing(NumericTickSpacing from)
       : base(from) // everything is done here, since CopyFrom is virtual!
     {
@@ -99,6 +111,7 @@ namespace Altaxo.Graph.Scales.Ticks
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -125,6 +138,9 @@ namespace Altaxo.Graph.Scales.Ticks
 
     #region User parameters
 
+    /// <summary>
+    /// Gets or sets the divider used for major ticks.
+    /// </summary>
     public int MajorTickDivider
     {
       get
@@ -140,6 +156,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Gets or sets the divider used for minor ticks.
+    /// </summary>
     public int MinorTickDivider
     {
       get
@@ -155,9 +174,14 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
-    /// <summary>If true, use degree instead of radian.</summary>
+    /// <summary>
+    /// Gets a value indicating whether degree values are used instead of radians.
+    /// </summary>
     public abstract bool UseDegree { get; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether signed values are used.
+    /// </summary>
     public bool UseSignedValues
     {
       get
@@ -175,16 +199,19 @@ namespace Altaxo.Graph.Scales.Ticks
 
     #endregion User parameters
 
+    /// <inheritdoc />
     public override Data.AltaxoVariant[] GetMajorTicksAsVariant()
     {
       return _majorTicks.ToArray();
     }
 
+    /// <inheritdoc />
     public override AltaxoVariant[] GetMinorTicksAsVariant()
     {
       return _minorTicks.ToArray();
     }
 
+    /// <inheritdoc />
     public override double[] GetMajorTicksNormal(Scale scale)
     {
       double[] ticks = new double[_majorTicks.Count];
@@ -195,6 +222,7 @@ namespace Altaxo.Graph.Scales.Ticks
       return ticks;
     }
 
+    /// <inheritdoc />
     public override double[] GetMinorTicksNormal(Scale scale)
     {
       double[] ticks = new double[_minorTicks.Count];
@@ -205,16 +233,22 @@ namespace Altaxo.Graph.Scales.Ticks
       return ticks;
     }
 
+    /// <summary>
+    /// Gets the possible divider values.
+    /// </summary>
+    /// <returns>A copy of the possible divider values.</returns>
     public int[] GetPossibleDividers()
     {
       return (int[])_possibleDividers.Clone();
     }
 
+    /// <inheritdoc />
     public override bool PreProcessScaleBoundaries(ref Altaxo.Data.AltaxoVariant org, ref Altaxo.Data.AltaxoVariant end, bool isOrgExtendable, bool isEndExtendable)
     {
       return false; // no change of the proposed boundaries
     }
 
+    /// <inheritdoc />
     public override void FinalProcessScaleBoundaries(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end, Scale scale)
     {
       InternalGetMajorTicks(org, end);

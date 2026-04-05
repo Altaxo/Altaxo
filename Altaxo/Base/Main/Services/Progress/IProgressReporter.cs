@@ -71,7 +71,7 @@ namespace Altaxo
     void ReportStatus(OperationStatus status);
 
     /// <summary>
-    /// Gets/Sets the name to show while the task is active.
+    /// Gets the name to show while the task is active.
     /// </summary>
     string TaskName { get; }
 
@@ -116,7 +116,7 @@ namespace Altaxo
   }
 
   /// <summary>
-  /// Represents the status of a operation with progress monitor.
+  /// Represents the status of an operation with a progress monitor.
   /// </summary>
   public enum OperationStatus : byte
   {

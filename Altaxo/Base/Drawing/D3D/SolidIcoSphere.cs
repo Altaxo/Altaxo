@@ -46,6 +46,10 @@ namespace Altaxo.Drawing.D3D
 
     private int _index;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SolidIcoSphere"/> class.
+    /// </summary>
+    /// <param name="recursionLevel">The recursion level used to refine the initial icosahedron.</param>
     public SolidIcoSphere(int recursionLevel)
     {
       var middlePointIndexCache = new Dictionary<long, int>();
@@ -125,6 +129,9 @@ namespace Altaxo.Drawing.D3D
       _geometry_TriangleIndices = faces;
     }
 
+    /// <summary>
+    /// Gets the vertices of the refined sphere.
+    /// </summary>
     public IEnumerable<PointD3D> VerticesForSphere
     {
       get
@@ -133,6 +140,9 @@ namespace Altaxo.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Gets the vertices and normals of the refined sphere.
+    /// </summary>
     public IEnumerable<Tuple<PointD3D, VectorD3D>> VerticesAndNormalsForSphere
     {
       get
@@ -142,6 +152,9 @@ namespace Altaxo.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Gets the triangle indices of the refined sphere.
+    /// </summary>
     public IEnumerable<Tuple<int, int, int>> TriangleIndicesForSphere
     {
       get
@@ -150,6 +163,9 @@ namespace Altaxo.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Gets the vertices and normals for the polyhedral representation.
+    /// </summary>
     public IEnumerable<Tuple<PointD3D, VectorD3D>> VerticesAndNormalsForPolyhedron
     {
       get
@@ -169,6 +185,9 @@ namespace Altaxo.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Gets the triangle indices for the polyhedral representation.
+    /// </summary>
     public IEnumerable<Tuple<int, int, int>> TriangleIndicesForPolyhedron
     {
       get
@@ -182,7 +201,11 @@ namespace Altaxo.Drawing.D3D
       }
     }
 
-    // add vertex to mesh, fix position to be on unit sphere, return index
+    /// <summary>
+    /// Adds a vertex to the mesh, normalizes it to the unit sphere, and returns its index.
+    /// </summary>
+    /// <param name="p">The vertex to add.</param>
+    /// <returns>The index of the added vertex.</returns>
     private int AddVertex(PointD3D p)
     {
       double length = Math.Sqrt(p.X * p.X + p.Y * p.Y + p.Z * p.Z);
@@ -190,7 +213,13 @@ namespace Altaxo.Drawing.D3D
       return _index++;
     }
 
-    // return index of point in the middle of p1 and p2
+    /// <summary>
+    /// Returns the index of the point in the middle of two vertices.
+    /// </summary>
+    /// <param name="p1">The index of the first vertex.</param>
+    /// <param name="p2">The index of the second vertex.</param>
+    /// <param name="middlePointIndexCache">The cache used to avoid duplicate midpoint vertices.</param>
+    /// <returns>The index of the midpoint vertex.</returns>
     private int GetMiddlePoint(int p1, int p2, Dictionary<long, int> middlePointIndexCache)
     {
       // first check if we have it already

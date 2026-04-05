@@ -107,6 +107,7 @@ namespace Altaxo.Text
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextDocument), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (TextDocument)obj;
@@ -156,6 +157,9 @@ namespace Altaxo.Text
         info.CommitArray();
       }
 
+      /// <summary>
+      /// Deserializes into an existing <see cref="TextDocument"/> instance.
+      /// </summary>
       public void Deserialize(TextDocument s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         s._name = info.GetString("Name");
@@ -183,6 +187,7 @@ namespace Altaxo.Text
         info.CloseArray(count);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (TextDocument?)o ?? new TextDocument();
@@ -206,7 +211,7 @@ namespace Altaxo.Text
     /// <summary>
     /// Initializes a new instance of the <see cref="TextDocument"/> class by copying the content from another instance.
     /// </summary>
-    /// <param name="from">Notes to copy from</param>
+    /// <param name="from">The document to copy from.</param>
     public TextDocument(TextDocument from)
     {
       using (var suppressToken = SuspendGetToken())
@@ -219,6 +224,10 @@ namespace Altaxo.Text
       }
     }
 
+    /// <summary>
+    /// Copies data from another <see cref="TextDocument"/>.
+    /// </summary>
+    /// <param name="from">The source document.</param>
     [MemberNotNull(nameof(_notes))]
     protected void CopyFrom(TextDocument from)
     {

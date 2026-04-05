@@ -26,14 +26,22 @@ using System.Collections.Generic;
 using Altaxo.Science.Spectroscopy.PeakEnhancement;
 
 namespace Altaxo.Gui.Science.Spectroscopy.PeakEnhancement;
+
+/// <summary>
+/// View interface for peak enhancement by SNIP.
+/// </summary>
 public interface IPeakEnhancementSNIPView : IDataContextAwareView
 {
 }
 
+/// <summary>
+/// Controller for <see cref="PeakEnhancementSNIP"/>.
+/// </summary>
 [UserControllerForObject(typeof(PeakEnhancementSNIP), 100)]
 [ExpectedTypeOfView(typeof(IPeakEnhancementSNIPView))]
 public class PeakEnhancementSNIPController : MVCANControllerEditImmutableDocBase<PeakEnhancementSNIP, IPeakEnhancementSNIPView>
 {
+  /// <inheritdoc/>
   public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
   {
     yield break;
@@ -43,6 +51,9 @@ public class PeakEnhancementSNIPController : MVCANControllerEditImmutableDocBase
 
   private bool _isHalfWidthManual;
 
+  /// <summary>
+  /// Gets or sets a value indicating whether the half width is specified manually.
+  /// </summary>
   public bool IsHalfWidthManual
   {
     get => _isHalfWidthManual;
@@ -59,6 +70,9 @@ public class PeakEnhancementSNIPController : MVCANControllerEditImmutableDocBase
 
   private double _halfWidth;
 
+  /// <summary>
+  /// Gets or sets the half width.
+  /// </summary>
   public double HalfWidth
   {
     get => _halfWidth;
@@ -74,6 +88,9 @@ public class PeakEnhancementSNIPController : MVCANControllerEditImmutableDocBase
 
   private bool _isHalfWidthInXUnits;
 
+  /// <summary>
+  /// Gets or sets a value indicating whether the half width is expressed in X units.
+  /// </summary>
   public bool IsHalfWidthInXUnits
   {
     get => _isHalfWidthInXUnits;
@@ -90,6 +107,9 @@ public class PeakEnhancementSNIPController : MVCANControllerEditImmutableDocBase
 
   private int _numberOfApplications;
 
+  /// <summary>
+  /// Gets or sets the number of applications.
+  /// </summary>
   public int NumberOfApplications
   {
     get => _numberOfApplications;
@@ -108,6 +128,7 @@ public class PeakEnhancementSNIPController : MVCANControllerEditImmutableDocBase
 
   #endregion
 
+  /// <inheritdoc/>
   protected override void Initialize(bool initData)
   {
     base.Initialize(initData);
@@ -121,6 +142,7 @@ public class PeakEnhancementSNIPController : MVCANControllerEditImmutableDocBase
     }
   }
 
+  /// <inheritdoc/>
   public override bool Apply(bool disposeController)
   {
     _doc = _doc with

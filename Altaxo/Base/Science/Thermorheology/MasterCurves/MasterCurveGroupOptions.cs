@@ -25,6 +25,9 @@
 #nullable enable
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
+  /// <summary>
+  /// Base options for configuring interpolation and weighting of a master-curve group.
+  /// </summary>
   public abstract record MasterCurveGroupOptions : Main.IImmutable
   {
     /// <summary>Logarithmize x values before adding to the interpolation curve. (Only for interpolation).</summary>
@@ -38,6 +41,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// </summary>
     public ShiftXBy XShiftBy { get; init; } = ShiftXBy.Factor;
 
+    /// <summary>
+    /// Gets the weighting factor used during fitting.
+    /// </summary>
     public double FittingWeight { get; init; } = 1;
   }
 }

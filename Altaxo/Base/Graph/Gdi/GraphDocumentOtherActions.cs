@@ -32,8 +32,15 @@ using Altaxo.Gui.Graph.Gdi;
 
 namespace Altaxo.Graph.Gdi
 {
+  /// <summary>
+  /// Provides miscellaneous helper actions for graph documents.
+  /// </summary>
   public static class GraphDocumentOtherActions
   {
+    /// <summary>
+    /// Shows the rename dialog for the specified graph document.
+    /// </summary>
+    /// <param name="doc">The graph document to rename.</param>
     public static void ShowRenameDialog(this GraphDocument doc)
     {
       var tvctrl = new Altaxo.Gui.Common.TextValueInputController(doc.Name, "Enter a name for the graph:")
@@ -98,6 +105,11 @@ namespace Altaxo.Graph.Gdi
 
     #region Layer manipulation
 
+    /// <summary>
+    /// Shows the properties dialog for the specified layer.
+    /// </summary>
+    /// <param name="doc">The graph document that contains the layer.</param>
+    /// <param name="layerNumber">The layer index path.</param>
     public static void ShowLayerDialog(this GraphDocument doc, IList<int> layerNumber)
     {
       if (doc.RootLayer.IsValidIndex(layerNumber, out var layer))
@@ -188,6 +200,10 @@ namespace Altaxo.Graph.Gdi
 
     #region Show properties dialog
 
+    /// <summary>
+    /// Shows the graph property dialog.
+    /// </summary>
+    /// <param name="doc">The graph document.</param>
     public static void ShowPropertyDialog(this GraphDocument doc)
     {
       var propHierarchy = new Altaxo.Main.Properties.PropertyHierarchy(PropertyExtensions.GetPropertyBags(doc));

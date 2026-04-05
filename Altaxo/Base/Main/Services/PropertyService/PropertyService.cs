@@ -34,12 +34,29 @@ namespace Altaxo.Main.Services
   using System.Diagnostics.CodeAnalysis;
   using Altaxo.Main.Properties;
 
+  /// <summary>
+  /// Default implementation of the application property service.
+  /// </summary>
   public class PropertyService : Altaxo.Main.Services.IPropertyService
   {
+    /// <summary>
+    /// Occurs when a property value changes.
+    /// </summary>
     public event PropertyChangedEventHandler? PropertyChanged;
 
+    /// <summary>
+    /// Gets the data directory.
+    /// </summary>
     public DirectoryName DataDirectory { get; protected set; }
+
+    /// <summary>
+    /// Gets the configuration directory.
+    /// </summary>
     public DirectoryName ConfigDirectory { get; protected set; }
+
+    /// <summary>
+    /// Gets the file name of the user properties file.
+    /// </summary>
     public FileName PropertiesFileName { get; protected set; }
 
 
@@ -61,6 +78,9 @@ namespace Altaxo.Main.Services
     /// The local application settings.
     /// </value>
     public IPropertyBag LocalApplicationSettings { get { return _localApplicationSettings; } }
+    /// <summary>
+    /// Gets the file that stores local application settings.
+    /// </summary>
     public FileName LocalApplicationSettingsFile { get; protected set; }
 
     /// <summary>
@@ -74,12 +94,28 @@ namespace Altaxo.Main.Services
     /// property value try to get the property service.</remarks>
     protected PropertyBagLazyLoaded _userSettings;
 
+    /// <summary>
+    /// Gets the user settings.
+    /// </summary>
     public IPropertyBag UserSettings { get { return _userSettings; } }
 
+    /// <summary>
+    /// Gets the application settings.
+    /// </summary>
     public IPropertyBag ApplicationSettings { get; private set; }
 
+    /// <summary>
+    /// Gets the built-in settings.
+    /// </summary>
     public IPropertyBag BuiltinSettings { get; private set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PropertyService"/> class.
+    /// </summary>
+    /// <param name="configDirectory">The configuration directory.</param>
+    /// <param name="dataDirectory">The data directory.</param>
+    /// <param name="localAppDirectory">The local application data directory.</param>
+    /// <param name="propertiesName">The base settings file name.</param>
     public PropertyService(DirectoryName configDirectory, DirectoryName dataDirectory, DirectoryName localAppDirectory, string propertiesName)
     {
       DataDirectory = dataDirectory;
@@ -94,6 +130,10 @@ namespace Altaxo.Main.Services
       BuiltinSettings = new PropertyBag() { ParentObject = SuspendableDocumentNode.StaticInstance };
     }
 
+    /// <summary>
+    /// Raises the <see cref="PropertyChanged"/> event.
+    /// </summary>
+    /// <param name="propertyName">The name of the changed property.</param>
     protected virtual void OnPropertyChanged(string propertyName)
     {
       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -101,6 +141,7 @@ namespace Altaxo.Main.Services
 
     #region Property getters
 
+    /// <inheritdoc />
     public T GetValue<T>(string key, T defaultValue)
     {
       if (UserSettings.TryGetValue<T>(key, out var result))
@@ -113,6 +154,7 @@ namespace Altaxo.Main.Services
         return defaultValue;
     }
 
+    /// <inheritdoc />
     [return: MaybeNull]
     public T GetValue<T>(PropertyKey<T> p, RuntimePropertyKind kind)
     {
@@ -126,6 +168,7 @@ namespace Altaxo.Main.Services
         throw new ArgumentOutOfRangeException(nameof(p), string.Format("No entry found for property key {0}", p));
     }
 
+    /// <inheritdoc />
     [return: MaybeNull]
     public T GetValueOrNull<T>(PropertyKey<T> p, RuntimePropertyKind kind)
     {
@@ -140,6 +183,7 @@ namespace Altaxo.Main.Services
     }
 
 
+    /// <inheritdoc />
     [return: NotNullIfNotNull("ValueCreationIfNotFound")]
     [return: MaybeNull]
     public T GetValue<T>(PropertyKey<T> p, RuntimePropertyKind kind, Func<T>? ValueCreationIfNotFound) where T : notnull
@@ -160,12 +204,14 @@ namespace Altaxo.Main.Services
 
     #region Property setters
 
+    /// <inheritdoc />
     public void SetValue<T>(string key, T value)
     {
       UserSettings.SetValue<T>(key, value);
       OnPropertyChanged(key);
     }
 
+    /// <inheritdoc />
     public void SetValue<T>(PropertyKey<T> p, T value)
     {
       UserSettings.SetValue(p, value);
@@ -176,6 +222,7 @@ namespace Altaxo.Main.Services
 
     #region Property removers
 
+    /// <inheritdoc />
     public void Remove(string key)
     {
       UserSettings.RemoveValue(key);
@@ -200,6 +247,11 @@ namespace Altaxo.Main.Services
           });
     }
 
+    /// <summary>
+    /// Loads a lazily deserialized settings bag from the specified file.
+    /// </summary>
+    /// <param name="fileName">The settings file to load.</param>
+    /// <returns>The loaded settings bag, or an empty one if loading failed.</returns>
     protected virtual PropertyBagLazyLoaded InternalLoadUserSettingsBag(FileName fileName)
     {
       if (!File.Exists(fileName))
@@ -236,6 +288,11 @@ namespace Altaxo.Main.Services
       return new PropertyBagLazyLoaded() { ParentObject = SuspendableDocumentNode.StaticInstance };
     }
 
+    /// <summary>
+    /// Saves a lazily loaded settings bag to the specified file.
+    /// </summary>
+    /// <param name="settings">The settings to save.</param>
+    /// <param name="fileName">The target file name.</param>
     protected virtual void InternalSaveUserSettingsBag(PropertyBagLazyLoaded settings, FileName fileName)
     {
       var thisVersion = UserSettings.GetType().Assembly.GetName().Version;
@@ -285,6 +342,7 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <inheritdoc />
     public virtual void Save()
     {
       InternalSaveUserSettingsBag(_userSettings, PropertiesFileName);

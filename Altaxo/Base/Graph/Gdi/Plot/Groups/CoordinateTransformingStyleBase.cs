@@ -30,8 +30,16 @@ using Altaxo.Graph.Scales.Boundaries;
 
 namespace Altaxo.Graph.Gdi.Plot.Groups
 {
+  /// <summary>
+  /// Provides helper methods for coordinate-transforming group styles.
+  /// </summary>
   public class CoordinateTransformingStyleBase
   {
+    /// <summary>
+    /// Merges all x-bounds of the specified plot items into the provided boundaries.
+    /// </summary>
+    /// <param name="pb">The physical boundaries to update.</param>
+    /// <param name="coll">The plot item collection.</param>
     public static void MergeXBoundsInto(IPhysicalBoundaries pb, PlotItemCollection coll)
     {
       foreach (IGPlotItem pi in coll)
@@ -44,6 +52,11 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       }
     }
 
+    /// <summary>
+    /// Merges all y-bounds of the specified plot items into the provided boundaries.
+    /// </summary>
+    /// <param name="pb">The physical boundaries to update.</param>
+    /// <param name="coll">The plot item collection.</param>
     public static void MergeYBoundsInto(IPhysicalBoundaries pb, PlotItemCollection coll)
     {
       foreach (IGPlotItem pi in coll)
@@ -56,6 +69,13 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       }
     }
 
+    /// <summary>
+    /// Paints the specified plot item collection from back to front.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="paintContext">The paint context.</param>
+    /// <param name="layer">The plot layer.</param>
+    /// <param name="coll">The plot item collection.</param>
     public static void Paint(System.Drawing.Graphics g, IPaintContext paintContext, IPlotArea layer, PlotItemCollection coll)
     {
       for (int i = coll.Count - 1; i >= 0; --i)

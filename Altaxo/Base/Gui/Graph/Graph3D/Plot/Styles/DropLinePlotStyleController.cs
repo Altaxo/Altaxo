@@ -38,14 +38,14 @@ using Altaxo.Units;
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 {
   /// <summary>
-  /// This view interface is for showing the options of the XYXYPlotScatterStyle
+  /// Provides the view contract for <see cref="DropLinePlotStyleController"/>.
   /// </summary>
   public interface IDropLinePlotStyleView : IDataContextAwareView
   {
   }
 
   /// <summary>
-  /// Summary description for XYPlotScatterStyleController.
+  /// Controller for <see cref="DropLinePlotStyle"/>.
   /// </summary>
   [UserControllerForObject(typeof(DropLinePlotStyle))]
   [ExpectedTypeOfView(typeof(IDropLinePlotStyleView))]
@@ -54,6 +54,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     /// <summary>Tracks the presence of a color group style in the parent collection.</summary>
     private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break; // no subcontrollers
@@ -63,6 +64,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _independentSkipFrequency;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the skip frequency is controlled independently.
+    /// </summary>
     public bool IndependentSkipFrequency
     {
       get => _independentSkipFrequency;
@@ -78,6 +82,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private int _SkipFrequency;
 
+    /// <summary>
+    /// Gets or sets the skip frequency.
+    /// </summary>
     public int SkipFrequency
     {
       get => _SkipFrequency;
@@ -94,6 +101,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _ignoreMissingDataPoints;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether missing data points are ignored.
+    /// </summary>
     public bool IgnoreMissingDataPoints
     {
       get => _ignoreMissingDataPoints;
@@ -110,6 +120,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _independentOnShiftingGroupStyles;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether shifting group styles are handled independently.
+    /// </summary>
     public bool IndependentOnShiftingGroupStyles
     {
       get => _independentOnShiftingGroupStyles;
@@ -125,6 +138,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private SelectableListNodeList _dropLineChoices;
 
+    /// <summary>
+    /// Gets or sets the available drop-line choices.
+    /// </summary>
     public SelectableListNodeList DropLineChoices
     {
       get => _dropLineChoices;
@@ -141,6 +157,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _enableUserDefinedDropTarget;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether a user-defined drop target is enabled.
+    /// </summary>
     public bool EnableUserDefinedDropTarget
     {
       get => _enableUserDefinedDropTarget;
@@ -156,6 +175,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private int _userDefinedDropTargetAxis = 2;
 
+    /// <summary>
+    /// Gets or sets the axis index for the user-defined drop target.
+    /// </summary>
     public int UserDefinedDropTargetAxis
     {
       get => _userDefinedDropTargetAxis;
@@ -171,6 +193,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _UserDefinedPhysicalBaseValue;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the user-defined base value is physical.
+    /// </summary>
     public bool UserDefinedPhysicalBaseValue
     {
       get => _UserDefinedPhysicalBaseValue;
@@ -186,6 +211,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private double _userDefinedBaseValue;
 
+    /// <summary>
+    /// Gets or sets the user-defined base value.
+    /// </summary>
     public double UserDefinedBaseValue
     {
       get => _userDefinedBaseValue;
@@ -202,6 +230,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _independentColor;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the color is controlled independently.
+    /// </summary>
     public bool IndependentColor
     {
       get => _independentColor;
@@ -219,6 +250,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _independentSymbolSize;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the symbol size is controlled independently.
+    /// </summary>
     public bool IndependentSymbolSize
     {
       get => _independentSymbolSize;
@@ -232,11 +266,17 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets the environment for symbol size values.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment SymbolSizeEnvironment => LineCapSizeEnvironment.Instance;
 
 
     private DimensionfulQuantity _symbolSize;
 
+    /// <summary>
+    /// Gets or sets the symbol size.
+    /// </summary>
     public DimensionfulQuantity SymbolSize
     {
       get => _symbolSize;
@@ -250,10 +290,16 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets the environment for line width values.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment LineWidthEnvironment => LineCapSizeEnvironment.Instance;
 
     private DimensionfulQuantity _lineWidth1Offset;
 
+    /// <summary>
+    /// Gets or sets the first line-width offset.
+    /// </summary>
     public DimensionfulQuantity LineWidth1Offset
     {
       get => _lineWidth1Offset;
@@ -269,6 +315,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private DimensionfulQuantity _lineWidth2Offset;
 
+    /// <summary>
+    /// Gets or sets the second line-width offset.
+    /// </summary>
     public DimensionfulQuantity LineWidth2Offset
     {
       get => _lineWidth2Offset;
@@ -283,10 +332,16 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
 
 
+    /// <summary>
+    /// Gets the environment for line-width factors.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment LineFactorEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _lineWidth1Factor;
 
+    /// <summary>
+    /// Gets or sets the first line-width factor.
+    /// </summary>
     public DimensionfulQuantity LineWidth1Factor
     {
       get => _lineWidth1Factor;
@@ -302,6 +357,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private DimensionfulQuantity _lineWidth2Factor;
 
+    /// <summary>
+    /// Gets or sets the second line-width factor.
+    /// </summary>
     public DimensionfulQuantity LineWidth2Factor
     {
       get => _lineWidth2Factor;
@@ -319,6 +377,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private DimensionfulQuantity _GapAtStartOffset;
 
+    /// <summary>
+    /// Gets or sets the gap offset at the start.
+    /// </summary>
     public DimensionfulQuantity GapAtStartOffset
     {
       get => _GapAtStartOffset;
@@ -334,6 +395,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private DimensionfulQuantity _GapAtStartFactor;
 
+    /// <summary>
+    /// Gets or sets the gap factor at the start.
+    /// </summary>
     public DimensionfulQuantity GapAtStartFactor
     {
       get => _GapAtStartFactor;
@@ -349,6 +413,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private DimensionfulQuantity _GapAtEndOffset;
 
+    /// <summary>
+    /// Gets or sets the gap offset at the end.
+    /// </summary>
     public DimensionfulQuantity GapAtEndOffset
     {
       get => _GapAtEndOffset;
@@ -364,6 +431,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private DimensionfulQuantity _GapAtEndFactor;
 
+    /// <summary>
+    /// Gets or sets the gap factor at the end.
+    /// </summary>
     public DimensionfulQuantity GapAtEndFactor
     {
       get => _GapAtEndFactor;
@@ -379,6 +449,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private PenAllPropertiesController _pen;
 
+    /// <summary>
+    /// Gets or sets the pen controller.
+    /// </summary>
     public PenAllPropertiesController Pen
     {
       get => _pen;
@@ -396,6 +469,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     #endregion
 
 
+ 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       _colorGroupStyleTracker = null;
@@ -405,6 +480,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       base.Dispose(isDisposing);
     }
 
+ 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -446,6 +523,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       }
     }
 
+ 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       // don't trust user input, so all into a try statement
@@ -490,6 +569,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       return ApplyEnd(true, disposeController);
     }
 
+    /// <summary>
+    /// Initializes the d ro pl in ec ho ic es.
+    /// </summary>
     public void InitializeDropLineChoices()
     {
       var layer = AbsoluteDocumentPath.GetRootNodeImplementing(_doc, typeof(XYZPlotLayer)) as XYZPlotLayer;

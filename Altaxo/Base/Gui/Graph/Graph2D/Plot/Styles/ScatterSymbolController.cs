@@ -35,14 +35,21 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
 {
+  /// <summary>
+  /// View contract for editing scatter symbols.
+  /// </summary>
   public interface IScatterSymbolView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for editing 2D scatter symbols.
+  /// </summary>
   [UserControllerForObject(typeof(IScatterSymbol))]
   [ExpectedTypeOfView(typeof(IScatterSymbolView))]
   public class ScatterSymbolController : MVCANControllerEditOriginalDocBase<IScatterSymbol, IScatterSymbolView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_plotColorInfluence, () => PlotColorInfluence = null);
@@ -52,6 +59,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
 
     private ItemsController<Type?> _shapes;
 
+    /// <summary>
+    /// Gets or sets the available scatter symbol shapes.
+    /// </summary>
     public ItemsController<Type?> Shapes
     {
       get => _shapes;
@@ -68,6 +78,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
 
     private ItemsController<Type?> _insets;
 
+    /// <summary>
+    /// Gets or sets the available inset choices.
+    /// </summary>
     public ItemsController<Type?> Insets
     {
       get => _insets;
@@ -83,6 +96,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
 
     private ItemsController<Type?> _frames;
 
+    /// <summary>
+    /// Gets or sets the available frame choices.
+    /// </summary>
     public ItemsController<Type?> Frames
     {
       get => _frames;
@@ -97,10 +113,16 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets the unit environment used for relative structure widths.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment RelativeStructureWidthEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _relativeStructureWidth;
 
+    /// <summary>
+    /// Gets or sets the relative structure width.
+    /// </summary>
     public DimensionfulQuantity RelativeStructureWidth
     {
       get => _relativeStructureWidth;
@@ -118,6 +140,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
 
     private PlotColorInfluenceController _plotColorInfluence;
 
+    /// <summary>
+    /// Gets or sets the controller for plot color influence settings.
+    /// </summary>
     public PlotColorInfluenceController PlotColorInfluence
     {
       get => _plotColorInfluence;
@@ -140,6 +165,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
 
     private NamedColor _fillColor;
 
+    /// <summary>
+    /// Gets or sets the fill color.
+    /// </summary>
     public NamedColor FillColor
     {
       get => _fillColor;
@@ -156,6 +184,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
 
     private NamedColor _frameColor;
 
+    /// <summary>
+    /// Gets or sets the frame color.
+    /// </summary>
     public NamedColor FrameColor
     {
       get => _frameColor;
@@ -171,6 +202,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
     }
     private NamedColor _insetColor;
 
+    /// <summary>
+    /// Gets or sets the inset color.
+    /// </summary>
     public NamedColor InsetColor
     {
       get => _insetColor;
@@ -187,6 +221,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
 
     private IScatterSymbol _scatterSymbolForPreview;
 
+    /// <summary>
+    /// Gets or sets the scatter symbol instance used for preview rendering.
+    /// </summary>
     public IScatterSymbol ScatterSymbolForPreview
     {
       get => _scatterSymbolForPreview;
@@ -204,6 +241,7 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -245,6 +283,7 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);

@@ -36,12 +36,19 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting.MultipleSpectra
 {
+  /// <summary>
+  /// View interface for peak fitting of multiple spectra by incremental peak addition.
+  /// </summary>
   public interface IPeakFittingOfMultipleSpectraByIncrementalPeakAdditionView : IDataContextAwareView { }
 
+  /// <summary>
+  /// Controller for <see cref="PeakFittingOfMultipleSpectraByIncrementalPeakAddition"/>.
+  /// </summary>
   [UserControllerForObject(typeof(PeakFittingOfMultipleSpectraByIncrementalPeakAddition))]
   [ExpectedTypeOfView(typeof(IPeakFittingOfMultipleSpectraByIncrementalPeakAdditionView))]
   public class PeakFittingOfMultipleSpectraByIncrementalPeakAdditionController : MVCANControllerEditImmutableDocBase<PeakFittingOfMultipleSpectraByIncrementalPeakAddition, IPeakFittingOfMultipleSpectraByIncrementalPeakAdditionView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -51,6 +58,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting.MultipleSpectra
 
     private ItemsController<Type> _fitFunctions;
 
+    /// <summary>
+    /// Gets or sets the selectable peak fit functions.
+    /// </summary>
     public ItemsController<Type> FitFunctions
     {
       get => _fitFunctions;
@@ -66,6 +76,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting.MultipleSpectra
 
     private int _orderOfBaselinePolynomial;
 
+    /// <summary>
+    /// Gets or sets the order of the baseline polynomial.
+    /// </summary>
     public int OrderOfBaselinePolynomial
     {
       get => _orderOfBaselinePolynomial;
@@ -81,6 +94,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting.MultipleSpectra
 
     private int _maximumNumberOfPeaks;
 
+    /// <summary>
+    /// Gets or sets the maximum number of peaks.
+    /// </summary>
     public int MaximumNumberOfPeaks
     {
       get => _maximumNumberOfPeaks;
@@ -95,10 +111,16 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting.MultipleSpectra
     }
 
 
+    /// <summary>
+    /// Gets the quantity environment for the minimal relative height.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment MinimalRelativeHeightEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _minimalRelativeHeight;
 
+    /// <summary>
+    /// Gets or sets the minimal relative height.
+    /// </summary>
     public DimensionfulQuantity MinimalRelativeHeight
     {
       get => _minimalRelativeHeight;
@@ -114,6 +136,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting.MultipleSpectra
 
     private DimensionfulQuantity _minimalSignalToNoiseRatio;
 
+    /// <summary>
+    /// Gets or sets the minimal signal-to-noise ratio.
+    /// </summary>
     public DimensionfulQuantity MinimalSignalToNoiseRatio
     {
       get => _minimalSignalToNoiseRatio;
@@ -130,6 +155,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting.MultipleSpectra
 
     private bool _useSeparatePeaksForErrorEvaluation;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether separate peaks are used for error evaluation.
+    /// </summary>
     public bool UseSeparatePeaksForErrorEvaluation
     {
       get => _useSeparatePeaksForErrorEvaluation;
@@ -145,6 +173,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting.MultipleSpectra
 
     private bool _isMinimalFWHMValueInXUnits;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the minimal FWHM value is specified in x units.
+    /// </summary>
     public bool IsMinimalFWHMValueInXUnits
     {
       get => _isMinimalFWHMValueInXUnits;
@@ -160,6 +191,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting.MultipleSpectra
 
     private double _minimalFWHMValue;
 
+    /// <summary>
+    /// Gets or sets the minimal FWHM value.
+    /// </summary>
     public double MinimalFWHMValue
     {
       get => _minimalFWHMValue;
@@ -173,11 +207,17 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting.MultipleSpectra
       }
     }
 
+    /// <summary>
+    /// Gets the quantity environment for the fit-width scaling factor.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment FitWidthScalingFactorEnvironment => RelationEnvironment.Instance;
 
 
     private DimensionfulQuantity _fitWidthScalingFactor;
 
+    /// <summary>
+    /// Gets or sets the fit-width scaling factor.
+    /// </summary>
     public DimensionfulQuantity FitWidthScalingFactor
     {
       get => _fitWidthScalingFactor;
@@ -193,6 +233,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting.MultipleSpectra
 
     private DimensionfulQuantity _prunePeaksSumChiSquareFactor;
 
+    /// <summary>
+    /// Gets or sets the pruning factor for the sum of chi-square values.
+    /// </summary>
     public DimensionfulQuantity PrunePeaksSumChiSquareFactor
     {
       get => _prunePeaksSumChiSquareFactor;
@@ -208,6 +251,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting.MultipleSpectra
 
     private ItemsController<PeakAdditionOrder> _peakAdditionOrder;
 
+    /// <summary>
+    /// Gets or sets the peak-addition order.
+    /// </summary>
     public ItemsController<PeakAdditionOrder> PeakAdditionOrder
     {
       get => _peakAdditionOrder;
@@ -223,17 +269,33 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting.MultipleSpectra
     }
 
 
+    /// <summary>
+    /// Editable fixed-position and FWHM data.
+    /// </summary>
     public class EditablePositionFWHM : IEditableObject, INotifyPropertyChanged
     {
+      /// <summary>
+      /// Occurs when a property value changes.
+      /// </summary>
       public event PropertyChangedEventHandler? PropertyChanged;
 
+      /// <summary>
+      /// Raises the <see cref="PropertyChanged"/> event.
+      /// </summary>
+      /// <param name="propertyName">The name of the changed property.</param>
       protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="EditablePositionFWHM"/> class.
+      /// </summary>
       public EditablePositionFWHM()
       {
 
       }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="EditablePositionFWHM"/> class.
+      /// </summary>
       public EditablePositionFWHM(double position, double initialFWHMValue, double? minimalFWHMValue, double? maximalFWHMValue)
       {
         Position = position;
@@ -242,6 +304,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting.MultipleSpectra
         MaximalFWHMValue = maximalFWHMValue;
       }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="EditablePositionFWHM"/> class.
+      /// </summary>
       public EditablePositionFWHM((double position, double initialFWHMValue, double? minimalFWHMValue, double? maximalFWHMValue) v)
       {
         Position = v.position;
@@ -250,20 +315,26 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting.MultipleSpectra
         MaximalFWHMValue = v.maximalFWHMValue;
       }
 
+      /// <inheritdoc/>
       public void BeginEdit()
       {
       }
 
+      /// <inheritdoc/>
       public void CancelEdit()
       {
       }
 
+      /// <inheritdoc/>
       public void EndEdit()
       {
       }
 
       private double _position;
 
+      /// <summary>
+      /// Gets or sets the peak position.
+      /// </summary>
       public double Position
       {
         get => _position;
@@ -279,6 +350,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting.MultipleSpectra
 
       private double _initialFWHMValue;
 
+      /// <summary>
+      /// Gets or sets the initial FWHM value.
+      /// </summary>
       public double InitialFWHMValue
       {
         get => _initialFWHMValue;
@@ -294,6 +368,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting.MultipleSpectra
 
       private double? _minimalFWHMValue;
 
+      /// <summary>
+      /// Gets or sets the minimal allowed FWHM value.
+      /// </summary>
       public double? MinimalFWHMValue
       {
         get => _minimalFWHMValue;
@@ -308,6 +385,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting.MultipleSpectra
       }
       private double? _maximalFWHMValue;
 
+      /// <summary>
+      /// Gets or sets the maximal allowed FWHM value.
+      /// </summary>
       public double? MaximalFWHMValue
       {
         get => _maximalFWHMValue;
@@ -322,10 +402,14 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting.MultipleSpectra
       }
     }
 
+    /// <summary>
+    /// Gets the editable collection of fixed peak positions and FWHM values.
+    /// </summary>
     public ObservableCollection<EditablePositionFWHM> FixedPositions { get; protected set; } = new();
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -364,6 +448,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting.MultipleSpectra
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       // test the fixed positions

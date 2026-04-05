@@ -54,6 +54,7 @@ namespace Altaxo.Serialization.BrukerOpus
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BrukerOpusImportOptions), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (BrukerOpusImportOptions)obj;
@@ -62,6 +63,7 @@ namespace Altaxo.Serialization.BrukerOpus
         info.AddValue("IncludeFilePathAsProperty", s.IncludeFilePathAsProperty);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var useNeutralColumnName = info.GetBoolean("UseNeutralColumnName");

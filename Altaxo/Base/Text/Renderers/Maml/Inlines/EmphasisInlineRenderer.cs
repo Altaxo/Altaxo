@@ -34,6 +34,9 @@ namespace Altaxo.Text.Renderers.Maml.Inlines
   public class EmphasisInlineRenderer : MamlObjectRenderer<EmphasisInline>
   {
 
+    /// <summary>
+    /// Writes an emphasis inline.
+    /// </summary>
     protected override void Write(MamlRenderer renderer, EmphasisInline obj)
     {
       MamlElement? mamlElement = null;

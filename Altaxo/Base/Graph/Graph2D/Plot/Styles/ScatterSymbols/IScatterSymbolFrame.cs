@@ -28,12 +28,29 @@ using Clipper2Lib;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
+  /// <summary>
+  /// Represents the frame geometry and color of a scatter symbol.
+  /// </summary>
   public interface IScatterSymbolFrame
   {
+    /// <summary>
+    /// Gets the frame color.
+    /// </summary>
     NamedColor Color { get; }
 
+    /// <summary>
+    /// Returns a copy of this frame with the specified color.
+    /// </summary>
+    /// <param name="color">The frame color to apply.</param>
+    /// <returns>A frame instance with the specified color.</returns>
     IScatterSymbolFrame WithColor(NamedColor color);
 
+    /// <summary>
+    /// Gets a copy of the inner polygon that remains after applying the frame width to an outer polygon.
+    /// </summary>
+    /// <param name="relativeWidth">The frame width relative to the symbol size.</param>
+    /// <param name="outerPolygon">The outer polygon of the symbol.</param>
+    /// <returns>The inner polygon in clipper coordinates.</returns>
     Paths64 GetCopyOfClipperPolygon(double relativeWidth, Paths64 outerPolygon);
   }
 }

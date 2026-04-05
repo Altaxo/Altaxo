@@ -45,6 +45,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NonlinearFitDocument), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (NonlinearFitDocument)obj;
@@ -53,6 +54,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         info.AddValue("Parameters", s._currentParameters);
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         NonlinearFitDocument s = o is not null ? (NonlinearFitDocument)o : new NonlinearFitDocument();
@@ -67,12 +69,18 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NonlinearFitDocument"/> class.
+    /// </summary>
     public NonlinearFitDocument()
     {
       _fitEnsemble = new FitEnsemble() { ParentObject = this };
       _currentParameters = new ParameterSet();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NonlinearFitDocument"/> class by cloning another document.
+    /// </summary>
     public NonlinearFitDocument(NonlinearFitDocument from)
     {
       _fitEnsemble = ChildCloneFrom(from._fitEnsemble);
@@ -80,6 +88,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       // Note that the fit context is not cloned here.
     }
 
+    /// <summary>
+    /// Gets the fit ensemble.
+    /// </summary>
     public FitEnsemble FitEnsemble
     {
       get
@@ -88,6 +99,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+    /// <summary>
+    /// Gets the current parameter set.
+    /// </summary>
     public ParameterSet CurrentParameters
     {
       get
@@ -96,6 +110,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+    /// <summary>
+    /// Gets the current parameter values for the specified fit element.
+    /// </summary>
     public double[] GetParametersForFitElement(int idx)
     {
       FitElement fitele = _fitEnsemble[idx];
@@ -169,6 +186,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     #region ICloneable Members
 
+    /// <inheritdoc/>
     public object Clone()
     {
       return new NonlinearFitDocument(this);
@@ -178,6 +196,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     #region Changed event handling
 
+    /// <inheritdoc/>
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       RecalculateParameterSet();
@@ -189,6 +208,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     #region Document node functions
 
+    /// <inheritdoc/>
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_fitEnsemble is not null)

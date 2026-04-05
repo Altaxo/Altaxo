@@ -29,11 +29,11 @@ using System.Collections.Generic;
 namespace Altaxo.Gui.Workbench
 {
   /// <summary>
-  /// Summary description for IWorkbench.
+  /// Represents the main application workbench that manages documents, pads, and the active content.
   /// </summary>
   public interface IWorkbench : System.ComponentModel.INotifyPropertyChanged, Altaxo.Main.Services.IMementoCapable
   {
-    /// <summary>Gets the corresponding workbench GUI object, i.e for Windows the main windows.</summary>
+    /// <summary>Gets the corresponding workbench GUI object, for example the main window.</summary>
     object ViewObject { get; }
 
     /// <summary>
@@ -150,6 +150,9 @@ namespace Altaxo.Gui.Workbench
     /// <param name="e">Information about the project change.</param>
     void EhProjectChanged(object sender, Altaxo.Main.ProjectEventArgs e);
 
+    /// <summary>
+    /// Saves the complete workbench state and layout in the property service.
+    /// </summary>
     void SaveCompleteWorkbenchStateAndLayoutInPropertyService();
   }
 }

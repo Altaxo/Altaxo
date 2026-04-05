@@ -32,8 +32,16 @@ using Altaxo.Main.Properties;
 
 namespace Altaxo.Graph.Gdi.GraphTemplates
 {
+  /// <summary>
+  /// Provides shared helper methods for graph templates.
+  /// </summary>
   public static class TemplateBase
   {
+    /// <summary>
+    /// Adds the standard graph properties from the specified property context to the graph.
+    /// </summary>
+    /// <param name="graph">The graph to configure.</param>
+    /// <param name="propertyContext">The property context providing default values.</param>
     public static void AddStandardPropertiesToGraph(GraphDocument graph, IReadOnlyPropertyBag propertyContext)
     {
       // Set default font property exclusively for the graph

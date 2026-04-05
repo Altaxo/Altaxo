@@ -28,9 +28,7 @@ using System;
 namespace Altaxo.Graph.Scales.Boundaries
 {
   /// <summary>
-  /// Provides an interface for tracking the physical
-  /// boundaries of a plot association. Every plot association has two of these objects
-  /// that help tracking the boundaries of X and Y axis
+  /// Provides an interface for tracking the physical boundaries of plot data.
   /// </summary>
   public interface IPhysicalBoundaries : Main.IDocumentLeafNode, ICloneable
   {
@@ -43,8 +41,8 @@ namespace Altaxo.Graph.Scales.Boundaries
     /// </summary>
     /// <param name="col">The numeric data column</param>
     /// <param name="idx">The index into this numeric column where the data value is located</param>
-    /// <returns>True if data has contributed to the determination of the boundaries. false if not.
-    /// Please not that a return value of false does <b>not</b> neccessarily means that the data can not be plotted.
+    /// <returns>True if data has contributed to the determination of the boundaries; otherwise, false.
+    /// Please note that a return value of false does <b>not</b> necessarily mean that the data can not be plotted.
     /// For instance, a value of PositiveInfinity can be plotted on a linear axis as a peak, but it can not contribute to the determination of the boundaries.</returns>
     bool Add(Altaxo.Data.IReadableColumn col, int idx);
 
@@ -56,23 +54,23 @@ namespace Altaxo.Graph.Scales.Boundaries
     /// return false.
     /// </summary>
     /// <param name="item">The data value.</param>
-    /// <returns>True if data has contributed to the determination of the boundaries. false if not.
-    /// Please not that a return value of false does <b>not</b> neccessarily means that the data can not be plotted.
+    /// <returns>True if data has contributed to the determination of the boundaries; otherwise, false.
+    /// Please note that a return value of false does <b>not</b> necessarily mean that the data can not be plotted.
     /// For instance, a value of PositiveInfinity can be plotted on a linear axis as a peak, but it can not contribute to the determination of the boundaries.</returns>
     bool Add(Altaxo.Data.AltaxoVariant item);
 
     /// <summary>
-    /// Reset the internal data to the initialized state
+    /// Resets the internal data to the initialized state.
     /// </summary>
     void Reset();
 
     /// <summary>
-    /// Return the number of items that was used to set the bounds.
+    /// Gets the number of items that were used to set the bounds.
     /// </summary>
     int NumberOfItems { get; }
 
     /// <summary>
-    /// Returns true when there are no data that can set the bounds.
+    /// Gets a value indicating whether there are no data that can set the bounds.
     /// </summary>
     bool IsEmpty { get; }
 
@@ -80,9 +78,9 @@ namespace Altaxo.Graph.Scales.Boundaries
     // double UpperBound { get { return maxValue; } }
 
     /// <summary>
-    /// merged boundaries of another object into this object
+    /// Merges the boundaries of another object into this object.
     /// </summary>
-    /// <param name="b">another physical boundary object of the same type as this</param>
+    /// <param name="b">Another physical boundary object of the same type as this instance.</param>
     void Add(IPhysicalBoundaries b);
   }
 }

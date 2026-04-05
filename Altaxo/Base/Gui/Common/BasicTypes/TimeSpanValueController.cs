@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -28,16 +28,25 @@ using System.Collections.Generic;
 
 namespace Altaxo.Gui.Common.BasicTypes
 {
+  /// <summary>
+  /// Defines the view contract for editing <see cref="TimeSpan"/> values.
+  /// </summary>
   public interface ITimeSpanValueView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="TimeSpan"/> values.
+  /// </summary>
   [UserControllerForObject(typeof(TimeSpan), 100)]
   [ExpectedTypeOfView(typeof(ITimeSpanValueView))]
   public class TimeSpanValueController : MVCANDControllerEditImmutableDocBase<TimeSpan, ITimeSpanValueView>
   {
     #region Bindings
 
+    /// <summary>
+    /// Gets or sets the value.
+    /// </summary>
     public TimeSpan Value
     {
       get
@@ -57,21 +66,30 @@ namespace Altaxo.Gui.Common.BasicTypes
 
     #endregion
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TimeSpanValueController"/> class.
+    /// </summary>
     public TimeSpanValueController()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TimeSpanValueController"/> class.
+    /// </summary>
+    /// <param name="value">The initial value.</param>
     public TimeSpanValueController(TimeSpan value)
     {
       _doc = _originalDoc = value;
       Initialize(true);
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;

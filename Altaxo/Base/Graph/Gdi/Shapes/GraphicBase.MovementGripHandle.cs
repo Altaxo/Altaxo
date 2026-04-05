@@ -33,6 +33,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 {
   public abstract partial class GraphicBase
   {
+    /// <summary>
+    /// Grip handle used to move a graphic object.
+    /// </summary>
     protected class MovementGripHandle : IGripManipulationHandle
     {
       private IHitTestObject _parent;
@@ -48,6 +51,12 @@ namespace Altaxo.Graph.Gdi.Shapes
       private PointD2D _initialMousePosition;
       private PointD2D _initialObjectPosition;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="MovementGripHandle"/> class.
+      /// </summary>
+      /// <param name="parent">The parent hit-test object.</param>
+      /// <param name="gripPath">The grip hit-test path.</param>
+      /// <param name="objectPath">The path to display.</param>
       public MovementGripHandle(IHitTestObject parent, GraphicsPath gripPath, GraphicsPath? objectPath)
       {
         _parent = parent;
@@ -87,6 +96,7 @@ namespace Altaxo.Graph.Gdi.Shapes
           return false;
       }
 
+      /// <inheritdoc />
       public void MoveGrip(PointD2D newPosition)
       {
         var diff = newPosition - _initialMousePosition;
@@ -109,11 +119,13 @@ namespace Altaxo.Graph.Gdi.Shapes
         }
       }
 
+      /// <inheritdoc />
       public bool IsGripHitted(PointD2D point)
       {
         return _gripPath.IsVisible(point.ToGdi());
       }
 
+      /// <inheritdoc />
       public bool IsGrippedObjectDisposed
       {
         get

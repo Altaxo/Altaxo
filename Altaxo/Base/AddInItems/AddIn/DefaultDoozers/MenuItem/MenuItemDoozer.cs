@@ -81,6 +81,7 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <inheritdoc/>
     public object BuildItem(BuildItemArgs args)
     {
       return new MenuItemDescriptor(args.Parameter, args.Codon, args.BuildSubItems<object>(), args.Conditions);
@@ -93,11 +94,26 @@ namespace Altaxo.AddInItems
   /// </summary>
   public sealed class MenuItemDescriptor
   {
+    /// <summary>
+    /// Gets the parameter passed to the builder.
+    /// </summary>
     public readonly object? Parameter;
+    /// <summary>
+    /// Gets the codon describing the menu item.
+    /// </summary>
     public readonly Codon Codon;
+    /// <summary>
+    /// Gets the submenu items.
+    /// </summary>
     public readonly IList SubItems;
+    /// <summary>
+    /// Gets the conditions attached to the menu item.
+    /// </summary>
     public readonly IReadOnlyCollection<ICondition> Conditions;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MenuItemDescriptor"/> class.
+    /// </summary>
     public MenuItemDescriptor(object? parameter, Codon codon, IList subItems, IReadOnlyCollection<ICondition> conditions)
     {
       Parameter = parameter;

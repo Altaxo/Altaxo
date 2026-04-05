@@ -35,6 +35,9 @@ using Altaxo.Scripting;
 
 namespace Altaxo.Data
 {
+  /// <summary>
+  /// Collection of data columns belonging to a table.
+  /// </summary>
   public class DataColumnCollection :
     Main.SuspendableDocumentNodeWithSingleAccumulatedData<BaseColumnCollectionChangedEventArgs>,
     IList<DataRow>,
@@ -47,6 +50,9 @@ namespace Altaxo.Data
 
     #region ColumnInfo
 
+    /// <summary>
+    /// Stores metadata for a data column in the collection.
+    /// </summary>
     [Serializable]
     protected class DataColumnInfo : ICloneable
     {
@@ -126,6 +132,9 @@ namespace Altaxo.Data
         Kind = from.Kind;
       }
 
+      /// <summary>
+      /// Gets a value indicating whether the column kind represents an independent variable.
+      /// </summary>
       public bool IsIndependentVariable
       {
         get { return Kind == ColumnKind.X || Kind == ColumnKind.Y || Kind == ColumnKind.Z; }
@@ -229,6 +238,9 @@ namespace Altaxo.Data
 
     /// <summary>If set, only the data should be stored, but e.g. not the scripts etc.</summary>
     public const string SerialiationInfoProperty_StoreDataOnly = "Altaxo.Data.DataColumnCollection_StoreDataOnly";
+    /// <summary>
+    /// Used during deserialization to indicate that only the data should be restored.
+    /// </summary>
     public const string DeserialiationInfoProperty_RestoreDataOnly = "Altaxo.Data.DataColumnCollection_RestoreDataOnly";
 
     /// <summary>Used during deserialization to store the info how to read the data at a later time.</summary>
@@ -1248,6 +1260,13 @@ namespace Altaxo.Data
       }
     }
 
+    /// <summary>
+    /// Determines whether two column collections have compatible structures.
+    /// </summary>
+    /// <param name="a">The first column collection.</param>
+    /// <param name="b">The second column collection.</param>
+    /// <param name="ignoreColumnNames">If <c>true</c>, column names are ignored during the comparison.</param>
+    /// <returns><c>true</c> if the structures are compatible; otherwise, <c>false</c>.</returns>
     public static bool IsColumnStructureCompatible(DataColumnCollection a, DataColumnCollection b, bool ignoreColumnNames)
     {
       if (a.ColumnCount != b.ColumnCount)
@@ -1315,6 +1334,10 @@ namespace Altaxo.Data
       RemoveColumns(GetColumnNumber(datac), 1);
     }
 
+    /// <summary>
+    /// Removes the specified columns from the collection.
+    /// </summary>
+    /// <param name="selectedColumns">The indices of the columns to remove.</param>
     public void RemoveColumns(IAscendingIntegerCollection selectedColumns)
     {
       if (_deferredDataLoader is not null)
@@ -2094,6 +2117,11 @@ namespace Altaxo.Data
 
     #region Column and row position manipulation
 
+    /// <summary>
+    /// Swaps the positions of two columns.
+    /// </summary>
+    /// <param name="i">The first column index.</param>
+    /// <param name="j">The second column index.</param>
     public void SwapColumnPositions(int i, int j)
     {
       if (i == j)
@@ -2584,6 +2612,7 @@ namespace Altaxo.Data
       AccumulateChangeData(sender, e, ref _accumulatedEventData);
     }
 
+    /// <inheritdoc />
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (e is Main.ParentChangedEventArgs parentChangedEventArgs && sender is DataColumn column)
@@ -2619,6 +2648,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     protected override void OnTunnelingEvent(IDocumentLeafNode originalSource, TunnelingEventArgs e)
     {
       if (e is DirtyResetEventArgs)
@@ -2838,6 +2868,7 @@ namespace Altaxo.Data
         return null;
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       for (int i = _columnsByNumber.Count - 1; i >= 0; --i)
@@ -2854,6 +2885,7 @@ namespace Altaxo.Data
 
     #region IEnumerable<DataRow> Members
 
+    /// <inheritdoc />
     public IEnumerator<DataRow> GetEnumerator()
     {
       for (int i = 0; i < RowCount; i++)

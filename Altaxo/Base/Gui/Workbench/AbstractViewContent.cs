@@ -40,14 +40,29 @@ namespace Altaxo.Gui.Workbench
   /// </summary>
   public abstract class AbstractViewContent : IViewContent
   {
+    /// <summary>
+    /// Stores whether the view content is active.
+    /// </summary>
     protected bool _isActive;
 
+    /// <summary>
+    /// Stores whether the view content is selected.
+    /// </summary>
     protected bool _isSelected;
 
+    /// <summary>
+    /// Stores whether the view content is visible.
+    /// </summary>
     protected bool _isVisible = true;
 
+    /// <summary>
+    /// Stores the current title.
+    /// </summary>
     protected string? _title;
 
+    /// <summary>
+    /// Stores the localized title source.
+    /// </summary>
     protected LanguageDependentString? _titleToBeLocalized;
 
     private string? _infoTip;
@@ -60,13 +75,21 @@ namespace Altaxo.Gui.Workbench
 
     private IServiceContainer? _services;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether disposal is in progress.
+    /// </summary>
     public bool IsDisposeInProgress { get; private set; }
     private bool _isDisposed;
 
+    /// <summary>
+    /// Occurs when the dirty state changes.
+    /// </summary>
     public event EventHandler? IsDirtyChanged;
 
+    /// <inheritdoc/>
     public event PropertyChangedEventHandler? PropertyChanged;
 
+    /// <inheritdoc/>
     public virtual bool CloseWithSolution
     {
       get
@@ -75,11 +98,13 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <inheritdoc/>
     public abstract object? ViewObject
     {
       get; set;
     }
 
+    /// <inheritdoc/>
     public virtual object? InitiallyFocusedControl
     {
       get { return null; }
@@ -163,7 +188,6 @@ namespace Altaxo.Gui.Workbench
     }
 
     /// <summary>
-    ///
     /// Gets or sets the visibility of the document.
     /// If false, the document tab header is not visible (but the document itself maybe visible !).
     /// If true, the document tab header is visible (if it fits in the bar),
@@ -231,6 +255,9 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Gets or sets the icon source.
+    /// </summary>
     public virtual string? IconSource
     {
       get
@@ -254,6 +281,9 @@ namespace Altaxo.Gui.Workbench
       EhTitleLocalizationChanged(_titleToBeLocalized, EventArgs.Empty);
     }
 
+    /// <summary>
+    /// Updates the title when the localized title changes.
+    /// </summary>
     protected virtual void EhTitleLocalizationChanged(object? sender, EventArgs e)
     {
       var value = _titleToBeLocalized?.Value;
@@ -319,11 +349,16 @@ namespace Altaxo.Gui.Workbench
 
     #endregion ContentId
 
+    /// <inheritdoc/>
     public virtual INavigationPoint? BuildNavPoint()
     {
       return null;
     }
 
+    /// <summary>
+    /// Raises the <see cref="PropertyChanged"/> event.
+    /// </summary>
+    /// <param name="propertyName">The name of the changed property.</param>
     protected virtual void OnPropertyChanged(string propertyName)
     {
       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -331,6 +366,9 @@ namespace Altaxo.Gui.Workbench
 
     #region CloseCommand
 
+    /// <summary>
+    /// Gets the command that closes the view content.
+    /// </summary>
     public System.Windows.Input.ICommand CloseCommand
     {
       get
@@ -344,11 +382,18 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Determines whether the view content can be closed.
+    /// </summary>
+    /// <returns><c>true</c> if the view content can be closed; otherwise, <c>false</c>.</returns>
     protected virtual bool CanClose()
     {
       return true;
     }
 
+    /// <summary>
+    /// Closes the view content.
+    /// </summary>
     protected virtual void OnClose()
     {
       Current.Workbench.CloseContent(this);
@@ -358,6 +403,9 @@ namespace Altaxo.Gui.Workbench
 
     #region InfoTip
 
+    /// <summary>
+    /// Gets or sets the informational tooltip for the view content.
+    /// </summary>
     public string? InfoTip
     {
       get { return _infoTip; }
@@ -402,13 +450,20 @@ namespace Altaxo.Gui.Workbench
 
     #region IDisposable
 
+    /// <summary>
+    /// Occurs when the view content has been disposed.
+    /// </summary>
     public event EventHandler? Disposed;
 
+    /// <summary>
+    /// Gets a value indicating whether the view content has been disposed.
+    /// </summary>
     public bool IsDisposed
     {
       get { return _isDisposed; }
     }
 
+    /// <inheritdoc/>
     public virtual void Dispose()
     {
       _isDisposed = true;
@@ -427,17 +482,24 @@ namespace Altaxo.Gui.Workbench
 
     #region IsDirty
 
+    /// <inheritdoc/>
     public virtual bool IsDirty
     {
       get { return _isDirty; }
     }
 
+    /// <summary>
+    /// Raises notifications that the dirty state has changed.
+    /// </summary>
     public virtual void OnIsDirtyChanged()
     {
       IsDirtyChanged?.Invoke(this, EventArgs.Empty);
       OnPropertyChanged(nameof(IsDirty));
     }
 
+    /// <summary>
+    /// Clears the dirty state.
+    /// </summary>
     public void ClearIsDirty()
     {
       if (!(_isDirty == false))
@@ -447,6 +509,9 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Sets the dirty state.
+    /// </summary>
     public void SetDirty()
     {
       if (!(_isDirty == true))
@@ -460,6 +525,9 @@ namespace Altaxo.Gui.Workbench
 
     #region IServiceProvider
 
+    /// <summary>
+    /// Gets or sets the service container for the view content.
+    /// </summary>
     public IServiceContainer? Services
     {
       get
@@ -472,13 +540,20 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <inheritdoc/>
     public abstract object ModelObject { get; }
 
+    /// <summary>
+    /// Gets a required service of the specified type.
+    /// </summary>
+    /// <typeparam name="T">The service type.</typeparam>
+    /// <returns>The requested service.</returns>
     public T GetService<T>()
     {
       return (T)(GetService(typeof(T)) ?? throw new InvalidOperationException($"Service of type {typeof(T)} not found on {this}"));
     }
 
+    /// <inheritdoc/>
     public object? GetService(Type serviceType)
     {
       var obj = _services?.GetService(serviceType);

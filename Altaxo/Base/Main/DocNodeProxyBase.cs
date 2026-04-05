@@ -31,6 +31,9 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Main
 {
+  /// <summary>
+  /// Base class for document-node proxies.
+  /// </summary>
   public class DocNodeProxyBase : Main.SuspendableDocumentLeafNodeWithEventArgs
   {
 #if DOCNODEPROXY_CONCURRENTDEBUG
@@ -47,6 +50,9 @@ namespace Altaxo.Main
     protected int DebugUSN => 0;
 #endif
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DocNodeProxyBase"/> class.
+    /// </summary>
     public DocNodeProxyBase()
     {
 #if DOCNODEPROXY_CONCURRENTDEBUG

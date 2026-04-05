@@ -40,6 +40,7 @@ namespace Altaxo.Main.Services
   {
     private bool _isDisposed;
 
+    /// <inheritdoc/>
     public event EventHandler<NameChangedEventArgs>? FileOrFolderNameChanged;
 
     /// <summary>
@@ -59,6 +60,12 @@ namespace Altaxo.Main.Services
     /// <inheritdoc/>
     public bool IsDisposed => _isDisposed;
 
+    /// <summary>
+    /// Creates a manager for saving to a newly created or overwritten empty project file.
+    /// </summary>
+    /// <param name="fileName">The target file name.</param>
+    /// <param name="allowOverwriting">If set to <c>true</c>, an existing file may be overwritten.</param>
+    /// <returns>The initialized archive manager.</returns>
     public static ZipFileProjectArchiveManagerWithoutClonedFile CreateForSavingWithEmptyProjectFile(FileName fileName, bool allowOverwriting)
     {
       var result = new ZipFileProjectArchiveManagerWithoutClonedFile();

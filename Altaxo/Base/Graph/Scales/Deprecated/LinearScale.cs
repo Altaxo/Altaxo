@@ -30,7 +30,7 @@ using Altaxo.Graph.Scales.Rescaling;
 namespace Altaxo.Graph.Scales.Deprecated
 {
   /// <summary>
-  /// A linear axis, i.e a axis where physical values v can be translated to logical values l by v=a+b*l.
+  /// Represents the deprecated linear scale implementation.
   /// </summary>
 
   [Serializable]
@@ -58,6 +58,9 @@ namespace Altaxo.Graph.Scales.Deprecated
     /// <summary>Holds the <see cref="NumericalBoundaries"/> for that axis.</summary>
     protected NumericalBoundaries _dataBounds = new FiniteNumericalBoundaries();
 
+    /// <summary>
+    /// Holds the rescaling conditions for this scale.
+    /// </summary>
     protected NumericScaleRescaleConditions _rescaling = new LinearScaleRescaleConditions();
 
     // cached values
@@ -78,6 +81,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.LinearAxis", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (LinearScale)obj;
@@ -94,6 +98,7 @@ namespace Altaxo.Graph.Scales.Deprecated
         info.AddValue("Bounds", s._dataBounds);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (LinearScale?)o ?? new LinearScale();
@@ -128,6 +133,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Scales.LinearScale", 2)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (LinearScale)obj;
@@ -147,6 +153,7 @@ namespace Altaxo.Graph.Scales.Deprecated
         info.AddValue("Rescaling", s._rescaling);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (LinearScale?)o ?? new LinearScale();
@@ -193,7 +200,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     /// <summary>
     /// Copy constructor.
     /// </summary>
-    /// <param name="from">A other linear axis from which to copy from.</param>
+    /// <param name="from">Another linear scale from which to copy.</param>
     public LinearScale(LinearScale from)
     {
       IsLinked = from.IsLinked;
@@ -215,6 +222,10 @@ namespace Altaxo.Graph.Scales.Deprecated
       _rescaling.ParentObject = this;
     }
 
+    /// <summary>
+    /// Copies the state from another deprecated <see cref="LinearScale"/>.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public virtual void CopyFrom(LinearScale from)
     {
       if (ReferenceEquals(this, from))
@@ -236,6 +247,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       ChildCopyToMemberOrCreateNew(ref _rescaling, from._rescaling, () => new LinearScaleRescaleConditions());
     }
 
+    /// <inheritdoc />
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_dataBounds is not null)
@@ -245,6 +257,7 @@ namespace Altaxo.Graph.Scales.Deprecated
         yield return new Main.DocumentNodeAndName(_rescaling, "Rescaling");
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new LinearScale(this);
@@ -305,6 +318,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       return (x - _cachedAxisOrg) * _cachedOneByAxisSpan;
     }
 
+    /// <inheritdoc />
     public override double NormalToPhysical(double x)
     {
       return _cachedAxisOrg + x * _cachedAxisSpan;
@@ -337,6 +351,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       return new Altaxo.Data.AltaxoVariant(NormalToPhysical(x));
     }
 
+    /// <inheritdoc />
     public override double[] GetMajorTicks()
     {
       int j;
@@ -361,6 +376,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       return retv;
     }
 
+    /// <inheritdoc />
     public override double[] GetMinorTicks()
     {
       int j;
@@ -398,6 +414,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       return retv;
     }
 
+    /// <inheritdoc />
     public override void ProcessDataBounds()
     {
       if (_dataBounds is null || _dataBounds.IsEmpty)
@@ -406,12 +423,19 @@ namespace Altaxo.Graph.Scales.Deprecated
       ProcessDataBounds(_dataBounds.LowerBound, _dataBounds.UpperBound, _rescaling);
     }
 
+    /// <summary>
+    /// Processes the specified data bounds using the given rescaling conditions.
+    /// </summary>
+    /// <param name="xorg">The lower data bound.</param>
+    /// <param name="xend">The upper data bound.</param>
+    /// <param name="rescaling">The rescaling conditions.</param>
     public void ProcessDataBounds(double xorg, double xend, NumericScaleRescaleConditions rescaling)
     {
       rescaling.OnDataBoundsChanged(xorg, xend);
       ProcessDataBounds(rescaling.ResultingOrg, rescaling.IsResultingOrgFixed, rescaling.ResultingEnd, rescaling.IsResultingEndFixed);
     }
 
+    /// <inheritdoc />
     public override void ProcessDataBounds(double xorg, bool xorgfixed, double xend, bool xendfixed)
     {
       if (IsLinked)
@@ -489,6 +513,9 @@ namespace Altaxo.Graph.Scales.Deprecated
       }
     }
 
+    /// <summary>
+    /// Updates cached values derived from the current axis bounds.
+    /// </summary>
     protected void SetCachedValues()
     {
       _cachedAxisOrg = _axisOrgByMajor * _majorSpan;
@@ -497,6 +524,11 @@ namespace Altaxo.Graph.Scales.Deprecated
       _cachedOneByAxisSpan = 1 / _cachedAxisSpan;
     }
 
+    /// <summary>
+    /// Handles changes of the associated boundaries.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The event arguments.</param>
     protected void OnBoundariesChanged(object sender, BoundariesChangedEventArgs e)
     {
       bool bIsRelevant = true;

@@ -29,11 +29,21 @@ namespace Altaxo.Gui.Common
   /// <summary>
   /// Summary description for SingleChoiceObjectController.
   /// </summary>
+  /// <summary>
+  /// Controller for <see cref="ISingleChoiceObject"/> instances.
+  /// </summary>
   [UserControllerForObject(typeof(ISingleChoiceObject), 100)]
   public class SingleChoiceObjectController : SingleChoiceController
   {
+    /// <summary>
+    /// The edited choice object.
+    /// </summary>
     protected ISingleChoiceObject _choiceObject;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SingleChoiceObjectController"/> class.
+    /// </summary>
+    /// <param name="o">The choice object to edit.</param>
     public SingleChoiceObjectController(ISingleChoiceObject o)
       :
       base(o.Choices, o.Selection)
@@ -41,6 +51,7 @@ namespace Altaxo.Gui.Common
       _choiceObject = o;
     }
 
+    /// <inheritdoc/>
     public override object ModelObject
     {
       get
@@ -49,6 +60,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (!base.Apply(disposeController))

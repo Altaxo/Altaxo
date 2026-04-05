@@ -32,18 +32,28 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Graph3D.Templates
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="DefaultCartesicPlotTemplateController"/>.
+  /// </summary>
   public interface IDefaultCartesicPlotTemplateView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for choosing a default 3D Cartesian plot template.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IDefaultCartesicPlotTemplateView))]
   public class DefaultCartesicPlotTemplateController : MVCANControllerEditOriginalDocBase<GraphDocument, IDefaultCartesicPlotTemplateView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DefaultCartesicPlotTemplateController"/> class.
+    /// </summary>
     public DefaultCartesicPlotTemplateController()
     {
       CmdGraphFromProjectSelected = new RelayCommand(EhGraphFromProjectSelected);
@@ -51,10 +61,16 @@ namespace Altaxo.Gui.Graph.Graph3D.Templates
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the command that selects a graph from the project.
+    /// </summary>
     public ICommand CmdGraphFromProjectSelected { get; }
 
     private ItemsController<GraphDocument> _graphsInProject;
 
+    /// <summary>
+    /// Gets or sets the graphs available in the project.
+    /// </summary>
     public ItemsController<GraphDocument> GraphsInProject
     {
       get => _graphsInProject;
@@ -71,6 +87,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Templates
 
     private string _previewTitle;
 
+    /// <summary>
+    /// Gets or sets the preview title.
+    /// </summary>
     public string PreviewTitle
     {
       get => _previewTitle;
@@ -86,6 +105,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Templates
 
     private System.Drawing.Bitmap _previewBitmap;
 
+    /// <summary>
+    /// Gets or sets the preview bitmap.
+    /// </summary>
     public System.Drawing.Bitmap PreviewBitmap
     {
       get => _previewBitmap;
@@ -104,6 +126,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Templates
 
     #endregion
 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       GraphsInProject = null;
@@ -111,6 +134,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Templates
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -130,6 +154,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Templates
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);
@@ -160,7 +185,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Templates
 
       if (!(doc.RootLayer.Layers[0] is XYZPlotLayer))
       {
-        Current.Gui.ErrorMessageBox("The selected graph is not appropriate as template because the first child layer is not an XYPlotLayer");
+        Current.Gui.ErrorMessageBox("The selected graph is not appropriate as template because the first child layer is not an XYZPlotLayer");
         return false;
       }
       return true;

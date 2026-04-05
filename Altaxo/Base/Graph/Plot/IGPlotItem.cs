@@ -33,7 +33,7 @@ using Altaxo.Main;
 namespace Altaxo.Graph.Plot
 {
   /// <summary>
-  /// Common interface of both 2D (<see cref="Altaxo.Graph.Gdi.Plot.IGPlotItem"/>) and 3D plot (<see cref="Altaxo.Graph.Graph3D.Plot.IGPlotItem"/>) items.
+  /// Common interface of both 2D (<see cref="Altaxo.Graph.Gdi.Plot.IGPlotItem"/>) and 3D (<see cref="Altaxo.Graph.Graph3D.Plot.IGPlotItem"/>) plot items.
   /// </summary>
   /// <seealso cref="Altaxo.Main.ICopyFrom" />
   /// <seealso cref="Altaxo.Main.IChangedEventSource" />
@@ -50,8 +50,8 @@ namespace Altaxo.Graph.Plot
     string GetName(int level);
 
     /// <summary>
-    /// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
-    /// to change a plot so that the plot items refer to another table.
+    /// Visits document references of this plot item, typically data items such as tables and columns.
+    /// This makes it possible to change a plot so that the plot items refer to another table.
     /// </summary>
     /// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
     void VisitDocumentReferences(DocNodeProxyReporter Report);

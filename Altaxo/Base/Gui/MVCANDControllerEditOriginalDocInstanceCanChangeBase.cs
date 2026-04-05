@@ -30,7 +30,7 @@ namespace Altaxo.Gui
   /// <summary>
   /// Base of all controllers that edit the original document directly (live).
   /// This class is especially well suited to edit a document class with many derived classes,
-  /// and the user can choose among the types. If the user choose a new type of document, this type must be instantiated and edited henceforth.
+  /// and the user can choose among the types. If the user chooses a new type of document, this type must be instantiated and edited henceforth.
   /// The old document should be released then, and the new document must be integrated in the document hierarchy.
   /// This class also implements <see cref="IMVCANDController"/> to signal when the user changed anything inside the document.
   /// </summary>
@@ -56,19 +56,19 @@ namespace Altaxo.Gui
     /// Initializes a new instance of the <see cref="MVCANDControllerEditOriginalDocInstanceCanChangeBase{TModel, TView}"/> class.
     /// </summary>
     /// <param name="SetInstanceInParentNode">Action that sets the instance that this controller is editing in the parent node. This action is typically called when
-    /// the user chooses a new type of model in the Gui.</param>
-    /// <exception cref="System.ArgumentNullException">SetInstanceInParentNode</exception>
+    /// the user chooses a new type of model in the GUI.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="SetInstanceInParentNode"/> is <c>null</c>.</exception>
     public MVCANDControllerEditOriginalDocInstanceCanChangeBase(Action<TModel> SetInstanceInParentNode)
       : base(SetInstanceInParentNode)
     {
     }
 
     /// <summary>
-    /// Initialize the controller with the document. If successfull, the function has to return true.
+    /// Initialize the controller with the document. If successful, the function has to return true.
     /// </summary>
-    /// <param name="args">The arguments neccessary to create the controller. Normally, the first argument is the document, the second can be the parent of the document and so on.</param>
+    /// <param name="args">The arguments necessary to create the controller. Normally, the first argument is the document, the second can be the parent of the document and so on.</param>
     /// <returns>
-    /// Returns <see langword="true" /> if successfull; otherwise <see langword="false" />.
+    /// Returns <see langword="true" /> if successful; otherwise <see langword="false" />.
     /// </returns>
     public override bool InitializeDocument(params object[] args)
     {
@@ -84,9 +84,7 @@ namespace Altaxo.Gui
       return result;
     }
 
-    /// <summary>
-    /// Returns the Gui element that shows the model to the user. When attaching a new view, the <see cref="MadeDirty"/> event is suppressed.
-    /// </summary>
+    /// <inheritdoc/>
     public override object? ViewObject
     {
       get
@@ -131,6 +129,9 @@ namespace Altaxo.Gui
 
     /// <summary>
     /// Gets the provisional model object. This is the model object that is based on the current user input. In this class of controller, it is identical to the edited document (because the original document is edited).
+    /// </summary>
+    /// <summary>
+    /// Gets the provisional model object. This is the model object based on the current user input.
     /// </summary>
     public object ProvisionalModelObject
     {

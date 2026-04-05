@@ -29,9 +29,13 @@ using Altaxo.Serialization.Renishaw;
 
 namespace Altaxo.Gui.Serialization.Renishaw
 {
+  /// <summary>
+  /// Controller for <see cref="RenishawImportDataSource"/>.
+  /// </summary>
   [UserControllerForObject(typeof(RenishawImportDataSource))]
   public class RenishawImportDataSourceController : DataSourceControllerBase<RenishawImportDataSource>
   {
+    /// <inheritdoc />
     protected override IMVCANController GetProcessDataController()
     {
       var processDataController = new MultipleFilesController();
@@ -40,7 +44,9 @@ namespace Altaxo.Gui.Serialization.Renishaw
       Current.Gui.FindAndAttachControlTo(processDataController);
       return processDataController;
     }
+    /// <inheritdoc />
     protected override bool IsProcessDataInitiallyExpanded() => true;
+    /// <inheritdoc />
     protected override bool IsProcessOptionsInitiallyExpanded() => false;
   }
 }

@@ -51,6 +51,8 @@ namespace Altaxo.DataConnection
     /// <summary>
     /// Prompts the user and edits a connection string.
     /// </summary>
+    /// <param name="connString">The connection string to edit.</param>
+    /// <returns>The edited connection string.</returns>
     public static string EditConnectionString(string connString)
     {
       try

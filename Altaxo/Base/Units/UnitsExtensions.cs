@@ -137,6 +137,11 @@ namespace Altaxo.Units
       }
     }
 
+    /// <summary>
+    /// Gets rate units for the specified fixed units.
+    /// </summary>
+    /// <param name="fixedUnits">The fixed units.</param>
+    /// <returns>An enumeration of value-per-time units derived from the fixed units.</returns>
     public static IEnumerable<IUnit> GetValueRateUnits(IEnumerable<IUnit> fixedUnits)
     {
       bool wasSomethingYielded = false;

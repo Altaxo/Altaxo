@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -46,9 +46,13 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     void GetColorVariations(AxoColor baseColor, AxoColor[] variations);
   }
 
+  /// <summary>
+  /// Creates variations by desaturating the base color.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorVariationModelDesaturate}")]
   public class ColorVariationModelDesaturate : IColorVariationModel
   {
+    /// <inheritdoc/>
     public void GetColorVariations(AxoColor baseColor, AxoColor[] variations)
     {
       var (alpha, hue, saturation, brightness) = baseColor.ToAhsb();
@@ -66,9 +70,13 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     }
   }
 
+  /// <summary>
+  /// Creates variations by desaturating and darkening the base color.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorVariationModelDesaturateAndDarker}")]
   public class ColorVariationModelDesaturateAndDarker : IColorVariationModel
   {
+    /// <inheritdoc/>
     public void GetColorVariations(AxoColor baseColor, AxoColor[] variations)
     {
       var (alpha, hue, saturation, brightness) = baseColor.ToAhsb();
@@ -87,9 +95,13 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     }
   }
 
+  /// <summary>
+  /// Creates darker variations of the base color.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorVariationModelDarker}")]
   public class ColorVariationModelDarker : IColorVariationModel
   {
+    /// <inheritdoc/>
     public void GetColorVariations(AxoColor baseColor, AxoColor[] variations)
     {
       var (alpha, hue, saturation, brightness) = baseColor.ToAhsb();
@@ -107,9 +119,13 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     }
   }
 
+  /// <summary>
+  /// Creates warmer variations of the base color.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorVariationModelWarmer}")]
   public class ColorVariationModelWarmer : IColorVariationModel
   {
+    /// <inheritdoc/>
     public void GetColorVariations(AxoColor baseColor, AxoColor[] variations)
     {
       var red = baseColor.ScR;
@@ -129,9 +145,13 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     }
   }
 
+  /// <summary>
+  /// Creates colder variations of the base color.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorVariationModelColder}")]
   public class ColorVariationModelColder : IColorVariationModel
   {
+    /// <inheritdoc/>
     public void GetColorVariations(AxoColor baseColor, AxoColor[] variations)
     {
       var blue = baseColor.ScB;

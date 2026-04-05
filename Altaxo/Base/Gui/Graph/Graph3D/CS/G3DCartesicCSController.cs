@@ -29,24 +29,38 @@ using Altaxo.Graph.Graph3D.CS;
 namespace Altaxo.Gui.Graph.Graph3D.CS
 {
 
+  /// <summary>
+  /// View contract for editing the 3D cartesian coordinate system.
+  /// </summary>
   public interface IG3DCartesicCSView : IDataContextAwareView
   {
   }
 
 
+  /// <summary>
+  /// Controller for editing <see cref="G3DCartesicCoordinateSystem"/>.
+  /// </summary>
   [UserControllerForObject(typeof(G3DCartesicCoordinateSystem), 101)]
   [ExpectedTypeOfView(typeof(IG3DCartesicCSView))]
   public class G3DCartesicCSController : MVCANControllerEditImmutableDocBase<G3DCartesicCoordinateSystem, IG3DCartesicCSView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="G3DCartesicCSController"/> class.
+    /// </summary>
     public G3DCartesicCSController()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="G3DCartesicCSController"/> class.
+    /// </summary>
+    /// <param name="doc">The coordinate system document.</param>
     public G3DCartesicCSController(G3DCartesicCoordinateSystem doc)
     {
       InitializeDocument(doc);
@@ -56,6 +70,9 @@ namespace Altaxo.Gui.Graph.Graph3D.CS
 
     private bool _exchangeXY;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether X and Y are exchanged.
+    /// </summary>
     public bool ExchangeXY
     {
       get => _exchangeXY;
@@ -70,6 +87,9 @@ namespace Altaxo.Gui.Graph.Graph3D.CS
     }
     private bool _reverseX;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the X direction is reversed.
+    /// </summary>
     public bool ReverseX
     {
       get => _reverseX;
@@ -84,6 +104,9 @@ namespace Altaxo.Gui.Graph.Graph3D.CS
     }
     private bool _reverseY;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the Y direction is reversed.
+    /// </summary>
     public bool ReverseY
     {
       get => _reverseY;
@@ -99,6 +122,9 @@ namespace Altaxo.Gui.Graph.Graph3D.CS
 
     private bool _reverseZ;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the Z direction is reversed.
+    /// </summary>
     public bool ReverseZ
     {
       get => _reverseZ;
@@ -115,6 +141,7 @@ namespace Altaxo.Gui.Graph.Graph3D.CS
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -128,6 +155,7 @@ namespace Altaxo.Gui.Graph.Graph3D.CS
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = _doc.WithXYInterchangedAndXYZReversed(

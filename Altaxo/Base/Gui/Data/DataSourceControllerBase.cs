@@ -43,17 +43,17 @@ namespace Altaxo.Gui.Data
     public event Action SuccessfullyApplied;
 
     /// <summary>
-    /// Name of the tab that shows the input options.
+    /// Gets the name of the tab that shows the input options.
     /// </summary>
     public const string TabInputOptions = "InputOptions";
 
     /// <summary>
-    /// Name of the tab that shows the process options.
+    /// Gets the name of the tab that shows the process options.
     /// </summary>
     public const string TabProcessOptions = "ProcessOptions";
 
     /// <summary>
-    /// Name of the tab that shows the process data.
+    /// Gets the name of the tab that shows the process data.
     /// </summary>
     public const string TabProcessData = "ProcessData";
 
@@ -224,7 +224,7 @@ namespace Altaxo.Gui.Data
     /// <summary>
     /// Creates the controller that manages the process options for the data source.
     /// </summary>
-    /// <returns>The process options controller, or <c>null</c> if there is no process options object.</returns>
+    /// <returns>The process options controller, or <see langword="null"/> if there is no process-options object.</returns>
     protected virtual IMVCANController GetProcessOptionsController()
     {
       if (_doc.ProcessOptionsObject is not null)
@@ -241,7 +241,7 @@ namespace Altaxo.Gui.Data
     /// <summary>
     /// Creates the controller that manages the process data for the data source.
     /// </summary>
-    /// <returns>The process data controller, or <c>null</c> if there is no process data object.</returns>
+    /// <returns>The process data controller, or <see langword="null"/> if there is no process-data object.</returns>
     protected virtual IMVCANController GetProcessDataController()
     {
       if (_doc.ProcessDataObject is not null)

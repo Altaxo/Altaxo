@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -29,14 +29,21 @@ using Altaxo.Analysis.Statistics.Histograms;
 
 namespace Altaxo.Gui.Analysis.Statistics
 {
+  /// <summary>
+  /// Defines the view contract for editing logarithmic binning options.
+  /// </summary>
   public interface ILogarithmicBinningView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="LogarithmicBinning"/>.
+  /// </summary>
   [UserControllerForObject(typeof(LogarithmicBinning))]
   [ExpectedTypeOfView(typeof(ILogarithmicBinningView))]
   public class LogarithmicBinningController : MVCANControllerEditOriginalDocBase<LogarithmicBinning, ILogarithmicBinningView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -46,6 +53,9 @@ namespace Altaxo.Gui.Analysis.Statistics
 
     private bool _isUserDefinedBinOffset;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the bin offset is user-defined.
+    /// </summary>
     public bool IsUserDefinedBinOffset
     {
       get => _isUserDefinedBinOffset;
@@ -60,6 +70,9 @@ namespace Altaxo.Gui.Analysis.Statistics
     }
     private double _binOffset;
 
+    /// <summary>
+    /// Gets or sets the bin offset.
+    /// </summary>
     public double BinOffset
     {
       get => _binOffset;
@@ -74,6 +87,9 @@ namespace Altaxo.Gui.Analysis.Statistics
     }
     private bool _isUserDefinedBinWidth;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the bin width is user-defined.
+    /// </summary>
     public bool IsUserDefinedBinWidth
     {
       get => _isUserDefinedBinWidth;
@@ -88,6 +104,9 @@ namespace Altaxo.Gui.Analysis.Statistics
     }
     private double _binWidth;
 
+    /// <summary>
+    /// Gets or sets the bin width.
+    /// </summary>
     public double BinWidth
     {
       get => _binWidth;
@@ -102,6 +121,9 @@ namespace Altaxo.Gui.Analysis.Statistics
     }
     private double _resultingBinCount;
 
+    /// <summary>
+    /// Gets or sets the resulting number of bins.
+    /// </summary>
     public double ResultingBinCount
     {
       get => _resultingBinCount;
@@ -119,6 +141,7 @@ namespace Altaxo.Gui.Analysis.Statistics
     #endregion Bindings
 
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -134,6 +157,7 @@ namespace Altaxo.Gui.Analysis.Statistics
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc.IsUserDefinedBinOffset = IsUserDefinedBinOffset;

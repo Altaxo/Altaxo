@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -28,16 +28,25 @@ using System.Collections.Generic;
 
 namespace Altaxo.Gui.Common.BasicTypes
 {
+  /// <summary>
+  /// Defines the view contract for editing <see cref="DateTimeOffset"/> values.
+  /// </summary>
   public interface IDateTimeOffsetValueView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="DateTimeOffset"/> values.
+  /// </summary>
   [UserControllerForObject(typeof(DateTimeOffset), 100)]
   [ExpectedTypeOfView(typeof(IDateTimeOffsetValueView))]
   public class DateTimeOffsetValueController : MVCANDControllerEditImmutableDocBase<DateTimeOffset, IDateTimeOffsetValueView>
   {
     #region Bindings
 
+    /// <summary>
+    /// Gets or sets the value.
+    /// </summary>
     public DateTimeOffset Value
     {
       get
@@ -57,11 +66,18 @@ namespace Altaxo.Gui.Common.BasicTypes
 
     #endregion
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DateTimeOffsetValueController"/> class.
+    /// </summary>
     public DateTimeOffsetValueController()
     {
 
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DateTimeOffsetValueController"/> class.
+    /// </summary>
+    /// <param name="value">The initial value.</param>
     public DateTimeOffsetValueController(DateTimeOffset value)
     {
       _doc = _originalDoc = value;
@@ -69,11 +85,13 @@ namespace Altaxo.Gui.Common.BasicTypes
     }
 
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;

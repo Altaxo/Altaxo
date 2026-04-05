@@ -25,10 +25,12 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Altaxo.Graph.Gdi.LabelFormatting
 {
+  /// <summary>
+  /// Formats numeric values as multiples of <c>π</c> where possible.
+  /// </summary>
   public class NumericLabelFormattingRadian : LabelFormattingBase
   {
     #region Serialization
@@ -52,20 +54,29 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
     #endregion Serialization
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NumericLabelFormattingRadian"/> class.
+    /// </summary>
     public NumericLabelFormattingRadian()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NumericLabelFormattingRadian"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public NumericLabelFormattingRadian(NumericLabelFormattingRadian from)
       : base(from) // everything is done here, since CopyFrom is virtual
     {
     }
 
+    /// <inheritdoc />
     protected override string FormatItem(Altaxo.Data.AltaxoVariant item)
     {
       const double tolerance = 1E-8;
@@ -129,6 +140,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
       }
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new NumericLabelFormattingRadian(this);

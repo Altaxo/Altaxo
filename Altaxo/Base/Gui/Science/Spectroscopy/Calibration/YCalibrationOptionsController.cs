@@ -31,12 +31,19 @@ using Altaxo.Science.Spectroscopy.Calibration;
 
 namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 {
+  /// <summary>
+  /// View interface for y-calibration options.
+  /// </summary>
   public interface IYCalibrationOptionsView : IDataContextAwareView { }
 
+  /// <summary>
+  /// Controller for <see cref="YCalibrationOptions"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IYCalibrationOptionsView))]
   [UserControllerForObject(typeof(YCalibrationOptions))]
   public class YCalibrationOptionsController : MVCANControllerEditImmutableDocBase<YCalibrationOptions, IYCalibrationOptionsView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(PreprocessingController, () => PreprocessingController = null!);
@@ -47,6 +54,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 
     private SpectralPreprocessingController _preprocessingController;
 
+    /// <summary>
+    /// Gets or sets the preprocessing controller.
+    /// </summary>
     public SpectralPreprocessingController PreprocessingController
     {
       get => _preprocessingController;
@@ -63,6 +73,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 
     private ScalarFunctionController _functionController;
 
+    /// <summary>
+    /// Gets or sets the calibration-function controller.
+    /// </summary>
     public ScalarFunctionController FunctionController
     {
       get => _functionController;
@@ -79,6 +92,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 
     private bool _smoothResultingCurve;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the resulting curve is smoothed.
+    /// </summary>
     public bool SmoothResultingCurve
     {
       get => _smoothResultingCurve;
@@ -95,6 +111,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 
     private InterpolationFunctionOptionsController _interpolationMethod;
 
+    /// <summary>
+    /// Gets or sets the interpolation method controller.
+    /// </summary>
     public InterpolationFunctionOptionsController InterpolationMethod
     {
       get => _interpolationMethod;
@@ -111,6 +130,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 
     private double _minimalValidXValueOfCurve;
 
+    /// <summary>
+    /// Gets or sets the minimum valid X value of the calibration curve.
+    /// </summary>
     public double MinimalValidXValueOfCurve
     {
       get => _minimalValidXValueOfCurve;
@@ -127,6 +149,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 
     private double _maximalValidXValueOfCurve;
 
+    /// <summary>
+    /// Gets or sets the maximum valid X value of the calibration curve.
+    /// </summary>
     public double MaximalValidXValueOfCurve
     {
       get => _maximalValidXValueOfCurve;
@@ -142,6 +167,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 
     private double _maximalGainRatio;
 
+    /// <summary>
+    /// Gets or sets the maximum gain ratio.
+    /// </summary>
     public double MaximalGainRatio
     {
       get => _maximalGainRatio;
@@ -157,6 +185,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -182,6 +211,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (!PreprocessingController.Apply(disposeController))

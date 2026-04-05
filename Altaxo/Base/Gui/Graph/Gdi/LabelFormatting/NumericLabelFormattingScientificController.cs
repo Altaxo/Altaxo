@@ -28,14 +28,21 @@ using Altaxo.Graph.Gdi.LabelFormatting;
 
 namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
 {
+  /// <summary>
+  /// Provides the view for editing scientific numeric label formatting.
+  /// </summary>
   public interface INumericLabelFormattingScientificView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controls the editing of scientific numeric label formatting for 2D graphs.
+  /// </summary>
   [UserControllerForObject(typeof(NumericLabelFormattingScientific))]
   [ExpectedTypeOfView(typeof(INumericLabelFormattingScientificView))]
   public class NumericLabelFormattingScientificController : MVCANControllerEditOriginalDocBase<NumericLabelFormattingScientific, INumericLabelFormattingScientificView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -45,6 +52,9 @@ namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
 
     private bool _showExponentAlways;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the exponent is always shown.
+    /// </summary>
     public bool ShowExponentAlways
     {
       get => _showExponentAlways;
@@ -61,6 +71,7 @@ namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -71,6 +82,7 @@ namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       _doc.ShowExponentAlways = ShowExponentAlways;

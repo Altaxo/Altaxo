@@ -40,13 +40,28 @@ namespace Altaxo.Data
 
 
 
+    /// <summary>
+    /// Defines how duplicate destination cells are handled.
+    /// </summary>
     public enum OutputAveraging
     {
+      /// <summary>
+      /// Do not average duplicates and keep the last value.
+      /// </summary>
       NoneIgnoreUseLastValue,
+      /// <summary>
+      /// Do not average duplicates and throw an exception.
+      /// </summary>
       NoneThrowException,
+      /// <summary>
+      /// Average duplicates linearly.
+      /// </summary>
       AverageLinear,
     }
 
+    /// <summary>
+    /// Defines how output columns are named.
+    /// </summary>
     public enum OutputNaming
     {
       /// <summary>Col and the index number appended.</summary>
@@ -60,8 +75,19 @@ namespace Altaxo.Data
 
     #region Members
 
+    /// <summary>
+    /// The output averaging mode.
+    /// </summary>
     protected OutputAveraging _outputAveraging;
+
+    /// <summary>
+    /// The output naming mode.
+    /// </summary>
     protected OutputNaming _outputNaming;
+
+    /// <summary>
+    /// The format string used for output column names.
+    /// </summary>
     protected string _outputColumnNameFormatString = "{0}";
 
 
@@ -145,20 +171,29 @@ namespace Altaxo.Data
 
     #region Construction
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConvertXYVToMatrixOptions"/> class.
+    /// </summary>
     public ConvertXYVToMatrixOptions()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConvertXYVToMatrixOptions"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The source options.</param>
     public ConvertXYVToMatrixOptions(ConvertXYVToMatrixOptions from)
     {
       CopyFrom(from);
     }
 
+    /// <inheritdoc />
     public object Clone()
     {
       return new ConvertXYVToMatrixOptions(this);
     }
 
+    /// <inheritdoc />
     public virtual bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -188,8 +223,18 @@ namespace Altaxo.Data
 
     #region Properties
 
+    /// <summary>
+    /// Gets or sets how duplicate output cells are averaged.
+    /// </summary>
     public OutputAveraging ValueAveraging { get => _outputAveraging; set => _outputAveraging = value; }
+
+    /// <summary>
+    /// Gets or sets how output columns are named.
+    /// </summary>
     public OutputNaming ColumnNaming { get => _outputNaming; set => _outputNaming = value; }
+    /// <summary>
+    /// Gets or sets the format string used for output column names.
+    /// </summary>
     public string ColumnNameFormatString { get => _outputColumnNameFormatString; set => _outputColumnNameFormatString = value ?? throw new ArgumentNullException(nameof(ColumnNameFormatString)); }
 
     /// <summary>If set, the destination columns will be either not sorted or sorted.</summary>
@@ -199,13 +244,34 @@ namespace Altaxo.Data
     public SortDirection DestinationYColumnSorting { get { return _destinationYColumnSorting; } set { SetMemberEnumAndRaiseSelfChanged(ref _destinationYColumnSorting, value); } }
 
 
+    /// <summary>
+    /// Gets or sets a value indicating whether clustering is used for x values.
+    /// </summary>
     public bool UseClusteringForX { get { return _useClusteringForX; } set { _useClusteringForX = value; } }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether clustering is used for y values.
+    /// </summary>
     public bool UseClusteringForY { get { return _useClusteringForY; } set { _useClusteringForY = value; } }
 
+    /// <summary>
+    /// Gets or sets the number of clusters for x values.
+    /// </summary>
     public int? NumberOfClustersX { get { return _numberOfClustersX; } set { _numberOfClustersX = value; } }
+
+    /// <summary>
+    /// Gets or sets the number of clusters for y values.
+    /// </summary>
     public int? NumberOfClustersY { get { return _numberOfClustersY; } set { _numberOfClustersY = value; } }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether standard deviation output is created for x clusters.
+    /// </summary>
     public bool CreateStdDevX { get { return _createStdDevX; } set { _createStdDevX = value; } }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether standard deviation output is created for y clusters.
+    /// </summary>
     public bool CreateStdDevY { get { return _createStdDevY; } set { _createStdDevY = value; } }
 
 

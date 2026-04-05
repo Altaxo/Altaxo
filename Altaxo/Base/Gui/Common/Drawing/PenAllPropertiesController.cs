@@ -31,23 +31,37 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Common.Drawing
 {
+  /// <summary>
+  /// Defines the view contract for editing all pen properties.
+  /// </summary>
   public interface IPenAllPropertiesView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for comprehensive <see cref="PenX"/> editing.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IPenAllPropertiesView))]
   public class PenAllPropertiesController : MVCANDControllerEditImmutableDocBase<PenX, IPenAllPropertiesView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_startCap, () => StartCap = null);
       yield return new ControllerAndSetNullMethod(_endCap, () => EndCap = null);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PenAllPropertiesController"/> class.
+    /// </summary>
     public PenAllPropertiesController()
     {
         CmdShowCustomPen = new RelayCommand(EhShowCustomPen);
     }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PenAllPropertiesController"/> class.
+    /// </summary>
+    /// <param name="pen">The pen to edit.</param>
     public PenAllPropertiesController(PenX pen) : this()
     {
       _doc = _originalDoc = pen ?? throw new ArgumentNullException(nameof(pen));
@@ -56,10 +70,16 @@ namespace Altaxo.Gui.Common.Drawing
 
     #region Binding
 
+    /// <summary>
+    /// Gets the command for opening the pen editor dialog.
+    /// </summary>
     public ICommand CmdShowCustomPen { get; }
 
     private bool _showPlotColorsOnly;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether only plot colors are shown.
+    /// </summary>
     public bool ShowPlotColorsOnly
     {
       get => _showPlotColorsOnly;
@@ -74,6 +94,9 @@ namespace Altaxo.Gui.Common.Drawing
     }
 
 
+    /// <summary>
+    /// Gets or sets the pen brush.
+    /// </summary>
     public BrushX Brush
     {
       get => _doc.Brush;
@@ -88,7 +111,13 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets or sets the environment used for line thickness.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment LineThicknessEnvironment { get; set; } = Altaxo.Gui.LineThicknessEnvironment.Instance;
+    /// <summary>
+    /// Gets or sets the line thickness.
+    /// </summary>
     public DimensionfulQuantity LineThickness
     {
       get => new DimensionfulQuantity(_doc.Width, Altaxo.Units.Length.Point.Instance).AsQuantityIn(LineThicknessEnvironment.DefaultUnit);
@@ -103,6 +132,9 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets or sets the dash pattern.
+    /// </summary>
     public IDashPattern DashPattern
     {
       get => _doc.DashPattern;
@@ -117,6 +149,9 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets or sets the dash cap.
+    /// </summary>
     public DashCap DashCap
     {
       get => _doc.DashCap;
@@ -135,6 +170,9 @@ namespace Altaxo.Gui.Common.Drawing
 
     StartEndCapController _startCap;
 
+    /// <summary>
+    /// Gets or sets the controller for the start cap.
+    /// </summary>
     public StartEndCapController StartCap
     {
       get => _startCap;
@@ -159,6 +197,9 @@ namespace Altaxo.Gui.Common.Drawing
 
     StartEndCapController _endCap;
 
+    /// <summary>
+    /// Gets or sets the controller for the end cap.
+    /// </summary>
     public StartEndCapController EndCap
     {
       get => _endCap;
@@ -181,6 +222,9 @@ namespace Altaxo.Gui.Common.Drawing
     }
 
 
+    /// <summary>
+    /// Gets or sets the line join style.
+    /// </summary>
     public LineJoin LineJoin
     {
       get => _doc.LineJoin;
@@ -195,7 +239,13 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets or sets the environment used for the miter limit.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment MiterLimitEnvironment { get; set; } = Altaxo.Gui.RelationEnvironment.Instance;
+    /// <summary>
+    /// Gets or sets the miter limit.
+    /// </summary>
     public DimensionfulQuantity MiterLimit
     {
       get => new DimensionfulQuantity(_doc.MiterLimit, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(MiterLimitEnvironment.DefaultUnit);
@@ -210,10 +260,14 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets the edited pen.
+    /// </summary>
     public PenX Pen => _doc;
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       if (initData)
@@ -243,12 +297,14 @@ namespace Altaxo.Gui.Common.Drawing
     }
 
 
+    /// <inheritdoc/>
     protected override void OnMadeDirty()
     {
       OnPropertyChanged(nameof(Pen));
       base.OnMadeDirty();
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);

@@ -30,9 +30,18 @@ using System.Text;
 
 namespace Altaxo.Drawing.D3D
 {
+  /// <summary>
+  /// Specifies how line segments are joined in 3D pen rendering.
+  /// </summary>
   public enum PenLineJoin
   {
+    /// <summary>
+    /// Line segments are joined with a miter corner.
+    /// </summary>
     Miter = 0,
+    /// <summary>
+    /// Line segments are joined with a beveled corner.
+    /// </summary>
     Bevel = 1
   }
 }

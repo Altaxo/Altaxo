@@ -95,6 +95,12 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       }
     }
 
+    /// <summary>
+    /// Divides selected columns into groups for master-curve creation.
+    /// </summary>
+    /// <param name="dataTable">The data table.</param>
+    /// <param name="selectedDataColumns">The selected data columns.</param>
+    /// <returns>The grouped columns.</returns>
     public static IReadOnlyList<IReadOnlyList<DataColumn?>> GetColumnsDividedIntoGroups(DataTable dataTable, IndexSelection selectedDataColumns)
     {
       int numberOfNamesWithBaseName = 0;
@@ -174,7 +180,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// </summary>
     /// <param name="processData">Contains the curves that participate in the master curve creation.</param>
     /// <param name="processOptions">The options for master curve creation.</param>
-    /// <param name="destinationTable">The destination table that accomodates the results.</param>
+    /// <param name="destinationTable">The destination table that accommodates the results.</param>
     /// <param name="reporter">The object to report the progress.</param>
     /// <exception cref="System.NotImplementedException"></exception>
     public static void Execute(MasterCurveData processData, MasterCurveCreationOptions processOptions, DataTable destinationTable, IProgressReporter reporter)
@@ -829,12 +835,13 @@ StartOfFunction:
     }
 
     /// <summary>
-    /// Converts the <see cref="MasterCurveData"/> to <see cref="ShiftGroupCollectionDouble"/>.
+    /// Converts the <see cref="MasterCurveData"/> to a <see cref="ShiftGroupCollection"/>.
     /// Only those curves are converted which participate on the fit, i.e. the curve must have at least two points,
     /// and the fitting weight must be positive.
     /// </summary>
+    /// <param name="options">The creation options.</param>
     /// <param name="processData">The process data.</param>
-    /// <returns>The <see cref="ShiftGroupCollectionDouble"/> containing the data to be shifted.</returns>
+    /// <returns>The <see cref="ShiftGroupCollection"/> containing the data to be shifted.</returns>
     private static (ShiftGroupCollection shiftGroupCollection, IReadOnlyList<CurveInformation> fitInformation) ConvertToShiftGroupCollection(MasterCurveCreationOptions options, MasterCurveData processData)
     {
       var listOfShiftGroups = new List<IShiftGroup>();
@@ -912,12 +919,15 @@ StartOfFunction:
     }
 
     /// <summary>
-    /// Converts the <see cref="MasterCurveData"/> to <see cref="ShiftGroupCollectionDouble"/>.
+    /// Converts the <see cref="MasterCurveData"/> to a <see cref="ShiftGroupDouble"/>.
     /// Only those curves are converted which participate on the fit, i.e. the curve must have at least two points,
     /// and the fitting weight must be positive.
     /// </summary>
+    /// <param name="groupOptions">The group options.</param>
     /// <param name="processData">The process data.</param>
-    /// <returns>The <see cref="ShiftGroupCollectionDouble"/> containing the data to be shifted.</returns>
+    /// <param name="idxGroup">The group index.</param>
+    /// <param name="idxDataColumn">The index of the first data column to use. The value is advanced by the consumed columns.</param>
+    /// <returns>The <see cref="ShiftGroupDouble"/> containing the data to be shifted.</returns>
     private static ShiftGroupDouble ConvertToShiftGroupDouble(MasterCurveGroupOptionsWithScalarInterpolation groupOptions, MasterCurveData processData, int idxGroup, ref int idxDataColumn)
     {
       var srcData = processData.CurveData;
@@ -946,12 +956,15 @@ StartOfFunction:
     }
 
     /// <summary>
-    /// Converts the <see cref="MasterCurveData"/> to <see cref="ShiftGroupCollectionDouble"/>.
+    /// Converts the <see cref="MasterCurveData"/> to a <see cref="ShiftGroupComplexCommonX"/> instance.
     /// Only those curves are converted which participate on the fit, i.e. the curve must have at least two points,
     /// and the fitting weight must be positive.
     /// </summary>
+    /// <param name="groupOptions">The group options.</param>
     /// <param name="processData">The process data.</param>
-    /// <returns>The <see cref="ShiftGroupCollectionDouble"/> containing the data to be shifted.</returns>
+    /// <param name="idxGroup">The group index.</param>
+    /// <param name="idxDataColumn">The index of the first data column to use. The value is advanced by the consumed columns.</param>
+    /// <returns>The <see cref="ShiftGroupComplexCommonX"/> containing the data to be shifted.</returns>
     private static ShiftGroupComplexCommonX ConvertToShiftGroupComplexCommonX(MasterCurveGroupOptionsWithComplexInterpolation groupOptions, MasterCurveData processData, int idxGroup, ref int idxDataColumn)
     {
       var srcData = processData.CurveData;
@@ -984,12 +997,15 @@ StartOfFunction:
     }
 
     /// <summary>
-    /// Converts the <see cref="MasterCurveData"/> to <see cref="ShiftGroupCollectionDouble"/>.
+    /// Converts the <see cref="MasterCurveData"/> to a <see cref="ShiftGroupComplexSeparateX"/> instance.
     /// Only those curves are converted which participate on the fit, i.e. the curve must have at least two points,
     /// and the fitting weight must be positive.
     /// </summary>
+    /// <param name="groupOptions">The group options.</param>
     /// <param name="processData">The process data.</param>
-    /// <returns>The <see cref="ShiftGroupCollectionDouble"/> containing the data to be shifted.</returns>
+    /// <param name="idxGroup">The group index.</param>
+    /// <param name="idxDataColumn">The index of the first data column to use. The value is advanced by the consumed columns.</param>
+    /// <returns>The <see cref="ShiftGroupComplexSeparateX"/> containing the data to be shifted.</returns>
     private static ShiftGroupComplexSeparateX ConvertToShiftGroupComplexSeparateX(MasterCurveGroupOptionsWithComplexInterpolation groupOptions, MasterCurveData processData, int idxGroup, ref int idxDataColumn)
     {
       var srcData = processData.CurveData;
@@ -1030,7 +1046,7 @@ StartOfFunction:
 
 
     /// <summary>
-    /// Converts <see cref="XAndYColumn"/> data to a <see cref="ShiftCurve"/>.
+    /// Converts <see cref="XAndYColumn"/> data to a shift curve.
     /// </summary>
     /// <param name="data">The data.</param>
     /// <returns>The shift curve (if there is any data). If the argument contains to data rows, then the return value is null.</returns>
@@ -1048,7 +1064,7 @@ StartOfFunction:
     }
 
     /// <summary>
-    /// Converts <see cref="XAndYColumn"/> data to a <see cref="ShiftCurve"/>.
+    /// Converts <see cref="XAndYColumn"/> data to a complex shift curve.
     /// </summary>
     /// <param name="dataReal">The data of the real part.</param>
     /// <param name="dataImag">The data of the imaginary part.</param>
@@ -1096,6 +1112,13 @@ StartOfFunction:
 
 
 
+    /// <summary>
+    /// Gets two property values from the specified curve.
+    /// </summary>
+    /// <param name="curve">The curve whose properties are queried.</param>
+    /// <param name="property1Name">The name of the first property.</param>
+    /// <param name="property2Name">The name of the second property.</param>
+    /// <returns>The values of the requested properties.</returns>
     public static (AltaxoVariant property1Value, AltaxoVariant property2Value) GetPropertiesOfCurve(XAndYColumn curve, string property1Name, string property2Name)
     {
       return (IndependentAndDependentColumns.GetPropertyValueOfCurve(curve, property1Name), IndependentAndDependentColumns.GetPropertyValueOfCurve(curve, property2Name));

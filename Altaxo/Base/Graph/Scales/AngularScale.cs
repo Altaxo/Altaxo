@@ -44,10 +44,29 @@ namespace Altaxo.Graph.Scales
     /// </summary>
     protected double _cachedAxisOrg;
 
+    /// <summary>
+    /// The cached axis span in physical units.
+    /// </summary>
     protected double _cachedAxisSpan;
+
+    /// <summary>
+    /// The cached reciprocal of the axis span.
+    /// </summary>
     protected double _cachedOneByAxisSpan;
+
+    /// <summary>
+    /// The data boundaries associated with this scale.
+    /// </summary>
     protected Boundaries.NumericalBoundaries _dataBounds;
+
+    /// <summary>
+    /// The rescaling conditions associated with this scale.
+    /// </summary>
     protected Rescaling.AngularRescaleConditions _rescaling;
+
+    /// <summary>
+    /// The tick spacing used by this scale.
+    /// </summary>
     protected Ticks.TickSpacing _tickSpacing;
 
     #region Serialization
@@ -55,6 +74,7 @@ namespace Altaxo.Graph.Scales
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Scales.AngularScale", 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
@@ -65,6 +85,7 @@ namespace Altaxo.Graph.Scales
                 */
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (AngularScale)(o ?? throw new ArgumentNullException(nameof(o)));
@@ -83,6 +104,7 @@ namespace Altaxo.Graph.Scales
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AngularScale), 2)]
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (AngularScale)obj;
@@ -95,6 +117,7 @@ namespace Altaxo.Graph.Scales
         info.AddValue("TickSpacing", s._tickSpacing);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (AngularScale)(o ?? throw new ArgumentNullException(nameof(o)));
@@ -129,6 +152,10 @@ namespace Altaxo.Graph.Scales
     }
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AngularScale"/> class.
+    /// </summary>
+    /// <param name="tickSpacing">The angular tick spacing implementation to use.</param>
     protected AngularScale(AngularTickSpacing tickSpacing)
     {
       if (tickSpacing is null)
@@ -143,11 +170,19 @@ namespace Altaxo.Graph.Scales
       UpdateTicksAndOrgEndUsingRescalingObject();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AngularScale"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public AngularScale(AngularScale from)
     {
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies the state from another <see cref="AngularScale"/> instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     [MemberNotNull(nameof(_dataBounds), nameof(_tickSpacing), nameof(_rescaling))]
     protected void CopyFrom(AngularScale from)
     {
@@ -166,6 +201,7 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -182,6 +218,7 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_dataBounds is not null)
@@ -218,11 +255,13 @@ namespace Altaxo.Graph.Scales
 
     #region NumericalScale
 
+    /// <inheritdoc />
     public override double PhysicalToNormal(double x)
     {
       return (x - _cachedAxisOrg) * _cachedOneByAxisSpan;
     }
 
+    /// <inheritdoc />
     public override double NormalToPhysical(double x)
     {
       return _cachedAxisOrg + x * _cachedAxisSpan;
@@ -238,6 +277,7 @@ namespace Altaxo.Graph.Scales
     /// <returns>
     /// the normalized value linear along the axis,
     /// 0 for axis origin, 1 for axis end</returns>
+    /// <inheritdoc />
     public override double PhysicalVariantToNormal(Altaxo.Data.AltaxoVariant x)
     {
       return PhysicalToNormal(x.ToDouble());
@@ -250,6 +290,7 @@ namespace Altaxo.Graph.Scales
     /// </summary>
     /// <param name="x">the normal value (0 for axis origin, 1 for axis end</param>
     /// <returns>the corresponding physical value</returns>
+    /// <inheritdoc />
     public override Altaxo.Data.AltaxoVariant NormalToPhysicalVariant(double x)
     {
       return new Altaxo.Data.AltaxoVariant(NormalToPhysical(x));
@@ -265,6 +306,7 @@ namespace Altaxo.Graph.Scales
       return _rescaling.ScaleOrigin % 360;
     }
 
+    /// <inheritdoc />
     public override Altaxo.Graph.Scales.Rescaling.NumericScaleRescaleConditions? Rescaling
     {
       get
@@ -273,6 +315,7 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     public override IScaleRescaleConditions RescalingObject
     {
       get
@@ -281,6 +324,7 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     public override Altaxo.Graph.Scales.Boundaries.NumericalBoundaries DataBounds
     {
       get
@@ -289,6 +333,7 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     public override double Org
     {
       get
@@ -297,6 +342,7 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     public override double End
     {
       get
@@ -305,6 +351,7 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc/>
     protected override string? SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
     {
       // ignore all this stuff, org and end are fixed here!
@@ -339,6 +386,7 @@ namespace Altaxo.Graph.Scales
 
     #endregion NumericalScale
 
+    /// <inheritdoc />
     public override Ticks.TickSpacing TickSpacing
     {
       get
@@ -357,16 +405,19 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     public override void OnUserZoomed(Data.AltaxoVariant newZoomOrg, Data.AltaxoVariant newZoomEnd)
     {
       // Do nothing - zooming is not supported
     }
 
+    /// <inheritdoc />
     public override void OnUserRescaled()
     {
       // Do nothing - rescaling is not supported
     }
 
+    /// <inheritdoc />
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (object.ReferenceEquals(sender, DataBounds)) // Data bounds have changed
@@ -385,6 +436,7 @@ namespace Altaxo.Graph.Scales
       return base.HandleHighPriorityChildChangeCases(sender, ref e);
     }
 
+    /// <inheritdoc/>
     protected override void UpdateTicksAndOrgEndUsingRescalingObject()
     {
       if (TickSpacing is null)

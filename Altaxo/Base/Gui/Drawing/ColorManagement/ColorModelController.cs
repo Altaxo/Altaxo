@@ -34,17 +34,35 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
+  /// <summary>
+  /// View contract for editing a color through different color models.
+  /// </summary>
   public interface IColorModelView : IDataContextAwareView
   {
+    /// <summary>
+    /// Initializes the interactive color model.
+    /// </summary>
     void InitializeColorModel(IColorModel colorModel, bool silentSet);
 
+    /// <summary>
+    /// Initializes the text-only color model.
+    /// </summary>
     void InitializeTextOnlyColorModel(ITextOnlyColorModel colorModel, bool silentSet);
 
+    /// <summary>
+    /// Initializes the current color.
+    /// </summary>
     void InitializeCurrentColor(AxoColor color);
 
+    /// <summary>
+    /// Occurs when the current color changes.
+    /// </summary>
     event Action<AxoColor> CurrentColorChanged;
   }
 
+  /// <summary>
+  /// Controller for editing a color through selectable color models.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IColorModelView))]
   public class ColorModelController : MVCANDControllerEditImmutableDocBase<AxoColor, IColorModelView>
   {
@@ -52,6 +70,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     private IColorModel _currentColorModel;
     private ITextOnlyColorModel _currentTextOnlyColorModel;
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -61,6 +80,9 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
     private ItemsController<Type> _availableColorModels;
 
+    /// <summary>
+    /// Gets or sets the selectable interactive color models.
+    /// </summary>
     public ItemsController<Type> AvailableColorModels
     {
       get => _availableColorModels;
@@ -76,6 +98,9 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
     private ItemsController<Type> _availableTextOnlyColorModels;
 
+    /// <summary>
+    /// Gets or sets the selectable text-only color models.
+    /// </summary>
     public ItemsController<Type> AvailableTextOnlyColorModels
     {
       get => _availableTextOnlyColorModels;
@@ -93,6 +118,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -127,11 +153,13 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);
     }
 
+    /// <inheritdoc/>
     protected override void AttachView()
     {
       base.AttachView();
@@ -139,6 +167,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       _view.CurrentColorChanged += EhCurrentColorChanged;
     }
 
+    /// <inheritdoc/>
     protected override void DetachView()
     {
       _view.CurrentColorChanged -= EhCurrentColorChanged;
@@ -146,6 +175,10 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       base.DetachView();
     }
 
+    /// <summary>
+    /// Handles selection changes of the interactive color model.
+    /// </summary>
+    /// <param name="selType">The selected color-model type.</param>
     private void EhColorModelSelectionChanged(Type selType)
     {
       if (selType is not null && selType != _currentColorModel.GetType())
@@ -156,6 +189,10 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       }
     }
 
+    /// <summary>
+    /// Handles selection changes of the text-only color model.
+    /// </summary>
+    /// <param name="selType">The selected text-only color-model type.</param>
     private void EhTextOnlyColorModelSelectionChanged(Type selType)
     {
       if (selType is not null && selType != _currentTextOnlyColorModel.GetType())

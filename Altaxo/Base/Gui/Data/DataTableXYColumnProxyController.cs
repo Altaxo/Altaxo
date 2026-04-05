@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -33,12 +33,19 @@ namespace Altaxo.Gui.Data
   using Altaxo.Data;
   using Altaxo.Gui.Common;
 
+  /// <summary>
+  /// Defines the view contract for editing <see cref="DataTableXYColumnProxy"/> instances.
+  /// </summary>
   public interface IDataTableXYColumnProxyView : IDataContextAwareView { }
 
+  /// <summary>
+  /// Controller for <see cref="DataTableXYColumnProxy"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IDataTableXYColumnProxyView))]
   [UserControllerForObject(typeof(DataTableXYColumnProxy))]
   public class DataTableXYColumnProxyController : MVCANControllerEditOriginalDocBase<DataTableXYColumnProxy, IDataTableXYColumnProxyView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -48,6 +55,9 @@ namespace Altaxo.Gui.Data
 
     private ItemsController<DataTable> _dataTable;
 
+    /// <summary>
+    /// Gets or sets the selected data table.
+    /// </summary>
     public ItemsController<DataTable> DataTable
     {
       get => _dataTable;
@@ -64,6 +74,9 @@ namespace Altaxo.Gui.Data
 
     private ObservableCollection<int> _availableGroups;
 
+    /// <summary>
+    /// Gets or sets the available group numbers.
+    /// </summary>
     public ObservableCollection<int> AvailableGroups
     {
       get => _availableGroups;
@@ -79,6 +92,9 @@ namespace Altaxo.Gui.Data
 
     private int _selectedGroup = int.MinValue;
 
+    /// <summary>
+    /// Gets or sets the selected group number.
+    /// </summary>
     public int SelectedGroup
     {
       get => _selectedGroup;
@@ -95,6 +111,9 @@ namespace Altaxo.Gui.Data
 
     private ItemsController<DataColumn> _xColumn;
 
+    /// <summary>
+    /// Gets or sets the selected x column.
+    /// </summary>
     public ItemsController<DataColumn> XColumn
     {
       get => _xColumn;
@@ -110,6 +129,9 @@ namespace Altaxo.Gui.Data
 
     private ItemsController<DataColumn> _yColumn;
 
+    /// <summary>
+    /// Gets or sets the selected y column.
+    /// </summary>
     public ItemsController<DataColumn> YColumn
     {
       get => _yColumn;
@@ -132,6 +154,7 @@ namespace Altaxo.Gui.Data
     {
     }
 
+    /// <inheritdoc/>
     public override bool InitializeDocument(params object[] args)
     {
       if (args.Length == 0 || args[0] == null)
@@ -145,6 +168,7 @@ namespace Altaxo.Gui.Data
       }
     }
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -242,6 +266,7 @@ namespace Altaxo.Gui.Data
         YColumn.SelectedValue = null;
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       var dataTable = DataTable?.SelectedValue;

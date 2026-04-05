@@ -59,9 +59,12 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     private static readonly string[] _genericSansSerifFamilyNames = new string[] { "Microsoft Sans Serif", "Liberation Sans", "Verdana", "Arial", "Helvetica" };
 
-    /// <summary>The instance used by the static methods of this class. Is not neccessarily of type <see cref="GdiFontManager"/>, but could also be a derived type.</summary>
+    /// <summary>The instance used by the static methods of this class. Is not necessarily of type <see cref="GdiFontManager"/>, but could also be a derived type.</summary>
     protected static CachedService<GdiFontManager, GdiFontManager> _instanceCached = new CachedService<GdiFontManager, GdiFontManager>(true, null, null);
 
+    /// <summary>
+    /// Gets the cached font-manager instance.
+    /// </summary>
     protected static GdiFontManager _instance { get { return _instanceCached.Instance ?? throw new InvalidOperationException($"Service {nameof(GdiFontManager)} not available yet!"); } }
 
     /// <summary>Corresponds the font's invariant description string with the Gdi+ font instance.
@@ -209,6 +212,9 @@ namespace Altaxo.Graph.Gdi
       InternalBuildDictionaries();
     }
 
+    /// <summary>
+    /// Releases resources used by the font manager.
+    /// </summary>
     protected virtual void Dispose()
     {
       FontX.FontConstructed -= EhAnnounceConstructionOfFontX;
@@ -278,6 +284,11 @@ namespace Altaxo.Graph.Gdi
       return fontStylePresent;
     }
 
+    /// <summary>
+    /// Converts an array of font families into style-availability flags.
+    /// </summary>
+    /// <param name="fontFamilyArray">The font family array indexed by style.</param>
+    /// <returns>The style-availability flags.</returns>
     protected static FontStylePresence FontFamilyArrayToFontStylePresence(FontFamily[] fontFamilyArray)
     {
       FontStylePresence pres = FontStylePresence.NoStyleAvailable;
@@ -498,6 +509,10 @@ namespace Altaxo.Graph.Gdi
       return result;
     }
 
+    /// <summary>
+    /// Gets the font family name to use as a generic sans serif fallback.
+    /// </summary>
+    /// <returns>The fallback family name.</returns>
     protected virtual string InternalGetFontFamilyNameGenericSansSerif()
     {
       foreach (var familyName in _genericSansSerifFamilyNames)

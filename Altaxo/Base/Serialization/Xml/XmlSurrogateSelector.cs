@@ -30,7 +30,7 @@ using System.Reflection;
 namespace Altaxo.Serialization.Xml
 {
   /// <summary>
-  /// Responsible for storage and retrieving of the xml surrogate classes.
+  /// Stores and retrieves XML serialization surrogates.
   /// </summary>
   public class XmlSurrogateSelector
   {
@@ -131,6 +131,9 @@ namespace Altaxo.Serialization.Xml
         AddSurrogate(attr.AssemblyName, attr.TypeName, attr.Version, surrogate);
     }
 
+    /// <summary>
+    /// Adds the surrogate for a type when its version is higher than the currently stored version.
+    /// </summary>
     protected void AddTypeAndVersionIfHigher(System.Type type, int version, IXmlSerializationSurrogate surrogate)
     {
       int storedversion = _versions.ContainsKey(type) ? (int)(_versions[type] ?? 0) : int.MinValue;

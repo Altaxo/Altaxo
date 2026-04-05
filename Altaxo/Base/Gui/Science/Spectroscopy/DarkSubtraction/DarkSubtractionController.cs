@@ -31,13 +31,20 @@ using Altaxo.Science.Spectroscopy.DarkSubtraction;
 
 namespace Altaxo.Gui.Science.Spectroscopy.DarkSubtraction
 {
+  /// <summary>
+  /// View interface for selecting a dark-subtraction method.
+  /// </summary>
   public interface IDarkSubtractionView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="IDarkSubtraction"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IDarkSubtractionView))]
   public class DarkSubtractionController : MVCANControllerEditImmutableDocBase<IDarkSubtraction, IDarkSubtractionView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_subController, () => SubController = null);
@@ -47,6 +54,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.DarkSubtraction
 
     private ItemsController<Type> _availableMethods;
 
+    /// <summary>
+    /// Gets or sets the available dark-subtraction methods.
+    /// </summary>
     public ItemsController<Type> AvailableMethods
     {
       get => _availableMethods;
@@ -63,6 +73,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.DarkSubtraction
 
     private IMVCANController? _subController;
 
+    /// <summary>
+    /// Gets or sets the controller for the selected dark-subtraction method.
+    /// </summary>
     public IMVCANController? SubController
     {
       get => _subController;
@@ -81,6 +94,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.DarkSubtraction
     #endregion
 
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -121,6 +135,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.DarkSubtraction
       CreateSubController();
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (SubController is not null)
@@ -137,8 +152,12 @@ namespace Altaxo.Gui.Science.Spectroscopy.DarkSubtraction
 
     #region TypeSorter
 
+    /// <summary>
+    /// Sorts dark-subtraction types for display.
+    /// </summary>
     private class TypeSorter : IComparer<Type>
     {
+      /// <inheritdoc/>
       public int Compare(Type x, Type y)
       {
         var xn = x.Name.EndsWith("None");

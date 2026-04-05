@@ -43,6 +43,11 @@ namespace Altaxo.Graph.Procedures
     private const string FitDocumentPropertyName = "NonlinearFitDocument";
     private static NonlinearFitDocument? _lastFitDocument;
 
+    /// <summary>
+    /// Shows the nonlinear fit dialog for the specified graph controller.
+    /// </summary>
+    /// <param name="ctrl">The graph controller.</param>
+    /// <returns>An error message, or <see langword="null"/> if no error occurred.</returns>
     public static string? ShowFitDialog(Altaxo.Gui.Graph.Gdi.Viewing.IGraphController ctrl)
     {
       var (error, fitDocument, fitDocumentIdentifier, activeLayer) = SelectFitDocument(ctrl);
@@ -90,6 +95,11 @@ namespace Altaxo.Graph.Procedures
       return null;
     }
 
+    /// <summary>
+    /// Selects the fit document to use for nonlinear fitting.
+    /// </summary>
+    /// <param name="ctrl">The graph controller.</param>
+    /// <returns>The selection result.</returns>
     private static (string? Error, NonlinearFitDocument? FitDocument, string? FitDocumentIdentifier, XYPlotLayer? ActiveLayer) SelectFitDocument(Altaxo.Gui.Graph.Gdi.Viewing.IGraphController ctrl)
     {
       XYPlotLayer? activeLayer = null;

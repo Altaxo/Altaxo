@@ -31,13 +31,20 @@ using Altaxo.Science.Spectroscopy.PeakFitting;
 
 namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
 {
+  /// <summary>
+  /// View interface for selecting a peak-fitting method.
+  /// </summary>
   public interface IPeakFittingView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="IPeakFitting"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IPeakFittingView))]
   public class PeakFittingController : MVCANControllerEditImmutableDocBase<IPeakFitting, IPeakFittingView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_subController, () => SubController = null);
@@ -47,6 +54,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
 
     private ItemsController<Type> _availableMethods;
 
+    /// <summary>
+    /// Gets or sets the available peak-fitting methods.
+    /// </summary>
     public ItemsController<Type> AvailableMethods
     {
       get => _availableMethods;
@@ -63,6 +73,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
 
     private IMVCANController? _subController;
 
+    /// <summary>
+    /// Gets or sets the controller for the selected peak-fitting method.
+    /// </summary>
     public IMVCANController? SubController
     {
       get => _subController;
@@ -81,6 +94,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
     #endregion
 
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -121,6 +135,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
       CreateSubController();
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (SubController is not null)
@@ -137,8 +152,12 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
 
     #region TypeSorter
 
+    /// <summary>
+    /// Sorts peak-fitting types for display.
+    /// </summary>
     class TypeSorter : IComparer<Type>
     {
+      /// <inheritdoc/>
       public int Compare(Type x, Type y)
       {
         var xn = x.Name.EndsWith("None");

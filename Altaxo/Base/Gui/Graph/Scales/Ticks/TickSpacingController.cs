@@ -31,16 +31,23 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Scales.Ticks
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="TickSpacingController"/>.
+  /// </summary>
   public interface ITickSpacingView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for editing a <see cref="TickSpacing"/> instance.
+  /// </summary>
   [ExpectedTypeOfView(typeof(ITickSpacingView))]
   [UserControllerForObject(typeof(TickSpacing))]
   public class TickSpacingController : MVCANDControllerEditOriginalDocBase<TickSpacing, ITickSpacingView>
   {
     ItemsController<Type> _tickSpacingTypes;
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_tickSpacingDetailsController, () => _tickSpacingDetailsController = null);
@@ -48,10 +55,16 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the available tick-spacing types.
+    /// </summary>
     public ItemsController<Type> TickSpacingTypes => _tickSpacingTypes;
 
     private IMVCAController _tickSpacingDetailsController;
 
+    /// <summary>
+    /// Gets or sets the controller for the selected tick-spacing details.
+    /// </summary>
     public IMVCAController TickSpacingDetailsController
     {
       get => _tickSpacingDetailsController;
@@ -68,12 +81,14 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
     #endregion
 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       _tickSpacingTypes = null;
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -97,6 +112,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (_tickSpacingDetailsController is not null && false == _tickSpacingDetailsController.Apply(disposeController))
@@ -105,6 +121,10 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
       return ApplyEnd(true, disposeController);
     }
 
+    /// <summary>
+    /// Handles the change of the selected tick-spacing type.
+    /// </summary>
+    /// <param name="spaceType">The selected tick-spacing type.</param>
     public void EhView_TickSpacingTypeChanged(Type spaceType)
     {
       if (spaceType is null)

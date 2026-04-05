@@ -44,25 +44,140 @@ namespace Altaxo.Main.PegParser
 {
   #region Input File Support
 
-  public enum EncodingClass { unicode, utf8, binary, ascii };
+  /// <summary>
+  /// Specifies the expected encoding class of an input file.
+  /// </summary>
+  public enum EncodingClass
+  {
+    /// <summary>
+    /// Expects Unicode text.
+    /// </summary>
+    unicode,
 
-  public enum UnicodeDetection { notApplicable, BOM, FirstCharIsAscii };
+    /// <summary>
+    /// Expects UTF-8 text.
+    /// </summary>
+    utf8,
 
+    /// <summary>
+    /// Expects binary data.
+    /// </summary>
+    binary,
+
+    /// <summary>
+    /// Expects ASCII text.
+    /// </summary>
+    ascii
+  };
+
+  /// <summary>
+  /// Specifies how Unicode encoding should be detected.
+  /// </summary>
+  public enum UnicodeDetection
+  {
+    /// <summary>
+    /// Unicode detection is not applicable.
+    /// </summary>
+    notApplicable,
+
+    /// <summary>
+    /// Detects Unicode by using a byte order mark.
+    /// </summary>
+    BOM,
+
+    /// <summary>
+    /// Detects Unicode by assuming the first character is ASCII.
+    /// </summary>
+    FirstCharIsAscii
+  };
+
+  /// <summary>
+  /// Loads text or binary input files and determines their encoding.
+  /// </summary>
   public class FileLoader
   {
-    public enum FileEncoding { none, ascii, binary, utf8, unicode, utf16be, utf16le, utf32le, utf32be, uniCodeBOM };
+    /// <summary>
+    /// Represents the supported file encodings.
+    /// </summary>
+    public enum FileEncoding
+    {
+      /// <summary>
+      /// No encoding could be determined.
+      /// </summary>
+      none,
 
+      /// <summary>
+      /// ASCII encoding.
+      /// </summary>
+      ascii,
+
+      /// <summary>
+      /// Binary data.
+      /// </summary>
+      binary,
+
+      /// <summary>
+      /// UTF-8 encoding.
+      /// </summary>
+      utf8,
+
+      /// <summary>
+      /// Unicode encoding.
+      /// </summary>
+      unicode,
+
+      /// <summary>
+      /// UTF-16 big-endian encoding.
+      /// </summary>
+      utf16be,
+
+      /// <summary>
+      /// UTF-16 little-endian encoding.
+      /// </summary>
+      utf16le,
+
+      /// <summary>
+      /// UTF-32 little-endian encoding.
+      /// </summary>
+      utf32le,
+
+      /// <summary>
+      /// UTF-32 big-endian encoding.
+      /// </summary>
+      utf32be,
+
+      /// <summary>
+      /// Unicode encoding detected by byte order mark.
+      /// </summary>
+      uniCodeBOM
+    };
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileLoader"/> class.
+    /// </summary>
+    /// <param name="encodingClass">The expected encoding class.</param>
+    /// <param name="detection">The Unicode detection mode.</param>
+    /// <param name="path">The file path.</param>
     public FileLoader(EncodingClass encodingClass, UnicodeDetection detection, string path)
     {
       encoding_ = GetEncoding(encodingClass, detection, path);
       path_ = path;
     }
 
+    /// <summary>
+    /// Determines whether the loaded file is treated as binary.
+    /// </summary>
+    /// <returns><c>true</c> if the file is binary; otherwise, <c>false</c>.</returns>
     public bool IsBinaryFile()
     {
       return encoding_ == FileEncoding.binary;
     }
 
+    /// <summary>
+    /// Loads the file as binary data.
+    /// </summary>
+    /// <param name="src">The loaded bytes.</param>
+    /// <returns><c>true</c> if the file could be loaded as binary data; otherwise, <c>false</c>.</returns>
     public bool LoadFile(out byte[] src)
     {
       src = null;
@@ -75,6 +190,11 @@ namespace Altaxo.Main.PegParser
       }
     }
 
+    /// <summary>
+    /// Loads the file as text.
+    /// </summary>
+    /// <param name="src">The loaded text.</param>
+    /// <returns><c>true</c> if the file could be loaded as text; otherwise, <c>false</c>.</returns>
     public bool LoadFile(out string src)
     {
       src = null;
@@ -191,6 +311,10 @@ namespace Altaxo.Main.PegParser
     }
 
     private string path_;
+
+    /// <summary>
+    /// Gets the detected file encoding.
+    /// </summary>
     public readonly FileEncoding encoding_;
   }
 
@@ -198,14 +322,24 @@ namespace Altaxo.Main.PegParser
 
   #region Error handling
 
+  /// <summary>
+  /// Exception that indicates a parsing error.
+  /// </summary>
   public class PegException : System.Exception
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PegException"/> class.
+    /// </summary>
+    /// <param name="message">The parsing error message.</param>
     public PegException(string message)
       : base("Parsing error: " + message ?? string.Empty)
     {
     }
   }
 
+  /// <summary>
+  /// Stores line information for parser error reporting.
+  /// </summary>
   public struct PegError
   {
     internal SortedList<int, int> lineStarts;
@@ -224,6 +358,13 @@ namespace Altaxo.Main.PegParser
       --colNo;
     }
 
+    /// <summary>
+    /// Gets the line and column that correspond to the specified position.
+    /// </summary>
+    /// <param name="s">The source text.</param>
+    /// <param name="pos">The position in the source text.</param>
+    /// <param name="lineNo">Receives the line number.</param>
+    /// <param name="colNo">Receives the column number.</param>
     public void GetLineAndCol(string s, int pos, out int lineNo, out int colNo)
     {
       for (int i = lineStarts.Count(); i > 0; --i)
@@ -251,17 +392,71 @@ namespace Altaxo.Main.PegParser
 
   #region Syntax/Parse-Tree related classes
 
-  public enum ESpecialNodes { eFatal = -10001, eAnonymNTNode = -1000, eAnonymASTNode = -1001, eAnonymousNode = -100 }
+  /// <summary>
+  /// Defines special node identifiers used by the parse tree.
+  /// </summary>
+  public enum ESpecialNodes
+  {
+    /// <summary>
+    /// Identifies a fatal parser node.
+    /// </summary>
+    eFatal = -10001,
 
-  public enum ECreatorPhase { eCreate, eCreationComplete, eCreateAndComplete }
+    /// <summary>
+    /// Identifies an anonymous nonterminal node.
+    /// </summary>
+    eAnonymNTNode = -1000,
 
+    /// <summary>
+    /// Identifies an anonymous abstract syntax tree node.
+    /// </summary>
+    eAnonymASTNode = -1001,
+
+    /// <summary>
+    /// Identifies an anonymous character node.
+    /// </summary>
+    eAnonymousNode = -100
+  }
+
+  /// <summary>
+  /// Defines the phases used when creating parse tree nodes.
+  /// </summary>
+  public enum ECreatorPhase
+  {
+    /// <summary>
+    /// Creates the node.
+    /// </summary>
+    eCreate,
+
+    /// <summary>
+    /// Completes creation of an existing node.
+    /// </summary>
+    eCreationComplete,
+
+    /// <summary>
+    /// Creates and completes the node in one step.
+    /// </summary>
+    eCreateAndComplete
+  }
+
+  /// <summary>
+  /// Represents a begin and end position in the source string.
+  /// </summary>
   public struct PegBegEnd//indices into the source string
   {
+    /// <summary>
+    /// Gets the length of the matched range.
+    /// </summary>
     public int Length
     {
       get { return posEnd_ - posBeg_; }
     }
 
+    /// <summary>
+    /// Gets the referenced substring from the specified source text.
+    /// </summary>
+    /// <param name="src">The source text.</param>
+    /// <returns>The referenced substring.</returns>
     public string GetAsString(string src)
     {
       if (!(src.Length >= posEnd_))
@@ -270,14 +465,32 @@ namespace Altaxo.Main.PegParser
       return src.Substring(posBeg_, Length);
     }
 
+    /// <summary>
+    /// The inclusive start position.
+    /// </summary>
     public int posBeg_;
+
+    /// <summary>
+    /// The exclusive end position.
+    /// </summary>
     public int posEnd_;
   }
 
+  /// <summary>
+  /// Represents a node in the parse tree.
+  /// </summary>
   public class PegNode : ICloneable
   {
     #region Constructors
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PegNode"/> class.
+    /// </summary>
+    /// <param name="parent">The parent node.</param>
+    /// <param name="id">The node identifier.</param>
+    /// <param name="match">The matched source range.</param>
+    /// <param name="child">The first child node.</param>
+    /// <param name="next">The next sibling node.</param>
     public PegNode(PegNode parent, int id, PegBegEnd match, PegNode child, PegNode next)
     {
       parent_ = parent;
@@ -287,15 +500,33 @@ namespace Altaxo.Main.PegParser
       match_ = match;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PegNode"/> class.
+    /// </summary>
+    /// <param name="parent">The parent node.</param>
+    /// <param name="id">The node identifier.</param>
+    /// <param name="match">The matched source range.</param>
+    /// <param name="child">The first child node.</param>
     public PegNode(PegNode parent, int id, PegBegEnd match, PegNode child)
       : this(parent, id, match, child, null)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PegNode"/> class.
+    /// </summary>
+    /// <param name="parent">The parent node.</param>
+    /// <param name="id">The node identifier.</param>
+    /// <param name="match">The matched source range.</param>
     public PegNode(PegNode parent, int id, PegBegEnd match)
       : this(parent, id, match, null, null)
     { }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PegNode"/> class.
+    /// </summary>
+    /// <param name="parent">The parent node.</param>
+    /// <param name="id">The node identifier.</param>
     public PegNode(PegNode parent, int id)
       : this(parent, id, new PegBegEnd(), null, null)
     {
@@ -305,11 +536,20 @@ namespace Altaxo.Main.PegParser
 
     #region Public Members
 
+    /// <summary>
+    /// Gets the matched source text for this node.
+    /// </summary>
+    /// <param name="s">The full source text.</param>
+    /// <returns>The matched source text.</returns>
     public virtual string GetAsString(string s)
     {
       return match_.GetAsString(s);
     }
 
+    /// <summary>
+    /// Creates a copy of this node and its descendants.
+    /// </summary>
+    /// <returns>A cloned node.</returns>
     public virtual PegNode Clone()
     {
       var clone = new PegNode(parent_, id_, match_);
@@ -321,6 +561,10 @@ namespace Altaxo.Main.PegParser
 
     #region Protected Members
 
+    /// <summary>
+    /// Clones the child and sibling subtrees into the specified node.
+    /// </summary>
+    /// <param name="clone">The node that receives the cloned subtrees.</param>
     protected void CloneSubTrees(PegNode clone)
     {
       PegNode child = null, next = null;
@@ -342,14 +586,36 @@ namespace Altaxo.Main.PegParser
 
     #region Data Members
 
+    /// <summary>
+    /// The node identifier.
+    /// </summary>
     public int id_;
-    public PegNode parent_, child_, next_;
+
+    /// <summary>
+    /// The parent node.
+    /// </summary>
+    public PegNode parent_;
+
+    /// <summary>
+    /// The first child node.
+    /// </summary>
+    public PegNode child_;
+
+    /// <summary>
+    /// The next sibling node.
+    /// </summary>
+    public PegNode next_;
+
+    /// <summary>
+    /// The matched source range.
+    /// </summary>
     public PegBegEnd match_;
 
     #endregion Data Members
 
     #region ICloneable Members
 
+    /// <inheritdoc/>
     object ICloneable.Clone()
     {
       return Clone();
@@ -367,38 +633,113 @@ namespace Altaxo.Main.PegParser
     internal AddPolicy addPolicy;
   }
 
+  /// <summary>
+  /// Defines the operations required to print a parse tree node.
+  /// </summary>
   public abstract class PrintNode
   {
+    /// <summary>
+    /// Gets the maximum line length used for printing.
+    /// </summary>
+    /// <returns>The maximum line length.</returns>
     public abstract int LenMaxLine();
 
+    /// <summary>
+    /// Determines whether the specified node is a leaf.
+    /// </summary>
+    /// <param name="p">The node to inspect.</param>
+    /// <returns><c>true</c> if the node is a leaf; otherwise, <c>false</c>.</returns>
     public abstract bool IsLeaf(PegNode p);
 
+    /// <summary>
+    /// Determines whether the specified node should be skipped during printing.
+    /// </summary>
+    /// <param name="p">The node to inspect.</param>
+    /// <returns><c>true</c> if the node should be skipped; otherwise, <c>false</c>.</returns>
     public virtual bool IsSkip(PegNode p)
     {
       return false;
     }
 
+    /// <summary>
+    /// Prints the beginning of a non-leaf node.
+    /// </summary>
+    /// <param name="p">The node to print.</param>
+    /// <param name="bAlignVertical">Whether child nodes are aligned vertically.</param>
+    /// <param name="nOffsetLineBeg">The current line offset.</param>
+    /// <param name="nLevel">The current tree level.</param>
     public abstract void PrintNodeBeg(PegNode p, bool bAlignVertical, ref int nOffsetLineBeg, int nLevel);
 
+    /// <summary>
+    /// Prints the end of a non-leaf node.
+    /// </summary>
+    /// <param name="p">The node to print.</param>
+    /// <param name="bAlignVertical">Whether child nodes are aligned vertically.</param>
+    /// <param name="nOffsetLineBeg">The current line offset.</param>
+    /// <param name="nLevel">The current tree level.</param>
     public abstract void PrintNodeEnd(PegNode p, bool bAlignVertical, ref int nOffsetLineBeg, int nLevel);
 
+    /// <summary>
+    /// Gets the printed length of the beginning of a non-leaf node.
+    /// </summary>
+    /// <param name="p">The node to inspect.</param>
+    /// <returns>The printed length.</returns>
     public abstract int LenNodeBeg(PegNode p);
 
+    /// <summary>
+    /// Gets the printed length of the end of a non-leaf node.
+    /// </summary>
+    /// <param name="p">The node to inspect.</param>
+    /// <returns>The printed length.</returns>
     public abstract int LenNodeEnd(PegNode p);
 
+    /// <summary>
+    /// Prints a leaf node.
+    /// </summary>
+    /// <param name="p">The node to print.</param>
+    /// <param name="nOffsetLineBeg">The current line offset.</param>
+    /// <param name="bAlignVertical">Whether output is vertically aligned.</param>
     public abstract void PrintLeaf(PegNode p, ref int nOffsetLineBeg, bool bAlignVertical);
 
+    /// <summary>
+    /// Gets the printed length of a leaf node.
+    /// </summary>
+    /// <param name="p">The node to inspect.</param>
+    /// <returns>The printed length.</returns>
     public abstract int LenLeaf(PegNode p);
 
+    /// <summary>
+    /// Gets the printed distance to the next node.
+    /// </summary>
+    /// <param name="p">The current node.</param>
+    /// <param name="bAlignVertical">Whether output is vertically aligned.</param>
+    /// <param name="nOffsetLineBeg">The current line offset.</param>
+    /// <param name="nLevel">The current tree level.</param>
+    /// <returns>The printed distance.</returns>
     public abstract int LenDistNext(PegNode p, bool bAlignVertical, ref int nOffsetLineBeg, int nLevel);
 
+    /// <summary>
+    /// Prints the separator to the next node.
+    /// </summary>
+    /// <param name="p">The current node.</param>
+    /// <param name="bAlignVertical">Whether output is vertically aligned.</param>
+    /// <param name="nOffsetLineBeg">The current line offset.</param>
+    /// <param name="nLevel">The current tree level.</param>
     public abstract void PrintDistNext(PegNode p, bool bAlignVertical, ref int nOffsetLineBeg, int nLevel);
   }
 
+  /// <summary>
+  /// Prints parse trees in a textual representation.
+  /// </summary>
   public class TreePrint : PrintNode
   {
     #region Data Members
 
+    /// <summary>
+    /// Resolves the display name for a node.
+    /// </summary>
+    /// <param name="node">The node to name.</param>
+    /// <returns>The display name.</returns>
     public delegate string GetNodeName(PegNode node);
 
     private string src_;
@@ -411,6 +752,14 @@ namespace Altaxo.Main.PegParser
 
     #region Methods
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TreePrint"/> class.
+    /// </summary>
+    /// <param name="treeOut">The text writer that receives the output.</param>
+    /// <param name="src">The source text.</param>
+    /// <param name="nMaxLineLen">The maximum output line length.</param>
+    /// <param name="GetNodeName">The callback used to resolve node names.</param>
+    /// <param name="bVerbose">Whether verbose output should be generated.</param>
     public TreePrint(TextWriter treeOut, string src, int nMaxLineLen, GetNodeName GetNodeName, bool bVerbose)
     {
       treeOut_ = treeOut;
@@ -420,6 +769,12 @@ namespace Altaxo.Main.PegParser
       src_ = src;
     }
 
+    /// <summary>
+    /// Prints the specified tree.
+    /// </summary>
+    /// <param name="parent">The root node to print.</param>
+    /// <param name="nOffsetLineBeg">The indentation offset.</param>
+    /// <param name="nLevel">The current tree level.</param>
     public void PrintTree(PegNode parent, int nOffsetLineBeg, int nLevel)
     {
       if (IsLeaf(parent))
@@ -486,11 +841,13 @@ namespace Altaxo.Main.PegParser
       return nLen;
     }
 
+    /// <inheritdoc/>
     public override int LenMaxLine()
     {
       return nMaxLineLen_;
     }
 
+    /// <inheritdoc/>
     public override void
         PrintNodeBeg(PegNode p, bool bAlignVertical, ref int nOffsetLineBeg, int nLevel)
     {
@@ -507,6 +864,7 @@ namespace Altaxo.Main.PegParser
       }
     }
 
+    /// <inheritdoc/>
     public override void
         PrintNodeEnd(PegNode p, bool bAlignVertical, ref int nOffsetLineBeg, int nLevel)
     {
@@ -522,16 +880,19 @@ namespace Altaxo.Main.PegParser
       }
     }
 
+    /// <inheritdoc/>
     public override int LenNodeBeg(PegNode p)
     {
       return LenIdAsName(p) + 1;
     }
 
+    /// <inheritdoc/>
     public override int LenNodeEnd(PegNode p)
     {
       return 1;
     }
 
+    /// <inheritdoc/>
     public override void PrintLeaf(PegNode p, ref int nOffsetLineBeg, bool bAlignVertical)
     {
       if (bVerbose_)
@@ -550,6 +911,7 @@ namespace Altaxo.Main.PegParser
         treeOut_.Write('>');
     }
 
+    /// <inheritdoc/>
     public override int LenLeaf(PegNode p)
     {
       int nLen = p.match_.posEnd_ - p.match_.posBeg_ + 2;
@@ -558,11 +920,13 @@ namespace Altaxo.Main.PegParser
       return nLen;
     }
 
+    /// <inheritdoc/>
     public override bool IsLeaf(PegNode p)
     {
       return p.child_ is null;
     }
 
+    /// <inheritdoc/>
     public override void
         PrintDistNext(PegNode p, bool bAlignVertical, ref int nOffsetLineBeg, int nLevel)
     {
@@ -578,6 +942,7 @@ namespace Altaxo.Main.PegParser
       }
     }
 
+    /// <inheritdoc/>
     public override int
         LenDistNext(PegNode p, bool bAlignVertical, ref int nOffsetLineBeg, int nLevel)
     {
@@ -603,27 +968,65 @@ namespace Altaxo.Main.PegParser
 
   #region Parsers
 
+  /// <summary>
+  /// Provides the common functionality for PEG parsers.
+  /// </summary>
   public abstract class PegBaseParser
   {
     #region Data Types
 
+    /// <summary>
+    /// Represents a parser matcher function.
+    /// </summary>
+    /// <returns><c>true</c> if the match succeeds; otherwise, <c>false</c>.</returns>
     public delegate bool Matcher();
 
+    /// <summary>
+    /// Represents a callback that creates parse tree nodes.
+    /// </summary>
+    /// <param name="ePhase">The creation phase.</param>
+    /// <param name="parentOrCreated">The parent node or the node being completed.</param>
+    /// <param name="id">The node identifier.</param>
+    /// <returns>The created node, or <see langword="null"/>.</returns>
     public delegate PegNode Creator(ECreatorPhase ePhase, PegNode parentOrCreated, int id);
 
     #endregion Data Types
 
     #region Data members
 
+    /// <summary>
+    /// The length of the current source.
+    /// </summary>
     protected int srcLen_;
+
+    /// <summary>
+    /// The current parser position.
+    /// </summary>
     protected int pos_;
+
+    /// <summary>
+    /// A value indicating whether tree creation is muted.
+    /// </summary>
     protected bool bMute_;
+
+    /// <summary>
+    /// The writer used for parser diagnostics.
+    /// </summary>
     protected TextWriter errOut_;
+
+    /// <summary>
+    /// The callback used to create tree nodes.
+    /// </summary>
     protected Creator nodeCreator_;
     private PegTree tree;
 
     #endregion Data members
 
+    /// <summary>
+    /// Gets the rule name for the specified identifier.
+    /// </summary>
+    /// <param name="id">The rule identifier.</param>
+    /// <returns>The rule name.</returns>
     public virtual string GetRuleNameFromId(int id)
     {//normally overridden
       switch (id)
@@ -641,12 +1044,24 @@ namespace Altaxo.Main.PegParser
       }
     }
 
+    /// <summary>
+    /// Gets the file loading properties expected by the parser.
+    /// </summary>
+    /// <param name="encoding">Receives the expected encoding class.</param>
+    /// <param name="detection">Receives the Unicode detection strategy.</param>
     public virtual void GetProperties(out EncodingClass encoding, out UnicodeDetection detection)
     {
       encoding = EncodingClass.ascii;
       detection = UnicodeDetection.notApplicable;
     }
 
+    /// <summary>
+    /// Creates a default parse tree node.
+    /// </summary>
+    /// <param name="phase">The creation phase.</param>
+    /// <param name="parentOrCreated">The parent node or created node.</param>
+    /// <param name="id">The node identifier.</param>
+    /// <returns>The created node, or <see langword="null"/> when no node is created.</returns>
     protected PegNode DefaultNodeCreator(ECreatorPhase phase, PegNode parentOrCreated, int id)
     {
       if (phase == ECreatorPhase.eCreate || phase == ECreatorPhase.eCreateAndComplete)
@@ -657,6 +1072,10 @@ namespace Altaxo.Main.PegParser
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PegBaseParser"/> class.
+    /// </summary>
+    /// <param name="errOut">The writer used for parser diagnostics.</param>
     public PegBaseParser(TextWriter errOut)
     {
       srcLen_ = pos_ = 0;
@@ -668,6 +1087,10 @@ namespace Altaxo.Main.PegParser
 
     #region Reinitialization, TextWriter access,Tree Access
 
+    /// <summary>
+    /// Reinitializes the parser.
+    /// </summary>
+    /// <param name="Fout">The writer used for parser diagnostics.</param>
     public void Construct(TextWriter Fout)
     {
       srcLen_ = pos_ = 0;
@@ -676,11 +1099,18 @@ namespace Altaxo.Main.PegParser
       ResetTree();
     }
 
+    /// <summary>
+    /// Resets the current parser position to the beginning of the source.
+    /// </summary>
     public void Rewind()
     {
       pos_ = 0;
     }
 
+    /// <summary>
+    /// Sets the destination for parser diagnostics.
+    /// </summary>
+    /// <param name="errOut">The writer used for parser diagnostics.</param>
     public void SetErrorDestination(TextWriter errOut)
     {
       errOut_ = errOut is null ? new StreamWriter(System.Console.OpenStandardError())
@@ -691,11 +1121,18 @@ namespace Altaxo.Main.PegParser
 
     #region Tree root access, Tree Node generation/display
 
+    /// <summary>
+    /// Gets the root node of the parse tree.
+    /// </summary>
+    /// <returns>The root node, or <see langword="null"/>.</returns>
     public PegNode GetRoot()
     {
       return tree.root_;
     }
 
+    /// <summary>
+    /// Clears the parse tree.
+    /// </summary>
     public void ResetTree()
     {
       tree.root_ = null;
@@ -742,21 +1179,45 @@ namespace Altaxo.Main.PegParser
       tree.addPolicy = prevPolicy;
     }
 
+    /// <summary>
+    /// Matches character data and stores it as an anonymous tree node.
+    /// </summary>
+    /// <param name="toMatch">The matcher to execute.</param>
+    /// <returns><c>true</c> if the match succeeds; otherwise, <c>false</c>.</returns>
     public bool TreeChars(Matcher toMatch)
     {
       return TreeCharsWithId((int)ESpecialNodes.eAnonymousNode, toMatch);
     }
 
+    /// <summary>
+    /// Matches character data and stores it as an anonymous tree node.
+    /// </summary>
+    /// <param name="nodeCreator">The node creator to use.</param>
+    /// <param name="toMatch">The matcher to execute.</param>
+    /// <returns><c>true</c> if the match succeeds; otherwise, <c>false</c>.</returns>
     public bool TreeChars(Creator nodeCreator, Matcher toMatch)
     {
       return TreeCharsWithId(nodeCreator, (int)ESpecialNodes.eAnonymousNode, toMatch);
     }
 
+    /// <summary>
+    /// Matches character data and stores it using the specified node identifier.
+    /// </summary>
+    /// <param name="nId">The node identifier.</param>
+    /// <param name="toMatch">The matcher to execute.</param>
+    /// <returns><c>true</c> if the match succeeds; otherwise, <c>false</c>.</returns>
     public bool TreeCharsWithId(int nId, Matcher toMatch)
     {
       return TreeCharsWithId(nodeCreator_, nId, toMatch);
     }
 
+    /// <summary>
+    /// Matches character data and stores it using the specified creator and node identifier.
+    /// </summary>
+    /// <param name="nodeCreator">The node creator to use.</param>
+    /// <param name="nId">The node identifier.</param>
+    /// <param name="toMatch">The matcher to execute.</param>
+    /// <returns><c>true</c> if the match succeeds; otherwise, <c>false</c>.</returns>
     public bool TreeCharsWithId(Creator nodeCreator, int nId, Matcher toMatch)
     {
       int pos = pos_;
@@ -773,11 +1234,24 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches a nonterminal and stores it in the parse tree.
+    /// </summary>
+    /// <param name="nRuleId">The rule identifier.</param>
+    /// <param name="toMatch">The matcher to execute.</param>
+    /// <returns><c>true</c> if the match succeeds; otherwise, <c>false</c>.</returns>
     public bool TreeNT(int nRuleId, Matcher toMatch)
     {
       return TreeNT(nodeCreator_, nRuleId, toMatch);
     }
 
+    /// <summary>
+    /// Matches a nonterminal and stores it in the parse tree.
+    /// </summary>
+    /// <param name="nodeCreator">The node creator to use.</param>
+    /// <param name="nRuleId">The rule identifier.</param>
+    /// <param name="toMatch">The matcher to execute.</param>
+    /// <returns><c>true</c> if the match succeeds; otherwise, <c>false</c>.</returns>
     public bool TreeNT(Creator nodeCreator, int nRuleId, Matcher toMatch)
     {
       if (bMute_)
@@ -801,11 +1275,24 @@ namespace Altaxo.Main.PegParser
       return bMatches;
     }
 
+    /// <summary>
+    /// Matches an abstract syntax tree node and stores it in the parse tree.
+    /// </summary>
+    /// <param name="nRuleId">The rule identifier.</param>
+    /// <param name="toMatch">The matcher to execute.</param>
+    /// <returns><c>true</c> if the match succeeds; otherwise, <c>false</c>.</returns>
     public bool TreeAST(int nRuleId, Matcher toMatch)
     {
       return TreeAST(nodeCreator_, nRuleId, toMatch);
     }
 
+    /// <summary>
+    /// Matches an abstract syntax tree node and stores it in the parse tree.
+    /// </summary>
+    /// <param name="nodeCreator">The node creator to use.</param>
+    /// <param name="nRuleId">The rule identifier.</param>
+    /// <param name="toMatch">The matcher to execute.</param>
+    /// <returns><c>true</c> if the match succeeds; otherwise, <c>false</c>.</returns>
     public bool TreeAST(Creator nodeCreator, int nRuleId, Matcher toMatch)
     {
       if (bMute_)
@@ -839,31 +1326,62 @@ namespace Altaxo.Main.PegParser
       return bMatches;
     }
 
+    /// <summary>
+    /// Matches an anonymous nonterminal and stores it in the parse tree.
+    /// </summary>
+    /// <param name="toMatch">The matcher to execute.</param>
+    /// <returns><c>true</c> if the match succeeds; otherwise, <c>false</c>.</returns>
     public bool TreeNT(Matcher toMatch)
     {
       return TreeNT((int)ESpecialNodes.eAnonymNTNode, toMatch);
     }
 
+    /// <summary>
+    /// Matches an anonymous nonterminal and stores it in the parse tree.
+    /// </summary>
+    /// <param name="nodeCreator">The node creator to use.</param>
+    /// <param name="toMatch">The matcher to execute.</param>
+    /// <returns><c>true</c> if the match succeeds; otherwise, <c>false</c>.</returns>
     public bool TreeNT(Creator nodeCreator, Matcher toMatch)
     {
       return TreeNT(nodeCreator, (int)ESpecialNodes.eAnonymNTNode, toMatch);
     }
 
+    /// <summary>
+    /// Matches an anonymous abstract syntax tree node and stores it in the parse tree.
+    /// </summary>
+    /// <param name="toMatch">The matcher to execute.</param>
+    /// <returns><c>true</c> if the match succeeds; otherwise, <c>false</c>.</returns>
     public bool TreeAST(Matcher toMatch)
     {
       return TreeAST((int)ESpecialNodes.eAnonymASTNode, toMatch);
     }
 
+    /// <summary>
+    /// Matches an anonymous abstract syntax tree node and stores it in the parse tree.
+    /// </summary>
+    /// <param name="nodeCreator">The node creator to use.</param>
+    /// <param name="toMatch">The matcher to execute.</param>
+    /// <returns><c>true</c> if the match succeeds; otherwise, <c>false</c>.</returns>
     public bool TreeAST(Creator nodeCreator, Matcher toMatch)
     {
       return TreeAST(nodeCreator, (int)ESpecialNodes.eAnonymASTNode, toMatch);
     }
 
+    /// <summary>
+    /// Converts the specified tree node to a display string.
+    /// </summary>
+    /// <param name="node">The node to convert.</param>
+    /// <returns>The display string.</returns>
     public virtual string TreeNodeToString(PegNode node)
     {
       return GetRuleNameFromId(node.id_);
     }
 
+    /// <summary>
+    /// Sets the callback used to create parse tree nodes.
+    /// </summary>
+    /// <param name="nodeCreator">The node creator callback.</param>
     public void SetNodeCreator(Creator nodeCreator)
     {
       if (nodeCreator is null)
@@ -876,6 +1394,11 @@ namespace Altaxo.Main.PegParser
 
     #region PEG  e1 e2 .. ; &e1 ; !e1 ;  e? ; e* ; e+ ; e{a,b} ; .
 
+    /// <summary>
+    /// Performs a positive lookahead with tree rollback support.
+    /// </summary>
+    /// <param name="pegSequence">The matcher to evaluate.</param>
+    /// <returns><c>true</c> if the matcher succeeds; otherwise, <c>false</c>.</returns>
     public bool And(Matcher pegSequence)
     {
       PegNode prevCur = tree.cur_;
@@ -890,6 +1413,11 @@ namespace Altaxo.Main.PegParser
       return bMatches;
     }
 
+    /// <summary>
+    /// Performs a lookahead match without consuming input.
+    /// </summary>
+    /// <param name="toMatch">The matcher to evaluate.</param>
+    /// <returns><c>true</c> if the matcher succeeds; otherwise, <c>false</c>.</returns>
     public bool Peek(Matcher toMatch)
     {
       int pos0 = pos_;
@@ -901,6 +1429,11 @@ namespace Altaxo.Main.PegParser
       return bMatches;
     }
 
+    /// <summary>
+    /// Performs a negative lookahead match without consuming input.
+    /// </summary>
+    /// <param name="toMatch">The matcher to evaluate.</param>
+    /// <returns><c>true</c> if the matcher fails; otherwise, <c>false</c>.</returns>
     public bool Not(Matcher toMatch)
     {
       int pos0 = pos_;
@@ -912,6 +1445,11 @@ namespace Altaxo.Main.PegParser
       return !bMatches;
     }
 
+    /// <summary>
+    /// Matches one or more repetitions.
+    /// </summary>
+    /// <param name="toRepeat">The matcher to repeat.</param>
+    /// <returns><c>true</c> if at least one repetition succeeds; otherwise, <c>false</c>.</returns>
     public bool PlusRepeat(Matcher toRepeat)
     {
       int i;
@@ -927,6 +1465,11 @@ namespace Altaxo.Main.PegParser
       return i > 0;
     }
 
+    /// <summary>
+    /// Matches zero or more repetitions.
+    /// </summary>
+    /// <param name="toRepeat">The matcher to repeat.</param>
+    /// <returns>Always <c>true</c>.</returns>
     public bool OptRepeat(Matcher toRepeat)
     {
       for (; ; )
@@ -940,6 +1483,11 @@ namespace Altaxo.Main.PegParser
       }
     }
 
+    /// <summary>
+    /// Optionally matches the specified expression.
+    /// </summary>
+    /// <param name="toMatch">The matcher to evaluate.</param>
+    /// <returns>Always <c>true</c>.</returns>
     public bool Option(Matcher toMatch)
     {
       int pos0 = pos_;
@@ -948,6 +1496,12 @@ namespace Altaxo.Main.PegParser
       return true;
     }
 
+    /// <summary>
+    /// Matches the specified expression an exact number of times.
+    /// </summary>
+    /// <param name="count">The required repetition count.</param>
+    /// <param name="toRepeat">The matcher to repeat.</param>
+    /// <returns><c>true</c> if all repetitions succeed; otherwise, <c>false</c>.</returns>
     public bool ForRepeat(int count, Matcher toRepeat)
     {
       PegNode prevCur = tree.cur_;
@@ -966,6 +1520,13 @@ namespace Altaxo.Main.PegParser
       return true;
     }
 
+    /// <summary>
+    /// Matches the specified expression within the provided repetition range.
+    /// </summary>
+    /// <param name="lower">The minimum repetition count.</param>
+    /// <param name="upper">The maximum repetition count.</param>
+    /// <param name="toRepeat">The matcher to repeat.</param>
+    /// <returns><c>true</c> if the number of successful repetitions is within range; otherwise, <c>false</c>.</returns>
     public bool ForRepeat(int lower, int upper, Matcher toRepeat)
     {
       PegNode prevCur = tree.cur_;
@@ -986,6 +1547,10 @@ namespace Altaxo.Main.PegParser
       return true;
     }
 
+    /// <summary>
+    /// Matches any single source element.
+    /// </summary>
+    /// <returns><c>true</c> if input was available; otherwise, <c>false</c>.</returns>
     public bool Any()
     {
       if (pos_ < srcLen_)
@@ -999,10 +1564,16 @@ namespace Altaxo.Main.PegParser
     #endregion PEG  e1 e2 .. ; &e1 ; !e1 ;  e? ; e* ; e+ ; e{a,b} ; .
   }
 
+  /// <summary>
+  /// Provides PEG parsing support for binary input.
+  /// </summary>
   public class PegByteParser : PegBaseParser
   {
     #region Data members
 
+    /// <summary>
+    /// The current binary source.
+    /// </summary>
     protected byte[] src_;
     private PegError errors;
 
@@ -1010,39 +1581,77 @@ namespace Altaxo.Main.PegParser
 
     #region PEG optimizations
 
+    /// <summary>
+    /// Represents an optimized byte set matcher.
+    /// </summary>
     public sealed class BytesetData
     {
+      /// <summary>
+      /// Represents an inclusive byte range.
+      /// </summary>
       public struct Range
       {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Range"/> struct.
+        /// </summary>
+        /// <param name="low">The lower bound.</param>
+        /// <param name="high">The upper bound.</param>
         public Range(byte low, byte high)
         {
           this.low = low;
           this.high = high;
         }
 
+        /// <summary>
+        /// The lower bound.
+        /// </summary>
         public byte low;
+
+        /// <summary>
+        /// The upper bound.
+        /// </summary>
         public byte high;
       }
 
       private System.Collections.BitArray charSet_;
       private bool bNegated_;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="BytesetData"/> class.
+      /// </summary>
+      /// <param name="b">The bit set that defines the allowed bytes.</param>
       public BytesetData(System.Collections.BitArray b)
         : this(b, false)
       {
       }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="BytesetData"/> class.
+      /// </summary>
+      /// <param name="b">The bit set that defines the allowed bytes.</param>
+      /// <param name="bNegated">Whether the bit set should be negated.</param>
       public BytesetData(System.Collections.BitArray b, bool bNegated)
       {
         charSet_ = new System.Collections.BitArray(b);
         bNegated_ = bNegated;
       }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="BytesetData"/> class.
+      /// </summary>
+      /// <param name="r">The byte ranges to include.</param>
+      /// <param name="c">The individual bytes to include.</param>
       public BytesetData(Range[] r, byte[] c)
         : this(r, c, false)
       {
       }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="BytesetData"/> class.
+      /// </summary>
+      /// <param name="r">The byte ranges to include.</param>
+      /// <param name="c">The individual bytes to include.</param>
+      /// <param name="bNegated">Whether the resulting set should be negated.</param>
       public BytesetData(Range[] r, byte[] c, bool bNegated)
       {
         int max = 0;
@@ -1071,6 +1680,11 @@ namespace Altaxo.Main.PegParser
         bNegated_ = bNegated;
       }
 
+      /// <summary>
+      /// Determines whether the specified byte matches the set.
+      /// </summary>
+      /// <param name="c">The byte to test.</param>
+      /// <returns><c>true</c> if the byte matches; otherwise, <c>false</c>.</returns>
       public bool Matches(byte c)
       {
         bool bMatches = c < charSet_.Length && charSet_[c];
@@ -1132,17 +1746,29 @@ namespace Altaxo.Main.PegParser
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PegByteParser"/> class.
+    /// </summary>
     public PegByteParser()
       : this(null)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PegByteParser"/> class.
+    /// </summary>
+    /// <param name="src">The initial source data.</param>
     public PegByteParser(byte[] src)
       : base(null)
     {
       SetSource(src);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PegByteParser"/> class.
+    /// </summary>
+    /// <param name="src">The initial source data.</param>
+    /// <param name="errOut">The writer used for parser diagnostics.</param>
     public PegByteParser(byte[] src, TextWriter errOut)
       : base(errOut)
     {
@@ -1153,12 +1779,21 @@ namespace Altaxo.Main.PegParser
 
     #region Reinitialization, Source Code access, TextWriter access,Tree Access
 
+    /// <summary>
+    /// Reinitializes the parser with the specified source and error writer.
+    /// </summary>
+    /// <param name="src">The source data.</param>
+    /// <param name="Fout">The writer used for parser diagnostics.</param>
     public void Construct(byte[] src, TextWriter Fout)
     {
       base.Construct(Fout);
       SetSource(src);
     }
 
+    /// <summary>
+    /// Sets the current source data.
+    /// </summary>
+    /// <param name="src">The source data.</param>
     public void SetSource(byte[] src)
     {
       if (src is null)
@@ -1171,6 +1806,10 @@ namespace Altaxo.Main.PegParser
       };
     }
 
+    /// <summary>
+    /// Gets the current source data.
+    /// </summary>
+    /// <returns>The current source data.</returns>
     public byte[] GetSource()
     {
       return src_;
@@ -1180,6 +1819,12 @@ namespace Altaxo.Main.PegParser
 
     #region Setting host variables
 
+    /// <summary>
+    /// Captures the bytes matched by the specified matcher.
+    /// </summary>
+    /// <param name="toMatch">The matcher to execute.</param>
+    /// <param name="into">Receives the matched bytes.</param>
+    /// <returns><c>true</c> if the match succeeds; otherwise, <c>false</c>.</returns>
     public bool Into(Matcher toMatch, out byte[] into)
     {
       int pos = pos_;
@@ -1200,6 +1845,12 @@ namespace Altaxo.Main.PegParser
       }
     }
 
+    /// <summary>
+    /// Captures the source range matched by the specified matcher.
+    /// </summary>
+    /// <param name="toMatch">The matcher to execute.</param>
+    /// <param name="begEnd">Receives the matched range.</param>
+    /// <returns><c>true</c> if the match succeeds; otherwise, <c>false</c>.</returns>
     public bool Into(Matcher toMatch, out PegBegEnd begEnd)
     {
       begEnd.posBeg_ = pos_;
@@ -1208,6 +1859,12 @@ namespace Altaxo.Main.PegParser
       return bMatches;
     }
 
+    /// <summary>
+    /// Captures the bytes matched by the specified matcher and converts them to an integer.
+    /// </summary>
+    /// <param name="toMatch">The matcher to execute.</param>
+    /// <param name="into">Receives the converted integer.</param>
+    /// <returns><c>true</c> if the match and conversion succeed; otherwise, <c>false</c>.</returns>
     public bool Into(Matcher toMatch, out int into)
     {
       into = 0;
@@ -1222,6 +1879,12 @@ namespace Altaxo.Main.PegParser
       return true;
     }
 
+    /// <summary>
+    /// Captures the bytes matched by the specified matcher and converts them to a double.
+    /// </summary>
+    /// <param name="toMatch">The matcher to execute.</param>
+    /// <param name="into">Receives the converted double value.</param>
+    /// <returns><c>true</c> if the match and conversion succeed; otherwise, <c>false</c>.</returns>
     public bool Into(Matcher toMatch, out double into)
     {
       into = 0.0;
@@ -1234,6 +1897,13 @@ namespace Altaxo.Main.PegParser
       return true;
     }
 
+    /// <summary>
+    /// Reads the specified bit range into an integer.
+    /// </summary>
+    /// <param name="lowBitNo">The first bit number.</param>
+    /// <param name="highBitNo">The last bit number.</param>
+    /// <param name="into">Receives the extracted value.</param>
+    /// <returns><c>true</c> if a byte was available; otherwise, <c>false</c>.</returns>
     public bool BitsInto(int lowBitNo, int highBitNo, out int into)
     {
       if (pos_ < srcLen_)
@@ -1246,6 +1916,14 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Reads the specified bit range into an integer and tests it against a byte set.
+    /// </summary>
+    /// <param name="lowBitNo">The first bit number.</param>
+    /// <param name="highBitNo">The last bit number.</param>
+    /// <param name="toMatch">The byte set to test.</param>
+    /// <param name="into">Receives the extracted value.</param>
+    /// <returns><c>true</c> if the extracted value matches; otherwise, <c>false</c>.</returns>
     public bool BitsInto(int lowBitNo, int highBitNo, BytesetData toMatch, out int into)
     {
       if (pos_ < srcLen_)
@@ -1272,12 +1950,22 @@ namespace Altaxo.Main.PegParser
       }
     }
 
+    /// <summary>
+    /// Reports a fatal parser error.
+    /// </summary>
+    /// <param name="sMsg">The error message.</param>
+    /// <returns>This method does not return.</returns>
     public virtual bool Fatal(string sMsg)
     {
       LogOutMsg("FATAL", sMsg);
       throw new PegException(sMsg);
     }
 
+    /// <summary>
+    /// Reports a parser warning.
+    /// </summary>
+    /// <param name="sMsg">The warning message.</param>
+    /// <returns>Always <c>true</c>.</returns>
     public bool Warning(string sMsg)
     {
       LogOutMsg("WARNING", sMsg);
@@ -1288,6 +1976,9 @@ namespace Altaxo.Main.PegParser
 
     #region PEG Bit level equivalents for PEG e1 ; &e1 ; !e1; e1:into ;
 
+    /// <summary>
+    /// Matches the specified bit range against an exact value.
+    /// </summary>
     public bool Bits(int lowBitNo, int highBitNo, byte toMatch)
     {
       if (pos_ < srcLen_ && ((src_[pos_] >> (lowBitNo - 1)) & ((1 << highBitNo) - 1)) == toMatch)
@@ -1298,6 +1989,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches the specified bit range against a byte set.
+    /// </summary>
     public bool Bits(int lowBitNo, int highBitNo, BytesetData toMatch)
     {
       if (pos_ < srcLen_)
@@ -1309,26 +2003,41 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Tests whether the specified bit range matches an exact value without consuming input.
+    /// </summary>
     public bool PeekBits(int lowBitNo, int highBitNo, byte toMatch)
     {
       return pos_ < srcLen_ && ((src_[pos_] >> (lowBitNo - 1)) & ((1 << highBitNo) - 1)) == toMatch;
     }
 
+    /// <summary>
+    /// Tests whether the specified bit range does not match an exact value without consuming input.
+    /// </summary>
     public bool NotBits(int lowBitNo, int highBitNo, byte toMatch)
     {
       return !(pos_ < srcLen_ && ((src_[pos_] >> (lowBitNo - 1)) & ((1 << highBitNo) - 1)) == toMatch);
     }
 
+    /// <summary>
+    /// Reads the specified bit range into an integer.
+    /// </summary>
     public bool IntoBits(int lowBitNo, int highBitNo, out int val)
     {
       return BitsInto(lowBitNo, highBitNo, out val);
     }
 
+    /// <summary>
+    /// Reads the specified bit range into an integer and tests it against a byte set.
+    /// </summary>
     public bool IntoBits(int lowBitNo, int highBitNo, BytesetData toMatch, out int val)
     {
       return BitsInto(lowBitNo, highBitNo, out val);
     }
 
+    /// <summary>
+    /// Matches the specified single bit against an exact value.
+    /// </summary>
     public bool Bit(int bitNo, byte toMatch)
     {
       if (pos_ < srcLen_ && ((src_[pos_] >> (bitNo - 1)) & 1) == toMatch)
@@ -1339,11 +2048,17 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Tests whether the specified single bit matches an exact value without consuming input.
+    /// </summary>
     public bool PeekBit(int bitNo, byte toMatch)
     {
       return pos_ < srcLen_ && ((src_[pos_] >> (bitNo - 1)) & 1) == toMatch;
     }
 
+    /// <summary>
+    /// Tests whether the specified single bit does not match an exact value without consuming input.
+    /// </summary>
     public bool NotBit(int bitNo, byte toMatch)
     {
       return !(pos_ < srcLen_ && ((src_[pos_] >> (bitNo - 1)) & 1) == toMatch);
@@ -1353,6 +2068,9 @@ namespace Altaxo.Main.PegParser
 
     #region PEG '<Literal>' / '<Literal>'/i / [low1-high1,low2-high2..] / [<CharList>]
 
+    /// <summary>
+    /// Matches the specified byte literal.
+    /// </summary>
     public bool Char(byte c1)
     {
       if (pos_ < srcLen_ && src_[pos_] == c1)
@@ -1360,6 +2078,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches the specified two-byte literal.
+    /// </summary>
     public bool Char(byte c1, byte c2)
     {
       if (pos_ + 1 < srcLen_
@@ -1369,6 +2090,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches the specified three-byte literal.
+    /// </summary>
     public bool Char(byte c1, byte c2, byte c3)
     {
       if (pos_ + 2 < srcLen_
@@ -1379,6 +2103,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches the specified four-byte literal.
+    /// </summary>
     public bool Char(byte c1, byte c2, byte c3, byte c4)
     {
       if (pos_ + 3 < srcLen_
@@ -1390,6 +2117,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches the specified five-byte literal.
+    /// </summary>
     public bool Char(byte c1, byte c2, byte c3, byte c4, byte c5)
     {
       if (pos_ + 4 < srcLen_
@@ -1402,6 +2132,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches the specified six-byte literal.
+    /// </summary>
     public bool Char(byte c1, byte c2, byte c3, byte c4, byte c5, byte c6)
     {
       if (pos_ + 5 < srcLen_
@@ -1415,6 +2148,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches the specified seven-byte literal.
+    /// </summary>
     public bool Char(byte c1, byte c2, byte c3, byte c4, byte c5, byte c6, byte c7)
     {
       if (pos_ + 6 < srcLen_
@@ -1429,6 +2165,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches the specified eight-byte literal.
+    /// </summary>
     public bool Char(byte c1, byte c2, byte c3, byte c4, byte c5, byte c6, byte c7, byte c8)
     {
       if (pos_ + 7 < srcLen_
@@ -1444,6 +2183,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches the specified byte sequence.
+    /// </summary>
     public bool Char(byte[] s)
     {
       int sLength = s.Length;
@@ -1458,6 +2200,9 @@ namespace Altaxo.Main.PegParser
       return true;
     }
 
+    /// <summary>
+    /// Converts an ASCII lowercase byte to uppercase.
+    /// </summary>
     public static byte ToUpper(byte c)
     {
       if (c >= 97 && c <= 122)
@@ -1466,6 +2211,9 @@ namespace Altaxo.Main.PegParser
         return c;
     }
 
+    /// <summary>
+    /// Matches the specified byte literal case-insensitively.
+    /// </summary>
     public bool IChar(byte c1)
     {
       if (pos_ < srcLen_ && ToUpper(src_[pos_]) == c1)
@@ -1473,6 +2221,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches the specified two-byte literal case-insensitively.
+    /// </summary>
     public bool IChar(byte c1, byte c2)
     {
       if (pos_ + 1 < srcLen_
@@ -1482,6 +2233,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches the specified three-byte literal case-insensitively.
+    /// </summary>
     public bool IChar(byte c1, byte c2, byte c3)
     {
       if (pos_ + 2 < srcLen_
@@ -1492,6 +2246,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches the specified four-byte literal case-insensitively.
+    /// </summary>
     public bool IChar(byte c1, byte c2, byte c3, byte c4)
     {
       if (pos_ + 3 < srcLen_
@@ -1503,6 +2260,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches the specified five-byte literal case-insensitively.
+    /// </summary>
     public bool IChar(byte c1, byte c2, byte c3, byte c4, byte c5)
     {
       if (pos_ + 4 < srcLen_
@@ -1515,6 +2275,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches the specified six-byte literal case-insensitively.
+    /// </summary>
     public bool IChar(byte c1, byte c2, byte c3, byte c4, byte c5, byte c6)
     {
       if (pos_ + 5 < srcLen_
@@ -1528,6 +2291,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches the specified seven-byte literal case-insensitively.
+    /// </summary>
     public bool IChar(byte c1, byte c2, byte c3, byte c4, byte c5, byte c6, byte c7)
     {
       if (pos_ + 6 < srcLen_
@@ -1542,6 +2308,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches the specified byte sequence case-insensitively.
+    /// </summary>
     public bool IChar(byte[] s)
     {
       int sLength = s.Length;
@@ -1556,6 +2325,9 @@ namespace Altaxo.Main.PegParser
       return true;
     }
 
+    /// <summary>
+    /// Matches a byte within the specified inclusive range.
+    /// </summary>
     public bool In(byte c0, byte c1)
     {
       if (pos_ < srcLen_
@@ -1567,6 +2339,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches a byte within either of the specified inclusive ranges.
+    /// </summary>
     public bool In(byte c0, byte c1, byte c2, byte c3)
     {
       if (pos_ < srcLen_)
@@ -1582,6 +2357,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches a byte within any of the specified inclusive ranges.
+    /// </summary>
     public bool In(byte c0, byte c1, byte c2, byte c3, byte c4, byte c5)
     {
       if (pos_ < srcLen_)
@@ -1598,6 +2376,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches a byte within any of the specified inclusive ranges.
+    /// </summary>
     public bool In(byte c0, byte c1, byte c2, byte c3, byte c4, byte c5, byte c6, byte c7)
     {
       if (pos_ < srcLen_)
@@ -1615,6 +2396,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches a byte within any of the inclusive ranges defined by the array.
+    /// </summary>
     public bool In(byte[] s)
     {
       if (pos_ < srcLen_)
@@ -1632,6 +2416,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches a byte outside all inclusive ranges defined by the array.
+    /// </summary>
     public bool NotIn(byte[] s)
     {
       if (pos_ < srcLen_)
@@ -1648,6 +2435,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches one of the specified bytes.
+    /// </summary>
     public bool OneOf(byte c0, byte c1)
     {
       if (pos_ < srcLen_
@@ -1659,6 +2449,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches one of the specified bytes.
+    /// </summary>
     public bool OneOf(byte c0, byte c1, byte c2)
     {
       if (pos_ < srcLen_)
@@ -1673,6 +2466,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches one of the specified bytes.
+    /// </summary>
     public bool OneOf(byte c0, byte c1, byte c2, byte c3)
     {
       if (pos_ < srcLen_)
@@ -1687,6 +2483,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches one of the specified bytes.
+    /// </summary>
     public bool OneOf(byte c0, byte c1, byte c2, byte c3, byte c4)
     {
       if (pos_ < srcLen_)
@@ -1701,6 +2500,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches one of the specified bytes.
+    /// </summary>
     public bool OneOf(byte c0, byte c1, byte c2, byte c3, byte c4, byte c5)
     {
       if (pos_ < srcLen_)
@@ -1715,6 +2517,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches one of the specified bytes.
+    /// </summary>
     public bool OneOf(byte c0, byte c1, byte c2, byte c3, byte c4, byte c5, byte c6)
     {
       if (pos_ < srcLen_)
@@ -1729,6 +2534,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches one of the specified bytes.
+    /// </summary>
     public bool OneOf(byte c0, byte c1, byte c2, byte c3, byte c4, byte c5, byte c6, byte c7)
     {
       if (pos_ < srcLen_)
@@ -1743,6 +2551,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches any byte contained in the specified array.
+    /// </summary>
     public bool OneOf(byte[] s)
     {
       if (pos_ < srcLen_)
@@ -1757,6 +2568,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches any byte not contained in the specified array.
+    /// </summary>
     public bool NotOneOf(byte[] s)
     {
       if (pos_ < srcLen_)
@@ -1772,6 +2586,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches any byte contained in the specified optimized byte set.
+    /// </summary>
     public bool OneOf(BytesetData bset)
     {
       if (pos_ < srcLen_ && bset.Matches(src_[pos_]))
@@ -1785,10 +2602,16 @@ namespace Altaxo.Main.PegParser
     #endregion PEG '<Literal>' / '<Literal>'/i / [low1-high1,low2-high2..] / [<CharList>]
   }
 
+  /// <summary>
+  /// Provides PEG parsing support for character input.
+  /// </summary>
   public class PegCharParser : PegBaseParser
   {
     #region Data members
 
+    /// <summary>
+    /// The current character source.
+    /// </summary>
     protected string src_;
     private PegError errors;
 
@@ -1796,39 +2619,77 @@ namespace Altaxo.Main.PegParser
 
     #region PEG optimizations
 
+    /// <summary>
+    /// Represents an optimized character set matcher.
+    /// </summary>
     public sealed class OptimizedCharset
     {
+      /// <summary>
+      /// Represents an inclusive character range.
+      /// </summary>
       public struct Range
       {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Range"/> struct.
+        /// </summary>
+        /// <param name="low">The lower bound.</param>
+        /// <param name="high">The upper bound.</param>
         public Range(char low, char high)
         {
           this.low = low;
           this.high = high;
         }
 
+        /// <summary>
+        /// The lower bound.
+        /// </summary>
         public char low;
+
+        /// <summary>
+        /// The upper bound.
+        /// </summary>
         public char high;
       }
 
       private System.Collections.BitArray charSet_;
       private bool bNegated_;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="OptimizedCharset"/> class.
+      /// </summary>
+      /// <param name="b">The bit set that defines the allowed characters.</param>
       public OptimizedCharset(System.Collections.BitArray b)
         : this(b, false)
       {
       }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="OptimizedCharset"/> class.
+      /// </summary>
+      /// <param name="b">The bit set that defines the allowed characters.</param>
+      /// <param name="bNegated">Whether the bit set should be negated.</param>
       public OptimizedCharset(System.Collections.BitArray b, bool bNegated)
       {
         charSet_ = new System.Collections.BitArray(b);
         bNegated_ = bNegated;
       }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="OptimizedCharset"/> class.
+      /// </summary>
+      /// <param name="r">The character ranges to include.</param>
+      /// <param name="c">The individual characters to include.</param>
       public OptimizedCharset(Range[] r, char[] c)
         : this(r, c, false)
       {
       }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="OptimizedCharset"/> class.
+      /// </summary>
+      /// <param name="r">The character ranges to include.</param>
+      /// <param name="c">The individual characters to include.</param>
+      /// <param name="bNegated">Whether the resulting set should be negated.</param>
       public OptimizedCharset(Range[] r, char[] c, bool bNegated)
       {
         int max = 0;
@@ -1857,6 +2718,11 @@ namespace Altaxo.Main.PegParser
         bNegated_ = bNegated;
       }
 
+      /// <summary>
+      /// Determines whether the specified character matches the set.
+      /// </summary>
+      /// <param name="c">The character to test.</param>
+      /// <returns><c>true</c> if the character matches; otherwise, <c>false</c>.</returns>
       public bool Matches(char c)
       {
         bool bMatches = c < charSet_.Length && charSet_[c];
@@ -1867,6 +2733,9 @@ namespace Altaxo.Main.PegParser
       }
     }
 
+    /// <summary>
+    /// Represents an optimized literal matcher.
+    /// </summary>
     public sealed class OptimizedLiterals
     {
       internal class Trie
@@ -1927,6 +2796,10 @@ namespace Altaxo.Main.PegParser
 
       internal Trie literalsRoot;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="OptimizedLiterals"/> class.
+      /// </summary>
+      /// <param name="litAlternatives">The literal alternatives to match.</param>
       public OptimizedLiterals(string[] litAlternatives)
       {
         literalsRoot = new Trie('\u0000', 0, litAlternatives);
@@ -1937,17 +2810,29 @@ namespace Altaxo.Main.PegParser
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PegCharParser"/> class.
+    /// </summary>
     public PegCharParser()
       : this("")
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PegCharParser"/> class.
+    /// </summary>
+    /// <param name="src">The initial source text.</param>
     public PegCharParser(string src)
       : base(null)
     {
       SetSource(src);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PegCharParser"/> class.
+    /// </summary>
+    /// <param name="src">The initial source text.</param>
+    /// <param name="errOut">The writer used for parser diagnostics.</param>
     public PegCharParser(string src, TextWriter errOut)
       : base(errOut)
     {
@@ -1959,6 +2844,7 @@ namespace Altaxo.Main.PegParser
 
     #region Overrides
 
+    /// <inheritdoc/>
     public override string TreeNodeToString(PegNode node)
     {
       string label = base.TreeNodeToString(node);
@@ -1977,12 +2863,21 @@ namespace Altaxo.Main.PegParser
 
     #region Reinitialization, Source Code access, TextWriter access,Tree Access
 
+    /// <summary>
+    /// Reinitializes the parser with the specified source and error writer.
+    /// </summary>
+    /// <param name="src">The source text.</param>
+    /// <param name="Fout">The writer used for parser diagnostics.</param>
     public void Construct(string src, TextWriter Fout)
     {
       base.Construct(Fout);
       SetSource(src);
     }
 
+    /// <summary>
+    /// Sets the current source text.
+    /// </summary>
+    /// <param name="src">The source text.</param>
     public void SetSource(string src)
     {
       if (src is null)
@@ -1996,6 +2891,10 @@ namespace Altaxo.Main.PegParser
       };
     }
 
+    /// <summary>
+    /// Gets the current source text.
+    /// </summary>
+    /// <returns>The current source text.</returns>
     public string GetSource()
     {
       return src_;
@@ -2005,6 +2904,12 @@ namespace Altaxo.Main.PegParser
 
     #region Setting host variables
 
+    /// <summary>
+    /// Captures the text matched by the specified matcher.
+    /// </summary>
+    /// <param name="toMatch">The matcher to execute.</param>
+    /// <param name="into">Receives the matched text.</param>
+    /// <returns><c>true</c> if the match succeeds; otherwise, <c>false</c>.</returns>
     public bool Into(Matcher toMatch, out string into)
     {
       int pos = pos_;
@@ -2020,6 +2925,12 @@ namespace Altaxo.Main.PegParser
       }
     }
 
+    /// <summary>
+    /// Captures the source range matched by the specified matcher.
+    /// </summary>
+    /// <param name="toMatch">The matcher to execute.</param>
+    /// <param name="begEnd">Receives the matched range.</param>
+    /// <returns><c>true</c> if the match succeeds; otherwise, <c>false</c>.</returns>
     public bool Into(Matcher toMatch, out PegBegEnd begEnd)
     {
       begEnd.posBeg_ = pos_;
@@ -2028,6 +2939,12 @@ namespace Altaxo.Main.PegParser
       return bMatches;
     }
 
+    /// <summary>
+    /// Captures the text matched by the specified matcher and converts it to an integer.
+    /// </summary>
+    /// <param name="toMatch">The matcher to execute.</param>
+    /// <param name="into">Receives the converted integer.</param>
+    /// <returns><c>true</c> if the match and conversion succeed; otherwise, <c>false</c>.</returns>
     public bool Into(Matcher toMatch, out int into)
     {
       into = 0;
@@ -2038,6 +2955,12 @@ namespace Altaxo.Main.PegParser
       return true;
     }
 
+    /// <summary>
+    /// Captures the text matched by the specified matcher and converts it to a double.
+    /// </summary>
+    /// <param name="toMatch">The matcher to execute.</param>
+    /// <param name="into">Receives the converted double value.</param>
+    /// <returns><c>true</c> if the match and conversion succeed; otherwise, <c>false</c>.</returns>
     public bool Into(Matcher toMatch, out double into)
     {
       into = 0.0;
@@ -2062,6 +2985,11 @@ namespace Altaxo.Main.PegParser
       }
     }
 
+    /// <summary>
+    /// Reports a fatal parser error.
+    /// </summary>
+    /// <param name="sMsg">The error message.</param>
+    /// <returns>This method does not return.</returns>
     public virtual bool Fatal(string sMsg)
     {
       LogOutMsg("FATAL", sMsg);
@@ -2069,6 +2997,11 @@ namespace Altaxo.Main.PegParser
       //return false;
     }
 
+    /// <summary>
+    /// Reports a parser warning.
+    /// </summary>
+    /// <param name="sMsg">The warning message.</param>
+    /// <returns>Always <c>true</c>.</returns>
     public bool Warning(string sMsg)
     {
       LogOutMsg("WARNING", sMsg);
@@ -2079,6 +3012,9 @@ namespace Altaxo.Main.PegParser
 
     #region PEG  optimized version of  e* ; e+
 
+    /// <summary>
+    /// Matches zero or more characters from the specified optimized character set.
+    /// </summary>
     public bool OptRepeat(OptimizedCharset charset)
     {
       for (; pos_ < srcLen_ && charset.Matches(src_[pos_]); ++pos_)
@@ -2086,6 +3022,9 @@ namespace Altaxo.Main.PegParser
       return true;
     }
 
+    /// <summary>
+    /// Matches one or more characters from the specified optimized character set.
+    /// </summary>
     public bool PlusRepeat(OptimizedCharset charset)
     {
       int pos0 = pos_;
@@ -2098,6 +3037,9 @@ namespace Altaxo.Main.PegParser
 
     #region PEG '<Literal>' / '<Literal>'/i / [low1-high1,low2-high2..] / [<CharList>]
 
+    /// <summary>
+    /// Matches the specified character literal.
+    /// </summary>
     public bool Char(char c1)
     {
       if (pos_ < srcLen_ && src_[pos_] == c1)
@@ -2105,6 +3047,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches the specified two-character literal.
+    /// </summary>
     public bool Char(char c1, char c2)
     {
       if (pos_ + 1 < srcLen_
@@ -2114,6 +3059,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches the specified three-character literal.
+    /// </summary>
     public bool Char(char c1, char c2, char c3)
     {
       if (pos_ + 2 < srcLen_
@@ -2124,6 +3072,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches the specified four-character literal.
+    /// </summary>
     public bool Char(char c1, char c2, char c3, char c4)
     {
       if (pos_ + 3 < srcLen_
@@ -2135,6 +3086,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches the specified five-character literal.
+    /// </summary>
     public bool Char(char c1, char c2, char c3, char c4, char c5)
     {
       if (pos_ + 4 < srcLen_
@@ -2147,6 +3101,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches the specified six-character literal.
+    /// </summary>
     public bool Char(char c1, char c2, char c3, char c4, char c5, char c6)
     {
       if (pos_ + 5 < srcLen_
@@ -2160,6 +3117,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches the specified seven-character literal.
+    /// </summary>
     public bool Char(char c1, char c2, char c3, char c4, char c5, char c6, char c7)
     {
       if (pos_ + 6 < srcLen_
@@ -2174,6 +3134,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches the specified eight-character literal.
+    /// </summary>
     public bool Char(char c1, char c2, char c3, char c4, char c5, char c6, char c7, char c8)
     {
       if (pos_ + 7 < srcLen_
@@ -2189,6 +3152,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches the specified string literal.
+    /// </summary>
     public bool Char(string s)
     {
       int sLength = s.Length;
@@ -2203,6 +3169,9 @@ namespace Altaxo.Main.PegParser
       return true;
     }
 
+    /// <summary>
+    /// Matches the specified character literal case-insensitively.
+    /// </summary>
     public bool IChar(char c1)
     {
       if (pos_ < srcLen_ && char.ToUpper(src_[pos_]) == c1)
@@ -2210,6 +3179,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches the specified two-character literal case-insensitively.
+    /// </summary>
     public bool IChar(char c1, char c2)
     {
       if (pos_ + 1 < srcLen_
@@ -2219,6 +3191,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches the specified three-character literal case-insensitively.
+    /// </summary>
     public bool IChar(char c1, char c2, char c3)
     {
       if (pos_ + 2 < srcLen_
@@ -2229,6 +3204,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches the specified four-character literal case-insensitively.
+    /// </summary>
     public bool IChar(char c1, char c2, char c3, char c4)
     {
       if (pos_ + 3 < srcLen_
@@ -2240,6 +3218,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches the specified five-character literal case-insensitively.
+    /// </summary>
     public bool IChar(char c1, char c2, char c3, char c4, char c5)
     {
       if (pos_ + 4 < srcLen_
@@ -2252,6 +3233,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches the specified six-character literal case-insensitively.
+    /// </summary>
     public bool IChar(char c1, char c2, char c3, char c4, char c5, char c6)
     {
       if (pos_ + 5 < srcLen_
@@ -2265,6 +3249,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches the specified seven-character literal case-insensitively.
+    /// </summary>
     public bool IChar(char c1, char c2, char c3, char c4, char c5, char c6, char c7)
     {
       if (pos_ + 6 < srcLen_
@@ -2279,6 +3266,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches the specified string literal case-insensitively.
+    /// </summary>
     public bool IChar(string s)
     {
       int sLength = s.Length;
@@ -2293,6 +3283,9 @@ namespace Altaxo.Main.PegParser
       return true;
     }
 
+    /// <summary>
+    /// Matches a character within the specified inclusive range.
+    /// </summary>
     public bool In(char c0, char c1)
     {
       if (pos_ < srcLen_
@@ -2304,6 +3297,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches a character within either of the specified inclusive ranges.
+    /// </summary>
     public bool In(char c0, char c1, char c2, char c3)
     {
       if (pos_ < srcLen_)
@@ -2319,6 +3315,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches a character within any of the specified inclusive ranges.
+    /// </summary>
     public bool In(char c0, char c1, char c2, char c3, char c4, char c5)
     {
       if (pos_ < srcLen_)
@@ -2335,6 +3334,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches a character within any of the specified inclusive ranges.
+    /// </summary>
     public bool In(char c0, char c1, char c2, char c3, char c4, char c5, char c6, char c7)
     {
       if (pos_ < srcLen_)
@@ -2352,6 +3354,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches a character within any of the inclusive ranges defined by the string.
+    /// </summary>
     public bool In(string s)
     {
       if (pos_ < srcLen_)
@@ -2368,6 +3373,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches a character outside all inclusive ranges defined by the string.
+    /// </summary>
     public bool NotIn(string s)
     {
       if (pos_ < srcLen_)
@@ -2384,6 +3392,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches one of the specified characters.
+    /// </summary>
     public bool OneOf(char c0, char c1)
     {
       if (pos_ < srcLen_
@@ -2395,6 +3406,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches one of the specified characters.
+    /// </summary>
     public bool OneOf(char c0, char c1, char c2)
     {
       if (pos_ < srcLen_)
@@ -2409,6 +3423,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches one of the specified characters.
+    /// </summary>
     public bool OneOf(char c0, char c1, char c2, char c3)
     {
       if (pos_ < srcLen_)
@@ -2423,6 +3440,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches one of the specified characters.
+    /// </summary>
     public bool OneOf(char c0, char c1, char c2, char c3, char c4)
     {
       if (pos_ < srcLen_)
@@ -2437,6 +3457,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches one of the specified characters.
+    /// </summary>
     public bool OneOf(char c0, char c1, char c2, char c3, char c4, char c5)
     {
       if (pos_ < srcLen_)
@@ -2451,6 +3474,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches one of the specified characters.
+    /// </summary>
     public bool OneOf(char c0, char c1, char c2, char c3, char c4, char c5, char c6)
     {
       if (pos_ < srcLen_)
@@ -2465,6 +3491,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches one of the specified characters.
+    /// </summary>
     public bool OneOf(char c0, char c1, char c2, char c3, char c4, char c5, char c6, char c7)
     {
       if (pos_ < srcLen_)
@@ -2479,6 +3508,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches any character contained in the specified string.
+    /// </summary>
     public bool OneOf(string s)
     {
       if (pos_ < srcLen_)
@@ -2492,6 +3524,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches any character not contained in the specified string.
+    /// </summary>
     public bool NotOneOf(string s)
     {
       if (pos_ < srcLen_)
@@ -2505,6 +3540,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches any character contained in the specified optimized character set.
+    /// </summary>
     public bool OneOf(OptimizedCharset cset)
     {
       if (pos_ < srcLen_ && cset.Matches(src_[pos_]))
@@ -2515,6 +3553,9 @@ namespace Altaxo.Main.PegParser
       return false;
     }
 
+    /// <summary>
+    /// Matches one of the specified optimized literal alternatives.
+    /// </summary>
     public bool OneOfLiterals(OptimizedLiterals litAlt)
     {
       OptimizedLiterals.Trie node = litAlt.literalsRoot;

@@ -23,22 +23,32 @@
 #endregion Copyright
 
 #nullable enable
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D
 {
+  /// <summary>
+  /// Represents the grid partitioning used to arrange child layers in a three-dimensional host layer.
+  /// </summary>
   public class GridPartitioning
     :
     Main.SuspendableDocumentNodeWithSetOfEventArgs,
     Main.ICopyFrom
   {
+    /// <summary>
+    /// The partitioning along the x axis.
+    /// </summary>
     protected Altaxo.Graph.LinearPartitioning _xPartitioning;
+
+    /// <summary>
+    /// The partitioning along the y axis.
+    /// </summary>
     protected Altaxo.Graph.LinearPartitioning _yPartitioning;
+
+    /// <summary>
+    /// The partitioning along the z axis.
+    /// </summary>
     protected Altaxo.Graph.LinearPartitioning _zPartitioning;
 
     #region Serialization
@@ -46,11 +56,13 @@ namespace Altaxo.Graph.Graph3D
     #region Version 0
 
     /// <summary>
+    /// Serializes <see cref="GridPartitioning"/> instances.
     /// 2015-09-49 initial version.
     /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GridPartitioning), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (GridPartitioning)obj;
@@ -79,6 +91,7 @@ namespace Altaxo.Graph.Graph3D
         return s;
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
@@ -90,6 +103,9 @@ namespace Altaxo.Graph.Graph3D
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GridPartitioning"/> class.
+    /// </summary>
     public GridPartitioning()
     {
       _xPartitioning = new LinearPartitioning() { ParentObject = this };
@@ -97,6 +113,10 @@ namespace Altaxo.Graph.Graph3D
       _zPartitioning = new LinearPartitioning() { ParentObject = this };
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GridPartitioning"/> class by copying from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public GridPartitioning(GridPartitioning from)
     {
       _xPartitioning = new LinearPartitioning() { ParentObject = this };
@@ -105,6 +125,7 @@ namespace Altaxo.Graph.Graph3D
       CopyFrom(from);
     }
 
+    /// <inheritdoc/>
     public bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -126,11 +147,13 @@ namespace Altaxo.Graph.Graph3D
       return false;
     }
 
+    /// <inheritdoc/>
     public object Clone()
     {
       return new GridPartitioning(this);
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_xPartitioning is not null)
@@ -141,14 +164,37 @@ namespace Altaxo.Graph.Graph3D
         yield return new Main.DocumentNodeAndName(_zPartitioning, () => _zPartitioning = null!, "ZPartitioning");
     }
 
+    /// <summary>
+    /// Gets the X partitioning.
+    /// </summary>
     public LinearPartitioning XPartitioning { get { return _xPartitioning; } }
 
+    /// <summary>
+    /// Gets the Y partitioning.
+    /// </summary>
     public LinearPartitioning YPartitioning { get { return _yPartitioning; } }
 
+    /// <summary>
+    /// Gets the Z partitioning.
+    /// </summary>
     public LinearPartitioning ZPartitioning { get { return _zPartitioning; } }
 
+    /// <summary>
+    /// Gets a value indicating whether all partitionings are empty.
+    /// </summary>
     public virtual bool IsEmpty { get { return _xPartitioning.Count == 0 && _yPartitioning.Count == 0 && _zPartitioning.Count == 0; } }
 
+    /// <summary>
+    /// Gets the rectangle of a grid tile in absolute coordinates.
+    /// </summary>
+    /// <param name="columnPosX">The x grid position.</param>
+    /// <param name="columnPosY">The y grid position.</param>
+    /// <param name="columnPosZ">The z grid position.</param>
+    /// <param name="columnSpanX">The x span.</param>
+    /// <param name="columnSpanY">The y span.</param>
+    /// <param name="columnSpanZ">The z span.</param>
+    /// <param name="totalSize">The total size of the parent layer.</param>
+    /// <returns>The absolute tile rectangle.</returns>
     public RectangleD3D GetTileRectangle(double columnPosX, double columnPosY, double columnPosZ,
       double columnSpanX, double columnSpanY, double columnSpanZ, VectorD3D totalSize)
     {

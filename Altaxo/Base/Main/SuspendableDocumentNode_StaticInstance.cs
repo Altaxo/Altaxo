@@ -33,13 +33,16 @@ namespace Altaxo.Main
 {
   /// <summary>
   /// Base class for a suspendable document node.
-  /// This class supports document nodes that have children, and implements most of the code neccessary to handle child events and to suspend the childs when the parent is suspended.
+  /// This class supports document nodes that have children, and implements most of the code necessary to handle child events and to suspend child nodes when the parent is suspended.
   /// </summary>
   /// <remarks>If you don't need support for child events, consider using <see cref="T:Altaxo.Main.SuspendableDocumentLeafNode{TEventArgs}"/> instead.</remarks>
   public abstract partial class SuspendableDocumentNode : SuspendableDocumentNodeBase, Main.IDocumentNode
   {
     private class StaticInstanceClass : IDocumentNode
     {
+      /// <summary>
+      /// Gets or sets the parent object.
+      /// </summary>
       public IDocumentNode? ParentObject
       {
         get
@@ -52,6 +55,9 @@ namespace Altaxo.Main
         }
       }
 
+      /// <summary>
+      /// Gets the fixed name of this infrastructure node.
+      /// </summary>
       public string Name
       {
         get { return "DocumentNodeStaticInstance"; }
@@ -68,13 +74,16 @@ namespace Altaxo.Main
         return name is not null;
       }
 
+      /// <inheritdoc/>
       public event EventHandler? Changed;
 
+      /// <inheritdoc/>
       public ISuspendToken SuspendGetToken()
       {
         throw new InvalidOperationException("This is a static instance of DocumentNode, intended for infrastructural purposes only.");
       }
 
+      /// <inheritdoc/>
       public bool IsSuspended
       {
         get
@@ -88,19 +97,23 @@ namespace Altaxo.Main
         Changed?.Invoke(this, EventArgs.Empty);
       }
 
+      /// <inheritdoc/>
       public void EhChildChanged(object child, EventArgs e)
       {
       }
 
+      /// <inheritdoc/>
       public void EhParentTunnelingEventHappened(IDocumentNode sender, IDocumentNode originalSource, TunnelingEventArgs e)
       {
       }
 
+      /// <inheritdoc/>
       public IDocumentLeafNode? GetChildObjectNamed(string name)
       {
         return null;
       }
 
+      /// <inheritdoc/>
       public string GetNameOfChildObject(IDocumentLeafNode o)
       {
         if (o is not null)
@@ -109,20 +122,24 @@ namespace Altaxo.Main
           return "<<null>>";
       }
 
+      /// <inheritdoc/>
       public IEnumerable<IDocumentLeafNode> ChildNodes
       {
         get { yield break; }
       }
 
+      /// <inheritdoc/>
       public IDocumentLeafNode? ParentNode
       {
         get { return null; }
       }
 
+      /// <inheritdoc/>
       public void Dispose()
       {
       }
 
+      /// <inheritdoc/>
       public event Action<object, object, TunnelingEventArgs>? TunneledEvent;
 
       protected void OnTunneledEvent(object origin, TunnelingEventArgs e)
@@ -130,16 +147,19 @@ namespace Altaxo.Main
         TunneledEvent?.Invoke(this, origin, e);
       }
 
+      /// <inheritdoc/>
       public bool IsDisposed
       {
         get { return false; }
       }
 
+      /// <inheritdoc/>
       public bool IsDisposeInProgress
       {
         get { return false; }
       }
 
+      /// <inheritdoc/>
       public void SetDisposeInProgress()
       {
       }

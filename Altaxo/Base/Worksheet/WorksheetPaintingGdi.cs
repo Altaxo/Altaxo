@@ -33,17 +33,24 @@ namespace Altaxo.Worksheet
   using WA = Altaxo.Worksheet.AreaRetrieval;
 
   /// <summary>
-  /// Methods for drawing a worksheet using Gdi
+  /// Provides methods for drawing a worksheet using GDI.
   /// </summary>
   public class WorksheetPaintingGdi
   {
+    /// <summary>
+    /// Determines whether any property cells are selected.
+    /// </summary>
+    /// <param name="table">The table.</param>
+    /// <param name="selectedPropertyColumns">The selected property columns.</param>
+    /// <param name="selectedPropertyRows">The selected property rows.</param>
+    /// <returns><see langword="true"/> if any property cells are selected; otherwise, <see langword="false"/>.</returns>
     public static bool ArePropertyCellsSelected(DataTable table, IAscendingIntegerCollection selectedPropertyColumns, IAscendingIntegerCollection selectedPropertyRows)
     {
       return table.PropCols.ColumnCount > 0 && (selectedPropertyColumns.Count > 0 || selectedPropertyRows.Count > 0);
     }
 
     /// <summary>
-    /// Paints part of the worksheet to the drawing context. Row and column header are always threaten as visible here.
+    /// Paints part of the worksheet to the drawing context. Row and column headers are always treated as visible here.
     /// </summary>
     /// <param name="dc">Drawing context.</param>
     /// <param name="layout">Worksheet layout.</param>

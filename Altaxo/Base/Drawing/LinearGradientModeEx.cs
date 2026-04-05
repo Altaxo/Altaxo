@@ -27,16 +27,43 @@ using System;
 
 namespace Altaxo.Drawing
 {
+  /// <summary>
+  /// Specifies the direction of a linear gradient, including reversed directions.
+  /// </summary>
   [Serializable]
   public enum LinearGradientModeEx
   {
+    /// <summary>
+    /// Gradient from upper right to lower left.
+    /// </summary>
     BackwardDiagonal,
+    /// <summary>
+    /// Gradient from upper left to lower right.
+    /// </summary>
     ForwardDiagonal,
+    /// <summary>
+    /// Horizontal gradient.
+    /// </summary>
     Horizontal,
+    /// <summary>
+    /// Vertical gradient.
+    /// </summary>
     Vertical,
+    /// <summary>
+    /// Reversed backward diagonal gradient.
+    /// </summary>
     RevBackwardDiagonal,
+    /// <summary>
+    /// Reversed forward diagonal gradient.
+    /// </summary>
     RevForwardDiagonal,
+    /// <summary>
+    /// Reversed horizontal gradient.
+    /// </summary>
     RevHorizontal,
+    /// <summary>
+    /// Reversed vertical gradient.
+    /// </summary>
     RevVertical
   }
 

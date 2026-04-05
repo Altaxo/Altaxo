@@ -33,7 +33,7 @@ namespace Altaxo.Graph.Scales
   using Ticks;
 
   /// <summary>
-  /// Axis is the abstract base class of all axis types including linear axis, logarithmic axis and so on.
+  /// Provides the abstract base class for all scale types.
   /// </summary>
   [Serializable]
   public abstract class Scale
@@ -57,6 +57,7 @@ namespace Altaxo.Graph.Scales
     /// <returns>The cloned copy of the axis.</returns>
     public abstract object Clone();
 
+    /// <inheritdoc />
     public abstract bool CopyFrom(object obj);
 
     #endregion ICloneable Members
@@ -87,6 +88,9 @@ namespace Altaxo.Graph.Scales
     /// </summary>
     public abstract Rescaling.IScaleRescaleConditions? RescalingObject { get; }
 
+    /// <summary>
+    /// Gets or sets the tick spacing associated with the scale.
+    /// </summary>
     public abstract TickSpacing TickSpacing { get; set; }
 
     /// <summary>
@@ -140,6 +144,9 @@ namespace Altaxo.Graph.Scales
     }
 
     /// <summary>Returns the collection of available axes.</summary>
+    /// <summary>
+    /// Gets the collection of available scale types.
+    /// </summary>
     public static System.Collections.Generic.Dictionary<string, Type> AvailableAxes
     {
       get { return sm_AvailableScales; }
@@ -149,6 +156,12 @@ namespace Altaxo.Graph.Scales
 
     private static Dictionary<System.Type, SortedDictionary<int, System.Type>> _scaleToTickSpacingTypes = new Dictionary<Type, SortedDictionary<int, Type>>();
 
+    /// <summary>
+    /// Registers a default tick spacing type for a scale type.
+    /// </summary>
+    /// <param name="scaleType">The scale type.</param>
+    /// <param name="tickSpacingType">The tick spacing type.</param>
+    /// <param name="priority">The priority used when selecting between multiple registrations.</param>
     public static void RegisterDefaultTicking(System.Type scaleType, System.Type tickSpacingType, int priority)
     {
       if (!_scaleToTickSpacingTypes.ContainsKey(scaleType))
@@ -156,6 +169,11 @@ namespace Altaxo.Graph.Scales
       _scaleToTickSpacingTypes[scaleType].Add(priority, tickSpacingType);
     }
 
+    /// <summary>
+    /// Creates the default tick spacing for the specified scale type.
+    /// </summary>
+    /// <param name="type">The scale type.</param>
+    /// <returns>The default tick spacing for the specified scale type.</returns>
     public static TickSpacing CreateDefaultTicks(System.Type type)
     {
       if (_scaleToTickSpacingTypes.ContainsKey(type))

@@ -32,6 +32,9 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 {
+  /// <summary>
+  /// Provides a blue-green-red-yellow color gradient.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Graph.Gdi.Plot.ColorProvider.ColorProviderBGRY}")]
   public class ColorProviderBGRY : ColorProviderBase
   {

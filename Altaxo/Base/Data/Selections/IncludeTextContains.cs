@@ -30,6 +30,9 @@ using Altaxo.Main;
 
 namespace Altaxo.Data.Selections
 {
+  /// <summary>
+  /// Selects rows whose text values contain a specified substring.
+  /// </summary>
   public class IncludeTextContains : Main.SuspendableDocumentNodeWithEventArgs, IRowSelection
   {
     private string _value;
@@ -65,6 +68,9 @@ namespace Altaxo.Data.Selections
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IncludeTextContains"/> class.
+    /// </summary>
     public IncludeTextContains()
     {
       _value = string.Empty;
@@ -82,6 +88,7 @@ namespace Altaxo.Data.Selections
       ChildCloneToMember(ref _columnProxy, from._columnProxy);
     }
 
+    /// <inheritdoc />
     public object Clone()
     {
       return new IncludeTextContains(this);
@@ -101,6 +108,12 @@ namespace Altaxo.Data.Selections
       ChildSetMember(ref _columnProxy, columnProxy);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IncludeTextContains"/> class for the specified column and substring.
+    /// </summary>
+    /// <param name="value">The substring to search for.</param>
+    /// <param name="ignoreCase">Whether comparisons should ignore case.</param>
+    /// <param name="column">The column to inspect.</param>
     public IncludeTextContains(string value, bool ignoreCase, IReadableColumn column)
     {
       _value = value;
@@ -161,6 +174,7 @@ namespace Altaxo.Data.Selections
       }
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_columnProxy is not null)
@@ -201,6 +215,9 @@ namespace Altaxo.Data.Selections
       }
     }
 
+    /// <summary>
+    /// Gets or sets the substring that selected rows must contain.
+    /// </summary>
     public string Value
     {
       get
@@ -217,6 +234,9 @@ namespace Altaxo.Data.Selections
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether string comparisons ignore case.
+    /// </summary>
     public bool IgnoreCase
     {
       get

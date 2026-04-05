@@ -31,7 +31,7 @@ using System.Text;
 namespace Altaxo.Graph.Plot.Groups
 {
   /// <summary>
-  /// Designates how to shift the bars that belong to a group (i.e. have the same independent variables x and y).
+  /// Designates how to shift the bars that belong to a group, that is, bars that have the same independent variables x and y.
   /// </summary>
   public enum BarShiftStrategy3D
   {

@@ -33,10 +33,13 @@ using System.Text;
 namespace Altaxo.Collections
 {
   /// <summary>
-  /// Interface to an items that has a name associated with it.
+  /// Defines an item that has an associated name.
   /// </summary>
   public interface INamedItem
   {
+    /// <summary>
+    /// Gets the name of the item.
+    /// </summary>
     string Name { get; }
   }
 
@@ -61,12 +64,19 @@ namespace Altaxo.Collections
   /// <summary>
   /// List of <see cref="INamedItem"/> instances, with support for <see cref="System.Collections.Specialized.INotifyCollectionChanged"/>
   /// </summary>
-  /// <typeparam name="T"></typeparam>
+  /// <typeparam name="T">The type of the named items in the list.</typeparam>
   /// <seealso cref="System.Collections.Generic.IEnumerable{T}" />
   /// <seealso cref="System.Collections.Specialized.INotifyCollectionChanged" />
   public class NamedItemList<T> : IEnumerable<T>, System.Collections.Specialized.INotifyCollectionChanged where T : INamedItem
   {
+    /// <summary>
+    /// The ordered list of items.
+    /// </summary>
     protected List<T> _list = new List<T>();
+
+    /// <summary>
+    /// Maps item names to their indices in <see cref="_list"/>.
+    /// </summary>
     protected Dictionary<string, int> _nameToIndex = new Dictionary<string, int>();
 
     /// <summary>
@@ -74,12 +84,19 @@ namespace Altaxo.Collections
     /// </summary>
     public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NamedItemList{T}"/> class.
+    /// </summary>
     public NamedItemList()
     {
     }
 
+    /// <summary>
+    /// Gets the number of items in the list.
+    /// </summary>
     public int Count { get { return _list.Count; } }
 
+    /// <inheritdoc/>
     public IEnumerator<T> GetEnumerator()
     {
       return _list.GetEnumerator();
@@ -94,6 +111,10 @@ namespace Altaxo.Collections
       CollectionChanged?.Invoke(this, e);
     }
 
+    /// <summary>
+    /// Adds the specified item to the list.
+    /// </summary>
+    /// <param name="item">The item to add.</param>
     public virtual void Add(T item)
     {
       if (_nameToIndex.ContainsKey(item.Name))
@@ -108,6 +129,10 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <summary>
+    /// Gets the item at the specified index.
+    /// </summary>
+    /// <param name="i">The zero-based item index.</param>
     public T this[int i]
     {
       get
@@ -116,6 +141,12 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <summary>
+    /// Replaces the item at the specified index.
+    /// </summary>
+    /// <param name="i">The zero-based item index.</param>
+    /// <param name="item">The replacement item.</param>
+    /// <returns>The item previously stored at the specified index.</returns>
     public virtual T SetElement(int i, T item)
     {
       // test for name crashes
@@ -138,6 +169,10 @@ namespace Altaxo.Collections
       return oldItem;
     }
 
+    /// <summary>
+    /// Gets the item with the specified name.
+    /// </summary>
+    /// <param name="name">The name of the item.</param>
     public T this[string name]
     {
       get
@@ -150,6 +185,12 @@ namespace Altaxo.Collections
     }
 
 
+    /// <summary>
+    /// Tries to get the item with the specified name.
+    /// </summary>
+    /// <param name="name">The name of the item to retrieve.</param>
+    /// <param name="item">When this method returns, contains the item if found; otherwise the default value.</param>
+    /// <returns><see langword="true"/> if the item was found; otherwise, <see langword="false"/>.</returns>
     public bool TryGetValue(string name, [MaybeNullWhen(false)] out T item)
     {
       if (_nameToIndex.TryGetValue(name, out var index))
@@ -164,6 +205,11 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <summary>
+    /// Gets the index of the specified item.
+    /// </summary>
+    /// <param name="item">The item to locate.</param>
+    /// <returns>The zero-based index of the item, or <c>-1</c> if it is not found.</returns>
     public int IndexOf(INamedItem item)
     {
       int idx = IndexOf(item.Name);
@@ -173,6 +219,11 @@ namespace Altaxo.Collections
       return idx;
     }
 
+    /// <summary>
+    /// Gets the index of the item with the specified name.
+    /// </summary>
+    /// <param name="itemName">The item name to locate.</param>
+    /// <returns>The zero-based index of the item, or <c>-1</c> if it is not found.</returns>
     public int IndexOf(string itemName)
     {
       if (_nameToIndex.TryGetValue(itemName, out var index))
@@ -181,16 +232,31 @@ namespace Altaxo.Collections
         return -1;
     }
 
+    /// <summary>
+    /// Determines whether the specified item exists in the list.
+    /// </summary>
+    /// <param name="item">The item to locate.</param>
+    /// <returns><see langword="true"/> if the item exists; otherwise, <see langword="false"/>.</returns>
     public bool Contains(INamedItem item)
     {
       return IndexOf(item) >= 0;
     }
 
+    /// <summary>
+    /// Determines whether an item with the specified name exists in the list.
+    /// </summary>
+    /// <param name="itemName">The item name to locate.</param>
+    /// <returns><see langword="true"/> if an item with the specified name exists; otherwise, <see langword="false"/>.</returns>
     public bool Contains(string itemName)
     {
       return IndexOf(itemName) >= 0;
     }
 
+    /// <summary>
+    /// Removes the item at the specified index.
+    /// </summary>
+    /// <param name="i">The zero-based index of the item to remove.</param>
+    /// <returns>The removed item.</returns>
     public virtual T RemoveAt(int i)
     {
       T item = _list[i];
@@ -212,6 +278,9 @@ namespace Altaxo.Collections
       return item;
     }
 
+    /// <summary>
+    /// Removes all items from the list.
+    /// </summary>
     public void Clear()
     {
       _nameToIndex.Clear();
@@ -232,12 +301,20 @@ namespace Altaxo.Collections
     #endregion IEnumerable Members
   }
 
+  /// <summary>
+  /// Represents a list of renameable items and keeps its name index synchronized with rename operations.
+  /// </summary>
+  /// <typeparam name="T">The type of renameable item.</typeparam>
   public class RenameableItemList<T> : NamedItemList<T> where T : IRenameableItem
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RenameableItemList{T}"/> class.
+    /// </summary>
     public RenameableItemList()
     {
     }
 
+    /// <inheritdoc/>
     public override void Add(T item)
     {
       base.Add(item);
@@ -245,6 +322,7 @@ namespace Altaxo.Collections
       item.AfterRename += EhAfterRename;
     }
 
+    /// <inheritdoc/>
     public override T SetElement(int i, T item)
     {
       T oldItem = base.SetElement(i, item);
@@ -257,6 +335,7 @@ namespace Altaxo.Collections
       return oldItem;
     }
 
+    /// <inheritdoc/>
     public override T RemoveAt(int i)
     {
       T item = base.RemoveAt(i);

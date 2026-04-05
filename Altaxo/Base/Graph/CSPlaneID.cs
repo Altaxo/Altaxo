@@ -102,11 +102,21 @@ namespace Altaxo.Graph
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CSPlaneID"/> class using an integral logical value.
+    /// </summary>
+    /// <param name="perpendicularAxisNumber">The axis perpendicular to the plane.</param>
+    /// <param name="logicalValue">The logical value along the perpendicular axis.</param>
     public CSPlaneID(int perpendicularAxisNumber, int logicalValue)
       : this(perpendicularAxisNumber, (double)logicalValue)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CSPlaneID"/> class using a logical value.
+    /// </summary>
+    /// <param name="perpendicularAxisNumber">The axis perpendicular to the plane.</param>
+    /// <param name="logicalValue">The logical value along the perpendicular axis.</param>
     public CSPlaneID(int perpendicularAxisNumber, double logicalValue)
     {
       _perpendicularAxisNumber = perpendicularAxisNumber;
@@ -122,6 +132,12 @@ namespace Altaxo.Graph
       _physicalValue = physicalValue;
     }
 
+    /// <summary>
+    /// Creates a plane identifier from a physical value.
+    /// </summary>
+    /// <param name="perpendicularAxisNumber">The axis perpendicular to the plane.</param>
+    /// <param name="physicalValue">The physical value along the perpendicular axis.</param>
+    /// <returns>A new plane identifier.</returns>
     public static CSPlaneID FromPhysicalValue(int perpendicularAxisNumber, double physicalValue)
     {
       if (double.IsNaN(physicalValue))
@@ -130,6 +146,12 @@ namespace Altaxo.Graph
       return new CSPlaneID(perpendicularAxisNumber, double.NaN, true, physicalValue);
     }
 
+    /// <summary>
+    /// Creates a plane identifier from a physical variant value.
+    /// </summary>
+    /// <param name="perpendicularAxisNumber">The axis perpendicular to the plane.</param>
+    /// <param name="physicalValue">The physical value along the perpendicular axis.</param>
+    /// <returns>A new plane identifier.</returns>
     public static CSPlaneID FromPhysicalVariant(int perpendicularAxisNumber, AltaxoVariant physicalValue)
     {
 #pragma warning disable CS1718 // Comparison made to same variable
@@ -153,6 +175,11 @@ namespace Altaxo.Graph
       get { return _logicalValue; }
     }
 
+    /// <summary>
+    /// Returns a copy of this identifier with an updated logical value.
+    /// </summary>
+    /// <param name="logicalValue">The new logical value.</param>
+    /// <returns>The current instance if the value is unchanged; otherwise, a modified copy.</returns>
     public CSPlaneID WithLogicalValue(double logicalValue)
     {
       if (!_usePhysicalValue)
@@ -195,6 +222,7 @@ namespace Altaxo.Graph
       get { return _perpendicularAxisNumber == 2 ? 1 : 2; }
     }
 
+    /// <inheritdoc />
     public override bool Equals(object? obj)
     {
       if (!(obj is CSPlaneID))
@@ -213,6 +241,7 @@ namespace Altaxo.Graph
         return _logicalValue == from._logicalValue;
     }
 
+    /// <inheritdoc />
     public override int GetHashCode()
     {
       int result = _perpendicularAxisNumber.GetHashCode();
@@ -225,76 +254,128 @@ namespace Altaxo.Graph
       return result;
     }
 
+    /// <summary>
+    /// Determines whether two plane identifiers are equal.
+    /// </summary>
+    /// <param name="a">The first identifier.</param>
+    /// <param name="b">The second identifier.</param>
+    /// <returns><c>true</c> if both identifiers are equal; otherwise, <c>false</c>.</returns>
     public static bool operator ==(CSPlaneID? a, CSPlaneID? b)
     {
       return ReferenceEquals(a, b) || (a is not null && b is not null && a.Equals(b));
     }
 
+    /// <summary>
+    /// Determines whether two plane identifiers are not equal.
+    /// </summary>
+    /// <param name="x">The first identifier.</param>
+    /// <param name="y">The second identifier.</param>
+    /// <returns><c>true</c> if both identifiers differ; otherwise, <c>false</c>.</returns>
     public static bool operator !=(CSPlaneID? x, CSPlaneID? y)
     {
       return !(x == y);
     }
 
+    /// <summary>
+    /// Gets the left 2D plane.
+    /// </summary>
     public static CSPlaneID Left
     {
       get { return new CSPlaneID(0, 0); }
     }
 
+    /// <summary>
+    /// Gets the right 2D plane.
+    /// </summary>
     public static CSPlaneID Right
     {
       get { return new CSPlaneID(0, 1); }
     }
 
+    /// <summary>
+    /// Gets the bottom 2D plane.
+    /// </summary>
     public static CSPlaneID Bottom
     {
       get { return new CSPlaneID(1, 0); }
     }
 
+    /// <summary>
+    /// Gets the top 2D plane.
+    /// </summary>
     public static CSPlaneID Top
     {
       get { return new CSPlaneID(1, 1); }
     }
 
+    /// <summary>
+    /// Gets the front 2D plane.
+    /// </summary>
     public static CSPlaneID Front
     {
       get { return new CSPlaneID(2, 0); }
     }
 
+    /// <summary>
+    /// Gets the back 2D plane.
+    /// </summary>
     public static CSPlaneID Back
     {
       get { return new CSPlaneID(2, 1); }
     }
 
+    /// <summary>
+    /// Gets the front 3D plane.
+    /// </summary>
     public static CSPlaneID Front3D
     {
       get { return new CSPlaneID(1, 0); }
     }
 
+    /// <summary>
+    /// Gets the back 3D plane.
+    /// </summary>
     public static CSPlaneID Back3D
     {
       get { return new CSPlaneID(1, 1); }
     }
 
+    /// <summary>
+    /// Gets the left 3D plane.
+    /// </summary>
     public static CSPlaneID Left3D
     {
       get { return new CSPlaneID(0, 0); }
     }
 
+    /// <summary>
+    /// Gets the right 3D plane.
+    /// </summary>
     public static CSPlaneID Right3D
     {
       get { return new CSPlaneID(0, 1); }
     }
 
+    /// <summary>
+    /// Gets the bottom 3D plane.
+    /// </summary>
     public static CSPlaneID Bottom3D
     {
       get { return new CSPlaneID(2, 0); }
     }
 
+    /// <summary>
+    /// Gets the top 3D plane.
+    /// </summary>
     public static CSPlaneID Top3D
     {
       get { return new CSPlaneID(2, 1); }
     }
 
+    /// <summary>
+    /// Converts a 2D plane identifier to the corresponding line identifier.
+    /// </summary>
+    /// <param name="plane">The plane identifier.</param>
     public static explicit operator CSLineID(CSPlaneID plane)
     {
       if (plane._perpendicularAxisNumber < 0)
@@ -308,6 +389,11 @@ namespace Altaxo.Graph
         return new CSLineID(plane.PerpendicularAxisNumber, plane.LogicalValue);
     }
 
+    /// <summary>
+    /// Gets the plane parallel to the specified 2D axis.
+    /// </summary>
+    /// <param name="id">The axis identifier.</param>
+    /// <returns>The corresponding plane identifier.</returns>
     public static CSPlaneID GetPlaneParallelToAxis2D(CSLineID id)
     {
       switch (id.ParallelAxisNumber)

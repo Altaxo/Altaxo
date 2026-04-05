@@ -33,12 +33,23 @@ namespace Altaxo.Serialization
   public class NumberConversion
   {
 
+    /// <summary>
+    /// Determines whether the specified text can be parsed as a double using invariant culture.
+    /// </summary>
+    /// <param name="txt">The text to parse.</param>
+    /// <param name="parsedNumber">The parsed number.</param>
+    /// <returns><c>true</c> if parsing succeeded; otherwise, <c>false</c>.</returns>
     public static bool IsDouble(string? txt, out double parsedNumber)
     {
       return double.TryParse(txt, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out parsedNumber);
     }
 
 
+    /// <summary>
+    /// Determines whether the specified text can be parsed as a double using invariant culture.
+    /// </summary>
+    /// <param name="txt">The text to parse.</param>
+    /// <returns><c>true</c> if parsing succeeded; otherwise, <c>false</c>.</returns>
     public static bool IsDouble(string? txt)
     {
       return IsDouble(txt, out var _);
@@ -58,6 +69,11 @@ namespace Altaxo.Serialization
     }
 
 
+    /// <summary>
+    /// Converts a double to a string using invariant culture.
+    /// </summary>
+    /// <param name="d">The value to convert.</param>
+    /// <returns>The invariant-culture string representation.</returns>
     public static string ToString(double d)
     {
       return d.ToString(System.Globalization.CultureInfo.InvariantCulture);

@@ -29,7 +29,7 @@ namespace Altaxo.Gui
 {
   /// <summary>
   /// Base of all controllers that edit the original document directly (live). This class is especially well suited to edit a document class with
-  /// many derived classes, and the user can choose among the types. If the user choose a new type of document, this type must be instantiated and edited henceforth.
+  /// many derived classes, and the user can choose among the types. If the user chooses a new type of document, this type must be instantiated and edited henceforth.
   /// The old document should be released then, and the new document must be integrated in the document hierarchy.
   /// </summary>
   /// <typeparam name="TModel">The type of the document to edit.</typeparam>
@@ -39,14 +39,17 @@ namespace Altaxo.Gui
     where TModel : ICloneable
     where TView : class
   {
+    /// <summary>
+    /// Action that updates the edited instance in the parent node.
+    /// </summary>
     protected Action<TModel> _setInstanceInParentNode;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MVCANControllerEditOriginalDocInstanceCanChangeBase{TModel, TView}"/> class.
     /// </summary>
     /// <param name="SetInstanceInParentNode">Action that sets the instance that this controller is editing in the parent node. This action is typically called when
-    /// the user chooses a new type of model in the Gui.</param>
-    /// <exception cref="System.ArgumentNullException">SetInstanceInParentNode</exception>
+    /// the user chooses a new type of model in the GUI.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="SetInstanceInParentNode"/> is <c>null</c>.</exception>
     public MVCANControllerEditOriginalDocInstanceCanChangeBase(Action<TModel> SetInstanceInParentNode)
     {
       if (SetInstanceInParentNode is null)
@@ -56,10 +59,10 @@ namespace Altaxo.Gui
     }
 
     /// <summary>
-    /// Should be called by a derived controller class when the instance of the model has changed.
+    /// Updates the controller after the model instance has changed.
     /// </summary>
-    /// <param name="oldInstance">The old instance.</param>
-    /// <param name="newInstance">The new instance.</param>
+    /// <param name="oldInstance">The old model instance.</param>
+    /// <param name="newInstance">The new model instance.</param>
     protected void OnDocumentInstanceChanged(TModel oldInstance, TModel newInstance)
     {
       Altaxo.Main.ISuspendToken? newSuspendToken = null;

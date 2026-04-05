@@ -38,7 +38,7 @@ namespace Altaxo.Graph.Plot.Data
   using Gdi.Plot.Data;
 
   /// <summary>
-  /// Summary description for XYColumnPlotData.
+  /// Stores plot data based on one X column and one Y column.
   /// </summary>
   public class XYColumnPlotData
     :
@@ -49,8 +49,14 @@ namespace Altaxo.Graph.Plot.Data
     private Altaxo.Data.IReadableColumn? _deprecatedLabelColumn; // the label column
 
     // cached or temporary data
+    /// <summary>
+    /// The cached boundaries for the X values.
+    /// </summary>
     protected IPhysicalBoundaries? _xBoundaries;
 
+    /// <summary>
+    /// The cached boundaries for the Y values.
+    /// </summary>
     protected IPhysicalBoundaries? _yBoundaries;
 
     /// <summary>List of plot points that is allocated once per thread (as thread local storage variable).</summary>
@@ -63,7 +69,14 @@ namespace Altaxo.Graph.Plot.Data
     /// </summary>
     protected int _pointCount;
 
+    /// <summary>
+    /// A value indicating whether the cached X data are valid.
+    /// </summary>
     protected bool _isCachedDataValidX = false;
+
+    /// <summary>
+    /// A value indicating whether the cached Y data are valid.
+    /// </summary>
     protected bool _isCachedDataValidY = false;
 
     #region Serialization
@@ -464,7 +477,7 @@ namespace Altaxo.Graph.Plot.Data
     #endregion Xml 7
 
     /// <summary>
-    /// Deserialization constructor. Initializes a new instance of the <see cref="XYZColumnPlotData"/> class without any member initialization.
+    /// Deserialization constructor. Initializes a new instance of the <see cref="XYColumnPlotData"/> class without any member initialization.
     /// </summary>
     /// <param name="info">The information.</param>
     /// <param name="version">The serialization version. Pass -1 in order to not read any data from the XML stream.</param>
@@ -477,6 +490,13 @@ namespace Altaxo.Graph.Plot.Data
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYColumnPlotData"/> class.
+    /// </summary>
+    /// <param name="dataTable">The underlying data table.</param>
+    /// <param name="groupNumber">The group number within the table.</param>
+    /// <param name="xColumn">The X column.</param>
+    /// <param name="yColumn">The Y column.</param>
     public XYColumnPlotData(Altaxo.Data.DataTable dataTable, int groupNumber, Altaxo.Data.IReadableColumn xColumn, Altaxo.Data.IReadableColumn yColumn)
       : base(dataTable, groupNumber, xColumn, yColumn)
     {
@@ -503,6 +523,7 @@ namespace Altaxo.Graph.Plot.Data
       _isCachedDataValidY = from._isCachedDataValidY;
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       foreach (var item in base.GetDocumentNodeChildrenWithName())
@@ -527,6 +548,9 @@ namespace Altaxo.Graph.Plot.Data
       return new XYColumnPlotData(this);
     }
 
+    /// <summary>
+    /// Gets or sets the data table used by this plot data.
+    /// </summary>
     [MaybeNull]
     public DataTable DataTable
     {
@@ -569,6 +593,9 @@ namespace Altaxo.Graph.Plot.Data
         yield return yc;
     }
 
+    /// <summary>
+    /// Gets or sets the group number of the referenced data columns.
+    /// </summary>
     public int GroupNumber
     {
       get
@@ -608,6 +635,10 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
+    /// <summary>
+    /// Merges the cached X boundaries into the specified boundary object.
+    /// </summary>
+    /// <param name="pb">The target boundary object.</param>
     public void MergeXBoundsInto(IPhysicalBoundaries pb)
     {
       if (_xBoundaries is null || pb.GetType() != _xBoundaries.GetType())
@@ -623,6 +654,10 @@ namespace Altaxo.Graph.Plot.Data
       pb.Add(_xBoundaries);
     }
 
+    /// <summary>
+    /// Merges the cached Y boundaries into the specified boundary object.
+    /// </summary>
+    /// <param name="pb">The target boundary object.</param>
     public void MergeYBoundsInto(IPhysicalBoundaries pb)
     {
       if (_yBoundaries is null || pb.GetType() != _yBoundaries.GetType())
@@ -697,6 +732,7 @@ namespace Altaxo.Graph.Plot.Data
       yield return new ColumnInformation("Y", YColumn, _dependentVariables[0]?.DocumentPath()?.LastPartOrDefault, (col, table, group) => { YColumn = col; if (table is not null) { DataTable = table; GroupNumber = group; } });
     }
 
+    /// <inheritdoc/>
     public override Altaxo.Data.IReadableColumn? XColumn
     {
       get
@@ -712,6 +748,9 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
+    /// <summary>
+    /// Gets the name of the X column.
+    /// </summary>
     public string XColumnName
     {
       get
@@ -720,6 +759,7 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
+    /// <inheritdoc/>
     public override Altaxo.Data.IReadableColumn? YColumn
     {
       get
@@ -735,6 +775,9 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
+    /// <summary>
+    /// Gets the name of the Y column.
+    /// </summary>
     public string YColumnName
     {
       get
@@ -754,6 +797,11 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
+    /// <summary>
+    /// Calculates the cached bounds using the supplied boundary templates.
+    /// </summary>
+    /// <param name="xBounds">The X boundary template.</param>
+    /// <param name="yBounds">The Y boundary template.</param>
     public void CalculateCachedData(IPhysicalBoundaries xBounds, IPhysicalBoundaries yBounds)
     {
       if (IsDisposeInProgress)
@@ -807,6 +855,9 @@ namespace Altaxo.Graph.Plot.Data
       return maxRowIndex;
     }
 
+    /// <summary>
+    /// Calculates the cached bounds based on the currently selected columns and row selection.
+    /// </summary>
     public void CalculateCachedData()
     {
       if (IsDisposeInProgress)
@@ -1008,6 +1059,7 @@ namespace Altaxo.Graph.Plot.Data
         }
         */
 
+    /// <inheritdoc />
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (object.ReferenceEquals(sender, _independentVariables[0]) || object.ReferenceEquals(sender, _dependentVariables[0]))
@@ -1056,10 +1108,7 @@ namespace Altaxo.Graph.Plot.Data
     /// Looks whether one of data data columns have changed their data. If this is the case, we must recalculate the boundaries,
     /// and trigger the boundary changed event if one of the boundaries have changed.
     /// </summary>
-    /// <param name="e">The <see cref="EventArgs" /> instance containing the event data. On return, you can provided transformed event args by this parameter.</param>
-    /// <returns>
-    /// The return value of the base handling function
-    /// </returns>
+    /// <inheritdoc />
     protected override void OnChanged(EventArgs e)
     {
       /* 2019-09-12 Outcommented for new data deserialization: the next lines will cause the XColumn and YColumn to be instantiated

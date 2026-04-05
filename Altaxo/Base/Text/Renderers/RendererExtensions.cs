@@ -31,6 +31,9 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Text.Renderers
 {
+  /// <summary>
+  /// Provides helper methods used by text renderers.
+  /// </summary>
   public static class RendererExtensions
   {
     /// <summary>
@@ -38,6 +41,11 @@ namespace Altaxo.Text.Renderers
     /// </summary>
     private static readonly System.Security.Cryptography.MD5 _md5Hasher = System.Security.Cryptography.MD5.Create();
 
+    /// <summary>
+    /// Extracts the plain text content from a leaf block.
+    /// </summary>
+    /// <param name="leafBlock">The leaf block.</param>
+    /// <returns>The extracted text content.</returns>
     public static string ExtractTextContentFrom(Markdig.Syntax.LeafBlock leafBlock)
     {
       var result = string.Empty;
@@ -53,6 +61,11 @@ namespace Altaxo.Text.Renderers
       return result;
     }
 
+    /// <summary>
+    /// Creates a deterministic identifier from a list of header titles.
+    /// </summary>
+    /// <param name="headerTitles">The header titles.</param>
+    /// <returns>The generated identifier.</returns>
     public static string CreateGuidFromHeaderTitles(List<string> headerTitles)
     {
       var stb = new System.Text.StringBuilder();
@@ -163,6 +176,11 @@ namespace Altaxo.Text.Renderers
     private static readonly HashSet<string> _notUsedWordsFromHeaderTitle = new HashSet<string>(new string[]
     { "A", "AN", "THE" /* "AND", "OR", "BY", "A", "THE", "ON", "OF", "IN", "FROM", "WITH",  */});
 
+    /// <summary>
+    /// Extracts up to three identifying characters from a header title.
+    /// </summary>
+    /// <param name="title">The header title.</param>
+    /// <returns>A short identifier derived from the title.</returns>
     public static string FirstThreeCharsFromHeaderTitle(string title)
     {
       var words = title.ToUpperInvariant().Split(_headerTitleSplitChars, StringSplitOptions.RemoveEmptyEntries);

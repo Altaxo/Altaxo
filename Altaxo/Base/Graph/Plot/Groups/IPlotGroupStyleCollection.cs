@@ -54,7 +54,7 @@ namespace Altaxo.Graph.Plot.Groups
     /// <summary>
     /// Removes a group style of the given type from the collection.
     /// </summary>
-    /// <param name="groupType"></param>
+    /// <param name="groupType">The type of the group style to remove.</param>
     void RemoveType(Type groupType);
 
     /// <summary>
@@ -88,18 +88,41 @@ namespace Altaxo.Graph.Plot.Groups
     /// </summary>
     PlotGroupStrictness PlotGroupStrictness { get; }
 
+    /// <summary>
+    /// Begins the preparation phase for all group styles in the collection.
+    /// </summary>
     void BeginPrepare();
 
+    /// <summary>
+    /// Ends the preparation phase for all group styles in the collection.
+    /// </summary>
     void EndPrepare();
 
+    /// <summary>
+    /// Begins the application phase for all group styles in the collection.
+    /// </summary>
     void BeginApply();
 
+    /// <summary>
+    /// Ends the application phase for all group styles in the collection.
+    /// </summary>
     void EndApply();
 
+    /// <summary>
+    /// Called before a group style of the specified type is applied.
+    /// </summary>
+    /// <param name="groupStyleType">The group style type that is about to be applied.</param>
     void OnBeforeApplication(Type groupStyleType);
 
+    /// <summary>
+    /// Advances preparation by one step for all group styles.
+    /// </summary>
     void PrepareStep();
 
+    /// <summary>
+    /// Advances all step-enabled group styles.
+    /// </summary>
+    /// <param name="step">The step direction and magnitude, usually <c>+1</c> or <c>-1</c>.</param>
     void Step(int step);
   }
 }

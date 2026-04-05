@@ -83,12 +83,12 @@ namespace Altaxo.Main
   }
 
   /// <summary>
-  /// Summary description for INamedObjectCollection.
+  /// Represents a collection that can resolve child objects by name.
   /// </summary>
   public interface INamedObjectCollection
   {
     /// <summary>
-    /// retrieves the object with the name <code>name</code>.
+    /// Retrieves the object with the specified name.
     /// </summary>
     /// <param name="name">The objects name.</param>
     /// <returns>The object with the specified name.</returns>
@@ -140,6 +140,9 @@ namespace Altaxo.Main
     void RenameChild(INameOwner child, string newName, Action<string> setName, Action<string> raiseOnNameChanged);
   }
 
+  /// <summary>
+  /// Provides event data for changes in a named object collection.
+  /// </summary>
   public class NamedObjectCollectionChangedEventArgs : Main.SelfAccumulateableEventArgs
   {
     /// <summary>
@@ -152,6 +155,13 @@ namespace Altaxo.Main
     private string _newItemName;
     private NamedObjectCollectionChangeType _operation;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NamedObjectCollectionChangedEventArgs"/> class for a single item change.
+    /// </summary>
+    /// <param name="item">The affected item.</param>
+    /// <param name="newItemName">The new item name.</param>
+    /// <param name="oldItemName">The old item name.</param>
+    /// <param name="operation">The change flags.</param>
     public NamedObjectCollectionChangedEventArgs(object item, string newItemName, string? oldItemName, NamedObjectCollectionChangeType operation)
     {
       _item = item;
@@ -160,6 +170,11 @@ namespace Altaxo.Main
       _operation = operation;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NamedObjectCollectionChangedEventArgs"/> class.
+    /// </summary>
+    /// <param name="item">The affected item.</param>
+    /// <param name="operation">The change flags.</param>
     public NamedObjectCollectionChangedEventArgs(object item, NamedObjectCollectionChangeType operation)
     {
       _item = item;
@@ -169,20 +184,44 @@ namespace Altaxo.Main
 
     #region Properties
 
+    /// <summary>
+    /// Gets the affected item.
+    /// </summary>
     public object Item { get { return _item; } }
 
+    /// <summary>
+    /// Gets the previous item name, if available.
+    /// </summary>
     public string? OldName { get { return _oldItemName; } }
 
+    /// <summary>
+    /// Gets the current item name.
+    /// </summary>
     public string NewName { get { return _newItemName; } }
 
+    /// <summary>
+    /// Gets the recorded change flags.
+    /// </summary>
     public NamedObjectCollectionChangeType Changes { get { return _operation; } }
 
+    /// <summary>
+    /// Gets a value indicating whether an item was added.
+    /// </summary>
     public bool WasItemAdded { get { return _operation.HasFlag(NamedObjectCollectionChangeType.ItemAdded); } }
 
+    /// <summary>
+    /// Gets a value indicating whether an item was removed.
+    /// </summary>
     public bool WasItemRemoved { get { return _operation.HasFlag(NamedObjectCollectionChangeType.ItemRemoved); } }
 
+    /// <summary>
+    /// Gets a value indicating whether an item was renamed.
+    /// </summary>
     public bool WasItemRenamed { get { return _operation.HasFlag(NamedObjectCollectionChangeType.ItemRenamed); } }
 
+    /// <summary>
+    /// Gets a value indicating whether multiple items changed.
+    /// </summary>
     public bool WasMultipleItemsChanged { get { return _operation.HasFlag(NamedObjectCollectionChangeType.MultipleChanges); } }
 
     #endregion Properties
@@ -250,6 +289,7 @@ namespace Altaxo.Main
       return result;
     }
 
+    /// <inheritdoc />
     public override void Add(SelfAccumulateableEventArgs e)
     {
       var other = e as NamedObjectCollectionChangedEventArgs;

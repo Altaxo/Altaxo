@@ -30,6 +30,9 @@ using Altaxo.Data;
 
 namespace Altaxo.Serialization.PrincetonInstruments
 {
+  /// <summary>
+  /// Table data source for importing Princeton Instruments SPE files.
+  /// </summary>
   public class PrincetonInstrumentsSPEImportDataSource : FileImportTableDataSourceBase<PrincetonInstrumentsSPEImportOptions>
   {
     #region Serialization
@@ -42,6 +45,7 @@ namespace Altaxo.Serialization.PrincetonInstruments
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PrincetonInstrumentsSPEImportDataSource), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PrincetonInstrumentsSPEImportDataSource)obj;
@@ -51,6 +55,7 @@ namespace Altaxo.Serialization.PrincetonInstruments
         info.AddArray("ProcessData", s._files.ToArray(), s._files.Count);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (o is PrincetonInstrumentsSPEImportDataSource s)
@@ -96,30 +101,42 @@ namespace Altaxo.Serialization.PrincetonInstruments
 
     #region Construction
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PrincetonInstrumentsSPEImportDataSource"/> class for a single file.
+    /// </summary>
     public PrincetonInstrumentsSPEImportDataSource(string fileName, PrincetonInstrumentsSPEImportOptions options)
       : this(new string[] { fileName }, options)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PrincetonInstrumentsSPEImportDataSource"/> class for multiple files.
+    /// </summary>
     public PrincetonInstrumentsSPEImportDataSource(IEnumerable<string> fileNames, PrincetonInstrumentsSPEImportOptions options)
       : base(fileNames)
     {
       _processOptions = options;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PrincetonInstrumentsSPEImportDataSource"/> class by copying another instance.
+    /// </summary>
     public PrincetonInstrumentsSPEImportDataSource(PrincetonInstrumentsSPEImportDataSource from)
       : base(from)
     {
     }
 
+    /// <inheritdoc />
     public override object Clone() => new PrincetonInstrumentsSPEImportDataSource(this);
 
     #endregion Construction
+    /// <inheritdoc />
     protected override void ImportFromFiles(string[] validFileNames, DataTable destinationTable, IProgressReporter reporter)
     {
       new PrincetonInstrumentsSPEImporter().Import(validFileNames, destinationTable, _processOptions, attachDataSource: false);
     }
 
+    /// <inheritdoc />
     public override (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
       => new PrincetonInstrumentsSPEImporter().GetFileExtensions();
   }

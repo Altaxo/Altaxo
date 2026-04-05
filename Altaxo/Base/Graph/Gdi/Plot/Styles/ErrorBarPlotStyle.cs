@@ -43,6 +43,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
   #region Error bar (abstract, for implementations see below)
 
+  /// <summary>
+  /// Provides the base implementation for 2D error-bar plot styles.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Graph.Gdi.Plot.Styles.ErrorBarPlotStyle}")]
   public abstract class ErrorBarPlotStyle
     :
@@ -52,6 +55,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   {
     /// <summary>
     /// Designates how to interpret the values of the error columns.
+    /// </summary>
+    /// <summary>
+    /// Describes how error-column values are interpreted.
     /// </summary>
     public enum ValueInterpretation
     {
@@ -65,6 +71,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       AbsoluteValue = 2
     }
 
+    /// <summary>
+    /// Stores whether a single error column is used for both positive and negative errors.
+    /// </summary>
     protected bool _useCommonErrorColumn = true;
 
     private IReadableColumnProxy? _commonErrorColumn;
@@ -73,6 +82,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     private ValueInterpretation _meaningOfValues;
 
+    /// <summary>
+    /// Stores whether the skip frequency is controlled independently from group styles.
+    /// </summary>
     protected bool _independentSkipFrequency;
 
     /// <summary>
@@ -158,6 +170,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Plot.Styles.ErrorBarPlotStyle", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
@@ -182,6 +195,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
                 */
       }
 
+      /// <summary>
+      /// Deserializes the specified legacy error-bar plot style instance.
+      /// </summary>
+      /// <param name="o">The existing instance, if any.</param>
+      /// <param name="info">The deserialization info.</param>
+      /// <param name="parent">The parent object.</param>
+      /// <returns>The deserialized error-bar plot style.</returns>
       protected virtual ErrorBarPlotStyle SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         ErrorBarPlotStyle s; // = null != o ? (ErrorBarPlotStyle)o : new ErrorBarPlotStyle(info);
@@ -220,6 +240,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         return s;
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         ErrorBarPlotStyle s = SDeserialize(o, info, parent);
@@ -231,6 +252,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ErrorBarPlotStyle), 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ErrorBarPlotStyle)obj;
@@ -271,6 +293,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         info.AddValue("ForceVisibilityOfEndCap", s._forceVisibilityOfEndCap);
       }
 
+      /// <summary>
+      /// Deserializes the specified error-bar plot style instance.
+      /// </summary>
+      /// <param name="o">The existing instance, if any.</param>
+      /// <param name="info">The deserialization info.</param>
+      /// <param name="parent">The parent object.</param>
+      /// <returns>The deserialized error-bar plot style.</returns>
       protected virtual ErrorBarPlotStyle SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (ErrorBarPlotStyle)(o ?? throw new ArgumentNullException(nameof(o)));
@@ -315,6 +344,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         return s;
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         ErrorBarPlotStyle s = SDeserialize(o, info, parent);
@@ -325,12 +355,22 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ErrorBarPlotStyle"/> class during deserialization.
+    /// </summary>
+    /// <param name="info">The deserialization info.</param>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected ErrorBarPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ErrorBarPlotStyle"/> class during deserialization using explicit error-column proxies.
+    /// </summary>
+    /// <param name="info">The deserialization info.</param>
+    /// <param name="posColumnProxy">The positive error-column proxy.</param>
+    /// <param name="negColumnProxy">The negative error-column proxy.</param>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected ErrorBarPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, IReadableColumnProxy? posColumnProxy, IReadableColumnProxy? negColumnProxy)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
@@ -340,6 +380,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       _useCommonErrorColumn = negColumnProxy is null;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ErrorBarPlotStyle"/> class.
+    /// </summary>
+    /// <param name="context">The property context.</param>
     public ErrorBarPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       var penWidth = GraphDocument.GetDefaultPenWidth(context);
@@ -351,11 +395,21 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       _pen = new PenX(color, penWidth).WithEndCap(new Altaxo.Drawing.LineCaps.SymBarLineCap());
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ErrorBarPlotStyle"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
+    /// <param name="copyWithDataReferences">If set to <c>true</c>, data references are copied.</param>
     public ErrorBarPlotStyle(ErrorBarPlotStyle from, bool copyWithDataReferences)
     {
       CopyFrom(from, copyWithDataReferences);
     }
 
+    /// <summary>
+    /// Copies member values from another <see cref="ErrorBarPlotStyle"/> instance.
+    /// </summary>
+    /// <param name="from">The source instance.</param>
+    /// <param name="copyWithDataReferences">If set to <see langword="true"/>, data references are copied as well.</param>
     [MemberNotNull(nameof(_pen))]
     protected void CopyFrom(ErrorBarPlotStyle from, bool copyWithDataReferences)
     {
@@ -395,6 +449,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       _cachedLogicalShiftY = from._cachedLogicalShiftY;
     }
 
+    /// <inheritdoc />
     public bool CopyFrom(object obj, bool copyWithDataReferences)
     {
       if (ReferenceEquals(this, obj))
@@ -417,6 +472,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       return CopyFrom(obj, true);
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_commonErrorColumn is not null)
@@ -429,12 +485,17 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         yield return new Main.DocumentNodeAndName(_negativeErrorColumn, "NegativeErrorColumn");
     }
 
+    /// <inheritdoc />
     public abstract object Clone();
 
+    /// <inheritdoc />
     public abstract object Clone(bool copyWithDataReferences);
 
     #region Properties
 
+    /// <summary>
+    /// Gets or sets how the error-column values are interpreted.
+    /// </summary>
     public ValueInterpretation MeaningOfValues
     {
       get
@@ -532,6 +593,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the symbol-gap offset.
+    /// </summary>
     public double SymbolGapOffset
     {
       get
@@ -548,6 +612,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the symbol-gap factor.
+    /// </summary>
     public double SymbolGapFactor
     {
       get
@@ -564,6 +631,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the line-width offset.
+    /// </summary>
     public double LineWidth1Offset
     {
       get
@@ -580,6 +650,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the line-width factor.
+    /// </summary>
     public double LineWidth1Factor
     {
       get
@@ -596,6 +669,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the end-cap size offset.
+    /// </summary>
     public double EndCapSizeOffset
     {
       get
@@ -612,6 +688,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the end-cap size factor.
+    /// </summary>
     public double EndCapSizeFactor
     {
       get
@@ -721,9 +800,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>
     /// True when no vertical, but horizontal error bars are shown.
     /// </summary>
+    /// <summary>
+    /// Gets the axis number the error bars belong to.
+    /// </summary>
     public abstract int AxisNumber { get; }
 
     /// <summary>Pen used to draw the error bar.</summary>
+    /// <summary>
+    /// Gets or sets the pen used to draw the error bars.
+    /// </summary>
     public PenX Pen
     {
       get { return _pen; }
@@ -740,6 +825,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether a single common error column is used.
+    /// </summary>
     public bool UseCommonErrorColumn
     {
       get
@@ -899,12 +987,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region IG2DPlotStyle Members
 
+    /// <inheritdoc />
     public void CollectExternalGroupStyles(Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection externalGroups)
     {
       if (!_independentColor)
         Graph.Plot.Groups.ColorGroupStyle.AddExternalGroupStyle(externalGroups);
     }
 
+    /// <inheritdoc />
     public void CollectLocalGroupStyles(Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection externalGroups, Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection localGroups)
     {
       if (!_independentColor)
@@ -914,6 +1004,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       IgnoreMissingDataPointsGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
     }
 
+    /// <inheritdoc />
     public void PrepareGroupStyles(Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection externalGroups, Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection localGroups, IPlotArea layer, Altaxo.Graph.Gdi.Plot.Data.Processed2DPlotData pdata)
     {
       if (!_independentColor)
@@ -931,6 +1022,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       // this item can not be used as provider of a symbol size
     }
 
+    /// <inheritdoc />
     public void ApplyGroupStyles(Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection externalGroups, Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection localGroups)
     {
       // IgnoreMissingDataPoints is the same for all sub plot styles
@@ -990,6 +1082,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <inheritdoc />
     public void Paint(System.Drawing.Graphics g, IPlotArea layer, Altaxo.Graph.Gdi.Plot.Data.Processed2DPlotData pdata, Processed2DPlotData? prevItemData, Processed2DPlotData? nextItemData)
     {
       // adjust the skip frequency if it was not set appropriate
@@ -1022,6 +1115,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Paints a single error-bar range for the specified axis.
+    /// </summary>
+    /// <param name="axisNumber">The axis number.</param>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="layer">The plot layer.</param>
+    /// <param name="range">The range to paint.</param>
+    /// <param name="pdata">The processed plot data.</param>
     protected void PaintOneRange(int axisNumber, Graphics g, IPlotArea layer, IPlotRange range, Processed2DPlotData pdata)
     {
       const double logicalClampMinimum = -10;
@@ -1234,6 +1335,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       g.Clip = oldClippingRegion;
     }
 
+    /// <inheritdoc />
     public System.Drawing.RectangleF PaintSymbol(System.Drawing.Graphics g, System.Drawing.RectangleF bounds)
     {
       // Error bars are not painted in the symbol
@@ -1305,6 +1407,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region IRoutedPropertyReceiver Members
 
+    /// <inheritdoc />
     public IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName)
     {
       switch (propertyName)
@@ -1329,9 +1432,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
   #region Error bar x
 
+  /// <summary>
+  /// Represents an error-bar plot style for the x-axis.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Graph.Gdi.Plot.Styles.ErrorBarXPlotStyle}")]
   public class ErrorBarXPlotStyle : ErrorBarPlotStyle
   {
+    /// <inheritdoc />
     public override int AxisNumber { get { return 0; } }
 
     #region Serialization
@@ -1363,19 +1470,28 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
     /// <summary>
-    /// Deserialization constructor
+    /// Initializes a new instance of the <see cref="ErrorBarXPlotStyle"/> class during deserialization using explicit error-column proxies.
     /// </summary>
-    /// <param name="posErrorColumn">The positive error column.</param>
-    /// <param name="negErrorColumn">The negative error column.</param>
-    /// <param name="info">The information.</param>
+    /// <param name="info">The deserialization info.</param>
+    /// <param name="posErrorColumn">The positive error-column proxy.</param>
+    /// <param name="negErrorColumn">The negative error-column proxy.</param>
     public ErrorBarXPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, IReadableColumnProxy? posErrorColumn, IReadableColumnProxy? negErrorColumn) : base(info, posErrorColumn, negErrorColumn)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ErrorBarXPlotStyle"/> class.
+    /// </summary>
+    /// <param name="context">The property context.</param>
     public ErrorBarXPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context) : base(context)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ErrorBarXPlotStyle"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The source style.</param>
+    /// <param name="copyWithDataReferences">If set to <see langword="true"/>, data references are copied as well.</param>
     public ErrorBarXPlotStyle(ErrorBarPlotStyle from, bool copyWithDataReferences) : base(from, copyWithDataReferences)
     {
     }
@@ -1397,9 +1513,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
   #region Error bar y
 
+  /// <summary>
+  /// Represents an error-bar plot style for the y-axis.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Graph.Gdi.Plot.Styles.ErrorBarYPlotStyle}")]
   public class ErrorBarYPlotStyle : ErrorBarPlotStyle
   {
+    /// <inheritdoc />
     public override int AxisNumber { get { return 1; } }
 
     #region Serialization
@@ -1431,19 +1551,28 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
     /// <summary>
-    /// Deserialization constructor
+    /// Initializes a new instance of the <see cref="ErrorBarYPlotStyle"/> class during deserialization using explicit error-column proxies.
     /// </summary>
-    /// <param name="posErrorColumn">The positive error column.</param>
-    /// <param name="negErrorColumn">The negative error column.</param>
-    /// <param name="info">The information.</param>
+    /// <param name="info">The deserialization info.</param>
+    /// <param name="posErrorColumn">The positive error-column proxy.</param>
+    /// <param name="negErrorColumn">The negative error-column proxy.</param>
     public ErrorBarYPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, IReadableColumnProxy? posErrorColumn, IReadableColumnProxy? negErrorColumn) : base(info, posErrorColumn, negErrorColumn)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ErrorBarYPlotStyle"/> class.
+    /// </summary>
+    /// <param name="context">The property context.</param>
     public ErrorBarYPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context) : base(context)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ErrorBarYPlotStyle"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The source style.</param>
+    /// <param name="copyWithDataReferences">If set to <see langword="true"/>, data references are copied as well.</param>
     public ErrorBarYPlotStyle(ErrorBarPlotStyle from, bool copyWithDataReferences) : base(from, copyWithDataReferences)
     {
     }

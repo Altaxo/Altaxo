@@ -24,9 +24,6 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Geometry;
 
 namespace Altaxo.Drawing.D3D
@@ -86,6 +83,17 @@ namespace Altaxo.Drawing.D3D
         );
     }
 
+    /// <summary>
+    /// Initializes the reusable dash-segment state for a straight line.
+    /// </summary>
+    /// <param name="crossSection">The cross section of the line.</param>
+    /// <param name="thickness1">The first line thickness.</param>
+    /// <param name="thickness2">The second line thickness.</param>
+    /// <param name="startCap">The dash start cap.</param>
+    /// <param name="endCap">The dash end cap.</param>
+    /// <param name="westVector">The west vector of the line coordinate system.</param>
+    /// <param name="northVector">The north vector of the line coordinate system.</param>
+    /// <param name="line">The straight line to render.</param>
     public void Initialize(
     ICrossSectionOfLine crossSection,
     double thickness1,
@@ -121,6 +129,15 @@ namespace Altaxo.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Adds geometry for a dash segment represented by a line.
+    /// </summary>
+    /// <param name="AddPositionAndNormal">Adds a vertex position together with its normal vector.</param>
+    /// <param name="AddIndices">Adds the vertex indices for a triangle.</param>
+    /// <param name="vertexIndexOffset">The running vertex index offset.</param>
+    /// <param name="dashSegment">The dash segment to draw.</param>
+    /// <param name="overrideStartCap">An optional cap that overrides the configured dash start cap.</param>
+    /// <param name="overrideEndCap">An optional cap that overrides the configured dash end cap.</param>
     public void AddGeometry(
       Action<PointD3D, VectorD3D> AddPositionAndNormal,
       Action<int, int, int, bool> AddIndices,

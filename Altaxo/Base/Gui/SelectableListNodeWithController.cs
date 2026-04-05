@@ -28,7 +28,7 @@ using Altaxo.Collections;
 namespace Altaxo.Gui
 {
   /// <summary>
-  /// Extends <see cref="SelectableListNode"/>, accomodating a <see cref="IMVCAController"/>, and exposing both controller and view.
+  /// Extends <see cref="SelectableListNode"/>, accommodating a <see cref="IMVCAController"/>, and exposing both controller and view.
   /// </summary>
   /// <seealso cref="Altaxo.Collections.SelectableListNode" />
   class SelectableListNodeWithController : SelectableListNode

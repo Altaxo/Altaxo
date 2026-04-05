@@ -71,6 +71,9 @@ namespace Altaxo.Gui.Workbench
     /// </value>
     bool IsSelected { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether this content is active.
+    /// </summary>
     bool IsActive { get; set; }
 
     /// <summary>

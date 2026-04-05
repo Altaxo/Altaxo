@@ -47,7 +47,7 @@ namespace Altaxo.Graph.Graph3D.Plot
   public interface IGPlotItem : Altaxo.Graph.Plot.IGPlotItem, ITreeListNodeWithParent<IGPlotItem>
   {
     /// <summary>
-    /// The collection where this plot item belongs to. Can be null for the root item.
+    /// Gets the collection to which this plot item belongs. Can be <see langword="null"/> for the root item.
     /// </summary>
     PlotItemCollection? ParentCollection { get; }
 

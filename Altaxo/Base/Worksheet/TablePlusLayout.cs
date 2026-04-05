@@ -40,6 +40,7 @@ namespace Altaxo.Worksheet
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TablePlusLayout), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (TablePlusLayout)obj;
@@ -48,6 +49,7 @@ namespace Altaxo.Worksheet
         info.AddValue("Layout", s._layout);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         TablePlusLayout s = (TablePlusLayout?)o ?? new TablePlusLayout(info);
@@ -61,7 +63,7 @@ namespace Altaxo.Worksheet
     #endregion Serialization
 
     /// <summary>
-    /// Constructor.
+    /// Initializes a new instance of the <see cref="TablePlusLayout"/> class.
     /// </summary>
     /// <param name="table">The table.</param>
     /// <param name="layout">The layout of the table.</param>
@@ -72,7 +74,7 @@ namespace Altaxo.Worksheet
     }
 
     /// <summary>
-    /// Empty constructor only for deserialization purposes.
+    /// Initializes a new instance of the <see cref="TablePlusLayout"/> class for deserialization.
     /// </summary>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected TablePlusLayout(Altaxo.Serialization.Xml.IXmlDeserializationInfo _)

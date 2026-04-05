@@ -32,8 +32,15 @@ using Altaxo.Gui.Graph.Graph3D;
 
 namespace Altaxo.Graph.Graph3D.Commands
 {
+  /// <summary>
+  /// Provides miscellaneous commands for three-dimensional graph documents.
+  /// </summary>
   public static class GraphDocumentOtherActions
   {
+    /// <summary>
+    /// Shows a dialog that lets the user rename the graph document.
+    /// </summary>
+    /// <param name="doc">The graph document to rename.</param>
     public static void ShowRenameDialog(this GraphDocument doc)
     {
       var tvctrl = new Altaxo.Gui.Common.TextValueInputController(doc.Name, "Enter a name for the graph:")
@@ -45,16 +52,24 @@ namespace Altaxo.Graph.Graph3D.Commands
         doc.Name = tvctrl.InputText.Trim();
     }
 
+    /// <summary>
+    /// Validates graph names entered in the rename dialog.
+    /// </summary>
     private class GraphRenameValidator : Altaxo.Gui.Common.TextValueInputController.NonEmptyStringValidator
     {
       private GraphDocument _doc;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="GraphRenameValidator"/> class.
+      /// </summary>
+      /// <param name="graphdoc">The graph document being renamed.</param>
       public GraphRenameValidator(GraphDocument graphdoc)
         : base("The graph's name must not be empty! Please enter a valid name.")
       {
         _doc = graphdoc;
       }
 
+      /// <inheritdoc/>
       public override string? Validate(string graphname)
       {
         var err = base.Validate(graphname);
@@ -98,6 +113,11 @@ namespace Altaxo.Graph.Graph3D.Commands
 
     #region Layer manipulation
 
+    /// <summary>
+    /// Shows the dialog for the layer specified by <paramref name="layerNumber"/>.
+    /// </summary>
+    /// <param name="doc">The graph document.</param>
+    /// <param name="layerNumber">The index path of the layer.</param>
     public static void ShowLayerDialog(this GraphDocument doc, IList<int> layerNumber)
     {
       if (doc.RootLayer.IsValidIndex(layerNumber, out var layer))
@@ -150,10 +170,10 @@ namespace Altaxo.Graph.Graph3D.Commands
     }
 
     /// <summary>
-    /// Moves the layer specified by index <paramref name="layerNumber"/> as specified by the user in the opened dialog.
+    /// Shows the dialog that lets the user move a layer to another position.
     /// </summary>
-    /// <param name="doc">Graph document.</param>
-    /// <param name="layerNumber">Number of the layer to move.</param>
+    /// <param name="doc">The graph document.</param>
+    /// <param name="layerNumber">The index path of the layer.</param>
     public static void ShowMoveLayerToPositionDialog(this GraphDocument doc, IList<int> layerNumber)
     {
       if (!doc.RootLayer.IsValidIndex(layerNumber, out var layer))
@@ -190,6 +210,10 @@ namespace Altaxo.Graph.Graph3D.Commands
 
     #region Show properties dialog
 
+    /// <summary>
+    /// Shows the property dialog of the specified graph document.
+    /// </summary>
+    /// <param name="doc">The graph document.</param>
     public static void ShowPropertyDialog(this GraphDocument doc)
     {
       var propHierarchy = new Altaxo.Main.Properties.PropertyHierarchy(PropertyExtensions.GetPropertyBags(doc));

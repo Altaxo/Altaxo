@@ -38,9 +38,15 @@ namespace Altaxo.Graph.Gdi.Plot
   using Groups;
   using Styles;
 
+  /// <summary>
+  /// Provides the base implementation for two-dimensional plot items.
+  /// </summary>
   [Serializable]
   public abstract class G2DPlotItem : PlotItem
   {
+    /// <summary>
+    /// Stores the plot styles applied to this plot item.
+    /// </summary>
     protected G2DPlotStyleCollection _plotStyles;
 
     [NonSerialized]
@@ -49,22 +55,38 @@ namespace Altaxo.Graph.Gdi.Plot
     [NonSerialized]
     private PlotGroupStyleCollection? _localGroups;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="G2DPlotItem"/> class.
+    /// </summary>
+    /// <param name="plotStyles">The plot styles.</param>
     protected G2DPlotItem(G2DPlotStyleCollection plotStyles)
     {
       ChildSetMember(ref _plotStyles, plotStyles);
     }
 
+
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="G2DPlotItem"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     protected G2DPlotItem(G2DPlotItem from)
     {
       CopyFrom(from, false);
     }
 
+    /// <summary>
+    /// Copies the state from another <see cref="G2DPlotItem"/> instance.
+    /// </summary>
+    /// <param name="from">The source instance.</param>
+    /// <param name="withBaseMembers">If set to <see langword="true"/>, base members are copied as well.</param>
     [MemberNotNull(nameof(_plotStyles))]
     protected void CopyFrom(G2DPlotItem from, bool withBaseMembers)
     {
       ChildCopyToMember(ref _plotStyles, from._plotStyles);
     }
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -84,6 +106,7 @@ namespace Altaxo.Graph.Gdi.Plot
       }
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_plotStyles is not null)
@@ -93,12 +116,16 @@ namespace Altaxo.Graph.Gdi.Plot
         yield return new Main.DocumentNodeAndName(_localGroups, () => _localGroups = null!, "LocalPlotGroupStyles");
     }
 
+    /// <inheritdoc />
     public override Main.IDocumentLeafNode StyleObject
     {
       get { return _plotStyles; }
       set { Style = (G2DPlotStyleCollection)value; }
     }
 
+    /// <summary>
+    /// Gets or sets the plot style collection.
+    /// </summary>
     public G2DPlotStyleCollection Style
     {
       get
@@ -117,10 +144,16 @@ namespace Altaxo.Graph.Gdi.Plot
       }
     }
 
+    /// <summary>
+    /// Gets processed plot data including ranges and points for the specified layer.
+    /// </summary>
+    /// <param name="layer">The plot layer.</param>
+    /// <returns>The processed plot data.</returns>
     public abstract Processed2DPlotData GetRangesAndPoints(IPlotArea layer);
 
     #region IPlotItem Members
 
+    /// <inheritdoc />
     public override void CollectStyles(PlotGroupStyleCollection styles)
     {
       // first add missing local group styles
@@ -128,6 +161,7 @@ namespace Altaxo.Graph.Gdi.Plot
         sps.CollectExternalGroupStyles(styles);
     }
 
+    /// <inheritdoc />
     public override void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, IPlotArea layer)
     {
       var pdata = GetRangesAndPoints(layer);
@@ -154,6 +188,7 @@ namespace Altaxo.Graph.Gdi.Plot
       }
     }
 
+    /// <inheritdoc />
     public override void ApplyGroupStyles(PlotGroupStyleCollection externalGroups)
     {
       if (_localGroups is null)
@@ -186,6 +221,7 @@ namespace Altaxo.Graph.Gdi.Plot
       _plotStyles.SetFromTemplate(from._plotStyles, strictness);
     }
 
+    /// <inheritdoc />
     public override void PaintSymbol(Graphics g, RectangleF location)
     {
       _plotStyles.PaintSymbol(g, location);
@@ -193,6 +229,11 @@ namespace Altaxo.Graph.Gdi.Plot
 
     #endregion IPlotItem Members
 
+    /// <summary>
+    /// Gets cached plot data for painting.
+    /// </summary>
+    /// <param name="layer">The plot layer.</param>
+    /// <returns>The cached plot data.</returns>
     public Processed2DPlotData? GetPlotData(IPlotArea layer)
     {
       if (_cachedPlotDataUsedForPainting is null)
@@ -201,6 +242,7 @@ namespace Altaxo.Graph.Gdi.Plot
       return _cachedPlotDataUsedForPainting;
     }
 
+    /// <inheritdoc />
     public override void Paint(Graphics g, IPaintContext context, IPlotArea layer, IGPlotItem? prevPlotItem, IGPlotItem? nextPlotItem)
     {
       var pdata = GetRangesAndPoints(layer);

@@ -32,6 +32,9 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Main.Services.Files
 {
+  /// <summary>
+  /// Represents a project archive entry backed by a file in the file system.
+  /// </summary>
   public class FileSystemFileAsProjectArchiveEntry : IProjectArchiveEntry
   {
     private string _baseFolder;
@@ -44,6 +47,11 @@ namespace Altaxo.Main.Services.Files
     private string _name;
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileSystemFileAsProjectArchiveEntry"/> class.
+    /// </summary>
+    /// <param name="baseFolder">The base folder of the archive.</param>
+    /// <param name="name">The entry name relative to the base folder.</param>
     public FileSystemFileAsProjectArchiveEntry(string baseFolder, string name)
     {
       if (string.IsNullOrEmpty(baseFolder))
@@ -55,14 +63,17 @@ namespace Altaxo.Main.Services.Files
       _name = name;
     }
 
+    /// <inheritdoc/>
     public string FullName => _name;
 
+    /// <inheritdoc/>
     public Stream OpenForReading()
     {
       var finalName = Path.Combine(_baseFolder, _name);
       return new FileStream(finalName, FileMode.Open, FileAccess.Read, FileShare.Read);
     }
 
+    /// <inheritdoc/>
     public Stream OpenForWriting()
     {
       var finalName = Path.Combine(_baseFolder, _name);

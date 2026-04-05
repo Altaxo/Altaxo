@@ -40,14 +40,23 @@ namespace Altaxo.Gui.Common
     bool ApplyVisible { set; }
 
     /// <summary>
-    /// Sets the title
+    /// Sets the title.
     /// </summary>
     string Title { set; }
 
+    /// <summary>
+    /// Occurs when the OK button is pressed.
+    /// </summary>
     event Action<System.ComponentModel.CancelEventArgs>? ButtonOKPressed;
 
+    /// <summary>
+    /// Occurs when the Cancel button is pressed.
+    /// </summary>
     event Action? ButtonCancelPressed;
 
+    /// <summary>
+    /// Occurs when the Apply button is pressed.
+    /// </summary>
     event Action? ButtonApplyPressed;
   }
 
@@ -98,7 +107,7 @@ namespace Altaxo.Gui.Common
     }
 
     /// <summary>
-    /// Get / sets the view of this controller.
+    /// Gets or sets the view of this controller.
     /// </summary>
     private IDialogShellView? View
     {

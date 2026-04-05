@@ -51,13 +51,13 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="dataTable">The table into which to import.</param>
     /// <param name="stream">The stream to read from.</param>
     /// <param name="streamOriginHint">Stream origin hint. If the stream was opened from a file, you should prepend <see cref="FileUrlStart"/> to the file name.</param>
-    /// <param name="importOptions">The Ascii import options. This parameter can be null, or the options can be not fully specified. In this case the method tries to determine the import options by analyzing the stream.</param>
+    /// <param name="importOptions">The ASCII import options. This parameter can be <see langword="null"/>, or the options can be not fully specified. In this case the method tries to determine the import options by analyzing the stream.</param>
     /// <exception cref="System.ArgumentNullException">
     /// Argument importOptions is null
     /// or
     /// Argument table is null
     /// </exception>
-    /// <exception cref="System.ArgumentException">Argument importOptions: importOptions must be fully specified, i.e. all elements of importOptions must be valid. Please run a document analysis in-before to get appropriate values.</exception>
+    /// <exception cref="System.ArgumentException">Argument importOptions: importOptions must be fully specified, i.e. all elements of importOptions must be valid. Please run a document analysis beforehand to get appropriate values.</exception>
     /// <exception cref="System.ArgumentOutOfRangeException">
     /// Unconsidered AsciiColumnType:  + impopt.RecognizedStructure[i].ToString()
     /// or
@@ -314,13 +314,13 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="dataTable">The table into which to import.</param>
     /// <param name="stream">The stream to read from.</param>
     /// <param name="streamOriginHint">Stream origin hint. If the stream was opened from a file, you should prepend <see cref="FileUrlStart"/> to the file name.</param>
-    /// <param name="importOptions">The Ascii import options. This parameter must not be <c>null</c>. If the provided options are not fully specified, it is tried to analyse the stream to get fully specified options.</param>
+    /// <param name="importOptions">The ASCII import options. This parameter must not be <c>null</c>. If the provided options are not fully specified, the stream is analyzed to obtain fully specified options.</param>
     /// <exception cref="System.ArgumentNullException">
     /// Argument importOptions is null
     /// or
     /// Argument table is null
     /// </exception>
-    /// <exception cref="System.ArgumentException">Argument importOptions: importOptions must be fully specified, i.e. all elements of importOptions must be valid. Please run a document analysis in-before to get appropriate values.</exception>
+    /// <exception cref="System.ArgumentException">Argument importOptions: importOptions must be fully specified, i.e. all elements of importOptions must be valid. Please run a document analysis beforehand to get appropriate values.</exception>
     /// <exception cref="System.ArgumentOutOfRangeException">
     /// Unconsidered AsciiColumnType:  + impopt.RecognizedStructure[i].ToString()
     /// or

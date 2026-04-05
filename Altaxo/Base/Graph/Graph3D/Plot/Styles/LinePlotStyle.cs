@@ -58,12 +58,24 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <summary>A value of 2 skips every other data point, a value of 3 skips 2 out of 3 data points, and so on.</summary>
     protected int _skipFreq = 1;
 
+    /// <summary>
+    /// Gets or sets the i nd ep en de nt co lo r.
+    /// </summary>
     protected bool _independentColor;
 
+    /// <summary>
+    /// Gets or sets the i nd ep en de nt da sh st yl e.
+    /// </summary>
     protected bool _independentDashStyle;
 
+    /// <summary>
+    /// Gets or sets the l in ep en.
+    /// </summary>
     protected PenX3D _linePen;
 
+    /// <summary>
+    /// Gets or sets the c on ne ct io ns ty le.
+    /// </summary>
     protected ILineConnectionStyle _connectionStyle;
 
     /// <summary>
@@ -74,11 +86,17 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <summary>Controls the length of the end bar.</summary>
     protected double _symbolSize;
 
+    /// <summary>
+    /// Performs the p re se nt operation.
+    /// </summary>
     protected bool _ignoreMissingDataPoints; // treat missing points as if not present (connect lines over missing points)
 
     /// <summary>If true, the start and the end point of the line are connected too.</summary>
     protected bool _connectCircular;
 
+    /// <summary>
+    /// Gets or sets the u se sy mb ol ga p.
+    /// </summary>
     protected bool _useSymbolGap;
 
     /// <summary>
@@ -108,9 +126,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <summary>
     /// 2016-05-06 initial version.
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="LinePlotStyle"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinePlotStyle), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (LinePlotStyle)obj;
@@ -134,6 +156,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         info.AddValue("KeepWestNorth", s._keepWestNorthThroughSymbolGap);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (LinePlotStyle?)o ?? new LinePlotStyle(info);
@@ -164,6 +187,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// </summary>
     /// <param name="info">The deserialization information.</param>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+
     protected LinePlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
@@ -173,6 +197,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     #region Construction and copying
 
+    /// <summary>
+    /// Copies values from the specified source.
+    /// </summary>
     [MemberNotNull(nameof(_linePen), nameof(_connectionStyle))]
     public void CopyFrom(LinePlotStyle from, Main.EventFiring eventFiring)
     {
@@ -188,7 +215,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
         _ignoreMissingDataPoints = from._ignoreMissingDataPoints;
         _connectCircular = from._connectCircular;
-        _connectionStyle = from._connectionStyle; 
+        _connectionStyle = from._connectionStyle;
 
         _linePen = from._linePen; // immutable
         _independentDashStyle = from._independentDashStyle;
@@ -242,6 +269,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       return new LinePlotStyle(this);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinePlotStyle"/> class from the specified property context.
+    /// </summary>
+    /// <param name="context">The property context.</param>
     public LinePlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       var penWidth = GraphDocument.GetDefaultPenWidth(context);
@@ -251,11 +282,17 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       _connectionStyle = new LineConnectionStyles.StraightConnection();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinePlotStyle"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The style to copy from.</param>
     public LinePlotStyle(LinePlotStyle from)
     {
       CopyFrom(from, Main.EventFiring.Suppressed);
     }
 
+
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
@@ -297,6 +334,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the line-connection strategy.
+    /// </summary>
     public ILineConnectionStyle Connection
     {
       get { return _connectionStyle; }
@@ -329,6 +369,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the absolute symbol-gap offset.
+    /// </summary>
     public double SymbolGapOffset
     {
       get
@@ -345,6 +388,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the factor used for symbol-gap calculation.
+    /// </summary>
     public double SymbolGapFactor
     {
       get
@@ -381,6 +427,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the line path is closed.
+    /// </summary>
     public bool ConnectCircular
     {
       get
@@ -418,6 +467,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the line color is independent of group styles.
+    /// </summary>
     public bool IndependentLineColor
     {
       get
@@ -433,6 +485,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the dash style is independent of group styles.
+    /// </summary>
     public bool IndependentDashStyle
     {
       get
@@ -448,6 +503,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the pen used to draw the line.
+    /// </summary>
     public PenX3D LinePen
     {
       get { return _linePen; }
@@ -489,6 +547,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this style produces visible line output.
+    /// </summary>
     public bool IsVisible
     {
       get
@@ -501,6 +562,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     #region Painting
 
+    /// <summary>
+    /// Paints a single line segment.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="beg">The segment start point.</param>
+    /// <param name="end">The segment end point.</param>
     public virtual void PaintLine(IGraphicsContext3D g, PointD3D beg, PointD3D end)
     {
       if (_linePen is not null)
@@ -509,6 +576,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Paints the s ym bo l.
+    /// </summary>
     public RectangleD3D PaintSymbol(IGraphicsContext3D g, RectangleD3D bounds)
     {
       if (IsVisible)
@@ -534,6 +604,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       return bounds;
     }
 
+    /// <summary>
+    /// Performs the p ai nt operation.
+    /// </summary>
     public void Paint(IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData pdata, Processed3DPlotData? prevItemData, Processed3DPlotData? nextItemData)
     {
       var linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
@@ -586,11 +659,17 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool IsColorProvider
     {
       get { return !_independentColor; }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public NamedColor Color
     {
       get
@@ -603,6 +682,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool IsColorReceiver
     {
       get { return !_independentColor; }
@@ -610,16 +692,25 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     #region IG3DPlotStyle Members
 
+    /// <summary>
+    /// Collects the e xt er na lg ro up st yl es.
+    /// </summary>
     public void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups)
     {
     }
 
+    /// <summary>
+    /// Collects the l oc al gr ou ps ty le s.
+    /// </summary>
     public void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       ColorGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
       DashPatternGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
     }
 
+    /// <summary>
+    /// Prepares the g ro up st yl es.
+    /// </summary>
     public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed3DPlotData pdata)
     {
       if (IsColorProvider)
@@ -631,6 +722,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         { return LinePen.DashPattern ?? DashPatternListManager.Instance.BuiltinDefaultSolid; });
     }
 
+    /// <summary>
+    /// Applies the g ro up st yl es.
+    /// </summary>
     public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       // SkipFrequency should be the same for all sub plot styles
@@ -691,6 +785,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     #region IRoutedPropertyReceiver Members
 
+    /// <summary>
+    /// Gets the r ou te dp ro pe rt ie s.
+    /// </summary>
     public IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName)
     {
       switch (propertyName)

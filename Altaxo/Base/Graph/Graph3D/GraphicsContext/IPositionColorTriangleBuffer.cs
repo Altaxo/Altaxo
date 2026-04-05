@@ -37,12 +37,12 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
   public interface IPositionColorTriangleBuffer
   {
     /// <summary>
-    /// Adds the specified vertex.
+    /// Adds a triangle vertex.
     /// </summary>
     /// <param name="x">The x position.</param>
     /// <param name="y">The y position.</param>
     /// <param name="z">The z position.</param>
-    /// <param name="w">The w position.</param>
+    /// <param name="w">The w component.</param>
     /// <param name="r">The r color component.</param>
     /// <param name="g">The g color component.</param>
     /// <param name="b">The b color component.</param>

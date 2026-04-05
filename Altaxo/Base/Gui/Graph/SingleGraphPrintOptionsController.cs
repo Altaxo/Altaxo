@@ -36,14 +36,21 @@ namespace Altaxo.Gui.Graph
   using Altaxo.Gui.Common;
   using Altaxo.Units;
 
+  /// <summary>
+  /// View contract for editing single-graph print options.
+  /// </summary>
   public interface ISingleGraphPrintOptionsView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for editing <see cref="SingleGraphPrintOptions"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(ISingleGraphPrintOptionsView))]
   [UserControllerForObject(typeof(SingleGraphPrintOptions))]
   public class SingleGraphPrintOptionsController : MVCANControllerEditImmutableDocBase<SingleGraphPrintOptions, ISingleGraphPrintOptionsView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -53,6 +60,9 @@ namespace Altaxo.Gui.Graph
 
     private ItemsController<SingleGraphPrintLocation> _printLocation;
 
+    /// <summary>
+    /// Gets or sets the print location.
+    /// </summary>
     public ItemsController<SingleGraphPrintLocation> PrintLocation
     {
       get => _printLocation;
@@ -69,6 +79,9 @@ namespace Altaxo.Gui.Graph
 
     private bool _fitGraphToPrintIfLarger;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether graphs larger than the page are fitted.
+    /// </summary>
     public bool FitGraphToPrintIfLarger
     {
       get => _fitGraphToPrintIfLarger;
@@ -84,6 +97,9 @@ namespace Altaxo.Gui.Graph
 
     private bool _fitGraphToPrintIfSmaller;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether graphs smaller than the page are fitted.
+    /// </summary>
     public bool FitGraphToPrintIfSmaller
     {
       get => _fitGraphToPrintIfSmaller;
@@ -99,6 +115,9 @@ namespace Altaxo.Gui.Graph
 
     private bool _printCropMarks;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether crop marks are printed.
+    /// </summary>
     public bool PrintCropMarks
     {
       get => _printCropMarks;
@@ -114,6 +133,9 @@ namespace Altaxo.Gui.Graph
 
     private bool _rotatePageAutomatically;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the page is rotated automatically.
+    /// </summary>
     public bool RotatePageAutomatically
     {
       get => _rotatePageAutomatically;
@@ -129,6 +151,9 @@ namespace Altaxo.Gui.Graph
 
     private bool _tilePages;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether pages are tiled.
+    /// </summary>
     public bool TilePages
     {
       get => _tilePages;
@@ -144,6 +169,9 @@ namespace Altaxo.Gui.Graph
 
     private bool _useFixedZoomFactor;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether a fixed zoom factor is used.
+    /// </summary>
     public bool UseFixedZoomFactor
     {
       get => _useFixedZoomFactor;
@@ -157,10 +185,16 @@ namespace Altaxo.Gui.Graph
       }
     }
 
+    /// <summary>
+    /// Gets the quantity environment for the zoom factor.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment ZoomFactorEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _zoomFactor;
 
+    /// <summary>
+    /// Gets or sets the zoom factor.
+    /// </summary>
     public DimensionfulQuantity ZoomFactor
     {
       get => _zoomFactor;
@@ -177,6 +211,7 @@ namespace Altaxo.Gui.Graph
 
 #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       if (initData)
@@ -193,6 +228,7 @@ namespace Altaxo.Gui.Graph
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc.PrintLocation = PrintLocation.SelectedValue;

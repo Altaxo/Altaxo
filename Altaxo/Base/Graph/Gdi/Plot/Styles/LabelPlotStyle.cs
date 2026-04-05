@@ -42,6 +42,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   using Plot.Data;
   using Plot.Groups;
 
+  /// <summary>
+  /// Draws text labels for plot points.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Graph.Gdi.Plot.Styles.LabelPlotStyle}")]
   public class LabelPlotStyle
     :
@@ -49,11 +52,17 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     IG2DPlotStyle,
     IRoutedPropertyReceiver
   {
+    /// <summary>
+    /// Stores the proxy for the label column.
+    /// </summary>
     protected Altaxo.Data.IReadableColumnProxy? _labelColumnProxy;
 
     /// <summary>The axis where the label is attached to (if it is attached).</summary>
     protected CSPlaneID? _attachedPlane;
 
+    /// <summary>
+    /// Stores whether the skip frequency is controlled independently from group styles.
+    /// </summary>
     protected bool _independentSkipFrequency;
 
     /// <summary>
@@ -89,8 +98,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// </summary>
     protected double _fontSizeFactor;
 
+    /// <summary>
+    /// Stores whether the symbol size is controlled independently from group styles.
+    /// </summary>
     protected bool _independentSymbolSize;
 
+    /// <summary>
+    /// Stores the symbol size used for label placement calculations.
+    /// </summary>
     protected double _symbolSize;
 
     /// <summary>The brush for the label.</summary>
@@ -101,7 +116,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// </summary>
     protected bool _independentColor;
 
+    /// <summary>
+    /// Stores the horizontal alignment of the label.
+    /// </summary>
     protected Alignment _alignmentX = Alignment.Center;
+
+    /// <summary>
+    /// Stores the vertical alignment of the label.
+    /// </summary>
     protected Alignment _alignmentY = Alignment.Center;
 
     /// <summary>The rotation of the label.</summary>
@@ -134,6 +156,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// totalOffset = _offset_Points + _offset_EmUnits * emSize + _offset_SymbolSizeUnits * symbolSize;</summary>
     protected double _offsetY_SymbolSizeUnits;
 
+    /// <summary>
+    /// Stores how the background color is linked to external styles.
+    /// </summary>
     protected ColorLinkage _backgroundColorLinkage;
 
     /// <summary>The style for the background.</summary>
@@ -154,6 +179,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>Logical y shift between the location of the real data point and the point where the item is finally drawn.</summary>
     private double _cachedLogicalShiftY;
 
+    /// <summary>
+    /// Stores the cached <see cref="System.Drawing.StringFormat"/> used for label rendering.
+    /// </summary>
     [NonSerialized]
     protected System.Drawing.StringFormat _cachedStringFormat;
 
@@ -183,6 +211,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLabelStyle", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <summary>
+      /// Converts a legacy edge type to the corresponding coordinate-system plane identifier.
+      /// </summary>
+      /// <param name="fillDir">The legacy edge type.</param>
+      /// <returns>The corresponding plane identifier.</returns>
       public static CSPlaneID GetDirection(EdgeType fillDir)
       {
         switch (fillDir)
@@ -204,11 +237,17 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         }
       }
 
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         SSerialize(obj, info);
       }
 
+      /// <summary>
+      /// Serializes the specified legacy label plot style.
+      /// </summary>
+      /// <param name="obj">The object to serialize.</param>
+      /// <param name="info">The serialization target.</param>
       public static void SSerialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotSupportedException("Serialization of old versions not supported, probably a programming error");
@@ -229,11 +268,20 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
                  */
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return SDeserialize(o, info, parent, true);
       }
 
+      /// <summary>
+      /// Deserializes the specified legacy label plot style.
+      /// </summary>
+      /// <param name="o">The existing instance, if any.</param>
+      /// <param name="info">The deserialization source.</param>
+      /// <param name="parent">The parent object.</param>
+      /// <param name="nativeCall">If set to <see langword="true"/>, cached values are restored.</param>
+      /// <returns>The deserialized label plot style.</returns>
       public static object SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent, bool nativeCall)
       {
         var s = (LabelPlotStyle?)o ?? new LabelPlotStyle(info);
@@ -272,6 +320,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLabelStyle", 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotSupportedException("Serialization of old versions not supported, probably a programming error");
@@ -283,6 +332,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
                 */
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (LabelPlotStyle)XmlSerializationSurrogate0.SDeserialize(o, info, parent, false);
@@ -299,11 +349,17 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLabelStyle", 2)]
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         SSerialize(obj, info);
       }
 
+      /// <summary>
+      /// Serializes the specified legacy label plot style.
+      /// </summary>
+      /// <param name="obj">The object to serialize.</param>
+      /// <param name="info">The serialization target.</param>
       public static void SSerialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotSupportedException("Serialization of old versions not supported, probably a programming error");
@@ -324,11 +380,20 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
                 */
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return SDeserialize(o, info, parent, true);
       }
 
+      /// <summary>
+      /// Deserializes the specified legacy label plot style.
+      /// </summary>
+      /// <param name="o">The existing instance, if any.</param>
+      /// <param name="info">The deserialization source.</param>
+      /// <param name="parent">The parent object.</param>
+      /// <param name="nativeCall">If set to <see langword="true"/>, cached values are restored.</param>
+      /// <returns>The deserialized label plot style.</returns>
       public static object SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent, bool nativeCall)
       {
         var s = (LabelPlotStyle?)o ?? new LabelPlotStyle(info);
@@ -365,12 +430,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Plot.Styles.LabelPlotStyle", 3)]
     private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotSupportedException("Serialization of old versions not supported, probably a programming error");
         // SSerialize(obj, info);
       }
 
+      /// <summary>
+      /// Serializes the specified legacy label plot style.
+      /// </summary>
+      /// <param name="obj">The object to serialize.</param>
+      /// <param name="info">The serialization target.</param>
       public static void SSerialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version not allowed!");
@@ -390,11 +461,20 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
                 */
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return SDeserialize(o, info, parent, true);
       }
 
+      /// <summary>
+      /// Deserializes the specified legacy label plot style.
+      /// </summary>
+      /// <param name="o">The existing instance, if any.</param>
+      /// <param name="info">The deserialization source.</param>
+      /// <param name="parent">The parent object.</param>
+      /// <param name="nativeCall">If set to <see langword="true"/>, cached values are restored.</param>
+      /// <returns>The deserialized label plot style.</returns>
       public static object SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent, bool nativeCall)
       {
         var s = (LabelPlotStyle?)o ?? new LabelPlotStyle(info);
@@ -428,11 +508,17 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Plot.Styles.LabelPlotStyle", 4)]
     private class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         SSerialize(obj, info);
       }
 
+      /// <summary>
+      /// Serializes the specified legacy label plot style.
+      /// </summary>
+      /// <param name="obj">The object to serialize.</param>
+      /// <param name="info">The serialization target.</param>
       public static void SSerialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version not allowed!");
@@ -454,11 +540,20 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
                 */
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return SDeserialize(o, info, parent, true);
       }
 
+      /// <summary>
+      /// Deserializes the specified legacy label plot style.
+      /// </summary>
+      /// <param name="o">The existing instance, if any.</param>
+      /// <param name="info">The deserialization source.</param>
+      /// <param name="parent">The parent object.</param>
+      /// <param name="nativeCall">If set to <see langword="true"/>, cached values are restored.</param>
+      /// <returns>The deserialized label plot style.</returns>
       public static object SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent, bool nativeCall)
       {
         var s = (LabelPlotStyle?)o ?? new LabelPlotStyle(info);
@@ -495,11 +590,17 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LabelPlotStyle), 5)]
     private class XmlSerializationSurrogate5 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         SSerialize(obj, info);
       }
 
+      /// <summary>
+      /// Serializes the specified label plot style.
+      /// </summary>
+      /// <param name="obj">The object to serialize.</param>
+      /// <param name="info">The serialization target.</param>
       public static void SSerialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (LabelPlotStyle)obj;
@@ -537,11 +638,20 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         info.AddValueOrNull("Background", s._backgroundStyle);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return SDeserialize(o, info, parent, true);
       }
 
+      /// <summary>
+      /// Deserializes the specified label plot style.
+      /// </summary>
+      /// <param name="o">The existing instance, if any.</param>
+      /// <param name="info">The deserialization source.</param>
+      /// <param name="parent">The parent object.</param>
+      /// <param name="nativeCall">If set to <see langword="true"/>, cached values are restored.</param>
+      /// <returns>The deserialized label plot style.</returns>
       public static object SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent, bool nativeCall)
       {
         var s = (LabelPlotStyle?)o ?? new LabelPlotStyle(info);
@@ -593,6 +703,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #endregion Serialization
 
+    /// <summary>
+    /// Copies member values from another <see cref="LabelPlotStyle"/> instance.
+    /// </summary>
+    /// <param name="from">The source instance.</param>
+    /// <param name="copyWithDataReferences">If set to <see langword="true"/>, data references are copied as well.</param>
     [MemberNotNull(nameof(_font), nameof(_brush), nameof(_cachedStringFormat))]
     protected void CopyFrom(LabelPlotStyle from, bool copyWithDataReferences)
     {
@@ -640,6 +755,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <inheritdoc />
     public bool CopyFrom(object obj, bool copyWithDataReferences)
     {
       if (ReferenceEquals(this, obj))
@@ -691,11 +807,20 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       _cachedStringFormat = new StringFormat(StringFormatFlags.NoWrap);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LabelPlotStyle"/> class.
+    /// </summary>
+    /// <param name="context">The property context.</param>
     public LabelPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
   : this(null, context)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LabelPlotStyle"/> class.
+    /// </summary>
+    /// <param name="labelColumn">The label column.</param>
+    /// <param name="context">The property context.</param>
     public LabelPlotStyle(Altaxo.Data.IReadableColumn? labelColumn, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       _font = GraphDocument.GetDefaultFont(context);
@@ -710,11 +835,17 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       _cachedStringFormat = new StringFormat(StringFormatFlags.NoWrap);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LabelPlotStyle"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
+    /// <param name="copyWithDataReferences">If set to <c>true</c>, data references are copied.</param>
     public LabelPlotStyle(LabelPlotStyle from, bool copyWithDataReferences)
     {
       CopyFrom(from, copyWithDataReferences);
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_backgroundStyle is not null)
@@ -729,6 +860,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       EhSelfChanged(EventArgs.Empty);
     }
 
+    /// <summary>
+    /// Gets or sets the label-column proxy used internally by this style.
+    /// </summary>
     protected Altaxo.Data.IReadableColumnProxy? LabelColumnProxy
     {
       set
@@ -743,6 +877,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the label column.
+    /// </summary>
     public Altaxo.Data.IReadableColumn? LabelColumn
     {
       get
@@ -772,6 +909,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets the columns additionally used by this style.
+    /// </summary>
+    /// <returns>The additionally used columns.</returns>
     public IEnumerable<(
       string ColumnLabel, // Column label
       IReadableColumn? Column, // the column as it was at the time of this call
@@ -782,6 +923,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       yield return ("Label", LabelColumn, LabelColumnDataColumnName, (col) => LabelColumn = col);
     }
 
+    /// <summary>
+    /// Gets or sets the label format string.
+    /// </summary>
     public string? LabelFormatString
     {
       get
@@ -908,6 +1052,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the brush used for label text.
+    /// </summary>
     public BrushX LabelBrush
     {
       get
@@ -942,6 +1089,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the background color linkage.
+    /// </summary>
     public ColorLinkage BackgroundColorLinkage
     {
       get
@@ -1204,10 +1354,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Updates cached rendering values derived from the current style settings.
+    /// </summary>
     protected void SetCachedValues()
     {
     }
 
+    /// <inheritdoc />
     public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData? prevItemData, Processed2DPlotData? nextItemData)
     {
       // adjust the skip frequency if it was not set appropriate
@@ -1239,6 +1393,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Paints one plot range of labels.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="layer">The plot layer.</param>
+    /// <param name="range">The plot range.</param>
+    /// <param name="pdata">The processed plot data.</param>
     public void PaintOneRange(Graphics g, IPlotArea layer, IPlotRange range, Processed2DPlotData pdata)
     {
       if (!(_labelColumnProxy?.Document() is { } labelColumn))
@@ -1373,13 +1534,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
     /// <summary>
-    /// Paints one label.
+    /// Paints a single label.
     /// </summary>
-    /// <param name="g"></param>
-    /// <param name="label"></param>
-    /// <param name="symbolSize">Symbol size used to calculate the offset positions.</param>
-    /// <param name="variableTextBrush">If not null, this argument provides the text brush that should be used now. If null, then the <see cref="_brush"/> is used instead.</param>
-    /// <param name="variableBackBrush"></param>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="label">The label text.</param>
+    /// <param name="symbolSize">The symbol size used to calculate offsets.</param>
+    /// <param name="variableTextBrush">The optional text brush override.</param>
+    /// <param name="variableBackBrush">The optional background brush override.</param>
     public void PaintOneItem(Graphics g, string label, double symbolSize, BrushX? variableTextBrush, BrushX? variableBackBrush)
     {
       var fontSize = _font.Size;
@@ -1431,6 +1592,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <inheritdoc />
     public RectangleF PaintSymbol(System.Drawing.Graphics g, System.Drawing.RectangleF bounds)
     {
       return bounds;
@@ -1452,11 +1614,17 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region I2DPlotStyle Members
 
+    /// <summary>
+    /// Gets a value indicating whether this style can provide a color.
+    /// </summary>
     public bool IsColorProvider
     {
       get { return _independentColor == false; }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this style can receive a color.
+    /// </summary>
     public bool IsColorReceiver
     {
       get { return IndependentColor == false; }
@@ -1499,12 +1667,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region IG2DPlotStyle Members
 
+    /// <inheritdoc />
     public void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups)
     {
       if (IsColorProvider)
         ColorGroupStyle.AddExternalGroupStyle(externalGroups);
     }
 
+    /// <inheritdoc />
     public void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       if (IsColorProvider)
@@ -1514,6 +1684,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       IgnoreMissingDataPointsGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
     }
 
+    /// <inheritdoc />
     public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
     {
       if (IsColorProvider)
@@ -1532,6 +1703,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       IgnoreMissingDataPointsGroupStyle.PrepareStyle(externalGroups, localGroups, () => _ignoreMissingDataPoints);
     }
 
+    /// <inheritdoc />
     public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       // IgnoreMissingDataPoints is the same for all sub plot styles
@@ -1618,6 +1790,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region IRoutedPropertyReceiver Members
 
+    /// <inheritdoc />
     public IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName)
     {
       switch (propertyName)

@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -30,14 +30,21 @@ using Altaxo.Main;
 
 namespace Altaxo.Gui.Analysis.Fourier
 {
+  /// <summary>
+  /// Defines the view contract for editing one-dimensional real Fourier transformation options.
+  /// </summary>
   public interface IRealFourierTransformationView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="AnalysisRealFourierTransformationCommands.RealFourierTransformOptions"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IRealFourierTransformationView))]
   [UserControllerForObject(typeof(AnalysisRealFourierTransformationCommands.RealFourierTransformOptions))]
   public class RealFourierTransformationController : MVCANControllerEditOriginalDocBase<AnalysisRealFourierTransformationCommands.RealFourierTransformOptions, IRealFourierTransformationView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_outputQuantitiesController, () => OutputQuantitiesController = null);
@@ -47,17 +54,31 @@ namespace Altaxo.Gui.Analysis.Fourier
     #region Bindings
 
     string _columnToTransform;
+
+    /// <summary>
+    /// Gets the path of the column to transform.
+    /// </summary>
     public string ColumnToTransform
     {
       get => _columnToTransform;
     }
 
+    /// <summary>
+    /// Gets or sets the x increment text.
+    /// </summary>
     public string XIncrement { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the x increment has a warning.
+    /// </summary>
     public bool XIncrementWarning { get; set; }
 
 
     private EnumValueController _outputQuantitiesController;
 
+    /// <summary>
+    /// Gets or sets the controller for selecting output quantities.
+    /// </summary>
     public EnumValueController OutputQuantitiesController
     {
       get => _outputQuantitiesController;
@@ -73,6 +94,9 @@ namespace Altaxo.Gui.Analysis.Fourier
     }
     private EnumValueController  _outputPlacementController;
 
+    /// <summary>
+    /// Gets or sets the controller for selecting output placement.
+    /// </summary>
     public EnumValueController  OutputPlacementController
     {
       get => _outputPlacementController;
@@ -90,6 +114,7 @@ namespace Altaxo.Gui.Analysis.Fourier
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -110,6 +135,7 @@ namespace Altaxo.Gui.Analysis.Fourier
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (false == _outputQuantitiesController.Apply(disposeController))

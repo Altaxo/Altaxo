@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -33,19 +33,29 @@ using Altaxo.Units;
 namespace Altaxo.Gui.Science.Spectroscopy.Raman
 {
 
+  /// <summary>
+  /// View interface for editing <see cref="SiliconCalibrationOptions"/>.
+  /// </summary>
   public interface ISiliconCalibrationOptionsView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for editing <see cref="SiliconCalibrationOptions"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(ISiliconCalibrationOptionsView))]
   [UserControllerForObject(typeof(SiliconCalibrationOptions))]
   public class SiliconCalibrationOptionsController : MVCANControllerEditImmutableDocBase<SiliconCalibrationOptions, ISiliconCalibrationOptionsView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_peakFindingController, () => PeakFindingController = null);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SiliconCalibrationOptionsController"/> class.
+    /// </summary>
     public SiliconCalibrationOptionsController()
     {
       TemperatureEnvironment = new QuantityWithUnitGuiEnvironment(new IUnit[]
@@ -61,8 +71,14 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
 
     private DimensionfulQuantity _temperature;
 
+    /// <summary>
+    /// Gets the environment that provides selectable temperature units.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment TemperatureEnvironment { get; }
 
+    /// <summary>
+    /// Gets or sets the temperature.
+    /// </summary>
     public DimensionfulQuantity Temperature
     {
       get => _temperature;
@@ -78,6 +94,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
 
     private double _shiftTolerance;
 
+    /// <summary>
+    /// Gets or sets the tolerance for the relative shift.
+    /// </summary>
     public double ShiftTolerance
     {
       get => _shiftTolerance;
@@ -97,6 +116,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
 
     private PeakSearchingAndFittingOptionsController _peakFindingController;
 
+    /// <summary>
+    /// Gets or sets the controller used to edit peak searching and fitting options.
+    /// </summary>
     public PeakSearchingAndFittingOptionsController PeakFindingController
     {
       get => _peakFindingController;
@@ -115,6 +137,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -130,6 +153,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       PeakSearchingAndFittingOptions findOptions;

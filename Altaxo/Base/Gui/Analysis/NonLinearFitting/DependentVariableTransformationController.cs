@@ -36,10 +36,16 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
+  /// <summary>
+  /// Defines the view contract for editing dependent-variable transformations.
+  /// </summary>
   public interface IDependentVariableTransformationView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for editing a dependent-variable transformation.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IDependentVariableTransformationView))]
   public class DependentVariableTransformationController : MVCANControllerEditImmutableDocBase<IDoubleToDoubleTransformation?, IDependentVariableTransformationView>
   {
@@ -47,10 +53,18 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     protected SelectableListNodeList _availableTransformations = new SelectableListNodeList();
     string _variableName = "y";
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DependentVariableTransformationController"/> class.
+    /// </summary>
     public DependentVariableTransformationController()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DependentVariableTransformationController"/> class.
+    /// </summary>
+    /// <param name="doc">The transformation to edit.</param>
+    /// <param name="variableName">The dependent variable name.</param>
     public DependentVariableTransformationController(IDoubleToDoubleTransformation? doc, string variableName="y")
     {
       _doc = doc;
@@ -58,16 +72,19 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       Initialize(true);
     }
 
+    /// <inheritdoc/>
     protected override void CheckDocumentInitialized<T>([AllowNull, NotNull] ref T doc)
     {
     }
 
+    /// <inheritdoc/>
     protected override void ThrowIfNotInitialized()
     {
     }
 
     
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       if (IsDisposed)
@@ -79,11 +96,13 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -173,6 +192,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       Update();
     }
 
+    /// <summary>
+    /// Adds the selected transformation.
+    /// </summary>
     public void EhView_TransformationAddTo()
     {
       var node = _availableTransformations.FirstSelectedNode;
@@ -190,6 +212,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       Update();
     }
 
+    /// <summary>
+    /// Replaces the current transformation with the selected transformation.
+    /// </summary>
     public void EhView_TransformationAddAsSingle()
     {
       IsTransformationPopupOpen = false;
@@ -201,6 +226,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
     }
 
+    /// <summary>
+    /// Prepends the selected transformation.
+    /// </summary>
     public void EhView_TransformationAddAsPrepending()
     {
       IsTransformationPopupOpen = false;
@@ -213,6 +241,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
     }
 
+    /// <summary>
+    /// Appends the selected transformation.
+    /// </summary>
     public void EhView_TransformationAddAsAppending()
     {
       IsTransformationPopupOpen = false;
@@ -224,12 +255,18 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
     }
 
+    /// <summary>
+    /// Edits the current transformation.
+    /// </summary>
     public void EhView_TransformationEdit()
     {
       _doc = EditAvailableTransformation(_doc, out var wasEdited);
       Update();
     }
 
+    /// <summary>
+    /// Removes the current transformation.
+    /// </summary>
     public void EhView_TransformationErase()
     {
       _doc = null;
@@ -238,12 +275,18 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     #endregion Transformation
 
+    /// <summary>
+    /// Refreshes the text shown for the current transformation.
+    /// </summary>
     public void Update()
     {
       OnPropertyChanged(nameof(TransformationTextToShow));
       OnPropertyChanged(nameof(TransformationToolTip));
     }
 
+    /// <summary>
+    /// Gets the transformation text shown in the view.
+    /// </summary>
     public string TransformationTextToShow
     {
       get
@@ -259,6 +302,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
     }
 
+    /// <summary>
+    /// Gets the tooltip text for the current transformation.
+    /// </summary>
     public string TransformationToolTip
     {
       get
@@ -276,6 +322,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private bool _isTransformationPopupOpen;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the transformation popup is open.
+    /// </summary>
     public bool IsTransformationPopupOpen
     {
       get => _isTransformationPopupOpen;
@@ -289,11 +338,17 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
     }
 
+    /// <summary>
+    /// Gets the available transformations.
+    /// </summary>
     public SelectableListNodeList AvailableTransformations => _availableTransformations;
 
     #region ColumnAddTo command
 
     private ICommand _columnAddToCommand;
+    /// <summary>
+    /// Gets the command for adding the selected transformation.
+    /// </summary>
     public ICommand ColumnAddToCommand
     {
       get
@@ -308,6 +363,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private ICommand _transformationEditCommand;
 
+    /// <summary>
+    /// Gets the command for editing the current transformation.
+    /// </summary>
     public ICommand TransformationEditCommand
     {
       get
@@ -324,6 +382,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private ICommand _transformationEraseCommand;
 
+    /// <summary>
+    /// Gets the command for erasing the current transformation.
+    /// </summary>
     public ICommand TransformationEraseCommand
     {
       get
@@ -340,6 +401,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private ICommand _transformationAddAsSingleCommand;
 
+    /// <summary>
+    /// Gets the command for replacing the current transformation.
+    /// </summary>
     public ICommand TransformationAddAsSingleCommand
     {
       get
@@ -354,6 +418,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private ICommand _transformationAddAsPrependingCommand;
 
+    /// <summary>
+    /// Gets the command for prepending a transformation.
+    /// </summary>
     public ICommand TransformationAddAsPrependingCommand
     {
       get
@@ -369,6 +436,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private ICommand _transformationAddAsAppendingCommand;
 
+    /// <summary>
+    /// Gets the command for appending a transformation.
+    /// </summary>
     public ICommand TransformationAddAsAppendingCommand
     {
       get
@@ -382,6 +452,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     #region CmdCloseTransformationPopup
 
     ICommand _cmdCloseTransformationPopup;
+    /// <summary>
+    /// Gets the command for closing the transformation popup.
+    /// </summary>
     public ICommand CmdCloseTransformationPopup => _cmdCloseTransformationPopup ??= new RelayCommand(() => IsTransformationPopupOpen = false);
 
     #endregion
@@ -389,10 +462,17 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     #region AvailableTransformations drag handler
 
     AvailableTransformationsDragHandlerImpl _availableTransformationDragHandler;
+    /// <summary>
+    /// Gets the drag handler for available transformations.
+    /// </summary>
     public AvailableTransformationsDragHandlerImpl AvailableTransformationDragHandler => _availableTransformationDragHandler ??= new AvailableTransformationsDragHandlerImpl();
 
+    /// <summary>
+    /// Drag handler for available transformations.
+    /// </summary>
     public class AvailableTransformationsDragHandlerImpl : IMVVMDragHandler
     {
+      /// <inheritdoc/>
       public bool CanStartDrag(IEnumerable items)
       {
         var selNode = items.OfType<SelectableListNode>().FirstOrDefault();
@@ -402,6 +482,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
      
 
+      /// <inheritdoc/>
       public void StartDrag(IEnumerable items, out object data, out bool canCopy, out bool canMove)
       {
         var node = items.OfType<SelectableListNode>().FirstOrDefault();
@@ -410,11 +491,13 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         canMove = true;
       }
 
+      /// <inheritdoc/>
       public void DragCancelled()
       {
         
       }
 
+      /// <inheritdoc/>
       public void DragEnded(bool isCopy, bool isMove)
       {
         
@@ -427,17 +510,27 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 
     private ColumnDropHandlerImpl _columnDropHandler;
+    /// <summary>
+    /// Gets the drop handler for transformations.
+    /// </summary>
     public ColumnDropHandlerImpl ColumnDropHandler => _columnDropHandler ??= new ColumnDropHandlerImpl(this);
 
+    /// <summary>
+    /// Drop handler for adding transformations.
+    /// </summary>
     public class ColumnDropHandlerImpl : IMVVMDropHandler
     {
       DependentVariableTransformationController _parent;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ColumnDropHandlerImpl"/> class.
+      /// </summary>
       public ColumnDropHandlerImpl(DependentVariableTransformationController parent)
       {
         _parent = parent;
       }
 
+      /// <inheritdoc/>
       public void DropCanAcceptData(object data, object targetItem, DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool canCopy, out bool canMove, out bool itemIsSwallowingData)
       {
         // investigate data
@@ -447,6 +540,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
 
 
+      /// <inheritdoc/>
       public void Drop(object data, object targetItem, DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool isCopy, out bool isMove)
       {
         if (data is Type)

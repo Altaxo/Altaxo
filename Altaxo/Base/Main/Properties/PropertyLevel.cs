@@ -45,13 +45,13 @@ namespace Altaxo.Main.Properties
     /// <summary>Property is intended for the project folder level (folder properties, including the root folder).</summary>
     ProjectFolder = 0x04,
 
-    /// <summary>Property is intended for a specific document. Further information on the specific type of document is neccessary from elsewhere.</summary>
+    /// <summary>Property is intended for a specific document. Further information about the specific type of document is necessary from elsewhere.</summary>
     Document = 0x08,
 
     /// <summary>Property is intended for Application, Project and ProjectFolder level.</summary>
     AllUpToFolder = 0x07,
 
-    /// <summary>Property is intended for Application, Project and ProjectFolder level and for a document item. Further information on the specific type of document is neccessary from elsewhere.</summary>
+    /// <summary>Property is intended for application, project, project-folder, and document levels. Further information about the specific document type is necessary from elsewhere.</summary>
     All = 0x0F,
   }
 }

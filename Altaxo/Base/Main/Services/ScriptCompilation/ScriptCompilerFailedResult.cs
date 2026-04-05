@@ -29,12 +29,21 @@ using System.Reflection;
 
 namespace Altaxo.Main.Services.ScriptCompilation
 {
+  /// <summary>
+  /// Represents an unsuccessful script compilation result.
+  /// </summary>
   public class ScriptCompilerFailedResult : IScriptCompilerFailedResult
   {
+    /// <summary>
+    /// Gets the compiled source texts and hash.
+    /// </summary>
     public CodeTextsWithHash CodeText { get; private set; }
 
     private ImmutableArray<ICompilerDiagnostic> _compileErrors;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScriptCompilerFailedResult"/> class.
+    /// </summary>
     public ScriptCompilerFailedResult(CodeTextsWithHash scriptText, IEnumerable<ICompilerDiagnostic> compileErrors)
     {
       CodeText = scriptText ?? throw new ArgumentNullException(nameof(scriptText));
@@ -43,6 +52,7 @@ namespace Altaxo.Main.Services.ScriptCompilation
 
     #region IScriptCompilerResult Members
 
+    /// <inheritdoc/>
     public string ScriptTextHash
     {
       get
@@ -51,6 +61,7 @@ namespace Altaxo.Main.Services.ScriptCompilation
       }
     }
 
+    /// <inheritdoc/>
     public Assembly? ScriptAssembly
     {
       get
@@ -59,6 +70,7 @@ namespace Altaxo.Main.Services.ScriptCompilation
       }
     }
 
+    /// <inheritdoc/>
     public int ScriptTextCount
     {
       get
@@ -67,11 +79,13 @@ namespace Altaxo.Main.Services.ScriptCompilation
       }
     }
 
+    /// <inheritdoc/>
     public string ScriptText(int i)
     {
       return CodeText.CodeTexts[i];
     }
 
+    /// <inheritdoc/>
     public IReadOnlyList<ICompilerDiagnostic> CompileErrors
     {
       get

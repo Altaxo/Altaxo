@@ -46,7 +46,7 @@ namespace Altaxo.Main.Services
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TimerQueue"/> class. This
-    /// constructur needs the <see cref="IHighResolutionClock"/> service to be present.
+    /// constructor needs the <see cref="IHighResolutionClock"/> service to be present.
     /// </summary>
     public TimerQueue()
       : this(Current.GetRequiredService<IHighResolutionClock>())
@@ -57,7 +57,7 @@ namespace Altaxo.Main.Services
     /// Initializes a new instance of the <see cref="TimerQueue"/> class.
     /// </summary>
     /// <param name="clock">The underlying high resolution clock.</param>
-    /// <exception cref="System.ArgumentNullException">Argument clock is null</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="clock"/> is <c>null</c>.</exception>
     public TimerQueue(IHighResolutionClock clock)
     {
       _clock = clock ?? throw new ArgumentNullException("clock");
@@ -72,6 +72,7 @@ namespace Altaxo.Main.Services
     /// <value>
     /// The elapsed time.
     /// </value>
+    /// <inheritdoc/>
     public TimeSpan CurrentTime
     {
       get
@@ -95,7 +96,7 @@ namespace Altaxo.Main.Services
     /// </summary>
     /// <param name="time">The time when to trigger the action.</param>
     /// <param name="action">The action. Can be a single or a multicast delegate. First argument is the token for the timer queue, second argument is the due time.</param>
-    /// <param name="token"></param>
+    /// <param name="token">The token identifying the queued item.</param>
     public bool TryAdd(object token, TimeSpan time, Action<object, TimeSpan> action)
     {
       if (_items.TryAdd(token, time, action))
@@ -109,6 +110,7 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <inheritdoc/>
     public bool AddOrUpdate(object token, TimeSpan time, Action<object, TimeSpan> action)
     {
       var result = _items.AddOrUpdate(token, time, action);
@@ -121,7 +123,7 @@ namespace Altaxo.Main.Services
     /// </summary>
     /// <param name="token">The token that identifies the item.</param>
     /// <param name="time">The new due time.</param>
-    /// <returns><c>True</c> if the change was sucessfull; <c>false</c> if the item was not in the queue.</returns>
+    /// <returns><c>true</c> if the change was successful; otherwise, <c>false</c>.</returns>
     public bool TryUpdateTime(object token, TimeSpan time)
     {
       if (_items.TryUpdateKey(token, time))
@@ -140,7 +142,7 @@ namespace Altaxo.Main.Services
     /// </summary>
     /// <param name="token">The token to identify the item.</param>
     /// <param name="dueTime">On success,  contains the removed item.</param>
-    /// <returns><c>True</c> if the item could be sucessfully removed; <c>false</c> if the item was not in the queue.</returns>
+    /// <returns><c>true</c> if the item could be successfully removed; otherwise, <c>false</c>.</returns>
     public bool TryRemove(object token, out TimeSpan dueTime)
     {
       return _items.TryRemove(token, out dueTime);
@@ -150,7 +152,7 @@ namespace Altaxo.Main.Services
     /// Tries the remove an item identified by a token from the queue.
     /// </summary>
     /// <param name="token">The token to identify the item.</param>
-    /// <returns><c>True</c> if the item could be sucessfully removed; <c>false</c> if the item was not in the queue.</returns>
+    /// <returns><c>true</c> if the item could be successfully removed; otherwise, <c>false</c>.</returns>
     public bool TryRemove(object token)
     {
       return _items.TryRemove(token);
@@ -183,6 +185,7 @@ namespace Altaxo.Main.Services
 
     #region IDisposable
 
+    /// <inheritdoc/>
     protected override void Dispose(bool disposing)
     {
       if (!_isDisposed)

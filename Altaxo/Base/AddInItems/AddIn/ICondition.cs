@@ -22,27 +22,39 @@ using System;
 namespace Altaxo.AddInItems
 {
   /// <summary>
-  /// Default actions, when a condition is failed.
+  /// Default actions when a condition fails.
   /// </summary>
   public enum ConditionFailedAction
   {
+    /// <summary>
+    /// Performs no action.
+    /// </summary>
     Nothing,
+    /// <summary>
+    /// Excludes the affected item.
+    /// </summary>
     Exclude,
+    /// <summary>
+    /// Disables the affected item.
+    /// </summary>
     Disable
   }
 
   /// <summary>
-  /// Interface for single condition or complex condition.
+  /// Represents a single condition or a complex condition.
   /// </summary>
   public interface ICondition
   {
+    /// <summary>
+    /// Gets the condition name.
+    /// </summary>
     string Name
     {
       get;
     }
 
     /// <summary>
-    /// Returns the action which occurs, when this condition fails.
+    /// Gets or sets the action that occurs when this condition fails.
     /// </summary>
     ConditionFailedAction Action
     {
@@ -51,8 +63,10 @@ namespace Altaxo.AddInItems
     }
 
     /// <summary>
-    /// Returns true, when the condition is valid otherwise false.
+    /// Determines whether the condition is valid for the specified parameter.
     /// </summary>
+    /// <param name="parameter">The parameter to validate against the condition.</param>
+    /// <returns><see langword="true"/> if the condition is valid; otherwise, <see langword="false"/>.</returns>
     bool IsValid(object? parameter);
   }
 }

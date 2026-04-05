@@ -31,6 +31,9 @@ using Altaxo.Data;
 
 namespace Altaxo.Gui.Graph.Plot.Data
 {
+  /// <summary>
+  /// Stores information about a plot column and its optional transformation.
+  /// </summary>
   public class PlotColumnInformation
   {
     /// <summary>
@@ -48,17 +51,40 @@ namespace Altaxo.Gui.Graph.Plot.Data
     /// </summary>
     protected string _nameOfUnderlyingDataColumn;
 
+    /// <summary>
+    /// The underlying column without any transformation applied.
+    /// </summary>
     protected IReadableColumn _underlyingColumn;
+
+    /// <summary>
+    /// The transformation applied to the underlying column.
+    /// </summary>
     protected IVariantToVariantTransformation _transformation;
 
     // Data for the control
+    /// <summary>
+    /// The text shown in the plot column box.
+    /// </summary>
     protected string _plotColumnBoxText;
 
+    /// <summary>
+    /// The tooltip shown for the plot column box.
+    /// </summary>
     protected string _plotColumnToolTip;
 
+    /// <summary>
+    /// The visual state of the plot column box.
+    /// </summary>
     protected PlotColumnControlState _plotColumnBoxState;
 
+    /// <summary>
+    /// The text shown in the transformation box.
+    /// </summary>
     protected string _transformationBoxText;
+
+    /// <summary>
+    /// The tooltip shown for the transformation box.
+    /// </summary>
     protected string _transformationToolTip;
 
     /// <summary>
@@ -66,10 +92,18 @@ namespace Altaxo.Gui.Graph.Plot.Data
     /// </summary>
     protected PlotColumnControlState _plotColumnBoxStateIfColumnIsMissing = PlotColumnControlState.Normal;
 
+    /// <summary>
+    /// Indicates whether the information has changed.
+    /// </summary>
     protected bool _isDirty;
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PlotColumnInformation"/> class.
+    /// </summary>
+    /// <param name="column">The initial column.</param>
+    /// <param name="nameOfUnderlyingDataColumn">The name of the underlying data column.</param>
     public PlotColumnInformation(IReadableColumn column, string nameOfUnderlyingDataColumn)
     {
       _nameOfUnderlyingDataColumn = nameOfUnderlyingDataColumn;
@@ -118,6 +152,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
       }
     }
 
+    /// <summary>
+    /// Gets the underlying column without applying a transformation.
+    /// </summary>
     public IReadableColumn UnderlyingColumn
     {
       get
@@ -207,6 +244,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     #endregion properties to use with Gui controls
 
+    /// <summary>
+    /// Called when the column information has changed.
+    /// </summary>
     protected virtual void OnChanged()
     {
     }

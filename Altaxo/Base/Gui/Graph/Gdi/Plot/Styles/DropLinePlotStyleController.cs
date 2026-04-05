@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -40,7 +40,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
 
   /// <summary>
-  /// This view interface is for showing the options of the XYXYPlotScatterStyle
+  /// Provides the view contract for <see cref="DropLinePlotStyleController"/>.
   /// </summary>
   public interface IDropLinePlotStyleView : IDataContextAwareView
   {
@@ -49,7 +49,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
   
 
   /// <summary>
-  /// Summary description for XYPlotScatterStyleController.
+  /// Controller for <see cref="DropLinePlotStyle"/>.
   /// </summary>
   [UserControllerForObject(typeof(DropLinePlotStyle))]
   [ExpectedTypeOfView(typeof(IDropLinePlotStyleView))]
@@ -60,6 +60,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
    
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break; // no subcontrollers
@@ -69,6 +70,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _independentSkipFrequency;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool IndependentSkipFrequency
     {
       get => _independentSkipFrequency;
@@ -84,6 +88,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private int _SkipFrequency;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public int SkipFrequency
     {
       get => _SkipFrequency;
@@ -100,6 +107,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _ignoreMissingDataPoints;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool IgnoreMissingDataPoints
     {
       get => _ignoreMissingDataPoints;
@@ -116,6 +126,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _independentOnShiftingGroupStyles;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool IndependentOnShiftingGroupStyles
     {
       get => _independentOnShiftingGroupStyles;
@@ -131,6 +144,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private SelectableListNodeList _dropLineChoices;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public SelectableListNodeList DropLineChoices
     {
       get => _dropLineChoices;
@@ -147,6 +163,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _enableUserDefinedDropTarget;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool EnableUserDefinedDropTarget
     {
       get => _enableUserDefinedDropTarget;
@@ -162,6 +181,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private int _userDefinedDropTargetAxis = 2;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public int UserDefinedDropTargetAxis
     {
       get => _userDefinedDropTargetAxis;
@@ -177,6 +199,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _UserDefinedPhysicalBaseValue;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool UserDefinedPhysicalBaseValue
     {
       get => _UserDefinedPhysicalBaseValue;
@@ -192,6 +217,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private double  _userDefinedBaseValue;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public double  UserDefinedBaseValue
     {
       get => _userDefinedBaseValue;
@@ -208,6 +236,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _independentColor;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool IndependentColor
     {
       get => _independentColor;
@@ -225,6 +256,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _independentSymbolSize;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool IndependentSymbolSize
     {
       get => _independentSymbolSize;
@@ -238,11 +272,17 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the s ym bo ls iz ee nv ir on me nt.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment SymbolSizeEnvironment => LineCapSizeEnvironment.Instance;
 
 
     private DimensionfulQuantity _symbolSize;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity SymbolSize
     {
       get => _symbolSize;
@@ -256,10 +296,16 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the l in ew id th en vi ro nm en t.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment LineWidthEnvironment => LineCapSizeEnvironment.Instance;
 
     private DimensionfulQuantity _lineWidth1Offset;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity LineWidth1Offset
     {
       get => _lineWidth1Offset;
@@ -273,10 +319,16 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the l in ef ac to re nv ir on me nt.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment LineFactorEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _lineWidth1Factor;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity LineWidth1Factor
     {
       get => _lineWidth1Factor;
@@ -292,6 +344,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private DimensionfulQuantity _GapAtStartOffset;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity GapAtStartOffset
     {
       get => _GapAtStartOffset;
@@ -307,6 +362,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private DimensionfulQuantity _GapAtStartFactor;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity GapAtStartFactor
     {
       get => _GapAtStartFactor;
@@ -322,6 +380,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private DimensionfulQuantity _GapAtEndOffset;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity GapAtEndOffset
     {
       get => _GapAtEndOffset;
@@ -337,6 +398,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private DimensionfulQuantity _GapAtEndFactor;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity GapAtEndFactor
     {
       get => _GapAtEndFactor;
@@ -352,6 +416,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private PenAllPropertiesController _pen;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public PenAllPropertiesController Pen
     {
       get => _pen;
@@ -368,6 +435,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     #endregion
 
+ 
+ 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       _colorGroupStyleTracker = null;
@@ -377,6 +447,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       base.Dispose(isDisposing);
     }
 
+ 
+ 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -419,6 +492,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
     }
 
+ 
+ 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       // don't trust user input, so all into a try statement
@@ -463,6 +539,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       return ApplyEnd(true, disposeController);
     }
 
+    /// <summary>
+    /// Initializes the d ro pl in ec ho ic es.
+    /// </summary>
     public void InitializeDropLineChoices()
     {
       var layer = AbsoluteDocumentPath.GetRootNodeImplementing<XYPlotLayer>(_doc);

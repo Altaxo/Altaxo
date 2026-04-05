@@ -31,6 +31,9 @@ using System.Text;
 
 namespace Altaxo.Graph.Scales
 {
+  /// <summary>
+  /// Represents an angular scale that uses radians.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Graph.Scales.AngularRadianScale}")]
   public class AngularRadianScale : AngularScale
   {
@@ -39,12 +42,14 @@ namespace Altaxo.Graph.Scales
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AngularRadianScale), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         info.AddBaseValueEmbedded(obj, typeof(AngularScale));
         var s = (AngularRadianScale)obj;
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         AngularRadianScale s = SDeserialize(o, info, parent);
@@ -69,21 +74,30 @@ namespace Altaxo.Graph.Scales
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AngularRadianScale"/> class.
+    /// </summary>
     public AngularRadianScale()
       : base(new Ticks.AngularRadianTickSpacing())
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AngularRadianScale"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public AngularRadianScale(AngularRadianScale from)
       : base(from)
     {
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new AngularRadianScale(this);
     }
 
+    /// <inheritdoc />
     protected override bool UseDegree
     {
       get { return false; }

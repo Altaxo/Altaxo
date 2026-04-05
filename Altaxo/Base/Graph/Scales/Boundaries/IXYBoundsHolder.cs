@@ -28,7 +28,7 @@ using System;
 namespace Altaxo.Graph.Scales.Boundaries
 {
   /// <summary>
-  /// Implemented by objects that hold x bounds and y bounds, for instance XYPlotAssociations.
+  /// Implemented by objects that hold X and Y bounds, for instance XY plot associations.
   /// </summary>
   public interface IXYBoundsHolder : IXBoundsHolder, IYBoundsHolder
   {

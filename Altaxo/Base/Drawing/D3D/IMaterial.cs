@@ -34,7 +34,7 @@ using Altaxo.Geometry;
 namespace Altaxo.Drawing.D3D
 {
   /// <summary>
-  /// Interface for material used in 3D geometry.
+  /// Interface for materials used in 3D geometry.
   /// </summary>
   /// <seealso cref="Altaxo.Main.IImmutable" />
   /// <seealso cref="System.IEquatable{T}" />

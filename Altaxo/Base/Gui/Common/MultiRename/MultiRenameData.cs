@@ -29,12 +29,12 @@ using System.Collections.Generic;
 namespace Altaxo.Gui.Common.MultiRename
 {
   /// <summary>
-  /// Data neccessary to rename a list of objects (but can also used for instance for exporting a list of objects). The idea behind is to have a bunch of shortcuts, like [N], that can be used as variables for the rename operation.
+  /// Data necessary to rename a list of objects, but it can also be used, for instance, for exporting a list of objects. The idea is to have a set of shortcuts, like [N], that can be used as variables for the rename operation.
   /// Since using this class is somewhat complex, see the remarks for the details.
   /// </summary>
   /// <remarks>
-  /// Momentarily, four different types of shortcuts are implemented:
-  /// An Integer shortcut provide a number, a string shortcuts provides a string, a DateTime shortcut a DateTime value and an Array shortcut provides a string array.
+  /// Currently, four different types of shortcuts are implemented:
+  /// an integer shortcut provides a number, a string shortcut provides a string, a <see cref="DateTime"/> shortcut provides a <see cref="DateTime"/> value, and an array shortcut provides a string array.
   /// In order to use this class for rename operations, after creating an instance of this class you have to:
   /// <list type="bullet">
   /// <item><description>Add some objects that you want to process (rename etc.) with <see cref="AddObjectsToRename"/></description></item>
@@ -171,7 +171,7 @@ namespace Altaxo.Gui.Common.MultiRename
       get { return _columnsOfObjectInformation; }
     }
 
-    /// <summary>Return the number of objects to be processed (renamed etc).</summary>
+    /// <summary>Returns the number of objects to be processed, for example renamed.</summary>
     public int ObjectsToRenameCount
     {
       get
@@ -353,7 +353,7 @@ namespace Altaxo.Gui.Common.MultiRename
     /// </summary>
     /// <param name="columnNumber">Column number of the list.</param>
     /// <param name="rowNumber">Index of the object in the internal list (index before some sort).</param>
-    /// <returns></returns>
+    /// <returns>The value shown in the specified list cell.</returns>
     public string GetListValue(int columnNumber, int rowNumber)
     {
       return _columnsOfObjectInformation[columnNumber].Value(_objectsToRename[rowNumber], string.Empty);

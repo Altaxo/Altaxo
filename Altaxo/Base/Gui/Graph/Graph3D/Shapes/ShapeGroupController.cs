@@ -35,19 +35,29 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Graph3D.Shapes
 {
+  /// <summary>
+  /// Provides the view for editing 3D shape groups.
+  /// </summary>
   public interface IShapeGroupView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controls the editing of <see cref="ShapeGroup"/> instances.
+  /// </summary>
   [UserControllerForObject(typeof(ShapeGroup))]
   [ExpectedTypeOfView(typeof(IShapeGroupView))]
   public class ShapeGroupController : MVCANControllerEditOriginalDocBase<ShapeGroup, IShapeGroupView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_locationController, () => LocationController = null);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ShapeGroupController"/> class.
+    /// </summary>
     public ShapeGroupController()
     {
       CmdEditItem = new RelayCommand(EhEditSelectedItem);
@@ -55,11 +65,17 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the command that edits the selected grouped item.
+    /// </summary>
     public System.Windows.Input.ICommand CmdEditItem { get; }
 
 
     private IMVCANController _locationController;
 
+    /// <summary>
+    /// Gets or sets the controller used to edit the group location.
+    /// </summary>
     public IMVCANController LocationController
     {
       get => _locationController;
@@ -76,6 +92,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
 
     private ItemsController<GraphicBase> _groupedItems;
 
+    /// <summary>
+    /// Gets or sets the grouped items shown by the controller.
+    /// </summary>
     public ItemsController<GraphicBase> GroupedItems
     {
       get => _groupedItems;
@@ -93,12 +112,14 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
     #endregion
 
 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       GroupedItems = null;
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -121,6 +142,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (!_locationController.Apply(disposeController))

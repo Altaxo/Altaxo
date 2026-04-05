@@ -59,6 +59,9 @@ namespace Altaxo.Serialization
       }
     }
 
+    /// <summary>
+    /// Gets or sets the culture used for GUI conversion.
+    /// </summary>
     public static System.Globalization.CultureInfo CultureSettings
     {
       get
@@ -73,6 +76,12 @@ namespace Altaxo.Serialization
       }
     }
 
+    /// <summary>
+    /// Converts a number into a string using an engineering prefix and unit.
+    /// </summary>
+    /// <param name="number">The number to format.</param>
+    /// <param name="unit">The unit suffix.</param>
+    /// <returns>The formatted number string.</returns>
     public static string ToNumberStringWithUnit(double number, string unit)
     {
       int l = (int)Math.Floor(Math.Log10(Math.Abs(number)) / 3);
@@ -128,6 +137,11 @@ namespace Altaxo.Serialization
       return m.ToString(_cultureSettings) + " " + pre + unit;
     }
 
+    /// <summary>
+    /// Converts a number to a string, or returns <c>null</c> if the value is <see cref="double.NaN"/>.
+    /// </summary>
+    /// <param name="val">The value to format.</param>
+    /// <returns>The formatted number string, or <c>null</c>.</returns>
     public static string? ToNumberStringNullIfNaN(double val)
     {
       if (double.IsNaN(val))
@@ -159,6 +173,9 @@ namespace Altaxo.Serialization
       return DateTime.TryParse(s, _cultureSettings, System.Globalization.DateTimeStyles.AssumeLocal, out val);
     }
 
+    /// <summary>
+    /// Converts the specified date/time to a culture-dependent string.
+    /// </summary>
     public static string ToString(DateTime o)
     {
       return o.ToString(_cultureSettings);
@@ -185,6 +202,9 @@ namespace Altaxo.Serialization
       return TimeSpan.TryParse(s, _cultureSettings.DateTimeFormat, out val);
     }
 
+    /// <summary>
+    /// Converts the specified time span to a culture-dependent string.
+    /// </summary>
     public static string ToString(TimeSpan o)
     {
       return o.ToString(string.Empty, _cultureSettings);
@@ -215,6 +235,12 @@ namespace Altaxo.Serialization
       return double.TryParse(s, System.Globalization.NumberStyles.Float, _cultureSettings, out val);
     }
 
+    /// <summary>
+    /// Determines whether the specified string represents a <see cref="double"/> value or an empty value.
+    /// </summary>
+    /// <param name="s">The string to parse.</param>
+    /// <param name="val">The parsed nullable value.</param>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public static bool IsDoubleOrNull(string s, out double? val)
     {
       if (string.IsNullOrEmpty(s))
@@ -237,6 +263,12 @@ namespace Altaxo.Serialization
       }
     }
 
+    /// <summary>
+    /// Determines whether the specified string represents an <see cref="int"/> value or an empty value.
+    /// </summary>
+    /// <param name="s">The string to parse.</param>
+    /// <param name="val">The parsed nullable value.</param>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public static bool IsInt32OrNull(string s, out int? val)
     {
       if (string.IsNullOrEmpty(s))
@@ -259,11 +291,21 @@ namespace Altaxo.Serialization
       }
     }
 
+    /// <summary>
+    /// Converts a <see cref="double"/> value to a culture-aware string.
+    /// </summary>
+    /// <param name="val">The value to convert.</param>
+    /// <returns>The formatted string.</returns>
     public static string ToString(double val)
     {
       return val.ToString(_cultureSettings);
     }
 
+    /// <summary>
+    /// Converts a nullable <see cref="double"/> value to a culture-aware string.
+    /// </summary>
+    /// <param name="val">The value to convert.</param>
+    /// <returns>The formatted string, or an empty string for <see langword="null"/>.</returns>
     public static string ToString(double? val)
     {
       if (val is null)
@@ -272,11 +314,23 @@ namespace Altaxo.Serialization
         return ((double)val).ToString(_cultureSettings);
     }
 
+    /// <summary>
+    /// Converts a <see cref="double"/> value to a culture-aware string with the specified accuracy.
+    /// </summary>
+    /// <param name="val">The value to convert.</param>
+    /// <param name="accuracy">The number of significant digits.</param>
+    /// <returns>The formatted string.</returns>
     public static string ToString(double val, int accuracy)
     {
       return val.ToString("G" + accuracy.ToString(), _cultureSettings);
     }
 
+    /// <summary>
+    /// Converts a <see cref="double"/> value to a culture-aware string using the specified format string.
+    /// </summary>
+    /// <param name="val">The value to convert.</param>
+    /// <param name="format">The format string.</param>
+    /// <returns>The formatted string.</returns>
     public static string ToString(double val, string format)
     {
       return val.ToString(format, _cultureSettings);
@@ -295,6 +349,11 @@ namespace Altaxo.Serialization
         }
         */
 
+    /// <summary>
+    /// Converts a collection of <see cref="double"/> values to a space-separated string.
+    /// </summary>
+    /// <param name="vals">The values to convert.</param>
+    /// <returns>The formatted string.</returns>
     public static string ToString(ICollection<double> vals)
     {
       var stb = new StringBuilder();
@@ -306,6 +365,12 @@ namespace Altaxo.Serialization
       return stb.ToString().TrimEnd();
     }
 
+    /// <summary>
+    /// Tries to parse multiple floating-point values from a delimited string.
+    /// </summary>
+    /// <param name="s">The input string.</param>
+    /// <param name="vals">The parsed values.</param>
+    /// <returns><see langword="true"/> if all values were parsed successfully; otherwise, <see langword="false"/>.</returns>
     public static bool TryParseMultipleDouble(string s, [MaybeNullWhen(false)] out double[] vals)
     {
       vals = null;
@@ -348,11 +413,21 @@ namespace Altaxo.Serialization
       return int.TryParse(s, System.Globalization.NumberStyles.Integer, _cultureSettings, out val);
     }
 
+    /// <summary>
+    /// Converts an <see cref="int"/> value to a culture-aware string.
+    /// </summary>
+    /// <param name="val">The value to convert.</param>
+    /// <returns>The formatted string.</returns>
     public static string ToString(int val)
     {
       return val.ToString(_cultureSettings);
     }
 
+    /// <summary>
+    /// Converts a nullable <see cref="int"/> value to a culture-aware string.
+    /// </summary>
+    /// <param name="val">The value to convert.</param>
+    /// <returns>The formatted string, or an empty string for <see langword="null"/>.</returns>
     public static string ToString(int? val)
     {
       if (val is null)
@@ -361,6 +436,11 @@ namespace Altaxo.Serialization
         return ((int)val).ToString(_cultureSettings);
     }
 
+    /// <summary>
+    /// Converts an array of <see cref="int"/> values to a space-separated string.
+    /// </summary>
+    /// <param name="vals">The values to convert.</param>
+    /// <returns>The formatted string.</returns>
     public static string ToString(int[] vals)
     {
       var stb = new StringBuilder();
@@ -372,6 +452,11 @@ namespace Altaxo.Serialization
       return stb.ToString().TrimEnd();
     }
 
+    /// <summary>
+    /// Converts a collection of <see cref="int"/> values to a space-separated string.
+    /// </summary>
+    /// <param name="vals">The values to convert.</param>
+    /// <returns>The formatted string.</returns>
     public static string ToString(ICollection<int> vals)
     {
       var stb = new StringBuilder();
@@ -383,6 +468,12 @@ namespace Altaxo.Serialization
       return stb.ToString().TrimEnd();
     }
 
+    /// <summary>
+    /// Tries to parse multiple integer values from a delimited string.
+    /// </summary>
+    /// <param name="s">The input string.</param>
+    /// <param name="vals">The parsed values.</param>
+    /// <returns><see langword="true"/> if all values were parsed successfully; otherwise, <see langword="false"/>.</returns>
     public static bool TryParseMultipleInt32(string s, [MaybeNullWhen(false)] out int[] vals)
     {
       vals = null;

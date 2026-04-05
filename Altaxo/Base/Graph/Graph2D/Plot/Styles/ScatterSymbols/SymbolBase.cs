@@ -33,6 +33,9 @@ using Altaxo.Graph.Graph2D.Plot.Groups;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
+  /// <summary>
+  /// Provides shared constants and serialization helpers for scatter symbols.
+  /// </summary>
   public abstract class SymbolBase
   {
     /// <summary>
@@ -55,6 +58,11 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 
     #region Serialization
 
+    /// <summary>
+    /// Serializes the relation between a scatter symbol and its parent symbol set.
+    /// </summary>
+    /// <param name="obj">The scatter symbol to serialize.</param>
+    /// <param name="info">The serialization information.</param>
     protected static void SerializeSetV0(IScatterSymbol obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
       var parent = ScatterSymbolListManager.Instance.GetParentList(obj);
@@ -67,6 +75,14 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       }
     }
 
+    /// <summary>
+    /// Deserializes the relation between a scatter symbol and its parent symbol set.
+    /// </summary>
+    /// <typeparam name="TItem">The scatter symbol type.</typeparam>
+    /// <param name="instanceTemplate">The instance template to use if no set relation is stored.</param>
+    /// <param name="info">The deserialization information.</param>
+    /// <param name="parent">The parent object in the serialization graph.</param>
+    /// <returns>The deserialized scatter symbol instance.</returns>
     protected static TItem DeserializeSetV0<TItem>(TItem instanceTemplate, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent) where TItem : IScatterSymbol
     {
       if (info.CurrentElementName == "Set")

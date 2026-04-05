@@ -52,9 +52,13 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <summary>
     /// 2015-11-14 initial version
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="AxisStyleCollection"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisStyleCollection), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (AxisStyleCollection)obj;
@@ -81,6 +85,7 @@ namespace Altaxo.Graph.Graph3D.Axis
         return s;
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         AxisStyleCollection s = SDeserialize(o, info, parent);
@@ -98,6 +103,10 @@ namespace Altaxo.Graph.Graph3D.Axis
       _axisStyles = new List<AxisStyle>();
     }
 
+    /// <summary>
+    /// Copies values from another <see cref="AxisStyleCollection"/> instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     private void CopyFrom(AxisStyleCollection from)
     {
       if (ReferenceEquals(this, from))
@@ -113,6 +122,7 @@ namespace Altaxo.Graph.Graph3D.Axis
       _cachedCoordinateSystem = from._cachedCoordinateSystem;
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_axisStyles is not null)
@@ -125,16 +135,29 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Gets the axis style at the specified index.
+    /// </summary>
+    /// <param name="idx">The zero-based style index.</param>
+    /// <returns>The axis style at the specified index.</returns>
     public AxisStyle ItemAt(int idx)
     {
       return _axisStyles[idx];
     }
 
+    /// <summary>
+    /// Gets the number of axis styles in the collection.
+    /// </summary>
     public int Count
     {
       get { return _axisStyles.Count; }
     }
 
+    /// <summary>
+    /// Gets the axis style for the specified identifier.
+    /// </summary>
+    /// <param name="id">The axis style identifier.</param>
+    /// <returns>The matching axis style, or <see langword="null"/> if no matching style exists.</returns>
     public AxisStyle? this[CSLineID id]
     {
       get
@@ -147,17 +170,32 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Determines whether an axis style with the specified identifier exists.
+    /// </summary>
+    /// <param name="id">The axis style identifier.</param>
+    /// <returns><see langword="true"/> if the collection contains an axis style with the specified identifier; otherwise, <see langword="false"/>.</returns>
     public bool Contains(CSLineID id)
     {
       return this[id] is not null;
     }
 
+    /// <summary>
+    /// Tries to get the axis style with the specified identifier.
+    /// </summary>
+    /// <param name="id">The axis style identifier.</param>
+    /// <param name="value">When this method returns, contains the matching axis style if one was found; otherwise, <see langword="null"/>.</param>
+    /// <returns><see langword="true"/> if an axis style was found; otherwise, <see langword="false"/>.</returns>
     public bool TryGetValue(CSLineID id, [MaybeNullWhen(false)] out AxisStyle value)
     {
       value = this[id];
       return value is not null;
     }
 
+    /// <summary>
+    /// Adds an axis style to the collection.
+    /// </summary>
+    /// <param name="value">The axis style to add.</param>
     public void Add(AxisStyle value)
     {
       if (value is not null)
@@ -171,6 +209,11 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Removes the axis style with the specified identifier.
+    /// </summary>
+    /// <param name="id">The axis style identifier.</param>
+    /// <returns><see langword="true"/> if an axis style was removed; otherwise, <see langword="false"/>.</returns>
     public bool Remove(CSLineID id)
     {
       int idx = -1;
@@ -202,6 +245,11 @@ namespace Altaxo.Graph.Graph3D.Axis
       _axisStyles.Clear();
     }
 
+    /// <summary>
+    /// Ensures that an axis style for the specified line identifier exists.
+    /// </summary>
+    /// <param name="id">The line identifier.</param>
+    /// <returns>The existing or newly created axis style.</returns>
     public AxisStyle AxisStyleEnsured(CSLineID id)
     {
       if (_cachedCoordinateSystem is null)
@@ -267,6 +315,9 @@ namespace Altaxo.Graph.Graph3D.Axis
 
 
 
+    /// <summary>
+    /// Gets the identifiers of all axis styles in the collection.
+    /// </summary>
     public IEnumerable<CSLineID> AxisStyleIDs
     {
       get
@@ -276,6 +327,10 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Updates the cached coordinate system for all axis styles in the collection.
+    /// </summary>
+    /// <param name="cs">The coordinate system to cache.</param>
     public void UpdateCoordinateSystem(G3DCoordinateSystem cs)
     {
       _cachedCoordinateSystem = cs;
@@ -317,6 +372,11 @@ namespace Altaxo.Graph.Graph3D.Axis
       UpdateCoordinateSystem(newSystem);
     }
 
+    /// <summary>
+    /// Removes the specified graphic object from the axis styles contained in this collection.
+    /// </summary>
+    /// <param name="go">The graphic object to remove.</param>
+    /// <returns><see langword="true"/> if the object was removed from one of the axis styles; otherwise, <see langword="false"/>.</returns>
     public bool Remove(IGraphicBase go)
     {
       for (int i = 0; i < _axisStyles.Count; ++i)
@@ -326,24 +386,41 @@ namespace Altaxo.Graph.Graph3D.Axis
       return false;
     }
 
+    /// <summary>
+    /// Fixes up the internal data structures of all axis styles for the specified plot area.
+    /// </summary>
+    /// <param name="layer">The plot area.</param>
     public void FixupInternalDataStructures(IPlotArea layer)
     {
       for (int i = 0; i < _axisStyles.Count; ++i)
         _axisStyles[i].FixupInternalDataStructures(layer);
     }
 
+    /// <summary>
+    /// Performs paint preprocessing for all axis styles in the specified plot area.
+    /// </summary>
+    /// <param name="layer">The plot area.</param>
     public void PaintPreprocessing(IPlotArea layer)
     {
       for (int i = 0; i < _axisStyles.Count; ++i)
         _axisStyles[i].PaintPreprocessing(layer);
     }
 
+    /// <summary>
+    /// Paints all axis styles in the specified plot area.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="paintContext">The paint context.</param>
+    /// <param name="layer">The plot area.</param>
     public void Paint(IGraphicsContext3D g, Altaxo.Graph.IPaintContext paintContext, IPlotArea layer)
     {
       for (int i = 0; i < _axisStyles.Count; ++i)
         _axisStyles[i].Paint(g, paintContext, layer);
     }
 
+    /// <summary>
+    /// Performs paint postprocessing for all axis styles in the collection.
+    /// </summary>
     public void PaintPostprocessing()
     {
       for (int i = 0; i < _axisStyles.Count; ++i)
@@ -352,6 +429,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     #region ICloneable Members
 
+    /// <inheritdoc/>
     public object Clone()
     {
       var result = new AxisStyleCollection();
@@ -363,6 +441,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     #region IEnumerable<AxisStyle> Members
 
+    /// <inheritdoc/>
     public IEnumerator<AxisStyle> GetEnumerator()
     {
       return _axisStyles.GetEnumerator();

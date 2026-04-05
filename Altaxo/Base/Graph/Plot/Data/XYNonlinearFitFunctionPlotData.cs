@@ -35,7 +35,7 @@ namespace Altaxo.Graph.Plot.Data
   using Gdi.Plot.Data;
 
   /// <summary>
-  /// Summary description for XYFunctionPlotData.
+  /// Plot data for a nonlinear fit function.
   /// </summary>
   [Serializable]
   public class XYNonlinearFitFunctionPlotData : XYFunctionPlotData
@@ -61,6 +61,7 @@ namespace Altaxo.Graph.Plot.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYNonlinearFitFunctionPlotData), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (XYNonlinearFitFunctionPlotData)obj;
@@ -72,6 +73,7 @@ namespace Altaxo.Graph.Plot.Data
         info.AddValue("DependentVariableIndex", s._dependentVariableIndex);
       }
 
+      /// <inheritdoc />
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (XYNonlinearFitFunctionPlotData?)o ?? new XYNonlinearFitFunctionPlotData(info);
@@ -123,16 +125,24 @@ namespace Altaxo.Graph.Plot.Data
 
 
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new XYNonlinearFitFunctionPlotData(this);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYNonlinearFitFunctionPlotData"/> class by copying from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public XYNonlinearFitFunctionPlotData(XYNonlinearFitFunctionPlotData from)
     {
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies the nonlinear-fit plot data from another instance.
+    /// </summary>
     [MemberNotNull(nameof(_fitDocumentIdentifier), nameof(_fitDocument))]
     protected void CopyFrom(XYNonlinearFitFunctionPlotData from)
     {
@@ -143,6 +153,7 @@ namespace Altaxo.Graph.Plot.Data
       _dependentVariableIndex = from._dependentVariableIndex;
     }
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -159,6 +170,8 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
+    /// <inheritdoc />
+    /// <inheritdoc />
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_function is Main.IDocumentLeafNode fdln)
@@ -175,6 +188,7 @@ namespace Altaxo.Graph.Plot.Data
     /// to change a plot so that the plot items refer to another table.
     /// </summary>
     /// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
+    /// <inheritdoc />
     public override void VisitDocumentReferences(DocNodeProxyReporter Report)
     {
       if (_fitDocument is { } fdoc)

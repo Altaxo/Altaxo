@@ -70,6 +70,7 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <inheritdoc/>
     public object BuildItem(BuildItemArgs args)
     {
       return new ToolbarItemDescriptor(args.Parameter, args.Codon, args.BuildSubItems<object>(), args.Conditions);
@@ -82,11 +83,26 @@ namespace Altaxo.AddInItems
   /// </summary>
   public sealed class ToolbarItemDescriptor
   {
+    /// <summary>
+    /// Gets the parameter passed to the builder.
+    /// </summary>
     public readonly object? Parameter;
+    /// <summary>
+    /// Gets the codon describing the toolbar item.
+    /// </summary>
     public readonly Codon Codon;
+    /// <summary>
+    /// Gets the child items.
+    /// </summary>
     public readonly IList SubItems;
+    /// <summary>
+    /// Gets the conditions attached to the toolbar item.
+    /// </summary>
     public readonly IReadOnlyCollection<ICondition> Conditions;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ToolbarItemDescriptor"/> class.
+    /// </summary>
     public ToolbarItemDescriptor(object? parameter, Codon codon, IList subItems, IReadOnlyCollection<ICondition> conditions)
     {
       Parameter = parameter;

@@ -90,23 +90,66 @@ namespace Altaxo.Graph.Scales.Rescaling
 
     // User provided parameters
 
+    /// <summary>
+    /// Stores the rescaling mode for the origin boundary.
+    /// </summary>
     protected BoundaryRescaling _orgRescaling;
+
+    /// <summary>
+    /// Stores the rescaling mode for the end boundary.
+    /// </summary>
     protected BoundaryRescaling _endRescaling;
 
+    /// <summary>
+    /// Stores how the user-provided origin value is interpreted relative to the data bounds.
+    /// </summary>
     protected BoundariesRelativeTo _userProvidedOrgRelativeTo;
+
+    /// <summary>
+    /// Stores how the user-provided end value is interpreted relative to the data bounds.
+    /// </summary>
     protected BoundariesRelativeTo _userProvidedEndRelativeTo;
 
+    /// <summary>
+    /// Stores the user-provided origin value.
+    /// </summary>
     protected double _userProvidedOrgValue;
+
+    /// <summary>
+    /// Stores the user-provided end value.
+    /// </summary>
     protected double _userProvidedEndValue;
 
+    /// <summary>
+    /// Stores the lower data bound.
+    /// </summary>
     protected double _dataBoundsOrg = 1;
+
+    /// <summary>
+    /// Stores the upper data bound.
+    /// </summary>
     protected double _dataBoundsEnd = 2;
 
     // Results
 
+    /// <summary>
+    /// Stores the resulting origin value.
+    /// </summary>
     protected double _resultingOrg = 1;
+
+    /// <summary>
+    /// Stores the resulting end value.
+    /// </summary>
     protected double _resultingEnd = 2;
+
+    /// <summary>
+    /// Stores the minimum permissible resulting origin value.
+    /// </summary>
     protected double _resultingMinOrg = UnboundMinOrg;
+
+    /// <summary>
+    /// Stores the maximum permissible resulting end value.
+    /// </summary>
     protected double _resultingMaxEnd = UnboundMaxEnd;
 
     private const double UnboundMinOrg = double.NegativeInfinity;
@@ -221,10 +264,17 @@ namespace Altaxo.Graph.Scales.Rescaling
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NumericScaleRescaleConditions"/> class.
+    /// </summary>
     public NumericScaleRescaleConditions()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NumericScaleRescaleConditions"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public NumericScaleRescaleConditions(NumericScaleRescaleConditions from)
     {
       CopyFrom(from);
@@ -265,25 +315,44 @@ namespace Altaxo.Graph.Scales.Rescaling
       return false;
     }
 
+    /// <inheritdoc/>
     public abstract object Clone();
 
     #region public properties
 
+    /// <summary>
+    /// Gets the resulting origin.
+    /// </summary>
     public virtual double ResultingOrg { get { return _resultingOrg; } }
 
+    /// <summary>
+    /// Gets the resulting end.
+    /// </summary>
     public virtual double ResultingEnd { get { return _resultingEnd; } }
 
+    /// <summary>
+    /// Gets a value indicating whether the resulting origin is fixed.
+    /// </summary>
     public bool IsResultingOrgFixed { get { return _resultingOrg == _resultingMinOrg; } }
 
+    /// <summary>
+    /// Gets a value indicating whether the resulting end is fixed.
+    /// </summary>
     public bool IsResultingEndFixed { get { return _resultingEnd == _resultingMaxEnd; } }
 
     #endregion public properties
 
+    /// <summary>
+    /// Sets user-provided rescaling parameters using absolute numeric values.
+    /// </summary>
     public virtual void SetUserParameters(BoundaryRescaling orgRescaling, double orgValue, BoundaryRescaling endRescaling, double endValue)
     {
       SetUserParameters(orgRescaling, BoundariesRelativeTo.Absolute, orgValue, endRescaling, BoundariesRelativeTo.Absolute, endValue);
     }
 
+    /// <summary>
+    /// Sets user-provided rescaling parameters using numeric values and relative modes.
+    /// </summary>
     public virtual void SetUserParameters(BoundaryRescaling orgRescaling, BoundariesRelativeTo orgRelativeTo, double orgValue, BoundaryRescaling endRescaling, BoundariesRelativeTo endRelativeTo, double endValue)
     {
       bool isChange =
@@ -313,6 +382,9 @@ namespace Altaxo.Graph.Scales.Rescaling
 
     #region Accessors
 
+    /// <summary>
+    /// Gets the origin rescaling mode.
+    /// </summary>
     public BoundaryRescaling OrgRescaling
     {
       get
@@ -321,6 +393,9 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <summary>
+    /// Gets the end rescaling mode.
+    /// </summary>
     public BoundaryRescaling EndRescaling
     {
       get
@@ -329,18 +404,35 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <summary>
+    /// Gets the reference mode used for the origin.
+    /// </summary>
     public BoundariesRelativeTo OrgRelativeTo { get { return _userProvidedOrgRelativeTo; } }
 
+    /// <summary>
+    /// Gets the reference mode used for the end value.
+    /// </summary>
     public BoundariesRelativeTo EndRelativeTo { get { return _userProvidedEndRelativeTo; } }
 
+    /// <summary>
+    /// Gets the user-provided origin value.
+    /// </summary>
     public virtual double UserProvidedOrgValue { get { return _userProvidedOrgValue; } }
 
+    /// <summary>
+    /// Gets the user-provided end value.
+    /// </summary>
     public virtual double UserProvidedEndValue { get { return _userProvidedEndValue; } }
 
     #endregion Accessors
 
     #region Event handling
 
+    /// <summary>
+    /// Updates the rescaling state after a user zoom action.
+    /// </summary>
+    /// <param name="newZoomOrg">The new zoom origin.</param>
+    /// <param name="newZoomEnd">The new zoom end.</param>
     public void OnUserZoomed(double newZoomOrg, double newZoomEnd)
     {
       if (!(newZoomOrg < newZoomEnd))
@@ -365,6 +457,9 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <summary>
+    /// Updates the rescaling state after a user-initiated rescale command.
+    /// </summary>
     public void OnUserRescaled()
     {
       var oldResultingOrg = _resultingOrg;
@@ -447,14 +542,32 @@ namespace Altaxo.Graph.Scales.Rescaling
 
     #region Resulting Org/End to/fron User Org/End
 
+    /// <summary>
+    /// Converts the user-provided origin value to the resulting origin value.
+    /// </summary>
+    /// <returns>The resulting origin value.</returns>
     protected abstract double GetResultingOrgFromUserProvidedOrg();
 
+    /// <summary>
+    /// Converts a resulting origin value back to the user-provided origin value.
+    /// </summary>
+    /// <param name="resultingOrg">The resulting origin value.</param>
+    /// <returns>The user-provided origin value.</returns>
     protected abstract double GetUserProvidedOrgFromResultingOrg(double resultingOrg);
 
     //		protected abstract double GetResultingOrgFromDataBoundsOrg();
 
+    /// <summary>
+    /// Converts the user-provided end value to the resulting end value.
+    /// </summary>
+    /// <returns>The resulting end value.</returns>
     protected abstract double GetResultingEndFromUserProvidedEnd();
 
+    /// <summary>
+    /// Converts a resulting end value back to the user-provided end value.
+    /// </summary>
+    /// <param name="resultingEnd">The resulting end value.</param>
+    /// <returns>The user-provided end value.</returns>
     protected abstract double GetUserProvidedEndFromResultingEnd(double resultingEnd);
 
     //		protected abstract double GetResultingEndFromDataBoundsEnd();
@@ -463,6 +576,9 @@ namespace Altaxo.Graph.Scales.Rescaling
 
     #region Process Org End
 
+    /// <summary>
+    /// Recalculates the resulting origin after the data bounds changed.
+    /// </summary>
     protected void ProcessOrg_DataBoundsChanged()
     {
       var resultingUserProvidedOrgValue = GetResultingOrgFromUserProvidedOrg();
@@ -515,6 +631,9 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <summary>
+    /// Recalculates the resulting origin after the user changed the rescaling mode.
+    /// </summary>
     protected void ProcessOrg_UserRescaled()
     {
       var resultingUserProvidedOrgValue = GetResultingOrgFromUserProvidedOrg();
@@ -577,6 +696,10 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <summary>
+    /// Recalculates the resulting origin after the user zoomed the origin boundary.
+    /// </summary>
+    /// <param name="zoomValueOrg">The zoomed origin value.</param>
     protected void ProcessOrg_UserZoomed(double zoomValueOrg)
     {
       var resultingUserProvidedOrgValue = GetResultingOrgFromUserProvidedOrg();
@@ -625,6 +748,9 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <summary>
+    /// Recalculates the resulting origin after user parameters changed.
+    /// </summary>
     protected void ProcessOrg_UserParametersChanged()
     {
       var resultingUserProvidedOrgValue = GetResultingOrgFromUserProvidedOrg();
@@ -677,6 +803,9 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <summary>
+    /// Recalculates the resulting end after the data bounds changed.
+    /// </summary>
     protected void ProcessEnd_DataBoundsChanged()
     {
       var resultingUserProvidedEndValue = GetResultingEndFromUserProvidedEnd();
@@ -729,6 +858,9 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <summary>
+    /// Recalculates the resulting end after the user changed the rescaling mode.
+    /// </summary>
     protected void ProcessEnd_UserRescaled()
     {
       var resultingUserProvidedEndValue = GetResultingEndFromUserProvidedEnd();
@@ -791,6 +923,10 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <summary>
+    /// Recalculates the resulting end after the user zoomed the end boundary.
+    /// </summary>
+    /// <param name="zoomValueEnd">The zoomed end value.</param>
     protected void ProcessEnd_UserZoomed(double zoomValueEnd)
     {
       var resultingUserProvidedEndValue = GetResultingEndFromUserProvidedEnd();
@@ -839,6 +975,9 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <summary>
+    /// Recalculates the resulting end after user parameters changed.
+    /// </summary>
     protected void ProcessEnd_UserParametersChanged()
     {
       var resultingUserProvidedEndValue = GetResultingEndFromUserProvidedEnd();

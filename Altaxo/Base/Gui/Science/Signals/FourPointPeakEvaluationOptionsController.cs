@@ -26,14 +26,21 @@ using Altaxo.Science.Signals;
 
 namespace Altaxo.Gui.Science.Signals
 {
+  /// <summary>
+  /// View interface for four-point peak evaluation options.
+  /// </summary>
   public interface IFourPointPeakEvaluationOptionsView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="FourPointPeakEvaluationOptions"/>.
+  /// </summary>
   [UserControllerForObject(typeof(FourPointPeakEvaluationOptions))]
   [ExpectedTypeOfView(typeof(IFourPointPeakEvaluationOptionsView))]
   public class FourPointPeakEvaluationOptionsController : MVCANControllerEditImmutableDocBase<FourPointPeakEvaluationOptions, IFourPointPeakEvaluationOptionsView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -45,6 +52,9 @@ namespace Altaxo.Gui.Science.Signals
 
     private bool _IncludeOriginalPointsInOutput;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the original points are included in the output.
+    /// </summary>
     public bool IncludeOriginalPointsInOutput
     {
       get => _IncludeOriginalPointsInOutput;
@@ -61,6 +71,9 @@ namespace Altaxo.Gui.Science.Signals
 
     private double _IndexLeftOuter;
 
+    /// <summary>
+    /// Gets or sets the outer left index.
+    /// </summary>
     public double IndexLeftOuter
     {
       get => _IndexLeftOuter;
@@ -76,6 +89,9 @@ namespace Altaxo.Gui.Science.Signals
 
     private double _IndexLeftInner;
 
+    /// <summary>
+    /// Gets or sets the inner left index.
+    /// </summary>
     public double IndexLeftInner
     {
       get => _IndexLeftInner;
@@ -91,6 +107,9 @@ namespace Altaxo.Gui.Science.Signals
 
     private double _IndexRightOuter;
 
+    /// <summary>
+    /// Gets or sets the outer right index.
+    /// </summary>
     public double IndexRightOuter
     {
       get => _IndexRightOuter;
@@ -106,6 +125,9 @@ namespace Altaxo.Gui.Science.Signals
 
     private double _IndexRightInner;
 
+    /// <summary>
+    /// Gets or sets the inner right index.
+    /// </summary>
     public double IndexRightInner
     {
       get => _IndexRightInner;
@@ -122,6 +144,7 @@ namespace Altaxo.Gui.Science.Signals
     #endregion
 
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -135,6 +158,7 @@ namespace Altaxo.Gui.Science.Signals
         IndexRightInner = _doc.IndexRightInner;
       }
     }
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
 

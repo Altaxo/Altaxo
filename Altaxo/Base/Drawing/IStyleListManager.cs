@@ -32,7 +32,7 @@ using System.Text;
 namespace Altaxo.Drawing
 {
   /// <summary>
-  /// Manager for style lists. Usually only a single instance of this manager should exist in the application.
+  /// Manages style lists. Usually only a single instance of this manager should exist in the application.
   /// </summary>
   /// <typeparam name="TList">The type of the style list.</typeparam>
   /// <typeparam name="T">The type of the style</typeparam>

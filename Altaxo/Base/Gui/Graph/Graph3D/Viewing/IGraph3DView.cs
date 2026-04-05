@@ -33,6 +33,9 @@ using Altaxo.Graph.Graph3D;
 
 namespace Altaxo.Gui.Graph.Graph3D.Viewing
 {
+  /// <summary>
+  /// View contract for 3D graph presentation.
+  /// </summary>
   public interface IGraph3DView
   {
     /// <summary>
@@ -41,7 +44,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     object GuiInitiallyFocusedElement { get; }
 
     /// <summary>
-    /// Sets the controller of the view;
+    /// Sets the controller of the view.
     /// </summary>
     Graph3DController Controller { set; }
 
@@ -79,7 +82,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     void SetCamera(Altaxo.Graph.Graph3D.Camera.CameraBase camera, Altaxo.Graph.Graph3D.LightSettings lightSettings);
 
     /// <summary>
-    /// Sets a new geometry, but does not trigger rendering (use <see cref="TriggerRendering"/> for triggering rendering.
+    /// Sets a new geometry, but does not trigger rendering (use <see cref="TriggerRendering"/> to trigger rendering).
     /// </summary>
     /// <param name="drawing">The drawing.</param>
     void SetDrawing(Altaxo.Graph.Graph3D.GraphicsContext.IGraphicsContext3D drawing);
@@ -102,7 +105,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     Altaxo.Graph.Graph3D.GraphicsContext.IOverlayContext3D GetGraphicContextForMarkers();
 
     /// <summary>
-    /// Sets the marker geometry, brings it into the buffers. It doesn't trigger a new rendering, please use <see cref="TriggerRendering"/> for that.
+    /// Sets the marker geometry and brings it into the buffers. It does not trigger a new rendering; use <see cref="TriggerRendering"/> for that.
     /// </summary>
     /// <param name="markerGeometry">The marker geometry.</param>
     void SetMarkerGeometry(Altaxo.Graph.Graph3D.GraphicsContext.IOverlayContext3D markerGeometry);
@@ -114,11 +117,14 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     Altaxo.Graph.Graph3D.GraphicsContext.IOverlayContext3D GetGraphicContextForOverlay();
 
     /// <summary>
-    /// Sets the overlay geometry, bring it into the buffers. It doesn't trigger a new rendering, please use <see cref="TriggerRendering"/> for that.
+    /// Sets the overlay geometry and brings it into the buffers. It does not trigger a new rendering; use <see cref="TriggerRendering"/> for that.
     /// </summary>
     /// <param name="overlayGeometry">The overlay geometry.</param>
     void SetOverlayGeometry(Altaxo.Graph.Graph3D.GraphicsContext.IOverlayContext3D overlayGeometry);
 
+    /// <summary>
+    /// Sets the input focus to the graph panel.
+    /// </summary>
     void FocusOnGraphPanel();
 
     /// <summary>
@@ -127,12 +133,25 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     /// <param name="cursor">The cursor (must be of the appropriate Gui type).</param>
     void SetPanelCursor(object cursor);
 
+    /// <summary>
+    /// Gets or sets the currently active graph tool.
+    /// </summary>
     GraphToolType CurrentGraphTool { get; set; }
 
+    /// <summary>
+    /// Renders the current overlay.
+    /// </summary>
     void RenderOverlay();
 
+    /// <summary>
+    /// Gets the currently selected objects.
+    /// </summary>
     IList<IHitTestObject> SelectedObjects { get; }
 
+    /// <summary>
+    /// Announces that the content visibility has changed.
+    /// </summary>
+    /// <param name="isVisible">If set to <see langword="true"/>, the content is visible.</param>
     void AnnounceContentVisibilityChanged(bool isVisible);
   }
 }

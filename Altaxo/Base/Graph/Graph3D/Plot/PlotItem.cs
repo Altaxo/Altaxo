@@ -39,6 +39,9 @@ namespace Altaxo.Graph.Graph3D.Plot
   using GraphicsContext;
   using Groups;
 
+  /// <summary>
+  /// Provides the base implementation for three-dimensional plot items.
+  /// </summary>
   [Serializable]
   public abstract class PlotItem
   :
@@ -46,10 +49,16 @@ namespace Altaxo.Graph.Graph3D.Plot
     IGPlotItem,
     Main.INamedObjectCollection
   {
+    /// <summary>
+    /// Copies base-state members from another <see cref="PlotItem"/> instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
+    /// <param name="withBaseMembers">If set to <c>true</c>, base members are copied as well.</param>
     protected void CopyFrom(PlotItem from, bool withBaseMembers)
     {
     }
 
+    /// <inheritdoc/>
     public virtual bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -67,6 +76,9 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// </summary>
     public abstract IDocumentLeafNode StyleObject { get; set; }
 
+    /// <summary>
+    /// Gets the data object associated with this plot item.
+    /// </summary>
     public abstract IDocumentLeafNode DataObject { get; }
 
     /// <summary>
@@ -119,6 +131,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <remarks>The data (DataColumns which belongs to a table in the document's DataTableCollection) are not cloned, only the reference to this columns is cloned.</remarks>
     public abstract object Clone();
 
+    /// <inheritdoc/>
     public virtual PlotItemCollection? ParentCollection
     {
       get
@@ -180,6 +193,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <param name="layer">The layer in which this plot item is drawn into.</param>
     /// <param name="hitpoint">The point where the mouse is pressed.</param>
     /// <returns>Null if no hit, or a <see cref="IHitTestObject" /> if there was a hit.</returns>
+    /// <inheritdoc/>
     public virtual IHitTestObject? HitTest(IPlotArea layer, HitTestPointData hitpoint)
     {
       return null;
@@ -187,10 +201,13 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     #region IPlotItem Members
 
+    /// <inheritdoc/>
     public abstract void CollectStyles(PlotGroupStyleCollection styles);
 
+    /// <inheritdoc/>
     public abstract void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, IPlotArea layer);
 
+    /// <inheritdoc/>
     public abstract void ApplyGroupStyles(PlotGroupStyleCollection externalGroups);
 
     /// <summary>
@@ -205,6 +222,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// </summary>
     /// <param name="g">The graphics context.</param>
     /// <param name="location">The rectangle where the symbol should be painted into.</param>
+    /// <inheritdoc/>
     public virtual void PaintSymbol(IGraphicsContext3D g, RectangleD3D location)
     {
     }

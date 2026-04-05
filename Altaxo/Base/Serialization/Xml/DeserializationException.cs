@@ -31,7 +31,7 @@ using System.Text;
 namespace Altaxo.Serialization.Xml
 {
   /// <summary>
-  /// Exception that is thrown during deserialization if unexpeced values are being deserialized.
+  /// Exception that is thrown during deserialization if unexpected values are encountered.
   /// </summary>
   /// <seealso cref="System.Exception" />
   [System.Serializable]
@@ -66,7 +66,7 @@ namespace Altaxo.Serialization.Xml
   }
 
   /// <summary>
-  /// Exception that is thrown when an object was expected to be deserialized, but instead null was deserialized. 
+  /// Exception that is thrown when an object was expected to be deserialized, but <c>null</c> was deserialized instead.
   /// </summary>
   /// <seealso cref="Altaxo.Serialization.Xml.DeserializationException" />
   [System.Serializable]

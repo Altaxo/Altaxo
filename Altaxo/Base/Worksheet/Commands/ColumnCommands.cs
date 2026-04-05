@@ -59,7 +59,7 @@ namespace Altaxo.Worksheet.Commands
     #region Set group number
 
     /// <summary>
-    /// Sets the group number of the selected column
+    /// Sets the group number of the selected column.
     /// </summary>
     /// <param name="ctrl">The worksheet controller for the table.</param>
     public static void ShowSetColumnGroupNumberDialog(IWorksheetController ctrl)
@@ -108,7 +108,7 @@ namespace Altaxo.Worksheet.Commands
     }
 
     /// <summary>
-    /// Moves the selected columns to a new position <code>nPosition</code>.
+    /// Moves the selected columns to a new position <c>nPosition</c>.
     /// </summary>
     /// <param name="ctrl">The worksheet controller.</param>
     /// <param name="nPosition">The new position for the selected columns.</param>
@@ -225,7 +225,7 @@ namespace Altaxo.Worksheet.Commands
     }
 
     /// <summary>
-    /// Sets the column kind of the first selected column to the specified column kind
+    /// Sets the column kind of the selected columns to the specified column kind.
     /// </summary>
     public static void SetSelectedColumnAsKind(IWorksheetController ctrl, Altaxo.Data.ColumnKind kind)
     {

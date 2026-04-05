@@ -40,6 +40,9 @@ namespace Altaxo.Graph.Gdi.Shapes
   using Data;
   using Geometry;
 
+  /// <summary>
+  /// Represents a legend for a density-image plot item.
+  /// </summary>
   [Serializable]
   public class DensityImageLegend : GraphicBase, Main.IChildChangedEventSink
   {
@@ -64,6 +67,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DensityImageLegend), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DensityImageLegend)obj;
@@ -77,6 +81,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         info.AddValue("AxisStyles", s._axisStyles);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (DensityImageLegend?)o ?? new DensityImageLegend(info);
@@ -109,6 +114,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DensityImageLegend"/> class.
+    /// </summary>
+    /// <param name="plotItem">The source density-image plot item.</param>
+    /// <param name="futureParentObject">The future parent object.</param>
+    /// <param name="initialLocation">The initial location.</param>
+    /// <param name="graphicSize">The legend size.</param>
+    /// <param name="context">The property context.</param>
     public DensityImageLegend(DensityImagePlotItem plotItem, Main.IDocumentNode futureParentObject, PointD2D initialLocation, PointD2D graphicSize, Main.Properties.IReadOnlyPropertyBag context)
       : base(new ItemLocationDirect())
     {
@@ -177,12 +190,21 @@ namespace Altaxo.Graph.Gdi.Shapes
       UpdateTransformationMatrix();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DensityImageLegend"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public DensityImageLegend(DensityImageLegend from)
       : base(from)  // all is done here, since CopyFrom is virtual!
     {
       CopyFrom(from, false);
     }
 
+    /// <summary>
+    /// Copies the values from another <see cref="DensityImageLegend"/> instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
+    /// <param name="withBaseMembers">If set to <see langword="true"/>, base class members are copied as well.</param>
     [MemberNotNull(nameof(_cachedArea), nameof(_axisStyles), nameof(_plotItemProxy))]
     protected void CopyFrom(DensityImageLegend from, bool withBaseMembers)
     {
@@ -200,6 +222,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       _plotItemProxy = new Main.RelDocNodeProxy(from._plotItemProxy, true, this);
     }
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -233,11 +256,13 @@ namespace Altaxo.Graph.Gdi.Shapes
         yield return new Main.DocumentNodeAndName(_plotItemProxy, "PlotItem");
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       return base.GetDocumentNodeChildrenWithName().Concat(GetMyDocumentNodeChildrenWithName());
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new DensityImageLegend(this);
@@ -271,6 +296,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets the axis styles used by the legend.
+    /// </summary>
     public AxisStyleCollection AxisStyles
     {
       get
@@ -279,6 +307,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets the coordinate system used by the legend.
+    /// </summary>
     public G2DCoordinateSystem CoordinateSystem
     {
       get
@@ -287,6 +318,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets the legend scale including tick spacing.
+    /// </summary>
     public Scale ScaleWithTicks
     {
       get
@@ -295,6 +329,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the legend orientation is vertical.
+    /// </summary>
     public bool IsOrientationVertical
     {
       get
@@ -303,6 +340,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the legend scale is reversed.
+    /// </summary>
     public bool IsScaleReversed
     {
       get
@@ -358,6 +398,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       return result;
     }
 
+    /// <inheritdoc />
     public override void FixupInternalDataStructures()
     {
       base.FixupInternalDataStructures();
@@ -388,12 +429,14 @@ namespace Altaxo.Graph.Gdi.Shapes
       _axisStyles.FixupInternalDataStructures(_cachedArea); // make sure the AxisStyles know about the size of the parent
     }
 
+    /// <inheritdoc />
     public override void PaintPreprocessing(IPaintContext context)
     {
       base.PaintPreprocessing(context);
       _axisStyles.PaintPreprocessing(_cachedArea); // make sure the AxisStyles know about the size of the parent
     }
 
+    /// <inheritdoc />
     public override void Paint(System.Drawing.Graphics g, IPaintContext paintContext)
     {
       if (_cachedArea is null)
@@ -489,6 +532,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       return false;
     }
 
+    /// <inheritdoc />
     public override IHitTestObject? HitTest(HitTestPointData htd)
     {
       var myHitTestData = htd.NewFromAdditionalTransformation(_transformation);
@@ -548,6 +592,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <inheritdoc/>
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (object.ReferenceEquals(sender, _plotItemProxy))

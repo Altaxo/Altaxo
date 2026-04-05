@@ -27,11 +27,23 @@ using System;
 
 namespace Altaxo.Drawing
 {
+  /// <summary>
+  /// Specifies the shape of a linear gradient blend.
+  /// </summary>
   [Serializable]
   public enum LinearGradientShape
   {
+    /// <summary>
+    /// Linear blend.
+    /// </summary>
     Linear,
+    /// <summary>
+    /// Triangular blend.
+    /// </summary>
     Triangular,
+    /// <summary>
+    /// Sigma bell blend.
+    /// </summary>
     SigmaBell
   }
 

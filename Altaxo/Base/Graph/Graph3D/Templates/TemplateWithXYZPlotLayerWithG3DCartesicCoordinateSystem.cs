@@ -34,8 +34,14 @@ using Altaxo.Main.Properties;
 
 namespace Altaxo.Graph.Graph3D.Templates
 {
+  /// <summary>
+  /// Provides the default template for a three-dimensional cartesic xyz plot layer.
+  /// </summary>
   public static class TemplateWithXYZPlotLayerWithG3DCartesicCoordinateSystem
   {
+    /// <summary>
+    /// Gets the property key for the default three-dimensional cartesic graph template.
+    /// </summary>
     public static readonly Main.Properties.PropertyKey<GraphDocument> PropertyKeyDefaultTemplate =
 new Main.Properties.PropertyKey<GraphDocument>(
 "76AEA5F9-B24D-4CBB-91D9-1AB7D3FAB973",
@@ -126,6 +132,12 @@ typeof(object),
       return graph;
     }
 
+    /// <summary>
+    /// Determines whether a graph template is suitable for use as a three-dimensional cartesic template.
+    /// </summary>
+    /// <param name="graphTemplate">The graph template to inspect.</param>
+    /// <param name="problemDescription">On failure, receives a description of the problem.</param>
+    /// <returns><c>true</c> if the template is suitable; otherwise, <c>false</c>.</returns>
     public static bool IsGraphTemplateSuitable(GraphDocument graphTemplate, [MaybeNullWhen(true)] out string problemDescription)
     {
       // Make sure that the graph contains an XYPlotLayer

@@ -30,11 +30,17 @@ using System.Text;
 
 namespace Altaxo.Gui.Data
 {
+  /// <summary>
+  /// Controller for editing <see cref="Altaxo.Data.EquallySpacedColumn"/> instances.
+  /// </summary>
   [UserControllerForObject(typeof(Altaxo.Data.EquallySpacedColumn))]
   public class EquallySpacedColumnController : Altaxo.Gui.Common.SimpleImmutableObjectController<Altaxo.Data.EquallySpacedColumn>
   {
   }
 
+  /// <summary>
+  /// Controller for editing <see cref="Altaxo.Data.ConstantDoubleColumn"/> instances.
+  /// </summary>
   [UserControllerForObject(typeof(Altaxo.Data.ConstantDoubleColumn))]
   public class ConstantDoubleColumnController : Altaxo.Gui.Common.SimpleImmutableObjectController<Altaxo.Data.ConstantDoubleColumn>
   {

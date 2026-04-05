@@ -48,7 +48,13 @@ namespace Altaxo.Graph.Gdi
   /// bounds is stored inside the class only to know what the original page size of the document was.</remarks>
   public class GraphDocument : GraphDocumentBase
   {
+    /// <summary>
+    /// The default root-layer width in points.
+    /// </summary>
     protected const double DefaultRootLayerSizeX = 697.68054;
+    /// <summary>
+    /// The default root-layer height in points.
+    /// </summary>
     protected const double DefaultRootLayerSizeY = 451.44;
 
     private SingleGraphPrintOptions? _printOptions;
@@ -61,6 +67,9 @@ namespace Altaxo.Graph.Gdi
 
     #region Property keys
 
+    /// <summary>
+    /// Gets the property key for the default root layer size.
+    /// </summary>
     public static readonly Main.Properties.PropertyKey<ItemLocationDirect> PropertyKeyDefaultRootLayerSize =
       new Main.Properties.PropertyKey<ItemLocationDirect>(
         "22F853C9-A011-46FA-8021-8668AB4EE1C6",
@@ -79,6 +88,9 @@ namespace Altaxo.Graph.Gdi
         }
       };
 
+    /// <summary>
+    /// Gets the property key for the default graph font.
+    /// </summary>
     public static readonly Main.Properties.PropertyKey<FontX> PropertyKeyDefaultFont =
         new Main.Properties.PropertyKey<FontX>(
         "2CFD57CF-25D5-456E-9E45-D7D8823F4A54",
@@ -95,6 +107,9 @@ namespace Altaxo.Graph.Gdi
           }
         };
 
+    /// <summary>
+    /// Gets the property key for the default foreground color.
+    /// </summary>
     public static readonly Main.Properties.PropertyKey<Altaxo.Drawing.NamedColor> PropertyKeyDefaultForeColor =
       new Main.Properties.PropertyKey<Altaxo.Drawing.NamedColor>(
 "2F138FDD-B96A-4C03-9BEF-83FC412E50B2",
@@ -112,6 +127,9 @@ typeof(GraphDocument),
         }
       };
 
+    /// <summary>
+    /// Gets the property key for the default background color.
+    /// </summary>
     public static readonly Main.Properties.PropertyKey<Altaxo.Drawing.NamedColor> PropertyKeyDefaultBackColor =
   new Main.Properties.PropertyKey<Altaxo.Drawing.NamedColor>(
 "90BB0E83-D1A4-40B7-9607-55D4B9C272C3",
@@ -129,6 +147,9 @@ typeof(GraphDocument),
     }
   };
 
+    /// <summary>
+    /// Gets the property key for the default plot color.
+    /// </summary>
     public static readonly Main.Properties.PropertyKey<NamedColor> PropertyKeyDefaultPlotColor =
 new Main.Properties.PropertyKey<NamedColor>(
 "D5DB4695-2630-4B7D-83E3-71CA3873B362",
@@ -151,6 +172,9 @@ typeof(GraphDocument),
 
     #endregion Property keys
 
+    /// <summary>
+    /// Gets or sets the print options for this graph document.
+    /// </summary>
     public SingleGraphPrintOptions? PrintOptions
     {
       get { return _printOptions; }
@@ -356,6 +380,10 @@ typeof(GraphDocument),
       EhChildChanged(sender, e);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GraphDocument"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public GraphDocument(GraphDocument from)
     {
       using (var suppressToken = SuspendGetToken())
@@ -369,6 +397,11 @@ typeof(GraphDocument),
       }
     }
 
+    /// <summary>
+    /// Copies graph content from another graph document using the specified copy options.
+    /// </summary>
+    /// <param name="from">The graph document to copy from.</param>
+    /// <param name="options">The copy options.</param>
     public void CopyFrom(GraphDocument from, GraphCopyOptions options)
     {
       if (ReferenceEquals(this, from))
@@ -412,6 +445,7 @@ typeof(GraphDocument),
       }
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_rootLayer is not null)
@@ -424,6 +458,7 @@ typeof(GraphDocument),
         yield return new Main.DocumentNodeAndName(_notes, () => _notes = null!, "Notes");
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new GraphDocument(this);
@@ -580,6 +615,11 @@ typeof(GraphDocument),
       } // end of lock
     } // end of function DoPaint
 
+    /// <summary>
+    /// Gets the default font for graph elements using the specified property context.
+    /// </summary>
+    /// <param name="context">The property context.</param>
+    /// <returns>The default font.</returns>
     public static FontX GetDefaultFont(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       if (context is not null)
@@ -614,6 +654,11 @@ typeof(GraphDocument),
       return result;
     }
 
+    /// <summary>
+    /// Gets the default foreground color using the specified property context.
+    /// </summary>
+    /// <param name="context">The property context.</param>
+    /// <returns>The default foreground color.</returns>
     public static NamedColor GetDefaultForeColor(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       if (context is null)
@@ -622,6 +667,11 @@ typeof(GraphDocument),
       return context.GetValue<NamedColor>(PropertyKeyDefaultForeColor);
     }
 
+    /// <summary>
+    /// Gets the default background color using the specified property context.
+    /// </summary>
+    /// <param name="context">The property context.</param>
+    /// <returns>The default background color.</returns>
     public static NamedColor GetDefaultBackColor(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       if (context is null)
@@ -630,6 +680,11 @@ typeof(GraphDocument),
       return context.GetValue<NamedColor>(PropertyKeyDefaultBackColor);
     }
 
+    /// <summary>
+    /// Gets the default plot color using the specified property context.
+    /// </summary>
+    /// <param name="context">The property context.</param>
+    /// <returns>The default plot color.</returns>
     public static NamedColor GetDefaultPlotColor(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       if (context is null)
@@ -692,6 +747,7 @@ typeof(GraphDocument),
       EhSelfChanged(EventArgs.Empty);
     }
 
+    /// <inheritdoc />
     protected override void OnChanged(EventArgs e)
     {
       if (_cachedRootLayerSize != _rootLayer.Size)

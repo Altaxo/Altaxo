@@ -33,6 +33,9 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 {
   using Plot.Data;
 
+  /// <summary>
+  /// Transforms stacked plot values into relative contributions.
+  /// </summary>
   public class RelativeStackTransform
     :
     Main.SuspendableDocumentLeafNodeWithEventArgs,
@@ -57,21 +60,30 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RelativeStackTransform"/> class.
+    /// </summary>
     public RelativeStackTransform()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RelativeStackTransform"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public RelativeStackTransform(RelativeStackTransform from)
     {
     }
 
     #region ICoordinateTransformingGroupStyle Members
 
+    /// <inheritdoc />
     public void MergeXBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll)
     {
       CoordinateTransformingStyleBase.MergeXBoundsInto(pb, coll);
     }
 
+    /// <inheritdoc />
     public void MergeYBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll)
     {
       var pbclone = (IPhysicalBoundaries)pb.Clone(); // before we can use CanUseStyle, we have to give physical y boundaries template
@@ -91,6 +103,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       return AbsoluteStackTransform.CanUseStyle(layer, coll, out plotDataList);
     }
 
+    /// <inheritdoc />
     public void PaintPreprocessing(System.Drawing.Graphics g, IPaintContext paintContext, IPlotArea layer, PlotItemCollection coll)
     {
       if (!CanUseStyle(layer, coll, out var plotDataDict))
@@ -151,10 +164,12 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       }
     }
 
+    /// <inheritdoc />
     public void PaintPostprocessing()
     {
     }
 
+    /// <inheritdoc />
     public void PaintChild(System.Drawing.Graphics g, IPaintContext paintContext, IPlotArea layer, PlotItemCollection coll, int indexOfChild)
     {
       var plotDataDict = paintContext.GetValueOrDefault<Dictionary<G2DPlotItem, Processed2DPlotData>>(this);
@@ -270,6 +285,10 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
     #region ICloneable Members
 
+    /// <summary>
+    /// Creates a copy of this transform.
+    /// </summary>
+    /// <returns>A copy of this transform.</returns>
     public object Clone()
     {
       return new RelativeStackTransform(this);

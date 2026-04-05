@@ -42,6 +42,9 @@ namespace Altaxo.Graph.Gdi.Plot
   /// </summary>
   public class XYFunctionPlotItem : G2DPlotItem
   {
+    /// <summary>
+    /// The function plot data.
+    /// </summary>
     protected IXYFunctionPlotData _plotData;
 
     #region Serialization
@@ -113,17 +116,26 @@ namespace Altaxo.Graph.Gdi.Plot
 
     #endregion Serialization
 
+    /// <summary>
+    /// Gets the local document-node children.
+    /// </summary>
     private System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetLocalDocumentNodeChildrenWithName()
     {
       if (_plotData is not null)
         yield return new Main.DocumentNodeAndName(_plotData, () => _plotData = null!, "Data");
     }
 
+    /// <inheritdoc/>
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       return GetLocalDocumentNodeChildrenWithName().Concat(base.GetDocumentNodeChildrenWithName());
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYFunctionPlotItem"/> class.
+    /// </summary>
+    /// <param name="pa">The plot data.</param>
+    /// <param name="ps">The plot styles.</param>
     public XYFunctionPlotItem(IXYFunctionPlotData pa, G2DPlotStyleCollection ps) : base(ps)
     {
       ChildSetMember(ref _plotData, pa);
@@ -137,11 +149,18 @@ namespace Altaxo.Graph.Gdi.Plot
     }
     */
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYFunctionPlotItem"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public XYFunctionPlotItem(XYFunctionPlotItem from) : base(from)
     {
       CopyFrom(from, false);
     }
 
+    /// <summary>
+    /// Copies values from another <see cref="XYFunctionPlotItem"/> instance.
+    /// </summary>
     [MemberNotNull(nameof(_plotData))]
     protected void CopyFrom(XYFunctionPlotItem from, bool withBaseMembers)
     {
@@ -152,6 +171,7 @@ namespace Altaxo.Graph.Gdi.Plot
     }
 
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -171,16 +191,21 @@ namespace Altaxo.Graph.Gdi.Plot
       }
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new XYFunctionPlotItem(this);
     }
 
+    /// <inheritdoc />
     public override Main.IDocumentLeafNode DataObject
     {
       get { return _plotData; }
     }
 
+    /// <summary>
+    /// Gets or sets the function plot data.
+    /// </summary>
     public virtual IXYFunctionPlotData Data
     {
       get { return _plotData; }
@@ -191,21 +216,25 @@ namespace Altaxo.Graph.Gdi.Plot
       }
     }
 
+    /// <inheritdoc />
     public override string GetName(int level)
     {
       return _plotData.ToString() ?? string.Empty;
     }
 
+    /// <inheritdoc />
     public override string GetName(string style)
     {
       return GetName(0);
     }
 
+    /// <inheritdoc />
     public override string ToString()
     {
       return GetName(int.MaxValue);
     }
 
+    /// <inheritdoc />
     public override Processed2DPlotData GetRangesAndPoints(IPlotArea layer)
     {
       return _plotData.GetRangesAndPoints(layer);

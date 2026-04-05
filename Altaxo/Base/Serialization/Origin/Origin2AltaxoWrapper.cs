@@ -35,15 +35,21 @@ namespace Altaxo.Serialization.Origin
   /// </summary>
   public class Origin2AltaxoWrapper
   {
+    /// <summary>
+    /// Gets the parser used by this wrapper.
+    /// </summary>
     public OriginAnyParser Parser { get; }
 
+    /// <summary>
+    /// Gets the original file name.
+    /// </summary>
     public string FileName { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Origin2AltaxoWrapper"/> class.
     /// </summary>
     /// <param name="parser">The parser.</param>
-    /// <param name="fileName">The file name (only to track the origin of the opj project)</param>
+    /// <param name="fileName">The file name, used only to track the origin of the OPJ project.</param>
     /// <exception cref="Markdig.Helpers.ThrowHelper.ArgumentNullException(System.String)">parser</exception>
     public Origin2AltaxoWrapper(OriginAnyParser parser, string fileName)
     {
@@ -53,9 +59,10 @@ namespace Altaxo.Serialization.Origin
 
 
     /// <summary>
-    /// Enumerates all spread sheets together with their full name.
+    /// Enumerates all spreadsheets together with their full name.
     /// </summary>
-    /// <returns>Enumeration of tuples of full name of the spreadsheet and the spreadsheet.</returns>
+    /// <param name="considerSpreadsheetsInExcelsToo">If set to <see langword="true"/>, spreadsheets in Excel objects are included.</param>
+    /// <returns>Enumeration of tuples containing the full name of the spreadsheet and the spreadsheet.</returns>
     public IEnumerable<(string fullName, SpreadSheet spreadsheet)> EnumerateAllSpreadSheets(bool considerSpreadsheetsInExcelsToo)
     {
       for (int i = 0; i < Parser.SpreadSheets.Count; i++)
@@ -152,7 +159,7 @@ namespace Altaxo.Serialization.Origin
     }
 
     /// <summary>
-    /// Gets the full Altaxo path of a Origin project node.
+    /// Gets the full Altaxo path of an Origin project node.
     /// </summary>
     /// <param name="node">The node.</param>
     /// <returns>The full Altaxo path. Parts of the part are separated by backlashes. That also means that if the node is a folder node,

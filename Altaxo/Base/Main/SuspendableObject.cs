@@ -30,7 +30,7 @@ using System.Text;
 
 namespace Altaxo.Main
 {
-  /// <summary>Helper class to suspend and resume change events (or other events). This class keeps a counter variable (suspend counter), which is incremented when a call to <see cref="SuspendGetToken"/> has been made, and is
+  /// <summary>Helper class to suspend and resume change events or other events. This class keeps a counter variable (suspend counter), which is incremented when a call to <see cref="SuspendGetToken"/> has been made, and is
   /// decremented when the suspend token returned by this call is disposed. Although you can use this class as it is - to keep track of the number of suspends - it is designed to be used in derived classes.
   /// See the remarks on details of the functions you should override.
   /// </summary>
@@ -52,7 +52,7 @@ namespace Altaxo.Main
     /// Increase the SuspendLevel by one, and return a token that, if disposed, will resume the object.
     /// </summary>
     /// <returns>A token, which must be handed to the resume function to decrease the suspend level. Alternatively,
-    /// the object can be used in an using statement. In this case, the call to the Resume function is not neccessary.</returns>
+    /// the object can be used in a <c>using</c> statement. In this case, the call to the resume function is not necessary.</returns>
     public ISuspendToken SuspendGetToken()
     {
       return new SuspendToken(this);
@@ -62,7 +62,7 @@ namespace Altaxo.Main
     /// Decrease the suspend level by disposing the suppress token. The token will fire the Resume event
     /// if the suppress level falls to zero.
     /// </summary>
-    /// <param name="token"></param>
+    /// <param name="token">The suspend token to dispose.</param>
     /// <returns>The event count accumulated during the suspend phase.</returns>
     public int Resume(ref ISuspendToken? token)
     {
@@ -76,7 +76,7 @@ namespace Altaxo.Main
     /// Decrease the suspend level by disposing the suppress token. The token will fire the Resume event
     /// if the suppress level falls to zero. You can suppress the resume event by setting argument 'suppressResumeEvent' to true.
     /// </summary>
-    /// <param name="token"></param>
+    /// <param name="token">The suspend token to dispose.</param>
     /// <param name="firingOfResumeEvent">Designates whether or not to fire the resume event.</param>
     /// <returns>The event count accumulated during the suspend phase.</returns>
     public int Resume(ref ISuspendToken? token, EventFiring firingOfResumeEvent)
@@ -94,7 +94,7 @@ namespace Altaxo.Main
     }
 
     /// <summary>
-    /// Resumes the events of this class as long as you hold the returned resume token. The original state (the suspenended state) is restored when you dispose the resume token.
+    /// Resumes the events of this class as long as you hold the returned resume token. The original state, that is, the suspended state, is restored when you dispose the resume token.
     /// </summary>
     public IDisposable ResumeShortlyGetToken()
     {
@@ -172,7 +172,7 @@ namespace Altaxo.Main
       }
 
       /// <summary>
-      /// Disarms this SuppressToken so that it can not raise the resume event anymore.
+      /// Disarms this suspend token so that it cannot raise the resume event anymore.
       /// </summary>
       public void ResumeSilently()
       {

@@ -27,9 +27,13 @@ using Altaxo.Science.Spectroscopy;
 
 namespace Altaxo.Gui.Science.Spectroscopy
 {
+  /// <summary>
+  /// Controller for <see cref="PeakSearchingAndFittingDataSource"/>.
+  /// </summary>
   [UserControllerForObject(typeof(PeakSearchingAndFittingDataSource))]
   public class PeakFindingAndFittingDataSourceController : DataSourceControllerBase<PeakSearchingAndFittingDataSource>
   {
+    /// <inheritdoc />
     protected override IMVCANController GetProcessDataController()
     {
       var ctrl = new ListOfXAndYColumnController();

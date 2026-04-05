@@ -34,9 +34,16 @@ namespace Altaxo.Worksheet.Commands
   /// <summary>
   /// Saves the options for the 'Plot common columns' command and contains the logic to execute that command with the stored options.
   /// </summary>
-  public class PlotCommonColumnsCommand 
+  public class PlotCommonColumnsCommand
   {
+    /// <summary>
+    /// The tables participating in the command.
+    /// </summary>
     protected List<Altaxo.Data.DataTable> _tables = new List<Altaxo.Data.DataTable>();
+
+    /// <summary>
+    /// The common Y-column names selected for plotting.
+    /// </summary>
     protected List<string> _yCommonColumnNamesForPlotting = new List<string>();
 
     /// <summary>The tables that contain the common columns to plot.</summary>
@@ -47,14 +54,14 @@ namespace Altaxo.Worksheet.Commands
     /// </summary>
     public string? XCommonColumnNameForPlot { get; set; }
 
-    /// <summary>Names of the y columns to plot. For each name, the columns in all the tables where used to build a plot group of plot items, resulting in n plot groups containing m
+    /// <summary>Names of the y columns to plot. For each name, the columns in all the tables were used to build a plot group of plot items, resulting in n plot groups containing m
     /// plot items, where n is the number of selected column names, and m is the number of tables.</summary>
     public List<string> YCommonColumnNamesForPlotting { get { return _yCommonColumnNamesForPlotting; } }
 
     /// <summary>
     /// Gets all the names of the columns common to all tables in a unordered fashion.
     /// </summary>
-    /// <returns>The names of all the columns common to all tables in a unordered fashion</returns>
+    /// <returns>The names of all the columns common to all tables in an unordered fashion.</returns>
     public HashSet<string> GetCommonColumnNamesUnordered()
     {
       if (_tables.Count == 0)

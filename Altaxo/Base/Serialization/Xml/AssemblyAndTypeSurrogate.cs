@@ -29,21 +29,31 @@ using System.Diagnostics.CodeAnalysis;
 namespace Altaxo.Serialization.Xml
 {
   /// <summary>
-  /// Summary description for AssemblyAndTypeSurrogate.
+  /// Stores the assembly name and type name of an object so that an instance of that type can later be recreated.
   /// </summary>
-  ///
   public class AssemblyAndTypeSurrogate
   {
+    /// <summary>
+    /// The assembly name.
+    /// </summary>
     private string _assemblyName;
+
+    /// <summary>
+    /// The type name.
+    /// </summary>
     private string _typeName;
 
     #region Serialization
 
     #region Version 0
 
+    /// <summary>
+    /// Serialization surrogate for <see cref="AssemblyAndTypeSurrogate"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AssemblyAndTypeSurrogate), 0)]
     public class XmlSerializationSurrogate : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (AssemblyAndTypeSurrogate)obj;
@@ -52,6 +62,7 @@ namespace Altaxo.Serialization.Xml
         info.AddValue("TypeName", s._typeName);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (o is AssemblyAndTypeSurrogate s)
@@ -71,6 +82,11 @@ namespace Altaxo.Serialization.Xml
 
     #endregion Version 0
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AssemblyAndTypeSurrogate"/> class for deserialization.
+    /// </summary>
+    /// <param name="info">The deserialization information.</param>
+    /// <param name="version">The surrogate version to deserialize.</param>
     protected AssemblyAndTypeSurrogate(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     {
       switch (version)
@@ -87,6 +103,10 @@ namespace Altaxo.Serialization.Xml
 
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AssemblyAndTypeSurrogate"/> class from an existing object.
+    /// </summary>
+    /// <param name="o">The object whose assembly and type information should be stored.</param>
     public AssemblyAndTypeSurrogate(object o)
     {
       if (o is null)
@@ -95,6 +115,10 @@ namespace Altaxo.Serialization.Xml
       _typeName = o.GetType().FullName ?? throw new InvalidOperationException($"Unable to determine full name of type {o.GetType()}");
     }
 
+    /// <summary>
+    /// Creates an instance of the stored type.
+    /// </summary>
+    /// <returns>A newly created instance of the stored type, or <c>null</c> if instance creation fails.</returns>
     public object? CreateInstance()
     {
       try

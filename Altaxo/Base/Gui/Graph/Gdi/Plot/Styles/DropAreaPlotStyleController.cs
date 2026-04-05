@@ -43,14 +43,14 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
 
   /// <summary>
-  /// This view interface is for showing the options of the XYZPlotLineStyle
+  /// Provides the view contract for <see cref="DropAreaPlotStyleController"/>.
   /// </summary>
   public interface IDropAreaPlotStyleView : IDataContextAwareView
   {
   }
 
   /// <summary>
-  /// Summary description for XYPlotLineStyleController.
+  /// Controller for <see cref="DropAreaPlotStyle"/>.
   /// </summary>
   [UserControllerForObject(typeof(DropAreaPlotStyle))]
   [ExpectedTypeOfView(typeof(IDropAreaPlotStyleView))]
@@ -59,6 +59,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     /// <summary>Tracks the presence of a color group style in the parent collection.</summary>
     private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_framePen, () => FramePen = null);
@@ -68,6 +69,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _connectCircular;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the plotted area is connected circularly.
+    /// </summary>
     public bool ConnectCircular
     {
       get => _connectCircular;
@@ -84,6 +88,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _ignoreMissingDataPoints;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether missing data points are ignored.
+    /// </summary>
     public bool IgnoreMissingDataPoints
     {
       get => _ignoreMissingDataPoints;
@@ -100,6 +107,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _independentOnShiftingGroupStyles;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether shifting group styles are ignored.
+    /// </summary>
     public bool IndependentOnShiftingGroupStyles
     {
       get => _independentOnShiftingGroupStyles;
@@ -115,6 +125,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private ItemsController<Type> _lineConnectChoices;
 
+    /// <summary>
+    /// Gets or sets the available line connection choices.
+    /// </summary>
     public ItemsController<Type> LineConnectChoices
     {
       get => _lineConnectChoices;
@@ -130,6 +143,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private ItemsController<CSPlaneID> _areaFillDirectionChoices;
 
+    /// <summary>
+    /// Gets or sets the available fill direction choices.
+    /// </summary>
     public ItemsController<CSPlaneID> AreaFillDirectionChoices
     {
       get => _areaFillDirectionChoices;
@@ -147,6 +163,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private ItemsController<ColorLinkage> _fillColorLinkageChoices;
 
+    /// <summary>
+    /// Gets or sets the available fill color linkage choices.
+    /// </summary>
     public ItemsController<ColorLinkage> FillColorLinkageChoices
     {
       get => _fillColorLinkageChoices;
@@ -162,6 +181,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private ItemsController<ColorLinkage> _frameColorLinkageChoices;
 
+    /// <summary>
+    /// Gets or sets the available frame color linkage choices.
+    /// </summary>
     public ItemsController<ColorLinkage> FrameColorLinkageChoices
     {
       get => _frameColorLinkageChoices;
@@ -177,6 +199,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _showPlotColorsOnlyForFillBrush;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether only plot colors are shown for the fill brush.
+    /// </summary>
     public bool ShowPlotColorsOnlyForFillBrush
     {
       get => _showPlotColorsOnlyForFillBrush;
@@ -192,6 +217,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private BrushX _fillBrush;
 
+    /// <summary>
+    /// Gets or sets the fill brush.
+    /// </summary>
     public BrushX FillBrush
     {
       get => _fillBrush;
@@ -208,6 +236,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private ColorTypeThicknessPenController _framePen;
 
+    /// <summary>
+    /// Gets or sets the frame pen controller.
+    /// </summary>
     public ColorTypeThicknessPenController FramePen
     {
       get => _framePen;
@@ -233,6 +264,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     #endregion
 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       _colorGroupStyleTracker = null;
@@ -245,6 +277,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -284,6 +317,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       LineConnectChoices = new ItemsController<Type>(lineConnectChoices);
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       // don't trust user input, so all into a try statement
@@ -315,11 +349,14 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
       catch (Exception ex)
       {
-        Current.Gui.ErrorMessageBox("A problem occured. " + ex.Message);
+        Current.Gui.ErrorMessageBox("A problem occurred. " + ex.Message);
         return false;
       }
     }
 
+    /// <summary>
+    /// Initializes the available fill direction choices.
+    /// </summary>
     public void InitializeFillDirectionChoices()
     {
       var areaFillDirectionChoices = new SelectableListNodeList();

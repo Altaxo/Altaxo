@@ -47,7 +47,7 @@ namespace Altaxo.Graph.Scales.Rescaling
     RelativeToDataBoundsOrg = 1,
 
     /// <summary>
-    /// User provided boundary is an offset relative to the end of the data bounds
+    /// User provided boundary is an offset relative to the end of the data bounds.
     /// Example: the user provided value is 200, the end of the data bounds is 2000, thus the resulting boundary value is 2200.
     /// </summary>
     RelativeToDataBoundsEnd = 2,

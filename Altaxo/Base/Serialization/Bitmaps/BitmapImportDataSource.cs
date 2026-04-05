@@ -30,6 +30,9 @@ using Altaxo.Data;
 
 namespace Altaxo.Serialization.Bitmaps
 {
+  /// <summary>
+  /// Table data source for importing bitmap files.
+  /// </summary>
   public class BitmapImportDataSource : FileImportTableDataSourceBase<BitmapImportOptions>
   {
     #region Serialization
@@ -42,6 +45,7 @@ namespace Altaxo.Serialization.Bitmaps
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BitmapImportDataSource), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (BitmapImportDataSource)obj;
@@ -51,6 +55,7 @@ namespace Altaxo.Serialization.Bitmaps
         info.AddArray("ProcessData", s._files.ToArray(), s._files.Count);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (o is BitmapImportDataSource s)
@@ -96,32 +101,44 @@ namespace Altaxo.Serialization.Bitmaps
 
     #region Construction
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BitmapImportDataSource"/> class for a single file.
+    /// </summary>
     public BitmapImportDataSource(string fileName, BitmapImportOptions options)
       : this(new string[] { fileName }, options)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BitmapImportDataSource"/> class for multiple files.
+    /// </summary>
     public BitmapImportDataSource(IEnumerable<string> fileNames, BitmapImportOptions options)
       : base(fileNames)
     {
       _processOptions = options;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BitmapImportDataSource"/> class by copying another instance.
+    /// </summary>
     public BitmapImportDataSource(BitmapImportDataSource from)
       : base(from)
     {
     }
 
+    /// <inheritdoc />
     public override object Clone() => new BitmapImportDataSource(this);
 
     #endregion Construction
 
 
+    /// <inheritdoc />
     protected override void ImportFromFiles(string[] validFileNames, DataTable destinationTable, IProgressReporter reporter)
     {
       new BitmapImporter().Import(validFileNames, destinationTable, _processOptions, attachDataSource: false);
     }
 
+    /// <inheritdoc />
     public override (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
     {
       return new BitmapImporter().GetFileExtensions();

@@ -40,10 +40,14 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
    
   }
 
+  /// <summary>
+  /// Controller for editing properties of <see cref="ColorProviderBase"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IColorProviderBaseView))]
   [UserControllerForObject(typeof(ColorProviderBase))]
   public class ColorProviderBaseController : MVCANDControllerEditImmutableDocBase<ColorProviderBase, IColorProviderBaseView>
   {
+    /// <inheritdoc/>
     public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -53,6 +57,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 
     private NamedColor _colorBelow;
 
+    /// <summary>
+    /// Gets or sets the color for values below the valid range.
+    /// </summary>
     public NamedColor ColorBelow
     {
       get => _colorBelow;
@@ -68,6 +75,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
     }
     private NamedColor _colorAbove;
 
+    /// <summary>
+    /// Gets or sets the color for values above the valid range.
+    /// </summary>
     public NamedColor ColorAbove
     {
       get => _colorAbove;
@@ -83,6 +93,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
     }
     private NamedColor _colorInvalid;
 
+    /// <summary>
+    /// Gets or sets the color for invalid values.
+    /// </summary>
     public NamedColor ColorInvalid
     {
       get => _colorInvalid;
@@ -100,6 +113,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 
     private decimal _transparency;
 
+    /// <summary>
+    /// Gets or sets the transparency in percent.
+    /// </summary>
     public decimal Transparency
     {
       get => _transparency;
@@ -116,6 +132,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 
     private int _colorSteps;
 
+    /// <summary>
+    /// Gets or sets the number of color steps.
+    /// </summary>
     public int ColorSteps
     {
       get => _colorSteps;
@@ -133,6 +152,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -147,6 +167,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = _doc

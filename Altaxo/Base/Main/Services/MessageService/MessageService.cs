@@ -89,11 +89,17 @@ namespace Altaxo.Main.Services
       return Service.AskQuestion(question, caption);
     }
 
+    /// <summary>
+    /// Asks the user a yes/no question using formatted text.
+    /// </summary>
     public static bool AskQuestionFormatted(string caption, string formatstring, params object[] formatitems)
     {
       return Service.AskQuestion(StringParser.Format(formatstring, formatitems), caption);
     }
 
+    /// <summary>
+    /// Asks the user a yes/no question using formatted text.
+    /// </summary>
     public static bool AskQuestionFormatted(string formatstring, params object[] formatitems)
     {
       return Service.AskQuestion(StringParser.Format(formatstring, formatitems));
@@ -131,6 +137,13 @@ namespace Altaxo.Main.Services
       return ShowCustomDialog(caption, dialogText, -1, -1, buttontexts);
     }
 
+    /// <summary>
+    /// Shows an input box.
+    /// </summary>
+    /// <param name="caption">The caption of the input box.</param>
+    /// <param name="dialogText">The prompt text.</param>
+    /// <param name="defaultValue">The default input value.</param>
+    /// <returns>The entered text.</returns>
     public static string ShowInputBox(string caption, string dialogText, string defaultValue)
     {
       return Service.ShowInputBox(caption, dialogText, defaultValue);
@@ -154,21 +167,33 @@ namespace Altaxo.Main.Services
       get { return Service.DefaultMessageBoxTitle; }
     }
 
+    /// <summary>
+    /// Shows a formatted informational message.
+    /// </summary>
     public static void ShowMessageFormatted(string formatstring, params object[] formatitems)
     {
       Service.ShowMessageFormatted(formatstring, null, formatitems);
     }
 
+    /// <summary>
+    /// Shows a formatted informational message with a custom caption.
+    /// </summary>
     public static void ShowMessageFormatted(string caption, string formatstring, params object[] formatitems)
     {
       Service.ShowMessageFormatted(formatstring, caption, formatitems);
     }
 
+    /// <summary>
+    /// Shows a message.
+    /// </summary>
     public static void ShowMessage(string message, string? caption = null)
     {
       Service.ShowMessage(message, caption);
     }
 
+    /// <summary>
+    /// Shows an exception that has already been handled.
+    /// </summary>
     public static void ShowHandledException(Exception ex, string? message = null)
     {
       Service.ShowHandledException(ex, message);

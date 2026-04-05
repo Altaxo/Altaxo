@@ -39,14 +39,38 @@ namespace Altaxo.Graph.Gdi
     Main.SuspendableDocumentNodeWithEventArgs,
     ICloneable
   {
+    /// <summary>
+    /// The source resolution in dpi.
+    /// </summary>
     protected double _sourceDpiResolution;
+    /// <summary>
+    /// The output scaling factor.
+    /// </summary>
     protected double _outputScalingFactor;
 
+    /// <summary>
+    /// Determines whether an enhanced metafile should be rendered.
+    /// </summary>
     protected bool _renderEnhancedMetafile; // can be rendered as true metafile or as enhanced metafile with included bitmap
+    /// <summary>
+    /// Determines whether the enhanced metafile should be rendered as vector format.
+    /// </summary>
     protected bool _renderEnhancedMetafileAsVectorFormat; // if true, use a true enhanced metafile
+    /// <summary>
+    /// Determines whether a Windows metafile should be rendered.
+    /// </summary>
     protected bool _renderWindowsMetafile; // has to be rendered as Metafile with included bitmap
+    /// <summary>
+    /// Determines whether a bitmap should be rendered.
+    /// </summary>
     protected bool _renderBitmap; // rendered as bitmap plus DIB bitmap
+    /// <summary>
+    /// The background color used for formats without alpha support.
+    /// </summary>
     protected NamedColor _backgroundColorForFormatsWithoutAlphaChannel;
+    /// <summary>
+    /// The optional background brush.
+    /// </summary>
     protected BrushX? _backgroundBrush;
 
     #region Serialization
@@ -127,6 +151,9 @@ namespace Altaxo.Graph.Gdi
 
     #region Construction
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EmbeddedObjectRenderingOptions"/> class.
+    /// </summary>
     public EmbeddedObjectRenderingOptions()
     {
       _sourceDpiResolution = 300;
@@ -139,6 +166,10 @@ namespace Altaxo.Graph.Gdi
       _outputScalingFactor = 1;
     }
 
+    /// <summary>
+    /// Copies the state from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     protected void CopyFrom(EmbeddedObjectRenderingOptions from)
     {
       _sourceDpiResolution = from._sourceDpiResolution;
@@ -152,6 +183,11 @@ namespace Altaxo.Graph.Gdi
       _backgroundBrush = from._backgroundBrush;
     }
 
+    /// <summary>
+    /// Copies the state from another object if it is compatible.
+    /// </summary>
+    /// <param name="obj">The object to copy from.</param>
+    /// <returns><c>true</c> if the copy succeeded; otherwise, <c>false</c>.</returns>
     public virtual bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -164,21 +200,31 @@ namespace Altaxo.Graph.Gdi
       return false;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EmbeddedObjectRenderingOptions"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public EmbeddedObjectRenderingOptions(EmbeddedObjectRenderingOptions from)
     {
       CopyFrom(from ?? throw new ArgumentNullException(nameof(from)));
     }
 
+    /// <summary>
+    /// Creates a copy of this instance.
+    /// </summary>
+    /// <returns>The cloned instance.</returns>
     public EmbeddedObjectRenderingOptions Clone()
     {
       return new EmbeddedObjectRenderingOptions(this);
     }
 
+    /// <inheritdoc />
     object ICloneable.Clone()
     {
       return new EmbeddedObjectRenderingOptions(this);
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
@@ -188,6 +234,9 @@ namespace Altaxo.Graph.Gdi
 
     #region Property management
 
+    /// <summary>
+    /// Gets the property key used to store embedded object rendering options.
+    /// </summary>
     public static readonly Altaxo.Main.Properties.PropertyKey<EmbeddedObjectRenderingOptions> PropertyKeyEmbeddedObjectRenderingOptions =
       new Altaxo.Main.Properties.PropertyKey<EmbeddedObjectRenderingOptions>(
         "1030D700-CB3B-445B-95D8-88E1ECFE78C0",
@@ -220,6 +269,9 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets or sets the scaling factor applied to the rendered output.
+    /// </summary>
     public double OutputScalingFactor
     {
       get
@@ -235,6 +287,9 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets or sets the optional background brush used during rendering.
+    /// </summary>
     public BrushX? BackgroundBrush
     {
       get
@@ -250,6 +305,9 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets or sets the background color used for formats without alpha support.
+    /// </summary>
     public NamedColor BackgroundColorForFormatsWithoutAlphaChannel
     {
       get

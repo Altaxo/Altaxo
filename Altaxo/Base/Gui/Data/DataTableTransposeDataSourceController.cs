@@ -27,6 +27,9 @@ using Altaxo.Data;
 
 namespace Altaxo.Gui.Data
 {
+  /// <summary>
+  /// Controller for <see cref="DataTableTransposeDataSource"/>.
+  /// </summary>
   [UserControllerForObject(typeof(DataTableTransposeDataSource))]
   public class DataTableTransposeDataSourceController : DataSourceControllerBase<DataTableTransposeDataSource>
   {

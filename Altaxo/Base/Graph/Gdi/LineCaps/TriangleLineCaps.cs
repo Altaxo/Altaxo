@@ -36,8 +36,10 @@ namespace Altaxo.Graph.Gdi.LineCaps
   /// </summary>
   public class TriangleOLineCap : GdiLineCapBase
   {
+    /// <inheritdoc />
     public override Type ExtendsType => typeof(Altaxo.Drawing.LineCaps.TriangleOLineCap);
 
+    /// <inheritdoc />
     protected override CustomLineCap GetCustomLineCap(Pen pen, float size, bool isEndCap)
     {
       float endPoint;
@@ -68,9 +70,11 @@ namespace Altaxo.Graph.Gdi.LineCaps
   /// </summary>
   public class TriangleFLineCap : GdiLineCapBase
   {
+    /// <inheritdoc />
     public override Type ExtendsType => typeof(Altaxo.Drawing.LineCaps.TriangleFLineCap);
 
 
+    /// <inheritdoc />
     protected override CustomLineCap GetCustomLineCap(Pen pen, float size, bool isEndCap)
     {
       float scale = pen.Width == 0 ? 1 : size / pen.Width;

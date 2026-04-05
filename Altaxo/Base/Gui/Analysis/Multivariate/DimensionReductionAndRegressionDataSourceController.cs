@@ -29,11 +29,13 @@ using Altaxo.Gui.Data;
 
 namespace Altaxo.Gui.Analysis.Multivariate
 {
-  
-
+  /// <summary>
+  /// Controller for <see cref="DimensionReductionAndRegressionDataSource"/>.
+  /// </summary>
   [UserControllerForObject(typeof(DimensionReductionAndRegressionDataSource))]
   public class DimensionReductionAndRegressionDataSourceController : DataSourceControllerBase<DimensionReductionAndRegressionDataSource>
   {
+    /// <inheritdoc />
     protected override IMVCANController GetProcessDataController()
     {
       var processDataController = new DataTableMatrixProxyWithMultipleColumnHeaderColumnsController() { UseDocumentCopy = UseDocument.Directly };

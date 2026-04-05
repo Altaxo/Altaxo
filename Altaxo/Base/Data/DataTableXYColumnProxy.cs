@@ -40,7 +40,7 @@ namespace Altaxo.Data
     Main.ICopyFrom,
     IHasDocumentReferences
   {
-    /// <summary><c>True</c> if the data are inconsistent. To bring the data in a consistent state <see cref="Update"/> method must be called then.</summary>
+    /// <summary><c>True</c> if the data are inconsistent. To bring the data into a consistent state, the <see cref="InternalUpdateParticipatingDataRows()"/> method must be called.</summary>
     protected bool _isDirty;
 
     /// <summary>Holds a reference to the underlying data table. If the Empty property of the proxy is null, the underlying table must be determined from the column proxies.</summary>
@@ -55,15 +55,21 @@ namespace Altaxo.Data
     /// <summary>The indices of the data rows that contribute to the matrix.</summary>
     protected AscendingIntegerCollection _participatingDataRows = new AscendingIntegerCollection();
 
+    /// <summary>
+    /// The proxy of the x-column.
+    /// </summary>
     protected IReadableColumnProxy _xColumn;
 
+    /// <summary>
+    /// The proxy of the y-column.
+    /// </summary>
     protected IReadableColumnProxy _yColumn;
 
     /// <summary>
     /// Copies data from another instance of <see cref="DataTableXYColumnProxy"/>.
     /// </summary>
     /// <param name="obj">The instance.</param>
-    /// <returns><c>True</c> if any data could be copyied.</returns>
+    /// <returns><c>True</c> if any data could be copied.</returns>
     public bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -260,6 +266,9 @@ namespace Altaxo.Data
       }
     }
 
+    /// <summary>
+    /// Gets the proxy of the x-column.
+    /// </summary>
     public IReadableColumnProxy XColumnProxy
     {
       get
@@ -268,6 +277,9 @@ namespace Altaxo.Data
       }
     }
 
+    /// <summary>
+    /// Gets the proxy of the y-column.
+    /// </summary>
     public IReadableColumnProxy YColumnProxy
     {
       get
@@ -277,6 +289,9 @@ namespace Altaxo.Data
     }
 
 
+    /// <summary>
+    /// Gets the resolved x-column.
+    /// </summary>
     public IReadableColumn? XColumn
     {
       get
@@ -285,6 +300,9 @@ namespace Altaxo.Data
       }
     }
 
+    /// <summary>
+    /// Gets the resolved y-column.
+    /// </summary>
     public IReadableColumn? YColumn
     {
       get
@@ -372,6 +390,7 @@ namespace Altaxo.Data
 
     #region Change event handling
 
+    /// <inheritdoc />
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       _isDirty = true;
@@ -382,6 +401,7 @@ namespace Altaxo.Data
 
     #region Document Node functions
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_dataTable is not null)

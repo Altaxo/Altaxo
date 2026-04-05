@@ -39,11 +39,11 @@ namespace Altaxo.Graph.Plot.Data
     private int _plotIndex;
 
     /// <summary>
-    /// Constructor.
+    /// Initializes a new instance of the <see cref="XYZScatterPointInformation"/> class.
     /// </summary>
-    /// <param name="layerCoordinates"></param>
-    /// <param name="rowIndex"></param>
-    /// <param name="plotIndex"></param>
+    /// <param name="layerCoordinates">The layer coordinates of the point.</param>
+    /// <param name="rowIndex">The row index in the underlying data source.</param>
+    /// <param name="plotIndex">The index of the plotted point.</param>
     public XYZScatterPointInformation(PointD3D layerCoordinates, int rowIndex, int plotIndex)
     {
       _layerCoordinates = layerCoordinates;

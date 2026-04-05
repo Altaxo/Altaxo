@@ -31,6 +31,9 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D
 {
+  /// <summary>
+  /// Represents an item location defined by grid coordinates within a host layer.
+  /// </summary>
   public class ItemLocationByGrid : Main.SuspendableDocumentLeafNodeWithEventArgs, IItemLocation
   {
     /// <summary>
@@ -96,9 +99,13 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// 2015-11-14 initial version.
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="ItemLocationByGrid"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ItemLocationByGrid), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ItemLocationByGrid)obj;
@@ -145,6 +152,7 @@ namespace Altaxo.Graph.Graph3D
         return s;
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
@@ -154,15 +162,23 @@ namespace Altaxo.Graph.Graph3D
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ItemLocationByGrid"/> class.
+    /// </summary>
     public ItemLocationByGrid()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ItemLocationByGrid"/> class by copying from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public ItemLocationByGrid(ItemLocationByGrid from)
     {
       CopyFrom(from);
     }
 
+    /// <inheritdoc/>
     public bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -215,16 +231,27 @@ namespace Altaxo.Graph.Graph3D
       return false;
     }
 
+    /// <inheritdoc/>
     object System.ICloneable.Clone()
     {
       return new ItemLocationByGrid(this);
     }
 
+    /// <summary>
+    /// Creates a strongly typed clone of this item location.
+    /// </summary>
+    /// <returns>A cloned item location.</returns>
     public ItemLocationByGrid Clone()
     {
       return new ItemLocationByGrid(this);
     }
 
+    /// <summary>
+    /// Gets the absolute rectangle represented by this grid-based location.
+    /// </summary>
+    /// <param name="partition">The grid partitioning.</param>
+    /// <param name="parentSize">The size of the parent layer.</param>
+    /// <returns>The absolute item rectangle.</returns>
     public RectangleD3D GetAbsolute(GridPartitioning partition, VectorD3D parentSize)
     {
       return partition.GetTileRectangle(_gridPosX, _gridPosY, _gridPosZ, _gridSpanX, _gridSpanY, _gridSpanZ, parentSize);

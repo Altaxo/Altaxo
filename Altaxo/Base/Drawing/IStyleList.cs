@@ -31,17 +31,29 @@ using System.Text;
 namespace Altaxo.Drawing
 {
   /// <summary>
-  /// Lists of styles, for instance scatter styles, line styles, etc., that are used in grouping.
-  /// This list has to be immutable.
+  /// Immutable lists of styles, for instance scatter styles or line styles, that are used in grouping.
   /// </summary>
   /// <typeparam name="T">Type of the style.</typeparam>
   /// <seealso cref="System.Collections.Generic.IList{T}" />
   public interface IStyleList<T> : IReadOnlyList<T>, Main.IImmutable where T : Main.IImmutable
   {
+    /// <summary>
+    /// Gets the name of the style list.
+    /// </summary>
     string Name { get; }
 
+    /// <summary>
+    /// Returns a copy of the style list with a different name.
+    /// </summary>
+    /// <param name="name">The new list name.</param>
+    /// <returns>A style list with the updated name.</returns>
     IStyleList<T> WithName(string name);
 
+    /// <summary>
+    /// Determines whether the specified list has the same structure and items.
+    /// </summary>
+    /// <param name="anotherList">The list to compare with.</param>
+    /// <returns><see langword="true"/> if the lists are structurally equivalent; otherwise, <see langword="false"/>.</returns>
     bool IsStructuralEquivalentTo(IEnumerable<T> anotherList);
   }
 }

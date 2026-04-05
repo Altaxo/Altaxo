@@ -39,6 +39,11 @@ namespace Altaxo.Serialization
   {
     #region AltaxoVariant
 
+    /// <summary>
+    /// Converts a sequence of <see cref="AltaxoVariant"/> values to a semicolon-separated string.
+    /// </summary>
+    /// <param name="vals">The values to format.</param>
+    /// <returns>The formatted string.</returns>
     public static string ToString(IEnumerable<AltaxoVariant> vals)
     {
       var stb = new StringBuilder();
@@ -55,6 +60,12 @@ namespace Altaxo.Serialization
       return stb.ToString();
     }
 
+    /// <summary>
+    /// Tries to parse multiple <see cref="AltaxoVariant"/> values from a string.
+    /// </summary>
+    /// <param name="s">The input string.</param>
+    /// <param name="vals">The parsed values.</param>
+    /// <returns><c>true</c> if parsing succeeded; otherwise, <c>false</c>.</returns>
     public static bool TryParseMultipleAltaxoVariant(string s, [MaybeNullWhen(false)] out AltaxoVariant[] vals)
     {
       vals = null;
@@ -91,6 +102,9 @@ namespace Altaxo.Serialization
 
     private static LengthUnit _lastLengthUnitUsed = LengthUnit.Point;
 
+    /// <summary>
+    /// Gets or sets the last used length unit.
+    /// </summary>
     public static LengthUnit LastUsedLengthUnit
     {
       get

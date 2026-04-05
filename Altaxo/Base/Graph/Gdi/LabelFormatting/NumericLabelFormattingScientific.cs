@@ -79,15 +79,23 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NumericLabelFormattingScientific"/> class.
+    /// </summary>
     public NumericLabelFormattingScientific()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NumericLabelFormattingScientific"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public NumericLabelFormattingScientific(NumericLabelFormattingScientific from)
       : base(from) // everything is done here, since CopyFrom is virtual
     {
     }
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -104,11 +112,13 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
       return false;
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new NumericLabelFormattingScientific(this);
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
@@ -130,16 +140,30 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
       }
     }
 
+    /// <inheritdoc/>
     protected override string FormatItem(Altaxo.Data.AltaxoVariant item)
     {
       throw new ApplicationException("Programming error: this function must not be called because the item can not be formatted as a string");
     }
 
+    /// <summary>
+    /// Formats a numeric value in scientific notation.
+    /// </summary>
+    /// <param name="tick">The numeric value.</param>
+    /// <returns>The formatted string.</returns>
     public string FormatItem(double tick)
     {
       throw new ApplicationException("Programming error: this function must not be called because the item can not be formatted as a string");
     }
 
+    /// <summary>
+    /// Splits a numeric value into a mantissa and exponent representation.
+    /// </summary>
+    /// <param name="ditem">The numeric value to split.</param>
+    /// <param name="firstpart">Receives the formatted first part of the label.</param>
+    /// <param name="mant">Receives the mantissa.</param>
+    /// <param name="middelpart">Receives the separator between mantissa and exponent.</param>
+    /// <param name="exponent">Receives the formatted exponent.</param>
     protected void SplitInFirstPartAndExponent(double ditem, out string firstpart, out double mant, out string middelpart, out string exponent)
     {
       if (0 == ditem || double.IsNaN(ditem) || double.IsInfinity(ditem))
@@ -176,6 +200,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
       }
     }
 
+    /// <inheritdoc />
     public override System.Drawing.SizeF MeasureItem(System.Drawing.Graphics g, FontX font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant mtick, System.Drawing.PointF morg)
     {
       SplitInFirstPartAndExponent(mtick, out var firstpart, out var mant, out var middelpart, out var exponent);
@@ -188,6 +213,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
       return new SizeF(size1.Width + size2.Width + size3.Width, size1.Height);
     }
 
+    /// <inheritdoc />
     public override void DrawItem(Graphics g, BrushX brush, FontX font, StringFormat strfmt, Altaxo.Data.AltaxoVariant item, PointF morg)
     {
       SplitInFirstPartAndExponent(item, out var firstpart, out var mant, out var middelpart, out var exponent);
@@ -216,6 +242,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
       }
     }
 
+    /// <inheritdoc />
     public override IMeasuredLabelItem[] GetMeasuredItems(Graphics g, FontX font, StringFormat strfmt, Altaxo.Data.AltaxoVariant[] items)
     {
       var litems = new MeasuredLabelItem[items.Length];
@@ -277,21 +304,65 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
       return litems;
     }
 
+    /// <summary>
+    /// Represents a measured scientific-notation label item.
+    /// </summary>
     protected new class MeasuredLabelItem : IMeasuredLabelItem
     {
+      /// <summary>
+      /// The leading portion of the label.
+      /// </summary>
       protected string _firstpart;
+      /// <summary>
+      /// The exponent portion of the label.
+      /// </summary>
       protected string _exponent;
+      /// <summary>
+      /// The trailing portion of the label.
+      /// </summary>
       protected string _lastpart;
+      /// <summary>
+      /// The font used for the leading and trailing text.
+      /// </summary>
       protected FontX _font1;
+      /// <summary>
+      /// The font used for the exponent text.
+      /// </summary>
       protected FontX _font2;
+      /// <summary>
+      /// The string formatting used for drawing.
+      /// </summary>
       protected System.Drawing.StringFormat _strfmt;
+      /// <summary>
+      /// The measured size of the leading portion.
+      /// </summary>
       protected SizeF _size1;
+      /// <summary>
+      /// The measured size of the exponent portion.
+      /// </summary>
       protected SizeF _size2;
+      /// <summary>
+      /// The measured size of the trailing portion.
+      /// </summary>
       protected SizeF _size3;
+      /// <summary>
+      /// The padding added to keep exponents aligned.
+      /// </summary>
       protected float _rightPadding;
 
       #region IMeasuredLabelItem Members
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="MeasuredLabelItem"/> class.
+      /// </summary>
+      /// <param name="g">The graphics context used for measurement.</param>
+      /// <param name="font1">The base font.</param>
+      /// <param name="font2">The exponent font.</param>
+      /// <param name="strfmt">The string format.</param>
+      /// <param name="firstpart">The leading portion of the label.</param>
+      /// <param name="exponent">The exponent portion of the label.</param>
+      /// <param name="lastpart">The trailing portion of the label.</param>
+      /// <param name="maxexposize">The maximum measured exponent width.</param>
       public MeasuredLabelItem(Graphics g, FontX font1, FontX font2, StringFormat strfmt, string firstpart, string exponent, string lastpart, float maxexposize)
       {
         _firstpart = firstpart;
@@ -306,6 +377,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
         _rightPadding = maxexposize - _size2.Width;
       }
 
+      /// <inheritdoc />
       public virtual SizeF Size
       {
         get
@@ -314,6 +386,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
         }
       }
 
+      /// <inheritdoc />
       public virtual void Draw(Graphics g, BrushXEnv brush, PointF point)
       {
         using (var gdibrush = BrushCacheGdi.Instance.BorrowBrush(brush))

@@ -36,6 +36,9 @@ namespace Altaxo.Graph.Graph3D
   using GraphicsContext;
   using Shapes;
 
+  /// <summary>
+  /// Represents a host layer that can contain graphic objects and child layers in a three-dimensional graph.
+  /// </summary>
   public class HostLayer :
     Main.SuspendableDocumentNodeWithSetOfEventArgs,
     ITreeListNodeWithParent<HostLayer>,
@@ -44,12 +47,30 @@ namespace Altaxo.Graph.Graph3D
   {
     #region Constants
 
+    /// <summary>
+    /// Default relative x size for child layers.
+    /// </summary>
     protected const double _xDefSizeLandscape = 88 / 128.0;
+    /// <summary>
+    /// Default relative y size for child layers.
+    /// </summary>
     protected const double _yDefSizeLandscape = 88 / 96.0;
+    /// <summary>
+    /// Default relative z size for child layers.
+    /// </summary>
     protected const double _zDefSizeLandscape = 72 / 96.0;
 
+    /// <summary>
+    /// Default relative x position for child layers.
+    /// </summary>
     protected const double _xDefPositionLandscape = 0.5 * (1 - 88 / 128.0);
+    /// <summary>
+    /// Default relative y position for child layers.
+    /// </summary>
     protected const double _yDefPositionLandscape = 0.5 * (1 - 88 / 96.0);
+    /// <summary>
+    /// Default relative z position for child layers.
+    /// </summary>
     protected const double _zDefPositionLandscape = 0.2;
 
     #endregion Constants
@@ -72,6 +93,9 @@ namespace Altaxo.Graph.Graph3D
     /// </summary>
     protected VectorD3D _cachedLayerSize;
 
+    /// <summary>
+    /// Stores the local transformation from parent coordinates into this layer.
+    /// </summary>
     protected Matrix4x3 _transformation = Matrix4x3.Identity;
 
     /// <summary>
@@ -88,8 +112,14 @@ namespace Altaxo.Graph.Graph3D
 
     #region Member variables
 
+    /// <summary>
+    /// Stores the location object controlling position, size, and transformation.
+    /// </summary>
     protected IItemLocation _location;
 
+    /// <summary>
+    /// Stores the graphical objects contained in this layer.
+    /// </summary>
     protected GraphicCollection _graphObjects;
 
     /// <summary>
@@ -101,6 +131,9 @@ namespace Altaxo.Graph.Graph3D
 
     #region Editor methods
 
+    /// <summary>
+    /// Gets or sets the editor method used to edit the layer position.
+    /// </summary>
     public static DoubleClickHandler? LayerPositionEditorMethod;
 
     #endregion Editor methods
@@ -128,9 +161,13 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// 2015-09-10 initial version.
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="HostLayer"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(HostLayer), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (HostLayer)obj;
@@ -164,6 +201,7 @@ namespace Altaxo.Graph.Graph3D
         return s;
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
@@ -180,6 +218,7 @@ namespace Altaxo.Graph.Graph3D
 
     #region Copying
 
+    /// <inheritdoc/>
     public virtual bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -193,6 +232,11 @@ namespace Altaxo.Graph.Graph3D
       return false;
     }
 
+    /// <summary>
+    /// Copies the contents of another host layer using the specified copy options.
+    /// </summary>
+    /// <param name="from">The host layer to copy from.</param>
+    /// <param name="options">The copy options.</param>
     public virtual void CopyFrom(HostLayer from, Altaxo.Graph.Gdi.GraphCopyOptions options)
     {
       if (ReferenceEquals(this, from))
@@ -206,11 +250,10 @@ namespace Altaxo.Graph.Graph3D
     }
 
     /// <summary>
-    /// Internal copy from operation. It is presumed, that the events are already suspended. Additionally,
-    /// it is not neccessary to call the OnChanged event, since this is called in the calling routine.
+    /// Performs the internal copy operation while change notifications are suspended.
     /// </summary>
-    /// <param name="from">The layer from which to copy.</param>
-    /// <param name="options">Copy options.</param>
+    /// <param name="from">The host layer to copy from.</param>
+    /// <param name="options">The copy options.</param>
     [MemberNotNull(nameof(_grid), nameof(_location))]
     protected virtual void InternalCopyFrom(HostLayer from, Altaxo.Graph.Gdi.GraphCopyOptions options)
     {
@@ -249,6 +292,11 @@ namespace Altaxo.Graph.Graph3D
       CalculateMatrix();
     }
 
+    /// <summary>
+    /// Copies the graphic items of another host layer according to the specified copy options.
+    /// </summary>
+    /// <param name="from">The host layer to copy from.</param>
+    /// <param name="options">The copy options.</param>
     protected virtual void InternalCopyGraphItems(HostLayer from, Altaxo.Graph.Gdi.GraphCopyOptions options)
     {
       bool bGraphItems = options.HasFlag(Altaxo.Graph.Gdi.GraphCopyOptions.CopyLayerGraphItems);
@@ -265,6 +313,12 @@ namespace Altaxo.Graph.Graph3D
       InternalCopyGraphItems(from, options, criterium);
     }
 
+    /// <summary>
+    /// Copies compatible graph items from another layer into this layer.
+    /// </summary>
+    /// <param name="from">The source layer.</param>
+    /// <param name="options">The copy options.</param>
+    /// <param name="selectionCriteria">The selection criteria for graph items.</param>
     protected virtual void InternalCopyGraphItems(HostLayer from, Altaxo.Graph.Gdi.GraphCopyOptions options, Func<IGraphicBase, bool> selectionCriteria)
     {
       var pwThis = _graphObjects.CreatePartialView(x => selectionCriteria(x));
@@ -306,6 +360,10 @@ namespace Altaxo.Graph.Graph3D
         pwThis.Add((IGraphicBase)pwFrom[j].Clone());
     }
 
+    /// <summary>
+    /// Creates a copy of this layer.
+    /// </summary>
+    /// <returns>A cloned host layer.</returns>
     public virtual object Clone()
     {
       return new HostLayer(this);
@@ -361,6 +419,9 @@ namespace Altaxo.Graph.Graph3D
       CalculateMatrix();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HostLayer"/> class.
+    /// </summary>
     public HostLayer()
       : this(null, new ItemLocationDirect())
     {
@@ -370,6 +431,9 @@ namespace Altaxo.Graph.Graph3D
 
     #region Grid creation
 
+    /// <summary>
+    /// Gets the grid used to arrange child layers.
+    /// </summary>
     public GridPartitioning Grid
     {
       get
@@ -561,6 +625,7 @@ namespace Altaxo.Graph.Graph3D
 
     #endregion Grid creation
 
+    /// <inheritdoc/>
     protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       // despite the fact that _childLayers is only a partial view of _graphObjects, we use it here because if it is found here, it is never searched for in _graphObjects
@@ -641,6 +706,9 @@ namespace Altaxo.Graph.Graph3D
 
     #region IGraphicBase3D
 
+    /// <summary>
+    /// Updates cached geometry and propagates parent size to child graph objects.
+    /// </summary>
     public virtual void FixupInternalDataStructures()
     {
       CalculateCachedSizeAndPosition();
@@ -653,6 +721,10 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Performs preprocessing for all contained graph objects.
+    /// </summary>
+    /// <param name="paintcontext">The paint context.</param>
     public virtual void PaintPreprocessing(Altaxo.Graph.IPaintContext paintcontext)
     {
       var mySize = Size;
@@ -662,6 +734,11 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Paints this layer and its graph objects.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="paintcontext">The paint context.</param>
     public virtual void Paint(IGraphicsContext3D g, IPaintContext paintcontext)
     {
       var savedgstate = g.SaveGraphicsState();
@@ -687,10 +764,18 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Performs cleanup after painting.
+    /// </summary>
     public virtual void PaintPostprocessing()
     {
     }
 
+    /// <summary>
+    /// Determines whether this layer can be inserted into the specified parent object.
+    /// </summary>
+    /// <param name="parentObject">The candidate parent object.</param>
+    /// <returns><see langword="true"/> if the parent is supported; otherwise, <see langword="false"/>.</returns>
     public bool IsCompatibleWithParent(object parentObject)
     {
       return true;
@@ -700,6 +785,9 @@ namespace Altaxo.Graph.Graph3D
 
     #region Position and Size
 
+    /// <summary>
+    /// Gets the default relative position for child layers.
+    /// </summary>
     public static VectorD3D DefaultChildLayerRelativePosition
     {
       get { return new VectorD3D(_xDefPositionLandscape, _yDefPositionLandscape, _zDefPositionLandscape); }
@@ -714,6 +802,9 @@ namespace Altaxo.Graph.Graph3D
       get { return (PointD3D)VectorD3D.MultiplicationElementwise(DefaultChildLayerRelativePosition, Size); }
     }
 
+    /// <summary>
+    /// Gets the default relative size for child layers.
+    /// </summary>
     public static VectorD3D DefaultChildLayerRelativeSize
     {
       get { return new VectorD3D(_xDefSizeLandscape, _yDefSizeLandscape, _zDefSizeLandscape); }
@@ -728,6 +819,10 @@ namespace Altaxo.Graph.Graph3D
       get { return VectorD3D.MultiplicationElementwise(DefaultChildLayerRelativeSize, Size); }
     }
 
+    /// <summary>
+    /// Creates the default location used for newly created child layers.
+    /// </summary>
+    /// <returns>A new item location configured with the default relative size and position.</returns>
     public static IItemLocation GetChildLayerDefaultLocation()
     {
       return new ItemLocationDirect
@@ -741,6 +836,9 @@ namespace Altaxo.Graph.Graph3D
       };
     }
 
+    /// <summary>
+    /// Gets or sets the location object of this layer.
+    /// </summary>
     public IItemLocation Location
     {
       get
@@ -787,6 +885,11 @@ namespace Altaxo.Graph.Graph3D
       get { return _cachedParentLayerSize; }
     }
 
+    /// <summary>
+    /// Updates the cached parent size for this layer.
+    /// </summary>
+    /// <param name="newParentSize">The new parent size.</param>
+    /// <param name="isTriggeringChangedEvent">If set to <see langword="true"/>, a changed event is raised when the size changes.</param>
     public void SetParentSize(VectorD3D newParentSize, bool isTriggeringChangedEvent)
     {
       var oldParentSize = _cachedParentLayerSize;
@@ -804,6 +907,9 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the cached absolute position of the layer.
+    /// </summary>
     public PointD3D Position
     {
       get { return _cachedLayerPosition; }
@@ -830,6 +936,9 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the cached absolute size of the layer.
+    /// </summary>
     public VectorD3D Size
     {
       get { return _cachedLayerSize; }
@@ -856,6 +965,9 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the x-axis rotation of the layer.
+    /// </summary>
     public double RotationX
     {
       get { return _location.RotationX; }
@@ -872,6 +984,9 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the y-axis rotation of the layer.
+    /// </summary>
     public double RotationY
     {
       get { return _location.RotationY; }
@@ -888,6 +1003,9 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the z-axis rotation of the layer.
+    /// </summary>
     public double RotationZ
     {
       get { return _location.RotationZ; }
@@ -904,6 +1022,9 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the x-axis shear of the layer.
+    /// </summary>
     public double ShearX
     {
       get { return _location.ShearX; }
@@ -920,6 +1041,9 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the y-axis shear of the layer.
+    /// </summary>
     public double ShearY
     {
       get { return _location.ShearY; }
@@ -936,6 +1060,9 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the z-axis shear of the layer.
+    /// </summary>
     public double ShearZ
     {
       get { return _location.ShearZ; }
@@ -952,6 +1079,9 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the x-axis scale factor of the layer.
+    /// </summary>
     public double ScaleX
     {
       get { return _location.ScaleX; }
@@ -968,6 +1098,9 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the y-axis scale factor of the layer.
+    /// </summary>
     public double ScaleY
     {
       get { return _location.ScaleY; }
@@ -984,6 +1117,9 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the z-axis scale factor of the layer.
+    /// </summary>
     public double ScaleZ
     {
       get { return _location.ScaleZ; }
@@ -1000,6 +1136,9 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Recalculates the transformation matrix from the current location data.
+    /// </summary>
     protected void CalculateMatrix()
     {
       if (_location is ItemLocationDirect)
@@ -1022,11 +1161,21 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Transforms coordinates from the parent layer into this layer.
+    /// </summary>
+    /// <param name="pagecoordinates">The coordinates in parent space.</param>
+    /// <returns>The coordinates in local layer space.</returns>
     public PointD3D TransformCoordinatesFromParentToHere(PointD3D pagecoordinates)
     {
       return _transformation.InverseTransform(pagecoordinates);
     }
 
+    /// <summary>
+    /// Transforms coordinates from the root layer into this layer.
+    /// </summary>
+    /// <param name="pagecoordinates">The coordinates in root space.</param>
+    /// <returns>The coordinates in local layer space.</returns>
     public PointD3D TransformCoordinatesFromRootToHere(PointD3D pagecoordinates)
     {
       foreach (var layer in this.TakeFromRootToHere())
@@ -1034,6 +1183,10 @@ namespace Altaxo.Graph.Graph3D
       return pagecoordinates;
     }
 
+    /// <summary>
+    /// Gets the transformation matrix from the root layer into this layer.
+    /// </summary>
+    /// <returns>The accumulated transformation matrix.</returns>
     public Matrix4x3 TransformationFromRootToHere()
     {
       Matrix4x3 result = Matrix4x3.Identity;
@@ -1042,6 +1195,10 @@ namespace Altaxo.Graph.Graph3D
       return result;
     }
 
+    /// <summary>
+    /// Gets the transformation matrix from this layer to the root layer.
+    /// </summary>
+    /// <returns>The accumulated transformation matrix.</returns>
     public Matrix4x3 TransformationFromHereToRoot()
     {
       Matrix4x3 result = Matrix4x3.Identity;
@@ -1070,6 +1227,11 @@ namespace Altaxo.Graph.Graph3D
       return _transformation.Transform(layerCoordinates);
     }
 
+    /// <summary>
+    /// Transforms coordinates from this layer into the root layer.
+    /// </summary>
+    /// <param name="coordinates">The coordinates in local layer space.</param>
+    /// <returns>The coordinates in root space.</returns>
     public PointD3D TransformCoordinatesFromHereToRoot(PointD3D coordinates)
     {
       foreach (var layer in this.TakeFromHereToRoot())
@@ -1077,6 +1239,9 @@ namespace Altaxo.Graph.Graph3D
       return coordinates;
     }
 
+    /// <summary>
+    /// Sets the position and size values stored in the current location object.
+    /// </summary>
     public void SetPositionSize(RADouble x, RADouble y, RADouble z, RADouble width, RADouble height, RADouble sizeZ)
     {
       ItemLocationDirect newlocation;
@@ -1186,6 +1351,12 @@ namespace Altaxo.Graph.Graph3D
         PositionChanged(this, new System.EventArgs());
     }
 
+    /// <summary>
+    /// Handles child changes that require cached geometry updates before normal processing.
+    /// </summary>
+    /// <param name="sender">The child that raised the change.</param>
+    /// <param name="e">The event arguments.</param>
+    /// <returns>The result from the base implementation.</returns>
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (sender is IItemLocation)
@@ -1245,12 +1416,18 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the parent host layer.
+    /// </summary>
     public HostLayer? ParentLayer
     {
       get { return _parent as HostLayer; }
       set { ParentObject = value; }
     }
 
+    /// <summary>
+    /// Gets the collection of graph objects contained in this layer.
+    /// </summary>
     public GraphicCollection GraphObjects
     {
       get { return _graphObjects; }
@@ -1392,11 +1569,22 @@ namespace Altaxo.Graph.Graph3D
 
     #region Hit test
 
+    /// <summary>
+    /// Performs hit testing against this layer.
+    /// </summary>
+    /// <param name="parentCoord">The hit-test data in parent coordinates.</param>
+    /// <returns>The matching hit-test object, or <see langword="null"/>.</returns>
     public virtual IHitTestObject? HitTest(HitTestPointData parentCoord)
     {
       return HitTest(parentCoord, false);
     }
 
+    /// <summary>
+    /// Performs hit testing against this layer.
+    /// </summary>
+    /// <param name="parentCoord">The hit-test data in parent coordinates.</param>
+    /// <param name="plotItemsOnly">If set to <see langword="true"/>, only plot items are considered.</param>
+    /// <returns>The matching hit-test object, or <see langword="null"/>.</returns>
     public IHitTestObject? HitTest(HitTestPointData parentCoord, bool plotItemsOnly)
     {
       //			HitTestPointData layerHitTestData = pageC.NewFromTranslationRotationScaleShear(Position.X, Position.Y, -Rotation, ScaleX, ScaleY, ShearX);
@@ -1405,6 +1593,12 @@ namespace Altaxo.Graph.Graph3D
       return HitTestWithLocalCoordinates(localCoord, plotItemsOnly);
     }
 
+    /// <summary>
+    /// Performs hit testing using coordinates already transformed into the local layer space.
+    /// </summary>
+    /// <param name="localCoord">The hit-test data in local coordinates.</param>
+    /// <param name="plotItemsOnly">If set to <see langword="true"/>, only plot items are considered.</param>
+    /// <returns>The matching hit-test object, or <see langword="null"/>.</returns>
     protected virtual IHitTestObject? HitTestWithLocalCoordinates(HitTestPointData localCoord, bool plotItemsOnly)
     {
       IHitTestObject? hit;

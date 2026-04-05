@@ -41,6 +41,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MasterCurveImprovementOptions), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (MasterCurveImprovementOptions)obj;
@@ -53,6 +54,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         info.AddArray("GroupOptions", s.GroupOptions, s.GroupOptions.Count);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var ShiftOrder = info.GetValue<ShiftOrder.IShiftOrder>("ShiftOrder", null);

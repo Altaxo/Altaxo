@@ -39,8 +39,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// </summary>
     /// <param name="factors">The factor scores.</param>
     /// <param name="loads">The loadings.</param>
-    /// <param name="residualVariances">Residual variances per factor, or <c>null</c> if not available.</param>
-    /// <param name="meanOfProcessData">Mean values used for preprocessing/centering of the process data, or <c>null</c> if not available.</param>
+    /// <param name="residualVariances">Residual variances per factor, or <c>null</c> if not available..</param>
+    /// <param name="meanOfProcessData">Mean values used for preprocessing or centering of the process data, or <c>null</c> if not available.</param>
     public DimensionReductionByFactorizationResult(IROMatrix<double> factors, IROMatrix<double> loads, IROMatrix<double> residualVariances, IReadOnlyCollection<double> meanOfProcessData)
     {
       Factors = factors;
@@ -71,7 +71,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
 
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void SaveResultToTable(DimensionReductionOutputOptions outputOptions, DataTable sourceTable, DataTable destinationTable, int[] columnNumbersOfSpectraInSourceTable, double[] xValuesOfPreprocessedSpectra, Matrix<double> preprocessedSpectra, IEnsembleProcessingAuxiliaryData auxiliaryData)
     {
       int numberOfSpectralPoints = Loadings.ColumnCount;
@@ -162,7 +162,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="data">The auxiliary data to save.</param>
     /// <param name="destinationTable">The destination table.</param>
     /// <param name="groupNumber">The destination group number.</param>
-    void SaveAuxiliarySampleData(IEnsembleProcessingAuxiliaryData data, DataTable destinationTable, int groupNumber)
+    private void SaveAuxiliarySampleData(IEnsembleProcessingAuxiliaryData data, DataTable destinationTable, int groupNumber)
     {
       if (data is EnsembleAuxiliaryDataCompound compound)
       {
@@ -185,7 +185,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="data">The auxiliary data to save.</param>
     /// <param name="destinationTable">The destination table.</param>
     /// <param name="groupNumber">The destination group number.</param>
-    void SaveAuxiliarySpectralData(IEnsembleProcessingAuxiliaryData data, DataTable destinationTable, int groupNumber)
+    private void SaveAuxiliarySpectralData(IEnsembleProcessingAuxiliaryData data, DataTable destinationTable, int groupNumber)
     {
       if (data is EnsembleAuxiliaryDataCompound compound)
       {
@@ -210,7 +210,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="loadings">The loadings.</param>
     /// <returns>A vector, in which the first element is the relative factorization residual after applying the first factor. The second
     /// element is the relative factorization residual when applying two factors, etc.</returns>
-    static Vector<double> CalculateResidualRelativeErrors(Matrix<double> V, IROMatrix<double> factors, IROMatrix<double> loadings)
+    private static Vector<double> CalculateResidualRelativeErrors(Matrix<double> V, IROMatrix<double> factors, IROMatrix<double> loadings)
     {
       var cfactors = CreateMatrix.DenseOfMatrix(factors);
       var cloadings = CreateMatrix.DenseOfMatrix(loadings);

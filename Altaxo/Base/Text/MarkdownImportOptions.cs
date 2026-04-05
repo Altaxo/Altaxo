@@ -34,8 +34,14 @@ using Markdig;
 
 namespace Altaxo.Text
 {
+  /// <summary>
+  /// Provides options and helpers for importing Markdown documents.
+  /// </summary>
   public class MarkdownImportOptions
   {
+    /// <summary>
+    /// Shows the import dialog and imports the selected Markdown file.
+    /// </summary>
     public static void ImportShowDialog()
     {
       var options = new MarkdownImportOptions();
@@ -60,6 +66,11 @@ namespace Altaxo.Text
       }
     }
 
+    /// <summary>
+    /// Imports the specified Markdown file into a text document.
+    /// </summary>
+    /// <param name="fileName">The Markdown file name.</param>
+    /// <returns>An error string, or <see langword="null"/> if the import succeeded.</returns>
     public string? Import(string fileName)
     {
       var errors = new System.Text.StringBuilder();
@@ -152,7 +163,7 @@ namespace Altaxo.Text
     /// Uses all extensions supported by <c>Markdig.Wpf</c>.
     /// </summary>
     /// <param name="pipeline">The pipeline.</param>
-    /// <returns>The modified pipeline</returns>
+    /// <returns>The modified pipeline.</returns>
     public static MarkdownPipelineBuilder UseSupportedExtensions(MarkdownPipelineBuilder pipeline)
     {
       if (pipeline is null)
@@ -173,7 +184,7 @@ namespace Altaxo.Text
     /// Enumerates all objects in a markdown parse tree recursively, starting with the given element.
     /// </summary>
     /// <param name="startElement">The start element.</param>
-    /// <returns>All text element (the given text element and all its childs).</returns>
+    /// <returns>All markdown objects, including the given element and all its children.</returns>
     public static IEnumerable<Markdig.Syntax.MarkdownObject> EnumerateAllMarkdownObjectsRecursively(Markdig.Syntax.MarkdownObject startElement)
     {
       yield return startElement;
@@ -188,10 +199,10 @@ namespace Altaxo.Text
     }
 
     /// <summary>
-    /// Gets the childs of a markdown object. Null is returned if no childs were to be found.
+    /// Gets the children of a markdown object. <see langword="null"/> is returned if no children could be found.
     /// </summary>
     /// <param name="parent">The markdown object from which to get the childs.</param>
-    /// <returns>The childs of the given markdown object, or null.</returns>
+    /// <returns>The children of the given markdown object, or <see langword="null"/>.</returns>
     public static IEnumerable<Markdig.Syntax.MarkdownObject>? GetChilds(Markdig.Syntax.MarkdownObject parent)
     {
       if (parent is Markdig.Syntax.LeafBlock leafBlock)
@@ -205,10 +216,10 @@ namespace Altaxo.Text
     }
 
     /// <summary>
-    /// Gets the childs of a markdown object. Null is returned if no childs were to be found.
+    /// Gets the children of a markdown object. <see langword="null"/> is returned if no children could be found.
     /// </summary>
     /// <param name="parent">The markdown object from which to get the childs.</param>
-    /// <returns>The childs of the given markdown object, or null.</returns>
+    /// <returns>The children of the given markdown object, or <see langword="null"/>.</returns>
     public static IReadOnlyList<Markdig.Syntax.MarkdownObject>? GetChildList(Markdig.Syntax.MarkdownObject parent)
     {
       if (parent is Markdig.Syntax.LeafBlock leafBlock)

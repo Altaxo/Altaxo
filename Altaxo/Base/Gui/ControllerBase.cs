@@ -39,9 +39,7 @@ namespace Altaxo.Gui
     /// </summary>
     public bool IsDisposed { get; private set; }
 
-    /// <summary>
-    /// Occurs when a property value changes.
-    /// </summary>
+    /// <inheritdoc/>
     public event PropertyChangedEventHandler? PropertyChanged;
 
 

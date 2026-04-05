@@ -31,6 +31,9 @@ using Altaxo.Collections;
 namespace Altaxo.Data
 {
 
+  /// <summary>
+  /// Actions for converting X-Y-value columns into a matrix representation.
+  /// </summary>
   public static class ConvertXYVToMatrixActions
   {
     /// <summary>
@@ -105,6 +108,11 @@ namespace Altaxo.Data
       return null;
     }
 
+    /// <summary>
+    /// Shows the dialog for converting selected XYV columns to a matrix.
+    /// </summary>
+    /// <param name="srcTable">The source table.</param>
+    /// <param name="selectedDataColumns">The selected data columns.</param>
     public static void ShowActionDialog(this DataTable srcTable, IAscendingIntegerCollection selectedDataColumns)
     {
       DataTableMultipleColumnProxy? proxy = null;
@@ -323,6 +331,12 @@ namespace Altaxo.Data
       return (resultList, resultStdDev, resultIndices);
     }
 
+    /// <summary>
+    /// Clusters equal values of a column and returns the cluster representatives and indices.
+    /// </summary>
+    /// <param name="col">The source column.</param>
+    /// <param name="sortDirection">The requested sort direction for the clusters.</param>
+    /// <returns>The cluster values and their corresponding indices.</returns>
     public static (IReadOnlyList<AltaxoVariant> ClusterValues, IReadOnlyList<int> ClusterIndices) ClusterValuesByEquality(DataColumn col, SortDirection sortDirection)
     {
       var result = new List<AltaxoVariant>();

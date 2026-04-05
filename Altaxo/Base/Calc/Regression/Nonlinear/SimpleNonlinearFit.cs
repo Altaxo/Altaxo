@@ -43,6 +43,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       private FitEvaluationFunction _func;
       private double[] _defaultParameter;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="DummyFitFunc"/> class.
+      /// </summary>
       public DummyFitFunc(FitEvaluationFunction func, double[] defaultParameter)
       {
         _func = func;
@@ -51,51 +54,61 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
       #region IFitFunction Members
 
+      /// <inheritdoc/>
       public int NumberOfIndependentVariables
       {
         get { return 1; }
       }
 
+      /// <inheritdoc/>
       public int NumberOfDependentVariables
       {
         get { return 1; }
       }
 
+      /// <inheritdoc/>
       public int NumberOfParameters
       {
         get { return _defaultParameter.Length; }
       }
 
+      /// <inheritdoc/>
       public string IndependentVariableName(int i)
       {
         return "x";
       }
 
+      /// <inheritdoc/>
       public string DependentVariableName(int i)
       {
         return "y";
       }
 
+      /// <inheritdoc/>
       public string ParameterName(int i)
       {
         return "P" + i.ToString();
       }
 
+      /// <inheritdoc/>
       public double DefaultParameterValue(int i)
       {
         return _defaultParameter[i];
       }
 
+      /// <inheritdoc/>
       public IVarianceScaling DefaultVarianceScaling(int i)
       {
         return new ConstantVarianceScaling();
       }
 
+      /// <inheritdoc/>
       public void Evaluate(double[] independent, double[] parameters, double[] FV)
       {
         _func(independent, parameters, FV);
       }
 
+      /// <inheritdoc/>
       public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
       {
         var XX = new double[1];

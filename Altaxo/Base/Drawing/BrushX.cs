@@ -35,25 +35,61 @@ using Altaxo.Main;
 namespace Altaxo.Drawing
 {
   /// <summary>
-  /// Holds all information neccessary to create a brush
-  /// of any kind without allocating resources, so this class
-  /// can be made serializable.
+  /// Holds all information necessary to create a brush of any kind without allocating resources, so this class can be serialized.
   /// </summary>
   [Serializable]
   public class BrushX : IEquatable<BrushX>, IImmutable
   {
+    /// <summary>
+    /// The brush type.
+    /// </summary>
     protected BrushType _brushType; // Type of the brush
+
+    /// <summary>
+    /// The foreground color of the brush.
+    /// </summary>
     protected NamedColor _foreColor; // Color of the brush
+
+    /// <summary>
+    /// The background color of the brush.
+    /// </summary>
     protected NamedColor _backColor = NamedColors.Transparent; // Backcolor of brush, f.i.f. HatchStyle brushes
+
+    /// <summary>
+    /// Indicates whether foreground and background colors are exchanged.
+    /// </summary>
     protected bool _exchangeColors;
+
+    /// <summary>
+    /// The wrap mode used for texture and linear gradient brushes.
+    /// </summary>
     protected WrapMode _wrapMode; // für TextureBrush und LinearGradientBrush
+
+    /// <summary>
+    /// The brush angle in degrees.
+    /// </summary>
     protected double _angle;
 
     /// <summary>For a gradient brush, this is the GradientFocus property. For texture brushes, it is the X-Offset property.</summary>
     protected double _offsetX;
+    /// <summary>
+    /// The Y offset for texture and path-gradient brushes.
+    /// </summary>
     protected double _offsetY;
+
+    /// <summary>
+    /// The gradient color scale factor.
+    /// </summary>
     protected double _gradientColorScale;
+
+    /// <summary>
+    /// The texture scaling used for texture-based brushes.
+    /// </summary>
     protected TextureScaling _textureScale = TextureScaling.Default;
+
+    /// <summary>
+    /// The texture image used for texture-based brushes.
+    /// </summary>
     protected ImageProxy? _textureImage; // für Texturebrush
 
     /// <summary>
@@ -487,12 +523,20 @@ namespace Altaxo.Drawing
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BrushX"/> class as a solid brush.
+    /// </summary>
+    /// <param name="c">The solid brush color.</param>
     public BrushX(NamedColor c)
     {
       _brushType = BrushType.SolidBrush;
       _foreColor = c;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BrushX"/> class for the specified brush type.
+    /// </summary>
+    /// <param name="brushType">The brush type.</param>
     public BrushX(BrushType brushType)
     {
       _brushType = brushType;
@@ -553,6 +597,7 @@ namespace Altaxo.Drawing
 
     #region Equality and Hash
 
+    /// <inheritdoc/>
     public bool Equals(BrushX? other)
     {
       if (other is null)
@@ -647,20 +692,31 @@ namespace Altaxo.Drawing
       return true;
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       return Equals(obj as BrushX);
     }
 
+    /// <summary>
+    /// Determines whether two <see cref="BrushX"/> instances are equal.
+    /// </summary>
     public static bool operator ==(BrushX? x, BrushX? y)
     {
       return x is { } _ ? x.Equals(y) : y is { } _ ? y.Equals(x) : true;
     }
+    /// <summary>
+    /// Determines whether two <see cref="BrushX"/> instances are not equal.
+    /// </summary>
     public static bool operator !=(BrushX? x, BrushX? y)
     {
       return !(x == y);
     }
 
+    /// <summary>
+    /// Calculates the hash code for the current brush state.
+    /// </summary>
+    /// <returns>The calculated hash code.</returns>
     protected int CalculateHash()
     {
       var result = _brushType.GetHashCode();
@@ -729,6 +785,7 @@ namespace Altaxo.Drawing
       return result;
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       if (!_cachedHashCode.HasValue)
@@ -753,6 +810,9 @@ namespace Altaxo.Drawing
 
     #region Properties
 
+    /// <summary>
+    /// Gets the brush type.
+    /// </summary>
     public BrushType BrushType
     {
       get
@@ -761,6 +821,11 @@ namespace Altaxo.Drawing
       }
     }
 
+    /// <summary>
+    /// Returns a copy of this brush with a different brush type.
+    /// </summary>
+    /// <param name="value">The new brush type.</param>
+    /// <returns>A brush with the updated brush type.</returns>
     public BrushX WithBrushType(BrushType value)
     {
       if (!(_brushType == value))
@@ -788,6 +853,9 @@ namespace Altaxo.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this brush is a solid brush.
+    /// </summary>
     public bool IsSolidBrush
     {
       get
@@ -818,11 +886,19 @@ namespace Altaxo.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets the foreground color of the brush.
+    /// </summary>
     public NamedColor Color
     {
       get { return _foreColor; }
     }
 
+    /// <summary>
+    /// Returns a copy of this brush with a different foreground color.
+    /// </summary>
+    /// <param name="color">The new foreground color.</param>
+    /// <returns>A brush with the updated foreground color.</returns>
     public BrushX WithColor(NamedColor color)
     {
       if (!(_foreColor == color))
@@ -837,6 +913,12 @@ namespace Altaxo.Drawing
       }
     }
 
+    /// <summary>
+    /// Returns a copy of this brush with different foreground and background colors.
+    /// </summary>
+    /// <param name="foreColor">The new foreground color.</param>
+    /// <param name="backColor">The new background color.</param>
+    /// <returns>A brush with the updated colors.</returns>
     public BrushX WithColors(NamedColor foreColor, NamedColor backColor)
     {
       if (!(_foreColor == foreColor) || BrushType != BrushType.SolidBrush && !(_backColor == backColor))
@@ -852,11 +934,19 @@ namespace Altaxo.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets the background color of the brush.
+    /// </summary>
     public NamedColor BackColor
     {
       get { return _backColor; }
     }
 
+    /// <summary>
+    /// Returns a copy of this brush with a different background color.
+    /// </summary>
+    /// <param name="color">The new background color.</param>
+    /// <returns>A brush with the updated background color.</returns>
     public BrushX WithBackColor(NamedColor color)
     {
       if (BrushType != BrushType.SolidBrush && !(_backColor == color))
@@ -871,6 +961,9 @@ namespace Altaxo.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether foreground and background colors are exchanged.
+    /// </summary>
     public bool ExchangeColors
     {
       get
@@ -879,6 +972,11 @@ namespace Altaxo.Drawing
       }
     }
 
+    /// <summary>
+    /// Returns a copy of this brush with the exchanged-colors flag updated.
+    /// </summary>
+    /// <param name="exchangeColors">The new exchanged-colors flag.</param>
+    /// <returns>A brush with the updated exchanged-colors flag.</returns>
     public BrushX WithExchangedColors(bool exchangeColors)
     {
       if (!(_exchangeColors == exchangeColors))
@@ -893,6 +991,9 @@ namespace Altaxo.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets the wrap mode used for texture-based brushes.
+    /// </summary>
     public WrapMode WrapMode
     {
       get
@@ -901,6 +1002,11 @@ namespace Altaxo.Drawing
       }
     }
 
+    /// <summary>
+    /// Returns a copy of this brush with a different wrap mode.
+    /// </summary>
+    /// <param name="wrapMode">The new wrap mode.</param>
+    /// <returns>A brush with the updated wrap mode.</returns>
     public BrushX WithWrapMode(WrapMode wrapMode)
     {
       if (!(_wrapMode == wrapMode))
@@ -917,6 +1023,9 @@ namespace Altaxo.Drawing
 
 
 
+    /// <summary>
+    /// Gets the gradient angle in degrees.
+    /// </summary>
     public double GradientAngle
     {
       get
@@ -925,6 +1034,11 @@ namespace Altaxo.Drawing
       }
     }
 
+    /// <summary>
+    /// Returns a copy of this brush with a different gradient angle.
+    /// </summary>
+    /// <param name="angle">The new gradient angle in degrees.</param>
+    /// <returns>A brush with the updated gradient angle.</returns>
     public BrushX WithGradientAngle(double angle)
     {
       if (!(_angle == angle))
@@ -939,6 +1053,9 @@ namespace Altaxo.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets the gradient focus value.
+    /// </summary>
     public double GradientFocus
     {
       get
@@ -947,6 +1064,11 @@ namespace Altaxo.Drawing
       }
     }
 
+    /// <summary>
+    /// Returns a copy of this brush with a different gradient focus.
+    /// </summary>
+    /// <param name="gradientFocus">The new gradient focus value.</param>
+    /// <returns>A brush with the updated gradient focus.</returns>
     public BrushX WithGradientFocus(double gradientFocus)
     {
       if (!(_offsetX == gradientFocus))
@@ -961,6 +1083,9 @@ namespace Altaxo.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets the gradient color scale factor.
+    /// </summary>
     public double GradientColorScale
     {
       get
@@ -969,6 +1094,11 @@ namespace Altaxo.Drawing
       }
     }
 
+    /// <summary>
+    /// Returns a copy of this brush with a different gradient color scale.
+    /// </summary>
+    /// <param name="gradientColorScale">The new gradient color scale.</param>
+    /// <returns>A brush with the updated gradient color scale.</returns>
     public BrushX WithGradientColorScale(double gradientColorScale)
     {
       if (!(_gradientColorScale == gradientColorScale))
@@ -983,6 +1113,9 @@ namespace Altaxo.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets the horizontal texture offset.
+    /// </summary>
     public double TextureOffsetX
     {
       get
@@ -991,6 +1124,11 @@ namespace Altaxo.Drawing
       }
     }
 
+    /// <summary>
+    /// Returns a copy of this brush with a different horizontal texture offset.
+    /// </summary>
+    /// <param name="offsetX">The new horizontal texture offset.</param>
+    /// <returns>A brush with the updated horizontal texture offset.</returns>
     public BrushX WithTextureOffsetX(double offsetX)
     {
       if (!(_offsetX == offsetX))
@@ -1005,6 +1143,9 @@ namespace Altaxo.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets the vertical texture offset.
+    /// </summary>
     public double TextureOffsetY
     {
       get
@@ -1013,6 +1154,11 @@ namespace Altaxo.Drawing
       }
     }
 
+    /// <summary>
+    /// Returns a copy of this brush with a different vertical texture offset.
+    /// </summary>
+    /// <param name="offsetY">The new vertical texture offset.</param>
+    /// <returns>A brush with the updated vertical texture offset.</returns>
     public BrushX WithTextureOffsetY(double offsetY)
     {
       if (!(_offsetY == offsetY))
@@ -1027,6 +1173,9 @@ namespace Altaxo.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets the texture image used by texture-based brushes.
+    /// </summary>
     public ImageProxy? TextureImage
     {
       get
@@ -1035,6 +1184,11 @@ namespace Altaxo.Drawing
       }
     }
 
+    /// <summary>
+    /// Returns a copy of this brush with a different texture image.
+    /// </summary>
+    /// <param name="textureImage">The new texture image.</param>
+    /// <returns>A brush with the updated texture image.</returns>
     public BrushX WithTextureImage(ImageProxy textureImage)
     {
       if (!ReferenceEquals(_textureImage, textureImage))
@@ -1049,6 +1203,9 @@ namespace Altaxo.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets the texture scaling mode.
+    /// </summary>
     public TextureScaling TextureScale
     {
       get
@@ -1057,6 +1214,11 @@ namespace Altaxo.Drawing
       }
     }
 
+    /// <summary>
+    /// Returns a copy of this brush with a different texture scaling mode.
+    /// </summary>
+    /// <param name="textureScale">The new texture scaling mode.</param>
+    /// <returns>A brush with the updated texture scaling mode.</returns>
     public BrushX WithTextureScale(TextureScaling textureScale)
     {
       if (!(_textureScale == textureScale))
@@ -1075,9 +1237,15 @@ namespace Altaxo.Drawing
 
     #region static members
 
+    /// <summary>
+    /// Gets an empty transparent brush.
+    /// </summary>
     public static BrushX Empty { get; } = new BrushX(NamedColors.Transparent);
 
 
+    /// <summary>
+    /// Gets the default texture brush image.
+    /// </summary>
     public static ImageProxy DefaultTextureBrush
     {
       get
@@ -1087,6 +1255,9 @@ namespace Altaxo.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets the default hatch brush image.
+    /// </summary>
     public static ImageProxy DefaultHatchBrush
     {
       get
@@ -1095,6 +1266,9 @@ namespace Altaxo.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets the default synthetic brush image.
+    /// </summary>
     public static ImageProxy DefaultSyntheticBrush
     {
       get

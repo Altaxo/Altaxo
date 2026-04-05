@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -29,19 +29,34 @@ using Altaxo.Data;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// Defines the view contract for editing <see cref="AltaxoVariant"/> values.
+  /// </summary>
   public interface IAltaxoVariantView : IDataContextAwareView { }
 
+  /// <summary>
+  /// Controller for <see cref="AltaxoVariant"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IAltaxoVariantView))]
   [UserControllerForObject(typeof(AltaxoVariant), 1)]
   public class AltaxoVariantController : MVCANControllerEditImmutableDocBase<AltaxoVariant, IAltaxoVariantView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AltaxoVariantController"/> class.
+    /// </summary>
     public AltaxoVariantController() { }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AltaxoVariantController"/> class.
+    /// </summary>
+    /// <param name="doc">The value to edit.</param>
     public AltaxoVariantController(AltaxoVariant doc)
     {
       _doc = _originalDoc = doc;
@@ -52,6 +67,9 @@ namespace Altaxo.Gui.Common
 
     private ItemsController<Type> _valueType;
 
+    /// <summary>
+    /// Gets or sets the selected value type.
+    /// </summary>
     public ItemsController<Type> ValueType
     {
       get => _valueType;
@@ -65,6 +83,9 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <summary>
+    /// Gets or sets the value interpreted as a double.
+    /// </summary>
     public double ValueAsDouble
     {
       get => (double)_doc;
@@ -74,6 +95,9 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <summary>
+    /// Gets or sets the value interpreted as a string.
+    /// </summary>
     public string ValueAsString
     {
       get => _doc.ToString();
@@ -83,6 +107,9 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <summary>
+    /// Gets or sets the value interpreted as a date and time.
+    /// </summary>
     public DateTime ValueAsDateTime
     {
       get => _doc.ToDateTime();
@@ -92,12 +119,22 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the selected type is numeric.
+    /// </summary>
     public bool IsDouble => ValueType.SelectedValue == typeof(double);
+    /// <summary>
+    /// Gets a value indicating whether the selected type is text.
+    /// </summary>
     public bool IsString => ValueType.SelectedValue == typeof(string);
+    /// <summary>
+    /// Gets a value indicating whether the selected type is date and time.
+    /// </summary>
     public bool IsDateTime => ValueType.SelectedValue == typeof(DateTime);
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -138,6 +175,7 @@ namespace Altaxo.Gui.Common
 
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);

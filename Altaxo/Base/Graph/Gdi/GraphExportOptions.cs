@@ -34,6 +34,9 @@ using Altaxo.Drawing;
 
 namespace Altaxo.Graph.Gdi
 {
+  /// <summary>
+  /// Stores options used to export graph documents as images.
+  /// </summary>
   public class GraphExportOptions : Main.ICopyFrom
   {
     private ImageFormat _imageFormat;
@@ -77,6 +80,10 @@ namespace Altaxo.Graph.Gdi
 
     #endregion Serialization
 
+    /// <summary>
+    /// Copies the state from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     [MemberNotNull(nameof(_imageFormat))]
     protected void CopyFrom(GraphExportOptions from)
     {
@@ -87,6 +94,7 @@ namespace Altaxo.Graph.Gdi
       DestinationDpiResolution = from.DestinationDpiResolution;
     }
 
+    /// <inheritdoc />
     public virtual bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -101,6 +109,9 @@ namespace Altaxo.Graph.Gdi
       return false;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GraphExportOptions"/> class.
+    /// </summary>
     public GraphExportOptions()
     {
       _imageFormat = System.Drawing.Imaging.ImageFormat.Png;
@@ -110,25 +121,43 @@ namespace Altaxo.Graph.Gdi
       BackgroundBrush = null;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GraphExportOptions"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public GraphExportOptions(GraphExportOptions from)
     {
       CopyFrom(from);
     }
 
+    /// <inheritdoc />
     object ICloneable.Clone()
     {
       return new GraphExportOptions(this);
     }
 
+    /// <summary>
+    /// Creates a copy of this instance.
+    /// </summary>
+    /// <returns>The cloned instance.</returns>
     public virtual GraphExportOptions Clone()
     {
       return new GraphExportOptions(this);
     }
 
+    /// <summary>
+    /// Gets the image format.
+    /// </summary>
     public ImageFormat ImageFormat { get { return _imageFormat; } }
 
+    /// <summary>
+    /// Gets the pixel format.
+    /// </summary>
     public PixelFormat PixelFormat { get { return _pixelFormat; } }
 
+    /// <summary>
+    /// Gets or sets the background brush.
+    /// </summary>
     public BrushX? BackgroundBrush
     {
       get
@@ -141,6 +170,9 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets or sets the source DPI resolution used for rendering.
+    /// </summary>
     public double SourceDpiResolution
     {
       get
@@ -156,6 +188,9 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets or sets the destination DPI resolution stored in the resulting image.
+    /// </summary>
     public double DestinationDpiResolution
     {
       get
@@ -171,6 +206,12 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Tries to set the image and pixel format.
+    /// </summary>
+    /// <param name="imgfmt">The image format.</param>
+    /// <param name="pixfmt">The pixel format.</param>
+    /// <returns><c>true</c> if the combination is valid; otherwise, <c>false</c>.</returns>
     public bool TrySetImageAndPixelFormat(ImageFormat imgfmt, PixelFormat pixfmt)
     {
       if (!IsVectorFormat(imgfmt) && !CanCreateAndSaveBitmap(imgfmt, pixfmt))
@@ -182,6 +223,10 @@ namespace Altaxo.Graph.Gdi
       return true;
     }
 
+    /// <summary>
+    /// Gets the default background brush for the configured export format.
+    /// </summary>
+    /// <returns>The default background brush, or <c>null</c>.</returns>
     public BrushX? GetDefaultBrush()
     {
       if (IsVectorFormat(_imageFormat) || HasPixelFormatAlphaChannel(_pixelFormat))
@@ -190,6 +235,10 @@ namespace Altaxo.Graph.Gdi
         return new BrushX(NamedColors.White);
     }
 
+    /// <summary>
+    /// Gets the configured background brush or the default brush if none is configured.
+    /// </summary>
+    /// <returns>The configured or default brush.</returns>
     public BrushX? GetBrushOrDefaultBrush()
     {
       if (_backgroundBrush is not null)
@@ -237,6 +286,9 @@ namespace Altaxo.Graph.Gdi
 
     private static GraphExportOptions _currentSetting = new GraphExportOptions();
 
+    /// <summary>
+    /// Gets the current global graph export setting.
+    /// </summary>
     public static GraphExportOptions CurrentSetting
     {
       get
@@ -245,11 +297,21 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Determines whether the specified image format is a vector format.
+    /// </summary>
+    /// <param name="fmt">The image format.</param>
+    /// <returns><c>true</c> if the format is vector based; otherwise, <c>false</c>.</returns>
     public static bool IsVectorFormat(ImageFormat fmt)
     {
       return ImageFormat.Emf == fmt || ImageFormat.Wmf == fmt;
     }
 
+    /// <summary>
+    /// Determines whether a bitmap can be created with the specified pixel format.
+    /// </summary>
+    /// <param name="fmt">The pixel format.</param>
+    /// <returns><c>true</c> if creation is possible; otherwise, <c>false</c>.</returns>
     public static bool CanCreateBitmap(PixelFormat fmt)
     {
       try
@@ -264,6 +326,12 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Determines whether a bitmap can be created and saved with the specified format combination.
+    /// </summary>
+    /// <param name="imgfmt">The image format.</param>
+    /// <param name="pixfmt">The pixel format.</param>
+    /// <returns><c>true</c> if creation and saving are possible; otherwise, <c>false</c>.</returns>
     public static bool CanCreateAndSaveBitmap(ImageFormat imgfmt, PixelFormat pixfmt)
     {
       try
@@ -285,6 +353,11 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Determines whether the specified pixel format contains an alpha channel.
+    /// </summary>
+    /// <param name="fmt">The pixel format.</param>
+    /// <returns><c>true</c> if the format contains alpha; otherwise, <c>false</c>.</returns>
     public static bool HasPixelFormatAlphaChannel(PixelFormat fmt)
     {
       return

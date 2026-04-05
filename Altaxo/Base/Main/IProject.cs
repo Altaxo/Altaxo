@@ -34,6 +34,9 @@ namespace Altaxo.Main
   /// </summary>
   public interface IProject : IDocumentNode, ICanBeDirty
   {
+    /// <summary>
+    /// Gets or sets a value indicating whether the project has unsaved changes.
+    /// </summary>
     public new bool IsDirty { get; set; }
 
     /// <summary>
@@ -81,7 +84,7 @@ namespace Altaxo.Main
     public AbsoluteDocumentPath GetRootPathForProjectItemType(System.Type type);
 
     /// <summary>
-    /// Gets the document path for project item, using its type and name. It is not neccessary that the item is part of the project yet.
+    /// Gets the document path for a project item, using its type and name. It is not necessary that the item is already part of the project.
     /// </summary>
     /// <param name="item">The item.</param>
     /// <returns>The document part for the project item, deduces from its type and its name.</returns>
@@ -140,7 +143,7 @@ namespace Altaxo.Main
     public void AddItemWithThisOrModifiedName(IProjectItem item);
 
     /// <summary>
-    /// Removes the provided project item to the Altaxo project, for instance a table or a graph, to the project.
+    /// Removes the provided project item from the Altaxo project.
     /// </summary>
     /// <param name="item">The item to remove.</param>
     /// <exception cref="System.ArgumentNullException">item</exception>

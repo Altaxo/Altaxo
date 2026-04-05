@@ -32,7 +32,7 @@ using System.Threading.Tasks;
 namespace Altaxo.Main.Services
 {
   /// <summary>
-  /// Interface to provide a LaTeX formula as an image. The image is provided as a stream, representing a .PNG image.
+  /// Provides a LaTeX formula as an image stream representing a PNG image.
   /// </summary>
   public interface ILaTeXFormulaImageStreamProvider
   {
@@ -40,10 +40,10 @@ namespace Altaxo.Main.Services
     /// Parses the specified LaTeX formula text.
     /// </summary>
     /// <param name="formulaText">The formula text.</param>
-    /// <param name="fontFamily">The font family of the font in with the formula is embedded.</param>
+    /// <param name="fontFamily">The font family of the surrounding text in which the formula is embedded.</param>
     /// <param name="fontSize">Size of the font in which the formula text is embedded.</param>
     /// <param name="dpiResolution">The resolution of the required image.</param>
-    /// <param name="isIntendedForHelp1File">Set this argument to true if the image is indended to be used in a Help1 file. In such a file, the placement of images with align="middle" differs from HTML rendering (the text baseline is aligned with the middle of the image, whereas in HTML the middle of the text is aligned with the middle of the image).</param>
+    /// <param name="isIntendedForHelp1File">Set this argument to <c>true</c> if the image is intended to be used in a Help1 file. In such a file, the placement of images with <c>align="middle"</c> differs from HTML rendering: the text baseline is aligned with the middle of the image, whereas in HTML the middle of the text is aligned with the middle of the image.</param>
     /// <returns>A tuple consisting of
     /// 1) the bitmap stream,
     /// 2) the html attribute how to place the image,

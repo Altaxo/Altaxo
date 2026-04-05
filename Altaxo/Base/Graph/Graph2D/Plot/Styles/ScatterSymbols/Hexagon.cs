@@ -30,6 +30,9 @@ using Clipper2Lib;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
+  /// <summary>
+  /// Represents a hexagonal closed scatter symbol.
+  /// </summary>
   public class Hexagon : ClosedSymbolBase
   {
     #region Serialization
@@ -37,9 +40,13 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
     /// <summary>
     /// 2016-10-27 initial version.
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="Hexagon"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Hexagon), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         info.AddBaseValueEmbedded(obj, obj.GetType().BaseType!);
@@ -47,6 +54,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
         SerializeSetV0((IScatterSymbol)obj, info);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (Hexagon?)o ?? new Hexagon();
@@ -58,15 +66,24 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Hexagon"/> class.
+    /// </summary>
     public Hexagon()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Hexagon"/> class.
+    /// </summary>
+    /// <param name="fillColor">The fill color.</param>
+    /// <param name="isFillColorInfluencedByPlotColor">If set to <c>true</c>, the fill color is influenced by the plot color.</param>
     public Hexagon(NamedColor fillColor, bool isFillColorInfluencedByPlotColor)
       : base(fillColor, isFillColorInfluencedByPlotColor)
     {
     }
 
+    /// <inheritdoc/>
     public override Paths64 GetCopyOfOuterPolygon()
     {
       var list = new List<Point64>(6);

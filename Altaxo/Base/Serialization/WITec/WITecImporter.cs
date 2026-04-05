@@ -30,8 +30,12 @@ using Altaxo.Data;
 
 namespace Altaxo.Serialization.WITec
 {
+  /// <summary>
+  /// Importer for WITec project files.
+  /// </summary>
   public record WITecImporter : DataFileImporterBase
   {
+    /// <inheritdoc />
     public override (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
     {
       return ([".wip"], "WiTec project files (*.wip)");
@@ -43,12 +47,14 @@ namespace Altaxo.Serialization.WITec
       return (importOptions as WITecImportOptions) ?? new WITecImportOptions();
     }
 
+    /// <inheritdoc />
     public override IAltaxoTableDataSource? CreateTableDataSource(IReadOnlyList<string> fileNames, object importOptions)
     {
       return new WITecImportDataSource(fileNames, (WITecImportOptions)importOptions);
     }
 
 
+    /// <inheritdoc />
     public override double GetProbabilityForBeingThisFileFormat(string fileName)
     {
       double p = 0;
@@ -77,6 +83,7 @@ namespace Altaxo.Serialization.WITec
       return p;
     }
 
+    /// <inheritdoc />
     public override string? Import(IReadOnlyList<string> fileNames, ImportOptionsInitial initialOptions)
     {
       var stb = new StringBuilder();
@@ -152,6 +159,7 @@ namespace Altaxo.Serialization.WITec
       return stb.Length == 0 ? null : stb.ToString();
     }
 
+    /// <inheritdoc />
     public override string? Import(IReadOnlyList<string> fileNames, DataTable table, object importOptionsObj, bool attachDataSource = true)
     {
       var importOptions = (WITecImportOptions)importOptionsObj;

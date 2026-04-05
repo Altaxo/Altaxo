@@ -31,6 +31,9 @@ using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Worksheet
 {
+  /// <summary>
+  /// Represents the worksheet style used for numeric double columns.
+  /// </summary>
   public class DoubleColumnStyle : Altaxo.Worksheet.ColumnStyle
   {
     #region Serialization
@@ -38,12 +41,14 @@ namespace Altaxo.Worksheet
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DoubleColumnStyle), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DoubleColumnStyle)obj;
         info.AddBaseValueEmbedded(s, typeof(DoubleColumnStyle).BaseType!);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         DoubleColumnStyle s = o is not null ? (DoubleColumnStyle)o : new DoubleColumnStyle();
@@ -54,6 +59,9 @@ namespace Altaxo.Worksheet
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DoubleColumnStyle"/> class.
+    /// </summary>
     public DoubleColumnStyle()
       : base(ColumnStyleType.DataCell)
     {
@@ -61,23 +69,30 @@ namespace Altaxo.Worksheet
       _textFormat.FormatFlags = StringFormatFlags.LineLimit;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DoubleColumnStyle"/> class by copying another instance.
+    /// </summary>
+    /// <param name="ds">The instance to copy.</param>
     public DoubleColumnStyle(DoubleColumnStyle ds)
       : base(ds)
     {
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       var ns = new Altaxo.Worksheet.DoubleColumnStyle(this);
       return ns;
     }
 
+    /// <inheritdoc />
     public override string GetColumnValueAtRow(int nRow, Altaxo.Data.DataColumn data)
     {
       double val = ((Altaxo.Data.DoubleColumn)data)[nRow];
       return double.IsNaN(val) ? "" : val.ToString("G15", Altaxo.Settings.GuiCulture.Instance);
     }
 
+    /// <inheritdoc />
     public override void SetColumnValueAtRow(string s, int nRow, Altaxo.Data.DataColumn data)
     {
       if (!double.TryParse(s, System.Globalization.NumberStyles.Float, Altaxo.Settings.GuiCulture.Instance, out var result))
@@ -85,6 +100,7 @@ namespace Altaxo.Worksheet
       ((Altaxo.Data.DoubleColumn)data)[nRow] = result;
     }
 
+    /// <inheritdoc />
     public override void Paint(Graphics dc, Rectangle cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
     {
       PaintBackground(dc, cellRectangle, bSelected);
@@ -100,8 +116,12 @@ namespace Altaxo.Worksheet
       }
     }
 
-    public static Dictionary<System.Type, Action<DoubleColumnStyle, object, RectangleD2D, int, Altaxo.Data.DataColumn, bool>> RegisteredPaintMethods = new Dictionary<Type, Action<DoubleColumnStyle, object, RectangleD2D, int, Data.DataColumn, bool>>();
+    /// <summary>
+    /// Gets the registered paint methods for specific drawing contexts.
+    /// </summary>
+    public static Dictionary<System.Type, Action<DoubleColumnStyle, object, RectangleD2D, int, Altaxo.Data.DataColumn, bool>> RegisteredPaintMethods = new Dictionary<System.Type, Action<DoubleColumnStyle, object, RectangleD2D, int, Altaxo.Data.DataColumn, bool>>();
 
+    /// <inheritdoc />
     public override void Paint(System.Type dctype, object dc, RectangleD2D cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
     {
       if (RegisteredPaintMethods.TryGetValue(dctype, out var action))

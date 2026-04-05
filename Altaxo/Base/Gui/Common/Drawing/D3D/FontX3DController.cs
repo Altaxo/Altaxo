@@ -29,22 +29,36 @@ using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Common.Drawing.D3D
 {
+  /// <summary>
+  /// Defines the view contract for editing <see cref="FontX3D"/> values.
+  /// </summary>
   public interface IFontX3DView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="FontX3D"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IFontX3DView))]
   public class FontX3DController : MVCANDControllerEditImmutableDocBase<FontX3D, IFontX3DView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FontX3DController"/> class.
+    /// </summary>
     public FontX3DController()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FontX3DController"/> class.
+    /// </summary>
+    /// <param name="doc">The font to edit.</param>
     public FontX3DController(FontX3D doc)
     {
       InitializeDocument(doc);
@@ -52,6 +66,9 @@ namespace Altaxo.Gui.Common.Drawing.D3D
 
     #region Bindings
 
+    /// <summary>
+    /// Gets or sets the selected font family name.
+    /// </summary>
     public string SelectedFontFamilyName
     {
       get => _doc.FontFamilyName;
@@ -68,6 +85,9 @@ namespace Altaxo.Gui.Common.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the selected font size.
+    /// </summary>
     public double SelectedFontSize
     {
       get => _doc.Size;
@@ -83,6 +103,9 @@ namespace Altaxo.Gui.Common.Drawing.D3D
     }
 
 
+    /// <summary>
+    /// Gets or sets the selected font depth.
+    /// </summary>
     public double SelectedFontDepth
     {
       get => _doc.Depth;
@@ -97,6 +120,9 @@ namespace Altaxo.Gui.Common.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the selected font style.
+    /// </summary>
     public FontXStyle SelectedFontStyle
     {
       get => _doc.Style;
@@ -113,14 +139,19 @@ namespace Altaxo.Gui.Common.Drawing.D3D
 
     #endregion
 
+    /// <summary>
+    /// Gets the edited font document.
+    /// </summary>
     public FontX3D Doc => _doc;
 
+    /// <inheritdoc/>
     protected override void OnMadeDirty()
     {
       base.OnMadeDirty();
       OnPropertyChanged(nameof(Doc));
     }
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -148,6 +179,7 @@ namespace Altaxo.Gui.Common.Drawing.D3D
         _doc = _doc.WithFamily(fontFamilyName).WithStyle(FontXStyle.Bold | FontXStyle.Italic);
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _originalDoc = _doc; // this is safe because FontX is an immutable class

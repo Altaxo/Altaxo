@@ -36,6 +36,9 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Main.Services
 {
+  /// <summary>
+  /// View interface for displaying informational, warning, and error messages.
+  /// </summary>
   public interface IInfoWarningErrorMessageView
   {
     /// <summary>
@@ -46,9 +49,15 @@ namespace Altaxo.Gui.Main.Services
     /// </value>
     object? DataContext { set; }
 
+    /// <summary>
+    /// Gets or sets the column widths.
+    /// </summary>
     double[] ColumnWidths { get; set; }
   }
 
+  /// <summary>
+  /// Controller for the message pad that displays informational, warning, and error messages.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IInfoWarningErrorMessageView))]
   public class InfoWarningErrorMessageController : AbstractPadContent, IMementoCapable
   {
@@ -66,6 +75,9 @@ namespace Altaxo.Gui.Main.Services
 
     private CachedService<IShutdownService, IShutdownService> _shutDownService;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="InfoWarningErrorMessageController"/> class.
+    /// </summary>
     public InfoWarningErrorMessageController()
     {
       Current.ServiceChanged += EhServiceChanged;
@@ -92,6 +104,9 @@ namespace Altaxo.Gui.Main.Services
 
     #region Bindable properties for view
 
+    /// <summary>
+    /// Gets the message items currently displayed.
+    /// </summary>
     public IReadOnlyList<InfoWarningErrorTextMessageItem> MessageItems
     {
       get { return _currentDoc; }
@@ -105,13 +120,20 @@ namespace Altaxo.Gui.Main.Services
       }
     }
 
+    /// <summary>
+    /// Gets the command that clears all messages.
+    /// </summary>
     public ICommand CommandClearAllMessages { get { return _commandClearAllMessages; } }
 
+    /// <summary>
+    /// Gets the command that reverses the message order.
+    /// </summary>
     public ICommand CommandReverseMessageOrder { get { return _commandReverseMessages; } }
 
     #endregion Bindable properties for view
 
 
+    /// <inheritdoc/>
     public override void Dispose()
     {
       Current.ServiceChanged -= EhServiceChanged;
@@ -148,6 +170,10 @@ namespace Altaxo.Gui.Main.Services
       _unreversedDoc.Add(msgItem);
     }
 
+    /// <summary>
+    /// Initializes the controller state and transfers cached view settings to the attached view.
+    /// </summary>
+    /// <param name="initData">If set to <c>true</c>, the controller initializes its data state.</param>
     protected void Initialize(bool initData)
     {
       if (initData)
@@ -198,16 +224,23 @@ namespace Altaxo.Gui.Main.Services
         OnPropertyChanged(nameof(MessageItems));
     }
 
+    /// <summary>
+    /// Attaches the current view to this controller.
+    /// </summary>
     protected void AttachView()
     {
       _view!.DataContext = this;
     }
 
+    /// <summary>
+    /// Detaches the current view from this controller.
+    /// </summary>
     protected void DetachView()
     {
       _view!.DataContext = null;
     }
 
+    /// <inheritdoc/>
     public override object? ViewObject
     {
       get { return _view; }
@@ -226,10 +259,16 @@ namespace Altaxo.Gui.Main.Services
       }
     }
 
+    /// <inheritdoc/>
     public override object ModelObject { get { return _unreversedDoc; } }
 
     #region IXmlSerializable Members
 
+    /// <summary>
+    /// Loads the controller state from XML.
+    /// </summary>
+    /// <param name="tr">The XML reader.</param>
+    /// <param name="localName">The local element name.</param>
     public void Load(System.Xml.XmlTextReader tr, string localName)
     {
       int count;
@@ -253,6 +292,11 @@ namespace Altaxo.Gui.Main.Services
       tr.ReadEndElement();
     }
 
+    /// <summary>
+    /// Saves the controller state to XML.
+    /// </summary>
+    /// <param name="tw">The XML writer.</param>
+    /// <param name="localName">The local element name.</param>
     public void Save(System.Xml.XmlTextWriter tw, string localName)
     {
       tw.WriteStartElement(localName);
@@ -270,76 +314,164 @@ namespace Altaxo.Gui.Main.Services
       tw.WriteEndElement(); // localName
     }
 
+    /// <summary>
+    /// Shows an exception message.
+    /// </summary>
+    /// <param name="ex">The exception to show.</param>
+    /// <param name="message">An optional custom message.</param>
     public void ShowException(Exception ex, string? message = null)
     {
       throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Shows a handled exception message.
+    /// </summary>
+    /// <param name="ex">The handled exception.</param>
+    /// <param name="message">An optional custom message.</param>
     public void ShowHandledException(Exception ex, string? message = null)
     {
       throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Shows an error message.
+    /// </summary>
+    /// <param name="message">The message to show.</param>
     public void ShowError(string message)
     {
       throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Shows a formatted error message.
+    /// </summary>
+    /// <param name="formatstring">The composite format string.</param>
+    /// <param name="formatitems">The format arguments.</param>
     public void ShowErrorFormatted(string formatstring, params object[] formatitems)
     {
       throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Shows a warning message.
+    /// </summary>
+    /// <param name="message">The warning message.</param>
     public void ShowWarning(string message)
     {
       throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Shows a formatted warning message.
+    /// </summary>
+    /// <param name="formatstring">The composite format string.</param>
+    /// <param name="formatitems">The format arguments.</param>
     public void ShowWarningFormatted(string formatstring, params object[] formatitems)
     {
       throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Shows an informational message.
+    /// </summary>
+    /// <param name="message">The message to show.</param>
+    /// <param name="caption">An optional caption.</param>
     public void ShowMessage(string message, string? caption = null)
     {
       throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Shows a formatted informational message.
+    /// </summary>
+    /// <param name="formatstring">The composite format string.</param>
+    /// <param name="caption">The dialog caption.</param>
+    /// <param name="formatitems">The format arguments.</param>
     public void ShowMessageFormatted(string formatstring, string caption, params object[] formatitems)
     {
       throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Asks the user a question.
+    /// </summary>
+    /// <param name="question">The question text.</param>
+    /// <param name="caption">An optional caption.</param>
+    /// <returns><c>true</c> if the user answered yes; otherwise, <c>false</c>.</returns>
     public bool AskQuestion(string question, string? caption = null)
     {
       throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Shows a custom dialog with the specified buttons.
+    /// </summary>
+    /// <param name="caption">The dialog caption.</param>
+    /// <param name="dialogText">The dialog text.</param>
+    /// <param name="acceptButtonIndex">The index of the accept button.</param>
+    /// <param name="cancelButtonIndex">The index of the cancel button.</param>
+    /// <param name="buttontexts">The button captions.</param>
+    /// <returns>The index of the pressed button.</returns>
     public int ShowCustomDialog(string caption, string dialogText, int acceptButtonIndex, int cancelButtonIndex, params string[] buttontexts)
     {
       throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Shows an input box.
+    /// </summary>
+    /// <param name="caption">The dialog caption.</param>
+    /// <param name="dialogText">The prompt text.</param>
+    /// <param name="defaultValue">The default input value.</param>
+    /// <returns>The entered value.</returns>
     public string ShowInputBox(string caption, string dialogText, string defaultValue)
     {
       throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Informs the user about a save error.
+    /// </summary>
+    /// <param name="fileName">The file that could not be saved.</param>
+    /// <param name="message">The message to show.</param>
+    /// <param name="dialogName">The dialog name.</param>
+    /// <param name="exceptionGot">The exception that occurred.</param>
     public void InformSaveError(FileName fileName, string message, string dialogName, Exception exceptionGot)
     {
       throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Lets the user choose how to handle a save error.
+    /// </summary>
+    /// <param name="fileName">The file that could not be saved.</param>
+    /// <param name="message">The message to show.</param>
+    /// <param name="dialogName">The dialog name.</param>
+    /// <param name="exceptionGot">The exception that occurred.</param>
+    /// <param name="chooseLocationEnabled">If set to <c>true</c>, choosing another location is allowed.</param>
+    /// <returns>The selected save-error handling option.</returns>
     public ChooseSaveErrorResult ChooseSaveError(FileName fileName, string message, string dialogName, Exception exceptionGot, bool chooseLocationEnabled)
     {
       throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Writes an error line.
+    /// </summary>
+    /// <param name="source">The source of the error.</param>
+    /// <param name="message">The error message.</param>
     public void WriteErrorLine(string source, string message)
     {
       throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Writes a formatted error line.
+    /// </summary>
+    /// <param name="source">The source of the error.</param>
+    /// <param name="format">The composite format string.</param>
+    /// <param name="args">The format arguments.</param>
     public void WriteErrorLine(string source, string format, params object[] args)
     {
       throw new NotImplementedException();
@@ -350,6 +482,7 @@ namespace Altaxo.Gui.Main.Services
 
     #region Memento
 
+    /// <inheritdoc/>
     public override object? GetService(Type serviceType)
     {
       // TODO make MementoService availabe if the user chooses to store the state of the online window with the document file
@@ -367,6 +500,7 @@ namespace Altaxo.Gui.Main.Services
     private static readonly PropertyKey<StateMemento> PropertyKeyMessageControlState = new PropertyKey<StateMemento>("1E2D00F9-5A27-4C2C-84C1-842AAC0F5343", "Messages\\ControlState", PropertyLevel.Application);
 
 
+    /// <inheritdoc/>
     public object CreateMemento()
     {
       if (_view is not null)
@@ -374,6 +508,7 @@ namespace Altaxo.Gui.Main.Services
       return new StateMemento(_columnWidths ?? new double[0]);
     }
 
+    /// <inheritdoc/>
     public void SetMemento(object memento)
     {
       if (memento is StateMemento m)
@@ -384,9 +519,20 @@ namespace Altaxo.Gui.Main.Services
 
 
 
+    /// <summary>
+    /// Stores the state of the message pad.
+    /// </summary>
     private class StateMemento
     {
+      /// <summary>
+      /// Gets the column widths.
+      /// </summary>
       public double[] ColumnWidths { get; private set; }
+
+      /// <summary>
+      /// Initializes a new instance of the <see cref="StateMemento"/> class.
+      /// </summary>
+      /// <param name="columnWidths">The column widths.</param>
       public StateMemento(double[] columnWidths)
       {
         ColumnWidths = columnWidths;
@@ -398,6 +544,7 @@ namespace Altaxo.Gui.Main.Services
       [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(StateMemento), 0)]
       private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
       {
+        /// <inheritdoc/>
         public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
         {
           var s = (StateMemento)obj;
@@ -410,6 +557,7 @@ namespace Altaxo.Gui.Main.Services
           info.CommitArray();
         }
 
+        /// <inheritdoc/>
         public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
           var s = (StateMemento?)o ?? new StateMemento(new double[0]);

@@ -25,12 +25,18 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.AddInItems
 {
+  /// <summary>
+  /// Represents a condition attached to a codon in the add-in tree.
+  /// </summary>
   public class Condition : ICondition
   {
     private string _name;
     private Properties _properties;
     private ConditionFailedAction _action;
 
+    /// <summary>
+    /// Gets the add-in that owns the condition.
+    /// </summary>
     public AddIn AddIn { get; private set; }
 
     /// <summary>
@@ -48,6 +54,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Gets the condition name.
+    /// </summary>
     public string Name
     {
       get
@@ -56,6 +65,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Gets a property value by key.
+    /// </summary>
     public string this[string key]
     {
       get
@@ -64,6 +76,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Gets the condition properties.
+    /// </summary>
     public Properties Properties
     {
       get
@@ -72,6 +87,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Condition"/> class.
+    /// </summary>
     public Condition(string name, Properties properties, AddIn addIn)
     {
       AddIn = addIn;
@@ -80,6 +98,7 @@ namespace Altaxo.AddInItems
       _action = properties.Get("action", ConditionFailedAction.Exclude);
     }
 
+    /// <inheritdoc/>
     public bool IsValid(object? parameter)
     {
       try
@@ -93,6 +112,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Reads a simple condition from XML.
+    /// </summary>
     public static ICondition Read(XmlReader reader, AddIn addIn)
     {
       var properties = Properties.ReadFromAttributes(reader);
@@ -100,6 +122,9 @@ namespace Altaxo.AddInItems
       return new Condition(conditionName, properties, addIn);
     }
 
+    /// <summary>
+    /// Reads a complex condition from XML.
+    /// </summary>
     public static ICondition? ReadComplexCondition(XmlReader reader, AddIn addIn)
     {
       var properties = Properties.ReadFromAttributes(reader);
@@ -137,6 +162,9 @@ exit:
       return condition;
     }
 
+    /// <summary>
+    /// Reads a list of conditions from XML.
+    /// </summary>
     public static ICondition[] ReadConditionList(XmlReader reader, string endElement, AddIn addIn)
     {
       var conditions = new List<ICondition>();
@@ -181,6 +209,9 @@ exit:
       return conditions.ToArray();
     }
 
+    /// <summary>
+    /// Gets the action to take when one of the conditions fails.
+    /// </summary>
     public static ConditionFailedAction GetFailedAction(IEnumerable<ICondition> conditionList, object? parameter)
     {
       ConditionFailedAction action = ConditionFailedAction.Nothing;

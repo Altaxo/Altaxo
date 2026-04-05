@@ -32,7 +32,7 @@ using System.Threading.Tasks;
 namespace Altaxo.Main.Services
 {
   /// <summary>
-  /// Supports the creation of temporary folders and files on a per instance base.
+  /// Supports the creation of temporary folders and files on a per-instance basis.
   /// </summary>
   public interface IInstanceStorageService : IDisposable
   {

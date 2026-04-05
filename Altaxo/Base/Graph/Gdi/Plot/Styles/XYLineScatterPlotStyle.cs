@@ -31,13 +31,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   using Graph.Plot.Data;
 
   /// <summary>
-  /// Used for constructor of <see cref="XYLineScatterPlotStyle" /> to choose between Line, Scatter and both.
+  /// Used for the constructor of <see cref="XYLineScatterPlotStyle"/> to choose between line, scatter, and both.
   /// </summary>
   [Flags]
   public enum LineScatterPlotStyleKind
   {
     /// <summary>
     /// Neither line nor scatter used.
+    /// </summary>
+    /// <summary>
+    /// Neither line nor scatter is used.
     /// </summary>
     Empty = 0,
 
@@ -70,6 +73,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYLineScatterPlotStyle", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotImplementedException("Serialization of old versions not supported");
@@ -81,6 +85,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
                  */
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (XYLineScatterPlotStyle?)o ?? new XYLineScatterPlotStyle(info);
@@ -97,6 +102,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYLineScatterPlotStyle", 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotImplementedException("Serialization of old versions not supported");
@@ -109,6 +115,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
                 */
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (XYLineScatterPlotStyle?)o ?? new XYLineScatterPlotStyle(info);
@@ -126,6 +133,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYLineScatterPlotStyle", 2)]
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotImplementedException("Serialization of old versions not supported");
@@ -142,6 +150,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
                 */
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (XYLineScatterPlotStyle?)o ?? new XYLineScatterPlotStyle(info);
@@ -165,6 +174,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     #endregion Serialization
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYLineScatterPlotStyle"/> class for deserialization.
+    /// </summary>
     public XYLineScatterPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
@@ -190,6 +202,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         }
         */
 
+    /// <summary>
+    /// Gets or sets the color of the contained line or scatter style.
+    /// </summary>
     public NamedColor Color
     {
       get
@@ -210,21 +225,33 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets the line plot style.
+    /// </summary>
     public LinePlotStyle XYPlotLineStyle
     {
       get { return m_LineStyle; }
     }
 
+    /// <summary>
+    /// Gets the scatter plot style.
+    /// </summary>
     public ScatterPlotStyle? ScatterStyle
     {
       get { return m_ScatterStyle; }
     }
 
+    /// <summary>
+    /// Gets the label plot style.
+    /// </summary>
     public LabelPlotStyle? XYPlotLabelStyle
     {
       get { return m_LabelStyle; }
     }
 
+    /// <summary>
+    /// Gets the symbol size.
+    /// </summary>
     public float SymbolSize
     {
       get
@@ -233,6 +260,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether a line-symbol gap is used.
+    /// </summary>
     public bool LineSymbolGap
     {
       get { return m_LineSymbolGap; }

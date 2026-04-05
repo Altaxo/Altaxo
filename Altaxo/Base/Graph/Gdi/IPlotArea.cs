@@ -50,8 +50,14 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     Scale YAxis { get; }
 
+    /// <summary>
+    /// Gets the collection of scales used by the plot area.
+    /// </summary>
     ScaleCollection Scales { get; }
 
+    /// <summary>
+    /// Gets the coordinate system used by the plot area.
+    /// </summary>
     G2DCoordinateSystem CoordinateSystem { get; }
 
     /// <summary>
@@ -59,8 +65,20 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     PointD2D Size { get; }
 
+    /// <summary>
+    /// Gets the logical 3D position for the specified accessor and index.
+    /// </summary>
+    /// <param name="acc">The accessor for physical values.</param>
+    /// <param name="idx">The data point index.</param>
+    /// <returns>The logical 3D position.</returns>
     Logical3D GetLogical3D(I3DPhysicalVariantAccessor acc, int idx);
 
+    /// <summary>
+    /// Gets the logical 3D position for the specified x and y values.
+    /// </summary>
+    /// <param name="x">The x value.</param>
+    /// <param name="y">The y value.</param>
+    /// <returns>The logical 3D position.</returns>
     Logical3D GetLogical3D(AltaxoVariant x, AltaxoVariant y);
 
     /// <summary>
@@ -71,7 +89,8 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Updates the logical value of a plane id in case it uses a physical value.
     /// </summary>
-    /// <param name="id">The plane identifier</param>
+    /// <param name="id">The plane identifier.</param>
+    /// <returns>The updated plane identifier.</returns>
     CSPlaneID UpdateCSPlaneID(CSPlaneID id);
   }
 }

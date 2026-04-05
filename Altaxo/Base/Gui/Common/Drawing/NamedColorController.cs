@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -27,14 +27,21 @@ using Altaxo.Drawing;
 
 namespace Altaxo.Gui.Common.Drawing
 {
+  /// <summary>
+  /// Defines the view contract for editing <see cref="NamedColor"/> values.
+  /// </summary>
   public interface INamedColorView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="NamedColor"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(INamedColorView))]
   [UserControllerForObject(typeof(NamedColor))]
   public class NamedColorController : MVCANDControllerEditImmutableDocBase<NamedColor, INamedColorView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -42,6 +49,9 @@ namespace Altaxo.Gui.Common.Drawing
 
     #region Bindings
 
+    /// <summary>
+    /// Gets or sets the selected named color.
+    /// </summary>
     public NamedColor NamedColor
     {
       get => _doc;
@@ -57,11 +67,13 @@ namespace Altaxo.Gui.Common.Drawing
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);

@@ -230,7 +230,6 @@ namespace Altaxo.Data
     /// <summary>
     /// Gets the number of column header columns.
     /// </summary>
-   
     public int ColumnHeaderColumnsCount => _columnHeaderColumns.Count;
 
     /// <summary>Column that correlate each column of the resulting matrix to a corresponding physical value. This value can be used for instance for calculating the x- or y- position in the coordinate system.</summary>

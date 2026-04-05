@@ -31,6 +31,9 @@ using Altaxo.Data;
 
 namespace Altaxo.Gui.Analysis.Multivariate
 {
+  /// <summary>
+  /// Defines the view contract for editing aggregation-based dimension reduction.
+  /// </summary>
   public interface IDimensionReductionByAggregationView : IDataContextAwareView
   {
   }
@@ -43,7 +46,7 @@ namespace Altaxo.Gui.Analysis.Multivariate
 
   public class DimensionReductionByAggregationController : MVCANControllerEditImmutableDocBase<DimensionReductionByAggregation, IDimensionReductionByAggregationView>
   {
-
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;

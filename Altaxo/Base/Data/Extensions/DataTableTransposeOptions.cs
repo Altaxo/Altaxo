@@ -66,6 +66,9 @@ namespace Altaxo.Data
 
     private string _columnNamingPreString = "Row";
 
+    /// <summary>
+    /// Gets or sets the prefix used when generating column names.
+    /// </summary>
     public string ColumnNamingPreString
     {
       get { return _columnNamingPreString; }
@@ -111,6 +114,10 @@ namespace Altaxo.Data
 
     #endregion Serialization
 
+    /// <summary>
+    /// Creates a shallow copy of this instance.
+    /// </summary>
+    /// <returns>A shallow copy of this instance.</returns>
     public object Clone()
     {
       return MemberwiseClone();

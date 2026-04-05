@@ -29,6 +29,9 @@ using System.Linq;
 
 namespace Altaxo.Data.Transformations
 {
+  /// <summary>
+  /// Transformation composed of multiple transformations executed in sequence.
+  /// </summary>
   public class CompoundTransformation : IDoubleToDoubleTransformation
   {
     /// <summary>
@@ -123,6 +126,11 @@ namespace Altaxo.Data.Transformations
         return new CompoundTransformation(transformationList);
     }
 
+    /// <summary>
+    /// Creates a simplified compound transformation from a sequence of transformations and direction flags.
+    /// </summary>
+    /// <param name="transformations">The transformations and their direction flags.</param>
+    /// <returns>A simplified transformation, or <see langword="null"/> if no effective transformation remains.</returns>
     public static IVariantToVariantTransformation? TryGetCompoundTransformationWithSimplification(IEnumerable<(IVariantToVariantTransformation Transformation, bool UseBackTransformation)> transformations)
     {
       if (transformations is null)
@@ -161,6 +169,11 @@ namespace Altaxo.Data.Transformations
       }
     }
 
+    /// <summary>
+    /// Creates a simplified compound transformation from a sequence of transformations.
+    /// </summary>
+    /// <param name="transformations">The transformations to combine.</param>
+    /// <returns>A simplified transformation, or <see langword="null"/> if no effective transformation remains.</returns>
     public static IVariantToVariantTransformation? TryGetCompoundTransformationWithSimplification(IEnumerable<IVariantToVariantTransformation> transformations)
     {
       if (transformations is null)
@@ -193,6 +206,7 @@ namespace Altaxo.Data.Transformations
     /// Adds a transformation to a flattened list. If the provided transformation is a <see cref="CompoundTransformation"/>, the transformation is unpacked before added to the list.
     /// </summary>
     /// <param name="transformation">The transformation.</param>
+    /// <param name="useBackTransformation">If <c>true</c>, the back transformation order is used.</param>
     /// <param name="list">The list.</param>
     private static void AddTransformationToFlattenedList(IVariantToVariantTransformation transformation, bool useBackTransformation, List<IVariantToVariantTransformation> list)
     {
@@ -281,6 +295,7 @@ namespace Altaxo.Data.Transformations
       } while (hasChanged);
     }
 
+    /// <inheritdoc/>
     public AltaxoVariant Transform(AltaxoVariant value)
     {
       foreach (var item in _transformations)
@@ -288,6 +303,7 @@ namespace Altaxo.Data.Transformations
       return value;
     }
 
+    /// <inheritdoc/>
     public double Transform(double value)
     {
       foreach (var item in _transformations)
@@ -312,11 +328,13 @@ namespace Altaxo.Data.Transformations
       return (y, dydx);
     }
 
+    /// <inheritdoc/>
     public string RepresentationAsFunction
     {
       get { return GetRepresentationAsFunction("x"); }
     }
 
+    /// <inheritdoc/>
     public string GetRepresentationAsFunction(string arg)
     {
       var x = arg;
@@ -325,6 +343,7 @@ namespace Altaxo.Data.Transformations
       return x;
     }
 
+    /// <inheritdoc/>
     public string RepresentationAsOperator
     {
       get
@@ -340,6 +359,7 @@ namespace Altaxo.Data.Transformations
       }
     }
 
+    /// <inheritdoc/>
     public IVariantToVariantTransformation BackTransformation
     {
       get
@@ -348,6 +368,11 @@ namespace Altaxo.Data.Transformations
       }
     }
 
+    /// <summary>
+    /// Returns a new compound transformation with the specified transformation prepended.
+    /// </summary>
+    /// <param name="transformation">The transformation to prepend.</param>
+    /// <returns>A new compound transformation.</returns>
     public CompoundTransformation WithPrependedTransformation(IVariantToVariantTransformation transformation)
     {
       if (transformation is null)
@@ -368,6 +393,11 @@ namespace Altaxo.Data.Transformations
       return result;
     }
 
+    /// <summary>
+    /// Returns a new compound transformation with the specified transformation appended.
+    /// </summary>
+    /// <param name="transformation">The transformation to append.</param>
+    /// <returns>A new compound transformation.</returns>
     public CompoundTransformation WithAppendedTransformation(IVariantToVariantTransformation transformation)
     {
       if (transformation is null)
@@ -396,6 +426,7 @@ namespace Altaxo.Data.Transformations
         yield return _transformations[i];
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       if (!(obj is CompoundTransformation from))
@@ -411,6 +442,7 @@ namespace Altaxo.Data.Transformations
       return true;
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       int len = Math.Min(3, _transformations.Count);
@@ -421,6 +453,7 @@ namespace Altaxo.Data.Transformations
       return result;
     }
 
+    /// <inheritdoc/>
     public bool IsEditable { get { return true; } }
   }
 }

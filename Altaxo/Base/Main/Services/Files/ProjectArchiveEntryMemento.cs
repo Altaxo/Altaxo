@@ -30,8 +30,8 @@ using System.IO.Compression;
 namespace Altaxo.Main.Services.Files
 {
   /// <summary>
-  /// Instances of this class can be used in project items to load data delayed (i.e. after the project has been loaded).
-  /// The instance store a memento that points to an archive entry that can be used to load the data when needed.
+  /// Instances of this class can be used in project items to load data later, that is, after the project has been loaded.
+  /// The instance stores a memento that points to an archive entry that can be used to load the data when needed.
   /// </summary>
   /// <seealso cref="Altaxo.Main.Services.IProjectArchiveEntryMemento" />
   /// <seealso cref="System.IDisposable" />
@@ -65,6 +65,7 @@ namespace Altaxo.Main.Services.Files
     }
 
     /// <inheritdoc/>
+    /// <inheritdoc/>
     public string EntryName
     {
       get
@@ -97,6 +98,10 @@ namespace Altaxo.Main.Services.Files
     /// <returns>
     /// The archive entry.
     /// </returns>
+    /// <summary>
+    /// Gets the archive entry referenced by this memento.
+    /// </summary>
+    /// <returns>The archive entry.</returns>
     public IProjectArchiveEntry GetArchiveEntry()
     {
       if (!(_archiveManager is null))

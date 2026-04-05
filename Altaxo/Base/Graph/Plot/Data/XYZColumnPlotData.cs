@@ -41,7 +41,7 @@ using Altaxo.Serialization.Xml;
 namespace Altaxo.Graph.Plot.Data
 {
   /// <summary>
-  /// Summary description for XYColumnPlotData.
+  /// Stores plot data based on one X column, one Y column, and one Z column.
   /// </summary>
   public class XYZColumnPlotData
     :
@@ -50,10 +50,19 @@ namespace Altaxo.Graph.Plot.Data
     System.ICloneable
   {
     // cached or temporary data
+    /// <summary>
+    /// The cached boundaries for the X values.
+    /// </summary>
     protected IPhysicalBoundaries? _xBoundaries;
 
+    /// <summary>
+    /// The cached boundaries for the Y values.
+    /// </summary>
     protected IPhysicalBoundaries? _yBoundaries;
 
+    /// <summary>
+    /// The cached boundaries for the Z values.
+    /// </summary>
     protected IPhysicalBoundaries? _zBoundaries;
 
     /// <summary>List of plot points that is allocated once per thread (as thread local storage variable).</summary>
@@ -66,8 +75,19 @@ namespace Altaxo.Graph.Plot.Data
     /// </summary>
     protected int _pointCount;
 
+    /// <summary>
+    /// A value indicating whether the cached X data are valid.
+    /// </summary>
     protected bool _isCachedDataValidX = false;
+
+    /// <summary>
+    /// A value indicating whether the cached Y data are valid.
+    /// </summary>
     protected bool _isCachedDataValidY = false;
+
+    /// <summary>
+    /// A value indicating whether the cached Z data are valid.
+    /// </summary>
     protected bool _isCachedDataValidZ = false;
 
     #region Serialization
@@ -137,6 +157,7 @@ namespace Altaxo.Graph.Plot.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYZColumnPlotData), 1)]
     protected class SerializationSurrogate1 : XYAndZColumn.XmlSerializationSurrogate0
     {
+      /// <inheritdoc/>
       public override void Serialize(object obj, IXmlSerializationInfo info)
       {
         base.Serialize(obj, info);
@@ -148,6 +169,7 @@ namespace Altaxo.Graph.Plot.Data
       }
 
 
+      /// <inheritdoc/>
       public override object? Deserialize(object? o, IXmlDeserializationInfo info, object? parentobject)
       {
         if (o is XYZColumnPlotData s)
@@ -158,6 +180,11 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYZColumnPlotData"/> class during XML deserialization.
+    /// </summary>
+    /// <param name="info">The deserialization information.</param>
+    /// <param name="version">The serialized version.</param>
     protected XYZColumnPlotData(IXmlDeserializationInfo info, int version)
       : base(info, 0)
     {
@@ -167,6 +194,10 @@ namespace Altaxo.Graph.Plot.Data
     }
 
 
+    /// <summary>
+    /// Deserializes additional data stored by serialization surrogate version 1.
+    /// </summary>
+    /// <param name="info">The deserialization information.</param>
     protected void DeserializeSurrogate1(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
       base.DeserializeSurrogate0(info);
@@ -177,11 +208,27 @@ namespace Altaxo.Graph.Plot.Data
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYZColumnPlotData"/> class.
+    /// </summary>
+    /// <param name="dataTable">The data table.</param>
+    /// <param name="groupNumber">The group number.</param>
+    /// <param name="xColumn">The X column.</param>
+    /// <param name="yColumn">The Y column.</param>
+    /// <param name="zColumn">The Z column.</param>
     public XYZColumnPlotData(Altaxo.Data.DataTable dataTable, int groupNumber, Altaxo.Data.IReadableColumn xColumn, Altaxo.Data.IReadableColumn yColumn, Altaxo.Data.IReadableColumn zColumn)
       : base(dataTable, groupNumber, xColumn, yColumn, zColumn)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYZColumnPlotData"/> class from proxies.
+    /// </summary>
+    /// <param name="dataTableProxy">The data-table proxy.</param>
+    /// <param name="groupNumber">The group number.</param>
+    /// <param name="xColumnProxy">The X-column proxy.</param>
+    /// <param name="yColumnProxy">The Y-column proxy.</param>
+    /// <param name="zColumnProxy">The Z-column proxy.</param>
     protected XYZColumnPlotData(DataTableProxy dataTableProxy, int groupNumber, IReadableColumnProxy xColumnProxy, IReadableColumnProxy yColumnProxy, IReadableColumnProxy zColumnProxy)
       : base(dataTableProxy, groupNumber, xColumnProxy, yColumnProxy, zColumnProxy)
     {
@@ -211,6 +258,7 @@ namespace Altaxo.Graph.Plot.Data
       _isCachedDataValidY = from._isCachedDataValidY;
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       foreach (var entry in base.GetDocumentNodeChildrenWithName())
@@ -257,6 +305,10 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
+    /// <summary>
+    /// Merges the cached X boundaries into the specified boundary object.
+    /// </summary>
+    /// <param name="pb">The target boundary object.</param>
     public void MergeXBoundsInto(IPhysicalBoundaries pb)
     {
       if (_xBoundaries is null || pb.GetType() != _xBoundaries.GetType())
@@ -272,6 +324,10 @@ namespace Altaxo.Graph.Plot.Data
       pb.Add(_xBoundaries);
     }
 
+    /// <summary>
+    /// Merges the cached Y boundaries into the specified boundary object.
+    /// </summary>
+    /// <param name="pb">The target boundary object.</param>
     public void MergeYBoundsInto(IPhysicalBoundaries pb)
     {
       if (_yBoundaries is null || pb.GetType() != _yBoundaries.GetType())
@@ -287,6 +343,10 @@ namespace Altaxo.Graph.Plot.Data
       pb.Add(_yBoundaries);
     }
 
+    /// <summary>
+    /// Merges the cached Z boundaries into the specified boundary object.
+    /// </summary>
+    /// <param name="pb">The target boundary object.</param>
     public void MergeZBoundsInto(IPhysicalBoundaries pb)
     {
       if (_zBoundaries is null || pb.GetType() != _zBoundaries.GetType())
@@ -341,8 +401,8 @@ namespace Altaxo.Graph.Plot.Data
     }
 
     /// <summary>
-    /// This sets the v boundary object to a object of the same type as val. The inner data of the boundary, if present,
-    /// are copied into the new y boundary object.
+    /// This sets the Z boundary object to an object of the same type as <paramref name="val"/>. The inner data of the boundary, if present,
+    /// are copied into the new Z boundary object.
     /// </summary>
     /// <param name="val">The template boundary object.</param>
     [MemberNotNull(nameof(_zBoundaries))]
@@ -397,6 +457,7 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
+    /// <inheritdoc/>
     [MaybeNull]
     public override Altaxo.Data.IReadableColumn XColumn
     {
@@ -414,6 +475,7 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
+    /// <inheritdoc/>
     [MaybeNull]
     public override Altaxo.Data.IReadableColumn YColumn
     {
@@ -431,6 +493,7 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
+    /// <inheritdoc/>
     [MaybeNull]
     public override Altaxo.Data.IReadableColumn ZColumn
     {
@@ -483,6 +546,12 @@ namespace Altaxo.Graph.Plot.Data
       return maxRowIndex;
     }
 
+    /// <summary>
+    /// Calculates cached data using the specified boundary templates.
+    /// </summary>
+    /// <param name="xBounds">The X-boundary template.</param>
+    /// <param name="yBounds">The Y-boundary template.</param>
+    /// <param name="vBounds">The Z-boundary template.</param>
     public void CalculateCachedData(IPhysicalBoundaries xBounds, IPhysicalBoundaries yBounds, IPhysicalBoundaries vBounds)
     {
       if (IsDisposeInProgress)
@@ -510,6 +579,9 @@ namespace Altaxo.Graph.Plot.Data
         CalculateCachedData();
     }
 
+    /// <summary>
+    /// Calculates the cached data and updates the cached boundaries.
+    /// </summary>
     public void CalculateCachedData()
     {
       if (IsDisposeInProgress)
@@ -564,6 +636,11 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
+    /// <summary>
+    /// Gets the data points used by this plot data.
+    /// </summary>
+    /// <param name="ensureZIsNotEmpty">If set to <see langword="true"/>, points with empty Z values are skipped.</param>
+    /// <returns>The enumerated data points together with their source row index.</returns>
     public IEnumerable<(AltaxoVariant x, AltaxoVariant y, AltaxoVariant z, int rowIndex)> GetDataPoints(bool ensureZIsNotEmpty)
     {
       var xColumn = XColumn;
@@ -584,6 +661,13 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
+    /// <summary>
+    /// Tries to convert the plot data into a regular mesh.
+    /// </summary>
+    /// <param name="xTransformation">The transformation applied to X values.</param>
+    /// <param name="yTransformation">The transformation applied to Y values.</param>
+    /// <param name="zTransformation">The transformation applied to Z values.</param>
+    /// <returns>A tuple indicating success together with the generated mesh data.</returns>
     public (bool success, double[] x, double[] y, Matrix<double> z) TryGetMesh(Func<AltaxoVariant, double> xTransformation, Func<AltaxoVariant, double> yTransformation, Func<AltaxoVariant, double> zTransformation)
     {
       // Find out if the plot data can be treated as meshed column data
@@ -776,6 +860,7 @@ namespace Altaxo.Graph.Plot.Data
 
     #region Change event handling
 
+    /// <inheritdoc />
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (object.ReferenceEquals(sender, _independentVariables[0]) || object.ReferenceEquals(sender, _independentVariables[1]) || object.ReferenceEquals(sender, _dependentVariables[0]))
@@ -806,10 +891,7 @@ namespace Altaxo.Graph.Plot.Data
     /// Looks whether one of data data columns have changed their data. If this is the case, we must recalculate the boundaries,
     /// and trigger the boundary changed event if one of the boundaries have changed.
     /// </summary>
-    /// <param name="e">The <see cref="EventArgs" /> instance containing the event data. On return, you can provided transformed event args by this parameter.</param>
-    /// <returns>
-    /// The return value of the base handling function
-    /// </returns>
+    /// <inheritdoc />
     protected override void OnChanged(EventArgs e)
     {
       /* 2019-09-12 Outcommented for new data deserialization: the next lines will cause the XColumn and YColumn to be instantiated

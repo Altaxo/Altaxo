@@ -36,14 +36,21 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Science.Thermorheology
 {
+  /// <summary>
+  /// View interface for editing <see cref="MasterCurveCreationOptions"/>.
+  /// </summary>
   public interface IMasterCurveCreationOptionsView : IDataContextAwareView { }
 
+  /// <summary>
+  /// Controller for editing <see cref="MasterCurveCreationOptions"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IMasterCurveCreationOptionsView))]
   [UserControllerForObject(typeof(MasterCurveCreationOptions))]
   public class MasterCurveCreationOptionsController : MVCANDControllerEditImmutableDocBase<MasterCurveCreationOptions, IMasterCurveCreationOptionsView>
   {
     private IMVCAController? _selectedController;
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       if (ImprovementOptionsController is not null)
@@ -56,6 +63,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private int _numberOfGroups;
 
+    /// <summary>
+    /// Gets or sets the number of curve groups.
+    /// </summary>
     public int NumberOfGroups
     {
       get => _numberOfGroups;
@@ -73,6 +83,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
 
 
+    /// <summary>
+    /// Triggers the dirty state notification.
+    /// </summary>
     public void TriggerOnMadeDirty()
     {
       OnMadeDirty();
@@ -80,6 +93,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private bool _useManualPivotCurveIndex;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the pivot curve index is specified manually.
+    /// </summary>
     public bool UseManualPivotCurveIndex
     {
       get => _useManualPivotCurveIndex;
@@ -97,6 +113,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private int _indexOfPivotCurve;
 
+    /// <summary>
+    /// Gets or sets the pivot curve index if <see cref="UseManualPivotCurveIndex"/> is enabled.
+    /// </summary>
     public int ManualPivotCurveIndex
     {
       get => _indexOfPivotCurve;
@@ -121,10 +140,19 @@ namespace Altaxo.Gui.Science.Thermorheology
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether a pivot curve index is required based on the selected shift order.
+    /// </summary>
     public bool IsPivotIndexRequired => ShiftOrder?.SelectedValue?.IsPivotIndexRequired ?? false;
 
+    /// <summary>
+    /// Gets a value indicating whether the selected shift order is manual.
+    /// </summary>
     public bool IsManualShiftOrder => ShiftOrder?.SelectedValue is Manual;
 
+    /// <summary>
+    /// Gets a value indicating whether a manual pivot index is required.
+    /// </summary>
     public bool IsManualPivotIndexRequired => IsPivotIndexRequired && UseManualPivotCurveIndex;
 
     private string ToShiftOrderString(IReadOnlyList<int> indices)
@@ -135,6 +163,9 @@ namespace Altaxo.Gui.Science.Thermorheology
     private string _manualShiftOrderIndices;
 
 
+    /// <summary>
+    /// Gets or sets the shift order indices string used when the shift order is manual.
+    /// </summary>
     public string ManualShiftOrderIndices
     {
       get => _manualShiftOrderIndices;
@@ -171,6 +202,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private string? _ManualShiftOrderIndicesValidationError;
 
+    /// <summary>
+    /// Gets or sets the validation error for <see cref="ManualShiftOrderIndices"/>.
+    /// </summary>
     public string? ManualShiftOrderIndicesValidationError
     {
       get => _ManualShiftOrderIndicesValidationError;
@@ -187,6 +221,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private ItemsController<IShiftOrder> _shiftOrder;
 
+    /// <summary>
+    /// Gets or sets the shift order selection.
+    /// </summary>
     public ItemsController<IShiftOrder> ShiftOrder
     {
       get => _shiftOrder;
@@ -203,6 +240,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private double? _ReferenceValue;
 
+    /// <summary>
+    /// Gets or sets the reference value used for shifting (if enabled).
+    /// </summary>
     public double? ReferenceValue
     {
       get => _ReferenceValue;
@@ -218,6 +258,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private bool _isReferenceValueUsed;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether an explicit reference value is used.
+    /// </summary>
     public bool IsReferenceValueUsed
     {
       get => _isReferenceValueUsed;
@@ -234,6 +277,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private bool _useExactReferenceValue;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the reference value must be matched exactly.
+    /// </summary>
     public bool UseExactReferenceValue
     {
       get => _useExactReferenceValue;
@@ -249,6 +295,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private int _indexOfReferenceColumn;
 
+    /// <summary>
+    /// Gets or sets the index of the reference column within the column group.
+    /// </summary>
     public int IndexOfReferenceColumn
     {
       get => _indexOfReferenceColumn;
@@ -265,6 +314,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private string _property1;
 
+    /// <summary>
+    /// Gets or sets the name of property 1.
+    /// </summary>
     public string Property1
     {
       get => _property1;
@@ -281,6 +333,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private bool _Property1IsTemperature;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether property 1 represents a temperature.
+    /// </summary>
     public bool Property1IsTemperature
     {
       get => _Property1IsTemperature;
@@ -296,6 +351,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private ItemsController<TemperatureRepresentation> _Property1TemperatureRepresentation;
 
+    /// <summary>
+    /// Gets or sets the temperature representation for property 1 (if enabled).
+    /// </summary>
     public ItemsController<TemperatureRepresentation> Property1TemperatureRepresentation
     {
       get => _Property1TemperatureRepresentation;
@@ -313,6 +371,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private string _property2;
 
+    /// <summary>
+    /// Gets or sets the name of property 2.
+    /// </summary>
     public string Property2
     {
       get => _property2;
@@ -332,6 +393,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private ItemsController<OptimizationMethod> _optimizationMethod;
 
+    /// <summary>
+    /// Gets or sets the optimization method used for shifting.
+    /// </summary>
     public ItemsController<OptimizationMethod> OptimizationMethod
     {
       get => _optimizationMethod;
@@ -347,6 +411,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private int _numberOfIterations;
 
+    /// <summary>
+    /// Gets or sets the number of optimization iterations.
+    /// </summary>
     public int NumberOfIterations
     {
       get => _numberOfIterations;
@@ -361,10 +428,16 @@ namespace Altaxo.Gui.Science.Thermorheology
     }
 
 
+    /// <summary>
+    /// Gets the unit environment used for relative overlap values.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment RelativeOverlapEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _relativeOverlap;
 
+    /// <summary>
+    /// Gets or sets the required relative overlap.
+    /// </summary>
     public DimensionfulQuantity RelativeOverlap
     {
       get => _relativeOverlap;
@@ -380,6 +453,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private ItemsController<MasterCurveGroupOptionsChoice> _GroupOptionsChoice;
 
+    /// <summary>
+    /// Gets or sets the choice of how group options are specified.
+    /// </summary>
     public ItemsController<MasterCurveGroupOptionsChoice> GroupOptionsChoice
     {
       get => _GroupOptionsChoice;
@@ -396,6 +472,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
 
     private ItemsController<IMVCAController> _tabControllers;
+    /// <summary>
+    /// Gets or sets the controllers for the per-group options tabs.
+    /// </summary>
     public ItemsController<IMVCAController> TabControllers
     {
       get => _tabControllers;
@@ -411,6 +490,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private bool _UseImprovementOptions;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether improvement options are used.
+    /// </summary>
     public bool UseImprovementOptions
     {
       get => _UseImprovementOptions;
@@ -432,6 +514,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private MasterCurveImprovementOptionsController? _improvementOptionsController;
 
+    /// <summary>
+    /// Gets or sets the controller for editing improvement options.
+    /// </summary>
     public MasterCurveImprovementOptionsController? ImprovementOptionsController
     {
       get => _improvementOptionsController;
@@ -448,6 +533,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private IMVCANController _tableOutputOptionsController;
 
+    /// <summary>
+    /// Gets or sets the controller for editing table output options.
+    /// </summary>
     public IMVCANController TableOutputOptionsController
     {
       get => _tableOutputOptionsController;
@@ -467,6 +555,7 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     #endregion Bindings
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -576,6 +665,10 @@ namespace Altaxo.Gui.Science.Thermorheology
       }
     }
 
+    /// <summary>
+    /// Adds the controllers for the selected group options choice.
+    /// </summary>
+    /// <param name="choice">The selected group options choice.</param>
     protected virtual void AddControllers(MasterCurveGroupOptionsChoice choice)
     {
       var list = new SelectableListNodeList();
@@ -678,6 +771,7 @@ namespace Altaxo.Gui.Science.Thermorheology
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (_selectedController is not null && !_selectedController.Apply(disposeController))

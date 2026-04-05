@@ -28,9 +28,13 @@ using Altaxo.Science.Thermorheology.MasterCurves;
 
 namespace Altaxo.Gui.Science.Thermorheology
 {
+  /// <summary>
+  /// Controller for <see cref="MasterCurveCreationDataSource"/>.
+  /// </summary>
   [UserControllerForObject(typeof(MasterCurveCreationDataSource))]
   public class MasterCurveCreationDataSourceController : DataSourceControllerBase<MasterCurveCreationDataSource>
   {
+    /// <inheritdoc />
     protected override IMVCANController GetProcessDataController()
     {
       var processDataController = new MasterCurveDataController() { UseDocumentCopy = UseDocument.Directly };
@@ -39,6 +43,7 @@ namespace Altaxo.Gui.Science.Thermorheology
       return processDataController;
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);

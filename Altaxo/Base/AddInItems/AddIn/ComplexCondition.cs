@@ -32,6 +32,7 @@ namespace Altaxo.AddInItems
     private ICondition _condition;
     private ConditionFailedAction _action = ConditionFailedAction.Exclude;
 
+    /// <inheritdoc/>
     public string Name
     {
       get
@@ -41,6 +42,7 @@ namespace Altaxo.AddInItems
     }
 
 
+    /// <inheritdoc/>
     public ConditionFailedAction Action
     {
       get
@@ -53,17 +55,24 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NegatedCondition"/> class.
+    /// </summary>
     public NegatedCondition(ICondition condition)
     {
       Debug.Assert(condition is not null);
       this._condition = condition;
     }
 
+    /// <inheritdoc/>
     public bool IsValid(object? parameter)
     {
       return !_condition.IsValid(parameter);
     }
 
+    /// <summary>
+    /// Reads a negated condition from XML.
+    /// </summary>
     public static ICondition Read(XmlReader reader, AddIn addIn)
     {
       return new NegatedCondition(Condition.ReadConditionList(reader, "Not", addIn)[0]);
@@ -78,6 +87,7 @@ namespace Altaxo.AddInItems
     private ICondition[] _conditions;
     private ConditionFailedAction _action = ConditionFailedAction.Exclude;
 
+    /// <inheritdoc/>
     public string Name
     {
       get
@@ -96,6 +106,7 @@ namespace Altaxo.AddInItems
     }
 
 
+    /// <inheritdoc/>
     public ConditionFailedAction Action
     {
       get
@@ -108,12 +119,16 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AndCondition"/> class.
+    /// </summary>
     public AndCondition(ICondition[] conditions)
     {
       Debug.Assert(conditions.Length >= 1);
       this._conditions = conditions;
     }
 
+    /// <inheritdoc/>
     public bool IsValid(object? parameter)
     {
       foreach (ICondition condition in _conditions)
@@ -126,6 +141,9 @@ namespace Altaxo.AddInItems
       return true;
     }
 
+    /// <summary>
+    /// Reads an AND condition from XML.
+    /// </summary>
     public static ICondition Read(XmlReader reader, AddIn addIn)
     {
       return new AndCondition(Condition.ReadConditionList(reader, "And", addIn));
@@ -140,6 +158,7 @@ namespace Altaxo.AddInItems
     private ICondition[] _conditions;
     private ConditionFailedAction _action = ConditionFailedAction.Exclude;
 
+    /// <inheritdoc/>
     public string Name
     {
       get
@@ -158,6 +177,7 @@ namespace Altaxo.AddInItems
     }
 
 
+    /// <inheritdoc/>
     public ConditionFailedAction Action
     {
       get
@@ -170,12 +190,16 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OrCondition"/> class.
+    /// </summary>
     public OrCondition(ICondition[] conditions)
     {
       Debug.Assert(conditions.Length >= 1);
       this._conditions = conditions;
     }
 
+    /// <inheritdoc/>
     public bool IsValid(object? parameter)
     {
       foreach (ICondition condition in _conditions)
@@ -188,6 +212,9 @@ namespace Altaxo.AddInItems
       return false;
     }
 
+    /// <summary>
+    /// Reads an OR condition from XML.
+    /// </summary>
     public static ICondition Read(XmlReader reader, AddIn addIn)
     {
       return new OrCondition(Condition.ReadConditionList(reader, "Or", addIn));

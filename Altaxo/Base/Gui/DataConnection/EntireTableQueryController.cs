@@ -32,11 +32,17 @@ using Altaxo.DataConnection;
 
 namespace Altaxo.Gui.DataConnection
 {
+  /// <summary>
+  /// View contract for selecting a complete table, view, or stored procedure.
+  /// </summary>
   public interface IEntireTableQueryView
   { /// <summary>Sets content of the tree view that shows the tables, views and stored procedures of a data base.</summary>
     /// <remarks>The image indices 0, 1, and 2 correspond to the nodes: Table , View, and Procedure.</remarks>
     void SetTreeSource(NGTreeNode rootNode);
 
+    /// <summary>
+    /// Occurs when the user requests to view the results.
+    /// </summary>
     event Action ViewResults;
 
     /// <summary>
@@ -45,6 +51,9 @@ namespace Altaxo.Gui.DataConnection
     event Action SelectedSchemaNodeChanged;
   }
 
+  /// <summary>
+  /// Controller for selecting complete-table queries from a database schema.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IEntireTableQueryView))]
   public class EntireTableQueryController : IMVCAController
   {
@@ -59,12 +68,18 @@ namespace Altaxo.Gui.DataConnection
 
     private NGTreeNode _treeRootNode;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EntireTableQueryController"/> class.
+    /// </summary>
     public EntireTableQueryController()
     {
       _schema = new OleDbSchema();
       _treeRootNode = new NGTreeNode();
     }
 
+    /// <summary>
+    /// Gets or sets the connection string that represents the underlying database.
+    /// </summary>
     /// <summary>
     /// Gets or sets the connection string that represents the underlying database.
     /// </summary>
@@ -89,6 +104,9 @@ namespace Altaxo.Gui.DataConnection
       }
     }
 
+    /// <summary>
+    /// Gets the current selection statement.
+    /// </summary>
     public string SelectionStatement
     {
       get
@@ -270,6 +288,7 @@ namespace Altaxo.Gui.DataConnection
       _view.SelectedSchemaNodeChanged -= EhSelectedSchemaNodeChanged;
     }
 
+    /// <inheritdoc/>
     public object ViewObject
     {
       get
@@ -293,16 +312,19 @@ namespace Altaxo.Gui.DataConnection
       }
     }
 
+    /// <inheritdoc/>
     public object ModelObject
     {
       get { throw new NotImplementedException(); }
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
       ViewObject = null;
     }
 
+    /// <inheritdoc/>
     public bool Apply(bool disposeController)
     {
       return !string.IsNullOrEmpty(_selectionStatement);
@@ -313,13 +335,16 @@ namespace Altaxo.Gui.DataConnection
     /// </summary>
     /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
     /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    ///   <c>true</c> if the revert operation was successful; otherwise, <c>false</c>.
     /// </returns>
     public bool Revert(bool disposeController)
     {
       return false;
     }
 
+    /// <summary>
+    /// Gets or sets the selected table name.
+    /// </summary>
     public string TableName { get; set; }
   }
 }

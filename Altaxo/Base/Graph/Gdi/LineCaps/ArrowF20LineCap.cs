@@ -24,18 +24,21 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Text;
 
 namespace Altaxo.Graph.Gdi.LineCaps
 {
+  /// <summary>
+  /// Renders the filled arrow line cap with size factor 2.0.
+  /// </summary>
   public class ArrowF20LineCap : GdiLineCapBase
   {
+    /// <inheritdoc />
     public override Type ExtendsType => typeof(Altaxo.Drawing.LineCaps.ArrowF20LineCap);
 
 
+    /// <inheritdoc />
     protected override CustomLineCap GetCustomLineCap(Pen pen, float size, bool isEndCap)
     {
       float scale = pen.Width == 0 ? 1 : size / pen.Width;

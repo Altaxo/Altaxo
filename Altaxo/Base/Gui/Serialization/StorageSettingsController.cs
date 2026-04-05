@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -33,14 +33,23 @@ using Altaxo.Serialization;
 namespace Altaxo.Gui.Serialization
 {
 
+  /// <summary>
+  /// View interface for editing <see cref="StorageSettings"/>.
+  /// </summary>
   public interface IStorageSettingsView : IDataContextAwareView { }
 
+  /// <summary>
+  /// Controller for editing <see cref="StorageSettings"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IStorageSettingsView))]
   [UserControllerForObject(typeof(StorageSettings))]
   public class StorageSettingsController : MVCANControllerEditImmutableDocBase<StorageSettings, IStorageSettingsView>
   {
     #region Bindings
 
+    /// <summary>
+    /// Gets or sets a value indicating whether progressive storage is allowed.
+    /// </summary>
     public bool UseProgressiveStorage
     {
       get => _doc.AllowProgressiveStorage;
@@ -54,6 +63,9 @@ namespace Altaxo.Gui.Serialization
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the compression level is uncompressed.
+    /// </summary>
     public bool IsCompressionLevelUncompressed
     {
       get => _doc.ZipCompressionLevel == System.IO.Compression.CompressionLevel.NoCompression;
@@ -71,6 +83,9 @@ namespace Altaxo.Gui.Serialization
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the compression level is medium.
+    /// </summary>
     public bool IsCompressionLevelMedium
     {
       get => _doc.ZipCompressionLevel == System.IO.Compression.CompressionLevel.Fastest;
@@ -88,6 +103,9 @@ namespace Altaxo.Gui.Serialization
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the compression level is optimal.
+    /// </summary>
     public bool IsCompressionLevelOptimal
     {
       get => _doc.ZipCompressionLevel == System.IO.Compression.CompressionLevel.Optimal;
@@ -108,28 +126,33 @@ namespace Altaxo.Gui.Serialization
     #endregion
 
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
     }
 
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <inheritdoc/>
     protected override void AttachView()
     {
       _view!.DataContext = this;
       base.AttachView();
     }
 
+    /// <inheritdoc/>
     protected override void DetachView()
     {
       _view!.DataContext = null;

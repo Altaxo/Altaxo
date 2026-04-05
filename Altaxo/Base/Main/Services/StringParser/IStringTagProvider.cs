@@ -21,8 +21,14 @@ using System;
 
 namespace Altaxo.Main.Services
 {
+  /// <summary>
+  /// Provides string values for replacement tags.
+  /// </summary>
   public interface IStringTagProvider
   {
+    /// <summary>
+    /// Resolves the specified tag to a string value.
+    /// </summary>
     string? ProvideString(string tag, StringTagPair[]? customTags);
   }
 }

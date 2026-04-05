@@ -38,7 +38,7 @@ using Altaxo.Main;
 namespace Altaxo.Gui.Graph.Plot.Data
 {
   /// <summary>
-  /// Summary description for LineScatterPlotDataController.
+  /// Controller for the plot data of an <see cref="XYZColumnPlotData"/> instance.
   /// </summary>
   [UserControllerForObject(typeof(XYZColumnPlotData))]
   [ExpectedTypeOfView(typeof(IColumnPlotDataView))]

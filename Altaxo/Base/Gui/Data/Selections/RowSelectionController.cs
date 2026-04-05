@@ -36,6 +36,9 @@ namespace Altaxo.Gui.Data.Selections
   using Altaxo.Main.Services;
   using Collections;
 
+  /// <summary>
+  /// Provides the view contract for <see cref="RowSelectionController"/>.
+  /// </summary>
   public interface IRowSelectionView : IDataContextAwareView
   {
   }
@@ -51,6 +54,9 @@ namespace Altaxo.Gui.Data.Selections
   // If the last item is deleted from its parent collection, the parent collection itself is deleted, too.
   // If only one item remains in the parent collection, the parent collection is not immediately deleted. Such simplification can be done after Applying the controller.
 
+  /// <summary>
+  /// Controller for editing an <see cref="IRowSelection"/>.
+  /// </summary>
   [UserControllerForObject(typeof(IRowSelection), 10)]
   [ExpectedTypeOfView(typeof(IRowSelectionView))]
   public class RowSelectionController : MVCANControllerEditCopyOfDocBase<IRowSelection, IRowSelectionView>
@@ -65,6 +71,7 @@ namespace Altaxo.Gui.Data.Selections
     /// </summary>
     private int _supposedGroupNumber;
 
+    /// <inheritdoc />
     public override bool InitializeDocument(params object[] args)
     {
       if (args.Length >= 2 && (args[1] is DataTable dt))
@@ -76,6 +83,7 @@ namespace Altaxo.Gui.Data.Selections
       return base.InitializeDocument(args);
     }
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       foreach (var c in _rowSelections)
@@ -86,10 +94,15 @@ namespace Altaxo.Gui.Data.Selections
     #region Bindings
 
     ObservableCollection<RowSelectionItemController> _rowSelections = new();
+
+    /// <summary>
+    /// Gets the editable list of row selections.
+    /// </summary>
     public ObservableCollection<RowSelectionItemController> RowSelections => _rowSelections;
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -228,6 +241,7 @@ namespace Altaxo.Gui.Data.Selections
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (!ApplyAllControllers(disposeController))
@@ -240,6 +254,10 @@ namespace Altaxo.Gui.Data.Selections
 
    
 
+    /// <summary>
+    /// Unindents the specified row selection.
+    /// </summary>
+    /// <param name="child">The row selection to unindent.</param>
     public void EhCmdUnindentSelection(RowSelectionItemController child)
     {
       var idx = _rowSelections.IndexOf(child);
@@ -272,6 +290,10 @@ namespace Altaxo.Gui.Data.Selections
       OnItemsChanged();
     }
 
+    /// <summary>
+    /// Indents the specified row selection.
+    /// </summary>
+    /// <param name="child">The row selection to indent.</param>
     public void EhCmdIndentSelection(RowSelectionItemController child)
     {
       var idx = _rowSelections.IndexOf(child);
@@ -325,7 +347,11 @@ namespace Altaxo.Gui.Data.Selections
 
     
 
-   public void EhCmdRemoveSelection(RowSelectionItemController child)
+    /// <summary>
+    /// Removes the specified row selection.
+    /// </summary>
+    /// <param name="child">The row selection to remove.</param>
+    public void EhCmdRemoveSelection(RowSelectionItemController child)
     {
       var idx = _rowSelections.IndexOf(child);
       if (idx < 0)
@@ -376,6 +402,10 @@ namespace Altaxo.Gui.Data.Selections
       OnItemsChanged();
     }
 
+    /// <summary>
+    /// Adds a new row selection relative to the specified item.
+    /// </summary>
+    /// <param name="child">The reference item.</param>
     public void EhCmdAddNewSelection(RowSelectionItemController child)
     {
       var idx = _rowSelections.IndexOf(child);
@@ -400,6 +430,10 @@ namespace Altaxo.Gui.Data.Selections
       OnItemsChanged();
     }
 
+    /// <summary>
+    /// Handles a change of the selection type.
+    /// </summary>
+    /// <param name="child">The changed selection item.</param>
     public void EhSelectionTypeChanged(RowSelectionItemController child)
     {
       OnItemsChanged();
@@ -521,10 +555,19 @@ namespace Altaxo.Gui.Data.Selections
       }
     }
 
+    /// <summary>
+    /// Sets the data table that is assumed to be the parent of the edited row selection.
+    /// </summary>
     public DataTable SupposedParentDataTable { set { _supposedParentDataTable = value; } }
 
+    /// <summary>
+    /// Occurs when the set of row selection items has changed.
+    /// </summary>
     public event Action ItemsChanged;
 
+    /// <summary>
+    /// Raises the <see cref="ItemsChanged"/> event.
+    /// </summary>
     protected void OnItemsChanged()
     {
       ItemsChanged?.Invoke();

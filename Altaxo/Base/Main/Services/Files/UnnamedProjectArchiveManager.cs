@@ -37,7 +37,7 @@ namespace Altaxo.Main.Services
   /// <seealso cref="Altaxo.Main.Services.IProjectArchiveManager" />
   public class UnnamedProjectArchiveManager : IProjectArchiveManager
   {
-    private bool _isDisposed; // not really neccessary, but useful for debugging purposes
+    private bool _isDisposed; // not really necessary, but useful for debugging purposes
 
     private PathName? _fileOrFolderName;
 
@@ -57,6 +57,10 @@ namespace Altaxo.Main.Services
 
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="UnnamedProjectArchiveManager"/> class.
+    /// </summary>
+    /// <param name="pathName">The current file or folder name.</param>
     /// <inheritdoc/>
     public UnnamedProjectArchiveManager(PathName pathName)
     {
@@ -64,7 +68,7 @@ namespace Altaxo.Main.Services
     }
 
     /// <summary>
-    /// Returns null because an unnamed project does not have a file name yet.
+    /// Gets the current file or folder name, if one was assigned already.
     /// </summary>
     public PathName? FileOrFolderName => _fileOrFolderName;
 

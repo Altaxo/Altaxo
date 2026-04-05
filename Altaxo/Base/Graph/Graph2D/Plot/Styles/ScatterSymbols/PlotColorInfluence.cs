@@ -57,7 +57,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
     FrameColorPreserveAlpha = 4,
 
     /// <summary>
-    /// The frame color is controlled by the plot color.
+    /// The frame color is fully controlled by the plot color.
     /// </summary>
     FrameColorFull = 8,
 
@@ -67,7 +67,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
     InsetColorPreserveAlpha = 16,
 
     /// <summary>
-    /// The inset color is controlled by the plot color.
+    /// The inset color is fully controlled by the plot color.
     /// </summary>
     InsetColorFull = 32,
   }

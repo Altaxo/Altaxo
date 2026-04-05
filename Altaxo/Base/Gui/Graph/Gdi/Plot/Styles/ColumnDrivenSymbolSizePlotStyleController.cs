@@ -38,10 +38,16 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
   using Graph.Plot.Data;
   using Scales;
 
+  /// <summary>
+  /// Provides the view contract for <see cref="ColumnDrivenSymbolSizePlotStyleController"/>.
+  /// </summary>
   public interface IColumnDrivenSymbolSizePlotStyleView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="ColumnDrivenSymbolSizePlotStyle"/>.
+  /// </summary>
   [UserControllerForObject(typeof(ColumnDrivenSymbolSizePlotStyle))]
   [ExpectedTypeOfView(typeof(IColumnDrivenSymbolSizePlotStyleView))]
   public class ColumnDrivenSymbolSizePlotStyleController : MVCANControllerEditOriginalDocBase<ColumnDrivenSymbolSizePlotStyle, IColumnDrivenSymbolSizePlotStyleView>, IColumnDataExternallyControlled
@@ -56,6 +62,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     /// </summary>
     private int _supposedGroupNumber;
 
+    /// <inheritdoc />
     public override bool InitializeDocument(params object[] args)
     {
       if (args.Length >= 2 && (args[1] is DataTable))
@@ -67,6 +74,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       return base.InitializeDocument(args);
     }
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_scaleController, () => _scaleController = null);
@@ -76,6 +84,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private DensityScaleController _scaleController;
 
+    /// <summary>
+    /// Gets or sets the controller for the value-to-size scale.
+    /// </summary>
     public DensityScaleController ScaleController
     {
       get => _scaleController;
@@ -92,6 +103,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private string _DataColumnText;
 
+    /// <summary>
+    /// Gets or sets the display text for the data column.
+    /// </summary>
     public string DataColumnText
     {
       get => _DataColumnText;
@@ -106,6 +120,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     }
     private string _DataColumnToolTip;
 
+    /// <summary>
+    /// Gets or sets the tooltip for the data column.
+    /// </summary>
     public string DataColumnToolTip
     {
       get => _DataColumnToolTip;
@@ -120,6 +137,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     }
     private int _DataColumnStatus;
 
+    /// <summary>
+    /// Gets or sets the status code for the data column.
+    /// </summary>
     public int DataColumnStatus
     {
       get => _DataColumnStatus;
@@ -134,6 +154,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     }
     private string _DataColumnTransformationText;
 
+    /// <summary>
+    /// Gets or sets the transformation text for the data column.
+    /// </summary>
     public string DataColumnTransformationText
     {
       get => _DataColumnTransformationText;
@@ -148,6 +171,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     }
     private string _DataColumnTransformationToolTip;
 
+    /// <summary>
+    /// Gets or sets the transformation tooltip for the data column.
+    /// </summary>
     public string DataColumnTransformationToolTip
     {
       get => _DataColumnTransformationToolTip;
@@ -161,11 +187,17 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets the unit environment used for symbol sizes.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment SymbolSizeEnvironment => SizeEnvironment.Instance;
 
 
     private DimensionfulQuantity _symbolSizeAt0;
 
+    /// <summary>
+    /// Gets or sets the symbol size used for a normalized value of 0.
+    /// </summary>
     public DimensionfulQuantity SymbolSizeAt0
     {
       get => _symbolSizeAt0;
@@ -181,6 +213,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private DimensionfulQuantity _symbolSizeAt1;
 
+    /// <summary>
+    /// Gets or sets the symbol size used for a normalized value of 1.
+    /// </summary>
     public DimensionfulQuantity SymbolSizeAt1
     {
       get => _symbolSizeAt1;
@@ -198,6 +233,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private DimensionfulQuantity _symbolSizeAbove;
 
+    /// <summary>
+    /// Gets or sets the symbol size used for values above the mapped range.
+    /// </summary>
     public DimensionfulQuantity SymbolSizeAbove
     {
       get => _symbolSizeAbove;
@@ -214,6 +252,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private DimensionfulQuantity _symbolSizeBelow;
 
+    /// <summary>
+    /// Gets or sets the symbol size used for values below the mapped range.
+    /// </summary>
     public DimensionfulQuantity SymbolSizeBelow
     {
       get => _symbolSizeBelow;
@@ -230,6 +271,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private DimensionfulQuantity _symbolSizeInvalid;
 
+    /// <summary>
+    /// Gets or sets the symbol size used for invalid values.
+    /// </summary>
     public DimensionfulQuantity SymbolSizeInvalid
     {
       get => _symbolSizeInvalid;
@@ -246,6 +290,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private int _numberOfSteps;
 
+    /// <summary>
+    /// Gets or sets the number of discrete size steps.
+    /// </summary>
     public int NumberOfSteps
     {
       get => _numberOfSteps;
@@ -262,11 +309,13 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 
     #endregion
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -286,6 +335,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (!_scaleController.Apply(disposeController))

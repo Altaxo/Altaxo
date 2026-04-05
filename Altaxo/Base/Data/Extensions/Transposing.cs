@@ -93,8 +93,8 @@ namespace Altaxo.Data
     }
 
     /// <summary>
-    /// Transpose transpose the table, i.e. exchange columns and rows
-    /// this can only work if all columns in the table are of the same type
+    /// Transposes the table, that is, exchanges columns and rows.
+    /// This can only work if all columns in the transposed range have the same type.
     /// </summary>
     /// <param name="srcTable">Table to transpose.</param>
     /// <param name="options">Options that control the transpose process.</param>

@@ -43,7 +43,6 @@ namespace Altaxo.Gui.Common.PropertyGrid
     /// <summary>
     /// Gets the name of the property.
     /// </summary>
-   
     string Name { get; }
     /// <summary>
     /// Gets the view (Gui object) that allows to show or edit the property value.

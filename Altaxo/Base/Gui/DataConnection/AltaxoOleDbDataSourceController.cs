@@ -31,13 +31,25 @@ using Altaxo.DataConnection;
 
 namespace Altaxo.Gui.DataConnection
 {
+  /// <summary>
+  /// View contract for editing an OLE DB data source.
+  /// </summary>
   public interface IAltaxoOleDbDataSourceView
   {
+    /// <summary>
+    /// Sets the query view.
+    /// </summary>
     void SetQueryView(object viewObject);
 
+    /// <summary>
+    /// Sets the import-options view.
+    /// </summary>
     void SetImportOptionsView(object viewObject);
   }
 
+  /// <summary>
+  /// Controller for <see cref="AltaxoOleDbDataSource"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IAltaxoOleDbDataSourceView))]
   [UserControllerForObject(typeof(AltaxoOleDbDataSource))]
   public class AltaxoOleDbDataSourceController : MVCANControllerEditOriginalDocBase<AltaxoOleDbDataSource, IAltaxoOleDbDataSourceView>
@@ -45,12 +57,14 @@ namespace Altaxo.Gui.DataConnection
     private OleDbDataQueryController _connectionMainController;
     private Altaxo.Gui.Data.DataSourceImportOptionsController _importOptionsController;
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_connectionMainController, () => _connectionMainController = null);
       yield return new ControllerAndSetNullMethod(_importOptionsController, () => _importOptionsController = null);
     }
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -77,6 +91,7 @@ namespace Altaxo.Gui.DataConnection
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (!_importOptionsController.Apply(disposeController))

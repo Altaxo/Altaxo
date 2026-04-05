@@ -67,6 +67,11 @@ namespace Altaxo.Data
 
     #region Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IndependentAndDependentColumns"/> class during XML deserialization.
+    /// </summary>
+    /// <param name="info">The deserialization information.</param>
+    /// <param name="version">The serialized version.</param>
     protected IndependentAndDependentColumns(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     {
       switch (version)
@@ -93,6 +98,7 @@ namespace Altaxo.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(IndependentAndDependentColumns), 0)]
     protected class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (IndependentAndDependentColumns)obj;
@@ -105,6 +111,7 @@ namespace Altaxo.Data
         info.AddArrayOfNullableElements("DependentVariables", s._dependentVariables, s._dependentVariables.Length);
       }
 
+      /// <inheritdoc />
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (o is IndependentAndDependentColumns s)
@@ -115,6 +122,10 @@ namespace Altaxo.Data
       }
     }
 
+    /// <summary>
+    /// Deserializes the version 0 surrogate data into this instance.
+    /// </summary>
+    /// <param name="info">The XML deserialization info.</param>
     [MemberNotNull(nameof(_rangeOfRows), nameof(_independentVariables), nameof(_dependentVariables))]
     protected void DeserializeSurrogate0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
@@ -184,9 +195,9 @@ namespace Altaxo.Data
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="IndependentAndDependentColumns"/> class from given proxies of DataTable and columns.
-    /// This constructor is intended for internal use only, e.g. for creating copies of existing instances.
-    /// ATTENTION: The proxies are not cloned! 
+    /// Initializes a new instance of the <see cref="IndependentAndDependentColumns"/> class from the given table and column proxies.
+    /// This constructor is intended for internal use only, for example when creating copies of existing instances.
+    /// Attention: the proxies are not cloned.
     /// </summary>
     /// <param name="table">The table proxy.</param>
     /// <param name="groupNumber">The group number of the x- and y-column.</param>
@@ -202,14 +213,15 @@ namespace Altaxo.Data
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="IndependentAndDependentColumns"/> class from given proxies of DataTable and columns.
-    /// This constructor is intended for internal use only, e.g. for creating copies of existing instances.
-    /// ATTENTION: The proxies are not cloned! 
+    /// Initializes a new instance of the <see cref="IndependentAndDependentColumns"/> class from the given table and column proxies.
+    /// This constructor is intended for internal use only, for example when creating copies of existing instances.
+    /// Attention: the proxies are not cloned.
     /// </summary>
     /// <param name="table">The table proxy.</param>
     /// <param name="groupNumber">The group number of the x- and y-column.</param>
     /// <param name="xCol">The proxy of the x-column.</param>
     /// <param name="yCol">The proxy of the y-column.</param>
+    /// <param name="zCol">The proxy of the dependent column.</param>
     protected IndependentAndDependentColumns(DataTableProxy table, int groupNumber, IReadableColumnProxy xCol, IReadableColumnProxy yCol, IReadableColumnProxy zCol)
     {
       _rangeOfRows = new AllRows() { ParentObject = this };
@@ -232,6 +244,9 @@ namespace Altaxo.Data
     }
 
 
+    /// <summary>
+    /// Gets or sets the data table that provides the independent and dependent columns.
+    /// </summary>
     [MaybeNull]
     public DataTable DataTable
     {
@@ -254,6 +269,9 @@ namespace Altaxo.Data
       }
     }
 
+    /// <summary>
+    /// Gets or sets the column group number expected for all referenced data columns.
+    /// </summary>
     public int GroupNumber
     {
       get
@@ -351,6 +369,11 @@ namespace Altaxo.Data
       yield return new GroupOfColumnsInformation("Dependent variables", GetDependentVariables());
     }
 
+    /// <summary>
+    /// Gets the display name for the independent variable at the specified index.
+    /// </summary>
+    /// <param name="idx">The zero-based variable index.</param>
+    /// <returns>The display name for the independent variable.</returns>
     protected virtual string GetIndependentVariableName(int idx)
     {
       return idx == 0 ? "X" : $"X{idx}";
@@ -414,6 +437,11 @@ namespace Altaxo.Data
 
 
 
+    /// <summary>
+    /// Gets the display name for the dependent variable at the specified index.
+    /// </summary>
+    /// <param name="idx">The zero-based variable index.</param>
+    /// <returns>The display name for the dependent variable.</returns>
     protected virtual string GetDependentVariableName(int idx)
     {
       return idx == 0 ? "Y" : $"Y{idx}";
@@ -733,6 +761,7 @@ namespace Altaxo.Data
     }
 
 
+    /// <inheritdoc />
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_dataTable is not null)

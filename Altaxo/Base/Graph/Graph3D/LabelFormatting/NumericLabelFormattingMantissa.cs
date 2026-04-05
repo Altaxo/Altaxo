@@ -35,15 +35,20 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
   {
     #region Serialization
 
+    /// <summary>
+    /// Serializes <see cref="NumericLabelFormattingMantissa"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericLabelFormattingMantissa), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (NumericLabelFormattingMantissa)obj;
         info.AddBaseValueEmbedded(s, typeof(NumericLabelFormattingMantissa).BaseType!);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (NumericLabelFormattingMantissa?)o ?? new NumericLabelFormattingMantissa();
@@ -54,25 +59,35 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NumericLabelFormattingMantissa"/> class.
+    /// </summary>
     public NumericLabelFormattingMantissa()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NumericLabelFormattingMantissa"/> class by copying from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public NumericLabelFormattingMantissa(NumericLabelFormattingMantissa from)
       : base(from) // everything is done here, since CopyFrom is virtual
     {
     }
 
+    /// <inheritdoc/>
     public override object Clone()
     {
       return new NumericLabelFormattingMantissa();
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
     }
 
+    /// <inheritdoc/>
     protected override string FormatItem(Altaxo.Data.AltaxoVariant item)
     {
       if (item.IsType(Altaxo.Data.AltaxoVariant.Content.VDouble))
@@ -81,6 +96,11 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
         return item.ToString();
     }
 
+    /// <summary>
+    /// Formats a numeric tick value by returning only its mantissa.
+    /// </summary>
+    /// <param name="tick">The tick value.</param>
+    /// <returns>The formatted mantissa.</returns>
     public string FormatItem(double tick)
     {
       string result = string.Format("{0:E0}", tick);

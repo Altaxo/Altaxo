@@ -83,6 +83,7 @@ namespace Altaxo.Serialization.Renishaw
 
 
     /// <returns>Null if no error occurs, or an error description.</returns>
+    /// <inheritdoc />
     public override string? Import(IReadOnlyList<string> filenames, Altaxo.Data.DataTable table, object importOptionsObj, bool attachDataSource = true)
     {
       var importOptions = (RenishawImportOptions)importOptionsObj;

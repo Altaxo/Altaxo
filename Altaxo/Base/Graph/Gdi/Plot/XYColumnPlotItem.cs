@@ -49,6 +49,9 @@ namespace Altaxo.Graph.Gdi.Plot
     IXBoundsHolder,
     IYBoundsHolder
   {
+    /// <summary>
+    /// The plot data associated with this plot item.
+    /// </summary>
     protected XYColumnPlotData _plotData;
 
     #region Serialization
@@ -145,21 +148,36 @@ namespace Altaxo.Graph.Gdi.Plot
         yield return new DocumentNodeAndName(_plotData, () => _plotData = null!, "Data");
     }
 
+    /// <inheritdoc/>
     protected override System.Collections.Generic.IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       return GetLocalDocumentNodeChildrenWithName().Concat(base.GetDocumentNodeChildrenWithName());
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYColumnPlotItem"/> class.
+    /// </summary>
+    /// <param name="pa">The plot data.</param>
+    /// <param name="ps">The plot styles.</param>
     public XYColumnPlotItem(XYColumnPlotData pa, G2DPlotStyleCollection ps) : base(ps)
     {
       ChildSetMember(ref _plotData, pa);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYColumnPlotItem"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public XYColumnPlotItem(XYColumnPlotItem from) : base(from)
     {
       CopyFrom(from, false);
     }
 
+    /// <summary>
+    /// Copies the content of another plot item.
+    /// </summary>
+    /// <param name="from">The source plot item.</param>
+    /// <param name="withBaseMembers">If set to <c>true</c>, base members are copied as well.</param>
     [MemberNotNull(nameof(_plotData))]
     public void CopyFrom(XYColumnPlotItem from, bool withBaseMembers)
     {
@@ -174,6 +192,7 @@ namespace Altaxo.Graph.Gdi.Plot
       ChildCopyToMember(ref _plotData, from._plotData);
     }
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -193,21 +212,29 @@ namespace Altaxo.Graph.Gdi.Plot
       }
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new XYColumnPlotItem(this);
     }
 
+    /// <summary>
+    /// Gets the underlying XY column plot data.
+    /// </summary>
     public XYColumnPlotData XYColumnPlotData
     {
       get { return _plotData; }
     }
 
+    /// <inheritdoc />
     public override Main.IDocumentLeafNode DataObject
     {
       get { return _plotData; }
     }
 
+    /// <summary>
+    /// Gets or sets the plot data.
+    /// </summary>
     public XYColumnPlotData Data
     {
       get
@@ -224,6 +251,7 @@ namespace Altaxo.Graph.Gdi.Plot
       }
     }
 
+    /// <inheritdoc />
     public override string GetName(int level)
     {
       switch (level)
@@ -242,6 +270,7 @@ namespace Altaxo.Graph.Gdi.Plot
       }
     }
 
+    /// <inheritdoc />
     public override string GetName(string style)
     {
       XYColumnPlotItemLabelTextStyle result = XYColumnPlotItemLabelTextStyle.YS;
@@ -255,6 +284,11 @@ namespace Altaxo.Graph.Gdi.Plot
       return GetName(result);
     }
 
+    /// <summary>
+    /// Gets the display name for the specified label style.
+    /// </summary>
+    /// <param name="style">The label text style.</param>
+    /// <returns>The display name.</returns>
     public virtual string GetName(XYColumnPlotItemLabelTextStyle style)
     {
       int st = (int)style;
@@ -300,11 +334,13 @@ namespace Altaxo.Graph.Gdi.Plot
         return string.Empty;
     }
 
+    /// <inheritdoc />
     public override string ToString()
     {
       return GetName(int.MaxValue);
     }
 
+    /// <inheritdoc />
     public override Processed2DPlotData GetRangesAndPoints(IPlotArea layer)
     {
       return _plotData.GetRangesAndPoints(layer);
@@ -337,6 +373,7 @@ namespace Altaxo.Graph.Gdi.Plot
 
     #region IXBoundsHolder Members
 
+    /// <inheritdoc />
     public void MergeXBoundsInto(IPhysicalBoundaries pb)
     {
       _plotData.MergeXBoundsInto(pb);
@@ -346,6 +383,7 @@ namespace Altaxo.Graph.Gdi.Plot
 
     #region IYBoundsHolder Members
 
+    /// <inheritdoc />
     public void MergeYBoundsInto(IPhysicalBoundaries pb)
     {
       _plotData.MergeYBoundsInto(pb);

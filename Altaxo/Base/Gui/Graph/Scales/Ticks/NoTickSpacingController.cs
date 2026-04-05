@@ -28,19 +28,27 @@ using Altaxo.Graph.Scales.Ticks;
 
 namespace Altaxo.Gui.Graph.Scales.Ticks
 {
+  /// <summary>
+  /// View interface for the no-tick-spacing controller.
+  /// </summary>
   public interface INoTickSpacingView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="NoTickSpacing"/>.
+  /// </summary>
   [UserControllerForObject(typeof(NoTickSpacing), 200)]
   [ExpectedTypeOfView(typeof(INoTickSpacingView))]
   public class NoTickSpacingController : MVCANControllerEditOriginalDocBase<NoTickSpacing, INoTickSpacingView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);

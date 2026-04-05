@@ -75,6 +75,9 @@ namespace Altaxo.Worksheet
     /// </summary>
     protected ColumnStyleDictionary _dataColumnStyles;
 
+    /// <summary>
+    /// Stores the column styles for each property column individually.
+    /// </summary>
     protected ColumnStyleDictionary _propertyColumnStyles;
 
     /// <summary>
@@ -98,6 +101,9 @@ namespace Altaxo.Worksheet
     /// </summary>
     protected bool _doShowPropertyColumns;
 
+    /// <summary>
+    /// Weak event handler for tunneled events raised by the data table.
+    /// </summary>
     protected WeakActionHandler<object, object, TunnelingEventArgs>? _weakEventHandlerForTable_TunneledEvent;
 
     #endregion Member variables
@@ -113,6 +119,7 @@ namespace Altaxo.Worksheet
       protected Dictionary<Main.AbsoluteDocumentPath, object>? _colStyles;
       protected Main.AbsoluteDocumentPath? _pathToTable;
 
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (WorksheetLayout)obj;
@@ -141,6 +148,7 @@ namespace Altaxo.Worksheet
 
 
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         WorksheetLayout s = (WorksheetLayout?)o ?? new WorksheetLayout(info);
@@ -229,6 +237,7 @@ namespace Altaxo.Worksheet
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WorksheetLayout), 1)]
     private class XmlSerializationSurrogate1 : XmlSerializationSurrogate0
     {
+      /// <inheritdoc />
       public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         base.Serialize(obj, info);
@@ -326,6 +335,10 @@ namespace Altaxo.Worksheet
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WorksheetLayout"/> class for deserialization.
+    /// </summary>
+    /// <param name="info">The deserialization helper.</param>
     protected WorksheetLayout(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
       : this(null!, true)
     {
@@ -333,11 +346,20 @@ namespace Altaxo.Worksheet
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WorksheetLayout"/> class for the specified table.
+    /// </summary>
+    /// <param name="table">The table whose layout is represented.</param>
     public WorksheetLayout(Altaxo.Data.DataTable table)
       : this(table, false)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WorksheetLayout"/> class.
+    /// </summary>
+    /// <param name="table">The table whose layout is represented.</param>
+    /// <param name="isTableNullAllowed">If set to <see langword="true"/>, a <see langword="null"/> table is allowed.</param>
     protected WorksheetLayout(Altaxo.Data.DataTable table, bool isTableNullAllowed)
     {
       if (table is null && !isTableNullAllowed)
@@ -373,6 +395,9 @@ namespace Altaxo.Worksheet
 
     #region Properties
 
+    /// <summary>
+    /// Gets the unique identifier of this worksheet layout.
+    /// </summary>
     public System.Guid Guid
     {
       get { return _guid; }
@@ -387,6 +412,9 @@ namespace Altaxo.Worksheet
     }
 
 
+    /// <summary>
+    /// Gets the data table associated with this worksheet layout.
+    /// </summary>
     public Altaxo.Data.DataTable DataTable
     {
       get { return _dataTable; }
@@ -414,26 +442,45 @@ namespace Altaxo.Worksheet
       }
     }
 
+    /// <summary>
+    /// Gets the styles assigned to data columns.
+    /// </summary>
     public IDictionary<Data.DataColumn, ColumnStyle> DataColumnStyles
     {
       get { return _dataColumnStyles; }
     }
 
+    /// <summary>
+    /// Gets the style for the data column at the specified index.
+    /// </summary>
+    /// <param name="i">The zero-based data-column index.</param>
+    /// <returns>The style of the specified data column.</returns>
     public ColumnStyle GetDataColumnStyle(int i)
     {
       return _dataColumnStyles[_dataTable.DataColumns[i]];
     }
 
+    /// <summary>
+    /// Gets the styles assigned to property columns.
+    /// </summary>
     public IDictionary<Data.DataColumn, ColumnStyle> PropertyColumnStyles
     {
       get { return _propertyColumnStyles; }
     }
 
+    /// <summary>
+    /// Gets the style for the property column at the specified index.
+    /// </summary>
+    /// <param name="i">The zero-based property-column index.</param>
+    /// <returns>The style of the specified property column.</returns>
     public ColumnStyle GetPropertyColumnStyle(int i)
     {
       return _propertyColumnStyles[_dataTable.PropertyColumns[i]];
     }
 
+    /// <summary>
+    /// Gets the style of the row header.
+    /// </summary>
     public RowHeaderStyle RowHeaderStyle
     {
       get { return _rowHeaderStyle; }
@@ -443,6 +490,9 @@ namespace Altaxo.Worksheet
       }
     }
 
+    /// <summary>
+    /// Gets the style of the column header.
+    /// </summary>
     public ColumnHeaderStyle ColumnHeaderStyle
     {
       get { return _columnHeaderStyle; }
@@ -452,6 +502,9 @@ namespace Altaxo.Worksheet
       }
     }
 
+    /// <summary>
+    /// Gets the style of the property-column header.
+    /// </summary>
     public ColumnHeaderStyle PropertyColumnHeaderStyle
     {
       get { return _propertyColumnHeaderStyle; }
@@ -461,6 +514,9 @@ namespace Altaxo.Worksheet
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the property columns are shown.
+    /// </summary>
     public bool ShowPropertyColumns
     {
       get { return _doShowPropertyColumns; }
@@ -471,6 +527,7 @@ namespace Altaxo.Worksheet
 
     #region IDocumentNode Members
 
+    /// <inheritdoc/>
     public override string Name
     {
       get
@@ -495,6 +552,7 @@ namespace Altaxo.Worksheet
 
     #region Document node functions
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_columnHeaderStyle is not null)
@@ -515,6 +573,7 @@ namespace Altaxo.Worksheet
 
     #endregion Document node functions
 
+    /// <inheritdoc/>
     protected override void Dispose(bool isDisposing)
     {
       if (_parent is not null)

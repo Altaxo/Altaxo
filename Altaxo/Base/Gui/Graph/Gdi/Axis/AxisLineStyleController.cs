@@ -33,15 +33,22 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Gdi.Axis
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="AxisLineStyleController"/>.
+  /// </summary>
   public interface IAxisLineStyleView : IDataContextAwareView
   {
   }
 
 
+  /// <summary>
+  /// Controller for <see cref="AxisLineStyle"/>.
+  /// </summary>
   [UserControllerForObject(typeof(AxisLineStyle))]
   [ExpectedTypeOfView(typeof(IAxisLineStyleView))]
   public class AxisLineStyleController : MVCANControllerEditOriginalDocBase<AxisLineStyle, IAxisLineStyleView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_axisLinePenController, () => _axisLinePenController = null);
@@ -53,6 +60,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     private bool _showLine;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the axis line is shown.
+    /// </summary>
     public bool ShowLine
     {
       get => _showLine;
@@ -71,6 +81,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     private ColorTypeThicknessPenController _axisLinePenController;
     private WeakPropertyChangedEventHandler _axisLinePenControllerHandler;
 
+    /// <summary>
+    /// Gets or sets the controller for the axis line pen.
+    /// </summary>
     public ColorTypeThicknessPenController AxisLinePenController
     {
       get => _axisLinePenController;
@@ -95,6 +108,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     private ColorTypeThicknessPenController _majorTicksPenController;
 
+    /// <summary>
+    /// Gets or sets the controller for the major tick pen.
+    /// </summary>
     public ColorTypeThicknessPenController MajorTicksPenController
     {
       get => _majorTicksPenController;
@@ -111,6 +127,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     private bool _individualMajorColor;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether major ticks use an individual color.
+    /// </summary>
     public bool IndividualMajorColor
     {
       get => _individualMajorColor;
@@ -126,6 +145,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     }
     private bool _individualMajorThickness;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether major ticks use an individual thickness.
+    /// </summary>
     public bool IndividualMajorThickness
     {
       get => _individualMajorThickness;
@@ -140,10 +162,16 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Gets the unit environment used for major tick lengths.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment MajorTickLengthEnvironment => SizeEnvironment.Instance;
 
     private DimensionfulQuantity _majorTickLength;
 
+    /// <summary>
+    /// Gets or sets the major tick length.
+    /// </summary>
     public DimensionfulQuantity MajorTickLength
     {
       get => _majorTickLength;
@@ -159,6 +187,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     private SelectableListNodeList _majorPenTicks;
 
+    /// <summary>
+    /// Gets or sets the side selection for major ticks.
+    /// </summary>
     public SelectableListNodeList MajorPenTicks
     {
       get => _majorPenTicks;
@@ -175,6 +206,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     private ColorTypeThicknessPenController _minorTicksPenController;
 
+    /// <summary>
+    /// Gets or sets the controller for the minor tick pen.
+    /// </summary>
     public ColorTypeThicknessPenController MinorTicksPenController
     {
       get => _minorTicksPenController;
@@ -190,6 +224,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     private bool _individualMinorColor;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether minor ticks use an individual color.
+    /// </summary>
     public bool IndividualMinorColor
     {
       get => _individualMinorColor;
@@ -206,6 +243,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     private bool _individualMinorThickness;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether minor ticks use an individual thickness.
+    /// </summary>
     public bool IndividualMinorThickness
     {
       get => _individualMinorThickness;
@@ -220,10 +260,16 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Gets the unit environment used for minor tick lengths.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment MinorTickLengthEnvironment => SizeEnvironment.Instance;
 
     private DimensionfulQuantity _minorTickLength;
 
+    /// <summary>
+    /// Gets or sets the minor tick length.
+    /// </summary>
     public DimensionfulQuantity MinorTickLength
     {
       get => _minorTickLength;
@@ -239,6 +285,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     private SelectableListNodeList _minorPenTicks;
 
+    /// <summary>
+    /// Gets or sets the side selection for minor ticks.
+    /// </summary>
     public SelectableListNodeList MinorPenTicks
     {
       get => _minorPenTicks;
@@ -255,6 +304,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -294,6 +344,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (!AxisLinePenController.Apply(disposeController))

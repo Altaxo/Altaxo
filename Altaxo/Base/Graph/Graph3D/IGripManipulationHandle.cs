@@ -32,7 +32,7 @@ using Altaxo.Graph.Graph3D.GraphicsContext;
 namespace Altaxo.Graph.Graph3D
 {
   /// <summary>
-  /// Used to manipulate an object by dragging it's grip area around.
+  /// Represents a handle used to manipulate an object by dragging its grip area.
   /// </summary>
   public interface IGripManipulationHandle
   {
@@ -43,10 +43,10 @@ namespace Altaxo.Graph.Graph3D
     void Show(IOverlayContext3D g);
 
     /// <summary>
-    /// Tests if the grip is hitted.
+    /// Tests whether the grip is hit.
     /// </summary>
     /// <param name="hitData">Hit point in world coordinates.</param>
-    /// <returns>True if the grip is hitted; otherwise false.</returns>
+    /// <returns><c>true</c> if the grip is hit; otherwise, <c>false</c>.</returns>
     bool IsGripHit(HitTestPointData hitData);
 
     /// <summary>
@@ -54,7 +54,7 @@ namespace Altaxo.Graph.Graph3D
     /// </summary>
     /// <param name="initialPosition">Initial position of the mouse.</param>
     /// <param name="isActivatedUponCreation">If true the activation is called right after creation of this handle. If false,
-    /// thie activation is due to a regular mouse click in this grip.</param>
+    /// the activation is due to a regular mouse click in this grip.</param>
     void Activate(HitTestPointData initialPosition, bool isActivatedUponCreation);
 
     /// <summary>

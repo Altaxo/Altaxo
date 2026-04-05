@@ -30,14 +30,28 @@ using Altaxo.Collections;
 
 namespace Altaxo.Data
 {
+  /// <summary>
+  /// Helper methods and comparers for sorting rows and columns.
+  /// </summary>
   public static class Sorting
   {
     #region Helper classes
 
     #region Sorting foundation
 
+    /// <summary>
+    /// Compares two row indices.
+    /// </summary>
+    /// <param name="i">The first row index.</param>
+    /// <param name="j">The second row index.</param>
+    /// <returns>A signed comparison result.</returns>
     public delegate int RowComparismMethod(int i, int j);
 
+    /// <summary>
+    /// Swaps two row indices.
+    /// </summary>
+    /// <param name="i">The first row index.</param>
+    /// <param name="j">The second row index.</param>
     public delegate void RowSwapMethod(int i, int j);
 
     private static void downheap(int N, int k, RowComparismMethod CMP, RowSwapMethod swap)
@@ -118,6 +132,11 @@ namespace Altaxo.Data
       return HeapSortVirtually(elementsToSort, null);
     }
 
+    /// <summary>
+    /// Creates an array whose elements contain their own indices.
+    /// </summary>
+    /// <param name="count">The number of indices to create.</param>
+    /// <returns>An array containing the values <c>0</c> through <c>count - 1</c>.</returns>
     public static int[] CreateIdentityIndices(int count)
     {
       var result = new int[count];
@@ -126,6 +145,10 @@ namespace Altaxo.Data
       return result;
     }
 
+    /// <summary>
+    /// Reverses the specified index array in place.
+    /// </summary>
+    /// <param name="arr">The array to reverse.</param>
     public static void ReverseArray(int[] arr)
     {
       int count = arr.Length;

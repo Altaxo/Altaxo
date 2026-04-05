@@ -33,7 +33,7 @@ namespace Altaxo.Graph.Graph3D
   using Shapes;
 
   /// <summary>
-  /// Summary description for GraphicsObjectCollection.
+  /// Represents a partitionable collection of three-dimensional graphic objects.
   /// </summary>
   [Serializable]
   public class GraphicCollection
@@ -45,9 +45,13 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// 2015-11-14 initial version.
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="GraphicCollection"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphicCollection), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (GraphicCollection)obj;
@@ -58,6 +62,7 @@ namespace Altaxo.Graph.Graph3D
         info.CommitArray();
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (IList<IGraphicBase>?)o ?? new List<IGraphicBase>();
@@ -76,6 +81,10 @@ namespace Altaxo.Graph.Graph3D
 
     #endregion "Serialization"
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GraphicCollection"/> class.
+    /// </summary>
+    /// <param name="insertAction">The action invoked when a graphic object is inserted.</param>
     public GraphicCollection(Action<IGraphicBase> insertAction)
       : base(insertAction)
     {

@@ -31,6 +31,9 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Drawing.D3D.LineCaps
 {
+  /// <summary>
+  /// Represents a flat 3D line cap.
+  /// </summary>
   public class Flat : ILineCap
   {
     private static Flat _instance = new Flat();
@@ -43,7 +46,9 @@ namespace Altaxo.Drawing.D3D.LineCaps
     /// </value>
     public static Flat Instance { get { return _instance; } }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Gets the base inset of the flat line cap.
+    /// </summary>
     public double BaseInset
     {
       get
@@ -52,6 +57,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
       }
     }
 
+    /// <inheritdoc />
     public double MinimumRelativeSize
     {
       get
@@ -60,6 +66,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
       }
     }
 
+    /// <inheritdoc />
     public double MinimumAbsoluteSizePt
     {
       get
@@ -68,6 +75,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
       }
     }
 
+    /// <inheritdoc />
     public virtual string Name
     {
       get
@@ -115,7 +123,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
     }
 
     /// <summary>
-    /// Adds the triangle geometry for this cap.
+    /// Adds the triangle geometry for a flat cap from the specified base cross section positions.
     /// </summary>
     /// <param name="AddPositionAndNormal">The procedure to add a vertex position and normal.</param>
     /// <param name="AddIndices">The procedure to add vertex indices for one triangle.</param>
@@ -164,7 +172,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
     }
 
     /// <summary>
-    /// Adds the triangle geometry for this cap.
+    /// Adds the triangle geometry for a flat cap from the specified line cross section.
     /// </summary>
     /// <param name="AddPositionAndNormal">The procedure to add a vertex position and normal.</param>
     /// <param name="AddIndices">The procedure to add vertex indices for one triangle.</param>
@@ -216,16 +224,19 @@ namespace Altaxo.Drawing.D3D.LineCaps
       vertexIndexOffset = currIndex;
     }
 
+    /// <inheritdoc />
     public ILineCap WithMinimumAbsoluteAndRelativeSize(double absoluteSizePt, double relativeSize)
     {
       return _instance;
     }
 
+    /// <inheritdoc />
     public override bool Equals(object? obj)
     {
       return obj is Flat;
     }
 
+    /// <inheritdoc />
     public override int GetHashCode()
     {
       return typeof(Flat).GetHashCode();

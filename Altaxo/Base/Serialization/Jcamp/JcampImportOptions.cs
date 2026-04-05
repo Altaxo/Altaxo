@@ -26,7 +26,7 @@
 namespace Altaxo.Serialization.Jcamp
 {
   /// <summary>
-  /// Import options for importing Galactic SPC files.
+  /// Import options for importing JCAMP files.
   /// </summary>
   public record JcampImportOptions : Main.IImmutable
   {
@@ -54,6 +54,7 @@ namespace Altaxo.Serialization.Jcamp
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(JcampImportOptions), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (JcampImportOptions)obj;
@@ -62,6 +63,7 @@ namespace Altaxo.Serialization.Jcamp
         info.AddValue("IncludeFilePathAsProperty", s.IncludeFilePathAsProperty);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var useNeutralColumnName = info.GetBoolean("UseNeutralColumnName");

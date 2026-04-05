@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -31,14 +31,21 @@ using Altaxo.Serialization.Ascii;
 
 namespace Altaxo.Gui.Serialization.Ascii
 {
+  /// <summary>
+  /// View interface for editing <see cref="FixedColumnWidthWithTabSeparationStrategy"/>.
+  /// </summary>
   public interface IFixedColumnWidthWithTabSeparationStrategyView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for editing <see cref="FixedColumnWidthWithTabSeparationStrategy"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IFixedColumnWidthWithTabSeparationStrategyView))]
   [UserControllerForObject(typeof(FixedColumnWidthWithTabSeparationStrategy))]
   public class FixedColumnWidthWithTabSeparationStrategyController : MVCANControllerEditImmutableDocBase<FixedColumnWidthWithTabSeparationStrategy, IFixedColumnWidthWithTabSeparationStrategyView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -48,6 +55,9 @@ namespace Altaxo.Gui.Serialization.Ascii
 
     private ObservableCollection<Boxed<int>> _positions;
 
+    /// <summary>
+    /// Gets or sets the list of start positions.
+    /// </summary>
     public ObservableCollection<Boxed<int>> Positions
     {
       get => _positions;
@@ -63,6 +73,9 @@ namespace Altaxo.Gui.Serialization.Ascii
 
     private int _tabSize;
 
+    /// <summary>
+    /// Gets or sets the tab size.
+    /// </summary>
     public int TabSize
     {
       get => _tabSize;
@@ -78,6 +91,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -89,6 +103,7 @@ namespace Altaxo.Gui.Serialization.Ascii
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       var resList = new List<int>(Boxed<int>.ToUnboxedItems(_positions));

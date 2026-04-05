@@ -29,7 +29,7 @@ using System.Collections.Generic;
 namespace Altaxo.Graph.Gdi.LabelFormatting
 {
   /// <summary>
-  /// Summary description for NumericAxisLabelFormattingFixed.
+  /// Formats numeric values using fixed notation.
   /// </summary>
   public class NumericLabelFormattingFixed : NumericLabelFormattingBase
   {
@@ -55,25 +55,35 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NumericLabelFormattingFixed"/> class.
+    /// </summary>
     public NumericLabelFormattingFixed()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NumericLabelFormattingFixed"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public NumericLabelFormattingFixed(NumericLabelFormattingFixed from)
       : base(from) // everything is done here, since CopyFrom is virtual
     {
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new NumericLabelFormattingFixed(this);
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
     }
 
+    /// <inheritdoc />
     protected override string FormatItem(Altaxo.Data.AltaxoVariant item)
     {
       if (item.IsType(Altaxo.Data.AltaxoVariant.Content.VDouble))
@@ -82,6 +92,11 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
         return item.ToString();
     }
 
+    /// <summary>
+    /// Formats a numeric value.
+    /// </summary>
+    /// <param name="tick">The numeric value.</param>
+    /// <returns>The formatted string.</returns>
     public string FormatItem(double tick)
     {
       return _prefix + tick.ToString("G15") + SuffixText;

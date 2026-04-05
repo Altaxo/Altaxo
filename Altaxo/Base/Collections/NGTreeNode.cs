@@ -53,8 +53,8 @@ namespace Altaxo.Collections
     /// <summary>
     /// Swap the nodes of indices i and j.
     /// </summary>
-    /// <param name="i"></param>
-    /// <param name="j"></param>
+    /// <param name="i">The index of the first node.</param>
+    /// <param name="j">The index of the second node.</param>
     void Swap(int i, int j);
   }
 
@@ -63,9 +63,19 @@ namespace Altaxo.Collections
   /// </summary>
   public class NGTreeNode : SelectableListNode, ITreeListNodeWithParent<NGTreeNode>
   {
+    /// <summary>
+    /// A dummy node used for lazy loading.
+    /// </summary>
     private static NGTreeNode _dummyNode = new NGTreeNode();
 
+    /// <summary>
+    /// Optional tag used by GUI code.
+    /// </summary>
     protected object? _guiTag;
+
+    /// <summary>
+    /// A value indicating whether this node is expanded.
+    /// </summary>
     protected bool _isExpanded;
 
     /// <summary>
@@ -105,6 +115,10 @@ namespace Altaxo.Collections
       Nodes.AddRange(nodes);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NGTreeNode"/> class with optional lazy loading of child nodes.
+    /// </summary>
+    /// <param name="lazyLoadChildren">If <c>true</c>, a dummy child is inserted so that children can be loaded on demand.</param>
     public NGTreeNode(bool lazyLoadChildren)
     {
       if (lazyLoadChildren)
@@ -116,6 +130,9 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <summary>
+    /// Gets or sets a property that always returns <c>false</c> when read.
+    /// </summary>
     public bool AlwaysFalse
     {
       get
@@ -180,6 +197,9 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <summary>
+    /// Clears the selection state of this node and all descendant nodes.
+    /// </summary>
     public virtual void ClearSelectionRecursively()
     {
       IsSelected = false;
@@ -187,7 +207,9 @@ namespace Altaxo.Collections
         n.ClearSelectionRecursively();
     }
 
-
+    /// <summary>
+    /// Gets the first selected node in this subtree.
+    /// </summary>
     public NGTreeNode? FirstSelectedNode
     {
       get
@@ -744,7 +766,14 @@ namespace Altaxo.Collections
   /// </summary>
   public class NGTreeNodeWithImageIndex : NGTreeNode
   {
+    /// <summary>
+    /// The image index used when the node is not selected.
+    /// </summary>
     protected int _imageIndex = -1;
+
+    /// <summary>
+    /// The image index used when the node is selected.
+    /// </summary>
     protected int _selectedImageIndex = -1;
 
     /// <summary>
@@ -789,6 +818,7 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <inheritdoc />
     protected override void OnPropertyChanged(string name)
     {
       base.OnPropertyChanged(name);

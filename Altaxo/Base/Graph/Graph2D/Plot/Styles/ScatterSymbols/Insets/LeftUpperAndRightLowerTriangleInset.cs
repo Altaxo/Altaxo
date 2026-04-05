@@ -27,6 +27,9 @@ using Clipper2Lib;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
 {
+  /// <summary>
+  /// Represents an inset composed of left-upper and right-lower triangles.
+  /// </summary>
   public class LeftUpperAndRightLowerTriangleInset : InsetBase
   {
     #region Serialization
@@ -34,14 +37,19 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
     /// <summary>
     /// 2016-10-27 initial version.
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="LeftUpperAndRightLowerTriangleInset"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LeftUpperAndRightLowerTriangleInset), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         info.AddBaseValueEmbedded(obj, obj.GetType().BaseType!);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (LeftUpperAndRightLowerTriangleInset?)o ?? new LeftUpperAndRightLowerTriangleInset();
@@ -52,6 +60,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
 
     #endregion Serialization
 
+    /// <inheritdoc/>
     public override Paths64 GetCopyOfClipperPolygon(double structureScale)
     {
       var h = ClipperScalingInt;

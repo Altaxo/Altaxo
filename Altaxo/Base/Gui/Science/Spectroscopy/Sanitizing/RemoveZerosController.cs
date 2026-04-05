@@ -1,14 +1,21 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Altaxo.Science.Spectroscopy.Sanitizing;
 
 namespace Altaxo.Gui.Science.Spectroscopy.Sanitizing
 {
+  /// <summary>
+  /// View interface for editing <see cref="RemoveZeros"/> options.
+  /// </summary>
   public interface IRemoveZerosView : IDataContextAwareView { }
 
+  /// <summary>
+  /// Controller for editing a <see cref="RemoveZeros"/> sanitizer.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IRemoveZerosView))]
   [UserControllerForObject(typeof(RemoveZeros))]
   public class RemoveZerosController : MVCANControllerEditImmutableDocBase<RemoveZeros, IRemoveZerosView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -18,6 +25,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Sanitizing
 
     private double _thresholdValue;
 
+    /// <summary>
+    /// Gets or sets the threshold value used to detect zeros.
+    /// </summary>
     public double ThresholdValue
     {
       get => _thresholdValue;
@@ -33,6 +43,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Sanitizing
 
     private bool _removeZerosAtStartOfSpectrum;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether zeros at the start of the spectrum should be removed.
+    /// </summary>
     public bool RemoveZerosAtStartOfSpectrum
     {
       get => _removeZerosAtStartOfSpectrum;
@@ -48,6 +61,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Sanitizing
 
     private bool _removeZerosAtEndOfSpectrum;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether zeros at the end of the spectrum should be removed.
+    /// </summary>
     public bool RemoveZerosAtEndOfSpectrum
     {
       get => _removeZerosAtEndOfSpectrum;
@@ -63,6 +79,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Sanitizing
 
     private bool _removeZerosInMiddleOfSpectrum;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether zeros in the middle of the spectrum should be removed.
+    /// </summary>
     public bool RemoveZerosInMiddleOfSpectrum
     {
       get => _removeZerosInMiddleOfSpectrum;
@@ -78,6 +97,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Sanitizing
 
     private bool _splitIntoSeparateRegions;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the spectrum should be split into separate regions.
+    /// </summary>
     public bool SplitIntoSeparateRegions
     {
       get => _splitIntoSeparateRegions;
@@ -94,6 +116,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Sanitizing
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -108,6 +131,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Sanitizing
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = _doc with

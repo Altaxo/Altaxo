@@ -38,9 +38,13 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 
     #region Serialization
 
+    /// <summary>
+    /// Serializes <see cref="FreeLabelFormatting"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FreeLabelFormatting), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (FreeLabelFormatting)obj;
@@ -48,6 +52,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
         info.AddValue("FormatString", s._formatString);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (FreeLabelFormatting?)o ?? new FreeLabelFormatting();
@@ -59,15 +64,23 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FreeLabelFormatting"/> class.
+    /// </summary>
     public FreeLabelFormatting()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FreeLabelFormatting"/> class by copying from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public FreeLabelFormatting(FreeLabelFormatting from)
       : base(from) // everything is done here, since CopyFrom is virtual
     {
     }
 
+    /// <inheritdoc/>
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -84,16 +97,21 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
       return false;
     }
 
+    /// <inheritdoc/>
     public override object Clone()
     {
       return new FreeLabelFormatting(this);
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Gets or sets the format string used to build labels.
+    /// </summary>
     public string FormatString
     {
       get
@@ -106,6 +124,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
       }
     }
 
+    /// <inheritdoc/>
     protected override string FormatItem(AltaxoVariant item)
     {
       if (!string.IsNullOrEmpty(_formatString))

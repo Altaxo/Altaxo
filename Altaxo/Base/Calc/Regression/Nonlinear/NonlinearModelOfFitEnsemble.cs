@@ -82,6 +82,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       /// </summary>
       public IAscendingIntegerCollection ValidRows;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="CachedFitElementInfo"/> class.
+      /// </summary>
       public CachedFitElementInfo(
         double[] parameters,
         IROMatrix<double> xs,
@@ -117,8 +120,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       /// </summary>
       /// <param name="mappedMatrix">The mapped jacobian matrix.</param>
       /// <param name="rowOffset">The row offset into the jacobian matrix.</param>
-      /// parameter list of the fit element. Parameters fixed correspond to a value of -1 in the column mapping, the varying
-      /// parameters correspond to values of 0, 1, 2, and so on.</param>
+      /// <param name="parameterMapping">The mapping of the jacobian matrix columns to the parameter list of the fit element. Parameters fixed correspond to a value of -1 in the column mapping, the varying parameters correspond to values of 0, 1, 2, and so on.</param>
       public JacobianMapper(Matrix<double> mappedMatrix, int rowOffset, int[] parameterMapping)
       {
         _matrix = mappedMatrix;
@@ -126,6 +128,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         _parameterMapping = parameterMapping;
       }
 
+      /// <inheritdoc/>
       public double this[int row, int col]
       {
         get
@@ -152,8 +155,10 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
       double IROMatrix<double>.this[int row, int col] => throw new NotImplementedException();
 
+      /// <inheritdoc/>
       public int RowCount => _matrix.RowCount - _rowOffset;
 
+      /// <inheritdoc/>
       public int ColumnCount => _matrix.ColumnCount;
     }
 
@@ -358,6 +363,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     }
 
+    /// <summary>
+    /// Copies the current model parameters back to the specified parameter set.
+    /// </summary>
     public void CopyParametersBackTo(ParameterSet pset, IReadOnlyList<double>? standardErrors)
     {
       if (pset.Count != _constantParameters.Length)
@@ -413,11 +421,13 @@ namespace Altaxo.Calc.Regression.Nonlinear
     }
 
 
+    /// <inheritdoc/>
     public override IObjectiveModel Fork()
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public override IObjectiveModel CreateNew()
     {
       throw new NotImplementedException();
@@ -492,8 +502,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <summary>
     /// Calculates the fitting values.
     /// </summary>
-    /// <param name="outputValues">You must provide an array to hold the calculated values. Size of the array must be
-    /// at least <see cref="NumberOfObservations" />.</param>
+    /// <param name="outputValues">You must provide an array to hold the calculated values. Its size must be
+    /// at least the number of observations.</param>
     /// <param name="calculateUnusedDependentVariablesAlso">If <c>true</c>, the unused dependent variables are also calculated (and plotted).</param>
     /// <remarks>The values of the fit elements are stored in the order from element_0 to element_n. If there is more
     /// than one used dependent variable per fit element, the output values are stored in interleaved order.
@@ -508,8 +518,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// Calculates the fitting values.
     /// </summary>
     /// <param name="parameters">The parameter used to calculate the values.</param>
-    /// <param name="outputValues">You must provide an array to hold the calculated values. Size of the array must be
-    /// at least <see cref="NumberOfObservations" />.</param>
+    /// <param name="outputValues">You must provide an array to hold the calculated values. Its size must be
+    /// at least the number of observations.</param>
     /// <param name="calculateUnusedDependentVariablesAlso">If <c>true</c>, the unused dependent variables are also calculated (and plotted).</param>
     /// <remarks>The values of the fit elements are stored in the order from element_0 to element_n. If there is more
     /// than one used dependent variable per fit element, the output values are stored in interleaved order.
@@ -554,6 +564,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+    /// <inheritdoc/>
     protected override void EvaluateFunction()
     {
       // Calculates the residuals, (y[i] - f(x[i]; p)) * L[i]
@@ -574,6 +585,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       _functionValue = _residuals.DotProduct(_residuals);
     }
 
+    /// <inheritdoc/>
     protected override void EvaluateJacobian()
     {
       int rowOffset = 0; // offset into the jacobian rows (by every fit element the increase is by (NumberOfX*NumberOfDependentVariablesInUse))
@@ -649,6 +661,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       _jacobianValueTransposed.Multiply(_jacobianValue, _hessianValue);
     }
 
+    /// <inheritdoc/>
     protected override Matrix<double> NumericalJacobian(Vector<double> parameters, Vector<double> currentValues, int accuracyOrder = 2)
     {
       const double deltaFactor = 0.000003;

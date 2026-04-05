@@ -32,14 +32,26 @@ using Altaxo.Drawing;
 
 namespace Altaxo.Graph.Gdi.SyntheticBrushes
 {
+  /// <summary>
+  /// Generates a synthetic brush texture consisting of randomly distributed circles.
+  /// </summary>
   public class RandomCircles : SyntheticBrushBase
   {
     private static int _staticRandomSeed = 1;
 
+    /// <summary>
+    /// The circle diameter in points.
+    /// </summary>
     protected double _circleDiameterPt;
 
+    /// <summary>
+    /// The filling factor.
+    /// </summary>
     protected double _fillingFactor;
 
+    /// <summary>
+    /// The random seed used to generate the pattern.
+    /// </summary>
     protected int _randomSeed;
 
     #region Serialization
@@ -71,6 +83,9 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RandomCircles"/> class.
+    /// </summary>
     public RandomCircles()
     {
       _repeatLengthPt = 144;
@@ -79,6 +94,9 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
       _randomSeed = ++_staticRandomSeed;
     }
 
+    /// <summary>
+    /// Gets the filling factor.
+    /// </summary>
     [System.ComponentModel.Editor(typeof(Altaxo.Gui.Common.RelationValueInUnityController), typeof(Altaxo.Gui.IMVCANController))]
     [Altaxo.Main.Services.PropertyReflection.DisplayOrder(3)]
     public double FillingFactor
@@ -89,6 +107,11 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
       }
     }
 
+    /// <summary>
+    /// Creates a copy with a different filling factor.
+    /// </summary>
+    /// <param name="value">The new filling factor.</param>
+    /// <returns>The updated instance or the current instance if unchanged.</returns>
     public RandomCircles WithFillingFactor(double value)
     {
       if (!(_fillingFactor == value))
@@ -104,6 +127,9 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
       }
     }
 
+    /// <summary>
+    /// Gets the circle diameter in points.
+    /// </summary>
     [System.ComponentModel.Editor(typeof(Altaxo.Gui.Common.LengthValueInPointController), typeof(Altaxo.Gui.IMVCANController))]
     [Altaxo.Main.Services.PropertyReflection.DisplayOrder(2)]
     public double CircleDiameter
@@ -111,6 +137,11 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
       get { return _circleDiameterPt; }
     }
 
+    /// <summary>
+    /// Creates a copy with a different circle diameter.
+    /// </summary>
+    /// <param name="value">The new circle diameter.</param>
+    /// <returns>The updated instance or the current instance if unchanged.</returns>
     public RandomCircles WithCircleDiameter(double value)
     {
       if (!(_circleDiameterPt == value))
@@ -130,6 +161,7 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
 
 
 
+    /// <inheritdoc />
     protected override System.Drawing.Image GetImage(double maxEffectiveResolutionDpi, NamedColor foreColor, NamedColor backColor)
     {
       var randomGenerator = new Random(_randomSeed);

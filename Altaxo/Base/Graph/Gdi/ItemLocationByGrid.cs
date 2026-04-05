@@ -31,6 +31,9 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi
 {
+  /// <summary>
+  /// Represents an item location defined by a grid cell and span.
+  /// </summary>
   public class ItemLocationByGrid : Main.SuspendableDocumentLeafNodeWithEventArgs, IItemLocation
   {
     /// <summary>
@@ -119,15 +122,23 @@ namespace Altaxo.Graph.Gdi
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ItemLocationByGrid"/> class.
+    /// </summary>
     public ItemLocationByGrid()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ItemLocationByGrid"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public ItemLocationByGrid(ItemLocationByGrid from)
     {
       CopyFrom(from);
     }
 
+    /// <inheritdoc />
     public bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -162,16 +173,27 @@ namespace Altaxo.Graph.Gdi
       return false;
     }
 
+    /// <inheritdoc />
     object System.ICloneable.Clone()
     {
       return new ItemLocationByGrid(this);
     }
 
+    /// <summary>
+    /// Creates a copy of this instance.
+    /// </summary>
+    /// <returns>The cloned instance.</returns>
     public ItemLocationByGrid Clone()
     {
       return new ItemLocationByGrid(this);
     }
 
+    /// <summary>
+    /// Gets the absolute rectangle represented by this grid location.
+    /// </summary>
+    /// <param name="partition">The grid partitioning.</param>
+    /// <param name="parentSize">The size of the parent area.</param>
+    /// <returns>The absolute rectangle.</returns>
     public RectangleD2D GetAbsolute(GridPartitioning partition, PointD2D parentSize)
     {
       return partition.GetTileRectangle(_gridColumn, _gridRow, _gridColumnSpan, _gridRowSpan, parentSize);

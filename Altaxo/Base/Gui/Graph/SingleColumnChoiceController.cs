@@ -32,6 +32,9 @@ using Altaxo.Main;
 
 namespace Altaxo.Gui.Graph
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="SingleColumnChoiceController"/>.
+  /// </summary>
   public interface ISingleColumnChoiceView : IDataContextAwareView
   {
   }
@@ -39,17 +42,30 @@ namespace Altaxo.Gui.Graph
   #region SingleColumnChoice document
 
   /// <summary>
-  /// Summary description for SingleColumnChoice.
+  /// Represents the document model for choosing a single column.
   /// </summary>
   public class SingleColumnChoice
   {
+    /// <summary>
+    /// Gets or sets the selected column.
+    /// </summary>
     public DataColumn SelectedColumn;
+    /// <summary>
+    /// Gets or sets the environment object.
+    /// </summary>
     public object Environment;
+    /// <summary>
+    /// Gets or sets a value indicating whether only numeric columns are allowed.
+    /// </summary>
     public bool AllowOnlyNumericColumns;
   }
 
   #endregion SingleColumnChoice document
 
+
+  /// <summary>
+  /// Provides controller logic for choosing a single data column.
+  /// </summary>
   [UserControllerForObject(typeof(SingleColumnChoice))]
   [ExpectedTypeOfView(typeof(ISingleColumnChoiceView))]
   public class SingleColumnChoiceController : MVCANControllerEditImmutableDocBase<SingleColumnChoice, ISingleColumnChoiceView>
@@ -63,6 +79,10 @@ namespace Altaxo.Gui.Graph
       private int _firstColumn;
       private int _columnCount;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="TableNode"/> class for a complete table.
+      /// </summary>
+      /// <param name="table">The source table.</param>
       public TableNode(DataTable table)
         : base(true)
       {
@@ -73,6 +93,12 @@ namespace Altaxo.Gui.Graph
         Tag = table;
       }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="TableNode"/> class for a contiguous range of columns.
+      /// </summary>
+      /// <param name="coll">The source column collection.</param>
+      /// <param name="firstColumn">The index of the first column in the range.</param>
+      /// <param name="columnCount">The number of columns in the range.</param>
       public TableNode(DataColumnCollection coll, int firstColumn, int columnCount)
         : base(true)
       {
@@ -82,24 +108,34 @@ namespace Altaxo.Gui.Graph
         Text = string.Format("Cols {0}-{1}", firstColumn, firstColumn + columnCount - 1);
       }
 
+      /// <summary>
+      /// Gets or sets the underlying column collection.
+      /// </summary>
       public DataColumnCollection Collection
       {
         get { return _collection; }
         set { _collection = value; }
       }
 
+      /// <summary>
+      /// Gets or sets the index of the first column represented by this node.
+      /// </summary>
       public int FirstColumn
       {
         get { return _firstColumn; }
         set { _firstColumn = value; }
       }
 
+      /// <summary>
+      /// Gets or sets the number of columns represented by this node.
+      /// </summary>
       public int ColumnCount
       {
         get { return _columnCount; }
         set { _columnCount = value; }
       }
 
+      /// <inheritdoc />
       protected override void LoadChildren()
       {
         DataColumnCollection coll = _collection;
@@ -137,11 +173,16 @@ namespace Altaxo.Gui.Graph
 
     private DataColumn _selectedColumn = null;
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SingleColumnChoiceController"/> class.
+    /// </summary>
+    /// <param name="doc">The document model.</param>
     public SingleColumnChoiceController(SingleColumnChoice doc)
     {
       CmdSelectedItemChanged = new RelayCommand(EhView_AfterSelectNode);
@@ -151,10 +192,16 @@ namespace Altaxo.Gui.Graph
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the command that is executed when the selected item changes.
+    /// </summary>
     public ICommand CmdSelectedItemChanged { get; }
 
     private NGTreeNode _rootNode = new NGTreeNode();
 
+    /// <summary>
+    /// Gets or sets the root tree node.
+    /// </summary>
     public NGTreeNode RootNode
     {
       get => _rootNode;
@@ -171,6 +218,7 @@ namespace Altaxo.Gui.Graph
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       if (initData)
@@ -207,6 +255,10 @@ namespace Altaxo.Gui.Graph
       }
     }
 
+    /// <summary>
+    /// Adds all table nodes below the specified table collection node.
+    /// </summary>
+    /// <param name="tableCollectionNode">The table collection node.</param>
     public static void AddAllTableNodes(NGTreeNode tableCollectionNode)
     {
       // Create a dictionary of folders to TreeNodes relation
@@ -274,6 +326,7 @@ namespace Altaxo.Gui.Graph
       return null;
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (_selectedColumn is not null)
@@ -285,6 +338,9 @@ namespace Altaxo.Gui.Graph
       return ApplyEnd(false, disposeController);
     }
 
+    /// <summary>
+    /// Handles the selection change after a node was selected.
+    /// </summary>
     public void EhView_AfterSelectNode()
     {
       var node = _rootNode.FirstSelectedNode;

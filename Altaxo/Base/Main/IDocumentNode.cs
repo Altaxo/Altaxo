@@ -79,7 +79,7 @@ namespace Altaxo.Main
   }
 
   /// <summary>
-  /// Provides the document hierarchy by getting the parent node. The document node is required to have a name, thus it also implements <see cref="INamedObject"/>.
+  /// Represents a document node that can contain child nodes and participate in the document hierarchy.
   /// </summary>
   public interface IDocumentNode : IDocumentLeafNode, IChildChangedEventSink, INamedObjectCollection
   {

@@ -60,6 +60,11 @@ namespace Altaxo.Drawing
     /// </value>
     public Main.ItemDefinitionLevel Level { get; private set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StyleListManagerBaseEntryValue{TList, T}"/> class.
+    /// </summary>
+    /// <param name="list">The style list.</param>
+    /// <param name="level">The definition level of the list.</param>
     public StyleListManagerBaseEntryValue(TList list, Main.ItemDefinitionLevel level)
     {
       if (list is null)
@@ -92,8 +97,14 @@ namespace Altaxo.Drawing
 
     private Func<TList, ItemDefinitionLevel, TListManagerEntry> EntryValueCreator;
 
+    /// <inheritdoc />
     public TList BuiltinDefault { get; private set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StyleListManagerBase{TList, TItem, TListManagerEntry}"/> class.
+    /// </summary>
+    /// <param name="valueCreator">Factory used to create manager entries.</param>
+    /// <param name="builtinDefaultList">The builtin default style list.</param>
     protected StyleListManagerBase(Func<TList, ItemDefinitionLevel, TListManagerEntry> valueCreator, TList builtinDefaultList)
     {
       if (valueCreator is null)
@@ -116,6 +127,7 @@ namespace Altaxo.Drawing
     /// <summary>
     /// Occurs when a list is added to the manager. The event is hold weak, thus you can safely add your handler without running in memory leaks.
     /// </summary>
+    /// <inheritdoc />
     public event Action Changed
     {
       add
@@ -128,6 +140,11 @@ namespace Altaxo.Drawing
       }
     }
 
+    /// <summary>
+    /// Raises notifications after a list has been added.
+    /// </summary>
+    /// <param name="list">The added list.</param>
+    /// <param name="level">The definition level of the added list.</param>
     protected virtual void OnListAdded(TList list, Main.ItemDefinitionLevel level)
     {
       if (level == ItemDefinitionLevel.UserDefined)
@@ -136,6 +153,11 @@ namespace Altaxo.Drawing
       _changed.Target?.Invoke();
     }
 
+    /// <summary>
+    /// Raises notifications after a list has changed.
+    /// </summary>
+    /// <param name="list">The affected list.</param>
+    /// <param name="level">The definition level associated with the change.</param>
     protected virtual void OnListChanged([AllowNull] TList list, Main.ItemDefinitionLevel level)
     {
       if (level == ItemDefinitionLevel.UserDefined)
@@ -144,23 +166,33 @@ namespace Altaxo.Drawing
       _changed.Target?.Invoke();
     }
 
+    /// <summary>
+    /// Handles changes to user-defined lists.
+    /// </summary>
+    /// <param name="list">The affected list.</param>
     protected virtual void OnUserDefinedListAddedChangedRemoved([AllowNull] TList list)
     {
     }
 
     #endregion ListAdded event
 
+    /// <summary>
+    /// Initializes the deserialization property dictionary for list renaming.
+    /// </summary>
+    /// <param name="info">The deserialization info that has been created.</param>
     protected virtual void EhDeserializationInfoCreated(XmlStreamDeserializationInfo info)
     {
       // store in the deserialization info a rename dictionary which stores key-value pairs of original color set name and new color set name
       info.PropertyDictionary.Add(DeserializationRenameDictionaryKey, new Dictionary<string, string>());
     }
 
+    /// <inheritdoc />
     public IEnumerable<string> GetAllListNames()
     {
       return _allLists.Keys;
     }
 
+    /// <inheritdoc />
     public TList GetList(string name)
     {
       return _allLists[name].List;
@@ -171,6 +203,10 @@ namespace Altaxo.Drawing
       return _allLists.Values;
     }
 
+    /// <summary>
+    /// Gets all manager entries with their concrete entry type.
+    /// </summary>
+    /// <returns>The manager entries.</returns>
     public IEnumerable<TListManagerEntry> GetEntryValues()
     {
       return _allLists.Values;
@@ -181,6 +217,11 @@ namespace Altaxo.Drawing
       return _allLists[name];
     }
 
+    /// <summary>
+    /// Gets the manager entry with the specified name.
+    /// </summary>
+    /// <param name="name">The list name.</param>
+    /// <returns>The corresponding manager entry.</returns>
     public TListManagerEntry GetEntryValue(string name)
     {
       return _allLists[name];
@@ -211,6 +252,12 @@ namespace Altaxo.Drawing
         throw new InvalidOperationException("The list is neither at user defined level nor at project level. Thus the levels can not be switched.");
     }
 
+    /// <summary>
+    /// Tries to get the manager entry with the specified name.
+    /// </summary>
+    /// <param name="name">The list name.</param>
+    /// <param name="value">When this method returns <c>true</c>, contains the matching manager entry.</param>
+    /// <returns><c>true</c> if a matching entry exists; otherwise, <c>false</c>.</returns>
     public bool TryGetList(string name, [MaybeNullWhen(false)] out TListManagerEntry value)
     {
       return _allLists.TryGetValue(name, out value);
@@ -340,6 +387,11 @@ namespace Altaxo.Drawing
       }
     }
 
+    /// <summary>
+    /// Generates a name that is not yet used by any registered list.
+    /// </summary>
+    /// <param name="usedName">The preferred base name.</param>
+    /// <returns>An unused list name.</returns>
     protected virtual string GetUnusedName(string usedName)
     {
       if (string.IsNullOrEmpty(usedName))
@@ -392,19 +444,25 @@ namespace Altaxo.Drawing
       return false;
     }
 
+    /// <inheritdoc />
     public bool ContainsList(string name)
     {
       return _allLists.ContainsKey(name);
     }
 
+    /// <inheritdoc />
     public abstract TList CreateNewList(string name, IEnumerable<TItem> symbols);
 
+    /// <inheritdoc />
     [return: MaybeNull]
     public abstract TList GetParentList(TItem item);
 
     /// <summary>
     /// Gets a string that is used as a key in the property dictionary of the deserialization info to get the renaming dictionary.
     /// The renaming dictionary is a dictionary that maps original list names to the new list names that some of the deserialized lists are renamed to.
+    /// </summary>
+    /// <summary>
+    /// Gets the key used to store the rename dictionary in the deserialization info.
     /// </summary>
     public string DeserializationRenameDictionaryKey
     {
@@ -416,6 +474,11 @@ namespace Altaxo.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets the display name for a definition level.
+    /// </summary>
+    /// <param name="listLevel">The definition level.</param>
+    /// <returns>The display name.</returns>
     public string GetListLevelName(ItemDefinitionLevel listLevel)
     {
       switch (listLevel)

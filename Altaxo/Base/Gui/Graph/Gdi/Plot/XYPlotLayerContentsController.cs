@@ -1,4 +1,4 @@
-﻿#define VERIFY_TREESYNCHRONIZATION
+#define VERIFY_TREESYNCHRONIZATION
 
 #region Copyright
 
@@ -44,6 +44,9 @@ using Altaxo.Serialization.Clipboard;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="XYPlotLayerContentsController"/>.
+  /// </summary>
   public interface IXYPlotLayerContentsView : IDataContextAwareView
   {
 
@@ -59,6 +62,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
     :
     MVCANControllerEditOriginalDocBase<PlotItemCollection, IXYPlotLayerContentsView>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYPlotLayerContentsController"/> class.
+    /// </summary>
     public XYPlotLayerContentsController()
     {
       CommandChangeTableForSelectedItems = new RelayCommand(EhChangeTableForSelectedItems, EhCanChangeTableForSelectedItems);
@@ -82,6 +88,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
     }
 
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -89,26 +96,77 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 
     #region Bindings
 
+    /// <summary>
+    /// Gets or sets the c om ma nd ch an ge ta bl ef or se le ct ed it em s.
+    /// </summary>
     public ICommand CommandChangeTableForSelectedItems { get; }
+    /// <summary>
+    /// Gets or sets the c om ma nd ch an ge co lu mn sf or se le ct ed it em s.
+    /// </summary>
     public ICommand CommandChangeColumnsForSelectedItems { get; }
 
+    /// <summary>
+    /// Gets or sets the c md pu td at at op lo ti te ms.
+    /// </summary>
     public ICommand CmdPutDataToPlotItems { get; }
+    /// <summary>
+    /// Gets or sets the c md pl ot it em sm ov eu ps el ec te d.
+    /// </summary>
     public ICommand CmdPLotItemsMoveUpSelected { get; }
+    /// <summary>
+    /// Gets or sets the c md pl ot it em sm ov ed ow ns el ec te d.
+    /// </summary>
     public ICommand CmdPLotItemsMoveDownSelected { get; }
+    /// <summary>
+    /// Gets or sets the c md pl ot it em op en.
+    /// </summary>
     public ICommand CmdPlotItemOpen { get; }
+    /// <summary>
+    /// Gets or sets the c md pl ot it em sg ro up in to ex is te nt.
+    /// </summary>
     public ICommand CmdPlotItemsGroupIntoExistent { get; }
+    /// <summary>
+    /// Gets or sets the c md pl ot it em sg ro up in to ne w.
+    /// </summary>
     public ICommand CmdPlotItemsGroupIntoNew { get; }
+    /// <summary>
+    /// Gets or sets the c md pl ot it em su ng ro up.
+    /// </summary>
     public ICommand CmdPlotItemsUngroup { get; }
+    /// <summary>
+    /// Gets or sets the c md pl ot it em se di tr an ge.
+    /// </summary>
     public ICommand CmdPlotItemsEditRange { get; }
+    /// <summary>
+    /// Gets or sets the c md pl ot it em sc op y.
+    /// </summary>
     public ICommand CmdPlotItemsCopy { get; }
+    /// <summary>
+    /// Gets or sets the c md pl ot it em sc ut.
+    /// </summary>
     public ICommand CmdPlotItemsCut { get; }
+    /// <summary>
+    /// Gets or sets the c md pl ot it em sp as te.
+    /// </summary>
     public ICommand CmdPlotItemsPaste { get; }
+    /// <summary>
+    /// Gets or sets the c md pl ot it em sd el et e.
+    /// </summary>
     public ICommand CmdPlotItemsDelete { get; }
 
+    /// <summary>
+    /// Gets or sets the c md pl ot it em do ub le cl ic k.
+    /// </summary>
     public ICommand CmdPlotItemDoubleClick { get; }
 
+    /// <summary>
+    /// Gets or sets the p lo ti te ms dr ag dr op ha nd le r.
+    /// </summary>
     public IMVVMDragDropHandler PlotItemsDragDropHandler { get; }
 
+    /// <summary>
+    /// Gets or sets the a va il ab le it em sd ra gh an dl er.
+    /// </summary>
     public IMVVMDragHandler AvailableItemsDragHandler { get; }
 
 
@@ -167,6 +225,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 
     private bool _showRange;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool ShowRange
     {
       get => _showRange;
@@ -181,6 +242,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
       }
     }
 
+    /// <summary>
+    /// Handles the s ho wr an ge ch an ge d.
+    /// </summary>
     public void EhShowRangeChanged(bool value)
     {
       _plotItemsRootNode.Nodes.Clear();
@@ -207,6 +271,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 
     #endregion
 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       _plotItemsRootNode = null;
@@ -215,6 +280,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -252,6 +318,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
 #if VERIFY_TREESYNCHRONIZATION
@@ -472,6 +539,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 
     #region ILineScatterLayerContentsController Members
 
+    /// <summary>
+    /// Handles the v ie w d at aa va il ab le be fo re ex pa nd.
+    /// </summary>
     public void EhView_DataAvailableBeforeExpand(NGTreeNode node)
     {
       DataTable dt = Current.Project.DataTableCollection[node.Text];
@@ -569,6 +639,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
       }
     }
 
+    /// <summary>
+    /// Performs the p lo ti te ms m ov eu ps el ec te d operation.
+    /// </summary>
     public void PlotItems_MoveUpSelected()
     {
       var selNodes = PlotItemsSelected.ToArray();
@@ -579,6 +652,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
       }
     }
 
+    /// <summary>
+    /// Performs the p lo ti te ms m ov ed ow ns el ec te d operation.
+    /// </summary>
     public void PlotItems_MoveDownSelected()
     {
       var selNodes = PlotItemsSelected.ToArray();
@@ -589,6 +665,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
       }
     }
 
+    /// <summary>
+    /// Performs the c on te nt sl is tb ox m ov eu pd ow n operation.
+    /// </summary>
     public void ContentsListBox_MoveUpDown(int iDelta, NGTreeNode[] selNodes)
     {
       if (NGTreeNode.HaveSameParent(selNodes))
@@ -710,6 +789,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 #endif
     }
 
+    /// <summary>
+    /// Performs the p lo ti te ms u ng ro up cl ic k operation.
+    /// </summary>
     public void PlotItems_UngroupClick()
     {
       var selNodes = PlotItemsSelected.ToArray();
@@ -763,6 +845,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 #endif
     }
 
+    /// <summary>
+    /// Performs the p lo ti te m d ou bl ec li ck operation.
+    /// </summary>
     public void PlotItem_DoubleClick()
     {
       if (!PlotItemsSelected.TryGetSingleElement(out var selNode))
@@ -789,6 +874,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
       selNode.Tag = pi;
     }
 
+    /// <summary>
+    /// Performs the p lo ti te ms e di tr an ge cl ic k operation.
+    /// </summary>
     public void PlotItems_EditRangeClick()
     {
       var selNodes = PlotItemsSelected;
@@ -931,16 +1019,25 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
       }
     }
 
+    /// <summary>
+    /// Performs the p lo ti te m o pe n operation.
+    /// </summary>
     public void PlotItem_Open()
     {
       PlotItem_DoubleClick();
     }
 
+    /// <summary>
+    /// Performs the p lo ti te ms c an de le te operation.
+    /// </summary>
     public bool PlotItems_CanDelete()
     {
       return true;
     }
 
+    /// <summary>
+    /// Performs the p lo ti te ms d el et e operation.
+    /// </summary>
     public void PlotItems_Delete()
     {
       var selNodes = PlotItemsSelected.ToArray();
@@ -956,10 +1053,16 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 #endif
     }
 
+    /// <summary>
+    /// Performs the p lo ti te ms c an co py operation.
+    /// </summary>
     public bool PlotItems_CanCopy()
     {
       return PlotItemsSelected.Any();
     }
+    /// <summary>
+    /// Performs the p lo ti te ms c op y operation.
+    /// </summary>
     public void PlotItems_Copy()
     {
       var selNodes = NGTreeNode.FilterIndependentNodes(PlotItemsSelected.ToArray());
@@ -969,10 +1072,16 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
       ClipboardSerialization.PutObjectToClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml", coll);
     }
 
+    /// <summary>
+    /// Performs the p lo ti te ms c an cu t operation.
+    /// </summary>
     public bool PlotItems_CanCut()
     {
       return PlotItemsSelected.Any();
     }
+    /// <summary>
+    /// Performs the p lo ti te ms c ut operation.
+    /// </summary>
     public void PlotItems_Cut()
     {
       var selNodes = PlotItemsSelected;
@@ -989,6 +1098,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 #endif
     }
 
+    /// <summary>
+    /// Performs the p lo ti te ms c an pa st e operation.
+    /// </summary>
     public bool PlotItems_CanPaste()
     {
       object o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml");
@@ -996,6 +1108,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
       return coll is not null;
     }
 
+    /// <summary>
+    /// Performs the p lo ti te ms p as te operation.
+    /// </summary>
     public void PlotItems_Paste()
     {
       object o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml");
@@ -1042,80 +1157,131 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 
     private class DummyPlotItem : Altaxo.Main.SuspendableDocumentLeafNode, IGPlotItem
     {
+      /// <summary>
+      /// Gets the n am e.
+      /// </summary>
       public string GetName(int level)
       {
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// Gets the n am e.
+      /// </summary>
       public string GetName(string style)
       {
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// Provides access to this member.
+      /// </summary>
       public PlotItemCollection ParentCollection
       {
         get { throw new NotImplementedException(); }
       }
 
+      /// <summary>
+      /// Collects the s ty le s.
+      /// </summary>
       public void CollectStyles(Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection styles)
       {
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// Prepares the g ro up st yl es.
+      /// </summary>
       public void PrepareGroupStyles(Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection styles, IPlotArea layer)
       {
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// Applies the g ro up st yl es.
+      /// </summary>
       public void ApplyGroupStyles(Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection styles)
       {
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// Sets the p lo ts ty le fr om te mp la te.
+      /// </summary>
       public void SetPlotStyleFromTemplate(IGPlotItem template, Altaxo.Graph.Plot.Groups.PlotGroupStrictness strictness)
       {
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// Prepares the s ca le s.
+      /// </summary>
       public void PrepareScales(IPlotArea layer)
       {
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// Paints the p re pr oc es si ng.
+      /// </summary>
       public void PaintPreprocessing(IPaintContext context)
       {
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// Performs the p ai nt operation.
+      /// </summary>
       public void Paint(Graphics g, IPaintContext context, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem)
       {
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// Paints the p os tp ro ce ss in g.
+      /// </summary>
       public void PaintPostprocessing()
       {
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// Paints the s ym bo l.
+      /// </summary>
       public void PaintSymbol(Graphics g, RectangleF location)
       {
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// Performs the h it te st operation.
+      /// </summary>
       public IHitTestObject HitTest(IPlotArea layer, PointD2D hitpoint)
       {
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// Visits the d oc um en tr ef er en ce s.
+      /// </summary>
       public void VisitDocumentReferences(Altaxo.Main.DocNodeProxyReporter Report)
       {
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// Gets or sets the d at ao bj ec t.
+      /// </summary>
       public IDocumentLeafNode DataObject { get { return null; } }
 
+      /// <summary>
+      /// Gets or sets the s ty le ob je ct.
+      /// </summary>
       public IDocumentLeafNode StyleObject { get { return null; } }
 
+      /// <summary>
+      /// Copies values from the specified source.
+      /// </summary>
       public bool CopyFrom(object obj)
       {
         if (ReferenceEquals(this, obj))
@@ -1124,16 +1290,25 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// Creates a copy of this instance.
+      /// </summary>
       public object Clone()
       {
         throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// Provides access to this member.
+      /// </summary>
       public IEnumerable<Altaxo.Main.IDocumentLeafNode> ChildNodes
       {
         get { throw new NotImplementedException(); }
       }
 
+      /// <summary>
+      /// Provides access to this member.
+      /// </summary>
       public Altaxo.Main.IDocumentLeafNode ParentNode
       {
         get { throw new NotImplementedException(); }
@@ -1154,26 +1329,36 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
         get { return _parent as IGPlotItem; }
       }
 
+ 
+      /// <inheritdoc />
       protected override bool AccumulatedEventData_HasZeroOrOneEventArg(out EventArgs singleEventArg)
       {
         throw new NotImplementedException();
       }
 
+ 
+      /// <inheritdoc />
       protected override IEnumerable<EventArgs> AccumulatedEventData
       {
         get { throw new NotImplementedException(); }
       }
 
+ 
+      /// <inheritdoc />
       protected override void AccumulatedEventData_Clear()
       {
         throw new NotImplementedException();
       }
 
+ 
+      /// <inheritdoc />
       protected override void AccumulateChangeData(object sender, EventArgs e)
       {
         throw new NotImplementedException();
       }
 
+ 
+      /// <inheritdoc />
       protected override void AccumulatedChangeData_SetBackAfterResumeAndSuspend(params EventArgs[] e)
       {
         throw new NotImplementedException();

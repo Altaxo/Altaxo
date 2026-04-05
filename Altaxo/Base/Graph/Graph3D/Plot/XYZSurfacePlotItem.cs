@@ -39,7 +39,7 @@ namespace Altaxo.Graph.Graph3D.Plot
   using Styles;
 
   /// <summary>
-  /// Association of data and style specialized for x-y-plots of column data.
+  /// Associates three-dimensional column data with a surface-style renderer.
   /// </summary>
   public class XYZSurfacePlotItem
     :
@@ -48,7 +48,14 @@ namespace Altaxo.Graph.Graph3D.Plot
     IYBoundsHolder,
     IZBoundsHolder
   {
+    /// <summary>
+    /// Stores the surface plot data.
+    /// </summary>
     protected XYZColumnPlotData _plotData;
+
+    /// <summary>
+    /// Stores the style used to render the surface.
+    /// </summary>
     protected DataMeshPlotStyle _plotStyle;
 
     #region Serialization
@@ -56,9 +63,13 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <summary>
     /// V0: 2026-01-19 initial version.
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="XYZSurfacePlotItem"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYZSurfacePlotItem), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (XYZSurfacePlotItem)obj;
@@ -66,6 +77,7 @@ namespace Altaxo.Graph.Graph3D.Plot
         info.AddValue("Style", s._plotStyle);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var pa = info.GetValue<XYZColumnPlotData>("Data", null);
@@ -87,6 +99,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     #endregion Serialization
 
+    /// <inheritdoc/>
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_plotData is not null)
@@ -95,17 +108,31 @@ namespace Altaxo.Graph.Graph3D.Plot
         yield return new Main.DocumentNodeAndName(_plotStyle, () => _plotStyle = null!, "Style");
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYZSurfacePlotItem"/> class.
+    /// </summary>
+    /// <param name="pa">The plot data.</param>
+    /// <param name="ps">The plot style.</param>
     public XYZSurfacePlotItem(XYZColumnPlotData pa, DataMeshPlotStyle ps)
     {
       ChildSetMember(ref _plotStyle, ps);
       ChildSetMember(ref _plotData, pa);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYZSurfacePlotItem"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The plot item to copy from.</param>
     public XYZSurfacePlotItem(XYZSurfacePlotItem from)
     {
       CopyFrom(from, false);
     }
 
+    /// <summary>
+    /// Copies values from another <see cref="XYZSurfacePlotItem"/> instance.
+    /// </summary>
+    /// <param name="from">The plot item to copy from.</param>
+    /// <param name="withBaseMembers">If set to <c>true</c>, base members are copied as well.</param>
     [MemberNotNull(nameof(_plotData), nameof(_plotStyle))]
     protected void CopyFrom(XYZSurfacePlotItem from, bool withBaseMembers)
     {
@@ -116,6 +143,7 @@ namespace Altaxo.Graph.Graph3D.Plot
       ChildCopyToMember(ref _plotStyle, from._plotStyle);
     }
 
+    /// <inheritdoc/>
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -135,11 +163,15 @@ namespace Altaxo.Graph.Graph3D.Plot
       }
     }
 
+    /// <inheritdoc/>
     public override object Clone()
     {
       return new XYZSurfacePlotItem(this);
     }
 
+    /// <summary>
+    /// Gets or sets the underlying surface data.
+    /// </summary>
     public object Data
     {
       get { return _plotData; }
@@ -159,17 +191,22 @@ namespace Altaxo.Graph.Graph3D.Plot
       }
     }
 
+    /// <inheritdoc/>
     public override Main.IDocumentLeafNode StyleObject
     {
       get { return _plotStyle; }
       set { Style = (DataMeshPlotStyle)value; }
     }
 
+    /// <inheritdoc/>
     public override Main.IDocumentLeafNode DataObject
     {
       get { return _plotData; }
     }
 
+    /// <summary>
+    /// Gets or sets the plot style used to render the surface.
+    /// </summary>
     public DataMeshPlotStyle Style
     {
       get { return _plotStyle; }
@@ -184,6 +221,7 @@ namespace Altaxo.Graph.Graph3D.Plot
       }
     }
 
+    /// <inheritdoc/>
     public override string GetName(int level)
     {
       switch (level)
@@ -202,6 +240,11 @@ namespace Altaxo.Graph.Graph3D.Plot
       }
     }
 
+    /// <summary>
+    /// Builds a display name according to the requested naming style mask.
+    /// </summary>
+    /// <param name="style">The naming style mask.</param>
+    /// <returns>The generated display name.</returns>
     public virtual string GetNameByStyle(int style)
     {
       int st = style;
@@ -236,11 +279,13 @@ namespace Altaxo.Graph.Graph3D.Plot
       return stb.ToString();
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return GetName(0);
     }
 
+    /// <inheritdoc/>
     public override void Paint(IGraphicsContext3D g, Altaxo.Graph.IPaintContext context, IPlotArea layer, IGPlotItem? previousPlotItem, IGPlotItem? nextPlotItem)
     {
       if (_plotStyle is not null)
@@ -266,6 +311,7 @@ namespace Altaxo.Graph.Graph3D.Plot
       }
     }
 
+    /// <inheritdoc/>
     protected override void OnChanged(EventArgs e)
     {
       if (e is PlotItemDataChangedEventArgs)
@@ -280,11 +326,13 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     #region IXBoundsHolder Members
 
+    /// <inheritdoc/>
     public void SetXBoundsFromTemplate(IPhysicalBoundaries val)
     {
       _plotData.SetXBoundsFromTemplate(val);
     }
 
+    /// <inheritdoc/>
     public void MergeXBoundsInto(IPhysicalBoundaries pb)
     {
       _plotData.MergeXBoundsInto(pb);
@@ -294,11 +342,13 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     #region IYBoundsHolder Members
 
+    /// <inheritdoc/>
     public void SetYBoundsFromTemplate(IPhysicalBoundaries val)
     {
       _plotData.SetYBoundsFromTemplate(val);
     }
 
+    /// <inheritdoc/>
     public void MergeYBoundsInto(IPhysicalBoundaries pb)
     {
       _plotData.MergeYBoundsInto(pb);
@@ -308,11 +358,13 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     #region IZBoundHolder
 
+    /// <inheritdoc/>
     public void SetZBoundsFromTemplate(IPhysicalBoundaries val)
     {
       _plotData.SetZBoundsFromTemplate(val);
     }
 
+    /// <inheritdoc/>
     public void MergeZBoundsInto(IPhysicalBoundaries pb)
     {
       _plotData.MergeZBoundsInto(pb);
@@ -320,14 +372,17 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     #endregion IZBoundHolder
 
+    /// <inheritdoc/>
     public override void CollectStyles(PlotGroupStyleCollection styles)
     {
     }
 
+    /// <inheritdoc/>
     public override void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, IPlotArea layer)
     {
     }
 
+    /// <inheritdoc/>
     public override void ApplyGroupStyles(PlotGroupStyleCollection externalGroups)
     {
     }
@@ -376,6 +431,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// to change a plot so that the plot items refer to another table.
     /// </summary>
     /// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
+    /// <inheritdoc/>
     public override void VisitDocumentReferences(DocNodeProxyReporter Report)
     {
       _plotData.VisitDocumentReferences(Report);

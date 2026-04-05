@@ -30,7 +30,7 @@ using Altaxo.Drawing;
 namespace Altaxo.Graph.Gdi.LabelFormatting
 {
   /// <summary>
-  /// Interface for an label item that is ready to draw and was already measured.
+  /// Interface for a label item that is ready to draw and was already measured.
   /// </summary>
   public interface IMeasuredLabelItem
   {

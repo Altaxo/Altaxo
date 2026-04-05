@@ -61,7 +61,7 @@ namespace Altaxo.Main.Properties
     /// </summary>
     /// <typeparam name="T">Type of the property.</typeparam>
     /// <param name="p">The property key.</param>
-    /// <param name="value">If successfull, on return this value contains the property value.</param>
+    /// <param name="value">If successful, on return this value contains the property value.</param>
     /// <returns><c>True</c> if the property could be successfully retrieved, otherwise <c>false</c>.</returns>
     bool TryGetValue<T>(PropertyKey<T> p, [MaybeNull] out T value);
 
@@ -110,7 +110,7 @@ namespace Altaxo.Main.Properties
     /// Removes a property from this instance.
     /// </summary>
     /// <param name="p">The property key.</param>
-    /// <returns>True if the property has been successful removed, fale if the property has not been found in this collection.</returns>
+    /// <returns><c>true</c> if the property was successfully removed; otherwise, <c>false</c>.</returns>
     bool RemoveValue<T>(PropertyKey<T> p);
 
     /// <summary>
@@ -141,13 +141,13 @@ namespace Altaxo.Main.Properties
     /// </summary>
     /// <typeparam name="T">Type of the property.</typeparam>
     /// <param name="propName">The property name.</param>
-    /// <param name="value">If successfull, on return this value contains the property value.</param>
+    /// <param name="value">If successful, on return this value contains the property value.</param>
     /// <returns><c>True</c> if the property could be successfully retrieved, otherwise <c>false</c>.</returns>
     bool TryGetValue<T>(string propName, out T value);
 
     /// <summary>
-    /// Get a string that designates a temporary property (i.e. a property that is not stored permanently). If any property key starts with this prefix,
-    /// the propery is not serialized when saving the project to file.
+    /// Gets a string that designates a temporary property, i.e. a property that is not stored permanently. If any property key starts with this prefix,
+    /// the property is not serialized when saving the project to a file.
     /// </summary>
     /// <value>
     /// Temporary property prefix.

@@ -32,6 +32,9 @@ namespace Altaxo.AddInItems
     private string _name;
     private string _className;
 
+    /// <summary>
+    /// Gets the registered doozer name.
+    /// </summary>
     public string Name
     {
       get
@@ -40,6 +43,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LazyLoadDoozer"/> class.
+    /// </summary>
     public LazyLoadDoozer(AddIn addIn, Properties properties)
     {
       this._addIn = addIn;
@@ -65,6 +71,7 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <inheritdoc/>
     public object? BuildItem(BuildItemArgs args)
     {
       var doozer = (IDoozer?)_addIn.CreateObject(_className);
@@ -76,6 +83,7 @@ namespace Altaxo.AddInItems
       return doozer.BuildItem(args);
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return string.Format("[LazyLoadDoozer: className = {0}, name = {1}]",

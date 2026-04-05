@@ -31,9 +31,13 @@ namespace Altaxo.Gui.Analysis.Multivariate
 {
   
 
+  /// <summary>
+  /// Controller for <see cref="DimensionReductionDataSource"/>.
+  /// </summary>
   [UserControllerForObject(typeof(DimensionReductionDataSource))]
   public class DimensionReductionDataSourceController : DataSourceControllerBase<DimensionReductionDataSource>
   {
+    /// <inheritdoc />
     protected override IMVCANController GetProcessDataController()
     {
       var processDataController = new DataTableMatrixProxyController() { UseDocumentCopy = UseDocument.Directly };

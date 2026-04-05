@@ -28,6 +28,9 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
+  /// <summary>
+  /// Defines the common contract for 2D graphics objects.
+  /// </summary>
   public interface IGraphicBase
     :
     Main.IChangedEventSource,
@@ -41,8 +44,18 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <param name="isTriggeringChangedEvent">If set to <c>true</c>, the Changed event is triggered if the size of the parent differs from the cached parent's size.</param>
     void SetParentSize(PointD2D parentSize, bool isTriggeringChangedEvent);
 
+    /// <summary>
+    /// Performs point-based hit testing.
+    /// </summary>
+    /// <param name="hitData">The point hit-test data.</param>
+    /// <returns>The hit-test object, or <see langword="null"/> if nothing was hit.</returns>
     Altaxo.Graph.Gdi.IHitTestObject? HitTest(Altaxo.Graph.Gdi.HitTestPointData hitData);
 
+    /// <summary>
+    /// Performs rectangular hit testing.
+    /// </summary>
+    /// <param name="hitData">The rectangular hit-test data.</param>
+    /// <returns>The hit-test object, or <see langword="null"/> if nothing was hit.</returns>
     Altaxo.Graph.Gdi.IHitTestObject? HitTest(Altaxo.Graph.Gdi.HitTestRectangularData hitData);
 
     /// <summary>
@@ -57,6 +70,11 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <param name="context">The paint context.</param>
     void PaintPreprocessing(IPaintContext context);
 
+    /// <summary>
+    /// Paints the object.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="context">The paint context.</param>
     void Paint(System.Drawing.Graphics g, IPaintContext context);
 
     /// <summary>
@@ -66,6 +84,9 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <returns><c>True</c> if this object is compatible with the parent object; otherwise <c>false</c>.</returns>
     bool IsCompatibleWithParent(object parentObject);
 
+    /// <summary>
+    /// Gets or sets the position of the object.
+    /// </summary>
     PointD2D Position { get; set; }
   }
 }

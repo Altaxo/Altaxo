@@ -31,7 +31,7 @@ using System.Text;
 namespace Altaxo.Drawing.ColorManagement
 {
   /// <summary>
-  /// Set of colors with a given name and level. This set can be writeable or not (see <see cref="P:IList{T}.IsReadOnly"/>).
+  /// Set of colors with a given name and level. This set can be writable or read-only.
   /// </summary>
   public interface IColorSet : IStyleList<NamedColor>
   {

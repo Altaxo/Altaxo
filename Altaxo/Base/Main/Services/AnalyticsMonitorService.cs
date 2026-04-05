@@ -22,7 +22,7 @@ using System;
 namespace Altaxo.Main.Services
 {
   /// <summary>
-  /// Interface for AnalyticsMonitorService.
+  /// Tracks exceptions and feature usage for analytics purposes.
   /// </summary>
   /// <remarks>Implementations of this interface must be thread-safe.</remarks>
   [GlobalService("SD.AnalyticsMonitor", FallbackImplementation = typeof(AnalyticsMonitorFallback))]
@@ -57,25 +57,35 @@ namespace Altaxo.Main.Services
   /// <remarks>Implementations of this interface must be thread-safe.</remarks>
   public interface IAnalyticsMonitorTrackedFeature
   {
+    /// <summary>
+    /// Marks the tracked feature usage as completed.
+    /// </summary>
     void EndTracking();
   }
 
+  /// <summary>
+  /// Fallback implementation used when no analytics monitor service is registered.
+  /// </summary>
   internal sealed class AnalyticsMonitorFallback : IAnalyticsMonitor, IAnalyticsMonitorTrackedFeature
   {
+    /// <inheritdoc/>
     public void TrackException(Exception exception)
     {
     }
 
+    /// <inheritdoc/>
     public IAnalyticsMonitorTrackedFeature TrackFeature(string featureName, string? activationMethod)
     {
       return this;
     }
 
+    /// <inheritdoc/>
     public IAnalyticsMonitorTrackedFeature TrackFeature(Type featureClass, string? featureName, string? activationMethod)
     {
       return this;
     }
 
+    /// <inheritdoc/>
     void IAnalyticsMonitorTrackedFeature.EndTracking()
     {
     }

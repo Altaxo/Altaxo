@@ -31,12 +31,17 @@ using Altaxo.Serialization.Ascii;
 
 namespace Altaxo.Gui.Serialization.Ascii
 {
+  /// <summary>
+  /// Controller for <see cref="AsciiImportDataSource"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IImportDataSourceView))]
   [UserControllerForObject(typeof(AsciiImportDataSource))]
   public class AsciiImportDataSourceController : MVCANControllerEditOriginalDocBase<AsciiImportDataSource, IImportDataSourceView>, IMVCSupportsApplyCallback
   {
+    /// <inheritdoc/>
     public event Action SuccessfullyApplied;
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_commonImportOptionsController, () => _commonImportOptionsController = null);
@@ -48,6 +53,9 @@ namespace Altaxo.Gui.Serialization.Ascii
 
     private string _commonImportOptionsControlHeader;
 
+    /// <summary>
+    /// Gets or sets the header for the common import options section.
+    /// </summary>
     public string CommonImportOptionsControlHeader
     {
       get => _commonImportOptionsControlHeader;
@@ -64,6 +72,9 @@ namespace Altaxo.Gui.Serialization.Ascii
 
     private IMVCANController _commonImportOptionsController;
 
+    /// <summary>
+    /// Gets or sets the controller for the common import options.
+    /// </summary>
     public IMVCANController CommonImportOptionsController
     {
       get => _commonImportOptionsController;
@@ -80,6 +91,9 @@ namespace Altaxo.Gui.Serialization.Ascii
 
     private string _specificImportOptionsControlHeader;
 
+    /// <summary>
+    /// Gets or sets the header for the ASCII-specific import options section.
+    /// </summary>
     public string SpecificImportOptionsControlHeader
     {
       get => _specificImportOptionsControlHeader;
@@ -96,6 +110,9 @@ namespace Altaxo.Gui.Serialization.Ascii
 
     private IMVCANController _specificImportOptionsController;
 
+    /// <summary>
+    /// Gets or sets the controller for the ASCII-specific import options.
+    /// </summary>
     public IMVCANController SpecificImportOptionsController
     {
       get => _specificImportOptionsController;
@@ -112,6 +129,9 @@ namespace Altaxo.Gui.Serialization.Ascii
 
     private string _specificImportSourceControlHeader;
 
+    /// <summary>
+    /// Gets or sets the header for the import source section.
+    /// </summary>
     public string SpecificImportSourceControlHeader
     {
       get => _specificImportSourceControlHeader;
@@ -128,6 +148,9 @@ namespace Altaxo.Gui.Serialization.Ascii
 
     private MultipleFilesController _specificImportSourceController;
 
+    /// <summary>
+    /// Gets or sets the controller for the import source files.
+    /// </summary>
     public MultipleFilesController SpecificImportSourceController
     {
       get => _specificImportSourceController;
@@ -148,6 +171,7 @@ namespace Altaxo.Gui.Serialization.Ascii
     #endregion
 
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -172,6 +196,7 @@ namespace Altaxo.Gui.Serialization.Ascii
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       bool result;
@@ -226,7 +251,7 @@ namespace Altaxo.Gui.Serialization.Ascii
     /// <summary>
     /// Gets a file stream of the first file for analysis purposes. Returns null without throwing an exception if the file is not available or could not be opened.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The file stream for analysis, or <see langword="null"/>.</returns>
     private System.IO.Stream GetFileStreamForAnalysis()
     {
       try

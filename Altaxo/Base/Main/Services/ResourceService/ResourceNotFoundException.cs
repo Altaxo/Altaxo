@@ -30,28 +30,44 @@ namespace Altaxo.Main.Services
   [Serializable()]
   public class ResourceNotFoundException : BaseException
   {
+    /// <summary>
+    /// Gets the missing resource name.
+    /// </summary>
     public string ResourceName { get; private set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ResourceNotFoundException"/> class.
+    /// </summary>
     public ResourceNotFoundException(string resourceName) : base("Resource not found : " + resourceName)
     {
       ResourceName = resourceName;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ResourceNotFoundException"/> class.
+    /// </summary>
     public ResourceNotFoundException() : base()
     {
       ResourceName = string.Empty;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ResourceNotFoundException"/> class.
+    /// </summary>
     public ResourceNotFoundException(string resourceName, Exception innerException) : base("Resource not found : " + resourceName, innerException)
     {
       ResourceName = resourceName;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ResourceNotFoundException"/> class from serialized data.
+    /// </summary>
     protected ResourceNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
       ResourceName = string.Empty;
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return $"{base.ToString()} {ResourceName}";

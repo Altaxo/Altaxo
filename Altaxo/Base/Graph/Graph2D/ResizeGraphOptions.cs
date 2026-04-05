@@ -189,6 +189,7 @@ namespace Altaxo.Graph.Graph2D
     /// </value>
     public double? UserDefinedMajorTickLength { get; set; }
 
+    /// <inheritdoc/>
     public object Clone()
     {
       return MemberwiseClone();
@@ -197,7 +198,7 @@ namespace Altaxo.Graph.Graph2D
     /// <summary>
     /// Resizes a graph according to the options stored in this instance.
     /// </summary>
-    /// <param name="doc">The graph to resize..</param>
+    /// <param name="doc">The graph to resize.</param>
     public void ResizeGraph(Altaxo.Graph.Gdi.GraphDocument doc)
     {
       var context = doc.GetPropertyHierarchy();

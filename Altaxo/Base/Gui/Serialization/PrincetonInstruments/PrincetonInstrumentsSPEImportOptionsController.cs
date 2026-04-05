@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -30,12 +30,19 @@ using Altaxo.Serialization.PrincetonInstruments;
 
 namespace Altaxo.Gui.Serialization.PrincetonInstruments
 {
+  /// <summary>
+  /// View interface for editing <see cref="PrincetonInstrumentsSPEImportOptions"/>.
+  /// </summary>
   public interface IPrincetonInstrumentsSPEImportOptionsView : IDataContextAwareView { }
 
+  /// <summary>
+  /// Controller for editing <see cref="PrincetonInstrumentsSPEImportOptions"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IPrincetonInstrumentsSPEImportOptionsView))]
   [UserControllerForObject(typeof(PrincetonInstrumentsSPEImportOptions))]
   public class PrincetonInstrumentsSPEImportOptionsController : MVCANControllerEditImmutableDocBase<PrincetonInstrumentsSPEImportOptions, IPrincetonInstrumentsSPEImportOptionsView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -45,6 +52,9 @@ namespace Altaxo.Gui.Serialization.PrincetonInstruments
 
     private bool _useNeutralColumnName;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the imported y-column names should be neutral (constant).
+    /// </summary>
     public bool UseNeutralColumnName
     {
       get => _useNeutralColumnName;
@@ -60,6 +70,9 @@ namespace Altaxo.Gui.Serialization.PrincetonInstruments
 
     private string _neutralColumnName;
 
+    /// <summary>
+    /// Gets or sets the neutral base name for imported y-columns.
+    /// </summary>
     public string NeutralColumnName
     {
       get => _neutralColumnName;
@@ -75,6 +88,9 @@ namespace Altaxo.Gui.Serialization.PrincetonInstruments
 
     private bool _includeFilePathAsProperty;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the imported file path should be stored as a column property.
+    /// </summary>
     public bool IncludeFilePathAsProperty
     {
       get => _includeFilePathAsProperty;
@@ -90,6 +106,9 @@ namespace Altaxo.Gui.Serialization.PrincetonInstruments
 
     private bool _ignoreSecondaryData;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether frame metadata is imported as properties.
+    /// </summary>
     public bool IncludeFrameMetaDataAsProperties
     {
       get => _ignoreSecondaryData;
@@ -103,8 +122,14 @@ namespace Altaxo.Gui.Serialization.PrincetonInstruments
       }
     }
 
+    /// <summary>
+    /// Model class used for binding a single frame/region index in the UI.
+    /// </summary>
     public class IndexClass
     {
+      /// <summary>
+      /// Gets or sets the index.
+      /// </summary>
       public int Index { get; set; }
 
 
@@ -112,6 +137,9 @@ namespace Altaxo.Gui.Serialization.PrincetonInstruments
 
     private ObservableCollection<IndexClass> _indicesOfFrames;
 
+    /// <summary>
+    /// Gets or sets the indices of frames to import.
+    /// </summary>
     public ObservableCollection<IndexClass> IndicesOfFrames
     {
       get => _indicesOfFrames;
@@ -127,6 +155,9 @@ namespace Altaxo.Gui.Serialization.PrincetonInstruments
 
     private ObservableCollection<IndexClass> _indicesOfRegions;
 
+    /// <summary>
+    /// Gets or sets the indices of regions to import.
+    /// </summary>
     public ObservableCollection<IndexClass> IndicesOfRegions
     {
       get => _indicesOfRegions;
@@ -143,6 +174,7 @@ namespace Altaxo.Gui.Serialization.PrincetonInstruments
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -158,6 +190,7 @@ namespace Altaxo.Gui.Serialization.PrincetonInstruments
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = _doc with

@@ -30,6 +30,9 @@ using Altaxo.Data;
 
 namespace Altaxo.Worksheet
 {
+  /// <summary>
+  /// Maps worksheet columns to their styles and maintains the default styles per column type.
+  /// </summary>
   public class ColumnStyleDictionary
     :
     Main.SuspendableDocumentNodeWithSetOfEventArgs,
@@ -49,6 +52,7 @@ namespace Altaxo.Worksheet
       protected ColumnStyleDictionary? _deserializedInstance;
       protected Dictionary<Main.AbsoluteDocumentPath, ColumnStyle>? _unresolvedColumns;
 
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ColumnStyleDictionary)obj;
@@ -74,6 +78,7 @@ namespace Altaxo.Worksheet
         info.CommitArray();
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         ColumnStyleDictionary s = (ColumnStyleDictionary?)o ?? new ColumnStyleDictionary();
@@ -81,6 +86,12 @@ namespace Altaxo.Worksheet
         return s;
       }
 
+      /// <summary>
+      /// Deserializes the specified column style dictionary instance.
+      /// </summary>
+      /// <param name="s">The dictionary to populate.</param>
+      /// <param name="info">The deserialization info.</param>
+      /// <param name="parent">The parent object.</param>
       protected virtual void Deserialize(ColumnStyleDictionary s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var surr = new XmlSerializationSurrogate0
@@ -125,6 +136,12 @@ namespace Altaxo.Worksheet
         info.CloseArray(count);
       }
 
+      /// <summary>
+      /// Resolves deferred column references after deserialization has finished.
+      /// </summary>
+      /// <param name="info">The deserialization info.</param>
+      /// <param name="documentRoot">The document root.</param>
+      /// <param name="isFinallyCall">If set, this is the final callback invocation.</param>
       public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
       {
         var resolvedStyles = new List<Main.AbsoluteDocumentPath>();
@@ -149,12 +166,16 @@ namespace Altaxo.Worksheet
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColumnStyleDictionary"/> class.
+    /// </summary>
     public ColumnStyleDictionary()
     {
       _defaultColumnStyles = new Dictionary<Type, ColumnStyle>();
       _columnStyles = new Dictionary<Altaxo.Data.DataColumn, ColumnStyle>();
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       foreach (var entry in _defaultColumnStyles)
@@ -171,6 +192,7 @@ namespace Altaxo.Worksheet
       }
     }
 
+    /// <inheritdoc />
     protected override void Dispose(bool isDisposing)
     {
       if (isDisposing)
@@ -226,6 +248,11 @@ namespace Altaxo.Worksheet
       }
     }
 
+    /// <summary>
+    /// Sets the default style for the specified column type.
+    /// </summary>
+    /// <param name="key">The column type.</param>
+    /// <param name="value">The default style to assign.</param>
     public void SetDefaultColumnStyle(System.Type key, ColumnStyle value)
     {
       bool isOldStylePresent = _defaultColumnStyles.TryGetValue(key, out var oldStyle);
@@ -236,6 +263,9 @@ namespace Altaxo.Worksheet
         oldStyle?.Dispose();
     }
 
+    /// <summary>
+    /// Gets the dictionary of default column styles.
+    /// </summary>
     internal Dictionary<System.Type, ColumnStyle> DefaultColumnStyles
     {
       get
@@ -246,6 +276,7 @@ namespace Altaxo.Worksheet
 
     #region IDictionary<DataColumn,ColumnStyle> Members
 
+    /// <inheritdoc />
     public void Add(DataColumn key, ColumnStyle value)
     {
       if (value is null)
@@ -256,16 +287,19 @@ namespace Altaxo.Worksheet
       AttachKey(key);
     }
 
+    /// <inheritdoc />
     public bool ContainsKey(DataColumn key)
     {
       return _columnStyles.ContainsKey(key);
     }
 
+    /// <inheritdoc />
     public ICollection<DataColumn> Keys
     {
       get { return _columnStyles.Keys; }
     }
 
+    /// <inheritdoc />
     public bool Remove(DataColumn key)
     {
       if (TryGetValue(key, out var value))
@@ -281,16 +315,19 @@ namespace Altaxo.Worksheet
       }
     }
 
+    /// <inheritdoc />
     public bool TryGetValue(DataColumn key, [MaybeNullWhen(false)] out ColumnStyle value)
     {
       return _columnStyles.TryGetValue(key, out value);
     }
 
+    /// <inheritdoc />
     public ICollection<ColumnStyle> Values
     {
       get { return _columnStyles.Values; }
     }
 
+    /// <inheritdoc />
     public ColumnStyle this[DataColumn key]
     {
       get
@@ -338,6 +375,7 @@ namespace Altaxo.Worksheet
 
     #region ICollection<KeyValuePair<DataColumn,ColumnStyle>> Members
 
+    /// <inheritdoc />
     public void Add(KeyValuePair<DataColumn, ColumnStyle> item)
     {
       ((ICollection<KeyValuePair<DataColumn, ColumnStyle>>)_columnStyles).Add(item);
@@ -345,6 +383,7 @@ namespace Altaxo.Worksheet
       item.Value.ParentObject = this;
     }
 
+    /// <inheritdoc />
     public void Clear()
     {
       var columnStyles = _columnStyles;
@@ -356,26 +395,31 @@ namespace Altaxo.Worksheet
       }
     }
 
+    /// <inheritdoc />
     public bool Contains(KeyValuePair<DataColumn, ColumnStyle> item)
     {
       return ((ICollection<KeyValuePair<DataColumn, ColumnStyle>>)_columnStyles).Contains(item);
     }
 
+    /// <inheritdoc />
     public void CopyTo(KeyValuePair<DataColumn, ColumnStyle>[] array, int arrayIndex)
     {
       ((ICollection<KeyValuePair<DataColumn, ColumnStyle>>)_columnStyles).CopyTo(array, arrayIndex);
     }
 
+    /// <inheritdoc />
     public int Count
     {
       get { return _columnStyles.Count; }
     }
 
+    /// <inheritdoc />
     public bool IsReadOnly
     {
       get { return ((ICollection<KeyValuePair<DataColumn, ColumnStyle>>)_columnStyles).IsReadOnly; }
     }
 
+    /// <inheritdoc />
     public bool Remove(KeyValuePair<DataColumn, ColumnStyle> item)
     {
       bool result = ((ICollection<KeyValuePair<DataColumn, ColumnStyle>>)_columnStyles).Remove(item);
@@ -391,6 +435,7 @@ namespace Altaxo.Worksheet
 
     #region IEnumerable<KeyValuePair<DataColumn,ColumnStyle>> Members
 
+    /// <inheritdoc />
     public IEnumerator<KeyValuePair<DataColumn, ColumnStyle>> GetEnumerator()
     {
       return ((ICollection<KeyValuePair<DataColumn, ColumnStyle>>)_columnStyles).GetEnumerator();

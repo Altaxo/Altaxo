@@ -41,7 +41,7 @@ using Markdig.Syntax.Inlines;
 namespace Altaxo.Text.Renderers.Html
 {
   /// <summary>
-  /// Renderer which renders into multiple Htlm files, including a table of contents file.
+  /// Renderer which renders into multiple HTML files, including a table of contents file.
   /// </summary>
   public class HtmlSplitRenderer
   {
@@ -89,6 +89,9 @@ namespace Altaxo.Text.Renderers.Html
     /// Value is the calculated Guid of the header.
     /// Guids that will not change with every rendering are essential in order to check in the created files in a version control system.
     /// By calculating Guids from the header titles we create unique Guids that will only change if the header title change.
+    /// <summary>
+    /// Gets the header GUID map keyed by source span start.
+    /// </summary>
     public IDictionary<int, string> HeaderGuids { get { return _headerGuids; } }
 
     /// <summary>
@@ -140,6 +143,9 @@ namespace Altaxo.Text.Renderers.Html
     /// </summary>
     public bool AutoOutline { get; }
 
+    /// <summary>
+    /// Gets a value indicating whether HTML escaping is enabled.
+    /// </summary>
     public bool EnableHtmlEscape { get; }
 
     /// <summary>
@@ -186,6 +192,9 @@ namespace Altaxo.Text.Renderers.Html
     public double BodyTextFontSize { get; }
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HtmlSplitRenderer"/> class.
+    /// </summary>
     public HtmlSplitRenderer(
       string projectOrContentFileName,
       string imageFolderName,
@@ -238,6 +247,10 @@ namespace Altaxo.Text.Renderers.Html
     }
 
 
+    /// <summary>
+    /// Removes old generated HTML files from the content folder.
+    /// </summary>
+    /// <param name="fullContentFolderName">The full content folder name.</param>
     public static void RemoveOldContentsOfContentFolder(string fullContentFolderName)
     {
       var dir = new DirectoryInfo(fullContentFolderName);
@@ -259,6 +272,10 @@ namespace Altaxo.Text.Renderers.Html
       }
     }
 
+    /// <summary>
+    /// Removes old generated image files from the image folder.
+    /// </summary>
+    /// <param name="fullImageFolderName">The full image folder path.</param>
     public static void RemoveOldContentsOfImageFolder(string fullImageFolderName)
     {
       var dir = new DirectoryInfo(fullImageFolderName);
@@ -280,6 +297,10 @@ namespace Altaxo.Text.Renderers.Html
       }
     }
 
+    /// <summary>
+    /// Renders the supplied markdown source text into one or more HTML files.
+    /// </summary>
+    /// <param name="documentSourceText">The markdown source text.</param>
     public void Render(string documentSourceText)
     {
       // first parse it with Markdig
@@ -529,6 +550,11 @@ namespace Altaxo.Text.Renderers.Html
     }
 
 
+    /// <summary>
+    /// Finds the generated HTML file and fragment address for the specified markdown link.
+    /// </summary>
+    /// <param name="url">The markdown fragment link.</param>
+    /// <returns>The target file name and fragment address.</returns>
     public (string? fileName, string? address) FindFragmentLink(string url)
     {
       if (_markdownDocument is null)
@@ -566,11 +592,21 @@ namespace Altaxo.Text.Renderers.Html
       return (null, null);
     }
 
+    /// <summary>
+    /// Renders links for split HTML output.
+    /// </summary>
     public class HtmlSplit_LinkInlineRenderer : HtmlObjectRenderer<LinkInline>
     {
+      /// <summary>
+      /// Gets the parent split renderer.
+      /// </summary>
       public HtmlSplitRenderer SplitRenderer { get; }
 
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="HtmlSplit_LinkInlineRenderer"/> class.
+      /// </summary>
+      /// <param name="parent">The parent split renderer.</param>
       public HtmlSplit_LinkInlineRenderer(HtmlSplitRenderer parent)
       {
         SplitRenderer = parent;
@@ -754,6 +790,7 @@ namespace Altaxo.Text.Renderers.Html
 
 
 
+      /// <inheritdoc />
       protected override void Write(HtmlRenderer renderer, LinkInline link)
       {
         if (link.IsImage)
@@ -767,8 +804,12 @@ namespace Altaxo.Text.Renderers.Html
       }
     }
 
+    /// <summary>
+    /// Renders inline math for split HTML output.
+    /// </summary>
     public class HtmlSplit_MathInlineRenderer : HtmlObjectRenderer<Markdig.Extensions.Mathematics.MathInline>
     {
+      /// <inheritdoc />
       protected override void Write(HtmlRenderer renderer, MathInline obj)
       {
         renderer.Write("<span class=\"math inline\">\\(");
@@ -777,8 +818,12 @@ namespace Altaxo.Text.Renderers.Html
       }
     }
 
+    /// <summary>
+    /// Renders block math for split HTML output.
+    /// </summary>
     public class HtmlSplit_MathBlockRenderer : HtmlObjectRenderer<MathBlock>
     {
+      /// <inheritdoc />
       protected override void Write(HtmlRenderer renderer, MathBlock obj)
       {
         var text = string.Empty; // obj.Content.Text.Substring(obj.Content.Start, obj.Content.Length);

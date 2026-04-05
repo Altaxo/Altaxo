@@ -24,28 +24,33 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Text;
 
 namespace Altaxo.Graph.Gdi.LineCaps
 {
+  /// <summary>
+  /// Renders a flat line cap.
+  /// </summary>
   public class FlatCap : GdiLineCapBase
   {
+    /// <inheritdoc />
     public override Type ExtendsType => typeof(Altaxo.Drawing.LineCaps.FlatCap);
 
 
+    /// <inheritdoc />
     public override void SetStartCap(Pen pen, float size)
     {
       pen.StartCap = LineCap.Flat;
     }
 
+    /// <inheritdoc />
     public override void SetEndCap(Pen pen, float size)
     {
       pen.EndCap = LineCap.Flat;
     }
 
+    /// <inheritdoc />
     protected override CustomLineCap GetCustomLineCap(Pen pen, float size, bool isEndCap)
     {
       throw new NotImplementedException();

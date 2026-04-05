@@ -29,19 +29,31 @@ using Clipper2Lib;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
+  /// <summary>
+  /// Provides the base implementation for open scatter symbols.
+  /// </summary>
   public abstract class OpenSymbolBase : SymbolBase, IScatterSymbol
   {
+    /// <summary>
+    /// The fill color.
+    /// </summary>
     protected NamedColor _fillColor = NamedColors.Black;
+
+    /// <summary>
+    /// The relative structure width.
+    /// </summary>
     protected double _relativeStructureWidth = 0.09375;
 
     #region Serialization
 
     /// <summary>
+    /// Serializes <see cref="OpenSymbolBase"/> state.
     /// 2016-10-27 initial version.
     /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(OpenSymbolBase), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (OpenSymbolBase)obj;
@@ -49,6 +61,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
         info.AddValue("Fill", s._fillColor);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (OpenSymbolBase)(o ?? throw new ArgumentNullException(nameof(o)));
@@ -67,24 +80,40 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
     /// <returns>Polygon(s) of the outer symbol shape.</returns>
     public abstract Paths64 GetCopyOfOuterPolygon(double relativeStructureWidth);
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OpenSymbolBase"/> class.
+    /// </summary>
     protected OpenSymbolBase()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OpenSymbolBase"/> class.
+    /// </summary>
+    /// <param name="fillColor">The fill color.</param>
+    /// <param name="isFillColorInfluencedByPlotColor">Indicates whether the fill color is influenced by the plot color.</param>
     protected OpenSymbolBase(NamedColor fillColor, bool isFillColorInfluencedByPlotColor)
     {
       _fillColor = fillColor;
     }
 
+    /// <inheritdoc/>
     public object Clone()
     {
       return MemberwiseClone();
     }
 
+    /// <inheritdoc/>
     public double DesignSize { get { return ClipperSymbolSize; } }
 
+    /// <inheritdoc/>
     public NamedColor FillColor { get { return _fillColor; } }
 
+    /// <summary>
+    /// Returns a copy of this symbol with the specified fill color.
+    /// </summary>
+    /// <param name="value">The fill color.</param>
+    /// <returns>The current instance if no change is required; otherwise, a cloned instance with the updated fill color.</returns>
     public OpenSymbolBase WithFillColor(NamedColor value)
     {
       if (_fillColor == value)
@@ -99,20 +128,29 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       }
     }
 
+    /// <inheritdoc/>
     IScatterSymbol IScatterSymbol.WithFillColor(NamedColor fillColor)
     {
       return WithFillColor(fillColor);
     }
 
+    /// <inheritdoc/>
     public PlotColorInfluence PlotColorInfluence { get { return PlotColorInfluence.FillColorFull; } }
 
+    /// <inheritdoc/>
     IScatterSymbol IScatterSymbol.WithPlotColorInfluence(PlotColorInfluence plotColorInfluence)
     {
       return this;
     }
 
+    /// <inheritdoc/>
     public double RelativeStructureWidth { get { return _relativeStructureWidth; } }
 
+    /// <summary>
+    /// Returns a copy of this symbol with the specified relative structure width.
+    /// </summary>
+    /// <param name="value">The relative width of internal structures.</param>
+    /// <returns>The current instance if no change is required; otherwise, a cloned instance with the updated width.</returns>
     public OpenSymbolBase WithRelativeStructureWidth(double value)
     {
       if (!(value >= 0) || !(value < 0.5))
@@ -132,28 +170,34 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       }
     }
 
+    /// <inheritdoc/>
     IScatterSymbol IScatterSymbol.WithRelativeStructureWidth(double relativeStructureWidth)
     {
       return WithRelativeStructureWidth(relativeStructureWidth);
     }
 
+    /// <inheritdoc/>
     public IScatterSymbolFrame? Frame
     {
       get { return null; }
     }
 
+    /// <inheritdoc/>
     IScatterSymbol IScatterSymbol.WithFrame(IScatterSymbolFrame? frame)
     {
       return this;
     }
 
+    /// <inheritdoc/>
     public IScatterSymbolInset? Inset { get { return null; } }
 
+    /// <inheritdoc/>
     IScatterSymbol IScatterSymbol.WithInset(IScatterSymbolInset? inset)
     {
       return this;
     }
 
+    /// <inheritdoc/>
     public void CalculatePolygons(
       double? relativeStructureWidth,
       out Paths64? framePolygon,
@@ -166,6 +210,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       fillPolygon = GetCopyOfOuterPolygon(relativeStructureWidth ?? _relativeStructureWidth);
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       if (!(GetType() == obj?.GetType()))
@@ -178,6 +223,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
         _fillColor == from._fillColor;
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return

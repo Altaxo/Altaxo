@@ -30,6 +30,9 @@ using Altaxo.Main;
 
 namespace Altaxo.Data.Selections
 {
+  /// <summary>
+  /// Selects rows whose text values start with a specified substring.
+  /// </summary>
   public class IncludeTextStartsWith : Main.SuspendableDocumentNodeWithEventArgs, IRowSelection
   {
     private string _value;
@@ -65,6 +68,9 @@ namespace Altaxo.Data.Selections
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IncludeTextStartsWith"/> class.
+    /// </summary>
     public IncludeTextStartsWith()
     {
       _value = string.Empty;
@@ -82,6 +88,7 @@ namespace Altaxo.Data.Selections
       ChildCloneToMember(ref _columnProxy, from._columnProxy);
     }
 
+    /// <inheritdoc />
     public object Clone()
     {
       return new IncludeTextStartsWith(this);
@@ -101,6 +108,12 @@ namespace Altaxo.Data.Selections
       ChildSetMember(ref _columnProxy, columnProxy);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IncludeTextStartsWith"/> class for the specified column and prefix.
+    /// </summary>
+    /// <param name="value">The prefix to match.</param>
+    /// <param name="ignoreCase">Whether comparisons should ignore case.</param>
+    /// <param name="column">The column to inspect.</param>
     public IncludeTextStartsWith(string value, bool ignoreCase, IReadableColumn column)
     {
       _value = value;
@@ -161,6 +174,7 @@ namespace Altaxo.Data.Selections
       }
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_columnProxy is not null)
@@ -201,6 +215,9 @@ namespace Altaxo.Data.Selections
       }
     }
 
+    /// <summary>
+    /// Gets or sets the prefix that selected rows must start with.
+    /// </summary>
     public string Value
     {
       get
@@ -217,6 +234,9 @@ namespace Altaxo.Data.Selections
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether string comparisons ignore case.
+    /// </summary>
     public bool IgnoreCase
     {
       get

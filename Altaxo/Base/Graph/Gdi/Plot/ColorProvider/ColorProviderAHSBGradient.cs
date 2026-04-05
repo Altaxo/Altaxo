@@ -86,6 +86,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 
     #endregion Serialization
 
+    /// <inheritdoc />
     public override bool Equals(IColorProvider? other)
     {
       if (!base.Equals(other))
@@ -104,11 +105,15 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
         _brightness1 == from._brightness1;
     }
 
+    /// <inheritdoc />
     public override int GetHashCode()
     {
       return base.GetHashCode() + (_alpha0 + _alpha1 + _hue0 + _hue1 + _saturation0 + _saturation1 + _brightness0 + _brightness1).GetHashCode() * 13;
     }
 
+    /// <summary>
+    /// Gets the start hue.
+    /// </summary>
     public double Hue0
     {
       get
@@ -117,6 +122,11 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Creates a copy with a different start hue.
+    /// </summary>
+    /// <param name="value">The hue value in the range 0 to 1.</param>
+    /// <returns>The updated provider or this instance if unchanged.</returns>
     public ColorProviderAHSBGradient WithHue0(double value)
     {
       if (!(value >= 0 && value <= 1))
@@ -134,6 +144,9 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Gets the end hue.
+    /// </summary>
     public double Hue1
     {
       get
@@ -142,6 +155,11 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Creates a copy with a different end hue.
+    /// </summary>
+    /// <param name="value">The hue value in the range 0 to 1.</param>
+    /// <returns>The updated provider or this instance if unchanged.</returns>
     public ColorProviderAHSBGradient WithHue1(double value)
     {
       if (!(value >= 0 && value <= 1))
@@ -159,6 +177,9 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Gets the start saturation.
+    /// </summary>
     public double Saturation0
     {
       get
@@ -167,6 +188,11 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Creates a copy with a different start saturation.
+    /// </summary>
+    /// <param name="value">The saturation value in the range 0 to 1.</param>
+    /// <returns>The updated provider or this instance if unchanged.</returns>
     public ColorProviderAHSBGradient WithSaturation0(double value)
     {
       if (!(value >= 0 && value <= 1))
@@ -184,6 +210,9 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Gets the end saturation.
+    /// </summary>
     public double Saturation1
     {
       get
@@ -192,6 +221,11 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Creates a copy with a different end saturation.
+    /// </summary>
+    /// <param name="value">The saturation value in the range 0 to 1.</param>
+    /// <returns>The updated provider or this instance if unchanged.</returns>
     public ColorProviderAHSBGradient WithSaturation1(double value)
     {
       if (!(value >= 0 && value <= 1))
@@ -209,6 +243,9 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Gets the start brightness.
+    /// </summary>
     public double Brightness0
     {
       get
@@ -217,6 +254,11 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Creates a copy with a different start brightness.
+    /// </summary>
+    /// <param name="value">The brightness value in the range 0 to 1.</param>
+    /// <returns>The updated provider or this instance if unchanged.</returns>
     public ColorProviderAHSBGradient WithBrightness0(double value)
     {
       if (!(value >= 0 && value <= 1))
@@ -234,6 +276,9 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Gets the end brightness.
+    /// </summary>
     public double Brightness1
     {
       get
@@ -242,6 +287,11 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Creates a copy with a different end brightness.
+    /// </summary>
+    /// <param name="value">The brightness value in the range 0 to 1.</param>
+    /// <returns>The updated provider or this instance if unchanged.</returns>
     public ColorProviderAHSBGradient WithBrightness1(double value)
     {
       if (!(value >= 0 && value <= 1))
@@ -259,6 +309,9 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Gets the start opaqueness.
+    /// </summary>
     public double Opaqueness0
     {
       get
@@ -267,6 +320,11 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Creates a copy with a different start opaqueness.
+    /// </summary>
+    /// <param name="value">The opaqueness value in the range 0 to 1.</param>
+    /// <returns>The updated provider or this instance if unchanged.</returns>
     public ColorProviderAHSBGradient WithOpaqueness0(double value)
     {
       if (!(value >= 0 && value <= 1))
@@ -284,6 +342,9 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Gets the end opaqueness.
+    /// </summary>
     public double Opaqueness1
     {
       get
@@ -292,6 +353,11 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Creates a copy with a different end opaqueness.
+    /// </summary>
+    /// <param name="value">The opaqueness value in the range 0 to 1.</param>
+    /// <returns>The updated provider or this instance if unchanged.</returns>
     public ColorProviderAHSBGradient WithOpaqueness1(double value)
     {
       if (!(value >= 0 && value <= 1))

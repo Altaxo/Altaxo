@@ -33,7 +33,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
   public abstract partial class GraphicBase
   {
     /// <summary>
-    /// Shows a single round grip, which can be customized to a move action.
+    /// Represents a grip handle for moving a path node of a graphic object.
     /// </summary>
     protected class PathNodeGripHandle : IGripManipulationHandle
     {
@@ -43,6 +43,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       /// <summary>The radius of the grip to show.</summary>
       protected double _gripRadius;
 
+      /// <summary>The parent hit-test object.</summary>
       protected IHitTestObject _parent;
 
       /// <summary>The relative position of the node that should be moved. For instance, (0,0,0) is at the origin of the object, (1,1,1) on the other side of the object, (0.5, 0.5, 0.5) at the center of the object.</summary>
@@ -115,6 +116,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       /// <param name="initialPosition">Initial position of the mouse.</param>
       /// <param name="isActivatedUponCreation">If true the activation is called right after creation of this handle. If false,
       /// thie activation is due to a regular mouse click in this grip.</param>
+      /// <inheritdoc/>
       public void Activate(HitTestPointData initialPosition, bool isActivatedUponCreation)
       {
         _initialMousePosition = initialPosition;
@@ -125,6 +127,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       /// Announces the deactivation of this grip.
       /// </summary>
       /// <returns>The grip level, that should be displayed next, or -1 when the level should not change.</returns>
+      /// <inheritdoc/>
       public virtual bool Deactivate()
       {
         if (_hasMoved)
@@ -137,6 +140,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       /// Moves the grip to the new position.
       /// </summary>
       /// <param name="newPosition">The new position (of the mouse).</param>
+      /// <inheritdoc/>
       public virtual void MoveGrip(HitTestPointData newPosition)
       {
         if (_initialMousePosition is null)
@@ -158,6 +162,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
       /// <summary>Draws the grip in the graphics context.</summary>
       /// <param name="g">Graphics context.</param>
+      /// <inheritdoc/>
       public void Show(IOverlayContext3D g)
       {
         var buf = g.PositionColorLineListBuffer;
@@ -169,11 +174,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
           buf.AddLine(line.P0.X, line.P0.Y, line.P0.Z, line.P1.X, line.P1.Y, line.P1.Z, 1, 0, 0, 1);
       }
 
-      /// <summary>
-      /// Determines whether the grip is hit by the current mouse position.
-      /// </summary>
-      /// <param name="mousePosition">The mouse position (hit ray).</param>
-      /// <returns></returns>
+      /// <inheritdoc/>
       public bool IsGripHit(HitTestPointData mousePosition)
       {
         var vec = new VectorD3D(_gripRadius, _gripRadius, _gripRadius);

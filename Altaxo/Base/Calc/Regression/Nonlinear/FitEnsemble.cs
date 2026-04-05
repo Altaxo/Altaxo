@@ -59,6 +59,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FitEnsemble), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (FitEnsemble)obj;
@@ -69,6 +70,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         info.CommitArray();
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         FitEnsemble s = o is not null ? (FitEnsemble)o : new FitEnsemble();
@@ -88,6 +90,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     #region Fit parameters
 
+    /// <summary>
+    /// Rebuilds the bundled parameter list from the contained fit elements.
+    /// </summary>
     protected void CollectParameterNames()
     {
       _parametersSortedByName.Clear();
@@ -124,16 +129,25 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+    /// <summary>
+    /// Gets the bundled parameter name at the specified index.
+    /// </summary>
     public string ParameterName(int i)
     {
       return _parameterNames[i];
     }
 
+    /// <summary>
+    /// Gets the default value of the bundled parameter at the specified index.
+    /// </summary>
     public double DefaultParameterValue(int i)
     {
       return _defaultParameterValues[i];
     }
 
+    /// <summary>
+    /// Gets the number of bundled parameters.
+    /// </summary>
     public int NumberOfParameters
     {
       get
@@ -146,10 +160,16 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     #region ICloneable Members
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FitEnsemble"/> class.
+    /// </summary>
     public FitEnsemble()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FitEnsemble"/> class by cloning another ensemble.
+    /// </summary>
     public FitEnsemble(FitEnsemble from)
     {
       foreach (var ele in from)
@@ -162,6 +182,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       CollectParameterNames();
     }
 
+    /// <inheritdoc/>
     public object Clone()
     {
       return new FitEnsemble(this);
@@ -171,6 +192,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     #region IList members
 
+    /// <inheritdoc/>
     public FitElement this[int i]
     {
       get
@@ -191,6 +213,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+    /// <inheritdoc/>
     public void Add(FitElement e)
     {
       e.ParentObject = this;
@@ -200,6 +223,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       EhSelfChanged(EventArgs.Empty);
     }
 
+    /// <inheritdoc/>
     public void Clear()
     {
       if (_fitElements.Count > 0)
@@ -212,26 +236,31 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+    /// <inheritdoc/>
     public bool Contains(FitElement item)
     {
       return _fitElements.Contains(item);
     }
 
+    /// <inheritdoc/>
     public void CopyTo(FitElement[] array, int arrayIndex)
     {
       _fitElements.CopyTo(array, arrayIndex);
     }
 
+    /// <inheritdoc/>
     public int Count
     {
       get { return _fitElements.Count; }
     }
 
+    /// <inheritdoc/>
     public bool IsReadOnly
     {
       get { return false; }
     }
 
+    /// <inheritdoc/>
     public bool Remove(FitElement item)
     {
       var success = _fitElements.Remove(item);
@@ -245,6 +274,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       return success;
     }
 
+    /// <inheritdoc/>
     public IEnumerator<FitElement> GetEnumerator()
     {
       return _fitElements.GetEnumerator();
@@ -255,11 +285,13 @@ namespace Altaxo.Calc.Regression.Nonlinear
       return _fitElements.GetEnumerator();
     }
 
+    /// <inheritdoc/>
     public int IndexOf(FitElement item)
     {
       return _fitElements.IndexOf(item);
     }
 
+    /// <inheritdoc/>
     public void Insert(int index, FitElement item)
     {
       item.ParentObject = this;
@@ -268,6 +300,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       EhSelfChanged(EventArgs.Empty);
     }
 
+    /// <inheritdoc/>
     public void RemoveAt(int index)
     {
       var tempFitElement = _fitElements[index];
@@ -281,6 +314,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     #region Changed handling
 
+    /// <inheritdoc/>
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       CollectParameterNames();
@@ -292,6 +326,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     #region Document node functions
 
+    /// <inheritdoc/>
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_fitElements is not null)

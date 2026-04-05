@@ -33,14 +33,14 @@ using Altaxo.Gui.Graph.Plot.Groups;
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 {
   /// <summary>
-  /// This view interface is for showing the options of the XYXYPlotScatterStyle
+  /// Provides the view contract for <see cref="ScatterPlotStyleController"/>.
   /// </summary>
   public interface IScatterPlotStyleView : IDataContextAwareView
   {
   }
 
   /// <summary>
-  /// Summary description for XYPlotScatterStyleController.
+  /// Controller for <see cref="ScatterPlotStyle"/>.
   /// </summary>
   [UserControllerForObject(typeof(ScatterPlotStyle))]
   [ExpectedTypeOfView(typeof(IScatterPlotStyleView))]
@@ -51,6 +51,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private SelectableListNodeList _symbolShapeChoices;
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break; // no subcontrollers
@@ -60,6 +61,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _enableMain = true;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the main properties are enabled.
+    /// </summary>
     public bool EnableMain
     {
       get => _enableMain;
@@ -78,6 +82,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     /// </summary>
     private IScatterSymbol _scatterSymbol;
 
+    /// <summary>
+    /// Gets or sets the scatter symbol.
+    /// </summary>
     public IScatterSymbol ScatterSymbol
     {
       get => _scatterSymbol;
@@ -93,6 +100,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _independentSkipFrequency;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the skip frequency is independent.
+    /// </summary>
     public bool IndependentSkipFrequency
     {
       get => _independentSkipFrequency;
@@ -108,6 +118,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private int _skipFrequency;
 
+    /// <summary>
+    /// Gets or sets the skip frequency.
+    /// </summary>
     public int SkipFrequency
     {
       get => _skipFrequency;
@@ -123,6 +136,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _independentColor;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the color is independent.
+    /// </summary>
     public bool IndependentColor
     {
       get => _independentColor;
@@ -161,6 +177,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     /// </summary>
     private bool _showPlotColorsOnly;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether to show plot colors only.
+    /// </summary>
     public bool ShowPlotColorsOnly
     {
       get => _showPlotColorsOnly;
@@ -193,7 +212,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private double _symbolSize;
     /// <summary>
-    /// Initializes the symbol size combobox.
+    /// Gets or sets the symbol size.
     /// </summary>
     public double SymbolSize
     {
@@ -210,6 +229,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     #endregion
 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       _colorGroupStyleTracker = null;
@@ -219,6 +239,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -248,6 +269,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       // don't trust user input, so all into a try statement
@@ -273,7 +295,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       }
       catch (Exception ex)
       {
-        Current.Gui.ErrorMessageBox("A problem occured: " + ex.Message);
+        Current.Gui.ErrorMessageBox("A problem occurred: " + ex.Message);
         return false;
       }
 
@@ -286,5 +308,5 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
     }
     private void EhIndependentColorChanged() => EhIndependentColorChanged(IndependentColor);
-  } // end of class XYPlotScatterStyleController
-} // end of namespace
+  }
+}

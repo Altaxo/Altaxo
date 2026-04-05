@@ -45,19 +45,19 @@ namespace Altaxo.Serialization.Omnic
   public record OmnicSPAImporter : DataFileImporterBase, Main.IImmutable
   {
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
     {
       return ([".spa"], "Nicolet/Thermo Omnic files (*.spa)");
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override object CheckOrCreateImportOptions(object? importOptions)
     {
       return (importOptions as OmnicSPAImportOptions) ?? new OmnicSPAImportOptions();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override double GetProbabilityForBeingThisFileFormat(string fileName)
     {
       double p = 0;
@@ -85,15 +85,16 @@ namespace Altaxo.Serialization.Omnic
     }
 
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override IAltaxoTableDataSource? CreateTableDataSource(IReadOnlyList<string> fileNames, object importOptions)
     {
       return new OmnicSPAImportDataSource(fileNames, (OmnicSPAImportOptions)importOptions);
     }
 
     /// <summary>
-    /// Imports the data of this <see cref="Import"/> instance into a <see cref="DataTable"/>.
+    /// Imports SPA data from a stream into a <see cref="DataTable"/>.
     /// </summary>
+    /// <param name="stream">The stream that contains the SPA data.</param>
     /// <param name="table">The table.</param>
     public string? Import(Stream stream, DataTable table)
     {
@@ -144,11 +145,13 @@ namespace Altaxo.Serialization.Omnic
     }
 
     /// <summary>
-    /// Imports a couple of Nicolet SPA files into a table. The spectra are added as columns to the (one and only) table. If the x column
+    /// Imports a couple of Omnic SPA files into a table. The spectra are added as columns to the (one and only) table. If the x column
     /// of the rightmost column does not match the x-data of the spectra, a new x-column is also created.
     /// </summary>
     /// <param name="filenames">An array of filenames to import.</param>
     /// <param name="table">The table the spectra should be imported to.</param>
+    /// <param name="importOptionsObj">The import options object.</param>
+    /// <param name="attachDataSource">Whether to attach a data source to the imported table.</param>
     /// <returns>Null if no error occurs, or an error description.</returns>
     public override string? Import(IReadOnlyList<string> filenames, Altaxo.Data.DataTable table, object importOptionsObj, bool attachDataSource = true)
     {

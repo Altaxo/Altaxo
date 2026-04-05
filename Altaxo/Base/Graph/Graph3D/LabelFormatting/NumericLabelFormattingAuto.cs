@@ -39,11 +39,13 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
     #region Serialization
 
     /// <summary>
+    /// Serializes <see cref="NumericLabelFormattingAuto"/> instances.
     /// 2015-11-14 initial version.
     /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericLabelFormattingAuto), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (NumericLabelFormattingAuto)obj;
@@ -51,6 +53,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
         info.AddBaseValueEmbedded(s, typeof(NumericLabelFormattingAuto).BaseType!);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (NumericLabelFormattingAuto?)o ?? new NumericLabelFormattingAuto();
@@ -62,30 +65,41 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NumericLabelFormattingAuto"/> class.
+    /// </summary>
     public NumericLabelFormattingAuto()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NumericLabelFormattingAuto"/> class by copying from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public NumericLabelFormattingAuto(NumericLabelFormattingAuto from)
       : base(from) // everything is done here, since CopyFrom is virtual
     {
     }
 
+    /// <inheritdoc/>
     public override object Clone()
     {
       return new NumericLabelFormattingAuto(this);
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
     }
 
+    /// <inheritdoc/>
     protected override string FormatItem(Altaxo.Data.AltaxoVariant item)
     {
       return item.ToString();
     }
 
+    /// <inheritdoc/>
     protected override string[] FormatItems(Altaxo.Data.AltaxoVariant[] items)
     {
       try
@@ -106,6 +120,11 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
       return sitems;
     }
 
+    /// <summary>
+    /// Formats an array of numeric tick values using a consistent automatic format.
+    /// </summary>
+    /// <param name="majorticks">The numeric tick values.</param>
+    /// <returns>The formatted tick labels.</returns>
     public static string[] FormatItems(double[] majorticks)
     {
       // print the major ticks

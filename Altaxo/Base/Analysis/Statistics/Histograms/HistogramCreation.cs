@@ -33,6 +33,9 @@ using Altaxo.Data;
 
 namespace Altaxo.Analysis.Statistics.Histograms
 {
+  /// <summary>
+  /// Provides helper methods for creating histogram tables from numeric data.
+  /// </summary>
   public static class HistogramCreation
   {
     #region Internal classes
@@ -47,6 +50,9 @@ namespace Altaxo.Analysis.Statistics.Histograms
       private int _nRow = 0;
       private INumericColumn? _col;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="NumericTableRegionEnumerator"/> class.
+      /// </summary>
       public NumericTableRegionEnumerator(DataTable srctable,
       IAscendingIntegerCollection selectedColumns,
       IAscendingIntegerCollection selectedRows)
@@ -65,6 +71,9 @@ namespace Altaxo.Analysis.Statistics.Histograms
         }
       }
 
+      /// <summary>
+      /// Gets the current numeric value.
+      /// </summary>
       public double Current
       {
         get
@@ -76,6 +85,9 @@ namespace Altaxo.Analysis.Statistics.Histograms
         }
       }
 
+      /// <summary>
+      /// Releases resources used by the enumerator.
+      /// </summary>
       public void Dispose()
       {
         _col = null;
@@ -92,6 +104,9 @@ namespace Altaxo.Analysis.Statistics.Histograms
         }
       }
 
+      /// <summary>
+      /// Advances to the next numeric value.
+      /// </summary>
       public bool MoveNext()
       {
         if (_col is not null)
@@ -130,6 +145,9 @@ namespace Altaxo.Analysis.Statistics.Histograms
         return false;
       }
 
+      /// <summary>
+      /// Resets the enumerator to its initial state.
+      /// </summary>
       public void Reset()
       {
         _col = null;
@@ -162,6 +180,9 @@ namespace Altaxo.Analysis.Statistics.Histograms
       return CreateHistogram(srctable.Name + "-HistogramData", histInfo);
     }
 
+    /// <summary>
+    /// Creates histogram data in the specified destination table.
+    /// </summary>
     public static void CreateHistogram(ref DataTable destinationTable, HistogramCreationInformation histInfo)
     {
       if (histInfo is null)
@@ -187,6 +208,9 @@ namespace Altaxo.Analysis.Statistics.Histograms
       CreateHistogramTable(ref destinationTable, null, histInfo.FilteredAndSortedDataEnsemble, histInfo.CreationOptions.Binning);
     }
 
+    /// <summary>
+    /// Creates a histogram table using the specified histogram information.
+    /// </summary>
     public static DataTable? CreateHistogram(string proposedTableName, HistogramCreationInformation histInfo)
     {
       if (proposedTableName is null)
@@ -213,6 +237,9 @@ namespace Altaxo.Analysis.Statistics.Histograms
       return destinationTable;
     }
 
+    /// <summary>
+    /// Populates derived histogram creation information from the current options and source data.
+    /// </summary>
     public static bool PopulateHistogramCreationInformation(HistogramCreationInformation histInfo)
     {
       if (histInfo is null)
@@ -391,6 +418,9 @@ namespace Altaxo.Analysis.Statistics.Histograms
       }
     }
 
+    /// <summary>
+    /// Tests the histogram against a fitted normal distribution.
+    /// </summary>
     public static string TestAgainstStandardDistribution(IList<double> sortedListOfData, LinearBinning binning, INumericColumn colBinPosition, INumericColumn colBinCounts)
     {
       var stb = new StringBuilder();

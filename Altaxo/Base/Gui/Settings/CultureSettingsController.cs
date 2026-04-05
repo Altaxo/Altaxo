@@ -60,11 +60,13 @@ namespace Altaxo.Gui.Settings
     /// <summary>List of available cultures.</summary>
     private SelectableListNodeList _availableCulturesList;
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <inheritdoc/>
     public override void Dispose(bool isDisposing)
     {
       _availableCulturesList = null;
@@ -72,6 +74,7 @@ namespace Altaxo.Gui.Settings
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -97,12 +100,16 @@ namespace Altaxo.Gui.Settings
       }
     }
 
+    /// <summary>
+    /// Compares cultures by display name.
+    /// </summary>
     private int CompareCultures(CultureInfo x, CultureInfo y)
     {
       return string.Compare(x.DisplayName, y.DisplayName);
     }
 
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       var docCulture = (CultureInfo)_doc.Culture.Clone();
@@ -113,18 +120,23 @@ namespace Altaxo.Gui.Settings
       return ApplyEnd(true, disposeController);
     }
 
+    /// <inheritdoc/>
     protected override void AttachView()
     {
       base.AttachView();
       _view.CultureChanged += EhCultureChanged;
     }
 
+    /// <inheritdoc/>
     protected override void DetachView()
     {
       _view.CultureChanged -= EhCultureChanged;
       base.DetachView();
     }
 
+    /// <summary>
+    /// Adds a culture to the list of available cultures.
+    /// </summary>
     private void AddToCultureList(CultureInfo cult, bool isSelected)
     {
       _availableCulturesList.Add(new SelectableListNode(cult.DisplayName, cult, cult.LCID == _doc.CultureID));
@@ -132,6 +144,9 @@ namespace Altaxo.Gui.Settings
 
 
 
+    /// <summary>
+    /// Handles changes of the selected culture.
+    /// </summary>
     private void EhCultureChanged()
     {
       var node = _availableCulturesList.FirstSelectedNode;
@@ -143,6 +158,10 @@ namespace Altaxo.Gui.Settings
       }
     }
 
+    /// <summary>
+    /// Updates view elements after the culture changed.
+    /// </summary>
+    /// <param name="s">The culture settings.</param>
     private void SetElementsAfterCultureChanged(CultureSettings s)
     {
       _view.NumberDecimalSeparator = s.NumberDecimalSeparator;

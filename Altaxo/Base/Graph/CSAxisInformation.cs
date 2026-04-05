@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -29,6 +29,9 @@ using System.Text;
 
 namespace Altaxo.Graph
 {
+  /// <summary>
+  /// Stores descriptive and behavioral information for a coordinate-system axis.
+  /// </summary>
   [Serializable]
   public class CSAxisInformation : Main.IImmutable
   {
@@ -64,6 +67,14 @@ namespace Altaxo.Graph
       _nameOfAxisStyle = "Axis";
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CSAxisInformation"/> class.
+    /// </summary>
+    /// <param name="Identifier">The axis identifier.</param>
+    /// <param name="NameOfAxisStyle">The display name of the axis style.</param>
+    /// <param name="NameOfFirstDownSide">The name of the first down side.</param>
+    /// <param name="NameOfFirstUpSide">The name of the first up side.</param>
+    /// <param name="PreferredLabelSide">The preferred side for labels.</param>
     public CSAxisInformation(
     CSLineID Identifier,
     string NameOfAxisStyle,
@@ -79,6 +90,16 @@ namespace Altaxo.Graph
       _preferedLabelSide = PreferredLabelSide;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CSAxisInformation"/> class.
+    /// </summary>
+    /// <param name="Identifier">The axis identifier.</param>
+    /// <param name="NameOfAxisStyle">The display name of the axis style.</param>
+    /// <param name="NameOfFirstDownSide">The name of the first down side.</param>
+    /// <param name="NameOfFirstUpSide">The name of the first up side.</param>
+    /// <param name="PreferredLabelSide">The preferred side for labels.</param>
+    /// <param name="IsShownByDefault">A value indicating whether the axis is shown by default.</param>
+    /// <param name="HasTitleByDefault">A value indicating whether the axis has a title by default.</param>
     public CSAxisInformation(
       CSLineID Identifier,
       string NameOfAxisStyle,
@@ -98,6 +119,21 @@ namespace Altaxo.Graph
       _hasTitleByDefault = HasTitleByDefault;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CSAxisInformation"/> class.
+    /// </summary>
+    /// <param name="Identifier">The axis identifier.</param>
+    /// <param name="NameOfAxisStyle">The display name of the axis style.</param>
+    /// <param name="NameOfFirstDownSide">The name of the first down side.</param>
+    /// <param name="NameOfFirstUpSide">The name of the first up side.</param>
+    /// <param name="NameOfSecondDownSide">The name of the second down side.</param>
+    /// <param name="NameOfSecondUpSide">The name of the second up side.</param>
+    /// <param name="PreferredLabelSide">The preferred side for labels.</param>
+    /// <param name="PreferredTickSide">The preferred side for ticks.</param>
+    /// <param name="IsShownByDefault">A value indicating whether the axis is shown by default.</param>
+    /// <param name="HasTicksByDefault">A value indicating whether ticks are shown by default.</param>
+    /// <param name="HasLabelsByDefault">A value indicating whether labels are shown by default.</param>
+    /// <param name="HasTitleByDefault">A value indicating whether a title is shown by default.</param>
     public CSAxisInformation(
       CSLineID Identifier,
       string NameOfAxisStyle,
@@ -127,6 +163,11 @@ namespace Altaxo.Graph
       _hasTitleByDefault = HasTitleByDefault;
     }
 
+    /// <summary>
+    /// Returns a copy of this instance with a different identifier.
+    /// </summary>
+    /// <param name="identifier">The new axis identifier.</param>
+    /// <returns>The current instance if the identifier is unchanged; otherwise, a modified copy.</returns>
     public CSAxisInformation WithIdentifier(CSLineID identifier)
     {
       if (_identifier == identifier)
@@ -207,6 +248,11 @@ namespace Altaxo.Graph
       _preferedLabelSide = CSAxisSide.FirstDown;
     }
 
+    /// <summary>
+    /// Creates a new axis information instance with generated default values.
+    /// </summary>
+    /// <param name="identifier">The axis identifier.</param>
+    /// <returns>A new axis information instance.</returns>
     public static CSAxisInformation NewWithDefaultValues(CSLineID identifier)
     {
       if (identifier is null)
@@ -215,6 +261,9 @@ namespace Altaxo.Graph
       return new CSAxisInformation(identifier, identifier);
     }
 
+    /// <summary>
+    /// Gets the identifier of the axis.
+    /// </summary>
     public CSLineID Identifier
     {
       get { return _identifier; }
@@ -228,6 +277,11 @@ namespace Altaxo.Graph
       get { return _nameOfAxisStyle; }
     }
 
+    /// <summary>
+    /// Returns a copy of this instance with a different axis style name.
+    /// </summary>
+    /// <param name="nameOfAxisStyle">The new axis style name.</param>
+    /// <returns>The current instance if the name is unchanged; otherwise, a modified copy.</returns>
     public CSAxisInformation WithNameOfAxisStyle(string nameOfAxisStyle)
     {
       if (_nameOfAxisStyle == nameOfAxisStyle)
@@ -258,6 +312,12 @@ namespace Altaxo.Graph
       get { return _nameOfFirstUpSide; }
     }
 
+    /// <summary>
+    /// Returns a copy of this instance with different names for the first up and down sides.
+    /// </summary>
+    /// <param name="NameOfFirstUpSide">The name of the first up side.</param>
+    /// <param name="NameOfFirstDownSide">The name of the first down side.</param>
+    /// <returns>The current instance if both names are unchanged; otherwise, a modified copy.</returns>
     public CSAxisInformation WithNamesForFirstUpAndDownSides(string NameOfFirstUpSide, string NameOfFirstDownSide)
     {
       if (_nameOfFirstUpSide == NameOfFirstUpSide && _nameOfFirstDownSide == NameOfFirstDownSide)
@@ -289,6 +349,12 @@ namespace Altaxo.Graph
       get { return _nameOfSecondUpSide; }
     }
 
+    /// <summary>
+    /// Returns a copy of this instance with different names for the second up and down sides.
+    /// </summary>
+    /// <param name="NameOfSecondUpSide">The name of the second up side.</param>
+    /// <param name="NameOfSecondDownSide">The name of the second down side.</param>
+    /// <returns>The current instance if both names are unchanged; otherwise, a modified copy.</returns>
     public CSAxisInformation WithNamesForSecondUpAndDownSides(string NameOfSecondUpSide, string NameOfSecondDownSide)
     {
       if (_nameOfSecondUpSide == NameOfSecondUpSide && _nameOfSecondDownSide == NameOfSecondDownSide)
@@ -320,21 +386,33 @@ namespace Altaxo.Graph
       get { return _preferedTickSide; }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the axis is shown by default.
+    /// </summary>
     public bool IsShownByDefault
     {
       get { return _isShownByDefault; }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the axis has a title by default.
+    /// </summary>
     public bool HasTitleByDefault
     {
       get { return _hasTitleByDefault; }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether ticks are shown by default.
+    /// </summary>
     public bool HasTicksByDefault
     {
       get { return _hasTicksByDefault; }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether labels are shown by default.
+    /// </summary>
     public bool HasLabelsByDefault
     {
       get { return _hasLabelsByDefault; }
@@ -358,6 +436,12 @@ namespace Altaxo.Graph
       }
     }
 
+    /// <summary>
+    /// Returns a copy of this instance with different logical start and end values.
+    /// </summary>
+    /// <param name="LogicalValueAxisOrg">The logical start value.</param>
+    /// <param name="LogicalValueAxisEnd">The logical end value.</param>
+    /// <returns>The current instance if both values are unchanged; otherwise, a modified copy.</returns>
     public CSAxisInformation WithLogicalValuesForAxisOrgAndEnd(double LogicalValueAxisOrg, double LogicalValueAxisEnd)
     {
       if (_logicalValueAxisOrg == LogicalValueAxisOrg && _logicalValueAxisEnd == LogicalValueAxisEnd)

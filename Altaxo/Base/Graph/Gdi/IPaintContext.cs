@@ -32,25 +32,25 @@ using System.Text;
 namespace Altaxo.Graph.Gdi
 {
   /// <summary>
-  /// Implementation of <see cref="IPaintContext"/> for Gdi paint operations.
+  /// Provides paint context data for GDI paint operations.
   /// </summary>
   public class GdiPaintContext : IPaintContext
   {
     private Dictionary<object, object> _dictionary = new Dictionary<object, object>();
 
-    ///<inheritdoc/>
+    /// <inheritdoc/>
     public void AddValue(object key, object value)
     {
       _dictionary.Add(key, value);
     }
 
-    ///<inheritdoc/>
+    /// <inheritdoc/>
     public T GetValue<T>(object key)
     {
       return (T)_dictionary[key];
     }
 
-    ///<inheritdoc/>
+    /// <inheritdoc/>
     [return: MaybeNull]
     public T GetValueOrDefault<T>(object key)
     {
@@ -68,6 +68,7 @@ namespace Altaxo.Graph.Gdi
 
     private Dictionary<string, object> _hierarchicalData = new Dictionary<string, object>();
 
+    /// <inheritdoc/>
     public void PushHierarchicalValue<T>(string name, T value)
     {
       if (_hierarchicalData.TryGetValue(name, out var existing))
@@ -86,6 +87,7 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <inheritdoc/>
     public T PopHierarchicalValue<T>(string name)
     {
       if (_hierarchicalData.TryGetValue(name, out var existing))
@@ -106,6 +108,7 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <inheritdoc/>
     public T GetHierarchicalValue<T>(string name)
     {
       if (_hierarchicalData.TryGetValue(name, out var existing))

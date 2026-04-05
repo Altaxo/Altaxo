@@ -29,14 +29,18 @@ using Altaxo.Gui.Common.PropertyGrid;
 namespace Altaxo.Gui.Calc.Interpolation
 {
   /// <summary>
-  /// Controls the Smoothing parameter of a rational cubic spline.
+  /// Controls options for a cross-validated cubic spline.
   /// </summary>
   [UserControllerForObject(typeof(CrossValidatedCubicSplineOptions), 100)]
   public class CrossValidatedCubicSplineOptionsController : PropertyGridController
   {
+    /// <summary>
+    /// Gets the spline options document.
+    /// </summary>
     internal CrossValidatedCubicSplineOptions Spline => (CrossValidatedCubicSplineOptions)_doc;
 
 
+    /// <inheritdoc/>
     protected override void InitializeValueInfos()
     {
       var controller = new Altaxo.Gui.Common.BasicTypes.NumericDoubleValueController(Spline.ErrorStandardDeviation);
@@ -46,6 +50,7 @@ namespace Altaxo.Gui.Calc.Interpolation
       ValueInfos.Add(new ValueInfo("Standard deviation (if unknown, set it to -1) :", controller));
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       var controller = ValueInfos[0].Controller;

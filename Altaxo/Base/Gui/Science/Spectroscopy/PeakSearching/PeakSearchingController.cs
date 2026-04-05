@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -31,14 +31,17 @@ using Altaxo.Science.Spectroscopy.PeakSearching;
 
 namespace Altaxo.Gui.Science.Spectroscopy.PeakSearching
 {
-  public interface IPeakSearchingView : IDataContextAwareView
+    /// <summary>Defines the contract for peak Searching View.</summary>
+public interface IPeakSearchingView : IDataContextAwareView
   {
   }
 
-  [ExpectedTypeOfView(typeof(IPeakSearchingView))]
+  /// <summary>Represents a controller for peak Searching.</summary>
+[ExpectedTypeOfView(typeof(IPeakSearchingView))]
   public class PeakSearchingController : MVCANControllerEditImmutableDocBase<IPeakSearching, IPeakSearchingView>
   {
-    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+        /// <inheritdoc />
+public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_subController, () => SubController = null);
     }
@@ -47,7 +50,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakSearching
 
     private ItemsController<Type> _availableMethods;
 
-    public ItemsController<Type> AvailableMethods
+        /// <summary>Gets or sets the available Methods.</summary>
+    /// <value>The available Methods.</value>
+public ItemsController<Type> AvailableMethods
     {
       get => _availableMethods;
       set
@@ -63,7 +68,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakSearching
 
     private IMVCANController? _subController;
 
-    public IMVCANController? SubController
+        /// <summary>Gets or sets the sub Controller.</summary>
+    /// <value>The sub Controller.</value>
+public IMVCANController? SubController
     {
       get => _subController;
       set
@@ -81,7 +88,8 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakSearching
     #endregion
 
 
-    protected override void Initialize(bool initData)
+        /// <inheritdoc />
+protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
@@ -122,7 +130,8 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakSearching
       CreateSubController();
     }
 
-    public override bool Apply(bool disposeController)
+        /// <inheritdoc />
+public override bool Apply(bool disposeController)
     {
       if (SubController is not null)
       {
@@ -140,7 +149,8 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakSearching
 
     class TypeSorter : IComparer<Type>
     {
-      public int Compare(Type x, Type y)
+            /// <inheritdoc />
+public int Compare(Type x, Type y)
       {
         var xn = x.Name.EndsWith("None");
         var yn = y.Name.EndsWith("None");

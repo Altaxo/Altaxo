@@ -38,16 +38,28 @@ using AUL = Altaxo.Units.Length;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="CardinalSplinePointsController"/>.
+  /// </summary>
   public interface ICardinalSplinePointsView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for editing cardinal spline points and tension.
+  /// </summary>
   [ExpectedTypeOfView(typeof(ICardinalSplinePointsView))]
   public class CardinalSplinePointsController : MVCANControllerEditImmutableDocBase<(List<PointD2D> CurvePoints, double Tension), ICardinalSplinePointsView>
   {
     GraphicBase _documentNode;
 
-    public CardinalSplinePointsController( List<PointD2D> curvePoints, double tension, GraphicBase documentNode)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CardinalSplinePointsController"/> class.
+    /// </summary>
+    /// <param name="curvePoints">The curve points.</param>
+    /// <param name="tension">The spline tension.</param>
+    /// <param name="documentNode">The owning document node.</param>
+    public CardinalSplinePointsController(List<PointD2D> curvePoints, double tension, GraphicBase documentNode)
     {
       _documentNode = documentNode;
       _doc = (curvePoints, tension);
@@ -63,6 +75,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       CmdPasteCurvePointsAsLogical = new RelayCommand(EhCurvePointsPasteLogicalTriggered);
     }
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -70,17 +83,41 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the command that copies the curve points.
+    /// </summary>
     public ICommand CmdCopyCurvePoints { get; }
+    /// <summary>
+    /// Gets the command that pastes the curve points.
+    /// </summary>
     public ICommand CmdPasteCurvePoints { get; }
+    /// <summary>
+    /// Gets the command that copies the curve points as physical coordinates.
+    /// </summary>
     public ICommand CmdCopyCurvePointsAsPhysical { get; }
+    /// <summary>
+    /// Gets the command that pastes the curve points as physical coordinates.
+    /// </summary>
     public ICommand CmdPasteCurvePointsAsPhysical { get; }
+    /// <summary>
+    /// Gets the command that copies the curve points as logical coordinates.
+    /// </summary>
     public ICommand CmdCopyCurvePointsAsLogical { get; }
+    /// <summary>
+    /// Gets the command that pastes the curve points as logical coordinates.
+    /// </summary>
     public ICommand CmdPasteCurvePointsAsLogical { get; }
 
+    /// <summary>
+    /// Gets the environment for the spline tension.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment TensionEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _tension;
 
+    /// <summary>
+    /// Gets or sets the spline tension.
+    /// </summary>
     public DimensionfulQuantity Tension
     {
       get => _tension;
@@ -96,6 +133,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private ObservableCollection<PointD2DClass> _curvePointsEditable=new ObservableCollection<PointD2DClass>();
 
+    /// <summary>
+    /// Gets or sets the editable collection of curve points.
+    /// </summary>
     public ObservableCollection<PointD2DClass> CurvePointsEditable
     {
       get => _curvePointsEditable;
@@ -129,6 +169,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       _doc = (CurvePoints, Tension.AsValueInSIUnits);
@@ -399,22 +440,40 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     #region Editable Curve Points
 
+    /// <summary>
+    /// Represents the PointD2DClass.
+    /// </summary>
     public class PointD2DClass : System.ComponentModel.IEditableObject
     {
+      /// <summary>
+      /// Initializes a new instance.
+      /// </summary>
       public PointD2DClass()
       {
       }
 
+      /// <summary>
+      /// Initializes a new instance.
+      /// </summary>
       public PointD2DClass(PointD2D p)
       {
         X = p.X;
         Y = p.Y;
       }
 
+      /// <summary>
+      /// Gets or sets the x.
+      /// </summary>
       public double X { get; set; }
 
+      /// <summary>
+      /// Gets or sets the y.
+      /// </summary>
       public double Y { get; set; }
 
+      /// <summary>
+      /// Provides access to this member.
+      /// </summary>
       public DimensionfulQuantity XQuantity
       {
         get
@@ -427,6 +486,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         }
       }
 
+      /// <summary>
+      /// Provides access to this member.
+      /// </summary>
       public DimensionfulQuantity YQuantity
       {
         get
@@ -439,14 +501,23 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         }
       }
 
+      /// <summary>
+      /// Performs the b eg in ed it operation.
+      /// </summary>
       public void BeginEdit()
       {
       }
 
+      /// <summary>
+      /// Gets a value indicating whether c el ed it.
+      /// </summary>
       public void CancelEdit()
       {
       }
 
+      /// <summary>
+      /// Performs the e nd ed it operation.
+      /// </summary>
       public void EndEdit()
       {
       }

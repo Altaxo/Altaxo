@@ -35,6 +35,9 @@ namespace Altaxo.Serialization
   /// </summary>
   public static class FileIOHelper
   {
+    /// <summary>
+    /// Maps invalid file-name characters to replacement characters.
+    /// </summary>
     public static ImmutableDictionary<char, char> InvalidFileNameChars = new Dictionary<char, char>()
     {
       [(char)0x00] = (char)0xF001,

@@ -31,14 +31,21 @@ using Altaxo.Graph.Gdi.Plot.ColorProvider;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 {
+  /// <summary>
+  /// View contract for editing a visible-light-spectrum color provider.
+  /// </summary>
   public interface IVisibleLightSpectrumView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for editing <see cref="VisibleLightSpectrum"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IVisibleLightSpectrumView))]
   [UserControllerForObject(typeof(VisibleLightSpectrum), 110)]
   public class VisibleLightSpectrumController : MVCANDControllerEditImmutableDocBase<VisibleLightSpectrum, IVisibleLightSpectrumView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_baseController, () => _baseController = null);
@@ -48,6 +55,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 
     private ColorProviderBaseController _baseController;
 
+    /// <summary>
+    /// Gets or sets the base controller.
+    /// </summary>
     public ColorProviderBaseController BaseController
     {
       get => _baseController;
@@ -65,6 +75,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 
     private decimal _brightness;
 
+    /// <summary>
+    /// Gets or sets the brightness.
+    /// </summary>
     public decimal Brightness
     {
       get => _brightness;
@@ -80,6 +93,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
     }
     private decimal _gamma;
 
+    /// <summary>
+    /// Gets or sets the gamma value.
+    /// </summary>
     public decimal Gamma
     {
       get => _gamma;
@@ -97,6 +113,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -111,6 +128,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (!_baseController.Apply(disposeController))

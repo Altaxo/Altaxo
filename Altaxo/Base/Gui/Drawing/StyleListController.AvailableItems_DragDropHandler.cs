@@ -36,10 +36,17 @@ namespace Altaxo.Gui.Drawing
 where TList : IStyleList<TItem>
 where TManager : IStyleListManager<TList, TItem>
   {
+    /// <summary>
+    /// Handles drag-and-drop interactions originating from the available-items list.
+    /// </summary>
     public class AvailableItems_DragDropHandler : IMVVMDragDropHandler
     {
       StyleListController<TManager, TList, TItem> _parent;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="AvailableItems_DragDropHandler"/> class.
+      /// </summary>
+      /// <param name="parent">The owning style-list controller.</param>
       public AvailableItems_DragDropHandler(StyleListController<TManager, TList, TItem> parent)
       {
         _parent = parent ?? throw new ArgumentNullException(nameof(parent));
@@ -47,15 +54,18 @@ where TManager : IStyleListManager<TList, TItem>
 
       #region Drag Available items
 
+      /// <inheritdoc/>
       public void DragCancelled()
       {
       }
 
       
+      /// <inheritdoc/>
       public void DragEnded(bool isCopy, bool isMove)
       {
       }
 
+      /// <inheritdoc/>
       public void StartDrag(IEnumerable items, out object data, out bool canCopy, out bool canMove)
       { 
         var node = items.OfType<SelectableListNode>().FirstOrDefault();
@@ -67,6 +77,7 @@ where TManager : IStyleListManager<TList, TItem>
         
       }
 
+      /// <inheritdoc/>
       public bool CanStartDrag(IEnumerable items)
       {
         var selNode = items.OfType<SelectableListNode>().FirstOrDefault();
@@ -78,6 +89,7 @@ where TManager : IStyleListManager<TList, TItem>
 
       #region Drop onto available items
 
+      /// <inheritdoc/>
       public void DropCanAcceptData(object data, object targetItem, DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool canCopy, out bool canMove, out bool itemIsSwallowingData)
       {
         // when dropping onto available items, it's only purpose is to remove some items from the current item lists
@@ -88,6 +100,7 @@ where TManager : IStyleListManager<TList, TItem>
         itemIsSwallowingData = false;
       }
 
+      /// <inheritdoc/>
       public void Drop(object data, object targetItem, DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool isCopy, out bool isMove)
       {
         // when dropping onto available items, it's only purpose is to remove some items from the item lists

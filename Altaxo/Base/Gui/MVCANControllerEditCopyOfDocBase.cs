@@ -202,19 +202,18 @@ namespace Altaxo.Gui
     }
 
 
-    /// <summary>
-    /// Sets whether or not a copy of the document is used. If set to <c>true</c>, a copy of the document is used, so if the controller is not applied,
-    /// all changes can be reverted. If set to <c>false</c>, no copy must be made. The document is directly changed by the controller, and changes can not be reverted.
-    /// Use the last option if a controller up in the hierarchy has already made a copy of the document.
-    /// </summary>
+    /// <inheritdoc/>
+    /// <remarks>
+    /// If set to <see cref="UseDocument.Copy"/>, a copy of the document is used, so changes can be reverted if the controller is not applied.
+    /// If set to <see cref="UseDocument.Directly"/>, no copy is made. The document is changed directly by the controller, and changes cannot be reverted.
+    /// Use the last option if a controller higher in the hierarchy has already made a copy of the document.
+    /// </remarks>
     public UseDocument UseDocumentCopy
     {
       set { _useDocumentCopy = value == UseDocument.Copy; }
     }
 
-    /// <summary>
-    /// Gets or sets the GUI element that shows the model to the user.
-    /// </summary>
+    /// <inheritdoc/>
     public virtual object? ViewObject
     {
       get
@@ -242,9 +241,7 @@ namespace Altaxo.Gui
       }
     }
 
-    /// <summary>
-    /// Gets the document that this controller has edited. Here the state of the document has changed only after calling <see cref="Apply(bool)"/>.
-    /// </summary>
+    /// <inheritdoc/>
     public virtual object ModelObject
     {
       get

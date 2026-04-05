@@ -36,6 +36,9 @@ namespace Altaxo.AddInItems
     private Version? _primaryVersion;
     private string? _primaryIdentity;
 
+    /// <summary>
+    /// Gets the primary identity of the add-in.
+    /// </summary>
     public string? PrimaryIdentity
     {
       get
@@ -44,6 +47,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Gets the primary version of the add-in.
+    /// </summary>
     public Version? PrimaryVersion
     {
       get
@@ -52,6 +58,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Gets the declared identities.
+    /// </summary>
     public Dictionary<string, Version> Identities
     {
       get
@@ -60,6 +69,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Gets the add-in dependencies.
+    /// </summary>
     public ReadOnlyCollection<AddInReference> Dependencies
     {
       get
@@ -68,6 +80,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Gets the conflicting add-ins.
+    /// </summary>
     public ReadOnlyCollection<AddInReference> Conflicts
     {
       get
@@ -99,6 +114,9 @@ namespace Altaxo.AddInItems
       _identities.Add(name, v);
     }
 
+    /// <summary>
+    /// Reads the manifest section from XML.
+    /// </summary>
     public void ReadManifestSection(XmlReader reader, string? hintPath)
     {
       if (reader.AttributeCount != 0)

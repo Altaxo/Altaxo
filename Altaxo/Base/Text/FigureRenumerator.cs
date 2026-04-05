@@ -36,6 +36,9 @@ using Markdig.Syntax.Inlines;
 
 namespace Altaxo.Text
 {
+  /// <summary>
+  /// Provides helpers for renumbering figures and figure references in markdown documents.
+  /// </summary>
   public static class FigureRenumerator
   {
     /// <summary>

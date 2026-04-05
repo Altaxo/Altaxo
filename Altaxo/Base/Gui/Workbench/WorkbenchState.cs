@@ -37,18 +37,25 @@ namespace Altaxo.Gui.Workbench
   /// </summary>
   public class WorkbenchState
   {
+    /// <summary>
+    /// Gets or sets the window bounds of the workbench.
+    /// </summary>
     public RectangleD2D Bounds { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the workbench window is maximized.
+    /// </summary>
     public bool IsMaximized { get; set; }
 
     #region Serialization
 
     /// <summary>
-    ///
+    /// XML serialization surrogate for the legacy workbench state format.
     /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoSDGui", "Altaxo.Gui.Workbench.AltaxoWorkbench+WorkbenchState", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
@@ -60,6 +67,7 @@ namespace Altaxo.Gui.Workbench
                 */
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = o as WorkbenchState ?? new WorkbenchState();
@@ -71,11 +79,15 @@ namespace Altaxo.Gui.Workbench
     }
 
     /// <summary>
-    /// 2017-12-02 Moved to new assembly (AltaxoState). WindowState replaced by boolean IsMaximized
+    /// XML serialization surrogate for the current workbench state format.
     /// </summary>
+    /// <remarks>
+    /// 2017-12-02 Moved to new assembly (AltaxoState). WindowState replaced by boolean IsMaximized.
+    /// </remarks>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WorkbenchState), 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (WorkbenchState)obj;
@@ -84,6 +96,7 @@ namespace Altaxo.Gui.Workbench
         info.AddValue("IsMaximized", s.IsMaximized);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = o as WorkbenchState ?? new WorkbenchState();

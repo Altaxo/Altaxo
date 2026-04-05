@@ -31,7 +31,7 @@ using Altaxo.Gui.Worksheet.Viewing;
 namespace Altaxo.Worksheet.Commands
 {
   /// <summary>
-  /// Summary description for EditCommands.
+  /// Contains worksheet edit commands.
   /// </summary>
   public class EditCommands
   {
@@ -138,7 +138,7 @@ namespace Altaxo.Worksheet.Commands
     }
 
     /// <summary>
-    /// This commands clean all selected cells.
+    /// Cleans all selected cells.
     /// </summary>
     /// <param name="ctrl">The worksheet controller.</param>
     public static void CleanSelected(IWorksheetController ctrl)
@@ -278,6 +278,10 @@ namespace Altaxo.Worksheet.Commands
       }
     }
 
+    /// <summary>
+    /// Copies the current worksheet selection to the clipboard.
+    /// </summary>
+    /// <param name="dg">The worksheet controller.</param>
     public static void CopyToClipboard(IWorksheetController dg)
     {
       Altaxo.Data.DataTable dt = dg.DataTable;
@@ -789,6 +793,11 @@ namespace Altaxo.Worksheet.Commands
       }
     }
 
+    /// <summary>
+    /// Pastes source-table rows into the currently selected destination columns.
+    /// </summary>
+    /// <param name="dg">The destination worksheet controller.</param>
+    /// <param name="sourcetable">The source table.</param>
     protected static void PasteFromTableRowsToSelectedColumns(IWorksheetController dg, Altaxo.Data.DataTable sourcetable)
     {
       PasteFromTableColumnsToSelectedRows(dg, sourcetable);
@@ -922,6 +931,10 @@ namespace Altaxo.Worksheet.Commands
       return columnmap;
     }
 
+    /// <summary>
+    /// Gets a table representation from the clipboard, if available.
+    /// </summary>
+    /// <returns>The table read from the clipboard, or <see langword="null"/> if no table data are available.</returns>
     public static DataTable? GetTableFromClipboard()
     {
       var dao = Current.Gui.OpenClipboardDataObject();
@@ -951,6 +964,10 @@ namespace Altaxo.Worksheet.Commands
       return table;
     }
 
+    /// <summary>
+    /// Pastes table data from the clipboard into the worksheet.
+    /// </summary>
+    /// <param name="dg">The worksheet controller.</param>
     public static void PasteFromClipboard(IWorksheetController dg)
     {
       var table = GetTableFromClipboard();

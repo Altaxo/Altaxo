@@ -36,12 +36,18 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 {
   #region Interfaces
 
+  /// <summary>
+  /// Provides the view contract for <see cref="BarGraphPlotStyleController"/>.
+  /// </summary>
   public interface IBarGraphPlotStyleView : IDataContextAwareView
   {
   }
 
   #endregion Interfaces
 
+  /// <summary>
+  /// Controller for <see cref="BarGraphPlotStyle"/>.
+  /// </summary>
   [UserControllerForObject(typeof(BarGraphPlotStyle))]
   [ExpectedTypeOfView(typeof(IBarGraphPlotStyleView))]
   public class BarGraphPlotStyleController : MVCANControllerEditOriginalDocBase<BarGraphPlotStyle, IBarGraphPlotStyleView>
@@ -49,6 +55,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     /// <summary>Tracks the presence of a color group style in the parent collection.</summary>
     private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -58,6 +65,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _independentColor;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether this instance has independent color.
+    /// </summary>
+    /// <value><c>true</c> if this instance has independent color; otherwise, <c>false</c>.</value>
     public bool IndependentColor
     {
       get => _independentColor;
@@ -74,6 +85,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private PenAllPropertiesController _penController;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public PenAllPropertiesController PenController
     {
       get => _penController;
@@ -89,6 +103,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _useUniformCrossSectionThickness;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether [use uniform cross section thickness].
+    /// </summary>
+    /// <value><c>true</c> if [use uniform cross section thickness]; otherwise, <c>false</c>.</value>
     public bool UseUniformCrossSectionThickness
     {
       get => _useUniformCrossSectionThickness;
@@ -104,6 +122,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private ItemsController<BarShiftStrategy3D> _barShiftStrategy;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public ItemsController<BarShiftStrategy3D> BarShiftStrategy
     {
       get => _barShiftStrategy;
@@ -119,6 +140,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _isEnabledNumberOfBarsInOneDirection;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether [is enabled number of bars in one direction].
+    /// </summary>
+    /// <value><c>true</c> if [is enabled number of bars in one direction]; otherwise, <c>false</c>.</value>
     public bool IsEnabledNumberOfBarsInOneDirection
     {
       get => _isEnabledNumberOfBarsInOneDirection;
@@ -135,6 +160,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private int _barShiftMaxItemsInOneDirection;
 
+    /// <summary>
+    /// Gets or sets the maximum number of items in one direction for bar shift.
+    /// </summary>
+    /// <value>The maximum number of items in one direction for bar shift.</value>
     public int BarShiftMaxItemsInOneDirection
     {
       get => _barShiftMaxItemsInOneDirection;
@@ -149,12 +178,18 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
 
 
+    /// <summary>
+    /// Gets or sets the g ap en vi ro nm en t.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment GapEnvironment => RelationEnvironment.Instance;
 
 
 
     private DimensionfulQuantity _innerGapX;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity InnerGapX
     {
       get => _innerGapX;
@@ -170,6 +205,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private DimensionfulQuantity _outerGapX;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity OuterGapX
     {
       get => _outerGapX;
@@ -184,6 +222,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
     private DimensionfulQuantity _innerGapY;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity InnerGapY
     {
       get => _innerGapY;
@@ -198,6 +239,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
     private DimensionfulQuantity _outerGapY;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity OuterGapY
     {
       get => _outerGapY;
@@ -213,6 +257,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _usePhysicalBaseValueV;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool UsePhysicalBaseValueV
     {
       get => _usePhysicalBaseValueV;
@@ -226,10 +273,16 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the l og ic al ba se va lu ev en vi ro nm en t.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment LogicalBaseValueVEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _logicalBaseValueV;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity LogicalBaseValueV
     {
       get => _logicalBaseValueV;
@@ -246,6 +299,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _startAtPreviousItem;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether [start at previous item].
+    /// </summary>
+    /// <value><c>true</c> if [start at previous item]; otherwise, <c>false</c>.</value>
     public bool StartAtPreviousItem
     {
       get => _startAtPreviousItem;
@@ -259,10 +316,16 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the g ap ve nv ir on me nt.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment GapVEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _gapV;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity GapV
     {
       get => _gapV;
@@ -282,6 +345,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -315,6 +379,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       _doc.IndependentColor = IndependentColor;

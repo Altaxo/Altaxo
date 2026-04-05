@@ -36,19 +36,30 @@ namespace Altaxo.Main.Services
   public class StatusBarService : IStatusBarService, IMVCController
   {
     private IStatusBarView? _statusBarView;
+    /// <summary>
+    /// Stores whether the status bar is currently visible.
+    /// </summary>
     protected bool _isStatusBarVisible = true;
     private bool _isDisposed;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StatusBarService"/> class.
+    /// </summary>
     public StatusBarService()
     {
 
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StatusBarService"/> class.
+    /// </summary>
+    /// <param name="statusBar">The status bar view.</param>
     public StatusBarService(IStatusBarView statusBar)
     {
       _statusBarView = statusBar ?? throw new ArgumentNullException(nameof(statusBar));
     }
 
+    /// <inheritdoc/>
     public bool IsVisible
     {
       get
@@ -63,12 +74,14 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <inheritdoc/>
     public virtual void SetRightCornerText(string text)
     {
       if (_statusBarView is { } view)
         view.ModeStatusBarPanelContent = text;
     }
 
+    /// <inheritdoc/>
     public virtual void SetCaretPosition(int x, int y, int charOffset)
     {
       if (_statusBarView is { } view)
@@ -82,6 +95,7 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <inheritdoc/>
     public void SetSelectionSingle(int length)
     {
       if (_statusBarView is { } view)
@@ -99,6 +113,7 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <inheritdoc/>
     public void SetSelectionMulti(int rows, int cols)
     {
       if (_statusBarView is { } view)
@@ -118,12 +133,14 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <inheritdoc/>
     public void SetInsertMode(bool insertMode)
     {
       if (_statusBarView is { } view)
         view.ModeStatusBarPanelContent = insertMode ? StringParser.Parse("${res:StatusBarService.CaretModes.Insert}") : StringParser.Parse("${res:StatusBarService.CaretModes.Overwrite}");
     }
 
+    /// <inheritdoc/>
     public void SetMessage(string message, bool highlighted, object? icon)
     {
       if (_statusBarView is { } view)
@@ -141,6 +158,7 @@ namespace Altaxo.Main.Services
         throw new ObjectDisposedException(this.GetType().Name);
     }
 
+    /// <inheritdoc/>
     public IProgressReporter CreateProgressReporter(CancellationToken cancellationToken = default(CancellationToken))
     {
       var progress = new ExternalDrivenBackgroundMonitor() { ShouldSetShouldReportAutomatically = true };
@@ -148,6 +166,7 @@ namespace Altaxo.Main.Services
       return progress.GetProgressReporter();
     }
 
+    /// <inheritdoc/>
     public void AddProgress(IProgressMonitor progress)
     {
       if (progress is null)
@@ -203,6 +222,7 @@ namespace Altaxo.Main.Services
 
     #region IMVCController
 
+    /// <inheritdoc/>
     public object? ViewObject
     {
       get
@@ -222,8 +242,10 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <inheritdoc/>
     public object ModelObject { get { return new object(); } }
 
+    /// <inheritdoc/>
     public virtual void Dispose()
     {
       _isDisposed = true;

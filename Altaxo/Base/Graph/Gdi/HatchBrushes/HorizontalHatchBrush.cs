@@ -32,6 +32,9 @@ using Altaxo.Drawing;
 
 namespace Altaxo.Graph.Gdi.HatchBrushes
 {
+  /// <summary>
+  /// Represents a horizontal hatch brush texture.
+  /// </summary>
   public class HorizontalHatchBrush : HatchBrushBase
   {
     #region Serialization
@@ -55,6 +58,7 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
 
     #endregion Serialization
 
+    /// <inheritdoc />
     protected override Image GetImage(double maxEffectiveResolutionDpi, NamedColor foreColor, NamedColor backColor)
     {
       int pixelDim = GetPixelDimensions(maxEffectiveResolutionDpi);

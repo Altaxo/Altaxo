@@ -38,8 +38,17 @@ namespace Altaxo.Main
   [Serializable]
   public sealed class AbsoluteDocumentPath : System.ICloneable
   {
+    /// <summary>
+    /// An empty string array used for initialization.
+    /// </summary>
     private static readonly string[] _emptyStringArray = new string[0];
+    /// <summary>
+    /// The document path of the root node.
+    /// </summary>
     public static readonly AbsoluteDocumentPath DocumentPathOfRootNode = new AbsoluteDocumentPath(new string[0]);
+    /// <summary>
+    /// The parts of the path.
+    /// </summary>
     private string[] _pathParts = _emptyStringArray;
 
     #region Serialization
@@ -47,6 +56,7 @@ namespace Altaxo.Main
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Main.DocumentPath", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version not supported");
@@ -62,6 +72,7 @@ namespace Altaxo.Main
                  */
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var isAbsolutePath = info.GetBoolean("IsAbsolute");
@@ -99,6 +110,7 @@ namespace Altaxo.Main
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AbsoluteDocumentPath), 0)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (AbsoluteDocumentPath)obj;
@@ -109,6 +121,7 @@ namespace Altaxo.Main
         info.CommitArray();
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         int count = info.OpenArray();
@@ -131,17 +144,30 @@ namespace Altaxo.Main
       _pathParts = arr;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AbsoluteDocumentPath"/> class from an enumeration of path parts.
+    /// </summary>
+    /// <param name="path">The path parts.</param>
     public AbsoluteDocumentPath(IEnumerable<string> path)
     {
       _pathParts = path.ToArray();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AbsoluteDocumentPath"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public AbsoluteDocumentPath(AbsoluteDocumentPath from)
     {
       _pathParts = (string[])from._pathParts.Clone();
     }
 
 
+    /// <summary>
+    /// Creates an absolute document path from its string representation.
+    /// </summary>
+    /// <param name="pathString">The path string.</param>
+    /// <returns>The parsed absolute document path.</returns>
     public static AbsoluteDocumentPath FromPathString(string pathString)
     {
       if (string.IsNullOrEmpty(pathString))
@@ -153,10 +179,17 @@ namespace Altaxo.Main
       return new AbsoluteDocumentPath(pathString[1..].Split('/'));
     }
 
+    /// <summary>
+    /// Gets the number of path parts.
+    /// </summary>
     public int Count { get { return _pathParts.Length; } }
 
+    /// <summary>
+    /// Gets the path part at the specified index.
+    /// </summary>
     public string this[int idx] { get { return _pathParts[idx]; } }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       var stringBuilder = new System.Text.StringBuilder(128);
@@ -173,6 +206,7 @@ namespace Altaxo.Main
       return stringBuilder.ToString();
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       if (!(obj is AbsoluteDocumentPath from))
@@ -188,11 +222,17 @@ namespace Altaxo.Main
       return true;
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return ToString().GetHashCode();
     }
 
+    /// <summary>
+    /// Determines whether this path starts with the specified path.
+    /// </summary>
+    /// <param name="another">The candidate prefix path.</param>
+    /// <returns><c>true</c> if this path starts with <paramref name="another"/>; otherwise, <c>false</c>.</returns>
     public bool StartsWith(AbsoluteDocumentPath another)
     {
       if (Count < another.Count)
@@ -205,6 +245,12 @@ namespace Altaxo.Main
       return true;
     }
 
+    /// <summary>
+    /// Returns a subpath.
+    /// </summary>
+    /// <param name="start">The zero-based index of the first path part.</param>
+    /// <param name="count">The number of path parts.</param>
+    /// <returns>The extracted subpath.</returns>
     public AbsoluteDocumentPath SubPath(int start, int count)
     {
       if (!(start >= 0))
@@ -267,6 +313,11 @@ namespace Altaxo.Main
       }
     }
 
+    /// <summary>
+    /// Appends another absolute document path.
+    /// </summary>
+    /// <param name="other">The path to append.</param>
+    /// <returns>The combined path.</returns>
     public AbsoluteDocumentPath Append(AbsoluteDocumentPath other)
     {
       if (other is null)
@@ -279,6 +330,11 @@ namespace Altaxo.Main
       return new AbsoluteDocumentPath(arr);
     }
 
+    /// <summary>
+    /// Appends a single path part.
+    /// </summary>
+    /// <param name="other">The path part to append.</param>
+    /// <returns>The combined path.</returns>
     public AbsoluteDocumentPath Append(string other)
     {
       if (other is null)
@@ -413,11 +469,11 @@ namespace Altaxo.Main
     }
 
     /// <summary>
-    /// Get the first parent node of the node <code>node</code> that implements the given type <code>type.</code>.
+    /// Gets the first parent node of <paramref name="node"/> that implements <typeparamref name="T"/>.
     /// </summary>
     /// <typeparam name="T">The type to search for.</typeparam>
     /// <param name="node">The node from where the search begins.</param>
-    /// <returns>The first parental node that implements the type <code>T</code>.</returns>
+    /// <returns>The first parent node that implements <typeparamref name="T"/>, or the default value if none was found.</returns>
     [return: MaybeNull]
     public static T GetRootNodeImplementing<T>(IDocumentLeafNode? node)
     {
@@ -506,6 +562,12 @@ namespace Altaxo.Main
       return new AbsoluteDocumentPath(list.TakeFromUpperIndexExclusiveDownToLowerIndexInclusive(list.Count, 0));
     }
 
+    /// <summary>
+    /// Gets the string representation of the path of the specified node.
+    /// </summary>
+    /// <param name="node">The node whose path should be returned.</param>
+    /// <param name="maxDepth">The maximum hierarchy depth to include.</param>
+    /// <returns>The string representation of the resolved path.</returns>
     public static string GetPathString(IDocumentLeafNode node, int maxDepth)
     {
       return GetPath(node, maxDepth).ToString();
@@ -528,6 +590,12 @@ namespace Altaxo.Main
       return retval;
     }
 
+    /// <summary>
+    /// Resolves the specified path starting from the root node of <paramref name="startnode"/>.
+    /// </summary>
+    /// <param name="path">The path to resolve.</param>
+    /// <param name="startnode">The node object considered as the starting point.</param>
+    /// <returns>The resolved object, or <see langword="null"/> if resolution failed.</returns>
     public static IDocumentLeafNode? GetObject(AbsoluteDocumentPath path, IDocumentLeafNode startnode)
     {
       if (path is null)
@@ -619,6 +687,10 @@ namespace Altaxo.Main
       return new AbsoluteDocumentPath(this);
     }
 
+    /// <summary>
+    /// Creates a copy of this path.
+    /// </summary>
+    /// <returns>A cloned <see cref="AbsoluteDocumentPath"/> instance.</returns>
     public AbsoluteDocumentPath Clone()
     {
       return new AbsoluteDocumentPath(this);

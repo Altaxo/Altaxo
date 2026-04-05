@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Altaxo.Calc.LinearAlgebra.Double.Factorization;
@@ -8,15 +8,22 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Analysis.Multivariate
 {
+  /// <summary>
+  /// Defines the view contract for editing nonnegative matrix-factorization settings.
+  /// </summary>
   public interface INonnegativeMatrixFactorizationBaseView : IDataContextAwareView
   {
 
   }
 
+  /// <summary>
+  /// Controller for <see cref="NonnegativeMatrixFactorizationBase"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(INonnegativeMatrixFactorizationBaseView))]
   [UserControllerForObject(typeof(NonnegativeMatrixFactorizationBase))]
   public class NonnegativeMatrixFactorizationBaseController : MVCANControllerEditImmutableDocBase<NonnegativeMatrixFactorizationBase, INonnegativeMatrixFactorizationBaseView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -25,6 +32,9 @@ namespace Altaxo.Gui.Analysis.Multivariate
     #region Bindings
 
 
+    /// <summary>
+    /// Gets or sets the available initialization methods.
+    /// </summary>
     public ItemsController<System.Type> InitializationMethod
     {
       get => field;
@@ -41,6 +51,9 @@ namespace Altaxo.Gui.Analysis.Multivariate
 
 
 
+    /// <summary>
+    /// Gets or sets the maximum number of iterations.
+    /// </summary>
     public int MaximumNumberOfIterations
     {
       get => field;
@@ -55,6 +68,9 @@ namespace Altaxo.Gui.Analysis.Multivariate
     }
 
 
+    /// <summary>
+    /// Gets or sets the number of additional trials.
+    /// </summary>
     public int NumberOfAdditionalTrials
     {
       get => field;
@@ -69,6 +85,9 @@ namespace Altaxo.Gui.Analysis.Multivariate
     }
 
 
+    /// <summary>
+    /// Gets or sets the convergence tolerance.
+    /// </summary>
     public double Tolerance
     {
       get => field;
@@ -83,6 +102,9 @@ namespace Altaxo.Gui.Analysis.Multivariate
     }
 
 
+    /// <summary>
+    /// Gets or sets the regularization value for H.
+    /// </summary>
     public double LambdaH
     {
       get => field;
@@ -97,6 +119,9 @@ namespace Altaxo.Gui.Analysis.Multivariate
     }
 
 
+    /// <summary>
+    /// Gets or sets the regularization value for W.
+    /// </summary>
     public double LambdaW
     {
       get => field;
@@ -111,6 +136,9 @@ namespace Altaxo.Gui.Analysis.Multivariate
     }
 
 
+    /// <summary>
+    /// Gets or sets a value indicating whether regularization controls are visible.
+    /// </summary>
     public bool AreLambdasVisible
     {
       get => field;
@@ -128,6 +156,7 @@ namespace Altaxo.Gui.Analysis.Multivariate
 
     #endregion Bindings
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -155,6 +184,7 @@ namespace Altaxo.Gui.Analysis.Multivariate
     }
 
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       var initializationMethod = (INonnegativeMatrixFactorizationInitializer)Activator.CreateInstance(InitializationMethod.SelectedValue);

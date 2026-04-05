@@ -52,13 +52,16 @@ namespace Altaxo.Text
     private double _bodyTextFontSize = 15;
 
     /// <summary>
-    /// Set this field to true if the Maml is indended to be used in a Help1 file.
+    /// Set this field to true if the MAML is intended to be used in a Help1 file.
     /// In such a file, the placement of images with align="middle" differs from HTML rendering
     /// (the text baseline is aligned with the middle of the image,
     /// whereas in HTML the middle of the text is aligned with the middle of the image).
     /// </summary>
     public bool IsIntendedForHtmlHelp1File { get; set; } = true;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether HTML escaping is enabled.
+    /// </summary>
     public bool EnableHtmlEscape { get; set; } = true;
 
     /// <summary>
@@ -82,6 +85,7 @@ namespace Altaxo.Text
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MamlExportOptions), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (MamlExportOptions)obj;
@@ -107,6 +111,12 @@ namespace Altaxo.Text
         info.AddValue("RenumerateFigures", s.RenumerateFigures);
       }
 
+      /// <summary>
+      /// Deserializes into an existing <see cref="MamlExportOptions"/> instance.
+      /// </summary>
+      /// <param name="s">The target instance.</param>
+      /// <param name="info">The deserialization info.</param>
+      /// <param name="parent">The parent object.</param>
       public void Deserialize(MamlExportOptions s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         s.SplitLevel = info.GetInt32("SplitLevel");
@@ -131,6 +141,7 @@ namespace Altaxo.Text
           s.RenumerateFigures = info.GetBoolean("RenumerateFigures");
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (MamlExportOptions?)o ?? new MamlExportOptions();
@@ -141,6 +152,7 @@ namespace Altaxo.Text
 
     #endregion "Serialization"
 
+    /// <inheritdoc />
     public object Clone()
     {
       return MemberwiseClone();
@@ -279,7 +291,7 @@ namespace Altaxo.Text
     /// Given the folder where the markdown file resides, this gets the full folder name of the image folder.
     /// </summary>
     /// <param name="markdownPathName">Name of the folder of the markdown file.</param>
-    /// <returns>Full folder name of the image folder</returns>
+    /// <returns>Full folder name of the image folder.</returns>
     private string GetImagePath(string markdownPathName)
     {
       return Path.Combine(markdownPathName, ImageFolderName);
@@ -288,7 +300,7 @@ namespace Altaxo.Text
     /// <summary>
     /// Gets the output file by showing a save file dialog.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A tuple containing the dialog result and the selected output file name.</returns>
     public static (bool dialogResult, string outputFileName) ShowGetOutputFileDialog()
     {
       var dlg = new SaveFileOptions();
@@ -302,6 +314,9 @@ namespace Altaxo.Text
       return (dialogResult, dlg.FileName);
     }
 
+    /// <summary>
+    /// The property key for <see cref="MamlExportOptions"/>.
+    /// </summary>
     public static readonly Main.Properties.PropertyKey<MamlExportOptions> PropertyKeyMamlExportOptions =
     new Main.Properties.PropertyKey<MamlExportOptions>(
     "0E223CE7-2845-48A1-BFB1-7642849F5A3A",

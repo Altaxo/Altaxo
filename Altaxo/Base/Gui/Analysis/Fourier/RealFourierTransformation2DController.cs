@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -33,14 +33,21 @@ using Altaxo.Worksheet.Commands.Analysis;
 
 namespace Altaxo.Gui.Analysis.Fourier
 {
+  /// <summary>
+  /// Defines the view contract for editing two-dimensional real Fourier transformation options.
+  /// </summary>
   public interface IRealFourierTransformation2DView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for editing <see cref="RealFourierTransformation2DOptions"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IRealFourierTransformation2DView))]
   [UserControllerForObject(typeof(RealFourierTransformation2DOptions))]
   public class RealFourierTransformation2DController : MVCANControllerEditOriginalDocBase<RealFourierTransformation2DOptions, IRealFourierTransformation2DView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_outputQuantitiesController, () => OutputQuantitiesController = null);
@@ -50,6 +57,9 @@ namespace Altaxo.Gui.Analysis.Fourier
 
     private EnumValueController _outputQuantitiesController;
 
+    /// <summary>
+    /// Gets or sets the controller for selecting the output quantities.
+    /// </summary>
     public EnumValueController OutputQuantitiesController
     {
       get => _outputQuantitiesController;
@@ -66,6 +76,9 @@ namespace Altaxo.Gui.Analysis.Fourier
 
     private ItemsController<Type> _fourierWindowChoices;
 
+    /// <summary>
+    /// Gets or sets the available Fourier-window choices.
+    /// </summary>
     public ItemsController<Type> FourierWindowChoices
     {
       get => _fourierWindowChoices;
@@ -80,6 +93,9 @@ namespace Altaxo.Gui.Analysis.Fourier
     }
 
     bool _isUserDefinedXIncrement;
+    /// <summary>
+    /// Gets or sets a value indicating whether a custom x increment is used.
+    /// </summary>
     public bool IsUserDefinedXIncrement
     {
       get => _isUserDefinedXIncrement;
@@ -93,6 +109,9 @@ namespace Altaxo.Gui.Analysis.Fourier
       }
     }
     private double _xIncrement;
+    /// <summary>
+    /// Gets or sets the x increment.
+    /// </summary>
     public double XIncrement
     {
       get => _xIncrement;
@@ -108,6 +127,9 @@ namespace Altaxo.Gui.Analysis.Fourier
 
     private string _xIncrementWarning;
 
+    /// <summary>
+    /// Gets or sets the warning message related to the x increment.
+    /// </summary>
     public string XIncrementWarning
     {
       get => _xIncrementWarning;
@@ -123,6 +145,9 @@ namespace Altaxo.Gui.Analysis.Fourier
 
     private bool _isUserDefinedYIncrement;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether a custom y increment is used.
+    /// </summary>
     public bool IsUserDefinedYIncrement
     {
       get => _isUserDefinedYIncrement;
@@ -138,6 +163,9 @@ namespace Altaxo.Gui.Analysis.Fourier
 
     private double _yIncrement;
 
+    /// <summary>
+    /// Gets or sets the y increment.
+    /// </summary>
     public double YIncrement
     {
       get => _yIncrement;
@@ -153,6 +181,9 @@ namespace Altaxo.Gui.Analysis.Fourier
 
     private string _yIncrementWarning;
 
+    /// <summary>
+    /// Gets or sets the warning message related to the y increment.
+    /// </summary>
     public string YIncrementWarning
     {
       get => _yIncrementWarning;
@@ -169,6 +200,9 @@ namespace Altaxo.Gui.Analysis.Fourier
 
     private bool _centerFrequencies;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the frequencies are centered in the output.
+    /// </summary>
     public bool CenterFrequencies
     {
       get => _centerFrequencies;
@@ -182,10 +216,16 @@ namespace Altaxo.Gui.Analysis.Fourier
       }
     }
 
+    /// <summary>
+    /// Gets the relation environment used for dimensionless quantities.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment RelationEnvironment => Altaxo.Gui.RelationEnvironment.Instance;
 
     private DimensionfulQuantity _resultingFractionOfRowsUsed;
 
+    /// <summary>
+    /// Gets or sets the resulting fraction of rows used.
+    /// </summary>
     public DimensionfulQuantity ResultingFractionOfRowsUsed
     {
       get => _resultingFractionOfRowsUsed;
@@ -201,6 +241,9 @@ namespace Altaxo.Gui.Analysis.Fourier
 
     private DimensionfulQuantity _resultingFractionOfColumnsUsed;
 
+    /// <summary>
+    /// Gets or sets the resulting fraction of columns used.
+    /// </summary>
     public DimensionfulQuantity ResultingFractionOfColumnsUsed
     {
       get => _resultingFractionOfColumnsUsed;
@@ -216,6 +259,9 @@ namespace Altaxo.Gui.Analysis.Fourier
 
     private bool _useDataPretreatment;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether data pretreatment is applied.
+    /// </summary>
     public bool UseDataPretreatment
     {
       get => _useDataPretreatment;
@@ -232,6 +278,9 @@ namespace Altaxo.Gui.Analysis.Fourier
 
     private int _dataPretreatmentOrder;
 
+    /// <summary>
+    /// Gets or sets the polynomial order used for data pretreatment.
+    /// </summary>
     public int DataPretreatmentOrder
     {
       get => _dataPretreatmentOrder;
@@ -247,6 +296,9 @@ namespace Altaxo.Gui.Analysis.Fourier
 
     private bool _useReplacementValueForNaNMatrixElements;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether NaN matrix elements are replaced.
+    /// </summary>
     public bool UseReplacementValueForNaNMatrixElements
     {
       get => _useReplacementValueForNaNMatrixElements;
@@ -262,6 +314,9 @@ namespace Altaxo.Gui.Analysis.Fourier
 
     private double _replacementValueForNaNMatrixElements;
 
+    /// <summary>
+    /// Gets or sets the replacement value for NaN matrix elements.
+    /// </summary>
     public double ReplacementValueForNaNMatrixElements
     {
       get => _replacementValueForNaNMatrixElements;
@@ -277,6 +332,9 @@ namespace Altaxo.Gui.Analysis.Fourier
 
     private bool _useReplacementValueForInfiniteMatrixElements;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether infinite matrix elements are replaced.
+    /// </summary>
     public bool UseReplacementValueForInfiniteMatrixElements
     {
       get => _useReplacementValueForInfiniteMatrixElements;
@@ -293,6 +351,9 @@ namespace Altaxo.Gui.Analysis.Fourier
 
     private double _replacementValueForInfiniteMatrixElements;
 
+    /// <summary>
+    /// Gets or sets the replacement value for infinite matrix elements.
+    /// </summary>
     public double ReplacementValueForInfiniteMatrixElements
     {
       get => _replacementValueForInfiniteMatrixElements;
@@ -308,6 +369,9 @@ namespace Altaxo.Gui.Analysis.Fourier
 
     private bool _outputFrequencyHeaderColumns;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether frequency header columns are output.
+    /// </summary>
     public bool OutputFrequencyHeaderColumns
     {
       get => _outputFrequencyHeaderColumns;
@@ -323,6 +387,9 @@ namespace Altaxo.Gui.Analysis.Fourier
 
     private string _frequencyRowHeaderColumnName;
 
+    /// <summary>
+    /// Gets or sets the row-header column name for frequencies.
+    /// </summary>
     public string FrequencyRowHeaderColumnName
     {
       get => _frequencyRowHeaderColumnName;
@@ -338,6 +405,9 @@ namespace Altaxo.Gui.Analysis.Fourier
 
     private string _frequencyColumnHeaderColumnName;
 
+    /// <summary>
+    /// Gets or sets the column-header column name for frequencies.
+    /// </summary>
     public string FrequencyColumnHeaderColumnName
     {
       get => _frequencyColumnHeaderColumnName;
@@ -353,6 +423,9 @@ namespace Altaxo.Gui.Analysis.Fourier
 
     private bool _outputPeriodHeaderColumns;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether period header columns are output.
+    /// </summary>
     public bool OutputPeriodHeaderColumns
     {
       get => _outputPeriodHeaderColumns;
@@ -368,6 +441,9 @@ namespace Altaxo.Gui.Analysis.Fourier
 
     private string _periodRowHeaderColumnName;
 
+    /// <summary>
+    /// Gets or sets the row-header column name for periods.
+    /// </summary>
     public string PeriodRowHeaderColumnName
     {
       get => _periodRowHeaderColumnName;
@@ -383,6 +459,9 @@ namespace Altaxo.Gui.Analysis.Fourier
 
     private string _periodColumnHeaderColumnName;
 
+    /// <summary>
+    /// Gets or sets the column-header column name for periods.
+    /// </summary>
     public string PeriodColumnHeaderColumnName
     {
       get => _periodColumnHeaderColumnName;
@@ -399,6 +478,7 @@ namespace Altaxo.Gui.Analysis.Fourier
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -466,6 +546,7 @@ namespace Altaxo.Gui.Analysis.Fourier
       return fourierWindowChoices;
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
 

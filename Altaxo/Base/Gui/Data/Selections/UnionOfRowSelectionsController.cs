@@ -28,14 +28,21 @@ using Altaxo.Data.Selections;
 
 namespace Altaxo.Gui.Data.Selections
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="UnionOfRowSelectionsController"/>.
+  /// </summary>
   public interface IUnionOfRowSelectionView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for the <see cref="UnionOfRowSelections"/> row selection.
+  /// </summary>
   [UserControllerForObject(typeof(UnionOfRowSelections), 100)]
   [ExpectedTypeOfView(typeof(IUnionOfRowSelectionView))]
   public class UnionOfRowSelectionsController : MVCANControllerEditImmutableDocBase<UnionOfRowSelections, IUnionOfRowSelectionView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -45,6 +52,9 @@ namespace Altaxo.Gui.Data.Selections
 
     private bool _mergeAdjoiningSegments;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether adjoining segments should be merged.
+    /// </summary>
     public bool MergeAdjoiningSegments
     {
       get => _mergeAdjoiningSegments;
@@ -61,6 +71,7 @@ namespace Altaxo.Gui.Data.Selections
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -71,6 +82,7 @@ namespace Altaxo.Gui.Data.Selections
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       var mergeAdjoiningSegments = MergeAdjoiningSegments;

@@ -38,17 +38,22 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
   [ExpectedTypeOfView(typeof(IDensityImagePlotItemOptionView))]
   public class DataMeshPlotItemOptionController : MVCANControllerEditOriginalDocBase<DataMeshPlotItem, IDensityImagePlotItemOptionView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DataMeshPlotItemOptionController"/> class.
+    /// </summary>
     public DataMeshPlotItemOptionController()
     {
       CmdCopyImageToClipboard = new RelayCommand(EhCopyImageToClipboard);
       CmdSaveImageToDisc = new RelayCommand(EhSaveImageToDisc);
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       // base.Initialize(initData); // no base initialize because we dont want to suspend the doc (this is only a helper controller)
@@ -56,11 +61,19 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the command that copies the image to the clipboard.
+    /// </summary>
     public ICommand CmdCopyImageToClipboard { get; }
+
+    /// <summary>
+    /// Gets the command that saves the image to disk.
+    /// </summary>
     public ICommand CmdSaveImageToDisc { get; }
 
     #endregion
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       return true;

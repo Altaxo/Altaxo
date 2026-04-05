@@ -28,10 +28,14 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
 {
+  /// <summary>
+  /// Controller for <see cref="PeakFittingTogetherWithSeparateVariances"/>.
+  /// </summary>
   [UserControllerForObject(typeof(PeakFittingTogetherWithSeparateVariances))]
   [ExpectedTypeOfView(typeof(IPeakFittingSeparatelyView))]
   public class PeakFittingTogetherWithSeparateVariancesController : PeakFittingBaseController<PeakFittingTogetherWithSeparateVariances, IPeakFittingSeparatelyView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -44,6 +48,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -59,6 +64,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = _doc with

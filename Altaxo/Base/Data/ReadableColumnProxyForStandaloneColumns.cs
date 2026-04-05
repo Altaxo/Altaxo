@@ -28,6 +28,9 @@ using Altaxo.Main;
 
 namespace Altaxo.Data
 {
+  /// <summary>
+  /// Proxy for readable columns that do not belong to the document hierarchy.
+  /// </summary>
   internal class ReadableColumnProxyForStandaloneColumns : Main.SuspendableDocumentLeafNodeWithEventArgs, IReadableColumnProxy
   {
     private IReadableColumn? _column;

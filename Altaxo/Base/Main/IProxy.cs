@@ -28,14 +28,14 @@ using System;
 namespace Altaxo.Main
 {
   /// <summary>
-  /// Interface for all classes which are not proxies themselfs, but which contain references to other document nodes by using <see cref="IProxy"/>s.
+  /// Interface for classes that are not proxies themselves, but contain references to other document nodes by using <see cref="IProxy"/> instances.
   /// </summary>
   public interface IHasDocumentReferences
   {
     /// <summary>
     /// Visits the document references of this instance. All proxies that
-    /// this instance contain should be reported by the <paramref name="ReportProxies"/> function.
-    /// This function is responsible for processing of the proxies, for instance to relocated the path.
+    /// this instance contains should be reported by the <paramref name="ReportProxies"/> function.
+    /// This function is responsible for processing the proxies, for instance to relocate the path.
     /// </summary>
     /// <param name="ReportProxies">The function which is used to report the <see cref="DocNodeProxy"/> instances that are contained in this class.</param>
     void VisitDocumentReferences(Main.DocNodeProxyReporter ReportProxies);

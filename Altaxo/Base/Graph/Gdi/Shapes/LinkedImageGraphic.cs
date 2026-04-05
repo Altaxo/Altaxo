@@ -31,11 +31,20 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
+  /// <summary>
+  /// Represents an image graphic that loads its image from an external path.
+  /// </summary>
   [Serializable]
   public class LinkedImageGraphic : ImageGraphic
   {
+    /// <summary>
+    /// The path to the linked image.
+    /// </summary>
     protected string _imagePath;
 
+    /// <summary>
+    /// The cached linked image.
+    /// </summary>
     [NonSerialized()]
     protected Image? _cachedImage;
 
@@ -45,6 +54,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinkedImageGraphic), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (LinkedImageGraphic)obj;
@@ -52,6 +62,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         info.AddValue("ImagePath", s._imagePath);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (LinkedImageGraphic?)o ?? new LinkedImageGraphic(info);
@@ -66,6 +77,10 @@ namespace Altaxo.Graph.Gdi.Shapes
     #region Constructors
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinkedImageGraphic"/> class for deserialization.
+    /// </summary>
+    /// <param name="info">The deserialization info.</param>
     public LinkedImageGraphic(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
       :
@@ -73,6 +88,9 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinkedImageGraphic"/> class.
+    /// </summary>
     public LinkedImageGraphic(PointD2D graphicPosition, string ImagePath)
       : base()
     {
@@ -80,12 +98,18 @@ namespace Altaxo.Graph.Gdi.Shapes
       this.ImagePath = ImagePath;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinkedImageGraphic"/> class.
+    /// </summary>
     public LinkedImageGraphic(double posX, double posY, string ImagePath)
       :
       this(new PointD2D(posX, posY), ImagePath)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinkedImageGraphic"/> class.
+    /// </summary>
     public LinkedImageGraphic(PointD2D graphicPosition, PointD2D graphicSize, string ImagePath)
       :
       this(graphicPosition, ImagePath)
@@ -93,18 +117,27 @@ namespace Altaxo.Graph.Gdi.Shapes
       SetSize(graphicSize.X, graphicSize.X, Main.EventFiring.Suppressed);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinkedImageGraphic"/> class.
+    /// </summary>
     public LinkedImageGraphic(double posX, double posY, PointD2D graphicSize, string ImagePath)
       :
       this(new PointD2D(posX, posY), graphicSize, ImagePath)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinkedImageGraphic"/> class.
+    /// </summary>
     public LinkedImageGraphic(double posX, double posY, double width, double height, string ImagePath)
       :
       this(new PointD2D(posX, posY), new PointD2D(width, height), ImagePath)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinkedImageGraphic"/> class.
+    /// </summary>
     public LinkedImageGraphic(PointD2D graphicPosition, double Rotation, string ImagePath)
       :
       this(graphicPosition, ImagePath)
@@ -112,12 +145,18 @@ namespace Altaxo.Graph.Gdi.Shapes
       this.Rotation = Rotation;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinkedImageGraphic"/> class.
+    /// </summary>
     public LinkedImageGraphic(double posX, double posY, double Rotation, string ImagePath)
       :
       this(new PointD2D(posX, posY), Rotation, ImagePath)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinkedImageGraphic"/> class.
+    /// </summary>
     public LinkedImageGraphic(PointD2D graphicPosition, PointD2D graphicSize, double Rotation, string ImagePath)
       :
       this(graphicPosition, Rotation, ImagePath)
@@ -125,18 +164,28 @@ namespace Altaxo.Graph.Gdi.Shapes
       SetSize(graphicSize.X, graphicSize.X, Main.EventFiring.Suppressed);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinkedImageGraphic"/> class.
+    /// </summary>
     public LinkedImageGraphic(double posX, double posY, PointD2D graphicSize, double Rotation, string ImagePath)
       :
       this(new PointD2D(posX, posY), graphicSize, Rotation, ImagePath)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinkedImageGraphic"/> class.
+    /// </summary>
     public LinkedImageGraphic(double posX, double posY, double width, double height, double Rotation, string ImagePath)
       :
       this(new PointD2D(posX, posY), new PointD2D(width, height), Rotation, ImagePath)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinkedImageGraphic"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public LinkedImageGraphic(LinkedImageGraphic from)
       :
       base(from)
@@ -144,6 +193,11 @@ namespace Altaxo.Graph.Gdi.Shapes
       CopyFrom(from, false);
     }
 
+    /// <summary>
+    /// Copies the values from another <see cref="LinkedImageGraphic"/> instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
+    /// <param name="withBaseMembers">If set to <see langword="true"/>, base class members are copied as well.</param>
     [MemberNotNull(nameof(_imagePath))]
     protected void CopyFrom(LinkedImageGraphic from, bool withBaseMembers)
     {
@@ -154,6 +208,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       _cachedImage = from._cachedImage is null ? null : (Image)from._cachedImage.Clone();
     }
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -175,11 +230,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #endregion Constructors
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new LinkedImageGraphic(this);
     }
 
+    /// <inheritdoc />
     public override Image? GetImage()
     {
       try
@@ -198,12 +255,16 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <inheritdoc />
     public override PointD2D GetImageSizePt()
     {
       var img = GetImage();
       return img is null ? PointD2D.Empty : new PointD2D(img.Width * 72.0 / img.HorizontalResolution, img.Height * 72.0 / img.VerticalResolution);
     }
 
+    /// <summary>
+    /// Gets or sets the external image path.
+    /// </summary>
     public string ImagePath
     {
       get
@@ -221,6 +282,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <inheritdoc />
     public override void Paint(Graphics g, IPaintContext paintContext)
     {
       GraphicsState gs = g.Save();

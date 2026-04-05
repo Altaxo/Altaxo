@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -31,14 +31,21 @@ using Altaxo.Serialization.Ascii;
 
 namespace Altaxo.Gui.Serialization.Ascii
 {
+  /// <summary>
+  /// View interface for editing <see cref="AsciiExportOptions"/>.
+  /// </summary>
   public interface IAsciiExportOptionsView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for editing <see cref="AsciiExportOptions"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IAsciiExportOptionsView))]
   [UserControllerForObject(typeof(AsciiExportOptions))]
   public class AsciiExportOptionsController : MVCANControllerEditImmutableDocBase<AsciiExportOptions, IAsciiExportOptionsView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -48,6 +55,9 @@ namespace Altaxo.Gui.Serialization.Ascii
 
     private char _SeparatorChar;
 
+    /// <summary>
+    /// Gets or sets the separator character.
+    /// </summary>
     public char SeparatorChar
     {
       get => _SeparatorChar;
@@ -63,6 +73,9 @@ namespace Altaxo.Gui.Serialization.Ascii
 
     private char _SubstituteChar;
 
+    /// <summary>
+    /// Gets or sets the character used as substitute for the separator.
+    /// </summary>
     public char SubstituteChar
     {
       get => _SubstituteChar;
@@ -78,6 +91,9 @@ namespace Altaxo.Gui.Serialization.Ascii
 
     private bool _ExportDataColumnNames;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether data column names are exported.
+    /// </summary>
     public bool ExportDataColumnNames
     {
       get => _ExportDataColumnNames;
@@ -93,6 +109,9 @@ namespace Altaxo.Gui.Serialization.Ascii
 
     private bool _ExportPropertyColumns;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether property columns are exported.
+    /// </summary>
     public bool ExportPropertyColumns
     {
       get => _ExportPropertyColumns;
@@ -108,6 +127,9 @@ namespace Altaxo.Gui.Serialization.Ascii
 
     private bool _ExportPropertiesWithName;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether properties are exported with their names.
+    /// </summary>
     public bool ExportPropertiesWithName
     {
       get => _ExportPropertiesWithName;
@@ -123,6 +145,9 @@ namespace Altaxo.Gui.Serialization.Ascii
 
     private ItemsController<CultureInfo> _culture;
 
+    /// <summary>
+    /// Gets or sets the culture used for formatting numbers and dates.
+    /// </summary>
     public ItemsController<CultureInfo> Culture
     {
       get => _culture;
@@ -142,6 +167,9 @@ namespace Altaxo.Gui.Serialization.Ascii
 
     private string _dateTimeFormat = string.Empty;
 
+    /// <summary>
+    /// Gets or sets the optional date/time format string.
+    /// </summary>
     public string DateTimeFormat
     {
       get => _dateTimeFormat;
@@ -156,6 +184,9 @@ namespace Altaxo.Gui.Serialization.Ascii
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the current date/time format is valid.
+    /// </summary>
     public bool IsDateTimeFormatValid
     {
       get
@@ -192,6 +223,9 @@ namespace Altaxo.Gui.Serialization.Ascii
 
     private string _dateTimeToolTip = string.Empty;
 
+    /// <summary>
+    /// Gets or sets a tooltip describing the date/time format.
+    /// </summary>
     public string DateTimeToolTip
     {
       get => _dateTimeToolTip;
@@ -207,6 +241,9 @@ namespace Altaxo.Gui.Serialization.Ascii
 
     private string _resultingDateTime;
 
+    /// <summary>
+    /// Gets or sets the resulting date/time preview string.
+    /// </summary>
     public string ResultingDateTime
     {
       get => _resultingDateTime;
@@ -223,6 +260,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -250,6 +288,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 
 
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (SeparatorChar == SubstituteChar)

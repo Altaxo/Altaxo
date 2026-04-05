@@ -48,6 +48,9 @@ namespace Altaxo.Main.Services
     /// <inheritdoc/>
     public string InstanceStoragePath => _localInstancePath;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="InstanceStorageService"/> class.
+    /// </summary>
     public InstanceStorageService()
     {
       var applicationName = StringParser.Parse("${AppName}") ?? throw new InvalidOperationException("Can not get an application name for this instance");
@@ -65,6 +68,9 @@ namespace Altaxo.Main.Services
     }
 
 
+    /// <summary>
+    /// Removes abandoned storage directories from previous application instances.
+    /// </summary>
     public void RemoveAbandonedInstanceStorageServiceInstances()
     {
       var dir = new DirectoryInfo(_localAppDataPath);
@@ -117,6 +123,7 @@ namespace Altaxo.Main.Services
     }
 
 
+    /// <inheritdoc/>
     public void Dispose()
     {
       if (!_isDisposed)

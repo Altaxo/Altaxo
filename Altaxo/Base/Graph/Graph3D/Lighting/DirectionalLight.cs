@@ -55,9 +55,13 @@ namespace Altaxo.Graph.Graph3D.Lighting
     /// <summary>
     /// 2016-01-24 initial version.
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="DirectionalLight"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DirectionalLight), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DirectionalLight)obj;
@@ -67,6 +71,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
         info.AddValue("DirectionToLight", s._directionToLight);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (DirectionalLight?)o ?? new DirectionalLight(info);

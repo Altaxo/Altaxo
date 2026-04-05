@@ -31,21 +31,35 @@ using System.Text;
 
 namespace Altaxo.Drawing.LineCaps
 {
+  /// <summary>
+  /// Filled arrow line cap with a short arrow head.
+  /// </summary>
   public class ArrowF05LineCap : LineCapBase
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ArrowF05LineCap"/> class.
+    /// </summary>
     public ArrowF05LineCap()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ArrowF05LineCap"/> class.
+    /// </summary>
+    /// <param name="minimumAbsoluteSizePt">The minimum absolute size in points.</param>
+    /// <param name="minimumRelativeSize">The minimum relative size.</param>
     public ArrowF05LineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
       : base(minimumAbsoluteSizePt, minimumRelativeSize)
     {
     }
 
+    /// <inheritdoc/>
     public override string Name { get { return "ArrowF05"; } }
 
+    /// <inheritdoc/>
     public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
 
+    /// <inheritdoc/>
     public override double DefaultMinimumRelativeSize { get { return 4; } }
   }
 }

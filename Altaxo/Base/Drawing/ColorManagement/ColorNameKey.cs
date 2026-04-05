@@ -31,7 +31,7 @@ using System.Text;
 namespace Altaxo.Drawing.ColorManagement
 {
   /// <summary>
-  /// Stores an <see cref="AxoColor"/> and a name to be used in as key for dictionaries in the color set classes.
+  /// Stores an <see cref="AxoColor"/> and a name to be used as a key for dictionaries in the color set classes.
   /// </summary>
   public struct ColorNameKey : IEquatable<ColorNameKey>
   {
@@ -64,6 +64,7 @@ namespace Altaxo.Drawing.ColorManagement
     /// </summary>
     /// <param name="obj">The other object.</param>
     /// <returns><c>True</c> if the other object is an instance of <see cref="ColorNameKey"/>, and this key matches with name and color value to the other key. Otherwise, <c>false</c>.</returns>
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       return (obj is ColorNameKey other) && Equals(other);
@@ -75,6 +76,7 @@ namespace Altaxo.Drawing.ColorManagement
     /// <returns>
     /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
     /// </returns>
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return _color.GetHashCode() + _name.GetHashCode();

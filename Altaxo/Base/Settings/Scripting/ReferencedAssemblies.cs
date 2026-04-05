@@ -34,6 +34,10 @@ using Altaxo.AddInItems;
 
 namespace Altaxo.Settings.Scripting
 {
+  /// <summary>
+  /// Delegate invoked when an assembly has been added to the referenced assembly list.
+  /// </summary>
+  /// <param name="added">The added assembly.</param>
   public delegate void AssemblyAddedEventHandler(Assembly added);
 
   /// <summary>
@@ -48,6 +52,9 @@ namespace Altaxo.Settings.Scripting
     private static readonly List<Assembly> _additionalReferencedAssemblies = new List<Assembly>();
     private static readonly List<Assembly> _assemblyIncludedInClassReference;
 
+    /// <summary>
+    /// Occurs when an assembly has been added.
+    /// </summary>
     public static AssemblyAddedEventHandler? AssemblyAdded;
 
     static ReferencedAssemblies()
@@ -183,6 +190,9 @@ namespace Altaxo.Settings.Scripting
       ImmutableInterlocked.Enqueue(ref _startupAssemblies, asm);
     }
 
+    /// <summary>
+    /// Initializes the referenced assemblies subsystem.
+    /// </summary>
     public static void Initialize()
     {
     }

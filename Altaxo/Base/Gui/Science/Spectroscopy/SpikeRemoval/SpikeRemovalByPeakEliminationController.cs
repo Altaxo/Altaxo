@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -27,14 +27,21 @@ using Altaxo.Science.Spectroscopy.SpikeRemoval;
 
 namespace Altaxo.Gui.Science.Spectroscopy.SpikeRemoval
 {
+  /// <summary>
+  /// View interface for editing <see cref="SpikeRemovalByPeakElimination"/> options.
+  /// </summary>
   public interface ISpikeRemovalByPeakEliminationView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for editing <see cref="SpikeRemovalByPeakElimination"/>.
+  /// </summary>
   [UserControllerForObject(typeof(SpikeRemovalByPeakElimination))]
   [ExpectedTypeOfView(typeof(ISpikeRemovalByPeakEliminationView))]
   public class SpikeRemovalByPeakEliminationController : MVCANControllerEditImmutableDocBase<SpikeRemovalByPeakElimination, ISpikeRemovalByPeakEliminationView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -44,6 +51,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.SpikeRemoval
 
     private int _maximalWidth;
 
+    /// <summary>
+    /// Gets or sets the maximal width of a feature that will be considered a spike.
+    /// </summary>
     public int MaximalWidth
     {
       get => _maximalWidth;
@@ -60,6 +70,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.SpikeRemoval
 
     private bool _eliminateNegativeSpikes;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether negative spikes should be eliminated.
+    /// </summary>
     public bool EliminateNegativeSpikes
     {
       get => _eliminateNegativeSpikes;
@@ -77,6 +90,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.SpikeRemoval
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -88,6 +102,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.SpikeRemoval
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = _doc with

@@ -78,6 +78,11 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// </summary>
     public MasterCurveTableOutputOptions TableOutputOptions { get; init; } = new MasterCurveTableOutputOptions();
 
+    /// <summary>
+    /// Creates a copy of these options that incorporates the specified improvement options.
+    /// </summary>
+    /// <param name="improvementOptions">The improvement options to merge into the creation options.</param>
+    /// <returns>A new set of master curve creation options.</returns>
     public MasterCurveCreationOptions With(MasterCurveImprovementOptions improvementOptions)
     {
       return this with
@@ -100,6 +105,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MasterCurveCreationOptions), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (MasterCurveCreationOptions)obj;
@@ -121,6 +127,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var ShiftOrder = info.GetValue<ShiftOrder.IShiftOrder>("ShiftOrder", null);

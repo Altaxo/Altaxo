@@ -33,7 +33,7 @@ namespace Altaxo.Main
   /// <summary>
   /// Helper class to temporarily disable something, e.g. some events. By calling <see cref="M:SuspendGetToken"/> one gets a disposable token, that,
   /// when disposed, enables again, which fires then the action that is given as parameter to the constructor. It is possible to make nested calls to <see cref="M:SuspendGetToken"/>. In this case all tokens
-  /// must be disposed before the <see cref="P:IsSuspended"/> is again <c>true</c> and the re-enabling action is fired.
+  /// must be disposed before <see cref="P:IsSuspended"/> is again <c>false</c> and the re-enabling action is fired.
   /// </summary>
   public class TemporaryDisabler : SuspendableObject
   {
@@ -41,9 +41,9 @@ namespace Altaxo.Main
     private Action _reenablingEventHandler;
 
     /// <summary>
-    /// Constructor. You have to provide a callback function, that is been called when the event handling resumes.
+    /// Initializes a new instance of the <see cref="TemporaryDisabler"/> class.
     /// </summary>
-    /// <param name="reenablingEventHandler">The callback function called when the events resume. See remarks when the callback function is called.</param>
+    /// <param name="reenablingEventHandler">The callback function called when the events resume. See the remarks for when the callback function is called.</param>
     /// <remarks>The callback function is called only (i) if the event resumes (exactly: the _suppressLevel changes from 1 to 0),
     /// and (ii) in that moment the _eventCount is &gt;0.
     /// To get the _eventCount&gt;0, someone must call either GetEnabledWithCounting or GetDisabledWithCounting

@@ -34,8 +34,12 @@ namespace Altaxo.Gui.Settings
   using Altaxo.Gui.Graph;
   using Graph.Gdi;
 
+  /// <summary>
+  /// Option panel for clipboard graph export settings.
+  /// </summary>
   public class ClipboardGraphExportOptionPanel : OptionPanelBase<ClipboardRenderingOptionsController>
   {
+    /// <inheritdoc />
     public override void Initialize(object optionPanelOwner)
     {
       var doc = Current.PropertyService.GetValue(ClipboardRenderingOptions.PropertyKeyClipboardRenderingOptions, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin, () => new ClipboardRenderingOptions());
@@ -43,6 +47,7 @@ namespace Altaxo.Gui.Settings
       _controller.InitializeDocument(doc);
     }
 
+    /// <inheritdoc />
     protected override void ProcessControllerResult()
     {
       var doc = (ClipboardRenderingOptions)_controller.ModelObject;

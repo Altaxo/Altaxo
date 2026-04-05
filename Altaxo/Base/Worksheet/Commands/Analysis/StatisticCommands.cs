@@ -30,12 +30,16 @@ using Altaxo.Gui.Worksheet.Viewing;
 namespace Altaxo.Worksheet.Commands.Analysis
 {
   /// <summary>
-  /// Contain statistic commands.
+  /// Contains statistic commands.
   /// </summary>
   public class StatisticCommands
   {
     #region Statistical commands
 
+    /// <summary>
+    /// Calculates statistics on the selected columns.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
     public static void StatisticsOnColumns(IWorksheetController ctrl)
     {
       var table = ctrl.DataTable.DoStatisticsOnColumns(ctrl.SelectedDataColumns, ctrl.SelectedDataRows);
@@ -45,6 +49,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
       Current.ProjectService.CreateNewWorksheet(table);
     }
 
+    /// <summary>
+    /// Calculates statistics on the selected rows.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
     public static void StatisticsOnRows(IWorksheetController ctrl)
     {
       var table = ctrl.DataTable.DoStatisticsOnRows(ctrl.SelectedDataColumns, ctrl.SelectedDataRows);
@@ -56,6 +64,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     #endregion Statistical commands
 
+    /// <summary>
+    /// Creates a histogram for the selected data.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
     public static void CreateHistogram(WorksheetController ctrl)
     {
       var table = Altaxo.Analysis.Statistics.Histograms.HistogramCreation.CreateHistogramOnColumns(ctrl.DataTable, ctrl.SelectedDataColumns, ctrl.SelectedDataRows, Gui.UserInteractionLevel.InteractAlways);

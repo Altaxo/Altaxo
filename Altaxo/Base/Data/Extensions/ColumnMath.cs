@@ -28,6 +28,9 @@ using System.Collections.Generic;
 
 namespace Altaxo.Data
 {
+  /// <summary>
+  /// Helper methods for working with data columns and column tuples.
+  /// </summary>
   public static class ColumnMath
   {
     /// <summary>

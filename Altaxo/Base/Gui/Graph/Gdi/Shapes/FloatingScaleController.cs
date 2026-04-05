@@ -37,19 +37,38 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
   using Gdi.Axis;
   using Geometry;
 
+  /// <summary>
+  /// Provides the view contract for <see cref="FloatingScaleController"/>.
+  /// </summary>
   public interface IFloatingScaleView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="FloatingScale"/>.
+  /// </summary>
   [UserControllerForObject(typeof(FloatingScale), 110)]
   [ExpectedTypeOfView(typeof(IFloatingScaleView))]
   public class FloatingScaleController : MVCANControllerEditOriginalDocBase<FloatingScale, IFloatingScaleView>
   {
+    /// <summary>
+    /// Holds the controller for the axis style.
+    /// </summary>
     protected AxisStyleController _axisStyleController;
+    /// <summary>
+    /// Stores the temporary tick spacing while the controller is active.
+    /// </summary>
     protected TickSpacing _tempTickSpacing;
+    /// <summary>
+    /// Holds the controller for the tick spacing.
+    /// </summary>
     protected TickSpacingController _tickSpacingController;
+    /// <summary>
+    /// Holds the controller for the background style.
+    /// </summary>
     protected BackgroundStyleController _backgroundStyleController;
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_tickSpacingController, () => _tickSpacingController = null);
@@ -59,10 +78,16 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the environment for position values.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment PositionEnvironment => Altaxo.Gui.PositionEnvironment.Instance;
 
     private DimensionfulQuantity _PositionX;
 
+    /// <summary>
+    /// Gets or sets the X position of the floating scale.
+    /// </summary>
     public DimensionfulQuantity PositionX
     {
       get => _PositionX;
@@ -78,6 +103,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private DimensionfulQuantity _PositionY;
 
+    /// <summary>
+    /// Gets or sets the Y position of the floating scale.
+    /// </summary>
     public DimensionfulQuantity PositionY
     {
       get => _PositionY;
@@ -93,6 +121,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private int _scaleNumber;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the floating scale measures the X scale.
+    /// </summary>
     public bool IsScaleToMeasureXScale
     {
       get => _scaleNumber == 0;
@@ -106,6 +137,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         }
       }
     }
+    /// <summary>
+    /// Gets or sets a value indicating whether the floating scale measures the Y scale.
+    /// </summary>
     public bool IsScaleToMeasureYScale
     {
       get => _scaleNumber == 1;
@@ -122,6 +156,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
 
     private FloatingScaleSpanType _scaleSpanType;
+    /// <summary>
+    /// Gets or sets a value indicating whether the scale span is specified as a logical value.
+    /// </summary>
     public bool IsScaleSpanTypeLogicalValue
     {
       get => _scaleSpanType == FloatingScaleSpanType.IsLogicalValue;
@@ -136,6 +173,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         }
       }
     }
+    /// <summary>
+    /// Gets or sets a value indicating whether the scale span is specified as a physical end-origin difference.
+    /// </summary>
     public bool IsScaleSpanTypePhysicalEndOrgDifference
     {
       get => _scaleSpanType == FloatingScaleSpanType.IsPhysicalEndOrgDifference;
@@ -150,6 +190,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         }
       }
     }
+    /// <summary>
+    /// Gets or sets a value indicating whether the scale span is specified as a physical end-origin ratio.
+    /// </summary>
     public bool IsScaleSpanTypePhysicalEndOrgRatio
     {
       get => _scaleSpanType == FloatingScaleSpanType.IsPhysicalEndOrgRatio;
@@ -167,10 +210,16 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
 
 
+    /// <summary>
+    /// Gets the environment for the logical scale span.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment LogicalScaleSpanEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _LogicalScaleSpan;
 
+    /// <summary>
+    /// Gets or sets the logical scale span.
+    /// </summary>
     public DimensionfulQuantity LogicalScaleSpan
     {
       get => _LogicalScaleSpan;
@@ -186,6 +235,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private double _ScaleSpanPhysicalEndOrgDifference = 1;
 
+    /// <summary>
+    /// Gets or sets the physical end-origin difference used for the scale span.
+    /// </summary>
     public double ScaleSpanPhysicalEndOrgDifference
     {
       get => _ScaleSpanPhysicalEndOrgDifference;
@@ -201,6 +253,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private double _ScaleSpanPhysicalEndOrgRatio = 2;
 
+    /// <summary>
+    /// Gets or sets the physical end-origin ratio used for the scale span.
+    /// </summary>
     public double ScaleSpanPhysicalEndOrgRatio
     {
       get => _ScaleSpanPhysicalEndOrgRatio;
@@ -215,6 +270,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     }
 
     private FloatingScale.ScaleSegmentType _scaleSegmentType;
+    /// <summary>
+    /// Gets or sets a value indicating whether the scale segment type is normal.
+    /// </summary>
     public bool IsScaleSegmentTypeNormal
     {
       get => _scaleSegmentType == FloatingScale.ScaleSegmentType.Normal;
@@ -230,6 +288,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the scale segment type is a difference to the origin.
+    /// </summary>
     public bool IsScaleSegmentTypeDifferenceToOrg
     {
       get => _scaleSegmentType == FloatingScale.ScaleSegmentType.DifferenceToOrg;
@@ -244,6 +305,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         }
       }
     }
+    /// <summary>
+    /// Gets or sets a value indicating whether the scale segment type is a ratio to the origin.
+    /// </summary>
     public bool IsScaleSegmentTypeRatioToOrg
     {
       get => _scaleSegmentType == FloatingScale.ScaleSegmentType.RatioToOrg;
@@ -258,14 +322,26 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         }
       }
     }
+    /// <summary>
+    /// Gets the controller for the axis style.
+    /// </summary>
     public AxisStyleController AxisStyleController => _axisStyleController;
 
+    /// <summary>
+    /// Gets the controller for the background style.
+    /// </summary>
     public BackgroundStyleController BackgroundStyleController => _backgroundStyleController;
 
     private DimensionfulQuantity _LeftMargin;
 
 
+    /// <summary>
+    /// Gets the environment for margin values.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment MarginEnvironment => Altaxo.Gui.SizeEnvironment.Instance;
+    /// <summary>
+    /// Gets or sets the left margin.
+    /// </summary>
     public DimensionfulQuantity LeftMargin
     {
       get => _LeftMargin;
@@ -280,6 +356,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     }
     private DimensionfulQuantity _TopMargin;
 
+    /// <summary>
+    /// Gets or sets the top margin.
+    /// </summary>
     public DimensionfulQuantity TopMargin
     {
       get => _TopMargin;
@@ -294,6 +373,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     }
     private DimensionfulQuantity _RightMargin;
 
+    /// <summary>
+    /// Gets or sets the right margin.
+    /// </summary>
     public DimensionfulQuantity RightMargin
     {
       get => _RightMargin;
@@ -308,6 +390,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     }
     private DimensionfulQuantity _BottomMargin;
 
+    /// <summary>
+    /// Gets or sets the bottom margin.
+    /// </summary>
     public DimensionfulQuantity BottomMargin
     {
       get => _BottomMargin;
@@ -322,17 +407,24 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     }
 
 
+    /// <summary>
+    /// Gets the controller for the tick spacing.
+    /// </summary>
     public TickSpacingController TickSpacingController => _tickSpacingController;
 
 
     #endregion
 
+ 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       _tempTickSpacing = null;
       base.Dispose(isDisposing);
     }
 
+ 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -377,6 +469,8 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       }
     }
 
+ 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       _doc.Position = new PointD2D(PositionX.AsValueIn(Altaxo.Units.Length.Point.Instance), PositionY.AsValueIn(Altaxo.Units.Length.Point.Instance));

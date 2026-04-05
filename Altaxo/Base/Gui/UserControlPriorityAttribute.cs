@@ -28,10 +28,13 @@ using System;
 namespace Altaxo.Gui
 {
   /// <summary>
-  /// Can be used for a control to denote which type of controller can control this.
+  /// Specifies the priority of a user control when multiple controls can handle the same controller.
   /// </summary>
   public class UserControlPriorityAttribute : System.Attribute, IComparable
   {
+    /// <summary>
+    /// Stores the configured priority value.
+    /// </summary>
     protected int _priority;
 
     /// <summary>
@@ -57,11 +60,7 @@ namespace Altaxo.Gui
 
     #region IComparable Members
 
-    /// <summary>
-    /// Compares to another priority attribute.
-    /// </summary>
-    /// <param name="obj">The other priority attribute.</param>
-    /// <returns>1 if the other priority attribute has higher priority than this attribute, -1 if this attribute has higher priority than the other; otherwise 0.</returns>
+    /// <inheritdoc/>
     public int CompareTo(object? obj)
     {
       // Attention - we sort the items so that the item with the highest priority value is the first (!) entry in a sorted list

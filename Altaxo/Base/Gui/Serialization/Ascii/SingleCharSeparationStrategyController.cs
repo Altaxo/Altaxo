@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -28,14 +28,21 @@ using Altaxo.Serialization.Ascii;
 
 namespace Altaxo.Gui.Serialization.Ascii
 {
+  /// <summary>
+  /// View interface for editing <see cref="SingleCharSeparationStrategy"/>.
+  /// </summary>
   public interface ISingleCharSeparationStrategyView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for editing <see cref="SingleCharSeparationStrategy"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(ISingleCharSeparationStrategyView))]
   [UserControllerForObject(typeof(SingleCharSeparationStrategy))]
   public class SingleCharSeparationStrategyController : MVCANControllerEditImmutableDocBase<SingleCharSeparationStrategy, ISingleCharSeparationStrategyView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -45,6 +52,9 @@ namespace Altaxo.Gui.Serialization.Ascii
 
     private char _separatorChar;
 
+    /// <summary>
+    /// Gets or sets the separator character.
+    /// </summary>
     public char SeparatorChar
     {
       get => _separatorChar;
@@ -61,6 +71,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -71,6 +82,7 @@ namespace Altaxo.Gui.Serialization.Ascii
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = _doc with

@@ -29,21 +29,34 @@ using System.Text;
 
 namespace Altaxo.Collections
 {
+  /// <summary>
+  /// Associates an item with a display name.
+  /// </summary>
   public class NamedItem<T>
   {
     private T _item;
     private string _name;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NamedItem{T}"/> class.
+    /// </summary>
     public NamedItem(T item, string name)
     {
       _item = item;
       _name = name;
     }
 
+    /// <summary>
+    /// Gets the name associated with the item.
+    /// </summary>
     public string Name { get { return _name; } }
 
+    /// <summary>
+    /// Gets the wrapped item.
+    /// </summary>
     public T Item { get { return _item; } }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       if (obj is null)
@@ -54,11 +67,13 @@ namespace Altaxo.Collections
       return object.Equals(_item, from._item);
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return _item?.GetHashCode() ?? 0;
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return _name;

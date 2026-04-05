@@ -33,20 +33,29 @@ using Altaxo.Units;
 namespace Altaxo.Gui.Graph.Graph3D
 {
 
+  /// <summary>
+  /// View contract for editing color and thickness pen properties.
+  /// </summary>
   public interface IColorTypeThicknessPenView : IDataContextAwareView
   {
   }
 
   /// <summary>
-  /// Summary description for ColorTypeWidthPenController.
+  /// Controller for editing simplified <see cref="PenX3D"/> properties.
   /// </summary>
   public class ColorTypeThicknessPenController : MVCANDControllerEditImmutableDocBase<PenX3D, object>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColorTypeThicknessPenController"/> class.
+    /// </summary>
     public ColorTypeThicknessPenController()
     {
       CmdShowCustomPen = new RelayCommand(EhShowCustomPen);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColorTypeThicknessPenController"/> class for the specified pen.
+    /// </summary>
     public ColorTypeThicknessPenController(PenX3D pen) : this()
     {
       _doc = _originalDoc = pen ?? throw new ArgumentNullException(nameof(pen));
@@ -73,6 +82,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       }
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -81,6 +91,9 @@ namespace Altaxo.Gui.Graph.Graph3D
     #region Bindings
 
     private bool _showPlotColorsOnly;
+    /// <summary>
+    /// Gets or sets a value indicating whether only plot colors are shown.
+    /// </summary>
     public bool ShowPlotColorsOnly
     {
       get => _showPlotColorsOnly;
@@ -94,6 +107,9 @@ namespace Altaxo.Gui.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the pen material.
+    /// </summary>
     public IMaterial Material
     {
       get => _doc.Material;
@@ -108,6 +124,9 @@ namespace Altaxo.Gui.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the line thickness.
+    /// </summary>
     public double LineThickness
     {
       get => _doc.Thickness1;
@@ -122,6 +141,9 @@ namespace Altaxo.Gui.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the dash pattern.
+    /// </summary>
     public Altaxo.Drawing.IDashPattern DashPattern
     {
       get => _doc.DashPattern;
@@ -136,16 +158,23 @@ namespace Altaxo.Gui.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Gets the command that opens the full pen editor.
+    /// </summary>
     public ICommand CmdShowCustomPen { get; }
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void OnMadeDirty()
     {
       base.OnMadeDirty();
       OnPropertyChanged(nameof(Pen));
     }
 
+    /// <summary>
+    /// Opens the full pen editor dialog.
+    /// </summary>
     public void EhShowCustomPen()
     {
       var ctrler = new PenAllPropertiesController(_doc)
@@ -164,6 +193,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);

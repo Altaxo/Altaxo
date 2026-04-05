@@ -28,15 +28,20 @@ namespace Altaxo.Gui.Data.Selections.Foo
 {
   using Altaxo.Data.Selections;
 
+  /// <summary>
+  /// Controller for the <see cref="ExcludeUnionOfRowSelections"/> row selection.
+  /// </summary>
   [UserControllerForObject(typeof(ExcludeUnionOfRowSelections), 100)]
   [ExpectedTypeOfView(typeof(IIntersectionOfRowSelectionView))]
   public class ExcludeUnionOfRowSelectionsController : MVCANControllerEditImmutableDocBase<ExcludeUnionOfRowSelections, IIntersectionOfRowSelectionView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -46,6 +51,7 @@ namespace Altaxo.Gui.Data.Selections.Foo
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);

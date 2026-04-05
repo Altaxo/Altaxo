@@ -33,7 +33,7 @@ namespace Altaxo.Main.Services
 {
   /// <summary>
   /// Thread that can be invoked, i.e. code can be executed using <see cref="Invoke"/> or <see cref="InvokeAsync"/> always from this thread. This is especially important
-  /// for objects which are thread sensitive. These objects must be created and it's functions must be called always from the same thread.
+  /// for objects which are thread-sensitive. These objects must be created on the same thread from which their functions are called.
   /// </summary>
   public interface IInvokeableThread : IDisposable
   {

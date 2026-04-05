@@ -31,14 +31,29 @@ using Altaxo.Main.Services.ExceptionHandling;
 
 namespace Altaxo.Main.Commands
 {
+  /// <summary>
+  /// Options for testing all Altaxo project files in one or more folders.
+  /// </summary>
   public class TestAllProjectsInFolderOptions : Altaxo.Main.ICopyFrom
   {
+    /// <summary>
+    /// Gets or sets the semicolon-separated folder paths to scan.
+    /// </summary>
     public string FolderPaths { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether saving and reopening should also be tested.
+    /// </summary>
     public bool TestSavingAndReopening { get; set; }
 
+    /// <summary>
+    /// Gets or sets the protocol file name.
+    /// </summary>
     public string ProtocolFileName { get; set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TestAllProjectsInFolderOptions"/> class.
+    /// </summary>
     public TestAllProjectsInFolderOptions()
     {
       FolderPaths = @"C:\Temp";
@@ -46,6 +61,7 @@ namespace Altaxo.Main.Commands
       ProtocolFileName = @"C:\Temp\AltaxoTestOpeningLog.txt";
     }
 
+    /// <inheritdoc />
     public bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -61,6 +77,7 @@ namespace Altaxo.Main.Commands
       return false;
     }
 
+    /// <inheritdoc />
     public object Clone()
     {
       var r = new TestAllProjectsInFolderOptions();
@@ -69,15 +86,26 @@ namespace Altaxo.Main.Commands
     }
   }
 
+  /// <summary>
+  /// Tests opening all Altaxo project files in one or more folders.
+  /// </summary>
   public class TestAllProjectsInFolder
   {
     #region Internal class Reporter
 
+      /// <summary>
+      /// Reporter used while testing Altaxo project files.
+      /// </summary>
     public class Reporter : Altaxo.Main.Services.TextOutputServiceBase
     {
       private System.IO.StreamWriter? _wr;
       private Altaxo.Main.Services.ITextOutputService _previousOutputService;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="Reporter"/> class.
+      /// </summary>
+      /// <param name="testOptions">The test options.</param>
+      /// <param name="previousOutputService">The previous output service.</param>
       public Reporter(TestAllProjectsInFolderOptions testOptions, Altaxo.Main.Services.ITextOutputService previousOutputService)
       {
         _previousOutputService = previousOutputService;
@@ -94,12 +122,16 @@ namespace Altaxo.Main.Commands
         }
       }
 
+      /// <summary>
+      /// Closes the underlying protocol writer.
+      /// </summary>
       public void Close()
       {
         _wr?.Close();
         _wr = null;
       }
 
+      /// <inheritdoc/>
       protected override void InternalWrite(string text)
       {
         if (_wr is not null)
@@ -112,29 +144,42 @@ namespace Altaxo.Main.Commands
       }
     }
 
+    /// <summary>
+    /// Handles unhandled exceptions that occur while testing project files.
+    /// </summary>
     public class UnhandledExceptionHandler : IUnhandledExceptionHandler
     {
       private Reporter _reporter;
 
+      /// <summary>
+      /// Gets the number of exceptions encountered so far.
+      /// </summary>
       public int NumberOfExceptionsEncountered { get; private set; }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="UnhandledExceptionHandler"/> class.
+      /// </summary>
+      /// <param name="reporter">The reporter used for logging.</param>
       public UnhandledExceptionHandler(Reporter reporter)
       {
         _reporter = reporter;
       }
 
+      /// <inheritdoc/>
       public void EhCurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
       {
         ++NumberOfExceptionsEncountered;
         _reporter.WriteLine($"Unhandled exception in current domain. IsTerminating: {e.IsTerminating}, Exception: {e.ExceptionObject}");
       }
 
+      /// <inheritdoc/>
       public void EhWindowsFormsApplication_ThreadException(object sender, ThreadExceptionEventArgs e)
       {
         ++NumberOfExceptionsEncountered;
         _reporter.WriteLine($"Unhandled exception in WindowsForms. Exception: {e.Exception}");
       }
 
+      /// <inheritdoc/>
       public void EhWpfDispatcher_UnhandledException(object sender, object dispatcher, Exception exception)
       {
         ++NumberOfExceptionsEncountered;
@@ -209,6 +254,9 @@ namespace Altaxo.Main.Commands
       return list;
     }
 
+    /// <summary>
+    /// Shows the dialog that starts verification of opening project files without exceptions.
+    /// </summary>
     public static void ShowDialogToVerifyOpeningOfDocumentsWithoutException()
     {
       if (Current.Project.IsDirty)

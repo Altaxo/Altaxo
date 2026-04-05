@@ -31,12 +31,18 @@ using Altaxo.Graph.Scales.Rescaling;
 
 namespace Altaxo.Graph.Scales.Deprecated
 {
+  /// <summary>
+  /// Represents the deprecated text scale implementation.
+  /// </summary>
   [Serializable]
   public class TextScale : Scale
   {
     /// <summary>Holds the <see cref="TextBoundaries"/> for that axis.</summary>
     protected TextBoundaries _dataBounds;
 
+    /// <summary>
+    /// Stores the rescaling conditions for this text scale.
+    /// </summary>
     protected NumericScaleRescaleConditions _rescaling;
 
     // cached values
@@ -57,6 +63,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Scales.TextScale", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (TextScale)obj;
@@ -65,6 +72,7 @@ namespace Altaxo.Graph.Scales.Deprecated
         info.AddValue("Rescaling", s._rescaling);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (TextScale?)o ?? new TextScale();
@@ -83,6 +91,9 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextScale"/> class.
+    /// </summary>
     public TextScale()
     {
       _dataBounds = new TextBoundaries
@@ -93,6 +104,10 @@ namespace Altaxo.Graph.Scales.Deprecated
       _rescaling = new LinearScaleRescaleConditions();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextScale"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public TextScale(TextScale from)
     {
       CopyFrom(from);
@@ -116,6 +131,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       _cachedOneByAxisSpan = from._cachedOneByAxisSpan;
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       var result = new TextScale();
@@ -123,6 +139,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       return result;
     }
 
+    /// <inheritdoc />
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_dataBounds is not null)
@@ -131,22 +148,36 @@ namespace Altaxo.Graph.Scales.Deprecated
         yield return new Main.DocumentNodeAndName(_rescaling, "Rescaling");
     }
 
+    /// <summary>
+    /// Sets the data bounds used by this scale.
+    /// </summary>
+    /// <param name="bounds">The bounds to assign.</param>
     protected void InternalSetDataBounds(TextBoundaries bounds)
     {
       ChildSetMember(ref _dataBounds, bounds);
     }
 
+    /// <summary>
+    /// Sets the rescaling object used by this scale.
+    /// </summary>
+    /// <param name="rescaling">The rescaling object to assign.</param>
     protected void InternalSetRescaling(NumericScaleRescaleConditions rescaling)
     {
       _rescaling = rescaling;
       _rescaling.ParentObject = this;
     }
 
+    /// <summary>
+    /// Handles boundary changes by recalculating the scale.
+    /// </summary>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The event arguments.</param>
     protected void EhBoundariesChanged(object sender, BoundariesChangedEventArgs e)
     {
       ProcessDataBounds(); // calculate new bounds and fire AxisChanged event
     }
 
+    /// <inheritdoc />
     public override double PhysicalVariantToNormal(Altaxo.Data.AltaxoVariant x)
     {
       if (x.IsType(Altaxo.Data.AltaxoVariant.Content.VString))
@@ -164,11 +195,13 @@ namespace Altaxo.Graph.Scales.Deprecated
       }
     }
 
+    /// <inheritdoc />
     public override Altaxo.Data.AltaxoVariant NormalToPhysicalVariant(double x)
     {
       return new AltaxoVariant(_cachedAxisOrg + x * _cachedAxisSpan);
     }
 
+    /// <inheritdoc />
     public override Altaxo.Data.AltaxoVariant[] GetMajorTicksAsVariant()
     {
       var result = new Altaxo.Data.AltaxoVariant[_dataBounds.NumberOfItems];
@@ -178,6 +211,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       return result;
     }
 
+    /// <inheritdoc />
     public override double[] GetMajorTicksNormal()
     {
       double[] result = new double[_dataBounds.NumberOfItems];
@@ -189,6 +223,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       return result;
     }
 
+    /// <inheritdoc />
     public override Altaxo.Data.AltaxoVariant[] GetMinorTicksAsVariant()
     {
       var result = new AltaxoVariant[_dataBounds.NumberOfItems + 1];
@@ -198,6 +233,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       return result;
     }
 
+    /// <inheritdoc />
     public override double[] GetMinorTicksNormal()
     {
       double[] result = new double[_dataBounds.NumberOfItems + 1];
@@ -207,6 +243,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       return result;
     }
 
+    /// <inheritdoc />
     public override object RescalingObject
     {
       get
@@ -215,11 +252,13 @@ namespace Altaxo.Graph.Scales.Deprecated
       }
     }
 
+    /// <inheritdoc />
     public override IPhysicalBoundaries DataBoundsObject
     {
       get { return _dataBounds; }
     }
 
+    /// <inheritdoc />
     public override Altaxo.Data.AltaxoVariant OrgAsVariant
     {
       get
@@ -233,6 +272,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       }
     }
 
+    /// <inheritdoc />
     public override Altaxo.Data.AltaxoVariant EndAsVariant
     {
       get
@@ -246,6 +286,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       }
     }
 
+    /// <inheritdoc />
     public override void ProcessDataBounds()
     {
       if (_dataBounds is null || _dataBounds.IsEmpty)
@@ -254,12 +295,19 @@ namespace Altaxo.Graph.Scales.Deprecated
       ProcessDataBounds(1, _dataBounds.NumberOfItems, _rescaling);
     }
 
+    /// <summary>
+    /// Updates the scale from data bounds and the specified rescaling conditions.
+    /// </summary>
+    /// <param name="xorg">The lower data bound.</param>
+    /// <param name="xend">The upper data bound.</param>
+    /// <param name="rescaling">The rescaling conditions to apply.</param>
     public void ProcessDataBounds(double xorg, double xend, NumericScaleRescaleConditions rescaling)
     {
       rescaling.OnDataBoundsChanged(xorg, xend);
       ProcessDataBounds(rescaling.ResultingOrg, rescaling.IsResultingOrgFixed, rescaling.ResultingEnd, rescaling.IsResultingEndFixed);
     }
 
+    /// <inheritdoc />
     public override void ProcessDataBounds(Altaxo.Data.AltaxoVariant org, bool orgfixed, Altaxo.Data.AltaxoVariant end, bool endfixed)
     {
       double dorg = org.ToDouble();

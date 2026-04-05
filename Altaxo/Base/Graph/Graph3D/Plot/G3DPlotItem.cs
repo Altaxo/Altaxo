@@ -39,9 +39,15 @@ namespace Altaxo.Graph.Graph3D.Plot
   using Groups;
   using Styles;
 
+  /// <summary>
+  /// Provides the base implementation for three-dimensional plot items.
+  /// </summary>
   [Serializable]
   public abstract class G3DPlotItem : PlotItem
   {
+    /// <summary>
+    /// Stores the plot styles used by this item.
+    /// </summary>
     protected G3DPlotStyleCollection _plotStyles;
 
     [NonSerialized]
@@ -50,22 +56,36 @@ namespace Altaxo.Graph.Graph3D.Plot
     [NonSerialized]
     private PlotGroupStyleCollection? _localGroups;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="G3DPlotItem"/> class.
+    /// </summary>
+    /// <param name="plotStyles">The plot-style collection.</param>
     protected G3DPlotItem(G3DPlotStyleCollection plotStyles)
     {
       ChildSetMember(ref _plotStyles, plotStyles);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="G3DPlotItem"/> class by copying from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     protected G3DPlotItem(G3DPlotItem from)
     {
       CopyFrom(from, false);
     }
 
+    /// <summary>
+    /// Copies values from another <see cref="G3DPlotItem"/> instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
+    /// <param name="withBaseMembers">If set to <c>true</c>, base-class members are copied as well.</param>
     [MemberNotNull(nameof(_plotStyles))]
     protected void CopyFrom(G3DPlotItem from, bool withBaseMembers)
     {
       ChildCopyToMember(ref _plotStyles, from._plotStyles);
     }
 
+    /// <inheritdoc/>
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -85,6 +105,7 @@ namespace Altaxo.Graph.Graph3D.Plot
       }
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_plotStyles is not null)
@@ -94,12 +115,16 @@ namespace Altaxo.Graph.Graph3D.Plot
         yield return new Main.DocumentNodeAndName(_localGroups, () => _localGroups = null!, "LocalPlotGroupStyles");
     }
 
+    /// <inheritdoc/>
     public override Main.IDocumentLeafNode StyleObject
     {
       get { return _plotStyles; }
       set { Style = (G3DPlotStyleCollection)value; }
     }
 
+    /// <summary>
+    /// Gets or sets the collection of plot styles for this plot item.
+    /// </summary>
     public G3DPlotStyleCollection Style
     {
       get
@@ -118,10 +143,18 @@ namespace Altaxo.Graph.Graph3D.Plot
       }
     }
 
+    /// <summary>
+    /// Gets the processed plot data including ranges and coordinates for the specified layer.
+    /// </summary>
+    /// <param name="layer">The plot layer.</param>
+    /// <returns>The processed plot data, or <c>null</c>.</returns>
     public abstract Processed3DPlotData? GetRangesAndPoints(IPlotArea layer);
 
     #region IPlotItem Members
 
+    /// <summary>
+    /// Collects external group styles used by the contained plot styles.
+    /// </summary>
     public override void CollectStyles(PlotGroupStyleCollection styles)
     {
       // first add missing local group styles
@@ -129,6 +162,9 @@ namespace Altaxo.Graph.Graph3D.Plot
         sps.CollectExternalGroupStyles(styles);
     }
 
+    /// <summary>
+    /// Prepares local and external group styles before painting.
+    /// </summary>
     public override void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, IPlotArea layer)
     {
       var pdata = GetRangesAndPoints(layer);
@@ -157,6 +193,9 @@ namespace Altaxo.Graph.Graph3D.Plot
       }
     }
 
+    /// <summary>
+    /// Applies the prepared group styles.
+    /// </summary>
     public override void ApplyGroupStyles(PlotGroupStyleCollection externalGroups)
     {
       if (_localGroups is null)
@@ -189,6 +228,9 @@ namespace Altaxo.Graph.Graph3D.Plot
       _plotStyles.SetFromTemplate(from._plotStyles, strictness);
     }
 
+    /// <summary>
+    /// Paints a legend symbol for this plot item.
+    /// </summary>
     public override void PaintSymbol(IGraphicsContext3D g, RectangleD3D location)
     {
       _plotStyles.PaintSymbol(g, location);
@@ -196,6 +238,11 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     #endregion IPlotItem Members
 
+    /// <summary>
+    /// Gets cached or freshly processed plot data for painting.
+    /// </summary>
+    /// <param name="layer">The plot layer.</param>
+    /// <returns>The processed plot data, or <c>null</c>.</returns>
     public Processed3DPlotData? GetPlotData(IPlotArea layer)
     {
       if (_cachedPlotDataUsedForPainting is null)
@@ -204,6 +251,7 @@ namespace Altaxo.Graph.Graph3D.Plot
       return _cachedPlotDataUsedForPainting;
     }
 
+    /// <inheritdoc/>
     public override void Paint(IGraphicsContext3D g, IPaintContext context, IPlotArea layer, IGPlotItem? prevPlotItem, IGPlotItem? nextPlotItem)
     {
       Processed3DPlotData? pdata = GetRangesAndPoints(layer);

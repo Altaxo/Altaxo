@@ -122,17 +122,29 @@ namespace Altaxo.Graph.Gdi
     private int _page;
     private bool _isPrintPreview;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the current rendering is for print preview.
+    /// </summary>
     public bool IsPrintPreview
     {
       get { return _isPrintPreview; }
       set { _isPrintPreview = value; }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GraphDocumentPrintTask"/> class for the specified graph document.
+    /// </summary>
+    /// <param name="doc">The graph document to print.</param>
     public GraphDocumentPrintTask(GraphDocument doc)
       : this(doc.RootLayer, doc.PrintOptions)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GraphDocumentPrintTask"/> class.
+    /// </summary>
+    /// <param name="rootLayer">The root layer to print.</param>
+    /// <param name="options">The print options, or <c>null</c> to use defaults.</param>
     public GraphDocumentPrintTask(HostLayer rootLayer, SingleGraphPrintOptions? options)
     {
       _layers = rootLayer;
@@ -143,8 +155,8 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Infrastructure. Don't use in your own projects. Will be called by PrintDocument during the printing process.
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
+    /// <param name="sender">The print document.</param>
+    /// <param name="e">The page settings event arguments.</param>
     public void EhQueryPageSettings(object sender, QueryPageSettingsEventArgs e)
     {
       if (_printOptions.RotatePageAutomatically)
@@ -160,8 +172,8 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Infrastructure. Don't use in your own projects. Will be called by PrintDocument during the printing process.
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
+    /// <param name="sender">The print document.</param>
+    /// <param name="e">The print page event arguments.</param>
     public void EhPrintPage(object sender, PrintPageEventArgs e)
     {
       Graphics g = e.Graphics;

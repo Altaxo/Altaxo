@@ -84,6 +84,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 
     #endregion Serialization
 
+    /// <inheritdoc />
     public override bool Equals(IColorProvider? other)
     {
       if (!base.Equals(other))
@@ -96,6 +97,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
         _brightness == from._brightness;
     }
 
+    /// <inheritdoc />
     public override int GetHashCode()
     {
       return base.GetHashCode() + (_gamma + _brightness).GetHashCode() * 13;
@@ -110,6 +112,9 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       _brightness = DefaultBrightness;
     }
 
+    /// <summary>
+    /// Gets the gamma value used for colorization.
+    /// </summary>
     public double Gamma
     {
       get
@@ -118,6 +123,11 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Creates a copy with a different gamma value.
+    /// </summary>
+    /// <param name="gamma">The gamma value.</param>
+    /// <returns>The updated spectrum or this instance if unchanged.</returns>
     public VisibleLightSpectrum WithGamma(double gamma)
     {
       if (!(gamma >= 0))
@@ -135,6 +145,9 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Gets the brightness value.
+    /// </summary>
     public double Brightness
     {
       get
@@ -143,6 +156,11 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Creates a copy with a different brightness.
+    /// </summary>
+    /// <param name="brightness">The brightness in the range 0 to 1.</param>
+    /// <returns>The updated spectrum or this instance if unchanged.</returns>
     public VisibleLightSpectrum WithBrightness(double brightness)
     {
       if (!((brightness >= 0) && (brightness <= 1)))

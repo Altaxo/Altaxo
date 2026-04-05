@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -36,12 +36,17 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 {
- 
+  /// <summary>
+  /// Provides the view contract for <see cref="PlotGroupCollectionControllerAdvanced"/>.
+  /// </summary>
   public interface IPlotGroupCollectionViewAdvanced : IDataContextAwareView
   {
   }
 
 
+  /// <summary>
+  /// Advanced controller for editing a plot-group style collection.
+  /// </summary>
   [UserControllerForObject(typeof(PlotGroupStyleCollection))]
   [ExpectedTypeOfView(typeof(IPlotGroupCollectionViewAdvanced))]
   public class PlotGroupCollectionControllerAdvanced
@@ -53,12 +58,18 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 
     private class MyListNode : CheckableSelectableListNode
     {
+      /// <summary>
+      /// Initializes a new instance.
+      /// </summary>
       public MyListNode(string name, object item, bool isSelected, bool isChecked, bool isCheckBoxVisible)
         : base(name, item, isSelected, isChecked)
       {
         IsCheckBoxVisible = isCheckBoxVisible;
       }
 
+      /// <summary>
+      /// Gets or sets the i sc he ck bo xv is ib le.
+      /// </summary>
       public bool IsCheckBoxVisible { get; set; }
     }
 
@@ -66,6 +77,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 
     private IGPlotItem _parent; // usually the parent is the PlotItemCollection
 
+    /// <summary>
+    /// Gets or sets the g ro up st yl ec ha ng ed.
+    /// </summary>
     public event Action GroupStyleChanged;
 
     /// <summary>
@@ -73,6 +87,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
     /// </summary>
     private int _currentNoOfItemsThatCanHaveChilds;
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -82,6 +97,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 
     private ItemsController<ICoordinateTransformingGroupStyle?> _coordinateTransformingGroupStyles;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public ItemsController<ICoordinateTransformingGroupStyle?> CoordinateTransformingGroupStyles
     {
       get => _coordinateTransformingGroupStyles;
@@ -98,6 +116,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 
     private ItemsController<PlotGroupStrictness> _plotGroupStrictness;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public ItemsController<PlotGroupStrictness> PlotGroupStrictness
     {
       get => _plotGroupStrictness;
@@ -113,6 +134,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 
     private bool _inheritFromParent;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool InheritFromParent
     {
       get => _inheritFromParent;
@@ -127,6 +151,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
     }
     private bool  _distributeToChilds;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool  DistributeToChilds
     {
       get => _distributeToChilds;
@@ -142,6 +169,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 
     private SelectableListNodeList _availableNormalStyles;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public SelectableListNodeList AvailableNormalStyles
     {
       get => _availableNormalStyles;
@@ -158,6 +188,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 
     private CheckableSelectableListNodeList _currentNormalStyles;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public CheckableSelectableListNodeList CurrentNormalStyles
     {
       get => _currentNormalStyles;
@@ -174,17 +207,44 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 
 
 
+    /// <summary>
+    /// Gets or sets the c md ed it co or di na te tr an sf or mi ng gr ou ps ty le.
+    /// </summary>
     public ICommand CmdEditCoordinateTransformingGroupStyle { get; }
+    /// <summary>
+    /// Gets or sets the c md ad dn or ma lg ro up st yl e.
+    /// </summary>
     public ICommand CmdAddNormalGroupStyle { get; }
+    /// <summary>
+    /// Gets or sets the c md re mo ve no rm al gr ou ps ty le.
+    /// </summary>
     public ICommand CmdRemoveNormalGroupStyle { get; }
+    /// <summary>
+    /// Gets or sets the c md in de nt gr ou ps ty le.
+    /// </summary>
     public ICommand CmdIndentGroupStyle { get; }
+    /// <summary>
+    /// Gets or sets the c md un in de nt gr ou ps ty le.
+    /// </summary>
     public ICommand CmdUnindentGroupStyle { get; }
+    /// <summary>
+    /// Gets or sets the c md mo ve up gr ou ps ty le.
+    /// </summary>
     public ICommand CmdMoveUpGroupStyle { get; }
+    /// <summary>
+    /// Gets or sets the c md mo ve do wn gr ou ps ty le.
+    /// </summary>
     public ICommand CmdMoveDownGroupStyle { get; }
+    /// <summary>
+    /// Gets or sets the c md cu rr en tg ro up st yl ed ou bl ec li ck.
+    /// </summary>
     public ICommand CmdCurrentGroupStyleDoubleClick { get; }
 
     #endregion
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PlotGroupCollectionControllerAdvanced"/> class.
+    /// </summary>
     public PlotGroupCollectionControllerAdvanced()
     {
       CmdEditCoordinateTransformingGroupStyle = new RelayCommand(EhView_CoordinateTransformingGroupStyleEdit);
@@ -205,6 +265,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 
     }
 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       _parent = null;
@@ -216,6 +277,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc />
     public override bool InitializeDocument(params object[] args)
     {
       if (args is not null && args.Length > 1 && args[1] is IGPlotItem)
@@ -224,6 +286,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
       return base.InitializeDocument(args);
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -298,6 +361,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       _doc.CoordinateTransformingStyle = CoordinateTransformingGroupStyles.SelectedValue;
@@ -393,6 +457,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 
     #region IPlotGroupCollectionViewEventSink Members
 
+    /// <summary>
+    /// Handles the v ie w c oo rd in at et ra ns fo rm in gg ro up st yl ee di t.
+    /// </summary>
     public void EhView_CoordinateTransformingGroupStyleEdit()
     {
       if (CoordinateTransformingGroupStyles.SelectedValue is { } currentTransfoStyle)
@@ -401,6 +468,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
       }
     }
 
+    /// <summary>
+    /// Handles the v ie w a dd no rm al gr ou ps ty le.
+    /// </summary>
     public void EhView_AddNormalGroupStyle()
     {
       SelectableListNode selected = null;
@@ -433,6 +503,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
       }
     }
 
+    /// <summary>
+    /// Handles the v ie w r em ov en or ma lg ro up st yl e.
+    /// </summary>
     public void EhView_RemoveNormalGroupStyle()
     {
       for (int i = _currentNormalStyles.Count - 1; i >= 0; i--)
@@ -456,6 +529,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
       UpdateCurrentNormalIndentation();
     }
 
+    /// <summary>
+    /// Handles the v ie w i nd en tg ro up st yl e.
+    /// </summary>
     public void EhView_IndentGroupStyle()
     {
       // for all selected items: append it as child to the item upward
@@ -478,6 +554,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
       UpdateCurrentNormalIndentation();
     }
 
+    /// <summary>
+    /// Handles the v ie w u ni nd en tg ro up st yl e.
+    /// </summary>
     public void EhView_UnindentGroupStyle()
     {
       // make sure that all the selected items are not child of another item
@@ -500,6 +579,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
       UpdateCurrentNormalIndentation();
     }
 
+    /// <summary>
+    /// Handles the v ie w m ov eu pg ro up st yl e.
+    /// </summary>
     public void EhView_MoveUpGroupStyle()
     {
       if (0 == _currentNoOfItemsThatCanHaveChilds || _currentNormalStyles[0].IsSelected)
@@ -528,6 +610,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
       UpdateCurrentNormalOrder();
     }
 
+    /// <summary>
+    /// Handles the v ie w m ov ed ow ng ro up st yl e.
+    /// </summary>
     public void EhView_MoveDownGroupStyle()
     {
       if (0 == _currentNoOfItemsThatCanHaveChilds || _currentNormalStyles[_currentNoOfItemsThatCanHaveChilds - 1].IsSelected)
@@ -556,6 +641,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
       UpdateCurrentNormalOrder();
     }
 
+    /// <summary>
+    /// Handles the c ur re nt gr ou ps ty le do ub le cl ic k.
+    /// </summary>
     public void EhCurrentGroupStyleDoubleClick()
     {
 

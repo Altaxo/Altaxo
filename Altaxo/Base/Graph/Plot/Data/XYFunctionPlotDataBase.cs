@@ -34,7 +34,7 @@ namespace Altaxo.Graph.Plot.Data
   #region XYFunctionPlotData
 
   /// <summary>
-  /// Summary description for XYFunctionPlotData.
+  /// Provides the abstract base class for XY function plot data.
   /// </summary>
   [Serializable]
   public abstract class XYFunctionPlotDataBase
@@ -50,6 +50,10 @@ namespace Altaxo.Graph.Plot.Data
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYFunctionPlotDataBase"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public XYFunctionPlotDataBase(XYFunctionPlotDataBase from)
     {
       if (from is null)
@@ -58,6 +62,7 @@ namespace Altaxo.Graph.Plot.Data
       CopyFrom(from);
     }
 
+    /// <inheritdoc />
     public virtual bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -70,16 +75,22 @@ namespace Altaxo.Graph.Plot.Data
       return false;
     }
 
+    /// <summary>
+    /// Creates a clone of this instance.
+    /// </summary>
+    /// <returns>The cloned instance.</returns>
     public abstract object Clone();
 
     #region IScalarFunctionDD Members
 
+    /// <inheritdoc />
     public abstract double Evaluate(double x);
 
     #endregion IScalarFunctionDD Members
 
     #region Changed event handling
 
+    /// <inheritdoc />
     protected override void AccumulateChangeData(object? sender, EventArgs e)
     {
       _accumulatedEventData = PlotItemDataChangedEventArgs.Empty;
@@ -87,6 +98,9 @@ namespace Altaxo.Graph.Plot.Data
 
     #endregion Changed event handling
 
+    /// <summary>
+    /// Stores temporary physical plot data.
+    /// </summary>
     private class MyPlotData
     {
       public double[] _xPhysical;
@@ -206,8 +220,7 @@ namespace Altaxo.Graph.Plot.Data
 
 
     /// <summary>
-    /// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
-    /// to change a plot so that the plot items refer to another table.
+    /// Visits document references, intended for data items such as tables and columns.
     /// </summary>
     /// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
     public virtual void VisitDocumentReferences(DocNodeProxyReporter Report)

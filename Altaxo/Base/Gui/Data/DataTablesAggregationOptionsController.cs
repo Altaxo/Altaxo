@@ -102,6 +102,9 @@ namespace Altaxo.Gui.Data
     }
 
 
+    /// <summary>
+    /// Gets or sets a value indicating whether table data sources are executed before aggregation.
+    /// </summary>
     public bool ExecuteTablesDataSourceBeforeAggregation
     {
       get => field;

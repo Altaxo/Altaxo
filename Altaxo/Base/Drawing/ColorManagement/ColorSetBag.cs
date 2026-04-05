@@ -37,7 +37,7 @@ namespace Altaxo.Drawing.ColorManagement
   public class ColorSetBag
   {
     /// <summary>
-    /// The color sets. One tupe consist of the color set and a bool indication whether this is a plot color set.
+    /// The color sets. One tuple consists of the color set and a flag indicating whether this is a plot color set.
     /// </summary>
     private Tuple<IColorSet, bool>[] _colorSets;
 
@@ -82,11 +82,18 @@ namespace Altaxo.Drawing.ColorManagement
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColorSetBag"/> class.
+    /// </summary>
+    /// <param name="colorSets">The color sets to persist together with their plot-color flag.</param>
     public ColorSetBag(IEnumerable<Tuple<IColorSet, bool>> colorSets)
     {
       _colorSets = colorSets.ToArray();
     }
 
+    /// <summary>
+    /// Gets the stored color sets together with their plot-color flags.
+    /// </summary>
     public IEnumerable<Tuple<IColorSet, bool>> ColorSets
     {
       get

@@ -33,14 +33,21 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Scales.Ticks
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="CumulativeProbabilityTickSpacingController"/>.
+  /// </summary>
   public interface ICumulativeProbabilityTickSpacingView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="CumulativeProbabilityTickSpacing"/>.
+  /// </summary>
   [UserControllerForObject(typeof(CumulativeProbabilityTickSpacing), 200)]
   [ExpectedTypeOfView(typeof(ICumulativeProbabilityTickSpacingView))]
   public class CumulativeProbabilityTickSpacingController : MVCANControllerEditOriginalDocBase<CumulativeProbabilityTickSpacing, ICumulativeProbabilityTickSpacingView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -50,6 +57,9 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
     private int _targetNumberOfMajorTicks;
 
+    /// <summary>
+    /// Gets or sets the target number of major ticks.
+    /// </summary>
     public int TargetNumberOfMajorTicks
     {
       get => _targetNumberOfMajorTicks;
@@ -64,6 +74,9 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
     }
     private int _targetNumberOfMinorTicks;
 
+    /// <summary>
+    /// Gets or sets the target number of minor ticks.
+    /// </summary>
     public int TargetNumberOfMinorTicks
     {
       get => _targetNumberOfMinorTicks;
@@ -77,10 +90,16 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Gets the quantity environment used for the grace values.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment GraceEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _minGrace;
 
+    /// <summary>
+    /// Gets or sets the grace at the origin boundary.
+    /// </summary>
     public DimensionfulQuantity MinGrace
     {
       get => _minGrace;
@@ -96,6 +115,9 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
     private DimensionfulQuantity _maxGrace;
 
+    /// <summary>
+    /// Gets or sets the grace at the end boundary.
+    /// </summary>
     public DimensionfulQuantity MaxGrace
     {
       get => _maxGrace;
@@ -111,6 +133,9 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
     private ItemsController<bool> _transformationIsMultiply;
 
+    /// <summary>
+    /// Gets or sets the transformation mode that determines whether the transformation multiplies or divides.
+    /// </summary>
     public ItemsController<bool> TransformationIsMultiply
     {
       get => _transformationIsMultiply;
@@ -126,6 +151,9 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
     private double _divideBy;
 
+    /// <summary>
+    /// Gets or sets the transformation divisor or factor.
+    /// </summary>
     public double DivideBy
     {
       get => _divideBy;
@@ -142,6 +170,9 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
     private string _suppressMajorTickValues;
 
+    /// <summary>
+    /// Gets or sets the list of major tick values to suppress.
+    /// </summary>
     public string SuppressMajorTicksByValue
     {
       get => _suppressMajorTickValues;
@@ -157,6 +188,9 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
     private string _suppressMajorTicksByNumber;
 
+    /// <summary>
+    /// Gets or sets the list of major tick indices to suppress.
+    /// </summary>
     public string SuppressMajorTicksByNumber
     {
       get => _suppressMajorTicksByNumber;
@@ -172,6 +206,9 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
     private string _suppressMinorTicksByValue;
 
+    /// <summary>
+    /// Gets or sets the list of minor tick values to suppress.
+    /// </summary>
     public string SuppressMinorTicksByValue
     {
       get => _suppressMinorTicksByValue;
@@ -186,6 +223,9 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
     }
     private string _suppressMinorTicksByNumber;
 
+    /// <summary>
+    /// Gets or sets the list of minor tick indices to suppress.
+    /// </summary>
     public string SuppressMinorTicksByNumber
     {
       get => _suppressMinorTicksByNumber;
@@ -200,6 +240,9 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
     }
     private string _addMajorTickValues;
 
+    /// <summary>
+    /// Gets or sets the additional major tick values.
+    /// </summary>
     public string AddMajorTickValues
     {
       get => _addMajorTickValues;
@@ -215,6 +258,9 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
     private string _addMinorTickValues;
 
+    /// <summary>
+    /// Gets or sets the additional minor tick values.
+    /// </summary>
     public string AddMinorTickValues
     {
       get => _addMinorTickValues;
@@ -231,6 +277,9 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
     private ItemsController<BoundaryTickSnapping> _snapTicksToOrg;
 
+    /// <summary>
+    /// Gets or sets the snapping behavior for ticks at the origin boundary.
+    /// </summary>
     public ItemsController<BoundaryTickSnapping> SnapTicksToOrg
     {
       get => _snapTicksToOrg;
@@ -245,6 +294,9 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
     }
     private ItemsController<BoundaryTickSnapping> _snapTicksToEnd;
 
+    /// <summary>
+    /// Gets or sets the snapping behavior for ticks at the end boundary.
+    /// </summary>
     public ItemsController<BoundaryTickSnapping> SnapTicksToEnd
     {
       get => _snapTicksToEnd;
@@ -261,6 +313,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
     #endregion Bindings
 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       _snapTicksToOrg = null;
@@ -268,6 +321,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -301,6 +355,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (GUIConversion.TryParseMultipleAltaxoVariant(SuppressMajorTicksByValue, out var varVals))

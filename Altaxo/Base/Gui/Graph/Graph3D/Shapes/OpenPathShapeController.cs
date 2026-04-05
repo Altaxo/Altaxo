@@ -31,15 +31,22 @@ using Altaxo.Gui.Drawing.D3D;
 
 namespace Altaxo.Gui.Graph.Graph3D.Shapes
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="OpenPathShapeController"/>.
+  /// </summary>
   public interface IOpenPathShapeView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="OpenPathShapeBase"/>.
+  /// </summary>
   [UserControllerForObject(typeof(OpenPathShapeBase), 101)]
   [ExpectedTypeOfView(typeof(IOpenPathShapeView))]
   public class OpenPathShapeController : MVCANControllerEditOriginalDocBase<OpenPathShapeBase, IOpenPathShapeView>
   {
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_penController, () => PenController = null);
@@ -50,6 +57,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
 
     private PenAllPropertiesController _penController;
 
+    /// <summary>
+    /// Gets or sets the pen controller.
+    /// </summary>
     public PenAllPropertiesController PenController
     {
       get => _penController;
@@ -66,6 +76,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
 
     private IMVCANController _locationController;
 
+    /// <summary>
+    /// Gets or sets the location controller.
+    /// </summary>
     public IMVCANController LocationController
     {
       get => _locationController;
@@ -85,6 +98,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -101,6 +115,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
 
     #region IApplyController Members
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       try
@@ -115,7 +130,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
       }
       catch (Exception ex)
       {
-        Current.Gui.ErrorMessageBox(string.Format("An exception has occured during applying of your settings. The message is: {0}", ex.Message));
+        Current.Gui.ErrorMessageBox(string.Format("An exception has occurred while applying your settings. The message is: {0}", ex.Message));
         return false;
       }
 

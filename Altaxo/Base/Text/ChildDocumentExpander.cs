@@ -35,20 +35,20 @@ using Markdig.Syntax.Inlines;
 namespace Altaxo.Text
 {
   /// <summary>
-  /// Contains method to expand nested markdown child text documents into a master document. This is done recursively.
+  /// Contains methods to expand nested markdown child text documents into a master document. This is done recursively.
   /// </summary>
   public class ChildDocumentExpander
   {
     /// <summary>
     /// Expands the document to include child documents directly, and converting any graph to an image.
-    /// This process is recursively, i.e. if the child documents contain child-child documents,
+    /// This process is recursive, i.e. if the child documents contain child-child documents,
     /// they are expanded, too.
     /// </summary>
     /// <param name="textDocument">The original text document. This document is not changed during the expansion.</param>
     /// <param name="recursionLevel">The recursion level. Start with 0 here.</param>
     /// <param name="errors">A list that collects error messages.</param>
     /// <returns>A new <see cref="TextDocument"/>. This text document contains the expanded markdown text. In addition, all Altaxo graphs are converted to local images.</returns>
-    /// <remarks>Since finding Altaxo graphs embedded in the markdown is depended on the context (location of the TextDocument and location of the graph),
+    /// <remarks>Since finding Altaxo graphs embedded in the markdown depends on the context (location of the <see cref="TextDocument"/> and location of the graph),
     /// and we somewhat loose this context during the expansion, we convert the graphs to local images before we insert the document into the master document.</remarks>
     public static TextDocument ExpandDocumentToNewDocument(TextDocument textDocument, int recursionLevel = 0, List<MarkdownError>? errors = null)
     {
@@ -58,14 +58,14 @@ namespace Altaxo.Text
 
     /// <summary>
     /// Expands the document to include child documents directly, leaving graphs as links, but changing their Uris appropriately.
-    /// This process is recursively, i.e. if the child documents contain child-child documents, they are expanded, too.
+    /// This process is recursive, i.e. if the child documents contain child-child documents, they are expanded, too.
     /// </summary>
     /// <param name="textDocument">The original text document. This document is not changed during the expansion.</param>
     /// <param name="targetDocumentFolder">Folder path of the final document that is the target of the expansion process.</param>
     /// <param name="recursionLevel">The recursion level. Start with 0 here.</param>
     /// <param name="errors">A list that collects error messages.</param>
-    /// <returns>A new <see cref="TextDocument"/>. This text document contains the expanded markdown text. In addition, all Altaxo graphs are converted to local images.</returns>
-    /// <remarks>Since finding Altaxo graphs embedded in the markdown is depended on the context (location of the TextDocument and location of the graph),
+    /// <returns>A new <see cref="TextDocument"/>. This text document contains the expanded markdown text.</returns>
+    /// <remarks>Since finding Altaxo graphs embedded in the markdown depends on the context (location of the <see cref="TextDocument"/> and location of the graph),
     /// and we somewhat loose this context during the expansion, we convert the graphs to local images before we insert the document into the master document.</remarks>
     public static TextDocument ExpandDocumentToNewDocument(TextDocument textDocument, string targetDocumentFolder, int recursionLevel = 0, List<MarkdownError>? errors = null)
     {
@@ -73,7 +73,7 @@ namespace Altaxo.Text
     }
 
     /// <summary>
-    /// Expands the document to include child documents directly. This process is recursively, i.e. if the child documents contain child-child documents,
+    /// Expands the document to include child documents directly. This process is recursive, i.e. if the child documents contain child-child documents,
     /// they are expanded, too.
     /// </summary>
     /// <param name="textDocument">The original text document. This document is not changed during the expansion.</param>
@@ -81,8 +81,8 @@ namespace Altaxo.Text
     /// <param name="newPath">Folder path of the final document that is the target of the expansion process.</param>
     /// <param name="recursionLevel">The recursion level. Start with 0 here.</param>
     /// <param name="errors">A list that collects error messages.</param>
-    /// <returns>A new <see cref="TextDocument"/>. This text document contains the expanded markdown text. In addition, all Altaxo graphs are converted to local images.</returns>
-    /// <remarks>Since finding Altaxo graphs embedded in the markdown is depended on the context (location of the TextDocument and location of the graph),
+    /// <returns>A new <see cref="TextDocument"/>. This text document contains the expanded markdown text.</returns>
+    /// <remarks>Since finding Altaxo graphs embedded in the markdown depends on the context (location of the <see cref="TextDocument"/> and location of the graph),
     /// and we somewhat loose this context during the expansion, we convert the graphs to local images before we insert the document into the master document.</remarks>
     private static TextDocument ExpandDocumentToNewDocument(TextDocument textDocument, bool convertGraphsToImages, string newPath, int recursionLevel, List<MarkdownError>? errors)
     {

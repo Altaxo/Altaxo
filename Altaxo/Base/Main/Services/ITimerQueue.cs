@@ -59,12 +59,12 @@ namespace Altaxo.Main.Services
     bool AddOrUpdate(object token, TimeSpan time, Action<object, TimeSpan> value);
 
     /// <summary>
-    /// Tries to adds the item identified by the provided <paramref name="token"/>.
+    /// Tries to add the item identified by the provided <paramref name="token"/>.
     /// </summary>
     /// <param name="token">The token to identify the item.</param>
     /// <param name="time">The due time.</param>
     /// <param name="action">The action to perform when the due time is reached. 1st parameter is the token, 2nd parameter is the due time.</param>
-    /// <returns></returns>
+    /// <returns><c>true</c> if the item was added; otherwise, <c>false</c> if an item with the same token already exists.</returns>
     bool TryAdd(object token, TimeSpan time, Action<object, TimeSpan> action);
 
     /// <summary>
@@ -79,7 +79,7 @@ namespace Altaxo.Main.Services
     /// Tries to remove an item from the queue.
     /// </summary>
     /// <param name="token">The token to identify the item.</param>
-    /// <param name="dueTime">If the removal was successfull, contains the due time value of the removed item.</param>
+    /// <param name="dueTime">If the removal was successful, contains the due time value of the removed item.</param>
     /// <returns><c>True</c> if the item could be successfully removed. <c>False</c> if the item was not present in the queue.</returns>
     bool TryRemove(object token, out TimeSpan dueTime);
 

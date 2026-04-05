@@ -30,7 +30,7 @@ using System.Text;
 namespace Altaxo.Main.Services.PropertyReflection
 {
   /// <summary>
-  ///
+  /// Represents a category of reflected properties.
   /// </summary>
   /// <remarks>
   /// <para>This class originated from the 'WPG Property Grid' project (<see href="http://wpg.codeplex.com"/>), licensed under Ms-PL.</para>
@@ -39,16 +39,26 @@ namespace Altaxo.Main.Services.PropertyReflection
   {
     #region Initialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PropertyCategory"/> class.
+    /// </summary>
     public PropertyCategory()
     {
       _categoryName = "Misc";
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PropertyCategory"/> class.
+    /// </summary>
+    /// <param name="categoryName">The category name.</param>
     public PropertyCategory(string categoryName)
     {
       _categoryName = categoryName;
     }
 
+    /// <summary>
+    /// Gets the category name.
+    /// </summary>
     public string Category
     {
       get { return _categoryName; }

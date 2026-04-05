@@ -30,7 +30,7 @@ using Altaxo.Main.Services.ScriptCompilation;
 namespace Altaxo.Scripting
 {
   /// <summary>
-  /// Holds the text, the module (=executable), and some properties of a script to import from a file.
+  /// Holds the text, the executable module, and properties of a script used to import data from a file.
   /// </summary>
   public class FileImportScript
     :
@@ -44,6 +44,7 @@ namespace Altaxo.Scripting
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Scripting.FileImportScript), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (FileImportScript)obj;
@@ -51,6 +52,7 @@ namespace Altaxo.Scripting
         info.AddValue("Text", s.ScriptText);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (FileImportScript?)o ?? new FileImportScript();
@@ -89,7 +91,7 @@ namespace Altaxo.Scripting
     }
 
     /// <summary>
-    /// Gives the type of the script object (full name), which is created after successfull compilation.
+    /// Gives the type of the script object (full name), which is created after successful compilation.
     /// </summary>
     public override string ScriptObjectType
     {
@@ -134,6 +136,7 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public override string CodeStart
     {
       get
@@ -144,6 +147,7 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public override string CodeUserDefault
     {
       get
@@ -159,6 +163,7 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public override string CodeEnd
     {
       get
@@ -194,13 +199,13 @@ namespace Altaxo.Scripting
     }
 
     /// <summary>
-    /// Executes the script. If no instance of the script object exists, the script is compiled. If thereafter no script object exists, a error message will be stored and the return value is false.
+    /// Executes the script. If no instance of the script object exists, the script is compiled. If no script object exists afterwards, an error message is stored and the return value is false.
     /// If the script object exists, the Execute function of this script object is called.
     /// </summary>
     /// <param name="myTable">The data table this script is working on.</param>
     /// <param name="fileNames">The names of the files to import from.</param>
     /// <param name="reporter">Progress reporter that can be used by the script to report the progress of its work.</param>
-    /// <returns>True if executed without exceptions, otherwise false.</returns>
+    /// <returns>True if executed without exceptions; otherwise, false.</returns>
     /// <remarks>If exceptions were thrown during execution, the exception messages are stored
     /// inside the column script and can be recalled by the Errors property.</remarks>
     public bool Execute(Altaxo.Data.DataTable myTable, string[] fileNames, IProgressReporter reporter)
@@ -209,28 +214,28 @@ namespace Altaxo.Scripting
     }
 
     /// <summary>
-    /// Executes the script. If no instance of the script object exists, the script is compiled. If thereafter no script object exists, a error message will be stored and the return value is false.
+    /// Executes the script. If no instance of the script object exists, the script is compiled. If no script object exists afterwards, an error message is stored and the return value is false.
     /// If the script object exists, the Execute function of this script object is called.
     /// </summary>
     /// <param name="myTable">The data table this script is working on.</param>
     /// <param name="fileNames">The file names of the files to import from.</param>
     /// <param name="reporter">Progress reporter that can be used by the script to report the progress of its work.</param>
-    /// <remarks>No exceptions are catched here. This function is therefore intended for being called by another script.</remarks>
+    /// <remarks>No exceptions are caught here. This function is therefore intended to be called by another script.</remarks>
     public void ExecuteWithoutExceptionCatching(Altaxo.Data.DataTable myTable, string[] fileNames, IProgressReporter reporter)
     {
       Execute(myTable, fileNames, reporter, false);
     }
 
     /// <summary>
-    /// Executes the script. If no instance of the script object exists, the script is compiled. If thereafter no script object exists, a error message will be stored and the return value is false.
+    /// Executes the script. If no instance of the script object exists, the script is compiled. If no script object exists afterwards, an error message is stored and the return value is false.
     /// If the script object exists, the Execute function of this script object is called.
     /// </summary>
     /// <param name="myTable">The data table this script is working on.</param>
     /// <param name="fileNames">The file names of the files to import from.</param>
     /// <param name="reporter">Progress reporter that can be used by the script to report the progress of its work.</param>
-    /// <param name="catchExceptionsAndStoreThemInThisScript">If true, exceptions during the script execution are catched and stored here for further investigation by the user.
+    /// <param name="catchExceptionsAndStoreThemInThisScript">If true, exceptions during script execution are caught and stored here for further investigation by the user.
     /// If you call this script from another script, you should set this parameter to false in order to see the execution errors in your script.</param>
-    /// <returns>True if executed without exceptions, otherwise false.</returns>
+    /// <returns>True if executed without exceptions; otherwise, false.</returns>
     /// <remarks>If exceptions were thrown during execution, the exception messages are stored
     /// inside the column script and can be recalled by the Errors property.</remarks>
     public bool Execute(Altaxo.Data.DataTable myTable, string[] fileNames, IProgressReporter reporter, bool catchExceptionsAndStoreThemInThisScript)
@@ -279,8 +284,8 @@ namespace Altaxo.Scripting
     }
 
     /// <summary>
-    /// Executes the script. If no instance of the script object exists, a error message will be stored and the return value is false.
-    /// If the script object exists, the data change notifications will be switched of (for all tables).
+    /// Executes the script. If no instance of the script object exists, an error message is stored and the return value is false.
+    /// If the script object exists, the data change notifications are switched off for all tables.
     /// Then the Execute function of this script object is called. Afterwards, the data changed notifications are switched on again.
     /// </summary>
     /// <param name="myTable">The data table this script is working on.</param>
@@ -331,6 +336,12 @@ namespace Altaxo.Scripting
       return bSucceeded;
     }
 
+    /// <summary>
+    /// Executes the script with a background dialog while notifications are suspended.
+    /// </summary>
+    /// <param name="myTable">The destination table.</param>
+    /// <param name="fileNames">The file names to import.</param>
+    /// <returns>An exception if execution failed; otherwise, <see langword="null"/>.</returns>
     public Exception? ExecuteWithBackgroundDialogAndSuspendNotifications(Altaxo.Data.DataTable myTable, string[] fileNames)
     {
       return Current.Gui.ExecuteAsUserCancellable(1000, (reporter) => ExecuteWithSuspendedNotifications(myTable, fileNames, reporter));

@@ -31,7 +31,7 @@ using System.Text;
 namespace Altaxo.Drawing.D3D.Material
 {
   /// <summary>
-  /// Represents a material which is uniformely colored.
+  /// Represents a material with a uniform color.
   /// </summary>
   public class MaterialWithUniformColor : MaterialBase
   {
@@ -157,6 +157,7 @@ namespace Altaxo.Drawing.D3D.Material
       }
     }
 
+    ///<inheritdoc/>
     public override bool IsVisible
     {
       get
@@ -200,6 +201,7 @@ namespace Altaxo.Drawing.D3D.Material
       return false;
     }
 
+    ///<inheritdoc/>
     public override int GetHashCode()
     {
       return _color.GetHashCode() + 3 * _smoothness.GetHashCode() + 7 * _metalness.GetHashCode() + 13 * _indexOfRefraction.GetHashCode();

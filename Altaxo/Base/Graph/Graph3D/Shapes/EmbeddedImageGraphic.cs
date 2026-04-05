@@ -34,14 +34,24 @@ using Altaxo.Graph.Graph3D.GraphicsContext;
 
 namespace Altaxo.Graph.Graph3D.Shapes
 {
+  /// <summary>
+  /// Represents an embedded image graphic in a three-dimensional graph.
+  /// </summary>
   [Serializable]
   public class EmbeddedImageGraphic : ImageGraphic
   {
+    /// <summary>
+    /// The embedded image proxy.
+    /// </summary>
     protected ImageProxy _imageProxy;
 
     #region Serialization
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EmbeddedImageGraphic"/> class during deserialization.
+    /// </summary>
+    /// <param name="info">The deserialization info.</param>
     protected EmbeddedImageGraphic(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     :
@@ -52,9 +62,13 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// <summary>
     /// 2016-02-16 Initial version
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="EmbeddedImageGraphic"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(EmbeddedImageGraphic), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (EmbeddedImageGraphic)obj;
@@ -62,6 +76,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
         info.AddValue("Image", s._imageProxy);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (EmbeddedImageGraphic?)o ?? new EmbeddedImageGraphic(info);
@@ -77,6 +92,11 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EmbeddedImageGraphic"/> class.
+    /// </summary>
+    /// <param name="graphicPosition">The graphic position.</param>
+    /// <param name="startingImage">The starting image.</param>
     public EmbeddedImageGraphic(PointD3D graphicPosition, ImageProxy startingImage)
       :
       base()
@@ -85,12 +105,18 @@ namespace Altaxo.Graph.Graph3D.Shapes
       Image = startingImage;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EmbeddedImageGraphic"/> class.
+    /// </summary>
     public EmbeddedImageGraphic(double posX, double posY, double posZ, ImageProxy startingImage)
       :
       this(new PointD3D(posX, posY, posZ), startingImage)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance with explicit position, size, and image.
+    /// </summary>
     public EmbeddedImageGraphic(PointD3D graphicPosition, VectorD3D graphicSize, ImageProxy startingImage)
       :
       this(graphicPosition, startingImage)
@@ -98,18 +124,27 @@ namespace Altaxo.Graph.Graph3D.Shapes
       SetSize(graphicSize.X, graphicSize.Y, graphicSize.Z, Main.EventFiring.Suppressed);
     }
 
+    /// <summary>
+    /// Initializes a new instance with explicit coordinates, size, and image.
+    /// </summary>
     public EmbeddedImageGraphic(double posX, double posY, double posZ, VectorD3D graphicSize, ImageProxy startingImage)
       :
       this(new PointD3D(posX, posY, posZ), graphicSize, startingImage)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance with explicit coordinates, width, height, and image.
+    /// </summary>
     public EmbeddedImageGraphic(double posX, double posY, double posZ, double width, double height, ImageProxy startingImage)
       :
       this(new PointD3D(posX, posY, posZ), new VectorD3D(width, height, 0), startingImage)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance with position, rotation, and image.
+    /// </summary>
     public EmbeddedImageGraphic(PointD3D graphicPosition, double Rotation, ImageProxy startingImage)
       :
       this(graphicPosition, startingImage)
@@ -117,12 +152,18 @@ namespace Altaxo.Graph.Graph3D.Shapes
       RotationZ = Rotation;
     }
 
+    /// <summary>
+    /// Initializes a new instance with coordinates, rotation, and image.
+    /// </summary>
     public EmbeddedImageGraphic(double posX, double posY, double posZ, double Rotation, ImageProxy startingImage)
       :
       this(new PointD3D(posX, posY, posZ), Rotation, startingImage)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance with position, size, rotation, and image.
+    /// </summary>
     public EmbeddedImageGraphic(PointD3D graphicPosition, VectorD3D graphicSize, double Rotation, ImageProxy startingImage)
       :
       this(graphicPosition, Rotation, startingImage)
@@ -130,24 +171,39 @@ namespace Altaxo.Graph.Graph3D.Shapes
       SetSize(graphicSize.X, graphicSize.Y, graphicSize.Z, Main.EventFiring.Suppressed);
     }
 
+    /// <summary>
+    /// Initializes a new instance with coordinates, size, rotation, and image.
+    /// </summary>
     public EmbeddedImageGraphic(double posX, double posY, double posZ, VectorD3D graphicSize, double Rotation, ImageProxy startingImage)
       :
       this(new PointD3D(posX, posY, posZ), graphicSize, Rotation, startingImage)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance with coordinates, width, height, rotation, and image.
+    /// </summary>
     public EmbeddedImageGraphic(double posX, double posY, double posZ, double width, double height, double Rotation, ImageProxy startingImage)
       :
       this(new PointD3D(posX, posY, posZ), new VectorD3D(width, height, 0), Rotation, startingImage)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EmbeddedImageGraphic"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The graphic to copy from.</param>
     public EmbeddedImageGraphic(EmbeddedImageGraphic from)
       : base(from)
     {
       CopyFrom(from, false);
     }
 
+    /// <summary>
+    /// Copies values from another <see cref="EmbeddedImageGraphic"/> instance.
+    /// </summary>
+    /// <param name="from">The graphic to copy from.</param>
+    /// <param name="withBaseMembers">If set to <c>true</c>, base members are copied as well.</param>
     [MemberNotNull(nameof(_imageProxy))]
     protected void CopyFrom(EmbeddedImageGraphic from, bool withBaseMembers)
     {
@@ -157,6 +213,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       Image = from._imageProxy;
     }
 
+    /// <inheritdoc/>
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -178,11 +235,15 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     #endregion Constructors
 
+    /// <inheritdoc/>
     public override object Clone()
     {
       return new EmbeddedImageGraphic(this);
     }
 
+    /// <summary>
+    /// Gets or sets the embedded image.
+    /// </summary>
     public ImageProxy Image
     {
       get
@@ -198,11 +259,13 @@ namespace Altaxo.Graph.Graph3D.Shapes
       }
     }
 
+    /// <inheritdoc/>
     public override PointD2D GetImageSizePt()
     {
       return _imageProxy is null ? new PointD2D(1, 1) : (PointD2D)_imageProxy.Size;
     }
 
+    /// <inheritdoc/>
     public override Image GetImage()
     {
       var str = _imageProxy.GetContentStream();
@@ -210,6 +273,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     }
 
+    /// <inheritdoc/>
     public override void Paint(IGraphicsContext3D g, IPaintContext context)
     {
       throw new NotImplementedException();

@@ -30,14 +30,31 @@ using System.Text;
 
 namespace Altaxo.Gui.Settings
 {
+  /// <summary>
+  /// Represents an options panel shown in the settings UI.
+  /// </summary>
   public interface IOptionPanel
   {
+    /// <summary>
+    /// Initializes the option panel.
+    /// </summary>
+    /// <param name="optionPanelOwner">The owner object of the option panel.</param>
     void Initialize(object? optionPanelOwner);
 
+    /// <summary>
+    /// Gets the view object associated with the panel.
+    /// </summary>
     object? ViewObject { get; }
 
+    /// <summary>
+    /// Applies the edited settings.
+    /// </summary>
+    /// <returns><see langword="true"/> if applying succeeded; otherwise, <see langword="false"/>.</returns>
     bool Apply();
 
+    /// <summary>
+    /// Gets or sets the panel owner.
+    /// </summary>
     object? Owner { get; set; }
   }
 }

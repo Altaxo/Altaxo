@@ -29,14 +29,21 @@ namespace Altaxo.Gui.Science.Spectroscopy.EnsembleProcessing
 {
   // MultiplicativeScatterCorrection
 
+  /// <summary>
+  /// View interface for ensemble mean-and-scale correction.
+  /// </summary>
   public interface IEnsembleMeanAndScaleView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="EnsembleMeanAndScaleCorrection"/>.
+  /// </summary>
   [UserControllerForObject(typeof(EnsembleMeanAndScaleCorrection))]
   [ExpectedTypeOfView(typeof(IEnsembleMeanAndScaleView))]
   public class EnsembleMeanAndScaleController : MVCANControllerEditImmutableDocBase<EnsembleMeanAndScaleCorrection, IEnsembleMeanAndScaleView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -44,6 +51,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.EnsembleProcessing
 
     #region Bindings
 
+    /// <summary>
+    /// Gets or sets a value indicating whether ensemble scaling is used.
+    /// </summary>
     public bool EnsembleScale
     {
       get => field;
@@ -58,6 +68,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.EnsembleProcessing
     }
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -68,6 +79,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.EnsembleProcessing
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = _doc with

@@ -37,10 +37,10 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
   public interface IIndexedTriangleBuffer
   {
     /// <summary>
-    /// Gets the number of triangles already stored in the buffer.
+    /// Gets the number of vertices already stored in the buffer.
     /// </summary>
     /// <value>
-    /// The index offset, i.e. the number of triangles already stored in the buffer.
+    /// The number of vertices already stored in the buffer.
     /// </value>
     int VertexCount { get; }
 

@@ -31,14 +31,21 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Scales.Ticks
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="SpanTickSpacingController"/>.
+  /// </summary>
   public interface ISpanTickSpacingView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="SpanTickSpacing"/>.
+  /// </summary>
   [UserControllerForObject(typeof(SpanTickSpacing), 200)]
   [ExpectedTypeOfView(typeof(ISpanTickSpacingView))]
   public class SpanTickSpacingController : MVCANControllerEditOriginalDocBase<SpanTickSpacing, ISpanTickSpacingView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -48,6 +55,9 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
     private bool _isEndOrgRatio;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the end-to-origin ratio is shown instead of the difference.
+    /// </summary>
     public bool IsEndOrgRatio
     {
       get => _isEndOrgRatio;
@@ -62,10 +72,16 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
     }
 
 
+    /// <summary>
+    /// Gets the unit environment for the relative tick position.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment RelativePositionOfTickEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _relativePositionOfTick;
 
+    /// <summary>
+    /// Gets or sets the relative position of the tick.
+    /// </summary>
     public DimensionfulQuantity RelativePositionOfTick
     {
       get => _relativePositionOfTick;
@@ -81,6 +97,9 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
     private ItemsController<bool> _transformationIsMultiply;
 
+    /// <summary>
+    /// Gets or sets the transformation operation selector.
+    /// </summary>
     public ItemsController<bool> TransformationIsMultiply
     {
       get => _transformationIsMultiply;
@@ -96,6 +115,9 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
     private double _divideBy;
 
+    /// <summary>
+    /// Gets or sets the transformation divider.
+    /// </summary>
     public double DivideBy
     {
       get => _divideBy;
@@ -111,6 +133,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -129,6 +152,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       _doc.RelativeTickPosition = RelativePositionOfTick.AsValueInSIUnits;

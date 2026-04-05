@@ -33,8 +33,7 @@ using System.Threading;
 namespace Altaxo.Main.Services
 {
   /// <summary>
-  /// This Class contains two ResourceManagers, which handle string and image resources
-  /// for the application. It do handle localization strings on this level.
+  /// Contains resource managers for application strings and images and handles localization.
   /// </summary>
   public class ResourceServiceImpl : IResourceService
   {
@@ -80,8 +79,14 @@ namespace Altaxo.Main.Services
 
     private string _currentLanguage;
 
+    /// <inheritdoc/>
     public event EventHandler? LanguageChanged;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ResourceServiceImpl"/> class.
+    /// </summary>
+    /// <param name="resourceDirectory">The directory containing localized resources.</param>
+    /// <param name="propertyService">The property service used to retrieve the UI language.</param>
     public ResourceServiceImpl(string resourceDirectory, IPropertyService propertyService)
     {
       _resourceDirectory = resourceDirectory ?? throw new ArgumentNullException(nameof(resourceDirectory));
@@ -90,6 +95,7 @@ namespace Altaxo.Main.Services
       LoadLanguageResources(Language);
     }
 
+    /// <inheritdoc/>
     public string Language
     {
       get
@@ -120,11 +126,20 @@ namespace Altaxo.Main.Services
       ra.Load();
     }
 
+    /// <summary>
+    /// Registers neutral string resources.
+    /// </summary>
     public void RegisterNeutralStrings(ResourceManager stringManager, string debugInfo)
     {
       RegisterNeutralStrings(string.Empty, stringManager, debugInfo);
     }
 
+    /// <summary>
+    /// Registers neutral string resources with an explicit key prefix.
+    /// </summary>
+    /// <param name="prefix">The prefix applied to resource names.</param>
+    /// <param name="stringManager">The resource manager that provides the strings.</param>
+    /// <param name="debugInfo">Debug information describing the resource source.</param>
     public void RegisterNeutralStrings(string prefix, ResourceManager stringManager, string debugInfo)
     {
       _neutralStringsResMgrs.Add((prefix, stringManager, debugInfo));
@@ -164,16 +179,29 @@ namespace Altaxo.Main.Services
       return prefix;
     }
 
+    /// <summary>
+    /// Registers neutral image resources.
+    /// </summary>
     public void RegisterNeutralImages(ResourceManager imageManager, string debugInfo)
     {
       RegisterNeutralImages(string.Empty, imageManager, debugInfo);
     }
 
+    /// <summary>
+    /// Registers neutral image resources with an explicit base resource name.
+    /// </summary>
+    /// <param name="baseResourceName">The base resource name used as prefix.</param>
+    /// <param name="imageManager">The resource manager that provides the images.</param>
+    /// <param name="debugInfo">Debug information describing the resource source.</param>
     public void RegisterNeutralImages(string baseResourceName, ResourceManager imageManager, string debugInfo)
     {
       _neutralIconsResMgrs.Add((baseResourceName, imageManager, debugInfo));
     }
 
+    /// <summary>
+    /// Registers all supported embedded resources found in the specified assembly.
+    /// </summary>
+    /// <param name="assembly">The assembly whose resources should be registered.</param>
     public void RegisterAssemblyResources(Assembly assembly)
     {
       // System.Diagnostics.Debug.WriteLine($"Register resources for assembly {assembly}");
@@ -297,6 +325,7 @@ namespace Altaxo.Main.Services
     /// <exception cref="ResourceNotFoundException">
     /// Is thrown when the GlobalResource manager can't find a requested resource.
     /// </exception>
+    /// <inheritdoc/>
     public string GetString(string name)
     {
       lock (_loadLock)
@@ -375,6 +404,7 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <inheritdoc/>
     public object? GetImageResource(string name)
     {
 #if USERESOURCETRACKING
@@ -430,11 +460,13 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <inheritdoc/>
     public Bitmap? GetBitmap(string name)
     {
       return (Bitmap?)GetImageResource(name);
     }
 
+    /// <inheritdoc/>
     public System.IO.Stream? GetResourceStream(string name)
     {
       lock (_loadLock)
@@ -489,6 +521,13 @@ namespace Altaxo.Main.Services
       private string _baseResourceName;
       private bool _isIcons;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ResourceAssembly"/> class.
+      /// </summary>
+      /// <param name="service">The owning resource service.</param>
+      /// <param name="assembly">The assembly that contains the resources.</param>
+      /// <param name="baseResourceName">The base resource name.</param>
+      /// <param name="isIcons">If set to <c>true</c>, the resources are treated as icons; otherwise, as strings.</param>
       public ResourceAssembly(ResourceServiceImpl service, Assembly assembly, string baseResourceName, bool isIcons)
       {
         _service = service;
@@ -514,6 +553,9 @@ namespace Altaxo.Main.Services
         }
       }
 
+      /// <summary>
+      /// Loads localized resources for the current language from the associated assembly.
+      /// </summary>
       public void Load()
       {
         string currentLanguage = _service._currentLanguage;

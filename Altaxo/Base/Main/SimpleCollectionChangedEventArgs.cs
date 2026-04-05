@@ -47,8 +47,8 @@ namespace Altaxo.Main
     /// <summary>
     /// Initializes a new instance of the <see cref="SimpleCollectionChangedEventArgs"/> class.
     /// </summary>
-    /// <param name="originator">The originator.</param>
-    /// <exception cref="System.ArgumentNullException">originator</exception>
+    /// <param name="originator">The originator of the collection change.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="originator"/> is <c>null</c>.</exception>
     public SimpleCollectionChangedEventArgs(IDocumentLeafNode originator)
     {
       if (originator is null)
@@ -81,7 +81,7 @@ namespace Altaxo.Main
     }
 
     /// <summary>
-    /// Adds the specified event args e.
+    /// Accumulates another event instance into this one.
     /// </summary>
     /// <param name="e">The <see cref="Altaxo.Main.SelfAccumulateableEventArgs" /> instance containing the event data.</param>
     /// <exception cref="System.ArgumentOutOfRangeException">

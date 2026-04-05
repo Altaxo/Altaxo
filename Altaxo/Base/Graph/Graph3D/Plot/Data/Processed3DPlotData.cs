@@ -178,6 +178,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Data
     /// <summary>
     /// Returns true if the z coordinate is used. Return false if the z coordinate is always 0 (zero), so we can
     /// </summary>
+    /// <summary>
+    /// Gets a value indicating whether the z coordinate is used.
+    /// </summary>
     public virtual bool IsZUsed { get { return true; } }
 
     /// <summary>

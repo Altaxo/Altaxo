@@ -34,38 +34,60 @@ using Altaxo.Main;
 
 namespace Altaxo.Science.Spectroscopy.Raman
 {
+  /// <summary>
+  /// Data source that computes Raman calibration data from neon and silicon calibration spectra.
+  /// </summary>
   public class RamanCalibrationDataSource : TableDataSourceBase, IAltaxoTableDataSource, Calibration.IXCalibrationDataSource, IHasDocumentReferences
   {
     #region ColumnNames
 
+    /// <summary>Column name for NIST neon peak wavelengths.</summary>
     public const string ColumnName_Group0_NeonCalibration_NistPeakWavelength = "NistNeonPeakWavelength [nm]";
+    /// <summary>Column name for measured neon peak wavelengths.</summary>
     public const string ColumnName_Group0_NeonCalibration_MeasuredPeakWavelength = "MeasuredNeonPeakWavelength [nm]";
+    /// <summary>Column name for wavelength differences between NIST and measured neon peaks.</summary>
     public const string ColumnName_Group0_NeonCalibration_DifferenceOfPeakWavelengths = "DifferenceOfPeakWavelengths [nm]";
+    /// <summary>Column name for the standard deviation of neon wavelength differences.</summary>
     public const string ColumnName_Group0_NeonCalibration_DifferenceOfPeakWavelengthsStdDev = "DifferenceOfPeakWavelengths.Err [nm]";
+    /// <summary>Property-column name for the assumed laser wavelength of the neon calibration.</summary>
     public const string PColumnName_Group0_NeonCalibration_AssumedLaserWavelength = "AssumedLaserWavelength [nm]";
 
+    /// <summary>Column name for the uncalibrated wavelength axis of the first preprocessed neon spectrum.</summary>
     public const string ColumnName_Group1_NeonCalibration1_PreprocessedUncalibratedWavelength = "Neon1_PreprocessedUncalibrated_Wavelength [nm]";
+    /// <summary>Column name for the calibrated wavelength axis of the first preprocessed neon spectrum.</summary>
     public const string ColumnName_Group1_NeonCalibration1_PreprocessedCalibratedWavelength = "Neon1_PreprocessedCalibrated_Wavelength [nm]";
+    /// <summary>Column name for the first preprocessed neon signal.</summary>
     public const string ColumnName_Group1_NeonCalibration1_PreprocessedSignal = "Neon1_Preprocessed_Signal";
 
+    /// <summary>Column name for the uncalibrated wavelength axis of the second preprocessed neon spectrum.</summary>
     public const string ColumnName_Group2_NeonCalibration2_PreprocessedUncalibratedWavelength = "Neon2_PreprocessedUncalibrated_Wavelength [nm]";
+    /// <summary>Column name for the calibrated wavelength axis of the second preprocessed neon spectrum.</summary>
     public const string ColumnName_Group2_NeonCalibration2_PreprocessedCalibratedWavelength = "Neon2_PreprocessedCalibrated_Wavelength [nm]";
+    /// <summary>Column name for the second preprocessed neon signal.</summary>
     public const string ColumnName_Group2_NeonCalibration2_PreprocessedSignal = "Neon2_Preprocessed_Signal";
 
+    /// <summary>Column name for the measured wavelengths used to build the neon spline calibration.</summary>
     public const string ColumnName_Group3_NeonCalibration_SplineX_MeasuredWavelength = "NeonCalibration_MeasuredWL [nm]";
+    /// <summary>Column name for wavelength differences returned by the neon spline calibration.</summary>
     public const string ColumnName_Group3_NeonCalibration_SplineY_DifferenceWavelength = "NeonCalibration_DifferenceWL [nm]";
 
+    /// <summary>Column name for the silicon peak shift.</summary>
     public const string ColumnName_Group4_SiliconCalibration_PeakShift = "SiliconPeakShift [cm-1]";
+    /// <summary>Column name for the standard deviation of the silicon peak shift.</summary>
     public const string ColumnName_Group4_SiliconCalibration_PeakShiftStdDev = "SiliconPeakShift.Err [cm-1]";
 
-
+    /// <summary>Column name for the wavelength axis of the preprocessed silicon spectrum.</summary>
     public const string ColumnName_Group5_SiliconCalibration_PreprocessedSpectrumWavelength = "Silicon_Preprocessed_Wavelength [nm]";
+    /// <summary>Column name for the preprocessed silicon signal.</summary>
     public const string ColumnName_Group5_SiliconCalibration_PreprocessedSignal = "Silicon_Preprocessed_Signal";
 
-
+    /// <summary>Column name for uncalibrated x-values of the final calibration curve.</summary>
     public const string ColumnName_Group6_XCalibration_UncalibratedX = "XCalibration_UncalibratedX";
+    /// <summary>Column name for calibrated x-values of the final calibration curve.</summary>
     public const string ColumnName_Group6_XCalibration_CalibratedX = "XCalibration_CalibratedX";
+    /// <summary>Column name for deviations between calibrated and uncalibrated x-values.</summary>
     public const string ColumnName_Group6_XCalibration_XDeviation = "XCalibration_XDeviation";
+    /// <summary>Property-column name for the calibrated laser wavelength.</summary>
     public const string PColumnName_Group6_CalibratedLaserWavelength = "CalibratedLaserWavelength [nm]";
 
     #endregion
@@ -78,6 +100,9 @@ namespace Altaxo.Science.Spectroscopy.Raman
     private SiliconCalibrationOptions? _siliconCalibrationOptions;
     private DataTableXYColumnProxy? _siliconCalibrationData;
 
+    /// <summary>
+    /// Holds the subscribers for <see cref="DataSourceChanged"/>.
+    /// </summary>
     public Action<IAltaxoTableDataSource>? _dataSourceChanged;
 
     #region Serialization
@@ -90,6 +115,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
     [Serialization.Xml.XmlSerializationSurrogateFor(typeof(RamanCalibrationDataSource), 0)]
     private class XmlSerializationSurrogate0 : Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (RamanCalibrationDataSource)obj;
@@ -106,6 +132,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
 
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (o is RamanCalibrationDataSource s)
@@ -131,6 +158,11 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
     #endregion Version 0
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RamanCalibrationDataSource"/> class from serialized data.
+    /// </summary>
+    /// <param name="info">The deserialization info.</param>
+    /// <param name="version">The serialized version.</param>
     protected RamanCalibrationDataSource(Serialization.Xml.IXmlDeserializationInfo info, int version)
     {
       switch (version)
@@ -151,13 +183,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
     /// Initializes a new instance of the <see cref="RamanCalibrationDataSource"/> class.
     /// </summary>
     /// <param name="importOptions">The data source import options.</param>
-    /// <exception cref="ArgumentNullException">
-    /// inputData
-    /// or
-    /// transformationOptions
-    /// or
-    /// importOptions
-    /// </exception>
+    /// <exception cref="ArgumentNullException"><paramref name="importOptions"/> is <see langword="null"/>.</exception>
     public RamanCalibrationDataSource(IDataSourceImportOptions importOptions)
     {
       if (importOptions is null)
@@ -187,6 +213,10 @@ namespace Altaxo.Science.Spectroscopy.Raman
       _siliconCalibrationOptions = from._siliconCalibrationOptions;
     }
 
+    /// <summary>
+    /// Copies state from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     [MemberNotNull(nameof(_importOptions))]
     private void CopyFrom(RamanCalibrationDataSource from)
     {
@@ -218,7 +248,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
     /// Copies from another instance.
     /// </summary>
     /// <param name="obj">The object to copy from.</param>
-    /// <returns><c>True</c> if anything could be copied from the object, otherwise <c>false</c>.</returns>
+    /// <returns><c>True</c> if anything could be copied from the object; otherwise, <c>false</c>.</returns>
     public bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -249,7 +279,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
     /// Fills (or refills) the data table with the processed data. The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable" />.
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
-    /// <param name="reporter"></param>
+    /// <param name="reporter">The progress reporter.</param>
     public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter reporter)
     {
       FillData(destinationTable, CancellationToken.None);
@@ -427,6 +457,12 @@ namespace Altaxo.Science.Spectroscopy.Raman
       return result;
     }
 
+    /// <summary>
+    /// Executes the final calibration step that combines neon and silicon calibration results.
+    /// </summary>
+    /// <param name="destinationTable">The destination table.</param>
+    /// <param name="MeasuredWavelengthToWavelengthDifference">The spline that converts measured wavelengths to wavelength differences.</param>
+    /// <param name="siliconCalibration">The silicon calibration result.</param>
     protected void ExecuteFullCalibration(DataTable destinationTable, Func<double, double> MeasuredWavelengthToWavelengthDifference, SiliconCalibration siliconCalibration)
     {
 
@@ -488,6 +524,9 @@ namespace Altaxo.Science.Spectroscopy.Raman
       }
     }
 
+    /// <summary>
+    /// Creates a neon calibration from the specified spectrum.
+    /// </summary>
     public static NeonCalibration? CalibrateWithNeonSpectrum(
       DataTable dstTable,
       NeonCalibrationOptions neonOptions,
@@ -539,6 +578,9 @@ namespace Altaxo.Science.Spectroscopy.Raman
       }
     }
 
+    /// <summary>
+    /// Writes a preprocessed neon spectrum to the destination table.
+    /// </summary>
     private static void WritePreprocessedSpectraToTable(DataTable dstTable, NeonCalibration calibration, bool isNeon2)
     {
       if (calibration.XPreprocessed_nm is { } xArr && calibration.YPreprocessed is { } yArr && calibration.Converter is { } converter)
@@ -588,6 +630,9 @@ namespace Altaxo.Science.Spectroscopy.Raman
       }
     }
 
+    /// <summary>
+    /// Creates a silicon calibration from the specified spectrum.
+    /// </summary>
     public static SiliconCalibration? CalibrateWithSiliconSpectrum(DataTable dstTable, SiliconCalibrationOptions siliconOptions, IReadableColumn x_column, IReadableColumn y_column, CancellationToken cancellationToken)
     {
       var len = Math.Min(x_column.Count ?? 0, y_column.Count ?? 0);
@@ -613,6 +658,9 @@ namespace Altaxo.Science.Spectroscopy.Raman
       return calibration;
     }
 
+    /// <summary>
+    /// Writes the fitted silicon peak position to the destination table.
+    /// </summary>
     private static void WriteSiliconPeakToTable(DataTable dstTable, (double Position, double PositionTolerance)? match)
     {
       var colPos = dstTable.DataColumns.EnsureExistence(ColumnName_Group4_SiliconCalibration_PeakShift, typeof(DoubleColumn), ColumnKind.V, 4);
@@ -624,6 +672,11 @@ namespace Altaxo.Science.Spectroscopy.Raman
       colPosErr[0] = match.Value.PositionTolerance;
     }
 
+    /// <summary>
+    /// Determines whether the specified table contains a valid x-axis calibration.
+    /// </summary>
+    /// <param name="table">The table to inspect.</param>
+    /// <returns><see langword="true"/> if a valid calibration is present; otherwise, <see langword="false"/>.</returns>
     public bool IsContainingValidXAxisCalibration(DataTable table)
     {
       var uncalibColumn = table.DataColumns.TryGetColumn(ColumnName_Group6_XCalibration_UncalibratedX);
@@ -631,6 +684,11 @@ namespace Altaxo.Science.Spectroscopy.Raman
       return uncalibColumn is not null && calibColumn is not null && Math.Min(uncalibColumn.Count, calibColumn.Count) >= 2;
     }
 
+    /// <summary>
+    /// Gets the x-axis calibration from the specified table.
+    /// </summary>
+    /// <param name="table">The table that contains the calibration.</param>
+    /// <returns>The pairs of uncalibrated and calibrated x values.</returns>
     public (double x_uncalibrated, double x_calibrated)[] GetXAxisCalibration(DataTable table)
     {
       var uncalibColumn = table.DataColumns.TryGetColumn(ColumnName_Group6_XCalibration_UncalibratedX);
@@ -673,8 +731,16 @@ namespace Altaxo.Science.Spectroscopy.Raman
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the first neon calibration is not configured.
+    /// </summary>
     public bool IsNeonCalibration1Empty => _neonCalibrationData1 is null || _neonCalibrationOptions1 is null;
 
+    /// <summary>
+    /// Sets the first neon calibration.
+    /// </summary>
+    /// <param name="options">The neon calibration options.</param>
+    /// <param name="data">The neon calibration data.</param>
     public void SetNeonCalibration1(NeonCalibrationOptions options, DataTableXYColumnProxy data)
     {
       var b1 = ChildSetMember(ref _neonCalibrationData1, data);
@@ -687,6 +753,11 @@ namespace Altaxo.Science.Spectroscopy.Raman
       }
     }
 
+    /// <summary>
+    /// Sets the second neon calibration.
+    /// </summary>
+    /// <param name="options">The neon calibration options.</param>
+    /// <param name="data">The neon calibration data.</param>
     public void SetNeonCalibration2(NeonCalibrationOptions options, DataTableXYColumnProxy data)
     {
       var b1 = ChildSetMember(ref _neonCalibrationData2, data);
@@ -699,22 +770,36 @@ namespace Altaxo.Science.Spectroscopy.Raman
       }
     }
 
+    /// <summary>
+    /// Clears the first neon calibration.
+    /// </summary>
     public void ClearNeonCalibration1()
     {
       SetNeonCalibration1(null!, null!);
     }
 
+    /// <summary>
+    /// Clears the second neon calibration.
+    /// </summary>
     public void ClearNeonCalibration2()
     {
       SetNeonCalibration2(null!, null!);
     }
 
+    /// <summary>
+    /// Clears the silicon calibration.
+    /// </summary>
     public void ClearSiliconCalibration()
     {
       SetSiliconCalibration(null!, null!);
     }
 
 
+    /// <summary>
+    /// Sets the silicon calibration.
+    /// </summary>
+    /// <param name="options">The silicon calibration options.</param>
+    /// <param name="data">The silicon calibration data.</param>
     public void SetSiliconCalibration(SiliconCalibrationOptions options, DataTableXYColumnProxy data)
     {
       var b1 = ChildSetMember(ref _siliconCalibrationData, data);
@@ -752,19 +837,44 @@ namespace Altaxo.Science.Spectroscopy.Raman
       }
     }
 
+    /// <summary>
+    /// Gets the options for the first neon calibration.
+    /// </summary>
     public NeonCalibrationOptions? NeonCalibrationOptions1 => _neonCalibrationOptions1;
+
+    /// <summary>
+    /// Gets the options for the second neon calibration.
+    /// </summary>
     public NeonCalibrationOptions? NeonCalibrationOptions2 => _neonCalibrationOptions2;
+
+    /// <summary>
+    /// Gets the options for the silicon calibration.
+    /// </summary>
     public SiliconCalibrationOptions? SiliconCalibrationOptions => _siliconCalibrationOptions;
 
+    /// <summary>
+    /// Gets the data for the first neon calibration.
+    /// </summary>
     public DataTableXYColumnProxy? NeonCalibrationData1 => _neonCalibrationData1;
+
+    /// <summary>
+    /// Gets the data for the second neon calibration.
+    /// </summary>
     public DataTableXYColumnProxy? NeonCalibrationData2 => _neonCalibrationData2;
+
+    /// <summary>
+    /// Gets the data for the silicon calibration.
+    /// </summary>
     public DataTableXYColumnProxy? SiliconCalibrationData => _siliconCalibrationData;
 
+    /// <inheritdoc />
     public object ProcessOptionsObject { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    /// <inheritdoc />
     public object ProcessDataObject { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
     #region Change event handling
 
+    /// <inheritdoc />
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (ReferenceEquals(_neonCalibrationData1, sender) ||
@@ -789,6 +899,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
     #region Document Node functions
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_neonCalibrationData1 is not null)
@@ -803,7 +914,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
     #endregion Document Node functions
 
     /// <summary>
-    /// Called after deserization of a data source instance, when it is already associated with a data table.
+    /// Called after deserialization of a data source instance, when it is already associated with a data table.
     /// </summary>
     public void OnAfterDeserialization()
     {

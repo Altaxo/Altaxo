@@ -44,25 +44,25 @@ namespace Altaxo.Serialization.Ascii
     /// </summary>
     public static readonly PropertyKey<AsciiDocumentAnalysisOptions> PropertyKeyAsciiDocumentAnalysisOptions = new PropertyKey<AsciiDocumentAnalysisOptions>("2AD2EBB9-F4C6-4BD2-A71B-23974776F5DF", "Table\\AsciiAnalysisOptions", PropertyLevel.All, typeof(Altaxo.Data.DataTable), AsciiDocumentAnalysisOptions.GetDefaultSystemOptions);
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
     {
       return ([".txt", ".csv", ".dat"], "ASCII files (*.txt;*.csv;*.dat)");
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override object CheckOrCreateImportOptions(object? importOptions)
     {
       return (importOptions as AsciiImportOptions) ?? new AsciiImportOptions();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override IAltaxoTableDataSource? CreateTableDataSource(IReadOnlyList<string> fileNames, object importOptions)
     {
       return new AsciiImportDataSource(fileNames, (AsciiImportOptions)importOptions);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override double GetProbabilityForBeingThisFileFormat(string fileName)
     {
       double p = 0;
@@ -97,7 +97,7 @@ namespace Altaxo.Serialization.Ascii
       return p;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override string? Import(IReadOnlyList<string> filenames, DataTable table, object importOptionsObj, bool attachDataSource)
     {
       var importOptions = (AsciiImportOptions)importOptionsObj;

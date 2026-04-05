@@ -21,11 +21,17 @@ using System;
 
 namespace Altaxo.Main.Services
 {
+  /// <summary>
+  /// Provides data for file-system events involving a single file or directory.
+  /// </summary>
   public class FileEventArgs : EventArgs
   {
     private string _fileName = string.Empty;
     private bool _isDirectory;
 
+    /// <summary>
+    /// Gets the affected file or directory name.
+    /// </summary>
     public string FileName
     {
       get
@@ -34,6 +40,9 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the affected path refers to a directory.
+    /// </summary>
     public bool IsDirectory
     {
       get
@@ -42,6 +51,11 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileEventArgs"/> class.
+    /// </summary>
+    /// <param name="fileName">The affected file or directory name.</param>
+    /// <param name="isDirectory">If set to <c>true</c>, the path refers to a directory.</param>
     public FileEventArgs(string fileName, bool isDirectory)
     {
       this._fileName = fileName;
@@ -49,10 +63,16 @@ namespace Altaxo.Main.Services
     }
   }
 
+  /// <summary>
+  /// Provides data for cancellable file-system events involving a single file or directory.
+  /// </summary>
   public class FileCancelEventArgs : FileEventArgs
   {
     private bool cancel;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the operation should be canceled.
+    /// </summary>
     public bool Cancel
     {
       get
@@ -67,6 +87,9 @@ namespace Altaxo.Main.Services
 
     private bool operationAlreadyDone;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the requested operation has already been completed.
+    /// </summary>
     public bool OperationAlreadyDone
     {
       get
@@ -79,6 +102,11 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileCancelEventArgs"/> class.
+    /// </summary>
+    /// <param name="fileName">The affected file or directory name.</param>
+    /// <param name="isDirectory">If set to <c>true</c>, the path refers to a directory.</param>
     public FileCancelEventArgs(string fileName, bool isDirectory) : base(fileName, isDirectory)
     {
     }

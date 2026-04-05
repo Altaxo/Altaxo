@@ -27,8 +27,14 @@ using System;
 
 namespace Altaxo.Data.Transformations
 {
+  /// <summary>
+  /// Applies the natural exponential function <c>exp(x)</c>.
+  /// </summary>
   public class NaturalExponentialTransformation : ImmutableClassWithoutMembersBase, IDoubleToDoubleTransformation
   {
+    /// <summary>
+    /// Gets the singleton instance.
+    /// </summary>
     public static NaturalExponentialTransformation Instance { get; private set; } = new NaturalExponentialTransformation();
 
     #region Serialization
@@ -77,21 +83,25 @@ namespace Altaxo.Data.Transformations
       return (yt, dydx * yt);
     }
 
+    /// <inheritdoc/>
     public string RepresentationAsFunction
     {
       get { return GetRepresentationAsFunction("x"); }
     }
 
+    /// <inheritdoc/>
     public string GetRepresentationAsFunction(string arg)
     {
       return string.Format("Exp({0})", arg);
     }
 
+    /// <inheritdoc/>
     public string RepresentationAsOperator
     {
       get { return "Exp"; }
     }
 
+    /// <inheritdoc/>
     public IVariantToVariantTransformation BackTransformation
     {
       get { return NaturalLogarithmTransformation.Instance; }

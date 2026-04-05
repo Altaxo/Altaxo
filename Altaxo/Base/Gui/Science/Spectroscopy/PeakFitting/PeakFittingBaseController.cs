@@ -33,6 +33,11 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
 {
+  /// <summary>
+  /// Base controller for peak-fitting option documents.
+  /// </summary>
+  /// <typeparam name="TModel">The model type.</typeparam>
+  /// <typeparam name="TView">The view type.</typeparam>
   public abstract class PeakFittingBaseController<TModel, TView> : MVCANControllerEditImmutableDocBase<TModel, TView> where TView : class
   {
 
@@ -40,6 +45,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
 
     private ItemsController<Type> _fitFunctions;
 
+    /// <summary>
+    /// Gets or sets the available fit functions.
+    /// </summary>
     public ItemsController<Type> FitFunctions
     {
       get => _fitFunctions;
@@ -53,6 +61,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
       }
     }
 
+    /// <summary>
+    /// Handles selection changes of the fit function.
+    /// </summary>
     protected void EhFitFunctionChanged(Type type)
     {
       if (type is not null && _currentFitFunction?.GetType() != type)
@@ -68,12 +79,21 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
       }
     }
 
+    /// <summary>
+    /// Gets the command that configures the current fit function.
+    /// </summary>
     public RelayCommand CmdConfigureFitFunction => field ??= new RelayCommand(EhConfigureFitFunction, EhCanConfigureFitFunction);
 
+    /// <summary>
+    /// Gets the unit environment for the fit-width scaling factor.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment FitWidthScalingFactorEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _fitWidthScalingFactor;
 
+    /// <summary>
+    /// Gets or sets the fit-width scaling factor.
+    /// </summary>
     public DimensionfulQuantity FitWidthScalingFactor
     {
       get => _fitWidthScalingFactor;
@@ -89,6 +109,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
 
     private bool _isMinimalFWHMValueInXUnits;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the minimal FWHM value is expressed in X units.
+    /// </summary>
     public bool IsMinimalFWHMValueInXUnits
     {
       get => _isMinimalFWHMValueInXUnits;
@@ -104,6 +127,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
 
     private double _minimalFWHMValue;
 
+    /// <summary>
+    /// Gets or sets the minimal FWHM value.
+    /// </summary>
     public double MinimalFWHMValue
     {
       get => _minimalFWHMValue;
@@ -120,6 +146,10 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
     #endregion
 
 
+    /// <summary>
+    /// Initializes the available fit functions.
+    /// </summary>
+    /// <param name="fitFunction">The initial fit function.</param>
     protected void InitializeFitFunctions(IFitFunctionPeak fitFunction)
     {
       var ftypeList = new SelectableListNodeList(
@@ -139,6 +169,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
     /// <summary>Keeps the configured fit functions. Key is the type, value is the instance.</summary>
     protected Dictionary<Type, IFitFunctionPeak> _fitFunctionInstances = [];
 
+    /// <summary>
+    /// Opens a dialog to configure the current fit function.
+    /// </summary>
     protected void EhConfigureFitFunction()
     {
       if (!EhCanConfigureFitFunction())
@@ -157,6 +190,10 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
       }
     }
 
+    /// <summary>
+    /// Determines whether the current fit function exposes configurable properties.
+    /// </summary>
+    /// <returns><c>true</c> if configuration is possible; otherwise, <c>false</c>.</returns>
     protected bool EhCanConfigureFitFunction()
     {
       if (_currentFitFunction is null)

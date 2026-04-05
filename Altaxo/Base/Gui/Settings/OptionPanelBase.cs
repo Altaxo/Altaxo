@@ -30,8 +30,14 @@ using System.Text;
 
 namespace Altaxo.Gui.Settings
 {
+  /// <summary>
+  /// Base class for option panels backed by an MVCA controller.
+  /// </summary>
   public abstract class OptionPanelBase<T> : IOptionPanel where T : class, IMVCANController
   {
+    /// <summary>
+    /// The controller backing this option panel.
+    /// </summary>
     protected T? _controller;
 
     /// <summary>
@@ -46,8 +52,12 @@ namespace Altaxo.Gui.Settings
     /// </summary>
     protected abstract void ProcessControllerResult();
 
+    /// <summary>
+    /// Gets or sets the owner of the option panel.
+    /// </summary>
     public object? Owner { get; set; }
 
+    /// <inheritdoc/>
     public object? ViewObject
     {
       get
@@ -62,6 +72,7 @@ namespace Altaxo.Gui.Settings
       }
     }
 
+    /// <inheritdoc/>
     public bool Apply()
     {
       if (_controller is null)

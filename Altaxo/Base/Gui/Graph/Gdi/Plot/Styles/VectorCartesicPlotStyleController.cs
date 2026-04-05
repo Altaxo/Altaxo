@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -38,11 +38,17 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="VectorCartesicPlotStyleController"/>.
+  /// </summary>
   public interface IVectorCartesicPlotStyleView : IDataContextAwareView
   {
   }
 
 
+  /// <summary>
+  /// Controller for <see cref="VectorCartesicPlotStyle"/>.
+  /// </summary>
   [UserControllerForObject(typeof(VectorCartesicPlotStyle))]
   [ExpectedTypeOfView(typeof(IVectorCartesicPlotStyleView))]
   public class VectorCartesicPlotStyleController : MVCANControllerEditOriginalDocBase<VectorCartesicPlotStyle, IVectorCartesicPlotStyleView>, IColumnDataExternallyControlled
@@ -60,6 +66,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     /// </summary>
     private int _supposedGroupNumber;
 
+    /// <inheritdoc />
     public override bool InitializeDocument(params object[] args)
     {
       if (args.Length >= 2 && (args[1] is DataTable dt))
@@ -71,6 +78,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       return base.InitializeDocument(args);
     }
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_pen, () => Pen = null);
@@ -83,6 +91,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private string _xColumnText;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public string XColumnText
     {
       get => _xColumnText;
@@ -97,6 +108,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     }
     private string _xColumnToolTip;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public string XColumnToolTip
     {
       get => _xColumnToolTip;
@@ -111,6 +125,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     }
     private int _xColumnStatus;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public int XColumnStatus
     {
       get => _xColumnStatus;
@@ -125,6 +142,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     }
     private string _xColumnTransformationText;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public string XColumnTransformationText
     {
       get => _xColumnTransformationText;
@@ -139,6 +159,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     }
     private string _xColumnTransformationToolTip;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public string XColumnTransformationToolTip
     {
       get => _xColumnTransformationToolTip;
@@ -159,6 +182,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private string _yColumnText;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public string YColumnText
     {
       get => _yColumnText;
@@ -173,6 +199,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     }
     private string _yColumnToolTip;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public string YColumnToolTip
     {
       get => _yColumnToolTip;
@@ -187,6 +216,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     }
     private int _yColumnStatus;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public int YColumnStatus
     {
       get => _yColumnStatus;
@@ -201,6 +233,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     }
     private string _yColumnTransformationText;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public string YColumnTransformationText
     {
       get => _yColumnTransformationText;
@@ -215,6 +250,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     }
     private string _yColumnTransformationToolTip;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public string YColumnTransformationToolTip
     {
       get => _yColumnTransformationToolTip;
@@ -232,6 +270,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private ItemsController<VectorCartesicPlotStyle.ValueInterpretation> _meaningOfValues;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public ItemsController<VectorCartesicPlotStyle.ValueInterpretation> MeaningOfValues
     {
       get => _meaningOfValues;
@@ -249,6 +290,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _independentSkipFrequency;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool IndependentSkipFrequency
     {
       get => _independentSkipFrequency;
@@ -264,6 +308,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private int _skipFrequency;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public int SkipFrequency
     {
       get => _skipFrequency;
@@ -279,6 +326,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _ignoreMissingDataPoints;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool IgnoreMissingDataPoints
     {
       get => _ignoreMissingDataPoints;
@@ -295,6 +345,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _independentOnShiftingGroupStyles;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool IndependentOnShiftingGroupStyles
     {
       get => _independentOnShiftingGroupStyles;
@@ -310,6 +363,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _independentColor;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool IndependentColor
     {
       get => _independentColor;
@@ -334,6 +390,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _independentSymbolSize;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool IndependentSymbolSize
     {
       get => _independentSymbolSize;
@@ -347,11 +406,17 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the s ym bo ls iz ee nv ir on me nt.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment SymbolSizeEnvironment => LineCapSizeEnvironment.Instance;
 
 
     private DimensionfulQuantity _symbolSize;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity SymbolSize
     {
       get => _symbolSize;
@@ -365,10 +430,16 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the l in ew id th en vi ro nm en t.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment LineWidthEnvironment => LineCapSizeEnvironment.Instance;
 
     private DimensionfulQuantity _lineWidth1Offset;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity LineWidth1Offset
     {
       get => _lineWidth1Offset;
@@ -382,10 +453,16 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the l in ef ac to re nv ir on me nt.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment LineFactorEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _lineWidth1Factor;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity LineWidth1Factor
     {
       get => _lineWidth1Factor;
@@ -401,6 +478,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private DimensionfulQuantity _endCapSizeOffset;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity EndCapSizeOffset
     {
       get => _endCapSizeOffset;
@@ -416,6 +496,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private DimensionfulQuantity _endCapSizeFactor;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity EndCapSizeFactor
     {
       get => _endCapSizeFactor;
@@ -431,6 +514,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _useSymbolGap;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool UseSymbolGap
     {
       get => _useSymbolGap;
@@ -447,6 +533,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private DimensionfulQuantity _symbolGapOffset;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity SymbolGapOffset
     {
       get => _symbolGapOffset;
@@ -462,6 +551,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private DimensionfulQuantity _symbolGapFactor;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity SymbolGapFactor
     {
       get => _symbolGapFactor;
@@ -477,6 +569,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _useManualVectorLength;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool UseManualVectorLength
     {
       get => _useManualVectorLength;
@@ -493,6 +588,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private DimensionfulQuantity _manualVectorLengthOffset;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity ManualVectorLengthOffset
     {
       get => _manualVectorLengthOffset;
@@ -507,6 +605,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     }
     private DimensionfulQuantity _manualVectorLengthFactor;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity ManualVectorLengthFactor
     {
       get => _manualVectorLengthFactor;
@@ -524,6 +625,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private PenAllPropertiesController _pen;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public PenAllPropertiesController Pen
     {
       get => _pen;
@@ -540,6 +644,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     #endregion
 
+ 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       _colorGroupStyleTracker = null;
@@ -547,6 +653,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       base.Dispose(isDisposing);
     }
 
+ 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -591,6 +699,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
     }
 
+ 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       _doc.UseManualVectorLength = UseManualVectorLength;

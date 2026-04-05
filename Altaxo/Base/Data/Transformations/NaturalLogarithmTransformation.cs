@@ -27,8 +27,14 @@ using System;
 
 namespace Altaxo.Data.Transformations
 {
+  /// <summary>
+  /// Applies the natural logarithm function <c>log(x)</c>.
+  /// </summary>
   public class NaturalLogarithmTransformation : ImmutableClassWithoutMembersBase, IDoubleToDoubleTransformation
   {
+    /// <summary>
+    /// Gets the singleton instance.
+    /// </summary>
     public static NaturalLogarithmTransformation Instance { get; private set; } = new NaturalLogarithmTransformation();
 
     #region Serialization
@@ -76,21 +82,25 @@ namespace Altaxo.Data.Transformations
       return (Math.Log(y), dydx / y);
     }
 
+    /// <inheritdoc/>
     public string RepresentationAsFunction
     {
       get { return GetRepresentationAsFunction("x"); }
     }
 
+    /// <inheritdoc/>
     public string GetRepresentationAsFunction(string arg)
     {
       return string.Format("Log({0})", arg);
     }
 
+    /// <inheritdoc/>
     public string RepresentationAsOperator
     {
       get { return "Log"; }
     }
 
+    /// <inheritdoc/>
     public IVariantToVariantTransformation BackTransformation
     {
       get { return NaturalExponentialTransformation.Instance; }

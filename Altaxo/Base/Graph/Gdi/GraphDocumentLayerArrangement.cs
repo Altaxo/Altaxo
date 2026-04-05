@@ -31,7 +31,7 @@ using System.Text;
 namespace Altaxo.Graph.Gdi
 {
   /// <summary>
-  /// Information of what happens to superfluous layers during the arrange layers action.
+  /// Specifies what happens to superfluous layers during the arrange-layers action.
   /// </summary>
   public enum SuperfluousLayersAction
   {
@@ -49,21 +49,49 @@ namespace Altaxo.Graph.Gdi
   }
 
   /// <summary>
-  /// Holds the information how to arrange layers in a graph document.
+  /// Holds the information about how to arrange layers in a graph document.
   /// Is used by the <see cref="Altaxo.Gui.Graph.Gdi.ArrangeLayersController" /> controller.
   /// </summary>
   public class ArrangeLayersDocument : Main.ICopyFrom
   {
+    /// <summary>
+    /// Gets or sets the number of rows.
+    /// </summary>
     public int NumberOfRows;
+    /// <summary>
+    /// Gets or sets the number of columns.
+    /// </summary>
     public int NumberOfColumns;
+    /// <summary>
+    /// Gets or sets the row spacing.
+    /// </summary>
     public double RowSpacing;
+    /// <summary>
+    /// Gets or sets the column spacing.
+    /// </summary>
     public double ColumnSpacing;
+    /// <summary>
+    /// Gets or sets the left margin.
+    /// </summary>
     public double LeftMargin;
+    /// <summary>
+    /// Gets or sets the top margin.
+    /// </summary>
     public double TopMargin;
+    /// <summary>
+    /// Gets or sets the right margin.
+    /// </summary>
     public double RightMargin;
+    /// <summary>
+    /// Gets or sets the bottom margin.
+    /// </summary>
     public double BottomMargin;
+    /// <summary>
+    /// Gets or sets the handling of superfluous layers.
+    /// </summary>
     public SuperfluousLayersAction SuperfluousLayersAction;
 
+    /// <inheritdoc/>
     public bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -86,6 +114,9 @@ namespace Altaxo.Graph.Gdi
       return false;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ArrangeLayersDocument"/> class.
+    /// </summary>
     public ArrangeLayersDocument()
     {
       NumberOfRows = 2;
@@ -99,16 +130,25 @@ namespace Altaxo.Graph.Gdi
       SuperfluousLayersAction = SuperfluousLayersAction.Untouched;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ArrangeLayersDocument"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public ArrangeLayersDocument(ArrangeLayersDocument from)
     {
       CopyFrom(from);
     }
 
+    /// <inheritdoc/>
     object ICloneable.Clone()
     {
       return new ArrangeLayersDocument(this);
     }
 
+    /// <summary>
+    /// Creates a copy of this instance.
+    /// </summary>
+    /// <returns>The copied instance.</returns>
     public ArrangeLayersDocument Clone()
     {
       return new ArrangeLayersDocument(this);
@@ -144,6 +184,11 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Arranges the specified grid according to the arrangement settings.
+    /// </summary>
+    /// <param name="arrangement">The arrangement settings.</param>
+    /// <param name="grid">The grid to arrange.</param>
     public static void ArrangeGrid(this ArrangeLayersDocument arrangement, GridPartitioning grid)
     {
       grid.XPartitioning.Clear();

@@ -31,7 +31,7 @@ using System.Threading.Tasks;
 namespace Altaxo.Drawing
 {
   /// <summary>
-  /// Holds some standard brushes.
+  /// Provides some standard brushes.
   /// </summary>
   public static class BrushesX
   {

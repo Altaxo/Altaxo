@@ -30,8 +30,7 @@ using System.Linq;
 namespace Altaxo.Collections
 {
   /// <summary>
-  /// This class is intended to use in list boxes, where you have to display a name, but must retrieve
-  /// the item instead.
+  /// Represents an item for list controls where display text is shown, but the associated object must also be retained.
   /// </summary>
   public class ListNode : System.ComponentModel.INotifyPropertyChanged
   {
@@ -40,7 +39,14 @@ namespace Altaxo.Collections
     /// </summary>
     public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
 
+    /// <summary>
+    /// The display text.
+    /// </summary>
     protected string? _text;
+
+    /// <summary>
+    /// The associated tag object.
+    /// </summary>
     protected object? _tag;
 
     /// <summary>
@@ -88,6 +94,9 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ListNode"/> class.
+    /// </summary>
     protected ListNode()
     {
     }
@@ -186,8 +195,8 @@ namespace Altaxo.Collections
     /// Get the sub item text at index <paramref name="i"/>.
     /// Implementer should be aware of, that when changing a subitem text, the corresponding property (e.g. Text0) is changed. Thus, <see cref="OnPropertyChanged(string)" /> must be called for all properties that have changed.
     /// </summary>
-    /// <param name="i">The i.</param>
-    /// <returns></returns>
+    /// <param name="i">The zero-based subitem index.</param>
+    /// <returns>The subitem text, or <see langword="null"/> if no text is available.</returns>
     public virtual string? SubItemText(int i)
     {
       return null;
@@ -202,10 +211,10 @@ namespace Altaxo.Collections
     public virtual string? Description { get { return null; } }
 
     /// <summary>
-    ///  Gets the color of the sub items.
+    /// Gets the background color of the subitems.
     /// </summary>
-    /// <param name="i">The i.</param>
-    /// <returns></returns>
+    /// <param name="i">The zero-based subitem index.</param>
+    /// <returns>The background color of the subitem, or <see langword="null"/> if no color is defined.</returns>
     public virtual System.Drawing.Color? SubItemBackColor(int i)
     {
       return null;
@@ -263,15 +272,15 @@ namespace Altaxo.Collections
     /// <summary>
     /// Get the index of the provided object.
     /// </summary>
-    /// <param name="o">The object to search for.</param>
+    /// <param name="obj">The object to search for.</param>
     /// <returns>The index of the object in this collection if found; otherwise, -1.</returns>
-    public int IndexOfObject(object o)
+    public int IndexOfObject(object obj)
     {
       int i = -1;
       foreach (ListNode n in this)
       {
         i++;
-        if (n.Tag == o)
+        if (n.Tag == obj)
           return i;
       }
       return -1;
@@ -323,16 +332,11 @@ namespace Altaxo.Collections
   public class SelectableListNode : ListNode, ISelectableItem
   {
     /// <summary>
-    /// Indicating whether this item is selected
+    /// Indicates whether this item is selected.
     /// </summary>
     protected bool _isSelected;
 
-    /// <summary>
-    /// Gets or sets a value indicating whether this item is selected.
-    /// </summary>
-    /// <value>
-    /// <c>true</c> if this item is selected; otherwise, <c>false</c>.
-    /// </value>
+    /// <inheritdoc/>
     public virtual bool IsSelected
     {
       get { return _isSelected; }
@@ -347,10 +351,19 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SelectableListNode"/> class.
+    /// </summary>
     protected SelectableListNode()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SelectableListNode"/> class.
+    /// </summary>
+    /// <param name="text">The text to display.</param>
+    /// <param name="tag">The tag associated with the item.</param>
+    /// <param name="isSelected">If set to <see langword="true"/>, the item is selected.</param>
     public SelectableListNode(string text, object? tag, bool isSelected)
         : base(text, tag)
     {
@@ -450,6 +463,11 @@ namespace Altaxo.Collections
         Add(item);
     }
 
+    /// <summary>
+    /// Removes a range of items from the collection.
+    /// </summary>
+    /// <param name="start">The zero-based index at which removal starts.</param>
+    /// <param name="count">The number of items to remove.</param>
     public void RemoveRange(int start, int count)
     {
       if (start < 0)
@@ -463,6 +481,10 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <summary>
+    /// Gets the indices of all selected items.
+    /// </summary>
+    /// <returns>An array containing the indices of all selected items.</returns>
     public int[] GetSelectedIndices()
     {
       var l = new List<int>();
@@ -472,6 +494,10 @@ namespace Altaxo.Collections
       return l.ToArray();
     }
 
+    /// <summary>
+    /// Creates an array from the items in this collection.
+    /// </summary>
+    /// <returns>An array containing the items in this collection.</returns>
     public SelectableListNode[] ToArray()
     {
       var result = new SelectableListNode[Count];
@@ -480,6 +506,11 @@ namespace Altaxo.Collections
       return result;
     }
 
+    /// <summary>
+    /// Searches for the index of the first item that matches the specified predicate.
+    /// </summary>
+    /// <param name="match">The predicate that defines the search condition.</param>
+    /// <returns>The index of the first matching item, or <c>-1</c> if no match is found.</returns>
     public int FindIndex(Predicate<SelectableListNode> match)
     {
       for (int i = 0; i < Count; i++)
@@ -488,6 +519,11 @@ namespace Altaxo.Collections
       return -1;
     }
 
+    /// <summary>
+    /// Returns the index of the first node whose tag equals the specified object.
+    /// </summary>
+    /// <param name="o">The object to search for.</param>
+    /// <returns>The zero-based index of the matching node, or -1 if no match was found.</returns>
     public int IndexOfObject(object o)
     {
       int i = -1;
@@ -529,7 +565,9 @@ namespace Altaxo.Collections
       }
     }
 
-    /// <summary>Sets the <see cref="P:SelectedListNode.IsSelected"/> property of each node in the list to false.</summary>
+    /// <summary>
+    /// Sets the <see cref="SelectableListNode.IsSelected"/> property of each node in the list to <see langword="false"/>.
+    /// </summary>
     public void ClearSelectionsAll()
     {
       foreach (var node in this)
@@ -736,7 +774,7 @@ namespace Altaxo.Collections
   }
 
   /// <summary>
-  /// A <see cref="SelectableListNode"/> that can additionally either in the checked or unchecked state.
+  /// Represents a <see cref="SelectableListNode"/> that can additionally be in the checked or unchecked state.
   /// </summary>
   /// <seealso cref="Altaxo.Collections.SelectableListNode" />
   public class CheckableSelectableListNode : SelectableListNode
@@ -789,28 +827,42 @@ namespace Altaxo.Collections
   /// <seealso cref="Altaxo.Collections.SelectableListNode" />
   public class SelectableListNodeWithParent : SelectableListNode
   {
+    /// <summary>
+    /// Defines the contract for a parent object that reacts to selection changes of its child nodes.
+    /// </summary>
     public interface IParent
     {
+      /// <summary>
+      /// Handles a change of the <see cref="SelectableListNodeWithParent.IsSelected"/> state of a child node.
+      /// </summary>
+      /// <param name="child">The child node whose selection state changed.</param>
       void EhChild_IsSelectedChanged(SelectableListNodeWithParent child);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SelectableListNodeWithParent"/> class.
+    /// </summary>
     protected SelectableListNodeWithParent()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SelectableListNodeWithParent"/> class.
+    /// </summary>
+    /// <param name="text">The text to display.</param>
+    /// <param name="tag">The tag associated with the item.</param>
+    /// <param name="isSelected">If set to <see langword="true"/>, the item is selected.</param>
     public SelectableListNodeWithParent(string text, object? tag, bool isSelected)
         : base(text, tag, isSelected)
     {
     }
 
+    /// <summary>
+    /// Gets or sets the parent that coordinates selection changes.
+    /// </summary>
     public IParent? Parent { get; set; }
 
-    /// <summary>
-    /// Gets or sets a value indicating whether this item is selected.
-    /// </summary>
-    /// <value>
-    /// <c>true</c> if this item is selected; otherwise, <c>false</c>.
-    /// </value>
+    /// <inheritdoc/>
     public override bool IsSelected
     {
       get
@@ -834,7 +886,7 @@ namespace Altaxo.Collections
   /// A list of selectable items. It is ensured, that either none or maximal one of the items is selected.
   /// If one item is selected, the other item that was selected before will be deselected.
   /// </summary>
-  /// <seealso cref="System.Collections.ObjectModel.ObservableCollection&lt;Altaxo.Collections.SelectableListNodeWithParent&gt;" />
+  /// <seealso cref="System.Collections.ObjectModel.ObservableCollection{SelectableListNodeWithParent}" />
   public class SingleSelectableListNodeList : System.Collections.ObjectModel.ObservableCollection<SelectableListNodeWithParent>, SelectableListNodeWithParent.IParent
   {
     /// <summary>
@@ -899,6 +951,7 @@ namespace Altaxo.Collections
     }
 
 
+    /// <inheritdoc/>
     public void EhChild_IsSelectedChanged(SelectableListNodeWithParent itemThatWasSet)
     {
       if (itemThatWasSet.IsSelected == false)
@@ -920,6 +973,9 @@ namespace Altaxo.Collections
 
     private SelectableListNodeWithParent? _selectedItem;
 
+    /// <summary>
+    /// Gets or sets the selected item.
+    /// </summary>
     public SelectableListNodeWithParent? SelectedItem
     {
       get => _selectedItem;
@@ -935,7 +991,7 @@ namespace Altaxo.Collections
           }
           else
           {
-            if(_selectedItem is { } oldSelectedItem)
+            if (_selectedItem is { } oldSelectedItem)
             {
               oldSelectedItem.IsSelected = false;
             }
@@ -965,6 +1021,7 @@ namespace Altaxo.Collections
 
     #region Item set/remove overrides to make sure parent is set
 
+    /// <inheritdoc />
     protected override void InsertItem(int index, SelectableListNodeWithParent item)
     {
       item.Parent = this;
@@ -975,6 +1032,7 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <inheritdoc />
     protected override void SetItem(int index, SelectableListNodeWithParent item)
     {
       item.Parent = this;
@@ -984,6 +1042,7 @@ namespace Altaxo.Collections
         EhChild_IsSelectedChanged(item);
       }
     }
+    /// <inheritdoc />
     protected override void RemoveItem(int index)
     {
       var item = this[index];
@@ -996,6 +1055,7 @@ namespace Altaxo.Collections
         OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs(nameof(SelectedValue)));
       }
     }
+    /// <inheritdoc />
     protected override void ClearItems()
     {
       foreach (var item in this)
@@ -1029,7 +1089,7 @@ namespace Altaxo.Collections
     {
     }
 
-   
+
     /// <summary>
     /// Initialize the list with all possible values of an enumeration. The item given in the argument is marked as selected item. Note: the enumeration must not have the [Flags] attribute!
     /// </summary>
@@ -1047,7 +1107,7 @@ namespace Altaxo.Collections
     {
       if (selectedItem.GetType().IsDefined(typeof(FlagsAttribute), inherit: false)) // is this an enumeration with the Flags attribute?
       {
-       
+
         // enumeration without flags attribute
         var values = System.Enum.GetValues(selectedItem.GetType());
         foreach (var value in values)
@@ -1072,32 +1132,45 @@ namespace Altaxo.Collections
     }
 
 
+    /// <summary>
+    /// Gets the currently selected items.
+    /// </summary>
     public IEnumerable<SelectableListNodeWithParent> SelectedItems
-  {
-    get
     {
+      get
+      {
         return this.Items.Where(x => x.IsSelected);
+      }
     }
-  }
 
+    /// <summary>
+    /// Clears the selection state of all items.
+    /// </summary>
     public void ClearSelectionsAll()
     {
       foreach (var item in Items)
         item.IsSelected = false;
     }
 
+    /// <summary>
+    /// Raises notifications that the selected items changed.
+    /// </summary>
     protected void OnSelectedItemsChanged()
     {
       OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs(nameof(SelectedItems)));
       SelectedItemsChanged?.Invoke();
     }
 
+    /// <summary>
+    /// Occurs when the selection of the items changes.
+    /// </summary>
     public event Action SelectedItemsChanged;
 
-   
+
 
     #region Item set/remove overrides to make sure parent is set
 
+    /// <inheritdoc />
     protected override void InsertItem(int index, SelectableListNodeWithParent item)
     {
       item.Parent = this;
@@ -1108,6 +1181,7 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <inheritdoc />
     protected override void SetItem(int index, SelectableListNodeWithParent item)
     {
       item.Parent = this;
@@ -1117,6 +1191,7 @@ namespace Altaxo.Collections
         OnSelectedItemsChanged();
       }
     }
+    /// <inheritdoc />
     protected override void RemoveItem(int index)
     {
       var item = this[index];
@@ -1127,6 +1202,7 @@ namespace Altaxo.Collections
         OnSelectedItemsChanged();
       }
     }
+    /// <inheritdoc />
     protected override void ClearItems()
     {
       foreach (var item in this)
@@ -1138,6 +1214,10 @@ namespace Altaxo.Collections
     #endregion
   }
 
+  /// <summary>
+  /// Represents a <see cref="SingleSelectableListNodeList"/> with a strongly typed selected value.
+  /// </summary>
+  /// <typeparam name="TValue">The type of the selected value.</typeparam>
   public class SingleSelectableListNodeList<TValue> : SingleSelectableListNodeList
   {
     /// <summary>
@@ -1162,6 +1242,9 @@ namespace Altaxo.Collections
   /// </summary>
   public class CheckableSelectableListNodeList : System.Collections.ObjectModel.ObservableCollection<CheckableSelectableListNode>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CheckableSelectableListNodeList"/> class.
+    /// </summary>
     public CheckableSelectableListNodeList()
     {
     }
@@ -1264,7 +1347,7 @@ namespace Altaxo.Collections
     /// initialized with <see cref="FillWithFlagEnumeration(SelectableListNodeList, Enum)"/> (the tags of the items must be integers, representing the flag values).
     /// </summary>
     /// <param name="list">The list.</param>
-    /// <returns></returns>
+    /// <returns>The combined selected flag value as a 32-bit integer.</returns>
     public static int GetFlagEnumValueAsInt32(this SelectableListNodeList list)
     {
       int result = 0;

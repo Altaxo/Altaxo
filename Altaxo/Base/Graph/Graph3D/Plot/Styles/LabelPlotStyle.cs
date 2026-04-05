@@ -44,17 +44,26 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
   using Plot.Data;
   using Plot.Groups;
 
+  /// <summary>
+  /// Draws text labels for three-dimensional plot points.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.LabelPlotStyle}")]
   public class LabelPlotStyle
     :
     Main.SuspendableDocumentNodeWithEventArgs,
     IG3DPlotStyle
   {
+    /// <summary>
+    /// Gets or sets the l ab el co lu mn pr ox y.
+    /// </summary>
     protected Altaxo.Data.IReadableColumnProxy _labelColumnProxy;
 
     /// <summary>The axis where the label is attached to (if it is attached).</summary>
     protected CSPlaneID? _attachedPlane;
 
+    /// <summary>
+    /// Gets or sets the i nd ep en de nt sk ip fr eq ue nc y.
+    /// </summary>
     protected bool _independentSkipFrequency;
 
     /// <summary>
@@ -85,8 +94,14 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// </summary>
     protected double _fontSizeFactor;
 
+    /// <summary>
+    /// Gets or sets the i nd ep en de nt sy mb ol si ze.
+    /// </summary>
     protected bool _independentSymbolSize;
 
+    /// <summary>
+    /// Gets or sets the s ym bo ls iz e.
+    /// </summary>
     protected double _symbolSize;
 
     /// <summary>The brush for the label.</summary>
@@ -97,8 +112,17 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// </summary>
     protected bool _independentColor;
 
+    /// <summary>
+    /// Gets or sets the a li gn me nt x.
+    /// </summary>
     protected Alignment _alignmentX;
+    /// <summary>
+    /// Gets or sets the a li gn me nt y.
+    /// </summary>
     protected Alignment _alignmentY;
+    /// <summary>
+    /// Gets or sets the a li gn me nt z.
+    /// </summary>
     protected Alignment _alignmentZ;
 
     /// <summary>The rotation around x-axis of the label.</summary>
@@ -151,6 +175,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// totalOffset = _offset_Points + _offset_EmUnits * emSize + _offset_SymbolSizeUnits * symbolSize;</summary>
     protected double _offsetZ_SymbolSizeUnits;
 
+    /// <summary>
+    /// Gets or sets the b ac kg ro un dc ol or li nk ag e.
+    /// </summary>
     protected ColorLinkage _backgroundColorLinkage;
 
     /// <summary>The style for the background.</summary>
@@ -180,14 +207,21 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <para>Date: 2016-06-22</para>
     /// <para>Added: BackgroundColorLinkage</para>
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="LabelPlotStyle"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LabelPlotStyle), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         SSerialize(obj, info);
       }
 
+      /// <summary>
+      /// Performs the s se ri al iz e operation.
+      /// </summary>
       public static void SSerialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (LabelPlotStyle)obj;
@@ -230,11 +264,15 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         info.AddValueOrNull("Background", s._backgroundStyle);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return SDeserialize(o, info, parent, true);
       }
 
+      /// <summary>
+      /// Performs the s de se ri al iz e operation.
+      /// </summary>
       public static object SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent, bool nativeCall)
       {
         var s = (LabelPlotStyle?)o ?? new LabelPlotStyle(info);
@@ -297,12 +335,16 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// </summary>
     /// <param name="info">The deserialization information.</param>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+
     protected LabelPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
       _backgroundColorLinkage = ColorLinkage.Independent;
     }
 
+    /// <summary>
+    /// Copies values from the specified source.
+    /// </summary>
     [MemberNotNull(nameof(_font), nameof(_material))]
     protected void CopyFrom(LabelPlotStyle from, bool copyWithDataReferences)
     {
@@ -354,9 +396,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         ChildCloneToMember(ref _labelColumnProxy, from._labelColumnProxy);
       }
     }
-    
 
-      public bool CopyFrom(object obj, bool copyWithDataReferences)
+
+    /// <inheritdoc/>
+    public bool CopyFrom(object obj, bool copyWithDataReferences)
     {
       if (ReferenceEquals(this, obj))
         return true;
@@ -400,18 +443,33 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       return new LabelPlotStyle(this, true);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LabelPlotStyle"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The style to copy from.</param>
+    /// <param name="copyWithDataReferences">If set to <c>true</c>, data references are copied as well.</param>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+
     public LabelPlotStyle(LabelPlotStyle from, bool copyWithDataReferences)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
       CopyFrom(from, copyWithDataReferences);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LabelPlotStyle"/> class from a property context.
+    /// </summary>
+    /// <param name="context">The property context.</param>
     public LabelPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
       : this(null, context)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LabelPlotStyle"/> class.
+    /// </summary>
+    /// <param name="labelColumn">The optional label column.</param>
+    /// <param name="context">The property context.</param>
     public LabelPlotStyle(Altaxo.Data.IReadableColumn? labelColumn, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       _font = GraphDocument.GetDefaultFont(context);
@@ -421,9 +479,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       _independentColor = false;
       _material = new MaterialWithUniformColor(color);
       _backgroundColorLinkage = ColorLinkage.Independent;
-      ChildSetMember(ref _labelColumnProxy , Altaxo.Data.ReadableColumnProxyBase.FromColumn(labelColumn));
+      ChildSetMember(ref _labelColumnProxy, Altaxo.Data.ReadableColumnProxyBase.FromColumn(labelColumn));
     }
 
+
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_backgroundStyle is not null)
@@ -438,6 +498,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       EhSelfChanged(EventArgs.Empty);
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     protected Altaxo.Data.IReadableColumnProxy LabelColumnProxy
     {
       set
@@ -452,6 +515,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the label column.
+    /// </summary>
     public Altaxo.Data.IReadableColumn? LabelColumn
     {
       get
@@ -481,6 +547,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public IEnumerable<(
       string ColumnLabel, // Column label
       IReadableColumn? Column, // the column as it was at the time of this call
@@ -491,6 +560,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       yield return ("Label", LabelColumn, LabelColumnDataColumnName, (col) => LabelColumn = col);
     }
 
+    /// <summary>
+    /// Gets or sets the label format string.
+    /// </summary>
     public string? LabelFormatString
     {
       get
@@ -615,6 +687,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public IMaterial Material
     {
       get
@@ -644,11 +719,14 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
       set
       {
-        if(ChildSetMember(ref _backgroundStyle, value))
+        if (ChildSetMember(ref _backgroundStyle, value))
           EhSelfChanged(EventArgs.Empty); // Fire Changed event
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public ColorLinkage BackgroundColorLinkage
     {
       get
@@ -927,7 +1005,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       get { return _attachedPlane; }
       set
       {
-        if(ChildSetMemberAlt(ref _attachedPlane, value))
+        if (ChildSetMemberAlt(ref _attachedPlane, value))
           EhSelfChanged(EventArgs.Empty);
       }
     }
@@ -984,6 +1062,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Sets the c ac he dv al ue s.
+    /// </summary>
     protected void SetCachedValues()
     {
     }
@@ -1046,11 +1127,14 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       g.DrawString(label, _font, brush, new PointD3D(xpos, ypos, zpos), _alignmentX, _alignmentY, _alignmentZ);
     }
 
+    /// <summary>
+    /// Performs the p ai nt operation.
+    /// </summary>
     public void Paint(IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData pdata, Processed3DPlotData? prevItemData, Processed3DPlotData? nextItemData)
     {
       if (!(_labelColumnProxy.Document() is Altaxo.Data.IReadableColumn labelColumn))
         return;
-      if (pdata is null || !(pdata.RangeList is { } rangeList) || rangeList.Count==0 || !(pdata.PlotPointsInAbsoluteLayerCoordinates is { } ptArray))
+      if (pdata is null || !(pdata.RangeList is { } rangeList) || rangeList.Count == 0 || !(pdata.PlotPointsInAbsoluteLayerCoordinates is { } ptArray))
         return;
 
       if (_attachedPlane is not null)
@@ -1180,6 +1264,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       g.RestoreGraphicsState(gs); // Restore the graphics state
     }
 
+    /// <summary>
+    /// Paints the s ym bo l.
+    /// </summary>
     public RectangleD3D PaintSymbol(IGraphicsContext3D g, RectangleD3D bounds)
     {
       return bounds;
@@ -1195,11 +1282,17 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     #region I3DPlotStyle Members
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool IsColorProvider
     {
       get { return _independentColor == false; }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool IsColorReceiver
     {
       get { return IndependentColor == false; }
@@ -1211,7 +1304,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <value>
     /// 	<c>true</c> if the background is able to provide a color; otherwise, <c>false</c>.
     /// </value>
-    [MemberNotNullWhen(true,nameof(_backgroundStyle))]
+    [MemberNotNullWhen(true, nameof(_backgroundStyle))]
     public bool IsBackgroundColorProvider
     {
       get
@@ -1241,20 +1334,31 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    #endregion I3DPlotStyle Members
+
     #region IG3DPlotStyle Members
 
+    /// <summary>
+    /// Collects the e xt er na lg ro up st yl es.
+    /// </summary>
     public void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups)
     {
       if (IsColorProvider)
         ColorGroupStyle.AddExternalGroupStyle(externalGroups);
     }
 
+    /// <summary>
+    /// Collects the l oc al gr ou ps ty le s.
+    /// </summary>
     public void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       if (IsColorProvider)
         ColorGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
     }
 
+    /// <summary>
+    /// Prepares the g ro up st yl es.
+    /// </summary>
     public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed3DPlotData pdata)
     {
       if (IsColorProvider)
@@ -1265,6 +1369,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         { return _backgroundStyle.Material.Color; });
     }
 
+    /// <summary>
+    /// Applies the g ro up st yl es.
+    /// </summary>
     public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       // SkipFrequency should be the same for all sub plot styles, so there is no "private" property
@@ -1328,7 +1435,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     #endregion IG3DPlotStyle Members
 
-    #endregion I3DPlotStyle Members
 
     #region IDocumentNode Members
 

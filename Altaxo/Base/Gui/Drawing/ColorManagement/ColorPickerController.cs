@@ -31,24 +31,35 @@ using Altaxo.Drawing;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
+  /// <summary>
+  /// View interface for selecting a color.
+  /// </summary>
   public interface IColorPickerView
   {
+    /// <summary>
+    /// Gets or sets the selected color.
+    /// </summary>
     AxoColor SelectedColor { get; set; }
 
+    /// <summary>
+    /// Occurs when the current color changes.
+    /// </summary>
     event Action<AxoColor> CurrentColorChanged;
   }
 
   /// <summary>
-  /// Controller to pick up a custom color
+  /// Controller to pick a custom color.
   /// </summary>
   [ExpectedTypeOfView(typeof(IColorPickerView))]
   public class ColorPickerController : MVCANDControllerEditImmutableDocBase<AxoColor, IColorPickerView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -59,6 +70,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = _view.SelectedColor;
@@ -66,6 +78,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       return ApplyEnd(true, disposeController);
     }
 
+    /// <inheritdoc/>
     protected override void AttachView()
     {
       base.AttachView();
@@ -73,6 +86,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       _view.CurrentColorChanged += EhCurrentColorChanged;
     }
 
+    /// <inheritdoc/>
     protected override void DetachView()
     {
       _view.CurrentColorChanged -= EhCurrentColorChanged;

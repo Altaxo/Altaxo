@@ -22,8 +22,14 @@ using Altaxo;
 
 namespace Altaxo.AddInItems
 {
+  /// <summary>
+  /// Provides access to an owner's internal state for condition evaluation.
+  /// </summary>
   public interface IOwnerState
   {
+    /// <summary>
+    /// Gets the internal state value that is used for evaluating conditions.
+    /// </summary>
     System.Enum InternalState
     {
       get;
@@ -36,6 +42,7 @@ namespace Altaxo.AddInItems
   /// </summary>
   public class OwnerStateConditionEvaluator : IConditionEvaluator
   {
+    /// <inheritdoc/>
     public bool IsValid(object? parameter, Condition condition)
     {
       if (parameter is IOwnerState)

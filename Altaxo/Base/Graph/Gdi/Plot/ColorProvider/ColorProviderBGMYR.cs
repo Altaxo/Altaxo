@@ -33,6 +33,9 @@ using Altaxo.Drawing;
 
 namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 {
+  /// <summary>
+  /// Provides a blue-green-magenta-yellow-red color gradient.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Graph.Gdi.Plot.ColorProvider.ColorProviderBGMYR}")]
   public class ColorProviderBGMYR : ColorProviderBase
   {
@@ -58,6 +61,14 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 
     #endregion Serialization
 
+    /// <summary>
+    /// Creates a new color provider with the specified out-of-range colors and transparency.
+    /// </summary>
+    /// <param name="colorBelow">The color for values below the range.</param>
+    /// <param name="colorAbove">The color for values above the range.</param>
+    /// <param name="colorInvalid">The color for invalid values.</param>
+    /// <param name="transparency">The transparency in the range 0 to 1.</param>
+    /// <returns>The configured color provider.</returns>
     public static ColorProviderBGMYR NewFromColorBelowAboveInvalidAndTransparency(NamedColor colorBelow, NamedColor colorAbove, NamedColor colorInvalid, double transparency)
     {
       var result = new ColorProviderBGMYR

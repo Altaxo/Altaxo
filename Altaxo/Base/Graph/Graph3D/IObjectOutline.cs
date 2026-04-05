@@ -81,6 +81,10 @@ namespace Altaxo.Graph.Graph3D
   {
     private IObjectOutline _outline;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ObjectOutlineForArrangementsWrapper"/> class.
+    /// </summary>
+    /// <param name="outline">The outline to wrap.</param>
     public ObjectOutlineForArrangementsWrapper(IObjectOutline outline)
     {
       _outline = outline;
@@ -95,22 +99,32 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <inheritdoc/>
     public RectangleD3D GetBounds(Matrix3x3 transformation)
     {
       return RectangleD3D.NewRectangleIncludingAllPoints(AsPoints().Select(p => transformation.Transform(p)));
     }
 
+    /// <inheritdoc/>
     public RectangleD3D GetBounds()
     {
       return RectangleD3D.NewRectangleIncludingAllPoints(AsPoints());
     }
   }
 
+  /// <summary>
+  /// Represents an outline based on a single transformed rectangle.
+  /// </summary>
   public class RectangularObjectOutline : IObjectOutline
   {
     private Matrix4x3 _transformation;
     private RectangleD3D _rectangle;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RectangularObjectOutline"/> class.
+    /// </summary>
+    /// <param name="rectangle">The rectangle describing the outline.</param>
+    /// <param name="transformation">The transformation to world coordinates.</param>
     public RectangularObjectOutline(RectangleD3D rectangle, Matrix4x3 transformation)
     {
       _rectangle = rectangle;
@@ -129,6 +143,7 @@ namespace Altaxo.Graph.Graph3D
       return new RectangularObjectOutline(_rectangle, _transformation.WithAppendedTransformation(transformation));
     }
 
+    /// <inheritdoc/>
     public IEnumerable<LineD3D> AsLines
     {
       get
@@ -142,16 +157,25 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <inheritdoc/>
     public bool IsHittedBy(HitTestPointData hitData)
     {
       return hitData.IsHit(_rectangle, _transformation, out var z);
     }
   }
 
+  /// <summary>
+  /// Represents multiple rectangular outlines.
+  /// </summary>
   public class MultipleRectangularObjectOutlines : IObjectOutline
   {
     private RectangularObjectOutline[] _outlines;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MultipleRectangularObjectOutlines"/> class.
+    /// </summary>
+    /// <param name="outlines">The outlines.</param>
+    /// <param name="localToWorldTransformation">The local-to-world transformation.</param>
     public MultipleRectangularObjectOutlines(IEnumerable<RectangularObjectOutline> outlines, Matrix4x3 localToWorldTransformation)
     {
       _outlines = outlines.ToArray();
@@ -163,6 +187,7 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <inheritdoc/>
     public IEnumerable<LineD3D> AsLines
     {
       get
@@ -175,6 +200,7 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <inheritdoc/>
     public bool IsHittedBy(HitTestPointData hitData)
     {
       foreach (var outline in _outlines)
@@ -185,11 +211,19 @@ namespace Altaxo.Graph.Graph3D
     }
   }
 
+  /// <summary>
+  /// Represents an outline based on multiple transformed rectangles.
+  /// </summary>
   public class MultiRectangularObjectOutline : IObjectOutline
   {
     private Matrix4x3 _transformation;
     private RectangleD3D[] _rectangles;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MultiRectangularObjectOutline"/> class.
+    /// </summary>
+    /// <param name="rectangles">The rectangles.</param>
+    /// <param name="transformation">The transformation to world coordinates.</param>
     public MultiRectangularObjectOutline(IEnumerable<RectangleD3D> rectangles, Matrix4x3 transformation)
     {
       if (rectangles is null)
@@ -203,6 +237,7 @@ namespace Altaxo.Graph.Graph3D
       _transformation = transformation;
     }
 
+    /// <inheritdoc/>
     public IEnumerable<LineD3D> AsLines
     {
       get
@@ -219,6 +254,7 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <inheritdoc/>
     public bool IsHittedBy(HitTestPointData hitData)
     {
       foreach (var rect in _rectangles)
@@ -230,6 +266,9 @@ namespace Altaxo.Graph.Graph3D
     }
   }
 
+  /// <summary>
+  /// Represents an outline based on a polyline with thickness.
+  /// </summary>
   public class PolylineObjectOutline : IObjectOutline
   {
     private Matrix4x3 _transformation;
@@ -238,6 +277,13 @@ namespace Altaxo.Graph.Graph3D
     private double _thickness1By2;
     private double _thickness2By2;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PolylineObjectOutline"/> class.
+    /// </summary>
+    /// <param name="thickness1">The thickness in west-east direction.</param>
+    /// <param name="thickness2">The thickness in north-south direction.</param>
+    /// <param name="points">The polyline points.</param>
+    /// <param name="localToWorldTransformation">The local-to-world transformation.</param>
     public PolylineObjectOutline(double thickness1, double thickness2, IEnumerable<PointD3D> points, Matrix4x3 localToWorldTransformation)
     {
       _thickness1By2 = thickness1 * 0.55;
@@ -246,6 +292,7 @@ namespace Altaxo.Graph.Graph3D
       _transformation = localToWorldTransformation;
     }
 
+    /// <inheritdoc/>
     public IEnumerable<LineD3D> AsLines
     {
       get
@@ -276,12 +323,16 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <inheritdoc/>
     public bool IsHittedBy(HitTestPointData hitData)
     {
       throw new NotImplementedException();
     }
   }
 
+  /// <summary>
+  /// Represents an outline based on multiple individual lines with thickness.
+  /// </summary>
   public class MultipleSingleLinesObjectOutline : IObjectOutline
   {
     private Matrix4x3 _transformation;
@@ -290,6 +341,13 @@ namespace Altaxo.Graph.Graph3D
     private double _thickness1By2;
     private double _thickness2By2;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MultipleSingleLinesObjectOutline"/> class.
+    /// </summary>
+    /// <param name="thickness1">The thickness in west-east direction.</param>
+    /// <param name="thickness2">The thickness in north-south direction.</param>
+    /// <param name="lines">The lines.</param>
+    /// <param name="localToWorldTransformation">The local-to-world transformation.</param>
     public MultipleSingleLinesObjectOutline(double thickness1, double thickness2, IEnumerable<LineD3D> lines, Matrix4x3 localToWorldTransformation)
     {
       _thickness1By2 = thickness1 * 0.55;
@@ -298,6 +356,7 @@ namespace Altaxo.Graph.Graph3D
       _transformation = localToWorldTransformation;
     }
 
+    /// <inheritdoc/>
     public IEnumerable<LineD3D> AsLines
     {
       get
@@ -325,6 +384,7 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <inheritdoc/>
     public bool IsHittedBy(HitTestPointData hitData)
     {
       throw new NotImplementedException();

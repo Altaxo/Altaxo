@@ -40,7 +40,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   using Plot.Groups;
 
   /// <summary>
-  ///
+  /// Renders data as filled and framed bar graphs.
   /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Graph.Gdi.Plot.Styles.BarGraphPlotStyle}")]
   public class BarGraphPlotStyle
@@ -120,6 +120,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Plot.Styles.BarGraphPlotStyle", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
@@ -139,6 +140,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         */
       }
 
+      /// <summary>
+      /// Deserializes the specified bar graph plot style instance.
+      /// </summary>
+      /// <param name="o">The existing instance, if any.</param>
+      /// <param name="info">The deserialization info.</param>
+      /// <param name="parent">The parent object.</param>
+      /// <returns>The deserialized style.</returns>
       protected virtual BarGraphPlotStyle SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (BarGraphPlotStyle?)o ?? new BarGraphPlotStyle(info);
@@ -158,6 +166,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         return s;
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         BarGraphPlotStyle s = SDeserialize(o, info, parent);
@@ -173,6 +182,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BarGraphPlotStyle), 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (BarGraphPlotStyle)obj;
@@ -190,6 +200,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         info.AddValue("ActaulPosition", s._xOffsetLogical);
       }
 
+      /// <summary>
+      /// Deserializes the specified bar graph plot style instance.
+      /// </summary>
+      /// <param name="o">The existing instance, if any.</param>
+      /// <param name="info">The deserialization info.</param>
+      /// <param name="parent">The parent object.</param>
+      /// <returns>The deserialized style.</returns>
       protected virtual BarGraphPlotStyle SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (BarGraphPlotStyle?)o ?? new BarGraphPlotStyle(info);
@@ -210,6 +227,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         return s;
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         BarGraphPlotStyle s = SDeserialize(o, info, parent);
@@ -219,6 +237,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #endregion Serialization
 
+    /// <summary>
+    /// Copies the values from another <see cref="BarGraphPlotStyle"/> instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
+    /// <param name="copyWithDataReferences">Unused copy option retained for interface compatibility.</param>
     protected void CopyFrom(BarGraphPlotStyle from, bool copyWithDataReferences)
     {
       _relInnerGapX = from._relInnerGapX;
@@ -273,27 +296,44 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BarGraphPlotStyle"/> class from XML deserialization data.
+    /// </summary>
+    /// <param name="info">The XML deserialization information.</param>
     protected BarGraphPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BarGraphPlotStyle"/> class.
+    /// </summary>
+    /// <param name="context">The plot-context property bag.</param>
     public BarGraphPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       var color = GraphDocument.GetDefaultPlotColor(context);
       _fillBrush = new BrushX(color);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BarGraphPlotStyle"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
+    /// <param name="copyWithDataReferences">Unused copy option retained for interface compatibility.</param>
     public BarGraphPlotStyle(BarGraphPlotStyle from, bool copyWithDataReferences)
     {
       CopyFrom(from, copyWithDataReferences);
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this style receives colors from routed properties.
+    /// </summary>
     public bool IsColorReceiver
     {
       get
@@ -302,6 +342,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the fill color is independent from group styles.
+    /// </summary>
     public bool IndependentFillColor
     {
       get
@@ -317,6 +360,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the fill brush.
+    /// </summary>
     public BrushX? FillBrush
     {
       get { return _fillBrush; }
@@ -327,6 +373,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the frame color is independent from group styles.
+    /// </summary>
     public bool IndependentFrameColor
     {
       get
@@ -342,6 +391,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the frame pen.
+    /// </summary>
     public PenX? FramePen
     {
       get { return _framePen; }
@@ -354,12 +406,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the relative inner gap between bars.
+    /// </summary>
     public double InnerGap
     {
       get { return _relInnerGapX; }
       set { _relInnerGapX = value; }
     }
 
+    /// <summary>
+    /// Gets or sets the relative outer gap between bar groups.
+    /// </summary>
     public double OuterGap
     {
       get { return _relOuterGapX; }
@@ -372,6 +430,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the logical y-gap to the previous item.
+    /// </summary>
     public double PreviousItemYGap
     {
       get { return _previousItemYGap; }
@@ -384,6 +445,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the bars start at the previous plot item.
+    /// </summary>
     public bool StartAtPreviousItem
     {
       get { return _startAtPreviousItem; }
@@ -396,6 +460,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the base value is interpreted physically.
+    /// </summary>
     public bool UsePhysicalBaseValue
     {
       get { return _usePhysicalBaseValue; }
@@ -408,6 +475,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the base value of the bars.
+    /// </summary>
     public Altaxo.Data.AltaxoVariant BaseValue
     {
       get { return _baseValue; }
@@ -422,16 +492,19 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region IG2DPlotStyle Members
 
+    /// <inheritdoc />
     public void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups)
     {
       BarSizePosition2DGroupStyle.AddExternalGroupStyle(externalGroups);
     }
 
+    /// <inheritdoc />
     public void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       BarSizePosition2DGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
     }
 
+    /// <inheritdoc />
     public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
     {
       // first, we have to calculate the span of logical values from the minimum logical value to the maximum logical value
@@ -466,6 +539,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         { return _framePen.Color; });
     }
 
+    /// <inheritdoc />
     public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       _cachedColorForIndexFunction = null;
@@ -499,6 +573,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <inheritdoc />
     public void Paint(System.Drawing.Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData? prevItemData, Processed2DPlotData? nextItemData)
     {
       if (pdata is null || !(pdata.RangeList is { } rangeList) || !(pdata.PlotPointsInAbsoluteLayerCoordinates is { } ptArray))
@@ -584,6 +659,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <inheritdoc />
     public RectangleF PaintSymbol(Graphics g, RectangleF bounds)
     {
       bounds.Inflate(0, -bounds.Height / 4);
@@ -640,6 +716,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region IRoutedPropertyReceiver Members
 
+    /// <inheritdoc />
     public IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName)
     {
       switch (propertyName)

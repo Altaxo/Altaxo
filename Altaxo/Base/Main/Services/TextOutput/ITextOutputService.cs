@@ -28,7 +28,7 @@ using System;
 namespace Altaxo.Main.Services
 {
   /// <summary>
-  /// IOutputService provides methods for outputting text for the user (for instance results of operations, warning and error messages).
+  /// Provides methods for writing text output for the user, such as operation results, warnings, and error messages.
   /// </summary>
   public interface ITextOutputService
   {
@@ -37,14 +37,14 @@ namespace Altaxo.Main.Services
     void Write(string text);
 
     /// <summary>
-    /// Writes a line using the format string and the parameters
+    /// Writes text using the format string and the supplied parameters.
     /// </summary>
     /// <param name="format">Format string.</param>
-    /// <param name="list">Variable number of parameters</param>
+    /// <param name="list">Variable number of parameters.</param>
     void Write(string format, params object[] list);
 
     /// <summary>
-    /// Write a line using a format provider and a formatted string.
+    /// Writes text using a format provider and a composite format string.
     /// </summary>
     /// <param name="provider">The format provider.</param>
     /// <param name="format">The formatted string.</param>
@@ -66,11 +66,11 @@ namespace Altaxo.Main.Services
     /// Writes a line using the format string and the parameters, then starts a new line.
     /// </summary>
     /// <param name="format">Format string.</param>
-    /// <param name="list">Variable number of parameters</param>
+    /// <param name="list">Variable number of parameters.</param>
     void WriteLine(string format, params object[] list);
 
     /// <summary>
-    /// Write a line using a format provider and a formatted string, then starts a new line.
+    /// Writes text using a format provider and a composite format string, then starts a new line.
     /// </summary>
     /// <param name="provider">The format provider.</param>
     /// <param name="format">The formatted string.</param>

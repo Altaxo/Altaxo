@@ -45,6 +45,9 @@ namespace Altaxo.Main.Services.Files
     private Stream? _stream;
     private ZipArchiveAxo _zipArchive;
     private bool _leaveOpen;
+    /// <summary>
+    /// Gets or sets the compression level used when creating new entries.
+    /// </summary>
     public CompressionLevel CompressionLevel { get; set; } = CompressionLevel.Fastest;
 
     /// <inheritdoc/>

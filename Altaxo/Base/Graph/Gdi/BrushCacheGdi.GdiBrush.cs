@@ -31,6 +31,9 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi
 {
+  /// <summary>
+  /// Provides cached GDI brush instances for reusable <see cref="BrushX"/> definitions.
+  /// </summary>
   public partial class BrushCacheGdi
   {
     /// <summary>
@@ -50,7 +53,7 @@ namespace Altaxo.Graph.Gdi
       public Brush Brush { get; }
 
       /// <summary>
-      /// The parent cache of this object. Can intendendly be set to null. In this case, the cached pen object is not returned to the cache.
+      /// The parent cache of this object. It can intentionally be set to <see langword="null"/>. In this case, the cached brush object is not returned to the cache.
       /// </summary>
       private BrushCacheGdi? _parentCache;
 
@@ -70,9 +73,7 @@ namespace Altaxo.Graph.Gdi
       }
 
 
-      /// <summary>
-      /// By disposing this object, it is returned to the cache. You should therefore no longer used it!
-      /// </summary>
+      /// <inheritdoc />
       public void Dispose()
       {
         _parentCache?.ReturnObject(this);
@@ -105,7 +106,7 @@ namespace Altaxo.Graph.Gdi
       /// <param name="brush">The <see cref="BrushX"/>.</param>
       /// <param name="brushBoundingRectangle">The brush bounding rectangle.</param>
       /// <param name="effectiveMaximumResolutionDpi">The effective maximum resolution in dpi.</param>
-      /// <returns></returns>
+      /// <returns>The created native GDI brush.</returns>
       public static Brush CreateGdiBrush(BrushX brush, RectangleD2D brushBoundingRectangle, double effectiveMaximumResolutionDpi)
       {
         Brush? gdiBrush = null;

@@ -23,18 +23,39 @@ using Altaxo.Main.Services.Implementation;
 
 namespace Altaxo.Main.Services
 {
+  /// <summary>
+  /// Represents a timestamped informational, warning, or error message.
+  /// </summary>
   public struct InfoWarningErrorTextMessageItem
   {
+    /// <summary>
+    /// Gets or sets the message level.
+    /// </summary>
     public MessageLevel Level { get; set; }
+    /// <summary>
+    /// Gets or sets the message source.
+    /// </summary>
     public string Source { get; set; }
+    /// <summary>
+    /// Gets or sets the message text.
+    /// </summary>
     public string Message { get; set; }
+    /// <summary>
+    /// Gets or sets the message timestamp in UTC.
+    /// </summary>
     public DateTime TimeUtc { get; set; }
 
+    /// <summary>
+    /// Gets the local time corresponding to <see cref="TimeUtc"/>.
+    /// </summary>
     public DateTime Time
     {
       get { return TimeUtc.ToLocalTime(); }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="InfoWarningErrorTextMessageItem"/> struct.
+    /// </summary>
     public InfoWarningErrorTextMessageItem(MessageLevel level, string source, string message, DateTime timeUtc)
     {
       Level = level;
@@ -51,12 +72,24 @@ namespace Altaxo.Main.Services
   [GlobalService("InfoWarningErrorTextMessageService")]
   public interface IInfoWarningErrorTextMessageService
   {
+    /// <summary>
+    /// Writes a message line.
+    /// </summary>
     void WriteLine(MessageLevel messageLevel, string source, string message);
 
+    /// <summary>
+    /// Writes a formatted message line.
+    /// </summary>
     void WriteLine(MessageLevel messageLevel, string source, string format, params object[] args);
 
+    /// <summary>
+    /// Writes a culture-aware formatted message line.
+    /// </summary>
     void WriteLine(MessageLevel messageLevel, string source, System.IFormatProvider provider, string format, params object[] args);
 
+    /// <summary>
+    /// Occurs when a message is added.
+    /// </summary>
     event Action<InfoWarningErrorTextMessageItem> MessageAdded;
   }
 }

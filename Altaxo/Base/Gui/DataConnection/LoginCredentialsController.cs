@@ -31,22 +31,36 @@ using Altaxo.DataConnection;
 
 namespace Altaxo.Gui.DataConnection
 {
+  /// <summary>
+  /// View interface for editing login credentials.
+  /// </summary>
   public interface ILoginCredentialsView
   {
+    /// <summary>
+    /// Gets or sets the user name.
+    /// </summary>
     string Username { get; set; }
 
+    /// <summary>
+    /// Gets or sets the password.
+    /// </summary>
     string Password { get; set; }
   }
 
+  /// <summary>
+  /// Controller for <see cref="LoginCredentials"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(ILoginCredentialsView))]
   [UserControllerForObject(typeof(LoginCredentials))]
   public class LoginCredentialsController : MVCANControllerEditOriginalDocBase<LoginCredentials, ILoginCredentialsView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -58,6 +72,7 @@ namespace Altaxo.Gui.DataConnection
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = new LoginCredentials(_view.Username, _view.Password);

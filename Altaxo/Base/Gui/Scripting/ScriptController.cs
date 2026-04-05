@@ -39,8 +39,14 @@ namespace Altaxo.Gui.Scripting
   /// <summary>
   /// Executes the script provided in the argument.
   /// </summary>
+  /// <param name="script">The script to execute.</param>
+  /// <param name="reporter">The progress reporter used during execution.</param>
+  /// <returns><c>true</c> if execution succeeded; otherwise, <c>false</c>.</returns>
   public delegate bool ScriptExecutionHandler(IScriptText script, IProgressReporter reporter);
 
+  /// <summary>
+  /// View contract for script editing with compiler diagnostics.
+  /// </summary>
   public interface IScriptView : IPureScriptView
   {
     /// <summary>
@@ -55,25 +61,51 @@ namespace Altaxo.Gui.Scripting
     void SetCompilerErrors(IEnumerable<ICompilerDiagnostic> errors);
   }
 
+  /// <summary>
+  /// Contract for script controllers.
+  /// </summary>
   public interface IScriptController : IMVCANController
   {
+    /// <summary>
+    /// Sets the script text in the view.
+    /// </summary>
+    /// <param name="text">The script text.</param>
     void SetText(string text);
 
+    /// <summary>
+    /// Compiles the current script.
+    /// </summary>
+    /// <param name="cancellationToken">A token used to cancel compilation.</param>
+    /// <returns>A task that represents the compilation operation.</returns>
     Task Compile(CancellationToken cancellationToken);
 
+    /// <summary>
+    /// Updates the model with the current script text.
+    /// </summary>
     void Update();
 
+    /// <summary>
+    /// Cancels the current operation.
+    /// </summary>
     void Cancel();
 
+    /// <summary>
+    /// Executes the script.
+    /// </summary>
+    /// <param name="reporter">The progress reporter used during execution.</param>
     void Execute(IProgressReporter reporter);
 
+    /// <summary>
+    /// Determines whether execution errors are present.
+    /// </summary>
+    /// <returns><c>true</c> if execution errors are present; otherwise, <c>false</c>.</returns>
     bool HasExecutionErrors();
   }
 
   #endregion Interfaces
 
   /// <summary>
-  /// Summary description for ScriptController.
+  /// Controller for editing, compiling, and executing scripts.
   /// </summary>
   [UserControllerForObject(typeof(IScriptText), 200)]
   [ExpectedTypeOfView(typeof(IScriptView))]
@@ -83,20 +115,35 @@ namespace Altaxo.Gui.Scripting
     private IScriptText _doc;
     private IScriptText _tempDoc;
     private IScriptText _compiledDoc;
+    /// <summary>
+    /// Delegate that executes the current script.
+    /// </summary>
     protected ScriptExecutionHandler _scriptExecutionHandler;
 
     //private IPureScriptController _pureScriptController;
     private Regex _compilerErrorRegex = new Regex(@".*\((?<line>\d+),(?<column>\d+)\) : (?<msg>.+)", RegexOptions.Compiled);
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScriptController"/> class.
+    /// </summary>
     public ScriptController()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScriptController"/> class.
+    /// </summary>
+    /// <param name="doc">The script document.</param>
     public ScriptController(IScriptText doc)
     {
       InitializeDocument(doc);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScriptController"/> class.
+    /// </summary>
+    /// <param name="doc">The script document.</param>
+    /// <param name="exec">The script execution handler.</param>
     public ScriptController(IScriptText doc, ScriptExecutionHandler exec)
     {
       InitializeDocument(doc, exec);
@@ -104,17 +151,20 @@ namespace Altaxo.Gui.Scripting
 
     #region IMVCANController Members
 
+    /// <inheritdoc/>
     public void AttachView()
     {
       _view.CompilerMessageClicked += EhView_GotoCompilerError;
     }
 
+    /// <inheritdoc/>
     public void DetachView()
     {
       _view.CompilerMessageClicked -= EhView_GotoCompilerError;
       ;
     }
 
+    /// <inheritdoc/>
     public bool InitializeDocument(params object[] args)
     {
       if (args is null || args.Length == 0)
@@ -134,6 +184,7 @@ namespace Altaxo.Gui.Scripting
       return true;
     }
 
+    /// <inheritdoc/>
     public UseDocument UseDocumentCopy
     {
       set { }
@@ -141,12 +192,16 @@ namespace Altaxo.Gui.Scripting
 
     #endregion IMVCANController Members
 
+    /// <inheritdoc/>
     public void SetText(string text)
     {
       if (_view is not null)
         _view.ScriptText = text;
     }
 
+    /// <summary>
+    /// Initializes the view with the current script data.
+    /// </summary>
     public void Initialize()
     {
       if (_view is not null)
@@ -159,6 +214,10 @@ namespace Altaxo.Gui.Scripting
 
     #region IScriptViewEventSink Members
 
+    /// <summary>
+    /// Moves the script cursor to the location described by a compiler message.
+    /// </summary>
+    /// <param name="message">The compiler message that contains the target location.</param>
     public void EhView_GotoCompilerError(string message)
     {
       try
@@ -180,6 +239,7 @@ namespace Altaxo.Gui.Scripting
 
     #region IScriptController Members
 
+    /// <inheritdoc/>
     public async Task Compile(CancellationToken cancellationToken)
     {
       var scriptCompilerService = Current.GetRequiredService<IScriptCompilerService>();
@@ -212,6 +272,9 @@ namespace Altaxo.Gui.Scripting
       }
     }
 
+    /// <summary>
+    /// Performs compilation using the built-in script implementation.
+    /// </summary>
     public void InternalCompiling()
     {
       _compiledDoc = null;
@@ -240,6 +303,7 @@ namespace Altaxo.Gui.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public void Update()
     {
       _tempDoc.ScriptText = _view.ScriptText;
@@ -258,16 +322,19 @@ namespace Altaxo.Gui.Scripting
       _tempDoc = (IScriptText)_doc.Clone();
     }
 
+    /// <inheritdoc/>
     public void Cancel()
     {
     }
 
+    /// <inheritdoc/>
     public void Execute(IProgressReporter progress)
     {
       _doc.ClearErrors();
       _scriptExecutionHandler?.Invoke(_doc, progress);
     }
 
+    /// <inheritdoc/>
     public bool HasExecutionErrors()
     {
       if (_doc.Errors is not null && _doc.Errors.Count > 0)
@@ -283,6 +350,7 @@ namespace Altaxo.Gui.Scripting
 
     #region IMVCController Members
 
+    /// <inheritdoc/>
     public object ModelObject
     {
       get
@@ -291,6 +359,7 @@ namespace Altaxo.Gui.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public object ViewObject
     {
       get
@@ -314,6 +383,7 @@ namespace Altaxo.Gui.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
     }
@@ -322,6 +392,7 @@ namespace Altaxo.Gui.Scripting
 
     #region IApplyController Members
 
+    /// <inheritdoc/>
     public bool Apply(bool disposeController)
     {
       bool applyresult = false;

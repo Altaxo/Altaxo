@@ -33,7 +33,7 @@ namespace Altaxo.Main
 {
   /// <summary>
   /// Base class for a suspendable document node.
-  /// This class supports document nodes that have children, and implements most of the code neccessary to handle child events and to suspend the childs when the parent is suspended.
+  /// This class supports document nodes that have children, and implements most of the code necessary to handle child events and to suspend child nodes when the parent is suspended.
   /// </summary>
   /// <remarks>If you don't need support for child events, consider using <see cref="T:Altaxo.Main.SuspendableDocumentLeafNode{TEventArgs}"/> instead.</remarks>
   public abstract partial class SuspendableDocumentNode : SuspendableDocumentNodeBase, Main.IDocumentNode
@@ -158,8 +158,8 @@ namespace Altaxo.Main
     /// <summary>
     /// Suspend will increase the SuspendLevel.
     /// </summary>
-    /// <returns>An object, which must be handed to the resume function to decrease the suspend level. Alternatively,
-    /// the object can be used in an using statement. In this case, the call to the Resume function is not neccessary.</returns>
+    /// <returns>An object which must be handed to the resume function to decrease the suspend level. Alternatively,
+    /// the object can be used in a `using` statement. In this case, the call to the resume function is not necessary.</returns>
     public override ISuspendToken SuspendGetToken()
     {
       return new SuspendToken(this);
@@ -170,7 +170,7 @@ namespace Altaxo.Main
     /// The return value is a token that had 'absorbed' the suspend count of the object, resulting in the suspend count
     /// of the object dropped to 0 (zero). When the returned token is finally disposed, the suspend count of the object is increased again by the 'absorbed' suspend count.
     /// </summary>
-    /// <returns>A new token. As long as this token is not disposed, and not other process calls SuspendGetToken, the object is fre (not suspended). The object is suspended again when
+    /// <returns>A new token. As long as this token is not disposed, and no other process calls <see cref="SuspendGetToken"/>, the object is free (not suspended). The object is suspended again when
     /// the returned token is disposed.</returns>
     public override IDisposable ResumeCompleteTemporarilyGetToken()
     {
@@ -229,7 +229,7 @@ namespace Altaxo.Main
     #region Change event handling
 
     /// <summary>
-    /// Handles the case when a child changes, and a reaction is neccessary independently on the suspend state of the table.
+    /// Handles the case when a child changes, and a reaction is necessary independently of the suspend state of the node.
     /// </summary>
     /// <param name="sender">The sender of the event, usually a child of this object.</param>
     /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
@@ -249,7 +249,7 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="sender">The sender of the event args, usually a child of this object.</param>
     /// <param name="e">The <see cref="EventArgs"/> instance containing the event data. On return, you can provided transformed event args by this parameter.</param>
-    /// <returns><c>True</c> if the event will not change this object, and further processing of the event is not neccessary.
+    /// <returns><c>true</c> if the event will not change this object, and further processing of the event is not necessary.
     /// If in doubt, return <c>false</c>. This will allow the further processing of the event.
     /// </returns>
     protected virtual bool HandleLowPriorityChildChangeCases(object? sender, ref EventArgs e)
@@ -441,6 +441,7 @@ namespace Altaxo.Main
       }
     }
 
+    /// <inheritdoc/>
     protected override void Dispose(bool isDisposing)
     {
       if (!IsDisposed)
@@ -1037,6 +1038,10 @@ namespace Altaxo.Main
       return problemsDetected;
     }
 
+    /// <summary>
+    /// Reports problems caused by assemblies that were loaded more than once.
+    /// </summary>
+    /// <returns><see langword="true"/> if problems were detected; otherwise, <see langword="false"/>.</returns>
     public static bool ReportAssemblyLoadedTwiceProblems()
     {
       bool problemsDetected = false;
@@ -1142,12 +1147,20 @@ namespace Altaxo.Main
 
 #else
 
+    /// <summary>
+    /// Reports problems in child lists when this diagnostic functionality is unavailable.
+    /// </summary>
+    /// <returns><see langword="false"/>.</returns>
     public static bool ReportChildListProblems()
     {
       Current.InfoTextMessageService.WriteLine(MessageLevel.Error, "ReportChildListProblems", "This functionality is available only in DEBUG mode with TRACEDOCUMENTNODES defined in AltaxoBase");
       return false;
     }
 
+    /// <summary>
+    /// Reports wrong child-parent relations when this diagnostic functionality is unavailable.
+    /// </summary>
+    /// <returns><see langword="false"/>.</returns>
     public static bool ReportWrongChildParentRelations()
     {
       Current.InfoTextMessageService.WriteLine(MessageLevel.Error, "ReportWrongChildParentRelations", "This functionality is available only in DEBUG mode with TRACEDOCUMENTNODES defined in AltaxoBase");

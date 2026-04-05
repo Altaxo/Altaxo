@@ -28,11 +28,17 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// Describes a choice consisting of a type and an optional instance of that type.
+  /// </summary>
   public class SingleInstanceChoice
   {
     private System.Type _instanceType;
     private object? _instance;
 
+    /// <summary>
+    /// Gets the instance type.
+    /// </summary>
     public System.Type InstanceType
     {
       get
@@ -41,6 +47,9 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <summary>
+    /// Gets or sets the selected instance.
+    /// </summary>
     public object? Instance
     {
       get
@@ -56,11 +65,21 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SingleInstanceChoice"/> class.
+    /// </summary>
+    /// <param name="instanceType">The instance type.</param>
+    /// <param name="instance">The selected instance.</param>
     public SingleInstanceChoice(System.Type instanceType, object instance)
     {
       Initialize(instanceType, instance);
     }
 
+    /// <summary>
+    /// Initializes the instance choice.
+    /// </summary>
+    /// <param name="instanceType">The instance type.</param>
+    /// <param name="instance">The selected instance.</param>
     [MemberNotNull(nameof(_instanceType))]
     public void Initialize(System.Type instanceType, object instance)
     {
@@ -75,7 +94,7 @@ namespace Altaxo.Gui.Common
   }
 
   /// <summary>
-  /// Summary description for SingleInstanceChoiceController.
+  /// Controller for choosing and instantiating a single subtype instance.
   /// </summary>
   [UserControllerForObject(typeof(SingleInstanceChoice))]
   public class SingleInstanceChoiceController : SingleChoiceController
@@ -83,6 +102,10 @@ namespace Altaxo.Gui.Common
     private SingleInstanceChoice _doc;
     private System.Type[] _types;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SingleInstanceChoiceController"/> class.
+    /// </summary>
+    /// <param name="doc">The choice document.</param>
     public SingleInstanceChoiceController(SingleInstanceChoice doc)
     {
       _doc = doc;
@@ -100,6 +123,7 @@ namespace Altaxo.Gui.Common
       base.Initialize(choices, selectedIndex);
     }
 
+    /// <inheritdoc/>
     public override object ModelObject
     {
       get
@@ -108,6 +132,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (!base.Apply(disposeController))

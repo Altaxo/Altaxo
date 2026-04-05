@@ -4,14 +4,21 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Science.Signals
 {
+  /// <summary>
+  /// View interface for four-point step evaluation options.
+  /// </summary>
   public interface IFourPointStepEvaluationOptionsView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="FourPointStepEvaluationOptions"/>.
+  /// </summary>
   [UserControllerForObject(typeof(FourPointStepEvaluationOptions))]
   [ExpectedTypeOfView(typeof(IFourPointStepEvaluationOptionsView))]
   public class FourPointStepEvaluationOptionsController : MVCANControllerEditImmutableDocBase<FourPointStepEvaluationOptions, IFourPointStepEvaluationOptionsView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -21,6 +28,9 @@ namespace Altaxo.Gui.Science.Signals
 
     private bool _useRegressionForLeftAndRightLine;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether regression is used for the left and right line.
+    /// </summary>
     public bool UseRegressionForLeftAndRightLine
     {
       get => _useRegressionForLeftAndRightLine;
@@ -34,10 +44,16 @@ namespace Altaxo.Gui.Science.Signals
       }
     }
 
+    /// <summary>
+    /// Gets the unit environment for level values.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment LevelEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _MiddleRegressionLowerLevel;
 
+    /// <summary>
+    /// Gets or sets the lower level for the middle regression.
+    /// </summary>
     public DimensionfulQuantity MiddleRegressionLowerLevel
     {
       get => _MiddleRegressionLowerLevel;
@@ -53,6 +69,9 @@ namespace Altaxo.Gui.Science.Signals
 
     private DimensionfulQuantity _MiddleRegressionUpperLevel;
 
+    /// <summary>
+    /// Gets or sets the upper level for the middle regression.
+    /// </summary>
     public DimensionfulQuantity MiddleRegressionUpperLevel
     {
       get => _MiddleRegressionUpperLevel;
@@ -68,6 +87,9 @@ namespace Altaxo.Gui.Science.Signals
 
     private DimensionfulQuantity _MiddleLineOverlap;
 
+    /// <summary>
+    /// Gets or sets the overlap of the middle line.
+    /// </summary>
     public DimensionfulQuantity MiddleLineOverlap
     {
       get => _MiddleLineOverlap;
@@ -84,6 +106,9 @@ namespace Altaxo.Gui.Science.Signals
 
     private bool _IncludeOriginalPointsInOutput;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether original points are included in the output.
+    /// </summary>
     public bool IncludeOriginalPointsInOutput
     {
       get => _IncludeOriginalPointsInOutput;
@@ -100,6 +125,9 @@ namespace Altaxo.Gui.Science.Signals
 
     private double _IndexLeftOuter;
 
+    /// <summary>
+    /// Gets or sets the outer left index.
+    /// </summary>
     public double IndexLeftOuter
     {
       get => _IndexLeftOuter;
@@ -115,6 +143,9 @@ namespace Altaxo.Gui.Science.Signals
 
     private double _IndexLeftInner;
 
+    /// <summary>
+    /// Gets or sets the inner left index.
+    /// </summary>
     public double IndexLeftInner
     {
       get => _IndexLeftInner;
@@ -130,6 +161,9 @@ namespace Altaxo.Gui.Science.Signals
 
     private double _IndexRightOuter;
 
+    /// <summary>
+    /// Gets or sets the outer right index.
+    /// </summary>
     public double IndexRightOuter
     {
       get => _IndexRightOuter;
@@ -145,6 +179,9 @@ namespace Altaxo.Gui.Science.Signals
 
     private double _IndexRightInner;
 
+    /// <summary>
+    /// Gets or sets the inner right index.
+    /// </summary>
     public double IndexRightInner
     {
       get => _IndexRightInner;
@@ -161,6 +198,7 @@ namespace Altaxo.Gui.Science.Signals
     #endregion
 
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -178,6 +216,7 @@ namespace Altaxo.Gui.Science.Signals
         IndexRightInner = _doc.IndexRightInner;
       }
     }
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       var middleRegressionLowerLevel = MiddleRegressionLowerLevel.AsValueInSIUnits;

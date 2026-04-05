@@ -36,14 +36,14 @@ namespace Altaxo.Main.Services.ExceptionHandling
     /// handlers below the newly registered handler are not called.
     /// </summary>
     /// <param name="handler">The handler to register.</param>
-    /// <param name="isExclusive">if set to <c>true</c>, the handlers below this handler are not called (until this handler unregisters).</param>
+    /// <param name="isExclusive">If set to <c>true</c>, the handlers below this handler are not called until this handler unregisters.</param>
     void AddHandler(IUnhandledExceptionHandler handler, bool isExclusive);
 
     /// <summary>
     /// Unregisters the handler.
     /// </summary>
     /// <param name="handler">The handler to unregister.</param>
-    /// <returns>True if the unregistering was successfull.</returns>
+    /// <returns><c>true</c> if the handler was removed successfully; otherwise, <c>false</c>.</returns>
     bool RemoveHandler(IUnhandledExceptionHandler handler);
   }
 }

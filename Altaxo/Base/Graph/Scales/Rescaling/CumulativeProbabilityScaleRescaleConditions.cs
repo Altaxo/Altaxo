@@ -32,9 +32,19 @@ namespace Altaxo.Graph.Scales.Rescaling
 {
   using Altaxo.Graph.Scales.Boundaries;
 
+  /// <summary>
+  /// Stores rescaling conditions for cumulative-probability scales.
+  /// </summary>
   public class CumulativeProbabilityScaleRescaleConditions : NumericScaleRescaleConditions
   {
+    /// <summary>
+    /// Default origin value used for cumulative-probability scales.
+    /// </summary>
     public const double DefaultOrgValue = 0.0002;
+
+    /// <summary>
+    /// Default end value used for cumulative-probability scales.
+    /// </summary>
     public const double DefaultEndValue = 0.9998;
 
     #region Serialization
@@ -64,22 +74,31 @@ namespace Altaxo.Graph.Scales.Rescaling
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CumulativeProbabilityScaleRescaleConditions"/> class.
+    /// </summary>
     public CumulativeProbabilityScaleRescaleConditions()
     {
       _dataBoundsOrg = _resultingOrg = DefaultOrgValue;
       _dataBoundsEnd = _resultingEnd = DefaultEndValue;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CumulativeProbabilityScaleRescaleConditions"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public CumulativeProbabilityScaleRescaleConditions(CumulativeProbabilityScaleRescaleConditions from)
       : base(from) // all is done here, since CopyFrom is virtual!
     {
     }
 
+    /// <inheritdoc/>
     public override object Clone()
     {
       return new CumulativeProbabilityScaleRescaleConditions(this);
     }
 
+    /// <inheritdoc/>
     public override void SetUserParameters(BoundaryRescaling orgRescaling, BoundariesRelativeTo orgRelativeTo, double orgValue, BoundaryRescaling endRescaling, BoundariesRelativeTo endRelativeTo, double endValue)
     {
       if (orgRelativeTo != BoundariesRelativeTo.Absolute)
@@ -131,6 +150,7 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <inheritdoc/>
     protected override double GetDataBoundsScaleMean()
     {
       return 0.5 * (_dataBoundsOrg + _dataBoundsEnd);
@@ -138,6 +158,7 @@ namespace Altaxo.Graph.Scales.Rescaling
 
     #region Resulting Org/End to/fron User Org/End
 
+    /// <inheritdoc/>
     protected override double GetResultingOrgFromUserProvidedOrg()
     {
       switch (_userProvidedOrgRelativeTo)
@@ -159,6 +180,7 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <inheritdoc/>
     protected override double GetUserProvidedOrgFromResultingOrg(double resultingOrg)
     {
       switch (_userProvidedOrgRelativeTo)
@@ -180,6 +202,7 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <inheritdoc/>
     protected override double GetResultingEndFromUserProvidedEnd()
     {
       switch (_userProvidedEndRelativeTo)
@@ -201,6 +224,7 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <inheritdoc/>
     protected override double GetUserProvidedEndFromResultingEnd(double resultingEnd)
     {
       switch (_userProvidedEndRelativeTo)
@@ -224,6 +248,7 @@ namespace Altaxo.Graph.Scales.Rescaling
 
     #endregion Resulting Org/End to/fron User Org/End
 
+    /// <inheritdoc/>
     protected override void FixValuesForUserZoomed(ref double zoomOrg, ref double zoomEnd)
     {
       if (zoomOrg > zoomEnd)
@@ -250,6 +275,11 @@ namespace Altaxo.Graph.Scales.Rescaling
 
     #region Helper functions for dialog
 
+    /// <summary>
+    /// Gets the origin value that should be shown in the rescaling dialog.
+    /// </summary>
+    /// <param name="currentResultingOrg">The current resulting origin.</param>
+    /// <returns>The origin value to display.</returns>
     public double GetOrgValueToShowInDialog(double currentResultingOrg)
     {
       if (_orgRescaling == BoundaryRescaling.Auto)
@@ -278,6 +308,11 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <summary>
+    /// Gets the end value that should be shown in the rescaling dialog.
+    /// </summary>
+    /// <param name="currentResultingEnd">The current resulting end.</param>
+    /// <returns>The end value to display.</returns>
     public double GetEndValueToShowInDialog(double currentResultingEnd)
     {
       if (_endRescaling == BoundaryRescaling.Auto)

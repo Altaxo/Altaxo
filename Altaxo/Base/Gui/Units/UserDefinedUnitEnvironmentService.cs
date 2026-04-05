@@ -63,6 +63,11 @@ namespace Altaxo.Gui.Units
       Current.PropertyService.SetValue(UserDefinedUnitEnvironments.PropertyKeyDefaultInstance, Environments);
     }
 
+    /// <summary>
+    /// Gets a user-defined unit environment matching the specified unit.
+    /// </summary>
+    /// <param name="unit">The unit to match.</param>
+    /// <returns>The matching or synthesized user-defined unit environment.</returns>
     public UserDefinedUnitEnvironment GetUserDefinedUnitEnvironment(IUnit unit)
     {
       var env = Environments.Values

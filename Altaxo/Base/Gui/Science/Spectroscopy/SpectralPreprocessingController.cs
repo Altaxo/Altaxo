@@ -41,16 +41,25 @@ using Altaxo.Science.Spectroscopy.SpikeRemoval;
 namespace Altaxo.Gui.Science.Spectroscopy
 {
 
+  /// <summary>
+  /// Controller for editing spectral preprocessing option sequences.
+  /// </summary>
   [UserControllerForObject(typeof(SpectralPreprocessingOptionsList))]
   [UserControllerForObject(typeof(SpectralPreprocessingOptions))]
   [ExpectedTypeOfView(typeof(ISpectralPreprocessingOptionsView))]
   public class SpectralPreprocessingController : SpectralPreprocessingControllerBase<SpectralPreprocessingOptionsBase>
   {
+    /// <inheritdoc/>
     protected override IEnumerable<(string Label, object Doc, Func<IMVCANController> GetController)> GetComponents()
     {
       return GetComponents(_doc);
     }
 
+    /// <summary>
+    /// Gets the preprocessing components represented by the specified document.
+    /// </summary>
+    /// <param name="_doc">The preprocessing options document.</param>
+    /// <returns>The component descriptors.</returns>
     public static IEnumerable<(string Label, object Doc, Func<IMVCANController> GetController)> GetComponents(SpectralPreprocessingOptionsBase _doc)
     {
       foreach (var processor in _doc)
@@ -101,11 +110,19 @@ namespace Altaxo.Gui.Science.Spectroscopy
       }
     }
 
+    /// <inheritdoc/>
     protected override void UpdateDoc(object model, int index)
     {
       _doc = UpdateDoc(_doc, model, index);
     }
 
+    /// <summary>
+    /// Updates the specified preprocessing document with a changed component.
+    /// </summary>
+    /// <param name="_doc">The source document.</param>
+    /// <param name="model">The updated component model.</param>
+    /// <param name="index">The component index.</param>
+    /// <returns>The updated preprocessing document.</returns>
     public static SpectralPreprocessingOptionsBase UpdateDoc(SpectralPreprocessingOptionsBase _doc, object model, int index)
     {
       if (model is not ISingleSpectrumPreprocessor)
@@ -165,6 +182,7 @@ namespace Altaxo.Gui.Science.Spectroscopy
       return _doc;
     }
 
+    /// <inheritdoc/>
     protected override SpectralPreprocessingOptionsBase InternalPreprocessingOptions
     {
       get => _doc;
@@ -172,6 +190,7 @@ namespace Altaxo.Gui.Science.Spectroscopy
     }
 
 
+    /// <inheritdoc/>
     protected override bool ApplyEnd(bool applyResult, bool disposeController)
     {
       // clean the SpectralPreprocessingOptionsList by dropping non-elements

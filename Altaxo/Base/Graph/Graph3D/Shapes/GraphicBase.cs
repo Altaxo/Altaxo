@@ -58,6 +58,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// <summary>Cached matrix which transforms from own coordinates to parent (layer) coordinates.</summary>
     protected Matrix4x3 _transformation = Matrix4x3.Identity;
 
+    /// <summary>
+    /// Stores an optional user-defined tag for the graphic.
+    /// </summary>
     protected string? _tag;
 
     #region Serialization
@@ -73,9 +76,13 @@ namespace Altaxo.Graph.Graph3D.Shapes
     }
 
     // 2015-09-12 initial version
+    /// <summary>
+    /// Serializes <see cref="GraphicBase"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphicBase), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (GraphicBase)obj;
@@ -83,6 +90,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
         info.AddValue("Tag", s._tag);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (GraphicBase)(o ?? throw new ArgumentNullException(nameof(o)));
@@ -107,6 +115,10 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// <summary>
     /// Initializes a fresh instance of this class with default values
     /// </summary>
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GraphicBase"/> class with the specified location.
+    /// </summary>
+    /// <param name="location">The location descriptor.</param>
     protected GraphicBase(ItemLocationDirect location)
     {
       if (location is null)
@@ -116,11 +128,20 @@ namespace Altaxo.Graph.Graph3D.Shapes
       _location.ParentObject = this;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GraphicBase"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The graphic to copy from.</param>
     protected GraphicBase(GraphicBase from)
     {
       CopyFrom(from, false);
     }
 
+    /// <summary>
+    /// Copies values from another <see cref="GraphicBase"/> instance.
+    /// </summary>
+    /// <param name="from">The graphic to copy from.</param>
+    /// <param name="withBaseMembers">If set to <c>true</c>, base members are copied as well.</param>
     [MemberNotNull(nameof(_location))]
     protected void CopyFrom(GraphicBase from, bool withBaseMembers)
     {
@@ -129,6 +150,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       UpdateTransformationMatrix();
     }
 
+    /// <inheritdoc/>
     public virtual bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -155,6 +177,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       return false;
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_location is not null)
@@ -163,11 +186,13 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     #region Suspend/Resume
 
+    /// <inheritdoc/>
     protected override void AccumulateChangeData(object? sender, EventArgs e)
     {
       _accumulatedEventData = EventArgs.Empty;
     }
 
+    /// <inheritdoc/>
     protected override void OnChanged(EventArgs e)
     {
       if (!IsDisposeInProgress)
@@ -179,6 +204,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     #endregion Suspend/Resume
 
+    /// <inheritdoc/>
     public void SetParentSize(VectorD3D parentSize, bool shouldTriggerChangeEvent)
     {
       var oldParentSize = _location.ParentSize;
@@ -193,6 +219,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets the current parent size.
+    /// </summary>
     public VectorD3D ParentSize
     {
       get
@@ -201,6 +230,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this graphic determines its size automatically.
+    /// </summary>
     public virtual bool AutoSize
     {
       get
@@ -209,6 +241,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets the location descriptor of this graphic.
+    /// </summary>
     public ItemLocationDirect Location
     {
       get
@@ -531,6 +566,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets the scale vector.
+    /// </summary>
     public virtual VectorD3D Scale
     {
       get
@@ -627,6 +665,11 @@ namespace Altaxo.Graph.Graph3D.Shapes
         _location.AbsolutePivotPositionX, _location.AbsolutePivotPositionY, _location.AbsolutePivotPositionZ);
     }
 
+    /// <summary>
+    /// Appends a transformation to the current coordinates.
+    /// </summary>
+    /// <param name="transform">The transformation to append.</param>
+    /// <param name="eventFiring">Controls whether change events are fired.</param>
     protected internal void SetCoordinatesByAppendTransformation(Matrix4x3 transform, Main.EventFiring eventFiring)
     {
       using (var token = SuspendGetToken())
@@ -650,6 +693,11 @@ namespace Altaxo.Graph.Graph3D.Shapes
       }
     }
 
+    /// <summary>
+    /// Appends the inverse of a transformation to the current coordinates.
+    /// </summary>
+    /// <param name="transform">The transformation whose inverse is appended.</param>
+    /// <param name="eventFiring">Controls whether change events are fired.</param>
     protected internal void SetCoordinatesByAppendInverseTransformation(Matrix4x3 transform, Main.EventFiring eventFiring)
     {
       using (var token = SuspendGetToken())
@@ -671,11 +719,17 @@ namespace Altaxo.Graph.Graph3D.Shapes
       }
     }
 
+    /// <summary>
+    /// Shifts the graphic position by the specified vector.
+    /// </summary>
     protected void ShiftPosition(PointD3D dp)
     {
       ShiftPosition(dp.X, dp.Y, dp.Z);
     }
 
+    /// <summary>
+    /// Shifts the graphic position by the specified components.
+    /// </summary>
     protected internal void ShiftPosition(double dx, double dy, double dz)
     {
       var currPos = GetPosition();
@@ -690,11 +744,13 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// <returns>
     ///   <c>True</c> if this object is compatible with the parent object; otherwise <c>false</c>.
     /// </returns>
+    /// <inheritdoc/>
     public virtual bool IsCompatibleWithParent(object parentObject)
     {
       return true;
     }
 
+    /// <inheritdoc/>
     public virtual void FixupInternalDataStructures()
     {
     }
@@ -703,6 +759,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// Is called before the paint procedure is executed.
     /// </summary>
     /// <param name="context">The paint context.</param>
+    /// <inheritdoc/>
     public virtual void PaintPreprocessing(Altaxo.Graph.IPaintContext context)
     {
     }
@@ -747,6 +804,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// </summary>
     /// <param name="parentHitData">Data containing the position of the click and the transformations.</param>
     /// <returns>Null if the object is not hitted. Otherwise data to further process the hitted object.</returns>
+    /// <inheritdoc/>
     public virtual IHitTestObject? HitTest(HitTestPointData parentHitData)
     {
       var localHitData = parentHitData.NewFromAdditionalTransformation(_transformation);
@@ -778,6 +836,12 @@ namespace Altaxo.Graph.Graph3D.Shapes
       return _transformation.Transform(bounds.Location + VectorD3D.MultiplicationElementwise(relativeObjectCoordinates, bounds.Size));
     }
 
+    /// <summary>
+    /// Converts a point difference to object coordinates without rotation.
+    /// </summary>
+    /// <param name="pivot">The pivot point.</param>
+    /// <param name="point">The point to transform.</param>
+    /// <returns>The unrotated difference vector.</returns>
     public VectorD3D ToUnrotatedDifference(PointD3D pivot, PointD3D point)
     {
       var v = _transformation.InverseTransform(point - pivot);
@@ -829,9 +893,27 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     #region IGrippableObject
 
+    /// <summary>
+    /// Defines the kinds of grip handles a graphic can expose.
+    /// </summary>
     [Flags]
-    protected enum GripKind { Move = 1, Resize = 2, Rotate = 4, Rescale = 8, Shear = 16 }
+    protected enum GripKind
+    {
+      /// <summary>Move grip.</summary>
+      Move = 1,
+      /// <summary>Resize grip.</summary>
+      Resize = 2,
+      /// <summary>Rotate grip.</summary>
+      Rotate = 4,
+      /// <summary>Rescale grip.</summary>
+      Rescale = 8,
+      /// <summary>Shear grip.</summary>
+      Shear = 16
+    }
 
+    /// <summary>
+    /// Gets the manipulation grips for the specified hit test object.
+    /// </summary>
     protected virtual IGripManipulationHandle[] GetGrips(IHitTestObject hitTest, GripKind gripKind)
     {
       var list = new List<IGripManipulationHandle>();

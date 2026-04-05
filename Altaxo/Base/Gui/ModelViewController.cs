@@ -67,19 +67,22 @@ namespace Altaxo.Gui
     Directly
   }
 
+  /// <summary>
+  /// Extends <see cref="IMVCAController"/> with document initialization and document-copy mode selection.
+  /// </summary>
   public interface IMVCANController : IMVCAController
   {
     /// <summary>
     /// Initializes the controller with the document.
     /// </summary>
-    /// <param name="args">The arguments neccessary to create the controller. Normally, the first argument is the document, the second can be the parent of the document and so on.</param>
-    /// <returns>Returns <see langword="true"/> if successfull; otherwise <see langword="false"/>.</returns>
+    /// <param name="args">The arguments necessary to create the controller. Normally, the first argument is the document, the second can be the parent of the document, and so on.</param>
+    /// <returns>Returns <see langword="true"/> if successful; otherwise, <see langword="false"/>.</returns>
     bool InitializeDocument(params object[] args);
 
     /// <summary>
     /// Sets whether or not a copy of the document is used. If set to true, a copy of the document is used, so if the controller is not applied,
-    /// all changes can be reverted. If set to false, no copy must be made. The document is directly changed by the controller, and changes can not be reverted.
-    /// Use the last option if a controller up in the hierarchie has already made a copy of the document.
+    /// all changes can be reverted. If set to false, no copy must be made. The document is directly changed by the controller, and changes cannot be reverted.
+    /// Use the last option if a controller higher in the hierarchy has already made a copy of the document.
     /// </summary>
     /// <remarks>
     /// If set to <see cref="UseDocument.Copy"/>, a copy of the document is used. If the controller is not applied, all changes can be reverted.
@@ -97,13 +100,13 @@ namespace Altaxo.Gui
     /// <summary>Event fired when the user changed some data that will change the model.</summary>
     event Action<IMVCANDController>? MadeDirty;
 
-    /// <summary>Gets the provisional model object. This is the model object that is based on the current user input.</summary>
+    /// <summary>Gets the provisional model object. This is the model object based on the current user input.</summary>
     object ProvisionalModelObject { get; }
   }
 
   /// <summary>
   /// Interface that can be optionally implemented by controllers to support some actions when the controller's Apply function is successfully executed.
-  /// The controller has to call the event <see cref="SuccessfullyApplied"/> after each successfully apply.
+    /// The controller has to call the event <see cref="SuccessfullyApplied"/> after each successful apply.
   /// </summary>
   public interface IMVCSupportsApplyCallback
   {

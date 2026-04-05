@@ -25,7 +25,7 @@
 namespace Altaxo.Main.Services.ScriptCompilation
 {
   /// <summary>
-  /// Extends the <see cref="IScriptCompilerResult"/> by the assembly that was the result of the successful compilation.
+  /// Extends <see cref="IScriptCompilerResult"/> by exposing the assembly produced by a successful compilation.
   /// </summary>
   /// <seealso cref="Altaxo.Main.Services.ScriptCompilation.IScriptCompilerResult" />
   public interface IScriptCompilerSuccessfulResult : IScriptCompilerResult

@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -33,7 +33,7 @@ namespace Altaxo.Graph.Scales.Deprecated
   using Rescaling;
 
   /// <summary>
-  /// Summary description for DateTimeAxis.
+  /// Represents the deprecated scale implementation for date-time values.
   /// </summary>
   [Serializable]
   public class DateTimeScale : Scale
@@ -48,6 +48,9 @@ namespace Altaxo.Graph.Scales.Deprecated
     /// <summary>Holds the <see cref="NumericalBoundaries"/> for that axis.</summary>
     protected FiniteDateTimeBoundaries _dataBounds;
 
+    /// <summary>
+    /// Gets or sets the r es ca li ng.
+    /// </summary>
     protected DateTimeScaleRescaleConditions _rescaling;
 
     private SpanCompound _majorSpan;
@@ -59,6 +62,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Scales.DateTimeScale", 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DateTimeScale)obj;
@@ -72,6 +76,7 @@ namespace Altaxo.Graph.Scales.Deprecated
         info.AddValue("Rescaling", s._rescaling);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (DateTimeScale?)o ?? new DateTimeScale();
@@ -95,17 +100,27 @@ namespace Altaxo.Graph.Scales.Deprecated
 
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DateTimeScale"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public DateTimeScale(DateTimeScale from)
     {
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DateTimeScale"/> class.
+    /// </summary>
     public DateTimeScale()
     {
       ChildSetMember(ref _dataBounds, new FiniteDateTimeBoundaries());
       ChildSetMember(ref _rescaling, new DateTimeScaleRescaleConditions());
     }
 
+    /// <summary>
+    /// Copies values from the specified source.
+    /// </summary>
     [MemberNotNull(nameof(_dataBounds), nameof(_rescaling))]
     public void CopyFrom(DateTimeScale from)
     {
@@ -136,6 +151,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     #endregion ICloneable Members
 
+    /// <inheritdoc />
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_dataBounds is not null)
@@ -203,6 +219,8 @@ namespace Altaxo.Graph.Scales.Deprecated
       return new Altaxo.Data.AltaxoVariant(NormalToPhysical(x));
     }
 
+ 
+    /// <inheritdoc />
     public override AltaxoVariant OrgAsVariant
     {
       get
@@ -215,6 +233,8 @@ namespace Altaxo.Graph.Scales.Deprecated
       }
     }
 
+ 
+    /// <inheritdoc />
     public override AltaxoVariant EndAsVariant
     {
       get
@@ -237,6 +257,8 @@ namespace Altaxo.Graph.Scales.Deprecated
       return (DateTime[])GetMajorTicksAsList().ToArray(typeof(DateTime));
     }
 
+ 
+    /// <inheritdoc />
     public override AltaxoVariant[] GetMajorTicksAsVariant()
     {
       DateTime[] ticks = GetMajorTicks();
@@ -246,6 +268,8 @@ namespace Altaxo.Graph.Scales.Deprecated
       return vticks;
     }
 
+ 
+    /// <inheritdoc />
     public override AltaxoVariant[] GetMinorTicksAsVariant()
     {
       DateTime[] ticks = GetMinorTicks();
@@ -302,6 +326,8 @@ namespace Altaxo.Graph.Scales.Deprecated
       return new DateTime[0];
     }
 
+ 
+    /// <inheritdoc />
     public override double[] GetMajorTicksNormal()
     {
       DateTime[] ticks = GetMajorTicks();
@@ -313,6 +339,8 @@ namespace Altaxo.Graph.Scales.Deprecated
       return rticks;
     }
 
+ 
+    /// <inheritdoc />
     public override double[] GetMinorTicksNormal()
     {
       DateTime[] ticks = GetMinorTicks();
@@ -325,7 +353,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     }
 
     /// <summary>
-    /// Returns the rescaling conditions for this axis
+    /// Gets the rescaling conditions for this axis.
     /// </summary>
     public DateTimeScaleRescaleConditions Rescaling
     {
@@ -456,6 +484,8 @@ namespace Altaxo.Graph.Scales.Deprecated
       ProcessDataBounds(DateTime.MinValue, true, DateTime.MinValue.AddDays(1), true);
     }
 
+ 
+    /// <inheritdoc />
     public override void ProcessDataBounds()
     {
       if (_dataBounds is null || _dataBounds.IsEmpty)
@@ -464,6 +494,9 @@ namespace Altaxo.Graph.Scales.Deprecated
         ProcessDataBounds(_dataBounds.LowerBound, _dataBounds.UpperBound, _rescaling);
     }
 
+    /// <summary>
+    /// Performs the p ro ce ss da ta bo un ds operation.
+    /// </summary>
     public void ProcessDataBounds(DateTime xorg, DateTime xend, DateTimeScaleRescaleConditions rescaling)
     {
       rescaling.OnDataBoundsChanged(xorg, xend);
@@ -496,6 +529,9 @@ namespace Altaxo.Graph.Scales.Deprecated
       ProcessDataBounds(dorg, orgfixed, dend, endfixed);
     }
 
+    /// <summary>
+    /// Handles the b ou nd ar ie sc ha ng ed.
+    /// </summary>
     protected void EhBoundariesChanged(object sender, BoundariesChangedEventArgs e)
     {
       bool bIsRelevant = true;
@@ -568,15 +604,27 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     private struct SpanCompound
     {
+      /// <summary>
+      /// Gets or sets the u ni t.
+      /// </summary>
       public Unit _unit;
+      /// <summary>
+      /// Gets or sets the s pa n.
+      /// </summary>
       public TimeSpan _span;
 
+      /// <summary>
+      /// Initializes a new instance.
+      /// </summary>
       public SpanCompound(Unit unit, TimeSpan span)
       {
         _unit = unit;
         _span = span;
       }
 
+      /// <summary>
+      /// Initializes a new instance.
+      /// </summary>
       public SpanCompound(Unit unit, long val)
       {
         _unit = unit;
@@ -609,6 +657,9 @@ namespace Altaxo.Graph.Scales.Deprecated
         return r == 0 ? i : i - r;
       }
 
+      /// <summary>
+      /// Performs the r ou nd up operation.
+      /// </summary>
       public DateTime RoundUp(DateTime d)
       {
         switch (_unit)
@@ -625,6 +676,9 @@ namespace Altaxo.Graph.Scales.Deprecated
         return d;
       }
 
+      /// <summary>
+      /// Performs the r ou nd do wn operation.
+      /// </summary>
       public DateTime RoundDown(DateTime d)
       {
         switch (_unit)

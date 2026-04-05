@@ -30,6 +30,9 @@ using Clipper2Lib;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
+  /// <summary>
+  /// Represents a downward-pointing triangular closed scatter symbol.
+  /// </summary>
   public class DownTriangle : ClosedSymbolBase
   {
     #region Serialization
@@ -37,9 +40,13 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
     /// <summary>
     /// 2016-10-27 initial version.
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="DownTriangle"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DownTriangle), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         info.AddBaseValueEmbedded(obj, obj.GetType().BaseType!);
@@ -47,6 +54,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
         SerializeSetV0((IScatterSymbol)obj, info);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (DownTriangle?)o ?? new DownTriangle();
@@ -58,15 +66,24 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DownTriangle"/> class.
+    /// </summary>
     public DownTriangle()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DownTriangle"/> class.
+    /// </summary>
+    /// <param name="fillColor">The fill color.</param>
+    /// <param name="isFillColorInfluencedByPlotColor">If set to <c>true</c>, the fill color is influenced by the plot color.</param>
     public DownTriangle(NamedColor fillColor, bool isFillColorInfluencedByPlotColor)
       : base(fillColor, isFillColorInfluencedByPlotColor)
     {
     }
 
+    /// <inheritdoc/>
     public override Paths64 GetCopyOfOuterPolygon()
     {
       var list = new List<Point64>(3);

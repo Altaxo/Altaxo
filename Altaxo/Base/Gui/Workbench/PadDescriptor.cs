@@ -30,11 +30,29 @@ namespace Altaxo.Gui.Workbench
   [Flags]
   public enum DefaultPadPositions
   {
+    /// <summary>
+    /// No default position is specified.
+    /// </summary>
     None = 0,
+    /// <summary>
+    /// The pad is shown on the right side.
+    /// </summary>
     Right = 1,
+    /// <summary>
+    /// The pad is shown on the left side.
+    /// </summary>
     Left = 2,
+    /// <summary>
+    /// The pad is shown at the bottom.
+    /// </summary>
     Bottom = 4,
+    /// <summary>
+    /// The pad is shown at the top.
+    /// </summary>
     Top = 8,
+    /// <summary>
+    /// The pad is initially hidden.
+    /// </summary>
     Hidden = 16
   }
 
@@ -184,6 +202,9 @@ namespace Altaxo.Gui.Workbench
     /// </summary>
     public DefaultPadPositions DefaultPosition { get; set; }
 
+    /// <summary>
+    /// Gets the lazily created pad content.
+    /// </summary>
     public IPadContent? PadContent
     {
       get
@@ -193,6 +214,7 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
       if (padContent is not null)
@@ -202,6 +224,9 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Creates the pad content if it has not been created yet.
+    /// </summary>
     public void CreatePad()
     {
       if (Altaxo.Current.Dispatcher.InvokeRequired)
@@ -239,6 +264,9 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Brings the pad to the front.
+    /// </summary>
     public void BringPadToFront()
     {
       CreatePad();
@@ -248,6 +276,7 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return "[PadDescriptor " + Class + "]";

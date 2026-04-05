@@ -41,8 +41,14 @@ namespace Altaxo.Main.Services
     /// </summary>
     System.Drawing.Printing.PrintDocument PrintDocument { get; }
 
+    /// <summary>
+    /// Gets the margins currently used for printing.
+    /// </summary>
     System.Drawing.Printing.Margins PrintingMargins { get; }
 
+    /// <summary>
+    /// Gets the printable bounds of the current page.
+    /// </summary>
     System.Drawing.RectangleF PrintingBounds { get; }
 
     /// <summary>

@@ -30,6 +30,9 @@ using System.Text;
 
 namespace Altaxo.Drawing.DashPatterns
 {
+  /// <summary>
+  /// Dash pattern defined by a custom sequence of dash and gap lengths.
+  /// </summary>
   public class Custom : DashPatternBase
   {
     private double[] _customDashPattern;
@@ -77,6 +80,10 @@ namespace Altaxo.Drawing.DashPatterns
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Custom"/> class.
+    /// </summary>
+    /// <param name="dashPattern">The dash-gap pattern sequence.</param>
     public Custom(IEnumerable<double> dashPattern)
     {
       if (dashPattern is null)
@@ -88,6 +95,11 @@ namespace Altaxo.Drawing.DashPatterns
         throw new ArgumentOutOfRangeException(nameof(dashPattern) + " is empty");
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Custom"/> class.
+    /// </summary>
+    /// <param name="dashPattern">The dash-gap pattern sequence.</param>
+    /// <param name="dashOffset">The dash offset.</param>
     public Custom(IEnumerable<double> dashPattern, double dashOffset)
     {
       if (dashPattern is null)
@@ -104,6 +116,7 @@ namespace Altaxo.Drawing.DashPatterns
       _dashOffset = dashOffset;
     }
 
+    /// <inheritdoc/>
     public override double this[int index]
     {
       get
@@ -119,6 +132,7 @@ namespace Altaxo.Drawing.DashPatterns
       }
     }
 
+    /// <inheritdoc/>
     public override int Count
     {
       get
@@ -127,6 +141,7 @@ namespace Altaxo.Drawing.DashPatterns
       }
     }
 
+    /// <inheritdoc/>
     public override double DashOffset
     {
       get
@@ -135,6 +150,7 @@ namespace Altaxo.Drawing.DashPatterns
       }
     }
 
+    /// <inheritdoc/>
     public override bool Equals(IDashPattern? obj)
     {
       if (!(obj is Custom other))
@@ -150,6 +166,7 @@ namespace Altaxo.Drawing.DashPatterns
       return true;
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return GetType().GetHashCode() + _customDashPattern.Length * 17 + _customDashPattern[0].GetHashCode();

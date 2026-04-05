@@ -29,9 +29,13 @@ using Altaxo.Serialization.TA_Instruments;
 
 namespace Altaxo.Gui.Serialization.TA_Instruments
 {
+  /// <summary>
+  /// Controller for <see cref="Q800ImportDataSource"/>.
+  /// </summary>
   [UserControllerForObject(typeof(Q800ImportDataSource))]
   public class Q800ImportDataSourceController : DataSourceControllerBase<Q800ImportDataSource>
   {
+    /// <inheritdoc />
     protected override IMVCANController GetProcessDataController()
     {
       var processDataController = new MultipleFilesController();
@@ -41,7 +45,9 @@ namespace Altaxo.Gui.Serialization.TA_Instruments
       return processDataController;
     }
 
+    /// <inheritdoc />
     protected override bool IsProcessDataInitiallyExpanded() => true;
+    /// <inheritdoc />
     protected override bool IsProcessOptionsInitiallyExpanded() => false;
   }
 }

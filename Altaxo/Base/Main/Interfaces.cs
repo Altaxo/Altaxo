@@ -27,8 +27,6 @@ using System;
 
 namespace Altaxo.Main
 {
-  
-
   /// <summary>
   /// Interface for instances that are able to copy properties from another object.
   /// </summary>
@@ -57,13 +55,10 @@ namespace Altaxo.Main
   public interface IChildChangedEventSink
   {
     /// <summary>
-    /// This function is used by the childs of an object to signal an parent object that they have changed. If the function returns true, the child have to suspend it's
-    /// change notifications (if this is supported by the child).
+    /// This function is used by the children of an object to signal to a parent object that they have changed. If the function returns true, the child have to suspend it's change notifications (if this is supported by the child).
     /// </summary>
     /// <param name="child">The child object.</param>
-    /// <param name="e">EventArgs, can be a derived class to provide details of the change.</param>
-    /// <returns>The parent returns false normally. If the parent is suspended, it returns true to signal the child
-    /// that it should also suspend its notification. </returns>
+    /// <param name="e">The event arguments, which can be a derived class to provide details of the change.</param>
     void EhChildChanged(object child, EventArgs e);
   }
 

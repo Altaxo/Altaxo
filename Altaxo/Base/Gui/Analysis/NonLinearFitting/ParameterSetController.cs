@@ -33,12 +33,21 @@ using Altaxo.Collections;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
+  /// <summary>
+  /// View-model item for a single parameter in a parameter set.
+  /// </summary>
   public class ParameterSetViewItem : INotifyPropertyChanged
   {
     private double _value;
 
+    /// <summary>
+    /// Gets or sets the parameter name.
+    /// </summary>
     public string Name { get; set; }
 
+    /// <summary>
+    /// Gets or sets the parameter value.
+    /// </summary>
     public double Value
     {
       get => _value;
@@ -54,6 +63,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private bool _vary;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the parameter varies during fitting.
+    /// </summary>
     public bool Vary
     {
       get => _vary;
@@ -70,6 +82,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private double _variance;
 
+    /// <summary>
+    /// Gets or sets the variance of the parameter.
+    /// </summary>
     public double Variance
     {
       get => _variance;
@@ -86,6 +101,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private double? _lowerBound;
 
+    /// <summary>
+    /// Gets or sets the lower bound.
+    /// </summary>
     public double? LowerBound
     {
       get => _lowerBound;
@@ -101,6 +119,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private double? _upperBound;
 
+    /// <summary>
+    /// Gets or sets the upper bound.
+    /// </summary>
     public double? UpperBound
     {
       get => _upperBound;
@@ -116,6 +137,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private bool _isLowerBoundExclusive;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the lower bound is exclusive.
+    /// </summary>
     public bool IsLowerBoundExclusive
     {
       get => _isLowerBoundExclusive;
@@ -131,6 +155,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private bool _isUpperBoundExclusive;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the upper bound is exclusive.
+    /// </summary>
     public bool IsUpperBoundExclusive
     {
       get => _isUpperBoundExclusive;
@@ -144,10 +171,21 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
     }
 
+    /// <summary>
+    /// Occurs when a property value changes.
+    /// </summary>
     public event PropertyChangedEventHandler PropertyChanged;
+
+    /// <summary>
+    /// Raises the <see cref="PropertyChanged"/> event.
+    /// </summary>
+    /// <param name="propertyName">The name of the changed property.</param>
     protected virtual void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
   }
 
+  /// <summary>
+  /// View interface for the parameter-set controller.
+  /// </summary>
   public interface IParameterSetView : IDataContextAwareView
   {
   }
@@ -155,30 +193,43 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 
   /// <summary>
-  /// Summary description for ParameterSetController.
+  /// Controller for editing a <see cref="ParameterSet"/>.
   /// </summary>
   [UserControllerForObject(typeof(ParameterSet))]
   [ExpectedTypeOfView(typeof(IParameterSetView))]
   public class ParameterSetController : MVCANControllerEditOriginalDocBase<ParameterSet, IParameterSetView>
   {
+    /// <summary>
+    /// Gets the editable parameter list.
+    /// </summary>
     public ObservableCollection<ParameterSetViewItem> ParameterList { get; } = new ObservableCollection<ParameterSetViewItem>();
 
+    /// <summary>
+    /// Gets the selectable lower-bound conditions.
+    /// </summary>
     public SelectableListNodeList LowerBoundConditions { get; } = new SelectableListNodeList {
       new SelectableListNode(">=", false, false),
       new SelectableListNode(">", true, false),
       };
 
+    /// <summary>
+    /// Gets the selectable upper-bound conditions.
+    /// </summary>
     public SelectableListNodeList UpperBoundConditions { get; } = new SelectableListNodeList {
       new SelectableListNode("<=", false, false),
       new SelectableListNode("<", true, false),
       };
 
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Updates the parameter list from the current document.
+    /// </summary>
     public void OnParametersChanged()
     {
       ParameterList.Clear();
@@ -201,6 +252,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
     }
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -208,12 +260,14 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       OnParametersChanged();
     }
 
+    /// <inheritdoc/>
     protected override void AttachView()
     {
       base.AttachView();
       _view.DataContext = this;
     }
 
+    /// <inheritdoc/>
     protected override void DetachView()
     {
       _view.DataContext = null;
@@ -221,6 +275,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     }
 
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       var list = ParameterList;
@@ -236,6 +291,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       return ApplyEnd(true, disposeController);
     }
 
+    /// <summary>
+    /// Pastes parameter values from the clipboard.
+    /// </summary>
     public void EhPasteParameterValues()
     {
       Altaxo.Data.DataTable table = Altaxo.Worksheet.Commands.EditCommands.GetTableFromClipboard();
@@ -261,6 +319,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       InitializeDocument(_doc);
     }
 
+    /// <summary>
+    /// Copies the parameter values to the clipboard.
+    /// </summary>
     public void EhCopyParameterValues()
     {
       if (true == Apply(false))
@@ -285,6 +346,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
     }
 
+    /// <summary>
+    /// Copies the parameter values to the clipboard as C# variable definitions.
+    /// </summary>
     public void EhCopyParameterVAsCDef()
     {
       if (true == Apply(false))
@@ -304,6 +368,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
     }
 
+    /// <summary>
+    /// Copies parameter names and values to the clipboard.
+    /// </summary>
     public void EhCopyParameterNV()
     {
       if (true == Apply(false))
@@ -334,6 +401,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
     }
 
+    /// <summary>
+    /// Copies parameter names, values, and variances to the clipboard.
+    /// </summary>
     public void EhCopyParameterNVV()
     {
       if (true == Apply(false))

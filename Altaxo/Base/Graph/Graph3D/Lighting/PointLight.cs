@@ -33,7 +33,7 @@ using Altaxo.Geometry;
 namespace Altaxo.Graph.Graph3D.Lighting
 {
   /// <summary>
-  /// Represents directional lighting. All light rays are parallel to each other.
+  /// Represents a point light source.
   /// </summary>
   public class PointLight : IDiscreteLight
   {
@@ -56,9 +56,13 @@ namespace Altaxo.Graph.Graph3D.Lighting
     /// <summary>
     /// 2016-01-24 initial version.
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="PointLight"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PointLight), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PointLight)obj;
@@ -69,6 +73,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
         info.AddValue("Range", s._range);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (PointLight?)o ?? new PointLight(info);

@@ -28,8 +28,12 @@ using Altaxo.Serialization.Ascii;
 
 namespace Altaxo.Gui.Settings
 {
+  /// <summary>
+  /// Option panel for ASCII analysis settings.
+  /// </summary>
   public class AsciiAnalysisSettingsOptionPanel : OptionPanelBase<Altaxo.Gui.Common.ConditionalDocumentControllerWithDisabledView<AsciiDocumentAnalysisOptions>>
   {
+    /// <inheritdoc />
     public override void Initialize(object optionPanelOwner)
     {
       AsciiDocumentAnalysisOptions sysDoc = null;
@@ -46,6 +50,7 @@ namespace Altaxo.Gui.Settings
       _controller.InitializeDocument(new object[] { userDoc, sysDoc });
     }
 
+    /// <inheritdoc />
     protected override void ProcessControllerResult()
     {
       if (_controller.ModelObject is not null)

@@ -32,44 +32,66 @@ using System.Text;
 namespace Altaxo.Drawing.LineCaps
 {
   /// <summary>
-  /// Draws a cap that is a open circle. The midpoint of the circle is the designated end of the line.
+  /// Draws an open diamond-shaped line cap whose center lies at the line end.
   /// </summary>
   public class DiamondOLineCap : LineCapBase
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DiamondOLineCap"/> class.
+    /// </summary>
     public DiamondOLineCap()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DiamondOLineCap"/> class.
+    /// </summary>
+    /// <param name="minimumAbsoluteSizePt">The minimum absolute size in points.</param>
+    /// <param name="minimumRelativeSize">The minimum relative size.</param>
     public DiamondOLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
       : base(minimumAbsoluteSizePt, minimumRelativeSize)
     {
     }
 
+    /// <inheritdoc/>
     public override string Name { get { return "DiamondO"; } }
 
+    /// <inheritdoc/>
     public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
 
+    /// <inheritdoc/>
     public override double DefaultMinimumRelativeSize { get { return 4; } }
   }
 
   /// <summary>
-  /// Draws a cap that is a open circle. The midpoint of the circle is the designated end of the line.
+  /// Draws a filled diamond-shaped line cap whose center lies at the line end.
   /// </summary>
   public class DiamondFLineCap : LineCapBase
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DiamondFLineCap"/> class.
+    /// </summary>
     public DiamondFLineCap()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DiamondFLineCap"/> class.
+    /// </summary>
+    /// <param name="minimumAbsoluteSizePt">The minimum absolute size in points.</param>
+    /// <param name="minimumRelativeSize">The minimum relative size.</param>
     public DiamondFLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
       : base(minimumAbsoluteSizePt, minimumRelativeSize)
     {
     }
 
+    /// <inheritdoc/>
     public override string Name { get { return "DiamondF"; } }
 
+    /// <inheritdoc/>
     public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
 
+    /// <inheritdoc/>
     public override double DefaultMinimumRelativeSize { get { return 4; } }
   }
 }

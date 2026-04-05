@@ -36,12 +36,15 @@ using Altaxo.Gui.Graph.Scales;
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
   /// <summary>
-  /// Summary description for LayerController.
+  /// Controller for <see cref="DensityImageLegend"/>.
   /// </summary>
   [UserControllerForObject(typeof(DensityImageLegend))]
   [ExpectedTypeOfView(typeof(IXYPlotLayerView))]
   public class DensityImageLegendController : MVCANControllerEditOriginalDocBase<DensityImageLegend, IXYPlotLayerView>
   {
+    /// <summary>
+    /// Gets or sets the initial tag.
+    /// </summary>
     protected string _initialTag;
 
     private int _currentScale; // which scale is choosen 0==X-AxisScale, 1==Y-AxisScale
@@ -50,8 +53,17 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private IMVCAController _currentController;
 
+    /// <summary>
+    /// Gets or sets the axis scale controller.
+    /// </summary>
     protected IMVCANController _axisScaleController;
+    /// <summary>
+    /// Gets or sets the coordinate controller.
+    /// </summary>
     protected IMVCAController _coordinateController;
+    /// <summary>
+    /// Gets or sets the layer position controller.
+    /// </summary>
     protected IMVCANController _layerPositionController;
 
     private Dictionary<CSLineID, AxisStyleController> _axisController = new Dictionary<CSLineID, AxisStyleController>();
@@ -63,17 +75,48 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private object _lastControllerApplied;
 
+    /// <summary>
+    /// Gets or sets the position tag.
+    /// </summary>
     public const string PositionTag = "Position";
+    /// <summary>
+    /// Gets or sets the graphic item tag.
+    /// </summary>
     public const string GraphItemsTag = "GraphicItems";
+    /// <summary>
+    /// Gets or sets the scale tag.
+    /// </summary>
     public const string ScaleTag = "Scale";
+    /// <summary>
+    /// Gets or sets the coordinate system tag.
+    /// </summary>
     public const string CoordSystemTag = "CoordSys";
+    /// <summary>
+    /// Gets or sets the content tag.
+    /// </summary>
     public const string ContentsTag = "Content";
+    /// <summary>
+    /// Gets or sets the title and format tag.
+    /// </summary>
     public const string TitleAndFormatTag = "TitleFormat";
+    /// <summary>
+    /// Gets or sets the major labels tag.
+    /// </summary>
     public const string MajorLabelsTag = "MajorLabels";
+    /// <summary>
+    /// Gets or sets the minor labels tag.
+    /// </summary>
     public const string MinorLabelsTag = "MinorLables";
+    /// <summary>
+    /// Gets or sets the grid style tag.
+    /// </summary>
     public const string GridStyleTag = "GridStyle";
+    /// <summary>
+    /// Gets or sets the secondary common tag.
+    /// </summary>
     public const string SecondaryCommonTag = "2ndCommon";
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_axisScaleController, () => _axisScaleController = null);
@@ -87,6 +130,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       yield return new ControllerAndSetNullMethod(null, () => _axisController = null);
     }
 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       _currentController = null;
@@ -100,6 +144,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       base.Dispose(isDisposing);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DensityImageLegendController"/> class.
+    /// </summary>
     public DensityImageLegendController()
     {
       _currentScale = 0;
@@ -112,11 +159,17 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     }
 
+    /// <summary>
+    /// Initializes a new instance.
+    /// </summary>
     public DensityImageLegendController(DensityImageLegend layer)
       : this(layer, ScaleTag, 1, CSLineID.X0)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance.
+    /// </summary>
     public DensityImageLegendController(DensityImageLegend layer, string currentPage, CSLineID id)
       : this(layer, currentPage, id.ParallelAxisNumber, id)
     {
@@ -131,6 +184,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       InitializeDocument(layer, currentPage, axisScaleIdx, id);
     }
 
+    /// <inheritdoc />
     public override bool InitializeDocument(params object[] args)
     {
       if (args is not null)
@@ -150,14 +204,29 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     #region Bindings
 
+    /// <summary>
+    /// Gets or sets the command to move the axis.
+    /// </summary>
     public ICommand CmdMoveAxis { get; set; }
+    /// <summary>
+    /// Gets or sets the command to create the axis.
+    /// </summary>
     public ICommand CmdCreateAxis { get; set; }
+    /// <summary>
+    /// Gets or sets the command to delete the axis.
+    /// </summary>
     public ICommand CmdDeleteAxis { get; set; }
 
+    /// <summary>
+    /// Performs the new operation.
+    /// </summary>
     public SelectableListNodeList Tabs { get; } = new();
 
     private string? _selectedTab;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public string? SelectedTab
     {
       get => _selectedTab;
@@ -172,6 +241,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Handles the primary choice changed.
+    /// </summary>
     protected void EhPrimaryChoiceChanged(string selectedTab)
     {
       switch (selectedTab)
@@ -202,6 +274,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private SelectableListNodeList _secondaryChoices;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public SelectableListNodeList SecondaryChoices
     {
       get => _secondaryChoices;
@@ -217,6 +292,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private object _selectedSecondaryChoice;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public object SelectedSecondaryChoice
     {
       get => _selectedSecondaryChoice;
@@ -238,6 +316,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Handles the secondary choice changed.
+    /// </summary>
     public void EhSecondaryChoiceChanged(object value)
     {
       if (SelectedTab == ScaleTag && value is int currentScale)
@@ -259,6 +340,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private bool _areAxisButtonsVisible;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool AreAxisButtonsVisible
     {
       get => _areAxisButtonsVisible;
@@ -275,6 +359,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     #endregion
 
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -300,6 +385,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       ApplyCurrentController(true, disposeController);
@@ -456,6 +542,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       SelectedSecondaryChoice = _currentPlaneID;
     }
 
+    /// <summary>
+    /// Handles the command to create or move the axis.
+    /// </summary>
     public void EhCmdCreateOrMoveAxis(bool moveAxis)
     {
       if (!ApplyCurrentController(false, false))
@@ -552,16 +641,25 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     #region Dialog
 
+    /// <summary>
+    /// Performs the show dialog operation.
+    /// </summary>
     public static bool ShowDialog(DensityImageLegend layer)
     {
       return ShowDialog(layer, ScaleTag, new CSLineID(0, 0));
     }
 
+    /// <summary>
+    /// Performs the show dialog operation.
+    /// </summary>
     public static bool ShowDialog(DensityImageLegend layer, string currentPage)
     {
       return ShowDialog(layer, currentPage, new CSLineID(0, 0));
     }
 
+    /// <summary>
+    /// Performs the show dialog operation.
+    /// </summary>
     public static bool ShowDialog(DensityImageLegend layer, string currentPage, CSLineID currentEdge)
     {
       var ctrl = new DensityImageLegendController(layer, currentPage, currentEdge);
@@ -572,6 +670,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     #region Edit Handlers
 
+    /// <summary>
+    /// Performs the register edit handlers operation.
+    /// </summary>
     public static void RegisterEditHandlers()
     {
       // register here editor methods
@@ -579,6 +680,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       XYPlotLayer.LayerPositionEditorMethod = new DoubleClickHandler(EhLayerPositionEdit);
     }
 
+    /// <summary>
+    /// Handles the layer position edit.
+    /// </summary>
     public static bool EhLayerPositionEdit(IHitTestObject hit)
     {
       var layer = hit.HittedObject as DensityImageLegend;

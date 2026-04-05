@@ -30,6 +30,9 @@ using System.Drawing.Imaging;
 
 namespace Altaxo.Graph.Gdi
 {
+  /// <summary>
+  /// Stores options used when rendering a graph document for the clipboard.
+  /// </summary>
   public class ClipboardRenderingOptions : EmbeddedObjectRenderingOptions, ICloneable
   {
     private bool _renderDropFile;
@@ -152,6 +155,9 @@ namespace Altaxo.Graph.Gdi
 
     #region Construction
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ClipboardRenderingOptions"/> class.
+    /// </summary>
     public ClipboardRenderingOptions()
     {
       _renderDropFile = false;
@@ -161,11 +167,19 @@ namespace Altaxo.Graph.Gdi
 
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ClipboardRenderingOptions"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public ClipboardRenderingOptions(ClipboardRenderingOptions from)
     {
       CopyFrom(from ?? throw new ArgumentNullException(nameof(from)));
     }
 
+    /// <summary>
+    /// Copies the state from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     [MemberNotNull(nameof(_renderDropFileImageFormat))]
     protected void CopyFrom(ClipboardRenderingOptions from)
     {
@@ -178,6 +192,7 @@ namespace Altaxo.Graph.Gdi
       _renderLinkedObject = from._renderLinkedObject;
     }
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -192,11 +207,16 @@ namespace Altaxo.Graph.Gdi
       return result;
     }
 
+    /// <inheritdoc />
     object ICloneable.Clone()
     {
       return new ClipboardRenderingOptions(this);
     }
 
+    /// <summary>
+    /// Creates a copy of this instance.
+    /// </summary>
+    /// <returns>The cloned instance.</returns>
     public new ClipboardRenderingOptions Clone()
     {
       return new ClipboardRenderingOptions(this);
@@ -206,9 +226,15 @@ namespace Altaxo.Graph.Gdi
 
     #region Property management
 
+    /// <summary>
+    /// Gets the property key used to store clipboard rendering options.
+    /// </summary>
     public static readonly Altaxo.Main.Properties.PropertyKey<ClipboardRenderingOptions> PropertyKeyClipboardRenderingOptions = new Altaxo.Main.Properties.PropertyKey<ClipboardRenderingOptions>("DE1819F6-7E8C-4C43-9984-B5C405236289", "Graph\\ClipboardRenderingOptions", Altaxo.Main.Properties.PropertyLevel.All, typeof(Altaxo.Graph.Gdi.GraphDocument), () => new ClipboardRenderingOptions());
     //	public static readonly PropertyKey<GraphClipboardExportOptions> PropertyKeyCopyPageSettings = new PropertyKey<GraphClipboardExportOptions>("DE1819F6-7E8C-4C43-9984-B5C405236289", "Graph\\CopyPageOptions", PropertyLevel.All, typeof(GraphDocument), () => new GraphClipboardExportOptions());
 
+    /// <summary>
+    /// Gets or sets the persisted clipboard rendering options.
+    /// </summary>
     public static ClipboardRenderingOptions CopyPageOptions
     {
       get
@@ -244,28 +270,49 @@ namespace Altaxo.Graph.Gdi
       set { _renderWindowsMetafile = value; }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether a temporary drop file should be rendered.
+    /// </summary>
     public bool RenderDropFile
     {
       get { return _renderDropFile; }
       set { _renderDropFile = value; }
     }
 
+    /// <summary>
+    /// Gets the image format used for the drop file.
+    /// </summary>
     public ImageFormat DropFileImageFormat { get { return _renderDropFileImageFormat; } }
 
+    /// <summary>
+    /// Gets the bitmap pixel format used for the drop file.
+    /// </summary>
     public PixelFormat DropFileBitmapPixelFormat { get { return _renderDropFileBitmapPixelFormat; } }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether an embedded object representation should be rendered.
+    /// </summary>
     public bool RenderEmbeddedObject
     {
       get { return _renderEmbeddedObject; }
       set { _renderEmbeddedObject = value; }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether a linked object representation should be rendered.
+    /// </summary>
     public bool RenderLinkedObject
     {
       get { return _renderLinkedObject; }
       set { _renderLinkedObject = value; }
     }
 
+    /// <summary>
+    /// Tries to set the image and pixel format used for the drop file.
+    /// </summary>
+    /// <param name="imgfmt">The image format.</param>
+    /// <param name="pixfmt">The pixel format.</param>
+    /// <returns><c>true</c> if the combination is supported; otherwise, <c>false</c>.</returns>
     public bool TrySetImageAndPixelFormat(ImageFormat imgfmt, PixelFormat pixfmt)
     {
       if (!IsVectorFormat(imgfmt) && !CanCreateAndSaveBitmap(imgfmt, pixfmt))
@@ -281,11 +328,22 @@ namespace Altaxo.Graph.Gdi
 
     #region Helper functions
 
+    /// <summary>
+    /// Determines whether the specified image format is a vector format.
+    /// </summary>
+    /// <param name="fmt">The image format.</param>
+    /// <returns><c>true</c> if the format is vector based; otherwise, <c>false</c>.</returns>
     public static bool IsVectorFormat(ImageFormat fmt)
     {
       return ImageFormat.Emf == fmt || ImageFormat.Wmf == fmt;
     }
 
+    /// <summary>
+    /// Determines whether a bitmap can be created and saved with the specified format combination.
+    /// </summary>
+    /// <param name="imgfmt">The image format.</param>
+    /// <param name="pixfmt">The pixel format.</param>
+    /// <returns><c>true</c> if the bitmap can be created and saved; otherwise, <c>false</c>.</returns>
     public static bool CanCreateAndSaveBitmap(ImageFormat imgfmt, PixelFormat pixfmt)
     {
       try
@@ -311,6 +369,10 @@ namespace Altaxo.Graph.Gdi
     /// Converts the <see cref="CopyPageOptions"/> to <see cref="GraphExportOptions"/>.
     /// </summary>
     /// <returns>The <see cref="GraphExportOptions"/> retrieved from the <see cref="CopyPageOptions"/>.</returns>
+    /// <summary>
+    /// Converts the current clipboard rendering options to graph export options.
+    /// </summary>
+    /// <returns>The graph export options derived from <see cref="CopyPageOptions"/>.</returns>
     public static GraphExportOptions GetGraphExportOptionsFromCopyPageOptions()
     {
       var options = CopyPageOptions;

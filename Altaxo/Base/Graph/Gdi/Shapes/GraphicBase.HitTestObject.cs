@@ -30,6 +30,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 {
   public abstract partial class GraphicBase
   {
+    /// <summary>
+    /// Hit-test object for <see cref="GraphicBase"/> instances.
+    /// </summary>
     protected class GraphicBaseHitTestObject : HitTestObjectBase
     {
       /// <summary>
@@ -56,6 +59,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         }
       }
 
+      /// <inheritdoc />
       public override void ChangeSize(double? x, double? y)
       {
         var hit = _hitobject as GraphicBase;
@@ -80,6 +84,9 @@ namespace Altaxo.Graph.Gdi.Shapes
         }
       }
 
+      /// <summary>
+      /// Gets the outline used for arrangement operations.
+      /// </summary>
       public override GraphicsPath ObjectOutlineForArrangements
       {
         get
@@ -91,6 +98,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         }
       }
 
+      /// <inheritdoc />
       public override int GetNextGripLevel(int currentGripLevel)
       {
         int newLevel = 1 + currentGripLevel;
@@ -100,6 +108,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         return newLevel;
       }
 
+      /// <inheritdoc />
       public override IGripManipulationHandle[]? GetGrips(double pageScale, int gripLevel)
       {
         if (((GraphicBase)_hitobject).AutoSize)

@@ -25,17 +25,17 @@
 namespace Altaxo.Main.Services.ScriptCompilation
 {
   /// <summary>
-  /// Interface to one item of a compiler's diagnostic message.
+  /// Represents one compiler diagnostic entry.
   /// </summary>
   public interface ICompilerDiagnostic
   {
     /// <summary>
-    /// Gets the text line number, or null if this not applies.
+    /// Gets the text line number, or <c>null</c> if no line number applies.
     /// </summary>
     int? Line { get; }
 
     /// <summary>
-    /// Gets the text column number, or null if this not applies.
+    /// Gets the text column number, or <c>null</c> if no column number applies.
     /// </summary>
     int? Column { get; }
 

@@ -38,12 +38,6 @@ namespace Altaxo.Science.Spectroscopy
   /// </summary>
   public class SpectralPreprocessingOptionsDocNode : SpectralPreprocessingOptionsDocNodeBase
   {
-    /// <summary>
-    /// Dictionary that contains the spectral preprocessor as value, and a proxy (DataTableProxy, .. other proxies) as value
-    /// </summary>
-    protected Dictionary<ISingleSpectrumPreprocessor, IDocumentLeafNode> _proxyCache;
-
-
     #region Serialization
 
     /// <summary>
@@ -52,6 +46,7 @@ namespace Altaxo.Science.Spectroscopy
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Science.Spectroscopy.SpectralPreprocessingOptionsDocNode", 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
@@ -62,6 +57,7 @@ namespace Altaxo.Science.Spectroscopy
         */
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
 
@@ -70,6 +66,9 @@ namespace Altaxo.Science.Spectroscopy
         return new SpectralPreprocessingOptionsDocNode(options, proxyList);
       }
 
+      /// <summary>
+      /// Deserializes proxies for the legacy version-0 format.
+      /// </summary>
       public static List<(int number, IDocumentLeafNode proxy)> DeserializeProxiesVersion0(IXmlDeserializationInfo info, object? parent, SpectralPreprocessingOptionsBase options)
       {
         var calibrationTableProxy = info.GetValueOrNull<DataTableProxy>("CalibrationTableProxy", parent);
@@ -97,6 +96,7 @@ namespace Altaxo.Science.Spectroscopy
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SpectralPreprocessingOptionsDocNode), 1)]
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (SpectralPreprocessingOptionsDocNode)obj;
@@ -106,6 +106,7 @@ namespace Altaxo.Science.Spectroscopy
         SerializeProxiesVersion1(info, s, processingOptions);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
 
@@ -119,6 +120,11 @@ namespace Altaxo.Science.Spectroscopy
 
     #endregion
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SpectralPreprocessingOptionsDocNode"/> class.
+    /// </summary>
+    /// <param name="options">The wrapped options.</param>
+    /// <param name="proxyList">The proxy list.</param>
     protected SpectralPreprocessingOptionsDocNode(SpectralPreprocessingOptionsBase options, List<(int number, IDocumentLeafNode proxy)> proxyList)
       : base(options, proxyList)
     {
@@ -134,20 +140,25 @@ namespace Altaxo.Science.Spectroscopy
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SpectralPreprocessingOptionsDocNode"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public SpectralPreprocessingOptionsDocNode(SpectralPreprocessingOptionsDocNode from)
       : base(from)
     {
     }
 
     /// <summary>
-    /// Gets the wrapped spectral preprocessing options. When neccessary, the calibration is updated to reflect the content of the linked calibration table.
+    /// Gets the wrapped spectral preprocessing options. When necessary, the calibration is updated to reflect the content of the linked calibration table.
     /// </summary>
-    /// <returns>The wrapped spectral preprocessing options</returns>
+    /// <returns>The wrapped spectral preprocessing options.</returns>
     public SpectralPreprocessingOptionsBase GetSpectralPreprocessingOptions()
     {
       return InternalGetSpectralPreprocessingOptions();
     }
 
+    /// <inheritdoc />
     protected override SpectralPreprocessingOptionsBase InternalSpectralPreprocessingOptions
     {
       get => (SpectralPreprocessingOptionsBase)_optionsObject;

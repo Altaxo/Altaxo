@@ -30,10 +30,18 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles
 {
+  /// <summary>
+  /// Provides named templates for <see cref="G3DPlotStyleCollection"/> instances.
+  /// </summary>
   public class G3DPlotStyleCollectionTemplates
   {
     #region Inner Classes
 
+    /// <summary>
+    /// Represents a factory method that creates a plot-style collection.
+    /// </summary>
+    /// <param name="context">The property context used for initialization.</param>
+    /// <returns>A plot-style collection.</returns>
     public delegate G3DPlotStyleCollection CreateCollectionProcedure(Altaxo.Main.Properties.IReadOnlyPropertyBag context);
 
     private class TypeArray
@@ -86,6 +94,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       //Add("Label only", new CreateCollectionProcedure(CreateLabelStyle));
     }
 
+    /// <summary>
+    /// Gets the template name for a given style collection.
+    /// </summary>
+    /// <param name="coll">The style collection.</param>
+    /// <returns>The template name.</returns>
     public static string GetName(G3DPlotStyleCollection coll)
     {
       return (string)_NamesByTypeArray[GetTypeArray(coll)];
@@ -100,11 +113,19 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       return new TypeArray(types);
     }
 
+    /// <summary>
+    /// Gets the available template names.
+    /// </summary>
+    /// <returns>The available template names.</returns>
     public static string[] GetAvailableNames()
     {
       return _NamesInOrder.ToArray();
     }
 
+    /// <summary>
+    /// Gets the available template names including the custom entry.
+    /// </summary>
+    /// <returns>The available template names including <c>Custom</c>.</returns>
     public static string[] GetAvailableNamesPlusCustom()
     {
       string[] result = new string[_NamesInOrder.Count + 1];
@@ -114,12 +135,22 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       return result;
     }
 
+    /// <summary>
+    /// Gets the index of a template name in the list returned by <see cref="GetAvailableNamesPlusCustom"/>.
+    /// </summary>
+    /// <param name="name">The template name.</param>
+    /// <returns>The template index.</returns>
     public static int GetIndexOfAvailableNamesPlusCustom(string name)
     {
       int result = _NamesInOrder.IndexOf(name);
       return result < 0 ? 0 : result + 1;
     }
 
+    /// <summary>
+    /// Gets the index of a style collection in the list returned by <see cref="GetAvailableNamesPlusCustom"/>.
+    /// </summary>
+    /// <param name="coll">The style collection.</param>
+    /// <returns>The template index.</returns>
     public static int GetIndexOfAvailableNamesPlusCustom(G3DPlotStyleCollection coll)
     {
       string name = GetName(coll);
@@ -130,6 +161,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       return result < 0 ? 0 : result + 1;
     }
 
+    /// <summary>
+    /// Gets a style-collection template by name.
+    /// </summary>
+    /// <param name="name">The template name.</param>
+    /// <param name="context">The property context.</param>
+    /// <returns>The template collection, or <see langword="null"/>.</returns>
     public static G3DPlotStyleCollection? GetTemplate(string name, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       if (_CreationProcByName.TryGetValue(name, out var proc))
@@ -138,11 +175,22 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         return null;
     }
 
+    /// <summary>
+    /// Gets a style-collection template by index.
+    /// </summary>
+    /// <param name="idx">The template index.</param>
+    /// <param name="context">The property context.</param>
+    /// <returns>The template collection, or <see langword="null"/>.</returns>
     public static G3DPlotStyleCollection? GetTemplate(int idx, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       return GetTemplate(_NamesInOrder[idx], context);
     }
 
+    /// <summary>
+    /// Adds a new named template.
+    /// </summary>
+    /// <param name="name">The template name.</param>
+    /// <param name="procedure">The template factory.</param>
     public static void Add(string name, CreateCollectionProcedure procedure)
     {
       if (_CreationProcByName.ContainsKey(name))

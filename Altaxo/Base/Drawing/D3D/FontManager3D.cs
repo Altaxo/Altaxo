@@ -34,6 +34,9 @@ namespace Altaxo.Drawing.D3D
   using Altaxo.Geometry;
   using Drawing;
 
+  /// <summary>
+  /// Manages font metrics and character geometry for 3D text rendering.
+  /// </summary>
   public class FontManager3D
   {
     private static FontManager3D _instance;
@@ -43,10 +46,20 @@ namespace Altaxo.Drawing.D3D
     /// </summary>
     protected Dictionary<string, Dictionary<char, CharacterGeometry>> _cachedCharacterOutlines = new Dictionary<string, Dictionary<char, CharacterGeometry>>();
 
+    /// <summary>
+    /// Cached bitmap used to create a graphics context for font measurements.
+    /// </summary>
     protected System.Drawing.Bitmap? _bmp;
+
+    /// <summary>
+    /// Cached graphics context used for font measurements.
+    /// </summary>
     protected System.Drawing.Graphics? _graphics;
     private System.Drawing.StringFormat _stringFormat;
 
+    /// <summary>
+    /// Gets or sets the singleton font manager instance.
+    /// </summary>
     public static FontManager3D Instance
     {
       get
@@ -67,6 +80,9 @@ namespace Altaxo.Drawing.D3D
       _instance = new FontManager3D();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FontManager3D"/> class.
+    /// </summary>
     protected FontManager3D()
     {
       _stringFormat = (System.Drawing.StringFormat)System.Drawing.StringFormat.GenericTypographic.Clone();
@@ -83,6 +99,12 @@ namespace Altaxo.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Measures a text string using the specified 3D font.
+    /// </summary>
+    /// <param name="text">The text to measure.</param>
+    /// <param name="font">The font used for measurement.</param>
+    /// <returns>The measured width, height, and depth.</returns>
     public virtual VectorD3D MeasureString(string text, FontX3D font)
     {
       EnsureGraphicsCreated();
@@ -90,6 +112,11 @@ namespace Altaxo.Drawing.D3D
       return new VectorD3D(size.Width, size.Height, font.Depth);
     }
 
+    /// <summary>
+    /// Gets font metrics for the specified 3D font.
+    /// </summary>
+    /// <param name="font">The font.</param>
+    /// <returns>The font metrics.</returns>
     public virtual FontInfo GetFontInformation(FontX3D font)
     {
       // get some properties of the font
@@ -106,13 +133,30 @@ namespace Altaxo.Drawing.D3D
       return new FontInfo(cyLineSpace, cyAscent, cyDescent, size);
     }
 
+    /// <summary>
+    /// Creates a 3D font for the specified family, size, depth, and style.
+    /// </summary>
+    /// <param name="fontFamilyName">The font family name.</param>
+    /// <param name="size">The font size.</param>
+    /// <param name="depth">The extrusion depth.</param>
+    /// <param name="style">The font style.</param>
+    /// <returns>The created 3D font.</returns>
     public FontX3D GetFont(string fontFamilyName, double size, double depth, FontXStyle style)
     {
       return new FontX3D(Altaxo.Graph.Gdi.GdiFontManager.GetFontX(fontFamilyName, size, style), depth);
     }
 
+    /// <summary>
+    /// Font size used when caching character outlines.
+    /// </summary>
     protected const double FontSizeForCaching = 1024;
 
+    /// <summary>
+    /// Gets the cached character geometry for a font and character.
+    /// </summary>
+    /// <param name="font">The font.</param>
+    /// <param name="textChar">The character.</param>
+    /// <returns>The character geometry.</returns>
     public CharacterGeometry GetCharacterGeometry(FontX font, char textChar)
     {
       var typefaceName = font.InvariantDescriptionStringWithoutSizeInformation;
@@ -132,6 +176,12 @@ namespace Altaxo.Drawing.D3D
       return cachedChar;
     }
 
+    /// <summary>
+    /// Creates cached character geometry from the raw outline information.
+    /// </summary>
+    /// <param name="textChar">The character.</param>
+    /// <param name="font">The font.</param>
+    /// <returns>The character geometry for caching.</returns>
     protected CharacterGeometry InternalGetCharacterGeometryForCaching(char textChar, FontX font)
     {
       var charOutline = InternalGetCharacterOutlineForCaching(textChar, font); // get the - already simplified - polygonal shape of the character
@@ -273,6 +323,11 @@ namespace Altaxo.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Triangulates the specified polygons and returns the resulting polygons with triangle data.
+    /// </summary>
+    /// <param name="polygons">The polygons to triangulate.</param>
+    /// <returns>The triangulated polygons.</returns>
     public static List<Poly2Tri.Polygon> GetTriangles(IList<PolygonClosedD2D> polygons)
     {
       var result = new List<Poly2Tri.Polygon>();
@@ -305,14 +360,38 @@ namespace Altaxo.Drawing.D3D
       return result;
     }
 
+    /// <summary>
+    /// Holds the raw polygonal outline and metrics of a character.
+    /// </summary>
     protected struct RawCharacterOutline
     {
+      /// <summary>
+      /// The polygonal outline of the character.
+      /// </summary>
       public IList<PolygonClosedD2D> Outline;
+      /// <summary>
+      /// The advance width of the character.
+      /// </summary>
       public double AdvanceWidth;
+      /// <summary>
+      /// The left side bearing of the character.
+      /// </summary>
       public double LeftSideBearing;
+      /// <summary>
+      /// The right side bearing of the character.
+      /// </summary>
       public double RightSideBearing;
+      /// <summary>
+      /// The font size used to create the outline.
+      /// </summary>
       public double FontSize;
+      /// <summary>
+      /// The line spacing of the font.
+      /// </summary>
       public double LineSpacing;
+      /// <summary>
+      /// The baseline position of the font.
+      /// </summary>
       public double Baseline;
     }
 

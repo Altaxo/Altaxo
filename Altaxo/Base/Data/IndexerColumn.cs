@@ -34,6 +34,9 @@ namespace Altaxo.Data
   [Serializable]
   public sealed class IndexerColumn : INumericColumn, IReadableColumn, ICloneable, Main.IImmutable
   {
+    /// <summary>
+    /// Gets the singleton instance.
+    /// </summary>
     public static IndexerColumn Instance { get; private set; } = new IndexerColumn();
 
     #region Serialization
@@ -112,6 +115,9 @@ namespace Altaxo.Data
       get { return "IndexerColumn"; }
     }
 
+    /// <summary>
+    /// Gets the number of elements if it is known; for the indexer column the count is unbounded and therefore unknown.
+    /// </summary>
     public int? Count
     {
       get

@@ -41,12 +41,13 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 
 
   /// <summary>
-  /// Summary description for ColorProviderController.
+  /// Controller for selecting and editing an <see cref="IColorProvider"/>.
   /// </summary>
   [ExpectedTypeOfView(typeof(IColorProviderView))]
   //[UserControllerForObject(typeof(IColorProvider), 101)]
   public class ColorProviderController : MVCANDControllerEditImmutableDocBase<IColorProvider, IColorProviderView>
   {
+    /// <inheritdoc/>
     public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_detailController, () => DetailController = null);
@@ -56,6 +57,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 
     private ItemsController<Type> _availableClasses;
 
+    /// <summary>
+    /// Gets or sets the available color-provider classes.
+    /// </summary>
     public ItemsController<Type> AvailableClasses
     {
       get => _availableClasses;
@@ -72,6 +76,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 
     private IMVCAController _detailController;
 
+    /// <summary>
+    /// Gets or sets the controller for the selected provider details.
+    /// </summary>
     public IMVCAController DetailController
     {
       get => _detailController;
@@ -93,11 +100,15 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 
     #endregion
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColorProviderController"/> class.
+    /// </summary>
     public ColorProviderController(Action<IColorProvider> SetInstanceInParentDoc)
       : base(SetInstanceInParentDoc)
     {
     }
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -109,6 +120,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (_detailController is not null)
@@ -122,6 +134,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
       return ApplyEnd(true, disposeController);
     }
 
+    /// <summary>
+    /// Initializes the selectable color-provider classes.
+    /// </summary>
     public void InitClassTypes()
     {
       var availableClasses = new SelectableListNodeList();
@@ -134,6 +149,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
       AvailableClasses = new ItemsController<Type>(availableClasses, EhColorProviderSelectionChanged);
     }
 
+    /// <summary>
+    /// Initializes the controller that edits the selected provider details.
+    /// </summary>
     public void InitDetailController()
     {
       object providerObject = _doc;

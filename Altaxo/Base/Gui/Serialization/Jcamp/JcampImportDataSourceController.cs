@@ -28,9 +28,13 @@ using Altaxo.Serialization.Jcamp;
 
 namespace Altaxo.Gui.Serialization.Jcamp
 {
+  /// <summary>
+  /// Controller for <see cref="JcampImportDataSource"/>.
+  /// </summary>
   [UserControllerForObject(typeof(JcampImportDataSource))]
   public class JcampImportDataSourceController : DataSourceControllerBase<JcampImportDataSource>
   {
+    /// <inheritdoc />
     protected override IMVCANController GetProcessDataController()
     {
       var processDataController = new MultipleFilesController();
@@ -40,7 +44,9 @@ namespace Altaxo.Gui.Serialization.Jcamp
       return processDataController;
     }
 
+    /// <inheritdoc />
     protected override bool IsProcessDataInitiallyExpanded() => true;
+    /// <inheritdoc />
     protected override bool IsProcessOptionsInitiallyExpanded() => false;
   }
 }

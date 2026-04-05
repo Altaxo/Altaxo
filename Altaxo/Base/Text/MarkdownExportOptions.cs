@@ -48,7 +48,7 @@ namespace Altaxo.Text
     /// Given the folder where the markdown file resides, this gets the full folder name of the image folder.
     /// </summary>
     /// <param name="markdownPathName">Name of the folder of the markdown file.</param>
-    /// <returns>Full folder name of the image folder</returns>
+    /// <returns>Full folder name of the image folder.</returns>
     private string GetImagePath(string markdownPathName)
     {
       return Path.Combine(markdownPathName, "Images");

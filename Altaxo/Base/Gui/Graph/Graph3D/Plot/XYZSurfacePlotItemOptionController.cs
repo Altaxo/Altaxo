@@ -33,22 +33,27 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
 
   /// <summary>
   /// Controls the option tab page in the <see cref="XYZSurfacePlotItem"/> dialog. This tab page allows only
-  /// to save the image to clipboard or disc, thus the document is not really controlled.
+  /// saving the image to the clipboard or disk, thus the document is not really controlled.
   /// </summary>
   [ExpectedTypeOfView(typeof(IDensityImagePlotItemOptionView))]
   public class XYZSurfacePlotItemOptionController : MVCANControllerEditOriginalDocBase<XYZSurfacePlotItem, IDensityImagePlotItemOptionView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYZSurfacePlotItemOptionController"/> class.
+    /// </summary>
     public XYZSurfacePlotItemOptionController()
     {
       CmdCopyImageToClipboard = new RelayCommand(EhCopyImageToClipboard);
       CmdSaveImageToDisc = new RelayCommand(EhSaveImageToDisc);
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       // base.Initialize(initData); // no base initialize because we dont want to suspend the doc (this is only a helper controller)
@@ -56,11 +61,19 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the command that copies the image to the clipboard.
+    /// </summary>
     public ICommand CmdCopyImageToClipboard { get; }
+
+    /// <summary>
+    /// Gets the command that saves the image to disk.
+    /// </summary>
     public ICommand CmdSaveImageToDisc { get; }
 
     #endregion
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       return true;

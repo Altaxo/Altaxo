@@ -28,14 +28,21 @@ using Altaxo.Science.Spectroscopy.BaselineEstimation;
 
 namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
 {
+  /// <summary>
+  /// View interface for X-to-X line baseline estimation settings.
+  /// </summary>
   public interface IXToXLineView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="XToXLineBase"/>.
+  /// </summary>
   [UserControllerForObject(typeof(XToXLineBase))]
   [ExpectedTypeOfView(typeof(IXToXLineView))]
   public class XToXLineController : MVCANControllerEditImmutableDocBase<XToXLineBase, IXToXLineView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -45,6 +52,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
 
     private double _x0;
 
+    /// <summary>
+    /// Gets or sets the first x value.
+    /// </summary>
     public double X0
     {
       get => _x0;
@@ -61,6 +71,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
 
     private double _x1;
 
+    /// <summary>
+    /// Gets or sets the second x value.
+    /// </summary>
     public double X1
     {
       get => _x1;
@@ -77,6 +90,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -88,6 +102,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       try

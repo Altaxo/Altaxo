@@ -32,6 +32,8 @@ namespace Altaxo.Main.Services
     /// Gets the normalized version of fileName.
     /// Slashes are replaced with backslashes, backreferences "." and ".." are 'evaluated'.
     /// </summary>
+    /// <param name="fileName">The path to normalize.</param>
+    /// <returns>The normalized path.</returns>
     public static string NormalizePath(string fileName)
     {
       if (string.IsNullOrEmpty(fileName))
@@ -152,6 +154,12 @@ namespace Altaxo.Main.Services
       return result.ToString();
     }
 
+    /// <summary>
+    /// Determines whether two file names refer to the same normalized path.
+    /// </summary>
+    /// <param name="fileName1">The first file name.</param>
+    /// <param name="fileName2">The second file name.</param>
+    /// <returns><c>true</c> if both file names are equal after normalization; otherwise, <c>false</c>.</returns>
     public static bool IsEqualFileName(string fileName1, string fileName2)
     {
       return string.Equals(NormalizePath(fileName1),
@@ -159,6 +167,12 @@ namespace Altaxo.Main.Services
                            StringComparison.OrdinalIgnoreCase);
     }
 
+    /// <summary>
+    /// Determines whether <paramref name="baseDirectory"/> is a base directory of <paramref name="testDirectory"/>.
+    /// </summary>
+    /// <param name="baseDirectory">The potential base directory.</param>
+    /// <param name="testDirectory">The directory to test.</param>
+    /// <returns><c>true</c> if <paramref name="testDirectory"/> is located in <paramref name="baseDirectory"/>; otherwise, <c>false</c>.</returns>
     public static bool IsBaseDirectory(string baseDirectory, string testDirectory)
     {
       if (baseDirectory is null || testDirectory is null)

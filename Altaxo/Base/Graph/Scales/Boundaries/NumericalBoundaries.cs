@@ -28,14 +28,19 @@ using System;
 namespace Altaxo.Graph.Scales.Boundaries
 {
   /// <summary>
-  /// Provides a abstract class for tracking the numerical
-  /// boundaries of a plot association. Every plot association has two of these objects
-  /// that help tracking the boundaries of X and Y axis
+  /// Provides an abstract base class for tracking numerical boundaries.
   /// </summary>
   [Serializable]
   public abstract class NumericalBoundaries : AbstractPhysicalBoundaries
   {
+    /// <summary>
+    /// The minimum tracked value.
+    /// </summary>
     protected double _minValue = double.MaxValue;
+
+    /// <summary>
+    /// The maximum tracked value.
+    /// </summary>
     protected double _maxValue = double.MinValue;
 
     [NonSerialized]
@@ -48,6 +53,7 @@ namespace Altaxo.Graph.Scales.Boundaries
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericalBoundaries), 2)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (NumericalBoundaries)obj;
@@ -60,6 +66,7 @@ namespace Altaxo.Graph.Scales.Boundaries
         info.AddValue("MaxValue", s._maxValue);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (NumericalBoundaries)(o ?? throw new ArgumentNullException(nameof(o)));
@@ -78,12 +85,19 @@ namespace Altaxo.Graph.Scales.Boundaries
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NumericalBoundaries"/> class.
+    /// </summary>
     public NumericalBoundaries()
     {
       _minValue = double.MaxValue;
       _maxValue = double.MinValue;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NumericalBoundaries"/> class by copying another instance.
+    /// </summary>
+    /// <param name="x">The instance to copy.</param>
     public NumericalBoundaries(NumericalBoundaries x)
       : base(x)
     {
@@ -92,7 +106,7 @@ namespace Altaxo.Graph.Scales.Boundaries
     }
 
     /// <summary>
-    /// Reset the internal data to the initialized state
+    /// <inheritdoc />
     /// </summary>
     public override void Reset()
     {
@@ -101,14 +115,20 @@ namespace Altaxo.Graph.Scales.Boundaries
       _maxValue = double.MinValue;
     }
 
+    /// <summary>
+    /// Gets the lower boundary.
+    /// </summary>
     public virtual double LowerBound { get { return _minValue; } }
 
+    /// <summary>
+    /// Gets the upper boundary.
+    /// </summary>
     public virtual double UpperBound { get { return _maxValue; } }
 
     /// <summary>
-    /// merged boundaries of another object into this object
+    /// Merges the boundaries of another object into this object.
     /// </summary>
-    /// <param name="b">another physical boundary object of the same type as this</param>
+    /// <param name="b">Another physical boundary object of the same type as this instance.</param>
     public virtual void Add(NumericalBoundaries b)
     {
       if (GetType() == b.GetType())
@@ -141,7 +161,7 @@ namespace Altaxo.Graph.Scales.Boundaries
 
     /// <summary>
     /// Manipulates the boundaries by shifting them by a certain amount.
-    /// Don't use this function unless you are absoluteley sure what you do.
+    /// Do not use this function unless you are absolutely sure what you do.
     /// This function is intended for coordinate transforming styles only.
     /// </summary>
     /// <param name="amount">The amount by which to shift the boundaries.</param>
@@ -153,6 +173,7 @@ namespace Altaxo.Graph.Scales.Boundaries
 
     #region IPhysicalBoundaries Members
 
+    /// <inheritdoc />
     public override void Add(IPhysicalBoundaries b)
     {
       Add((NumericalBoundaries)b);
@@ -166,6 +187,7 @@ namespace Altaxo.Graph.Scales.Boundaries
     /// For performance reasons, we save the current state of this instance here if the item is suspended. When the item is resumed, we compare the saved state
     /// with the current state and set our accumulated data accordingly.
     /// </summary>
+    /// <inheritdoc />
     protected override void OnSuspended()
     {
       _savedNumberOfItems = _numberOfItems;
@@ -177,8 +199,9 @@ namespace Altaxo.Graph.Scales.Boundaries
 
     /// <summary>
     /// For performance reasons, we don't call EhSelfChanged during the suspended state. Instead, when we resume here, we compare the saved state of this instance with the current state of the instance
-    /// and and set our accumulated data accordingly.
+    /// and set our accumulated data accordingly.
     /// </summary>
+    /// <inheritdoc />
     protected override void OnResume()
     {
       BoundariesChangedData data = 0;

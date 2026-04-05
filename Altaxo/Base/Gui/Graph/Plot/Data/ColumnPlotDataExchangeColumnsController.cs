@@ -38,6 +38,9 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Plot.Data
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="ColumnPlotDataExchangeColumnsController"/>.
+  /// </summary>
   public interface IColumnPlotDataExchangeColumnsView : IDataContextAwareView
   {
   }
@@ -64,28 +67,47 @@ namespace Altaxo.Gui.Graph.Plot.Data
       /// First argument is the column, second argument is the supposed parent data table, third the group number.</summary>
       public Action<IReadableColumn, DataTable, int> ColumnSetter { get; set; }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="PlotColumnInformationInternal"/> class.
+      /// </summary>
       public PlotColumnInformationInternal(IReadableColumn column, string nameOfUnderlyingDataColumn)
         : base(column, nameOfUnderlyingDataColumn)
       {
       }
 
+      /// <inheritdoc/>
       protected override void OnChanged()
       {
         ColumnSetter?.Invoke(Column, _supposedDataTable, _supposedGroupNumber);
       }
     }
 
+      /// <summary>
+      /// Stores the columns that belong to one displayed group.
+      /// </summary>
     protected class GroupInfo
     {
+        /// <summary>
+        /// Gets or sets the display name of the group.
+        /// </summary>
       public string GroupName;
+        /// <summary>
+        /// Gets the columns that belong to this group.
+        /// </summary>
       public List<PlotColumnInformationInternal> Columns = new List<PlotColumnInformationInternal>();
     }
 
+      /// <summary>
+      /// Represents a single available column name in the tree.
+      /// </summary>
     protected class DataColumnSingleNode : NGTreeNode
     {
       private List<string> _table;
       private string _toolTip = null;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="DataColumnSingleNode"/> class.
+      /// </summary>
       public DataColumnSingleNode(List<string> columnNames, string columnName, bool isSelected)
         :
         base(columnName)
@@ -95,6 +117,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
         _table = columnNames;
       }
 
+        /// <summary>
+        /// Gets the tooltip text for this column node.
+        /// </summary>
       public string ToolTip
       {
         get
@@ -115,8 +140,14 @@ namespace Altaxo.Gui.Graph.Plot.Data
       }
     }
 
+      /// <summary>
+      /// Represents a tree node that bundles many available column names.
+      /// </summary>
     protected class DataColumnBundleNode : NGTreeNode
     {
+        /// <summary>
+        /// Maximum number of columns shown directly in one node.
+        /// </summary>
       public const int MaxNumberOfColumnsInOneNode = 200;
 
       private int _firstColumn;
@@ -124,6 +155,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
       // private DataTable _dataTable;
       private List<string> _columns;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="DataColumnBundleNode"/> class.
+      /// </summary>
       public DataColumnBundleNode(List<string> columnList, int firstColumn, int columnCount)
         : base(true)
       {
@@ -133,6 +167,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
         Text = string.Format("Cols {0}-{1}", firstColumn, firstColumn + columnCount - 1);
       }
 
+      /// <inheritdoc/>
       protected override void LoadChildren()
       {
         var coll = _columns;
@@ -165,18 +200,42 @@ namespace Altaxo.Gui.Graph.Plot.Data
       }
     }
 
+    /// <summary>
+    /// Identifies the UI element that currently supplies column data.
+    /// </summary>
     protected enum ColumnSourceElement
     {
+      /// <summary>
+      /// The flat list of available table columns.
+      /// </summary>
       AvailableTableColumnsList,
+
+      /// <summary>
+      /// The tree view of available table columns.
+      /// </summary>
       AvailableTableColumnsTree,
+
+      /// <summary>
+      /// Other columns that can be selected.
+      /// </summary>
       OtherAvailableColumns,
+
+      /// <summary>
+      /// The list of available column transformations.
+      /// </summary>
       AvailableTransformations
     }
 
     #endregion Inner classes
 
+    /// <summary>
+    /// Indicates whether the controller contains unapplied changes.
+    /// </summary>
     protected bool _isDirty = false;
 
+    /// <summary>
+    /// Holds the column groups displayed by the controller.
+    /// </summary>
     protected List<GroupInfo> _columnGroups;
 
 
@@ -187,17 +246,22 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     #region Infrastructur Dispose and GetSubControllers
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       _availableDataColumns = null;
       base.Dispose(isDisposing);
     }
 
+    /// <summary>
+    /// Marks the controller as modified.
+    /// </summary>
     public void SetDirty()
     {
       _isDirty = true;
@@ -205,6 +269,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     #endregion Infrastructur Dispose and GetSubControllers
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColumnPlotDataExchangeColumnsController"/> class.
+    /// </summary>
     public ColumnPlotDataExchangeColumnsController()
     {
       AvailableDataColumnsDragHandler = new AvailableDataColumnsDragHandlerImpl(this);
@@ -214,6 +281,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     private ObservableCollection<int> _availabeGroupNumbers = new ObservableCollection<int>();
 
+    /// <summary>
+    /// Gets or sets the available group numbers.
+    /// </summary>
     public ObservableCollection<int> AvailabeGroupNumbers
     {
       get => _availabeGroupNumbers;
@@ -229,6 +299,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     private int _selectedGroupNumber;
 
+    /// <summary>
+    /// Gets or sets the selected group number.
+    /// </summary>
     public int SelectedGroupNumber
     {
       get => _selectedGroupNumber;
@@ -244,6 +317,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
     }
     private bool _isGroupNumberEnabled;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether group-number selection is enabled.
+    /// </summary>
     public bool IsGroupNumberEnabled
     {
       get => _isGroupNumberEnabled;
@@ -266,6 +342,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
     public NGTreeNodeCollection AvailableTableColumnsForListView => IsTableColumnsListVisible ? _availableDataColumns.Nodes : null;
 
     private NGTreeNode _availableTableColumnsListSelectedItem;
+    /// <summary>
+    /// Gets or sets the selected item in the flat list of available columns.
+    /// </summary>
     public NGTreeNode AvailableTableColumnsListSelectedItem
     {
       get => _availableTableColumnsListSelectedItem;
@@ -306,6 +385,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     private IMVVMDragHandler _availableDataColumnsDragHandler;
 
+    /// <summary>
+    /// Gets or sets the drag handler for available columns.
+    /// </summary>
     public IMVVMDragHandler AvailableDataColumnsDragHandler
     {
       get => _availableDataColumnsDragHandler;
@@ -321,6 +403,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     private bool _isAvailableDataColumnsListViewFocused;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the list view of available columns has the focus.
+    /// </summary>
     public bool IsAvailableDataColumnsListViewFocused
     {
       get => _isAvailableDataColumnsListViewFocused;
@@ -338,6 +423,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     private bool _isAvailableDataColumnsTreeViewFocused;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the tree view of available columns has the focus.
+    /// </summary>
     public bool IsAvailableDataColumnsTreeViewFocused
     {
       get => _isAvailableDataColumnsTreeViewFocused;
@@ -355,6 +443,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     private ObservableCollection<SingleColumnController> _plotItemColumns = new ObservableCollection<SingleColumnController>();
 
+    /// <summary>
+    /// Gets or sets the controllers for the displayed plot-item columns.
+    /// </summary>
     public ObservableCollection<SingleColumnController> PlotItemColumns
     {
       get => _plotItemColumns;
@@ -370,6 +461,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -515,6 +607,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       int idx = 0;
@@ -543,6 +636,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
       }
     }
 
+    /// <summary>
+    /// Assigns the currently selected available column to the specified plot column.
+    /// </summary>
     public void EhPlotColumnAddTo(SingleColumnController ctrl)
     {
       var node = _availableDataColumns.FirstSelectedNode;
@@ -560,10 +656,16 @@ namespace Altaxo.Gui.Graph.Plot.Data
       }
     }
 
+    /// <summary>
+    /// Handles editing of a plot column.
+    /// </summary>
     public void EhPlotColumnEdit(SingleColumnController ctrl)
     {
     }
 
+    /// <summary>
+    /// Removes the assigned column from the specified plot column.
+    /// </summary>
     public void EhPlotColumnErase(SingleColumnController ctrl)
     {
       var tag = ctrl.Tag;
@@ -581,15 +683,24 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     #region Drag/Drop Handlers
 
+      /// <summary>
+      /// Drag handler for items from the available-columns list.
+      /// </summary>
     public class AvailableDataColumnsDragHandlerImpl : IMVVMDragHandler
     {
       ColumnPlotDataExchangeColumnsController _parent;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="AvailableDataColumnsDragHandlerImpl"/> class.
+      /// </summary>
       public AvailableDataColumnsDragHandlerImpl(ColumnPlotDataExchangeColumnsController parent)
       {
         _parent = parent;
       }
 
+      /// <summary>
+      /// Determines whether dragging can start for the current selection.
+      /// </summary>
       public bool CanStartDrag(IEnumerable items)
       {
         var selNode = _parent._availableDataColumns.FirstSelectedNode;
@@ -597,6 +708,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
         return selNode is not null && (selNode.Tag is DataColumn);
       }
 
+      /// <summary>
+      /// Starts the drag operation for the selected available column.
+      /// </summary>
       public void StartDrag(IEnumerable items, out object data, out bool canCopy, out bool canMove)
       {
         var selNode = _parent._availableDataColumns.FirstSelectedNode;
@@ -615,10 +729,16 @@ namespace Altaxo.Gui.Graph.Plot.Data
         }
       }
 
+      /// <summary>
+      /// Called when a drag operation is cancelled.
+      /// </summary>
       public void DragCancelled()
       {
       }
 
+      /// <summary>
+      /// Called when a drag operation has ended.
+      /// </summary>
       public void DragEnded(bool isCopy, bool isMove)
       {
       }
@@ -628,12 +748,18 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     #region ColumnDrop hander
 
+    /// <summary>
+    /// Handles a dropped transformation for a plot column.
+    /// </summary>
     public void EhPlotColumnTransformationDrop(SingleColumnController ctrl, object data)
     {
       EhPlotColumnDrop(ctrl, data);
     }
 
 
+    /// <summary>
+    /// Handles dropped data for a plot column.
+    /// </summary>
     public void EhPlotColumnDrop(SingleColumnController ctrl, object data)
     {
       var tag = ctrl.Tag;
@@ -685,26 +811,41 @@ namespace Altaxo.Gui.Graph.Plot.Data
       
     }
 
+    /// <summary>
+    /// Handles editing of a plot-column transformation.
+    /// </summary>
     public void EhPlotColumnTransformationEdit(SingleColumnController ctrl)
     {
       throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Removes the transformation from a plot column.
+    /// </summary>
     public void EhPlotColumnTransformationErase(SingleColumnController ctrl)
     {
       throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Adds the dropped transformation as the only transformation of a plot column.
+    /// </summary>
     public void EhPlotColumnTransformationAddAsSingle(SingleColumnController ctrl)
     {
       throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Prepends the dropped transformation to the plot column transformation chain.
+    /// </summary>
     public void EhPlotColumnTransformationAddAsPrepending(SingleColumnController ctrl)
     {
       throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Appends the dropped transformation to the plot column transformation chain.
+    /// </summary>
     public void EhPlotColumnTransformationAddAsAppending(SingleColumnController ctrl)
     {
       throw new NotImplementedException();

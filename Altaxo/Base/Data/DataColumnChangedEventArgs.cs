@@ -91,6 +91,7 @@ namespace Altaxo.Data
       get { return _hasRowCountDecreased; }
     }
 
+    /// <inheritdoc/>
     public override void Add(Main.SelfAccumulateableEventArgs e)
     {
       var other = (DataColumnChangedEventArgs)e;

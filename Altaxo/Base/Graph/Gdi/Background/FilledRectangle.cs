@@ -32,7 +32,7 @@ using Altaxo.Geometry;
 namespace Altaxo.Graph.Gdi.Background
 {
   /// <summary>
-  /// Backs the item with a color filled rectangle.
+  /// Fills the item area with the configured brush.
   /// </summary>
   [Serializable]
   public class FilledRectangle
@@ -40,6 +40,9 @@ namespace Altaxo.Graph.Gdi.Background
     Main.SuspendableDocumentNodeWithEventArgs,
     IBackgroundStyle
   {
+    /// <summary>
+    /// The brush used to fill the rectangle.
+    /// </summary>
     protected BrushX _brush;
 
     #region Serialization
@@ -64,26 +67,45 @@ namespace Altaxo.Graph.Gdi.Background
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FilledRectangle"/> class.
+    /// </summary>
     public FilledRectangle()
     {
       _brush = BrushesX.Black;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FilledRectangle"/> class with the specified color.
+    /// </summary>
+    /// <param name="c">The fill color.</param>
     public FilledRectangle(NamedColor c)
     {
       _brush = new BrushX(c);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FilledRectangle"/> class with the specified brush.
+    /// </summary>
+    /// <param name="brush">The brush used to fill the rectangle.</param>
     public FilledRectangle(BrushX brush)
     {
       _brush = brush ?? throw new ArgumentNullException(nameof(brush));
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FilledRectangle"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public FilledRectangle(FilledRectangle from)
     {
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies the state from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     [MemberNotNull(nameof(_brush))]
     public void CopyFrom(FilledRectangle from)
     {
@@ -95,11 +117,13 @@ namespace Altaxo.Graph.Gdi.Background
       Brush = from._brush;
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
     }
 
+    /// <inheritdoc />
     public object Clone()
     {
       return new FilledRectangle(this);
@@ -107,16 +131,19 @@ namespace Altaxo.Graph.Gdi.Background
 
     #region IBackgroundStyle Members
 
+    /// <inheritdoc />
     public RectangleD2D MeasureItem(System.Drawing.Graphics g, RectangleD2D innerArea)
     {
       return innerArea;
     }
 
+    /// <inheritdoc />
     public void Draw(System.Drawing.Graphics g, RectangleD2D innerArea)
     {
       Draw(g, _brush, innerArea);
     }
 
+    /// <inheritdoc />
     public void Draw(System.Drawing.Graphics g, BrushX brush, RectangleD2D innerArea)
     {
       if (brush is not null)
@@ -128,8 +155,10 @@ namespace Altaxo.Graph.Gdi.Background
       }
     }
 
+    /// <inheritdoc />
     public bool SupportsBrush { get { return true; } }
 
+    /// <inheritdoc />
     public BrushX Brush
     {
       get

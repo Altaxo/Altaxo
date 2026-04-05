@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Altaxo.Data.Transformations
 {
   /// <summary>
-  /// Transforms a double value to another double value.
+  /// Transforms one <see cref="double"/> value into another.
   /// </summary>
   /// <seealso cref="Altaxo.Data.IVariantToVariantTransformation" />
   public interface IDoubleToDoubleTransformation : IVariantToVariantTransformation

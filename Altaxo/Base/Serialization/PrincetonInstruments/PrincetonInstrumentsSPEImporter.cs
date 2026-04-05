@@ -112,6 +112,7 @@ namespace Altaxo.Serialization.PrincetonInstruments
     /// <param name="importOptionsObj">The import options. Has to be an instance of <see cref="PrincetonInstrumentsSPEImportOptions"/>.</param>
     /// <param name="attachDataSource"></param>
     /// <returns>Null if no error occurs, or an error description.</returns>
+    /// <inheritdoc />
     public override string? Import(IReadOnlyList<string> filenames, Altaxo.Data.DataTable table, object importOptionsObj, bool attachDataSource = true)
     {
       var importOptions = (PrincetonInstrumentsSPEImportOptions)importOptionsObj;
@@ -282,6 +283,7 @@ namespace Altaxo.Serialization.PrincetonInstruments
     }
 
 
+    /// <inheritdoc/>
     public override string? Import(IReadOnlyList<string> fileNames, ImportOptionsInitial initialOptions)
     {
       var stb = new StringBuilder();

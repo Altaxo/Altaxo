@@ -30,6 +30,9 @@ using Altaxo.Main;
 
 namespace Altaxo.Data.Selections
 {
+  /// <summary>
+  /// Selects rows whose values in a specified column equal a single text value.
+  /// </summary>
   public class IncludeSingleTextValue : Main.SuspendableDocumentNodeWithEventArgs, IRowSelection
   {
     private string _value;
@@ -65,6 +68,9 @@ namespace Altaxo.Data.Selections
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IncludeSingleTextValue"/> class.
+    /// </summary>
     public IncludeSingleTextValue()
     {
       _value = string.Empty;
@@ -82,6 +88,7 @@ namespace Altaxo.Data.Selections
       ChildCloneToMember(ref _columnProxy, from._columnProxy);
     }
 
+    /// <inheritdoc />
     public object Clone()
     {
       return new IncludeSingleTextValue(this);
@@ -101,6 +108,12 @@ namespace Altaxo.Data.Selections
       ChildSetMember(ref _columnProxy, columnProxy);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IncludeSingleTextValue"/> class for the specified column and text value.
+    /// </summary>
+    /// <param name="value">The text value to match.</param>
+    /// <param name="ignoreCase">Whether comparisons should ignore case.</param>
+    /// <param name="column">The column to inspect.</param>
     public IncludeSingleTextValue(string value, bool ignoreCase, IReadableColumn column)
     {
       _value = value;
@@ -161,6 +174,7 @@ namespace Altaxo.Data.Selections
       }
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_columnProxy is not null)
@@ -201,6 +215,9 @@ namespace Altaxo.Data.Selections
       }
     }
 
+    /// <summary>
+    /// Gets or sets the text value that selected rows must match.
+    /// </summary>
     public string Value
     {
       get
@@ -217,6 +234,9 @@ namespace Altaxo.Data.Selections
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether string comparisons ignore case.
+    /// </summary>
     public bool IgnoreCase
     {
       get

@@ -35,13 +35,18 @@ using Altaxo.Serialization;
 namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
 {
   /// <summary>
-  /// Represents the null symbol in a scatter plot, i.e. this symbol is not visible.
+  /// Provides the base implementation for immutable scatter-symbol shapes.
   /// </summary>
   /// <seealso cref="Altaxo.Graph.Graph3D.Plot.Styles.IScatterSymbol" />
   public abstract class ScatterSymbolShapeBase : IScatterSymbol
   {
     #region Serialization
 
+    /// <summary>
+    /// Serializes the shared registration information for a scatter symbol.
+    /// </summary>
+    /// <param name="obj">The symbol instance.</param>
+    /// <param name="info">The serialization info.</param>
     protected static void SerializeV0(IScatterSymbol obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
       var parent = ScatterSymbolListManager.Instance.GetParentList(obj);
@@ -54,6 +59,14 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
       }
     }
 
+    /// <summary>
+    /// Deserializes a shared scatter-symbol instance from version 0 data.
+    /// </summary>
+    /// <typeparam name="TItem">The symbol type.</typeparam>
+    /// <param name="instanceTemplate">The template instance.</param>
+    /// <param name="info">The deserialization info.</param>
+    /// <param name="parent">The parent object.</param>
+    /// <returns>The deserialized shared instance.</returns>
     protected static TItem DeserializeV0<TItem>(TItem instanceTemplate, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent) where TItem : ScatterSymbolShapeBase
     {
       if (info.CurrentElementName == "Set")
@@ -84,16 +97,19 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
     /// <param name="symbolSize">Size of the symbol.</param>
     public abstract void Paint(IGraphicsContext3D g, IMaterial material, PointD3D centerLocation, double symbolSize);
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return GetType().GetHashCode();
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       return GetType() == obj?.GetType();
     }
 
+    /// <inheritdoc/>
     public object Clone()
     {
       return MemberwiseClone();

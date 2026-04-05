@@ -31,13 +31,13 @@ using System.Text;
 namespace Altaxo.Main
 {
   /// <summary>
-  /// Base class for all event args that can accumulate state. They can accumulate even instances of themself, by calling the <see cref="Add"/> function.
+  /// Base class for all event args that can accumulate state. They can even accumulate instances of themselves by calling the <see cref="Add"/> method.
   /// Overrides for <see cref="GetHashCode"/> and <see cref="Equals"/> ensure that only a single instance is contained in a HashSet.
   /// </summary>
   public abstract class SelfAccumulateableEventArgs : EventArgs
   {
     /// <summary>
-    /// Adds the specified event args e.
+    /// Adds the specified event arguments.
     /// </summary>
     /// <param name="e">The <see cref="Altaxo.Main.SelfAccumulateableEventArgs"/> instance containing the event data.</param>
     public abstract void Add(SelfAccumulateableEventArgs e);

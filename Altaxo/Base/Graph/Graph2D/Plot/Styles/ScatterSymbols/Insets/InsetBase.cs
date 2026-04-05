@@ -29,11 +29,24 @@ using Clipper2Lib;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
 {
+  /// <summary>
+  /// Provides the base implementation for scatter-symbol insets.
+  /// </summary>
   public abstract class InsetBase : IScatterSymbolInset
   {
+    /// <summary>
+    /// Scaling factor used for double-based Clipper coordinates.
+    /// </summary>
     protected const double ClipperScalingDouble = SymbolBase.ClipperScalingDouble;
+
+    /// <summary>
+    /// Scaling factor used for integer-based Clipper coordinates.
+    /// </summary>
     protected const int ClipperScalingInt = SymbolBase.ClipperScalingInt;
 
+    /// <summary>
+    /// The inset color.
+    /// </summary>
     protected NamedColor _color = NamedColors.White;
 
     #region Serialization
@@ -41,15 +54,20 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
     /// <summary>
     /// 2016-10-27 initial version.
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="InsetBase"/> state.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(InsetBase), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (InsetBase)obj;
         info.AddValue("Color", s._color);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (InsetBase)(o ?? throw new ArgumentNullException(nameof(o)));
@@ -60,8 +78,10 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
 
     #endregion Serialization
 
+    /// <inheritdoc/>
     public abstract Paths64 GetCopyOfClipperPolygon(double relativeWidth);
 
+    /// <inheritdoc/>
     public NamedColor Color
     {
       get
@@ -70,6 +90,11 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
       }
     }
 
+    /// <summary>
+    /// Returns a copy of this inset with the specified color.
+    /// </summary>
+    /// <param name="value">The inset color.</param>
+    /// <returns>The current instance if no change is required; otherwise, a cloned instance with the updated color.</returns>
     public InsetBase WithColor(NamedColor value)
     {
       if (_color == value)
@@ -84,16 +109,19 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
       }
     }
 
+    /// <inheritdoc/>
     IScatterSymbolInset IScatterSymbolInset.WithColor(NamedColor color)
     {
       return WithColor(color);
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       return GetType() == obj?.GetType() && _color == ((InsetBase)obj)._color;
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return GetType().GetHashCode() + 17 * _color.GetHashCode();

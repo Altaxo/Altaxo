@@ -46,6 +46,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
   using Gdi;
   using Geometry;
 
+  /// <summary>
+  /// Controller for 2D graph documents and views.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IGraphView))]
   [UserControllerForObject(typeof(GraphViewLayout))]
   [UserControllerForObject(typeof(GraphDocument))]
@@ -84,6 +87,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     /// </summary>
     protected double _areaFillingFactor = 1.2;
 
+    /// <summary>
+    /// Stores the viewport upper-left corner in root-layer coordinates.
+    /// </summary>
     protected PointD2D _positionOfViewportsUpperLeftCornerInRootLayerCoordinates;
 
     /// <summary>
@@ -91,10 +97,19 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     /// </summary>
     private NGTreeNode _layerStructure;
 
+    /// <summary>
+    /// Schedules deferred updates after document changes.
+    /// </summary>
     protected Altaxo.Main.TriggerBasedUpdate _triggerBasedUpdate;
 
+    /// <summary>
+    /// Holds the weak event handlers attached to the document.
+    /// </summary>
     [NonSerialized]
     protected WeakEventHandler[] _weakEventHandlersForDoc;
+    /// <summary>
+    /// Holds the weak handler for tunneled document events.
+    /// </summary>
     protected WeakActionHandler<object, object, TunnelingEventArgs> _weakEventHandlerForDoc_TunneledEvent;
 
     private static IList<IHitTestObject> _emptyReadOnlyList;
@@ -119,7 +134,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     protected PointD2D _screenResolutionDpi;
 
     /// <summary>
-    /// Stores a time that designates when the next zomm by the mouse scroll wheel will be accepted.
+    /// Stores a time that designates when the next zoom by the mouse scroll wheel will be accepted.
     /// This helps to ensure that the scroll zoom pauses for a second when the zoom factor is 100%.
     /// </summary>
     private DateTime _nextScrollZoomAcceptTime;
@@ -139,6 +154,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       TextGraphic.TextGraphicsEditorMethod = new DoubleClickHandler(EhEditTextGraphics);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GraphController"/> class.
+    /// </summary>
     public GraphController()
     {
       InitTriggerBasedUpdate();
@@ -152,7 +170,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     public GraphController(GraphDocument graphdoc)
     {
       if (graphdoc is null)
-        throw new ArgumentNullException("Leaving the graphdoc null in constructor is not supported here");
+        throw new ArgumentNullException("Leaving graphdoc null in the constructor is not supported here");
 
       InitTriggerBasedUpdate();
       SetMemberVariablesToDefault();
@@ -184,6 +202,11 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       _screenResolutionDpi = Current.Gui.ScreenResolutionDpi;
     }
 
+    /// <summary>
+    /// Initializes the controller with the supplied document arguments.
+    /// </summary>
+    /// <param name="args">The initialization arguments.</param>
+    /// <returns><see langword="true"/> if initialization succeeded; otherwise <see langword="false"/>.</returns>
     public bool InitializeDocument(params object[] args)
     {
       if (args is null || args.Length == 0)
@@ -206,6 +229,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       return true;
     }
 
+    /// <summary>
+    /// Sets whether the controller should work on a document copy.
+    /// </summary>
     public UseDocument UseDocumentCopy
     {
       set { }
@@ -215,6 +241,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 
     #region Initialization
 
+    /// <summary>
+    /// Performs the i ni ti al iz e operation.
+    /// </summary>
     protected void Initialize(bool initData)
     {
       if (initData)
@@ -290,6 +319,8 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 
     #region Property changed overrides to handle content visibility
 
+ 
+    /// <inheritdoc />
     protected override void OnPropertyChanged(string propertyName)
     {
       base.OnPropertyChanged(propertyName);
@@ -298,6 +329,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
         OnContentVisibilityChanged();
     }
 
+    /// <summary>
+    /// Notifies the view that the content visibility changed.
+    /// </summary>
     protected void OnContentVisibilityChanged()
     {
       _view?.AnnounceContentVisibilityChanged(IsContentVisible);
@@ -579,6 +613,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       return oldZoomFactor != _zoomFactor || oldPositionOfViewportsUpperLeftCornerInRootLayerCoordinates != _positionOfViewportsUpperLeftCornerInRootLayerCoordinates;
     }
 
+    /// <summary>
+    /// Performs the r ef re sh ma nu al zo om operation.
+    /// </summary>
     protected void RefreshManualZoom()
     {
       var virtualSize = SizeOfViewportInGraphCoordinates;
@@ -704,6 +741,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     /// </summary>
     public event EventHandler CurrentGraphToolChanged;
 
+    /// <summary>
+    /// Gets or sets the currently selected graph tool.
+    /// </summary>
     public GraphToolType CurrentGraphTool
     {
       get
@@ -723,11 +763,16 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     #region IGraphController Members
 
 
+    /// <summary>
+    /// Gets the graph document displayed by the controller.
+    /// </summary>
     public Altaxo.Graph.Gdi.GraphDocument Doc
     {
       get { return _doc; }
     }
 
+ 
+    /// <inheritdoc />
     public override object ModelObject
     {
       get
@@ -848,6 +893,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       }
     }
 
+    /// <summary>
+    /// Refreshes the graph view.
+    /// </summary>
     public void RefreshGraph()
     {
       if (_view is not null)
@@ -864,6 +912,8 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       _view.Controller = null;
     }
 
+ 
+    /// <inheritdoc />
     public override object ViewObject
     {
       get { return _view; }
@@ -930,6 +980,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       Current.Dispatcher.InvokeAndForget(EhGraph_BoundsChanged_Unsynchronized);
     }
 
+    /// <summary>
+    /// Updates the view after the graph bounds changed.
+    /// </summary>
     protected void EhGraph_BoundsChanged_Unsynchronized()
     {
       if (_view is not null)
@@ -950,6 +1003,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       Current.Dispatcher.InvokeAndForget(EhGraph_LayerCollectionChanged_Unsynchronized);
     }
 
+    /// <summary>
+    /// Updates the layer structure after the layer collection changed.
+    /// </summary>
     protected void EhGraph_LayerCollectionChanged_Unsynchronized()
     {
       var oldActiveLayer = new List<int>(_currentLayerNumber);
@@ -1007,6 +1063,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       }
     }
 
+    /// <summary>
+    /// Raises the notification that the current graph tool changed.
+    /// </summary>
     public virtual void EhView_CurrentGraphToolChanged()
     {
       if (CurrentGraphToolChanged is not null)
@@ -1050,6 +1109,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       }
     }
 
+    /// <summary>
+    /// Updates the viewport position after the view scrollbars changed.
+    /// </summary>
     public void EhView_Scroll()
     {
       _positionOfViewportsUpperLeftCornerInRootLayerCoordinates = ConvertScrollbarValueToGraphCoordinate(_view.GraphScrollPosition);
@@ -1060,6 +1122,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 
     #region Arrange
 
+    /// <summary>
+    /// Gets the currently selected hit-test objects.
+    /// </summary>
     public IList<IHitTestObject> SelectedObjects
     {
       get
@@ -1096,6 +1161,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       }
     }
 
+    /// <summary>
+    /// Represents a delegate that arranges a graph element relative to the master bounds.
+    /// </summary>
     public delegate void ArrangeElement(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds);
 
     /// <summary>
@@ -1269,6 +1337,10 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       _view.InvalidateCachedGraphBitmapAndRepaint(); // force a refresh
     }
 
+    /// <summary>
+    /// Arranges the selected objects to match the master size using the specified routine.
+    /// </summary>
+    /// <param name="ArrangeAction">The action that applies the size arrangement.</param>
     public void ArrangeSameSizeBase(Action<IHitTestObject, RectangleF, RectangleF> ArrangeAction)
     {
       if (SelectedObjects.Count < 2)
@@ -1288,6 +1360,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       _view.InvalidateCachedGraphBitmapAndRepaint(); // force a refresh
     }
 
+    /// <summary>
+    /// Arranges the selected objects to have the same horizontal size.
+    /// </summary>
     public void ArrangeSameHorizontalSize()
     {
       ArrangeSameSizeBase(
@@ -1298,6 +1373,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
         );
     }
 
+    /// <summary>
+    /// Arranges the selected objects to have the same vertical size.
+    /// </summary>
     public void ArrangeSameVerticalSize()
     {
       ArrangeSameSizeBase(
@@ -1308,6 +1386,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
         );
     }
 
+    /// <summary>
+    /// Moves the selected graph items one step up in z-order.
+    /// </summary>
     public void MoveSelectedGraphItemsUp()
     {
       var selectedItems = new HashSet<object>();
@@ -1320,6 +1401,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       }
     }
 
+    /// <summary>
+    /// Moves the selected graph items one step down in z-order.
+    /// </summary>
     public void MoveSelectedGraphItemsDown()
     {
       var selectedItems = new HashSet<object>();
@@ -1332,6 +1416,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       }
     }
 
+    /// <summary>
+    /// Moves the selected graph items to the top of the z-order.
+    /// </summary>
     public void MoveSelectedGraphItemsToTop()
     {
       var selectedItems = new HashSet<object>();
@@ -1344,6 +1431,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       }
     }
 
+    /// <summary>
+    /// Moves the selected graph items to the bottom of the z-order.
+    /// </summary>
     public void MoveSelectedGraphItemsToBottom()
     {
       var selectedItems = new HashSet<object>();
@@ -1356,11 +1446,17 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       }
     }
 
+    /// <summary>
+    /// Determines whether delete is currently enabled.
+    /// </summary>
     public bool IsCmdDeleteEnabled()
     {
       return true;
     }
 
+    /// <summary>
+    /// Deletes the selected objects or, if none are selected, the graph document.
+    /// </summary>
     public void CmdDelete()
     {
       if (SelectedObjects.Count > 0)
@@ -1400,6 +1496,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       }
     }
 
+    /// <summary>
+    /// Determines whether copy is currently enabled.
+    /// </summary>
     public bool IsCmdCopyEnabled()
     {
       return true;
@@ -1426,11 +1525,17 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       }
     }
 
+    /// <summary>
+    /// Determines whether cut is currently enabled.
+    /// </summary>
     public bool IsCmdCutEnabled()
     {
       return 0 != SelectedObjects.Count;
     }
 
+    /// <summary>
+    /// Cuts the selected objects to the clipboard.
+    /// </summary>
     public void CutSelectedObjectsToClipboard()
     {
       var objectList = new ArrayList();
@@ -1450,11 +1555,17 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       RemoveSelectedObjects();
     }
 
+    /// <summary>
+    /// Determines whether paste is currently enabled.
+    /// </summary>
     public bool IsCmdPasteEnabled()
     {
       return true;
     }
 
+    /// <summary>
+    /// Pastes graph objects from the clipboard.
+    /// </summary>
     public void PasteObjectsFromClipboard()
     {
       GraphDocument gd = Doc;
@@ -1632,6 +1743,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       SelectedObjects.Clear();
     }
 
+    /// <summary>
+    /// Sets the s el ec te do bj ec ts pr op er ty.
+    /// </summary>
     public void SetSelectedObjectsProperty(IRoutedSetterProperty property)
     {
       foreach (IHitTestObject o in SelectedObjects)
@@ -1763,11 +1877,17 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 
     #region Functions used by View
 
+    /// <summary>
+    /// Sets the g ra ph to ol fr om in te rn al.
+    /// </summary>
     public void SetGraphToolFromInternal(GraphToolType value)
     {
       _view.CurrentGraphTool = value;
     }
 
+    /// <summary>
+    /// Sets the p an el cu rs or.
+    /// </summary>
     public void SetPanelCursor(object cursor)
     {
       _view?.SetPanelCursor(cursor);
@@ -1945,6 +2065,10 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       g.PageScale = (float)ZoomFactor;
     }
 
+    /// <summary>
+    /// Prepares the graphics context for painting the graph document.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
     public void ScaleForPaintingGraphDocument(Graphics g)
     {
       ScaleForPaint(g);
@@ -1999,6 +2123,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       _view.MouseState_AfterPaint(g);
     }
 
+    /// <summary>
+    /// Gets a value indicating whether overlay painting is required.
+    /// </summary>
     public bool IsOverlayPaintingRequired
     {
       get
@@ -2076,6 +2203,11 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       return false;
     }
 
+    /// <summary>
+    /// Finds graph objects inside the specified rectangle in root-layer coordinates.
+    /// </summary>
+    /// <param name="rectRootLayerCoordinates">The search rectangle in root-layer coordinates.</param>
+    /// <param name="foundObjects">The list receiving the found objects.</param>
     public void FindGraphObjectInRootLayerRectangle(RectangleD2D rectRootLayerCoordinates, out List<IHitTestObject> foundObjects)
     {
       foundObjects = new List<IHitTestObject>();
@@ -2086,6 +2218,8 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     #endregion Finding objects at position
 
 
+ 
+    /// <inheritdoc />
     public override void Dispose()
     {
       if (_triggerBasedUpdate is not null)
@@ -2102,6 +2236,11 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       base.Dispose();
     }
 
+    /// <summary>
+    /// Applies the controller changes.
+    /// </summary>
+    /// <param name="disposeController">If set to <see langword="true"/>, the controller should release temporary resources afterwards.</param>
+    /// <returns>Always <see langword="true"/>.</returns>
     public bool Apply(bool disposeController)
     {
       return true;

@@ -37,8 +37,7 @@ using System.Text;
 namespace Altaxo.DataConnection
 {
   /// <summary>
-  /// DataSet that knows how to retrieve a schema (tables, columns, views,
-  /// sprocs, constraints, relations) based on a connection string.
+  /// <see cref="DataSet"/> that retrieves database schema information, such as tables, columns, views, stored procedures, constraints, and relations, based on a connection string.
   /// </summary>
   [System.ComponentModel.DesignTimeVisible(false)]
   public class OleDbSchema : DataSet

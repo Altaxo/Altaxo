@@ -38,23 +38,44 @@ namespace Altaxo.Graph.Scales.Ticks
     :
     Main.SuspendableDocumentNodeWithEventArgs, Main.ICopyFrom
   {
+    /// <summary>
+    /// The next update sequence number.
+    /// </summary>
     protected static int _nextUpdateSequenceNumber;
 
+    /// <summary>
+    /// The current update sequence number.
+    /// </summary>
     protected int _updateSequenceNumber;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TickSpacing"/> class.
+    /// </summary>
     protected TickSpacing()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TickSpacing"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public TickSpacing(TickSpacing from)
     {
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Creates a copy of this tick-spacing instance.
+    /// </summary>
+    /// <returns>A cloned tick-spacing instance.</returns>
     public abstract object Clone();
 
+    /// <inheritdoc />
     public abstract bool CopyFrom(object obj);
 
+    /// <summary>
+    /// Gets the update sequence number of this instance.
+    /// </summary>
     public int UpdateSequenceNumber { get { return _updateSequenceNumber; } }
 
     /// <summary>
@@ -89,6 +110,11 @@ namespace Altaxo.Graph.Scales.Ticks
     /// <returns>The array with minor tick values.</returns>
     public abstract AltaxoVariant[] GetMinorTicksAsVariant();
 
+    /// <summary>
+    /// Gets the major ticks in normalized scale coordinates.
+    /// </summary>
+    /// <param name="scale">The scale used to convert physical values to normalized values.</param>
+    /// <returns>The major ticks in normalized coordinates.</returns>
     public virtual double[] GetMajorTicksNormal(Scale scale)
     {
       AltaxoVariant[] vars = GetMajorTicksAsVariant();
@@ -99,6 +125,11 @@ namespace Altaxo.Graph.Scales.Ticks
       return result;
     }
 
+    /// <summary>
+    /// Gets the minor ticks in normalized scale coordinates.
+    /// </summary>
+    /// <param name="scale">The scale used to convert physical values to normalized values.</param>
+    /// <returns>The minor ticks in normalized coordinates.</returns>
     public virtual double[] GetMinorTicksNormal(Scale scale)
     {
       AltaxoVariant[] vars = GetMinorTicksAsVariant();
@@ -109,12 +140,14 @@ namespace Altaxo.Graph.Scales.Ticks
       return result;
     }
 
+    /// <inheritdoc />
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       _updateSequenceNumber = _nextUpdateSequenceNumber++;
       return base.HandleHighPriorityChildChangeCases(sender, ref e);
     }
 
+    /// <inheritdoc />
     protected override void EhSelfChanged(EventArgs e)
     {
       _updateSequenceNumber = _nextUpdateSequenceNumber++;

@@ -32,6 +32,9 @@ using Altaxo.Main;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
+  /// <summary>
+  /// Represents a closed cardinal spline shape.
+  /// </summary>
   [Serializable]
   public class ClosedCardinalSpline : ClosedPathShapeBase
   {
@@ -45,6 +48,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ClosedCardinalSpline), 0)]
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ClosedCardinalSpline)obj;
@@ -56,6 +60,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         info.CommitArray();
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (ClosedCardinalSpline?)o ?? new ClosedCardinalSpline(info);
@@ -74,21 +79,40 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ClosedCardinalSpline"/> class during deserialization.
+    /// </summary>
+    /// <param name="info">The deserialization info.</param>
     protected ClosedCardinalSpline(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
       : base(new ItemLocationDirectAutoSize(), info)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ClosedCardinalSpline"/> class.
+    /// </summary>
+    /// <param name="context">The property context.</param>
     public ClosedCardinalSpline(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
       : base(new ItemLocationDirectAutoSize(), context)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ClosedCardinalSpline"/> class.
+    /// </summary>
+    /// <param name="points">The curve points.</param>
+    /// <param name="context">The property context.</param>
     public ClosedCardinalSpline(IEnumerable<PointD2D> points, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
       : this(points, DefaultTension, context)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ClosedCardinalSpline"/> class.
+    /// </summary>
+    /// <param name="points">The curve points.</param>
+    /// <param name="tension">The spline tension.</param>
+    /// <param name="context">The property context.</param>
     public ClosedCardinalSpline(IEnumerable<PointD2D> points, double tension, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
       : base(new ItemLocationDirectAutoSize(), context)
     {
@@ -101,12 +125,21 @@ namespace Altaxo.Graph.Gdi.Shapes
       CalculateAndSetBounds();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ClosedCardinalSpline"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public ClosedCardinalSpline(ClosedCardinalSpline from)
       : base(from)  // all is done here, since CopyFrom is virtual!
     {
       CopyFrom(from, false);
     }
 
+    /// <summary>
+    /// Copies the state from another <see cref="ClosedCardinalSpline"/> instance.
+    /// </summary>
+    /// <param name="from">The source instance.</param>
+    /// <param name="withBaseMembers">If set to <see langword="true"/>, base members are copied as well.</param>
     protected void CopyFrom(ClosedCardinalSpline from, bool withBaseMembers)
     {
       if (withBaseMembers)
@@ -117,6 +150,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       _curvePoints.AddRange(from._curvePoints);
     }
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -138,8 +172,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #endregion Constructors
 
+    /// <summary>
+    /// Gets the default spline tension.
+    /// </summary>
     public static double DefaultTension { get { return _defaultTension; } }
 
+    /// <summary>
+    /// Gets or sets the spline tension.
+    /// </summary>
     public double Tension
     {
       get
@@ -172,6 +212,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <inheritdoc />
     public override bool AllowNegativeSize
     {
       get
@@ -180,6 +221,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new ClosedCardinalSpline(this);
@@ -195,6 +237,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
     }
 
+    /// <inheritdoc />
     public override bool AutoSize
     {
       get
@@ -219,6 +262,11 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Sets one control point of the spline.
+    /// </summary>
+    /// <param name="idx">The point index.</param>
+    /// <param name="value">The new point value.</param>
     public void SetPoint(int idx, PointD2D value)
     {
       if (!(_curvePoints[idx] == value))
@@ -228,6 +276,10 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets the selection path.
+    /// </summary>
+    /// <returns>The selection path.</returns>
     public GraphicsPath GetSelectionPath()
     {
       return GetPath();
@@ -262,6 +314,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       return InternalGetPath(_location.AbsoluteVectorPivotToLeftUpper);
     }
 
+    /// <inheritdoc />
     public override IHitTestObject? HitTest(HitTestPointData htd)
     {
       HitTestObjectBase? result = null;
@@ -299,6 +352,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       return true;
     }
 
+    /// <inheritdoc />
     public override void Paint(Graphics g, IPaintContext context)
     {
       GraphicsState gs = g.Save();
@@ -326,13 +380,21 @@ namespace Altaxo.Graph.Gdi.Shapes
       g.Restore(gs);
     }
 
+    /// <summary>
+    /// Represents the hit-test object for <see cref="ClosedCardinalSpline"/>.
+    /// </summary>
     protected class ClosedCardinalSplineHitTestObject : GraphicBaseHitTestObject
     {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ClosedCardinalSplineHitTestObject"/> class.
+      /// </summary>
+      /// <param name="parent">The parent spline.</param>
       public ClosedCardinalSplineHitTestObject(ClosedCardinalSpline parent)
         : base(parent)
       {
       }
 
+      /// <inheritdoc />
       public override IGripManipulationHandle[]? GetGrips(double pageScale, int gripLevel)
       {
         if (gripLevel <= 1)
@@ -380,6 +442,13 @@ namespace Altaxo.Graph.Gdi.Shapes
       private PointD2D _offset;
       private ISuspendToken? _suspendToken;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ClosedCardinalSplinePathNodeGripHandle"/> class.
+      /// </summary>
+      /// <param name="parent">The parent hit-test object.</param>
+      /// <param name="pointNr">The spline point index.</param>
+      /// <param name="gripCenter">The grip center in page coordinates.</param>
+      /// <param name="gripRadius">The grip radius.</param>
       public ClosedCardinalSplinePathNodeGripHandle(IHitTestObject parent, int pointNr, PointD2D gripCenter, double gripRadius)
         : base(parent, new PointD2D(0, 0), gripCenter, gripRadius)
       {
@@ -387,6 +456,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         _offset = ((ClosedCardinalSpline)GraphObject).Location.AbsoluteVectorPivotToLeftUpper;
       }
 
+      /// <inheritdoc />
       public override void MoveGrip(PointD2D newPosition)
       {
         newPosition = _parent.Transformation.InverseTransformPoint(newPosition);
@@ -398,6 +468,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         obj.SetPoint(_pointNumber, newPosition - _offset);
       }
 
+      /// <inheritdoc />
       public override bool Deactivate()
       {
         var obj = (ClosedCardinalSpline)GraphObject;

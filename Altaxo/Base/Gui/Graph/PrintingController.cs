@@ -38,11 +38,21 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="PrintingController"/>.
+  /// </summary>
   public interface IPrintingView : IDataContextAwareView
   {
+    /// <summary>
+    /// Shows the printer properties dialog for the current printer settings.
+    /// </summary>
+    /// <param name="currentSettings">The current printer settings.</param>
     void ShowPrinterPropertiesDialog(PrinterSettings currentSettings);
   }
 
+  /// <summary>
+  /// Controller for printing a <see cref="GraphDocument"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IPrintingView))]
   public class PrintingController : MVCANControllerEditImmutableDocBase<GraphDocument, IPrintingView>
   {
@@ -52,6 +62,9 @@ namespace Altaxo.Gui.Graph
     private System.Threading.CancellationToken _printerStatusCancellationToken;
     private System.Threading.CancellationTokenSource _printerStatusCancellationTokenSource;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PrintingController"/> class.
+    /// </summary>
     public PrintingController()
     {
       CmdShowPrinterProperties = new RelayCommand(EhEditPrinterProperties);
@@ -65,11 +78,13 @@ namespace Altaxo.Gui.Graph
       _printerStatusCancellationToken = _printerStatusCancellationTokenSource.Token;
     }
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_documentPrintOptionsController, () => DocumentPrintOptionsController = null);
     }
 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       _printerStatusCancellationTokenSource?.Cancel();
@@ -79,18 +94,36 @@ namespace Altaxo.Gui.Graph
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the command that opens the printer properties dialog.
+    /// </summary>
     public ICommand CmdShowPrinterProperties { get; }
 
+    /// <summary>
+    /// Gets the command that shows the first preview page.
+    /// </summary>
     public ICommand CmdPreviewFirstPage { get; }
+    /// <summary>
+    /// Gets the command that shows the previous preview page.
+    /// </summary>
     public ICommand CmdPreviewPreviousPage { get; }
 
+    /// <summary>
+    /// Gets the command that shows the next preview page.
+    /// </summary>
     public ICommand CmdPreviewNextPage { get; }
+    /// <summary>
+    /// Gets the command that shows the last preview page.
+    /// </summary>
     public ICommand CmdPreviewLastPage { get; }
 
 
     private SingleGraphPrintOptionsController _documentPrintOptionsController;
 
 
+    /// <summary>
+    /// Gets or sets the controller for the document print options.
+    /// </summary>
     public SingleGraphPrintOptionsController DocumentPrintOptionsController
     {
       get => _documentPrintOptionsController;
@@ -112,6 +145,9 @@ namespace Altaxo.Gui.Graph
 
     private ItemsController<string> _availablePrinters;
 
+    /// <summary>
+    /// Gets or sets the available printers.
+    /// </summary>
     public ItemsController<string> AvailablePrinters
     {
       get => _availablePrinters;
@@ -129,6 +165,9 @@ namespace Altaxo.Gui.Graph
 
     private ItemsController<PaperSize> _availablePaperSizes;
 
+    /// <summary>
+    /// Gets or sets the available paper sizes.
+    /// </summary>
     public ItemsController<PaperSize> AvailablePaperSizes
     {
       get => _availablePaperSizes;
@@ -145,6 +184,9 @@ namespace Altaxo.Gui.Graph
 
     private ItemsController<PaperSource> _availablePaperSources;
 
+    /// <summary>
+    /// Gets or sets the available paper sources.
+    /// </summary>
     public ItemsController<PaperSource> AvailablePaperSources
     {
       get => _availablePaperSources;
@@ -161,6 +203,9 @@ namespace Altaxo.Gui.Graph
 
     private bool _isPaperOrientationLandscape;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the paper orientation is landscape.
+    /// </summary>
     public bool IsPaperOrientationLandscape
     {
       get => _isPaperOrientationLandscape;
@@ -177,16 +222,25 @@ namespace Altaxo.Gui.Graph
     }
 
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the paper orientation is portrait.
+    /// </summary>
     public bool IsPaperOrientationPortrait
     {
       get => !IsPaperOrientationLandscape;
       set => IsPaperOrientationLandscape = !value;
     }
 
+    /// <summary>
+    /// Gets the quantity environment used for paper margins.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment MarginEnvironment => PaperMarginEnvironment.Instance;
 
     private DimensionfulQuantity _marginLeft;
 
+    /// <summary>
+    /// Gets or sets the left paper margin.
+    /// </summary>
     public DimensionfulQuantity MarginLeft
     {
       get => _marginLeft;
@@ -202,6 +256,9 @@ namespace Altaxo.Gui.Graph
     }
     private DimensionfulQuantity _marginRight;
 
+    /// <summary>
+    /// Gets or sets the right paper margin.
+    /// </summary>
     public DimensionfulQuantity MarginRight
     {
       get => _marginRight;
@@ -218,6 +275,9 @@ namespace Altaxo.Gui.Graph
 
     private DimensionfulQuantity _marginTop;
 
+    /// <summary>
+    /// Gets or sets the top paper margin.
+    /// </summary>
     public DimensionfulQuantity MarginTop
     {
       get => _marginTop;
@@ -233,6 +293,9 @@ namespace Altaxo.Gui.Graph
     }
     private DimensionfulQuantity _marginBottom;
 
+    /// <summary>
+    /// Gets or sets the bottom paper margin.
+    /// </summary>
     public DimensionfulQuantity MarginBottom
     {
       get => _marginBottom;
@@ -250,6 +313,9 @@ namespace Altaxo.Gui.Graph
 
     private int _numberOfCopies;
 
+    /// <summary>
+    /// Gets or sets the number of copies to print.
+    /// </summary>
     public int NumberOfCopies
     {
       get => _numberOfCopies;
@@ -267,6 +333,9 @@ namespace Altaxo.Gui.Graph
 
     private bool _collateCopies;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether printed copies are collated.
+    /// </summary>
     public bool CollateCopies
     {
       get => _collateCopies;
@@ -283,6 +352,9 @@ namespace Altaxo.Gui.Graph
 
     private string _printerStatus = "Ready";
 
+    /// <summary>
+    /// Gets or sets the printer status text.
+    /// </summary>
     public string PrinterStatus
     {
       get => _printerStatus;
@@ -297,6 +369,9 @@ namespace Altaxo.Gui.Graph
     }
     private string _printerLocation = "Unknown";
 
+    /// <summary>
+    /// Gets or sets the printer location text.
+    /// </summary>
     public string PrinterLocation
     {
       get => _printerLocation;
@@ -311,6 +386,9 @@ namespace Altaxo.Gui.Graph
     }
     private string _printerComment = "Unknown";
 
+    /// <summary>
+    /// Gets or sets the printer comment text.
+    /// </summary>
     public string PrinterComment
     {
       get => _printerComment;
@@ -327,6 +405,9 @@ namespace Altaxo.Gui.Graph
 
     private string _previewPageNumberText;
 
+    /// <summary>
+    /// Gets or sets the preview page-number text.
+    /// </summary>
     public string PreviewPageNumberText
     {
       get => _previewPageNumberText;
@@ -340,6 +421,9 @@ namespace Altaxo.Gui.Graph
       }
     }
 
+    /// <summary>
+    /// Gets the currently displayed preview page data.
+    /// </summary>
     public PreviewPageInfo CurrentPreviewData
     {
       get => _previewData is not null && _previewPageNumber < _previewData.Length ? _previewData[_previewPageNumber] : null;
@@ -348,6 +432,9 @@ namespace Altaxo.Gui.Graph
 
     private double _previewHeight;
 
+    /// <summary>
+    /// Gets or sets the preview height.
+    /// </summary>
     public double PreviewHeight
     {
       get => _previewHeight;
@@ -362,6 +449,9 @@ namespace Altaxo.Gui.Graph
     }
     private double _previewWidth;
 
+    /// <summary>
+    /// Gets or sets the preview width.
+    /// </summary>
     public double PreviewWidth
     {
       get => _previewWidth;
@@ -378,6 +468,8 @@ namespace Altaxo.Gui.Graph
 
     #endregion
 
+    /// <inheritdoc />
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       if (initData)
@@ -641,6 +733,9 @@ namespace Altaxo.Gui.Graph
       return _previewController.GetPreviewPageInfo();
     }
 
+    /// <summary>
+    /// Requests regeneration of the print preview.
+    /// </summary>
     public void RequestPreview()
     {
       _previewRequested = true;
@@ -724,6 +819,7 @@ namespace Altaxo.Gui.Graph
 
     #endregion Preview
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       var previewTask = _previewTask;

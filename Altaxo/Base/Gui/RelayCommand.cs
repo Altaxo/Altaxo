@@ -39,11 +39,20 @@ namespace Altaxo.Gui
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RelayCommand"/> class.
+    /// </summary>
+    /// <param name="execute">The action to execute when the command is invoked.</param>
     public RelayCommand(Action execute)
      : this(execute, null)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RelayCommand"/> class.
+    /// </summary>
+    /// <param name="execute">The action to execute when the command is invoked.</param>
+    /// <param name="canExecute">The function that determines whether the command can execute.</param>
     public RelayCommand(Action execute, Func<bool>? canExecute)
     {
       _execute = execute ?? throw new ArgumentNullException(nameof(execute));
@@ -54,9 +63,7 @@ namespace Altaxo.Gui
 
     #region ICommand
 
-    /// <summary>
-    /// Occurs when changes occur that affect whether or not the command should execute.
-    /// </summary>
+    /// <inheritdoc/>
     public event EventHandler? CanExecuteChanged;
 
     /// <summary>
@@ -77,22 +84,13 @@ namespace Altaxo.Gui
       OnCanExecuteChanged();
     }
 
-    /// <summary>
-    /// Defines the method that determines whether the command can execute in its current state.
-    /// </summary>
-    /// <param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.</param>
-    /// <returns>
-    /// true if this command can be executed; otherwise, false.
-    /// </returns>
+    /// <inheritdoc/>
     public bool CanExecute(object? parameter)
     {
       return _canExecute?.Invoke() ?? true;
     }
 
-    /// <summary>
-    /// Defines the method to be called when the command is invoked.
-    /// </summary>
-    /// <param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.</param>
+    /// <inheritdoc/>
     public void Execute(object? parameter)
     {
       _execute();
@@ -106,6 +104,7 @@ namespace Altaxo.Gui
   /// and <see cref="System.Windows.Input.ICommand.CanExecute(object)"/>. Note that you have to manually call <see cref="OnCanExecuteChanged"/> if <see cref="CanExecute(object)"/> will return a different value than before.
   /// </summary>
   /// <seealso cref="System.Windows.Input.ICommand" />
+  /// <typeparam name="T">The type of the command parameter.</typeparam>
   public class RelayCommand<T> : System.Windows.Input.ICommand
   {
     private readonly Action<T> _execute;
@@ -113,11 +112,20 @@ namespace Altaxo.Gui
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RelayCommand{T}"/> class.
+    /// </summary>
+    /// <param name="execute">The action to execute when the command is invoked.</param>
     public RelayCommand(Action<T> execute)
       : this(execute, null)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RelayCommand{T}"/> class.
+    /// </summary>
+    /// <param name="execute">The action to execute when the command is invoked.</param>
+    /// <param name="canExecute">The predicate that determines whether the command can execute.</param>
     public RelayCommand(Action<T> execute, Predicate<T>? canExecute)
     {
       _execute = execute ?? throw new ArgumentNullException(nameof(execute));
@@ -128,9 +136,7 @@ namespace Altaxo.Gui
 
     #region ICommand
 
-    /// <summary>
-    /// Occurs when changes occur that affect whether or not the command should execute.
-    /// </summary>
+    /// <inheritdoc/>
     public event EventHandler? CanExecuteChanged;
 
     /// <summary>
@@ -151,13 +157,7 @@ namespace Altaxo.Gui
       OnCanExecuteChanged();
     }
 
-    /// <summary>
-    /// Defines the method that determines whether the command can execute in its current state.
-    /// </summary>
-    /// <param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.</param>
-    /// <returns>
-    /// true if this command can be executed; otherwise, false.
-    /// </returns>
+    /// <inheritdoc/>
     public bool CanExecute(object? parameter)
     {
       if (_canExecute is null)
@@ -170,10 +170,7 @@ namespace Altaxo.Gui
         throw new ArgumentException("Argument is expected to be of type " + typeof(T).ToString(), nameof(parameter));
     }
 
-    /// <summary>
-    /// Defines the method to be called when the command is invoked.
-    /// </summary>
-    /// <param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.</param>
+    /// <inheritdoc/>
     public void Execute(object? parameter)
     {
       if (parameter is T tpara)

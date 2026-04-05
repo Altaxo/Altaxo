@@ -30,12 +30,21 @@ namespace Altaxo.Gui.Common.BasicTypes
 {
   #region Interfaces
 
+  /// <summary>
+  /// Defines the view contract for editing boolean values.
+  /// </summary>
   public interface IBooleanValueView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Defines additional metadata for a boolean value controller.
+  /// </summary>
   public interface IBooleanValueController : IMVCAController
   {
+    /// <summary>
+    /// Gets or sets the descriptive text shown by the view.
+    /// </summary>
     string DescriptionText { get; set; }
   }
 
@@ -48,15 +57,26 @@ namespace Altaxo.Gui.Common.BasicTypes
   [ExpectedTypeOfView(typeof(IBooleanValueView))]
   public class BooleanValueController : MVCANControllerEditImmutableDocBase<bool, IBooleanValueView>, IBooleanValueController, IMVCANDController
   {
+    /// <summary>
+    /// The descriptive text shown by the view.
+    /// </summary>
     protected string _descriptionText = "Enter value:";
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BooleanValueController"/> class.
+    /// </summary>
     public BooleanValueController() { }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BooleanValueController"/> class.
+    /// </summary>
+    /// <param name="val">The initial value.</param>
     public BooleanValueController(bool val)
     {
       InitializeDocument(val);
     }
 
+    /// <inheritdoc/>
     public string DescriptionText
     {
       get
@@ -73,6 +93,9 @@ namespace Altaxo.Gui.Common.BasicTypes
       }
     }
 
+    /// <summary>
+    /// Gets or sets the boolean value.
+    /// </summary>
     public bool Value
     {
       get => _doc;
@@ -87,15 +110,19 @@ namespace Altaxo.Gui.Common.BasicTypes
       }
     }
 
+    /// <inheritdoc/>
     public object ProvisionalModelObject => _doc;
 
+    /// <inheritdoc/>
     public event Action<IMVCANDController>? MadeDirty;
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;

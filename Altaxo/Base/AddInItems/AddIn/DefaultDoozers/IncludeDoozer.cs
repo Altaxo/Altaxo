@@ -56,6 +56,7 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <inheritdoc/>
     public object BuildItem(BuildItemArgs args)
     {
       Codon codon = args.Codon;
@@ -87,6 +88,9 @@ namespace Altaxo.AddInItems
       private readonly object? _parameter;
       private readonly IEnumerable<ICondition>? _additionalConditions;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="IncludeReturnItem"/> class.
+      /// </summary>
       public IncludeReturnItem(AddInTreeNode node, object? parameter, IEnumerable<ICondition>? additionalConditions)
       {
         this._node = node;
@@ -94,6 +98,7 @@ namespace Altaxo.AddInItems
         this._additionalConditions = additionalConditions;
       }
 
+      /// <inheritdoc/>
       public void Apply(IList items)
       {
         foreach (object o in _node.BuildChildItems<object>(_parameter, _additionalConditions))

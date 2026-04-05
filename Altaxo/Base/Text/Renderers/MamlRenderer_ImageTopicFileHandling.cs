@@ -33,6 +33,9 @@ namespace Altaxo.Text.Renderers
 {
   public partial class MamlRenderer : TextRendererBase<MamlRenderer>
   {
+    /// <summary>
+    /// Gets the fixed GUID of the generated image topic file.
+    /// </summary>
     public string ImageTopicFileGuid { get; } = "ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027"; // Guid of image topic file is fixed
 
     /// <summary>

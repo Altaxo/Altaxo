@@ -89,6 +89,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
   using Drawing;
   using Drawing.D3D;
 
+  /// <summary>
+  /// Contains parsing helpers used to build the glyph tree for <see cref="TextGraphic"/>.
+  /// </summary>
   public partial class TextGraphic : GraphicBase
   {
     #region Regex expressions
@@ -104,15 +107,30 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     #endregion Regex expressions
 
+    /// <summary>
+    /// Walks the parsed text tree and converts it into glyph structures.
+    /// </summary>
     private class TreeWalker
     {
       private string _sourceText;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="TreeWalker"/> class.
+      /// </summary>
+      /// <param name="sourceText">The source text.</param>
       public TreeWalker(string sourceText)
       {
         _sourceText = sourceText;
       }
 
+      /// <summary>
+      /// Visits the parse tree and creates the root glyph.
+      /// </summary>
+      /// <param name="root">The parse-tree root.</param>
+      /// <param name="context">The style context.</param>
+      /// <param name="lineSpacingFactor">The line-spacing factor.</param>
+      /// <param name="isFixedLineSpacing">If set to <c>true</c>, line spacing is fixed.</param>
+      /// <returns>The root structural glyph.</returns>
       public StructuralGlyph VisitTree(PegNode root, StyleContext context, double lineSpacingFactor, bool isFixedLineSpacing)
       {
         var rootGlyph = new VerticalStack(context)

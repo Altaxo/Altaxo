@@ -101,6 +101,7 @@ namespace Altaxo.Main
       _stb = new StringBuilder(from._stb.ToString());
     }
 
+    /// <inheritdoc/>
     object ICloneable.Clone()
     {
       return new TextBackedConsole(this);
@@ -115,6 +116,7 @@ namespace Altaxo.Main
       return new TextBackedConsole(this);
     }
 
+    /// <inheritdoc/>
     public void Write(string value)
     {
       _stb.Append(value);
@@ -200,6 +202,7 @@ namespace Altaxo.Main
       }
     }
 
+    /// <inheritdoc/>
     protected override void OnChanged(EventArgs e)
     {
       PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(nameof(Text)));

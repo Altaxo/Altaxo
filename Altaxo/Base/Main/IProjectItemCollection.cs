@@ -47,9 +47,9 @@ namespace Altaxo.Main
     bool Contains(string itemName);
 
     /// <summary>
-    /// Determines whether the collection contains any project item with the specified name. This must not neccessarily
-    /// a item of the type that this collection stores (some collections can have a shared name dictionary).
-    /// In constrast, use <see cref="Contains(string)"/> to determine if the collection contains an item with the specified name and the native type that the collection stores.
+    /// Determines whether the collection contains any project item with the specified name. This must not necessarily
+    /// be an item of the type that this collection stores, because some collections can have a shared name dictionary.
+    /// In contrast, use <see cref="Contains(string)"/> to determine if the collection contains an item with the specified name and the native type that the collection stores.
     /// </summary>
     /// <param name="itemName">Name of the project item.</param>
     /// <returns>True if the collection contains any project item with the specified name.</returns>
@@ -80,7 +80,7 @@ namespace Altaxo.Main
     IProjectItem this[string projectItemName] { get; }
 
     /// <summary>
-    /// Try to get a project item by name
+    /// Tries to get a project item by name.
     /// </summary>
     /// <param name="projectItemName">Name of the project item.</param>
     /// <param name="projectItem">The project item.</param>

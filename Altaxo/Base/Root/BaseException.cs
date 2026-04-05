@@ -28,18 +28,35 @@ namespace Altaxo
   [Serializable()]
   public class BaseException : Exception
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BaseException"/> class.
+    /// </summary>
     public BaseException() : base()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BaseException"/> class.
+    /// </summary>
+    /// <param name="message">The exception message.</param>
     public BaseException(string message) : base(message)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BaseException"/> class.
+    /// </summary>
+    /// <param name="message">The exception message.</param>
+    /// <param name="innerException">The inner exception.</param>
     public BaseException(string message, Exception innerException) : base(message, innerException)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BaseException"/> class from serialized data.
+    /// </summary>
+    /// <param name="info">The serialization information.</param>
+    /// <param name="context">The streaming context.</param>
     protected BaseException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
     }

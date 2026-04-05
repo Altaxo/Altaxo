@@ -33,19 +33,31 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Data.Selections
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="RowSelectionItemController"/>.
+  /// </summary>
   public interface IRowSelectionItemView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for a single row-selection item.
+  /// </summary>
   public class RowSelectionItemController : MVCANControllerEditImmutableDocBase<IRowSelection, IRowSelectionItemView>
   {
     RowSelectionController _parent;
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_detailsController, () => DetailsController = null);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RowSelectionItemController"/> class.
+    /// </summary>
+    /// <param name="doc">The row selection.</param>
+    /// <param name="parent">The parent controller.</param>
     public RowSelectionItemController(IRowSelection doc, RowSelectionController parent)
     {
       _doc = _originalDoc = doc;
@@ -58,6 +70,9 @@ namespace Altaxo.Gui.Data.Selections
 
     private IMVCANController _detailsController;
 
+    /// <summary>
+    /// Gets or sets the controller for the selection details.
+    /// </summary>
     public IMVCANController DetailsController
     {
       get => _detailsController;
@@ -74,6 +89,9 @@ namespace Altaxo.Gui.Data.Selections
 
     private ItemsController<Type> _rowSelectionTypes;
 
+    /// <summary>
+    /// Gets or sets the available row-selection types.
+    /// </summary>
     public ItemsController<Type> RowSelectionTypes
     {
       get => _rowSelectionTypes;
@@ -88,22 +106,37 @@ namespace Altaxo.Gui.Data.Selections
       }
     }
 
-    ICommand _cmdAddNewSelection;
+    private ICommand _cmdAddNewSelection;
+    /// <summary>
+    /// Gets the command that adds a new selection.
+    /// </summary>
     public ICommand CmdAddNewSelection => _cmdAddNewSelection ??= new RelayCommand(EhAddNewSelection);
 
 
 
-    ICommand _cmdUnindentSelection;
+    private ICommand _cmdUnindentSelection;
+    /// <summary>
+    /// Gets the command that decreases the indentation level.
+    /// </summary>
     public ICommand CmdUnindentSelection => _cmdUnindentSelection ??= new RelayCommand(EhUnindentSelection);
 
-    ICommand _cmdIndentSelection;
+    private ICommand _cmdIndentSelection;
+    /// <summary>
+    /// Gets the command that increases the indentation level.
+    /// </summary>
     public ICommand CmdIndentSelection => _cmdIndentSelection ??= new RelayCommand(EhIndentSelection);
 
-    ICommand _cmdRemoveSelection;
+    private ICommand _cmdRemoveSelection;
+    /// <summary>
+    /// Gets the command that removes the current selection.
+    /// </summary>
     public ICommand CmdRemoveSelection => _cmdRemoveSelection ??= new RelayCommand(EhRemoveSelection);
 
     private int _indentationLevel;
 
+    /// <summary>
+    /// Gets or sets the indentation level.
+    /// </summary>
     public int IndentationLevel
     {
       get => _indentationLevel;
@@ -136,6 +169,9 @@ namespace Altaxo.Gui.Data.Selections
     }
 
 
+    /// <summary>
+    /// Gets or sets the current row selection.
+    /// </summary>
     public IRowSelection RowSelection
     {
       get => _doc;
@@ -155,6 +191,7 @@ namespace Altaxo.Gui.Data.Selections
     SelectableListNodeList _rowSelectionSimpleTypes;
     SelectableListNodeList _rowSelectionCollectionTypes;
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -189,6 +226,7 @@ namespace Altaxo.Gui.Data.Selections
 
    
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if(DetailsController is not null)

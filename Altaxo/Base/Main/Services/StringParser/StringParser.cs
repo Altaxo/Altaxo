@@ -30,8 +30,8 @@ namespace Altaxo.Main.Services
 {
   /// <summary>
   /// This class parses internal ${xyz} tags of #Develop.
-  /// All environment variables are avaible under the name env.[NAME]
-  /// where [NAME] represents the string under which it is avaiable in
+  /// All environment variables are available under the name env.[NAME],
+  /// where [NAME] represents the string under which it is available in
   /// the environment.
   /// </summary>
   public static class StringParser
@@ -60,6 +60,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Escapes all occurrences of '${' to '${$}{'.
     /// </summary>
+    /// <param name="input">The input string.</param>
+    /// <returns>The escaped string.</returns>
     public static string Escape(string input)
     {
       if (input is null)
@@ -77,6 +79,10 @@ namespace Altaxo.Main.Services
       return Parse(input, null);
     }
 
+    /// <summary>
+    /// Registers an unprefixed string-tag provider.
+    /// </summary>
+    /// <param name="tagProvider">The tag provider to register.</param>
     public static void RegisterStringTagProvider(IStringTagProvider tagProvider)
     {
       if (tagProvider is null)
@@ -84,6 +90,11 @@ namespace Altaxo.Main.Services
       stringTagProviders.Push(tagProvider);
     }
 
+    /// <summary>
+    /// Registers a prefixed string-tag provider.
+    /// </summary>
+    /// <param name="prefix">The tag prefix.</param>
+    /// <param name="tagProvider">The tag provider to register.</param>
     public static void RegisterStringTagProvider(string prefix, IStringTagProvider tagProvider)
     {
       if (prefix is null)
@@ -169,6 +180,9 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Evaluates a property using the StringParser. Equivalent to StringParser.Parse("${" + propertyName + "}");
     /// </summary>
+    /// <param name="propertyName">The property name to evaluate.</param>
+    /// <param name="customTags">Optional custom tags.</param>
+    /// <returns>The evaluated value, or <c>null</c> if the property cannot be resolved.</returns>
     public static string? GetValue(string propertyName, params StringTagPair[]? customTags)
     {
       if (propertyName is null)
@@ -284,6 +298,9 @@ namespace Altaxo.Main.Services
     /// <code>return string.Format(StringParser.Parse(formatstring), formatitems);</code>
     /// but additionally includes error handling.
     /// </summary>
+    /// <param name="formatstring">The format string.</param>
+    /// <param name="formatitems">The format arguments.</param>
+    /// <returns>The formatted string.</returns>
     public static string Format(string formatstring, params object[] formatitems)
     {
       try
@@ -320,21 +337,35 @@ namespace Altaxo.Main.Services
     }
   }
 
+  /// <summary>
+  /// Represents a custom string tag and its replacement value.
+  /// </summary>
   public struct StringTagPair
   {
     private readonly string _tag;
     private readonly string _value;
 
+    /// <summary>
+    /// Gets the tag name.
+    /// </summary>
     public string Tag
     {
       get { return _tag; }
     }
 
+    /// <summary>
+    /// Gets the replacement value.
+    /// </summary>
     public string Value
     {
       get { return _value; }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StringTagPair"/> struct.
+    /// </summary>
+    /// <param name="tag">The tag name.</param>
+    /// <param name="value">The replacement value.</param>
     public StringTagPair(string tag, string value)
     {
       this._tag = tag ?? throw new ArgumentNullException(nameof(tag));

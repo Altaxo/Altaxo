@@ -32,6 +32,10 @@ using Altaxo.Graph.Scales.Rescaling;
 
 namespace Altaxo.Graph.Scales
 {
+  /// <summary>
+  /// Represents a scale for text-based categories.
+  /// </summary>
+
   [Serializable]
   [DisplayName("${res:ClassNames.Altaxo.Graph.Scales.TextScale}")]
   public class TextScale : Scale
@@ -39,8 +43,14 @@ namespace Altaxo.Graph.Scales
     /// <summary>Holds the <see cref="TextBoundaries"/> for that axis.</summary>
     protected TextBoundaries _dataBounds;
 
+    /// <summary>
+    /// Holds the rescaling conditions for this scale.
+    /// </summary>
     protected NumericScaleRescaleConditions _rescaling;
 
+    /// <summary>
+    /// Holds the tick spacing for this scale.
+    /// </summary>
     protected Ticks.TickSpacing _tickSpacing;
 
     // cached values
@@ -61,6 +71,7 @@ namespace Altaxo.Graph.Scales
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Scales.TextScale", 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
@@ -75,6 +86,7 @@ namespace Altaxo.Graph.Scales
                 */
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (TextScale?)o ?? new TextScale(info);
@@ -100,6 +112,7 @@ namespace Altaxo.Graph.Scales
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextScale), 2)]
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (TextScale)obj;
@@ -112,6 +125,7 @@ namespace Altaxo.Graph.Scales
         info.AddValue("TickSpacing", s._tickSpacing);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (TextScale?)o ?? new TextScale(info);
@@ -143,6 +157,9 @@ namespace Altaxo.Graph.Scales
     }
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextScale"/> class.
+    /// </summary>
     public TextScale()
     {
       ChildSetMember(ref _dataBounds, new TextBoundaries());
@@ -151,11 +168,19 @@ namespace Altaxo.Graph.Scales
       UpdateTicksAndOrgEndUsingRescalingObject();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextScale"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public TextScale(TextScale from)
     {
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies the state from another <see cref="TextScale"/>.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     [MemberNotNull(nameof(_dataBounds), nameof(_rescaling), nameof(_tickSpacing))]
     protected void CopyFrom(TextScale from)
     {
@@ -175,6 +200,7 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -191,6 +217,7 @@ namespace Altaxo.Graph.Scales
       return false;
     }
 
+    /// <inheritdoc />
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_dataBounds is not null)
@@ -201,11 +228,13 @@ namespace Altaxo.Graph.Scales
         yield return new Main.DocumentNodeAndName(_tickSpacing, () => _tickSpacing = null!, "TickSpacing");
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new TextScale(this);
     }
 
+    /// <inheritdoc />
     public override double PhysicalVariantToNormal(Altaxo.Data.AltaxoVariant x)
     {
       if (x.IsType(Altaxo.Data.AltaxoVariant.Content.VString))
@@ -223,11 +252,13 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     public override Altaxo.Data.AltaxoVariant NormalToPhysicalVariant(double x)
     {
       return new AltaxoVariant(_cachedAxisOrg + x * _cachedAxisSpan);
     }
 
+    /// <inheritdoc />
     public override IScaleRescaleConditions RescalingObject
     {
       get
@@ -236,11 +267,13 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     public override IPhysicalBoundaries DataBoundsObject
     {
       get { return _dataBounds; }
     }
 
+    /// <inheritdoc />
     public override Ticks.TickSpacing TickSpacing
     {
       get
@@ -257,6 +290,7 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     public override Altaxo.Data.AltaxoVariant OrgAsVariant
     {
       get
@@ -265,6 +299,7 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     public override Altaxo.Data.AltaxoVariant EndAsVariant
     {
       get
@@ -273,6 +308,7 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     protected override string? SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
     {
       double o = org.ToDouble();
@@ -299,11 +335,13 @@ namespace Altaxo.Graph.Scales
         EhSelfChanged(EventArgs.Empty);
     }
 
+    /// <inheritdoc />
     public override void OnUserRescaled()
     {
       _rescaling.OnUserRescaled();
     }
 
+    /// <inheritdoc />
     public override void OnUserZoomed(AltaxoVariant newZoomOrg, AltaxoVariant newZoomEnd)
     {
       _rescaling.OnUserZoomed(newZoomOrg, newZoomEnd);
@@ -311,6 +349,7 @@ namespace Altaxo.Graph.Scales
 
     #region Changed event handling
 
+    /// <inheritdoc />
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (object.ReferenceEquals(sender, _dataBounds)) // Data bounds have changed
@@ -346,6 +385,9 @@ namespace Altaxo.Graph.Scales
       return base.HandleHighPriorityChildChangeCases(sender, ref e);
     }
 
+    /// <summary>
+    /// Updates ticks, origin, and end values using the current rescaling object.
+    /// </summary>
     protected void UpdateTicksAndOrgEndUsingRescalingObject()
     {
       if (TickSpacing is null)

@@ -30,21 +30,38 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Graph3D.Viewing
 {
+  /// <summary>
+  /// Specifies the active tool in a 3D graph view.
+  /// </summary>
   public enum GraphToolType
   {
+    /// <summary>No tool is active.</summary>
     None,
+    /// <summary>Selects and manipulates objects.</summary>
     ObjectPointer,
+    /// <summary>Draws an arrow line.</summary>
     ArrowLineDrawing,
+    /// <summary>Draws a single line.</summary>
     SingleLineDrawing,
+    /// <summary>Draws a rectangle.</summary>
     RectangleDrawing,
+    /// <summary>Draws a curly brace.</summary>
     CurlyBraceDrawing,
+    /// <summary>Draws an ellipse.</summary>
     EllipseDrawing,
+    /// <summary>Draws a text object.</summary>
     TextDrawing,
+    /// <summary>Reads plot-item data.</summary>
     ReadPlotItemData,
+    /// <summary>Reads XY coordinates.</summary>
     ReadXYCoordinates,
+    /// <summary>Zooms axes.</summary>
     ZoomAxes,
+    /// <summary>Draws a regular polygon.</summary>
     RegularPolygonDrawing,
+    /// <summary>Draws an open cardinal spline.</summary>
     OpenCardinalSplineDrawing,
+    /// <summary>Draws a closed cardinal spline.</summary>
     ClosedCardinalSplineDrawing,
 
     /// <summary>Edits the grid of the current layer, or if it has no childs, the grid of the parent layer.</summary>

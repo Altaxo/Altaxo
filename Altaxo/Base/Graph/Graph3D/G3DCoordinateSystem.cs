@@ -30,9 +30,15 @@ using Altaxo.Graph;
 
 namespace Altaxo.Graph.Graph3D
 {
+  /// <summary>
+  /// Provides the base implementation for three-dimensional coordinate systems.
+  /// </summary>
   [Serializable]
   public abstract class G3DCoordinateSystem : Altaxo.Graph.ICoordinateSystem, Main.IImmutable
   {
+    /// <summary>
+    /// Stores the size of the layer represented by this coordinate system.
+    /// </summary>
     protected VectorD3D _layerSize;
 
     /// <summary>
@@ -102,10 +108,10 @@ namespace Altaxo.Graph.Graph3D
     public abstract string GetAxisSideName(CSLineID id, CSAxisSide side);
 
     /// <summary>
-    /// Returns an instance of this class, whose rectangular area size was set to the provided value
+    /// Returns a copy of this coordinate system with the specified layer size.
     /// </summary>
-    /// <param name="size">The new size.</param>
-    /// <returns>Instance of this class, whose rectangular area size was set to the provided value.</returns>
+    /// <param name="size">The new layer size.</param>
+    /// <returns>The existing instance if nothing changes; otherwise, a modified copy.</returns>
     public G3DCoordinateSystem WithLayerSize(VectorD3D size)
     {
       if (_layerSize == size)
@@ -188,6 +194,12 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Gets the point on the specified plane at the given logical coordinates.
+    /// </summary>
+    /// <param name="id">The plane identifier.</param>
+    /// <param name="r">The logical coordinates on the plane.</param>
+    /// <returns>The corresponding point in layer coordinates.</returns>
     public PointD3D GetPointOnPlane(CSPlaneID id, Logical3D r)
     {
       PointD3D result;
@@ -201,6 +213,13 @@ namespace Altaxo.Graph.Graph3D
       return result;
     }
 
+    /// <summary>
+    /// Gets the point on the specified plane at the given logical coordinates.
+    /// </summary>
+    /// <param name="id">The plane identifier.</param>
+    /// <param name="logicalFirstOther">The first logical coordinate on the plane.</param>
+    /// <param name="logicalSecondOther">The second logical coordinate on the plane.</param>
+    /// <returns>The corresponding point in layer coordinates.</returns>
     public PointD3D GetPointOnPlane(CSPlaneID id, double logicalFirstOther, double logicalSecondOther)
     {
       PointD3D result;
@@ -354,8 +373,16 @@ namespace Altaxo.Graph.Graph3D
     /// </summary>
     public abstract IEnumerable<CSAxisInformation> AxisStyles { get; }
 
+    /// <summary>
+    /// Gets all plane-style descriptions provided by this coordinate system.
+    /// </summary>
     public abstract IEnumerable<CSPlaneInformation> PlaneStyles { get; }
 
+    /// <summary>
+    /// Gets axis information for the specified style identifier.
+    /// </summary>
+    /// <param name="styleID">The axis-style identifier.</param>
+    /// <returns>The resolved axis information.</returns>
     public CSAxisInformation GetAxisStyleInformation(CSLineID styleID)
     {
       // search for the same axis first, then for the style with the nearest logical value
@@ -424,11 +451,19 @@ namespace Altaxo.Graph.Graph3D
     /// <returns>The name of the provided plane.</returns>
     public abstract string GetNameOfPlane(CSPlaneID planeId);
 
+    /// <summary>
+    /// Gets plane information for the specified plane identifier.
+    /// </summary>
+    /// <param name="planeID">The plane identifier.</param>
+    /// <returns>The corresponding plane information.</returns>
     public CSPlaneInformation GetPlaneInformation(CSPlaneID planeID)
     {
       return new CSPlaneInformation(planeID) { Name = GetNameOfPlane(planeID) };
     }
 
+    /// <summary>
+    /// Returns the union of known axis-style identifiers and the supplied identifier sequences.
+    /// </summary>
     public IEnumerable<CSLineID> GetJoinedAxisStyleIdentifier(IEnumerable<CSLineID> list1, IEnumerable<CSLineID> list2)
     {
       var dict = new Dictionary<CSLineID, object?>();
@@ -464,6 +499,9 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Returns the union of known plane identifiers and the supplied identifier sequences.
+    /// </summary>
     public IEnumerable<CSPlaneID> GetJoinedPlaneIdentifier(IEnumerable<CSLineID> list1, IEnumerable<CSPlaneID> list2)
     {
       var set = new HashSet<CSPlaneID>();

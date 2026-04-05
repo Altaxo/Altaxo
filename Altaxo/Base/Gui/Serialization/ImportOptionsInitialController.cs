@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -29,12 +29,19 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Gui.Serialization
 {
+  /// <summary>
+  /// View interface for editing <see cref="ImportOptionsInitial"/>.
+  /// </summary>
   public interface IImportOptionsInitialView : IDataContextAwareView { }
 
+  /// <summary>
+  /// Controller for editing <see cref="ImportOptionsInitial"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IImportOptionsInitialView))]
   [UserControllerForObject(typeof(ImportOptionsInitial))]
   public class ImportOptionsInitialController : MVCANControllerEditImmutableDocBase<ImportOptionsInitial, IImportOptionsInitialView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(OptionsController, () => OptionsController = null);
@@ -45,6 +52,9 @@ namespace Altaxo.Gui.Serialization
 
     private IMVCANController _optionsController;
 
+    /// <summary>
+    /// Gets or sets the controller for the file-format-specific import options.
+    /// </summary>
     public IMVCANController OptionsController
     {
       get => _optionsController;
@@ -62,6 +72,9 @@ namespace Altaxo.Gui.Serialization
 
     private bool _distributeFilesToSeparateTables;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether files are distributed to separate tables.
+    /// </summary>
     public bool DistributeFilesToSeparateTables
     {
       get => _distributeFilesToSeparateTables;
@@ -77,6 +90,9 @@ namespace Altaxo.Gui.Serialization
 
     private bool _distributeDataPerFileToSeparateTables;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether data per file is distributed to separate tables.
+    /// </summary>
     public bool DistributeDataPerFileToSeparateTables
     {
       get => _distributeDataPerFileToSeparateTables;
@@ -92,6 +108,9 @@ namespace Altaxo.Gui.Serialization
 
     private bool _useMetaDataNameAsTableName;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the metadata name is used as table name.
+    /// </summary>
     public bool UseMetaDataNameAsTableName
     {
       get => _useMetaDataNameAsTableName;
@@ -109,6 +128,7 @@ namespace Altaxo.Gui.Serialization
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -124,6 +144,7 @@ namespace Altaxo.Gui.Serialization
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (!OptionsController.Apply(disposeController))

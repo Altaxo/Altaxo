@@ -32,7 +32,7 @@ using System.Text;
 namespace Altaxo.Graph.Scales.Ticks
 {
   /// <summary>
-  ///
+  /// Represents tick spacing that shows the span between origin and end.
   /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Graph.Scales.Ticks.SpanTickSpacing}")]
   public class SpanTickSpacing : Altaxo.Graph.Scales.Ticks.TickSpacing
@@ -55,6 +55,7 @@ namespace Altaxo.Graph.Scales.Ticks
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SpanTickSpacing), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (SpanTickSpacing)obj;
@@ -65,6 +66,7 @@ namespace Altaxo.Graph.Scales.Ticks
         info.AddValue("TransformationIsMultiply", s._transformationOperationIsMultiply);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (SpanTickSpacing?)o ?? new SpanTickSpacing();
@@ -83,16 +85,24 @@ namespace Altaxo.Graph.Scales.Ticks
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SpanTickSpacing"/> class.
+    /// </summary>
     public SpanTickSpacing()
     {
       _relTickPosition = 0.5;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SpanTickSpacing"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public SpanTickSpacing(SpanTickSpacing from)
       : base(from) // everything is done here, since CopyFrom is virtual!
     {
     }
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -115,16 +125,21 @@ namespace Altaxo.Graph.Scales.Ticks
       return true;
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new SpanTickSpacing(this);
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Gets or sets the relative position of the span tick.
+    /// </summary>
     public double RelativeTickPosition
     {
       get
@@ -137,6 +152,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the end-to-origin ratio is shown instead of the difference.
+    /// </summary>
     public bool ShowEndOrgRatioInsteadOfDifference
     {
       get
@@ -149,6 +167,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Gets or sets the divider used for the transformation.
+    /// </summary>
     public double TransformationDivider
     {
       get
@@ -164,6 +185,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the transformation operation uses multiplication.
+    /// </summary>
     public bool TransformationOperationIsMultiply
     {
       get
@@ -195,11 +219,13 @@ namespace Altaxo.Graph.Scales.Ticks
         return y * _transformationDivider;
     }
 
+    /// <inheritdoc />
     public override bool PreProcessScaleBoundaries(ref Altaxo.Data.AltaxoVariant org, ref Altaxo.Data.AltaxoVariant end, bool isOrgExtendable, bool isEndExtendable)
     {
       return false;
     }
 
+    /// <inheritdoc />
     public override void FinalProcessScaleBoundaries(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end, Altaxo.Graph.Scales.Scale scale)
     {
       _org = org;
@@ -218,11 +244,13 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <inheritdoc />
     public override double[] GetMajorTicksNormal(Scale scale)
     {
       return new double[] { 0, 1 };
     }
 
+    /// <inheritdoc />
     public override Altaxo.Data.AltaxoVariant[] GetMajorTicksAsVariant()
     {
       if (_transformationDivider == 1)
@@ -245,11 +273,13 @@ namespace Altaxo.Graph.Scales.Ticks
       return new Altaxo.Data.AltaxoVariant[] { new Altaxo.Data.AltaxoVariant(string.Empty), new Altaxo.Data.AltaxoVariant(string.Empty) };
     }
 
+    /// <inheritdoc />
     public override double[] GetMinorTicksNormal(Scale scale)
     {
       return new double[] { _relTickPosition };
     }
 
+    /// <inheritdoc />
     public override Altaxo.Data.AltaxoVariant[] GetMinorTicksAsVariant()
     {
       return new Altaxo.Data.AltaxoVariant[] { TransformOriginalToModified(_span) };

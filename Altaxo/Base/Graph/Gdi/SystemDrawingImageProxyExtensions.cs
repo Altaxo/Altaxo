@@ -42,7 +42,7 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     /// <param name="image">The image to convert to a stream.</param>
     /// <param name="format">The format to save the image to the stream.</param>
-    /// <returns></returns>
+    /// <returns>The created memory stream.</returns>
     public static MemoryStream GetStreamFromImage(Image image, ImageFormat format)
     {
       var str = new MemoryStream();
@@ -167,7 +167,7 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     /// <param name="stream">The stream to read from.</param>
     /// <param name="disposeStream">if set to <c>true</c>, the stream is disposed after reading the image; otherwise, the caller is responsible for disposing of the stream.</param>
-    /// <returns></returns>
+    /// <returns>The created image.</returns>
     /// <exception cref="ArgumentNullException">stream</exception>
     public static Image GetImage(Stream stream, bool disposeStream = true)
     {

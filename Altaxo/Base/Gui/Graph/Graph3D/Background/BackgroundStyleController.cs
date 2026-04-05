@@ -31,30 +31,39 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Graph3D.Background
 {
-  
+  /// <summary>
+  /// Provides the view for editing 3D background styles.
+  /// </summary>
   public interface IBackgroundStyleView : IDataContextAwareView
   {
   }
 
- 
   /// <summary>
-  /// Controls a IBackgroundStyle instance. 
+  /// Controls an <see cref="IBackgroundStyle"/> instance.
   /// </summary>
   [UserControllerForObject(typeof(IBackgroundStyle))]
   [ExpectedTypeOfView(typeof(IBackgroundStyleView))]
   public class BackgroundStyleController : MVCANDControllerEditOriginalDocBase<IBackgroundStyle, IBackgroundStyleView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BackgroundStyleController"/> class.
+    /// </summary>
+    /// <param name="doc">The background style to edit.</param>
     public BackgroundStyleController(IBackgroundStyle? doc)
     {
       _doc = doc;
       Initialize(true);
     }
 
+    /// <summary>
+    /// Gets or sets the background style being edited.
+    /// </summary>
     public new IBackgroundStyle? Doc
     {
       get => _doc;
@@ -68,6 +77,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Background
 
     private IMaterial _backgroundMaterial;
 
+    /// <summary>
+    /// Gets or sets the material used for the background.
+    /// </summary>
     public IMaterial BackgroundMaterial
     {
       get => _backgroundMaterial;
@@ -88,6 +100,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Background
 
     private bool _isBackgroundMaterialEnabled;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the background material can be edited.
+    /// </summary>
     public bool IsBackgroundMaterialEnabled
     {
       get => _isBackgroundMaterialEnabled;
@@ -103,6 +118,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Background
 
     private bool _showPlotColorsOnly;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether only plot colors are offered for selection.
+    /// </summary>
     public bool ShowPlotColorsOnly
     {
       get => _showPlotColorsOnly;
@@ -119,6 +137,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Background
 
     private ItemsController<Type?> _backgroundStyles;
 
+    /// <summary>
+    /// Gets or sets the available background style types.
+    /// </summary>
     public ItemsController<Type?> BackgroundStyles
     {
       get => _backgroundStyles;
@@ -134,8 +155,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Background
     }
 
     /// <summary>
-    /// Called if the background style changed.
+    /// Called when the selected background style changes.
     /// </summary>
+    /// <param name="newType">The newly selected background style type.</param>
     public void EhView_BackgroundStyleChanged(Type? newType)
     {
       if (newType is not null)
@@ -167,6 +189,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Background
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       // base.Initialize, but without test if document is null
@@ -200,14 +223,16 @@ namespace Altaxo.Gui.Graph.Graph3D.Background
         IsBackgroundMaterialEnabled = (_doc is not null && _doc.SupportsUserDefinedMaterial);
       }
     }
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);
     }
 
-    /// <summary>
-    /// Overridden because here _doc can be null.
-    /// </summary>
+    /// <inheritdoc />
+    /// <remarks>
+    /// Overridden because <c>_doc</c> can be <see langword="null"/> here.
+    /// </remarks>
     protected override void ThrowIfNotInitialized()
     {
     }

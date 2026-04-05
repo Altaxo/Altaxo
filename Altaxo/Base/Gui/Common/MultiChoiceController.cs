@@ -98,6 +98,9 @@ namespace Altaxo.Gui.Common
     private Exception NoDocumentException => new InvalidOperationException("This controller is not yet initialized with a document!");
 
 
+    /// <summary>
+    /// Initializes the controller state and updates the view.
+    /// </summary>
     protected void Initialize(bool initData)
     {
       if (_doc is null)
@@ -118,6 +121,11 @@ namespace Altaxo.Gui.Common
 
     #region IMVCANController Members
 
+    /// <summary>
+    /// Initializes the controller with the specified document.
+    /// </summary>
+    /// <param name="args">The controller arguments.</param>
+    /// <returns><c>true</c> if initialization succeeded; otherwise, <c>false</c>.</returns>
     public bool InitializeDocument(params object[] args)
     {
       if (args.Length > 0 && args[0] is MultiChoiceList)
@@ -130,6 +138,7 @@ namespace Altaxo.Gui.Common
         return false;
     }
 
+    /// <inheritdoc/>
     public UseDocument UseDocumentCopy
     {
       set { }
@@ -139,6 +148,7 @@ namespace Altaxo.Gui.Common
 
     #region IMVCController Members
 
+    /// <inheritdoc/>
     public object? ViewObject
     {
       get
@@ -155,6 +165,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     public object ModelObject
     {
       get
@@ -166,6 +177,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
     }
@@ -174,6 +186,7 @@ namespace Altaxo.Gui.Common
 
     #region IApplyController Members
 
+    /// <inheritdoc/>
     public bool Apply(bool disposeController)
     {
       return true;
@@ -184,7 +197,7 @@ namespace Altaxo.Gui.Common
     /// </summary>
     /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
     /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    ///   <c>true</c> if the revert operation was successful; otherwise, <c>false</c> if the revert operation was not possible.
     /// </returns>
     public bool Revert(bool disposeController)
     {

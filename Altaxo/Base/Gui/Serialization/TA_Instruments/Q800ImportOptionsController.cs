@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -28,12 +28,19 @@ using Altaxo.Serialization.TA_Instruments;
 
 namespace Altaxo.Gui.Serialization.TA_Instruments
 {
+  /// <summary>
+  /// View interface for editing <see cref="Q800ImportOptions"/>.
+  /// </summary>
   public interface IQ800ImportOptionsView : IDataContextAwareView { }
 
+  /// <summary>
+  /// Controller for editing <see cref="Q800ImportOptions"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IQ800ImportOptionsView))]
   [UserControllerForObject(typeof(Q800ImportOptions))]
   public class Q800ImportOptionsController : MVCANControllerEditImmutableDocBase<Q800ImportOptions, IQ800ImportOptionsView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -43,6 +50,9 @@ namespace Altaxo.Gui.Serialization.TA_Instruments
 
     private bool _convertUnitsToSIUnits;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the imported units are converted to SI units.
+    /// </summary>
     public bool ConvertUnitsToSIUnits
     {
       get => _convertUnitsToSIUnits;
@@ -58,6 +68,9 @@ namespace Altaxo.Gui.Serialization.TA_Instruments
 
     private bool _includeFilePathAsProperty;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the imported file path should be stored as a column property.
+    /// </summary>
     public bool IncludeFilePathAsProperty
     {
       get => _includeFilePathAsProperty;
@@ -73,6 +86,9 @@ namespace Altaxo.Gui.Serialization.TA_Instruments
 
     private ItemsController<MetadataDestination> _metadataDestination;
 
+    /// <summary>
+    /// Gets or sets the destination for imported metadata.
+    /// </summary>
     public ItemsController<MetadataDestination> MetadataDestination
     {
       get => _metadataDestination;
@@ -91,6 +107,7 @@ namespace Altaxo.Gui.Serialization.TA_Instruments
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -103,6 +120,7 @@ namespace Altaxo.Gui.Serialization.TA_Instruments
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = _doc with

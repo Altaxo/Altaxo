@@ -170,6 +170,9 @@ namespace Altaxo.Text.Renderers
       }
     }
 
+    /// <summary>
+    /// Closes the current MAML topic file after writing any deferred navigation links.
+    /// </summary>
     public void CloseCurrentMamlFile()
     {
       if (Writer is not null && _currentElementStack.Count > 0)

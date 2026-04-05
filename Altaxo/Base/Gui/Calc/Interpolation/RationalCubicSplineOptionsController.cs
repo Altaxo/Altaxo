@@ -29,13 +29,17 @@ using Altaxo.Gui.Common.PropertyGrid;
 namespace Altaxo.Gui.Worksheet
 {
   /// <summary>
-  /// Controls the Smoothing parameter of a rational cubic spline.
+  /// Controls options for a rational cubic spline.
   /// </summary>
   [UserControllerForObject(typeof(Altaxo.Calc.Interpolation.RationalCubicSplineOptions), 100)]
   public class RationalCubicSplineOptionsController : PropertyGridController
   {
+    /// <summary>
+    /// Gets the spline options document.
+    /// </summary>
     private RationalCubicSplineOptions Spline => (RationalCubicSplineOptions)_doc;
 
+    /// <inheritdoc/>
     protected override void InitializeValueInfos()
     {
       var controller = new Altaxo.Gui.Common.BasicTypes.NumericDoubleValueController(Spline.Smoothing);
@@ -45,6 +49,7 @@ namespace Altaxo.Gui.Worksheet
       ValueInfos.Add(new ValueInfo("Smoothing parameter p (-0.5<p<0: overshooting; p=0: cubic spline; p=infinity: linear interpolation):", controller));
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       var controller = ValueInfos[0].Controller;

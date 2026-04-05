@@ -50,16 +50,19 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Removes one project file from the collection of recently opened project files.
     /// </summary>
+    /// <param name="fileName">The project file to remove.</param>
     void RemoveRecentProject(PathName fileName);
 
     /// <summary>
     /// Adds a file to the collection of recently opened files (other than project files).
     /// </summary>
+    /// <param name="fileName">The file to add.</param>
     void AddRecentFile(FileName fileName);
 
     /// <summary>
     /// Adds a project file to the collection of recently opened project files.
     /// </summary>
+    /// <param name="fileName">The project file to add.</param>
     void AddRecentProject(PathName fileName);
   }
 }

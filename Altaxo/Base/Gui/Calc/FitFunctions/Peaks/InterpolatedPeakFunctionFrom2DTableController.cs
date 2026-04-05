@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -29,14 +29,21 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Calc.FitFunctions.Peaks
 {
+  /// <summary>
+  /// Defines the view contract for editing <see cref="InterpolatedPeakFunctionFrom2DTable"/>.
+  /// </summary>
   public interface IInterpolatedPeakFunctionFrom2DTableView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="InterpolatedPeakFunctionFrom2DTable"/>.
+  /// </summary>
   [UserControllerForObject(typeof(InterpolatedPeakFunctionFrom2DTable))]
   [ExpectedTypeOfView(typeof(IInterpolatedPeakFunctionFrom2DTableView))]
   public class InterpolatedPeakFunctionFrom2DTableController : MVCANControllerEditImmutableDocBase<InterpolatedPeakFunctionFrom2DTable, IInterpolatedPeakFunctionFrom2DTableView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -45,6 +52,9 @@ namespace Altaxo.Gui.Calc.FitFunctions.Peaks
     #region Bindings
 
 
+    /// <summary>
+    /// Gets or sets the baseline polynomial order.
+    /// </summary>
     public int OrderOfBaselinePolynominal
     {
       get => field;
@@ -59,6 +69,9 @@ namespace Altaxo.Gui.Calc.FitFunctions.Peaks
     }
 
 
+    /// <summary>
+    /// Gets or sets the number of terms.
+    /// </summary>
     public int NumberOfTerms
     {
       get => field;
@@ -73,6 +86,9 @@ namespace Altaxo.Gui.Calc.FitFunctions.Peaks
     }
 
 
+    /// <summary>
+    /// Gets or sets the available table names.
+    /// </summary>
     public ItemsController<string> TableNames
     {
       get => field;
@@ -88,6 +104,9 @@ namespace Altaxo.Gui.Calc.FitFunctions.Peaks
     }
 
 
+    /// <summary>
+    /// Gets or sets the available group numbers of participating columns.
+    /// </summary>
     public ItemsController<int> GroupNumberOfParticipatingColumns
     {
       get => field;
@@ -104,6 +123,9 @@ namespace Altaxo.Gui.Calc.FitFunctions.Peaks
 
 
 
+    /// <summary>
+    /// Gets or sets the available property names.
+    /// </summary>
     public ItemsController<string> NameOfProperties
     {
       get => field;
@@ -120,6 +142,9 @@ namespace Altaxo.Gui.Calc.FitFunctions.Peaks
 
 
     bool _propertyIsWidth;
+    /// <summary>
+    /// Gets or sets a value indicating whether the selected property represents peak width.
+    /// </summary>
     public bool PropertyIsWidth
     {
       get => _propertyIsWidth;
@@ -133,6 +158,9 @@ namespace Altaxo.Gui.Calc.FitFunctions.Peaks
         }
       }
     }
+    /// <summary>
+    /// Gets or sets a value indicating whether the selected property represents peak position.
+    /// </summary>
     public bool PropertyIsPosition
     {
       get => !_propertyIsWidth;
@@ -150,6 +178,7 @@ namespace Altaxo.Gui.Calc.FitFunctions.Peaks
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -205,6 +234,7 @@ namespace Altaxo.Gui.Calc.FitFunctions.Peaks
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = _doc with

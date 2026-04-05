@@ -28,36 +28,111 @@ namespace Altaxo.Main.Services
   [GlobalService("Log", FallbackImplementation = typeof(FallbackLoggingService))]
   public interface ILoggingService
   {
+    /// <summary>
+    /// Writes a debug message.
+    /// </summary>
+    /// <param name="message">The message to log.</param>
     void Debug(object message);
 
+    /// <summary>
+    /// Writes a formatted debug message.
+    /// </summary>
+    /// <param name="format">The composite format string.</param>
+    /// <param name="args">The format arguments.</param>
     void DebugFormatted(string format, params object[] args);
 
+    /// <summary>
+    /// Writes an informational message.
+    /// </summary>
+    /// <param name="message">The message to log.</param>
     void Info(object message);
 
+    /// <summary>
+    /// Writes a formatted informational message.
+    /// </summary>
+    /// <param name="format">The composite format string.</param>
+    /// <param name="args">The format arguments.</param>
     void InfoFormatted(string format, params object[] args);
 
+    /// <summary>
+    /// Writes a warning message.
+    /// </summary>
+    /// <param name="message">The message to log.</param>
     void Warn(object message);
 
+    /// <summary>
+    /// Writes a warning message together with an exception.
+    /// </summary>
+    /// <param name="message">The message to log.</param>
+    /// <param name="exception">The related exception.</param>
     void Warn(object message, Exception exception);
 
+    /// <summary>
+    /// Writes a formatted warning message.
+    /// </summary>
+    /// <param name="format">The composite format string.</param>
+    /// <param name="args">The format arguments.</param>
     void WarnFormatted(string format, params object[] args);
 
+    /// <summary>
+    /// Writes an error message.
+    /// </summary>
+    /// <param name="message">The message to log.</param>
     void Error(object message);
 
+    /// <summary>
+    /// Writes an error message together with an exception.
+    /// </summary>
+    /// <param name="message">The message to log.</param>
+    /// <param name="exception">The related exception.</param>
     void Error(object message, Exception exception);
 
+    /// <summary>
+    /// Writes a formatted error message.
+    /// </summary>
+    /// <param name="format">The composite format string.</param>
+    /// <param name="args">The format arguments.</param>
     void ErrorFormatted(string format, params object[] args);
 
+    /// <summary>
+    /// Writes a fatal message.
+    /// </summary>
+    /// <param name="message">The message to log.</param>
     void Fatal(object message);
 
+    /// <summary>
+    /// Writes a fatal message together with an exception.
+    /// </summary>
+    /// <param name="message">The message to log.</param>
+    /// <param name="exception">The related exception.</param>
     void Fatal(object message, Exception? exception);
 
+    /// <summary>
+    /// Writes a formatted fatal message.
+    /// </summary>
+    /// <param name="format">The composite format string.</param>
+    /// <param name="args">The format arguments.</param>
     void FatalFormatted(string format, params object[] args);
 
+    /// <summary>
+    /// Gets a value indicating whether debug logging is enabled.
+    /// </summary>
     bool IsDebugEnabled { get; }
+    /// <summary>
+    /// Gets a value indicating whether informational logging is enabled.
+    /// </summary>
     bool IsInfoEnabled { get; }
+    /// <summary>
+    /// Gets a value indicating whether warning logging is enabled.
+    /// </summary>
     bool IsWarnEnabled { get; }
+    /// <summary>
+    /// Gets a value indicating whether error logging is enabled.
+    /// </summary>
     bool IsErrorEnabled { get; }
+    /// <summary>
+    /// Gets a value indicating whether fatal logging is enabled.
+    /// </summary>
     bool IsFatalEnabled { get; }
   }
 

@@ -104,14 +104,14 @@ namespace Altaxo.Serialization
       }
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     protected abstract override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName();
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public abstract void VisitDocumentReferences(Main.DocNodeProxyReporter ReportProxies);
 
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     protected override void OnResume(int eventCount)
     {
       base.OnResume(eventCount);
@@ -122,7 +122,7 @@ namespace Altaxo.Serialization
         UpdateWatching(); // Compromise - we update only if the watch is off
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter reporter)
     {
       var validFileNames = _files.Select(x => x.GetResolvedFileNameOrNull()).OfType<string>().Where(x => !string.IsNullOrEmpty(x)).ToArray();
@@ -202,7 +202,7 @@ namespace Altaxo.Serialization
       }
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public virtual object ProcessDataObject
     {
       get => SourceFileNames;
@@ -214,7 +214,7 @@ namespace Altaxo.Serialization
     /// </summary>
     public int SourceFileNameCount => _files.Count;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override IDataSourceImportOptions ImportOptions
     {
       get => _importOptions;
@@ -231,7 +231,7 @@ namespace Altaxo.Serialization
       }
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public abstract object ProcessOptionsObject { get; set; }
 
     /// <summary>

@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -41,7 +41,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
 
   /// <summary>
-  /// This view interface is for showing the options of the XYXYPlotScatterStyle
+  /// Provides the view contract for <see cref="ScatterPlotStyleController"/>.
   /// </summary>
   public interface IScatterPlotStyleView : IDataContextAwareView
   {
@@ -49,7 +49,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 
   /// <summary>
-  /// Summary description for XYPlotScatterStyleController.
+  /// Controller for <see cref="ScatterPlotStyle"/>.
   /// </summary>
   [UserControllerForObject(typeof(ScatterPlotStyle))]
   [ExpectedTypeOfView(typeof(IScatterPlotStyleView))]
@@ -60,11 +60,15 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_overriddenPlotColorInfluence, () => OverriddenPlotColorInfluence = null);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScatterPlotStyleController"/> class.
+    /// </summary>
     public ScatterPlotStyleController()
     {
       CmdCreateNewScatterSymbolSet = new RelayCommand(EhCreateNewSymbolSetFromOverrides);
@@ -74,6 +78,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _enableMain = true;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool EnableMain
     {
       get => _enableMain;
@@ -90,6 +97,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _independentSkipFrequency;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool IndependentSkipFrequency
     {
       get => _independentSkipFrequency;
@@ -105,6 +115,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private int _skipFrequency;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public int SkipFrequency
     {
       get => _skipFrequency;
@@ -120,6 +133,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _ignoreMissingDataPoints;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool IgnoreMissingDataPoints
     {
       get => _ignoreMissingDataPoints;
@@ -136,6 +152,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _independentOnShiftingGroupStyles;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool IndependentOnShiftingGroupStyles
     {
       get => _independentOnShiftingGroupStyles;
@@ -151,6 +170,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _independentScatterSymbol;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool IndependentScatterSymbol
     {
       get => _independentScatterSymbol;
@@ -171,6 +193,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     /// </summary>
     private IScatterSymbol _scatterSymbol;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public IScatterSymbol ScatterSymbol
     {
       get => _scatterSymbol;
@@ -207,6 +232,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _independentColor;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool IndependentColor
     {
       get => _independentColor;
@@ -251,6 +279,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     /// </summary>
     private bool _showPlotColorsOnly;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool ShowPlotColorsOnly
     {
       get => _showPlotColorsOnly;
@@ -284,6 +315,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the s ym bo ls iz ee nv ir on me nt.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment SymbolSizeEnvironment => LineCapSizeEnvironment.Instance;
 
 
@@ -307,6 +341,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _overrideInset;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool OverrideInset
     {
       get => _overrideInset;
@@ -322,6 +359,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private ItemsController<Type?> _insets;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public ItemsController<Type?> Insets
     {
       get => _insets;
@@ -338,6 +378,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _overrideFrame;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool OverrideFrame
     {
       get => _overrideFrame;
@@ -353,6 +396,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private ItemsController<Type?> _frames;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public ItemsController<Type?> Frames
     {
       get => _frames;
@@ -371,6 +417,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _overrideAbsoluteStructureWidth;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool OverrideAbsoluteStructureWidth
     {
       get => _overrideAbsoluteStructureWidth;
@@ -384,10 +433,16 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the a bs ol ut ew id th en vi ro nm en t.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment AbsoluteWidthEnvironment => SizeEnvironment.Instance;
 
     private DimensionfulQuantity _overriddenAbsoluteStructureWidth;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity OverriddenAbsoluteStructureWidth
     {
       get => _overriddenAbsoluteStructureWidth;
@@ -404,6 +459,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _overrideRelativeStructureWidth;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool OverrideRelativeStructureWidth
     {
       get => _overrideRelativeStructureWidth;
@@ -417,11 +475,17 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the r el at iv ew id th en vi ro nm en t.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment RelativeWidthEnvironment => RelationEnvironment.Instance;
 
 
     private DimensionfulQuantity _overriddenRelativeStructureWidth;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity OverriddenRelativeStructureWidth
     {
       get => _overriddenRelativeStructureWidth;
@@ -439,6 +503,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _overridePlotColorInfluence;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool OverridePlotColorInfluence
     {
       get => _overridePlotColorInfluence;
@@ -455,6 +522,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private PlotColorInfluenceController _overriddenPlotColorInfluence;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public PlotColorInfluenceController OverriddenPlotColorInfluence
     {
       get => _overriddenPlotColorInfluence;
@@ -472,6 +542,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _overrideFillColor;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool OverrideFillColor
     {
       get => _overrideFillColor;
@@ -487,6 +560,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private NamedColor _OverriddenFillColor;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public NamedColor OverriddenFillColor
     {
       get => _OverriddenFillColor;
@@ -503,6 +579,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _overrideFrameColor;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool OverrideFrameColor
     {
       get => _overrideFrameColor;
@@ -518,6 +597,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private NamedColor _overriddenFrameColor;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public NamedColor OverriddenFrameColor
     {
       get => _overriddenFrameColor;
@@ -534,6 +616,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _overrideInsetColor;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool OverrideInsetColor
     {
       get => _overrideInsetColor;
@@ -549,6 +634,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private NamedColor _overriddenInsetColor;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public NamedColor OverriddenInsetColor
     {
       get => _overriddenInsetColor;
@@ -562,6 +650,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the c md cr ea te ne ws ca tt er sy mb ol se t.
+    /// </summary>
     public ICommand CmdCreateNewScatterSymbolSet { get; }
 
     private bool _areOverridesExpanded;
@@ -585,6 +676,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     #endregion
 
+ 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       _colorGroupStyleTracker = null;
@@ -592,6 +685,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       base.Dispose(isDisposing);
     }
 
+ 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -667,6 +762,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
     }
 
+ 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       // bool applyResult = true;

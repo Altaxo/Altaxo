@@ -27,10 +27,14 @@ using Altaxo.Data;
 
 namespace Altaxo.Gui.Data
 {
+  /// <summary>
+  /// Controller for <see cref="DecomposeByColumnContentDataSource"/>.
+  /// </summary>
   [UserControllerForObject(typeof(DecomposeByColumnContentDataSource))]
   public class DecomposeByColumnContentDataSourceController : DataSourceControllerBase<DecomposeByColumnContentDataSource>
   {
 
+    /// <inheritdoc />
     protected override IMVCANController GetProcessDataController()
     {
       var processDataController = new DecomposeByColumnContentDataController() { UseDocumentCopy = UseDocument.Directly };

@@ -30,6 +30,9 @@ using System.Text;
 
 namespace Altaxo.Drawing.DashPatterns
 {
+  /// <summary>
+  /// Built-in solid dash pattern.
+  /// </summary>
   public class Solid : DashPatternBase
   {
     /// <summary>
@@ -57,6 +60,7 @@ namespace Altaxo.Drawing.DashPatterns
       }
     }
 
+    /// <inheritdoc/>
     public override double this[int index]
     {
       get
@@ -80,6 +84,7 @@ namespace Altaxo.Drawing.DashPatterns
       }
     }
 
+    /// <inheritdoc/>
     public override int Count
     {
       get

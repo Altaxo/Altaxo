@@ -31,37 +31,46 @@ using Altaxo.Data;
 
 namespace Altaxo.Graph.Scales.Ticks
 {
+  /// <summary>
+  /// Provides the abstract base class for numeric tick-spacing implementations.
+  /// </summary>
   public abstract class NumericTickSpacing : TickSpacing
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NumericTickSpacing"/> class.
+    /// </summary>
     public NumericTickSpacing()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NumericTickSpacing"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public NumericTickSpacing(NumericTickSpacing from)
       : base(from) // everything is done here, since CopyFrom is virtual!
     {
     }
 
     /// <summary>
-    /// Returns the physical values
-    /// at which major ticks should occur
+    /// Returns the physical values at which major ticks should occur.
     /// </summary>
     /// <returns>physical values for the major ticks</returns>
     public virtual double[] GetMajorTicks()
     {
-      return new double[] { }; // return a empty array per default
+      return new double[] { }; // return an empty array by default
     }
 
     /// <summary>
-    /// GetMinorTicks returns the physical values
-    /// at which minor ticks should occur
+    /// Returns the physical values at which minor ticks should occur.
     /// </summary>
     /// <returns>physical values for the minor ticks</returns>
     public virtual double[] GetMinorTicks()
     {
-      return new double[] { }; // return a empty array per default
+      return new double[] { }; // return an empty array by default
     }
 
+    /// <inheritdoc />
     public override double[] GetMajorTicksNormal(Scale scale)
     {
       double[] ticks = GetMajorTicks();
@@ -72,6 +81,7 @@ namespace Altaxo.Graph.Scales.Ticks
       return ticks;
     }
 
+    /// <inheritdoc />
     public override double[] GetMinorTicksNormal(Scale scale)
     {
       double[] ticks = GetMinorTicks();
@@ -82,6 +92,7 @@ namespace Altaxo.Graph.Scales.Ticks
       return ticks;
     }
 
+    /// <inheritdoc />
     public override AltaxoVariant[] GetMajorTicksAsVariant()
     {
       double[] ticks = GetMajorTicks();
@@ -91,6 +102,7 @@ namespace Altaxo.Graph.Scales.Ticks
       return vticks;
     }
 
+    /// <inheritdoc />
     public override AltaxoVariant[] GetMinorTicksAsVariant()
     {
       double[] ticks = GetMinorTicks();

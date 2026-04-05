@@ -45,6 +45,13 @@ namespace Altaxo.Worksheet.Commands
   /// </summary>
   public class PlotCommands
   {
+    /// <summary>
+    /// Creates plot items from the selected worksheet columns.
+    /// </summary>
+    /// <param name="table">The source table.</param>
+    /// <param name="selectedColumns">The selected column indices.</param>
+    /// <param name="templatePlotStyle">The template plot style.</param>
+    /// <returns>The created plot items.</returns>
     public static List<IGPlotItem> CreatePlotItems(DataTable table, IAscendingIntegerCollection selectedColumns, G2DPlotStyleCollection templatePlotStyle)
     {
       var selColumns = new List<DataColumn>(selectedColumns.Count);
@@ -54,6 +61,13 @@ namespace Altaxo.Worksheet.Commands
       return CreatePlotItems(selColumns, templatePlotStyle, table.GetPropertyContext());
     }
 
+    /// <summary>
+    /// Creates a list of plot items from data columns, using a template plot style.
+    /// </summary>
+    /// <param name="selectedColumns">Columns for which to create plot items.</param>
+    /// <param name="templatePlotStyle">The template plot style used to create the basic plot item.</param>
+    /// <param name="context">Property context used to determine default values, e.g. for the pen width or symbol size.</param>
+    /// <returns>List of plot items created.</returns>
     public static List<IGPlotItem> CreatePlotItems(IEnumerable<DataColumn> selectedColumns, G2DPlotStyleCollection templatePlotStyle, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       return CreatePlotItems(selectedColumns, templatePlotStyle, new HashSet<DataColumn>(), context);
@@ -64,7 +78,7 @@ namespace Altaxo.Worksheet.Commands
     /// </summary>
     /// <param name="selectedColumns">Columns for which to create plot items.</param>
     /// <param name="templatePlotStyle">The template plot style used to create the basic plot item.</param>
-    /// <param name="processedColumns">On return, contains all columns that where used in creating the plot items. That are
+    /// <param name="processedColumns">On return, contains all columns that were used in creating the plot items. These are
     /// not only the columns given in the first argument, but maybe also columns that are right to those columns in the table and have special kinds, like
     /// labels, yerr, and so on.</param>
     /// <param name="context">Property context used to determine default values, e.g. for the pen width or symbol size.</param>
@@ -80,7 +94,7 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="selectedColumns">Columns for which to create plot items.</param>
     /// <param name="xColumnName">Name of the x column. If it is null or empty, or that column is not found in the table, the current assigned x column is used.</param>
     /// <param name="templatePlotStyle">The template plot style used to create the basic plot item.</param>
-    /// <param name="processedColumns">On return, contains all columns that where used in creating the plot items. That are
+    /// <param name="processedColumns">On return, contains all columns that were used in creating the plot items. These are
     /// not only the columns given in the first argument, but maybe also columns that are right to those columns in the table and have special kinds, like
     /// labels, yerr, and so on.</param>
     /// <param name="context">Property context used to determine default values, e.g. for the pen width or symbol size.</param>
@@ -185,6 +199,11 @@ namespace Altaxo.Worksheet.Commands
 
     #region Predefined plot style collections
 
+    /// <summary>
+    /// Gets a plot style collection with a line style.
+    /// </summary>
+    /// <param name="context">The property context used for style initialization.</param>
+    /// <returns>A plot style collection containing a line style.</returns>
     public static G2DPlotStyleCollection PlotStyle_Line(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       var result = new G2DPlotStyleCollection
@@ -194,6 +213,11 @@ namespace Altaxo.Worksheet.Commands
       return result;
     }
 
+    /// <summary>
+    /// Gets a plot style collection with a symbol (scatter) style.
+    /// </summary>
+    /// <param name="context">The property context used for style initialization.</param>
+    /// <returns>A plot style collection containing a symbol (scatter) style.</returns>
     public static G2DPlotStyleCollection PlotStyle_Symbol(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       var result = new G2DPlotStyleCollection
@@ -203,6 +227,11 @@ namespace Altaxo.Worksheet.Commands
       return result;
     }
 
+    /// <summary>
+    /// Gets a plot style collection with both line and symbol styles.
+    /// </summary>
+    /// <param name="context">The property context used for style initialization.</param>
+    /// <returns>A plot style collection containing both line and symbol styles.</returns>
     public static G2DPlotStyleCollection PlotStyle_Line_Symbol(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       var result = new G2DPlotStyleCollection
@@ -213,6 +242,11 @@ namespace Altaxo.Worksheet.Commands
       return result;
     }
 
+    /// <summary>
+    /// Gets a plot style collection with a line and an area style.
+    /// </summary>
+    /// <param name="context">The property context used for style initialization.</param>
+    /// <returns>A plot style collection containing a line and an area style.</returns>
     public static G2DPlotStyleCollection PlotStyle_LineArea(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       var result = new G2DPlotStyleCollection();
@@ -223,6 +257,11 @@ namespace Altaxo.Worksheet.Commands
       return result;
     }
 
+    /// <summary>
+    /// Gets a plot style collection with a bar style.
+    /// </summary>
+    /// <param name="context">The property context used for style initialization.</param>
+    /// <returns>A plot style collection containing a bar style.</returns>
     public static G2DPlotStyleCollection PlotStyle_Bar(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       var result = new G2DPlotStyleCollection();
@@ -235,6 +274,9 @@ namespace Altaxo.Worksheet.Commands
 
     #region Predefined group styles
 
+    /// <summary>
+    /// Gets a group-style collection for color and line grouping.
+    /// </summary>
     public static PlotGroupStyleCollection GroupStyle_Color_Line
     {
       get
@@ -249,6 +291,9 @@ namespace Altaxo.Worksheet.Commands
       }
     }
 
+    /// <summary>
+    /// Gets a group-style collection for stacked color and line grouping.
+    /// </summary>
     public static PlotGroupStyleCollection GroupStyle_Stack_Color_Line
     {
       get
@@ -259,6 +304,9 @@ namespace Altaxo.Worksheet.Commands
       }
     }
 
+    /// <summary>
+    /// Gets a group-style collection for relatively stacked color and line grouping.
+    /// </summary>
     public static PlotGroupStyleCollection GroupStyle_RelativeStack_Color_Line
     {
       get
@@ -269,6 +317,9 @@ namespace Altaxo.Worksheet.Commands
       }
     }
 
+    /// <summary>
+    /// Gets a group-style collection for waterfall color and line grouping.
+    /// </summary>
     public static PlotGroupStyleCollection GroupStyle_Waterfall_Color_Line
     {
       get
@@ -279,6 +330,9 @@ namespace Altaxo.Worksheet.Commands
       }
     }
 
+    /// <summary>
+    /// Gets a group-style collection for color and symbol grouping.
+    /// </summary>
     public static PlotGroupStyleCollection GroupStyle_Color_Symbol
     {
       get
@@ -293,6 +347,9 @@ namespace Altaxo.Worksheet.Commands
       }
     }
 
+    /// <summary>
+    /// Gets a group-style collection for color, line, and symbol grouping.
+    /// </summary>
     public static PlotGroupStyleCollection GroupStyle_Color_Line_Symbol
     {
       get
@@ -309,6 +366,9 @@ namespace Altaxo.Worksheet.Commands
       }
     }
 
+    /// <summary>
+    /// Gets a group-style collection for bar plots.
+    /// </summary>
     public static PlotGroupStyleCollection GroupStyle_Bar
     {
       get
@@ -323,6 +383,9 @@ namespace Altaxo.Worksheet.Commands
       }
     }
 
+    /// <summary>
+    /// Gets a group-style collection for stacked bar plots.
+    /// </summary>
     public static PlotGroupStyleCollection GroupStyle_Stack_Bar
     {
       get
@@ -339,6 +402,9 @@ namespace Altaxo.Worksheet.Commands
       }
     }
 
+    /// <summary>
+    /// Gets a group-style collection for relatively stacked bar plots.
+    /// </summary>
     public static PlotGroupStyleCollection GroupStyle_RelativeStack_Bar
     {
       get

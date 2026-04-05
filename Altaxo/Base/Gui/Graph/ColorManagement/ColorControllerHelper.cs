@@ -33,6 +33,9 @@ using Altaxo.Drawing.ColorManagement;
 
 namespace Altaxo.Gui.Graph.ColorManagement
 {
+  /// <summary>
+  /// Helper methods for graph color-selection controllers.
+  /// </summary>
   internal class ColorControllerHelper
   {
     #region Inner class
@@ -42,6 +45,10 @@ namespace Altaxo.Gui.Graph.ColorManagement
     /// </summary>
     private class NGTreeNodeForColorSet : NGTreeNode
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NGTreeNodeForColorSet"/> class.
+        /// </summary>
+        /// <param name="colorSet">The color set represented by the node.</param>
       public NGTreeNodeForColorSet(IColorSet colorSet)
         : base(true)
       {
@@ -49,6 +56,9 @@ namespace Altaxo.Gui.Graph.ColorManagement
         _text = colorSet.Name;
       }
 
+        /// <summary>
+        /// Loads child nodes for the color set.
+        /// </summary>
       protected override void LoadChildren()
       {
         base.LoadChildren();

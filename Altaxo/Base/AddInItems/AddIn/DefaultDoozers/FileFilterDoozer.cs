@@ -37,10 +37,7 @@ namespace Altaxo.AddInItems
   /// </returns>
   public class FileFilterDoozer : IDoozer
   {
-    /// <summary>
-    /// Gets if the doozer handles codon conditions on its own.
-    /// If this property return false, the item is excluded when the condition is not met.
-    /// </summary>
+    /// <inheritdoc/>
     public bool HandleConditions
     {
       get
@@ -49,6 +46,7 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <inheritdoc/>
     public object BuildItem(BuildItemArgs args)
     {
       Codon codon = args.Codon;
@@ -61,16 +59,29 @@ namespace Altaxo.AddInItems
     }
   }
 
+  /// <summary>
+  /// Describes a file filter entry for file dialogs.
+  /// </summary>
   public sealed class FileFilterDescriptor
   {
+    /// <summary>
+    /// Gets or sets the display name of the filter.
+    /// </summary>
     public string Name { get; set; } = string.Empty;
+    /// <summary>
+    /// Gets or sets the file extensions that belong to the filter.
+    /// </summary>
     public string Extensions { get; set; } = string.Empty;
+    /// <summary>
+    /// Gets or sets the MIME type associated with the filter.
+    /// </summary>
     public string MimeType { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets whether this descriptor matches the specified file extension.
     /// </summary>
-    /// <param name="extension">File extension starting with '.'</param>
+    /// <param name="extension">The file extension starting with <c>.</c>.</param>
+    /// <returns><see langword="true"/> if the descriptor contains the specified extension; otherwise, <see langword="false"/>.</returns>
     public bool ContainsExtension(string extension)
     {
       if (string.IsNullOrEmpty(extension))
@@ -82,6 +93,7 @@ namespace Altaxo.AddInItems
       return matchLength == Extensions.Length || Extensions[matchLength] == ';';
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return Name + "|" + Extensions;

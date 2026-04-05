@@ -32,6 +32,9 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D.Camera
 {
+  /// <summary>
+  /// Represents an orthographic camera for three-dimensional graphs.
+  /// </summary>
   public class OrthographicCamera : CameraBase
   {
     #region Serialization
@@ -39,9 +42,13 @@ namespace Altaxo.Graph.Graph3D.Camera
     /// <summary>
     /// 2015-11-14 initial version.
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="OrthographicCamera"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(OrthographicCamera), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (OrthographicCamera)obj;
@@ -53,6 +60,7 @@ namespace Altaxo.Graph.Graph3D.Camera
         info.AddValue("Width", s._widthAtZNear);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (OrthographicCamera?)o ?? new OrthographicCamera();
@@ -68,11 +76,23 @@ namespace Altaxo.Graph.Graph3D.Camera
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OrthographicCamera"/> class.
+    /// </summary>
     public OrthographicCamera()
             : base(new VectorD3D(0, 0, 1), new PointD3D(0, 0, -1500), new PointD3D(0, 0, 0), 150, 3000, 1000)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OrthographicCamera"/> class.
+    /// </summary>
+    /// <param name="upVector">The up vector.</param>
+    /// <param name="eyePosition">The eye position.</param>
+    /// <param name="targetPosition">The target position.</param>
+    /// <param name="zNear">The near clipping distance.</param>
+    /// <param name="zFar">The far clipping distance.</param>
+    /// <param name="widthAtZNear">The view width at the near plane.</param>
     public OrthographicCamera(VectorD3D upVector, PointD3D eyePosition, PointD3D targetPosition, double zNear, double zFar, double widthAtZNear)
             : base(upVector, eyePosition, targetPosition, zNear, zFar, widthAtZNear)
     {
@@ -86,6 +106,7 @@ namespace Altaxo.Graph.Graph3D.Camera
     /// <value>
     /// The width of the view field at target distance.
     /// </value>
+    /// <inheritdoc/>
     public override double WidthAtTargetDistance
     {
       get
@@ -102,6 +123,7 @@ namespace Altaxo.Graph.Graph3D.Camera
     /// <returns>
     /// A new instance of the camera with  <see cref="CameraBase.ZNear" /> and <see cref="CameraBase.ZFar" /> set to the provided values. The <see cref="WidthAtTargetDistance" /> is adjusted so that the view angle of the camera is not changed.
     /// </returns>
+    /// <inheritdoc/>
     public override CameraBase WithZNearZFarWithoutChangingViewAngle(double zNear, double zFar)
     {
       if (zNear == _zNear && zFar == _zFar)
@@ -160,6 +182,7 @@ namespace Altaxo.Graph.Graph3D.Camera
     /// </summary>
     /// <param name="aspectRatio">The aspect ratio of the screen (or whatever the 2D output medium is).</param>
     /// <returns>The LookAtRH matrix multiplied with the OrthoRH matrix.</returns>
+    /// <inheritdoc/>
     public override Matrix4x4 GetViewProjectionMatrix(double aspectRatio)
     {
       return GetViewProjectionMatrix(aspectRatio, ZNear, ZFar, ScreenOffset.X, ScreenOffset.Y);
@@ -197,6 +220,7 @@ namespace Altaxo.Graph.Graph3D.Camera
     /// <returns>
     /// Matrix which transforms world coordinates in that way that the hit ray in world coordinates is transformed to x=0 and y=0 and z being the distance to the camera.
     /// </returns>
+    /// <inheritdoc/>
     public override Matrix4x4 GetHitRayMatrix(PointD3D relativeScreenPosition)
     {
       double relX = relativeScreenPosition.X * 2 - 1; // relative Screen Position from -1..1

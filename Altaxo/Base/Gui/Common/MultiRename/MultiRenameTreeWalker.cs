@@ -29,12 +29,20 @@ using Altaxo.Main.PegParser;
 
 namespace Altaxo.Gui.Common.MultiRename
 {
+  /// <summary>
+  /// Walks the parsed multi-rename syntax tree and creates rename elements.
+  /// </summary>
   internal class MultiRenameTreeWalker
   {
     private string _sourceText;
     private MultiRenameData _renameData;
     private PegNode _tree;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MultiRenameTreeWalker"/> class.
+    /// </summary>
+    /// <param name="sourceText">The source pattern text.</param>
+    /// <param name="data">The rename data used to resolve shortcuts.</param>
     public MultiRenameTreeWalker(string sourceText, MultiRenameData data)
     {
       _sourceText = sourceText;
@@ -46,6 +54,10 @@ namespace Altaxo.Gui.Common.MultiRename
       _tree = parser.GetRoot();
     }
 
+    /// <summary>
+    /// Visits the parse tree and builds the corresponding rename element structure.
+    /// </summary>
+    /// <returns>The root rename element.</returns>
     public IMultiRenameElement VisitTree()
     {
       var result = new MultiRenameElementCollection();

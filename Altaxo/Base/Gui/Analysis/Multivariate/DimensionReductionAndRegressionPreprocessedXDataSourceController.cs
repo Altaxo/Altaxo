@@ -29,11 +29,13 @@ using Altaxo.Gui.Data;
 
 namespace Altaxo.Gui.Analysis.Multivariate
 {
-  
-
+  /// <summary>
+  /// Controller for <see cref="DimensionReductionAndRegressionPreprocessedXDataSource"/>.
+  /// </summary>
   [UserControllerForObject(typeof(DimensionReductionAndRegressionPreprocessedXDataSource))]
   public class DimensionReductionAndRegressionPreprocessedXDataSourceController : DataSourceControllerBase<DimensionReductionAndRegressionPreprocessedXDataSource>
   {
+    /// <inheritdoc />
     protected override IMVCANController GetProcessDataController()
     {
 

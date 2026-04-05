@@ -32,14 +32,14 @@ using System.Threading.Tasks;
 namespace Altaxo.Main.Services
 {
   /// <summary>
-  /// Interface to a service that auto update the application.
+  /// Defines a service that can install application updates.
   /// </summary>
   public interface IAutoUpdateInstallationService
   {
-    /// <summary>Starts the installer program, when all presumtions are fullfilled.</summary>
+    /// <summary>Starts the installer program when all prerequisites are fulfilled.</summary>
     /// <param name="isApplicationCurrentlyStarting">If set to <c>true</c>, the application will be restarted after the installation is done.</param>
     /// <param name="commandLineArgs">Original command line arguments. Can be <c>null</c> when calling this function on shutdown.</param>
-    /// <returns>True if the installer program was started. Then the application have to be shut down immediately. Returns <c>false</c> if the installer program was not started.</returns>
+    /// <returns><c>true</c> if the installer program was started and the application must shut down immediately; otherwise, <c>false</c>.</returns>
     bool Run(bool isApplicationCurrentlyStarting, string[]? commandLineArgs);
   }
 }

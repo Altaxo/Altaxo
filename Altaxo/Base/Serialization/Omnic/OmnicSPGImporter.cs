@@ -38,19 +38,19 @@ namespace Altaxo.Serialization.Omnic
   public record OmnicSPGImporter : DataFileImporterBase, Main.IImmutable
   {
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
     {
       return ([".spg"], "Omnic spectrum group files (*.spg)");
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override object CheckOrCreateImportOptions(object? importOptions)
     {
       return (importOptions as OmnicSPGImportOptions) ?? new OmnicSPGImportOptions();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override double GetProbabilityForBeingThisFileFormat(string fileName)
     {
       double p = 0;
@@ -78,7 +78,7 @@ namespace Altaxo.Serialization.Omnic
     }
 
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override IAltaxoTableDataSource? CreateTableDataSource(IReadOnlyList<string> fileNames, object importOptions)
     {
       return new OmnicSPGImportDataSource(fileNames, (OmnicSPGImportOptions)importOptions);
@@ -111,6 +111,8 @@ namespace Altaxo.Serialization.Omnic
     /// </summary>
     /// <param name="filenames">An array of filenames to import.</param>
     /// <param name="table">The table the spectra should be imported to.</param>
+    /// <param name="importOptionsObj">The import options object.</param>
+    /// <param name="attachDataSource">Whether to attach a data source to the imported table.</param>
     /// <returns>Null if no error occurs, or an error description.</returns>
     public override string? Import(IReadOnlyList<string> filenames, Altaxo.Data.DataTable table, object importOptionsObj, bool attachDataSource = true)
     {
@@ -139,7 +141,7 @@ namespace Altaxo.Serialization.Omnic
           }
           catch (Exception ex)
           {
-            errorList.AppendLine($"Error reading file {filename} with the {typeof(PrincetonInstrumentsSPEReader)}: {ex.Message}");
+                errorList.AppendLine($"Error reading file {filename} with the {typeof(OmnicSPGReader)}: {ex.Message}");
             continue;
           }
         }
@@ -240,6 +242,7 @@ namespace Altaxo.Serialization.Omnic
       return errorList.Length == 0 ? null : errorList.ToString();
     }
 
+    /// <inheritdoc/>
     public override string? Import(IReadOnlyList<string> fileNames, ImportOptionsInitial initialOptions)
     {
       var stb = new StringBuilder();

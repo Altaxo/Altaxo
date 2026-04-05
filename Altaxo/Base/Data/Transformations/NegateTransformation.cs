@@ -27,8 +27,14 @@ using System;
 
 namespace Altaxo.Data.Transformations
 {
+  /// <summary>
+  /// Applies the negation transformation <c>-x</c>.
+  /// </summary>
   public class NegateTransformation : ImmutableClassWithoutMembersBase, IDoubleToDoubleTransformation
   {
+    /// <summary>
+    /// Gets the singleton instance.
+    /// </summary>
     public static NegateTransformation Instance { get; private set; } = new NegateTransformation();
 
     #region Serialization
@@ -58,10 +64,13 @@ namespace Altaxo.Data.Transformations
     /// <inheritdoc/>
     public Type OutputValueType { get { return typeof(double); } }
 
+    /// <inheritdoc/>
     public AltaxoVariant Transform(AltaxoVariant value)
     {
       return -value;
     }
+
+    /// <inheritdoc/>
     public double Transform(double value)
     {
       return -value;
@@ -74,21 +83,25 @@ namespace Altaxo.Data.Transformations
     }
 
 
+    /// <inheritdoc/>
     public string RepresentationAsFunction
     {
       get { return GetRepresentationAsFunction("x"); }
     }
 
+    /// <inheritdoc/>
     public string GetRepresentationAsFunction(string arg)
     {
       return arg.Length == 1 ? string.Format("-{0}", arg) : string.Format("-({0})", arg);
     }
 
+    /// <inheritdoc/>
     public string RepresentationAsOperator
     {
       get { return "-"; }
     }
 
+    /// <inheritdoc/>
     public IVariantToVariantTransformation BackTransformation
     {
       get { return this; }

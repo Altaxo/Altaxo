@@ -23,14 +23,17 @@ using System.Reflection;
 
 namespace Altaxo.AddInItems
 {
-  // Based on http://ayende.com/Blog/archive/2006/05/22/SolvingTheAssemblyLoadContextProblem.aspx
-  // This class ensures that assemblies loaded into the LoadFrom context are also available
-  // in the Load context.
+  /// <summary>
+  /// Keeps assemblies loaded through the load-from context available for regular assembly resolution.
+  /// </summary>
   internal static class AssemblyLocator
   {
     private static Dictionary<string, Assembly> _assemblies = new Dictionary<string, Assembly>();
     private static bool _isInitialized;
 
+    /// <summary>
+    /// Initializes the assembly locator and subscribes to the current application domain events.
+    /// </summary>
     public static void Init()
     {
       lock (_assemblies)
@@ -43,6 +46,12 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Resolves assemblies that were previously loaded through the load-from context.
+    /// </summary>
+    /// <param name="sender">The event source.</param>
+    /// <param name="args">The assembly resolution arguments.</param>
+    /// <returns>The resolved assembly, or <see langword="null"/> if no matching assembly could be found.</returns>
     private static Assembly? CurrentDomain_AssemblyResolve(object? sender, ResolveEventArgs args)
     {
       if (string.IsNullOrEmpty(args.Name))
@@ -78,6 +87,12 @@ namespace Altaxo.AddInItems
       return result;
     }
 
+    /// <summary>
+    /// Attempts to load an assembly file from the specified directory.
+    /// </summary>
+    /// <param name="path">The directory that may contain the assembly.</param>
+    /// <param name="fileNameWithoutExtension">The assembly file name without its extension.</param>
+    /// <returns>The loaded assembly, or <see langword="null"/> if no matching assembly could be loaded.</returns>
     private static Assembly? TryGetAssembly(string path, string fileNameWithoutExtension)
     {
       var fileName = System.IO.Path.Combine(path, fileNameWithoutExtension + ".dll");
@@ -96,6 +111,11 @@ namespace Altaxo.AddInItems
       return null;
     }
 
+    /// <summary>
+    /// Stores assemblies as they are loaded so they can be reused during later resolution requests.
+    /// </summary>
+    /// <param name="sender">The event source.</param>
+    /// <param name="args">The assembly load event arguments.</param>
     private static void CurrentDomain_AssemblyLoad(object? sender, AssemblyLoadEventArgs args)
     {
       Assembly assembly = args.LoadedAssembly;

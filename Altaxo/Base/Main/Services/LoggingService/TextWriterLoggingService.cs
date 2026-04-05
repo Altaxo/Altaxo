@@ -23,12 +23,16 @@ using System.IO;
 namespace Altaxo.Main.Services
 {
   /// <summary>
-  /// LoggingService implementation that logs into a TextWriter.
+  /// Logging service implementation that writes log output to a <see cref="TextWriter"/>.
   /// </summary>
   public class TextWriterLoggingService : ILoggingService
   {
     private readonly TextWriter writer;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextWriterLoggingService"/> class.
+    /// </summary>
+    /// <param name="writer">The writer that receives the log output.</param>
     public TextWriterLoggingService(TextWriter writer)
     {
       if (writer is null)
@@ -53,12 +57,18 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <inheritdoc/>
     public bool IsDebugEnabled { get; set; }
+    /// <inheritdoc/>
     public bool IsInfoEnabled { get; set; }
+    /// <inheritdoc/>
     public bool IsWarnEnabled { get; set; }
+    /// <inheritdoc/>
     public bool IsErrorEnabled { get; set; }
+    /// <inheritdoc/>
     public bool IsFatalEnabled { get; set; }
 
+    /// <inheritdoc/>
     public void Debug(object message)
     {
       if (IsDebugEnabled)
@@ -67,11 +77,13 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <inheritdoc/>
     public void DebugFormatted(string format, params object[] args)
     {
       Debug(string.Format(format, args));
     }
 
+    /// <inheritdoc/>
     public void Info(object message)
     {
       if (IsInfoEnabled)
@@ -80,16 +92,19 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <inheritdoc/>
     public void InfoFormatted(string format, params object[] args)
     {
       Info(string.Format(format, args));
     }
 
+    /// <inheritdoc/>
     public void Warn(object message)
     {
       Warn(message, null);
     }
 
+    /// <inheritdoc/>
     public void Warn(object message, Exception? exception)
     {
       if (IsWarnEnabled)
@@ -98,16 +113,19 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <inheritdoc/>
     public void WarnFormatted(string format, params object[] args)
     {
       Warn(string.Format(format, args));
     }
 
+    /// <inheritdoc/>
     public void Error(object message)
     {
       Error(message, null);
     }
 
+    /// <inheritdoc/>
     public void Error(object message, Exception? exception)
     {
       if (IsErrorEnabled)
@@ -116,16 +134,19 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <inheritdoc/>
     public void ErrorFormatted(string format, params object[] args)
     {
       Error(string.Format(format, args));
     }
 
+    /// <inheritdoc/>
     public void Fatal(object message)
     {
       Fatal(message, null);
     }
 
+    /// <inheritdoc/>
     public void Fatal(object message, Exception? exception)
     {
       if (IsFatalEnabled)
@@ -134,6 +155,7 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <inheritdoc/>
     public void FatalFormatted(string format, params object[] args)
     {
       Fatal(string.Format(format, args));

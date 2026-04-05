@@ -29,8 +29,7 @@ using System.Collections.Generic;
 namespace Altaxo.Data
 {
   /// <summary>
-  /// This designates a vector structure, which holds elements. A single element at a given index can be read out
-  /// by returning a AltaxoVariant.
+  /// Represents a vector-like structure whose elements can be read as <see cref="AltaxoVariant"/> values.
   /// </summary>
   public interface IReadableColumn : ICloneable
   {

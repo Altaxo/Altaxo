@@ -31,12 +31,19 @@ using Altaxo.Science.Spectroscopy.DarkSubtraction;
 
 namespace Altaxo.Gui.Science.Spectroscopy.DarkSubtraction
 {
+  /// <summary>
+  /// View interface for spectrum subtraction.
+  /// </summary>
   public interface ISpectrumSubtractionView : IDataContextAwareView { }
 
+  /// <summary>
+  /// Controller for <see cref="SpectrumSubtraction"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(ISpectrumSubtractionView))]
   [UserControllerForObject(typeof(SpectrumSubtraction))]
   public class SpectrumSubtractionController : MVCANControllerEditImmutableDocBase<SpectrumSubtraction, ISpectrumSubtractionView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(ProxyController, () => { ProxyController = null!; });
@@ -46,6 +53,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.DarkSubtraction
 
     private DataTableXYColumnProxyController _proxyController;
 
+    /// <summary>
+    /// Gets or sets the controller for the subtraction spectrum proxy.
+    /// </summary>
     public DataTableXYColumnProxyController ProxyController
     {
       get => _proxyController;
@@ -62,6 +72,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.DarkSubtraction
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -88,6 +99,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.DarkSubtraction
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (ProxyController is not null)

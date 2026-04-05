@@ -33,6 +33,9 @@ namespace Altaxo.AddInItems
     private IReadOnlyCollection<ICondition> _conditions;
     private AddInTreeNode? _subItemNode;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BuildItemArgs"/> class.
+    /// </summary>
     public BuildItemArgs(object? parameter, Codon codon, IReadOnlyCollection<ICondition> conditions, AddInTreeNode? subItemNode)
     {
       if (codon is null)

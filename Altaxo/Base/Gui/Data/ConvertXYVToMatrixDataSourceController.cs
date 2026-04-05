@@ -27,9 +27,13 @@ using Altaxo.Data;
 
 namespace Altaxo.Gui.Data
 {
+  /// <summary>
+  /// Controller for <see cref="ConvertXYVToMatrixDataSource"/>.
+  /// </summary>
   [UserControllerForObject(typeof(ConvertXYVToMatrixDataSource))]
   public class ConvertXYVToMatrixDataSourceController : DataSourceControllerBase<ConvertXYVToMatrixDataSource>
   {
+    /// <inheritdoc />
     protected override IMVCANController GetProcessDataController()
     {
       var processDataController = new ConvertXYVToMatrixDataController() { UseDocumentCopy = UseDocument.Directly };

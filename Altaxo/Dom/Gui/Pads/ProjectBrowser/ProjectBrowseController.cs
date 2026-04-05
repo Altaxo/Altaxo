@@ -41,32 +41,32 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
   /// 0: Project, 1: closed folder, 2: open folder, 3: worksheet, 4: graph.</remarks>
   public interface IProjectBrowseView
   {
-    ProjectBrowseController Controller { get; set; }
+    public ProjectBrowseController Controller { get; set; }
 
     /// <summary>Sets the browser root node.</summary>
     /// <param name="root">The root node of the project browser.</param>
-    void InitializeTree(Altaxo.Collections.NGTreeNode root);
+    public void InitializeTree(Altaxo.Collections.NGTreeNode root);
 
-    void SilentSelectTreeNode(Altaxo.Collections.NGTreeNode node);
+    public void SilentSelectTreeNode(Altaxo.Collections.NGTreeNode node);
 
-    object TreeNodeContextMenu { get; }
+    public object TreeNodeContextMenu { get; }
 
-    void InitializeList(SelectableListNodeList list);
+    public void InitializeList(SelectableListNodeList list);
 
     /// <summary>Sets the display in what folder we are currently in.</summary>
     /// <param name="currentFolder">Name of the current folder.</param>
     /// <param name="isFullNameFolder">True if the full name is shown, instead of only the short name</param>
-    void InitializeCurrentFolder(string currentFolder, bool isFullNameFolder);
+    public void InitializeCurrentFolder(string currentFolder, bool isFullNameFolder);
 
-    void SetSortIndicator_NameColumn(bool isSorted, bool isDescendingSort, bool isSecondaryAdorner);
+    public void SetSortIndicator_NameColumn(bool isSorted, bool isDescendingSort, bool isSecondaryAdorner);
 
-    void SetSortIndicator_CreationDateColumn(bool isSorted, bool isDescendingSort, bool isSecondaryAdorner);
+    public void SetSortIndicator_CreationDateColumn(bool isSorted, bool isDescendingSort, bool isSecondaryAdorner);
 
-    void SetSortIndicator_ChangeDateColumn(bool isSorted, bool isDescendingSort, bool isSecondaryAdorner);
+    public void SetSortIndicator_ChangeDateColumn(bool isSorted, bool isDescendingSort, bool isSecondaryAdorner);
 
-    void SetSortIndicator_NameRevColumn(bool isSorted, bool isDescendingSort, bool isSecondaryAdorner);
+    public void SetSortIndicator_NameRevColumn(bool isSorted, bool isDescendingSort, bool isSecondaryAdorner);
 
-    void SynchronizeListSelection();
+    public void SynchronizeListSelection();
   }
 
   #endregion Interfaces
@@ -354,6 +354,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// Internally sets the list item handler and wires the ListChange event.
     /// </summary>
     /// <param name="itemHandler"></param>
+    /// <param name="isFullNameFolder">Indicates if the full folder name is shown in the view, or only the short name.</param>
     private void SetItemListHandler(AbstractItemHandler itemHandler, bool isFullNameFolder)
     {
       if (_listItemHandler is not null)

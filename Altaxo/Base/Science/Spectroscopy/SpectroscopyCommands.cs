@@ -48,12 +48,20 @@ using Altaxo.Worksheet.Commands;
 
 namespace Altaxo.Science.Spectroscopy
 {
+  /// <summary>
+  /// Contains spectroscopy-related commands and helper methods.
+  /// </summary>
   public class SpectroscopyCommands
   {
     private static PeakSearchingAndFittingOptions? _lastPeakFindingFittingOptions = null;
 
     private static SpectralPreprocessingOptionsBase? _lastPreprocessOptions = null;
 
+    /// <summary>
+    /// Gets the standard name of the preprocessed X column for the specified spectrum index.
+    /// </summary>
+    /// <param name="numberOfSpectrum">Zero-based spectrum index.</param>
+    /// <returns>The column name for the preprocessed X values.</returns>
     public static string PeakTable_PreprocessedColumnNameX(int numberOfSpectrum) => $"X_Preprocessed{numberOfSpectrum}";
     /// <summary>
     /// Gets the standard name of the preprocessed X column for the specified spectrum index.
@@ -68,6 +76,11 @@ namespace Altaxo.Science.Spectroscopy
     /// <returns>The column name indicating points used for fitting.</returns>
     public static string PeakTable_UsedForFitColumnName(int numberOfSpectrum) => $"UsedForFit{numberOfSpectrum}";
 
+    /// <summary>
+    /// Gets the standard name of the X column containing the fitted curve values for the specified spectrum.
+    /// </summary>
+    /// <param name="numberOfSpectrum">Zero-based spectrum index.</param>
+    /// <returns>The column name for the fitted X values.</returns>
     public static string PeakTable_FitCurveColumnNameX(int numberOfSpectrum) => $"X_FitCurve{numberOfSpectrum}";
     /// <summary>
     /// Gets the standard name of the Y column containing the fitted curve values for the specified spectrum.
@@ -148,7 +161,7 @@ namespace Altaxo.Science.Spectroscopy
     /// Shows the dialog to get the preprocessing options.
     /// </summary>
     /// <param name="ctrl">The worksheet containing the spectra.</param>
-    /// <param name="options">On successfull return, contains the preprocessing options.</param>
+    /// <param name="options">On successful return, contains the preprocessing options.</param>
     /// <returns>True if successful; otherwise, false.</returns>
     public static bool ShowDialogGetPreprocessingOptions(WorksheetController ctrl, out SpectralPreprocessingOptionsBase? options)
     {
@@ -176,7 +189,7 @@ namespace Altaxo.Science.Spectroscopy
     /// Shows the dialog to get the preprocessing options.
     /// </summary>
     /// <param name="ctrl">The worksheet containing the spectra.</param>
-    /// <param name="options">On successfull return, contains the preprocessing options.</param>
+    /// <param name="options">On successful return, contains the preprocessing options.</param>
     /// <returns>True if successful; otherwise, false.</returns>
     public static bool ShowDialogGetPeakFindingFittingOptions(WorksheetController ctrl, out PeakSearchingAndFittingOptions options)
     {
@@ -200,7 +213,14 @@ namespace Altaxo.Science.Spectroscopy
       return true;
     }
 
+    /// <summary>
+    /// The name of the X column.
+    /// </summary>
     public const string ColumnX = "X-Column";
+
+    /// <summary>
+    /// The name of the V columns.
+    /// </summary>
     public const string ColumnsV = "V-Columns";
 
 
@@ -1116,6 +1136,7 @@ namespace Altaxo.Science.Spectroscopy
     /// </summary>
     /// <param name="peakTable">The peak table containing the fit results.</param>
     /// <param name="numberOfSpectrum">The number of spectrum (usually 0).</param>
+    /// <param name="numberOfSpectra">The total number of spectra represented by the fit result.</param>
     /// <param name="graphName">Name of the graph to create (full name). If null or empty, a graph with a default name is created in the same folder as the table.</param>
     /// <param name="doOpenGraph">If true, the created graph is opened (the graph window is shown in Altaxo).</param>
     public static void PlotFitCurveAsSeparatePeaks(DataTable peakTable, int numberOfSpectrum, int numberOfSpectra, string? graphName = null, bool doOpenGraph = true)

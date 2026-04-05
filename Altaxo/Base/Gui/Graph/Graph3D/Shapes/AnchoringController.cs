@@ -30,21 +30,45 @@ using AUL = Altaxo.Units.Length;
 
 namespace Altaxo.Gui.Graph.Graph3D.Shapes
 {
+  /// <summary>
+  /// View interface for editing 3D anchoring.
+  /// </summary>
   public interface IAnchoringView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Immutable model for 3D anchoring settings.
+  /// </summary>
   public record AnchoringModel
   {
+    /// <summary>
+    /// Gets the x pivot.
+    /// </summary>
     public RADouble PivotX { get; init; }
+    /// <summary>
+    /// Gets the y pivot.
+    /// </summary>
     public RADouble PivotY { get; init; }
+    /// <summary>
+    /// Gets the z pivot.
+    /// </summary>
     public RADouble PivotZ { get; init; }
 
+    /// <summary>
+    /// Gets the reference size.
+    /// </summary>
     public VectorD3D ReferenceSize { get; init; }
 
+    /// <summary>
+    /// Gets the title.
+    /// </summary>
     public string Title { get; init; }
   }
 
+  /// <summary>
+  /// Controller for editing 3D anchoring.
+  /// </summary>
   public class AnchoringController : MVCANControllerEditImmutableDocBase<AnchoringModel, IAnchoringView>
   {
 
@@ -54,12 +78,16 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
     private ChangeableRelativePercentUnit _percentLayerYSizeUnit = new ChangeableRelativePercentUnit("% Y-Size", "%", new DimensionfulQuantity(1, AUL.Point.Instance));
     private ChangeableRelativePercentUnit _percentLayerZSizeUnit = new ChangeableRelativePercentUnit("% Z-Size", "%", new DimensionfulQuantity(1, AUL.Point.Instance));
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AnchoringController"/> class.
+    /// </summary>
     public AnchoringController()
     {
       CmdSwitchToRadioView = new RelayCommand(() => IsRadioViewVisible = true);
       CmdSwitchToNumericView = new RelayCommand(() => IsRadioViewVisible = false);
     }
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -83,17 +111,32 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the command to switch to radio view.
+    /// </summary>
     public ICommand CmdSwitchToRadioView { get; set; }
+    /// <summary>
+    /// Gets the command to switch to numeric view.
+    /// </summary>
     public ICommand CmdSwitchToNumericView { get; set; }
 
+    /// <summary>
+    /// Command for radio button selection.
+    /// </summary>
     public ICommand CmdRadioButtion { get; init; }
 
 
+    /// <summary>
+    /// Gets the title of the document.
+    /// </summary>
     public string? Title => _doc?.Title;
 
 
     private bool _isRadioViewVisible;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the radio view is visible.
+    /// </summary>
     public bool IsRadioViewVisible
     {
       get => _isRadioViewVisible;
@@ -111,6 +154,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether switching to radio view is enabled.
+    /// </summary>
     public bool IsSwitchToRadioViewEnabled
     {
       get
@@ -121,6 +167,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
         return useRadioView;
       }
     }
+    /// <summary>
+    /// Gets a value indicating whether the numeric view is visible.
+    /// </summary>
     public bool IsNumericViewVisible
     {
       get => !_isRadioViewVisible;
@@ -130,6 +179,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets the environment for the X pivot quantity with unit.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment PivotXEnvironment
     {
       get => _xSizeEnvironment;
@@ -138,6 +190,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
 
     private DimensionfulQuantity _pivotXQuantity;
 
+    /// <summary>
+    /// Gets or sets the quantity of the X pivot.
+    /// </summary>
     public DimensionfulQuantity PivotXQuantity
     {
       get => _pivotXQuantity;
@@ -180,6 +235,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
     }
 
 
+    /// <summary>
+    /// Gets the environment for the Y pivot quantity with unit.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment PivotYEnvironment
     {
       get => _ySizeEnvironment;
@@ -187,6 +245,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
 
     private DimensionfulQuantity _pivotYQuantity;
 
+    /// <summary>
+    /// Gets or sets the quantity of the Y pivot.
+    /// </summary>
     public DimensionfulQuantity PivotYQuantity
     {
       get => _pivotYQuantity;
@@ -231,6 +292,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
     }
 
     // z
+    /// <summary>
+    /// Gets the environment for the Z pivot quantity with unit.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment PivotZEnvironment
     {
       get => _zSizeEnvironment;
@@ -238,6 +302,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
 
     private DimensionfulQuantity _pivotZQuantity;
 
+    /// <summary>
+    /// Gets or sets the quantity of the Z pivot.
+    /// </summary>
     public DimensionfulQuantity PivotZQuantity
     {
       get => _pivotZQuantity;
@@ -281,6 +348,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the X pivot is near.
+    /// </summary>
     public bool IsNearX
     {
       get => PivotX.IsRelative && PivotX.Value == 0;
@@ -293,6 +363,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the X pivot is at the center.
+    /// </summary>
     public bool IsCenterX
     {
       get => PivotX.IsRelative && PivotX.Value == 0.5;
@@ -305,6 +378,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the X pivot is far.
+    /// </summary>
     public bool IsFarX
     {
       get => PivotX.IsRelative && PivotX.Value == 1;
@@ -317,6 +393,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the Y pivot is near.
+    /// </summary>
     public bool IsNearY
     {
       get => PivotY.IsRelative && PivotY.Value == 0;
@@ -329,6 +408,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the Y pivot is at the center.
+    /// </summary>
     public bool IsCenterY
     {
       get => PivotY.IsRelative && PivotY.Value == 0.5;
@@ -341,6 +423,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the Y pivot is far.
+    /// </summary>
     public bool IsFarY
     {
       get => PivotY.IsRelative && PivotY.Value == 1;
@@ -353,6 +438,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the Z pivot is near.
+    /// </summary>
     public bool IsNearZ
     {
       get => PivotZ.IsRelative && PivotZ.Value == 0;
@@ -365,6 +453,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the Z pivot is at the center.
+    /// </summary>
     public bool IsCenterZ
     {
       get => PivotZ.IsRelative && PivotZ.Value == 0.5;
@@ -377,6 +468,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the Z pivot is far.
+    /// </summary>
     public bool IsFarZ
     {
       get => PivotZ.IsRelative && PivotZ.Value == 1;
@@ -392,12 +486,14 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
 
     #endregion
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = new AnchoringModel() { ReferenceSize = _doc.ReferenceSize, Title = _doc.Title, PivotX = PivotX, PivotY = PivotY, PivotZ = PivotZ };
       return ApplyEnd(true, disposeController);
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;

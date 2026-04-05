@@ -33,6 +33,11 @@ namespace Altaxo.Text.Renderers
 {
   public partial class MamlRenderer : TextRendererBase<MamlRenderer>
   {
+    /// <summary>
+    /// Stores a PNG image stream in the configured image folder.
+    /// </summary>
+    /// <param name="imageStream">The image stream.</param>
+    /// <param name="contentHash">The content hash used as file name.</param>
     public void StorePngImageFile(Stream imageStream, string contentHash)
     {
       var fullFileName = Path.Combine(BasePathName, ImageFolderName, contentHash + ".png");

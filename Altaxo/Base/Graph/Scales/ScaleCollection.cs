@@ -28,6 +28,9 @@ using System.Collections.Generic;
 
 namespace Altaxo.Graph.Scales
 {
+  /// <summary>
+  /// Represents a collection of <see cref="Scale"/> instances.
+  /// </summary>
   [Serializable]
   public class ScaleCollection
   :
@@ -42,6 +45,7 @@ namespace Altaxo.Graph.Scales
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Scales.ScaleCollection", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
@@ -55,6 +59,7 @@ namespace Altaxo.Graph.Scales
                 */
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (ScaleCollection?)o ?? new ScaleCollection(info);
@@ -82,6 +87,7 @@ namespace Altaxo.Graph.Scales
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScaleCollection), 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ScaleCollection)obj;
@@ -92,6 +98,7 @@ namespace Altaxo.Graph.Scales
         info.CommitArray();
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (ScaleCollection?)o ?? new ScaleCollection(info);
@@ -123,11 +130,18 @@ namespace Altaxo.Graph.Scales
     }
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScaleCollection"/> class with two scales.
+    /// </summary>
     public ScaleCollection()
       : this(2)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScaleCollection"/> class.
+    /// </summary>
+    /// <param name="numberOfScales">The number of scales to create.</param>
     public ScaleCollection(int numberOfScales)
     {
       if (numberOfScales <= 0)
@@ -138,12 +152,17 @@ namespace Altaxo.Graph.Scales
         this[i] = new LinearScale();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScaleCollection"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public ScaleCollection(ScaleCollection from)
     {
       _scales = new Scale[from._scales.Length];
       CopyFrom(from);
     }
 
+    /// <inheritdoc />
     public bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -168,6 +187,7 @@ namespace Altaxo.Graph.Scales
       return true;
     }
 
+    /// <inheritdoc />
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_scales is not null)
@@ -180,6 +200,7 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     protected override void Dispose(bool isDisposing)
     {
       if (isDisposing)
@@ -204,11 +225,18 @@ namespace Altaxo.Graph.Scales
       return new ScaleCollection(this);
     }
 
+    /// <summary>
+    /// Creates a strongly typed clone of this collection.
+    /// </summary>
+    /// <returns>A cloned <see cref="ScaleCollection"/> instance.</returns>
     public ScaleCollection Clone()
     {
       return new ScaleCollection(this);
     }
 
+    /// <summary>
+    /// Gets the number of scales in the collection.
+    /// </summary>
     public int Count
     {
       get
@@ -217,6 +245,11 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <summary>
+    /// Gets the conventional name of the scale at the specified index.
+    /// </summary>
+    /// <param name="idx">The scale index.</param>
+    /// <returns>The conventional scale name.</returns>
     public string GetName(int idx)
     {
       switch (idx)
@@ -235,6 +268,9 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <summary>
+    /// Gets or sets the X scale.
+    /// </summary>
     public Scale X
     {
       get
@@ -247,6 +283,9 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <summary>
+    /// Gets or sets the Y scale.
+    /// </summary>
     public Scale Y
     {
       get
@@ -259,6 +298,9 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <summary>
+    /// Gets or sets the Z scale.
+    /// </summary>
     public Scale Z
     {
       get
@@ -271,6 +313,11 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <summary>
+    /// Gets or sets the scale at the specified index.
+    /// </summary>
+    /// <param name="i">The scale index.</param>
+    /// <returns>The scale at the specified index.</returns>
     public Scale this[int i]
     {
       get
@@ -285,6 +332,11 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <summary>
+    /// Gets the index of the specified scale.
+    /// </summary>
+    /// <param name="ax">The scale.</param>
+    /// <returns>The zero-based index, or <c>-1</c> if the scale was not found.</returns>
     public int IndexOf(Scale ax)
     {
       for (int i = 0; i < _scales.Length; i++)
@@ -296,6 +348,10 @@ namespace Altaxo.Graph.Scales
       return -1;
     }
 
+    /// <summary>
+    /// Returns an enumerator for the contained scales.
+    /// </summary>
+    /// <returns>An enumerator for the contained scales.</returns>
     public IEnumerator<Scale> GetEnumerator()
     {
       for (int i = 0; i < _scales.Length; ++i)

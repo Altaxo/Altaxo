@@ -28,21 +28,35 @@ using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Common.Drawing
 {
+  /// <summary>
+  /// Defines the view contract for editing <see cref="FontX"/> values.
+  /// </summary>
   public interface IFontXView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="FontX"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IFontXView))]
   public class FontXController : MVCANDControllerEditImmutableDocBase<FontX, IFontXView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FontXController"/> class.
+    /// </summary>
     public FontXController()
     {
     }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FontXController"/> class.
+    /// </summary>
+    /// <param name="doc">The font to edit.</param>
     public FontXController(FontX doc)
     {
       InitializeDocument(doc);
@@ -50,6 +64,9 @@ namespace Altaxo.Gui.Common.Drawing
 
     #region Bindings
 
+    /// <summary>
+    /// Gets or sets the selected font family name.
+    /// </summary>
     public string SelectedFontFamilyName
     {
       get => _doc.FontFamilyName;
@@ -65,6 +82,9 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets or sets the selected font size.
+    /// </summary>
     public double SelectedFontSize
     {
       get => _doc.Size;
@@ -79,6 +99,9 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets or sets the selected font style.
+    /// </summary>
     public FontXStyle SelectedFontStyle
     {
       get => _doc.Style;
@@ -97,14 +120,19 @@ namespace Altaxo.Gui.Common.Drawing
     #endregion
 
 
+    /// <summary>
+    /// Gets the edited font document.
+    /// </summary>
     public FontX Doc => _doc;
 
+    /// <inheritdoc/>
     protected override void OnMadeDirty()
     {
       base.OnMadeDirty();
       OnPropertyChanged(nameof(Doc));
     }
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -132,6 +160,7 @@ namespace Altaxo.Gui.Common.Drawing
         _doc = GdiFontManager.GetFontX(fontFamilyName, _doc.Size, FontXStyle.Bold | FontXStyle.Italic);
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _originalDoc = _doc; // this is safe because FontX is an immutable class

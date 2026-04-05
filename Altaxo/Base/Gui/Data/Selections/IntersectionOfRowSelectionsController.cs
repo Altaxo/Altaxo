@@ -28,19 +28,27 @@ namespace Altaxo.Gui.Data.Selections
 {
   using Altaxo.Data.Selections;
 
+  /// <summary>
+  /// Provides the view contract for <see cref="IntersectionOfRowSelectionsController"/>.
+  /// </summary>
   public interface IIntersectionOfRowSelectionView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for the <see cref="IntersectionOfRowSelections"/> row selection.
+  /// </summary>
   [UserControllerForObject(typeof(IntersectionOfRowSelections), 100)]
   [ExpectedTypeOfView(typeof(IIntersectionOfRowSelectionView))]
   public class IntersectionOfRowSelectionsController : MVCANControllerEditImmutableDocBase<IntersectionOfRowSelections, IIntersectionOfRowSelectionView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -50,6 +58,7 @@ namespace Altaxo.Gui.Data.Selections
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);

@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -38,13 +38,18 @@ namespace Altaxo.Calc.Regression.Multivariate
   {
     #region Serialization
 
+    /// <summary>
+    /// Serialization surrogate for <see cref="PCRWorksheetAnalysis"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PCRWorksheetAnalysis), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new PCRWorksheetAnalysis();
@@ -52,6 +57,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
     #endregion
 
+    /// <inheritdoc/>
     public override string AnalysisName
     {
       get
@@ -60,11 +66,13 @@ namespace Altaxo.Calc.Regression.Multivariate
       }
     }
 
+    /// <inheritdoc/>
     public override MultivariateRegression CreateNewRegressionObject()
     {
       return new PCRRegression();
     }
 
+    /// <inheritdoc/>
     public override void StoreCalibrationModelInTable(
       IMultivariateCalibrationModel calibrationSet,
       DataTable table)
@@ -232,6 +240,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       calibrationSet.SetPreprocessingModel(preprocessSet);
     }
 
+    /// <inheritdoc/>
     public override IMultivariateCalibrationModel GetCalibrationModel(
       DataTable calibTable)
     {
@@ -274,6 +283,9 @@ namespace Altaxo.Calc.Regression.Multivariate
       return col.Count;
     }
 
+    /// <summary>
+    /// Determines whether the specified table stores a PCR calibration model.
+    /// </summary>
     public static bool IsPCRCalibrationModel(Altaxo.Data.DataTable table)
     {
       if (!table.DataColumns.Contains(GetXOfX_ColumnName()))

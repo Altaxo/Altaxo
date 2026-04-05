@@ -61,6 +61,9 @@ namespace Altaxo.Gui.Settings
     void SetSelectedNode(NGTreeNode node);
   }
 
+  /// <summary>
+  /// Controller for the settings dialog.
+  /// </summary>
   [ExpectedTypeOfView(typeof(ISettingsView))]
   public class SettingsController : IMVCANController
   {
@@ -70,11 +73,15 @@ namespace Altaxo.Gui.Settings
 
     private HashSet<NGTreeNode> _dirtyTopics = new HashSet<NGTreeNode>();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SettingsController"/> class.
+    /// </summary>
     public SettingsController()
     {
       Initialize(true);
     }
 
+    /// <inheritdoc/>
     public bool InitializeDocument(params object[] args)
     {
       return true;
@@ -155,11 +162,13 @@ namespace Altaxo.Gui.Settings
       return null; // nothing found
     }
 
+    /// <inheritdoc/>
     public UseDocument UseDocumentCopy
     {
       set { }
     }
 
+    /// <inheritdoc/>
     public object ViewObject
     {
       get
@@ -185,15 +194,18 @@ namespace Altaxo.Gui.Settings
       }
     }
 
+    /// <inheritdoc/>
     public object ModelObject
     {
       get { return null; }
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
     }
 
+    /// <inheritdoc/>
     public bool Apply(bool disposeController)
     {
       // we have to call apply for all dirty topics
@@ -220,7 +232,7 @@ namespace Altaxo.Gui.Settings
     /// </summary>
     /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
     /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    ///   <c>true</c> if the revert operation was successful; otherwise, <c>false</c> if the revert operation was not possible.
     /// </returns>
     public bool Revert(bool disposeController)
     {

@@ -81,9 +81,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <summary>
     /// 2015-11-14 initial version.
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="DataMeshPlotStyle"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DataMeshPlotStyle), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DataMeshPlotStyle)obj;
@@ -94,6 +98,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         info.AddValue("Material", s._material);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (DataMeshPlotStyle?)o ?? new DataMeshPlotStyle();
@@ -137,6 +142,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies values from another <see cref="DataMeshPlotStyle"/> instance.
+    /// </summary>
+    /// <param name="from">The style to copy from.</param>
     [MemberNotNull(nameof(_colorProvider), nameof(_material))]
     protected void CopyFrom(DataMeshPlotStyle from)
     {
@@ -146,6 +155,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       _material = from._material; // Material is immutable
     }
 
+    /// <inheritdoc/>
     public bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -165,12 +175,14 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       return false;
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_colorScale is not null)
         yield return new Main.DocumentNodeAndName(_colorScale, "ColorScale");
     }
 
+    /// <inheritdoc/>
     public object Clone()
     {
       return new DataMeshPlotStyle(this);
@@ -201,6 +213,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the color provider used for mesh colorization.
+    /// </summary>
     public IColorProvider ColorProvider
     {
       get { return _colorProvider; }
@@ -217,6 +232,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the mesh is clipped to the plot layer.
+    /// </summary>
     public bool ClipToLayer
     {
       get { return _clipToLayer; }
@@ -232,6 +250,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the material used to render the mesh.
+    /// </summary>
     public IMaterial Material
     {
       get { return _material; }
@@ -331,7 +352,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// </summary>
     /// <param name="gfrx">The graphics context painting in.</param>
     /// <param name="gl">The layer painting in.</param>
-    /// <param name="plotObject">The data to plot.</param>
+    /// <param name="myPlotAssociation">The meshed column plot data.</param>
     public void Paint(IGraphicsContext3D gfrx, IPlotArea gl, XYZMeshedColumnPlotData myPlotAssociation) // plots the curve with the choosen style
     {
       myPlotAssociation.DataTableMatrix.GetWrappers(
@@ -552,6 +573,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     #region Changed event handling
 
+    /// <inheritdoc/>
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (object.ReferenceEquals(sender, _colorScale))

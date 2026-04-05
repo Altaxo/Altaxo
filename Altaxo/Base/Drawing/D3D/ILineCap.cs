@@ -31,6 +31,9 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Drawing.D3D
 {
+  /// <summary>
+  /// Describes a line cap for 3D line rendering.
+  /// </summary>
   public interface ILineCap
   {
     /// <summary>
@@ -43,12 +46,27 @@ namespace Altaxo.Drawing.D3D
     /// the cap is also drawn from the end of the line. In this case the cap itself is reponsible for taking the offset into account.</returns>
     double GetAbsoluteBaseInset(double thickness1, double thickness2);
 
+    /// <summary>
+    /// Gets the minimum relative size of the line cap.
+    /// </summary>
     double MinimumRelativeSize { get; }
 
+    /// <summary>
+    /// Gets the minimum absolute size of the line cap in points.
+    /// </summary>
     double MinimumAbsoluteSizePt { get; }
 
+    /// <summary>
+    /// Gets the display name of the line cap.
+    /// </summary>
     string Name { get; }
 
+    /// <summary>
+    /// Returns a copy of the line cap with the specified minimum absolute and relative sizes.
+    /// </summary>
+    /// <param name="absoluteSizePt">The minimum absolute size in points.</param>
+    /// <param name="relativeSize">The minimum relative size.</param>
+    /// <returns>A line cap with the specified size settings.</returns>
     ILineCap WithMinimumAbsoluteAndRelativeSize(double absoluteSizePt, double relativeSize);
 
     /// <summary>

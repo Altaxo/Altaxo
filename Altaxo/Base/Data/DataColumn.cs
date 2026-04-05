@@ -42,11 +42,11 @@ namespace Altaxo.Data
     IList<AltaxoVariant>,
     ICloneable
   {
-    /// <summary>If the capacity of the column is not enough, a new array is aquired, with the new size
+    /// <summary>If the capacity of the column is not enough, a new array is acquired, with the new size
     /// newSize = addSpace+increaseFactor*oldSize.</summary>
     protected static double _increaseFactor = 2; // array space is increased by this factor plus addSpace
 
-    /// <summary>If the capacity of the column is not enough, a new array is aquired, with the new size
+    /// <summary>If the capacity of the column is not enough, a new array is acquired, with the new size
     /// newSize = addSpace+increaseFactor*oldSize.</summary>
     protected static int _addSpace = 32; // array space is increased by multiplying with increasefactor + addspase
 
@@ -463,6 +463,7 @@ namespace Altaxo.Data
 
     #region IList<AltaxoVariant> Members
 
+    /// <inheritdoc />
     public int IndexOf(AltaxoVariant item)
     {
       for (int i = 0; i < Count; i++)
@@ -483,12 +484,14 @@ namespace Altaxo.Data
           yield return i;
     }
 
+    /// <inheritdoc />
     public void Insert(int index, AltaxoVariant item)
     {
       InsertRows(index, 1);
       SetValueAt(index, item);
     }
 
+    /// <inheritdoc />
     public void RemoveAt(int index)
     {
       RemoveRows(index, 1);
@@ -498,16 +501,19 @@ namespace Altaxo.Data
 
     #region ICollection<AltaxoVariant> Members
 
+    /// <inheritdoc />
     public void Add(AltaxoVariant item)
     {
       SetValueAt(Count, item);
     }
 
+    /// <inheritdoc />
     public bool Contains(AltaxoVariant item)
     {
       return IndexOf(item) >= 0;
     }
 
+    /// <inheritdoc />
     public void CopyTo(AltaxoVariant[] array, int arrayIndex)
     {
       if (0 == Count)
@@ -521,11 +527,13 @@ namespace Altaxo.Data
         array[arrayIndex + i] = GetVariantAt(i);
     }
 
+    /// <inheritdoc />
     public bool IsReadOnly
     {
       get { return false; }
     }
 
+    /// <inheritdoc />
     public bool Remove(AltaxoVariant item)
     {
       int index = IndexOf(item);
@@ -538,6 +546,7 @@ namespace Altaxo.Data
 
     #region IEnumerable<AltaxoVariant> Members
 
+    /// <inheritdoc />
     public IEnumerator<AltaxoVariant> GetEnumerator()
     {
       for (int i = 0; i < Count; i++)
@@ -560,6 +569,11 @@ namespace Altaxo.Data
 
     #region Converters
 
+    /// <summary>
+    /// Creates a new instance of the specified <see cref="DataColumn"/> type.
+    /// </summary>
+    /// <param name="type">The column type to instantiate.</param>
+    /// <returns>A new column instance.</returns>
     public static DataColumn CreateInstanceOfType(Type type)
     {
       if (type is null) throw new ArgumentNullException(nameof(type));
@@ -681,12 +695,30 @@ namespace Altaxo.Data
     public virtual bool vop_Addition(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Adds this data column to another data column in reverse operand order.
+    /// </summary>
+    /// <param name="a">The left operand.</param>
+    /// <param name="b">The result of the addition.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Addition_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Adds a scalar value to this data column.
+    /// </summary>
+    /// <param name="a">The scalar value to add.</param>
+    /// <param name="b">The result of the addition.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Addition(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Adds this data column to a scalar value in reverse operand order.
+    /// </summary>
+    /// <param name="a">The scalar value.</param>
+    /// <param name="b">The result of the addition.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Addition_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
@@ -699,12 +731,30 @@ namespace Altaxo.Data
     public virtual bool vop_Subtraction(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Subtracts this data column from another data column.
+    /// </summary>
+    /// <param name="a">The left operand.</param>
+    /// <param name="b">The result of the subtraction.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Subtraction_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Subtracts a scalar value from this data column.
+    /// </summary>
+    /// <param name="a">The scalar value to subtract.</param>
+    /// <param name="b">The result of the subtraction.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Subtraction(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Subtracts this data column from a scalar value.
+    /// </summary>
+    /// <param name="a">The scalar value.</param>
+    /// <param name="b">The result of the subtraction.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Subtraction_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
@@ -717,12 +767,30 @@ namespace Altaxo.Data
     public virtual bool vop_Multiplication(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Multiplies another data column with this data column in reverse operand order.
+    /// </summary>
+    /// <param name="a">The left operand.</param>
+    /// <param name="b">The result of the multiplication.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Multiplication_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Multiplies this data column by a scalar value.
+    /// </summary>
+    /// <param name="a">The scalar value.</param>
+    /// <param name="b">The result of the multiplication.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Multiplication(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Multiplies a scalar value by this data column in reverse operand order.
+    /// </summary>
+    /// <param name="a">The scalar value.</param>
+    /// <param name="b">The result of the multiplication.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Multiplication_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
@@ -735,160 +803,464 @@ namespace Altaxo.Data
     public virtual bool vop_Division(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Divides another data column by this data column.
+    /// </summary>
+    /// <param name="a">The left operand.</param>
+    /// <param name="b">The result of the division.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Division_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Divides this data column by a scalar value.
+    /// </summary>
+    /// <param name="a">The scalar divisor.</param>
+    /// <param name="b">The result of the division.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Division(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Divides a scalar value by this data column.
+    /// </summary>
+    /// <param name="a">The scalar dividend.</param>
+    /// <param name="b">The result of the division.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Division_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Calculates the modulo of this data column with another data column.
+    /// </summary>
+    /// <param name="a">The right operand.</param>
+    /// <param name="b">The result of the modulo operation.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Modulo(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Calculates the modulo of another data column with this data column.
+    /// </summary>
+    /// <param name="a">The left operand.</param>
+    /// <param name="b">The result of the modulo operation.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Modulo_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Calculates the modulo of this data column with a scalar value.
+    /// </summary>
+    /// <param name="a">The scalar value.</param>
+    /// <param name="b">The result of the modulo operation.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Modulo(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Calculates the modulo of a scalar value with this data column.
+    /// </summary>
+    /// <param name="a">The scalar value.</param>
+    /// <param name="b">The result of the modulo operation.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Modulo_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Applies a logical AND between this data column and another data column.
+    /// </summary>
+    /// <param name="a">The right operand.</param>
+    /// <param name="b">The result of the operation.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_And(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Applies a logical AND between another data column and this data column in reverse operand order.
+    /// </summary>
+    /// <param name="a">The left operand.</param>
+    /// <param name="b">The result of the operation.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_And_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Applies a logical AND between this data column and a scalar value.
+    /// </summary>
+    /// <param name="a">The scalar value.</param>
+    /// <param name="b">The result of the operation.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_And(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Applies a logical AND between a scalar value and this data column in reverse operand order.
+    /// </summary>
+    /// <param name="a">The scalar value.</param>
+    /// <param name="b">The result of the operation.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_And_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Applies a logical OR between this data column and another data column.
+    /// </summary>
+    /// <param name="a">The right operand.</param>
+    /// <param name="b">The result of the operation.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Or(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Applies a logical OR between another data column and this data column in reverse operand order.
+    /// </summary>
+    /// <param name="a">The left operand.</param>
+    /// <param name="b">The result of the operation.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Or_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Applies a logical OR between this data column and a scalar value.
+    /// </summary>
+    /// <param name="a">The scalar value.</param>
+    /// <param name="b">The result of the operation.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Or(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Applies a logical OR between a scalar value and this data column in reverse operand order.
+    /// </summary>
+    /// <param name="a">The scalar value.</param>
+    /// <param name="b">The result of the operation.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Or_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Applies an exclusive OR between this data column and another data column.
+    /// </summary>
+    /// <param name="a">The right operand.</param>
+    /// <param name="b">The result of the operation.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Xor(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Applies an exclusive OR between another data column and this data column in reverse operand order.
+    /// </summary>
+    /// <param name="a">The left operand.</param>
+    /// <param name="b">The result of the operation.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Xor_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Applies an exclusive OR between this data column and a scalar value.
+    /// </summary>
+    /// <param name="a">The scalar value.</param>
+    /// <param name="b">The result of the operation.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Xor(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Applies an exclusive OR between a scalar value and this data column in reverse operand order.
+    /// </summary>
+    /// <param name="a">The scalar value.</param>
+    /// <param name="b">The result of the operation.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Xor_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Shifts this data column left by the values of another data column.
+    /// </summary>
+    /// <param name="a">The right operand.</param>
+    /// <param name="b">The result of the operation.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_ShiftLeft(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Shifts another data column left by this data column in reverse operand order.
+    /// </summary>
+    /// <param name="a">The left operand.</param>
+    /// <param name="b">The result of the operation.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_ShiftLeft_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Shifts this data column left by a scalar value.
+    /// </summary>
+    /// <param name="a">The scalar value.</param>
+    /// <param name="b">The result of the operation.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_ShiftLeft(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Shifts a scalar value left by this data column in reverse operand order.
+    /// </summary>
+    /// <param name="a">The scalar value.</param>
+    /// <param name="b">The result of the operation.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_ShiftLeft_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Shifts this data column right by the values of another data column.
+    /// </summary>
+    /// <param name="a">The right operand.</param>
+    /// <param name="b">The result of the operation.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_ShiftRight(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Shifts another data column right by this data column in reverse operand order.
+    /// </summary>
+    /// <param name="a">The left operand.</param>
+    /// <param name="b">The result of the operation.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_ShiftRight_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Shifts this data column right by a scalar value.
+    /// </summary>
+    /// <param name="a">The scalar value.</param>
+    /// <param name="b">The result of the operation.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_ShiftRight(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Shifts a scalar value right by this data column in reverse operand order.
+    /// </summary>
+    /// <param name="a">The scalar value.</param>
+    /// <param name="b">The result of the operation.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_ShiftRight_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tests whether this data column is less than another data column.
+    /// </summary>
+    /// <param name="a">The right operand.</param>
+    /// <param name="b">The result of the comparison.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Lesser(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tests whether another data column is less than this data column.
+    /// </summary>
+    /// <param name="a">The left operand.</param>
+    /// <param name="b">The result of the comparison.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Lesser_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tests whether this data column is less than a scalar value.
+    /// </summary>
+    /// <param name="a">The scalar value.</param>
+    /// <param name="b">The result of the comparison.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Lesser(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tests whether a scalar value is less than this data column.
+    /// </summary>
+    /// <param name="a">The scalar value.</param>
+    /// <param name="b">The result of the comparison.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Lesser_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tests whether this data column is greater than another data column.
+    /// </summary>
+    /// <param name="a">The right operand.</param>
+    /// <param name="b">The result of the comparison.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Greater(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tests whether another data column is greater than this data column.
+    /// </summary>
+    /// <param name="a">The left operand.</param>
+    /// <param name="b">The result of the comparison.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Greater_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tests whether this data column is greater than a scalar value.
+    /// </summary>
+    /// <param name="a">The scalar value.</param>
+    /// <param name="b">The result of the comparison.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Greater(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tests whether a scalar value is greater than this data column.
+    /// </summary>
+    /// <param name="a">The scalar value.</param>
+    /// <param name="b">The result of the comparison.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Greater_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tests whether this data column is less than or equal to another data column.
+    /// </summary>
+    /// <param name="a">The right operand.</param>
+    /// <param name="b">The result of the comparison.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_LesserOrEqual(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tests whether another data column is less than or equal to this data column.
+    /// </summary>
+    /// <param name="a">The left operand.</param>
+    /// <param name="b">The result of the comparison.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_LesserOrEqual_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tests whether this data column is less than or equal to a scalar value.
+    /// </summary>
+    /// <param name="a">The scalar value.</param>
+    /// <param name="b">The result of the comparison.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_LesserOrEqual(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tests whether a scalar value is less than or equal to this data column.
+    /// </summary>
+    /// <param name="a">The scalar value.</param>
+    /// <param name="b">The result of the comparison.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_LesserOrEqual_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tests whether this data column is greater than or equal to another data column.
+    /// </summary>
+    /// <param name="a">The right operand.</param>
+    /// <param name="b">The result of the comparison.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_GreaterOrEqual(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tests whether another data column is greater than or equal to this data column.
+    /// </summary>
+    /// <param name="a">The left operand.</param>
+    /// <param name="b">The result of the comparison.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_GreaterOrEqual_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tests whether this data column is greater than or equal to a scalar value.
+    /// </summary>
+    /// <param name="a">The scalar value.</param>
+    /// <param name="b">The result of the comparison.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_GreaterOrEqual(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Tests whether a scalar value is greater than or equal to this data column.
+    /// </summary>
+    /// <param name="a">The scalar value.</param>
+    /// <param name="b">The result of the comparison.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_GreaterOrEqual_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
     // Unary operators
+    /// <summary>
+    /// Applies the unary plus operator.
+    /// </summary>
+    /// <param name="b">The result of the operation.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Plus([MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Applies the unary minus operator.
+    /// </summary>
+    /// <param name="b">The result of the operation.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Minus([MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Applies the logical NOT operator.
+    /// </summary>
+    /// <param name="b">The result of the operation.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Not([MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Applies the bitwise complement operator.
+    /// </summary>
+    /// <param name="b">The result of the operation.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Complement([MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Applies the increment operator.
+    /// </summary>
+    /// <param name="b">The result of the operation.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Increment([MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Applies the decrement operator.
+    /// </summary>
+    /// <param name="b">The result of the operation.</param>
+    /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
     public virtual bool vop_Decrement([MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
+    /// <summary>
+    /// Evaluates whether this column should be treated as logically true.
+    /// </summary>
+    /// <param name="b">The Boolean result.</param>
+    /// <returns><c>true</c> if evaluation is supported; otherwise, <c>false</c>.</returns>
     public virtual bool vop_True(out bool b)
     { b = false; return false; }
 
+    /// <summary>
+    /// Evaluates whether this column should be treated as logically false.
+    /// </summary>
+    /// <param name="b">The Boolean result.</param>
+    /// <returns><c>true</c> if evaluation is supported; otherwise, <c>false</c>.</returns>
     public virtual bool vop_False(out bool b)
     { b = false; return false; }
 
+    /// <summary>
+    /// Adds two data columns.
+    /// </summary>
+    /// <param name="c1">The first operand.</param>
+    /// <param name="c2">The second operand.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator +(DataColumn c1, DataColumn c2)
     {
 
@@ -900,6 +1272,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to add " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Adds a scalar value to a data column.
+    /// </summary>
+    /// <param name="c1">The data column.</param>
+    /// <param name="c2">The scalar value.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator +(DataColumn c1, AltaxoVariant c2)
     {
 
@@ -909,6 +1287,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to add " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Adds a data column to a scalar value.
+    /// </summary>
+    /// <param name="c1">The scalar value.</param>
+    /// <param name="c2">The data column.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator +(AltaxoVariant c1, DataColumn c2)
     {
 
@@ -918,6 +1302,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to add " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Subtracts one data column from another.
+    /// </summary>
+    /// <param name="c1">The first operand.</param>
+    /// <param name="c2">The second operand.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator -(DataColumn c1, DataColumn c2)
     {
 
@@ -929,6 +1319,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to subtract " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Subtracts a scalar value from a data column.
+    /// </summary>
+    /// <param name="c1">The data column.</param>
+    /// <param name="c2">The scalar value.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator -(DataColumn c1, AltaxoVariant c2)
     {
 
@@ -938,6 +1334,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to subtract " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Subtracts a data column from a scalar value.
+    /// </summary>
+    /// <param name="c1">The scalar value.</param>
+    /// <param name="c2">The data column.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator -(AltaxoVariant c1, DataColumn c2)
     {
 
@@ -947,6 +1349,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to subtract " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Multiplies two data columns.
+    /// </summary>
+    /// <param name="c1">The first operand.</param>
+    /// <param name="c2">The second operand.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator *(DataColumn c1, DataColumn c2)
     {
 
@@ -958,6 +1366,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to multiply " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Multiplies a data column by a scalar value.
+    /// </summary>
+    /// <param name="c1">The data column.</param>
+    /// <param name="c2">The scalar value.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator *(DataColumn c1, AltaxoVariant c2)
     {
 
@@ -967,6 +1381,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to multiply " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Multiplies a scalar value by a data column.
+    /// </summary>
+    /// <param name="c1">The scalar value.</param>
+    /// <param name="c2">The data column.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator *(AltaxoVariant c1, DataColumn c2)
     {
 
@@ -976,6 +1396,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to multiply " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Divides one data column by another.
+    /// </summary>
+    /// <param name="c1">The dividend column.</param>
+    /// <param name="c2">The divisor column.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator /(DataColumn c1, DataColumn c2)
     {
 
@@ -987,6 +1413,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to divide " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Divides a data column by a scalar value.
+    /// </summary>
+    /// <param name="c1">The dividend column.</param>
+    /// <param name="c2">The scalar divisor.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator /(DataColumn c1, AltaxoVariant c2)
     {
 
@@ -996,6 +1428,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to divide " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Divides a scalar value by a data column.
+    /// </summary>
+    /// <param name="c1">The scalar dividend.</param>
+    /// <param name="c2">The divisor column.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator /(AltaxoVariant c1, DataColumn c2)
     {
 
@@ -1005,6 +1443,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to divide " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Calculates the modulo of one data column by another.
+    /// </summary>
+    /// <param name="c1">The dividend column.</param>
+    /// <param name="c2">The divisor column.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator %(DataColumn c1, DataColumn c2)
     {
 
@@ -1016,6 +1460,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to take modulus of " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Calculates the modulo of a data column by a scalar value.
+    /// </summary>
+    /// <param name="c1">The dividend column.</param>
+    /// <param name="c2">The scalar divisor.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator %(DataColumn c1, AltaxoVariant c2)
     {
 
@@ -1025,6 +1475,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to take modulus of " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Calculates the modulo of a scalar value by a data column.
+    /// </summary>
+    /// <param name="c1">The scalar dividend.</param>
+    /// <param name="c2">The divisor column.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator %(AltaxoVariant c1, DataColumn c2)
     {
 
@@ -1034,6 +1490,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to take modulus of " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies a logical AND between two data columns.
+    /// </summary>
+    /// <param name="c1">The first operand.</param>
+    /// <param name="c2">The second operand.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator &(DataColumn c1, DataColumn c2)
     {
 
@@ -1045,6 +1507,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply and operator to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies a logical AND between a data column and a scalar value.
+    /// </summary>
+    /// <param name="c1">The data column.</param>
+    /// <param name="c2">The scalar value.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator &(DataColumn c1, AltaxoVariant c2)
     {
 
@@ -1054,6 +1522,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator AND to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies a logical AND between a scalar value and a data column.
+    /// </summary>
+    /// <param name="c1">The scalar value.</param>
+    /// <param name="c2">The data column.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator &(AltaxoVariant c1, DataColumn c2)
     {
 
@@ -1063,6 +1537,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator AND to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies a logical OR between two data columns.
+    /// </summary>
+    /// <param name="c1">The first operand.</param>
+    /// <param name="c2">The second operand.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator |(DataColumn c1, DataColumn c2)
     {
 
@@ -1074,6 +1554,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply or operator to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies a logical OR between a data column and a scalar value.
+    /// </summary>
+    /// <param name="c1">The data column.</param>
+    /// <param name="c2">The scalar value.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator |(DataColumn c1, AltaxoVariant c2)
     {
 
@@ -1083,6 +1569,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator OR to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies a logical OR between a scalar value and a data column.
+    /// </summary>
+    /// <param name="c1">The scalar value.</param>
+    /// <param name="c2">The data column.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator |(AltaxoVariant c1, DataColumn c2)
     {
 
@@ -1092,6 +1584,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator OR to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies an exclusive OR between two data columns.
+    /// </summary>
+    /// <param name="c1">The first operand.</param>
+    /// <param name="c2">The second operand.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator ^(DataColumn c1, DataColumn c2)
     {
 
@@ -1103,6 +1601,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply xor operator to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies an exclusive OR between a data column and a scalar value.
+    /// </summary>
+    /// <param name="c1">The data column.</param>
+    /// <param name="c2">The scalar value.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator ^(DataColumn c1, AltaxoVariant c2)
     {
 
@@ -1112,6 +1616,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator XOR to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies an exclusive OR between a scalar value and a data column.
+    /// </summary>
+    /// <param name="c1">The scalar value.</param>
+    /// <param name="c2">The data column.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator ^(AltaxoVariant c1, DataColumn c2)
     {
 
@@ -1121,6 +1631,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator XOR to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Shifts a data column left by the specified number of bits.
+    /// </summary>
+    /// <param name="c1">The data column.</param>
+    /// <param name="c2">The shift count.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator <<(DataColumn c1, int c2)
     {
 
@@ -1130,6 +1646,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator << to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Shifts a data column right by the specified number of bits.
+    /// </summary>
+    /// <param name="c1">The data column.</param>
+    /// <param name="c2">The shift count.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator >>(DataColumn c1, int c2)
     {
 
@@ -1139,6 +1661,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator >> to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Compares whether one data column is less than another.
+    /// </summary>
+    /// <param name="c1">The first operand.</param>
+    /// <param name="c2">The second operand.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator <(DataColumn c1, DataColumn c2)
     {
 
@@ -1150,6 +1678,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator lesser to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Compares whether a data column is less than a scalar value.
+    /// </summary>
+    /// <param name="c1">The data column.</param>
+    /// <param name="c2">The scalar value.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator <(DataColumn c1, AltaxoVariant c2)
     {
 
@@ -1159,6 +1693,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator < to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Compares whether a scalar value is less than a data column.
+    /// </summary>
+    /// <param name="c1">The scalar value.</param>
+    /// <param name="c2">The data column.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator <(AltaxoVariant c1, DataColumn c2)
     {
 
@@ -1168,6 +1708,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator < to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Compares whether one data column is greater than another.
+    /// </summary>
+    /// <param name="c1">The first operand.</param>
+    /// <param name="c2">The second operand.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator >(DataColumn c1, DataColumn c2)
     {
 
@@ -1179,6 +1725,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator greater to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Compares whether a data column is greater than a scalar value.
+    /// </summary>
+    /// <param name="c1">The data column.</param>
+    /// <param name="c2">The scalar value.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator >(DataColumn c1, AltaxoVariant c2)
     {
 
@@ -1188,6 +1740,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator > to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Compares whether a scalar value is greater than a data column.
+    /// </summary>
+    /// <param name="c1">The scalar value.</param>
+    /// <param name="c2">The data column.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator >(AltaxoVariant c1, DataColumn c2)
     {
 
@@ -1197,6 +1755,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator > to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Compares whether one data column is less than or equal to another.
+    /// </summary>
+    /// <param name="c1">The first operand.</param>
+    /// <param name="c2">The second operand.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator <=(DataColumn c1, DataColumn c2)
     {
 
@@ -1208,6 +1772,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator LesserOrEqual to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Compares whether a data column is less than or equal to a scalar value.
+    /// </summary>
+    /// <param name="c1">The data column.</param>
+    /// <param name="c2">The scalar value.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator <=(DataColumn c1, AltaxoVariant c2)
     {
 
@@ -1217,6 +1787,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator <= to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Compares whether a scalar value is less than or equal to a data column.
+    /// </summary>
+    /// <param name="c1">The scalar value.</param>
+    /// <param name="c2">The data column.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator <=(AltaxoVariant c1, DataColumn c2)
     {
 
@@ -1226,6 +1802,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator <= " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Compares whether one data column is greater than or equal to another.
+    /// </summary>
+    /// <param name="c1">The first operand.</param>
+    /// <param name="c2">The second operand.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator >=(DataColumn c1, DataColumn c2)
     {
 
@@ -1237,6 +1819,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator GreaterOrEqual to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Compares whether a data column is greater than or equal to a scalar value.
+    /// </summary>
+    /// <param name="c1">The data column.</param>
+    /// <param name="c2">The scalar value.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator >=(DataColumn c1, AltaxoVariant c2)
     {
 
@@ -1246,6 +1834,12 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator >= to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Compares whether a scalar value is greater than or equal to a data column.
+    /// </summary>
+    /// <param name="c1">The scalar value.</param>
+    /// <param name="c2">The data column.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator >=(AltaxoVariant c1, DataColumn c2)
     {
 
@@ -1255,6 +1849,11 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator >= to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies the unary plus operator to a data column.
+    /// </summary>
+    /// <param name="c1">The operand.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator +(DataColumn c1)
     {
 
@@ -1264,6 +1863,11 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator plus to " + c1.ToString() + " (" + c1.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies the unary minus operator to a data column.
+    /// </summary>
+    /// <param name="c1">The operand.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator -(DataColumn c1)
     {
 
@@ -1273,6 +1877,11 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator minus to " + c1.ToString() + " (" + c1.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies the logical NOT operator to a data column.
+    /// </summary>
+    /// <param name="c1">The operand.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator !(DataColumn c1)
     {
 
@@ -1282,6 +1891,11 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator not to " + c1.ToString() + " (" + c1.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies the bitwise complement operator to a data column.
+    /// </summary>
+    /// <param name="c1">The operand.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator ~(DataColumn c1)
     {
 
@@ -1291,6 +1905,11 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator complement to " + c1.ToString() + " (" + c1.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies the increment operator to a data column.
+    /// </summary>
+    /// <param name="c1">The operand.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator ++(DataColumn c1)
     {
 
@@ -1300,6 +1919,11 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator increment to " + c1.ToString() + " (" + c1.GetType() + ")");
     }
 
+    /// <summary>
+    /// Applies the decrement operator to a data column.
+    /// </summary>
+    /// <param name="c1">The operand.</param>
+    /// <returns>The result column.</returns>
     public static DataColumn operator --(DataColumn c1)
     {
 
@@ -1309,6 +1933,11 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator decrement to " + c1.ToString() + " (" + c1.GetType() + ")");
     }
 
+    /// <summary>
+    /// Evaluates the logical true operator for a data column.
+    /// </summary>
+    /// <param name="c1">The operand.</param>
+    /// <returns>The Boolean result.</returns>
     public static bool operator true(DataColumn c1)
     {
 
@@ -1318,6 +1947,11 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply operator TRUE to " + c1.ToString() + " (" + c1.GetType() + ")");
     }
 
+    /// <summary>
+    /// Evaluates the logical false operator for a data column.
+    /// </summary>
+    /// <param name="c1">The operand.</param>
+    /// <returns>The Boolean result.</returns>
     public static bool operator false(DataColumn c1)
     {
 

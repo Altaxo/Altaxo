@@ -27,9 +27,15 @@ namespace Altaxo.AddInItems
   /// </summary>
   public interface IMenuItemBuilder
   {
+    /// <summary>
+    /// Builds menu items for the specified codon.
+    /// </summary>
     IEnumerable<object> BuildItems(Codon codon, object parameter);
   }
 
+  /// <summary>
+  /// Obsolete compatibility alias for <see cref="IMenuItemBuilder"/>.
+  /// </summary>
   [Obsolete("Use IMenuItemBuilder instead")]
   public interface ISubmenuBuilder : IMenuItemBuilder
   {

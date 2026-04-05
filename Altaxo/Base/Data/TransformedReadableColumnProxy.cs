@@ -29,7 +29,7 @@ using Altaxo.Main;
 namespace Altaxo.Data
 {
   /// <summary>
-  /// Proxy for a <see cref="DataColumn"/> that is part of the document, and a transformation.
+  /// Proxy for a transformed readable column whose underlying column is part of the document hierarchy.
   /// </summary>
   /// <seealso cref="Altaxo.Main.DocNodeProxy" />
   /// <seealso cref="Altaxo.Data.IReadableColumnProxy" />

@@ -27,9 +27,13 @@ using Altaxo.Science.Signals;
 
 namespace Altaxo.Gui.Science.Signals
 {
+  /// <summary>
+  /// Controller for <see cref="FourPointPeakEvaluationDataSource"/>.
+  /// </summary>
   [UserControllerForObject(typeof(FourPointPeakEvaluationDataSource))]
   public class FourPointPeakEvaluationDataSourceController : DataSourceControllerBase<FourPointPeakEvaluationDataSource>
   {
+    /// <inheritdoc />
     protected override IMVCANController GetProcessDataController()
     {
       var ctrl = new XAndYColumnController();

@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -42,6 +42,9 @@ namespace Altaxo.Graph.Scales.Ticks
 
     private class CachedMajorMinor : ICloneable
     {
+      /// <summary>
+      /// Gets or sets the e nd.
+      /// </summary>
       public double Org, End;
 
       /// <summary>Raw value of physical span value between two major ticks, must be scaled with the MajorSpanDecadicExponent.</summary>
@@ -70,6 +73,9 @@ namespace Altaxo.Graph.Scales.Ticks
       /// <summary>Current axis end divided by the major tick span value.</summary>
       public double AxisEndByMajor;
 
+      /// <summary>
+      /// Initializes a new instance.
+      /// </summary>
       public CachedMajorMinor(double org, double end, double majorRaw, int majorDecadicExponent, int minor)
       {
         Org = org;
@@ -79,6 +85,9 @@ namespace Altaxo.Graph.Scales.Ticks
         MinorTicks = minor;
       }
 
+      /// <summary>
+      /// Creates a copy of this instance.
+      /// </summary>
       public object Clone()
       {
         return MemberwiseClone();
@@ -134,6 +143,7 @@ namespace Altaxo.Graph.Scales.Ticks
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinearTickSpacing), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (LinearTickSpacing)obj;
@@ -174,12 +184,16 @@ namespace Altaxo.Graph.Scales.Ticks
           info.AddValueOrNull("AdditionalMinorTicks", s._additionalMinorTicks);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         LinearTickSpacing s = SDeserialize(o, info, parent);
         return s;
       }
 
+      /// <summary>
+      /// Performs the s de se ri al iz e operation.
+      /// </summary>
       protected virtual LinearTickSpacing SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (LinearTickSpacing?)o ?? new LinearTickSpacing();
@@ -209,6 +223,9 @@ namespace Altaxo.Graph.Scales.Ticks
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinearTickSpacing"/> class.
+    /// </summary>
     public LinearTickSpacing()
     {
       _majorTicks = new List<double>();
@@ -220,12 +237,17 @@ namespace Altaxo.Graph.Scales.Ticks
     }
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinearTickSpacing"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public LinearTickSpacing(LinearTickSpacing from)
       : base(from) // everything is done here, since CopyFrom is virtual!
     {
     }
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -271,6 +293,7 @@ namespace Altaxo.Graph.Scales.Ticks
       return true;
     }
 
+    /// <inheritdoc />
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_suppressedMajorTicks is not null)
@@ -284,11 +307,13 @@ namespace Altaxo.Graph.Scales.Ticks
         yield return new Main.DocumentNodeAndName(_additionalMinorTicks, "AdditionalMinorTicks");
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new LinearTickSpacing(this);
     }
 
+    /// <inheritdoc />
     public override bool Equals(object? obj)
     {
       if (ReferenceEquals(this, obj))
@@ -344,6 +369,8 @@ namespace Altaxo.Graph.Scales.Ticks
       return true;
     }
 
+ 
+    /// <inheritdoc />
     public override int GetHashCode()
     {
       return base.GetHashCode() + 13 * _targetNumberOfMajorTicks + 31 * _targetNumberOfMinorTicks;
@@ -417,6 +444,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public BoundaryTickSnapping SnapOrgToTick
     {
       get
@@ -432,6 +462,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public BoundaryTickSnapping SnapEndToTick
     {
       get
@@ -447,6 +480,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public int TargetNumberOfMajorTicks
     {
       get
@@ -462,6 +498,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public int TargetNumberOfMinorTicks
     {
       get
@@ -477,6 +516,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public double TransformationDivider
     {
       get
@@ -492,6 +534,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public double TransformationOffset
     {
       get
@@ -507,6 +552,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool TransformationOperationIsMultiply
     {
       get
@@ -522,6 +570,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public int? MinorTicks
     {
       get
@@ -537,6 +588,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public double? MajorTickSpan
     {
       get
@@ -552,6 +606,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     [AllowNull]
     public SuppressedTicks SuppressedMajorTicks
     {
@@ -565,6 +622,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     [AllowNull]
     public SuppressedTicks SuppressedMinorTicks
     {
@@ -578,6 +638,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     [AllowNull]
     public AdditionalTicks AdditionalMajorTicks
     {
@@ -591,6 +654,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     [AllowNull]
     public AdditionalTicks AdditionalMinorTicks
     {
@@ -642,6 +708,8 @@ namespace Altaxo.Graph.Scales.Ticks
       return _minorTicks.ToArray();
     }
 
+ 
+    /// <inheritdoc />
     public override double[] GetMajorTicksNormal(Scale scale)
     {
       double[] r = new double[_majorTicks.Count];
@@ -651,6 +719,8 @@ namespace Altaxo.Graph.Scales.Ticks
       return r;
     }
 
+ 
+    /// <inheritdoc />
     public override double[] GetMinorTicksNormal(Scale scale)
     {
       double[] r = new double[_minorTicks.Count];

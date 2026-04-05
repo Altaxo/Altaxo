@@ -41,6 +41,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
   using GraphicsContext;
   using Plot.Groups;
 
+  /// <summary>
+  /// Represents a collection of three-dimensional plot styles.
+  /// </summary>
   public class G3DPlotStyleCollection
     :
     Main.SuspendableDocumentNodeWithSingleAccumulatedData<PlotItemStyleChangedEventArgs>,
@@ -57,9 +60,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <summary>
     /// 2016-05-30 Initial version
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="G3DPlotStyleCollection"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(G3DPlotStyleCollection), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (G3DPlotStyleCollection)obj;
@@ -70,6 +77,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         info.CommitArray();
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         int count = info.OpenArray();
@@ -96,6 +104,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     #region Copying
 
+    /// <summary>
+    /// Copies the contents of another style collection.
+    /// </summary>
+    /// <param name="from">The collection to copy from.</param>
     [MemberNotNull(nameof(_innerList))]
     public void CopyFrom(G3DPlotStyleCollection from)
     {
@@ -163,6 +175,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       return true;
     }
 
+    /// <inheritdoc/>
     public bool CopyFrom(object obj, bool copyWithDataReferences)
     {
       if (ReferenceEquals(this, obj))
@@ -181,6 +194,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// </summary>
     /// <param name="obj">Another instance to copy the data from.</param>
     /// <returns>True if data was copied, otherwise false.</returns>
+    /// <inheritdoc/>
     public bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -190,16 +204,22 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     }
 
     /// <inheritdoc/>
+    /// <inheritdoc/>
     public object Clone(bool copyWithDataReferences)
     {
       return new G3DPlotStyleCollection(this);
     }
 
+    /// <inheritdoc/>
     object ICloneable.Clone()
     {
       return new G3DPlotStyleCollection(this);
     }
 
+    /// <summary>
+    /// Creates a strongly typed clone of this collection.
+    /// </summary>
+    /// <returns>A cloned style collection.</returns>
     public G3DPlotStyleCollection Clone()
     {
       return new G3DPlotStyleCollection(this);
@@ -212,11 +232,18 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <summary>
     /// Creates an empty collection, i.e. without any styles (so the item is not visible). You must manually add styles to make the plot item visible.
     /// </summary>
+    /// <summary>
+    /// Initializes a new instance of the <see cref="G3DPlotStyleCollection"/> class.
+    /// </summary>
     public G3DPlotStyleCollection()
     {
       _innerList = new List<IG3DPlotStyle>();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="G3DPlotStyleCollection"/> class with the specified styles.
+    /// </summary>
+    /// <param name="styles">The styles to add.</param>
     public G3DPlotStyleCollection(IG3DPlotStyle[] styles)
     {
       _innerList = new List<IG3DPlotStyle>();
@@ -225,6 +252,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
           Add(styles[i], false);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="G3DPlotStyleCollection"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The collection to copy from.</param>
     public G3DPlotStyleCollection(G3DPlotStyleCollection from)
     {
       CopyFrom(from);
@@ -232,6 +263,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     #endregion Construction
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_innerList is not null)
@@ -244,6 +276,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Updates this collection from a template collection according to the specified strictness.
+    /// </summary>
+    /// <param name="from">The template collection.</param>
+    /// <param name="strictness">The template application strictness.</param>
     public void SetFromTemplate(G3DPlotStyleCollection from, PlotGroupStrictness strictness)
     {
       if (strictness == PlotGroupStrictness.Strict)
@@ -277,6 +314,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets the plot style at the specified index.
+    /// </summary>
+    /// <param name="i">The zero-based index.</param>
+    /// <returns>The plot style at the specified index.</returns>
     public IG3DPlotStyle this[int i]
     {
       get
@@ -285,6 +327,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets the number of plot styles in the collection.
+    /// </summary>
     public int Count
     {
       get
@@ -293,11 +338,20 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Adds a plot style to the collection.
+    /// </summary>
+    /// <param name="toadd">The plot style to add.</param>
     public void Add(IG3DPlotStyle toadd)
     {
       Add(toadd, true);
     }
 
+    /// <summary>
+    /// Adds a plot style to the collection.
+    /// </summary>
+    /// <param name="toadd">The plot style to add.</param>
+    /// <param name="withReorganizationAndEvents">If set to <see langword="true"/>, change events are raised afterwards.</param>
     protected void Add(IG3DPlotStyle toadd, bool withReorganizationAndEvents)
     {
       if (toadd is not null)
@@ -312,6 +366,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Replaces the plot style at the specified index.
+    /// </summary>
+    /// <param name="ps">The replacement plot style.</param>
+    /// <param name="idx">The zero-based index to replace.</param>
+    /// <param name="withReorganizationAndEvents">If set to <see langword="true"/>, change events are raised afterwards.</param>
     protected void Replace(IG3DPlotStyle ps, int idx, bool withReorganizationAndEvents)
     {
       if (ps is not null)
@@ -326,6 +386,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Adds a range of plot styles to the collection.
+    /// </summary>
+    /// <param name="toadd">The plot styles to add.</param>
     public void AddRange(IG3DPlotStyle[] toadd)
     {
       if (toadd is not null)
@@ -340,6 +404,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Inserts a plot style at the specified index.
+    /// </summary>
+    /// <param name="whichposition">The zero-based insertion index.</param>
+    /// <param name="toinsert">The plot style to insert.</param>
     public void Insert(int whichposition, IG3DPlotStyle toinsert)
     {
       if (toinsert is not null)
@@ -351,6 +420,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Removes all plot styles from the collection.
+    /// </summary>
     public void Clear()
     {
       if (_innerList is not null)
@@ -361,6 +433,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Removes the plot style at the specified index.
+    /// </summary>
+    /// <param name="idx">The zero-based index of the plot style to remove.</param>
     public void RemoveAt(int idx)
     {
       var removed = this[idx];
@@ -369,6 +445,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       EhSelfChanged(EventArgs.Empty);
     }
 
+    /// <summary>
+    /// Exchanges the positions of two plot styles in the collection.
+    /// </summary>
+    /// <param name="pos1">The first index.</param>
+    /// <param name="pos2">The second index.</param>
     public void ExchangeItemPositions(int pos1, int pos2)
     {
       var item1 = this[pos1];
@@ -378,11 +459,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       EhSelfChanged(EventArgs.Empty);
     }
 
+    /// <inheritdoc/>
     protected override void AccumulateChangeData(object? sender, EventArgs e)
     {
       _accumulatedEventData = PlotItemStyleChangedEventArgs.Empty;
     }
 
+    /// <inheritdoc/>
     public void Paint(IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData pdata, Processed3DPlotData? prevItemData, Processed3DPlotData? nextItemData)
     {
       if (pdata is null)
@@ -408,6 +491,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <inheritdoc/>
     public RectangleD3D PaintSymbol(IGraphicsContext3D g, RectangleD3D bounds)
     {
       for (int i = _innerList.Count - 1; i >= 0; i--)
@@ -474,6 +558,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     #region IEnumerable<IPlotStyle> Members
 
+    /// <inheritdoc/>
     public IEnumerator<IG3DPlotStyle> GetEnumerator()
     {
       return _innerList.GetEnumerator();
@@ -492,24 +577,28 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     #region IPlotStyle Members
 
+    /// <inheritdoc/>
     public void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups)
     {
       foreach (var ps in this)
         ps.CollectExternalGroupStyles(externalGroups);
     }
 
+    /// <inheritdoc/>
     public void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       foreach (var ps in this)
         ps.CollectLocalGroupStyles(externalGroups, localGroups);
     }
 
+    /// <inheritdoc/>
     public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed3DPlotData pdata)
     {
       foreach (var ps in this)
         ps.PrepareGroupStyles(externalGroups, localGroups, layer, pdata);
     }
 
+    /// <inheritdoc/>
     public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       foreach (var ps in this)

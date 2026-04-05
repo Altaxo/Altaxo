@@ -31,15 +31,22 @@ using Altaxo.Science.Spectroscopy;
 
 namespace Altaxo.Gui.Science.Spectroscopy
 {
-  public interface IPeakSearchingAndFittingOutputOptionsView : IDataContextAwareView
+    /// <summary>
+/// Defines the contract for peak Searching And Fitting Output Options View.
+/// </summary>
+public interface IPeakSearchingAndFittingOutputOptionsView : IDataContextAwareView
   {
   }
 
-  [ExpectedTypeOfView(typeof(IPeakSearchingAndFittingOutputOptionsView))]
+  /// <summary>
+/// Represents a controller for peak Searching And Fitting Output Options.
+/// </summary>
+[ExpectedTypeOfView(typeof(IPeakSearchingAndFittingOutputOptionsView))]
   [UserControllerForObject(typeof(PeakSearchingAndFittingOutputOptions))]
   public class PeakSearchingAndFittingOutputOptionsController : MVCANControllerEditImmutableDocBase<PeakSearchingAndFittingOutputOptions, IPeakSearchingAndFittingOutputOptionsView>
   {
-    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+        /// <inheritdoc />
+public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
@@ -48,7 +55,13 @@ namespace Altaxo.Gui.Science.Spectroscopy
 
     private bool _outputPreprocessedCurve;
 
-    public bool OutputPreprocessedCurve
+        /// <summary>
+/// Gets or sets the output Preprocessed Curve.
+/// </summary>
+/// <value>
+/// <c>true</c> if output Preprocessed Curve; otherwise, <c>false</c>.
+/// </value>
+public bool OutputPreprocessedCurve
     {
       get => _outputPreprocessedCurve;
       set
@@ -63,7 +76,13 @@ namespace Altaxo.Gui.Science.Spectroscopy
 
     private bool _outputFitCurve;
 
-    public bool OutputFitCurve
+        /// <summary>
+/// Gets or sets the output Fit Curve.
+/// </summary>
+/// <value>
+/// <c>true</c> if output Fit Curve; otherwise, <c>false</c>.
+/// </value>
+public bool OutputFitCurve
     {
       get => _outputFitCurve;
       set
@@ -78,7 +97,13 @@ namespace Altaxo.Gui.Science.Spectroscopy
 
     private bool _outputFitCurveAsSeparatePeaks;
 
-    public bool OutputFitCurveAsSeparatePeaks
+        /// <summary>
+/// Gets or sets the output Fit Curve As Separate Peaks.
+/// </summary>
+/// <value>
+/// <c>true</c> if output Fit Curve As Separate Peaks; otherwise, <c>false</c>.
+/// </value>
+public bool OutputFitCurveAsSeparatePeaks
     {
       get => _outputFitCurveAsSeparatePeaks;
       set
@@ -93,7 +118,13 @@ namespace Altaxo.Gui.Science.Spectroscopy
 
     private int _outputFitCurveSamplingFactor;
 
-    public int OutputFitCurveSamplingFactor
+        /// <summary>
+/// Gets or sets the output Fit Curve Sampling Factor.
+/// </summary>
+/// <value>
+/// The output Fit Curve Sampling Factor.
+/// </value>
+public int OutputFitCurveSamplingFactor
     {
       get => _outputFitCurveSamplingFactor;
       set
@@ -108,7 +139,13 @@ namespace Altaxo.Gui.Science.Spectroscopy
 
     private int _outputFitCurveAsSeparatePeaksSamplingFactor;
 
-    public int OutputFitCurveAsSeparatePeaksSamplingFactor
+        /// <summary>
+/// Gets or sets the output Fit Curve As Separate Peaks Sampling Factor.
+/// </summary>
+/// <value>
+/// The output Fit Curve As Separate Peaks Sampling Factor.
+/// </value>
+public int OutputFitCurveAsSeparatePeaksSamplingFactor
     {
       get => _outputFitCurveAsSeparatePeaksSamplingFactor;
       set
@@ -123,7 +160,13 @@ namespace Altaxo.Gui.Science.Spectroscopy
 
     private bool _outputBaselineCurve;
 
-    public bool OutputBaselineCurve
+        /// <summary>
+/// Gets or sets the output Baseline Curve.
+/// </summary>
+/// <value>
+/// <c>true</c> if output Baseline Curve; otherwise, <c>false</c>.
+/// </value>
+public bool OutputBaselineCurve
     {
       get => _outputBaselineCurve;
       set
@@ -138,7 +181,13 @@ namespace Altaxo.Gui.Science.Spectroscopy
 
     private bool _outputFitResidualCurve;
 
-    public bool OutputFitResidualCurve
+        /// <summary>
+/// Gets or sets the output Fit Residual Curve.
+/// </summary>
+/// <value>
+/// <c>true</c> if output Fit Residual Curve; otherwise, <c>false</c>.
+/// </value>
+public bool OutputFitResidualCurve
     {
       get => _outputFitResidualCurve;
       set
@@ -152,31 +201,51 @@ namespace Altaxo.Gui.Science.Spectroscopy
     }
 
 
-    public class Property : IEditableObject, INotifyPropertyChanged
+    /// <summary>
+/// Represents the property.
+/// </summary>
+public class Property : IEditableObject, INotifyPropertyChanged
     {
+      /// <inheritdoc/>
       public event PropertyChangedEventHandler? PropertyChanged;
 
-      public Property() { }
-      public Property(string name)
+            /// <summary>
+/// Initializes a new instance of the <see cref="Altaxo.Gui.Science.Spectroscopy.PeakSearchingAndFittingOutputOptionsController.Property" /> class.
+/// </summary>
+public Property() { }
+            /// <summary>
+/// Initializes a new instance of the <see cref="Altaxo.Gui.Science.Spectroscopy.PeakSearchingAndFittingOutputOptionsController.Property" /> class.
+/// </summary>
+/// <param name="name">The name.</param>
+public Property(string name)
       {
         _propertyName = name ?? string.Empty;
       }
 
 
-      public void BeginEdit()
+            /// <inheritdoc />
+public void BeginEdit()
       {
       }
 
-      public void CancelEdit()
+            /// <inheritdoc />
+public void CancelEdit()
       {
       }
 
-      public void EndEdit()
+            /// <inheritdoc />
+public void EndEdit()
       {
       }
 
       private string _propertyName = string.Empty;
-      public string PropertyName
+            /// <summary>
+/// Gets or sets the property Name.
+/// </summary>
+/// <value>
+/// The property Name.
+/// </value>
+public string PropertyName
       {
         get => _propertyName;
         set
@@ -190,12 +259,19 @@ namespace Altaxo.Gui.Science.Spectroscopy
       }
     }
 
-    public ObservableCollection<Property> PropertyNames { get; } = new();
+        /// <summary>
+/// Gets the property Names.
+/// </summary>
+/// <value>
+/// The property Names.
+/// </value>
+public ObservableCollection<Property> PropertyNames { get; } = new();
 
 
     #endregion
 
-    protected override void Initialize(bool initData)
+        /// <inheritdoc />
+protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
@@ -212,7 +288,8 @@ namespace Altaxo.Gui.Science.Spectroscopy
       }
     }
 
-    public override bool Apply(bool disposeController)
+        /// <inheritdoc />
+public override bool Apply(bool disposeController)
     {
       _doc = _doc with
       {

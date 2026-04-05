@@ -28,7 +28,7 @@ using System;
 namespace Altaxo.Graph.Scales.Rescaling
 {
   /// <summary>
-  /// Summary description for LogarithmicAxisRescaleConditions.
+  /// Stores rescaling conditions for inverse scales.
   /// </summary>
   [Serializable]
   public class InverseScaleRescaleConditions : NumericScaleRescaleConditions
@@ -39,6 +39,7 @@ namespace Altaxo.Graph.Scales.Rescaling
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(InverseScaleRescaleConditions), 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (InverseScaleRescaleConditions)obj;
@@ -46,6 +47,7 @@ namespace Altaxo.Graph.Scales.Rescaling
         info.AddBaseValueEmbedded(s, s.GetType().BaseType!);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (InverseScaleRescaleConditions?)o ?? new InverseScaleRescaleConditions();
@@ -58,20 +60,29 @@ namespace Altaxo.Graph.Scales.Rescaling
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="InverseScaleRescaleConditions"/> class.
+    /// </summary>
     public InverseScaleRescaleConditions()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="InverseScaleRescaleConditions"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public InverseScaleRescaleConditions(InverseScaleRescaleConditions from)
       : base(from) // all is done here, since CopyFrom is virtual!
     {
     }
 
+    /// <inheritdoc/>
     public override object Clone()
     {
       return new InverseScaleRescaleConditions(this);
     }
 
+    /// <inheritdoc/>
     public override double ResultingOrg
     {
       get
@@ -80,6 +91,9 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <summary>
+    /// Gets the resulting origin in inverse representation.
+    /// </summary>
     public double ResultingInverseOrg
     {
       get
@@ -88,6 +102,7 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <inheritdoc/>
     public override double ResultingEnd
     {
       get
@@ -96,6 +111,9 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <summary>
+    /// Gets the resulting end in inverse representation.
+    /// </summary>
     public double ResultingInverseEnd
     {
       get
@@ -104,6 +122,7 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <inheritdoc/>
     public override double UserProvidedOrgValue
     {
       get
@@ -112,6 +131,7 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <inheritdoc/>
     public override double UserProvidedEndValue
     {
       get
@@ -120,6 +140,7 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <inheritdoc/>
     public override void SetUserParameters(BoundaryRescaling orgRescaling, BoundariesRelativeTo orgRelativeTo, double orgValue, BoundaryRescaling endRescaling, BoundariesRelativeTo endRelativeTo, double endValue)
     {
       orgValue = 1 / orgValue;
@@ -180,6 +201,7 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <inheritdoc/>
     protected override void FixValuesForUserZoomed(ref double zoomOrg, ref double zoomEnd)
     {
       zoomOrg = 1 / zoomOrg;
@@ -198,6 +220,7 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <inheritdoc/>
     protected override double GetDataBoundsScaleMean()
     {
       return 0.5 * (_dataBoundsOrg + _dataBoundsEnd);
@@ -205,6 +228,7 @@ namespace Altaxo.Graph.Scales.Rescaling
 
     #region Resulting Org/End to/fron User Org/End
 
+    /// <inheritdoc/>
     protected override double GetResultingOrgFromUserProvidedOrg()
     {
       switch (_userProvidedOrgRelativeTo)
@@ -226,6 +250,7 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <inheritdoc/>
     protected override double GetUserProvidedOrgFromResultingOrg(double resultingOrg)
     {
       switch (_userProvidedOrgRelativeTo)
@@ -247,6 +272,7 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <inheritdoc/>
     protected override double GetResultingEndFromUserProvidedEnd()
     {
       switch (_userProvidedEndRelativeTo)
@@ -268,6 +294,7 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <inheritdoc/>
     protected override double GetUserProvidedEndFromResultingEnd(double resultingEnd)
     {
       switch (_userProvidedEndRelativeTo)
@@ -293,6 +320,11 @@ namespace Altaxo.Graph.Scales.Rescaling
 
     #region Helper functions for dialog
 
+    /// <summary>
+    /// Gets the origin value that should be shown in the rescaling dialog.
+    /// </summary>
+    /// <param name="currentResultingInverseOrg">The current resulting inverse origin.</param>
+    /// <returns>The origin value to display.</returns>
     public double GetOrgValueToShowInDialog(double currentResultingInverseOrg)
     {
       if (_orgRescaling == BoundaryRescaling.Auto)
@@ -321,6 +353,11 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <summary>
+    /// Gets the end value that should be shown in the rescaling dialog.
+    /// </summary>
+    /// <param name="currentResultingInverseEnd">The current resulting inverse end.</param>
+    /// <returns>The end value to display.</returns>
     public double GetEndValueToShowInDialog(double currentResultingInverseEnd)
     {
       if (_endRescaling == BoundaryRescaling.Auto)

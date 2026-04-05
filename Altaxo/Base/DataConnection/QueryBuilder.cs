@@ -40,9 +40,24 @@ namespace Altaxo.DataConnection
   /// </summary>
   public enum GroupByExtension
   {
+    /// <summary>
+    /// Uses the standard <c>GROUP BY</c> behavior without any extension.
+    /// </summary>
     None,
+
+    /// <summary>
+    /// Uses the <c>WITH CUBE</c> extension.
+    /// </summary>
     Cube,
+
+    /// <summary>
+    /// Uses the <c>WITH ROLLUP</c> extension.
+    /// </summary>
     Rollup,
+
+    /// <summary>
+    /// Uses the <c>ALL</c> extension.
+    /// </summary>
     All
   }
 

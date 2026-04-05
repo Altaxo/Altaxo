@@ -27,9 +27,15 @@ using System;
 
 namespace Altaxo.Data.Transformations
 {
+  /// <summary>
+  /// Applies the decadic logarithm function <c>log10(x)</c>.
+  /// </summary>
   public class DecadicLogarithmTransformation : ImmutableClassWithoutMembersBase, IDoubleToDoubleTransformation
   {
     private static readonly double Log10 = Math.Log(10);
+    /// <summary>
+    /// Gets the singleton instance.
+    /// </summary>
     public static DecadicLogarithmTransformation Instance { get; private set; } = new DecadicLogarithmTransformation();
 
     #region Serialization
@@ -59,6 +65,7 @@ namespace Altaxo.Data.Transformations
     /// <inheritdoc/>
     public Type OutputValueType { get { return typeof(double); } }
 
+    /// <inheritdoc/>
     public AltaxoVariant Transform(AltaxoVariant value)
     {
       return Math.Log10(value);
@@ -70,26 +77,31 @@ namespace Altaxo.Data.Transformations
       return (Math.Log10(y), dydx / (y*Log10));
     }
 
+    /// <inheritdoc/>
     public double Transform(double value)
     {
       return Math.Log10(value);
     }
 
+    /// <inheritdoc/>
     public string RepresentationAsFunction
     {
       get { return GetRepresentationAsFunction("x"); }
     }
 
+    /// <inheritdoc/>
     public string GetRepresentationAsFunction(string arg)
     {
       return string.Format("Log10({0})", arg);
     }
 
+    /// <inheritdoc/>
     public string RepresentationAsOperator
     {
       get { return "Log10"; }
     }
 
+    /// <inheritdoc/>
     public IVariantToVariantTransformation BackTransformation
     {
       get { return DecadicExponentialTransformation.Instance; }

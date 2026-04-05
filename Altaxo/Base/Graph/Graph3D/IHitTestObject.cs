@@ -29,8 +29,10 @@ using Altaxo.Geometry;
 namespace Altaxo.Graph.Graph3D
 {
   /// <summary>
-  /// Handler type to process double click events
+  /// Represents a handler for hit-test-object double-click events.
   /// </summary>
+  /// <param name="o">The hit-test object that received the double click.</param>
+  /// <returns><c>true</c> if the object was removed; otherwise, <c>false</c>.</returns>
   public delegate bool DoubleClickHandler(IHitTestObject o);
 
   /// <summary>
@@ -58,6 +60,9 @@ namespace Altaxo.Graph.Graph3D
     /// <returns></returns>
     object HittedObject { get; set; }
 
+    /// <summary>
+    /// Gets or sets the parent layer of the hit object.
+    /// </summary>
     HostLayer? ParentLayer { get; set; }
 
     /// <summary>

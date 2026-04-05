@@ -30,6 +30,10 @@ namespace Altaxo.Main.Services.Implementation
   {
     private readonly TextWriter writer;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextWriterMessageService"/> class.
+    /// </summary>
+    /// <param name="writer">The target text writer.</param>
     public TextWriterMessageService(TextWriter writer)
     {
       if (writer is null)
@@ -38,11 +42,17 @@ namespace Altaxo.Main.Services.Implementation
       DefaultMessageBoxTitle = ProductName = "SharpDevelop";
     }
 
+    /// <summary>
+    /// Writes an error line.
+    /// </summary>
     public void WriteErrorLine(string caption, string message)
     {
       writer.WriteLine(caption ?? string.Empty + " " + message ?? string.Empty);
     }
 
+    /// <summary>
+    /// Writes a formatted error line.
+    /// </summary>
     public void WriteErrorLine(string caption, string message, params object[] args)
     {
       if (string.IsNullOrEmpty(caption))
@@ -51,6 +61,7 @@ namespace Altaxo.Main.Services.Implementation
         writer.WriteLine(caption + ": " + string.Format(message, args));
     }
 
+    /// <inheritdoc/>
     public void WriteLine(MessageLevel level, string caption, string message)
     {
       switch (level)
@@ -72,21 +83,25 @@ namespace Altaxo.Main.Services.Implementation
       }
     }
 
+    /// <inheritdoc/>
     public void WriteLine(MessageLevel messageLevel, string source, string format, params object[] args)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public void WriteLine(MessageLevel messageLevel, string source, System.IFormatProvider provider, string format, params object[] args)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public void ShowError(string message)
     {
       writer.WriteLine(message);
     }
 
+    /// <inheritdoc/>
     public void ShowException(Exception ex, string? message = null)
     {
       if (message is not null)
@@ -99,6 +114,7 @@ namespace Altaxo.Main.Services.Implementation
       }
     }
 
+    /// <inheritdoc/>
     public void ShowHandledException(Exception ex, string? message = null)
     {
       if (message is not null)
@@ -111,34 +127,40 @@ namespace Altaxo.Main.Services.Implementation
       }
     }
 
+    /// <inheritdoc/>
     public void ShowWarning(string message)
     {
       writer.WriteLine(message);
     }
 
+    /// <inheritdoc/>
     public bool AskQuestion(string question, string? caption)
     {
       writer.WriteLine((caption ?? string.Empty) + ": " + question);
       return false;
     }
 
+    /// <inheritdoc/>
     public int ShowCustomDialog(string caption, string dialogText, int acceptButtonIndex, int cancelButtonIndex, params string[] buttontexts)
     {
       writer.WriteLine(caption + ": " + dialogText);
       return cancelButtonIndex;
     }
 
+    /// <inheritdoc/>
     public string ShowInputBox(string caption, string dialogText, string defaultValue)
     {
       writer.WriteLine(caption + ": " + dialogText);
       return defaultValue;
     }
 
+    /// <inheritdoc/>
     public void ShowMessage(string message, string? caption)
     {
       writer.WriteLine((caption ?? string.Empty) + ": " + message);
     }
 
+    /// <inheritdoc/>
     public void InformSaveError(PathName fileName, string message, string dialogName, Exception exceptionGot)
     {
       writer.WriteLine(dialogName + ": " + message + " (" + fileName + ")");
@@ -146,6 +168,7 @@ namespace Altaxo.Main.Services.Implementation
         writer.WriteLine(exceptionGot.ToString());
     }
 
+    /// <inheritdoc/>
     public ChooseSaveErrorResult ChooseSaveError(PathName fileName, string message, string dialogName, Exception exceptionGot, bool chooseLocationEnabled)
     {
       writer.WriteLine(dialogName + ": " + message + " (" + fileName + ")");
@@ -154,22 +177,27 @@ namespace Altaxo.Main.Services.Implementation
       return ChooseSaveErrorResult.Ignore;
     }
 
+    /// <inheritdoc/>
     public void ShowErrorFormatted(string formatstring, params object[] formatitems)
     {
       writer.WriteLine(StringParser.Format(formatstring, formatitems));
     }
 
+    /// <inheritdoc/>
     public void ShowWarningFormatted(string formatstring, params object[] formatitems)
     {
       writer.WriteLine(StringParser.Format(formatstring, formatitems));
     }
 
+    /// <inheritdoc/>
     public void ShowMessageFormatted(string formatstring, string? caption, params object[] formatitems)
     {
       writer.WriteLine(StringParser.Format(formatstring, formatitems));
     }
 
+    /// <inheritdoc/>
     public string DefaultMessageBoxTitle { get; set; }
+    /// <inheritdoc/>
     public string ProductName { get; set; }
   }
 }

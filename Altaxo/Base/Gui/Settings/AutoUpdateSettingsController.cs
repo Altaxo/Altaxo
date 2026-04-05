@@ -50,10 +50,19 @@ namespace Altaxo.Gui.Settings
     /// <summary>Gets or sets the Gui element(s) that indicate when to install auto updates. Here: Bit0=1: at startup; Bit1=1: at shutdown</summary>
     int InstallAt { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the installation window is shown.
+    /// </summary>
     bool ShowInstallationWindow { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether installation must be confirmed.
+    /// </summary>
     bool ConfirmInstallation { get; set; }
 
+    /// <summary>
+    /// Gets or sets the automatic closing time of the installation window.
+    /// </summary>
     int InstallationWindowClosingTime { get; set; }
   }
 
@@ -62,11 +71,13 @@ namespace Altaxo.Gui.Settings
   [UserControllerForObject(typeof(AutoUpdateSettings))]
   public class AutoUpdateSettingsController : MVCANControllerEditOriginalDocBase<AutoUpdateSettings, IAutoUpdateSettingsView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -84,6 +95,7 @@ namespace Altaxo.Gui.Settings
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc.EnableAutoUpdates = _view.EnableAutoUpdates;
@@ -101,8 +113,12 @@ namespace Altaxo.Gui.Settings
     }
   }
 
+    /// <summary>
+    /// Option panel for editing auto-update settings.
+    /// </summary>
   public class AutoUpdateSettingsOptionPanel : OptionPanelBase<AutoUpdateSettingsController>
   {
+    /// <inheritdoc/>
     public override void Initialize(object optionPanelOwner)
     {
       _controller = new AutoUpdateSettingsController();
@@ -110,6 +126,7 @@ namespace Altaxo.Gui.Settings
       _controller.InitializeDocument(doc);
     }
 
+    /// <inheritdoc/>
     protected override void ProcessControllerResult()
     {
       var doc = (AutoUpdateSettings)_controller.ModelObject;

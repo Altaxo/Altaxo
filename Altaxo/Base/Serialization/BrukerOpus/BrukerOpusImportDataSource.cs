@@ -30,6 +30,9 @@ using Altaxo.Data;
 
 namespace Altaxo.Serialization.BrukerOpus
 {
+  /// <summary>
+  /// Table data source for importing Bruker Opus files.
+  /// </summary>
   public class BrukerOpusImportDataSource : FileImportTableDataSourceBase<BrukerOpusImportOptions>
   {
     #region Serialization
@@ -42,6 +45,7 @@ namespace Altaxo.Serialization.BrukerOpus
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BrukerOpusImportDataSource), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (BrukerOpusImportDataSource)obj;
@@ -51,6 +55,7 @@ namespace Altaxo.Serialization.BrukerOpus
         info.AddArray("ProcessData", s._files.ToArray(), s._files.Count);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (o is BrukerOpusImportDataSource s)
@@ -96,30 +101,42 @@ namespace Altaxo.Serialization.BrukerOpus
 
     #region Construction
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BrukerOpusImportDataSource"/> class for a single file.
+    /// </summary>
     public BrukerOpusImportDataSource(string fileName, BrukerOpusImportOptions options)
       : this(new string[] { fileName }, options)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BrukerOpusImportDataSource"/> class for multiple files.
+    /// </summary>
     public BrukerOpusImportDataSource(IEnumerable<string> fileNames, BrukerOpusImportOptions options)
       : base(fileNames)
     {
       _processOptions = options;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BrukerOpusImportDataSource"/> class by copying another instance.
+    /// </summary>
     public BrukerOpusImportDataSource(BrukerOpusImportDataSource from)
       : base(from)
     {
     }
 
+    /// <inheritdoc />
     public override object Clone() => new BrukerOpusImportDataSource(this);
 
     #endregion Construction
+    /// <inheritdoc />
     protected override void ImportFromFiles(string[] validFileNames, DataTable destinationTable, IProgressReporter reporter)
     {
       new BrukerOpusImporter().Import(validFileNames, destinationTable, _processOptions, attachDataSource: false);
     }
 
+    /// <inheritdoc />
     public override (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
       => new BrukerOpusImporter().GetFileExtensions();
   }

@@ -29,12 +29,18 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Data
 {
+  /// <summary>
+  /// Table data source that transposes another data table.
+  /// </summary>
   public class DataTableTransposeDataSource : TableDataSourceBase, Altaxo.Data.IAltaxoTableDataSource
   {
     private DataTableTransposeOptions _processOptions;
     private DataTableProxy _processData;
     private IDataSourceImportOptions _importOptions;
 
+    /// <summary>
+    /// Raised when the data source changes.
+    /// </summary>
     public Action<IAltaxoTableDataSource>? _dataSourceChanged;
 
     #region Serialization
@@ -79,6 +85,11 @@ namespace Altaxo.Data
 
     #endregion Version 0
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DataTableTransposeDataSource"/> class during XML deserialization.
+    /// </summary>
+    /// <param name="info">The XML deserialization info.</param>
+    /// <param name="version">The serialized version.</param>
     protected DataTableTransposeDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     {
       switch (version)
@@ -307,6 +318,7 @@ namespace Altaxo.Data
 
     #region Change event handling
 
+    /// <inheritdoc />
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (object.ReferenceEquals(_processData, sender)) // incoming call from data proxy
@@ -328,6 +340,7 @@ namespace Altaxo.Data
 
     #region Document Node functions
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_processData is not null)

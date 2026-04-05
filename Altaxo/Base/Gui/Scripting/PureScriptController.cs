@@ -30,22 +30,45 @@ namespace Altaxo.Gui.Scripting
 {
   #region Interfaces
 
+  /// <summary>
+  /// View interface for editing a pure script text.
+  /// </summary>
   public interface IPureScriptView
   {
+    /// <summary>
+    /// Gets or sets the script text.
+    /// </summary>
     string ScriptText { get; set; }
 
+    /// <summary>
+    /// Sets the current script cursor location.
+    /// </summary>
     int ScriptCursorLocation { set; }
 
+    /// <summary>
+    /// Sets the initial script cursor location.
+    /// </summary>
     int InitialScriptCursorLocation { set; }
 
+    /// <summary>
+    /// Sets the script cursor location by line and column.
+    /// </summary>
     void SetScriptCursorLocation(int line, int column);
 
+    /// <summary>
+    /// Marks the specified text range.
+    /// </summary>
     void MarkText(int pos1, int pos2);
   }
 
+  /// <summary>
+  /// Controller interface for editing <see cref="IPureScriptText"/>.
+  /// </summary>
   public interface IPureScriptController : IMVCANController
   {
-    // Initializes or reinitializes the script controller.
+    /// <summary>
+    /// Initializes or reinitializes the script controller.
+    /// </summary>
     void SetText(string text);
 
     /// <summary>
@@ -55,8 +78,14 @@ namespace Altaxo.Gui.Scripting
     /// <param name="column">Script column (1-based).</param>
     void SetScriptCursorLocation(int line, int column);
 
+    /// <summary>
+    /// Sets the cursor location using a character offset.
+    /// </summary>
     void SetScriptCursorLocation(int offset);
 
+    /// <summary>
+    /// Sets the initial cursor location using a character offset.
+    /// </summary>
     void SetInitialScriptCursorLocation(int offset);
 
     /// <summary>
@@ -65,13 +94,16 @@ namespace Altaxo.Gui.Scripting
     /// <returns></returns>
     string GetCurrentScriptText();
 
+    /// <summary>
+    /// Gets the script model.
+    /// </summary>
     IPureScriptText Model { get; }
   }
 
   #endregion Interfaces
 
   /// <summary>
-  /// Summary description for PureScriptController.
+  /// Controller for editing <see cref="IPureScriptText"/>.
   /// </summary>
   [UserControllerForObject(typeof(IPureScriptText))]
   [ExpectedTypeOfView(typeof(IPureScriptView))]
@@ -80,10 +112,17 @@ namespace Altaxo.Gui.Scripting
     private IPureScriptView _view;
     private IPureScriptText _doc;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PureScriptController"/> class.
+    /// </summary>
     public PureScriptController()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PureScriptController"/> class.
+    /// </summary>
+    /// <param name="doc">Script document to edit.</param>
     public PureScriptController(IPureScriptText doc)
     {
       InitializeDocument(doc);
@@ -91,6 +130,7 @@ namespace Altaxo.Gui.Scripting
 
     #region IMVCANController Members
 
+    /// <inheritdoc/>
     public bool InitializeDocument(params object[] args)
     {
       if (args is null || args.Length == 0)
@@ -104,6 +144,7 @@ namespace Altaxo.Gui.Scripting
       return true;
     }
 
+    /// <inheritdoc/>
     public UseDocument UseDocumentCopy
     {
       set { }
@@ -111,28 +152,39 @@ namespace Altaxo.Gui.Scripting
 
     #endregion IMVCANController Members
 
+    /// <inheritdoc/>
     public void SetText(string text)
     {
       if (_view is not null)
         _view.ScriptText = text;
     }
 
+    /// <summary>
+    /// Initializes the view from the current document.
+    /// </summary>
     public void Initialize()
     {
       if (_view is not null)
         _view.ScriptText = _doc.ScriptText;
     }
 
+    /// <summary>
+    /// Attaches the view.
+    /// </summary>
     public void AttachView()
     {
     }
 
+    /// <summary>
+    /// Detaches the view.
+    /// </summary>
     public void DetachView()
     {
     }
 
     #region IMVCController Members
 
+    /// <inheritdoc/>
     public object ModelObject
     {
       get
@@ -141,6 +193,7 @@ namespace Altaxo.Gui.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public object ViewObject
     {
       get
@@ -164,6 +217,7 @@ namespace Altaxo.Gui.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
     }
@@ -172,6 +226,7 @@ namespace Altaxo.Gui.Scripting
 
     #region IApplyController Members
 
+    /// <inheritdoc/>
     public bool Apply(bool disposeController)
     {
       if (_view is not null)
@@ -186,11 +241,11 @@ namespace Altaxo.Gui.Scripting
     }
 
     /// <summary>
-    /// Try to revert changes to the model, i.e. restores the original state of the model.
+    /// Tries to revert changes to the model, i.e. restores the original state of the model.
     /// </summary>
     /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
     /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    ///   <c>true</c> if the revert operation was successful; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
     /// </returns>
     public bool Revert(bool disposeController)
     {
@@ -212,12 +267,14 @@ namespace Altaxo.Gui.Scripting
         _view.SetScriptCursorLocation(line, column);
     }
 
+    /// <inheritdoc/>
     public void SetScriptCursorLocation(int offset)
     {
       if (_view is not null)
         _view.ScriptCursorLocation = offset;
     }
 
+    /// <inheritdoc/>
     public void SetInitialScriptCursorLocation(int offset)
     {
       if (_view is not null)
@@ -236,6 +293,7 @@ namespace Altaxo.Gui.Scripting
         return _doc.ScriptText;
     }
 
+    /// <inheritdoc/>
     public IPureScriptText Model
     {
       get

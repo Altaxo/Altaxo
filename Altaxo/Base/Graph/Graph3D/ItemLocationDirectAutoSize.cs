@@ -31,6 +31,9 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D
 {
+  /// <summary>
+  /// Represents a direct item location whose size is determined automatically by the item itself.
+  /// </summary>
   public class ItemLocationDirectAutoSize : ItemLocationDirect, ICloneable
   {
     #region Serialization
@@ -38,14 +41,19 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// 2015-11-14 initial version.
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="ItemLocationDirectAutoSize"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ItemLocationDirectAutoSize), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         info.AddBaseValueEmbedded(obj, typeof(ItemLocationDirectAutoSize).BaseType!);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (ItemLocationDirectAutoSize?)o ?? new ItemLocationDirectAutoSize();
@@ -58,25 +66,38 @@ namespace Altaxo.Graph.Graph3D
 
     #region Construction and copying
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ItemLocationDirectAutoSize"/> class.
+    /// </summary>
     public ItemLocationDirectAutoSize()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ItemLocationDirectAutoSize"/> class from a direct item location.
+    /// </summary>
+    /// <param name="from">The item location to copy from.</param>
     public ItemLocationDirectAutoSize(ItemLocationDirect from)
     {
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ItemLocationDirectAutoSize"/> class from another item location.
+    /// </summary>
+    /// <param name="from">The item location to copy from.</param>
     public ItemLocationDirectAutoSize(IItemLocation from)
     {
       CopyFrom(from);
     }
 
+    /// <inheritdoc/>
     object System.ICloneable.Clone()
     {
       return new ItemLocationDirectAutoSize(this);
     }
 
+    /// <inheritdoc/>
     public override ItemLocationDirect Clone()
     {
       return new ItemLocationDirectAutoSize(this);
@@ -119,6 +140,7 @@ namespace Altaxo.Graph.Graph3D
 
     #region overrides
 
+    /// <inheritdoc/>
     public override bool IsAutoSized
     {
       get
@@ -127,21 +149,25 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <inheritdoc/>
     protected override void InternalSetSizeXSilent(RADouble value)
     {
       throw new InvalidOperationException("Setting the size is not supported in AutoSize mode. (internally the function SetSizeInAutoSizeMode should be used)");
     }
 
+    /// <inheritdoc/>
     protected override void InternalSetSizeYSilent(RADouble value)
     {
       throw new InvalidOperationException("Setting the size is not supported in AutoSize mode. (internally the function SetSizeInAutoSizeMode should be used)");
     }
 
+    /// <inheritdoc/>
     protected override void InternalSetSizeZSilent(RADouble value)
     {
       throw new InvalidOperationException("Setting the size is not supported in AutoSize mode. (internally the function SetSizeInAutoSizeMode should be used)");
     }
 
+    /// <inheritdoc/>
     protected override void InternalSetSizeSilent(RADouble valueX, RADouble valueY, RADouble valueZ)
     {
       throw new InvalidOperationException("Setting the size is not supported in AutoSize mode. (internally the function SetSizeInAutoSizeMode should be used)");
@@ -156,6 +182,7 @@ namespace Altaxo.Graph.Graph3D
     /// <param name="sizeX">The width (ignored).</param>
     /// <param name="sizeY">The height (ignored).</param>
     /// <param name="sizeZ">The z size (ignored).</param>
+    /// <inheritdoc/>
     public override void SetPositionAndSize(RADouble x, RADouble y, RADouble z, RADouble sizeX, RADouble sizeY, RADouble sizeZ)
     {
       bool isChanged = x != _positionX || y != _positionY || z != _positionZ;

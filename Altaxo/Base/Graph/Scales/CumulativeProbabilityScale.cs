@@ -45,8 +45,14 @@ namespace Altaxo.Graph.Scales
     /// <summary>Holds the <see cref="NumericalBoundaries"/> for that axis.</summary>
     protected NumericalBoundaries _dataBounds;
 
+    /// <summary>
+    /// Stores the rescaling conditions for this scale.
+    /// </summary>
     protected CumulativeProbabilityScaleRescaleConditions _rescaling;
 
+    /// <summary>
+    /// Stores the tick-spacing settings for this scale.
+    /// </summary>
     protected Ticks.TickSpacing _tickSpacing;
 
     // cached values
@@ -56,7 +62,14 @@ namespace Altaxo.Graph.Scales
     /// <summary>Current axis end (cached value).</summary>
     protected double _cachedAxisEnd = CumulativeProbabilityScaleRescaleConditions.DefaultEndValue;
 
+    /// <summary>
+    /// Caches the quantile that corresponds to the current axis origin.
+    /// </summary>
     protected double _cachedAxisQuantileOrg;
+
+    /// <summary>
+    /// Caches the quantile span between axis origin and axis end.
+    /// </summary>
     protected double _cachedAxisQuantileSpan;
 
     #region Serialization
@@ -67,6 +80,7 @@ namespace Altaxo.Graph.Scales
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CumulativeProbabilityScale), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (CumulativeProbabilityScale)obj;
@@ -77,6 +91,7 @@ namespace Altaxo.Graph.Scales
         info.AddValue("TickSpacing", s._tickSpacing);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (CumulativeProbabilityScale?)o ?? new CumulativeProbabilityScale(info);
@@ -132,6 +147,10 @@ namespace Altaxo.Graph.Scales
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies state from another scale.
+    /// </summary>
+    /// <param name="from">The scale to copy from.</param>
     [MemberNotNull(nameof(_dataBounds), nameof(_rescaling), nameof(_tickSpacing))]
     protected void CopyFrom(CumulativeProbabilityScale from)
     {
@@ -150,6 +169,7 @@ namespace Altaxo.Graph.Scales
         suspendToken.Resume();
       }
     }
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -164,11 +184,13 @@ namespace Altaxo.Graph.Scales
       return false;
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new CumulativeProbabilityScale(this);
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_dataBounds is not null)
@@ -202,7 +224,7 @@ namespace Altaxo.Graph.Scales
     }
 
     /// <summary>
-    /// Returns the rescaling conditions for this axis
+    /// Returns the rescaling conditions for this axis.
     /// </summary>
     public override NumericScaleRescaleConditions Rescaling
     {
@@ -212,6 +234,7 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     public override Ticks.TickSpacing TickSpacing
     {
       get
@@ -228,6 +251,7 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     public override void OnUserRescaled()
     {
       _rescaling.OnUserRescaled();
@@ -261,6 +285,7 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     public override double NormalToPhysical(double x)
     {
       double quantile = _cachedAxisQuantileOrg + x * _cachedAxisQuantileSpan;
@@ -305,6 +330,7 @@ namespace Altaxo.Graph.Scales
       end = 1;
     }
 
+    /// <inheritdoc />
     protected override string? SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
     {
       double o = org.ToDouble();

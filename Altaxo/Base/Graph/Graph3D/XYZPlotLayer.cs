@@ -25,11 +25,9 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using Altaxo.Collections;
 using Altaxo.Geometry;
-using Altaxo.Graph;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Graph.Scales.Ticks;
@@ -45,7 +43,7 @@ namespace Altaxo.Graph.Graph3D
   using Shapes;
 
   /// <summary>
-  /// XYPlotLayer represents a rectangular area on the graph, which holds plot curves, axes and graphical elements.
+  /// Represents a three-dimensional plot layer that holds plot items, axes, grid planes, and graphic elements.
   /// </summary>
   public partial class XYZPlotLayer
     :
@@ -54,17 +52,29 @@ namespace Altaxo.Graph.Graph3D
   {
     #region Member variables
 
+    /// <summary>
+    /// Gets or sets the c oo rd in at es ys te m.
+    /// </summary>
     protected G3DCoordinateSystem _coordinateSystem;
 
     private ScaleCollection _scales;
 
+    /// <summary>
+    /// Gets or sets the g ri dp la ne s.
+    /// </summary>
     protected GridPlaneCollection _gridPlanes;
 
+    /// <summary>
+    /// Gets or sets the a xi ss ty le s.
+    /// </summary>
     protected AxisStyleCollection _axisStyles;
 
     /// <summary>If true, the data are clipped to the frame.</summary>
     protected LayerDataClipping _dataClipping = LayerDataClipping.StrictToCS;
 
+    /// <summary>
+    /// Gets or sets the p lo ti te ms.
+    /// </summary>
     protected PlotItemCollection _plotItems;
 
     /// <summary>Number of times this event is disables, or 0 if it is enabled.</summary>
@@ -86,9 +96,13 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// 2015-11-14 initial version
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="XYZPlotLayer"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYZPlotLayer), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (XYZPlotLayer)obj;
@@ -114,6 +128,9 @@ namespace Altaxo.Graph.Graph3D
         info.AddValue("Plots", s._plotItems);
       }
 
+      /// <summary>
+      /// Performs the s de se ri al iz e operation.
+      /// </summary>
       protected virtual XYZPlotLayer SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (XYZPlotLayer?)o ?? new XYZPlotLayer(info);
@@ -141,6 +158,7 @@ namespace Altaxo.Graph.Graph3D
         return s;
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
@@ -182,6 +200,7 @@ namespace Altaxo.Graph.Graph3D
     /// </summary>
     /// <param name="from"></param>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+
     public XYZPlotLayer(XYZPlotLayer from)
       : base(from)
     {
@@ -233,6 +252,8 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+
+    /// <inheritdoc />
     protected override void InternalCopyGraphItems(HostLayer from, Gdi.GraphCopyOptions options)
     {
       bool bGraphItems = options.HasFlag(Gdi.GraphCopyOptions.CopyLayerGraphItems);
@@ -253,6 +274,7 @@ namespace Altaxo.Graph.Graph3D
       InternalCopyGraphItems(from, options, criterium);
     }
 
+    /// <inheritdoc/>
     public override object Clone()
     {
       return new XYZPlotLayer(this);
@@ -265,7 +287,7 @@ namespace Altaxo.Graph.Graph3D
     /// </summary>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected XYZPlotLayer(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
-      : base(info)
+       : base(info)
     {
       CoordinateSystem = new CS.G3DCartesicCoordinateSystem();
       AxisStyles = new AxisStyleCollection();
@@ -278,11 +300,20 @@ namespace Altaxo.Graph.Graph3D
     }
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYZPlotLayer"/> class with a default coordinate system.
+    /// </summary>
+    /// <param name="parentLayer">The parent layer.</param>
     public XYZPlotLayer(HostLayer parentLayer)
       : this(parentLayer, GetChildLayerDefaultLocation(), new CS.G3DCartesicCoordinateSystem())
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYZPlotLayer"/> class.
+    /// </summary>
+    /// <param name="parentLayer">The parent layer.</param>
+    /// <param name="coordinateSystem">The coordinate system.</param>
     public XYZPlotLayer(HostLayer parentLayer, G3DCoordinateSystem coordinateSystem)
       : this(parentLayer, GetChildLayerDefaultLocation(), coordinateSystem)
     {
@@ -321,15 +352,32 @@ namespace Altaxo.Graph.Graph3D
 
     #region IPlotLayer methods
 
+    /// <summary>
+    /// Gets a value indicating whether this plot layer is three-dimensional.
+    /// </summary>
     public bool Is3D { get { return true; } }
 
+    /// <summary>
+    /// Gets the z-axis scale.
+    /// </summary>
     public Scale ZAxis { get { return _scales[2]; } }
 
+    /// <summary>
+    /// Gets the scale at the specified index.
+    /// </summary>
+    /// <param name="i">The scale index.</param>
+    /// <returns>The scale.</returns>
     public Scale GetScale(int i)
     {
       return _scales[i];
     }
 
+    /// <summary>
+    /// Gets the logical three-dimensional coordinates for a row in the accessor.
+    /// </summary>
+    /// <param name="acc">The physical-value accessor.</param>
+    /// <param name="idx">The row index.</param>
+    /// <returns>The logical coordinates.</returns>
     public Logical3D GetLogical3D(I3DPhysicalVariantAccessor acc, int idx)
     {
       Logical3D r;
@@ -339,6 +387,13 @@ namespace Altaxo.Graph.Graph3D
       return r;
     }
 
+    /// <summary>
+    /// Gets the logical three-dimensional coordinates for the specified physical values.
+    /// </summary>
+    /// <param name="x">The physical x value.</param>
+    /// <param name="y">The physical y value.</param>
+    /// <param name="z">The physical z value.</param>
+    /// <returns>The logical coordinates.</returns>
     public Logical3D GetLogical3D(AltaxoVariant x, AltaxoVariant y, AltaxoVariant z)
     {
       Logical3D r;
@@ -350,6 +405,9 @@ namespace Altaxo.Graph.Graph3D
 
     /// <summary>
     /// Returns a list of the used axis style ids for this layer.
+    /// </summary>
+    /// <summary>
+    /// Gets the axis-style identifiers used by this layer.
     /// </summary>
     public System.Collections.Generic.IEnumerable<CSLineID> AxisStyleIDs
     {
@@ -388,6 +446,9 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Collection of the axis styles for the left, bottom, right, and top axis.
     /// </summary>
+    /// <summary>
+    /// Gets or sets the collection of axis styles.
+    /// </summary>
     public AxisStyleCollection AxisStyles
     {
       get
@@ -409,6 +470,9 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the scale collection.
+    /// </summary>
     public ScaleCollection Scales
     {
       get
@@ -442,6 +506,9 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the legend graphic of this layer.
+    /// </summary>
     public TextGraphic? Legend
     {
       get
@@ -487,6 +554,9 @@ namespace Altaxo.Graph.Graph3D
         return base.Remove(go);
     }
 
+    /// <summary>
+    /// Gets or sets the plot-item collection of this layer.
+    /// </summary>
     public PlotItemCollection PlotItems
     {
       get
@@ -585,6 +655,9 @@ namespace Altaxo.Graph.Graph3D
 
     #region Scale related
 
+    /// <summary>
+    /// Gets the x-axis tick spacing.
+    /// </summary>
     public TickSpacing XTicks
     {
       get
@@ -593,6 +666,9 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Gets the y-axis tick spacing.
+    /// </summary>
     public TickSpacing YTicks
     {
       get
@@ -678,6 +754,9 @@ namespace Altaxo.Graph.Graph3D
 
     #region Style properties
 
+    /// <summary>
+    /// Gets or sets the clipping mode used for data drawing.
+    /// </summary>
     public LayerDataClipping ClipDataToFrame
     {
       get
@@ -694,6 +773,9 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the grid-plane collection.
+    /// </summary>
     public GridPlaneCollection GridPlanes
     {
       get
@@ -808,6 +890,9 @@ namespace Altaxo.Graph.Graph3D
       axisTitle.Location.PositionZ = RADouble.NewAbs(distance * normDirection.Z);
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     [MaybeNull]
     public string DefaultYAxisTitleString
     {
@@ -821,6 +906,9 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     [MaybeNull]
     public string DefaultXAxisTitleString
     {
@@ -854,6 +942,7 @@ namespace Altaxo.Graph.Graph3D
       _axisStyles.FixupInternalDataStructures(this);
     }
 
+    /// <inheritdoc/>
     public override void PaintPreprocessing(IPaintContext context)
     {
       context.PushHierarchicalValue<IPlotArea>(nameof(IPlotArea), this);
@@ -862,6 +951,8 @@ namespace Altaxo.Graph.Graph3D
       context.PopHierarchicalValue<IPlotArea>(nameof(IPlotArea));
     }
 
+
+    /// <inheritdoc />
     protected override void PaintInternal(IGraphicsContext3D g, IPaintContext paintContext)
     {
       // paint the background very first
@@ -886,6 +977,8 @@ namespace Altaxo.Graph.Graph3D
       base.PaintPostprocessing();
     }
 
+
+    /// <inheritdoc />
     protected override IHitTestObject? HitTestWithLocalCoordinates(HitTestPointData localCoord, bool plotItemsOnly)
     {
       IHitTestObject? hit = null;
@@ -910,10 +1003,25 @@ namespace Altaxo.Graph.Graph3D
 
     #region Editor methods
 
+    /// <summary>
+    /// Gets or sets the editor callback for axis scales.
+    /// </summary>
     public static DoubleClickHandler? AxisScaleEditorMethod;
+    /// <summary>
+    /// Gets or sets the editor callback for axis styles.
+    /// </summary>
     public static DoubleClickHandler? AxisStyleEditorMethod;
+    /// <summary>
+    /// Gets or sets the editor callback for major axis labels.
+    /// </summary>
     public static DoubleClickHandler? AxisLabelMajorStyleEditorMethod;
+    /// <summary>
+    /// Gets or sets the editor callback for minor axis labels.
+    /// </summary>
     public static DoubleClickHandler? AxisLabelMinorStyleEditorMethod;
+    /// <summary>
+    /// Gets or sets the editor callback for plot items.
+    /// </summary>
     public static DoubleClickHandler? PlotItemEditorMethod;
 
     private bool EhAxisLabelMajorStyleRemove(IHitTestObject o)
@@ -942,6 +1050,8 @@ namespace Altaxo.Graph.Graph3D
 
     #region Event firing
 
+
+    /// <inheritdoc />
     protected override void OnCachedResultingSizeChanged()
     {
       // first update out direct childs
@@ -951,6 +1061,9 @@ namespace Altaxo.Graph.Graph3D
       base.OnCachedResultingSizeChanged();
     }
 
+    /// <summary>
+    /// Performs the o nc oo rd in at es ys te mc ha ng ed operation.
+    /// </summary>
     protected virtual void OnCoordinateSystemChanged()
     {
       // if the coordinate system has changed, try to bring all axis titles back to their default position
@@ -967,6 +1080,8 @@ namespace Altaxo.Graph.Graph3D
 
     #region Handler of child events
 
+
+    /// <inheritdoc />
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (object.ReferenceEquals(sender, _coordinateSystem))
@@ -975,6 +1090,8 @@ namespace Altaxo.Graph.Graph3D
       return base.HandleHighPriorityChildChangeCases(sender, ref e);
     }
 
+
+    /// <inheritdoc />
     protected override void OnChanged(EventArgs e)
     {
       if (e is BoundariesChangedEventArgs)
@@ -985,6 +1102,9 @@ namespace Altaxo.Graph.Graph3D
       base.OnChanged(e);
     }
 
+    /// <summary>
+    /// Handles the b ou nd ar yc ha ng ed ev en tf ro mp lo ti te m.
+    /// </summary>
     protected void EhBoundaryChangedEventFromPlotItem(BoundariesChangedEventArgs boundaryChangedEventArgs)
     {
       var data = boundaryChangedEventArgs.Data;
@@ -1297,11 +1417,15 @@ namespace Altaxo.Graph.Graph3D
         yield return new Main.DocumentNodeAndName(_gridPlanes, "Grids");
     }
 
+
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       return GetMyDocumentNodeChildrenWithName().Concat(base.GetDocumentNodeChildrenWithName());
     }
 
+
+    /// <inheritdoc />
     protected override void Dispose(bool isDisposing)
     {
       if (isDisposing)
@@ -1318,8 +1442,14 @@ namespace Altaxo.Graph.Graph3D
 
     #region Inner types
 
+    /// <summary>
+    /// Gets a value indicating whether both displayed axes are linear.
+    /// </summary>
     public bool IsLinear { get { return XAxis is LinearScale && YAxis is LinearScale; } }
 
+    /// <summary>
+    /// Gets or sets the coordinate system of this layer.
+    /// </summary>
     public G3DCoordinateSystem CoordinateSystem
     {
       get
@@ -1348,6 +1478,9 @@ namespace Altaxo.Graph.Graph3D
 
     #region IGraphicShape placeholder for items in XYPlotLayer
 
+    /// <summary>
+    /// Represents the legend text object used by the layer.
+    /// </summary>
     private class LegendText : TextGraphic
     {
       #region Serialization
@@ -1358,12 +1491,14 @@ namespace Altaxo.Graph.Graph3D
       [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LegendText), 0)]
       private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
       {
+        /// <inheritdoc/>
         public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
         {
           var s = (LegendText)obj;
           info.AddBaseValueEmbedded(s, typeof(LegendText).BaseType!);
         }
 
+        /// <inheritdoc/>
         public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
           var s = o is not null ? (LegendText)o : new LegendText(info);
@@ -1374,21 +1509,35 @@ namespace Altaxo.Graph.Graph3D
 
       #endregion Serialization
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="LegendText"/> class.
+      /// </summary>
+      /// <param name="context">The property context.</param>
       public LegendText(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
         : base(context)
       {
       }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="LegendText"/> class during deserialization.
+      /// </summary>
+      /// <param name="info">The deserialization info.</param>
       protected LegendText(Serialization.Xml.IXmlDeserializationInfo info)
         : base(info)
       {
       }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="LegendText"/> class by copying another text graphic.
+      /// </summary>
+      /// <param name="from">The source text graphic.</param>
       public LegendText(TextGraphic from)
         : base(from)
       {
       }
 
+
+      /// <inheritdoc />
       public override string ToString()
       {
         return string.Format("Legend text");

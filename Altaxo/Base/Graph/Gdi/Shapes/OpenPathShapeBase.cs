@@ -71,12 +71,18 @@ namespace Altaxo.Graph.Gdi.Shapes
     #endregion Serialization
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OpenPathShapeBase"/> class for deserialization.
+    /// </summary>
     protected OpenPathShapeBase(ItemLocationDirect location, Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
       : base(location)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OpenPathShapeBase"/> class.
+    /// </summary>
     protected OpenPathShapeBase(ItemLocationDirect location, Altaxo.Main.Properties.IReadOnlyPropertyBag? context)
       : base(location)
     {
@@ -88,6 +94,10 @@ namespace Altaxo.Graph.Gdi.Shapes
       _linePen = new PenX(foreColor, penWidth);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OpenPathShapeBase"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public OpenPathShapeBase(OpenPathShapeBase from)
       :
       base(from)
@@ -95,6 +105,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       CopyFrom(from, false);
     }
 
+    /// <summary>
+    /// Copies values from another <see cref="OpenPathShapeBase"/> instance.
+    /// </summary>
     [MemberNotNull(nameof(_linePen))]
     protected void CopyFrom(OpenPathShapeBase from, bool withBaseMembers)
     {
@@ -105,6 +118,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       _linePen = from._linePen;
     }
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -129,11 +143,15 @@ namespace Altaxo.Graph.Gdi.Shapes
       yield break;
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       return base.GetDocumentNodeChildrenWithName().Concat(GetMyDocumentNodeChildrenWithName());
     }
 
+    /// <summary>
+    /// Gets or sets the line pen.
+    /// </summary>
     public virtual PenX Pen
     {
       get
@@ -152,6 +170,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets the outline pen.
+    /// </summary>
     public virtual PenX? OutlinePen
     {
       get
@@ -167,6 +188,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <inheritdoc />
     public override IHitTestObject? HitTest(HitTestPointData htd)
     {
       var result = base.HitTest(htd);
@@ -175,6 +197,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       return result;
     }
 
+    /// <inheritdoc />
     public override IHitTestObject? HitTest(HitTestRectangularData rect)
     {
       var result = base.HitTest(rect);
@@ -193,6 +216,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #region IRoutedPropertyReceiver Members
 
+    /// <inheritdoc />
     public IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName)
     {
       switch (propertyName)

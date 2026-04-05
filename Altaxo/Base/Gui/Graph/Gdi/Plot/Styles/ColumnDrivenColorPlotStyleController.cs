@@ -38,10 +38,16 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
   using Graph.Plot.Data;
   using Scales;
 
+  /// <summary>
+  /// Provides the view contract for <see cref="ColumnDrivenColorPlotStyleController"/>.
+  /// </summary>
   public interface IColumnDrivenColorPlotStyleView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="ColumnDrivenColorPlotStyle"/>.
+  /// </summary>
   [UserControllerForObject(typeof(ColumnDrivenColorPlotStyle))]
   [ExpectedTypeOfView(typeof(IColumnDrivenColorPlotStyleView))]
   public class ColumnDrivenColorPlotStyleController : MVCANControllerEditOriginalDocBase<ColumnDrivenColorPlotStyle, IColumnDrivenColorPlotStyleView>, IColumnDataExternallyControlled
@@ -58,6 +64,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     /// </summary>
     private int _supposedGroupNumber;
 
+    /// <inheritdoc />
     public override bool InitializeDocument(params object[] args)
     {
       if (args.Length >= 2 && (args[1] is DataTable))
@@ -69,6 +76,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       return base.InitializeDocument(args);
     }
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_scaleController, () => _scaleController = null);
@@ -79,6 +87,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private DensityScaleController _scaleController;
 
+    /// <summary>
+    /// Gets or sets the scale controller.
+    /// </summary>
     public DensityScaleController ScaleController
     {
       get => _scaleController;
@@ -95,6 +106,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private ColorProviderController _colorProviderController;
 
+    /// <summary>
+    /// Gets or sets the color-provider controller.
+    /// </summary>
     public ColorProviderController ColorProvider
     {
       get => _colorProviderController;
@@ -111,6 +125,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private string _dataColumnText;
 
+    /// <summary>
+    /// Gets or sets the data-column display text.
+    /// </summary>
     public string DataColumnText
     {
       get => _dataColumnText;
@@ -125,6 +142,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     }
     private string _dataColumnToolTip;
 
+    /// <summary>
+    /// Gets or sets the data-column tooltip.
+    /// </summary>
     public string DataColumnToolTip
     {
       get => _dataColumnToolTip;
@@ -139,6 +159,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     }
     private int _dataColumnStatus;
 
+    /// <summary>
+    /// Gets or sets the data-column status.
+    /// </summary>
     public int DataColumnStatus
     {
       get => _dataColumnStatus;
@@ -153,6 +176,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     }
     private string _dataColumnTransformationText;
 
+    /// <summary>
+    /// Gets or sets the data-column transformation text.
+    /// </summary>
     public string DataColumnTransformationText
     {
       get => _dataColumnTransformationText;
@@ -167,6 +193,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     }
     private string _dataColumnTransformationToolTip;
 
+    /// <summary>
+    /// Gets or sets the data-column transformation tooltip.
+    /// </summary>
     public string DataColumnTransformationToolTip
     {
       get => _dataColumnTransformationToolTip;
@@ -183,11 +212,13 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     #endregion
 
+    /// <inheritdoc/>
     public override void Dispose(bool isDisposing)
     {
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -204,6 +235,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (!_scaleController.Apply(disposeController))

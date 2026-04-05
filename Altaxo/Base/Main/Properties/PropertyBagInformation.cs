@@ -46,11 +46,22 @@ namespace Altaxo.Main.Properties
     /// </summary>
     public System.Type? ApplicationItemType { get; private set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PropertyBagInformation"/> struct.
+    /// </summary>
+    /// <param name="name">The property bag name.</param>
+    /// <param name="applicationLevel">The property level.</param>
     public PropertyBagInformation(string name, PropertyLevel applicationLevel)
       : this(name, applicationLevel, null)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PropertyBagInformation"/> struct.
+    /// </summary>
+    /// <param name="name">The property bag name.</param>
+    /// <param name="applicationLevel">The property level.</param>
+    /// <param name="applicationItemType">The application item type.</param>
     public PropertyBagInformation(string name, PropertyLevel applicationLevel, System.Type? applicationItemType)
       : this()
     {

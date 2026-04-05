@@ -34,13 +34,20 @@ using Altaxo.Science.Spectroscopy.Cropping;
 
 namespace Altaxo.Gui.Science.Spectroscopy.Cropping
 {
+  /// <summary>
+  /// View interface for selecting a cropping method.
+  /// </summary>
   public interface ICroppingView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="ICropping"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(ICroppingView))]
   public class CroppingController : MVCANControllerEditImmutableDocBase<ICropping, ICroppingView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_subController, () => SubController = null);
@@ -50,6 +57,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Cropping
 
     private ItemsController<Type> _availableMethods;
 
+    /// <summary>
+    /// Gets or sets the available cropping methods.
+    /// </summary>
     public ItemsController<Type> AvailableMethods
     {
       get => _availableMethods;
@@ -66,6 +76,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Cropping
 
     private IMVCANController? _subController;
 
+    /// <summary>
+    /// Gets or sets the controller for the selected cropping method.
+    /// </summary>
     public IMVCANController? SubController
     {
       get => _subController;
@@ -84,6 +97,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Cropping
     #endregion
 
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -124,6 +138,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Cropping
       CreateSubController();
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if(SubController is not null)
@@ -140,8 +155,12 @@ namespace Altaxo.Gui.Science.Spectroscopy.Cropping
 
     #region TypeSorter
 
+    /// <summary>
+    /// Sorts cropping types for display.
+    /// </summary>
     class TypeSorter : IComparer<Type>
     {
+      /// <inheritdoc/>
       public int Compare(Type x, Type y)
       {
         var xn = x.Name.EndsWith("None");

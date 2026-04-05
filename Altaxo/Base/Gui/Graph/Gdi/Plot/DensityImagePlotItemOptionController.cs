@@ -30,28 +30,36 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
   using System.Windows.Input;
   using Altaxo.Graph.Gdi.Plot;
 
+  /// <summary>
+  /// Provides the view contract for <see cref="DensityImagePlotItemOptionController"/>.
+  /// </summary>
   public interface IDensityImagePlotItemOptionView : IDataContextAwareView
   {
   }
 
   /// <summary>
   /// Controls the option tab page in the <see cref="DensityImagePlotItem"/> dialog. This tab page allows only
-  /// to save the image to clipboard or disc, thus the document is not really controlled.
+  /// saving the image to the clipboard or disk, thus the document is not really controlled.
   /// </summary>
   [ExpectedTypeOfView(typeof(IDensityImagePlotItemOptionView))]
   public class DensityImagePlotItemOptionController : MVCANControllerEditOriginalDocBase<DensityImagePlotItem, IDensityImagePlotItemOptionView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DensityImagePlotItemOptionController"/> class.
+    /// </summary>
     public DensityImagePlotItemOptionController()
     {
       CmdCopyImageToClipboard = new RelayCommand(EhCopyImageToClipboard);
       CmdSaveImageToDisc = new RelayCommand(EhSaveImageToDisc);
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       // base.Initialize(initData); // no base initialize because we dont want to suspend the doc (this is only a helper controller)
@@ -59,11 +67,19 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the command that copies the image to the clipboard.
+    /// </summary>
     public ICommand CmdCopyImageToClipboard { get; }
+
+    /// <summary>
+    /// Gets the command that saves the image to disk.
+    /// </summary>
     public ICommand CmdSaveImageToDisc { get; }
 
     #endregion
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       return true;

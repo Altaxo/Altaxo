@@ -32,8 +32,14 @@ using Altaxo.Main.Properties;
 
 namespace Altaxo.Serialization
 {
+  /// <summary>
+  /// Stores settings that control project serialization and archive compression.
+  /// </summary>
   public class StorageSettings
   {
+    /// <summary>
+    /// Gets or sets a value indicating whether progressive storage is allowed.
+    /// </summary>
     public bool AllowProgressiveStorage { get; set; }
 
     /// <summary>
@@ -83,6 +89,9 @@ namespace Altaxo.Serialization
     }
 
 
+    /// <summary>
+    /// Gets the property key for storage settings.
+    /// </summary>
     public static readonly PropertyKey<StorageSettings> PropertyKeyStorageSettings = new PropertyKey<StorageSettings>(
       "AB367EE6-1E6A-4995-A84B-29DD8046E01B",
       "Project\\StorageSettings",
@@ -96,6 +105,7 @@ namespace Altaxo.Serialization
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(StorageSettings), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (StorageSettings)obj;
@@ -103,6 +113,7 @@ namespace Altaxo.Serialization
         info.AddValue("CompressionLevel", s.CompressionLevel);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (StorageSettings?)o ?? new StorageSettings();
@@ -117,6 +128,7 @@ namespace Altaxo.Serialization
 
     #endregion Serialization
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return $"AllowProgressive: {AllowProgressiveStorage}, Level: {CompressionLevel}";

@@ -56,6 +56,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DimensionReductionAndRegressionPredictionProcessData)obj;
@@ -65,6 +66,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       }
 
       /// <inheritdoc/>
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var modelProxy = (DataTableProxy)info.GetValue("ModelTable", parent);
@@ -87,7 +89,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       DataToPredict = dataToPredict;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public object Clone()
     {
       return new DimensionReductionAndRegressionPredictionProcessData(

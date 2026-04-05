@@ -45,10 +45,29 @@ namespace Altaxo.Graph.Gdi.Shapes
   [Serializable]
   public partial class TextGraphic : GraphicBase, IRoutedPropertyReceiver
   {
+    /// <summary>
+    /// Stores the formatted text content.
+    /// </summary>
     protected string _text = ""; // the text, which contains the formatting symbols
+
+    /// <summary>
+    /// Stores the font used to render the text.
+    /// </summary>
     protected FontX _font;
+
+    /// <summary>
+    /// Stores the brush used to render the text.
+    /// </summary>
     protected BrushX _textBrush = new BrushX(NamedColors.Black);
+
+    /// <summary>
+    /// Stores the background style of the text graphic.
+    /// </summary>
     protected IBackgroundStyle? _background = null;
+
+    /// <summary>
+    /// Stores the line-spacing multiplier.
+    /// </summary>
     protected double _lineSpacingFactor = 1.25f; // multiplicator for the line space, i.e. 1, 1.5 or 2
 
     #region Cached or temporary variables
@@ -57,9 +76,24 @@ namespace Altaxo.Graph.Gdi.Shapes
     protected Dictionary<GraphicsPath, IGPlotItem> _cachedSymbolPositions = new Dictionary<GraphicsPath, IGPlotItem>();
 
     private StructuralGlyph? _rootNode;
+    /// <summary>
+    /// Stores whether the parsed text structure is synchronized with the text content.
+    /// </summary>
     protected bool _isStructureInSync = false; // true when the text was interpretet and the structure created
+
+    /// <summary>
+    /// Stores whether the measured text metrics are synchronized with the current content.
+    /// </summary>
     protected bool _isMeasureInSync = false; // true when all items are measured
+
+    /// <summary>
+    /// Stores the cached text offset relative to the upper-left corner.
+    /// </summary>
     protected PointD2D _cachedTextOffset; // offset of text to left upper corner of outer rectangle
+
+    /// <summary>
+    /// Stores the cached text bounds including background padding.
+    /// </summary>
     protected RectangleD2D _cachedExtendedTextBounds; // the text bounds extended by some margin around it
 
     #endregion Cached or temporary variables
@@ -69,6 +103,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.TextGraphics", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new ApplicationException("This serializer is not the actual version, and should therefore not be called");
@@ -87,6 +122,7 @@ namespace Altaxo.Graph.Gdi.Shapes
                 */
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (TextGraphic?)o ?? new TextGraphic(info);
@@ -117,6 +153,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Shapes.TextGraphic", 2)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old type");
@@ -134,6 +171,7 @@ namespace Altaxo.Graph.Gdi.Shapes
                 */
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (TextGraphic?)o ?? new TextGraphic(info);
@@ -167,6 +205,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextGraphic), 3)]
     private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (TextGraphic)obj;
@@ -179,6 +218,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         info.AddValue("LineSpacing", s._lineSpacingFactor);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (TextGraphic?)o ?? new TextGraphic(info);
@@ -211,6 +251,10 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextGraphic"/> class.
+    /// </summary>
+    /// <param name="context">The property context.</param>
     public TextGraphic(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
       : base(new ItemLocationDirectAutoSize())
     {
@@ -221,6 +265,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       _textBrush = new BrushX(context.GetValue(GraphDocument.PropertyKeyDefaultForeColor));
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextGraphic"/> class.
+    /// </summary>
     public TextGraphic(PointD2D graphicPosition, string text,
       FontX textFont, NamedColor textColor)
       : base(new ItemLocationDirectAutoSize())
@@ -231,12 +278,18 @@ namespace Altaxo.Graph.Gdi.Shapes
       Color = textColor;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextGraphic"/> class.
+    /// </summary>
     public TextGraphic(double posX, double posY,
       string text, FontX textFont, NamedColor textColor)
       : this(new PointD2D(posX, posY), text, textFont, textColor)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextGraphic"/> class.
+    /// </summary>
     public TextGraphic(PointD2D graphicPosition,
       string text, FontX textFont,
       NamedColor textColor, double Rotation)
@@ -245,6 +298,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       this.Rotation = Rotation;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextGraphic"/> class.
+    /// </summary>
     public TextGraphic(double posX, double posY,
       string text,
       FontX textFont,
@@ -253,6 +309,10 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextGraphic"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public TextGraphic(TextGraphic from)
       : base(from)
     {
@@ -262,6 +322,11 @@ namespace Altaxo.Graph.Gdi.Shapes
     #endregion Constructors
 
     #region Copying
+    /// <summary>
+    /// Copies the state from another <see cref="TextGraphic"/> instance.
+    /// </summary>
+    /// <param name="from">The source instance.</param>
+    /// <param name="withBaseMembers">If set to <see langword="true"/>, base members are copied as well.</param>
     [MemberNotNull(nameof(_font))]
     protected void CopyFrom(TextGraphic from, bool withBaseMembers)
     {
@@ -284,6 +349,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       _isMeasureInSync = false;
     }
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -303,6 +369,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new TextGraphic(this);
@@ -317,6 +384,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         yield return new Main.DocumentNodeAndName(_background, "Background");
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       return base.GetDocumentNodeChildrenWithName().Concat(GetMyDocumentNodeChildrenWithName());
@@ -324,6 +392,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #region Background
 
+    /// <summary>
+    /// Measures the background geometry for the specified text size.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="textWidth">The measured text width.</param>
+    /// <param name="textHeight">The measured text height.</param>
     protected void MeasureBackground(Graphics g, double textWidth, double textHeight)
     {
       var fontInfo = FontInfo.Create(g, _font);
@@ -370,6 +444,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       _cachedTextOffset = new PointD2D(distanceXL, distanceYU);
     }
 
+    /// <summary>
+    /// Gets or sets the background style used behind the text.
+    /// </summary>
     public IBackgroundStyle? Background
     {
       get
@@ -441,6 +518,10 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Paints the background of the text graphic.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
     protected virtual void PaintBackground(Graphics g)
     {
       // Assumptions:
@@ -458,11 +539,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #region Properties
 
+    /// <inheritdoc />
     public override string ToString()
     {
       return string.Format("TextGraphics Text: <<{0}>>", _text);
     }
 
+    /// <inheritdoc />
     public override bool AutoSize
     {
       get
@@ -471,6 +554,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets the font.
+    /// </summary>
     public FontX Font
     {
       get
@@ -490,11 +576,17 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the text is empty.
+    /// </summary>
     public bool Empty
     {
       get { return _text is null || _text.Length == 0; }
     }
 
+    /// <summary>
+    /// Gets or sets the text.
+    /// </summary>
     public string Text
     {
       get
@@ -512,6 +604,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets the text color.
+    /// </summary>
     public NamedColor Color
     {
       get
@@ -526,6 +621,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets the text fill brush.
+    /// </summary>
     public BrushX TextFillBrush
     {
       get
@@ -546,6 +644,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets the line-spacing factor.
+    /// </summary>
     public double LineSpacing
     {
       get
@@ -645,11 +746,18 @@ namespace Altaxo.Graph.Gdi.Shapes
       return GetRectangularObjectOutline();
     }
 
+    /// <inheritdoc />
     public override void Paint(Graphics g, IPaintContext paintContext)
     {
       Paint(g, paintContext, false);
     }
 
+    /// <summary>
+    /// Paints the text graphic.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="paintContext">The paint context.</param>
+    /// <param name="bForPreview">If set to <c>true</c>, paints for preview purposes.</param>
     public void Paint(Graphics g, IPaintContext paintContext, bool bForPreview)
     {
       //_isStructureInSync = false;
@@ -716,9 +824,16 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #region Hit testing and handling
 
+    /// <summary>
+    /// Gets or sets the double-click handler used for embedded plot items.
+    /// </summary>
     public static DoubleClickHandler? PlotItemEditorMethod;
+    /// <summary>
+    /// Gets or sets the double-click handler used for text graphics.
+    /// </summary>
     public static DoubleClickHandler? TextGraphicsEditorMethod;
 
+    /// <inheritdoc />
     public override IHitTestObject? HitTest(HitTestPointData htd)
     {
       IHitTestObject? result;
@@ -758,15 +873,20 @@ namespace Altaxo.Graph.Gdi.Shapes
       BlackOut
     }
 
+    /// <summary>
+    /// Serialization surrogate for the deprecated background-style enum.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.BackgroundStyle", 0)]
     public class BackgroundStyleXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotImplementedException("This class is deprecated and no longer supported to serialize");
         // info.SetNodeContent(obj.ToString());
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         string val = info.GetNodeContent();
@@ -778,6 +898,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #region IRoutedPropertyReceiver Members
 
+    /// <inheritdoc />
     public IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName)
     {
       switch (propertyName)

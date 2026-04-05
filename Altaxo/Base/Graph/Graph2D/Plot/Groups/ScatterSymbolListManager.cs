@@ -37,24 +37,66 @@ using Altaxo.Main;
 
 namespace Altaxo.Graph.Graph2D.Plot.Groups
 {
+  /// <summary>
+  /// Manages built-in and user-defined lists of two-dimensional scatter symbols.
+  /// </summary>
   public class ScatterSymbolListManager : StyleListManagerBaseForClasses<ScatterSymbolList, IScatterSymbol, StyleListManagerBaseEntryValue<ScatterSymbolList, IScatterSymbol>>
   {
+    /// <summary>
+    /// Gets the application property key that stores user-defined scatter symbol lists.
+    /// </summary>
     public static readonly Main.Properties.PropertyKey<ScatterSymbolListBag> PropertyKeyUserDefinedScatterSymbolLists;
 
     private static ScatterSymbolListManager _instance;
 
+    /// <summary>
+    /// Gets the default built-in list of filled scatter symbols.
+    /// </summary>
     public ScatterSymbolList BuiltinSolid { get; private set; }
+    /// <summary>
+    /// Gets the built-in list of open scatter symbols.
+    /// </summary>
     public ScatterSymbolList BuiltinOpen { get; private set; }
+    /// <summary>
+    /// Gets the built-in list of scatter symbols with a centered bullet inset.
+    /// </summary>
     public ScatterSymbolList BuiltinDotCenter { get; private set; }
+    /// <summary>
+    /// Gets the built-in list of hollow scatter symbols.
+    /// </summary>
     public ScatterSymbolList BuiltinHollow { get; private set; }
 
+    /// <summary>
+    /// Gets the legacy list of filled scatter symbols.
+    /// </summary>
     public ScatterSymbolList OldSolid { get; private set; }
+    /// <summary>
+    /// Gets the legacy list of open scatter symbols.
+    /// </summary>
     public ScatterSymbolList OldOpen { get; private set; }
+    /// <summary>
+    /// Gets the legacy list of scatter symbols with a centered bullet inset.
+    /// </summary>
     public ScatterSymbolList OldDotCenter { get; private set; }
+    /// <summary>
+    /// Gets the legacy list of hollow scatter symbols.
+    /// </summary>
     public ScatterSymbolList OldHollow { get; private set; }
+    /// <summary>
+    /// Gets the legacy list of scatter symbols with a plus inset.
+    /// </summary>
     public ScatterSymbolList OldPlus { get; private set; }
+    /// <summary>
+    /// Gets the legacy list of scatter symbols with a times inset.
+    /// </summary>
     public ScatterSymbolList OldTimes { get; private set; }
+    /// <summary>
+    /// Gets the legacy list of scatter symbols with a horizontal bar inset.
+    /// </summary>
     public ScatterSymbolList OldBarHorz { get; private set; }
+    /// <summary>
+    /// Gets the legacy list of scatter symbols with a vertical bar inset.
+    /// </summary>
     public ScatterSymbolList OldBarVert { get; private set; }
 
     static ScatterSymbolListManager()
@@ -69,6 +111,9 @@ namespace Altaxo.Graph.Graph2D.Plot.Groups
       Instance = new ScatterSymbolListManager();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScatterSymbolListManager"/> class.
+    /// </summary>
     protected ScatterSymbolListManager()
       : base(
           (list, level) => new StyleListManagerBaseEntryValue<ScatterSymbolList, IScatterSymbol>(list, level),
@@ -228,6 +273,9 @@ namespace Altaxo.Graph.Graph2D.Plot.Groups
       RebuildListEntryToListDictionary();
     }
 
+    /// <summary>
+    /// Gets or sets the singleton instance of the scatter symbol list manager.
+    /// </summary>
     public static ScatterSymbolListManager Instance
     {
       get
@@ -249,6 +297,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Groups
       }
     }
 
+    /// <inheritdoc/>
     public override ScatterSymbolList CreateNewList(string name, IEnumerable<IScatterSymbol> symbols)
     {
       return new ScatterSymbolList(name, symbols);
@@ -256,6 +305,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Groups
 
     #region User defined lists
 
+    /// <inheritdoc/>
     protected override void OnUserDefinedListAddedChangedRemoved(ScatterSymbolList? list)
     {
       var listBag = new ScatterSymbolListBag(_allLists.Values.Where(entry => entry.Level == ItemDefinitionLevel.UserDefined).Select(entry => entry.List));

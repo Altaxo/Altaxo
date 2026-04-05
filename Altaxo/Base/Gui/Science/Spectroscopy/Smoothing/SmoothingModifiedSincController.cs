@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -28,12 +28,19 @@ using Altaxo.Science.Spectroscopy.Smoothing;
 
 namespace Altaxo.Gui.Science.Spectroscopy.Smoothing
 {
+  /// <summary>
+  /// View interface for editing <see cref="SmoothingModifiedSinc"/> options.
+  /// </summary>
   public interface ISmoothingModifiedSincView : IDataContextAwareView { }
 
+  /// <summary>
+  /// Controller for editing a <see cref="SmoothingModifiedSinc"/> smoothing method.
+  /// </summary>
   [ExpectedTypeOfView(typeof(ISmoothingModifiedSincView))]
   [UserControllerForObject(typeof(SmoothingModifiedSinc))]
   public class SmoothingModifiedSincController : MVCANControllerEditImmutableDocBase<SmoothingModifiedSinc, ISmoothingModifiedSincView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -45,6 +52,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Smoothing
 
     private bool _isMS1Smoothing;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether MS1 smoothing should be used.
+    /// </summary>
     public bool IsMS1Smoothing
     {
       get => _isMS1Smoothing;
@@ -60,6 +70,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Smoothing
 
     private int _Degree;
 
+    /// <summary>
+    /// Gets or sets the degree parameter.
+    /// </summary>
     public int Degree
     {
       get => _Degree;
@@ -75,6 +88,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Smoothing
 
     private int _NumberOfPoints;
 
+    /// <summary>
+    /// Gets or sets the number of points used for smoothing.
+    /// </summary>
     public int NumberOfPoints
     {
       get => _NumberOfPoints;
@@ -92,6 +108,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Smoothing
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -104,6 +121,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Smoothing
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       try

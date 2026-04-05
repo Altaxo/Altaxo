@@ -31,6 +31,9 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
+  /// <summary>
+  /// Provides the base implementation for graphics that render images.
+  /// </summary>
   [Serializable]
   public abstract class ImageGraphic : GraphicBase
   {
@@ -46,6 +49,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Shapes.ImageGraphic", 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Try to serialize old version");
@@ -55,6 +59,7 @@ namespace Altaxo.Graph.Gdi.Shapes
                 */
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (ImageGraphic)(o ?? throw new ArgumentNullException(nameof(o)));
@@ -72,6 +77,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Shapes.ImageGraphic", 2)]
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
@@ -84,6 +90,7 @@ namespace Altaxo.Graph.Gdi.Shapes
                 */
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (ImageGraphic)(o ?? throw new ArgumentNullException(nameof(o)));
@@ -103,6 +110,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ImageGraphic), 3)]
     private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ImageGraphic)obj;
@@ -111,6 +119,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         info.AddValue("SizeBasedOnSourceSize", s._isSizeCalculationBasedOnSourceSize);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (ImageGraphic)(o ?? throw new ArgumentNullException(nameof(o)));
@@ -124,18 +133,29 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ImageGraphic"/> class during deserialization.
+    /// </summary>
+    /// <param name="info">The deserialization info.</param>
     protected ImageGraphic(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
       : base(new ItemLocationDirectAspectPreserving())
     {
 
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ImageGraphic"/> class.
+    /// </summary>
     protected ImageGraphic()
       :
       base(new ItemLocationDirectAspectPreserving())
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ImageGraphic"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     protected ImageGraphic(ImageGraphic from)
       :
       base(from) // all is done here, since CopyFrom is virtual!
@@ -143,6 +163,11 @@ namespace Altaxo.Graph.Gdi.Shapes
       CopyFrom(from, false);
     }
 
+    /// <summary>
+    /// Copies the state from another <see cref="ImageGraphic"/> instance.
+    /// </summary>
+    /// <param name="from">The source instance.</param>
+    /// <param name="withBaseMembers">If set to <see langword="true"/>, base members are copied as well.</param>
     protected void CopyFrom(ImageGraphic from, bool withBaseMembers)
     {
       if (withBaseMembers)
@@ -151,6 +176,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       _isSizeCalculationBasedOnSourceSize = from._isSizeCalculationBasedOnSourceSize;
     }
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -170,6 +196,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <inheritdoc />
     public override bool AutoSize
     {
       get
@@ -178,6 +205,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the displayed size is calculated from the source image size.
+    /// </summary>
     public bool IsSizeCalculationBasedOnSourceSize
     {
       get
@@ -191,6 +221,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets the aspect-ratio preserving mode.
+    /// </summary>
     public AspectRatioPreservingMode AspectRatioPreserving
     {
       get
@@ -206,6 +239,10 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>Get the size of the original image in points (1/72 inch).</summary>
     public abstract PointD2D GetImageSizePt();
 
+    /// <summary>
+    /// Gets the image represented by this graphic.
+    /// </summary>
+    /// <returns>The image, or <see langword="null"/> if no image is available.</returns>
     public abstract Image? GetImage();
 
     /// <summary>
@@ -217,6 +254,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       return GetRectangularObjectOutline();
     }
 
+    /// <inheritdoc />
     public override IHitTestObject? HitTest(HitTestPointData htd)
     {
       var result = base.HitTest(htd);
@@ -244,11 +282,16 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     private class MyHitTestObject : GraphicBaseHitTestObject
     {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="MyHitTestObject"/> class.
+      /// </summary>
+      /// <param name="obj">The image graphic.</param>
       public MyHitTestObject(ImageGraphic obj)
         : base(obj)
       {
       }
 
+      /// <inheritdoc />
       public override IGripManipulationHandle[]? GetGrips(double pageScale, int gripLevel)
       {
         switch (gripLevel)

@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -37,12 +37,18 @@ using Altaxo.Scripting;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
+  /// <summary>
+  /// Defines the view contract for selecting a fit function.
+  /// </summary>
   public interface IFitFunctionSelectionView : IDataContextAwareView
   {
   }
 
 
 
+  /// <summary>
+  /// Controller for selecting and managing fit functions.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IFitFunctionSelectionView))]
   public class FitFunctionSelectionController : MVCANControllerEditImmutableDocBase<IFitFunction, IFitFunctionSelectionView>
   {
@@ -63,26 +69,50 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private class MyNGTreeNode : NGTreeNode
     {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="MyNGTreeNode"/> class.
+      /// </summary>
       public MyNGTreeNode(string text)
         : base(text)
       {
       }
 
+      /// <summary>
+      /// Gets a value indicating whether the remove menu is enabled.
+      /// </summary>
       public virtual bool IsMenuRemoveEnabled { get { return false; } }
 
+      /// <summary>
+      /// Gets a value indicating whether the edit menu is enabled.
+      /// </summary>
       public virtual bool IsMenuEditEnabled { get { return false; } }
 
+      /// <summary>
+      /// Gets a value indicating whether the edit-copy menu is enabled.
+      /// </summary>
       public virtual bool IsMenuEditCopyEnabled { get { return false; } }
 
+      /// <summary>
+      /// Gets this node instance.
+      /// </summary>
       public object MySelf { get { return this; } }
     }
 
     private class RootNode : MyNGTreeNode
     {
+      /// <summary>
+      /// The root node type.
+      /// </summary>
       public ItemDefinitionLevel RootNodeType;
 
+      /// <summary>
+      /// Gets the node type name.
+      /// </summary>
       public string NodeType { get { return RootNodeType.ToString(); } }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="RootNode"/> class.
+      /// </summary>
       public RootNode(string text, ItemDefinitionLevel type)
         :
         base(text)
@@ -94,33 +124,51 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private class CategoryNode : MyNGTreeNode
     {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="CategoryNode"/> class.
+      /// </summary>
       public CategoryNode(string text)
         : base(text)
       {
       }
 
+      /// <summary>
+      /// Gets the node type name.
+      /// </summary>
       public string NodeType { get { return "CategoryNode"; } }
     }
 
     private class LeafNode : MyNGTreeNode
     {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="LeafNode"/> class.
+      /// </summary>
       public LeafNode(string text)
         : base(text)
       {
       }
 
+      /// <summary>
+      /// Gets the node type identifier.
+      /// </summary>
       public virtual string NodeType { get { return "LeafNode"; } }
 
       private bool _canBeRemoved;
       private bool _canBeEdited;
       private bool _canBeACopyEdited;
 
+      /// <inheritdoc/>
       public override bool IsMenuEditEnabled { get { return _canBeEdited; } }
 
+      /// <inheritdoc/>
       public override bool IsMenuEditCopyEnabled { get { return _canBeACopyEdited; } }
 
+      /// <inheritdoc/>
       public override bool IsMenuRemoveEnabled { get { return _canBeRemoved; } }
 
+      /// <summary>
+      /// Sets the menu availability flags.
+      /// </summary>
       public void SetMenuEnabled(bool canBeEdited, bool canBeACopyEdited, bool canBeRemoved)
       {
         _canBeEdited = canBeEdited;
@@ -131,15 +179,31 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private class FitFunctionLeafNode : LeafNode
     {
+      /// <summary>
+      /// The associated fit function information.
+      /// </summary>
       public object FunctionType;
 
+      /// <summary>
+      /// Gets the command for editing the item.
+      /// </summary>
       public ICommand CmdEditItem { get; }
+      /// <summary>
+      /// Gets the command for creating and editing a copy of the item.
+      /// </summary>
       public ICommand CmdEditCopyOfItem { get; }
+      /// <summary>
+      /// Gets the command for removing the item.
+      /// </summary>
       public ICommand CmdRemoveItem { get; }
 
 
+      /// <inheritdoc/>
       public override string NodeType { get { return "BuiltinLeafNode"; } }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="FitFunctionLeafNode"/> class.
+      /// </summary>
       public FitFunctionLeafNode(string text, object functionType)
         : base(text)
       {
@@ -150,16 +214,25 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         CmdRemoveItem = new RelayCommand<object>(EhView_RemoveItem, (o) => IsMenuRemoveEnabled);
       }
 
+      /// <summary>
+      /// Edits the represented item.
+      /// </summary>
       public void EhView_EditItem(object parameter)
       {
         (parameter as FitFunctionSelectionController)?.EditItemOrItemCopy(this.FunctionType, false);
       }
 
+      /// <summary>
+      /// Creates and edits a copy of the represented item.
+      /// </summary>
       public void EhView_CreateItemFromHere(object parameter)
       {
         (parameter as FitFunctionSelectionController)?.EditItemOrItemCopy(this.FunctionType, true);
       }
 
+      /// <summary>
+      /// Removes the represented item.
+      /// </summary>
       public void EhView_RemoveItem(object parameter)
       {
         (parameter as FitFunctionSelectionController)?.EhView_RemoveItem(this.FunctionType);
@@ -168,6 +241,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     #endregion Node classes
 
+    /// <summary>
+    /// Occurs when a fit function is selected.
+    /// </summary>
     public event Action<IFitFunctionInformation> FitFunctionSelected;
 
     private IFitFunctionInformation _tempdoc;
@@ -177,6 +253,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     private RootNode _nodeUserDefined;
     private RootNode _nodeProject;
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -189,6 +266,10 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FitFunctionSelectionController"/> class.
+    /// </summary>
+    /// <param name="doc">The fit function to select initially.</param>
     public FitFunctionSelectionController(IFitFunction doc) : this()
     {
       _doc = doc;
@@ -196,6 +277,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       Initialize(true);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FitFunctionSelectionController"/> class.
+    /// </summary>
     public FitFunctionSelectionController()
       {
       CmdItemDoubleClicked = new RelayCommand(EhView_ItemDoubleClicked);
@@ -205,10 +289,16 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the command executed when an item is double-clicked.
+    /// </summary>
     public ICommand CmdItemDoubleClicked { get; }
 
     private NGTreeNode _fitFunctionsRoot;
 
+    /// <summary>
+    /// Gets or sets the root node of the fit-function tree.
+    /// </summary>
     public NGTreeNode FitFunctionsRoot
     {
       get => _fitFunctionsRoot;
@@ -224,6 +314,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private NGTreeNode _selectedFitFunction;
 
+    /// <summary>
+    /// Gets or sets the currently selected fit function.
+    /// </summary>
     public NGTreeNode SelectedFitFunction
     {
       get => _selectedFitFunction;
@@ -245,6 +338,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private string _fitFunctionDescription;
 
+    /// <summary>
+    /// Gets or sets the description of the selected fit function.
+    /// </summary>
     public string FitFunctionDescription
     {
       get => _fitFunctionDescription;
@@ -260,11 +356,17 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     #endregion
 
+    /// <summary>
+    /// Reloads the fit-function tree.
+    /// </summary>
     public void Refresh()
     {
       Initialize(true);
     }
 
+    /// <summary>
+    /// Initializes the controller state.
+    /// </summary>
     public void Initialize(bool initData)
     {
       if (initData)
@@ -356,11 +458,17 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       return selNode;
     }
 
+    /// <summary>
+    /// Updates the temporary selection.
+    /// </summary>
     public void EhView_SelectionChanged(IFitFunctionInformation selectedtag)
     {
       _tempdoc = selectedtag;
     }
     
+    /// <summary>
+    /// Edits the selected item or a copy of it.
+    /// </summary>
     public void EditItemOrItemCopy(object parameter, bool editItemCopy)
     {
       if (parameter is IFitFunctionInformation selectedtag)
@@ -425,6 +533,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       return null;
     }
 
+    /// <summary>
+    /// Removes the selected item.
+    /// </summary>
     public void EhView_RemoveItem(object parameter)
     {
       if (parameter is IFitFunctionInformation selectedtag)
@@ -442,6 +553,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
     }
 
+    /// <summary>
+    /// Handles double-click selection of a fit function.
+    /// </summary>
     public void EhView_ItemDoubleClicked()
     {
       if (SelectedFitFunction?.Tag is IFitFunctionInformation fitinfo)
@@ -453,6 +567,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     #region IMVCController Members
 
+    /// <inheritdoc/>
     public object ViewObject
     {
       get
@@ -473,6 +588,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
     }
 
+    /// <inheritdoc/>
     public object ModelObject
     {
       get
@@ -481,6 +597,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
     }
@@ -489,6 +606,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     #region IApplyController Members
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (_tempdoc is null) // nothing selected, so return the original doc

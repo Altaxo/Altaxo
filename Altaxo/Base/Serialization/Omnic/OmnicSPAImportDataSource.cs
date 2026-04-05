@@ -30,6 +30,9 @@ using Altaxo.Data;
 
 namespace Altaxo.Serialization.Omnic
 {
+  /// <summary>
+  /// Table data source for importing Omnic SPA files.
+  /// </summary>
   public class OmnicSPAImportDataSource : FileImportTableDataSourceBase<OmnicSPAImportOptions>
   {
     #region Serialization
@@ -44,6 +47,7 @@ namespace Altaxo.Serialization.Omnic
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(OmnicSPAImportDataSource), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (OmnicSPAImportDataSource)obj;
@@ -53,6 +57,7 @@ namespace Altaxo.Serialization.Omnic
         info.AddArray("ProcessData", s._files.ToArray(), s._files.Count);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (o is OmnicSPAImportDataSource s)
@@ -98,30 +103,42 @@ namespace Altaxo.Serialization.Omnic
 
     #region Construction
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OmnicSPAImportDataSource"/> class for a single file.
+    /// </summary>
     public OmnicSPAImportDataSource(string fileName, OmnicSPAImportOptions options)
       : this(new string[] { fileName }, options)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OmnicSPAImportDataSource"/> class for multiple files.
+    /// </summary>
     public OmnicSPAImportDataSource(IEnumerable<string> fileNames, OmnicSPAImportOptions options)
       : base(fileNames)
     {
       _processOptions = options;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OmnicSPAImportDataSource"/> class by copying another instance.
+    /// </summary>
     public OmnicSPAImportDataSource(OmnicSPAImportDataSource from)
       : base(from)
     {
     }
 
+    /// <inheritdoc />
     public override object Clone() => new OmnicSPAImportDataSource(this);
 
     #endregion Construction
+    /// <inheritdoc />
     protected override void ImportFromFiles(string[] validFileNames, DataTable destinationTable, IProgressReporter reporter)
     {
       new OmnicSPAImporter().Import(validFileNames, destinationTable, _processOptions, attachDataSource: false);
     }
 
+    /// <inheritdoc />
     public override (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
       => new OmnicSPAImporter().GetFileExtensions();
   }

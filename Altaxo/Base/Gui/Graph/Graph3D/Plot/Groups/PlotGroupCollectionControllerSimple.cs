@@ -35,15 +35,19 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
 {
 
   /// <summary>
-  /// This view interface is for showing the options of the XYLineScatterPlotStyle
+  /// Provides the view contract for <see cref="PlotGroupCollectionControllerSimple"/>.
   /// </summary>
   public interface IPlotGroupCollectionViewSimple : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Simple controller for <see cref="PlotGroupStyleCollection"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IPlotGroupCollectionViewSimple))]
   public class PlotGroupCollectionControllerSimple : MVCANControllerEditOriginalDocBase<PlotGroupStyleCollection, IPlotGroupCollectionViewSimple>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -53,6 +57,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
 
     private bool _PlotGroupColor;
 
+    /// <summary>
+    /// Indicates whether the plot groups are colored.
+    /// </summary>
     public bool PlotGroupColor
     {
       get => _PlotGroupColor;
@@ -67,6 +74,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
     }
     private bool _PlotGroupLineType;
 
+    /// <summary>
+    /// Indicates whether the plot groups have a line style.
+    /// </summary>
     public bool PlotGroupLineType
     {
       get => _PlotGroupLineType;
@@ -81,6 +91,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
     }
     private bool _PlotGroupSymbol;
 
+    /// <summary>
+    /// Indicates whether the plot groups have a symbol.
+    /// </summary>
     public bool PlotGroupSymbol
     {
       get => _PlotGroupSymbol;
@@ -95,6 +108,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
     }
     private bool _plotGroupSequential;
 
+    /// <summary>
+    /// Indicates whether the plot groups are sequential.
+    /// </summary>
     public bool PlotGroupSequential
     {
       get => _plotGroupSequential;
@@ -110,6 +126,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
 
     private ItemsController<PlotGroupStrictness> _plotGroupStrictness;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public ItemsController<PlotGroupStrictness> PlotGroupStrictness
     {
       get => _plotGroupStrictness;
@@ -127,6 +146,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
     #endregion
 
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -144,6 +164,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       bool color = PlotGroupColor;
@@ -206,7 +227,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
     }
 
     /// <summary>
-    /// Determines if a PlotGroupStyleCollection fullfills the requirements to be presented by a simple controller.
+    /// Determines if a PlotGroupStyleCollection fulfills the requirements to be presented by a simple controller.
     /// </summary>
     /// <param name="plotGroupStyles">The <see cref="PlotGroupStyleCollection"/> to investigate.</param>
     /// <returns>True if the <see cref="PlotGroupStyleCollection"/> can be presented by a simple controller, otherwise False.</returns>
@@ -216,7 +237,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
     }
 
     /// <summary>
-    /// Determines if a PlotGroupStyleCollection fullfills the requirements to be presented by a simple controller.
+    /// Determines if a PlotGroupStyleCollection fulfills the requirements to be presented by a simple controller.
     /// </summary>
     /// <param name="plotGroupStyles">The <see cref="PlotGroupStyleCollection"/> to investigate.</param>
     /// <param name="isSteppingSerial">On return: is True if the styles are changed serial, i.e. first all colors, then the line style, then the symbol style.</param>

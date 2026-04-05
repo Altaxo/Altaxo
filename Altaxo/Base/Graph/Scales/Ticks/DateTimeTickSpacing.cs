@@ -34,68 +34,153 @@ using Altaxo.Data;
 
 namespace Altaxo.Graph.Scales.Ticks
 {
+  /// <summary>
+  /// Represents tick-spacing settings for date-time scales.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Graph.Scales.Ticks.DateTimeTickSpacing}")]
   public class DateTimeTickSpacing : TickSpacing
   {
     #region Inner classes
 
-    public enum TimeSpanExUnit { Span, Month, Years }
+    /// <summary>
+    /// Defines the units supported by <see cref="TimeSpanEx"/>.
+    /// </summary>
+    public enum TimeSpanExUnit
+    {
+      /// <summary>
+      /// Uses a regular <see cref="TimeSpan"/> value.
+      /// </summary>
+      Span,
 
+      /// <summary>
+      /// Uses whole months.
+      /// </summary>
+      Month,
+
+      /// <summary>
+      /// Uses whole years.
+      /// </summary>
+      Years
+    }
+
+    /// <summary>
+    /// Represents an extended time span that can also encode whole months and years.
+    /// </summary>
     public struct TimeSpanEx : IEquatable<TimeSpanEx>, IEquatable<object>
     {
+      /// <summary>
+      /// Stores the unit used by this extended time span.
+      /// </summary>
       public TimeSpanExUnit _unit;
+
+      /// <summary>
+      /// Stores the span value or the encoded number of months or years.
+      /// </summary>
       public TimeSpan _span;
 
+      /// <summary>
+      /// Creates an instance from ticks.
+      /// </summary>
+      /// <param name="ticks">The number of ticks.</param>
+      /// <returns>A <see cref="TimeSpanEx"/> representing the specified tick count.</returns>
       public static TimeSpanEx FromTicks(long ticks)
       {
         return new TimeSpanEx { _unit = TimeSpanExUnit.Span, _span = TimeSpan.FromTicks(ticks) };
       }
 
+      /// <summary>
+      /// Creates an instance from a <see cref="TimeSpan"/>.
+      /// </summary>
+      /// <param name="span">The time span.</param>
+      /// <returns>A <see cref="TimeSpanEx"/> representing the specified span.</returns>
       public static TimeSpanEx FromTimeSpan(TimeSpan span)
       {
         return new TimeSpanEx { _unit = TimeSpanExUnit.Span, _span = span };
       }
 
+      /// <summary>
+      /// Creates an instance representing a number of whole years.
+      /// </summary>
+      /// <param name="years">The number of years.</param>
+      /// <returns>A <see cref="TimeSpanEx"/> representing the specified number of years.</returns>
       public static TimeSpanEx FromYears(long years)
       {
         return new TimeSpanEx { _unit = TimeSpanExUnit.Years, _span = TimeSpan.FromTicks(years) };
       }
 
+      /// <summary>
+      /// Creates an instance representing a number of whole months.
+      /// </summary>
+      /// <param name="months">The number of months.</param>
+      /// <returns>A <see cref="TimeSpanEx"/> representing the specified number of months.</returns>
       public static TimeSpanEx FromMonths(long months)
       {
         return new TimeSpanEx { _unit = TimeSpanExUnit.Month, _span = TimeSpan.FromTicks(months) };
       }
 
+      /// <summary>
+      /// Creates an instance representing a number of whole days.
+      /// </summary>
+      /// <param name="days">The number of days.</param>
+      /// <returns>A <see cref="TimeSpanEx"/> representing the specified number of days.</returns>
       public static TimeSpanEx FromDays(long days)
       {
         return new TimeSpanEx() { _unit = TimeSpanExUnit.Span, _span = TimeSpan.FromDays(days) };
       }
 
+      /// <summary>
+      /// Creates an instance representing a number of whole hours.
+      /// </summary>
+      /// <param name="hours">The number of hours.</param>
+      /// <returns>A <see cref="TimeSpanEx"/> representing the specified number of hours.</returns>
       public static TimeSpanEx FromHours(long hours)
       {
         return new TimeSpanEx() { _unit = TimeSpanExUnit.Span, _span = TimeSpan.FromHours(hours) };
       }
 
+      /// <summary>
+      /// Creates an instance representing a number of whole minutes.
+      /// </summary>
+      /// <param name="minutes">The number of minutes.</param>
+      /// <returns>A <see cref="TimeSpanEx"/> representing the specified number of minutes.</returns>
       public static TimeSpanEx FromMinutes(long minutes)
       {
         return new TimeSpanEx() { _unit = TimeSpanExUnit.Span, _span = TimeSpan.FromMinutes(minutes) };
       }
 
+      /// <summary>
+      /// Creates an instance representing a number of whole seconds.
+      /// </summary>
+      /// <param name="seconds">The number of seconds.</param>
+      /// <returns>A <see cref="TimeSpanEx"/> representing the specified number of seconds.</returns>
       public static TimeSpanEx FromSeconds(long seconds)
       {
         return new TimeSpanEx() { _unit = TimeSpanExUnit.Span, _span = TimeSpan.FromSeconds(seconds) };
       }
 
+      /// <summary>
+      /// Creates an instance representing a number of whole milliseconds.
+      /// </summary>
+      /// <param name="milliseconds">The number of milliseconds.</param>
+      /// <returns>A <see cref="TimeSpanEx"/> representing the specified number of milliseconds.</returns>
       public static TimeSpanEx FromMilliSeconds(long milliseconds)
       {
         return new TimeSpanEx() { _unit = TimeSpanExUnit.Span, _span = TimeSpan.FromMilliseconds(milliseconds) };
       }
 
+      /// <summary>
+      /// Creates an instance representing a number of whole microseconds.
+      /// </summary>
+      /// <param name="microseconds">The number of microseconds.</param>
+      /// <returns>A <see cref="TimeSpanEx"/> representing the specified number of microseconds.</returns>
       public static TimeSpanEx FromMicroSeconds(long microseconds)
       {
         return new TimeSpanEx() { _unit = TimeSpanExUnit.Span, _span = TimeSpan.FromTicks(10 * microseconds) };
       }
 
+      /// <summary>
+      /// Gets the number of years represented by this value.
+      /// </summary>
       public double Years
       {
         get
@@ -109,6 +194,9 @@ namespace Altaxo.Graph.Scales.Ticks
         }
       }
 
+      /// <summary>
+      /// Gets the number of months represented by this value.
+      /// </summary>
       public long Months
       {
         get
@@ -122,6 +210,9 @@ namespace Altaxo.Graph.Scales.Ticks
         }
       }
 
+      /// <summary>
+      /// Gets the represented <see cref="TimeSpan"/>.
+      /// </summary>
       public TimeSpan Span
       {
         get
@@ -133,6 +224,11 @@ namespace Altaxo.Graph.Scales.Ticks
         }
       }
 
+      /// <summary>
+      /// Rounds the specified date-time up to the next matching boundary.
+      /// </summary>
+      /// <param name="d">The date-time value.</param>
+      /// <returns>The rounded date-time value.</returns>
       public DateTime RoundUp(DateTime d)
       {
         switch (_unit)
@@ -149,6 +245,11 @@ namespace Altaxo.Graph.Scales.Ticks
         return d;
       }
 
+      /// <summary>
+      /// Rounds the specified date-time down to the previous matching boundary.
+      /// </summary>
+      /// <param name="d">The date-time value.</param>
+      /// <returns>The rounded date-time value.</returns>
       public DateTime RoundDown(DateTime d)
       {
         switch (_unit)
@@ -165,6 +266,9 @@ namespace Altaxo.Graph.Scales.Ticks
         return d;
       }
 
+      /// <summary>
+      /// Performs the a dd operation.
+      /// </summary>
       public static DateTime Add(DateTime x, TimeSpanEx span)
       {
         switch (span._unit)
@@ -190,6 +294,9 @@ namespace Altaxo.Graph.Scales.Ticks
         }
       }
 
+      /// <summary>
+      /// Performs the s ub tr ac t operation.
+      /// </summary>
       public static DateTime Subtract(DateTime x, TimeSpanEx span)
       {
         switch (span._unit)
@@ -215,6 +322,9 @@ namespace Altaxo.Graph.Scales.Ticks
         }
       }
 
+      /// <summary>
+      /// Performs the d iv id e operation.
+      /// </summary>
       public static double Divide(TimeSpanEx a, TimeSpanEx b)
       {
         switch (a._unit)
@@ -270,6 +380,9 @@ namespace Altaxo.Graph.Scales.Ticks
         return double.NaN;
       }
 
+      /// <summary>
+      /// Performs the e qu al s operation.
+      /// </summary>
       public bool Equals(TimeSpanEx other)
       {
         return _unit == other._unit && _span == other._span;
@@ -280,29 +393,43 @@ namespace Altaxo.Graph.Scales.Ticks
         return (other is TimeSpanEx timeSpanEx) && Equals(timeSpanEx);
       }
 
+      /// <inheritdoc />
       public override bool Equals(object? obj)
       {
         return obj is TimeSpanEx other && Equals(other);
       }
 
+      /// <inheritdoc />
       public override int GetHashCode()
       {
         return _span.GetHashCode() + 13 * _unit.GetHashCode();
       }
 
+      /// <summary>
+      /// Gets or sets the o pe ra to r.
+      /// </summary>
       public static bool operator ==(TimeSpanEx x, TimeSpanEx y)
       {
         return x.Equals(y);
       }
 
+      /// <summary>
+      /// Provides access to this member.
+      /// </summary>
       public static bool operator !=(TimeSpanEx x, TimeSpanEx y)
       {
         return !(x.Equals(y));
       }
     }
 
+    /// <summary>
+    /// Caches the current major and minor tick settings.
+    /// </summary>
     private class CachedMajorMinor : ICloneable
     {
+      /// <summary>
+      /// Gets or sets the e nd.
+      /// </summary>
       public DateTime Org, End;
       /// <summary>Physical span value between two major ticks.</summary>
 
@@ -312,6 +439,9 @@ namespace Altaxo.Graph.Scales.Ticks
 
       public TimeSpanEx MinorTickSpan;
 
+      /// <summary>
+      /// Initializes a new instance.
+      /// </summary>
       public CachedMajorMinor(DateTime org, DateTime end, TimeSpanEx major, TimeSpanEx minor)
       {
         Org = org;
@@ -320,6 +450,9 @@ namespace Altaxo.Graph.Scales.Ticks
         MinorTickSpan = minor;
       }
 
+      /// <summary>
+      /// Creates a copy of this instance.
+      /// </summary>
       public object Clone()
       {
         return MemberwiseClone();
@@ -481,11 +614,17 @@ namespace Altaxo.Graph.Scales.Ticks
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DateTimeTickSpacing), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <summary>
+      /// Performs the s er ia li ze operation.
+      /// </summary>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DateTimeTickSpacing)obj;
       }
 
+      /// <summary>
+      /// Performs the d es er ia li ze operation.
+      /// </summary>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
        var s = (DateTimeTickSpacing?)o ?? new DateTimeTickSpacing();
@@ -498,6 +637,9 @@ namespace Altaxo.Graph.Scales.Ticks
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance.
+    /// </summary>
     public DateTimeTickSpacing()
     {
       _majorTicks = new List<AltaxoVariant>();
@@ -509,12 +651,17 @@ namespace Altaxo.Graph.Scales.Ticks
     }
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    /// <summary>
+    /// Initializes a new instance.
+    /// </summary>
     public DateTimeTickSpacing(DateTimeTickSpacing from)
       : base(from) // everything is done here, since CopyFrom is virtual!
     {
     }
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
+ 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -555,6 +702,8 @@ namespace Altaxo.Graph.Scales.Ticks
       return false;
     }
 
+ 
+    /// <inheritdoc />
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_suppressedMajorTicks is not null)
@@ -567,11 +716,15 @@ namespace Altaxo.Graph.Scales.Ticks
         yield return new Main.DocumentNodeAndName(_additionalMinorTicks, "AdditionalMinorTicks");
     }
 
+ 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new DateTimeTickSpacing(this);
     }
 
+ 
+    /// <inheritdoc />
     public override bool Equals(object? obj)
     {
       if (ReferenceEquals(this, obj))
@@ -619,6 +772,8 @@ namespace Altaxo.Graph.Scales.Ticks
       return true;
     }
 
+ 
+    /// <inheritdoc />
     public override int GetHashCode()
     {
       return base.GetHashCode() + 13 * _targetNumberOfMajorTicks + 31 * _targetNumberOfMinorTicks;
@@ -626,6 +781,9 @@ namespace Altaxo.Graph.Scales.Ticks
 
     #region User parameters
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public double OrgGrace
     {
       get
@@ -641,6 +799,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public double EndGrace
     {
       get
@@ -656,6 +817,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public BoundaryTickSnapping SnapOrgToTick
     {
       get
@@ -671,6 +835,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public BoundaryTickSnapping SnapEndToTick
     {
       get
@@ -686,6 +853,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public int TargetNumberOfMajorTicks
     {
       get
@@ -701,6 +871,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public int TargetNumberOfMinorTicks
     {
       get
@@ -716,6 +889,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public int? MinorTicks
     {
       get
@@ -731,6 +907,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public TimeSpanEx? MajorTickSpan
     {
       get
@@ -746,6 +925,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Gets the collection of suppressed major ticks.
+    /// </summary>
     [AllowNull]
     public SuppressedTicks SuppressedMajorTicks
     {
@@ -760,6 +942,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Gets the collection of suppressed minor ticks.
+    /// </summary>
     [AllowNull]
     public SuppressedTicks SuppressedMinorTicks
     {
@@ -774,6 +959,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Gets the collection of additional major ticks.
+    /// </summary>
     [AllowNull]
     public AdditionalTicks AdditionalMajorTicks
     {
@@ -788,6 +976,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Gets the collection of additional minor ticks.
+    /// </summary>
     [AllowNull]
     public AdditionalTicks AdditionalMinorTicks
     {
@@ -804,11 +995,15 @@ namespace Altaxo.Graph.Scales.Ticks
 
     #endregion User parameters
 
+ 
+    /// <inheritdoc />
     public override AltaxoVariant[] GetMajorTicksAsVariant()
     {
       return _majorTicks.ToArray();
     }
 
+ 
+    /// <inheritdoc />
     public override AltaxoVariant[] GetMinorTicksAsVariant()
     {
       return _minorTicks.ToArray();
@@ -836,6 +1031,8 @@ namespace Altaxo.Graph.Scales.Ticks
         throw new ArgumentException("Variant end is not a DateTime nor a numeric value");
     }
 
+ 
+    /// <inheritdoc />
     public override bool PreProcessScaleBoundaries(ref AltaxoVariant org, ref AltaxoVariant end, bool isOrgExtendable, bool isEndExtendable)
     {
       ConvertOrgEndToDateTimeValues(org, end, out var dorg, out var dend);
@@ -853,6 +1050,8 @@ namespace Altaxo.Graph.Scales.Ticks
         return false;
     }
 
+ 
+    /// <inheritdoc />
     public override void FinalProcessScaleBoundaries(AltaxoVariant org, AltaxoVariant end, Scale scale)
     {
       ConvertOrgEndToDateTimeValues(org, end, out var dorg, out var dend);

@@ -70,6 +70,7 @@ namespace Altaxo.Graph.Graph3D.Background
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RectangularBackground), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (RectangularBackground)obj;
@@ -79,6 +80,7 @@ namespace Altaxo.Graph.Graph3D.Background
         info.AddValue("CustomThickness", s._customThickness);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (RectangularBackground?)o ?? new RectangularBackground();
@@ -115,6 +117,7 @@ namespace Altaxo.Graph.Graph3D.Background
     /// <returns>
     /// A new object that is a copy of this instance.
     /// </returns>
+    /// <inheritdoc/>
     public object Clone()
     {
       return new RectangularBackground(this);
@@ -128,6 +131,7 @@ namespace Altaxo.Graph.Graph3D.Background
     /// <returns>
     /// True if at least parts of the object could be copied, false if the object to copy from is incompatible.
     /// </returns>
+    /// <inheritdoc/>
     public bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))

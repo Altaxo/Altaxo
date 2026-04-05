@@ -33,6 +33,9 @@ namespace Altaxo.Text.Renderers.Maml.Inlines
   /// <seealso cref="MamlObjectRenderer{T}" />
   public class DelimiterInlineRenderer : MamlObjectRenderer<DelimiterInline>
   {
+    /// <summary>
+    /// Writes a delimiter inline.
+    /// </summary>
     protected override void Write(MamlRenderer renderer, DelimiterInline obj)
     {
       renderer.WriteEscape(obj.ToLiteral());

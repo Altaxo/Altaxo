@@ -61,8 +61,16 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     void TrySetHueOfButton(int indexOfMovedButton, double hue, double[] hueOfButtons);
   }
 
+  /// <summary>
+  /// Provides helper methods for color-circle models.
+  /// </summary>
   public class ColorCircleModelHelperBase
   {
+    /// <summary>
+    /// Brings a value into the range from 0 to 1.
+    /// </summary>
+    /// <param name="x">The value.</param>
+    /// <returns>The wrapped value in the range from 0 to 1.</returns>
     protected static double BringInbetween0To1(double x)
     {
       if (x < 0)
@@ -78,6 +86,13 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       return x;
     }
 
+    /// <summary>
+    /// Brings a value into the specified range or to the nearest range boundary.
+    /// </summary>
+    /// <param name="x">The value.</param>
+    /// <param name="min">The minimum value.</param>
+    /// <param name="max">The maximum value.</param>
+    /// <returns>A value within the specified range or the nearest range boundary.</returns>
     protected static double BringInbetweenOrToMinimumDistanceFrom(double x, double min, double max)
     {
       if (!(min <= max))
@@ -108,6 +123,12 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       }
     }
 
+    /// <summary>
+    /// Brings a value to be greater than or equal to another value.
+    /// </summary>
+    /// <param name="x">The value to adjust.</param>
+    /// <param name="y">The minimum target value.</param>
+    /// <returns>A value greater than or equal to <paramref name="y"/>.</returns>
     protected static double BringToGreaterThanOrEqualTo(double x, double y)
     {
       while (x < y)
@@ -117,33 +138,45 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     }
   }
 
+  /// <summary>
+  /// Color-circle model with a single primary hue.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorCircleModelPrimary}")]
   public class ColorCircleModelPrimary : ColorCircleModelHelperBase, IColorCircleModel
   {
+    /// <inheritdoc/>
     public int NumberOfHueValues { get { return 1; } }
 
+    /// <inheritdoc/>
     public void SetInitialHueValues(double[] hueOfButtons)
     {
       hueOfButtons[0] = 0;
     }
 
+    /// <inheritdoc/>
     public void TrySetHueOfButton(int indexOfMovedButton, double phi, double[] hueOfButtons)
     {
       hueOfButtons[0] = BringInbetween0To1(phi);
     }
   }
 
+  /// <summary>
+  /// Color-circle model with two complementary hues.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorCircleModelComplementary}")]
   public class ColorCircleModelComplementary : ColorCircleModelHelperBase, IColorCircleModel
   {
+    /// <inheritdoc/>
     public int NumberOfHueValues { get { return 2; } }
 
+    /// <inheritdoc/>
     public void SetInitialHueValues(double[] hueOfButtons)
     {
       hueOfButtons[0] = 0;
       hueOfButtons[1] = 0.5;
     }
 
+    /// <inheritdoc/>
     public void TrySetHueOfButton(int indexOfMovedButton, double hue, double[] hueOfButtons)
     {
       if (0 == indexOfMovedButton)
@@ -159,11 +192,16 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     }
   }
 
+  /// <summary>
+  /// Color-circle model with a triangular complementary arrangement.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorCircleModelTriangleComplementary}")]
   public class ColorCircleModelTriangleComplementary : ColorCircleModelHelperBase, IColorCircleModel
   {
+    /// <inheritdoc/>
     public int NumberOfHueValues { get { return 3; } }
 
+    /// <inheritdoc/>
     public void SetInitialHueValues(double[] hueOfButtons)
     {
       hueOfButtons[0] = 0;
@@ -171,6 +209,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       hueOfButtons[2] = 0.75;
     }
 
+    /// <inheritdoc/>
     public void TrySetHueOfButton(int indexOfMovedButton, double hue, double[] hueOfButtons)
     {
       if (0 == indexOfMovedButton || 1 == indexOfMovedButton)
@@ -190,11 +229,16 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     }
   }
 
+  /// <summary>
+  /// Color-circle model with three symmetrically arranged hues.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorCircleModelTriangleSymmetrically}")]
   public class ColorCircleModelTriangleSymmetrically : ColorCircleModelHelperBase, IColorCircleModel
   {
+    /// <inheritdoc/>
     public int NumberOfHueValues { get { return 3; } }
 
+    /// <inheritdoc/>
     public void SetInitialHueValues(double[] hueOfButtons)
     {
       hueOfButtons[0] = 0;
@@ -202,6 +246,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       hueOfButtons[2] = 2 / 3.0;
     }
 
+    /// <inheritdoc/>
     public void TrySetHueOfButton(int indexOfMovedButton, double hue, double[] hueOfButtons)
     {
       if (0 == indexOfMovedButton)
@@ -245,13 +290,18 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     }
   }
 
+  /// <summary>
+  /// Color-circle model with four hues arranged as a rectangle.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorCircleModelRectangle}")]
   public class ColorCircleModelRectangle : ColorCircleModelHelperBase, IColorCircleModel
   {
     private double[] _hueTransformed = new double[4];
 
+    /// <inheritdoc/>
     public int NumberOfHueValues { get { return 4; } }
 
+    /// <inheritdoc/>
     public void SetInitialHueValues(double[] hueOfButtons)
     {
       hueOfButtons[0] = 0;
@@ -260,6 +310,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       hueOfButtons[3] = 3 / 4.0;
     }
 
+    /// <inheritdoc/>
     public void TrySetHueOfButton(int indexOfMovedButton, double hue, double[] hueOfButtons)
     {
       if (0 == indexOfMovedButton || 2 == indexOfMovedButton)
@@ -314,13 +365,18 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     }
   }
 
+  /// <summary>
+  /// Color-circle model with five symmetrically arranged hues.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorCircleModelPentagonSymmetrically}")]
   public class ColorCircleModelPentagonSymmetrically : ColorCircleModelHelperBase, IColorCircleModel
   {
     private double[] _hueTransformed = new double[5];
 
+    /// <inheritdoc/>
     public int NumberOfHueValues { get { return 5; } }
 
+    /// <inheritdoc/>
     public void SetInitialHueValues(double[] hueOfButtons)
     {
       hueOfButtons[0] = 0;
@@ -330,6 +386,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       hueOfButtons[4] = 4 / 5.0;
     }
 
+    /// <inheritdoc/>
     public void TrySetHueOfButton(int indexOfMovedButton, double hue, double[] hueOfButtons)
     {
       if (0 == indexOfMovedButton)
@@ -419,14 +476,27 @@ namespace Altaxo.Gui.Drawing.ColorManagement
   {
     private int _numberOfHueValues = 2;
 
+    /// <summary>
+    /// Gets the number of hue values managed by this model.
+    /// </summary>
     public int NumberOfHueValues { get { return _numberOfHueValues; } }
 
+    /// <summary>
+    /// Initializes the hue values with evenly distributed positions on the color circle.
+    /// </summary>
+    /// <param name="hueOfButtons">The array that receives the initial hue values.</param>
     public void SetInitialHueValues(double[] hueOfButtons)
     {
       for (int i = 0; i < _numberOfHueValues; ++i)
         hueOfButtons[i] = i / (double)_numberOfHueValues;
     }
 
+    /// <summary>
+    /// Tries to update the hue of a button while preserving the model constraints.
+    /// </summary>
+    /// <param name="indexOfMovedButton">The index of the moved button.</param>
+    /// <param name="hue">The requested hue.</param>
+    /// <param name="hueOfButtons">The current hue values.</param>
     public void TrySetHueOfButton(int indexOfMovedButton, double hue, double[] hueOfButtons)
     {
       if (0 == indexOfMovedButton)

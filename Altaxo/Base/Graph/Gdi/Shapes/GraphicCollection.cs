@@ -72,6 +72,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #endregion "Serialization"
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GraphicCollection"/> class.
+    /// </summary>
+    /// <param name="insertAction">The action that is invoked when an item is inserted.</param>
     public GraphicCollection(Action<IGraphicBase> insertAction)
       : base(insertAction)
     {

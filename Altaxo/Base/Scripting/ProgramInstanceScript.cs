@@ -32,13 +32,13 @@ using Altaxo.Main.Services.ScriptCompilation;
 namespace Altaxo.Scripting
 {
   /// <summary>
-  /// Script for a program instance of Altaxo. Main purpose is add functionality, when the script must load or close projects.
+  /// Script for a program instance of Altaxo. The main purpose is to add functionality when the script must load or close projects.
   /// </summary>
 
   public class ProgramInstanceScript : AbstractScript, IScriptText
   {
     /// <summary>
-    /// Creates an empty  script.
+    /// Creates an empty script.
     /// </summary>
     public ProgramInstanceScript()
     {
@@ -54,7 +54,7 @@ namespace Altaxo.Scripting
     }
 
     /// <summary>
-    /// Creates a  script as a copy from another script with the option for modifying the txt.
+    /// Creates a script as a copy from another script with the option to modify the text.
     /// </summary>
     /// <param name="b">The script to copy from.</param>
     /// <param name="forModification">If true, the new script text can be modified.</param>
@@ -64,7 +64,7 @@ namespace Altaxo.Scripting
     }
 
     /// <summary>
-    /// Gives the type of the script object (full name), which is created after successfull compilation.
+    /// Gives the type of the script object (full name), which is created after successful compilation.
     /// </summary>
     public override string ScriptObjectType
     {
@@ -97,6 +97,9 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <summary>
+    /// Gets the code text inserted before the user section.
+    /// </summary>
     public override string CodeStart
     {
       get
@@ -107,6 +110,9 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <summary>
+    /// Gets the default user code.
+    /// </summary>
     public override string CodeUserDefault
     {
       get
@@ -120,6 +126,9 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <summary>
+    /// Gets the code text inserted after the user section.
+    /// </summary>
     public override string CodeEnd
     {
       get
@@ -155,10 +164,11 @@ namespace Altaxo.Scripting
     }
 
     /// <summary>
-    /// Executes the script. If no instance of the script object exists, a error message will be stored and the return value is false.
+    /// Executes the script. If no instance of the script object exists, an error message is stored and the return value is false.
     /// If the script object exists, the Execute function of this script object is called.
     /// </summary>
-    /// <returns>True if executed without exceptions, otherwise false.</returns>
+    /// <param name="reporter">The progress reporter.</param>
+    /// <returns>True if executed without exceptions; otherwise, false.</returns>
     /// <remarks>If exceptions were thrown during execution, the exception messages are stored
     /// inside the column script and can be recalled by the Errors property.</remarks>
     public bool Execute(IProgressReporter reporter)

@@ -30,8 +30,14 @@ using System.Text;
 
 namespace Altaxo.Drawing.D3D.Material
 {
+  /// <summary>
+  /// Invisible placeholder material used when no material should be rendered.
+  /// </summary>
   public class MaterialInvisible : IMaterial
   {
+    /// <summary>
+    /// Gets the singleton instance.
+    /// </summary>
     public static MaterialInvisible Instance { get; private set; } = new MaterialInvisible();
 
     #region Serialization
@@ -58,6 +64,7 @@ namespace Altaxo.Drawing.D3D.Material
     {
     }
 
+    /// <inheritdoc/>
     public NamedColor Color
     {
       get
@@ -66,6 +73,7 @@ namespace Altaxo.Drawing.D3D.Material
       }
     }
 
+    /// <inheritdoc/>
     public bool HasColor
     {
       get
@@ -74,6 +82,7 @@ namespace Altaxo.Drawing.D3D.Material
       }
     }
 
+    /// <inheritdoc/>
     public bool HasTexture
     {
       get
@@ -82,6 +91,7 @@ namespace Altaxo.Drawing.D3D.Material
       }
     }
 
+    /// <inheritdoc/>
     public bool IsVisible
     {
       get
@@ -90,6 +100,7 @@ namespace Altaxo.Drawing.D3D.Material
       }
     }
 
+    /// <inheritdoc/>
     public double Smoothness
     {
       get
@@ -98,6 +109,7 @@ namespace Altaxo.Drawing.D3D.Material
       }
     }
 
+    /// <inheritdoc/>
     public double Metalness
     {
       get
@@ -106,6 +118,7 @@ namespace Altaxo.Drawing.D3D.Material
       }
     }
 
+    /// <inheritdoc/>
     public double IndexOfRefraction
     {
       get
@@ -114,6 +127,7 @@ namespace Altaxo.Drawing.D3D.Material
       }
     }
 
+    /// <inheritdoc/>
     public double PhongModelSpecularIntensity
     {
       get
@@ -122,6 +136,7 @@ namespace Altaxo.Drawing.D3D.Material
       }
     }
 
+    /// <inheritdoc/>
     public double PhongModelDiffuseIntensity
     {
       get
@@ -130,6 +145,7 @@ namespace Altaxo.Drawing.D3D.Material
       }
     }
 
+    /// <inheritdoc/>
     public double PhongModelSpecularExponent
     {
       get
@@ -138,36 +154,43 @@ namespace Altaxo.Drawing.D3D.Material
       }
     }
 
+    /// <inheritdoc/>
     public bool Equals(IMaterial? other)
     {
       return (other is MaterialInvisible);
     }
 
+    /// <inheritdoc/>
     public IMaterial WithColor(NamedColor color)
     {
       return this;
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       return obj is MaterialInvisible;
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return 483886 + base.GetHashCode();
     }
 
+    /// <inheritdoc/>
     public IMaterial WithSpecularProperties(double smoothness, double metalness, double indexOfRefraction)
     {
       return this;
     }
 
+    /// <inheritdoc/>
     public IMaterial WithSpecularPropertiesAs(IMaterial templateMaterial)
     {
       return this;
     }
 
+    /// <inheritdoc/>
     public bool HasSameSpecularPropertiesAs(IMaterial anotherMaterial)
     {
       return anotherMaterial is MaterialInvisible;

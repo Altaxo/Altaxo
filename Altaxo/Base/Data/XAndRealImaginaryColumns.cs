@@ -27,7 +27,7 @@ using Altaxo.Serialization.Xml;
 namespace Altaxo.Data
 {
   /// <summary>
-  /// Collection of one independent variable called 'X' and one dependent variable called 'Y'.
+  /// Collection of one independent variable called <c>X</c> and two dependent variables called <c>Re</c> and <c>Im</c>.
   /// </summary>
   /// <seealso cref="Altaxo.Data.IndependentAndDependentColumns" />
   public class XAndRealImaginaryColumns : IndependentAndDependentColumns
@@ -43,6 +43,7 @@ namespace Altaxo.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XAndRealImaginaryColumns), 0)]
     protected class SerializationSurrogate0 : IndependentAndDependentColumns.XmlSerializationSurrogate0
     {
+      /// <inheritdoc/>
       public override void Serialize(object obj, IXmlSerializationInfo info)
       {
         var s = (XAndRealImaginaryColumns)obj;
@@ -50,6 +51,7 @@ namespace Altaxo.Data
         base.Serialize(obj, info);
       }
 
+      /// <inheritdoc/>
       public override object? Deserialize(object? o, IXmlDeserializationInfo info, object? parentobject)
       {
         var independentColumnName = info.GetString("IndependentColumnName");
@@ -70,24 +72,43 @@ namespace Altaxo.Data
 
     #endregion
 
+    /// <summary>
+    /// Initializes a new instance by copying the state from another <see cref="XAndRealImaginaryColumns"/>.
+    /// </summary>
+    /// <param name="from">The source instance to copy.</param>
     public XAndRealImaginaryColumns(XAndRealImaginaryColumns from) : base(from)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance for one independent and two dependent columns.
+    /// </summary>
+    /// <param name="table">The data table that contains the columns.</param>
+    /// <param name="groupNumber">The group number applied to the columns.</param>
+    /// <param name="independentColumnName">The display name of the independent column.</param>
     public XAndRealImaginaryColumns(DataTable table, int groupNumber, string independentColumnName) : base(table, groupNumber, 1, 2)
     {
       IndependentColumnName = independentColumnName;
     }
 
+    /// <summary>
+    /// Initializes a new instance from XML deserialization data.
+    /// </summary>
+    /// <param name="info">The deserialization info.</param>
+    /// <param name="version">The serialized version.</param>
     protected XAndRealImaginaryColumns(IXmlDeserializationInfo info, int version) : base(info, version)
     {
     }
 
+    /// <inheritdoc/>
     public override object Clone()
     {
       return new XAndRealImaginaryColumns(this);
     }
 
+    /// <summary>
+    /// Gets or sets the display name of the independent column.
+    /// </summary>
     public string IndependentColumnName
     {
       get => _independentColumnName;
@@ -99,10 +120,12 @@ namespace Altaxo.Data
       }
     }
 
+    /// <inheritdoc/>
     protected override string GetIndependentVariableName(int idx)
     {
       return "X";
     }
+    /// <inheritdoc/>
     protected override string GetDependentVariableName(int idx)
     {
       return idx switch
@@ -113,22 +136,35 @@ namespace Altaxo.Data
       };
     }
 
+    /// <summary>
+    /// Gets or sets the independent X column.
+    /// </summary>
     public IReadableColumn? XColumn
     {
       get { return GetIndependentVariable(0); }
       set { SetIndependentVariable(0, value); }
     }
+    /// <summary>
+    /// Gets or sets the real dependent column.
+    /// </summary>
     public IReadableColumn? RealColumn
     {
       get { return GetDependentVariable(0); }
       set { SetDependentVariable(0, value); }
     }
+    /// <summary>
+    /// Gets or sets the imaginary dependent column.
+    /// </summary>
     public IReadableColumn? ImaginaryColumn
     {
       get { return GetDependentVariable(1); }
       set { SetDependentVariable(1, value); }
     }
 
+    /// <summary>
+    /// Retrieves the resolved X, real, and imaginary data arrays together with the row count.
+    /// </summary>
+    /// <returns>A tuple containing the resolved X, real, and imaginary data arrays and the row count.</returns>
     public (double[]? X, double[]? Real, double[]? Imaginary, int RowCount) GetResolvedXRealImaginaryData()
     {
       var (Independent, Dependent, RowCount) = GetResolvedData();

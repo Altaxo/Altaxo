@@ -32,6 +32,9 @@ using Complex64T = System.Numerics.Complex;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
+  /// <summary>
+  /// Provides wrappers that expose data columns as vectors and matrices.
+  /// </summary>
   public static class DataColumnWrapper
   {
     #region Inner classes
@@ -76,6 +79,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 
+      /// <inheritdoc/>
       public IEnumerator<double> GetEnumerator()
       {
         for (int i = 0; i < _rows; ++i)
@@ -126,6 +130,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 
+      /// <inheritdoc/>
       public IEnumerator<double> GetEnumerator()
       {
         var length = Count;
@@ -189,6 +194,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 
+      /// <inheritdoc/>
       public IEnumerator<double> GetEnumerator()
       {
         var length = Count;
@@ -245,6 +251,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 
+      /// <inheritdoc/>
       public IEnumerator<double> GetEnumerator()
       {
         var length = Count;
@@ -333,6 +340,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       #region IROMatrix Members
 
+      /// <inheritdoc/>
       public int RowCount
       {
         get
@@ -341,6 +349,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 
+      /// <inheritdoc/>
       public double this[int row, int col]
       {
         get
@@ -349,6 +358,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 
+      /// <inheritdoc/>
       public int ColumnCount
       {
         get
@@ -378,6 +388,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       #region IROMatrix Members
 
+      /// <inheritdoc/>
       public int RowCount
       {
         get
@@ -386,6 +397,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 
+      /// <inheritdoc/>
       public double this[int row, int col]
       {
         get
@@ -394,6 +406,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 
+      /// <inheritdoc/>
       public int ColumnCount
       {
         get
@@ -423,6 +436,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       #region IROMatrix Members
 
+      /// <inheritdoc/>
       public int RowCount
       {
         get
@@ -431,6 +445,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 
+      /// <inheritdoc/>
       public double this[int row, int col]
       {
         get
@@ -439,6 +454,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 
+      /// <inheritdoc/>
       public int ColumnCount
       {
         get
@@ -484,6 +500,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       #region IROMatrix Members
 
+      /// <inheritdoc/>
       public int RowCount
       {
         get
@@ -492,6 +509,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 
+      /// <inheritdoc/>
       public double this[int row, int col]
       {
         get
@@ -500,6 +518,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 
+      /// <inheritdoc/>
       public int ColumnCount
       {
         get

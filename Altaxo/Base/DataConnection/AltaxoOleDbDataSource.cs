@@ -30,11 +30,24 @@ using Altaxo.Data;
 
 namespace Altaxo.DataConnection
 {
+  /// <summary>
+  /// Table data source that fills an Altaxo table from an OLE DB query.
+  /// </summary>
   public class AltaxoOleDbDataSource : TableDataSourceBase, Altaxo.Data.IAltaxoTableDataSource
   {
+    /// <summary>
+    /// The import options used for this data source.
+    /// </summary>
     protected Data.IDataSourceImportOptions _importOptions;
+
+    /// <summary>
+    /// The OLE DB query that provides the data.
+    /// </summary>
     private OleDbDataQuery _dataQuery = OleDbDataQuery.Empty;
 
+    /// <summary>
+    /// The trigger-based updater used while watching for changes.
+    /// </summary>
     protected Altaxo.Main.TriggerBasedUpdate? _triggerBasedUpdate;
 
     /// <summary>Indicates that serialization of the whole AltaxoDocument (!) is still in progress. Data sources should not be updated during serialization.</summary>
@@ -43,23 +56,40 @@ namespace Altaxo.DataConnection
 
     #region Construction
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AltaxoOleDbDataSource"/> class.
+    /// </summary>
+    /// <param name="selectionStatement">The selection statement.</param>
+    /// <param name="connectionString">The connection string.</param>
     public AltaxoOleDbDataSource(string selectionStatement, AltaxoOleDbConnectionString connectionString)
     {
       _importOptions = new Data.DataSourceImportOptions();
       _dataQuery = new OleDbDataQuery(selectionStatement, connectionString);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AltaxoOleDbDataSource"/> class during XML deserialization.
+    /// </summary>
+    /// <param name="info">The XML deserialization info.</param>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected AltaxoOleDbDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
     }
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AltaxoOleDbDataSource"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     protected AltaxoOleDbDataSource(AltaxoOleDbDataSource from)
     {
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies the state from another <see cref="AltaxoOleDbDataSource"/> instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     [MemberNotNull(nameof(_dataQuery), nameof(_importOptions))]
     public virtual void CopyFrom(AltaxoOleDbDataSource from)
     {
@@ -72,6 +102,7 @@ namespace Altaxo.DataConnection
       CopyHelper.CopyImmutable<OleDbDataQuery>(ref _dataQuery, from._dataQuery);
     }
 
+    /// <inheritdoc />
     public virtual bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -95,6 +126,7 @@ namespace Altaxo.DataConnection
       return new AltaxoOleDbDataSource(this);
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
@@ -145,6 +177,7 @@ namespace Altaxo.DataConnection
 
     #region Properties
 
+    /// <inheritdoc />
     public override Main.IDocumentNode? ParentObject
     {
       get
@@ -158,6 +191,9 @@ namespace Altaxo.DataConnection
       }
     }
 
+    /// <summary>
+    /// Gets or sets the OLE DB query used by this data source.
+    /// </summary>
     public OleDbDataQuery DataQuery
     {
       get
@@ -179,6 +215,7 @@ namespace Altaxo.DataConnection
       }
     }
 
+    /// <inheritdoc />
     public override Data.IDataSourceImportOptions ImportOptions
     {
       get
@@ -219,7 +256,8 @@ namespace Altaxo.DataConnection
     /// Fills (or refills) the data. The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable" />.
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
-    /// <param name="reporter"></param>
+    /// <param name="reporter">The progress reporter.</param>
+    /// <inheritdoc />
     public override void FillData_Unchecked(Data.DataTable destinationTable, IProgressReporter reporter)
     {
       if (destinationTable is null)
@@ -231,7 +269,9 @@ namespace Altaxo.DataConnection
       _dataQuery.ReadDataFromOleDbConnection(tableConnector.ReadAction);
     }
 
-
+    /// <summary>
+    /// Performs post-deserialization initialization.
+    /// </summary>
     public void OnAfterDeserialization()
     {
       // Note: it is not neccessary to call UpdateWatching here; UpdateWatching is called when the table connects to this data source via subscription to the DataSourceChanged event
@@ -250,6 +290,7 @@ namespace Altaxo.DataConnection
         SwitchOffWatching();
     }
 
+    /// <inheritdoc />
     protected override void OnResume(int eventCount)
     {
       base.OnResume(eventCount);
@@ -260,6 +301,9 @@ namespace Altaxo.DataConnection
         UpdateWatching(); // Compromise - we update only if the watch is off
     }
 
+    /// <summary>
+    /// Updates the watcher state according to the current settings and object lifetime.
+    /// </summary>
     public void UpdateWatching()
     {
       SwitchOffWatching();
@@ -296,6 +340,7 @@ namespace Altaxo.DataConnection
       disp?.Dispose();
     }
 
+    /// <inheritdoc />
     protected override void Dispose(bool disposing)
     {
       if (!IsDisposed)
@@ -305,6 +350,7 @@ namespace Altaxo.DataConnection
       base.Dispose(disposing);
     }
 
+    /// <inheritdoc />
     public void VisitDocumentReferences(Main.DocNodeProxyReporter ReportProxies)
     {
     }

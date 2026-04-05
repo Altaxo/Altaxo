@@ -193,6 +193,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     private class DataColumnToColumnMatrixWrapper : DataColumnToColumnROMatrixWrapper, IMatrix<double>
     {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="DataColumnToColumnMatrixWrapper"/> class.
+      /// </summary>
       public DataColumnToColumnMatrixWrapper(Altaxo.Data.DataColumnCollection collection, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, Altaxo.Collections.IAscendingIntegerCollection selectedRows)
         : base(collection, selectedColumns, selectedRows)
       {

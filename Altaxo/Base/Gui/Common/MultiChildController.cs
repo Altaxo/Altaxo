@@ -30,16 +30,34 @@ namespace Altaxo.Gui.Common
 {
   #region Interfaces
 
+  /// <summary>
+  /// Defines the view contract for displaying multiple child controllers.
+  /// </summary>
   public interface IMultiChildView
   {
+    /// <summary>
+    /// Begins the initialization sequence.
+    /// </summary>
     void InitializeBegin();
 
+    /// <summary>
+    /// Ends the initialization sequence.
+    /// </summary>
     void InitializeEnd();
 
+    /// <summary>
+    /// Initializes the layout direction.
+    /// </summary>
     void InitializeLayout(bool horizontalLayout);
 
+    /// <summary>
+    /// Initializes the description text.
+    /// </summary>
     void InitializeDescription(string value);
 
+    /// <summary>
+    /// Initializes the child views.
+    /// </summary>
     void InitializeChilds(ViewDescriptionElement[] childs, int initialFocusedChild);
 
     /// <summary>Event fired when one of the child controls is leaved.</summary>
@@ -49,10 +67,19 @@ namespace Altaxo.Gui.Common
     event EventHandler? ChildControlValidated;
   }
 
+  /// <summary>
+  /// Defines the controller contract for multiple child controllers.
+  /// </summary>
   public interface IMultiChildController : IMVCAController
   {
+    /// <summary>
+    /// Initializes the controller with child controllers.
+    /// </summary>
     void Initialize(IMVCAController[] childs, bool horizontalLayout);
 
+    /// <summary>
+    /// Gets or sets the description text.
+    /// </summary>
     string DescriptionText { get; set; }
 
     /// <summary>Event fired when one of the child controls is leaved and another entered.</summary>
@@ -68,8 +95,19 @@ namespace Altaxo.Gui.Common
   [ExpectedTypeOfView(typeof(IMultiChildView))]
   public class MultiChildController : IMultiChildController, IRefreshable
   {
+    /// <summary>
+    /// Stores the attached view.
+    /// </summary>
     protected IMultiChildView? _view;
+
+    /// <summary>
+    /// Stores the child controllers together with their associated views.
+    /// </summary>
     protected ControlViewElement[] _childController = new ControlViewElement[0];
+
+    /// <summary>
+    /// Indicates whether the child controls should be arranged horizontally.
+    /// </summary>
     protected bool _horizontalLayout;
 
     /// <summary>Event fired when one of the child controls is leaved.</summary>
@@ -77,28 +115,48 @@ namespace Altaxo.Gui.Common
 
     private object? _lastActiveChild;
 
-
+    /// <summary>
+    /// Stores the description text shown by the view.
+    /// </summary>
     protected string _descriptionText = string.Empty;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MultiChildController"/> class.
+    /// </summary>
+    /// <param name="childs">The child view elements.</param>
+    /// <param name="horizontalLayout"><see langword="true"/> to use a horizontal layout; otherwise, <see langword="false"/>.</param>
     public MultiChildController(ControlViewElement[] childs, bool horizontalLayout)
     {
       Initialize(childs, horizontalLayout);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MultiChildController"/> class.
+    /// </summary>
+    /// <param name="childs">The child controllers.</param>
+    /// <param name="horizontalLayout"><see langword="true"/> to use a horizontal layout; otherwise, <see langword="false"/>.</param>
     public MultiChildController(IMVCAController[] childs, bool horizontalLayout)
     {
       Initialize(childs, horizontalLayout);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MultiChildController"/> class.
+    /// </summary>
+    /// <param name="childs">The child controllers.</param>
     public MultiChildController(IMVCAController[] childs)
     {
       Initialize(childs, false);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MultiChildController"/> class.
+    /// </summary>
     protected MultiChildController()
     {
     }
 
+    /// <inheritdoc/>
     public void Initialize(IMVCAController[] childs, bool horizontalLayout)
     {
       _childController = new ControlViewElement[childs.Length];
@@ -110,6 +168,11 @@ namespace Altaxo.Gui.Common
       Initialize();
     }
 
+    /// <summary>
+    /// Initializes the controller with described child views.
+    /// </summary>
+    /// <param name="childs">The child view elements.</param>
+    /// <param name="horizontalLayout"><see langword="true"/> to use a horizontal layout; otherwise, <see langword="false"/>.</param>
     public void Initialize(ControlViewElement[] childs, bool horizontalLayout)
     {
       _childController = new ControlViewElement[childs.Length];
@@ -121,6 +184,9 @@ namespace Altaxo.Gui.Common
       Initialize();
     }
 
+    /// <summary>
+    /// Initializes the attached view with the current child-controller configuration.
+    /// </summary>
     protected virtual void Initialize()
     {
       if (_view is not null)
@@ -139,6 +205,9 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <summary>
+    /// Refreshes all refreshable child controllers.
+    /// </summary>
     public void Refresh()
     {
       for (int i = 0; i < _childController.Length; ++i)
@@ -148,6 +217,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     public string DescriptionText
     {
       get
@@ -165,12 +235,18 @@ namespace Altaxo.Gui.Common
     }
 
 
+    /// <summary>
+    /// Handles activation changes between child controls.
+    /// </summary>
     protected virtual void EhView_ChildControlEntered(object? sender, EventArgs e)
     {
       ChildControlChanged?.Invoke(sender, new InstanceChangedEventArgs(_lastActiveChild, sender));
       _lastActiveChild = sender;
     }
 
+    /// <summary>
+    /// Handles validation of the current child control.
+    /// </summary>
     protected virtual void EhView_ChildControlValidated(object? sender, EventArgs e)
     {
       ChildControlChanged?.Invoke(sender, new InstanceChangedEventArgs(sender, null));
@@ -179,6 +255,7 @@ namespace Altaxo.Gui.Common
 
     #region IMVCController Members
 
+    /// <inheritdoc/>
     public virtual object? ViewObject
     {
       get
@@ -205,6 +282,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     public virtual object ModelObject
     {
       get
@@ -213,6 +291,8 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
+    /// <inheritdoc/>
     public void Dispose()
     {
     }
@@ -221,6 +301,7 @@ namespace Altaxo.Gui.Common
 
     #region IApplyController Members
 
+    /// <inheritdoc/>
     public virtual bool Apply(bool disposeController)
     {
       for (int i = 0; i < _childController.Length; i++)
@@ -241,6 +322,7 @@ namespace Altaxo.Gui.Common
     /// <returns>
     ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
     /// </returns>
+    /// <inheritdoc/>
     public bool Revert(bool disposeController)
     {
       return false;

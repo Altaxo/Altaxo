@@ -71,6 +71,9 @@ namespace Altaxo.Gui
     /// <summary>Gets the y-coordinate of the mouse during the generating mouse event. </summary>
     public double Y { get; set; }
 
+    /// <summary>
+    /// Gets or sets the mouse position.
+    /// </summary>
     public PointD2D Position { get { return new PointD2D(X, Y); } set { X = value.X; Y = value.Y; } }
   }
 }

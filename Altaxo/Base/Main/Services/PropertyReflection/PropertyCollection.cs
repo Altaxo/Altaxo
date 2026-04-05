@@ -32,7 +32,7 @@ using System.Text;
 namespace Altaxo.Main.Services.PropertyReflection
 {
   /// <summary>
-  ///
+  /// Represents a collection of reflected properties, optionally grouped by category.
   /// </summary>
   /// <remarks>
   /// <para>This class originated from the 'WPG Property Grid' project (<see href="http://wpg.codeplex.com"/>), licensed under Ms-PL.</para>
@@ -41,6 +41,9 @@ namespace Altaxo.Main.Services.PropertyReflection
   {
     #region Initialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PropertyCollection"/> class.
+    /// </summary>
     public PropertyCollection()
     {
     }
@@ -49,6 +52,13 @@ namespace Altaxo.Main.Services.PropertyReflection
     //    : this(instance, false)
     //{ }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PropertyCollection"/> class.
+    /// </summary>
+    /// <param name="instance">The object whose properties should be collected.</param>
+    /// <param name="noCategory">Whether properties should be listed without categories.</param>
+    /// <param name="automaticlyExpandObjects">Whether expandable objects should be expanded automatically.</param>
+    /// <param name="filter">The name filter applied to collected properties.</param>
     public PropertyCollection(object instance, bool noCategory, bool automaticlyExpandObjects, string filter)
     {
       var groups = new Dictionary<string, PropertyCategory>();

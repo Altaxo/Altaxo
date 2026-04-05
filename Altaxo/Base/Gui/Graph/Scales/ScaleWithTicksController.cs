@@ -32,12 +32,15 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Scales
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="ScaleWithTicksController"/>.
+  /// </summary>
   public interface IScaleWithTicksView : IDataContextAwareView
   {
   }
 
   /// <summary>
-  /// Summary description for AxisScaleController.
+  /// Controller for editing a scale together with its tick spacing and rescaling.
   /// </summary>
   [ExpectedTypeOfView(typeof(IScaleWithTicksView))]
   public class ScaleWithTicksController : MVCANControllerEditOriginalDocInstanceCanChangeBase<Scale, IScaleWithTicksView>
@@ -49,6 +52,7 @@ namespace Altaxo.Gui.Graph.Scales
     /// </summary>
     protected bool _lockScaleType;
 
+    /// <inheritdoc />
     public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_scaleController, () => _scaleController = null);
@@ -61,6 +65,9 @@ namespace Altaxo.Gui.Graph.Scales
 
     private ItemsController<Type> _scaleTypes;
 
+    /// <summary>
+    /// Gets or sets the selectable scale types.
+    /// </summary>
     public ItemsController<Type> ScaleTypes
     {
       get => _scaleTypes;
@@ -78,6 +85,9 @@ namespace Altaxo.Gui.Graph.Scales
 
     private ItemsController<Type> _tickSpacingTypes;
 
+    /// <summary>
+    /// Gets or sets the selectable tick-spacing types.
+    /// </summary>
     public ItemsController<Type> TickSpacingTypes
     {
       get => _tickSpacingTypes;
@@ -94,6 +104,9 @@ namespace Altaxo.Gui.Graph.Scales
 
     private ItemsController<Scale?> _linkScaleChoices;
 
+    /// <summary>
+    /// Gets or sets the selectable target scales for linking.
+    /// </summary>
     public ItemsController<Scale?> LinkScaleChoices
     {
       get => _linkScaleChoices;
@@ -109,6 +122,9 @@ namespace Altaxo.Gui.Graph.Scales
 
     private bool _LinkScaleType;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the scale type is linked to the target scale.
+    /// </summary>
     public bool LinkScaleType
     {
       get => _LinkScaleType;
@@ -124,6 +140,9 @@ namespace Altaxo.Gui.Graph.Scales
 
     private bool _LinkTicksStraight;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the tick spacing is linked to the target scale.
+    /// </summary>
     public bool LinkTicksStraight
     {
       get => _LinkTicksStraight;
@@ -139,6 +158,9 @@ namespace Altaxo.Gui.Graph.Scales
 
     private IMVCAController _scaleController;
 
+    /// <summary>
+    /// Gets or sets the controller that edits the scale-specific parameters.
+    /// </summary>
     public IMVCAController ScaleController
     {
       get => _scaleController;
@@ -156,6 +178,9 @@ namespace Altaxo.Gui.Graph.Scales
 
     private IMVCAController _linkedScaleParameterController;
 
+    /// <summary>
+    /// Gets or sets the controller for parameters of a linked scale.
+    /// </summary>
     public IMVCAController LinkedScaleParameterController
     {
       get => _linkedScaleParameterController;
@@ -173,6 +198,9 @@ namespace Altaxo.Gui.Graph.Scales
 
     private IMVCAController _rescalingController;
 
+    /// <summary>
+    /// Gets or sets the controller that edits the rescaling settings.
+    /// </summary>
     public IMVCAController RescalingController
     {
       get => _rescalingController;
@@ -190,6 +218,9 @@ namespace Altaxo.Gui.Graph.Scales
 
     private IMVCAController _tickSpacingController;
 
+    /// <summary>
+    /// Gets or sets the controller that edits the tick-spacing settings.
+    /// </summary>
     public IMVCAController TickSpacingController
     {
       get => _tickSpacingController;
@@ -206,6 +237,9 @@ namespace Altaxo.Gui.Graph.Scales
 
     private bool _showLinkTargets;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the link targets are shown.
+    /// </summary>
     public bool ShowLinkTargets
     {
       get => _showLinkTargets;
@@ -221,6 +255,9 @@ namespace Altaxo.Gui.Graph.Scales
 
     private bool _showOtherLinkProperties;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether additional link properties are shown.
+    /// </summary>
     public bool ShowOtherLinkProperties
     {
       get => _showOtherLinkProperties;
@@ -236,6 +273,7 @@ namespace Altaxo.Gui.Graph.Scales
 
     #endregion
 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       _scaleTypes = null;
@@ -260,6 +298,7 @@ namespace Altaxo.Gui.Graph.Scales
       _showLinkTargets = !hideLinkTargets;
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -280,6 +319,7 @@ namespace Altaxo.Gui.Graph.Scales
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (_scaleController is not null && false == _scaleController.Apply(disposeController))
@@ -333,6 +373,9 @@ namespace Altaxo.Gui.Graph.Scales
       }
     }
 
+    /// <summary>
+    /// Gets or sets the scale to which the edited scale is linked.
+    /// </summary>
     protected Scale? ScaleLinkedTo
     {
       get
@@ -423,6 +466,10 @@ namespace Altaxo.Gui.Graph.Scales
       LinkScaleChoices = new ItemsController<Scale?>(linkScaleChoices, EhView_LinkTargetChanged);
     }
 
+    /// <summary>
+    /// Initializes the properties that are only relevant for linked scales.
+    /// </summary>
+    /// <param name="initData">If set to <c>true</c>, initialization is performed for freshly loaded data.</param>
     public void InitLinkProperties(bool initData)
     {
         if (_doc is LinkedScale)
@@ -445,6 +492,9 @@ namespace Altaxo.Gui.Graph.Scales
         ShowOtherLinkProperties = _doc is LinkedScale;
     }
 
+    /// <summary>
+    /// Initializes the list of selectable scale types.
+    /// </summary>
     public void InitScaleTypes()
     {
       var scaleTypes = new SelectableListNodeList();
@@ -466,6 +516,9 @@ namespace Altaxo.Gui.Graph.Scales
       ScaleTypes = new ItemsController<Type>(scaleTypes, EhView_ScaleTypeChanged);
     }
 
+    /// <summary>
+    /// Initializes the list of selectable tick-spacing types.
+    /// </summary>
     public void InitTickSpacingTypes()
     {
         var tickSpacingTypes = new SelectableListNodeList();
@@ -478,11 +531,17 @@ namespace Altaxo.Gui.Graph.Scales
       TickSpacingTypes = new ItemsController<Type>(tickSpacingTypes, EhView_TickSpacingTypeChanged);
     }
 
+    /// <summary>
+    /// Initializes the controller that edits the scale-specific settings.
+    /// </summary>
     public void InitScaleController()
     {
         ScaleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { ScaleToEdit }, typeof(IMVCAController), UseDocument.Directly);
     }
 
+    /// <summary>
+    /// Initializes the controller that edits the rescaling settings.
+    /// </summary>
     public void InitRescalingController()
     {
       if (ScaleToEdit.RescalingObject is not null && ScaleLinkedTo is null)
@@ -491,6 +550,9 @@ namespace Altaxo.Gui.Graph.Scales
         RescalingController = null;
     }
 
+    /// <summary>
+    /// Initializes the controller that edits the tick-spacing settings.
+    /// </summary>
     public void InitTickSpacingController()
     {
       if (_doc.TickSpacing is not null)
@@ -501,6 +563,10 @@ namespace Altaxo.Gui.Graph.Scales
 
     #region View event handlers
 
+    /// <summary>
+    /// Handles changes to the selected scale type.
+    /// </summary>
+    /// <param name="scaleType">The newly selected scale type.</param>
     public void EhView_ScaleTypeChanged(Type scaleType)
     {
       try
@@ -538,6 +604,10 @@ namespace Altaxo.Gui.Graph.Scales
       }
     }
 
+    /// <summary>
+    /// Handles changes to the selected tick-spacing type.
+    /// </summary>
+    /// <param name="spaceType">The newly selected tick-spacing type.</param>
     public void EhView_TickSpacingTypeChanged(Type spaceType)
     {
       if (spaceType is null)
@@ -550,6 +620,10 @@ namespace Altaxo.Gui.Graph.Scales
       InitTickSpacingController();
     }
 
+    /// <summary>
+    /// Handles changes to the selected link target.
+    /// </summary>
+    /// <param name="selectedScale">The selected target scale, or <see langword="null"/> to remove the link.</param>
     public void EhView_LinkTargetChanged(Scale? selectedScale)
     {
       ScaleLinkedTo = selectedScale;

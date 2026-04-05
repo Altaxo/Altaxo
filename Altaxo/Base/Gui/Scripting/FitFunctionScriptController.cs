@@ -32,59 +32,146 @@ namespace Altaxo.Gui.Scripting
 {
   #region Interfaces
 
+  /// <summary>
+  /// View interface for editing fit function scripts.
+  /// </summary>
   public interface IFitFunctionScriptView
   {
+    /// <summary>
+    /// Gets or sets the controller that handles view events.
+    /// </summary>
     IFitFunctionScriptViewEventSink Controller { get; set; }
 
+    /// <summary>
+    /// Closes the view.
+    /// </summary>
+    /// <param name="withOK"><see langword="true"/> to close with acceptance; otherwise, <see langword="false"/>.</param>
     void Close(bool withOK);
 
+    /// <summary>
+    /// Sets the embedded script view.
+    /// </summary>
+    /// <param name="scriptView">The script view object.</param>
     void SetScriptView(object scriptView);
 
+    /// <summary>
+    /// Sets whether user-defined parameters are enabled.
+    /// </summary>
+    /// <param name="useUserDefParameters"><see langword="true"/> to use user-defined parameters; otherwise, <see langword="false"/>.</param>
     void SetCheckUseUserDefinedParameters(bool useUserDefParameters);
 
+    /// <summary>
+    /// Sets the parameter text.
+    /// </summary>
+    /// <param name="text">The parameter text.</param>
+    /// <param name="enable"><see langword="true"/> to enable editing; otherwise, <see langword="false"/>.</param>
     void SetParameterText(string text, bool enable);
 
+    /// <summary>
+    /// Sets the independent-variable text.
+    /// </summary>
+    /// <param name="text">The text to display.</param>
     void SetIndependentVariableText(string text);
 
+    /// <summary>
+    /// Sets the dependent-variable text.
+    /// </summary>
+    /// <param name="text">The text to display.</param>
     void SetDependentVariableText(string text);
 
+    /// <summary>
+    /// Sets the number of parameters.
+    /// </summary>
+    /// <param name="numberOfParameters">The number of parameters.</param>
+    /// <param name="enable"><see langword="true"/> to enable editing; otherwise, <see langword="false"/>.</param>
     void SetNumberOfParameters(int numberOfParameters, bool enable);
 
+    /// <summary>
+    /// Enables or disables the script view.
+    /// </summary>
+    /// <param name="view">The view object.</param>
+    /// <param name="enable"><see langword="true"/> to enable the view; otherwise, <see langword="false"/>.</param>
     void EnableScriptView(object view, bool enable);
   }
 
+  /// <summary>
+  /// Event sink interface for <see cref="IFitFunctionScriptView"/>.
+  /// </summary>
   public interface IFitFunctionScriptViewEventSink
   {
+    /// <summary>
+    /// Handles changes to the number of parameters.
+    /// </summary>
+    /// <param name="numParameter">The new number of parameters.</param>
     void EhView_NumberOfParameterChanged(int numParameter);
 
+    /// <summary>
+    /// Handles changes to the user-defined-parameter setting.
+    /// </summary>
+    /// <param name="userDefinedParameters"><see langword="true"/> if user-defined parameters are enabled; otherwise, <see langword="false"/>.</param>
     void EhView_UserDefinedParameterCheckChanged(bool userDefinedParameters);
 
+    /// <summary>
+    /// Handles changes to the user-defined parameter text.
+    /// </summary>
+    /// <param name="parameterNames">The entered parameter names.</param>
     void EhView_UserDefinedParameterTextChanged(string parameterNames);
 
+    /// <summary>
+    /// Handles changes to the independent-variable text.
+    /// </summary>
+    /// <param name="val">The entered value.</param>
     void EhView_IndependentVariableTextChanged(string val);
 
+    /// <summary>
+    /// Handles changes to the dependent-variable text.
+    /// </summary>
+    /// <param name="val">The entered value.</param>
     void EhView_DependentVariableTextChanged(string val);
 
+    /// <summary>
+    /// Commits the pending view changes.
+    /// </summary>
     void EhView_CommitChanges();
 
+    /// <summary>
+    /// Reverts the pending view changes.
+    /// </summary>
     void EhView_RevertChanges();
   }
 
   #endregion Interfaces
 
   /// <summary>
-  /// Summary description for TableScriptController.
+  /// Controller for editing <see cref="IFitFunctionScriptText"/> documents.
   /// </summary>
   [UserControllerForObject(typeof(IFitFunctionScriptText), 300)]
   [ExpectedTypeOfView(typeof(IFitFunctionScriptView))]
   public class FitFunctionScriptController : IFitFunctionScriptViewEventSink, IScriptController
   {
+    /// <summary>
+    /// Holds the script execution handler.
+    /// </summary>
     protected ScriptExecutionHandler m_ScriptExecution;
+
+    /// <summary>
+    /// Holds the original script document.
+    /// </summary>
     public IFitFunctionScriptText m_Script;
+
+    /// <summary>
+    /// Holds the temporary editable script document.
+    /// </summary>
     public IFitFunctionScriptText m_TempScript;
 
+    /// <summary>
+    /// Holds the embedded script controller.
+    /// </summary>
     public IScriptController _scriptController;
 
+    /// <summary>
+    /// Holds the attached view.
+    /// </summary>
     protected IFitFunctionScriptView m_View;
 
     private int _tempNumberOfParameters;
@@ -93,10 +180,17 @@ namespace Altaxo.Gui.Scripting
     private string _tempDependentVariables;
     private string _tempUserDefinedParameters;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FitFunctionScriptController"/> class.
+    /// </summary>
     public FitFunctionScriptController()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FitFunctionScriptController"/> class.
+    /// </summary>
+    /// <param name="script">The script document to edit.</param>
     public FitFunctionScriptController(IFitFunctionScriptText script)
     {
       InitializeDocument(script);
@@ -104,6 +198,7 @@ namespace Altaxo.Gui.Scripting
 
     #region IMVCANController Members
 
+    /// <inheritdoc/>
     public bool InitializeDocument(params object[] args)
     {
       if (args is null || args.Length == 0)
@@ -120,6 +215,7 @@ namespace Altaxo.Gui.Scripting
       return true;
     }
 
+    /// <inheritdoc/>
     public UseDocument UseDocumentCopy
     {
       set { }
@@ -127,6 +223,10 @@ namespace Altaxo.Gui.Scripting
 
     #endregion IMVCANController Members
 
+    /// <summary>
+    /// Initializes and updates view elements from the current temporary model.
+    /// </summary>
+    /// <param name="bInit">If set to <c>true</c>, the embedded script controller is created.</param>
     protected void SetElements(bool bInit)
     {
       if (bInit)
@@ -156,6 +256,9 @@ namespace Altaxo.Gui.Scripting
       }
     }
 
+    /// <summary>
+    /// Gets or sets the attached view.
+    /// </summary>
     public IFitFunctionScriptView View
     {
       get
@@ -177,6 +280,7 @@ namespace Altaxo.Gui.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public object ViewObject
     {
       get { return View; }
@@ -241,6 +345,10 @@ namespace Altaxo.Gui.Scripting
       return stb.ToString();
     }
 
+    /// <summary>
+    /// Gets the independent-variable names as a comma-separated string.
+    /// </summary>
+    /// <returns>The formatted independent-variable names.</returns>
     public string GetIndependentVariablesAsLine()
     {
       var stb = new System.Text.StringBuilder();
@@ -253,6 +361,10 @@ namespace Altaxo.Gui.Scripting
       return stb.ToString();
     }
 
+    /// <summary>
+    /// Gets the dependent-variable names as a comma-separated string.
+    /// </summary>
+    /// <returns>The formatted dependent-variable names.</returns>
     public string GetDependentVariablesAsLine()
     {
       var stb = new System.Text.StringBuilder();
@@ -265,6 +377,7 @@ namespace Altaxo.Gui.Scripting
       return stb.ToString();
     }
 
+    /// <inheritdoc/>
     public void EhView_NumberOfParameterChanged(int numParameter)
     {
       _scriptController.Update();
@@ -277,6 +390,7 @@ namespace Altaxo.Gui.Scripting
         View.SetParameterText(GetDefaultParametersAsLine(_tempNumberOfParameters), _tempIsUsingUserDefinedParameters);
     }
 
+    /// <inheritdoc/>
     public void EhView_UserDefinedParameterCheckChanged(bool userDefinedParameters)
     {
       _scriptController.Update();
@@ -291,6 +405,7 @@ namespace Altaxo.Gui.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public void EhView_UserDefinedParameterTextChanged(string parameterNames)
     {
       _scriptController.Update();
@@ -299,6 +414,7 @@ namespace Altaxo.Gui.Scripting
         View.EnableScriptView(_scriptController.ViewObject, false);
     }
 
+    /// <inheritdoc/>
     public void EhView_IndependentVariableTextChanged(string val)
     {
       _scriptController.Update();
@@ -307,6 +423,7 @@ namespace Altaxo.Gui.Scripting
         View.EnableScriptView(_scriptController.ViewObject, false);
     }
 
+    /// <inheritdoc/>
     public void EhView_DependentVariableTextChanged(string val)
     {
       _scriptController.Update();
@@ -390,6 +507,7 @@ namespace Altaxo.Gui.Scripting
       return numberValidParameters > 0;
     }
 
+    /// <inheritdoc/>
     public void EhView_CommitChanges()
     {
       bool successI = true, successD = true, successP = true;
@@ -429,6 +547,7 @@ namespace Altaxo.Gui.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public void EhView_RevertChanges()
     {
       SetElements(false);
@@ -437,6 +556,7 @@ namespace Altaxo.Gui.Scripting
 
     #region IMVCController Members
 
+    /// <inheritdoc/>
     public object ModelObject
     {
       get
@@ -445,6 +565,7 @@ namespace Altaxo.Gui.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
     }
@@ -453,6 +574,7 @@ namespace Altaxo.Gui.Scripting
 
     #region IApplyController Members
 
+    /// <inheritdoc/>
     public bool Apply(bool disposeController)
     {
       if (_scriptController.Apply(disposeController))
@@ -470,11 +592,11 @@ namespace Altaxo.Gui.Scripting
     }
 
     /// <summary>
-    /// Try to revert changes to the model, i.e. restores the original state of the model.
+    /// Tries to revert changes to the model, i.e. restores the original state of the model.
     /// </summary>
     /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
     /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    ///   <c>true</c> if the revert operation was successful; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
     /// </returns>
     public bool Revert(bool disposeController)
     {
@@ -485,29 +607,35 @@ namespace Altaxo.Gui.Scripting
 
     #region IScriptController Members
 
+    /// <inheritdoc/>
     public void SetText(string text)
     {
       _scriptController.SetText(text);
     }
 
+    /// <inheritdoc/>
     public Task Compile(CancellationToken cancellationToken)
     {
       return _scriptController.Compile(cancellationToken);
     }
 
+    /// <inheritdoc/>
     public void Update()
     {
       _scriptController.Update();
     }
 
+    /// <inheritdoc/>
     public void Cancel()
     {
     }
 
+    /// <inheritdoc/>
     public void Execute(IProgressReporter reporter)
     {
     }
 
+    /// <inheritdoc/>
     public bool HasExecutionErrors()
     {
       return false;

@@ -29,7 +29,7 @@ using Altaxo.Calc.LinearAlgebra;
 namespace Altaxo.Calc.LinearAlgebra
 {
   /// <summary>
-  /// Wrapps a set of <see>DataColumns</see> into a matrix so that the matrix columns corresponds to the <see>DataColumns</see>.
+  /// Wraps a set of data columns into a matrix so that the matrix columns correspond to the source columns.
   /// </summary>
   internal class DataColumnToColumnMatrixWrapper : IROMatrix<double>
   {
@@ -37,10 +37,10 @@ namespace Altaxo.Calc.LinearAlgebra
     private int _rows;
 
     /// <summary>
-    /// Constructor
+    /// Initializes a new instance of the <see cref="DataColumnToColumnMatrixWrapper"/> class.
     /// </summary>
-    /// <param name="collection">Collection of <see>DataColumns</see>.</param>
-    /// <param name="selectedColumns">Set set of indices into the collection that are part of the matrix.</param>
+    /// <param name="collection">Collection of data columns.</param>
+    /// <param name="selectedColumns">Set of indices into the collection that are part of the matrix.</param>
     /// <param name="nRows">The number of rows that are part of the matrix. (Starting from index 0).</param>
     public DataColumnToColumnMatrixWrapper(Altaxo.Data.DataColumnCollection collection, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, int nRows)
     {
@@ -90,7 +90,7 @@ namespace Altaxo.Calc.LinearAlgebra
   }
 
   /// <summary>
-  /// Wrapps a set of <see>DataColumns</see> into a matrix so that the matrix rows corresponds to the <see>DataColumns</see>.
+  /// Wraps a set of data columns into a matrix so that the matrix rows correspond to the source columns.
   /// </summary>
   internal class DataColumnToRowMatrixWrapper : IROMatrix<double>
   {

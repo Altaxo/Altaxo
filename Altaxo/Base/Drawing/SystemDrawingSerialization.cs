@@ -26,11 +26,15 @@
 
 namespace System.Drawing
 {
+  /// <summary>
+  /// XML serialization surrogate for <see cref="System.Drawing.Color"/>.
+  /// </summary>
   [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("System.Drawing", "System.Drawing.Color", 0)]
   public class ColorXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
   {
     private static System.Drawing.ColorConverter sm_Converter = new System.Drawing.ColorConverter();
 
+    /// <inheritdoc/>
     public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
       throw new ApplicationException("Deprecated 2011-05-09: do not serialize System.Drawing.Color anymore");
@@ -41,6 +45,7 @@ namespace System.Drawing
             */
     }
 
+    /// <inheritdoc/>
     public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
     {
       string val = info.GetNodeContent();
@@ -49,10 +54,14 @@ namespace System.Drawing
     }
   }
 
+  /// <summary>
+  /// XML serialization surrogate for <see cref="System.Drawing.SizeF"/>.
+  /// </summary>
   [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("System.Drawing", "System.Drawing.SizeF", 0)]
   [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(System.Drawing.SizeF), 0)]
   public class SizeFXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
   {
+    /// <inheritdoc/>
     public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
       var s = (System.Drawing.SizeF)obj;
@@ -61,6 +70,7 @@ namespace System.Drawing
       info.AddValue("Height", s.Height);
     }
 
+    /// <inheritdoc/>
     public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
     {
       float w = info.GetSingle("Width");
@@ -69,10 +79,14 @@ namespace System.Drawing
     }
   }
 
+  /// <summary>
+  /// XML serialization surrogate for <see cref="System.Drawing.PointF"/>.
+  /// </summary>
   [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("System.Drawing", "System.Drawing.PointF", 0)]
   [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(System.Drawing.PointF), 0)]
   public class PointFXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
   {
+    /// <inheritdoc/>
     public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
       var s = (System.Drawing.PointF)obj;
@@ -81,6 +95,7 @@ namespace System.Drawing
       info.AddValue("Y", s.Y);
     }
 
+    /// <inheritdoc/>
     public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
     {
       float x = info.GetSingle("X");
@@ -89,10 +104,14 @@ namespace System.Drawing
     }
   }
 
+  /// <summary>
+  /// XML serialization surrogate for <see cref="System.Drawing.RectangleF"/>.
+  /// </summary>
   [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("System.Drawing", "System.Drawing.RectangleF", 0)]
   [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(System.Drawing.RectangleF), 0)]
   public class RectangleFXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
   {
+    /// <inheritdoc/>
     public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
       var s = (System.Drawing.RectangleF)obj;
@@ -103,6 +122,7 @@ namespace System.Drawing
       info.AddValue("Height", s.Height);
     }
 
+    /// <inheritdoc/>
     public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
     {
       float x = info.GetSingle("X");

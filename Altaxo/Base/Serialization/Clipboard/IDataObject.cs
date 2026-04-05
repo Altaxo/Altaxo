@@ -28,7 +28,7 @@ using System;
 namespace Altaxo.Serialization.Clipboard
 {
   /// <summary>
-  /// Altaxo's interface to a data object, independent on any Gui....
+  /// Altaxo abstraction of a clipboard data object, independent of a specific GUI framework.
   /// </summary>
   public interface IDataObject
   {

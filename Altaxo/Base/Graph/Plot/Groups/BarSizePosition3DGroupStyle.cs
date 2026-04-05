@@ -29,6 +29,9 @@ using System.Text;
 
 namespace Altaxo.Graph.Plot.Groups
 {
+  /// <summary>
+  /// Group style that manages 3D bar sizes and positions within a cluster.
+  /// </summary>
   public class BarSizePosition3DGroupStyle
     :
     Main.SuspendableDocumentLeafNodeWithEventArgs,
@@ -114,12 +117,14 @@ namespace Altaxo.Graph.Plot.Groups
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BarSizePosition3DGroupStyle), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (BarSizePosition3DGroupStyle)obj;
         info.AddValue("StepEnabled", s._isStepEnabled);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (BarSizePosition3DGroupStyle?)o ?? new BarSizePosition3DGroupStyle();
@@ -152,6 +157,7 @@ namespace Altaxo.Graph.Plot.Groups
       _logicalItemOffsetY = from._logicalItemOffsetY;
     }
 
+    /// <inheritdoc/>
     public void TransferFrom(IPlotGroupStyle fromb)
     {
       var from = (BarSizePosition3DGroupStyle)fromb;
@@ -171,6 +177,9 @@ namespace Altaxo.Graph.Plot.Groups
       _logicalItemOffsetY = from._logicalItemOffsetY;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BarSizePosition3DGroupStyle"/> class.
+    /// </summary>
     public BarSizePosition3DGroupStyle()
     {
       _isStepEnabled = true;
@@ -178,6 +187,9 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region ICloneable Members
 
+    /// <summary>
+    /// Creates a strongly typed clone of this group style.
+    /// </summary>
     public BarSizePosition3DGroupStyle Clone()
     {
       var result = new BarSizePosition3DGroupStyle();
@@ -196,6 +208,7 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region IPlotGroupStyle Members
 
+    /// <inheritdoc/>
     public void BeginPrepare()
     {
       _isInitialized = false;
@@ -205,6 +218,7 @@ namespace Altaxo.Graph.Plot.Groups
       _logicalClusterSizeY = 0.5; // in case there is only one item, it takes half of the width of the x-scale
     }
 
+    /// <inheritdoc/>
     public void PrepareStep()
     {
       if (_wasTouchedInThisPrepareStep)
@@ -218,6 +232,7 @@ namespace Altaxo.Graph.Plot.Groups
       _wasTouchedInThisPrepareStep = false;
     }
 
+    /// <inheritdoc/>
     public void EndPrepare()
     {
       _wasTouchedInThisPrepareStep = false;
@@ -318,6 +333,7 @@ namespace Altaxo.Graph.Plot.Groups
       _logicalItemOffsetY += itemIndexY * _logicalItemSizeY * (1 + _relInnerGapY);
     }
 
+    /// <inheritdoc/>
     public bool CanCarryOver
     {
       get
@@ -326,6 +342,7 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <inheritdoc/>
     public bool CanStep
     {
       get
@@ -334,6 +351,7 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <inheritdoc/>
     public int Step(int step)
     {
       _cachedCurrentItemIndex += step;
@@ -343,6 +361,7 @@ namespace Altaxo.Graph.Plot.Groups
       return 0;
     }
 
+    /// <inheritdoc/>
     public bool IsStepEnabled
     {
       get
@@ -357,6 +376,9 @@ namespace Altaxo.Graph.Plot.Groups
 
     #endregion IPlotGroupStyle Members
 
+    /// <summary>
+    /// Gets a value indicating whether the style has been initialized with spacing data.
+    /// </summary>
     public bool IsInitialized
     {
       get
@@ -415,6 +437,9 @@ namespace Altaxo.Graph.Plot.Groups
       _relOuterGapY = relOuterGapY;
     }
 
+    /// <summary>
+    /// Returns the currently prepared bar-shift parameters.
+    /// </summary>
     public void Apply(
       out BarShiftStrategy3D barShiftStrategy, out int barShiftMaxNumberOfItemsInOneDirection,
       out double relInnerGapX, out double relOuterGapX, out double sizeX, out double posX,
@@ -449,6 +474,9 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region Static Helpers
 
+    /// <summary>
+    /// Adds this style as an external group style when required.
+    /// </summary>
     public static void AddExternalGroupStyle(IPlotGroupStyleCollection externalGroups)
     {
       if (PlotGroupStyle.ShouldAddExternalGroupStyle(externalGroups, typeof(BarSizePosition3DGroupStyle)))
@@ -478,6 +506,9 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <summary>
+    /// Announces that a plot item intends to use three-dimensional bar-size positioning.
+    /// </summary>
     public static void IntendToApply(
       IPlotGroupStyleCollection externalGroups,
       IPlotGroupStyleCollection localGroups,

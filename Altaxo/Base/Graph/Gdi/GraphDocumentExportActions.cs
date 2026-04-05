@@ -45,6 +45,13 @@ namespace Altaxo.Graph.Gdi
   {
     #region Stream und file
 
+    /// <summary>
+    /// Renders the graph document to a stream using the specified export options.
+    /// </summary>
+    /// <param name="doc">The graph document to render.</param>
+    /// <param name="stream">The destination stream.</param>
+    /// <param name="options">The export options.</param>
+    /// <returns>The pixel dimensions of the rendered output.</returns>
     public static (int pixelsX, int pixelsY) RenderToStream(this GraphDocument doc, System.IO.Stream stream, GraphExportOptions options)
     {
       (int pixelsX, int pixelsY) result;
@@ -57,6 +64,13 @@ namespace Altaxo.Graph.Gdi
       return result;
     }
 
+    /// <summary>
+    /// Renders the graph document to a file using the specified export options.
+    /// </summary>
+    /// <param name="doc">The graph document to render.</param>
+    /// <param name="filename">The target file name.</param>
+    /// <param name="options">The export options.</param>
+    /// <returns>The pixel dimensions of the rendered output.</returns>
     public static (int pixelsX, int pixelsY) RenderToFile(this GraphDocument doc, string filename, GraphExportOptions options)
     {
       using (System.IO.Stream str = new System.IO.FileStream(filename, System.IO.FileMode.CreateNew, System.IO.FileAccess.Write, System.IO.FileShare.Read))
@@ -183,6 +197,12 @@ namespace Altaxo.Graph.Gdi
       return RenderAsBitmap(doc, opaqueGround, exportOptions.BackgroundBrush, pixelFormat, exportOptions.SourceDpiResolution, exportOptions.SourceDpiResolution / exportOptions.OutputScalingFactor);
     }
 
+    /// <summary>
+    /// Renders the graph document as a bitmap using the specified graph export options.
+    /// </summary>
+    /// <param name="doc">The graph document to render.</param>
+    /// <param name="options">The export options.</param>
+    /// <returns>The rendered bitmap.</returns>
     public static Bitmap RenderAsBitmap(this GraphDocument doc, GraphExportOptions options)
     {
       return RenderAsBitmap(doc, options.BackgroundBrush, options.PixelFormat, options.SourceDpiResolution, options.DestinationDpiResolution);
@@ -654,6 +674,13 @@ namespace Altaxo.Graph.Gdi
 
     #region Convenience functions with filename
 
+    /// <summary>
+    /// Renders the graph document as an enhanced metafile in vector format and writes it to a file.
+    /// </summary>
+    /// <param name="doc">The graph document to render.</param>
+    /// <param name="options">The export options.</param>
+    /// <param name="filename">The target file name.</param>
+    /// <returns>The rendered metafile.</returns>
     public static Metafile RenderAsEnhancedMetafileVectorFormat(this GraphDocument doc, GraphExportOptions options, string filename)
     {
       Metafile mf;

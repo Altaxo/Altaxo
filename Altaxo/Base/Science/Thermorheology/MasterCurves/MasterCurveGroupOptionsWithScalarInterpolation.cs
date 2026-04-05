@@ -27,8 +27,14 @@ using Altaxo.Calc.Interpolation;
 
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
+  /// <summary>
+  /// Provides master-curve group options that use a scalar interpolation function.
+  /// </summary>
   public record MasterCurveGroupOptionsWithScalarInterpolation : MasterCurveGroupOptions
   {
+    /// <summary>
+    /// Gets the interpolation function options.
+    /// </summary>
     public IInterpolationFunctionOptions InterpolationFunction { get; init; } = new SmoothingCubicSplineOptions { Smoothness = 1 };
 
     #region Serialization
@@ -39,6 +45,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MasterCurveGroupOptionsWithScalarInterpolation), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (MasterCurveGroupOptionsWithScalarInterpolation)obj;
@@ -50,6 +57,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         info.AddValue("Interpolation", s.InterpolationFunction);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var xShiftBy = info.GetEnum<ShiftXBy>("XShiftBy");

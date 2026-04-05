@@ -194,6 +194,7 @@ namespace Altaxo.Graph.Gdi
     /// </value>
     public PointD2D PositionOfViewportsUpperLeftCornerInRootLayerCoordinates { get { return _positionOfViewportsUpperLeftCornerInRootLayerCoordinates; } }
 
+    /// <inheritdoc />
     IProjectItem IProjectItemPresentationModel.Document
     {
       get

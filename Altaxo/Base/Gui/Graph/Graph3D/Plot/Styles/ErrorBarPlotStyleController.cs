@@ -37,10 +37,16 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="ErrorBarPlotStyleController"/>.
+  /// </summary>
   public interface IErrorBarPlotStyleView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="ErrorBarPlotStyle"/>.
+  /// </summary>
   [UserControllerForObject(typeof(ErrorBarPlotStyle))]
   [ExpectedTypeOfView(typeof(IErrorBarPlotStyleView))]
   public class ErrorBarPlotStyleController : MVCANControllerEditOriginalDocBase<ErrorBarPlotStyle, IErrorBarPlotStyleView>, IColumnDataExternallyControlled
@@ -58,6 +64,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     /// </summary>
     private int _supposedGroupNumber;
 
+    /// <inheritdoc />
     public override bool InitializeDocument(params object[] args)
     {
       if (args.Length >= 2 && (args[1] is DataTable dt))
@@ -69,6 +76,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       return base.InitializeDocument(args);
     }
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -78,6 +86,14 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _useCommonErrorColumn;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether to use a common error column for all data points.
+    /// </summary>
+    /// <remarks>
+    /// When this option is enabled, all data points will share the same error column, defined by the 
+    /// <see cref="CommonErrorColumnText"/>. If disabled, each data point can have its own error columns,
+    /// specified by <see cref="PositiveErrorColumnText"/> and <see cref="NegativeErrorColumnText"/>.
+    /// </remarks>
     public bool UseCommonErrorColumn
     {
       get => _useCommonErrorColumn;
@@ -97,6 +113,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private string _commonErrorColumnText;
 
+    /// <summary>
+    /// Provides access to the text representation of the common error column.
+    /// </summary>
+    /// <remarks>
+    /// This text is displayed in the GUI to represent the error column used for all data points when
+    /// <see cref="UseCommonErrorColumn"/> is enabled.
+    /// </remarks>
     public string CommonErrorColumnText
     {
       get => _commonErrorColumnText;
@@ -111,6 +134,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
     private string _commonErrorColumnToolTip;
 
+    /// <summary>
+    /// Provides access to the tooltip for the common error column.
+    /// </summary>
+    /// <remarks>
+    /// This tooltip is displayed in the GUI to provide additional information about the error column
+    /// used for all data points when <see cref="UseCommonErrorColumn"/> is enabled.
+    /// </remarks>
     public string CommonErrorColumnToolTip
     {
       get => _commonErrorColumnToolTip;
@@ -125,6 +155,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
     private int _commonErrorColumnStatus;
 
+    /// <summary>
+    /// Provides access to the status of the common error column.
+    /// </summary>
+    /// <remarks>
+    /// The status indicates the usability of the common error column. A value of 0 typically means the
+    /// column is not usable.
+    /// </remarks>
     public int CommonErrorColumnStatus
     {
       get => _commonErrorColumnStatus;
@@ -139,6 +176,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
     private string _commonErrorColumnTransformationText;
 
+    /// <summary>
+    /// Provides access to the transformation text for the common error column.
+    /// </summary>
+    /// <remarks>
+    /// This text describes any transformations that are applied to the common error column data for
+    /// processing or visualization purposes.
+    /// </remarks>
     public string CommonErrorColumnTransformationText
     {
       get => _commonErrorColumnTransformationText;
@@ -153,6 +197,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
     private string _commonErrorColumnTransformationToolTip;
 
+    /// <summary>
+    /// Provides access to the tooltip for the transformation of the common error column.
+    /// </summary>
+    /// <remarks>
+    /// This tooltip provides additional information about the transformations applied to the common
+    /// error column data.
+    /// </remarks>
     public string CommonErrorColumnTransformationToolTip
     {
       get => _commonErrorColumnTransformationToolTip;
@@ -172,6 +223,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private string _positiveErrorColumnText;
 
+    /// <summary>
+    /// Provides access to the text representation of the positive error column.
+    /// </summary>
+    /// <remarks>
+    /// This text is displayed in the GUI to represent the positive error column used for data points
+    /// when <see cref="UseCommonErrorColumn"/> is disabled.
+    /// </remarks>
     public string PositiveErrorColumnText
     {
       get => _positiveErrorColumnText;
@@ -186,6 +244,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
     private string _positiveErrorColumnToolTip;
 
+    /// <summary>
+    /// Provides access to the tooltip for the positive error column.
+    /// </summary>
+    /// <remarks>
+    /// This tooltip is displayed in the GUI to provide additional information about the positive error
+    /// column used for data points when <see cref="UseCommonErrorColumn"/> is disabled.
+    /// </remarks>
     public string PositiveErrorColumnToolTip
     {
       get => _positiveErrorColumnToolTip;
@@ -200,6 +265,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
     private int _positiveErrorColumnStatus;
 
+    /// <summary>
+    /// Provides access to the status of the positive error column.
+    /// </summary>
+    /// <remarks>
+    /// The status indicates the usability of the positive error column. A value of 0 typically means the
+    /// column is not usable.
+    /// </remarks>
     public int PositiveErrorColumnStatus
     {
       get => _positiveErrorColumnStatus;
@@ -214,6 +286,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
     private string _positiveErrorColumnTransformationText;
 
+    /// <summary>
+    /// Provides access to the transformation text for the positive error column.
+    /// </summary>
+    /// <remarks>
+    /// This text describes any transformations that are applied to the positive error column data for
+    /// processing or visualization purposes.
+    /// </remarks>
     public string PositiveErrorColumnTransformationText
     {
       get => _positiveErrorColumnTransformationText;
@@ -228,6 +307,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
     private string _positiveErrorColumnTransformationToolTip;
 
+    /// <summary>
+    /// Provides access to the tooltip for the transformation of the positive error column.
+    /// </summary>
+    /// <remarks>
+    /// This tooltip provides additional information about the transformations applied to the positive
+    /// error column data.
+    /// </remarks>
     public string PositiveErrorColumnTransformationToolTip
     {
       get => _positiveErrorColumnTransformationToolTip;
@@ -247,6 +333,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private string _negativeErrorColumnText;
 
+    /// <summary>
+    /// Provides access to the text representation of the negative error column.
+    /// </summary>
+    /// <remarks>
+    /// This text is displayed in the GUI to represent the negative error column used for data points
+    /// when <see cref="UseCommonErrorColumn"/> is disabled.
+    /// </remarks>
     public string NegativeErrorColumnText
     {
       get => _negativeErrorColumnText;
@@ -261,6 +354,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
     private string _negativeErrorColumnToolTip;
 
+    /// <summary>
+    /// Provides access to the tooltip for the negative error column.
+    /// </summary>
+    /// <remarks>
+    /// This tooltip is displayed in the GUI to provide additional information about the negative error
+    /// column used for data points when <see cref="UseCommonErrorColumn"/> is disabled.
+    /// </remarks>
     public string NegativeErrorColumnToolTip
     {
       get => _negativeErrorColumnToolTip;
@@ -275,6 +375,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
     private int _negativeErrorColumnStatus;
 
+    /// <summary>
+    /// Provides access to the status of the negative error column.
+    /// </summary>
+    /// <remarks>
+    /// The status indicates the usability of the negative error column. A value of 0 typically means the
+    /// column is not usable.
+    /// </remarks>
     public int NegativeErrorColumnStatus
     {
       get => _negativeErrorColumnStatus;
@@ -289,6 +396,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
     private string _negativeErrorColumnTransformationText;
 
+    /// <summary>
+    /// Provides access to the transformation text for the negative error column.
+    /// </summary>
+    /// <remarks>
+    /// This text describes any transformations that are applied to the negative error column data for
+    /// processing or visualization purposes.
+    /// </remarks>
     public string NegativeErrorColumnTransformationText
     {
       get => _negativeErrorColumnTransformationText;
@@ -303,6 +417,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
     private string _negativeErrorColumnTransformationToolTip;
 
+    /// <summary>
+    /// Provides access to the tooltip for the transformation of the negative error column.
+    /// </summary>
+    /// <remarks>
+    /// This tooltip provides additional information about the transformations applied to the negative
+    /// error column data.
+    /// </remarks>
     public string NegativeErrorColumnTransformationToolTip
     {
       get => _negativeErrorColumnTransformationToolTip;
@@ -320,6 +441,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private ItemsController<ErrorBarPlotStyle.ValueInterpretation> _meaningOfValues;
 
+    /// <summary>
+    /// Provides access to the controller for selecting the meaning of values in the error bar plot style.
+    /// </summary>
     public ItemsController<ErrorBarPlotStyle.ValueInterpretation> MeaningOfValues
     {
       get => _meaningOfValues;
@@ -337,6 +461,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _independentSkipFrequency;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the skip frequency is independent for each data point.
+    /// </summary>
+    /// <remarks>
+    /// If true, each data point can have a different skip frequency. If false, the same skip frequency
+    /// is applied to all data points.
+    /// </remarks>
     public bool IndependentSkipFrequency
     {
       get => _independentSkipFrequency;
@@ -352,6 +483,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private int _skipFrequency;
 
+    /// <summary>
+    /// Provides access to the frequency at which data points are skipped.
+    /// </summary>
+    /// <remarks>
+    /// This is used to reduce the number of data points plotted, by skipping points according to the
+    /// specified frequency. For example, a value of 2 would mean every other data point is skipped.
+    /// </remarks>
     public int SkipFrequency
     {
       get => _skipFrequency;
@@ -367,6 +505,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _ignoreMissingDataPoints;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether to ignore missing data points.
+    /// </summary>
+    /// <remarks>
+    /// If true, data points with missing values are ignored in the plot. If false, missing data points
+    /// can affect the plot depending on other settings (e.g., <see cref="UseCommonErrorColumn"/>).
+    /// </remarks>
     public bool IgnoreMissingDataPoints
     {
       get => _ignoreMissingDataPoints;
@@ -383,6 +528,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _independentOnShiftingGroupStyles;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the error bar plot style is independent of shifting group styles.
+    /// </summary>
+    /// <remarks>
+    /// When this option is enabled, the error bar plot style does not change even if the group styles are shifted.
+    /// </remarks>
     public bool IndependentOnShiftingGroupStyles
     {
       get => _independentOnShiftingGroupStyles;
@@ -398,6 +549,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _independentColor;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the color of the error bars is independent.
+    /// </summary>
+    /// <remarks>
+    /// If true, the error bars can have a color independent of the group color. If false, the error bar
+    /// color is linked to the group color.
+    /// </remarks>
     public bool IndependentColor
     {
       get => _independentColor;
@@ -414,6 +572,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _independentDashPattern;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the dash pattern of the error bars is independent.
+    /// </summary>
+    /// <remarks>
+    /// If true, the error bars can have a dash pattern independent of the group dash pattern. If false,
+    /// the error bar dash pattern is linked to the group dash pattern.
+    /// </remarks>
     public bool IndependentDashPattern
     {
       get => _independentDashPattern;
@@ -431,6 +596,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _independentSymbolSize;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the symbol size for the error bars is independent.
+    /// </summary>
+    /// <remarks>
+    /// If true, the error bars can have a symbol size independent of the group symbol size. If false,
+    /// the error bar symbol size is linked to the group symbol size.
+    /// </remarks>
     public bool IndependentSymbolSize
     {
       get => _independentSymbolSize;
@@ -444,11 +616,20 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the s ym bo ls iz ee nv ir on me nt.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment SymbolSizeEnvironment => LineCapSizeEnvironment.Instance;
 
 
     private DimensionfulQuantity _symbolSize;
 
+    /// <summary>
+    /// Provides access to the size of the symbols used at the ends of the error bars.
+    /// </summary>
+    /// <remarks>
+    /// The symbol size can be affected by the current UI settings for symbol size environment.
+    /// </remarks>
     public DimensionfulQuantity SymbolSize
     {
       get => _symbolSize;
@@ -462,10 +643,19 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the l in ew id th en vi ro nm en t.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment LineWidthEnvironment => LineCapSizeEnvironment.Instance;
 
     private DimensionfulQuantity _lineWidth1Offset;
 
+    /// <summary>
+    /// Provides access to the offset for the first line width factor applied to the error bars.
+    /// </summary>
+    /// <remarks>
+    /// This offset can be affected by the current UI settings for line width environment.
+    /// </remarks>
     public DimensionfulQuantity LineWidth1Offset
     {
       get => _lineWidth1Offset;
@@ -481,6 +671,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private DimensionfulQuantity _lineWidth2Offset;
 
+    /// <summary>
+    /// Provides access to the offset for the second line width factor applied to the error bars.
+    /// </summary>
+    /// <remarks>
+    /// This offset can be affected by the current UI settings for line width environment.
+    /// </remarks>
     public DimensionfulQuantity LineWidth2Offset
     {
       get => _lineWidth2Offset;
@@ -495,10 +691,20 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
 
 
+    /// <summary>
+    /// Gets or sets the l in ef ac to re nv ir on me nt.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment LineFactorEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _lineWidth1Factor;
 
+    /// <summary>
+    /// Provides access to the first line width factor applied to the error bars.
+    /// </summary>
+    /// <remarks>
+    /// This factor is used to scale the line width based on the current UI settings for line width
+    /// environment.
+    /// </remarks>
     public DimensionfulQuantity LineWidth1Factor
     {
       get => _lineWidth1Factor;
@@ -514,6 +720,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private DimensionfulQuantity _lineWidth2Factor;
 
+    /// <summary>
+    /// Provides access to the second line width factor applied to the error bars.
+    /// </summary>
+    /// <remarks>
+    /// This factor is used to scale the line width based on the current UI settings for line width
+    /// environment.
+    /// </remarks>
     public DimensionfulQuantity LineWidth2Factor
     {
       get => _lineWidth2Factor;
@@ -530,6 +743,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _useSymbolGap;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether to use a gap between symbols at the end of the error bars.
+    /// </summary>
+    /// <remarks>
+    /// If true, a gap is preserved between the symbol and the end of the error bar. If false, the
+    /// symbol is drawn at the end of the error bar.
+    /// </remarks>
     public bool UseSymbolGap
     {
       get => _useSymbolGap;
@@ -546,6 +766,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private DimensionfulQuantity _symbolGapOffset;
 
+    /// <summary>
+    /// Provides access to the offset for the symbol gap factor applied to the error bars.
+    /// </summary>
+    /// <remarks>
+    /// This offset can be affected by the current UI settings for line width environment.
+    /// </remarks>
     public DimensionfulQuantity SymbolGapOffset
     {
       get => _symbolGapOffset;
@@ -561,6 +787,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private DimensionfulQuantity _symbolGapFactor;
 
+    /// <summary>
+    /// Provides access to the factor for scaling the symbol gap applied to the error bars.
+    /// </summary>
+    /// <remarks>
+    /// This factor is used to scale the symbol gap based on the current UI settings for line width
+    /// environment.
+    /// </remarks>
     public DimensionfulQuantity SymbolGapFactor
     {
       get => _symbolGapFactor;
@@ -576,6 +809,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _forceVisibilityOfEndCap;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the visibility of the end cap of the error bars is forced.
+    /// </summary>
+    /// <remarks>
+    /// If true, the end cap of the error bars is always visible, overriding other settings that may hide it.
+    /// </remarks>
     public bool ForceVisibilityOfEndCap
     {
       get => _forceVisibilityOfEndCap;
@@ -592,6 +831,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private DimensionfulQuantity _endCapSizeOffset;
 
+    /// <summary>
+    /// Provides access to the offset for the end cap size factor applied to the error bars.
+    /// </summary>
+    /// <remarks>
+    /// This offset can be affected by the current UI settings for line width environment.
+    /// </remarks>
     public DimensionfulQuantity EndCapSizeOffset
     {
       get => _endCapSizeOffset;
@@ -607,6 +852,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private DimensionfulQuantity _endCapSizeFactor;
 
+    /// <summary>
+    /// Provides access to the factor for scaling the end cap size applied to the error bars.
+    /// </summary>
+    /// <remarks>
+    /// This factor is used to scale the end cap size based on the current UI settings for line width
+    /// environment.
+    /// </remarks>
     public DimensionfulQuantity EndCapSizeFactor
     {
       get => _endCapSizeFactor;
@@ -622,6 +874,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private PenAllPropertiesController _pen;
 
+    /// <summary>
+    /// Provides access to the pen controller for defining the pen properties of the error bars.
+    /// </summary>
     public PenAllPropertiesController Pen
     {
       get => _pen;
@@ -640,6 +895,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
 
 
+ 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       _colorGroupStyleTracker = null;
@@ -647,6 +904,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       base.Dispose(isDisposing);
     }
 
+ 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -698,6 +957,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       }
     }
 
+ 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       _doc.IndependentColor = IndependentColor;

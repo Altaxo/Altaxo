@@ -32,6 +32,9 @@ using Altaxo.Graph.Graph3D.GraphicsContext;
 
 namespace Altaxo.Graph.Graph3D.Shapes
 {
+  /// <summary>
+  /// Represents an open line shape in three-dimensional space.
+  /// </summary>
   [Serializable]
   public class LineShape : OpenPathShapeBase
   {
@@ -41,15 +44,20 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// 2016-04-19 Initial version
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    /// <summary>
+    /// Serializes <see cref="LineShape"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LineShape), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (LineShape)obj;
         info.AddBaseValueEmbedded(s, typeof(LineShape).BaseType!);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (LineShape?)o ?? new LineShape(info);
@@ -63,27 +71,50 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LineShape"/> class during deserialization.
+    /// </summary>
+    /// <param name="info">The deserialization info.</param>
     protected LineShape(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
       : base(info)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LineShape"/> class from a property context.
+    /// </summary>
+    /// <param name="context">The property context.</param>
     public LineShape(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
       : base(new ItemLocationDirect(), context)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LineShape"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The line shape to copy from.</param>
     public LineShape(LineShape from)
       : base(from)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LineShape"/> class with the specified start position.
+    /// </summary>
+    /// <param name="startPosition">The start position.</param>
+    /// <param name="context">The optional property context.</param>
     public LineShape(PointD3D startPosition, Altaxo.Main.Properties.IReadOnlyPropertyBag? context)
       : base(new ItemLocationDirect(), context)
     {
       Position = startPosition;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LineShape"/> class with the specified endpoints.
+    /// </summary>
+    /// <param name="startPosition">The start position.</param>
+    /// <param name="endPosition">The end position.</param>
+    /// <param name="context">The property context.</param>
     public LineShape(PointD3D startPosition, PointD3D endPosition, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
       :
       this(startPosition, context)
@@ -93,6 +124,13 @@ namespace Altaxo.Graph.Graph3D.Shapes
       _location.SizeZ = RADouble.NewAbs(endPosition.Z - startPosition.Z);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LineShape"/> class with the specified endpoints and stroke settings.
+    /// </summary>
+    /// <param name="startPosition">The start position.</param>
+    /// <param name="endPosition">The end position.</param>
+    /// <param name="lineWidth">The line width.</param>
+    /// <param name="lineColor">The line color.</param>
     public LineShape(PointD3D startPosition, PointD3D endPosition, double lineWidth, NamedColor lineColor)
       :
       this(startPosition, null)
@@ -105,6 +143,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     #endregion Constructors
 
+    /// <inheritdoc/>
     public override bool AllowNegativeSize
     {
       get
@@ -113,6 +152,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       }
     }
 
+    /// <inheritdoc/>
     public override object Clone()
     {
       return new LineShape(this);
@@ -127,6 +167,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       return new LineShapeObjectOutline(_transformation.WithAppendedTransformation(localToWorldTransformation), Bounds);
     }
 
+    /// <inheritdoc/>
     public override IHitTestObject? HitTest(HitTestPointData parentHitData)
     {
       IHitTestObject? result = null;
@@ -142,6 +183,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       return result;
     }
 
+    /// <inheritdoc/>
     protected override IHitTestObject GetNewHitTestObject(Matrix4x3 localToWorldTransformation)
     {
       return new LineShapeHitTestObject(this, localToWorldTransformation);
@@ -155,6 +197,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       return true;
     }
 
+    /// <inheritdoc/>
     public override void Paint(IGraphicsContext3D g, IPaintContext context)
     {
       var gs = g.SaveGraphicsState();
@@ -163,6 +206,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       g.RestoreGraphicsState(gs);
     }
 
+    /// <inheritdoc/>
     protected override IGripManipulationHandle[] GetGrips(IHitTestObject hitTest, GripKind gripKind)
     {
       var list = new List<IGripManipulationHandle>();
@@ -263,13 +307,20 @@ const double gripNominalSize = 10; // 10 Points nominal size on the screen
       return list.ToArray();
     }
 
+    /// <summary>
+    /// Hit-test object specialized for <see cref="LineShape"/>.
+    /// </summary>
     protected class LineShapeHitTestObject : GraphicBaseHitTestObject
     {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="LineShapeHitTestObject"/> class.
+      /// </summary>
       public LineShapeHitTestObject(LineShape parent, Matrix4x3 localToWorldTransformation)
         : base(parent, localToWorldTransformation)
       {
       }
 
+      /// <inheritdoc/>
       public override IGripManipulationHandle[]? GetGrips(int gripLevel)
       {
         if (gripLevel <= 1)

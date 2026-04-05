@@ -37,11 +37,17 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="VectorCartesicPlotStyleController"/>.
+  /// </summary>
   public interface IVectorCartesicPlotStyleView : IDataContextAwareView
   {
   }
 
 
+  /// <summary>
+  /// Controller for <see cref="VectorCartesicPlotStyle"/>.
+  /// </summary>
   [UserControllerForObject(typeof(VectorCartesicPlotStyle))]
   [ExpectedTypeOfView(typeof(IVectorCartesicPlotStyleView))]
   public class VectorCartesicPlotStyleController : MVCANControllerEditOriginalDocBase<VectorCartesicPlotStyle, IVectorCartesicPlotStyleView>, IColumnDataExternallyControlled
@@ -59,6 +65,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     /// </summary>
     private int _supposedGroupNumber;
 
+    /// <inheritdoc />
     public override bool InitializeDocument(params object[] args)
     {
       if (args.Length >= 2 && (args[1] is DataTable dt))
@@ -70,6 +77,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       return base.InitializeDocument(args);
     }
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_pen, () => Pen = null);
@@ -82,6 +90,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private string _xColumnText;
 
+    /// <summary>
+    /// Gets or sets the display text for the X column.
+    /// </summary>
     public string XColumnText
     {
       get => _xColumnText;
@@ -96,6 +107,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
     private string _xColumnToolTip;
 
+    /// <summary>
+    /// Gets or sets the tooltip text for the X column.
+    /// </summary>
     public string XColumnToolTip
     {
       get => _xColumnToolTip;
@@ -110,6 +124,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
     private int _xColumnStatus;
 
+    /// <summary>
+    /// Gets or sets the status of the X column.
+    /// </summary>
     public int XColumnStatus
     {
       get => _xColumnStatus;
@@ -124,6 +141,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
     private string _xColumnTransformationText;
 
+    /// <summary>
+    /// Gets or sets the transformation text for the X column.
+    /// </summary>
     public string XColumnTransformationText
     {
       get => _xColumnTransformationText;
@@ -138,6 +158,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
     private string _xColumnTransformationToolTip;
 
+    /// <summary>
+    /// Gets or sets the transformation tooltip text for the X column.
+    /// </summary>
     public string XColumnTransformationToolTip
     {
       get => _xColumnTransformationToolTip;
@@ -158,6 +181,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private string _yColumnText;
 
+    /// <summary>
+    /// Gets or sets the display text for the Y column.
+    /// </summary>
     public string YColumnText
     {
       get => _yColumnText;
@@ -172,6 +198,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
     private string _yColumnToolTip;
 
+    /// <summary>
+    /// Gets or sets the tooltip text for the Y column.
+    /// </summary>
     public string YColumnToolTip
     {
       get => _yColumnToolTip;
@@ -186,6 +215,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
     private int _yColumnStatus;
 
+    /// <summary>
+    /// Gets or sets the status of the Y column.
+    /// </summary>
     public int YColumnStatus
     {
       get => _yColumnStatus;
@@ -200,6 +232,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
     private string _yColumnTransformationText;
 
+    /// <summary>
+    /// Gets or sets the transformation text for the Y column.
+    /// </summary>
     public string YColumnTransformationText
     {
       get => _yColumnTransformationText;
@@ -214,6 +249,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
     private string _yColumnTransformationToolTip;
 
+    /// <summary>
+    /// Gets or sets the transformation tooltip text for the Y column.
+    /// </summary>
     public string YColumnTransformationToolTip
     {
       get => _yColumnTransformationToolTip;
@@ -234,6 +272,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private string _zColumnText;
 
+    /// <summary>
+    /// Gets or sets the display text for the Z column.
+    /// </summary>
     public string ZColumnText
     {
       get => _zColumnText;
@@ -248,6 +289,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
     private string _zColumnToolTip;
 
+    /// <summary>
+    /// Gets or sets the tooltip text for the Z column.
+    /// </summary>
     public string ZColumnToolTip
     {
       get => _zColumnToolTip;
@@ -262,6 +306,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
     private int _zColumnStatus;
 
+    /// <summary>
+    /// Gets or sets the status of the Z column.
+    /// </summary>
     public int ZColumnStatus
     {
       get => _zColumnStatus;
@@ -276,6 +323,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
     private string _zColumnTransformationText;
 
+    /// <summary>
+    /// Gets or sets the transformation text for the Z column.
+    /// </summary>
     public string ZColumnTransformationText
     {
       get => _zColumnTransformationText;
@@ -290,6 +340,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
     private string _zColumnTransformationToolTip;
 
+    /// <summary>
+    /// Gets or sets the transformation tooltip text for the Z column.
+    /// </summary>
     public string ZColumnTransformationToolTip
     {
       get => _zColumnTransformationToolTip;
@@ -308,6 +361,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private ItemsController<VectorCartesicPlotStyle.ValueInterpretation> _meaningOfValues;
 
+    /// <summary>
+    /// Gets or sets the controller for the meaning of values.
+    /// </summary>
     public ItemsController<VectorCartesicPlotStyle.ValueInterpretation> MeaningOfValues
     {
       get => _meaningOfValues;
@@ -325,6 +381,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _independentSkipFrequency;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the skip frequency is independent.
+    /// </summary>
     public bool IndependentSkipFrequency
     {
       get => _independentSkipFrequency;
@@ -340,6 +399,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private int _skipFrequency;
 
+    /// <summary>
+    /// Gets or sets the skip frequency.
+    /// </summary>
     public int SkipFrequency
     {
       get => _skipFrequency;
@@ -355,6 +417,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _ignoreMissingDataPoints;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether to ignore missing data points.
+    /// </summary>
     public bool IgnoreMissingDataPoints
     {
       get => _ignoreMissingDataPoints;
@@ -371,6 +436,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _independentOnShiftingGroupStyles;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the style is independent of shifting group styles.
+    /// </summary>
     public bool IndependentOnShiftingGroupStyles
     {
       get => _independentOnShiftingGroupStyles;
@@ -386,6 +454,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _independentColor;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the color is independent.
+    /// </summary>
     public bool IndependentColor
     {
       get => _independentColor;
@@ -410,6 +481,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _independentSymbolSize;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the symbol size is independent.
+    /// </summary>
     public bool IndependentSymbolSize
     {
       get => _independentSymbolSize;
@@ -423,11 +497,17 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets the environment for the symbol size quantity with unit.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment SymbolSizeEnvironment => LineCapSizeEnvironment.Instance;
 
 
     private DimensionfulQuantity _symbolSize;
 
+    /// <summary>
+    /// Gets or sets the symbol size.
+    /// </summary>
     public DimensionfulQuantity SymbolSize
     {
       get => _symbolSize;
@@ -441,10 +521,16 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets the environment for the line width quantity with unit.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment LineWidthEnvironment => LineCapSizeEnvironment.Instance;
 
     private DimensionfulQuantity _lineWidth1Offset;
 
+    /// <summary>
+    /// Gets or sets the line width 1 offset.
+    /// </summary>
     public DimensionfulQuantity LineWidth1Offset
     {
       get => _lineWidth1Offset;
@@ -459,6 +545,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
 
     private DimensionfulQuantity _lineWidth2Offset;
+    /// <summary>
+    /// Gets or sets the line width 2 offset.
+    /// </summary>
     public DimensionfulQuantity LineWidth2Offset
     {
       get => _lineWidth2Offset;
@@ -473,6 +562,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
 
     private DimensionfulQuantity _vectorLengthOffset;
+    /// <summary>
+    /// Gets or sets the vector length offset.
+    /// </summary>
     public DimensionfulQuantity VectorLengthOffset
     {
       get => _vectorLengthOffset;
@@ -486,10 +578,16 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets the environment for the line factor quantity with unit.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment LineFactorEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _lineWidth1Factor;
 
+    /// <summary>
+    /// Gets or sets the line width 1 factor.
+    /// </summary>
     public DimensionfulQuantity LineWidth1Factor
     {
       get => _lineWidth1Factor;
@@ -505,6 +603,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private DimensionfulQuantity _lineWidth2Factor;
 
+    /// <summary>
+    /// Gets or sets the line width 2 factor.
+    /// </summary>
     public DimensionfulQuantity LineWidth2Factor
     {
       get => _lineWidth2Factor;
@@ -520,6 +621,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private DimensionfulQuantity _vectorLengthFactor;
 
+    /// <summary>
+    /// Gets or sets the vector length factor.
+    /// </summary>
     public DimensionfulQuantity VectorLengthFactor
     {
       get => _vectorLengthFactor;
@@ -535,6 +639,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private DimensionfulQuantity _endCapSizeOffset;
 
+    /// <summary>
+    /// Gets or sets the end cap size offset.
+    /// </summary>
     public DimensionfulQuantity EndCapSizeOffset
     {
       get => _endCapSizeOffset;
@@ -550,6 +657,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private DimensionfulQuantity _endCapSizeFactor;
 
+    /// <summary>
+    /// Gets or sets the end cap size factor.
+    /// </summary>
     public DimensionfulQuantity EndCapSizeFactor
     {
       get => _endCapSizeFactor;
@@ -565,6 +675,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _useSymbolGap;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether to use a symbol gap.
+    /// </summary>
     public bool UseSymbolGap
     {
       get => _useSymbolGap;
@@ -581,6 +694,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private DimensionfulQuantity _symbolGapOffset;
 
+    /// <summary>
+    /// Gets or sets the symbol gap offset.
+    /// </summary>
     public DimensionfulQuantity SymbolGapOffset
     {
       get => _symbolGapOffset;
@@ -596,6 +712,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private DimensionfulQuantity _symbolGapFactor;
 
+    /// <summary>
+    /// Gets or sets the symbol gap factor.
+    /// </summary>
     public DimensionfulQuantity SymbolGapFactor
     {
       get => _symbolGapFactor;
@@ -611,6 +730,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _useManualVectorLength;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether to use a manual vector length.
+    /// </summary>
     public bool UseManualVectorLength
     {
       get => _useManualVectorLength;
@@ -627,6 +749,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private DimensionfulQuantity _manualVectorLengthOffset;
 
+    /// <summary>
+    /// Gets or sets the manual vector length offset.
+    /// </summary>
     public DimensionfulQuantity ManualVectorLengthOffset
     {
       get => _manualVectorLengthOffset;
@@ -641,6 +766,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
     private DimensionfulQuantity _manualVectorLengthFactor;
 
+    /// <summary>
+    /// Gets or sets the manual vector length factor.
+    /// </summary>
     public DimensionfulQuantity ManualVectorLengthFactor
     {
       get => _manualVectorLengthFactor;
@@ -658,6 +786,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private PenAllPropertiesController _pen;
 
+    /// <summary>
+    /// Gets or sets the pen controller for all properties.
+    /// </summary>
     public PenAllPropertiesController Pen
     {
       get => _pen;
@@ -675,6 +806,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     #endregion
 
 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       _colorGroupStyleTracker = null;
@@ -682,6 +814,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -732,6 +865,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       _doc.UseManualVectorLength = UseManualVectorLength;
@@ -802,14 +936,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       ZColumnTransformationToolTip = info.TransformationToolTip;
     }
 
-    /// <summary>
-    /// Gets the additional columns that the controller's document is referring to.
-    /// </summary>
-    /// <returns>Enumeration of tuples.
-    /// Item1 is a label to be shown in the column data dialog to let the user identify the column.
-    /// Item2 is the column itself,
-    /// Item3 is the column name (last part of the full path to the column), and
-    /// Item4 is an action which sets the column (and by the way the supposed data table the column belongs to.</returns>
+    /// <inheritdoc />
     public IEnumerable<(string ColumnLabel, IReadableColumn Column, string ColumnName, Action<IReadableColumn, DataTable, int> ColumnSetAction)> GetDataColumnsExternallyControlled()
     {
       yield return (

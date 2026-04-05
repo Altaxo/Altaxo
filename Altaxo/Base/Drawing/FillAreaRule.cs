@@ -31,7 +31,7 @@ using System.Text;
 namespace Altaxo.Drawing
 {
   /// <summary>
-  /// Rule to fill an 2D area.
+  /// Specifies the rule used to fill a 2D area.
   /// </summary>
   public enum FillAreaRule
   {
@@ -39,7 +39,7 @@ namespace Altaxo.Drawing
     EvenOdd = 0,
 
     /// <summary>
-    /// The non zero rule: Gdi: Winding, SVG: nonzero
+    /// The non-zero rule. GDI: Winding, SVG: nonzero.
     /// </summary>
     NonZero = 1,
   }

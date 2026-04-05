@@ -30,6 +30,9 @@ using System.Text;
 
 namespace Altaxo.Graph.Scales.Rescaling
 {
+  /// <summary>
+  /// Stores rescaling conditions for angular scales.
+  /// </summary>
   public class AngularRescaleConditions
     :
     Main.SuspendableDocumentLeafNodeWithEventArgs,
@@ -43,6 +46,7 @@ namespace Altaxo.Graph.Scales.Rescaling
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AngularRescaleConditions), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (AngularRescaleConditions)obj;
@@ -50,6 +54,7 @@ namespace Altaxo.Graph.Scales.Rescaling
         info.AddValue("ScaleOrigin", s._scaleOrigin);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (AngularRescaleConditions?)o ?? new AngularRescaleConditions();
@@ -64,15 +69,23 @@ namespace Altaxo.Graph.Scales.Rescaling
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AngularRescaleConditions"/> class.
+    /// </summary>
     public AngularRescaleConditions()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AngularRescaleConditions"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public AngularRescaleConditions(AngularRescaleConditions from)
     {
       CopyFrom(from);
     }
 
+    /// <inheritdoc/>
     public virtual bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -89,6 +102,7 @@ namespace Altaxo.Graph.Scales.Rescaling
       return true;
     }
 
+    /// <inheritdoc/>
     public virtual object Clone()
     {
       return new AngularRescaleConditions(this);

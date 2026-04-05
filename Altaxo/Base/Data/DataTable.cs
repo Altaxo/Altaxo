@@ -32,17 +32,22 @@ using Altaxo.Scripting;
 
 namespace Altaxo.Data
 {
+  /// <summary>
+  /// The exception that is thrown when a unique name is required but cannot be assigned.
+  /// </summary>
   public class AltaxoUniqueNameException : System.ApplicationException
   {
   }
 
-  /// <summary>DataTable is the central class of Altaxo, which holds the data organized in columns.</summary>
+  /// <summary>
+  /// <see cref="DataTable"/> is the central class of Altaxo, which holds the data organized in columns.
+  /// </summary>
   /// <remarks>In contrast to common database
   /// programs, the data are not organized in rows, but in (relatively independent) columns. As in database programs,
   /// each column has a certain type, as <see cref="TextColumn"/> for holding strings,
   /// <see cref="DoubleColumn"/> for storing numeric values, and <see cref="DateTimeColumn"/> for holding DateTimes.
   /// All these column types are derived from the base class <see cref="DataColumn"/>.<para/>
-  /// There is also a similar concept like metadata in database programs: Each column can have some property values associated with. The property values
+  /// There is also a concept similar to metadata in database programs: each column can have associated property values. The property values
   /// are organized in property columns and can be retrieved by the <see cref="DataTable.PropCols"/> property of the table.</remarks>
   public class DataTable
     :
@@ -118,6 +123,7 @@ namespace Altaxo.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Data.DataTable", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (Altaxo.Data.DataTable)obj;
@@ -126,6 +132,7 @@ namespace Altaxo.Data
         info.AddValue("PropCols", s._propertyColumns); // the property columns of that table
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (Altaxo.Data.DataTable?)o ?? new Altaxo.Data.DataTable(info);
@@ -147,6 +154,7 @@ namespace Altaxo.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Data.DataTable", 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (Altaxo.Data.DataTable)obj;
@@ -158,6 +166,7 @@ namespace Altaxo.Data
         info.AddValueOrNull("TableScript", s._tableScript);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (Altaxo.Data.DataTable?)o ?? new Altaxo.Data.DataTable(info);
@@ -181,6 +190,7 @@ namespace Altaxo.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Data.DataTable", 2)]
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Try to serialize old version");
@@ -213,6 +223,7 @@ namespace Altaxo.Data
                 */
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (Altaxo.Data.DataTable?)o ?? new Altaxo.Data.DataTable(info);
@@ -276,6 +287,7 @@ namespace Altaxo.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Data.DataTable", 4)]
     private class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (Altaxo.Data.DataTable)obj;
@@ -351,6 +363,7 @@ namespace Altaxo.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.DataTable), 5)]
     private class XmlSerializationSurrogate5 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (Altaxo.Data.DataTable)obj;
@@ -422,6 +435,7 @@ namespace Altaxo.Data
         s._dataColumns.ColumnScripts.ParentObject = s;
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (Altaxo.Data.DataTable?)o ?? new Altaxo.Data.DataTable(info);
@@ -444,9 +458,10 @@ namespace Altaxo.Data
       private IAscendingIntegerCollection _selectedPropertyRows;
 
       /// <summary>
-      /// Constructor. Besides the table, the current selections must be provided. Only the areas that corresponds to the selections are
-      /// serialized. The serialization process has to occur immediately after this constructor, because only a reference
-      /// to the table is hold by this object.
+      /// Initializes a new instance of the <see cref="ClipboardMemento"/> class.
+      /// Besides the table, the current selections must be provided. Only the areas that correspond to the selections are
+      /// serialized. The serialization process has to occur immediately after this constructor because this object only holds
+      /// a reference to the table.
       /// </summary>
       /// <param name="table">The table to serialize.</param>
       /// <param name="selectedDataColumns">The selected data columns.</param>
@@ -471,6 +486,7 @@ namespace Altaxo.Data
       [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.DataTable.ClipboardMemento), 0)]
       private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
       {
+        /// <inheritdoc/>
         public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
         {
           var s = (Altaxo.Data.DataTable.ClipboardMemento)obj;
@@ -491,6 +507,7 @@ namespace Altaxo.Data
           }
         }
 
+        /// <inheritdoc/>
         public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
           var s = (Altaxo.Data.DataTable.ClipboardMemento?)o ?? new Altaxo.Data.DataTable.ClipboardMemento(info);
@@ -517,7 +534,7 @@ namespace Altaxo.Data
       #endregion Serialization
 
       /// <summary>
-      /// Returns the (deserialized) table.
+      /// Gets the deserialized table.
       /// </summary>
       public DataTable DataTable
       {
@@ -637,10 +654,7 @@ namespace Altaxo.Data
 
     #region Suspend and resume
 
-    /// <summary>
-    /// Fires the change event with the EventArgs provided in the argument.
-    /// </summary>
-    /// <param name="e"></param>
+    /// <inheritdoc/>
     protected override void OnChanged(EventArgs e)
     {
       _lastChangeTime = DateTime.UtcNow; // changing LastChangeTime should obviously not trigger a changed event
@@ -660,6 +674,7 @@ namespace Altaxo.Data
       }
     }
 
+    /// <inheritdoc/>
     protected override void OnAboutToBeResumed(int eventCount)
     {
       if (_accumulatedEventData.Contains(TableDataSourceChangedEventArgs.Empty))
@@ -671,9 +686,7 @@ namespace Altaxo.Data
 
     #endregion Suspend and resume
 
-    /// <summary>
-    /// Get / sets the parent object of this table.
-    /// </summary>
+    /// <inheritdoc/>
     public override Main.IDocumentNode? ParentObject
     {
       get
@@ -693,13 +706,7 @@ namespace Altaxo.Data
       }
     }
 
-    /// <summary>
-    /// Tests if this item already has a name.
-    /// </summary>
-    /// <param name="name">On success, returns the name of the item.</param>
-    /// <returns>
-    /// True if the item already has a name; otherwise false.
-    /// </returns>
+    /// <inheritdoc/>
     public override bool TryGetName([MaybeNullWhen(false)] out string name)
     {
       name = _name;
@@ -707,8 +714,8 @@ namespace Altaxo.Data
     }
 
     /// <summary>
-    /// Get or sets the full name of the table.
-    /// At first (if the table is not added to a collection), the name of the table may be null.
+    /// Gets or sets the full name of the table.
+    /// At first, if the table is not added to a collection, the name of the table may be <see langword="null"/>.
     /// </summary>
 
     public override string Name
@@ -856,9 +863,9 @@ namespace Altaxo.Data
 
     /// <summary>
     /// Updates the data in the table from the table data source. If the options specify that
-    /// the worksheet script should be exectuted after this, it is executed then.
-    /// The table is locked during the operation, and the exceptions will be catched. Use the return result
-    /// to see if an error has occured.
+    /// the worksheet script should be executed after this, it is executed afterwards.
+    /// The table is locked during the operation, and exceptions are caught. Use the return value
+    /// to see whether an error has occurred.
     /// </summary>
     /// <returns>Null if no error occurs; otherwise, the error.</returns>
     public string? UpdateTableFromTableDataSourceAsUserCancellable()
@@ -870,9 +877,9 @@ namespace Altaxo.Data
 
     /// <summary>
     /// Updates the data in the table from the table data source. If the options specify that
-    /// the worksheet script should be exectuted after this, it is executed then.
-    /// The table is locked during the operation, and the exceptions will be catched. Use the return result
-    /// to see if an error has occured.
+    /// the worksheet script should be executed after this, it is executed afterwards.
+    /// The table is locked during the operation, and exceptions are caught. Use the return value
+    /// to see whether an error has occurred.
     /// </summary>
     /// <returns>Null if no error occurs; otherwise, the error.</returns>
     public string? UpdateTableFromTableDataSource(IProgressReporter reporter)
@@ -925,7 +932,7 @@ namespace Altaxo.Data
       get { return _dataColumns.ColumnCount; }
     }
 
-    /// <summary>Returns the number of property rows. This is the same as <see cref="DataColumnCount" /> and is only provided for completness.</summary>
+    /// <summary>Returns the number of property rows. This is the same as <see cref="DataColumnCount" /> and is only provided for completeness.</summary>
     /// <value>The number of property rows = number of data columns in the table.</value>
     public int PropertyRowCount
     {
@@ -946,6 +953,9 @@ namespace Altaxo.Data
       get { return _dataColumns.RowCount; }
     }
 
+    /// <summary>
+    /// Gets or sets the table script associated with this table.
+    /// </summary>
     public TableScript? TableScript
     {
       get { return _tableScript; }
@@ -957,7 +967,7 @@ namespace Altaxo.Data
     }
 
     /// <summary>
-    /// Copies data to the data column with the provided index if both columns are of the same type. If they are not of the same type, the column is replaced by the provided column. If the index is beyoind the limit, the provided column is added.
+    /// Copies data to the data column with the provided index if both columns are of the same type. If they are not of the same type, the column is replaced by the provided column. If the index is beyond the limit, the provided column is added.
     /// </summary>
     /// <param name="idx">The index of the column where to copy to, or replace.</param>
     /// <param name="datac">The column to copy.</param>
@@ -1135,7 +1145,7 @@ namespace Altaxo.Data
     /// Tests if the table contains a property column with the provided name.
     /// </summary>
     /// <param name="name">The name to look for.</param>
-    /// <returns>True if the table contains a data column with the provided name.</returns>
+    /// <returns>True if the table contains a property column with the provided name.</returns>
     public bool ContainsPropertyColumn(string name)
     {
       return _propertyColumns.Contains(name);
@@ -1164,9 +1174,9 @@ namespace Altaxo.Data
     }
 
     /// <summary>
-    /// Remove the selected data columns <b>and the corresponding property rows</b>.
+    /// Removes the selected data columns <b>and the corresponding property rows</b>.
     /// </summary>
-    /// <param name="selectedColumns">A collection of the indizes to the columns that have to be removed.</param>
+    /// <param name="selectedColumns">A collection of the indices of the columns that have to be removed.</param>
     public virtual void RemoveColumns(IAscendingIntegerCollection selectedColumns)
     {
       using (var suspendToken = SuspendGetToken())
@@ -1202,8 +1212,9 @@ namespace Altaxo.Data
     }
 
     /// <summary>
-    /// Remove a table property, key is a string
+    /// Removes a table property.
     /// </summary>
+    /// <param name="key">The name of the property to remove.</param>
     /// <returns>True if the property was found (and removed). False if there was no such property to remove.</returns>
     /// <remarks>The properties are saved on disc (with exception of those who's name starts with "tmp/".
     /// If the property you want to store is only temporary, the property name should therefore
@@ -1213,6 +1224,7 @@ namespace Altaxo.Data
       return _tableProperties is null ? false : _tableProperties.RemoveValue(key);
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_dataColumns is not null)
@@ -1271,8 +1283,8 @@ namespace Altaxo.Data
     /// <summary>
     /// Gets the parent data table of the DataColumn column.
     /// </summary>
-    /// <param name="column">The data column for wich the parent data table should be found.</param>
-    /// <returns>The parent data table of this column, or null if it can not be found.</returns>
+    /// <param name="column">The data column for which the parent data table should be found.</param>
+    /// <returns>The parent data table of this column, or <see langword="null"/> if it cannot be found.</returns>
     public static Altaxo.Data.DataTable? GetParentDataTableOf(DataColumn? column)
     {
       if (column is null)
@@ -1298,6 +1310,7 @@ namespace Altaxo.Data
 
     #region IPropertyBagOwner
 
+    /// <inheritdoc/>
     public Main.Properties.PropertyBag? PropertyBag
     {
       get { return _tableProperties; }
@@ -1307,6 +1320,7 @@ namespace Altaxo.Data
       }
     }
 
+    /// <inheritdoc/>
     public Main.Properties.PropertyBag PropertyBagNotNull
     {
       get
@@ -1320,8 +1334,8 @@ namespace Altaxo.Data
     #endregion IPropertyBagOwner
 
     /// <summary>
-    /// Has to enumerate all references to other items in the project (<see cref="T:Altaxo.Main.DocNodeProxy" />) which are used in this project item and in all childs of this project item. The references
-    /// has to be reported to the <paramref name="ProxyProcessing" /> function. This function is responsible for processing of the proxies, for instance to relocated the path.
+    /// Has to enumerate all references to other items in the project (<see cref="T:Altaxo.Main.DocNodeProxy" />) that are used in this project item and in all children of this project item. The references
+    /// have to be reported to the <paramref name="ProxyProcessing" /> function. This function is responsible for processing the proxies, for instance to relocate the path.
     /// </summary>
     /// <param name="ProxyProcessing">Function that processes  the found <see cref="T:Altaxo.Main.DocNodeProxy" /> instances.</param>
     public void VisitDocumentReferences(Main.DocNodeProxyReporter ProxyProcessing)

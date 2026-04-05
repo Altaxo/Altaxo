@@ -77,6 +77,7 @@ namespace Altaxo.Serialization.PrincetonInstruments
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PrincetonInstrumentsSPEImportOptions), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PrincetonInstrumentsSPEImportOptions)obj;
@@ -88,6 +89,7 @@ namespace Altaxo.Serialization.PrincetonInstruments
         info.AddArray("IndicesOfImportedRegions", s.IndicesOfImportedRegions, s.IndicesOfImportedRegions.Count);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var useNeutralColumnName = info.GetBoolean("UseNeutralColumnName");

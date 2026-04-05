@@ -158,7 +158,7 @@ namespace Altaxo.Data
     }
 
     /// <summary>
-    /// Gets the source tables for the extraction.
+    /// Gets the source table proxies for the aggregation.
     /// </summary>
     public IReadOnlyList<DataTableProxy> TableProxies => DataTables;
 

@@ -29,6 +29,9 @@ using System.Text;
 
 namespace Altaxo.Graph.Plot.Groups
 {
+  /// <summary>
+  /// Group style that manages 2D bar sizes and horizontal positions within a cluster.
+  /// </summary>
   public class BarSizePosition2DGroupStyle
     :
     Main.SuspendableDocumentLeafNodeWithEventArgs,
@@ -115,6 +118,7 @@ namespace Altaxo.Graph.Plot.Groups
       _logicalItemOffsetX = from._logicalItemOffsetX;
     }
 
+    /// <inheritdoc/>
     public void TransferFrom(IPlotGroupStyle fromb)
     {
       var from = (BarSizePosition2DGroupStyle)fromb;
@@ -126,6 +130,9 @@ namespace Altaxo.Graph.Plot.Groups
       _logicalItemOffsetX = from._logicalItemOffsetX;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BarSizePosition2DGroupStyle"/> class.
+    /// </summary>
     public BarSizePosition2DGroupStyle()
     {
       _isStepEnabled = true;
@@ -133,6 +140,9 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region ICloneable Members
 
+    /// <summary>
+    /// Creates a strongly typed clone of this group style.
+    /// </summary>
     public BarSizePosition2DGroupStyle Clone()
     {
       var result = new BarSizePosition2DGroupStyle();
@@ -151,6 +161,7 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region IPlotGroupStyle Members
 
+    /// <inheritdoc/>
     public void BeginPrepare()
     {
       _isInitialized = false;
@@ -159,6 +170,7 @@ namespace Altaxo.Graph.Plot.Groups
       _logicalClusterSizeX = 0.5; // in case there is only one item, it takes half of the width of the x-scale
     }
 
+    /// <inheritdoc/>
     public void PrepareStep()
     {
       if (_wasTouchedInThisPrepareStep)
@@ -172,6 +184,7 @@ namespace Altaxo.Graph.Plot.Groups
       _wasTouchedInThisPrepareStep = false;
     }
 
+    /// <inheritdoc/>
     public void EndPrepare()
     {
       _wasTouchedInThisPrepareStep = false;
@@ -213,6 +226,7 @@ namespace Altaxo.Graph.Plot.Groups
       _logicalItemOffsetX += itemIndexX * _logicalItemSizeX * (1 + _relInnerGapX);
     }
 
+    /// <inheritdoc/>
     public bool CanCarryOver
     {
       get
@@ -221,6 +235,7 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <inheritdoc/>
     public bool CanStep
     {
       get
@@ -229,6 +244,7 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <inheritdoc/>
     public int Step(int step)
     {
       _cachedCurrentItemIndex += step;
@@ -238,6 +254,7 @@ namespace Altaxo.Graph.Plot.Groups
       return 0;
     }
 
+    /// <inheritdoc/>
     public bool IsStepEnabled
     {
       get
@@ -252,6 +269,9 @@ namespace Altaxo.Graph.Plot.Groups
 
     #endregion IPlotGroupStyle Members
 
+    /// <summary>
+    /// Gets a value indicating whether this style was initialized.
+    /// </summary>
     public bool IsInitialized
     {
       get
@@ -280,12 +300,10 @@ namespace Altaxo.Graph.Plot.Groups
     }
 
     /// <summary>
-    /// Is initialized is called the first time a BarGraphPlotStyle.PrepareStyle was called.
-    /// The BarGraphPlotStyle has stored two properties relGap and relBound, which are transferred
-    /// to the group style in this process.
+    /// Initializes the bar-spacing parameters.
     /// </summary>
-    /// <param name="relInnerGapX">Gap between to bars in a group in units of one bar width.</param>
-    /// <param name="relOuterGapX">Gap between the items of two groups in units of one bar width.</param>
+    /// <param name="relInnerGapX">The relative gap between bars inside a cluster.</param>
+    /// <param name="relOuterGapX">The relative gap between neighboring clusters.</param>
     public void Initialize(double relInnerGapX, double relOuterGapX)
     {
       _isInitialized = true;
@@ -293,6 +311,13 @@ namespace Altaxo.Graph.Plot.Groups
       _relOuterGapX = relOuterGapX;
     }
 
+    /// <summary>
+    /// Applies the current size and position information.
+    /// </summary>
+    /// <param name="relInnerGapX">The relative inner gap.</param>
+    /// <param name="relOuterGapX">The relative outer gap.</param>
+    /// <param name="sizeX">The bar width.</param>
+    /// <param name="posX">The bar offset.</param>
     public void Apply(out double relInnerGapX, out double relOuterGapX, out double sizeX, out double posX)
     {
       relInnerGapX = _relInnerGapX;
@@ -316,6 +341,9 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region Static Helpers
 
+    /// <summary>
+    /// Adds this style as an external group style when required.
+    /// </summary>
     public static void AddExternalGroupStyle(IPlotGroupStyleCollection externalGroups)
     {
       if (PlotGroupStyle.ShouldAddExternalGroupStyle(externalGroups, typeof(BarSizePosition2DGroupStyle)))
@@ -345,6 +373,9 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <summary>
+    /// Announces that a plot item intends to use bar-size positioning.
+    /// </summary>
     public static void IntendToApply(
       IPlotGroupStyleCollection externalGroups,
       IPlotGroupStyleCollection localGroups,

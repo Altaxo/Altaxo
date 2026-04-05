@@ -31,6 +31,9 @@ using System.Text;
 
 namespace Altaxo.Graph.Scales.Ticks
 {
+  /// <summary>
+  /// Represents angular tick spacing using radian values.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Graph.Scales.Ticks.AngularRadianTickSpacing}")]
   public class AngularRadianTickSpacing : AngularTickSpacing
   {
@@ -39,12 +42,14 @@ namespace Altaxo.Graph.Scales.Ticks
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AngularRadianTickSpacing), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         info.AddBaseValueEmbedded(obj, typeof(AngularTickSpacing));
         var s = (AngularRadianTickSpacing)obj;
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
        var s = (AngularRadianTickSpacing?)o ?? new AngularRadianTickSpacing();
@@ -55,25 +60,35 @@ namespace Altaxo.Graph.Scales.Ticks
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AngularRadianTickSpacing"/> class.
+    /// </summary>
     public AngularRadianTickSpacing()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AngularRadianTickSpacing"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public AngularRadianTickSpacing(AngularRadianTickSpacing from)
       : base(from) // everything is done here, since CopyFrom is virtual!
     {
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new AngularRadianTickSpacing(this);
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
     }
 
+    /// <inheritdoc />
     public override bool UseDegree
     {
       get { return false; }

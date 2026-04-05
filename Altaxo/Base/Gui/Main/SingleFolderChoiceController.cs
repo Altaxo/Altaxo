@@ -35,15 +35,21 @@ namespace Altaxo.Gui.Main
   #region SingleColumnChoice document
 
   /// <summary>
-  /// Summary description for SingleColumnChoice.
+  /// Represents the document model for choosing a single project folder.
   /// </summary>
   public class SingleFolderChoice
   {
+    /// <summary>
+    /// Gets or sets the selected folder.
+    /// </summary>
     public ProjectFolder SelectedFolder { get; set; }
   }
 
   #endregion SingleColumnChoice document
 
+  /// <summary>
+  /// Controller for choosing a single folder.
+  /// </summary>
   [UserControllerForObject(typeof(SingleFolderChoice))]
   [ExpectedTypeOfView(typeof(ISingleTreeViewItemChoiceView))]
   public class SingleColumnChoiceController : IMVCANController
@@ -62,6 +68,7 @@ namespace Altaxo.Gui.Main
     private ProjectFolder _selectedFolder = null;
     private NGTreeNode _rootNode = new NGTreeNode();
 
+    /// <inheritdoc />
     public bool InitializeDocument(params object[] args)
     {
       if (args is null || 0 == args.Length || !(args[0] is SingleFolderChoice))
@@ -72,11 +79,16 @@ namespace Altaxo.Gui.Main
       return true;
     }
 
+    /// <inheritdoc />
     public UseDocument UseDocumentCopy
     {
       set { }
     }
 
+    /// <summary>
+    /// Initializes the controller.
+    /// </summary>
+    /// <param name="initData">If set to <see langword="true"/>, model data are loaded into the view model.</param>
     public void Initialize(bool initData)
     {
       if (initData)
@@ -106,6 +118,10 @@ namespace Altaxo.Gui.Main
       }
     }
 
+    /// <summary>
+    /// Adds all table-folder nodes to the supplied tree node.
+    /// </summary>
+    /// <param name="tableCollectionNode">The tree node representing the root collection.</param>
     public static void AddAllTableNodes(NGTreeNode tableCollectionNode)
     {
       // Create a dictionary of folders to TreeNodes relation
@@ -121,6 +137,12 @@ namespace Altaxo.Gui.Main
       }
     }
 
+    /// <summary>
+    /// Finds the tree node that represents the specified folder.
+    /// </summary>
+    /// <param name="tableCollectionNode">The root node to search.</param>
+    /// <param name="table">The folder to find.</param>
+    /// <returns>The matching node, or <see langword="null"/> if none was found.</returns>
     public static NGTreeNode FindFolderNode(NGTreeNode tableCollectionNode, ProjectFolder table)
     {
       NGTreeNode result = null;
@@ -151,6 +173,10 @@ namespace Altaxo.Gui.Main
       return null;
     }
 
+    /// <summary>
+    /// Handles selection changes in the view.
+    /// </summary>
+    /// <param name="node">The newly selected node.</param>
     public void EhSelectionChanged(NGTreeNode node)
     {
       if (node.Tag is ProjectFolder)
@@ -163,6 +189,7 @@ namespace Altaxo.Gui.Main
 
     #region IMVCController Members
 
+    /// <inheritdoc />
     public object ViewObject
     {
       get
@@ -187,6 +214,7 @@ namespace Altaxo.Gui.Main
       }
     }
 
+    /// <inheritdoc />
     public object ModelObject
     {
       get
@@ -195,6 +223,7 @@ namespace Altaxo.Gui.Main
       }
     }
 
+    /// <inheritdoc />
     public void Dispose()
     {
     }
@@ -203,6 +232,7 @@ namespace Altaxo.Gui.Main
 
     #region IApplyController Members
 
+    /// <inheritdoc />
     public bool Apply(bool disposeController)
     {
       if (_selectedFolder is not null)
@@ -219,8 +249,9 @@ namespace Altaxo.Gui.Main
     /// </summary>
     /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
     /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    ///   <c>True</c> if the revert operation was successful; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
     /// </returns>
+    /// <inheritdoc />
     public bool Revert(bool disposeController)
     {
       return false;

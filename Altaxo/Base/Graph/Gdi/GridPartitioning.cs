@@ -34,6 +34,9 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Graph
 {
+  /// <summary>
+  /// Represents a two-dimensional grid partitioning used to place child layers.
+  /// </summary>
   public class GridPartitioning
     :
     Main.SuspendableDocumentNodeWithSetOfEventArgs,
@@ -81,12 +84,19 @@ namespace Altaxo.Graph
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GridPartitioning"/> class.
+    /// </summary>
     public GridPartitioning()
     {
       _xPartitioning = new LinearPartitioning() { ParentObject = this };
       _yPartitioning = new LinearPartitioning() { ParentObject = this };
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GridPartitioning"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public GridPartitioning(GridPartitioning from)
     {
       _xPartitioning = new LinearPartitioning() { ParentObject = this };
@@ -94,6 +104,7 @@ namespace Altaxo.Graph
       CopyFrom(from);
     }
 
+    /// <inheritdoc />
     public bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -114,11 +125,16 @@ namespace Altaxo.Graph
       return false;
     }
 
+    /// <summary>
+    /// Creates a copy of this partitioning.
+    /// </summary>
+    /// <returns>The cloned instance.</returns>
     public object Clone()
     {
       return new GridPartitioning(this);
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_xPartitioning is not null)
@@ -127,12 +143,30 @@ namespace Altaxo.Graph
         yield return new Main.DocumentNodeAndName(_yPartitioning, () => _yPartitioning = null!, "YPartitioning");
     }
 
+    /// <summary>
+    /// Gets the partitioning in x-direction.
+    /// </summary>
     public LinearPartitioning XPartitioning { get { return _xPartitioning; } }
 
+    /// <summary>
+    /// Gets the partitioning in y-direction.
+    /// </summary>
     public LinearPartitioning YPartitioning { get { return _yPartitioning; } }
 
+    /// <summary>
+    /// Gets a value indicating whether the partitioning contains no rows and columns.
+    /// </summary>
     public bool IsEmpty { get { return _xPartitioning.Count == 0 && _yPartitioning.Count == 0; } }
 
+    /// <summary>
+    /// Gets the rectangle of a grid tile for the specified cell and span.
+    /// </summary>
+    /// <param name="column">The starting column index.</param>
+    /// <param name="row">The starting row index.</param>
+    /// <param name="columnSpan">The column span.</param>
+    /// <param name="rowSpan">The row span.</param>
+    /// <param name="totalSize">The total size of the grid area.</param>
+    /// <returns>The rectangle of the requested tile.</returns>
     public RectangleD2D GetTileRectangle(double column, double row, double columnSpan, double rowSpan, PointD2D totalSize)
     {
       _xPartitioning.GetAbsolutePositionAndSizeFromGridIndexAndSpan(totalSize.X, column, columnSpan, out var xstart, out var xsize);

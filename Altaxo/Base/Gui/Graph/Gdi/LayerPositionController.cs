@@ -29,12 +29,15 @@ using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Graph.Gdi
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="LayerPositionController"/>.
+  /// </summary>
   public interface ILayerPositionView : IDataContextAwareView
   {
   }
 
   /// <summary>
-  /// Summary description for LayerPositionController.
+  /// Controller for editing the position of a 2D layer.
   /// </summary>
   [ExpectedTypeOfView(typeof(ILayerPositionView))]
   public class LayerPositionController : MVCANDControllerEditOriginalDocBase<IItemLocation, ILayerPositionView>
@@ -44,8 +47,12 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private Dictionary<Type, IItemLocation> _instances;
 
+    /// <summary>
+    /// Indicates whether the edited position belongs to the root layer.
+    /// </summary>
     protected bool _isRootLayerPosition = false;
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_subController, () => _subController = null);
@@ -55,6 +62,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private bool _UseDirectPositioning;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether direct positioning is used.
+    /// </summary>
     public bool UseDirectPositioning
     {
       get => _UseDirectPositioning;
@@ -70,6 +80,9 @@ namespace Altaxo.Gui.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether grid positioning is used.
+    /// </summary>
     public bool UseGridPositioning
     {
       get => !UseDirectPositioning;
@@ -77,11 +90,17 @@ namespace Altaxo.Gui.Graph.Gdi
     }
 
 
+    /// <summary>
+    /// Gets a value indicating whether the positioning choice is visible.
+    /// </summary>
     public bool IsPositioningChoiceVisible
     {
       get => !IsRootLayerPosition;
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the edited layer is the root layer.
+    /// </summary>
     public bool IsRootLayerPosition
     {
       get
@@ -92,6 +111,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private IMVCANController _subController;
 
+    /// <summary>
+    /// Gets or sets the controller for the selected positioning mode.
+    /// </summary>
     public IMVCANController SubController
     {
       get => _subController;
@@ -109,6 +131,7 @@ namespace Altaxo.Gui.Graph.Gdi
 
     #endregion
 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       _layer = null;
@@ -117,6 +140,7 @@ namespace Altaxo.Gui.Graph.Gdi
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc />
     public override bool InitializeDocument(params object[] args)
     {
       if (args.Length < 2)
@@ -128,6 +152,7 @@ namespace Altaxo.Gui.Graph.Gdi
       return base.InitializeDocument(args);
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -147,6 +172,7 @@ namespace Altaxo.Gui.Graph.Gdi
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if(false==_subController.Apply(disposeController))

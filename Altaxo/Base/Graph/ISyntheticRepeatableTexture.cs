@@ -29,17 +29,20 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Graph
 {
+  /// <summary>
+  /// Represents a synthetic repeatable texture.
+  /// </summary>
   public interface ISyntheticRepeatableTexture
   {
     /// <summary>
-    /// Gets an image of the texture. The image dimensions (pixels in x and y direction) are calculated using the provided <paramref name=" maxEffectiveResolutionDpi">maximum effective resolution.</paramref>.
+    /// Gets an image of the texture. The image dimensions (pixels in x and y direction) are calculated using the provided <paramref name="maxEffectiveResolutionDpi"/>.
     /// </summary>
     /// <param name="maxEffectiveResolutionDpi">Effective resolution used for later drawing of this image. The higher the resolution, the more pixels are allocated for the bitmap.</param>
     /// <returns>The image of the texture.</returns>
     System.IO.Stream GetContentStream(double maxEffectiveResolutionDpi);
 
     /// <summary>
-    /// Physical size of both sides of the texture in points (1 point = 1/72 inch).
+    /// Gets the physical size of both sides of the texture in points (1 point = 1/72 inch).
     /// </summary>
     VectorD2D Size { get; }
   }

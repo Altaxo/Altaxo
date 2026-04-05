@@ -32,14 +32,21 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Analysis.Statistics
 {
+  /// <summary>
+  /// Defines the view contract for histogram creation.
+  /// </summary>
   public interface IHistogramCreationView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="HistogramCreationInformation"/>.
+  /// </summary>
   [UserControllerForObject(typeof(HistogramCreationInformation))]
   [ExpectedTypeOfView(typeof(IHistogramCreationView))]
   public class HistogramCreationController : MVCANControllerEditOriginalDocBase<HistogramCreationInformation, IHistogramCreationView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       if (_binningController is not null)
@@ -50,6 +57,9 @@ namespace Altaxo.Gui.Analysis.Statistics
 
     private ObservableCollection<string> _errors;
 
+    /// <summary>
+    /// Gets or sets the current error messages.
+    /// </summary>
     public ObservableCollection<string> Errors
     {
       get => _errors;
@@ -65,6 +75,9 @@ namespace Altaxo.Gui.Analysis.Statistics
 
     private ObservableCollection<string> _warnings;
 
+    /// <summary>
+    /// Gets or sets the current warning messages.
+    /// </summary>
     public ObservableCollection<string> Warnings
     {
       get => _warnings;
@@ -81,6 +94,9 @@ namespace Altaxo.Gui.Analysis.Statistics
 
     private double _numberOfValuesOriginal;
 
+    /// <summary>
+    /// Gets or sets the original number of values.
+    /// </summary>
     public double NumberOfValuesOriginal
     {
       get => _numberOfValuesOriginal;
@@ -95,6 +111,9 @@ namespace Altaxo.Gui.Analysis.Statistics
     }
     private double _numberOfValuesFiltered;
 
+    /// <summary>
+    /// Gets or sets the filtered number of values.
+    /// </summary>
     public double NumberOfValuesFiltered
     {
       get => _numberOfValuesFiltered;
@@ -109,6 +128,9 @@ namespace Altaxo.Gui.Analysis.Statistics
     }
     private double _numberOfNaNValues;
 
+    /// <summary>
+    /// Gets or sets the number of NaN values.
+    /// </summary>
     public double NumberOfNaNValues
     {
       get => _numberOfNaNValues;
@@ -123,6 +145,9 @@ namespace Altaxo.Gui.Analysis.Statistics
     }
     private double _numberOfInfiniteValues;
 
+    /// <summary>
+    /// Gets or sets the number of infinite values.
+    /// </summary>
     public double NumberOfInfiniteValues
     {
       get => _numberOfInfiniteValues;
@@ -137,6 +162,9 @@ namespace Altaxo.Gui.Analysis.Statistics
     }
     private double _minimumValue;
 
+    /// <summary>
+    /// Gets or sets the minimum value.
+    /// </summary>
     public double MinimumValue
     {
       get => _minimumValue;
@@ -151,6 +179,9 @@ namespace Altaxo.Gui.Analysis.Statistics
     }
     private double _maximumValue;
 
+    /// <summary>
+    /// Gets or sets the maximum value.
+    /// </summary>
     public double MaximumValue
     {
       get => _maximumValue;
@@ -164,6 +195,9 @@ namespace Altaxo.Gui.Analysis.Statistics
       }
     }
     private bool _ignoreNaNValues;
+    /// <summary>
+    /// Gets or sets a value indicating whether NaN values are ignored.
+    /// </summary>
     public bool IgnoreNaNValues
     {
       get => _ignoreNaNValues;
@@ -178,6 +212,9 @@ namespace Altaxo.Gui.Analysis.Statistics
     }
     private bool _ignoreInfiniteValues;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether infinite values are ignored.
+    /// </summary>
     public bool IgnoreInfiniteValues
     {
       get => _ignoreInfiniteValues;
@@ -192,6 +229,9 @@ namespace Altaxo.Gui.Analysis.Statistics
     }
     private bool _ignoreValuesBelowLowerBoundary;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether values below the lower boundary are ignored.
+    /// </summary>
     public bool IgnoreValuesBelowLowerBoundary
     {
       get => _ignoreValuesBelowLowerBoundary;
@@ -206,6 +246,9 @@ namespace Altaxo.Gui.Analysis.Statistics
     }
     private bool _isLowerBoundaryInclusive;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the lower boundary is inclusive.
+    /// </summary>
     public bool IsLowerBoundaryInclusive
     {
       get => _isLowerBoundaryInclusive;
@@ -220,6 +263,9 @@ namespace Altaxo.Gui.Analysis.Statistics
     }
     private double _lowerBoundary;
 
+    /// <summary>
+    /// Gets or sets the lower boundary.
+    /// </summary>
     public double LowerBoundary
     {
       get => _lowerBoundary;
@@ -234,6 +280,9 @@ namespace Altaxo.Gui.Analysis.Statistics
     }
     private bool _ignoreValuesAboveUpperBoundary;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether values above the upper boundary are ignored.
+    /// </summary>
     public bool IgnoreValuesAboveUpperBoundary
     {
       get => _ignoreValuesAboveUpperBoundary;
@@ -248,6 +297,9 @@ namespace Altaxo.Gui.Analysis.Statistics
     }
     private bool _isUpperBoundaryInclusive;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the upper boundary is inclusive.
+    /// </summary>
     public bool IsUpperBoundaryInclusive
     {
       get => _isUpperBoundaryInclusive;
@@ -262,6 +314,9 @@ namespace Altaxo.Gui.Analysis.Statistics
     }
     private double _upperBoundary;
 
+    /// <summary>
+    /// Gets or sets the upper boundary.
+    /// </summary>
     public double UpperBoundary
     {
       get => _upperBoundary;
@@ -276,6 +331,9 @@ namespace Altaxo.Gui.Analysis.Statistics
     }
     private bool _useAutomaticBinning;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether automatic binning is used.
+    /// </summary>
     public bool UseAutomaticBinning
     {
       get => _useAutomaticBinning;
@@ -291,6 +349,9 @@ namespace Altaxo.Gui.Analysis.Statistics
     }
     private ItemsController<Type> _binningTypes;
 
+    /// <summary>
+    /// Gets or sets the available binning types.
+    /// </summary>
     public ItemsController<Type> BinningTypes
     {
       get => _binningTypes;
@@ -307,6 +368,9 @@ namespace Altaxo.Gui.Analysis.Statistics
 
     private IMVCANController _binningController;
 
+    /// <summary>
+    /// Gets or sets the controller for the selected binning settings.
+    /// </summary>
     public IMVCANController BinningController
     {
       get => _binningController;
@@ -325,6 +389,7 @@ namespace Altaxo.Gui.Analysis.Statistics
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -363,6 +428,7 @@ namespace Altaxo.Gui.Analysis.Statistics
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc.CreationOptions.IgnoreNaN = IgnoreNaNValues;

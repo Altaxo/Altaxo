@@ -29,14 +29,21 @@ using Altaxo.Science.Spectroscopy.BaselineEstimation;
 
 namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
 {
+  /// <summary>
+  /// View interface for SSProb baseline estimation settings.
+  /// </summary>
   public interface ISSProbView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="SSProbBase"/>.
+  /// </summary>
   [UserControllerForObject(typeof(SSProbBase))]
   [ExpectedTypeOfView(typeof(ISSProbView))]
   public class SSProbController : MVCANControllerEditImmutableDocBase<SSProbBase, ISSProbView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -46,6 +53,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
 
     private double _smoothnessValue;
 
+    /// <summary>
+    /// Gets or sets the smoothness value.
+    /// </summary>
     public double SmoothnessValue
     {
       get => _smoothnessValue;
@@ -59,6 +69,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
       }
     }
 
+    /// <summary>
+    /// Gets or sets how the smoothness is specified.
+    /// </summary>
     public SmoothnessSpecification SmoothnessSpecificiedBy
     {
       get => field;
@@ -75,6 +88,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the smoothness is specified by the number of features.
+    /// </summary>
     public bool IsSpecifiedNumberOfFeatures
     {
       get => SmoothnessSpecificiedBy == SmoothnessSpecification.ByNumberOfFeatures;
@@ -85,6 +101,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the smoothness is specified by the number of points.
+    /// </summary>
     public bool IsSpecifiedNumberOfPoints
     {
       get => SmoothnessSpecificiedBy == SmoothnessSpecification.ByNumberOfPoints;
@@ -94,6 +113,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
           SmoothnessSpecificiedBy = SmoothnessSpecification.ByNumberOfPoints;
       }
     }
+    /// <summary>
+    /// Gets or sets a value indicating whether the smoothness is specified by the X span.
+    /// </summary>
     public bool IsSpecifiedXSpan
     {
       get => SmoothnessSpecificiedBy == SmoothnessSpecification.ByXSpan;
@@ -107,6 +129,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -119,6 +142,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       try

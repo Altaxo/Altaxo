@@ -29,14 +29,21 @@ using Altaxo.Data.Selections;
 namespace Altaxo.Gui.Data.Selections
 {
 
+  /// <summary>
+  /// Provides the view contract for <see cref="PeriodicRowIndexSegmentsController"/>.
+  /// </summary>
   public interface IPeriodicRowIndexSegmentsView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for the <see cref="PeriodicRowIndexSegments"/> row selection.
+  /// </summary>
   [UserControllerForObject(typeof(PeriodicRowIndexSegments), 100)]
   [ExpectedTypeOfView(typeof(IPeriodicRowIndexSegmentsView))]
   public class PeriodicRowIndexSegmentsController : MVCANControllerEditImmutableDocBase<PeriodicRowIndexSegments, IPeriodicRowIndexSegmentsView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -46,6 +53,9 @@ namespace Altaxo.Gui.Data.Selections
 
     private int _startIndex;
 
+    /// <summary>
+    /// Gets or sets the start index.
+    /// </summary>
     public int StartIndex
     {
       get => _startIndex;
@@ -61,6 +71,9 @@ namespace Altaxo.Gui.Data.Selections
 
     private int _lengthOfPeriod;
 
+    /// <summary>
+    /// Gets or sets the period length.
+    /// </summary>
     public int LengthOfPeriod
     {
       get => _lengthOfPeriod;
@@ -76,6 +89,9 @@ namespace Altaxo.Gui.Data.Selections
 
     private int _numberOfItemsPerPeriod;
 
+    /// <summary>
+    /// Gets or sets the number of selected items per period.
+    /// </summary>
     public int NumberOfItemsPerPeriod
     {
       get => _numberOfItemsPerPeriod;
@@ -93,6 +109,7 @@ namespace Altaxo.Gui.Data.Selections
     #endregion
 
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -105,6 +122,7 @@ namespace Altaxo.Gui.Data.Selections
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       int start = StartIndex;

@@ -31,6 +31,9 @@ using Altaxo.Science.Thermorheology.MasterCurves;
 
 namespace Altaxo.Gui.Science.Thermorheology
 {
+  /// <summary>
+  /// Partial implementation of <see cref="MasterCurveDataController"/> for node management.
+  /// </summary>
   public partial class MasterCurveDataController : MVCANControllerEditCopyOfDocBase<MasterCurveData, IMasterCurveDataView>
   {
     private List<SelectableListNodeList> _dataNodes = [];
@@ -111,7 +114,7 @@ namespace Altaxo.Gui.Science.Thermorheology
     }
 
     /// <summary>
-    /// Appends and curve item to the Gui list.
+    /// Appends a curve item to the GUI list.
     /// </summary>
     /// <param name="curves">The curves to add.</param>
     /// <param name="groupNumber">The group number to which to append.</param>
@@ -143,7 +146,7 @@ namespace Altaxo.Gui.Science.Thermorheology
     }
 
     /// <summary>
-    /// Appends and curve item to the Gui list.
+    /// Appends a curve item to the GUI list.
     /// </summary>
     /// <param name="curves">The curves to add.</param>
     /// <param name="groupNumber">The group number to which to append.</param>
@@ -218,6 +221,9 @@ namespace Altaxo.Gui.Science.Thermorheology
       }
     }
 
+    /// <summary>
+    /// Moves the selected plot items up.
+    /// </summary>
     public void PlotItems_MoveUpSelected()
     {
       var sublist = DataItems.Items;
@@ -225,6 +231,9 @@ namespace Altaxo.Gui.Science.Thermorheology
       StartTaskUpdateAllGuiNodesWithProperties();
     }
 
+    /// <summary>
+    /// Moves the selected plot items down.
+    /// </summary>
     public void PlotItems_MoveDownSelected()
     {
       var sublist = DataItems.Items;

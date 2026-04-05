@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -28,16 +28,25 @@ using System.Collections.Generic;
 
 namespace Altaxo.Gui.Common.BasicTypes
 {
+  /// <summary>
+  /// Defines the view contract for editing string values.
+  /// </summary>
   public interface IStringValueView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for string values.
+  /// </summary>
   [UserControllerForObject(typeof(string), 100)]
   [ExpectedTypeOfView(typeof(IStringValueView))]
   public class StringValueController : MVCANDControllerEditImmutableDocBase<string, IStringValueView>
   {
     #region Bindings
 
+    /// <summary>
+    /// Gets or sets the string value.
+    /// </summary>
     public string Value
     {
       get
@@ -57,21 +66,30 @@ namespace Altaxo.Gui.Common.BasicTypes
 
     #endregion
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StringValueController"/> class.
+    /// </summary>
     public StringValueController()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StringValueController"/> class.
+    /// </summary>
+    /// <param name="value">The initial value.</param>
     public StringValueController(string value)
     {
       _doc = _originalDoc = value;
       Initialize(true);
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;

@@ -33,16 +33,23 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Gdi
 {
+  /// <summary>
+  /// View contract for editing embedded object rendering options.
+  /// </summary>
   public interface IEmbeddedObjectRenderingOptionsView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for editing <see cref="EmbeddedObjectRenderingOptions"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IEmbeddedObjectRenderingOptionsView))]
   [UserControllerForObject(typeof(EmbeddedObjectRenderingOptions))]
   public class EmbeddedObjectRenderingOptionsController : MVCANControllerEditOriginalDocBase<EmbeddedObjectRenderingOptions, IEmbeddedObjectRenderingOptionsView>
   {
     private static readonly int[] Resolutions = new int[] { 75, 150, 300, 400, 600, 1000, 1200, 1600, 2000, 2400, 4800 };
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -52,6 +59,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private ItemsController<double> _sourceDpi;
 
+    /// <summary>
+    /// Gets or sets the selectable source DPI values.
+    /// </summary>
     public ItemsController<double> SourceDpi
     {
       get => _sourceDpi;
@@ -67,6 +77,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private string _sourceDpiText;
 
+    /// <summary>
+    /// Gets or sets the source DPI as text.
+    /// </summary>
     public string SourceDpiText
     {
       get => _sourceDpiText;
@@ -81,10 +94,16 @@ namespace Altaxo.Gui.Graph.Gdi
     }
 
 
+    /// <summary>
+    /// Gets the unit environment for the output scaling factor.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment OutputScalingEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _outputScaling;
 
+    /// <summary>
+    /// Gets or sets the output scaling.
+    /// </summary>
     public DimensionfulQuantity OutputScaling
     {
       get => _outputScaling;
@@ -100,6 +119,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private NamedColor _backgroundColor;
 
+    /// <summary>
+    /// Gets or sets the background color used for formats without alpha support.
+    /// </summary>
     public NamedColor BackgroundColor
     {
       get => _backgroundColor;
@@ -115,6 +137,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private BrushX _backgroundBrush;
 
+    /// <summary>
+    /// Gets or sets the background brush.
+    /// </summary>
     public BrushX BackgroundBrush
     {
       get => _backgroundBrush;
@@ -131,6 +156,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private bool _renderEnhancedMetafile;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether enhanced metafiles are rendered.
+    /// </summary>
     public bool RenderEnhancedMetafile
     {
       get => _renderEnhancedMetafile;
@@ -147,6 +175,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private bool _renderEnhancedMetafileAsVectorFormat;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether enhanced metafiles are rendered as vector format.
+    /// </summary>
     public bool RenderEnhancedMetafileAsVectorFormat
     {
       get => _renderEnhancedMetafileAsVectorFormat;
@@ -163,6 +194,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private bool _renderWindowsMetafile;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether Windows metafiles are rendered.
+    /// </summary>
     public bool RenderWindowsMetafile
     {
       get => _renderWindowsMetafile;
@@ -179,6 +213,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private bool _renderBitmap;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether bitmaps are rendered.
+    /// </summary>
     public bool RenderBitmap
     {
       get => _renderBitmap;
@@ -195,6 +232,7 @@ namespace Altaxo.Gui.Graph.Gdi
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -238,6 +276,7 @@ namespace Altaxo.Gui.Graph.Gdi
 
     #region IApplyController Members
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
 

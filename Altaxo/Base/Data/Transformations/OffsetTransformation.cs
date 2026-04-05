@@ -27,6 +27,9 @@ using System;
 
 namespace Altaxo.Data.Transformations
 {
+  /// <summary>
+  /// Adds a constant offset to a value.
+  /// </summary>
   public class OffsetTransformation : IDoubleToDoubleTransformation
   {
     /// <summary>
@@ -64,20 +67,30 @@ namespace Altaxo.Data.Transformations
     /// <inheritdoc/>
     public Type OutputValueType { get { return typeof(double); } }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OffsetTransformation"/> class with zero offset.
+    /// </summary>
     public OffsetTransformation()
     {
       _offset = 0;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OffsetTransformation"/> class.
+    /// </summary>
+    /// <param name="offset">The offset to add.</param>
     public OffsetTransformation(double offset)
     {
       _offset = offset;
     }
 
+    /// <inheritdoc/>
     public AltaxoVariant Transform(AltaxoVariant value)
     {
       return _offset + value;
     }
+
+    /// <inheritdoc/>
     public double Transform(double value)
     {
       return _offset + value;
@@ -90,16 +103,19 @@ namespace Altaxo.Data.Transformations
     }
 
 
+    /// <inheritdoc/>
     public string RepresentationAsFunction
     {
       get { return GetRepresentationAsFunction("x"); }
     }
 
+    /// <inheritdoc/>
     public string GetRepresentationAsFunction(string arg)
     {
       return Altaxo.Serialization.GUIConversion.ToString(_offset) + " + " + arg;
     }
 
+    /// <inheritdoc/>
     public string RepresentationAsOperator
     {
       get
@@ -108,6 +124,7 @@ namespace Altaxo.Data.Transformations
       }
     }
 
+    /// <inheritdoc/>
     public IVariantToVariantTransformation BackTransformation
     {
       get
@@ -116,6 +133,9 @@ namespace Altaxo.Data.Transformations
       }
     }
 
+    /// <summary>
+    /// Gets the offset added by the transformation.
+    /// </summary>
     public double Offset
     {
       get
@@ -124,6 +144,11 @@ namespace Altaxo.Data.Transformations
       }
     }
 
+    /// <summary>
+    /// Returns a transformation with the specified offset.
+    /// </summary>
+    /// <param name="offset">The offset to apply.</param>
+    /// <returns>The current instance if the offset is unchanged; otherwise, a new instance.</returns>
     public OffsetTransformation WithOffset(double offset)
     {
       if (offset == _offset)
@@ -132,16 +157,19 @@ namespace Altaxo.Data.Transformations
         return new OffsetTransformation(offset);
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       return obj is OffsetTransformation from ? _offset == from._offset : false;
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return GetType().GetHashCode() + 17 * _offset.GetHashCode();
     }
 
+    /// <inheritdoc/>
     public bool IsEditable { get { return true; } }
   }
 }

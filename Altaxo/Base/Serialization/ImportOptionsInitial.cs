@@ -1,10 +1,14 @@
 ﻿namespace Altaxo.Serialization
 {
   /// <summary>
-  /// Initial import options for data files, that are used when making an initial import. 
+  /// Initial import options for data files that are used during an initial import.
   /// </summary>
   public record ImportOptionsInitial
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ImportOptionsInitial"/> record.
+    /// </summary>
+    /// <param name="importOptions">The import options object.</param>
     public ImportOptionsInitial(object importOptions)
     {
       ImportOptions = importOptions ?? throw new System.ArgumentNullException(nameof(importOptions));

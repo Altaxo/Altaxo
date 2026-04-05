@@ -32,6 +32,9 @@ using Altaxo.DataConnection;
 
 namespace Altaxo.Gui.DataConnection
 {
+  /// <summary>
+  /// View contract for editing OLE DB data queries.
+  /// </summary>
   public interface IOleDbDataQueryView
   {
     /// <summary>Sets the cursor inside the control to the wait cursor.</summary>
@@ -47,8 +50,16 @@ namespace Altaxo.Gui.DataConnection
     /// <param name="currentValue">Current value of the connection string.</param>
     void SetConnectionListSource(SelectableListNodeList list, string currentValue);
 
+    /// <summary>
+    /// Updates the visual status of the current connection string.
+    /// </summary>
+    /// <param name="isValidConnectionSource">If set to <c>true</c>, the current connection string is valid.</param>
     void SetConnectionStatus(bool isValidConnectionSource);
 
+    /// <summary>
+    /// Sets the available query-mode tab items.
+    /// </summary>
+    /// <param name="tabItems">The selectable tab items.</param>
     void SetTabItemsSource(SelectableListNodeList tabItems);
 
     /// <summary>Fires when the currently selected tab page changed.</summary>
@@ -66,6 +77,9 @@ namespace Altaxo.Gui.DataConnection
     event Action<string> ConnectionStringChangedByUser;
   }
 
+  /// <summary>
+  /// Controller for editing and validating <see cref="OleDbDataQuery"/> instances.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IOleDbDataQueryView))]
   [UserControllerForObject(typeof(OleDbDataQuery))]
   public class OleDbDataQueryController : MVCANControllerEditImmutableDocBase<OleDbDataQuery, IOleDbDataQueryView>
@@ -111,6 +125,7 @@ namespace Altaxo.Gui.DataConnection
     private ArbitrarySqlQueryController _arbitrarySqlQueryController;
     private IMVCAController _currentlySelectedController;
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_entireTableQueryController, () => _entireTableQueryController = null);
@@ -119,6 +134,7 @@ namespace Altaxo.Gui.DataConnection
       yield return new ControllerAndSetNullMethod(null, () => _currentlySelectedController = null);
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -190,6 +206,9 @@ namespace Altaxo.Gui.DataConnection
       }
     }
 
+    /// <summary>
+    /// Gets or sets the validated connection string used by the query controllers.
+    /// </summary>
     public AltaxoOleDbConnectionString ConnectionString
     {
       get
@@ -360,6 +379,7 @@ namespace Altaxo.Gui.DataConnection
       }
     }
 
+    /// <inheritdoc />
     protected override void AttachView()
     {
       _view.SelectedTabChanged += EhSelectedTabChanged;
@@ -368,6 +388,7 @@ namespace Altaxo.Gui.DataConnection
       _view.ConnectionStringChangedByUser += EhConnectionStringChangedByUser;
     }
 
+    /// <inheritdoc />
     protected override void DetachView()
     {
       _view.SelectedTabChanged -= EhSelectedTabChanged;
@@ -439,6 +460,7 @@ namespace Altaxo.Gui.DataConnection
       Current.Gui.ErrorMessageBox(msg);
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       bool result = false;

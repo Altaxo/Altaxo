@@ -27,7 +27,9 @@ using Altaxo.Calc.Regression.Multivariate;
 
 namespace Altaxo.Gui.Analysis.Multivariate
 {
-
+  /// <summary>
+  /// Defines the view contract for editing dimension-reduction output options.
+  /// </summary>
   public interface IDimensionReductionOutputOptionsView : IDataContextAwareView
   {
   }
@@ -39,7 +41,7 @@ namespace Altaxo.Gui.Analysis.Multivariate
   [UserControllerForObject(typeof(DimensionReductionOutputOptions))]
   public class DimensionReductionOutputOptionsController : MVCANControllerEditImmutableDocBase<DimensionReductionOutputOptions, IDimensionReductionOutputOptionsView>
   {
-
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -48,6 +50,9 @@ namespace Altaxo.Gui.Analysis.Multivariate
     #region Bindings
 
 
+    /// <summary>
+    /// Gets or sets a value indicating whether auxiliary ensemble-preprocessing data are included.
+    /// </summary>
     public bool IncludeEnsemblePreprocessingAuxiliaryData
     {
       get => field;
@@ -62,6 +67,9 @@ namespace Altaxo.Gui.Analysis.Multivariate
     }
 
 
+    /// <summary>
+    /// Gets or sets a value indicating whether preprocessed spectra are included.
+    /// </summary>
     public bool IncludePreprocessedSpectra
     {
       get => field;
@@ -79,6 +87,7 @@ namespace Altaxo.Gui.Analysis.Multivariate
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -89,9 +98,7 @@ namespace Altaxo.Gui.Analysis.Multivariate
         IncludePreprocessedSpectra = _doc.IncludePreprocessedSpectra;
       }
     }
-
-
-
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
 

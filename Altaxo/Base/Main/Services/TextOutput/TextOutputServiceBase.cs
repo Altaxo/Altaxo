@@ -31,7 +31,7 @@ using System.Text;
 namespace Altaxo.Main.Services
 {
   /// <summary>
-  /// Base class implementing <see cref="Altaxo.Main.Services.ITextOutputService"/>. You only need to overwrite <see cref="InternalWrite(string)"/>
+  /// Base class implementing <see cref="Altaxo.Main.Services.ITextOutputService"/>. You only need to override <see cref="InternalWrite(string)"/>.
   /// </summary>
   /// <seealso cref="Altaxo.Main.Services.ITextOutputService" />
   public abstract class TextOutputServiceBase : ITextOutputService
@@ -40,38 +40,49 @@ namespace Altaxo.Main.Services
 
     #region IOutputService Members
 
+    /// <summary>
+    /// Writes the specified text to the underlying output.
+    /// </summary>
+    /// <param name="text">The text to write.</param>
     protected abstract void InternalWrite(string text);
 
+    /// <inheritdoc/>
     public void Write(string text)
     {
       InternalWrite(text);
     }
 
+    /// <inheritdoc/>
     public void WriteLine()
     {
       InternalWrite(System.Environment.NewLine);
     }
 
+    /// <inheritdoc/>
     public void WriteLine(string text)
     {
       InternalWrite(text + System.Environment.NewLine);
     }
 
+    /// <inheritdoc/>
     public void WriteLine(string format, params object[] args)
     {
       InternalWrite(string.Format(format, args) + System.Environment.NewLine);
     }
 
+    /// <inheritdoc/>
     public void WriteLine(System.IFormatProvider provider, string format, params object[] args)
     {
       InternalWrite(string.Format(provider, format, args) + System.Environment.NewLine);
     }
 
+    /// <inheritdoc/>
     public void Write(string format, params object[] args)
     {
       InternalWrite(string.Format(format, args));
     }
 
+    /// <inheritdoc/>
     public void Write(System.IFormatProvider provider, string format, params object[] args)
     {
       InternalWrite(string.Format(provider, format, args));

@@ -58,10 +58,28 @@ namespace Altaxo.Graph
     /// <returns>The value, or the default value. An exception will be thrown if the specified key does not exist or a value with another type than the specified type is stored under the key.</returns>
     T GetValueOrDefault<T>(object key);
 
+    /// <summary>
+    /// Pushes a hierarchical value onto the named stack.
+    /// </summary>
+    /// <typeparam name="T">The value type.</typeparam>
+    /// <param name="name">The stack name.</param>
+    /// <param name="value">The value to push.</param>
     void PushHierarchicalValue<T>(string name, T value);
 
+    /// <summary>
+    /// Pops a hierarchical value from the named stack.
+    /// </summary>
+    /// <typeparam name="T">The value type.</typeparam>
+    /// <param name="name">The stack name.</param>
+    /// <returns>The popped value.</returns>
     T PopHierarchicalValue<T>(string name);
 
+    /// <summary>
+    /// Gets the current hierarchical value from the named stack.
+    /// </summary>
+    /// <typeparam name="T">The value type.</typeparam>
+    /// <param name="name">The stack name.</param>
+    /// <returns>The current hierarchical value.</returns>
     T GetHierarchicalValue<T>(string name);
   }
 }

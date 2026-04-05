@@ -27,6 +27,9 @@ using System;
 
 namespace Altaxo.Serialization.Clipboard
 {
+  /// <summary>
+  /// Defines options controlling how project items are pasted from the clipboard.
+  /// </summary>
   public class ProjectItemsPasteOptions : ICloneable
   {
     /// <summary>If true, references will be relocated in the same way as the project items will be relocated.</summary>
@@ -39,6 +42,7 @@ namespace Altaxo.Serialization.Clipboard
     /// </summary>
     public bool? TryToKeepInternalReferences { get; set; }
 
+    /// <inheritdoc/>
     public object Clone()
     {
       return MemberwiseClone();

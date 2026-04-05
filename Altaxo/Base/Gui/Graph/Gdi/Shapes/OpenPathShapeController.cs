@@ -34,10 +34,16 @@ using Altaxo.Gui.Common.Drawing;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="OpenPathShapeController"/>.
+  /// </summary>
   public interface IOpenPathShapeView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="OpenPathShapeBase"/>.
+  /// </summary>
   [UserControllerForObject(typeof(OpenPathShapeBase), 101)]
   [ExpectedTypeOfView(typeof(IOpenPathShapeView))]
   public class OpenPathShapeController : MVCANControllerEditOriginalDocBase<OpenPathShapeBase, IOpenPathShapeView>
@@ -45,6 +51,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     private IMVCANController _locationController;
     private PenAllPropertiesController _penController;
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_locationController, () => _locationController = null);
@@ -52,12 +59,19 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     }
 
     #region Bindings
+    /// <summary>
+    /// Gets the pen controller view model.
+    /// </summary>
     public object PenController => _penController;
 
+    /// <summary>
+    /// Gets the location view object.
+    /// </summary>
     public object LocationView => _locationController?.ViewObject;
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -72,6 +86,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     #region IApplyController Members
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       try
@@ -90,7 +105,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       }
       catch (Exception ex)
       {
-        Current.Gui.ErrorMessageBox(string.Format("An exception has occured during applying of your settings. The message is: {0}", ex.Message));
+        Current.Gui.ErrorMessageBox(string.Format("An exception has occurred while applying your settings. The message is: {0}", ex.Message));
         return false;
       }
 

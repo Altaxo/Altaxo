@@ -48,12 +48,27 @@ namespace Altaxo.Graph.Graph3D.Axis
     IRoutedPropertyReceiver,
     Main.ICopyFrom
   {
+    /// <summary>
+    /// Stores the font used for labels.
+    /// </summary>
     protected FontX3D _font;
 
+    /// <summary>
+    /// Stores the alignment of the label along the x-axis.
+    /// </summary>
     protected Alignment _alignmentX;
+    /// <summary>
+    /// Stores the alignment of the label along the y-axis.
+    /// </summary>
     protected Alignment _alignmentY;
+    /// <summary>
+    /// Stores the alignment of the label along the z-axis.
+    /// </summary>
     protected Alignment _alignmentZ;
 
+    /// <summary>
+    /// Stores the material used to draw the label.
+    /// </summary>
     protected IMaterial _brush;
 
     /// <summary>The x offset in EM units.</summary>
@@ -77,8 +92,14 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <summary>The style for the background.</summary>
     protected Background.IBackgroundStyle? _backgroundStyle;
 
+    /// <summary>
+    /// Indicates whether the label alignment is determined automatically.
+    /// </summary>
     protected bool _automaticRotationShift;
 
+    /// <summary>
+    /// Stores the labels that should be suppressed.
+    /// </summary>
     protected SuppressedTicks _suppressedLabels;
 
     private ILabelFormatting _labelFormatting;
@@ -104,9 +125,13 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <summary>
     /// 2015-11-14 initial version
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="AxisLabelStyle"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisLabelStyle), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (AxisLabelStyle)obj;
@@ -137,6 +162,7 @@ namespace Altaxo.Graph.Graph3D.Axis
         info.AddNullableEnum("LabelSide", s._labelSide);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         AxisLabelStyle s = o is not null ? (AxisLabelStyle)o : new AxisLabelStyle(info);
@@ -167,14 +193,18 @@ namespace Altaxo.Graph.Graph3D.Axis
     }
 
     /// <summary>
-    /// Finale measures after deserialization.
+    /// Performs final steps after deserialization.
     /// </summary>
-    /// <param name="obj">Not used.</param>
+    /// <param name="obj">The deserialized object.</param>
     public virtual void OnDeserialization(object obj)
     {
     }
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AxisLabelStyle"/> class during deserialization.
+    /// </summary>
+    /// <param name="info">The deserialization info.</param>
     protected AxisLabelStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
     }
@@ -184,11 +214,20 @@ namespace Altaxo.Graph.Graph3D.Axis
     #endregion Serialization
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AxisLabelStyle"/> class.
+    /// </summary>
+    /// <param name="context">The property context.</param>
     public AxisLabelStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
       : this(null, context)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AxisLabelStyle"/> class.
+    /// </summary>
+    /// <param name="labelSide">The preferred label side.</param>
+    /// <param name="context">The property context.</param>
     public AxisLabelStyle(CSAxisSide? labelSide, Altaxo.Main.Properties.IReadOnlyPropertyBag? context)
     {
       context ??= PropertyExtensions.GetPropertyContextOfProject();
@@ -206,11 +245,19 @@ namespace Altaxo.Graph.Graph3D.Axis
       _labelFormatting = new LabelFormatting.NumericLabelFormattingAuto() { ParentObject = this };
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AxisLabelStyle"/> class by copying from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public AxisLabelStyle(AxisLabelStyle from)
     {
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies the values from another <see cref="AxisLabelStyle"/> instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     [MemberNotNull(nameof(_font), nameof(_brush), nameof(_suppressedLabels), nameof(_labelFormatting))]
     public void CopyFrom(AxisLabelStyle from)
     {
@@ -249,6 +296,7 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <inheritdoc/>
     public virtual bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -262,11 +310,16 @@ namespace Altaxo.Graph.Graph3D.Axis
       return false;
     }
 
+    /// <summary>
+    /// Creates a copy of this axis-label style.
+    /// </summary>
+    /// <returns>A cloned axis-label style.</returns>
     public virtual object Clone()
     {
       return new AxisLabelStyle(this);
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_labelFormatting is not null)
@@ -365,6 +418,9 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Gets the collection of suppressed labels.
+    /// </summary>
     public SuppressedTicks SuppressedLabels
     {
       get
@@ -373,6 +429,9 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets the label-formatting strategy.
+    /// </summary>
     public ILabelFormatting LabelFormat
     {
       get
@@ -411,6 +470,9 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets the prefix text inserted before each formatted label.
+    /// </summary>
     public string PrefixText
     {
       get
@@ -423,6 +485,9 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets the suffix text appended to each formatted label.
+    /// </summary>
     public string SuffixText
     {
       get
@@ -528,6 +593,9 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether label alignment is determined automatically.
+    /// </summary>
     public bool AutomaticAlignment
     {
       get
@@ -598,6 +666,9 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     #endregion Properties
 
+    /// <summary>
+    /// Gets the identifier of the axis this label style currently belongs to.
+    /// </summary>
     public CSLineID AxisStyleID
     {
       get
@@ -608,6 +679,9 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets the cached axis information used while painting and hit testing.
+    /// </summary>
     public CSAxisInformation? CachedAxisInformation
     {
       get
@@ -620,6 +694,14 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Adjusts the given rectangle according to the specified alignments.
+    /// </summary>
+    /// <param name="r">The rectangle to adjust.</param>
+    /// <param name="alignmentX">The x-axis alignment.</param>
+    /// <param name="alignmentY">The y-axis alignment.</param>
+    /// <param name="alignmentZ">The z-axis alignment.</param>
+    /// <returns>The adjusted rectangle.</returns>
     public RectangleD3D AdjustRectangle(RectangleD3D r, Alignment alignmentX, Alignment alignmentY, Alignment alignmentZ)
     {
       double rX = r.X;
@@ -820,6 +902,11 @@ namespace Altaxo.Graph.Graph3D.Axis
       _cachedLabelOutlines = labelOutlines;
     }
 
+    /// <summary>
+    /// Performs hit testing against the cached label outlines.
+    /// </summary>
+    /// <param name="hitData">The hit-test data.</param>
+    /// <returns>The matching hit-test object, or <see langword="null"/>.</returns>
     public IHitTestObject? HitTest(HitTestPointData hitData)
     {
       var labelOutlines = _cachedLabelOutlines;
@@ -837,6 +924,11 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     #region IRoutedPropertyReceiver Members
 
+    /// <summary>
+    /// Returns routed properties that can be edited through the property-routing mechanism.
+    /// </summary>
+    /// <param name="propertyName">The requested property name.</param>
+    /// <returns>The routed property descriptors.</returns>
     public IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName)
     {
       switch (propertyName)

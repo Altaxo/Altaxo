@@ -31,18 +31,25 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Worksheet
 {
+  /// <summary>
+  /// View interface for the PLS predict-value controller.
+  /// </summary>
   public interface IPLSPredictValueView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Combines a calibration table with a destination table.
+  /// </summary>
   public record CalibrationAndDestinationTable(DataTable CalibrationTable, DataTable DestinationTable);
 
   /// <summary>
-  /// Summary description for PLSPredictValueController.
+  /// Controller for selecting a PLS calibration table and a destination table.
   /// </summary>
   [ExpectedTypeOfView(typeof(IPLSPredictValueView))]
   public class PLSPredictValueController : MVCANControllerEditImmutableDocBase<CalibrationAndDestinationTable, IPLSPredictValueView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -52,6 +59,9 @@ namespace Altaxo.Gui.Worksheet
 
     private ItemsController<DataTable> _calibrationTables;
 
+    /// <summary>
+    /// Gets or sets the selectable calibration tables.
+    /// </summary>
     public ItemsController<DataTable> CalibrationTables
     {
       get => _calibrationTables;
@@ -68,6 +78,9 @@ namespace Altaxo.Gui.Worksheet
 
     private ItemsController<DataTable?> _destinationTables;
 
+    /// <summary>
+    /// Gets or sets the selectable destination tables.
+    /// </summary>
     public ItemsController<DataTable?> DestinationTables
     {
       get => _destinationTables;
@@ -83,6 +96,7 @@ namespace Altaxo.Gui.Worksheet
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -113,6 +127,7 @@ namespace Altaxo.Gui.Worksheet
       return result;
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (CalibrationTables.SelectedValue is null)

@@ -29,13 +29,12 @@ using System.Linq;
 namespace Altaxo.Data
 {
   /// <summary>
-  /// Holds both the data (see <see cref="DataTableMultipleColumnProxy"/>) and the options (see <see cref="ConvertXYVToMatrixOptions"/>) to perform
-  /// the decomposition of a table containing a column with a cycling variable.
+  /// Holds both the data (see <see cref="DataTableMultipleColumnProxy"/>) and the options (see <see cref="ConvertXYVToMatrixOptions"/>) needed to convert X-Y-value data into a matrix.
   /// </summary>
   public class ConvertXYVToMatrixDataAndOptions : ICloneable
   {
     /// <summary>
-    /// Holds the data nessessary for decomposing of a table containing a column with a cycling variable.
+    /// Holds the data necessary for converting a table containing X-Y-value data into a matrix.
     /// </summary>
     /// <value>
     /// The data.
@@ -43,7 +42,7 @@ namespace Altaxo.Data
     public DataTableMultipleColumnProxy Data { get; private set; }
 
     /// <summary>
-    /// Holds the options nessessary for decomposing of a table containing a column with a cycling variable.
+    /// Holds the options necessary for converting a table containing X-Y-value data into a matrix.
     /// </summary>
     /// <value>
     /// The options.
@@ -60,6 +59,11 @@ namespace Altaxo.Data
     /// <summary>Identifies all columns which participate in the <see cref="DataTableMultipleColumnProxy"/> instance.</summary>
     public const string ColumnV = "V-Column";
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConvertXYVToMatrixDataAndOptions"/> class.
+    /// </summary>
+    /// <param name="data">The selected source data.</param>
+    /// <param name="options">The conversion options.</param>
     public ConvertXYVToMatrixDataAndOptions(DataTableMultipleColumnProxy data, ConvertXYVToMatrixOptions options)
     {
       Data = data;

@@ -50,6 +50,9 @@ namespace Altaxo.Text
     /// </summary>
     private double _bodyTextFontSize = 15;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether HTML escaping is enabled.
+    /// </summary>
     public bool EnableHtmlEscape { get; set; } = true;
 
     /// <summary>
@@ -68,6 +71,7 @@ namespace Altaxo.Text
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(HtmlExportOptions), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (HtmlExportOptions)obj;
@@ -91,6 +95,12 @@ namespace Altaxo.Text
         info.AddValue("RenumerateFigures", s.RenumerateFigures);
       }
 
+      /// <summary>
+      /// Deserializes into an existing <see cref="HtmlExportOptions"/> instance.
+      /// </summary>
+      /// <param name="s">The target instance.</param>
+      /// <param name="info">The deserialization info.</param>
+      /// <param name="parent">The parent object.</param>
       public void Deserialize(HtmlExportOptions s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         s.SplitLevel = info.GetInt32("SplitLevel");
@@ -113,6 +123,7 @@ namespace Altaxo.Text
           s.RenumerateFigures = info.GetBoolean("RenumerateFigures");
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (HtmlExportOptions?)o ?? new HtmlExportOptions();
@@ -123,6 +134,7 @@ namespace Altaxo.Text
 
     #endregion "Serialization"
 
+    /// <inheritdoc />
     public object Clone()
     {
       return MemberwiseClone();
@@ -272,7 +284,7 @@ namespace Altaxo.Text
     /// Given the folder where the markdown file resides, this gets the full folder name of the image folder.
     /// </summary>
     /// <param name="markdownPathName">Name of the folder of the markdown file.</param>
-    /// <returns>Full folder name of the image folder</returns>
+    /// <returns>Full folder name of the image folder.</returns>
     private string GetImagePath(string markdownPathName)
     {
       return Path.Combine(markdownPathName, ImageFolderName);
@@ -281,7 +293,7 @@ namespace Altaxo.Text
     /// <summary>
     /// Gets the output file by showing a save file dialog.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A tuple containing the dialog result and the selected output file name.</returns>
     public static (bool dialogResult, string outputFileName) ShowGetOutputFileDialog()
     {
       var dlg = new SaveFileOptions();
@@ -294,6 +306,9 @@ namespace Altaxo.Text
       return (dialogResult, dlg.FileName);
     }
 
+    /// <summary>
+    /// The property key for <see cref="HtmlExportOptions"/>.
+    /// </summary>
     public static readonly Main.Properties.PropertyKey<HtmlExportOptions> PropertyKeyHtmlExportOptions =
     new Main.Properties.PropertyKey<HtmlExportOptions>(
     "1A21999E-6F58-4B59-B635-2F839AABF080",

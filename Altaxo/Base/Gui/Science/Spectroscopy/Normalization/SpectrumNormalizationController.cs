@@ -34,14 +34,21 @@ using Altaxo.Science.Spectroscopy.Normalization;
 
 namespace Altaxo.Gui.Science.Spectroscopy.Normalization
 {
+  /// <summary>
+  /// View interface for selecting a normalization method.
+  /// </summary>
   public interface INormalizationView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="INormalization"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(INormalizationView))]
 
   public class NormalizationController : MVCANControllerEditImmutableDocBase<INormalization, INormalizationView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_subController, () => SubController = null);
@@ -51,6 +58,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Normalization
 
     private ItemsController<Type> _availableMethods;
 
+    /// <summary>
+    /// Gets or sets the available normalization methods.
+    /// </summary>
     public ItemsController<Type> AvailableMethods
     {
       get => _availableMethods;
@@ -67,6 +77,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Normalization
 
     private IMVCANController? _subController;
 
+    /// <summary>
+    /// Gets or sets the controller for the selected normalization method.
+    /// </summary>
     public IMVCANController? SubController
     {
       get => _subController;
@@ -85,6 +98,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Normalization
     #endregion
 
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -125,6 +139,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Normalization
       CreateSubController();
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if(SubController is not null)
@@ -141,8 +156,12 @@ namespace Altaxo.Gui.Science.Spectroscopy.Normalization
 
     #region TypeSorter
 
+    /// <summary>
+    /// Sorts normalization types for display.
+    /// </summary>
     class TypeSorter : IComparer<Type>
     {
+      /// <inheritdoc/>
       public int Compare(Type x, Type y)
       {
         var xn = x.Name.EndsWith("None");

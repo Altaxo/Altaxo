@@ -31,23 +31,33 @@ namespace Altaxo.Gui.Graph.Plot.Data
 {
   #region Interfaces
 
+  /// <summary>
+  /// Provides the view contract for <see cref="FunctionPlotDataController"/>.
+  /// </summary>
   public interface IFunctionPlotDataView : IDataContextAwareView
   {
   }
 
   #endregion Interfaces
 
+  /// <summary>
+  /// Controller for editing <see cref="XYFunctionPlotData"/>.
+  /// </summary>
   [UserControllerForObject(typeof(XYFunctionPlotData))]
   [ExpectedTypeOfView(typeof(IFunctionPlotDataView))]
   public class FunctionPlotDataController : MVCANControllerEditOriginalDocBase<XYFunctionPlotData, IFunctionPlotDataView>
   {
     private IMVCAController _functionController;
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_functionController, () => _functionController = null);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FunctionPlotDataController"/> class.
+    /// </summary>
     public FunctionPlotDataController()
     {
       CmdEdit = new RelayCommand(EhView_EditText);
@@ -55,10 +65,16 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the command that opens the function editor.
+    /// </summary>
     public ICommand CmdEdit { get; }
 
     private string _functionText;
 
+    /// <summary>
+    /// Gets or sets the function text.
+    /// </summary>
     public string FunctionText
     {
       get => _functionText;
@@ -74,6 +90,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     private bool _functionTextIsEditable;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the function text can be edited.
+    /// </summary>
     public bool FunctionTextIsEditable
     {
       get => _functionTextIsEditable;
@@ -89,6 +108,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -112,6 +132,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);

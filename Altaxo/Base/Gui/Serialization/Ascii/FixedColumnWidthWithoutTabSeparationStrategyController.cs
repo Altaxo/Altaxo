@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -31,15 +31,21 @@ using Altaxo.Serialization.Ascii;
 
 namespace Altaxo.Gui.Serialization.Ascii
 {
+  /// <summary>
+  /// View interface for editing <see cref="FixedColumnWidthWithoutTabSeparationStrategy"/>.
+  /// </summary>
   public interface IFixedColumnWidthWithoutTabSeparationStrategyView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for editing <see cref="FixedColumnWidthWithoutTabSeparationStrategy"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IFixedColumnWidthWithoutTabSeparationStrategyView))]
   [UserControllerForObject(typeof(FixedColumnWidthWithoutTabSeparationStrategy))]
   public class FixedColumnWidthWithoutTabSeparationStrategyController : MVCANControllerEditImmutableDocBase<FixedColumnWidthWithoutTabSeparationStrategy, IFixedColumnWidthWithoutTabSeparationStrategyView>
   {
-
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -49,6 +55,9 @@ namespace Altaxo.Gui.Serialization.Ascii
 
     private ObservableCollection<Boxed<int>> _positions;
 
+    /// <summary>
+    /// Gets or sets the list of start positions.
+    /// </summary>
     public ObservableCollection<Boxed<int>> Positions
     {
       get => _positions;
@@ -65,6 +74,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 
     #endregion
 
+    /// <inheritdoc/>
     public override void Dispose(bool isDisposing)
     {
       _positions = null;
@@ -72,6 +82,7 @@ namespace Altaxo.Gui.Serialization.Ascii
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -82,6 +93,7 @@ namespace Altaxo.Gui.Serialization.Ascii
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       var resList = new List<int>(Boxed<int>.ToUnboxedItems(_positions));

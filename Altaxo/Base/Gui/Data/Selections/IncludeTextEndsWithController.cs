@@ -30,6 +30,9 @@ using Altaxo.Gui.Graph.Plot.Data;
 
 namespace Altaxo.Gui.Data.Selections
 {
+  /// <summary>
+  /// Controller for <see cref="IncludeTextEndsWith"/>.
+  /// </summary>
   [UserControllerForObject(typeof(IncludeTextEndsWith), 100)]
   [ExpectedTypeOfView(typeof(IIncludeSingleTextValueView))]
   public class IncludeTextEndsWithController : MVCANControllerEditCopyOfDocBase<IncludeTextEndsWith, IIncludeSingleTextValueView>, IDataColumnController
@@ -44,6 +47,7 @@ namespace Altaxo.Gui.Data.Selections
     /// </summary>
     private int _supposedGroupNumber;
 
+    /// <inheritdoc />
     public override bool InitializeDocument(params object[] args)
     {
       if (args.Length >= 2 && (args[1] is DataTable dt))
@@ -59,6 +63,9 @@ namespace Altaxo.Gui.Data.Selections
 
     private string _columnText;
 
+    /// <summary>
+    /// Gets or sets the display text for the selected column.
+    /// </summary>
     public string ColumnText
     {
       get => _columnText;
@@ -73,6 +80,9 @@ namespace Altaxo.Gui.Data.Selections
     }
     private string _columnToolTip;
 
+    /// <summary>
+    /// Gets or sets the tooltip for the selected column.
+    /// </summary>
     public string ColumnToolTip
     {
       get => _columnToolTip;
@@ -87,6 +97,9 @@ namespace Altaxo.Gui.Data.Selections
     }
     private int _columnStatus;
 
+    /// <summary>
+    /// Gets or sets the status code for the selected column.
+    /// </summary>
     public int ColumnStatus
     {
       get => _columnStatus;
@@ -101,6 +114,9 @@ namespace Altaxo.Gui.Data.Selections
     }
     private string _columnTransformationText;
 
+    /// <summary>
+    /// Gets or sets the transformation text shown for the selected column.
+    /// </summary>
     public string ColumnTransformationText
     {
       get => _columnTransformationText;
@@ -115,6 +131,9 @@ namespace Altaxo.Gui.Data.Selections
     }
     private string _columnTransformationToolTip;
 
+    /// <summary>
+    /// Gets or sets the tooltip for the selected column transformation.
+    /// </summary>
     public string ColumnTransformationToolTip
     {
       get => _columnTransformationToolTip;
@@ -129,6 +148,9 @@ namespace Altaxo.Gui.Data.Selections
     }
     private string _dataLabel;
 
+    /// <summary>
+    /// Gets or sets the label shown for the data entry.
+    /// </summary>
     public string DataLabel
     {
       get => _dataLabel;
@@ -143,6 +165,9 @@ namespace Altaxo.Gui.Data.Selections
     }
     private string _value;
 
+    /// <summary>
+    /// Gets or sets the text value to match.
+    /// </summary>
     public string Value
     {
       get => _value;
@@ -158,6 +183,9 @@ namespace Altaxo.Gui.Data.Selections
 
     private bool _ignoreCase;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether matching ignores character casing.
+    /// </summary>
     public bool IgnoreCase
     {
       get => _ignoreCase;
@@ -172,6 +200,9 @@ namespace Altaxo.Gui.Data.Selections
     }
     private string _actionString = "that is text:";
 
+    /// <summary>
+    /// Gets or sets the action text shown in the user interface.
+    /// </summary>
     public string ActionString
     {
       get => _actionString;
@@ -186,6 +217,9 @@ namespace Altaxo.Gui.Data.Selections
     }
     private string _valueToolTip = "Text value to include";
 
+    /// <summary>
+    /// Gets or sets the tooltip for the text value input.
+    /// </summary>
     public string ValueToolTip
     {
       get => _valueToolTip;
@@ -204,6 +238,7 @@ namespace Altaxo.Gui.Data.Selections
     #endregion
 
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -230,6 +265,7 @@ namespace Altaxo.Gui.Data.Selections
       ColumnTransformationToolTip = info.TransformationToolTip;
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       var column = _doc.Column;
@@ -253,6 +289,7 @@ namespace Altaxo.Gui.Data.Selections
       return ApplyEnd(true, disposeController);
     }
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;

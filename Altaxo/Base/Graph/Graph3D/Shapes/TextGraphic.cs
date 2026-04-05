@@ -45,10 +45,25 @@ namespace Altaxo.Graph.Graph3D.Shapes
   [Serializable]
   public partial class TextGraphic : GraphicBase, IRoutedPropertyReceiver
   {
+    /// <summary>
+    /// Stores the text including formatting codes.
+    /// </summary>
     protected string _text = string.Empty; // the text, which contains the formatting symbols
+    /// <summary>
+    /// Stores the font used for rendering.
+    /// </summary>
     protected FontX3D _font;
+    /// <summary>
+    /// Stores the material used to draw the text.
+    /// </summary>
     protected IMaterial _textBrush = Materials.GetSolidMaterial(NamedColors.Black);
+    /// <summary>
+    /// Stores the optional background style.
+    /// </summary>
     protected IBackgroundStyle? _background = null;
+    /// <summary>
+    /// Stores the line spacing factor.
+    /// </summary>
     protected double _lineSpacingFactor = 1.25f; // multiplicator for the line space, i.e. 1, 1.5 or 2
 
     #region Cached or temporary variables
@@ -57,14 +72,29 @@ namespace Altaxo.Graph.Graph3D.Shapes
     protected Dictionary<RectangleTransformedD3D, IGPlotItem> _cachedSymbolPositions = new Dictionary<RectangleTransformedD3D, IGPlotItem>();
 
     private StructuralGlyph? _rootNode;
+    /// <summary>
+    /// Indicates whether the parsed text structure is up to date.
+    /// </summary>
     protected bool _isStructureInSync = false; // true when the text was interpretet and the structure created
+    /// <summary>
+    /// Indicates whether all layout measurements are up to date.
+    /// </summary>
     protected bool _isMeasureInSync = false; // true when all items are measured
 
     /// <summary>The size of the text rectangle as is - i.e. without padding, background, etc.</summary>
     protected VectorD3D CachedTextSizeWithoutPadding { get { return _rootNode is not null ? new VectorD3D(_rootNode.SizeX, _rootNode.SizeY, _rootNode.SizeZ) : VectorD3D.Empty; } }
 
+    /// <summary>
+    /// Caches the text padding contributed by the background style.
+    /// </summary>
     protected Margin2D _cachedTextPadding;
+    /// <summary>
+    /// Caches the offset from the drawing origin to the unpadded text rectangle.
+    /// </summary>
     protected PointD3D _cachedTextOffset; // offset from the lower left corner of the background or drawing origin to the lower left corner of the unpadded text rectangle
+    /// <summary>
+    /// Caches the total text bounds including background margins.
+    /// </summary>
     protected RectangleD3D _cachedExtendedTextBounds; // the text bounds extended by some margin around it
 
     #endregion Cached or temporary variables
@@ -74,9 +104,13 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// <summary>
     /// 2015-09-11 initial version
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="TextGraphic"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextGraphic), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (TextGraphic)obj;
@@ -89,6 +123,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
         info.AddValue("LineSpacing", s._lineSpacingFactor);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (TextGraphic?)o ?? new TextGraphic(info);
@@ -122,6 +157,10 @@ namespace Altaxo.Graph.Graph3D.Shapes
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextGraphic"/> class from a property context.
+    /// </summary>
+    /// <param name="context">The property context.</param>
     public TextGraphic(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
       : base(new ItemLocationDirectAutoSize())
     {
@@ -132,6 +171,13 @@ namespace Altaxo.Graph.Graph3D.Shapes
       _textBrush = Materials.GetSolidMaterial(GraphDocument.GetDefaultForeColor(context));
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextGraphic"/> class.
+    /// </summary>
+    /// <param name="graphicPosition">The graphic position.</param>
+    /// <param name="text">The text content.</param>
+    /// <param name="textFont">The text font.</param>
+    /// <param name="textColor">The text color.</param>
     public TextGraphic(PointD3D graphicPosition, string text, FontX3D textFont, NamedColor textColor)
       : base(new ItemLocationDirectAutoSize())
     {
@@ -141,6 +187,10 @@ namespace Altaxo.Graph.Graph3D.Shapes
       Color = textColor;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextGraphic"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The text graphic to copy from.</param>
     public TextGraphic(TextGraphic from)
       : base(from) // all is done here, since CopyFrom is virtual!
     {
@@ -150,6 +200,11 @@ namespace Altaxo.Graph.Graph3D.Shapes
     #endregion Constructors
 
     #region Copying
+    /// <summary>
+    /// Copies values from another <see cref="TextGraphic"/> instance.
+    /// </summary>
+    /// <param name="from">The text graphic to copy from.</param>
+    /// <param name="withBaseMembers">If set to <c>true</c>, base members are copied as well.</param>
     [MemberNotNull(nameof(_font))]
     protected void CopyFrom(TextGraphic from, bool withBaseMembers)
     {
@@ -168,6 +223,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       _isMeasureInSync = false;
     }
 
+    /// <inheritdoc/>
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -189,6 +245,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
 
 
+    /// <inheritdoc/>
     public override object Clone()
     {
       return new TextGraphic(this);
@@ -202,6 +259,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
         yield return new Main.DocumentNodeAndName(_background, "Background");
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       return base.GetDocumentNodeChildrenWithName().Concat(GetMyDocumentNodeChildrenWithName());
@@ -209,6 +267,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     #region Background
 
+    /// <summary>
+    /// Measures the background layout for the current text content.
+    /// </summary>
     protected void MeasureBackground(IGraphicsContext3D g, double itemSizeX, double itemSizeY, double itemSizeZ)
     {
       var fontInfo = FontManager3D.Instance.GetFontInformation(_font);
@@ -249,6 +310,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets the background style.
+    /// </summary>
     public IBackgroundStyle? Background
     {
       get
@@ -268,6 +332,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
       }
     }
 
+    /// <summary>
+    /// Paints the configured background.
+    /// </summary>
     protected virtual void PaintBackground(IGraphicsContext3D g)
     {
       // Assumptions:
@@ -289,11 +356,13 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     #region Properties
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return string.Format("TextGraphics Text: <<{0}>>", _text);
     }
 
+    /// <inheritdoc/>
     public override bool AutoSize
     {
       get
@@ -302,6 +371,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets the font.
+    /// </summary>
     public FontX3D Font
     {
       get
@@ -321,11 +393,17 @@ namespace Altaxo.Graph.Graph3D.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the text is empty.
+    /// </summary>
     public bool Empty
     {
       get { return _text is null || _text.Length == 0; }
     }
 
+    /// <summary>
+    /// Gets or sets the text content.
+    /// </summary>
     public string Text
     {
       get
@@ -345,6 +423,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets the text color.
+    /// </summary>
     public NamedColor Color
     {
       get
@@ -364,6 +445,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets the material used to fill the text.
+    /// </summary>
     public IMaterial TextFillBrush
     {
       get
@@ -385,6 +469,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets the line-spacing factor.
+    /// </summary>
     public double LineSpacing
     {
       get
@@ -443,11 +530,18 @@ namespace Altaxo.Graph.Graph3D.Shapes
       _rootNode?.Draw(g, dc, x, y + _rootNode.ExtendBelowBaseline, z);
     }
 
+    /// <inheritdoc/>
     public override void Paint(IGraphicsContext3D g, Altaxo.Graph.IPaintContext paintContext)
     {
       Paint(g, paintContext, false);
     }
 
+    /// <summary>
+    /// Paints the text graphic.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="paintContext">The paint context.</param>
+    /// <param name="bForPreview">If set to <c>true</c>, paints in preview mode.</param>
     public void Paint(IGraphicsContext3D g, Altaxo.Graph.IPaintContext paintContext, bool bForPreview)
     {
       //_isStructureInSync = false;
@@ -513,9 +607,16 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     #region Hit testing and handling
 
+    /// <summary>
+    /// Gets or sets the editor callback for plot-item placeholders.
+    /// </summary>
     public static DoubleClickHandler? PlotItemEditorMethod;
+    /// <summary>
+    /// Gets or sets the editor callback for text graphics.
+    /// </summary>
     public static DoubleClickHandler? TextGraphicsEditorMethod;
 
+    /// <inheritdoc/>
     public override IHitTestObject? HitTest(HitTestPointData parentHitData)
     {
       //			HitTestPointData layerHitTestData = pageC.NewFromTranslationRotationScaleShear(Position.X, Position.Y, -Rotation, ScaleX, ScaleY, ShearX);
@@ -548,15 +649,20 @@ namespace Altaxo.Graph.Graph3D.Shapes
       BlackOut
     }
 
+    /// <summary>
+    /// Deserializes the deprecated <c>BackgroundStyle</c> enum.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Graph3D.Shapes.BackgroundStyle", 0)]
     public class BackgroundStyleXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotImplementedException("This class is deprecated and no longer supported to serialize");
         // info.SetNodeContent(obj.ToString());
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         string val = info.GetNodeContent();
@@ -568,6 +674,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     #region IRoutedPropertyReceiver Members
 
+    /// <inheritdoc/>
     public IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName)
     {
       switch (propertyName)

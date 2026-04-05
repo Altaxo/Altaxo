@@ -90,6 +90,9 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WaterfallTransform"/> class.
+    /// </summary>
     public WaterfallTransform()
     {
     }
@@ -108,6 +111,9 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       _yinc = from._yinc;
     }
 
+    /// <summary>
+    /// Gets or sets the x offset scale factor.
+    /// </summary>
     public double XScale
     {
       get
@@ -124,6 +130,9 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       }
     }
 
+    /// <summary>
+    /// Gets or sets the y offset scale factor.
+    /// </summary>
     public double YScale
     {
       get
@@ -139,6 +148,9 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether clipping against previous items is used.
+    /// </summary>
     public bool UseClipping
     {
       get
@@ -156,6 +168,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
     #region ICoordinateTransformingGroupStyle Members
 
+    /// <inheritdoc />
     public void MergeXBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll)
     {
       if (!(pb is NumericalBoundaries))
@@ -200,6 +213,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       }
     }
 
+    /// <inheritdoc />
     public void MergeYBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll)
     {
       if (!(pb is NumericalBoundaries))
@@ -261,6 +275,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       }
     }
 
+    /// <inheritdoc />
     public void PaintPreprocessing(System.Drawing.Graphics g, IPaintContext paintContext, IPlotArea layer, PlotItemCollection coll)
     {
       var paintData = new CachedPaintData
@@ -342,10 +357,12 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       }
     }
 
+    /// <inheritdoc />
     public void PaintPostprocessing()
     {
     }
 
+    /// <inheritdoc />
     public void PaintChild(System.Drawing.Graphics g, IPaintContext paintContext, IPlotArea layer, PlotItemCollection coll, int i)
     {
       CachedPaintData paintData = paintContext.GetValue<CachedPaintData>(this);
@@ -485,6 +502,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
     #region ICloneable Members
 
+    /// <inheritdoc />
     public object Clone()
     {
       return new WaterfallTransform(this);

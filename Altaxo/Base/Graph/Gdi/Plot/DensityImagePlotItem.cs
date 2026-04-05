@@ -51,7 +51,14 @@ namespace Altaxo.Graph.Gdi.Plot
     IXBoundsHolder,
     IYBoundsHolder
   {
+    /// <summary>
+    /// Stores the meshed column plot data used by this plot item.
+    /// </summary>
     protected XYZMeshedColumnPlotData _plotData;
+
+    /// <summary>
+    /// Stores the plot style used to render the density image.
+    /// </summary>
     protected DensityImagePlotStyle _plotStyle;
 
     #region Serialization
@@ -60,6 +67,7 @@ namespace Altaxo.Graph.Gdi.Plot
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DensityImagePlotItem), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DensityImagePlotItem)obj;
@@ -67,6 +75,7 @@ namespace Altaxo.Graph.Gdi.Plot
         info.AddValue("Style", s._plotStyle);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var pa = (XYZMeshedColumnPlotData)info.GetValue("Data", null);
@@ -88,6 +97,7 @@ namespace Altaxo.Graph.Gdi.Plot
 
     #endregion Serialization
 
+    /// <inheritdoc />
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_plotData is not null)
@@ -96,17 +106,31 @@ namespace Altaxo.Graph.Gdi.Plot
         yield return new Main.DocumentNodeAndName(_plotStyle, () => _plotStyle = null!, "Style");
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DensityImagePlotItem"/> class.
+    /// </summary>
+    /// <param name="pa">The plot data.</param>
+    /// <param name="ps">The plot style.</param>
     public DensityImagePlotItem(XYZMeshedColumnPlotData pa, DensityImagePlotStyle ps) 
     {
       ChildSetMember(ref _plotStyle, ps);
       ChildSetMember(ref _plotData, pa);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DensityImagePlotItem"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public DensityImagePlotItem(DensityImagePlotItem from)
     {
       CopyFrom(from, false);
     }
 
+    /// <summary>
+    /// Copies the state from another <see cref="DensityImagePlotItem"/> instance.
+    /// </summary>
+    /// <param name="from">The source instance.</param>
+    /// <param name="withBaseMembers">If set to <see langword="true"/>, base members are copied as well.</param>
     [MemberNotNull(nameof(_plotData), nameof(_plotStyle))]
     protected void CopyFrom(DensityImagePlotItem from, bool withBaseMembers)
     {
@@ -117,6 +141,7 @@ namespace Altaxo.Graph.Gdi.Plot
       ChildCopyToMember(ref _plotStyle, from._plotStyle);
     }
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -136,27 +161,36 @@ namespace Altaxo.Graph.Gdi.Plot
       }
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new DensityImagePlotItem(this);
     }
 
+    /// <summary>
+    /// Gets the plot data object.
+    /// </summary>
     public object Data
     {
       get { return _plotData; }
     }
 
+    /// <inheritdoc />
     public override Main.IDocumentLeafNode StyleObject
     {
       get { return _plotStyle; }
       set { Style = (DensityImagePlotStyle)value; }
     }
 
+    /// <inheritdoc />
     public override Main.IDocumentLeafNode DataObject
     {
       get { return _plotData; }
     }
 
+    /// <summary>
+    /// Gets or sets the density image plot style.
+    /// </summary>
     public DensityImagePlotStyle Style
     {
       get { return _plotStyle; }
@@ -172,21 +206,25 @@ namespace Altaxo.Graph.Gdi.Plot
       }
     }
 
+    /// <inheritdoc />
     public override string GetName(int level)
     {
       return _plotData.ToString();
     }
 
+    /// <inheritdoc />
     public override string GetName(string style)
     {
       return GetName(0);
     }
 
+    /// <inheritdoc />
     public override string ToString()
     {
       return GetName(int.MaxValue);
     }
 
+    /// <inheritdoc />
     public override void Paint(Graphics g, IPaintContext context, IPlotArea layer, IGPlotItem? previousPlotItem, IGPlotItem? nextPlotItem)
     {
       if (_plotStyle is not null)
@@ -212,6 +250,7 @@ namespace Altaxo.Graph.Gdi.Plot
       }
     }
 
+    /// <inheritdoc />
     protected override void OnChanged(EventArgs e)
     {
       if (e is PlotItemDataChangedEventArgs)
@@ -226,11 +265,13 @@ namespace Altaxo.Graph.Gdi.Plot
 
     #region IXBoundsHolder Members
 
+    /// <inheritdoc />
     public void SetXBoundsFromTemplate(IPhysicalBoundaries val)
     {
       _plotData.SetXBoundsFromTemplate(val);
     }
 
+    /// <inheritdoc />
     public void MergeXBoundsInto(IPhysicalBoundaries pb)
     {
       _plotData.MergeXBoundsInto(pb);
@@ -240,11 +281,13 @@ namespace Altaxo.Graph.Gdi.Plot
 
     #region IYBoundsHolder Members
 
+    /// <inheritdoc />
     public void SetYBoundsFromTemplate(IPhysicalBoundaries val)
     {
       _plotData.SetYBoundsFromTemplate(val);
     }
 
+    /// <inheritdoc />
     public void MergeYBoundsInto(IPhysicalBoundaries pb)
     {
       _plotData.MergeYBoundsInto(pb);
@@ -252,14 +295,17 @@ namespace Altaxo.Graph.Gdi.Plot
 
     #endregion IYBoundsHolder Members
 
+    /// <inheritdoc />
     public override void CollectStyles(PlotGroupStyleCollection styles)
     {
     }
 
+    /// <inheritdoc />
     public override void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, IPlotArea layer)
     {
     }
 
+    /// <inheritdoc />
     public override void ApplyGroupStyles(PlotGroupStyleCollection externalGroups)
     {
     }

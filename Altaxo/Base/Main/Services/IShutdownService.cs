@@ -32,12 +32,12 @@ namespace Altaxo.Main.Services
     /// Gets a value indicating whether the application is closing.
     /// </summary>
     /// <value>
-    ///   <c>true</c> if the application closing; otherwise, <c>false</c>.
+    ///   <c>true</c> if the application is closing; otherwise, <c>false</c>.
     /// </value>
     bool IsApplicationClosing { get; }
 
     /// <summary>
-    /// Attemps to close the IDE.
+    /// Attempts to close the IDE.
     /// </summary>
     /// <remarks>
     /// <para>This method:</para>
@@ -59,7 +59,7 @@ namespace Altaxo.Main.Services
 
     /// <summary>
     /// Occurs when the project was already closed and the rest of the shutdown procedure starts to happen. This should be implemented
-    /// as weak event in order to prevent garbage collection of item that subscribe to this event.
+    /// as a weak event in order to prevent garbage collection of items that subscribe to this event.
     /// </summary>
     event EventHandler? Closed;
 
@@ -88,6 +88,9 @@ namespace Altaxo.Main.Services
     /// <remarks>This property is thread-safe.</remarks>
     CancellationToken ShutdownToken { get; }
 
+    /// <summary>
+    /// Signals the shutdown cancellation token.
+    /// </summary>
     void SignalShutdownToken();
 
     /// <summary>
@@ -104,7 +107,7 @@ namespace Altaxo.Main.Services
     /// Adds a background task on which the application should wait on shutdown.
     ///
     /// Use this method for tasks that asynchronously write state to disk and should not be
-    /// interrupted by the applicaiton closing down.
+    /// interrupted by the application closing down.
     /// </summary>
     /// <remarks>This method is thread-safe.</remarks>
     void AddBackgroundTask(Task task);

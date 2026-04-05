@@ -28,7 +28,7 @@ using System;
 namespace Altaxo.Serialization
 {
   /// <summary>
-  /// This class is only intended to group some static functions for parsing of strings.
+  /// Provides helper methods for parsing date/time and time-span strings.
   /// </summary>
   public class DateTimeParsing
   {

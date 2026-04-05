@@ -30,6 +30,9 @@ using Altaxo.Main;
 
 namespace Altaxo.Data.Selections
 {
+  /// <summary>
+  /// Selects rows whose values in a specified column equal a single numeric value.
+  /// </summary>
   public class IncludeSingleNumericalValue : Main.SuspendableDocumentNodeWithEventArgs, IRowSelection
   {
     private AltaxoVariant _value;
@@ -62,6 +65,9 @@ namespace Altaxo.Data.Selections
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IncludeSingleNumericalValue"/> class.
+    /// </summary>
     public IncludeSingleNumericalValue()
     {
       _value = 0;
@@ -78,6 +84,7 @@ namespace Altaxo.Data.Selections
       ChildCloneToMember(ref _columnProxy, from._columnProxy);
     }
 
+    /// <inheritdoc />
     public object Clone()
     {
       return new IncludeSingleNumericalValue(this);
@@ -95,6 +102,11 @@ namespace Altaxo.Data.Selections
       ChildSetMember(ref _columnProxy, columnProxy);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IncludeSingleNumericalValue"/> class for the specified column and value.
+    /// </summary>
+    /// <param name="value">The value to match.</param>
+    /// <param name="column">The column to inspect.</param>
     public IncludeSingleNumericalValue(double value, IReadableColumn column)
     {
       _value = value;
@@ -150,6 +162,7 @@ namespace Altaxo.Data.Selections
       }
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_columnProxy is not null)
@@ -190,6 +203,9 @@ namespace Altaxo.Data.Selections
       }
     }
 
+    /// <summary>
+    /// Gets or sets the numeric value that selected rows must match.
+    /// </summary>
     public double Value
     {
       get

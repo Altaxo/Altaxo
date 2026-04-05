@@ -31,15 +31,31 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Main.Services
 {
+  /// <summary>
+  /// View interface for the output window.
+  /// </summary>
   public interface IOutputView
   {
+    /// <summary>
+    /// Sets the displayed text.
+    /// </summary>
+    /// <param name="text">The text.</param>
     void SetText(string text);
 
+    /// <summary>
+    /// Gets or sets a value indicating whether output logging is enabled.
+    /// </summary>
     bool IsEnabled { get; set; }
 
+    /// <summary>
+    /// Occurs when the enabled state changes.
+    /// </summary>
     event Action EnabledChanged;
   }
 
+  /// <summary>
+  /// Controller for the output pad.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IOutputView))]
   public class OutputController : IMVCController, ITextOutputService
   {
@@ -47,6 +63,10 @@ namespace Altaxo.Gui.Main.Services
     private bool _isLoggingEnabled = false; // always start with false, only the user can enable this service
     private StringBuilder _logText = new StringBuilder();
 
+    /// <summary>
+    /// Writes text internally if logging is enabled.
+    /// </summary>
+    /// <param name="text">The text.</param>
     public void InternalWrite(string text)
     {
       if (_isLoggingEnabled)
@@ -58,36 +78,43 @@ namespace Altaxo.Gui.Main.Services
       }
     }
 
+    /// <inheritdoc/>
     public void Write(string text)
     {
       InternalWrite(text);
     }
 
+    /// <inheritdoc/>
     public void WriteLine()
     {
       InternalWrite(System.Environment.NewLine);
     }
 
+    /// <inheritdoc/>
     public void WriteLine(string text)
     {
       InternalWrite(text + System.Environment.NewLine);
     }
 
+    /// <inheritdoc/>
     public void WriteLine(string format, params object[] args)
     {
       InternalWrite(string.Format(format, args) + System.Environment.NewLine);
     }
 
+    /// <inheritdoc/>
     public void WriteLine(System.IFormatProvider provider, string format, params object[] args)
     {
       InternalWrite(string.Format(provider, format, args) + System.Environment.NewLine);
     }
 
+    /// <inheritdoc/>
     public void Write(string format, params object[] args)
     {
       InternalWrite(string.Format(format, args));
     }
 
+    /// <inheritdoc/>
     public void Write(System.IFormatProvider provider, string format, params object[] args)
     {
       InternalWrite(string.Format(provider, format, args));
@@ -107,6 +134,7 @@ namespace Altaxo.Gui.Main.Services
         _isLoggingEnabled = view.IsEnabled;
     }
 
+    /// <inheritdoc/>
     public object? ViewObject
     {
       get
@@ -132,6 +160,7 @@ namespace Altaxo.Gui.Main.Services
 
     #region IMVCController Members
 
+    /// <inheritdoc/>
     public object ModelObject
     {
       get
@@ -144,6 +173,11 @@ namespace Altaxo.Gui.Main.Services
 
     #region IXmlSerializable Members
 
+    /// <summary>
+    /// Loads the controller state from XML.
+    /// </summary>
+    /// <param name="tr">The XML reader.</param>
+    /// <param name="localName">The local element name.</param>
     public void Load(System.Xml.XmlTextReader tr, string localName)
     {
       tr.ReadStartElement(localName);
@@ -153,6 +187,11 @@ namespace Altaxo.Gui.Main.Services
       tr.ReadEndElement();
     }
 
+    /// <summary>
+    /// Saves the controller state to XML.
+    /// </summary>
+    /// <param name="tw">The XML writer.</param>
+    /// <param name="localName">The local element name.</param>
     public void Save(System.Xml.XmlTextWriter tw, string localName)
     {
       tw.WriteStartElement(localName);
@@ -163,6 +202,7 @@ namespace Altaxo.Gui.Main.Services
       tw.WriteEndElement(); // localName
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
       throw new NotImplementedException();

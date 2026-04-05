@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -31,6 +31,9 @@ using Altaxo.Gui.Graph.Scales.Ticks;
 #nullable disable
 namespace Altaxo.Gui.Graph.Gdi.Axis
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="AxisStyleController"/>.
+  /// </summary>
   public interface IAxisStyleView : IDataContextAwareView
   {
   }
@@ -43,9 +46,13 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
   [UserControllerForObject(typeof(AxisStyle))]
   public class AxisStyleController : MVCANDControllerEditOriginalDocBase<AxisStyle, IAxisStyleView>
   {
+    /// <summary>
+    /// Gets the axis information associated with the edited axis.
+    /// </summary>
     public CSAxisInformation AxisInformation { get; private set; }
     private Altaxo.Main.Properties.IReadOnlyPropertyBag _context;
 
+    /// <inheritdoc />
     public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_axisLineStyleController, () => _axisLineStyleController = null);
@@ -61,6 +68,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     private IMVCANController _axisLineStyleController;
 
+    /// <summary>
+    /// Gets the controller used to edit the axis line style.
+    /// </summary>
     public IMVCANController AxisLineStyleController
     {
       get
@@ -75,6 +85,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     }
 
 
+    /// <summary>
+    /// Gets the view object for the axis line style controller.
+    /// </summary>
     public object? AxisLineStyleView
     {
       get
@@ -93,6 +106,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the axis line is shown.
+    /// </summary>
     public bool ShowAxisLine
     {
       get => _doc.AxisLineStyle is not null;
@@ -124,6 +140,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     private ConditionalDocumentController<AxisLabelStyle> _majorLabelCondController;
 
+    /// <summary>
+    /// Gets the controller for the major label style.
+    /// </summary>
     public ConditionalDocumentController<AxisLabelStyle> MajorLabelCondController
     {
       get
@@ -142,6 +161,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether major labels are shown.
+    /// </summary>
     public bool ShowMajorLabels
     {
       get => _doc.MajorLabelStyle is not null;
@@ -166,6 +188,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
         }
       }
     }
+    /// <summary>
+    /// Gets the conditional view for the major label style.
+    /// </summary>
     public IConditionalDocumentView MajorLabelCondView
     {
       get
@@ -185,6 +210,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     private ConditionalDocumentController<AxisLabelStyle> _minorLabelCondController;
 
+    /// <summary>
+    /// Gets the controller for the minor label style.
+    /// </summary>
     public ConditionalDocumentController<AxisLabelStyle> MinorLabelCondController
     {
       get
@@ -204,6 +232,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether minor labels are shown.
+    /// </summary>
     public bool ShowMinorLabels
     {
       get => _doc.MinorLabelStyle is not null;
@@ -229,6 +260,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Gets the conditional view for the minor label style.
+    /// </summary>
     public IConditionalDocumentView MinorLabelCondView
     {
       get
@@ -248,6 +282,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     private string _axisTitle;
 
+    /// <summary>
+    /// Gets or sets the axis title.
+    /// </summary>
     public string AxisTitle
     {
       get => _axisTitle;
@@ -265,6 +302,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     #region Custom Tick Spacing
 
+    /// <summary>
+    /// Gets or sets a value indicating whether a custom tick spacing editor is shown.
+    /// </summary>
     public bool ShowCustomTickSpacing
     {
       get => _doc.TickSpacing is not null;
@@ -300,14 +340,21 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       }
       OnPropertyChanged(nameof(CustomTickSpacingView));
     }
+    /// <summary>
+    /// Gets or sets the t ic ks pa ci ng co nt ro ll er.
+    /// </summary>
     protected TickSpacingController _tickSpacingController;
 
+    /// <summary>
+    /// Gets the view object for the custom tick spacing controller.
+    /// </summary>
     public object? CustomTickSpacingView => _tickSpacingController?.ViewObject;
 
     #endregion Custom Tick Spacing
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -320,6 +367,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       // read axis title

@@ -45,6 +45,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
         _parent = b;
       }
 
+      /// <inheritdoc/>
       public override Bin this[int index]
       {
         get
@@ -57,6 +58,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
         }
       }
 
+      /// <inheritdoc/>
       public override int Count
       {
         get { return _parent._binCounts.Length; }
@@ -65,12 +67,34 @@ namespace Altaxo.Analysis.Statistics.Histograms
 
     #endregion Inner classes
 
+    /// <summary>
+    /// The bin offset.
+    /// </summary>
     protected double _binOffset = double.NaN;
+
+    /// <summary>
+    /// The bin width.
+    /// </summary>
     protected double _binWidth = double.NaN;
+
+    /// <summary>
+    /// The number of bins.
+    /// </summary>
     protected int _numberOfBins = 0;
+
+    /// <summary>
+    /// The lower index of the first populated bin.
+    /// </summary>
     protected int _binLowerIndex;
+
+    /// <summary>
+    /// The number of items in each bin.
+    /// </summary>
     protected int[] _binCounts = new int[0];
     private BinList _binListProxy;
+    /// <summary>
+    /// The total number of data items in the ensemble.
+    /// </summary>
     protected int _ensembleDataCount = 0;
 
     /// <summary>
@@ -258,6 +282,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
 
     #endregion IBinningDefinition
 
+    /// <inheritdoc />
     public object Clone()
     {
       return MemberwiseClone();

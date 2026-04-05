@@ -31,21 +31,38 @@ namespace Altaxo.Main.Services
 {
   public partial class ExternalDrivenBackgroundMonitor
   {
+    /// <summary>
+    /// Reports progress to an <see cref="ExternalDrivenBackgroundMonitor"/> and supports hierarchical subtasks.
+    /// </summary>
     public class Reporter : IProgressReporter
     {
+      /// <summary>
+      /// Gets the root monitor that receives the aggregated progress.
+      /// </summary>
       protected ExternalDrivenBackgroundMonitor Root { get; init; }
 
+      /// <summary>
+      /// Gets the parent reporter, or <c>null</c> if this is the root reporter.
+      /// </summary>
       protected Reporter? Parent { get; init; }
 
+      /// <summary>
+      /// Gets the nesting level of this reporter.
+      /// </summary>
       public int Level { get; init; }
 
+      /// <inheritdoc/>
       public CancellationToken CancellationToken { get; init; }
 
+      /// <summary>
+      /// Gets the hard-cancellation token.
+      /// </summary>
       public CancellationToken CancellationTokenHard { get; init; }
 
       /// <summary>The fraction of work the parent has assigned to this subtask.</summary>
       protected double FractionOfWorkOfParent { get; init; }
 
+      /// <inheritdoc/>
       public string TaskName { get; init; }
 
       /// <summary>
@@ -60,6 +77,9 @@ namespace Altaxo.Main.Services
       private OperationStatus _status;
 
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="Reporter"/> class.
+      /// </summary>
       public Reporter(
         ExternalDrivenBackgroundMonitor root,
         Reporter? parent,
@@ -80,16 +100,28 @@ namespace Altaxo.Main.Services
         CancellationTokenHard = cancellationTokenHard;
       }
 
+      /// <inheritdoc/>
       public IProgressReporter GetSubTask(double fractionOfWork)
       {
         return CreateSubTask(fractionOfWork, CancellationToken, CancellationTokenHard, TaskName);
       }
 
+      /// <summary>
+      /// Creates a subtask with explicit cancellation tokens.
+      /// </summary>
       public IProgressReporter GetSubTask(double fractionOfWork, CancellationToken cancellationTokenSoft, CancellationToken cancellationTokenHard)
       {
         return CreateSubTask(fractionOfWork, cancellationTokenSoft, cancellationTokenHard, TaskName);
       }
 
+      /// <summary>
+      /// Creates a named subtask.
+      /// </summary>
+      /// <param name="fractionOfWork">The fraction of work represented by the subtask.</param>
+      /// <param name="cancellationTokenSoft">The soft-cancellation token.</param>
+      /// <param name="cancellationTokenHard">The hard-cancellation token.</param>
+      /// <param name="taskName">The task name.</param>
+      /// <returns>A reporter for the created subtask.</returns>
       public IProgressReporter CreateSubTask(double fractionOfWork, CancellationToken cancellationTokenSoft, CancellationToken cancellationTokenHard, string taskName)
       {
         var subTask = new Reporter(
@@ -118,6 +150,7 @@ namespace Altaxo.Main.Services
       /// <param name="level">The level. This value can be higher than the level of the immediate child (if a child of the child task is reporting).</param>
       /// <param name="progressValue">The progress value.</param>
       /// <param name="text">The text.</param>
+      /// <param name="status">The reported operation status.</param>
       protected void EhSubTaskReport(Reporter subtask, int level, double progressValue, string? text, OperationStatus status)
       {
         double differenceWork;
@@ -144,6 +177,7 @@ namespace Altaxo.Main.Services
       }
 
 
+      /// <inheritdoc/>
       public bool ShouldReportNow
       {
         get
@@ -152,6 +186,7 @@ namespace Altaxo.Main.Services
         }
       }
 
+      /// <inheritdoc/>
       public bool CancellationPending
       {
         get
@@ -161,6 +196,7 @@ namespace Altaxo.Main.Services
       }
 
 
+      /// <inheritdoc/>
       public void ReportProgress(string text, double progressValue)
       {
         double progress;
@@ -182,16 +218,19 @@ namespace Altaxo.Main.Services
         }
       }
 
+      /// <inheritdoc/>
       public void Report((string text, double progressFraction) value)
       {
         ReportProgress(value.text, value.progressFraction);
       }
 
+      /// <inheritdoc/>
       public void Report(double value)
       {
         ReportProgress(null!, value);
       }
 
+      /// <inheritdoc/>
       public void Report(string text)
       {
         double progress;
@@ -211,11 +250,13 @@ namespace Altaxo.Main.Services
           Root.EhSubTaskReport(this, Level, progress, text, statusNow);
         }
       }
+      /// <inheritdoc/>
       public void ReportProgress(string text)
       {
         Report(text);
       }
 
+      /// <inheritdoc/>
       public void ReportStatus(OperationStatus status)
       {
         OperationStatus statusNow;
@@ -236,6 +277,7 @@ namespace Altaxo.Main.Services
         }
       }
 
+      /// <inheritdoc/>
       public void Dispose()
       {
         Report(FractionOfWorkOfParent);

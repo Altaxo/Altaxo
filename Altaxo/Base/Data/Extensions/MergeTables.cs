@@ -31,7 +31,7 @@ using Altaxo.Collections;
 namespace Altaxo.Data
 {
   /// <summary>
-  /// Actions that help to merge two tables.
+  /// Actions that help merge two tables.
   /// </summary>
   public static class MergeTables
   {

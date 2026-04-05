@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -34,10 +34,16 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="BarGraphPlotStyleController"/>.
+  /// </summary>
   public interface IBarGraphPlotStyleView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="BarGraphPlotStyle"/>.
+  /// </summary>
   [UserControllerForObject(typeof(BarGraphPlotStyle))]
   [ExpectedTypeOfView(typeof(IBarGraphPlotStyleView))]
   public class BarGraphPlotStyleController : MVCANControllerEditOriginalDocBase<BarGraphPlotStyle, IBarGraphPlotStyleView>
@@ -45,6 +51,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     /// <summary>Tracks the presence of a color group style in the parent collection.</summary>
     private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_framePen, () => FramePen = null);
@@ -54,6 +61,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _useFill;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool UseFill
     {
       get => _useFill;
@@ -84,6 +94,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _independentFillColor;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool IndependentFillColor
     {
       get => _independentFillColor;
@@ -107,6 +120,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 
     private bool _showPlotColorsOnlyForFillBrush;
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool ShowPlotColorsOnlyForFillBrush
     {
       get => _showPlotColorsOnlyForFillBrush;
@@ -123,6 +139,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private BrushX _fillBrush;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public BrushX FillBrush
     {
       get => _fillBrush;
@@ -148,6 +167,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _useFrame;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool UseFrame
     {
       get => _useFrame;
@@ -178,6 +200,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _independentFrameColor;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool IndependentFrameColor
     {
       get => _independentFrameColor;
@@ -201,6 +226,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private ColorTypeThicknessPenController _framePen;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public ColorTypeThicknessPenController FramePen
     {
       get => _framePen;
@@ -227,10 +255,16 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the g ap en vi ro nm en t.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment GapEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _innerGap;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity InnerGap
     {
       get => _innerGap;
@@ -247,6 +281,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private DimensionfulQuantity _outerGap;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity OuterGap
     {
       get => _outerGap;
@@ -262,6 +299,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _usePhysicalBaseValue;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool UsePhysicalBaseValue
     {
       get => _usePhysicalBaseValue;
@@ -275,10 +315,16 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the b as ev al ue en vi ro nm en t.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment BaseValueEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _baseValue;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity BaseValue
     {
       get => _baseValue;
@@ -295,6 +341,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _startAtPreviousItem;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool StartAtPreviousItem
     {
       get => _startAtPreviousItem;
@@ -311,6 +360,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private DimensionfulQuantity _yGap;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity YGap
     {
       get => _yGap;
@@ -326,6 +378,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -357,6 +410,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
   }
 
 
+ 
+ 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (UseFill)

@@ -33,7 +33,7 @@ namespace Altaxo.Gui.Graph.Plot.Groups
   using Altaxo.Graph.Plot.Groups;
 
   /// <summary>
-  /// Tracks the presence or absence of a <see cref="Altaxo.Graph.Plot.Groups.ColorGroupStyle"/> in the group style collection relevant that is relevant for a plot style.
+  /// Tracks the presence or absence of a <see cref="Altaxo.Graph.Plot.Groups.ColorGroupStyle"/> in the group style collection relevant for a plot style.
   /// </summary>
   public class ColorGroupStylePresenceTracker
   {
@@ -81,6 +81,11 @@ namespace Altaxo.Gui.Graph.Plot.Groups
       return _colorGroupStyle is not null && colorLinkage == ColorLinkage.Dependent;
     }
 
+    /// <summary>
+    /// Gets the color group style from the plot item collection that contains the specified document node.
+    /// </summary>
+    /// <param name="doc">The document node.</param>
+    /// <returns>The color group style if present; otherwise, <see langword="null"/>.</returns>
     public static Altaxo.Graph.Plot.Groups.ColorGroupStyle GetColorGroupStyle(Altaxo.Main.IDocumentLeafNode doc)
     {
       var plotItemCollection = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<Altaxo.Graph.Gdi.Plot.PlotItemCollection>(doc);

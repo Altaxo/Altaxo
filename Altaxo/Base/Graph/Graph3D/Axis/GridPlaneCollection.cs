@@ -30,6 +30,9 @@ using Altaxo.Graph.Graph3D.GraphicsContext;
 
 namespace Altaxo.Graph.Graph3D.Axis
 {
+  /// <summary>
+  /// Represents a collection of grid planes of a three-dimensional plot area.
+  /// </summary>
   [Serializable]
   public class GridPlaneCollection
     :
@@ -39,6 +42,10 @@ namespace Altaxo.Graph.Graph3D.Axis
   {
     private List<GridPlane> _innerList = new List<GridPlane>();
 
+    /// <summary>
+    /// Copies values from another <see cref="GridPlaneCollection"/> instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     private void CopyFrom(GridPlaneCollection from)
     {
       if (ReferenceEquals(this, from))
@@ -57,9 +64,13 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <summary>
     /// 2015-11-15 initial version.
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="GridPlaneCollection"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GridPlaneCollection), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (GridPlaneCollection)obj;
@@ -85,6 +96,7 @@ namespace Altaxo.Graph.Graph3D.Axis
         return s;
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         GridPlaneCollection s = SDeserialize(o, info, parent);
@@ -96,15 +108,23 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GridPlaneCollection"/> class.
+    /// </summary>
     public GridPlaneCollection()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GridPlaneCollection"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The collection to copy from.</param>
     public GridPlaneCollection(GridPlaneCollection from)
     {
       CopyFrom(from);
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       int i = -1;
@@ -116,18 +136,29 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Creates a strongly typed clone of this <see cref="GridPlaneCollection"/>.
+    /// </summary>
+    /// <returns>A cloned grid-plane collection.</returns>
     public GridPlaneCollection Clone()
     {
       return new GridPlaneCollection(this);
     }
 
+    /// <inheritdoc/>
     object ICloneable.Clone()
     {
       return new GridPlaneCollection(this);
     }
 
+    /// <summary>
+    /// Gets the number of grid planes in the collection.
+    /// </summary>
     public int Count { get { return _innerList.Count; } }
 
+    /// <summary>
+    /// Gets the grid plane at the specified index.
+    /// </summary>
     public GridPlane this[int idx]
     {
       get
@@ -136,6 +167,9 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets the grid plane with the specified identifier.
+    /// </summary>
     public GridPlane? this[CSPlaneID planeid]
     {
       get
@@ -166,6 +200,10 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Adds a grid plane to the collection.
+    /// </summary>
+    /// <param name="plane">The grid plane to add.</param>
     public void Add(GridPlane plane)
     {
       if (plane is null)
@@ -175,6 +213,9 @@ namespace Altaxo.Graph.Graph3D.Axis
       _innerList.Add(plane);
     }
 
+    /// <summary>
+    /// Clears the collection and disposes all contained grid planes.
+    /// </summary>
     public void Clear()
     {
       var list = _innerList;
@@ -183,6 +224,9 @@ namespace Altaxo.Graph.Graph3D.Axis
         plane.Dispose();
     }
 
+    /// <summary>
+    /// Removes all unused grid planes from the collection.
+    /// </summary>
     public void RemoveUnused()
     {
       for (int i = _innerList.Count - 1; i >= 0; i--)
@@ -196,6 +240,9 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Determines whether a grid plane with the specified identifier exists.
+    /// </summary>
     public bool Contains(CSPlaneID planeid)
     {
       foreach (GridPlane plane in _innerList)
@@ -206,6 +253,11 @@ namespace Altaxo.Graph.Graph3D.Axis
       return false;
     }
 
+    /// <summary>
+    /// Paints all grid planes.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="layer">The plot area.</param>
     public void Paint(IGraphicsContext3D g, IPlotArea layer)
     {
       for (int i = 0; i < _innerList.Count; ++i)
@@ -236,6 +288,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     #region IEnumerable<GridPlane> Members
 
+    /// <inheritdoc/>
     public IEnumerator<GridPlane> GetEnumerator()
     {
       return _innerList.GetEnumerator();
@@ -245,6 +298,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     #region IEnumerable Members
 
+    /// <inheritdoc/>
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
       return _innerList.GetEnumerator();

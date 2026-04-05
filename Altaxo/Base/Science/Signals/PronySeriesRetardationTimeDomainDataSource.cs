@@ -27,6 +27,9 @@ using Altaxo.Data;
 
 namespace Altaxo.Science.Signals
 {
+  /// <summary>
+  /// Data source that evaluates a Prony-series retardation model in the time domain.
+  /// </summary>
   public class PronySeriesRetardationTimeDomainDataSource : TableDataSourceBaseImmutableOptions<PronySeriesRetardation, XAndYColumn>
   {
     #region Serialization
@@ -39,12 +42,16 @@ namespace Altaxo.Science.Signals
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PronySeriesRetardationTimeDomainDataSource), 0)]
     private class XmlSerializationSurrogate0 : XmlSerializationSurrogateBase
     {
+      /// <inheritdoc />
       public override object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new PronySeriesRetardationTimeDomainDataSource(info, 0);
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PronySeriesRetardationTimeDomainDataSource"/> class for deserialization.
+    /// </summary>
     protected PronySeriesRetardationTimeDomainDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     : base(info, version)
     {
@@ -55,10 +62,10 @@ namespace Altaxo.Science.Signals
     #endregion Serialization
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ConvertXYVToMatrixDataSource"/> class.
+    /// Initializes a new instance of the <see cref="PronySeriesRetardationTimeDomainDataSource"/> class.
     /// </summary>
     /// <param name="inputData">The input data designates the original source of data (used then for the processing).</param>
-    /// <param name="dataSourceOptions">The Fourier transformation options.</param>
+    /// <param name="dataSourceOptions">The Prony-series options.</param>
     /// <param name="importOptions">The data source import options.</param>
     public PronySeriesRetardationTimeDomainDataSource(XAndYColumn inputData, PronySeriesRetardation dataSourceOptions, IDataSourceImportOptions importOptions)
         : base(inputData, dataSourceOptions, importOptions)
@@ -78,7 +85,7 @@ namespace Altaxo.Science.Signals
     /// Fills (or refills) the data table with the processed data. The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable" />.
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
-    /// <param name="reporter"></param>
+    /// <param name="reporter">The progress reporter.</param>
     public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter reporter)
     {
       destinationTable.DataColumns.RemoveColumnsAll();

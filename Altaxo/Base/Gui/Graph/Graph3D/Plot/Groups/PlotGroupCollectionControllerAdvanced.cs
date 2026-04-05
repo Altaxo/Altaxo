@@ -37,10 +37,16 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="PlotGroupCollectionControllerAdvanced"/>.
+  /// </summary>
   public interface IPlotGroupCollectionViewAdvanced : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Advanced controller for editing a 3D plot-group style collection.
+  /// </summary>
   [UserControllerForObject(typeof(PlotGroupStyleCollection))]
   [ExpectedTypeOfView(typeof(IPlotGroupCollectionViewAdvanced))]
   public class PlotGroupCollectionControllerAdvanced
@@ -51,18 +57,27 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
 
     private class MyListNode : CheckableSelectableListNode
     {
+      /// <summary>
+      /// Initializes a new instance.
+      /// </summary>
       public MyListNode(string name, object item, bool isSelected, bool isChecked, bool isCheckBoxVisible)
         : base(name, item, isSelected, isChecked)
       {
         IsCheckBoxVisible = isCheckBoxVisible;
       }
 
+      /// <summary>
+      /// Gets or sets the checkbox visibility.
+      /// </summary>
       public bool IsCheckBoxVisible { get; set; }
     }
 
     #endregion Inner classes
 
     private IGPlotItem _parent; // usually the parent is the PlotItemCollection
+    /// <summary>
+    /// Occurs when group style changed.
+    /// </summary>
     public event Action GroupStyleChanged;
 
     /// <summary>
@@ -70,6 +85,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
     /// </summary>
     private int _currentNoOfItemsThatCanHaveChilds;
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -80,6 +96,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
 
     private ItemsController<ICoordinateTransformingGroupStyle?> _coordinateTransformingGroupStyles;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public ItemsController<ICoordinateTransformingGroupStyle?> CoordinateTransformingGroupStyles
     {
       get => _coordinateTransformingGroupStyles;
@@ -96,6 +115,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
 
     private ItemsController<PlotGroupStrictness> _plotGroupStrictness;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public ItemsController<PlotGroupStrictness> PlotGroupStrictness
     {
       get => _plotGroupStrictness;
@@ -111,6 +133,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
 
     private bool _inheritFromParent;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool InheritFromParent
     {
       get => _inheritFromParent;
@@ -125,6 +150,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
     }
     private bool _distributeToChilds;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool DistributeToChilds
     {
       get => _distributeToChilds;
@@ -140,6 +168,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
 
     private SelectableListNodeList _availableNormalStyles;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public SelectableListNodeList AvailableNormalStyles
     {
       get => _availableNormalStyles;
@@ -156,6 +187,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
 
     private CheckableSelectableListNodeList _currentNormalStyles;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public CheckableSelectableListNodeList CurrentNormalStyles
     {
       get => _currentNormalStyles;
@@ -172,19 +206,49 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
 
 
 
+    /// <summary>
+    /// Gets or sets the command to edit coordinate transforming group style.
+    /// </summary>
     public ICommand CmdEditCoordinateTransformingGroupStyle { get; }
+    /// <summary>
+    /// Gets or sets the command to add normal group style.
+    /// </summary>
     public ICommand CmdAddNormalGroupStyle { get; }
+    /// <summary>
+    /// Gets or sets the command to remove normal group style.
+    /// </summary>
     public ICommand CmdRemoveNormalGroupStyle { get; }
+    /// <summary>
+    /// Gets or sets the command to indent group style.
+    /// </summary>
     public ICommand CmdIndentGroupStyle { get; }
+    /// <summary>
+    /// Gets or sets the command to unindent group style.
+    /// </summary>
     public ICommand CmdUnindentGroupStyle { get; }
+    /// <summary>
+    /// Gets or sets the command to move up group style.
+    /// </summary>
     public ICommand CmdMoveUpGroupStyle { get; }
+    /// <summary>
+    /// Gets or sets the command to move down group style.
+    /// </summary>
     public ICommand CmdMoveDownGroupStyle { get; }
 
+    /// <summary>
+    /// Gets or sets the command to handle current group style double click.
+    /// </summary>
     public ICommand CmdCurrentGroupStyleDoubleClick { get; }
+    /// <summary>
+    /// Gets or sets the implementation of <see cref="EhCurrentGroupStyle_DoubleClick"/>.
+    /// </summary>
     public object EhCurrentGroupStyle_DoubleClick { get; private set; }
 
     #endregion
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PlotGroupCollectionControllerAdvanced"/> class.
+    /// </summary>
     public PlotGroupCollectionControllerAdvanced()
     {
       CmdEditCoordinateTransformingGroupStyle = new RelayCommand(EhView_CoordinateTransformingGroupStyleEdit);
@@ -207,6 +271,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
 
 
 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       _parent = null;
@@ -217,6 +282,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc />
     public override bool InitializeDocument(params object[] args)
     {
       if (args is not null && args.Length > 1 && args[1] is IGPlotItem)
@@ -225,6 +291,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
       return base.InitializeDocument(args);
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -301,6 +368,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       
@@ -396,6 +464,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
 
     #region IPlotGroupCollectionViewEventSink Members
 
+    /// <summary>
+    /// Handles the view coordinate transforming group style edit.
+    /// </summary>
     public void EhView_CoordinateTransformingGroupStyleEdit()
     {
       if (CoordinateTransformingGroupStyles.SelectedValue is { } currentTransfoStyle)
@@ -404,6 +475,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
       }
     }
 
+    /// <summary>
+    /// Handles the view add normal group style.
+    /// </summary>
     public void EhView_AddNormalGroupStyle()
     {
       SelectableListNode selected = null;
@@ -436,6 +510,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
       }
     }
 
+    /// <summary>
+    /// Handles the view remove normal group style.
+    /// </summary>
     public void EhView_RemoveNormalGroupStyle()
     {
       for (int i = _currentNormalStyles.Count - 1; i >= 0; i--)
@@ -459,6 +536,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
       UpdateCurrentNormalIndentation();
     }
 
+    /// <summary>
+    /// Handles the view indent group style.
+    /// </summary>
     public void EhView_IndentGroupStyle()
     {
       // for all selected items: append it as child to the item upward
@@ -470,7 +550,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
           continue;
 
         if (_doc.GetParentTypeOf((Type)selected.Tag) is not null)
-          continue; // only ident those items who dont have a parent
+          continue; // only indent those items who dont have a parent
 
         IPlotGroupStyle style = _doc.GetPlotGroupStyle((Type)selected.Tag);
         _doc.RemoveType(style.GetType()); // Removing the type so removing also the parent-child-relationship
@@ -481,6 +561,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
       UpdateCurrentNormalIndentation();
     }
 
+    /// <summary>
+    /// Handles the view unindent group style.
+    /// </summary>
     public void EhView_UnindentGroupStyle()
     {
       // make sure that all the selected items are not child of another item
@@ -503,6 +586,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
       UpdateCurrentNormalIndentation();
     }
 
+    /// <summary>
+    /// Handles the view move up group style.
+    /// </summary>
     public void EhView_MoveUpGroupStyle()
     {
       if (0 == _currentNoOfItemsThatCanHaveChilds || _currentNormalStyles[0].IsSelected)
@@ -531,6 +617,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
       UpdateCurrentNormalOrder();
     }
 
+    /// <summary>
+    /// Handles the view move down group style.
+    /// </summary>
     public void EhView_MoveDownGroupStyle()
     {
       if (0 == _currentNoOfItemsThatCanHaveChilds || _currentNormalStyles[_currentNoOfItemsThatCanHaveChilds - 1].IsSelected)
@@ -559,6 +648,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
       UpdateCurrentNormalOrder();
     }
 
+    /// <summary>
+    /// Handles the view edit group style.
+    /// </summary>
     public void EhView_EditGroupStyle()
     {
       var selNode = _currentNormalStyles.FirstOrDefault(x => x.IsSelected);

@@ -35,7 +35,7 @@ namespace Altaxo.Drawing.D3D
   /// <summary>
   /// Contains code to generate triangle geometry for solid polyline dash segments.
   /// This structure needs to be initialized only once per line with <see cref="Initialize(PenX3D)"/>.
-  /// It then can be used for each individual dash segment by calling AddGeometry/>.
+  /// It can then be used for each individual dash segment by calling one of the <c>AddGeometry</c> overloads.
   /// </summary>
   public struct SolidPolylineDashSegment
   {
@@ -144,7 +144,7 @@ namespace Altaxo.Drawing.D3D
     #endregion local variables, i.e. variables that change with every dash segment
 
     /// <summary>
-    /// Initialization that is needed only once per straigth line (not once per dash).
+    /// Initialization that is needed only once per straight line (not once per dash).
     /// </summary>
     /// <param name="pen">The pen that is used to draw the line.</param>
     public void Initialize(
@@ -163,7 +163,7 @@ namespace Altaxo.Drawing.D3D
     }
 
     /// <summary>
-    /// Initialization that is needed only once per straigth line (not once per dash).
+    /// Initialization that is needed only once per straight line (not once per dash).
     /// </summary>
     /// <param name="crossSection">The cross section of the pen that is used to draw the line.</param>
     /// <param name="thickness1">Thickness1 of the pen.</param>
@@ -206,14 +206,14 @@ namespace Altaxo.Drawing.D3D
     }
 
     /// <summary>
-    /// Adds the triangle geometry for a polyline segment with start and end cap.
+    /// Adds the triangle geometry for a polyline segment with start and end caps.
     /// </summary>
     /// <param name="AddPositionAndNormal">The procedure to add a vertex position and normal.</param>
     /// <param name="AddIndices">The procedure to add vertex indices for one triangle.</param>
     /// <param name="vertexIndexOffset">The vertex index offset.</param>
     /// <param name="polylinePoints">The points of the original polyline to draw (not shortened to account for start and end cap). Here, the polyline points are already amended with orientation vectors.</param>
-    /// <param name="overrideStartCap">If not null, this parameter override the start cap that is stored in this class.</param>
-    /// <param name="overrideEndCap">If not null, this parameter overrides the end cap that is stored in this class.</param>
+    /// <param name="overrideStartCap">If not null, this parameter overrides the start cap stored in this instance.</param>
+    /// <param name="overrideEndCap">If not null, this parameter overrides the end cap stored in this instance.</param>
     public void AddGeometry(
   Action<PointD3D, VectorD3D> AddPositionAndNormal,
   Action<int, int, int, bool> AddIndices,
@@ -299,8 +299,8 @@ namespace Altaxo.Drawing.D3D
     /// <param name="westVector">West vector at the start of the original polyline.</param>
     /// <param name="northVector">North vector at the start of the original polyline.</param>
     /// <param name="forwardVector">Forward vector at the start of the original polyline.</param>
-    /// <param name="overrideStartCap">If not null, this parameter override the start cap that is stored in this class.</param>
-    /// <param name="overrideEndCap">If not null, this parameter overrides the end cap that is stored in this class.</param>
+    /// <param name="overrideStartCap">If not null, this parameter overrides the start cap stored in this instance.</param>
+    /// <param name="overrideEndCap">If not null, this parameter overrides the end cap stored in this instance.</param>
     public void AddGeometry(
     Action<PointD3D, VectorD3D> AddPositionAndNormal,
     Action<int, int, int, bool> AddIndices,
@@ -379,8 +379,8 @@ namespace Altaxo.Drawing.D3D
     /// <param name="vertexIndexOffset">The vertex index offset.</param>
     /// <param name="polylinePoints">The points of the polyline to draw. This is not the original polyline segment, but the polyline segment shortened to account for the start and end cap.</param>
     /// <param name="drawLine">If this parameter is true, the line segment between lineStart and lineEnd is drawn. If false, the line segment itself is not drawn, but the start end end caps are drawn.</param>
-    /// <param name="overrideStartCap">If not null, this parameter override the start cap that is stored in this class.</param>
-    /// <param name="overrideEndCap">If not null, this parameter overrides the end cap that is stored in this class.</param>
+    /// <param name="overrideStartCap">If not null, this parameter overrides the start cap stored in this instance.</param>
+    /// <param name="overrideEndCap">If not null, this parameter overrides the end cap stored in this instance.</param>
     /// <exception cref="System.InvalidProgramException">The structure is not initialized yet. Call Initialize before using it!</exception>
     public void AddGeometry(
       Action<PointD3D, VectorD3D> AddPositionAndNormal,
@@ -957,6 +957,11 @@ namespace Altaxo.Drawing.D3D
       return indexList.ToArray();
     }
 
+    /// <summary>
+    /// Triangulates the specified polygon.
+    /// </summary>
+    /// <param name="polygons">The polygon to triangulate.</param>
+    /// <returns>The triangulated polygon.</returns>
     public static Poly2Tri.Polygon GetTriangles(PolygonClosedD2D polygons)
     {
       var mainPolygon = new Poly2Tri.Polygon(polygons.Points.Select(pt => new Poly2Tri.PolygonPoint(pt.X, pt.Y)));

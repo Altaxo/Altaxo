@@ -25,10 +25,11 @@ using System.Text;
 namespace Altaxo.Main.Services.Implementation
 {
   /// <summary>
-  /// TextWriter that writes into System.Diagnostics.Trace
+  /// <see cref="TextWriter"/> implementation that writes to <see cref="System.Diagnostics.Trace"/>.
   /// </summary>
   public class TraceTextWriter : TextWriter
   {
+    /// <inheritdoc/>
     public override Encoding Encoding
     {
       get
@@ -37,26 +38,31 @@ namespace Altaxo.Main.Services.Implementation
       }
     }
 
+    /// <inheritdoc/>
     public override void Write(char value)
     {
       Trace.Write(value.ToString());
     }
 
+    /// <inheritdoc/>
     public override void Write(char[] buffer, int index, int count)
     {
       Trace.Write(new string(buffer, index, count));
     }
 
+    /// <inheritdoc/>
     public override void Write(string? value)
     {
       Trace.Write(value);
     }
 
+    /// <inheritdoc/>
     public override void WriteLine()
     {
       Trace.WriteLine(string.Empty);
     }
 
+    /// <inheritdoc/>
     public override void WriteLine(string? value)
     {
       Trace.WriteLine(value);

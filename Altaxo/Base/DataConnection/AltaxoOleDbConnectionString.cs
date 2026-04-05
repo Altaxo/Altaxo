@@ -31,7 +31,7 @@ using System.Text;
 namespace Altaxo.DataConnection
 {
   /// <summary>
-  /// Contains an connection string (with or without password,
+  /// Stores an OLE DB connection string together with optional temporary credentials.
   /// </summary>
   public class AltaxoOleDbConnectionString : Main.IImmutable
   {
@@ -42,6 +42,11 @@ namespace Altaxo.DataConnection
     private string _originalConnectionString;
     private string _connectionStringWithCredentials;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AltaxoOleDbConnectionString"/> class.
+    /// </summary>
+    /// <param name="originalConnectionString">The original connection string.</param>
+    /// <param name="credentials">Optional credentials to merge into the connection string.</param>
     public AltaxoOleDbConnectionString(string originalConnectionString, LoginCredentials? credentials)
     {
       _originalConnectionString = originalConnectionString;
@@ -61,14 +66,30 @@ namespace Altaxo.DataConnection
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the connection string is empty.
+    /// </summary>
     public bool IsEmpty { get { return string.IsNullOrEmpty(_connectionStringWithCredentials); } }
 
+    /// <summary>
+    /// Gets an empty connection-string instance.
+    /// </summary>
     public static AltaxoOleDbConnectionString Empty { get { return _emptyInstance; } }
 
+    /// <summary>
+    /// Gets the original connection string without temporary credentials.
+    /// </summary>
     public string OriginalConnectionString { get { return _originalConnectionString; } }
 
+    /// <summary>
+    /// Gets the connection string including temporary credentials, if supplied.
+    /// </summary>
     public string ConnectionStringWithTemporaryCredentials { get { return _connectionStringWithCredentials; } }
 
+    /// <summary>
+    /// Extracts the credentials stored in the original connection string.
+    /// </summary>
+    /// <returns>The extracted credentials.</returns>
     public LoginCredentials GetCredentials()
     {
       var connBuilder = new System.Data.OleDb.OleDbConnectionStringBuilder(_originalConnectionString);
@@ -80,6 +101,7 @@ namespace Altaxo.DataConnection
       return new LoginCredentials(username ?? string.Empty, password ?? string.Empty);
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       if (obj is AltaxoOleDbConnectionString from)
@@ -88,21 +110,29 @@ namespace Altaxo.DataConnection
         return false;
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return _originalConnectionString;
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return _connectionStringWithCredentials.GetHashCode();
     }
 
+    /// <summary>
+    /// Compares two connection-string instances for equality.
+    /// </summary>
     public static bool operator ==(AltaxoOleDbConnectionString x, AltaxoOleDbConnectionString y)
     {
       return ReferenceEquals(x,y) || (x is not null && y is not null && x._originalConnectionString == y._originalConnectionString && x._connectionStringWithCredentials == y._connectionStringWithCredentials);
     }
 
+    /// <summary>
+    /// Compares two connection-string instances for inequality.
+    /// </summary>
     public static bool operator !=(AltaxoOleDbConnectionString x, AltaxoOleDbConnectionString y)
     {
       return !(x == y);

@@ -30,15 +30,24 @@ using Altaxo.Main;
 
 namespace Altaxo.Graph.Graph3D
 {
+  /// <summary>
+  /// Represents a collection of three-dimensional graph documents.
+  /// </summary>
   public class GraphDocumentCollection :
     ProjectItemCollectionBase<GraphDocument, IProjectItem>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GraphDocumentCollection"/> class.
+    /// </summary>
+    /// <param name="parent">The parent document.</param>
+    /// <param name="commonDictionaryForGraphs">The shared dictionary used to store graphs by name.</param>
     public GraphDocumentCollection(AltaxoDocument parent, SortedDictionary<string, IProjectItem> commonDictionaryForGraphs)
       : base(parent)
     {
       _itemsByName = commonDictionaryForGraphs ?? throw new ArgumentNullException(nameof(commonDictionaryForGraphs));
     }
 
+    /// <inheritdoc/>
     public override Main.IDocumentNode? ParentObject
     {
       get
@@ -53,6 +62,7 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <inheritdoc/>
     public override string ItemBaseName { get { return "GRAPH"; } }
 
     /// <summary>

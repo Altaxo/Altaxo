@@ -25,13 +25,13 @@
 namespace Altaxo.Main.Services.ScriptCompilation
 {
   /// <summary>
-  /// Base interface for the result of the script controller. This base interface only provided the source code.
+  /// Base interface for the result of script compilation. This base interface only provides the source code.
   /// The derived interfaces then also provide compilation results.
   /// </summary>
   public interface IScriptCompilerResult
   {
     /// <summary>
-    /// Gets the number of source code fragments (script text) of which consists the compilation result.
+    /// Gets the number of source code fragments that make up the compilation result.
     /// </summary>
     int ScriptTextCount { get; }
 

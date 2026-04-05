@@ -44,7 +44,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   using Plot.Groups;
 
   /// <summary>
-  /// Summary description for XYPlotLineStyle.
+  /// Fills and frames the area between a connected line and a reference plane.
   /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Graph.Gdi.Plot.Styles.DropAreaPlotStyle}")]
   public class DropAreaPlotStyle
@@ -53,25 +53,43 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     IG2DPlotStyle,
     IRoutedPropertyReceiver
   {
+    /// <summary>
+    /// Stores the line connection style used for the filled area outline.
+    /// </summary>
     protected ILineConnectionStyle _connectionStyle;
 
     /// <summary>If true, the start and the end point of the line are connected too.</summary>
     protected bool _connectCircular;
 
+    /// <summary>
+    /// Gets or sets whether missing data points are ignored when connecting the area outline.
+    /// </summary>
     protected bool _ignoreMissingDataPoints; // treat missing points as if not present (connect lines over missing points)
 
     /// <summary>If true, group styles that shift the logical position of the items (for instance <see cref="BarSizePosition3DGroupStyle"/>) are not applied. I.e. when true, the position of the item remains unperturbed.</summary>
     private bool _independentOnShiftingGroupStyles = true;
 
+    /// <summary>
+    /// Stores the direction toward which the area is filled.
+    /// </summary>
     protected CSPlaneID _fillDirection; // the direction to fill
 
+    /// <summary>
+    /// Stores the rule used to determine the filled area.
+    /// </summary>
     protected FillAreaRule _fillRule;
 
+    /// <summary>
+    /// Stores the brush used to fill the area.
+    /// </summary>
     protected BrushX? _fillBrush; // brush to fill the area under the line
 
     /// <summary>Designates if the fill color is independent or dependent.</summary>
     protected ColorLinkage _fillColorLinkage = ColorLinkage.PreserveAlpha;
 
+    /// <summary>
+    /// Stores the pen used to draw the frame around the filled area.
+    /// </summary>
     protected PenX _framePen;
 
     /// <summary>Designates if the fill color is independent or dependent.</summary>
@@ -91,6 +109,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DropAreaPlotStyle), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DropAreaPlotStyle)obj;
@@ -109,6 +128,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         info.AddEnum("FrameColorLinkage", s._frameColorLinkage);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (DropAreaPlotStyle?)o ?? new DropAreaPlotStyle(info);
@@ -133,6 +153,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region Construction and copying
 
+    /// <summary>
+    /// Copies values from another drop-area plot style.
+    /// </summary>
+    /// <param name="from">The source style.</param>
+    /// <param name="eventFiring">Controls change-event firing.</param>
     [MemberNotNull(nameof(_connectionStyle), nameof(_fillDirection), nameof(_framePen))]
     public void CopyFrom(DropAreaPlotStyle from, Main.EventFiring eventFiring)
     {
@@ -196,6 +221,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       return new DropAreaPlotStyle(this);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DropAreaPlotStyle"/> class during deserialization.
+    /// </summary>
+    /// <param name="info">The deserialization info.</param>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected DropAreaPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
@@ -203,6 +232,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       _connectionStyle = LineConnectionStyles.StraightConnection.Instance;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DropAreaPlotStyle"/> class.
+    /// </summary>
+    /// <param name="connection">The connection style.</param>
+    /// <param name="ignoreMissingDataPoints">Whether to ignore missing data points.</param>
+    /// <param name="connectCircular">Whether to connect the last and first point.</param>
+    /// <param name="direction">The fill direction.</param>
+    /// <param name="fillBrush">The fill brush.</param>
+    /// <param name="fillColorLinkage">The fill color linkage.</param>
     public DropAreaPlotStyle(ILineConnectionStyle connection, bool ignoreMissingDataPoints, bool connectCircular, CSPlaneID direction, BrushX fillBrush, ColorLinkage fillColorLinkage)
     {
       _connectionStyle = connection;
@@ -214,6 +252,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       _framePen = new PenX(NamedColors.Transparent, 1);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DropAreaPlotStyle"/> class using the specified context.
+    /// </summary>
+    /// <param name="context">The property context.</param>
     public DropAreaPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       var penWidth = GraphDocument.GetDefaultPenWidth(context);
@@ -226,11 +268,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       _connectionStyle = LineConnectionStyles.StraightConnection.Instance;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DropAreaPlotStyle"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public DropAreaPlotStyle(DropAreaPlotStyle from)
     {
       CopyFrom(from, Main.EventFiring.Suppressed);
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
@@ -240,6 +287,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region Properties
 
+    /// <summary>
+    /// Gets or sets the line connection style.
+    /// </summary>
     public ILineConnectionStyle Connection
     {
       get { return _connectionStyle; }
@@ -256,6 +306,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the first and last point are connected.
+    /// </summary>
     public bool ConnectCircular
     {
       get
@@ -312,6 +365,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the fill direction.
+    /// </summary>
     public CSPlaneID FillDirection
     {
       get { return _fillDirection; }
@@ -326,6 +382,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the fill rule.
+    /// </summary>
     public FillAreaRule FillRule
     {
       get { return _fillRule; }
@@ -339,6 +398,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the fill brush.
+    /// </summary>
     public BrushX? FillBrush
     {
       get { return _fillBrush; }
@@ -356,6 +418,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the fill color linkage.
+    /// </summary>
     public ColorLinkage FillColorLinkage
     {
       get
@@ -371,6 +436,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the frame pen.
+    /// </summary>
     public PenX FramePen
     {
       get { return _framePen; }
@@ -387,6 +455,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the frame color linkage.
+    /// </summary>
     public ColorLinkage FrameColorLinkage
     {
       get
@@ -403,6 +474,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this style is visible.
+    /// </summary>
     public bool IsVisible
     {
       get
@@ -417,11 +491,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region Painting
 
+    /// <inheritdoc />
     public RectangleF PaintSymbol(System.Drawing.Graphics g, System.Drawing.RectangleF bounds)
     {
       return bounds;
     }
 
+    /// <inheritdoc />
     public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData? prevItemData, Processed2DPlotData? nextItemData)
     {
       if (_connectionStyle is LineConnectionStyles.NoConnection)
@@ -489,10 +565,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
     }
 
+    /// <inheritdoc />
     public void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups)
     {
     }
 
+    /// <inheritdoc />
     public void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       ColorGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
@@ -501,6 +579,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       LineConnection2DGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
     }
 
+    /// <inheritdoc />
     public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
     {
       if (_fillColorLinkage == ColorLinkage.Dependent && _fillBrush is not null)
@@ -514,6 +593,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       LineConnection2DGroupStyle.PrepareStyle(externalGroups, localGroups, () => new Tuple<ILineConnectionStyle, bool>(_connectionStyle, _connectCircular));
     }
 
+    /// <inheritdoc />
     public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       // IgnoreMissingDataPoints is the same for all sub plot styles
@@ -567,6 +647,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// to change a plot so that the plot items refer to another table.
     /// </summary>
     /// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
+    /// <inheritdoc />
     public void VisitDocumentReferences(DocNodeProxyReporter Report)
     {
     }
@@ -586,6 +667,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region IRoutedPropertyReceiver Members
 
+    /// <inheritdoc />
     public IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName)
     {
       switch (propertyName)

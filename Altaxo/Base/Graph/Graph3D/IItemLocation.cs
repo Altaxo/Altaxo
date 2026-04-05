@@ -30,25 +30,55 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph3D
 {
+  /// <summary>
+  /// Describes the position, orientation, shear, and scale of an item in a three-dimensional host layer.
+  /// </summary>
   public interface IItemLocation
   :
   Altaxo.Main.IDocumentLeafNode,
   Altaxo.Main.ICopyFrom
   {
+    /// <summary>
+    /// Gets or sets the rotation around the x-axis in degrees.
+    /// </summary>
     double RotationX { get; set; }
+    /// <summary>
+    /// Gets or sets the rotation around the y-axis in degrees.
+    /// </summary>
     double RotationY { get; set; }
+    /// <summary>
+    /// Gets or sets the rotation around the z-axis in degrees.
+    /// </summary>
     double RotationZ { get; set; }
 
+    /// <summary>
+    /// Gets or sets the shear in x direction.
+    /// </summary>
     double ShearX { get; set; }
 
+    /// <summary>
+    /// Gets or sets the shear in y direction.
+    /// </summary>
     double ShearY { get; set; }
 
+    /// <summary>
+    /// Gets or sets the shear in z direction.
+    /// </summary>
     double ShearZ { get; set; }
 
+    /// <summary>
+    /// Gets or sets the scale in x direction.
+    /// </summary>
     double ScaleX { get; set; }
 
+    /// <summary>
+    /// Gets or sets the scale in y direction.
+    /// </summary>
     double ScaleY { get; set; }
 
+    /// <summary>
+    /// Gets or sets the scale in z direction.
+    /// </summary>
     double ScaleZ { get; set; }
   }
 }

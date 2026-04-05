@@ -29,8 +29,7 @@ using Altaxo.Data;
 namespace Altaxo.Graph.Scales.Boundaries
 {
   /// <summary>
-  /// PositiveFinitePhysicalBoundaries is intended to use for logarithmic axis
-  /// it keeps track of the smallest positive and biggest positive value
+  /// Tracks the smallest and largest positive finite values for logarithmic scales.
   /// </summary>
   [Serializable]
   public class PositiveFiniteNumericalBoundaries : NumericalBoundaries
@@ -42,12 +41,14 @@ namespace Altaxo.Graph.Scales.Boundaries
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PositiveFiniteNumericalBoundaries), 2)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PositiveFiniteNumericalBoundaries)obj;
         info.AddBaseValueEmbedded(s, typeof(PositiveFiniteNumericalBoundaries).BaseType!);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (PositiveFiniteNumericalBoundaries?)o ?? new PositiveFiniteNumericalBoundaries();
@@ -58,32 +59,47 @@ namespace Altaxo.Graph.Scales.Boundaries
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PositiveFiniteNumericalBoundaries"/> class.
+    /// </summary>
     public PositiveFiniteNumericalBoundaries()
       : base()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PositiveFiniteNumericalBoundaries"/> class by copying another instance.
+    /// </summary>
+    /// <param name="c">The instance to copy.</param>
     public PositiveFiniteNumericalBoundaries(PositiveFiniteNumericalBoundaries c)
       : base(c)
     {
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new PositiveFiniteNumericalBoundaries(this);
     }
 
+    /// <inheritdoc />
     public override bool Add(IReadableColumn col, int idx)
     {
       var v = col[idx];
       return Add((v.IsNativeNumeric) ? v.ToDouble() : idx);
     }
 
+    /// <inheritdoc />
     public override bool Add(Altaxo.Data.AltaxoVariant val)
     {
       return Add(val.ToDouble());
     }
 
+    /// <summary>
+    /// Adds a positive finite numeric value to the tracked boundaries.
+    /// </summary>
+    /// <param name="d">The value to add.</param>
+    /// <returns><see langword="true"/> if the value contributed to the boundaries; otherwise, <see langword="false"/>.</returns>
     public bool Add(double d)
     {
       if (IsSuspended) // when suspended: performance tweak, see overrides OnSuspended and OnResume for details (if suspended, we have saved the state of the instance for comparison when we resume).

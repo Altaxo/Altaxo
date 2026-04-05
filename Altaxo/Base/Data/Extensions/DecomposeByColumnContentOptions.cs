@@ -38,16 +38,37 @@ namespace Altaxo.Data
   {
     #region Enums
 
+    /// <summary>
+    /// Defines how the decomposed output columns are grouped.
+    /// </summary>
     public enum OutputFormat
     {
+      /// <summary>
+      /// Place each output column into its own group.
+      /// </summary>
       GroupOneColumn,
+      /// <summary>
+      /// Place all output columns into one group.
+      /// </summary>
       GroupAllColumns,
     }
 
+    /// <summary>
+    /// Defines the sorting applied to generated columns.
+    /// </summary>
     public enum OutputSorting
     {
+      /// <summary>
+      /// Do not sort the generated columns.
+      /// </summary>
       None,
+      /// <summary>
+      /// Sort the generated columns in ascending order.
+      /// </summary>
       Ascending,
+      /// <summary>
+      /// Sort the generated columns in descending order.
+      /// </summary>
       Descending
     }
 
@@ -104,20 +125,29 @@ namespace Altaxo.Data
 
     #region Construction
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DecomposeByColumnContentOptions"/> class.
+    /// </summary>
     public DecomposeByColumnContentOptions()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DecomposeByColumnContentOptions"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The source options.</param>
     public DecomposeByColumnContentOptions(DecomposeByColumnContentOptions from)
     {
       CopyFrom(from);
     }
 
+    /// <inheritdoc />
     public object Clone()
     {
       return new DecomposeByColumnContentOptions(this);
     }
 
+    /// <inheritdoc />
     public virtual bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))

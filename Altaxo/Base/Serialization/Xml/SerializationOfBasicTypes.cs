@@ -45,12 +45,14 @@ namespace Altaxo.Serialization.Xml
     [XmlSerializationSurrogateFor("mscorlib", "System.String", 0)] // Deserialization for .Net framework type
     private class XmlSerializationSurrogateForSystemString : IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, IXmlSerializationInfo info)
       {
         var s = (string)obj;
         info.AddValue("e", s);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, IXmlDeserializationInfo info, object? parentobject)
       {
         return info.GetString("e");
@@ -65,12 +67,14 @@ namespace Altaxo.Serialization.Xml
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("mscorlib", "System.Double", 0)] // Deserialization for .Net framework type
     private class XmlSerializationSurrogateForSystemDouble : IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (double)obj;
         info.AddValue("e", s);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, IXmlDeserializationInfo info, object? parentobject)
       {
         return info.GetDouble("e");
@@ -85,12 +89,14 @@ namespace Altaxo.Serialization.Xml
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("mscorlib", "System.Int32", 0)] // Deserialization for .Net framework type
     private class XmlSerializationSurrogateForSystemInt32 : IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (int)obj;
         info.AddValue("e", s);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, IXmlDeserializationInfo info, object? parentobject)
       {
         return info.GetInt32("e");
@@ -105,12 +111,14 @@ namespace Altaxo.Serialization.Xml
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("mscorlib", "System.Int64", 0)] // Deserialization for .Net framework type
     private class XmlSerializationSurrogateForSystemInt64 : IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (long)obj;
         info.AddValue("e", s);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, IXmlDeserializationInfo info, object? parentobject)
       {
         return info.GetInt64("e");
@@ -125,12 +133,14 @@ namespace Altaxo.Serialization.Xml
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("mscorlib", "System.DateTime", 0)] // Deserialization for .Net framework type
     private class XmlSerializationSurrogateForSystemDateTime : IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DateTime)obj;
         info.AddValue("e", s);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, IXmlDeserializationInfo info, object? parentobject)
       {
         return info.GetDateTime("e");
@@ -145,12 +155,14 @@ namespace Altaxo.Serialization.Xml
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("mscorlib", "System.Boolean", 0)] // Deserialization for .Net framework type
     private class XmlSerializationSurrogateForBoolean : IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (bool)obj;
         info.AddValue("e", s);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, IXmlDeserializationInfo info, object? parentobject)
       {
         return info.GetBoolean("e");

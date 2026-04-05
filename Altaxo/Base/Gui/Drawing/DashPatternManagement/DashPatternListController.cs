@@ -36,14 +36,23 @@ using Altaxo.Graph.Graph3D.Plot.Groups;
 
 namespace Altaxo.Gui.Drawing.DashPatternManagement
 {
+  /// <summary>
+  /// View contract for editing dash-pattern lists.
+  /// </summary>
   public interface IDashPatternListView : IStyleListView
   {
   }
 
+  /// <summary>
+  /// Controller for editing <see cref="DashPatternList"/> instances.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IDashPatternListView))]
   [UserControllerForObject(typeof(DashPatternList))]
   public class DashPatternListController : StyleListController<DashPatternListManager, DashPatternList, IDashPattern>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DashPatternListController"/> class.
+    /// </summary>
     public DashPatternListController()
       : base(DashPatternListManager.Instance)
     {
@@ -52,10 +61,16 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the command that adds the current custom dash pattern to the list.
+    /// </summary>
     public ICommand CmdAddCustomDashPatternToList { get; }
 
     private IDashPattern _customDashPattern = new Altaxo.Drawing.DashPatterns.Solid();
 
+    /// <summary>
+    /// Gets or sets the custom dash pattern to add.
+    /// </summary>
     public IDashPattern CustomDashPattern
     {
       get => _customDashPattern;

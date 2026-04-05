@@ -32,7 +32,7 @@ using Altaxo.Data;
 namespace Altaxo.Gui.Data
 {
   /// <summary>
-  /// Interface to be used if a controller controls an instance which refers to one or more data column(s).
+  /// Interface to be used if a controller controls an instance that refers to one or more data columns.
   /// </summary>
   public interface IColumnDataExternallyControlled
   {
@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Data
     /// Item1 is a label to be shown in the column data dialog to let the user identify the column.
     /// Item2 is the column itself,
     /// Item3 is the column name (last part of the full path to the column), and
-    /// Item4 is an action which sets the column (and by the way the supposed data table the column belongs to.</returns>
+    /// Item4 is an action that sets the column, the supposed parent data table, and the group number.</returns>
     IEnumerable<(string ColumnLabel, IReadableColumn Column, string ColumnName, Action<IReadableColumn, DataTable, int> ColumnSetAction)> GetDataColumnsExternallyControlled();
   }
 }

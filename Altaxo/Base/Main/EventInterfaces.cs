@@ -31,13 +31,13 @@ using System.Text;
 namespace Altaxo.Main
 {
   /// <summary>
-  /// Stores a set of event data. A special function exist to either set the item, if it is not accumulateable, or to accumulate the event data.
+  /// Stores a set of event data. A special function exists to either set the item, if it is not accumulatable, or accumulate the event data.
   /// </summary>
   public interface ISetOfEventData : ICollection<EventArgs>
   {
     /// <summary>
-    /// Puts the specified item in the collection, regardless whether it is already contained or not. If it is not already contained, it is added to the collection.
-    /// If it is already contained, and is of type <see cref="SelfAccumulateableEventArgs"/>, the <see cref="SelfAccumulateableEventArgs.Add"/> function is used to add the item to the already contained item.
+    /// Puts the specified item in the collection regardless of whether it is already contained. If it is not already contained, it is added to the collection.
+    /// If it is already contained and is of type <see cref="SelfAccumulateableEventArgs"/>, the <see cref="SelfAccumulateableEventArgs.Add"/> function is used to add the item to the already contained item.
     /// </summary>
     /// <param name="item">The <see cref="EventArgs"/> instance containing the event data.</param>
     void SetOrAccumulate(EventArgs item);
@@ -87,11 +87,10 @@ namespace Altaxo.Main
 
     /// <summary>
     /// Resumes the object suspended by this token completely for the time the returned token is referenced and not disposed.
-    /// The return value is another token that had 'absorbed' the suspend count of the object, resulting in a suspend count
-    /// of the object of 0 (zero). When these other token is finally disposed, the suspend count of the object is increased again by the 'absorbed' suspend count.
+    /// The return value is another token that has absorbed the suspend count of the object, resulting in a suspend count
+    /// of zero. When this other token is finally disposed, the suspend count of the object is increased again by the absorbed suspend count.
     /// </summary>
-    /// <returns>A new token. As long as this token is not disposed, and not other process calls SuspendGetToken, the object is fre (not suspended). The object is suspended again when
-    /// the returned token is disposed.</returns>
+    /// <returns>A new token. As long as this token is not disposed, and no other process calls <c>SuspendGetToken</c>, the object is free, that is, not suspended. The object is suspended again when the returned token is disposed.</returns>
     IDisposable ResumeCompleteTemporarilyGetToken();
   }
 }

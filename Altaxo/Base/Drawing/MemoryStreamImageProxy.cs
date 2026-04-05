@@ -34,13 +34,14 @@ using Altaxo.Serialization.Xml;
 namespace Altaxo.Drawing
 {
   /// <summary>
-  /// Holds an image, either from a resource or from a file stream or from the clipboard.
+  /// Holds an image in memory, typically loaded from a file, stream, or clipboard.
   /// </summary>
   /// <seealso cref="ImageProxy" />
   [Serializable]
   public class MemoryStreamImageProxy : ImageProxy, Main.IImmutable
   {
     private byte[] _streamBuffer;
+    /// <inheritdoc/>
     public override string ContentHash { get; }
 
     /// <summary>
@@ -54,6 +55,7 @@ namespace Altaxo.Drawing
     /// </summary>
     public string Url { get; }
 
+    /// <inheritdoc/>
     public override string Name { get; }
 
 
@@ -155,11 +157,23 @@ namespace Altaxo.Drawing
 
     #endregion Serialization
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return Name;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MemoryStreamImageProxy"/> class.
+    /// </summary>
+    /// <param name="stream">The image content stream.</param>
+    /// <param name="hash">The optional precomputed content hash.</param>
+    /// <param name="extension">The image file extension.</param>
+    /// <param name="name">The display name.</param>
+    /// <param name="url">The source URL or path.</param>
+    /// <param name="imageSizePoint">The optional image size in points.</param>
+    /// <param name="imageSizePixel">The optional image size in pixels.</param>
+    /// <param name="imageResolutionDpi">The optional image resolution in dpi.</param>
     public MemoryStreamImageProxy(Stream stream, string hash, string extension, string name, string url, VectorD2D? imageSizePoint = null, VectorD2D? imageSizePixel = null, VectorD2D? imageResolutionDpi = null)
     {
       if (stream is null)
@@ -199,6 +213,11 @@ namespace Altaxo.Drawing
     }
 
 
+    /// <summary>
+    /// Creates a <see cref="MemoryStreamImageProxy"/> from a file.
+    /// </summary>
+    /// <param name="fullpath">The full file path.</param>
+    /// <returns>A memory-backed image proxy.</returns>
     public static new MemoryStreamImageProxy FromFile(string fullpath)
     {
       var stream = new MemoryStream();
@@ -291,6 +310,7 @@ namespace Altaxo.Drawing
     }
 
 
+    /// <inheritdoc/>
     public override bool IsValid
     {
       get
@@ -336,6 +356,7 @@ namespace Altaxo.Drawing
       }
     }
 
+    /// <inheritdoc/>
     public override Stream GetContentStream()
     {
       return new MemoryStream(_streamBuffer, writable: false);

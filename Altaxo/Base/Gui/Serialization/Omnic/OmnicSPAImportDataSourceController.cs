@@ -30,9 +30,13 @@ using Altaxo.Serialization.Omnic;
 
 namespace Altaxo.Gui.Serialization.Omnic
 {
+  /// <summary>
+  /// Controller for <see cref="OmnicSPAImportDataSource"/>.
+  /// </summary>
   [UserControllerForObject(typeof(OmnicSPAImportDataSource))]
   public class OmnicSPAImportDataSourceController : DataSourceControllerBase<OmnicSPAImportDataSource>
   {
+    /// <inheritdoc />
     protected override IMVCANController GetProcessDataController()
     {
       var processDataController = new MultipleFilesController();
@@ -42,7 +46,9 @@ namespace Altaxo.Gui.Serialization.Omnic
       return processDataController;
     }
 
+    /// <inheritdoc />
     protected override bool IsProcessDataInitiallyExpanded() => true;
+    /// <inheritdoc />
     protected override bool IsProcessOptionsInitiallyExpanded() => false;
   }
 }

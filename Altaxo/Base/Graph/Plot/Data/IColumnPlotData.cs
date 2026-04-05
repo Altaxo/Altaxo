@@ -37,10 +37,14 @@ namespace Altaxo.Graph.Plot.Data
   /// <seealso cref="System.ICloneable" />
   public interface IColumnPlotData : ICloneable
   {
-    /// <summary>Gets the underlying data table. If this property is null (happens with old deserialization), the underlying table must be determined from the data columns.</summary>
+    /// <summary>
+    /// Gets or sets the underlying data table. If this property is <see langword="null"/> the underlying table must be determined from the data columns.
+    /// </summary>
     [MaybeNull] DataTable DataTable { get; set; }
 
-    /// <summary>The group number of the data columns. All data columns should have this group number. Data columns having other group numbers will be marked.</summary>
+    /// <summary>
+    /// Gets or sets the group number of the data columns.
+    /// </summary>
     int GroupNumber { get; set; }
 
     /// <summary>

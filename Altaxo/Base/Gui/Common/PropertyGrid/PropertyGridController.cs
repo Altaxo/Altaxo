@@ -33,27 +33,60 @@ using Altaxo.Gui.Common.BasicTypes;
 
 namespace Altaxo.Gui.Common.PropertyGrid
 {
+  /// <summary>
+  /// Defines the view contract for the property grid.
+  /// </summary>
   public interface IPropertyGridView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller that exposes writable properties of an object as editable child controllers.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IPropertyGridView))]
   public class PropertyGridController : MVCANControllerEditImmutableDocBase<object, IPropertyGridView>
   {
     private Type TypeOfDocument { get; set; }
 
+    /// <summary>
+    /// Describes a single editable value shown in the property grid.
+    /// </summary>
     public class ValueInfo : ICategoryNameView
     {
+      /// <summary>
+      /// Gets or sets the category name.
+      /// </summary>
       public string Category { get; set; } = string.Empty;
+      /// <summary>
+      /// Gets the display name.
+      /// </summary>
       public string Name { get; }
+      /// <summary>
+      /// Gets the underlying value.
+      /// </summary>
       public object? Value { get; }
+      /// <summary>
+      /// Gets the value type.
+      /// </summary>
       public Type ValueType { get; }
+      /// <summary>
+      /// Gets the associated method or property info.
+      /// </summary>
       public object? MethodOrPropertyInfo { get; }
 
+      /// <summary>
+      /// Gets or sets the controller used to edit the value.
+      /// </summary>
       public IMVCAController Controller { get; set; }
 
+      /// <summary>
+      /// Gets the view associated with the controller.
+      /// </summary>
       public object View => Controller.ViewObject!;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ValueInfo"/> class.
+      /// </summary>
       public ValueInfo(string name, IMVCAController controller)
       {
         Name = name;
@@ -62,6 +95,9 @@ namespace Altaxo.Gui.Common.PropertyGrid
         ValueType = Value.GetType();
       }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ValueInfo"/> class.
+      /// </summary>
       public ValueInfo(string name, Type valueType, MethodInfo method, object? value, IMVCAController controller)
       {
         Name = name;
@@ -71,6 +107,9 @@ namespace Altaxo.Gui.Common.PropertyGrid
         Controller = controller;
       }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ValueInfo"/> class.
+      /// </summary>
       public ValueInfo(string name, PropertyInfo propertyInfo, object? value, IMVCAController controller)
       {
         Name = name;
@@ -82,6 +121,9 @@ namespace Altaxo.Gui.Common.PropertyGrid
     }
 
 
+    /// <summary>
+    /// Gets the editable value descriptors.
+    /// </summary>
     public ObservableCollection<ValueInfo> ValueInfos { get; private set; } = new ObservableCollection<ValueInfo>();
 
     /// <summary>
@@ -89,6 +131,9 @@ namespace Altaxo.Gui.Common.PropertyGrid
     /// </summary>
     public string LabelIfDocumentIsBasicType { get; set; } = "Value";
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PropertyGridController"/> class.
+    /// </summary>
     public PropertyGridController()
     {
       TypeOfDocument = null!;
@@ -118,6 +163,7 @@ namespace Altaxo.Gui.Common.PropertyGrid
       Initialize(true);
     }
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       if (_doc is null)
@@ -132,6 +178,9 @@ namespace Altaxo.Gui.Common.PropertyGrid
       }
     }
 
+    /// <summary>
+    /// Gets the names and types of writable properties for a document.
+    /// </summary>
     public static IEnumerable<(string Name, Type type)> GetNameAndTypeOfWritableProperties(object doc)
     {
       if (doc is null)
@@ -177,6 +226,9 @@ namespace Altaxo.Gui.Common.PropertyGrid
     }
 
 
+    /// <summary>
+    /// Initializes the value descriptors shown by the property grid.
+    /// </summary>
     protected virtual void InitializeValueInfos()
     {
       var doctype = _doc.GetType();
@@ -275,6 +327,12 @@ namespace Altaxo.Gui.Common.PropertyGrid
       }
     }
 
+    /// <summary>
+    /// Tries to create a controller for the specified value.
+    /// </summary>
+    /// <param name="value">The current value.</param>
+    /// <param name="valueType">The value type.</param>
+    /// <returns>The controller if one could be created; otherwise, <see langword="null"/>.</returns>
     protected IMVCAController? TryGetControllerAndControl(object? value, Type valueType)
     {
       IMVCAController? controller = null;
@@ -361,6 +419,7 @@ namespace Altaxo.Gui.Common.PropertyGrid
       return null;
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (IsBasicType(TypeOfDocument))
@@ -424,6 +483,7 @@ namespace Altaxo.Gui.Common.PropertyGrid
       }
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       foreach (var item in ValueInfos)

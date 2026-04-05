@@ -33,6 +33,9 @@ namespace Altaxo.Text.Renderers.Maml.Extensions
   /// <seealso cref="MamlObjectRenderer{Table}" />
   public class TableRenderer : MamlObjectRenderer<Table>
   {
+    /// <summary>
+    /// Writes a table.
+    /// </summary>
     protected override void Write(MamlRenderer renderer, Table table)
     {
       renderer.Push(MamlElements.table);

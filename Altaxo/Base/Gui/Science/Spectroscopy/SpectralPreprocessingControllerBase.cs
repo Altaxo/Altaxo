@@ -45,17 +45,25 @@ namespace Altaxo.Gui.Science.Spectroscopy
 {
 
 
+  /// <summary>
+  /// View interface for editing spectral preprocessing options.
+  /// </summary>
   public interface ISpectralPreprocessingOptionsView : IDataContextAwareView
   {
   }
 
 
+  /// <summary>
+  /// Base class for controllers that edit spectral preprocessing option documents.
+  /// </summary>
+  /// <typeparam name="TOptions">Type of the options document.</typeparam>
   public abstract class SpectralPreprocessingControllerBase<TOptions> : MVCANControllerEditImmutableDocBase<TOptions, ISpectralPreprocessingOptionsView> where TOptions : class
   {
     private IMVCANController _selectedController;
 
     private Dictionary<Type, (string Caption, Type DefaultType, Func<IMVCANController> CreateController)> _controllerDict = new();
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       if (TabControllers?.Items is { } list)
@@ -67,6 +75,9 @@ namespace Altaxo.Gui.Science.Spectroscopy
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SpectralPreprocessingControllerBase{TOptions}"/> class.
+    /// </summary>
     public SpectralPreprocessingControllerBase()
     {
       CmdRemoveTab = new RelayCommand(EhCmdRemoveTab);
@@ -76,14 +87,26 @@ namespace Altaxo.Gui.Science.Spectroscopy
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the command that removes the currently selected preprocessing step.
+    /// </summary>
     public ICommand CmdRemoveTab { get; }
 
+    /// <summary>
+    /// Gets the command that moves the currently selected preprocessing step to the right.
+    /// </summary>
     public ICommand CmdMoveTabRight { get; }
 
+    /// <summary>
+    /// Gets the command that moves the currently selected preprocessing step to the left.
+    /// </summary>
     public ICommand CmdMoveTabLeft { get; }
 
     private ItemsController<IMVCANController> _tabControllers;
 
+    /// <summary>
+    /// Gets or sets the list of controllers representing the preprocessing pipeline.
+    /// </summary>
     public ItemsController<IMVCANController> TabControllers
     {
       get => _tabControllers;
@@ -100,6 +123,9 @@ namespace Altaxo.Gui.Science.Spectroscopy
 
     private bool _isCustomPipeline;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the options represent a custom pipeline.
+    /// </summary>
     public bool IsCustomPipeline
     {
       get => _isCustomPipeline;
@@ -130,6 +156,9 @@ namespace Altaxo.Gui.Science.Spectroscopy
 
     private ItemsController<Type> _contentInsertLeft;
 
+    /// <summary>
+    /// Gets or sets the list of available preprocessing steps to insert on the left side.
+    /// </summary>
     public ItemsController<Type> ContentInsertLeft
     {
       get => _contentInsertLeft;
@@ -145,6 +174,9 @@ namespace Altaxo.Gui.Science.Spectroscopy
 
     private ItemsController<Type> _contentInsertRight;
 
+    /// <summary>
+    /// Gets or sets the list of available preprocessing steps to insert on the right side.
+    /// </summary>
     public ItemsController<Type> ContentInsertRight
     {
       get => _contentInsertRight;
@@ -160,6 +192,7 @@ namespace Altaxo.Gui.Science.Spectroscopy
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -213,6 +246,9 @@ namespace Altaxo.Gui.Science.Spectroscopy
       }
     }
 
+    /// <summary>
+    /// Recreates the tab controllers from the current document.
+    /// </summary>
     protected void UpdateControllers()
     {
       _selectedController = null;
@@ -324,8 +360,16 @@ namespace Altaxo.Gui.Science.Spectroscopy
       }
     }
 
+    /// <summary>
+    /// Gets the components of the document that should be shown as tab items.
+    /// </summary>
+    /// <returns>Sequence of label, document instance, and a factory for the corresponding controller.</returns>
     protected abstract IEnumerable<(string Label, object Doc, Func<IMVCANController> GetController)> GetComponents();
 
+    /// <summary>
+    /// Adds controllers for all components returned by <see cref="GetComponents"/>.
+    /// </summary>
+    /// <param name="controllers">Destination list.</param>
     protected virtual void AddControllers(SelectableListNodeList controllers)
     {
       int idx = 0;
@@ -361,10 +405,19 @@ namespace Altaxo.Gui.Science.Spectroscopy
       _selectedController = e.newController;
     }
 
+    /// <summary>
+    /// Updates the underlying document after a component controller has applied its changes.
+    /// </summary>
+    /// <param name="model">Model object of the component controller.</param>
+    /// <param name="index">Index of the component in the pipeline.</param>
     protected abstract void UpdateDoc(object model, int index);
 
+    /// <summary>
+    /// Gets or sets the preprocessing options that are edited by this controller.
+    /// </summary>
     protected abstract SpectralPreprocessingOptionsBase InternalPreprocessingOptions { get; set; }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (_selectedController is not null)

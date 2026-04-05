@@ -26,17 +26,30 @@
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// View interface for the property controller.
+  /// </summary>
   public interface IPropertyView
   {
+    /// <summary>
+    /// Gets or sets the selected objects to display.
+    /// </summary>
     object[] SelectedObjectsToView { get; set; }
   }
 
+  /// <summary>
+  /// Controller for displaying an object's properties.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IPropertyView))]
   public class PropertyController : IMVCAController
   {
     private IPropertyView? _view;
     private object _doc;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PropertyController"/> class.
+    /// </summary>
+    /// <param name="doc">The document object.</param>
     public PropertyController(object doc)
     {
       _doc = doc;
@@ -53,6 +66,7 @@ namespace Altaxo.Gui.Common
 
     #region IMVCController Members
 
+    /// <inheritdoc/>
     public object? ViewObject
     {
       get
@@ -66,15 +80,18 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     public object ModelObject
     {
       get { return _doc; }
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
     }
 
+    /// <inheritdoc/>
     public bool Apply(bool disposeController)
     {
       return true;
@@ -85,8 +102,9 @@ namespace Altaxo.Gui.Common
     /// </summary>
     /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
     /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    ///   <c>True</c> if the revert operation was successful; <c>false</c> if the revert operation was not possible, that is, because the controller has not stored the original state of the model.
     /// </returns>
+    /// <inheritdoc/>
     public bool Revert(bool disposeController)
     {
       return false;

@@ -39,7 +39,7 @@ namespace Altaxo.Gui.Graph
   using Altaxo.Main;
 
   /// <summary>
-  /// Holds all information that is neccessary to replace the tables used as data source for the plot items in graphs by other tables with the same structure.
+  /// Holds all information that is necessary to replace the tables used as data source for plot items in graphs by other tables with the same structure.
   /// </summary>
   public class ExchangeTablesOfPlotItemsDocument
   {
@@ -88,7 +88,7 @@ namespace Altaxo.Gui.Graph
     }
 
     /// <summary>Collects all plot items for a single <see cref="Altaxo.Graph.Gdi.GraphDocument"/>.</summary>
-    /// <param name="doc">The graph document to collect the plot items from..</param>
+    /// <param name="doc">The graph document to collect the plot items from.</param>
     private void CollectPlotItemsForGraph(Altaxo.Graph.Gdi.GraphDocument doc)
     {
       foreach (var layer in doc.RootLayer.TakeFromHereToFirstLeaves().OfType<XYPlotLayer>())
@@ -209,6 +209,9 @@ namespace Altaxo.Gui.Graph
   /// <summary>
   /// Interface to the Gui view that shows the dialog in which the user can exchange the underlying tables of plot items.
   /// </summary>
+  /// <summary>
+  /// Provides the view contract for <see cref="ExchangeTablesOfPlotItemsController"/>.
+  /// </summary>
   public interface IExchangeTablesOfPlotItemsView : IDataContextAwareView
   {
   }
@@ -314,11 +317,15 @@ namespace Altaxo.Gui.Graph
 
     private List<string> _listOfSelectedTableNames = new List<string>();
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ExchangeTablesOfPlotItemsController"/> class.
+    /// </summary>
     public ExchangeTablesOfPlotItemsController()
     {
       CmdApplyReplacementForCommonSubstring = new RelayCommand(EhApplySubstringReplacement);
@@ -329,10 +336,19 @@ namespace Altaxo.Gui.Graph
     #region Bindings
 
 
+    /// <summary>
+    /// Gets the command that applies the current substring replacement.
+    /// </summary>
     public ICommand CmdApplyReplacementForCommonSubstring { get; }
 
+    /// <summary>
+    /// Gets the command that chooses a replacement table.
+    /// </summary>
     public ICommand CmdChooseTable { get; }
 
+    /// <summary>
+    /// Gets the command that chooses a replacement folder.
+    /// </summary>
     public ICommand CmdChooseFolder { get; }
 
     private MultipleSelectableListNodeList _tableList;
@@ -382,7 +398,7 @@ namespace Altaxo.Gui.Graph
 
     private ItemsController<string> _listOfReplacementCandidates;
 
-    /// <summary>List of possible replacement candidates for the currently selected common substring in <see cref="_commonSubstringsList"/>.</summary>
+    /// <summary>List of possible replacement candidates for the currently selected common substring in <see cref="ListOfCommonSubstrings"/>.</summary>
     public ItemsController<string> ListOfReplacementCandidates
     {
       get => _listOfReplacementCandidates;
@@ -399,6 +415,9 @@ namespace Altaxo.Gui.Graph
 
     private string _replacementCandidateText;
 
+    /// <summary>
+    /// Gets or sets the replacement candidate text.
+    /// </summary>
     public string ReplacementCandidateText
     {
       get => _replacementCandidateText;
@@ -431,6 +450,9 @@ namespace Altaxo.Gui.Graph
 
     private bool _isCommonSubstringOperationsVisible;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether common-substring operations are visible.
+    /// </summary>
     public bool IsCommonSubstringOperationsVisible
     {
       get => _isCommonSubstringOperationsVisible;
@@ -447,6 +469,9 @@ namespace Altaxo.Gui.Graph
 
     private bool _searchCommonSubstringCharacterwise;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether common substrings are searched characterwise.
+    /// </summary>
     public bool SearchCommonSubstringCharacterwise
     {
       get => _searchCommonSubstringCharacterwise;
@@ -461,6 +486,9 @@ namespace Altaxo.Gui.Graph
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether common substrings are searched subfolderwise.
+    /// </summary>
     public bool SearchCommonSubstringSubfolderwise
     {
       get => !_searchCommonSubstringCharacterwise;
@@ -471,6 +499,7 @@ namespace Altaxo.Gui.Graph
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -722,7 +751,7 @@ namespace Altaxo.Gui.Graph
       }
     }
 
-    /// <summary>Evaluates substrings that are common to all (!) of the <see cref="_listOfSelectedTableNames"/> and updates the <see cref="_commonSubstringsList">list of common substrings</see> with the result.</summary>
+    /// <summary>Evaluates substrings that are common to all (!) of the <see cref="_listOfSelectedTableNames"/> and updates the <see cref="ListOfCommonSubstrings">list of common substrings</see> with the result.</summary>
     private void UpdateListOfCommonSubstringsCharacterWise()
     {
       var gsa = Altaxo.Collections.Text.GeneralizedSuffixArray.FromSeparateWords(_listOfSelectedTableNames, true);
@@ -797,8 +826,8 @@ namespace Altaxo.Gui.Graph
     }
 
     /// <summary>
-    /// Updates the list of substring replacement candidates for a given substring position. For the substring that is currently selected in <see cref="_commonSubstringsList"/> it evaluates
-    /// the possible replacement candidates for this substrings and filles the list <see cref="_substringReplacementCandidatesList"/> with the result.
+    /// Updates the list of substring replacement candidates for a given substring position. For the substring that is currently selected in <see cref="ListOfCommonSubstrings"/>, it evaluates
+    /// the possible replacement candidates for this substring and fills the list <see cref="ListOfReplacementCandidates"/> with the result.
     /// </summary>
     /// <param name="maybeShortendedSubstring">The maybe shortended substring.</param>
     private void UpdateListOfSubstringReplacementCandidates(string maybeShortendedSubstring)

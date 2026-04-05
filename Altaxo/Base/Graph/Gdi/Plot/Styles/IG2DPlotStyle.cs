@@ -35,6 +35,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   using Altaxo.Data;
   using Groups;
 
+  /// <summary>
+  /// Represents a two-dimensional plot style.
+  /// </summary>
   public interface IG2DPlotStyle : Altaxo.Graph.Plot.Styles.IGPlotStyle
   {
     /// <summary>

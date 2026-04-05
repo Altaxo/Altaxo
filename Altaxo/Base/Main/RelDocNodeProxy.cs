@@ -73,6 +73,7 @@ namespace Altaxo.Main
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Main.RelDocNodeProxy", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version not supported");
@@ -92,6 +93,7 @@ namespace Altaxo.Main
                 */
       }
 
+      /// <inheritdoc />
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (!(parent is Main.IDocumentNode))
@@ -117,6 +119,7 @@ namespace Altaxo.Main
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RelDocNodeProxy), 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (RelDocNodeProxy)obj;
@@ -132,6 +135,7 @@ namespace Altaxo.Main
         info.AddValue("Node", path);
       }
 
+      /// <inheritdoc />
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (!(parent is Main.IDocumentNode))
@@ -184,6 +188,11 @@ namespace Altaxo.Main
       _docNodePath = docNodePath;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RelDocNodeProxy"/> class.
+    /// </summary>
+    /// <param name="docNode">The document node to proxy.</param>
+    /// <param name="parentNode">The parent node of this proxy.</param>
     public RelDocNodeProxy(Main.IDocumentLeafNode docNode, Main.IDocumentNode parentNode)
     {
 
@@ -207,9 +216,9 @@ namespace Altaxo.Main
     }
 
     /// <summary>
-    /// Creates a copy of a docnode proxy
+    /// Creates a copy of a document-node proxy.
     /// </summary>
-    /// <param name="from"></param>
+    /// <param name="from">The proxy to copy.</param>
     /// <param name="copyPathOnly">If true, only the path is copied, and the document is then resolved using the provided <paramref name="parentNode"/> as start point of the path.
     /// If <c>false</c>, and the proxy to copy from has a valid document, that document is used also for this instance, and a new relative path from  <paramref name="parentNode"/> to the document is calculated.</param>
     /// <param name="parentNode">The parent node of this proxy.</param>
@@ -234,6 +243,7 @@ namespace Altaxo.Main
     /// Instead, we remove all references to the holded document node and also all event handlers-
     /// </summary>
     /// <param name="isDisposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+    /// <inheritdoc />
     protected override void Dispose(bool isDisposing)
     {
 #if DEBUG_DOCNODEPROXYLOGGING
@@ -253,6 +263,7 @@ namespace Altaxo.Main
 
     #region public properties (that need locking)
 
+    /// <inheritdoc />
     public override IDocumentNode? ParentObject
     {
       get
@@ -292,7 +303,7 @@ namespace Altaxo.Main
     }
 
     /// <summary>
-    /// Gets/sets the document node that is held by this proxy. If the stored doc node is null, it is tried to resolve the stored document path.
+    /// Gets or sets the document node that is held by this proxy. If the stored document node is null, it is tried to resolve the stored document path.
     /// If that fails too, null is returned.
     /// </summary>
     [MaybeNull]
@@ -443,6 +454,7 @@ namespace Altaxo.Main
 
     #region Handling of events from the parent document node
 
+    /// <inheritdoc/>
     public override void EhParentTunnelingEventHappened(IDocumentNode sender, IDocumentNode originalSource, TunnelingEventArgs e)
     {
       if (!IsDisposeInProgress)
@@ -738,6 +750,9 @@ namespace Altaxo.Main
       }
     }
 
+    /// <summary>
+    /// Gets or sets the internal relative document path.
+    /// </summary>
     protected RelativeDocumentPath InternalDocumentPath
     {
       get
@@ -750,6 +765,10 @@ namespace Altaxo.Main
       }
     }
 
+    /// <summary>
+    /// Resolves the proxied document object.
+    /// </summary>
+    /// <returns>The resolved node together with optional instance-changed event arguments.</returns>
     protected virtual (IDocumentLeafNode? node, InstanceChangedEventArgs? instanceArgs) ResolveDocumentObject()
     {
       if (IsDisposeInProgress)

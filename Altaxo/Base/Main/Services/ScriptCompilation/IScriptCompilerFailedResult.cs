@@ -28,13 +28,13 @@ using System.Collections.Generic;
 namespace Altaxo.Main.Services.ScriptCompilation
 {
   /// <summary>
-  /// Extends the <see cref="IScriptCompilerResult"/> by the list of compilation errors of an unsuccessful compilation.
+  /// Extends the <see cref="IScriptCompilerResult"/> with the diagnostics of an unsuccessful compilation.
   /// </summary>
   /// <seealso cref="Altaxo.Main.Services.ScriptCompilation.IScriptCompilerResult" />
   public interface IScriptCompilerFailedResult : IScriptCompilerResult
   {
     /// <summary>
-    /// Gets the list of compilation errors.
+    /// Gets the list of compilation diagnostics.
     /// </summary>
     IReadOnlyList<ICompilerDiagnostic> CompileErrors { get; }
   }

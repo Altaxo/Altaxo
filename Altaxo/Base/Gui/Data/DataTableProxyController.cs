@@ -31,17 +31,28 @@ using Altaxo.Collections;
 
 namespace Altaxo.Gui.Data
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="DataTableProxyController"/>.
+  /// </summary>
   public interface IDataTableProxyView
   {
+    /// <summary>
+    /// Initializes the list of available tables.
+    /// </summary>
+    /// <param name="tables">The available tables.</param>
     void InitializeTables(SelectableListNodeList tables);
   }
 
+  /// <summary>
+  /// Controls editing of <see cref="Altaxo.Data.DataTableProxy"/> instances.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IDataTableProxyView))]
   [UserControllerForObject(typeof(Altaxo.Data.DataTableProxy))]
   public class DataTableProxyController : MVCANControllerEditOriginalDocBase<Altaxo.Data.DataTableProxy, IDataTableProxyView>
   {
     private SelectableListNodeList _availableTables;
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -61,6 +72,7 @@ namespace Altaxo.Gui.Data
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       var selNode = _availableTables.FirstSelectedNode;
@@ -75,6 +87,7 @@ namespace Altaxo.Gui.Data
       return ApplyEnd(true, disposeController);
     }
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;

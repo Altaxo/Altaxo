@@ -103,6 +103,7 @@ namespace Altaxo.Main.Services.ScriptCompilation
       return string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0:X16}{1:X16}", Hi, Lo);
     }
 
+    /// <inheritdoc/>
     public IEnumerator<string> GetEnumerator()
     {
       return CodeTexts.GetEnumerator();

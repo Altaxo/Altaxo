@@ -32,7 +32,7 @@ using Altaxo.Geometry;
 namespace Altaxo.Drawing
 {
   /// <summary>
-  /// Holds an image, either from a resource or from a file stream or from the clipboard.
+  /// Holds an image that is resolved from an application resource.
   /// </summary>
   [Serializable]
   public class ResourceImageProxy : ImageProxy
@@ -105,6 +105,7 @@ namespace Altaxo.Drawing
     }
 
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return _name;
@@ -118,6 +119,11 @@ namespace Altaxo.Drawing
 
 
 
+    /// <summary>
+    /// Creates an image proxy for the specified resource key.
+    /// </summary>
+    /// <param name="resourceKey">The resource key.</param>
+    /// <returns>An image proxy that resolves the resource on demand.</returns>
     public static new ImageProxy FromResource(string resourceKey)
     {
       if (string.IsNullOrEmpty(resourceKey))
@@ -129,6 +135,12 @@ namespace Altaxo.Drawing
       return new ResourceImageProxy(url: url, name: name);
     }
 
+    /// <summary>
+    /// Creates an image proxy for the specified resource key using a custom display name.
+    /// </summary>
+    /// <param name="name">The display name.</param>
+    /// <param name="resourceKey">The resource key.</param>
+    /// <returns>An image proxy that resolves the resource on demand.</returns>
     public static ImageProxy FromResource(string name, string resourceKey)
     {
       if (string.IsNullOrEmpty(name))
@@ -139,8 +151,10 @@ namespace Altaxo.Drawing
       return new ResourceImageProxy(url: resourceKey, name: name);
     }
 
+    /// <inheritdoc/>
     public override string Name { get { return _name; } }
 
+    /// <inheritdoc/>
     public override VectorD2D Size
     {
       get
@@ -154,6 +168,7 @@ namespace Altaxo.Drawing
       }
     }
 
+    /// <inheritdoc/>
     public override bool IsValid
     {
       get
@@ -163,6 +178,7 @@ namespace Altaxo.Drawing
       }
     }
 
+    /// <inheritdoc/>
     public override Stream GetContentStream()
     {
       TryResolveStreamBuffer();
@@ -191,6 +207,7 @@ namespace Altaxo.Drawing
       }
     }
 
+    /// <inheritdoc/>
     public override string ContentHash
     {
       get

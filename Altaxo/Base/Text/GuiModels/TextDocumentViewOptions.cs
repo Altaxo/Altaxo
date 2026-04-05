@@ -32,6 +32,9 @@ using Altaxo.Main;
 
 namespace Altaxo.Text.GuiModels
 {
+  /// <summary>
+  /// Stores presentation settings for a text document view.
+  /// </summary>
   public class TextDocumentViewOptions : IProjectItemPresentationModel, ICloneable
   {
     /// <summary>
@@ -105,6 +108,7 @@ namespace Altaxo.Text.GuiModels
       private AbsoluteDocumentPath? _pathToDocument;
       private TextDocumentViewOptions? _deserializedInstance;
 
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (TextDocumentViewOptions)obj;
@@ -121,6 +125,7 @@ namespace Altaxo.Text.GuiModels
         info.AddValue("OutlineWindowRelativeWidth", s.OutlineWindowRelativeWidth);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s =  (TextDocumentViewOptions?)o ?? new TextDocumentViewOptions(info);
@@ -168,16 +173,25 @@ namespace Altaxo.Text.GuiModels
     #endregion Serialization
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextDocumentViewOptions"/> class from XML deserialization data.
+    /// </summary>
+    /// <param name="info">The XML deserialization information.</param>
     protected TextDocumentViewOptions(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextDocumentViewOptions"/> class.
+    /// </summary>
+    /// <param name="doc">The text document.</param>
     public TextDocumentViewOptions(TextDocument doc)
     {
       Document = doc ?? throw new ArgumentNullException(nameof(doc));
     }
 
+    /// <inheritdoc/>
     public object Clone()
     {
       var result = (TextDocumentViewOptions)MemberwiseClone();
@@ -208,6 +222,9 @@ namespace Altaxo.Text.GuiModels
 
     #region Property keys
 
+    /// <summary>
+    /// Gets the property key for editor word wrapping.
+    /// </summary>
     public static readonly Main.Properties.PropertyKey<bool> PropertyKeyIsWordWrappingEnabled =
       new Main.Properties.PropertyKey<bool>(
         "FA2B3AF4-ED5D-4A26-B467-D9C4AE7C394B",
@@ -216,6 +233,9 @@ namespace Altaxo.Text.GuiModels
         typeof(TextDocument),
         () => true);
 
+    /// <summary>
+    /// Gets the property key for editor line numbering.
+    /// </summary>
     public static readonly Main.Properties.PropertyKey<bool> PropertyKeyIsLineNumberingEnabled =
       new Main.Properties.PropertyKey<bool>(
         "648D76D1-401F-4955-881A-716FFB4C6106",
@@ -224,6 +244,9 @@ namespace Altaxo.Text.GuiModels
         typeof(TextDocument),
         () => false);
 
+    /// <summary>
+    /// Gets the property key for viewer spell checking.
+    /// </summary>
     public static readonly Main.Properties.PropertyKey<bool> PropertyKeyIsSpellCheckingEnabled =
       new Main.Properties.PropertyKey<bool>(
       "0F4B3D74-51BB-4FE3-BF30-465E02305593",
@@ -232,6 +255,9 @@ namespace Altaxo.Text.GuiModels
       typeof(TextDocument),
       () => false);
 
+    /// <summary>
+    /// Gets the property key for viewer hyphenation.
+    /// </summary>
     public static readonly Main.Properties.PropertyKey<bool> PropertyKeyIsHyphenationEnabled =
       new Main.Properties.PropertyKey<bool>(
       "1A61D4A8-06E8-4A98-AD60-E89C0B47D77F",
@@ -240,6 +266,9 @@ namespace Altaxo.Text.GuiModels
       typeof(TextDocument),
       () => false);
 
+    /// <summary>
+    /// Gets the property key for editor folding.
+    /// </summary>
     public static readonly Main.Properties.PropertyKey<bool> PropertyKeyIsFoldingEnabled =
       new Main.Properties.PropertyKey<bool>(
       "8FBF38A4-E9ED-4C17-B6F0-F6E5E285FD33",
@@ -248,6 +277,9 @@ namespace Altaxo.Text.GuiModels
       typeof(TextDocument),
       () => false);
 
+    /// <summary>
+    /// Gets the property key for the editor highlighting style.
+    /// </summary>
     public static readonly Main.Properties.PropertyKey<string> PropertyKeyHighlightingStyle =
     new Main.Properties.PropertyKey<string>(
     "60B8A644-DB17-4D7A-A6EC-DD076B6E3A7A",
@@ -256,6 +288,9 @@ namespace Altaxo.Text.GuiModels
     typeof(TextDocument),
     () => "default");
 
+    /// <summary>
+    /// Gets the property key for outline visibility.
+    /// </summary>
     public static readonly Main.Properties.PropertyKey<bool> PropertyKeyOutlineVisible =
       new Main.Properties.PropertyKey<bool>(
         "208895E4-47CA-4A54-A19E-E09E1A2376CD",
@@ -264,6 +299,9 @@ namespace Altaxo.Text.GuiModels
         typeof(TextDocument),
         () => false);
 
+    /// <summary>
+    /// Gets the property key for the relative outline width.
+    /// </summary>
     public static readonly Main.Properties.PropertyKey<double> PropertyKeyOutlineWindowRelativeWidth =
       new Main.Properties.PropertyKey<double>(
         "6E55BC19-E1B5-4838-AD20-9A354E3C1C16",

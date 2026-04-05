@@ -31,7 +31,7 @@ namespace Altaxo.Graph.Scales.Deprecated
   using Boundaries;
 
   /// <summary>
-  /// Axis is the abstract base class of all axis types including linear axis, logarithmic axis and so on.
+  /// Provides the deprecated abstract base class for all scale types.
   /// </summary>
   [Serializable]
   public abstract class Scale
@@ -52,7 +52,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     #region IChangedEventSource Members
 
     /// <summary>
-    /// Used to fire the axis changed event, can be overriden in child classes.
+    /// Used to fire the scale changed event and can be overridden in derived classes.
     /// </summary>
     protected virtual void OnChanged()
     {
@@ -124,6 +124,9 @@ namespace Altaxo.Graph.Scales.Deprecated
     /// <summary>The axis end point in physical units.</summary>
     public abstract AltaxoVariant EndAsVariant { get; set; }
 
+    /// <summary>
+    /// Processes the data bounds currently stored in the scale.
+    /// </summary>
     public abstract void ProcessDataBounds();
 
     /// <summary>
@@ -138,15 +141,18 @@ namespace Altaxo.Graph.Scales.Deprecated
     /// The layer that controls this axis has to set IsLinked temporarily to false in order
     /// to be able to set the data bounds of this axis.
     /// </summary>
+    /// <summary>
+    /// Gets or sets a value indicating whether the scale is linked to another scale.
+    /// </summary>
     public bool IsLinked;
 
     /// <summary>
-    /// Static collection that holds all available axis types.
+    /// Static collection that holds all available scale types.
     /// </summary>
     protected static System.Collections.Hashtable sm_AvailableAxes;
 
     /// <summary>
-    /// Static constructor that initializes the collection of available axis types by searching in the current assembly for child classes of axis.
+    /// Static constructor that initializes the collection of available scale types by searching the current assembly for subclasses of <see cref="Scale"/>.
     /// </summary>
     static Scale()
     {
@@ -160,7 +166,9 @@ namespace Altaxo.Graph.Scales.Deprecated
       }
     }
 
-    /// <summary>Returns the collection of available axes.</summary>
+    /// <summary>
+    /// Gets the collection of available scales.
+    /// </summary>
     public static System.Collections.Hashtable AvailableAxes
     {
       get { return sm_AvailableAxes; }

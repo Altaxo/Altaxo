@@ -36,8 +36,14 @@ namespace Altaxo.Graph.Graph3D.Shapes
   using GraphicsContext;
   using Plot;
 
+  /// <summary>
+  /// Contains glyph-model types used by <see cref="TextGraphic"/>.
+  /// </summary>
   public partial class TextGraphic : GraphicBase
   {
+    /// <summary>
+    /// Caches font information used while measuring and drawing glyphs.
+    /// </summary>
     private class FontCache : IDisposable
     {
       private Dictionary<FontX3D, FontInfo> _fontInfoDictionary = new Dictionary<FontX3D, FontInfo>();
@@ -67,6 +73,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
       #endregion IDisposable Members
     }
 
+    /// <summary>
+    /// Stores the current style state during text parsing and layout.
+    /// </summary>
     private class StyleContext
     {
       public FontX3D BaseFontId { get; set; }
@@ -113,6 +122,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
       }
     }
 
+    /// <summary>
+    /// Provides contextual data used during glyph measurement.
+    /// </summary>
     private class MeasureContext
     {
       public object LinkedObject { get; }
@@ -129,6 +141,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
       }
     }
 
+    /// <summary>
+    /// Provides contextual data used during glyph drawing.
+    /// </summary>
     private class DrawContext
     {
       public object LinkedObject { get; }
@@ -151,6 +166,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
       }
     }
 
+    /// <summary>
+    /// Represents the base glyph used in text layout.
+    /// </summary>
     private class Glyph
     {
       /// <summary>Parent of this object.</summary>
@@ -205,6 +223,10 @@ namespace Altaxo.Graph.Graph3D.Shapes
         return FontManager3D.Instance.MeasureString(text, font);
       }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="Glyph"/> class.
+      /// </summary>
+      /// <param name="styleContext">The glyph style context.</param>
       public Glyph(StyleContext styleContext)
       {
         Style = styleContext;
@@ -213,6 +235,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     #region Structural glyphs
 
+      /// <summary>
+      /// Represents a structural glyph that can contain other glyphs.
+      /// </summary>
     private class StructuralGlyph : Glyph
     {
       public StructuralGlyph(StyleContext style) : base(style)
@@ -229,6 +254,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
       }
     }
 
+      /// <summary>
+      /// Represents a structural glyph that can contain multiple child glyphs.
+      /// </summary>
     private class MultiChildGlyph : StructuralGlyph
     {
       protected List<Glyph> _childs = new List<Glyph>();

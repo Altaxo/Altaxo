@@ -29,7 +29,7 @@ using System.ComponentModel;
 namespace Altaxo.Graph.Scales.Rescaling
 {
   /// <summary>
-  /// Denotes what happens with one side of an axis when the data are changed.
+  /// Denotes what happens with one side of an axis when the data changes.
   /// </summary>
   public enum BoundaryRescaling
   {

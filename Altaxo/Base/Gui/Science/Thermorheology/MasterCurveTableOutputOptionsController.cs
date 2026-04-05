@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -28,12 +28,19 @@ using Altaxo.Science.Thermorheology.MasterCurves;
 
 namespace Altaxo.Gui.Science.Thermorheology
 {
+  /// <summary>
+  /// View interface for editing <see cref="MasterCurveTableOutputOptions"/>.
+  /// </summary>
   public interface IMasterCurveTableOutputOptionsView : IDataContextAwareView { }
 
+  /// <summary>
+  /// Controller for editing <see cref="MasterCurveTableOutputOptions"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IMasterCurveTableOutputOptionsView))]
   [UserControllerForObject(typeof(MasterCurveTableOutputOptions))]
   public class MasterCurveTableOutputOptionsController : MVCANControllerEditImmutableDocBase<MasterCurveTableOutputOptions, IMasterCurveTableOutputOptionsView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -44,6 +51,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private bool _outputOriginalCurves;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether original curves are output.
+    /// </summary>
     public bool OutputOriginalCurves
     {
       get => _outputOriginalCurves;
@@ -59,6 +69,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private bool _outputShiftedCurves;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether shifted curves are output.
+    /// </summary>
     public bool OutputShiftedCurves
     {
       get => _outputShiftedCurves;
@@ -74,6 +87,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private bool _outputMergedShiftedCurve;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the merged shifted curve is output.
+    /// </summary>
     public bool OutputMergedShiftedCurve
     {
       get => _outputMergedShiftedCurve;
@@ -89,6 +105,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private bool _outputInterpolatedCurve;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether an interpolated curve is output.
+    /// </summary>
     public bool OutputInterpolatedCurve
     {
       get => _outputInterpolatedCurve;
@@ -104,6 +123,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private bool _outputActivationEnergies;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether activation energies are output.
+    /// </summary>
     public bool OutputActivationEnergies
     {
       get => _outputActivationEnergies;
@@ -119,6 +141,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private bool _xValuesForActivationEnergiesAreRates;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether x-values for activation energies are rates.
+    /// </summary>
     public bool XValuesForActivationEnergiesAreRates
     {
       get => _xValuesForActivationEnergiesAreRates;
@@ -134,6 +159,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private ItemsController<ShiftGroupSorting> _sortShiftGroupValuesBy;
 
+    /// <summary>
+    /// Gets or sets the sorting applied to shift-group values.
+    /// </summary>
     public ItemsController<ShiftGroupSorting> SortShiftGroupValuesBy
     {
       get => _sortShiftGroupValuesBy;
@@ -150,6 +178,7 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -167,6 +196,7 @@ namespace Altaxo.Gui.Science.Thermorheology
     }
 
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = _doc with

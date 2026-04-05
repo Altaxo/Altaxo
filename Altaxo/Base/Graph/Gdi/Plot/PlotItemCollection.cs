@@ -39,6 +39,9 @@ namespace Altaxo.Graph.Gdi.Plot
   using Graph.Plot.Groups;
   using Plot.Groups;
 
+  /// <summary>
+  /// Represents a collection of plot items and their associated group styles.
+  /// </summary>
   [Serializable]
   public class PlotItemCollection
     :
@@ -62,6 +65,7 @@ namespace Altaxo.Graph.Gdi.Plot
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.PlotItemCollection", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotImplementedException("Programming error - trying to serialize an old version of PlotItemCollection");
@@ -84,12 +88,23 @@ namespace Altaxo.Graph.Gdi.Plot
                 */
       }
 
+      /// <summary>
+      /// Temporary helper used while deserializing legacy plot groups.
+      /// </summary>
       private struct PGTrans
       {
+        /// <summary>
+        /// Gets or sets the serialized plot group information.
+        /// </summary>
         public PlotGroupMemento PlotGroup;
+
+        /// <summary>
+        /// Gets or sets the plot item collection associated with the plot group.
+        /// </summary>
         public PlotItemCollection PlotItemCollection;
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (PlotItemCollection?)o ?? new PlotItemCollection(info);
@@ -170,6 +185,7 @@ namespace Altaxo.Graph.Gdi.Plot
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Plot.PlotItemCollection", 2)]
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
@@ -185,6 +201,7 @@ namespace Altaxo.Graph.Gdi.Plot
                 */
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (PlotItemCollection?)o ?? new PlotItemCollection(info);
@@ -211,6 +228,7 @@ namespace Altaxo.Graph.Gdi.Plot
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotItemCollection), 3)]
     private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PlotItemCollection)obj;
@@ -223,6 +241,7 @@ namespace Altaxo.Graph.Gdi.Plot
         info.CommitArray();
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (PlotItemCollection?)o ?? new PlotItemCollection(info);
@@ -244,9 +263,9 @@ namespace Altaxo.Graph.Gdi.Plot
     }
 
     /// <summary>
-    /// Finale measures after deserialization.
+    /// Performs final restoration steps after deserialization.
     /// </summary>
-    /// <param name="obj">Not used.</param>
+    /// <param name="obj">The deserialized object.</param>
     public virtual void OnDeserialization(object obj)
     {
       // restore the event chain
@@ -254,6 +273,10 @@ namespace Altaxo.Graph.Gdi.Plot
         item.ParentObject = this;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PlotItemCollection"/> class during deserialization.
+    /// </summary>
+    /// <param name="info">The deserialization info.</param>
     public PlotItemCollection(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
       _plotItems = new ObservableList<IGPlotItem>();
@@ -265,6 +288,10 @@ namespace Altaxo.Graph.Gdi.Plot
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PlotItemCollection"/> class.
+    /// </summary>
+    /// <param name="owner">The owning plot layer.</param>
     public PlotItemCollection(XYPlotLayer owner)
     {
       _parent = owner;
@@ -273,6 +300,9 @@ namespace Altaxo.Graph.Gdi.Plot
       _plotGroupStyles = new PlotGroupStyleCollection() { ParentObject = this };
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PlotItemCollection"/> class.
+    /// </summary>
     public PlotItemCollection()
     {
       _plotItems = new ObservableList<IGPlotItem>();
@@ -306,6 +336,11 @@ namespace Altaxo.Graph.Gdi.Plot
       ChildCopyToMember(ref _plotGroupStyles, from._plotGroupStyles);
     }
 
+    /// <summary>
+    /// Copies settings from another plot item collection.
+    /// </summary>
+    /// <param name="from">The source collection.</param>
+    /// <param name="options">The copy options.</param>
     public void CopyFrom(PlotItemCollection from, GraphCopyOptions options)
     {
       if (ReferenceEquals(this, from))
@@ -323,6 +358,7 @@ namespace Altaxo.Graph.Gdi.Plot
       }
     }
 
+    /// <inheritdoc />
     public virtual bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -341,6 +377,10 @@ namespace Altaxo.Graph.Gdi.Plot
       return new PlotItemCollection(this);
     }
 
+    /// <summary>
+    /// Creates a copy of this collection.
+    /// </summary>
+    /// <returns>The cloned collection.</returns>
     public PlotItemCollection Clone()
     {
       return new PlotItemCollection(this);
@@ -350,6 +390,9 @@ namespace Altaxo.Graph.Gdi.Plot
 
     #region Other stuff
 
+    /// <summary>
+    /// Gets the parent plot layer.
+    /// </summary>
     public XYPlotLayer ParentLayer
     {
       get
@@ -358,6 +401,7 @@ namespace Altaxo.Graph.Gdi.Plot
       }
     }
 
+    /// <inheritdoc />
     public PlotItemCollection? ParentCollection
     {
       get
@@ -390,6 +434,9 @@ namespace Altaxo.Graph.Gdi.Plot
       }
     }
 
+    /// <summary>
+    /// Gets or sets the group styles of this collection.
+    /// </summary>
     public PlotGroupStyleCollection GroupStyles
     {
       get
@@ -430,26 +477,29 @@ namespace Altaxo.Graph.Gdi.Plot
         pi.CollectStyles(styles);
     }
 
+    /// <inheritdoc />
     public void PrepareScales(IPlotArea layer)
     {
       foreach (IGPlotItem pi in _plotItems)
         pi.PrepareScales(layer);
     }
 
+    /// <inheritdoc />
     public void PrepareGroupStyles(PlotGroupStyleCollection? parentPlotGroupStyles, IPlotArea layer)
     {
       PrepareGroupStylesForward_HierarchyUpOnly(parentPlotGroupStyles, layer);
     }
 
+    /// <inheritdoc />
     public void ApplyGroupStyles(PlotGroupStyleCollection? parentPlotGroupStyles)
     {
       ApplyGroupStylesForward_HierarchyUpOnly(parentPlotGroupStyles);
     }
 
     /// <summary>
-    /// Distribute the changes made to the plotitem 'pivotitem' to all other items in the collection and if neccessary, also up and down the plot item tree.
+    /// Distributes style changes from one plot item to the remaining collection.
     /// </summary>
-    /// <param name="pivotitem">The plot item where changes to the plot item's styles were made.</param>
+    /// <param name="pivotitem">The plot item where the changes originated.</param>
     public void DistributeChanges(IGPlotItem pivotitem)
     {
       int pivotidx = _plotItems.IndexOf(pivotitem);
@@ -764,15 +814,16 @@ namespace Altaxo.Graph.Gdi.Plot
     /// </summary>
     /// <param name="template">Ignored.</param>
     /// <param name="strictness">Ignored.</param>
+    /// <inheritdoc />
     public void SetPlotStyleFromTemplate(IGPlotItem template, PlotGroupStrictness strictness)
     {
     }
 
     /// <summary>
-    /// Sets the plot style (or sub plot styles) of all plot items in this collection according to a template provided by the plot item in the template argument.
+    /// Applies plot styles from a template item to all other items in the collection.
     /// </summary>
-    /// <param name="template">The template item to copy the plot styles from.</param>
-    /// <param name="strictness">Denotes the strictness the styles are copied from the template. See <see cref="PlotGroupStrictness" /> for more information.</param>
+    /// <param name="template">The template plot item.</param>
+    /// <param name="strictness">The style-copy strictness.</param>
     public void DistributePlotStyleFromTemplate(IGPlotItem template, PlotGroupStrictness strictness)
     {
       foreach (IGPlotItem pi in _plotItems)
@@ -791,16 +842,21 @@ namespace Altaxo.Graph.Gdi.Plot
     {
     }
 
+    /// <inheritdoc />
     public string GetName(int level)
     {
       return string.Format("<Collection of {0} plot items>", _plotItems.Count);
     }
 
+    /// <inheritdoc />
     public string GetName(string style)
     {
       return string.Format("<Collection of {0} plot items>", _plotItems.Count);
     }
 
+    /// <summary>
+    /// Gets the child index direction used for painting.
+    /// </summary>
     public IndexDirection ChildIndexDirection
     {
       get
@@ -812,10 +868,12 @@ namespace Altaxo.Graph.Gdi.Plot
       }
     }
 
+    /// <inheritdoc />
     public virtual void PaintPreprocessing(IPaintContext paintContext)
     {
     }
 
+    /// <inheritdoc />
     public void Paint(System.Drawing.Graphics g, IPaintContext paintContext, IPlotArea layer, IGPlotItem? previousPlotItem, IGPlotItem? nextPlotItem)
     {
       //var layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<IPlotArea>(this);
@@ -829,6 +887,13 @@ namespace Altaxo.Graph.Gdi.Plot
       }
     }
 
+    /// <summary>
+    /// Paints the specified child plot item.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="paintContext">The paint context.</param>
+    /// <param name="layer">The plot layer.</param>
+    /// <param name="indexOfChild">The child index.</param>
     public void PaintChild(System.Drawing.Graphics g, IPaintContext paintContext, IPlotArea layer, int indexOfChild)
     {
       if (_plotGroupStyles.CoordinateTransformingStyle is { } coordTransStyle)
@@ -850,12 +915,14 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <summary>
     /// Called after painting has finished. Can be used to release resources.
     /// </summary>
+    /// <inheritdoc />
     public void PaintPostprocessing()
     {
     }
 
     #region Hit test
 
+    /// <inheritdoc />
     public IHitTestObject? HitTest(IPlotArea layer, PointD2D hitpoint)
     {
       IHitTestObject? result = null;
@@ -900,6 +967,10 @@ namespace Altaxo.Graph.Gdi.Plot
 
     #region IEnumerable<IG2DPlotItem> Members
 
+    /// <summary>
+    /// Returns an enumerator over the plot items.
+    /// </summary>
+    /// <returns>An enumerator.</returns>
     public IEnumerator<IGPlotItem> GetEnumerator()
     {
       return _plotItems.GetEnumerator();
@@ -918,11 +989,18 @@ namespace Altaxo.Graph.Gdi.Plot
 
     #region Other collection methods
 
+    /// <summary>
+    /// Gets the number of plot items.
+    /// </summary>
     public int Count
     {
       get { return _plotItems.Count; }
     }
 
+    /// <summary>
+    /// Adds a plot item to the collection.
+    /// </summary>
+    /// <param name="item">The item to add.</param>
     public void Add(IGPlotItem item)
     {
       if (item is null)
@@ -959,6 +1037,10 @@ namespace Altaxo.Graph.Gdi.Plot
       _plotItems[idx] = tempPlotItem; // ObservableList ensures that Changed event is fired
     }
 
+    /// <summary>
+    /// Adds a range of plot items to the collection.
+    /// </summary>
+    /// <param name="items">The items to add.</param>
     public void AddRange(IEnumerable<IGPlotItem> items)
     {
       if (items is null)
@@ -973,11 +1055,17 @@ namespace Altaxo.Graph.Gdi.Plot
       OnCollectionChanged();
     }
 
+    /// <summary>
+    /// Removes all plot items from the collection.
+    /// </summary>
     public void ClearPlotItems()
     {
       _plotItems.Clear();
     }
 
+    /// <summary>
+    /// Removes all plot items and group styles from the collection.
+    /// </summary>
     public void ClearPlotItemsAndGroupStyles()
     {
       _plotItems.Clear();
@@ -985,6 +1073,10 @@ namespace Altaxo.Graph.Gdi.Plot
       OnCollectionChanged();
     }
 
+    /// <summary>
+    /// Gets the plot item at the specified index.
+    /// </summary>
+    /// <param name="i">The item index.</param>
     public IGPlotItem this[int i]
     {
       get { return _plotItems[i]; }
@@ -1008,6 +1100,11 @@ namespace Altaxo.Graph.Gdi.Plot
       return false;
     }
 
+    /// <summary>
+    /// Gets the index of the specified plot item.
+    /// </summary>
+    /// <param name="it">The plot item.</param>
+    /// <returns>The item index, or -1 if not found.</returns>
     public int IndexOf(IGPlotItem it)
     {
       return _plotItems.IndexOf(it);
@@ -1026,6 +1123,9 @@ namespace Altaxo.Graph.Gdi.Plot
           list.Add(pi);
     }
 
+    /// <summary>
+    /// Gets all nested plot items as a flattened array.
+    /// </summary>
     public IGPlotItem[] Flattened
     {
       get
@@ -1081,6 +1181,7 @@ namespace Altaxo.Graph.Gdi.Plot
       return null;
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       var index = 0;
@@ -1096,6 +1197,7 @@ namespace Altaxo.Graph.Gdi.Plot
       }
     }
 
+    /// <inheritdoc />
     protected override void Dispose(bool isDisposing)
     {
       if (_plotItems is not null)
@@ -1120,15 +1222,18 @@ namespace Altaxo.Graph.Gdi.Plot
     #region PlotGroup handling
 
     /// <summary>
-    /// Add the PlotGroupStyle.
+    /// Adds a plot group style to the collection.
     /// </summary>
-    /// <param name="pg">The plot group style to add.</param>
+    /// <param name="pg">The group style to add.</param>
     public void Add(IPlotGroupStyle pg)
     {
       _plotGroupStyles.Add(pg);
       EhSelfChanged(EventArgs.Empty);
     }
 
+    /// <summary>
+    /// Enumerates possible plot group styles.
+    /// </summary>
     public void ListPossiblePlotGroupStyles()
     {
       foreach (IGPlotItem pi in _plotItems)
@@ -1140,6 +1245,11 @@ namespace Altaxo.Graph.Gdi.Plot
 
     #region Event Handling
 
+    /// <summary>
+    /// Handles changes in plot groups.
+    /// </summary>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The event arguments.</param>
     public void EhPlotGroups_Changed(object sender, EventArgs e)
     {
       EhSelfChanged(EventArgs.Empty);
@@ -1150,6 +1260,9 @@ namespace Altaxo.Graph.Gdi.Plot
       OnCollectionChanged();
     }
 
+    /// <summary>
+    /// Raises change notifications after the contents of the collection have changed.
+    /// </summary>
     protected virtual void OnCollectionChanged()
     {
       _cachedPlotItemsFlattened = null; // invalidate _cachedPlotItemsFlattened
@@ -1157,6 +1270,7 @@ namespace Altaxo.Graph.Gdi.Plot
       EhSelfChanged(new BoundariesChangedEventArgs(BoundariesChangedData.ComplexChange)); // notify that possibly the boundaries have been changed
     }
 
+    /// <inheritdoc />
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       var e1 = e as SimpleCollectionChangedEventArgs;
@@ -1173,6 +1287,7 @@ namespace Altaxo.Graph.Gdi.Plot
 
     #region IXBoundsHolder Members
 
+    /// <inheritdoc />
     public void MergeXBoundsInto(IPhysicalBoundaries pb)
     {
       if (_plotGroupStyles.CoordinateTransformingStyle is { } coordTransStyle)
@@ -1185,6 +1300,7 @@ namespace Altaxo.Graph.Gdi.Plot
 
     #region IYBoundsHolder Members
 
+    /// <inheritdoc />
     public void MergeYBoundsInto(IPhysicalBoundaries pb)
     {
       if (_plotGroupStyles.CoordinateTransformingStyle is { } coordTransStyle)
@@ -1214,12 +1330,14 @@ namespace Altaxo.Graph.Gdi.Plot
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.PlotGroupStyle", 0)]
     private class PlotGroupStyleTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotImplementedException("This is deprectated stuff");
         //info.SetNodeContent(obj.ToString());
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         string val = info.GetNodeContent();
@@ -1232,12 +1350,31 @@ namespace Altaxo.Graph.Gdi.Plot
     /// </summary>
     private class PlotGroupMemento
     {
+      /// <summary>
+      /// Gets or sets the legacy plot group style.
+      /// </summary>
       public Version0PlotGroupStyle _plotGroupStyle;
+
+      /// <summary>
+      /// Gets or sets a value indicating whether styles are changed concurrently.
+      /// </summary>
       public bool _concurrently;
+
+      /// <summary>
+      /// Gets or sets the legacy plot group strictness.
+      /// </summary>
       public PlotGroupStrictness _plotGroupStrictness;
+
+      /// <summary>
+      /// Gets or sets the indices of the plot items that belong to the group.
+      /// </summary>
       public int[] _plotItemIndices; // stores not the plotitems itself, only the position of the items in the list
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+      /// <summary>
+      /// Initializes a new instance of the <see cref="PlotGroupMemento"/> class during deserialization.
+      /// </summary>
+      /// <param name="info">The deserialization info.</param>
       protected PlotGroupMemento(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
       {
@@ -1267,6 +1404,7 @@ namespace Altaxo.Graph.Gdi.Plot
       [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.PlotGroup+Memento", 0)]
       private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
       {
+        /// <inheritdoc />
         public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
         {
           throw new NotImplementedException("This is deprecated stuff");
@@ -1280,12 +1418,20 @@ namespace Altaxo.Graph.Gdi.Plot
                     */
         }
 
+        /// <inheritdoc />
         public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
           PlotGroupMemento s = SDeserialize(o, info, parent);
           return s;
         }
 
+        /// <summary>
+        /// Deserializes the specified legacy plot group memento instance.
+        /// </summary>
+        /// <param name="o">The existing instance, if any.</param>
+        /// <param name="info">The deserialization info.</param>
+        /// <param name="parent">The parent object.</param>
+        /// <returns>The deserialized plot group memento.</returns>
         public virtual PlotGroupMemento SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
           var s = (PlotGroupMemento?)o ?? new PlotGroupMemento(info);
@@ -1306,6 +1452,7 @@ namespace Altaxo.Graph.Gdi.Plot
       [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.PlotGroup+Memento", 1)]
       private class XmlSerializationSurrogate1 : XmlSerializationSurrogate0
       {
+        /// <inheritdoc />
         public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
         {
           throw new NotImplementedException("This is deprecated stuff");
@@ -1317,6 +1464,7 @@ namespace Altaxo.Graph.Gdi.Plot
                     */
         }
 
+        /// <inheritdoc />
         public override PlotGroupMemento SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
           var s = base.SDeserialize(o, info, parent);

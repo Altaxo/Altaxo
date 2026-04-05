@@ -28,12 +28,28 @@ using Clipper2Lib;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
+  /// <summary>
+  /// Represents the inset geometry and color of a scatter symbol.
+  /// </summary>
   public interface IScatterSymbolInset
   {
+    /// <summary>
+    /// Gets the inset color.
+    /// </summary>
     NamedColor Color { get; }
 
+    /// <summary>
+    /// Returns a copy of this inset with the specified color.
+    /// </summary>
+    /// <param name="color">The inset color to apply.</param>
+    /// <returns>An inset instance with the specified color.</returns>
     IScatterSymbolInset WithColor(NamedColor color);
 
+    /// <summary>
+    /// Gets a copy of the inset polygon in clipper coordinates.
+    /// </summary>
+    /// <param name="relativeWidth">The inset width relative to the symbol size.</param>
+    /// <returns>The inset polygon in clipper coordinates.</returns>
     Paths64 GetCopyOfClipperPolygon(double relativeWidth);
   }
 }

@@ -29,10 +29,16 @@ using Altaxo.Collections;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// Defines the view contract for choosing a type and editing its instance.
+  /// </summary>
   public interface ITypeAndInstanceView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Defines the controller contract for choosing a type and its instance controller.
+  /// </summary>
   public interface ITypeAndInstanceController : INotifyPropertyChanged
   {
     /// <summary>

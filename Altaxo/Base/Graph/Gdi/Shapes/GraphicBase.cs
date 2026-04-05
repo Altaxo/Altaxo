@@ -36,6 +36,7 @@ namespace Altaxo.Graph.Gdi.Shapes
   /// The abstract base class for general graphical objects on the layer,
   /// for instance text elements, lines, pictures, rectangles and so on.
   /// </summary>
+  /// <remarks>This class is serializable and supports various graphical transformations.</remarks>
   [Serializable]
   public abstract partial class GraphicBase
     :
@@ -110,6 +111,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Shapes.GraphicBase", 2)]
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotSupportedException("Can not serialize old versions, maybe this is a programming error");
@@ -122,6 +124,7 @@ namespace Altaxo.Graph.Gdi.Shapes
                 */
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (GraphicBase)(o ?? throw new ArgumentNullException(nameof(o)));
@@ -157,6 +160,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Shapes.GraphicBase", 3)]
     private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotSupportedException("Can not serialize old versions, maybe this is a programming error");
@@ -172,6 +176,7 @@ namespace Altaxo.Graph.Gdi.Shapes
                 */
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (GraphicBase)(o ?? throw new ArgumentNullException(nameof(o)));
@@ -213,6 +218,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Shapes.GraphicBase", 4)]
     private class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
@@ -231,6 +237,7 @@ namespace Altaxo.Graph.Gdi.Shapes
                 */
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (GraphicBase)(o ?? throw new ArgumentNullException(nameof(o)));
@@ -310,11 +317,20 @@ namespace Altaxo.Graph.Gdi.Shapes
       _location.ParentObject = this;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GraphicBase"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     protected GraphicBase(GraphicBase from)
     {
       CopyFrom(from, false);
     }
 
+    /// <summary>
+    /// Copies the state from another <see cref="GraphicBase"/> instance.
+    /// </summary>
+    /// <param name="from">The source instance.</param>
+    /// <param name="withBaseMembers">If set to <see langword="true"/>, base members are copied as well.</param>
     [MemberNotNull(nameof(_location))]
     protected void CopyFrom(GraphicBase from, bool withBaseMembers)
     {
@@ -324,6 +340,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
 
 
+    /// <inheritdoc />
     public virtual bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -348,6 +365,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       return false;
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_location is not null)
@@ -356,11 +374,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #region Suspend/Resume
 
+    /// <inheritdoc />
     protected override void AccumulateChangeData(object? sender, EventArgs e)
     {
       _accumulatedEventData = EventArgs.Empty;
     }
 
+    /// <inheritdoc />
     protected override void OnChanged(EventArgs e)
     {
       UpdateTransformationMatrix();
@@ -370,6 +390,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #endregion Suspend/Resume
 
+    /// <summary>
+    /// Sets the size of the parent object.
+    /// </summary>
+    /// <param name="parentSize">The parent size.</param>
+    /// <param name="shouldTriggerChangeEvent">If set to <c>true</c>, a change event is raised when needed.</param>
     public void SetParentSize(PointD2D parentSize, bool shouldTriggerChangeEvent)
     {
       var oldParentSize = _location.ParentSize;
@@ -384,6 +409,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets the size of the parent object.
+    /// </summary>
     public PointD2D ParentSize
     {
       get
@@ -392,6 +420,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the object sizes itself automatically.
+    /// </summary>
     public virtual bool AutoSize
     {
       get
@@ -400,6 +431,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets the location descriptor of the object.
+    /// </summary>
     public ItemLocationDirect Location
     {
       get
@@ -628,6 +662,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets the scale factors of the object.
+    /// </summary>
     public virtual PointD2D Scale
     {
       get
@@ -738,6 +775,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       return true;
     }
 
+    /// <summary>
+    /// Fixes up internal data structures after deserialization or structural changes.
+    /// </summary>
     public virtual void FixupInternalDataStructures()
     {
     }
@@ -783,6 +823,10 @@ namespace Altaxo.Graph.Gdi.Shapes
       return result;
     }
 
+    /// <summary>
+    /// Creates a new hit-test object for this graphic.
+    /// </summary>
+    /// <returns>A new hit-test object.</returns>
     protected virtual IHitTestObject GetNewHitTestObject()
     {
       return new GraphicBaseHitTestObject(this);
@@ -806,6 +850,11 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Tests whether a rectangular selection hits the object.
+    /// </summary>
+    /// <param name="parentHitData">The rectangular hit-test data.</param>
+    /// <returns>The hit-test object, or <see langword="null"/> if no hit occurred.</returns>
     public virtual IHitTestObject? HitTest(HitTestRectangularData parentHitData)
     {
       var localHitData = parentHitData.NewFromAdditionalTransformation(_transformation);
@@ -820,11 +869,10 @@ namespace Altaxo.Graph.Gdi.Shapes
     #region Hitting Helper functions
 
     /// <summary>
-    /// Converts relative positions (0..1, 0..1) to absolute coordinates in the world coordinate system of the object.
-    /// To convert this to layer coordinates, you have to transform it with the transformation matrix of this object.
+    /// Converts relative local coordinates to absolute local coordinates. 
     /// </summary>
-    /// <param name="p">Relative coordinates of the rectangle (0,0 is the upper left corner, 1,1 is the lower right corner).</param>
-    /// <returns>The absolute object coordinates of this point (not layer coordinates!).</returns>
+    /// <param name="p">The relative point.</param>
+    /// <returns>The absolute local point.</returns>
     public PointD2D RelativeLocalToAbsoluteLocalCoordinates(PointD2D p)
     {
       var bounds = Bounds;
@@ -832,10 +880,10 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
 
     /// <summary>
-    /// Converts relative positions of the object (0..1, 0..1) to coordinates in the world coordinate system of the parent (normally the layer).
+    /// Converts relative local coordinates to absolute parent coordinates.
     /// </summary>
-    /// <param name="p">Relative coordinates of the rectangle (0,0 is the upper left corner, 1,1 is the lower right corner).</param>
-    /// <returns>The absolute parent coordinates of this point (i.e. normally layer coordinates).</returns>
+    /// <param name="p">The relative point.</param>
+    /// <returns>The absolute parent point.</returns>
     public PointD2D RelativeLocalToAbsoluteParentCoordinates(PointD2D p)
     {
       var bounds = Bounds;
@@ -843,10 +891,10 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
 
     /// <summary>
-    /// Converts relative positions (0..1, 0..1) to coordinates in the world coordinate system of the parent (normally the layer).
+    /// Converts a relative local point to an absolute parent vector.
     /// </summary>
-    /// <param name="p">Relative coordinates of the rectangle (0,0 is the upper left corner, 1,1 is the lower right corner).</param>
-    /// <returns>The absolute parent coordinates of this point.</returns>
+    /// <param name="p">The relative point.</param>
+    /// <returns>The absolute parent vector.</returns>
     public PointD2D RelativeLocalToAbsoluteParentVector(PointD2D p)
     {
       var bounds = Bounds;
@@ -870,12 +918,11 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
 
     /// <summary>
-    /// Converts relative positions (0..1, 0..1) to absolute position of the rectangle, taking into account
-    /// the current rotation.
+    /// Converts a relative point to an absolute position.
     /// </summary>
-    /// <param name="p">Relative coordinates of the rectangle (0,0 is the upper left corner, 1,1 is the lower right corner).</param>
-    /// <param name="withRotation">If true, the coordinates are calculated taking the rotation into account.</param>
-    /// <returns>The coordinates of this point.</returns>
+    /// <param name="p">The relative point.</param>
+    /// <param name="withRotation">If set to <c>true</c>, rotation is taken into account.</param>
+    /// <returns>The absolute position.</returns>
     public PointD2D RelativeToAbsolutePosition(PointD2D p, bool withRotation)
     {
       var bounds = Bounds;
@@ -902,6 +949,12 @@ namespace Altaxo.Graph.Gdi.Shapes
         return new PointD2D(dx, dy);
     }
 
+    /// <summary>
+    /// Converts a difference vector defined by two points to unrotated coordinates.
+    /// </summary>
+    /// <param name="pivot">The pivot point.</param>
+    /// <param name="point">The target point.</param>
+    /// <returns>The unrotated difference vector.</returns>
     public PointD2D ToUnrotatedDifference(PointD2D pivot, PointD2D point)
     {
       double dx = point.X - pivot.X;
@@ -920,6 +973,11 @@ namespace Altaxo.Graph.Gdi.Shapes
       return new PointD2D(dx, dy);
     }
 
+    /// <summary>
+    /// Converts a difference vector to unrotated coordinates.
+    /// </summary>
+    /// <param name="diff">The rotated difference vector.</param>
+    /// <returns>The unrotated difference vector.</returns>
     public PointD2D ToUnrotatedDifference(PointD2D diff)
     {
       double dx = diff.X;
@@ -938,6 +996,12 @@ namespace Altaxo.Graph.Gdi.Shapes
       return new PointD2D(dx, dy);
     }
 
+    /// <summary>
+    /// Converts a difference vector to unrotated coordinates using the specified rotation.
+    /// </summary>
+    /// <param name="rotation">The rotation in degrees.</param>
+    /// <param name="diff">The rotated difference vector.</param>
+    /// <returns>The unrotated difference vector.</returns>
     public static PointD2D ToUnrotatedDifference(double rotation, PointD2D diff)
     {
       double dx = diff.X;
@@ -956,6 +1020,12 @@ namespace Altaxo.Graph.Gdi.Shapes
       return new PointD2D(dx, dy);
     }
 
+    /// <summary>
+    /// Converts a point to unrotated coordinates around the specified pivot.
+    /// </summary>
+    /// <param name="pivot">The pivot point.</param>
+    /// <param name="point">The rotated point.</param>
+    /// <returns>The unrotated point.</returns>
     public PointD2D ToUnrotatedCoordinates(PointD2D pivot, PointD2D point)
     {
       double dx = point.X - pivot.X;
@@ -973,6 +1043,12 @@ namespace Altaxo.Graph.Gdi.Shapes
       return new PointD2D((pivot.X + dx), (pivot.Y + dy));
     }
 
+    /// <summary>
+    /// Converts a difference vector defined by two points to rotated coordinates.
+    /// </summary>
+    /// <param name="pivot">The pivot point.</param>
+    /// <param name="point">The target point.</param>
+    /// <returns>The rotated difference vector.</returns>
     public PointD2D ToRotatedDifference(PointD2D pivot, PointD2D point)
     {
       double dx = point.X - pivot.X;
@@ -1028,7 +1104,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
 
     /// <summary>
-    ///
+    /// Sets the rotation from a pivot point and grip movement.
     /// </summary>
     /// <param name="relPivot">Pivot point in relative coordinates.</param>
     /// <param name="absPivot">Pivot point in absolute coordinates.</param>
@@ -1057,6 +1133,16 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Sets the scale factors from a grip movement.
+    /// </summary>
+    /// <param name="fixrPosition">The fixed relative position.</param>
+    /// <param name="fixaPosition">The fixed absolute position.</param>
+    /// <param name="relDrawGrip">The relative draw-grip position.</param>
+    /// <param name="diff">The grip movement difference.</param>
+    /// <param name="initialScaleX">The initial X scale.</param>
+    /// <param name="initialScaleY">The initial Y scale.</param>
+    /// <param name="eventFiring">Designates whether or not the change event should be fired if the value has changed.</param>
     public void SetScalesFrom(PointD2D fixrPosition, PointD2D fixaPosition, PointD2D relDrawGrip, PointD2D diff, double initialScaleX, double initialScaleY, Main.EventFiring eventFiring)
     {
       using (var token = SuspendGetToken())
@@ -1087,6 +1173,18 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Sets the shear from a grip movement.
+    /// </summary>
+    /// <param name="fixrPosition">The fixed relative position.</param>
+    /// <param name="fixaPosition">The fixed absolute position.</param>
+    /// <param name="relDrawGrip">The relative draw-grip position.</param>
+    /// <param name="diff">The grip movement difference.</param>
+    /// <param name="initialRotation">The initial rotation.</param>
+    /// <param name="initialShear">The initial shear.</param>
+    /// <param name="initialScaleX">The initial X scale.</param>
+    /// <param name="initialScaleY">The initial Y scale.</param>
+    /// <param name="eventFiring">Designates whether or not the change event should be fired if the value has changed.</param>
     public void SetShearFrom(PointD2D fixrPosition, PointD2D fixaPosition, PointD2D relDrawGrip, PointD2D diff, double initialRotation, double initialShear, double initialScaleX, double initialScaleY, Main.EventFiring eventFiring)
     {
       using (var token = SuspendGetToken())
@@ -1134,6 +1232,11 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Appends a transformation to the current coordinates of this graphic.
+    /// </summary>
+    /// <param name="transform">The transformation to append.</param>
+    /// <param name="eventFiring">Controls change-event firing.</param>
     protected internal void SetCoordinatesByAppendTransformation(MatrixD2D transform, Main.EventFiring eventFiring)
     {
       using (var token = SuspendGetToken())
@@ -1149,6 +1252,11 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Appends the inverse of a transformation to the current coordinates of this graphic.
+    /// </summary>
+    /// <param name="transform">The transformation whose inverse is appended.</param>
+    /// <param name="eventFiring">Controls change-event firing.</param>
     protected internal void SetCoordinatesByAppendInverseTransformation(MatrixD2D transform, Main.EventFiring eventFiring)
     {
       using (var token = SuspendGetToken())
@@ -1163,11 +1271,20 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Shifts the position of the graphic by the specified vector.
+    /// </summary>
+    /// <param name="dp">The offset vector.</param>
     protected internal void ShiftPosition(PointD2D dp)
     {
       ShiftPosition(dp.X, dp.Y);
     }
 
+    /// <summary>
+    /// Shifts the position of the graphic by the specified offsets.
+    /// </summary>
+    /// <param name="dx">The x offset.</param>
+    /// <param name="dy">The y offset.</param>
     protected internal void ShiftPosition(double dx, double dy)
     {
       var currPos = GetPosition();
@@ -1192,8 +1309,33 @@ namespace Altaxo.Graph.Gdi.Shapes
       new PointD2D(0, 0.5),
       };
 
+    /// <summary>
+    /// Identifies the kinds of grips that can be created for a graphic.
+    /// </summary>
     [Flags]
-    protected enum GripKind { Move = 1, Resize = 2, Rotate = 4, Rescale = 8, Shear = 16 }
+    protected enum GripKind
+    {
+      /// <summary>
+      /// A grip that moves the graphic.
+      /// </summary>
+      Move = 1,
+      /// <summary>
+      /// A grip that resizes the graphic.
+      /// </summary>
+      Resize = 2,
+      /// <summary>
+      /// A grip that rotates the graphic.
+      /// </summary>
+      Rotate = 4,
+      /// <summary>
+      /// A grip that rescales the graphic.
+      /// </summary>
+      Rescale = 8,
+      /// <summary>
+      /// A grip that shears the graphic.
+      /// </summary>
+      Shear = 16
+    }
 
     /// <summary>
     /// Gets an vector (not normalized), which points outward of the relative point in page coordinates.
@@ -1310,6 +1452,13 @@ namespace Altaxo.Graph.Gdi.Shapes
       outVec = pt - pt0;
     }
 
+    /// <summary>
+    /// Creates grip handles for the specified hit-test object.
+    /// </summary>
+    /// <param name="hitTest">The hit-test object.</param>
+    /// <param name="pageScale">The current page scale.</param>
+    /// <param name="gripKind">The kinds of grips to create.</param>
+    /// <returns>The created grip handles.</returns>
     protected virtual IGripManipulationHandle[] GetGrips(IHitTestObject hitTest, double pageScale, GripKind gripKind)
     {
       var list = new List<IGripManipulationHandle>();

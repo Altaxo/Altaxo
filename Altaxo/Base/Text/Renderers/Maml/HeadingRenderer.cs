@@ -32,8 +32,14 @@ using Markdig.Syntax;
 
 namespace Altaxo.Text.Renderers.Maml
 {
+  /// <summary>
+  /// MAML renderer for a <see cref="HeadingBlock"/>.
+  /// </summary>
   public class HeadingRenderer : MamlObjectRenderer<HeadingBlock>
   {
+    /// <summary>
+    /// Writes a heading block.
+    /// </summary>
     protected override void Write(MamlRenderer renderer, HeadingBlock obj)
     {
       bool newFileWasStarted = renderer.TryStartNewMamlFile(obj);

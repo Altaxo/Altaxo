@@ -74,12 +74,14 @@ namespace Altaxo.Calc
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScalarFunctionDDExpression), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ScalarFunctionDDExpression)obj;
         info.AddValue("Expression", s.Expression);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var expression = info.GetString("Expression");
@@ -89,6 +91,9 @@ namespace Altaxo.Calc
     #endregion
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScalarFunctionDDExpression"/> record.
+    /// </summary>
     public ScalarFunctionDDExpression(string expression)
     {
       if (string.IsNullOrEmpty(expression))
@@ -100,6 +105,7 @@ namespace Altaxo.Calc
       _script.Compile();
     }
 
+    /// <inheritdoc/>
     public double Evaluate(double x)
     {
       var arguments = this._arguments.Value;

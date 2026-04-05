@@ -31,14 +31,14 @@ using System.Text;
 namespace Altaxo.Main.Services
 {
   /// <summary>
-  /// Delegate for the <see cref="IGuiTimerService"/>. Note that the argument is the Utc time. If you need local time, you have to convert the
+  /// Delegate for the <see cref="IGuiTimerService"/>. Note that the argument is the UTC time. If you need local time, you have to convert the
   /// argument to local time.
   /// </summary>
   /// <param name="utcNow">The UTC current time.</param>
   public delegate void GuiTimerServiceHandler(DateTime utcNow);
 
   /// <summary>
-  /// Interface for a timer service that calls back using the Gui thread.
+  /// Interface for a timer service that invokes callbacks on the GUI thread.
   /// </summary>
   /// <seealso cref="System.IDisposable" />
   public interface IGuiTimerService : IDisposable

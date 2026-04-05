@@ -35,7 +35,7 @@ using Altaxo.Main;
 namespace Altaxo.Graph.Procedures
 {
   /// <summary>
-  /// Given a single GraphDocumentBase, this class retrieves all the objects that are neccessary for this particular GraphDocumentBase (tables, functions etc.)
+  /// Given a single <see cref="GraphDocumentBase"/>, this class retrieves all objects that are necessary for this graph (tables, functions, etc.)
   /// and builds a new <see cref="Altaxo.AltaxoDocument"/> that contains these objects.
   /// </summary>
   public class MiniProjectBuilder
@@ -50,6 +50,11 @@ namespace Altaxo.Graph.Procedures
     private Dictionary<AbsoluteDocumentPath, DataTable?> _tablesToChange;
     private Dictionary<DataColumn, DataTable?> _columnsToChange;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MiniProjectBuilder"/> class.
+    /// </summary>
+    /// <param name="graph">The graph to include.</param>
+    /// <param name="ensureEmbeddedObjectRenderingOptionsStoredInGraph">If set to <see langword="true"/>, embedded object rendering options are stored in the graph.</param>
     protected MiniProjectBuilder(GraphDocumentBase graph, bool ensureEmbeddedObjectRenderingOptionsStoredInGraph)
     {
       Initialize();
@@ -76,6 +81,9 @@ namespace Altaxo.Graph.Procedures
       return pb._document;
     }
 
+    /// <summary>
+    /// Initializes the builder state.
+    /// </summary>
     [MemberNotNull(nameof(_document), nameof(_tablesToChange), nameof(_columnsToChange))]
     protected void Initialize()
     {
@@ -84,6 +92,9 @@ namespace Altaxo.Graph.Procedures
       _columnsToChange = new Dictionary<DataColumn, DataTable?>();
     }
 
+    /// <summary>
+    /// Copies the graph document into the mini project.
+    /// </summary>
     protected void CopyGraphToNewDocument(GraphDocumentBase oldGraph, bool ensureEmbeddedObjectRenderingOptionsStoredInGraph)
     {
       var newGraph = (GraphDocumentBase)oldGraph.Clone();
@@ -101,6 +112,9 @@ namespace Altaxo.Graph.Procedures
       }
     }
 
+    /// <summary>
+    /// Copies the folder properties referenced by the graph.
+    /// </summary>
     protected void CopyFolderPropertiesOf(GraphDocumentBase oldGraph)
     {
       foreach (var doc in PropertyExtensions.GetProjectFolderPropertyDocuments(oldGraph))
@@ -123,11 +137,17 @@ namespace Altaxo.Graph.Procedures
       }
     }
 
+    /// <summary>
+    /// Collects all referenced data columns from the graph.
+    /// </summary>
     protected void CollectAllDataColumnReferences()
     {
       _graph.VisitDocumentReferences(CollectDataColumnsFromProxyVisit);
     }
 
+    /// <summary>
+    /// Copies the referenced columns into the new project.
+    /// </summary>
     protected void CopyReferencedColumnsToNewProject()
     {
       while (_columnsToChange.Count > 0)

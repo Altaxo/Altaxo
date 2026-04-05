@@ -45,7 +45,7 @@ namespace Altaxo.Science.Spectroscopy
     /// </summary>
     protected abstract SpectralPreprocessingOptionsBase InternalSpectralPreprocessingOptions { get; set; }
 
-    /// <inhericdoc/>
+    /// <inheritdoc />
     public virtual object Clone()
     {
       var result = (SpectralPreprocessingOptionsDocNodeBase)this.MemberwiseClone();
@@ -63,13 +63,21 @@ namespace Altaxo.Science.Spectroscopy
       return result;
     }
 
+    /// <summary>
+    /// The spectral preprocessing options object.
+    /// </summary>
     protected object _optionsObject;
 
     /// <summary>
-    /// Dictionary that contains the spectral preprocessor as value, and a proxy (DataTableProxy, .. other proxies) as value
+    /// Dictionary that contains the spectral preprocessor as key, and a proxy (`DataTableProxy`, or other proxies) as value.
     /// </summary>
     protected Dictionary<ISingleSpectrumPreprocessor, IDocumentLeafNode> _proxyCache;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SpectralPreprocessingOptionsDocNodeBase"/> class.
+    /// </summary>
+    /// <param name="optionsObject">The wrapped options object.</param>
+    /// <param name="proxyList">The list of proxies to attach to processor elements.</param>
     protected SpectralPreprocessingOptionsDocNodeBase(object optionsObject, List<(int number, IDocumentLeafNode proxy)> proxyList)
     {
       _optionsObject = optionsObject;
@@ -128,6 +136,10 @@ namespace Altaxo.Science.Spectroscopy
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SpectralPreprocessingOptionsDocNodeBase"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public SpectralPreprocessingOptionsDocNodeBase(SpectralPreprocessingOptionsDocNodeBase from)
     {
       this._optionsObject = from._optionsObject;
@@ -144,6 +156,7 @@ namespace Altaxo.Science.Spectroscopy
     }
 
     /// <inheritdoc/>
+    /// <inheritdoc />
     protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       int proxyNumber = -1;
@@ -160,9 +173,9 @@ namespace Altaxo.Science.Spectroscopy
 
 
     /// <summary>
-    /// Gets the wrapped spectral preprocessing options. When neccessary, the calibration is updated to reflect the content of the linked calibration table.
+    /// Gets the wrapped spectral preprocessing options. When necessary, the calibration is updated to reflect the content of the linked calibration table.
     /// </summary>
-    /// <returns>The wrapped spectral preprocessing options</returns>
+    /// <returns>The wrapped spectral preprocessing options.</returns>
     protected SpectralPreprocessingOptionsBase InternalGetSpectralPreprocessingOptions()
     {
       var elements = InternalSpectralPreprocessingOptions.GetProcessorElements().ToArray();
@@ -242,6 +255,12 @@ namespace Altaxo.Science.Spectroscopy
       _proxyCache[newKey] = proxy;
     }
 
+    /// <summary>
+    /// Updates an <see cref="XCalibrationByDataSource"/> element using the specified proxy.
+    /// </summary>
+    /// <param name="element">The element to update.</param>
+    /// <param name="proxy">The proxy providing the referenced table.</param>
+    /// <returns>The updated element.</returns>
     public static XCalibrationByDataSource UpdateXCalibrationByDataSourceElement(XCalibrationByDataSource element, IDocumentLeafNode proxy)
     {
       if (proxy is not DataTableProxy calibrationTableProxy)
@@ -392,6 +411,12 @@ namespace Altaxo.Science.Spectroscopy
       }
     }
 
+    /// <summary>
+    /// Serializes the proxy list for version 1.
+    /// </summary>
+    /// <param name="info">The serialization information.</param>
+    /// <param name="s">The document node.</param>
+    /// <param name="processingOptions">The processing options.</param>
     protected static void SerializeProxiesVersion1(IXmlSerializationInfo info, SpectralPreprocessingOptionsDocNodeBase s, SpectralPreprocessingOptionsBase processingOptions)
     {
       var proxyList = new List<(int number, object proxy)>(10);
@@ -420,6 +445,11 @@ namespace Altaxo.Science.Spectroscopy
       info.CommitArray();
     }
 
+    /// <summary>
+    /// Deserializes the proxy list for version 1.
+    /// </summary>
+    /// <param name="info">The deserialization information.</param>
+    /// <returns>The deserialized proxy list.</returns>
     protected static List<(int number, IDocumentLeafNode proxy)> DeserializeProxiesVersion1(IXmlDeserializationInfo info)
     {
       var count = info.OpenArray("Proxies");

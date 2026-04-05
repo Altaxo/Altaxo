@@ -78,10 +78,16 @@ namespace Altaxo.Gui.Data.Sorting
     }
   }
 
+  /// <summary>
+  /// Provides the view contract for <see cref="SortingDataColumnsController"/>.
+  /// </summary>
   public interface ISortingDataColumnsView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for editing <see cref="SortingDataColumnsModel"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(ISortingDataColumnsView))]
   [UserControllerForObject(typeof(SortingDataColumnsModel))]
   public class SortingDataColumnsController : MVCANControllerEditCopyOfDocBase<SortingDataColumnsModel, ISortingDataColumnsView>
@@ -116,9 +122,19 @@ namespace Altaxo.Gui.Data.Sorting
       }
     }
 
+    /// <summary>
+    /// Gets the command that moves selected columns up.
+    /// </summary>
     public ICommand CmdMoveUpSelected { get; }
+
+    /// <summary>
+    /// Gets the command that moves selected columns down.
+    /// </summary>
     public ICommand CmdMoveDownSelected { get; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SortingDataColumnsController"/> class.
+    /// </summary>
     public SortingDataColumnsController()
     {
       CmdMoveDownSelected = new RelayCommand(EhMoveDownSelected);
@@ -135,12 +151,16 @@ namespace Altaxo.Gui.Data.Sorting
       Columns.MoveSelectedItemsDown();
     }
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
 
+    /// <summary>
+    /// Gets or sets a value indicating whether empty elements are treated as the lowest values.
+    /// </summary>
     public bool TreatEmptyElementsAsLowest
     {
       get => field;
@@ -158,6 +178,9 @@ namespace Altaxo.Gui.Data.Sorting
     #region Bindings
 
 
+    /// <summary>
+    /// Gets or sets the columns to sort.
+    /// </summary>
     public SelectableListNodeList Columns
     {
       get => field;
@@ -172,6 +195,9 @@ namespace Altaxo.Gui.Data.Sorting
     }
 
 
+    /// <summary>
+    /// Gets or sets a value indicating whether only matching property-column groups are moved.
+    /// </summary>
     public bool MoveOnlyDataColumnsThatMatchPropertyColumnGroup
     {
       get => field;
@@ -186,6 +212,9 @@ namespace Altaxo.Gui.Data.Sorting
     }
 
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the matching-group option is visible.
+    /// </summary>
     public bool MoveOnlyDataColumnsThatMatchPropertyColumnGroupIsVisible
     {
       get => field;
@@ -202,6 +231,7 @@ namespace Altaxo.Gui.Data.Sorting
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -223,6 +253,7 @@ namespace Altaxo.Gui.Data.Sorting
     }
 
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       _doc.ColumnsToSort.Clear();

@@ -27,23 +27,45 @@ using System;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// Bundles a view instance with a title.
+  /// </summary>
   public class ViewDescriptionElement : ICloneable
   {
+    /// <summary>
+    /// The title of the view.
+    /// </summary>
     public string Title;
+    /// <summary>
+    /// Gets the view instance.
+    /// </summary>
     public object View { get; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ViewDescriptionElement"/> class as a copy of another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public ViewDescriptionElement(ViewDescriptionElement from)
     {
       Title = from.Title;
       View = from.View;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ViewDescriptionElement"/> class.
+    /// </summary>
+    /// <param name="title">The title.</param>
+    /// <param name="view">The view instance.</param>
     public ViewDescriptionElement(string title, object view)
     {
       Title = title;
       View = view;
     }
 
+    /// <summary>
+    /// Creates a copy of this instance.
+    /// </summary>
+    /// <returns>A copy of this instance.</returns>
     public ViewDescriptionElement Clone()
     {
       return new ViewDescriptionElement(this);

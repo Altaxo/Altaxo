@@ -42,6 +42,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
   /// <seealso cref="Altaxo.Main.IImmutable" />
   public class StepHorizontalConnection : StepConnectionBase
   {
+    /// <summary>
+    /// Gets the singleton instance.
+    /// </summary>
     public static StepHorizontalConnection Instance { get; private set; } = new StepHorizontalConnection();
 
     #region Serialization
@@ -64,6 +67,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 
     #endregion Serialization
 
+    /// <inheritdoc />
     protected override PointF[] GetStepPolylinePoints(
     PointF[] allLinePoints,
     IPlotRange range,

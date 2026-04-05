@@ -31,10 +31,17 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Text
 {
+  /// <summary>
+  /// Provides additional UI actions for <see cref="TextDocument"/> instances.
+  /// </summary>
   public static class TextDocumentOtherActions
   {
     #region Rename text document
 
+    /// <summary>
+    /// Shows the rename dialog for a text document.
+    /// </summary>
+    /// <param name="doc">The document to rename.</param>
     public static void ShowRenameDialog(this TextDocument doc)
     {
       var tvctrl = new Altaxo.Gui.Common.TextValueInputController(doc.Name, "Enter a name for the text document:")
@@ -50,12 +57,17 @@ namespace Altaxo.Text
     {
       private TextDocument _doc;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="TextDocumentRenameValidator"/> class.
+      /// </summary>
+      /// <param name="doc">The document being renamed.</param>
       public TextDocumentRenameValidator(TextDocument doc)
         : base("The text document's name must not be empty! Please enter a valid name.")
       {
         _doc = doc;
       }
 
+      /// <inheritdoc />
       public override string? Validate(string name)
       {
         var err = base.Validate(name);
@@ -77,6 +89,10 @@ namespace Altaxo.Text
 
     #region Show properties dialog
 
+    /// <summary>
+    /// Shows the properties dialog for a text document.
+    /// </summary>
+    /// <param name="doc">The document whose properties should be shown.</param>
     public static void ShowPropertyDialog(this TextDocument doc)
     {
       var propHierarchy = new Altaxo.Main.Properties.PropertyHierarchy(PropertyExtensions.GetPropertyBags(doc));

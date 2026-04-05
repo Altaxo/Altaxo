@@ -42,6 +42,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
   /// <seealso cref="Altaxo.Main.IImmutable" />
   public class SplineConnection : LineConnectionStyleBase
   {
+    /// <summary>
+    /// Gets the singleton instance.
+    /// </summary>
     public static SplineConnection Instance { get; private set; } = new SplineConnection();
 
     #region Serialization

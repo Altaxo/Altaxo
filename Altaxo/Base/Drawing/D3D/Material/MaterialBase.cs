@@ -31,7 +31,7 @@ using System.Text;
 namespace Altaxo.Drawing.D3D.Material
 {
   /// <summary>
-  /// Base of the materials. This material supports specular reflections using a modified Phong equation:
+  /// Base class for materials. This material supports specular reflections using a modified Phong equation:
   /// kspec = SpecularIntensity*(1+SpecularExponent)*DotProduct[IncidentLight,EmergentLight]. The modification
   /// is the term (1+SpecularExponent), which ensures that the integral over the half sphere is constant when the SpecularExponent changes.
   /// </summary>
@@ -96,6 +96,7 @@ namespace Altaxo.Drawing.D3D.Material
     ///<inheritdoc/>
     public abstract NamedColor Color { get; }
 
+    ///<inheritdoc/>
     public abstract IMaterial WithColor(NamedColor color);
 
     ///<inheritdoc/>
@@ -114,6 +115,9 @@ namespace Altaxo.Drawing.D3D.Material
 
     /// <summary>
     /// The smothness value, a value in the range [0,1]. A value of 0 defines a rough diffuse surface, and a value of 1 a very shiny surface.
+    /// </summary>
+    /// <summary>
+    /// Gets the smoothness value in the range [0, 1].
     /// </summary>
     public double Smoothness
     {
@@ -215,6 +219,9 @@ namespace Altaxo.Drawing.D3D.Material
 
     #region IndexOfRefraction
 
+    /// <summary>
+    /// Gets the index of refraction.
+    /// </summary>
     public double IndexOfRefraction
     {
       get
@@ -317,6 +324,9 @@ namespace Altaxo.Drawing.D3D.Material
 
     #region Phong model
 
+    /// <summary>
+    /// Gets the diffuse intensity term used by the Phong lighting model.
+    /// </summary>
     public double PhongModelDiffuseIntensity
     {
       get
@@ -340,6 +350,9 @@ namespace Altaxo.Drawing.D3D.Material
       }
     }
 
+    /// <summary>
+    /// Gets the specular exponent used by the Phong lighting model.
+    /// </summary>
     public double PhongModelSpecularExponent
     {
       get

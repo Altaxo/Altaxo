@@ -29,19 +29,28 @@ using System.Collections.Generic;
 namespace Altaxo.Data
 {
   /// <summary>
-  /// Summary description for Altaxo.Data.DataTableCollection.
+  /// Collection of data tables belonging to an Altaxo document.
   /// </summary>
   public class DataTableCollection
     :
     Altaxo.Main.ProjectItemCollectionBase<DataTable>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DataTableCollection"/> class.
+    /// </summary>
+    /// <param name="parent">The parent document.</param>
     public DataTableCollection(AltaxoDocument parent)
       : base(parent)
     {
     }
 
+    /// <inheritdoc />
     public override string ItemBaseName { get { return "WKS"; } }
 
+    /// <summary>
+    /// Gets the table names in sorted order.
+    /// </summary>
+    /// <returns>The sorted table names.</returns>
     public string[] GetSortedTableNames()
     {
       string[] arr = new string[_itemsByName.Count];
@@ -69,6 +78,7 @@ namespace Altaxo.Data
       }
     }
 
+    /// <inheritdoc />
     public override Main.IDocumentLeafNode? GetChildObjectNamed(string name)
     {
       if (_itemsByName.TryGetValue(name, out var result))
@@ -77,6 +87,7 @@ namespace Altaxo.Data
       return null;
     }
 
+    /// <inheritdoc />
     public override string? GetNameOfChildObject(Main.IDocumentLeafNode o)
     {
       if (o is DataTable table)
@@ -102,6 +113,7 @@ namespace Altaxo.Data
       return null;
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       foreach (var entry in _itemsByName)

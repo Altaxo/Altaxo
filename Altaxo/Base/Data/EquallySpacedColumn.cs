@@ -73,6 +73,9 @@ namespace Altaxo.Data
       _increment = increment;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EquallySpacedColumn"/> class.
+    /// </summary>
     public EquallySpacedColumn()
     {
       _start = 0;
@@ -96,8 +99,16 @@ namespace Altaxo.Data
     /// </value>
     public Type ItemType { get { return typeof(double); } }
 
+    /// <summary>
+    /// Gets the start value of the sequence.
+    /// </summary>
     public double StartValue { get { return _start; } }
 
+    /// <summary>
+    /// Returns a copy with a different start value.
+    /// </summary>
+    /// <param name="startValue">The start value for the returned column.</param>
+    /// <returns>The updated column.</returns>
     public EquallySpacedColumn WithStartValue(double startValue)
     {
       if (startValue == _start)
@@ -106,8 +117,16 @@ namespace Altaxo.Data
         return new EquallySpacedColumn(startValue, _increment);
     }
 
+    /// <summary>
+    /// Gets the increment of the sequence.
+    /// </summary>
     public double Increment { get { return _increment; } }
 
+    /// <summary>
+    /// Returns a copy with a different increment.
+    /// </summary>
+    /// <param name="increment">The increment for the returned column.</param>
+    /// <returns>The updated column.</returns>
     public EquallySpacedColumn WithIncrement(double increment)
     {
       if (increment == _increment)
@@ -158,6 +177,9 @@ namespace Altaxo.Data
       get { return "EquallySpacedColumn(" + _start.ToString() + "," + _increment.ToString() + ")"; }
     }
 
+    /// <summary>
+    /// Gets the number of rows if known.
+    /// </summary>
     public int? Count
     {
       get
@@ -166,6 +188,9 @@ namespace Altaxo.Data
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the column is editable.
+    /// </summary>
     public bool IsEditable { get { return true; } }
   }
 }

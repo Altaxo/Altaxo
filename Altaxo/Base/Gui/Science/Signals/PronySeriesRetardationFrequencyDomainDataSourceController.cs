@@ -27,9 +27,13 @@ using Altaxo.Science.Signals;
 
 namespace Altaxo.Gui.Science.Signals
 {
+  /// <summary>
+  /// Controller for <see cref="PronySeriesRetardationFrequencyDomainDataSource"/>.
+  /// </summary>
   [UserControllerForObject(typeof(PronySeriesRetardationFrequencyDomainDataSource))]
   public class PronySeriesRetardationFrequencyDomainDataSourceController : DataSourceControllerBase<PronySeriesRetardationFrequencyDomainDataSource>
   {
+    /// <inheritdoc />
     protected override IMVCANController GetProcessDataController()
     {
       var ctrl = new XAndRealImaginaryColumnsController();

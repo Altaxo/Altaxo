@@ -46,6 +46,9 @@ namespace Altaxo.Main.Services.PropertyReflection
 
     #region Properties
 
+    /// <summary>
+    /// Gets the child items.
+    /// </summary>
     public ObservableCollection<Item> Items
     {
       get { return _items; }
@@ -55,6 +58,7 @@ namespace Altaxo.Main.Services.PropertyReflection
 
     #region IDisposable Members
 
+    /// <inheritdoc/>
     protected override void Dispose(bool disposing)
     {
       if (Disposed)

@@ -33,6 +33,9 @@ namespace Altaxo.Text.Renderers.Maml.Inlines
   /// <seealso cref="MamlObjectRenderer{T}" />
   public class CodeInlineRenderer : MamlObjectRenderer<CodeInline>
   {
+    /// <summary>
+    /// Writes an inline code span.
+    /// </summary>
     protected override void Write(MamlRenderer renderer, CodeInline obj)
     {
       renderer.Push(MamlElements.codeInline);

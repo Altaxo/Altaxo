@@ -31,14 +31,21 @@ using Altaxo.Graph.Gdi.Plot.ColorProvider;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 {
+  /// <summary>
+  /// View contract for editing an ARGB gradient color provider.
+  /// </summary>
   public interface IColorProviderARGBGradientView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for editing <see cref="ColorProviderARGBGradient"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IColorProviderARGBGradientView))]
   [UserControllerForObject(typeof(ColorProviderARGBGradient), 110)]
   public class ColorProviderARGBGradientController : MVCANDControllerEditImmutableDocBase<ColorProviderARGBGradient, IColorProviderARGBGradientView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_baseController, () => _baseController = null);
@@ -48,6 +55,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 
     private ColorProviderBaseController _baseController;
 
+    /// <summary>
+    /// Gets or sets the base controller.
+    /// </summary>
     public ColorProviderBaseController BaseController
     {
       get => _baseController;
@@ -65,6 +75,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 
     private decimal _red0;
 
+    /// <summary>
+    /// Gets or sets the starting red component.
+    /// </summary>
     public decimal Red0
     {
       get => _red0;
@@ -80,6 +93,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
     }
     private decimal _red1;
 
+    /// <summary>
+    /// Gets or sets the ending red component.
+    /// </summary>
     public decimal Red1
     {
       get => _red1;
@@ -95,6 +111,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
     }
     private decimal _green0;
 
+    /// <summary>
+    /// Gets or sets the starting green component.
+    /// </summary>
     public decimal Green0
     {
       get => _green0;
@@ -110,6 +129,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
     }
     private decimal _green1;
 
+    /// <summary>
+    /// Gets or sets the ending green component.
+    /// </summary>
     public decimal Green1
     {
       get => _green1;
@@ -125,6 +147,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
     }
     private decimal _blue0;
 
+    /// <summary>
+    /// Gets or sets the starting blue component.
+    /// </summary>
     public decimal Blue0
     {
       get => _blue0;
@@ -140,6 +165,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
     }
     private decimal _blue1;
 
+    /// <summary>
+    /// Gets or sets the ending blue component.
+    /// </summary>
     public decimal Blue1
     {
       get => _blue1;
@@ -156,6 +184,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 
     private decimal _opaqueness0;
 
+    /// <summary>
+    /// Gets or sets the starting opaqueness.
+    /// </summary>
     public decimal Opaqueness0
     {
       get => _opaqueness0;
@@ -171,6 +202,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
     }
     private decimal _opaqueness1;
 
+    /// <summary>
+    /// Gets or sets the ending opaqueness.
+    /// </summary>
     public decimal Opaqueness1
     {
       get => _opaqueness1;
@@ -188,6 +222,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -210,6 +245,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (!_baseController.Apply(disposeController))

@@ -64,9 +64,13 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// 2016-01-24 initial version.
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="LightSettings"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LightSettings), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (LightSettings)obj;
@@ -77,6 +81,7 @@ namespace Altaxo.Graph.Graph3D
         info.AddValueOrNull("DiscreteLight3", s._discreteLight3);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (LightSettings?)o ?? new LightSettings(info);
@@ -204,6 +209,9 @@ namespace Altaxo.Graph.Graph3D
       return result;
     }
 
+    /// <summary>
+    /// Recalculates whether any configured light is affixed to the camera.
+    /// </summary>
     private void CalculateIsAnyAffixedToCamera()
     {
       bool result = false;

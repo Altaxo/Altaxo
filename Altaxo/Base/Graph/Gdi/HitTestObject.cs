@@ -29,6 +29,9 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi
 {
+  /// <summary>
+  /// Provides a base implementation for hit test objects.
+  /// </summary>
   public abstract class HitTestObjectBase : IHitTestObject
   {
     #region Internal classes
@@ -40,6 +43,10 @@ namespace Altaxo.Graph.Gdi
     {
       private GraphicsPath _displayPath;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="NoopGrip"/> class.
+      /// </summary>
+      /// <param name="displayPath">The display path.</param>
       public NoopGrip(GraphicsPath displayPath)
       {
         _displayPath = displayPath;
@@ -57,11 +64,13 @@ namespace Altaxo.Graph.Gdi
       {
       }
 
+      /// <inheritdoc />
       public bool Deactivate()
       {
         return false;
       }
 
+      /// <inheritdoc />
       public void MoveGrip(PointD2D newPosition)
       {
       }
@@ -77,11 +86,13 @@ namespace Altaxo.Graph.Gdi
         }
       }
 
+      /// <inheritdoc />
       public bool IsGripHitted(PointD2D point)
       {
         return false;
       }
 
+      /// <inheritdoc />
       public bool IsGrippedObjectDisposed
       {
         get { return false; }
@@ -131,12 +142,14 @@ namespace Altaxo.Graph.Gdi
       _matrix.AppendTransform(x);
     }
 
+    /// <inheritdoc />
     public object HittedObject
     {
       get { return _hitobject; }
       set { _hitobject = value; }
     }
 
+    /// <inheritdoc />
     public abstract GraphicsPath ObjectOutlineForArrangements { get; }
 
     /// <summary>
@@ -147,6 +160,7 @@ namespace Altaxo.Graph.Gdi
     /// <returns>Grip manipulation handles that are used to show the grips and to manipulate the object.</returns>
     public abstract IGripManipulationHandle[]? GetGrips(double pageScale, int gripLevel);
 
+    /// <inheritdoc />
     public virtual int GetNextGripLevel(int currentGripLevel)
     {
       return currentGripLevel;
@@ -168,6 +182,7 @@ namespace Altaxo.Graph.Gdi
 
     private DoubleClickHandler? _DoubleClick;
 
+    /// <inheritdoc />
     public DoubleClickHandler? DoubleClick
     {
       get { return _DoubleClick; }
@@ -199,6 +214,7 @@ namespace Altaxo.Graph.Gdi
 
     private HostLayer? _parentLayer;
 
+    /// <inheritdoc />
     public HostLayer? ParentLayer
     {
       get { return _parentLayer; }
@@ -209,7 +225,7 @@ namespace Altaxo.Graph.Gdi
   }
 
   /// <summary>
-  /// This class holds the arrangement path by itself.
+  /// Represents a hit test object that stores its arrangement path directly.
   /// </summary>
   public class HitTestObject : HitTestObjectBase
   {
@@ -288,6 +304,11 @@ namespace Altaxo.Graph.Gdi
       // per default: do nothing
     }
 
+    /// <summary>
+    /// Changes the size of the hit object.
+    /// </summary>
+    /// <param name="x">The new x-size, or <c>null</c>.</param>
+    /// <param name="y">The new y-size, or <c>null</c>.</param>
     public override void ChangeSize(double? x, double? y)
     {
       // per default: do nothing

@@ -122,30 +122,45 @@ namespace Altaxo.Collections
     {
     }
 
+    /// <summary>
+    /// Wraps the specified items in <see cref="Boxed{T}"/> instances.
+    /// </summary>
     public static IEnumerable<Boxed<T>> ToBoxedItems(IEnumerable<T> items)
     {
       foreach (var item in items)
         yield return new Boxed<T>(item);
     }
 
+    /// <summary>
+    /// Adds boxed versions of the specified source items to the destination collection.
+    /// </summary>
     public static void AddRange(ICollection<Boxed<T>> destination, IEnumerable<T> sourceItems)
     {
       foreach (var item in sourceItems)
         destination.Add(new Boxed<T>(item));
     }
 
+    /// <summary>
+    /// Returns the unboxed values from the specified boxed items.
+    /// </summary>
     public static IEnumerable<T> ToUnboxedItems(IEnumerable<Boxed<T>> boxedItems)
     {
       foreach (var item in boxedItems)
         yield return item.Value;
     }
 
+    /// <summary>
+    /// Adds unboxed values from the specified boxed items to the destination collection.
+    /// </summary>
     public static void AddRange(ICollection<T> destination, IEnumerable<Boxed<T>> sourceItems)
     {
       foreach (var item in sourceItems)
         destination.Add(item.Value);
     }
 
+    /// <summary>
+    /// Copies the specified boxed items into a new array of unboxed values.
+    /// </summary>
     public static T[] ToUnboxedArray(ICollection<Boxed<T>> boxedItems)
     {
       var arr = new T[boxedItems.Count];

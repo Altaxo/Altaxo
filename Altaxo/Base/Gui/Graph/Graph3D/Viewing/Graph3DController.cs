@@ -49,17 +49,32 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
   using Altaxo.Serialization.Clipboard;
   using Graph.Graph3D;
 
+  /// <summary>
+  /// Controller for 3D graph documents and views.
+  /// </summary>
   [UserControllerForObject(typeof(GraphDocument))]
   [UserControllerForObject(typeof(GraphViewOptions))]
   [ExpectedTypeOfView(typeof(IGraph3DView))]
   public class Graph3DController : AbstractViewContent, IDisposable, IMVCANController, IGraphController, IClipboardHandler
   {
+    /// <summary>
+    /// Occurs when the active graph tool changes.
+    /// </summary>
     public event EventHandler CurrentGraphToolChanged;
 
+    /// <summary>
+    /// The attached 3D graph view.
+    /// </summary>
     public IGraph3DView _view;
 
+    /// <summary>
+    /// The graph document controlled by this instance.
+    /// </summary>
     protected GraphDocument _doc;
 
+    /// <summary>
+    /// Gets the graph document.
+    /// </summary>
     public GraphDocument Doc { get { return _doc; } }
 
     /// <summary>Number of the currently selected layer (or null if no layer is present).</summary>
@@ -70,10 +85,19 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
     private NGTreeNode _layerStructure;
 
+    /// <summary>
+    /// Delays expensive redraw updates until queued changes have settled.
+    /// </summary>
     protected Altaxo.Main.TriggerBasedUpdate _triggerBasedUpdate;
 
+    /// <summary>
+    /// Weak event handlers that keep the document from holding strong references to this controller.
+    /// </summary>
     [NonSerialized]
     protected WeakEventHandler[] _weakEventHandlersForDoc;
+    /// <summary>
+    /// Weak handler for tunneled document events.
+    /// </summary>
     protected WeakActionHandler<object, object, TunnelingEventArgs> _weakEventHandlerForDoc_TunneledEvent;
 
 
@@ -105,13 +129,35 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     /// </summary>
     protected PointD3D _middleButtonPressed_InitialPosition;
 
-    protected enum MiddelButtonAction { RotateCamera, MoveCamera, ZoomCamera }
+    /// <summary>
+    /// Specifies the action performed while dragging with the middle mouse button.
+    /// </summary>
+    protected enum MiddelButtonAction
+    {
+      /// <summary>
+      /// Rotates the camera.
+      /// </summary>
+      RotateCamera,
+
+      /// <summary>
+      /// Moves the camera.
+      /// </summary>
+      MoveCamera,
+
+      /// <summary>
+      /// Zooms the camera.
+      /// </summary>
+      ZoomCamera
+    }
 
     /// <summary>
     /// The action that is executed if the middle mouse button is pressed and the mouse is moved. This value is only valid if if the field <see cref="_middleButtonPressed_InitialCamera"/> is not null.
     /// </summary>
     protected MiddelButtonAction _middleButtonCurrentAction;
 
+    /// <summary>
+    /// Empty read-only list returned when no objects are selected.
+    /// </summary>
     protected static IList<IHitTestObject> _emptyReadOnlyList;
 
     #region Constructors
@@ -127,6 +173,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       TextGraphic.TextGraphicsEditorMethod = new DoubleClickHandler(EhEditTextGraphics);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Graph3DController"/> class.
+    /// </summary>
     public Graph3DController()
     {
       InitTriggerBasedUpdate();
@@ -134,19 +183,20 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
 
     /// <summary>
-    /// Creates a GraphController which shows the <see cref="GraphDocument"/> <paramref name="graphdoc"/>.
+    /// Creates a <see cref="Graph3DController"/> which shows the <see cref="GraphDocument"/> <paramref name="graphdoc"/>.
     /// </summary>
     /// <param name="graphdoc">The graph which holds the graphical elements.</param>
     public Graph3DController(GraphDocument graphdoc)
     {
       if (graphdoc is null)
-        throw new ArgumentNullException("Leaving the graphdoc null in constructor is not supported here");
+        throw new ArgumentNullException("Leaving graphdoc null in the constructor is not supported here");
 
       InitTriggerBasedUpdate();
       InternalInitializeGraphDocument(graphdoc); // Using DataTable here wires the event chain also
     }
 
 
+    /// <inheritdoc/>
     public bool InitializeDocument(params object[] args)
     {
       if (args is null || args.Length == 0)
@@ -175,6 +225,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       return true;
     }
 
+    /// <inheritdoc/>
     public UseDocument UseDocumentCopy
     {
       set { }
@@ -182,6 +233,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
     #endregion Constructors
 
+    /// <summary>
+    /// Initializes the controller state and optionally reloads document-dependent data.
+    /// </summary>
     protected void Initialize(bool initData)
     {
       if (initData)
@@ -212,7 +266,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     }
 
     /// <summary>
-    /// Is called when the graph3d is no longer displayed. Used here to free resources
+    /// Is called when the 3D graph is no longer displayed. Used here to free resources.
     /// </summary>
     public override void Dispose()
     {
@@ -240,6 +294,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       _triggerBasedUpdate.UpdateAction += EhUpdateByTimerQueue;
     }
 
+ 
+    /// <inheritdoc/>
     protected override void OnPropertyChanged(string propertyName)
     {
       base.OnPropertyChanged(propertyName);
@@ -248,6 +304,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         OnContentVisibilityChanged();
     }
 
+    /// <summary>
+    /// Notifies the view that the content visibility has changed.
+    /// </summary>
     protected void OnContentVisibilityChanged()
     {
       _view?.AnnounceContentVisibilityChanged(IsContentVisible);
@@ -311,6 +370,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       _doc = null;
     }
 
+ 
+    /// <inheritdoc/>
     public override object ModelObject
     {
       get
@@ -319,6 +380,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       }
     }
 
+    /// <inheritdoc/>
     public override object ViewObject
     {
       get
@@ -341,6 +403,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       }
     }
 
+    /// <summary>
+    /// Gets or sets the attached 3D graph view.
+    /// </summary>
     public IGraph3DView View
     {
       get
@@ -409,7 +474,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     }
 
     /// <summary>
-    /// check the validity of the CurrentLayerNumber and correct it
+    /// Ensures that <see cref="CurrentLayerNumber"/> refers to a valid layer and returns that layer.
     /// </summary>
     public HostLayer EnsureValidityOfCurrentLayerNumber()
     {
@@ -493,11 +558,17 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       }
     }
 
+    /// <summary>
+    /// Determines whether the cut command is currently available.
+    /// </summary>
     public bool IsCmdCutEnabled()
     {
       return 0 != SelectedObjects.Count;
     }
 
+    /// <summary>
+    /// Cuts the currently selected objects to the clipboard.
+    /// </summary>
     public void CutSelectedObjectsToClipboard()
     {
       var objectList = new ArrayList();
@@ -517,11 +588,17 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       RemoveSelectedObjects();
     }
 
+    /// <summary>
+    /// Determines whether the copy command is currently available.
+    /// </summary>
     public bool IsCmdCopyEnabled()
     {
       return true;
     }
 
+    /// <summary>
+    /// Copies the currently selected objects to the clipboard.
+    /// </summary>
     public void CopySelectedObjectsToClipboard()
     {
       if (0 == SelectedObjects.Count)
@@ -541,11 +618,17 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       }
     }
 
+    /// <summary>
+    /// Determines whether the paste command is currently available.
+    /// </summary>
     public bool IsCmdPasteEnabled()
     {
       return true;
     }
 
+    /// <summary>
+    /// Pastes supported objects from the clipboard into the active layer.
+    /// </summary>
     public void PasteObjectsFromClipboard()
     {
       GraphDocument gd = Doc;
@@ -723,11 +806,17 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
 
 
+    /// <summary>
+    /// Determines whether the delete command is currently available.
+    /// </summary>
     public bool IsCmdDeleteEnabled()
     {
       return true;
     }
 
+    /// <summary>
+    /// Deletes the current selection or, if nothing is selected, the graph document itself.
+    /// </summary>
     public void CmdDelete()
     {
       if (SelectedObjects.Count > 0)
@@ -741,6 +830,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       }
     }
 
+    /// <summary>
+    /// Removes all currently selected objects from the graph.
+    /// </summary>
     public void RemoveSelectedObjects()
     {
       if (SelectedObjects is null || SelectedObjects.Count == 0)
@@ -769,11 +861,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       _view?.RenderOverlay();
     }
 
+    /// <inheritdoc/>
     public bool Apply(bool disposeController)
     {
       return true;
     }
 
+    /// <inheritdoc/>
     public bool Revert(bool disposeController)
     {
       return true;
@@ -859,46 +953,73 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       Doc.Camera = AdjustZNearZFar(newCamera);
     }
 
+    /// <summary>
+    /// Sets the camera to a front view of the root layer.
+    /// </summary>
     public void ViewFront()
     {
       ViewToRootLayerCenter(new VectorD3D(0, -1, 0), new VectorD3D(0, 0, 1));
     }
 
+    /// <summary>
+    /// Sets the camera to a right-side view of the root layer.
+    /// </summary>
     public void ViewRight()
     {
       ViewToRootLayerCenter(new VectorD3D(1, 0, 0), new VectorD3D(0, 0, 1));
     }
 
+    /// <summary>
+    /// Sets the camera to a back view of the root layer.
+    /// </summary>
     public void ViewBack()
     {
       ViewToRootLayerCenter(new VectorD3D(0, -1, 0), new VectorD3D(0, 0, 1));
     }
 
+    /// <summary>
+    /// Sets the camera to a left-side view of the root layer.
+    /// </summary>
     public void ViewLeft()
     {
       ViewToRootLayerCenter(new VectorD3D(-1, 0, 0), new VectorD3D(0, 0, 1));
     }
 
+    /// <summary>
+    /// Sets the camera to a top view of the root layer.
+    /// </summary>
     public void ViewTop()
     {
       ViewToRootLayerCenter(new VectorD3D(0, 0, 1), new VectorD3D(0, 1, 0));
     }
 
+    /// <summary>
+    /// Sets the camera to a bottom view of the root layer.
+    /// </summary>
     public void ViewBottom()
     {
       ViewToRootLayerCenter(new VectorD3D(0, 0, -1), new VectorD3D(0, -1, 0));
     }
 
+    /// <summary>
+    /// Sets the camera to the standard isometric view.
+    /// </summary>
     public void ViewIsometricStandard()
     {
       ViewToRootLayerCenter(new VectorD3D(-1, -1, 1), new VectorD3D(0, 0, 1));
     }
 
+    /// <summary>
+    /// Sets the camera to an isometric left-top view.
+    /// </summary>
     public void ViewIsometricLeftTop()
     {
       ViewToRootLayerCenter(new VectorD3D(-1, -2, 1), new VectorD3D(0, 0, 1));
     }
 
+    /// <summary>
+    /// Handles mouse-wheel input on the graph panel.
+    /// </summary>
     public void EhView_GraphPanelMouseWheel(double relX, double relY, double aspectRatio, int delta, bool isSHIFTpressed, bool isCTRLpressed, bool isALTpressed)
     {
       // MouseWheeling only: Zoom in/out
@@ -929,6 +1050,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       }
     }
 
+    /// <summary>
+    /// Performs the c am er az oo mb ym ou se wh e e l operation.
+    /// </summary>
     protected void CameraZoomByMouseWheel(double relX, double relY, double aspectRatio, double delta)
     {
       var camera = CameraZoomByMouseWheel(Doc.Camera, relX, relY, aspectRatio, delta / (4 * 120));
@@ -936,6 +1060,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       Doc.Camera = camera;
     }
 
+    /// <summary>
+    /// Performs the c am er az oo mb ym ou se wh e e l operation.
+    /// </summary>
     protected static CameraBase CameraZoomByMouseWheel(CameraBase camera, double relX, double relY, double aspectRatio, double delta)
     {
       if (camera is OrthographicCamera)
@@ -970,21 +1097,33 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       return camera;
     }
 
+    /// <summary>
+    /// Performs the c am er am ov eh or iz on ta ll yb ym ou se wh e e l operation.
+    /// </summary>
     protected void CameraMoveHorizontallyByMouseWheel(double relX, double relY, double aspectRatio, int delta)
     {
       CameraMoveRelative(delta / 4800.0, 0);
     }
 
+    /// <summary>
+    /// Performs the c am er am ov ev er ti ca ll yb ym ou se wh e e l operation.
+    /// </summary>
     protected void CameraMoveVerticallyByMouseWheel(double relX, double relY, double aspectRatio, int delta)
     {
       CameraMoveRelative(0, delta / 4800.0);
     }
 
+    /// <summary>
+    /// Performs the c am er ar ot at ea ro un dh or iz on ta la xi sb ym ou se wh e e l operation.
+    /// </summary>
     protected void CameraRotateAroundHorizontalAxisByMouseWheel(double relX, double relY, double aspectRatio, int delta)
     {
       CameraRotateDegrees(delta / 24.0, 0);
     }
 
+    /// <summary>
+    /// Performs the c am er ar ot at ea ro un dv er ti ca la xi sb ym ou se wh e e l operation.
+    /// </summary>
     protected void CameraRotateAroundVerticalAxisByMouseWheel(double relX, double relY, double aspectRatio, int delta)
     {
       CameraRotateDegrees(0, delta / 24.0);
@@ -1036,6 +1175,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       return cam;
     }
 
+    /// <summary>
+    /// Rotates the model around the center of the root layer.
+    /// </summary>
     public static CameraBase ModelRotateDegrees(CameraBase cam, VectorD3D rootLayerSize, double stepX, double stepY)
     {
       double angleRadianZ = stepX * Math.PI / 180.0;
@@ -1226,6 +1368,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       Current.Dispatcher.InvokeAndForget(EhGraph_BoundsChanged_Unsynchronized);
     }
 
+    /// <summary>
+    /// Updates marker geometry after the graph bounds have changed.
+    /// </summary>
     protected void EhGraph_BoundsChanged_Unsynchronized()
     {
       var view = _view;
@@ -1247,6 +1392,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       Current.Dispatcher.InvokeAndForget(EhGraph_LayerCollectionChanged_Unsynchronized);
     }
 
+    /// <summary>
+    /// Updates controller and view state after the layer collection has changed.
+    /// </summary>
     protected void EhGraph_LayerCollectionChanged_Unsynchronized()
     {
       var oldActiveLayer = new List<int>(_currentLayerNumber);
@@ -1365,6 +1513,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       }
     }
 
+    /// <summary>
+    /// Raises <see cref="CurrentGraphToolChanged"/>.
+    /// </summary>
     public virtual void EhView_CurrentGraphToolChanged()
     {
       if (CurrentGraphToolChanged is not null)
@@ -1451,6 +1602,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       }
     }
 
+    /// <summary>
+    /// Gets or sets the currently active graph tool.
+    /// </summary>
     public GraphToolType CurrentGraphTool
     {
       get
@@ -1502,7 +1656,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       buf.AddTriangleVertex(pos.X + 0, pos.Y + markerLenBy2, pos.Z + 0, r, g, b, 1); // Point
       buf.AddTriangleVertex(pos.X + markerThicknessBy2, pos.Y - markerLenBy2, pos.Z + markerThicknessBy2, r, g, b, 1);
       buf.AddTriangleVertex(pos.X + markerThicknessBy2, pos.Y - markerLenBy2, pos.Z - markerThicknessBy2, r, g, b, 1);
-      buf.AddTriangleVertex(pos.X - markerThicknessBy2, pos.Y - markerLenBy2, pos.Z - markerThicknessBy2, r, g, b, 1);
+      buf.AddTriangleVertex(pos.X - markerThicknessBy2, pos.Y - markerLenBy2, pos.Z - markerLenBy2, r, g, b, 1);
       buf.AddTriangleVertex(pos.X - markerThicknessBy2, pos.Y - markerLenBy2, pos.Z + markerThicknessBy2, r, g, b, 1);
       g = 0;
 
@@ -1536,6 +1690,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       buf.AddTriangleIndices(4 + voffs, 2 + voffs, 1 + voffs);
     }
 
+    /// <summary>
+    /// Draws the root-layer orientation markers.
+    /// </summary>
     public void DrawRootLayerMarkers(IOverlayContext3D gc)
     {
       var buf = gc.PositionColorIndexedTriangleBuffers;
@@ -1924,6 +2081,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       }
     }
 
+    /// <summary>
+    /// Performs the a rr an ge sa me ho ri zo nt al si z e operation.
+    /// </summary>
     public void ArrangeSameHorizontalSize()
     {
       ArrangeSameSizeBase(
@@ -1936,6 +2096,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         );
     }
 
+    /// <summary>
+    /// Performs the a rr an ge sa me ve rt ic al si z e operation.
+    /// </summary>
     public void ArrangeSameVerticalSize()
     {
       ArrangeSameSizeBase(
@@ -2000,46 +2163,73 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
     #region IClipboardHandler Members
 
+    /// <summary>
+    /// The e na bl ec u t.
+    /// </summary>
     public bool EnableCut
     {
       get { return true; }
     }
 
+    /// <summary>
+    /// The e na bl ec o p y.
+    /// </summary>
     public bool EnableCopy
     {
       get { return true; }
     }
 
+    /// <summary>
+    /// The e na bl ep as t e.
+    /// </summary>
     public bool EnablePaste
     {
       get { return true; }
     }
 
+    /// <summary>
+    /// The e na bl ed el e t e.
+    /// </summary>
     public bool EnableDelete
     {
       get { return true; }
     }
 
+    /// <summary>
+    /// The e na bl es el ec ta l l.
+    /// </summary>
     public bool EnableSelectAll
     {
       get { return false; }
     }
 
+    /// <summary>
+    /// Performs the c u t operation.
+    /// </summary>
     public void Cut()
     {
       CutSelectedObjectsToClipboard();
     }
 
+    /// <summary>
+    /// Performs the c o p y operation.
+    /// </summary>
     public void Copy()
     {
       CopySelectedObjectsToClipboard();
     }
 
+    /// <summary>
+    /// Performs the p as t e operation.
+    /// </summary>
     public void Paste()
     {
       PasteObjectsFromClipboard();
     }
 
+    /// <summary>
+    /// Performs the d el e t e operation.
+    /// </summary>
     public void Delete()
     {
       if (SelectedObjects.Count > 0)
@@ -2054,6 +2244,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       }
     }
 
+    /// <summary>
+    /// Performs the s el ec ta l l operation.
+    /// </summary>
     public void SelectAll()
     {
     }

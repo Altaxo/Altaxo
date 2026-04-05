@@ -32,6 +32,9 @@ using Altaxo.Gui.Common.BasicTypes;
 
 namespace Altaxo.Gui.Worksheet
 {
+  /// <summary>
+  /// Controller for <see cref="MultivariateLinearFitParameters"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IMultiChildView))]
   [UserControllerForObject(typeof(MultivariateLinearFitParameters), 100)]
   public class MultivariateLinearRegressionController : MVCANControllerEditCopyOfDocBase<MultivariateLinearFitParameters, IMultiChildView>
@@ -42,6 +45,7 @@ namespace Altaxo.Gui.Worksheet
     private SingleChoiceController _ctrl0;
     private BooleanValueController _ctrl1, _ctrl2, _ctrl3;
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_ctrl0, () => _ctrl0 = null);
@@ -52,6 +56,7 @@ namespace Altaxo.Gui.Worksheet
       yield return new ControllerAndSetNullMethod(_innerController, () => _innerController = null);
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -83,6 +88,7 @@ namespace Altaxo.Gui.Worksheet
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       bool applyResult;
@@ -103,6 +109,7 @@ namespace Altaxo.Gui.Worksheet
       return ApplyEnd(applyResult, disposeController);
     }
 
+    /// <inheritdoc />
     protected override void AttachView()
     {
       base.AttachView();
@@ -112,6 +119,7 @@ namespace Altaxo.Gui.Worksheet
       }
     }
 
+    /// <inheritdoc />
     protected override void DetachView()
     {
       if (_innerController is not null)

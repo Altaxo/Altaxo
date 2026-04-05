@@ -275,15 +275,54 @@ namespace Altaxo.Data
   }
 
   /// <summary>
-  /// AltaxoVariant is the universal datatype used to return the value of a data column,
-  /// it is necessary because the type of the column can be text, date, or double
-  /// I decided to use struct which only holds the object because of its efficiency
-  /// AltaxoVariant is never used to store the data in the array, for this purpose
-  /// the native data types are used
+  /// <see cref="AltaxoVariant"/> is the universal data type used to return the value of a data column.
+  /// It is necessary because the type of the column can be text, date, or double.
+  /// This type is implemented as a struct for efficiency.
+  /// <see cref="AltaxoVariant"/> is never used to store the data in an array; for this purpose,
+  /// the native data types are used.
   /// </summary>
   public struct AltaxoVariant : IComparable, IFormattable
   {
-    public enum Content { VNull, VDouble, VDateTime, VString, VOperatable, VObject, VDateTimeOffset }
+    /// <summary>
+    /// Identifies the kind of content stored in an <see cref="AltaxoVariant"/>.
+    /// </summary>
+    public enum Content
+    {
+      /// <summary>
+      /// No value is stored.
+      /// </summary>
+      VNull,
+
+      /// <summary>
+      /// A <see cref="double"/> value is stored.
+      /// </summary>
+      VDouble,
+
+      /// <summary>
+      /// A <see cref="DateTime"/> value is stored.
+      /// </summary>
+      VDateTime,
+
+      /// <summary>
+      /// A <see cref="string"/> value is stored.
+      /// </summary>
+      VString,
+
+      /// <summary>
+      /// An operable custom value is stored.
+      /// </summary>
+      VOperatable,
+
+      /// <summary>
+      /// An arbitrary object value is stored.
+      /// </summary>
+      VObject,
+
+      /// <summary>
+      /// A <see cref="DateTimeOffset"/> value is stored.
+      /// </summary>
+      VDateTimeOffset
+    }
 
     private Content _typeOfContent;
     private double _double;
@@ -296,6 +335,7 @@ namespace Altaxo.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AltaxoVariant), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (AltaxoVariant)obj;
@@ -323,6 +363,9 @@ namespace Altaxo.Data
         }
       }
 
+      /// <summary>
+      /// Deserializes an <see cref="AltaxoVariant"/> instance.
+      /// </summary>
       protected virtual AltaxoVariant SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (AltaxoVariant?)o ?? new AltaxoVariant();
@@ -354,6 +397,7 @@ namespace Altaxo.Data
         return s;
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         AltaxoVariant s = SDeserialize(o, info, parent);
@@ -365,6 +409,10 @@ namespace Altaxo.Data
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AltaxoVariant"/> struct by copying another variant.
+    /// </summary>
+    /// <param name="a">The variant to copy.</param>
     public AltaxoVariant(AltaxoVariant a)
     {
       _typeOfContent = a._typeOfContent;
@@ -372,6 +420,10 @@ namespace Altaxo.Data
       _object = a._object;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AltaxoVariant"/> struct from a <see cref="double"/> value.
+    /// </summary>
+    /// <param name="d">The numeric value.</param>
     public AltaxoVariant(double d)
     {
       _typeOfContent = Content.VDouble;
@@ -379,6 +431,10 @@ namespace Altaxo.Data
       _object = null;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AltaxoVariant"/> struct from a <see cref="DateTime"/> value.
+    /// </summary>
+    /// <param name="f">The date and time value.</param>
     public AltaxoVariant(DateTime f)
     {
       _typeOfContent = Content.VDateTime;
@@ -386,6 +442,10 @@ namespace Altaxo.Data
       _double = 0;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AltaxoVariant"/> struct from a <see cref="DateTimeOffset"/> value.
+    /// </summary>
+    /// <param name="f">The date and time value with offset.</param>
     public AltaxoVariant(DateTimeOffset f)
     {
       _typeOfContent = Content.VDateTimeOffset;
@@ -393,6 +453,10 @@ namespace Altaxo.Data
       _double = 0;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AltaxoVariant"/> struct from a string value.
+    /// </summary>
+    /// <param name="s">The string value.</param>
     public AltaxoVariant(string? s)
     {
       _typeOfContent = Content.VString;
@@ -400,6 +464,10 @@ namespace Altaxo.Data
       _double = 0;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AltaxoVariant"/> struct from an arbitrary object.
+    /// </summary>
+    /// <param name="k">The object to store.</param>
     public AltaxoVariant(object? k)
     {
       switch (k)
@@ -447,18 +515,34 @@ namespace Altaxo.Data
       }
     }
 
+    /// <summary>
+    /// Determines whether this instance contains the specified content type.
+    /// </summary>
+    /// <param name="c">The content type to test.</param>
+    /// <returns><see langword="true"/> if this instance contains the specified type; otherwise, <see langword="false"/>.</returns>
     public bool IsType(Content c)
     {
       return _typeOfContent == c;
     }
 
+    /// <summary>
+    /// Determines whether this instance contains the specified content type or is empty.
+    /// </summary>
+    /// <param name="c">The content type to test.</param>
+    /// <returns><see langword="true"/> if this instance contains the specified type or is empty; otherwise, <see langword="false"/>.</returns>
     public bool IsTypeOrNull(Content c)
     {
       return _typeOfContent == c || _typeOfContent == Content.VNull;
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this instance is empty.
+    /// </summary>
     public bool IsEmpty => _typeOfContent == Content.VNull;
 
+    /// <summary>
+    /// Gets a value indicating whether the stored value can be converted to a <see cref="double"/>.
+    /// </summary>
     public bool CanConvertedToDouble
     {
       get
@@ -513,7 +597,7 @@ namespace Altaxo.Data
     /// Converts the variant to a nullable boolean value.
     /// </summary>
     /// <returns>Nullable boolean value.</returns>
-    /// <exception cref="ApplicationException">Unable to convert the contents of this variant to a number, the contents is: " + ToString()</exception>
+    /// <exception cref="ApplicationException">Thrown if the content cannot be converted to a nullable boolean value.</exception>
     public bool? ToNullableBoolean()
     {
       if (_typeOfContent == Content.VDouble)
@@ -607,6 +691,7 @@ namespace Altaxo.Data
       }
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       if (_typeOfContent == Content.VNull)
@@ -619,6 +704,7 @@ namespace Altaxo.Data
         return "";
     }
 
+    /// <inheritdoc/>
     public string ToString(string? formatString, IFormatProvider? provider)
     {
       try
@@ -656,6 +742,7 @@ namespace Altaxo.Data
         return _object!;
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? k)
     {
       if (k is AltaxoVariant av)
@@ -664,6 +751,7 @@ namespace Altaxo.Data
         return this == new AltaxoVariant(k);
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       if (_typeOfContent == Content.VNull)
@@ -684,6 +772,10 @@ namespace Altaxo.Data
         }
         */
 
+    /// <summary>
+    /// Converts a variant containing a <see cref="double"/> to a <see cref="double"/>.
+    /// </summary>
+    /// <param name="f">The variant to convert.</param>
     public static implicit operator double(AltaxoVariant f)
     {
       if (f._typeOfContent == Content.VDouble)
@@ -691,11 +783,19 @@ namespace Altaxo.Data
       throw new ApplicationException("Variant contains " + f._typeOfContent.ToString() + ", but expecting type Double");
     }
 
+    /// <summary>
+    /// Converts a <see cref="double"/> to an <see cref="AltaxoVariant"/>.
+    /// </summary>
+    /// <param name="f">The value to convert.</param>
     public static implicit operator AltaxoVariant(double f)
     {
       return new AltaxoVariant(f);
     }
 
+    /// <summary>
+    /// Converts a variant containing a <see cref="DateTime"/> to a <see cref="DateTime"/>.
+    /// </summary>
+    /// <param name="f">The variant to convert.</param>
     public static implicit operator DateTime(AltaxoVariant f)
     {
       if (f._typeOfContent == Content.VDateTime)
@@ -703,6 +803,10 @@ namespace Altaxo.Data
       throw new ApplicationException("Variant contains " + f._typeOfContent.ToString() + ", but expecting type DateTime");
     }
 
+    /// <summary>
+    /// Converts a variant containing a <see cref="DateTimeOffset"/> to a <see cref="DateTimeOffset"/>.
+    /// </summary>
+    /// <param name="f">The variant to convert.</param>
     public static implicit operator DateTimeOffset(AltaxoVariant f)
     {
       if (f._typeOfContent == Content.VDateTimeOffset)
@@ -710,16 +814,28 @@ namespace Altaxo.Data
       throw new ApplicationException("Variant contains " + f._typeOfContent.ToString() + ", but expecting type DateTimeOffset");
     }
 
+    /// <summary>
+    /// Converts a <see cref="DateTime"/> to an <see cref="AltaxoVariant"/>.
+    /// </summary>
+    /// <param name="f">The value to convert.</param>
     public static implicit operator AltaxoVariant(DateTime f)
     {
       return new AltaxoVariant(f);
     }
 
+    /// <summary>
+    /// Converts a <see cref="DateTimeOffset"/> to an <see cref="AltaxoVariant"/>.
+    /// </summary>
+    /// <param name="f">The value to convert.</param>
     public static implicit operator AltaxoVariant(DateTimeOffset f)
     {
       return new AltaxoVariant(f);
     }
 
+    /// <summary>
+    /// Converts a variant containing a string to a string.
+    /// </summary>
+    /// <param name="f">The variant to convert.</param>
     public static implicit operator string?(AltaxoVariant f)
     {
       return f._typeOfContent switch
@@ -730,11 +846,18 @@ namespace Altaxo.Data
       };
     }
 
+    /// <summary>
+    /// Converts a string to an <see cref="AltaxoVariant"/>.
+    /// </summary>
+    /// <param name="f">The value to convert.</param>
     public static implicit operator AltaxoVariant(string? f)
     {
       return new AltaxoVariant(f);
     }
 
+    /// <summary>
+    /// Adds two variants.
+    /// </summary>
     public static AltaxoVariant operator +(AltaxoVariant a, AltaxoVariant b)
     {
 
@@ -764,6 +887,9 @@ namespace Altaxo.Data
         throw new AltaxoOperatorException("Error: Try to add types " + a._typeOfContent.ToString() + " and " + b._typeOfContent.GetType().ToString());
     }
 
+    /// <summary>
+    /// Subtracts one variant from another.
+    /// </summary>
     public static AltaxoVariant operator -(AltaxoVariant a, AltaxoVariant b)
     {
 
@@ -787,6 +913,9 @@ namespace Altaxo.Data
         throw new AltaxoOperatorException("Error: Try to subtract types " + a._typeOfContent.ToString() + " and " + b._typeOfContent.ToString());
     }
 
+    /// <summary>
+    /// Multiplies two variants.
+    /// </summary>
     public static AltaxoVariant operator *(AltaxoVariant a, AltaxoVariant b)
     {
 
@@ -806,6 +935,9 @@ namespace Altaxo.Data
         throw new AltaxoOperatorException("Error: Try to multiply types " + a._typeOfContent.ToString() + " and " + b._typeOfContent.ToString());
     }
 
+    /// <summary>
+    /// Divides one variant by another.
+    /// </summary>
     public static AltaxoVariant operator /(AltaxoVariant a, AltaxoVariant b)
     {
       if (a._typeOfContent == Content.VDouble && b._typeOfContent == Content.VDouble)
@@ -820,6 +952,9 @@ namespace Altaxo.Data
         throw new AltaxoOperatorException("Error: Try to divide types " + a._typeOfContent.ToString() + " and " + b._typeOfContent.ToString());
     }
 
+    /// <summary>
+    /// Calculates the remainder of one variant divided by another.
+    /// </summary>
     public static AltaxoVariant operator %(AltaxoVariant a, AltaxoVariant b)
     {
       if (a._typeOfContent == Content.VDouble && b._typeOfContent == Content.VDouble)
@@ -834,6 +969,9 @@ namespace Altaxo.Data
         throw new AltaxoOperatorException("Error: Try to get remainder of types " + a._typeOfContent.ToString() + " and " + b._typeOfContent.ToString());
     }
 
+    /// <summary>
+    /// Applies the bitwise AND operator to two variants.
+    /// </summary>
     public static AltaxoVariant operator &(AltaxoVariant a, AltaxoVariant b)
     {
       if (a._typeOfContent == Content.VDouble && b._typeOfContent == Content.VDouble)
@@ -848,6 +986,9 @@ namespace Altaxo.Data
         throw new AltaxoOperatorException("Error: Try to apply operator and to types " + a._typeOfContent.ToString() + " and " + b._typeOfContent.ToString());
     }
 
+    /// <summary>
+    /// Applies the bitwise OR operator to two variants.
+    /// </summary>
     public static AltaxoVariant operator |(AltaxoVariant a, AltaxoVariant b)
     {
       if (a._typeOfContent == Content.VDouble && b._typeOfContent == Content.VDouble)
@@ -862,6 +1003,9 @@ namespace Altaxo.Data
         throw new AltaxoOperatorException("Error: Try to apply operator OR to types " + a._typeOfContent.ToString() + " and " + b._typeOfContent.ToString());
     }
 
+    /// <summary>
+    /// Applies the bitwise XOR operator to two variants.
+    /// </summary>
     public static AltaxoVariant operator ^(AltaxoVariant a, AltaxoVariant b)
     {
       if (a._typeOfContent == Content.VDouble && b._typeOfContent == Content.VDouble)
@@ -876,6 +1020,9 @@ namespace Altaxo.Data
         throw new AltaxoOperatorException("Error: Try to apply operator XOR to types " + a._typeOfContent.ToString() + " and " + b._typeOfContent.ToString());
     }
 
+    /// <summary>
+    /// Shifts a variant to the left.
+    /// </summary>
     public static AltaxoVariant operator <<(AltaxoVariant a, int b)
     {
       if (a._typeOfContent == Content.VDouble)
@@ -888,6 +1035,9 @@ namespace Altaxo.Data
         throw new AltaxoOperatorException("Error: Try to apply operator << to types " + a._typeOfContent.ToString() + " and " + b.ToString());
     }
 
+    /// <summary>
+    /// Shifts a variant to the right.
+    /// </summary>
     public static AltaxoVariant operator >>(AltaxoVariant a, int b)
     {
       if (a._typeOfContent == Content.VDouble)
@@ -900,6 +1050,9 @@ namespace Altaxo.Data
         throw new AltaxoOperatorException("Error: Try to apply operator >> to types " + a._typeOfContent.ToString() + " and " + b.ToString());
     }
 
+    /// <summary>
+    /// Determines whether two variants are equal.
+    /// </summary>
     public static bool operator ==(AltaxoVariant a, AltaxoVariant b)
     {
 
@@ -923,11 +1076,17 @@ namespace Altaxo.Data
         return false;
     }
 
+    /// <summary>
+    /// Determines whether two variants are not equal.
+    /// </summary>
     public static bool operator !=(AltaxoVariant a, AltaxoVariant b)
     {
       return !(a == b);
     }
 
+    /// <summary>
+    /// Determines whether one variant is less than another.
+    /// </summary>
     public static bool operator <(AltaxoVariant a, AltaxoVariant b)
     {
 
@@ -952,6 +1111,9 @@ namespace Altaxo.Data
         throw new AltaxoOperatorException("Error: Try to compare types " + a._typeOfContent.ToString() + " and " + b._typeOfContent.ToString());
     }
 
+    /// <summary>
+    /// Determines whether one variant is greater than another.
+    /// </summary>
     public static bool operator >(AltaxoVariant a, AltaxoVariant b)
     {
 
@@ -976,6 +1138,9 @@ namespace Altaxo.Data
         throw new AltaxoOperatorException("Error: Try to compare types " + a._typeOfContent.ToString() + " and " + b._typeOfContent.ToString());
     }
 
+    /// <summary>
+    /// Determines whether one variant is less than or equal to another.
+    /// </summary>
     public static bool operator <=(AltaxoVariant a, AltaxoVariant b)
     {
 
@@ -1000,6 +1165,9 @@ namespace Altaxo.Data
         throw new AltaxoOperatorException("Error: Try to compare types " + a._typeOfContent.ToString() + " and " + b._typeOfContent.ToString());
     }
 
+    /// <summary>
+    /// Determines whether one variant is greater than or equal to another.
+    /// </summary>
     public static bool operator >=(AltaxoVariant a, AltaxoVariant b)
     {
 
@@ -1026,6 +1194,9 @@ namespace Altaxo.Data
 
     // Unary operators
 
+    /// <summary>
+    /// Applies the unary plus operator to a variant.
+    /// </summary>
     public static AltaxoVariant operator +(AltaxoVariant a)
     {
       switch (a._typeOfContent)
@@ -1044,6 +1215,9 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply unary plus operator to variant " + a.ToString());
     }
 
+    /// <summary>
+    /// Applies the unary minus operator to a variant.
+    /// </summary>
     public static AltaxoVariant operator -(AltaxoVariant a)
     {
       switch (a._typeOfContent)
@@ -1062,6 +1236,9 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply unary minus operator to variant " + a.ToString());
     }
 
+    /// <summary>
+    /// Applies the logical NOT operator to a variant.
+    /// </summary>
     public static AltaxoVariant operator !(AltaxoVariant a)
     {
       switch (a._typeOfContent)
@@ -1080,6 +1257,9 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply unary not operator to variant " + a.ToString());
     }
 
+    /// <summary>
+    /// Applies the bitwise complement operator to a variant.
+    /// </summary>
     public static AltaxoVariant operator ~(AltaxoVariant a)
     {
       switch (a._typeOfContent)
@@ -1098,6 +1278,9 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply unary complement operator to variant " + a.ToString());
     }
 
+    /// <summary>
+    /// Increments a variant.
+    /// </summary>
     public static AltaxoVariant operator ++(AltaxoVariant a)
     {
       switch (a._typeOfContent)
@@ -1116,6 +1299,9 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply unary increment operator to variant " + a.ToString());
     }
 
+    /// <summary>
+    /// Decrements a variant.
+    /// </summary>
     public static AltaxoVariant operator --(AltaxoVariant a)
     {
       switch (a._typeOfContent)
@@ -1134,6 +1320,9 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply unary decrement operator to variant " + a.ToString());
     }
 
+    /// <summary>
+    /// Determines whether a variant evaluates to <see langword="true"/>.
+    /// </summary>
     public static bool operator true(AltaxoVariant a)
     {
       switch (a._typeOfContent)
@@ -1152,6 +1341,9 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply unary true operator to variant " + a.ToString());
     }
 
+    /// <summary>
+    /// Determines whether a variant evaluates to <see langword="false"/>.
+    /// </summary>
     public static bool operator false(AltaxoVariant a)
     {
       switch (a._typeOfContent)
@@ -1172,6 +1364,7 @@ namespace Altaxo.Data
 
     #region IComparable Members
 
+    /// <inheritdoc/>
     int IComparable.CompareTo(object? obj)
     {
       if (!(obj is AltaxoVariant from))

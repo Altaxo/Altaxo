@@ -34,6 +34,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
 {
   public abstract partial class GraphicBase
   {
+    /// <summary>
+    /// Represents a grip handle used to move a graphic object.
+    /// </summary>
     protected class MovementGripHandle : IGripManipulationHandle
     {
       private IHitTestObject _parent;
@@ -102,6 +105,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
           return false;
       }
 
+      /// <inheritdoc/>
       public void MoveGrip(HitTestPointData newPosition)
       {
         if (_initialMousePosition is null)
@@ -189,6 +193,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
         }
       }
 
+      /// <inheritdoc/>
       public bool IsGripHit(HitTestPointData point)
       {
         return _gripPath.IsHittedBy(point);

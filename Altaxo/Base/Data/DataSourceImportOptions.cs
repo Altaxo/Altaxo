@@ -27,6 +27,9 @@ using System;
 
 namespace Altaxo.Data
 {
+  /// <summary>
+  /// Defines options that control how a data source is imported and refreshed.
+  /// </summary>
   public interface IDataSourceImportOptions : Main.IImmutable
   {
     /// <summary>
@@ -88,6 +91,9 @@ namespace Altaxo.Data
     double MinimumWaitingTimeAfterLastTriggerInSeconds { get; }
   }
 
+  /// <summary>
+  /// Immutable implementation of <see cref="IDataSourceImportOptions"/>.
+  /// </summary>
   public record DataSourceImportOptions : IDataSourceImportOptions, Main.IImmutable
   {
     #region Serialization
@@ -100,6 +106,7 @@ namespace Altaxo.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Data.DataSourceImportOptions", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DataSourceImportOptions)obj;
@@ -129,6 +136,7 @@ namespace Altaxo.Data
         };
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
@@ -146,6 +154,7 @@ namespace Altaxo.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DataSourceImportOptions), 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DataSourceImportOptions)obj;
@@ -185,6 +194,7 @@ namespace Altaxo.Data
         };
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);

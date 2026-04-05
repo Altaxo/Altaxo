@@ -30,6 +30,9 @@ using Altaxo.Data;
 
 namespace Altaxo.Serialization.Jcamp
 {
+  /// <summary>
+  /// Table data source for importing JCAMP files.
+  /// </summary>
   public class JcampImportDataSource : FileImportTableDataSourceBase<JcampImportOptions>
   {
     #region Serialization
@@ -42,6 +45,7 @@ namespace Altaxo.Serialization.Jcamp
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(JcampImportDataSource), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (JcampImportDataSource)obj;
@@ -51,6 +55,7 @@ namespace Altaxo.Serialization.Jcamp
         info.AddArray("ProcessData", s._files.ToArray(), s._files.Count);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (o is JcampImportDataSource s)
@@ -96,30 +101,42 @@ namespace Altaxo.Serialization.Jcamp
 
     #region Construction
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="JcampImportDataSource"/> class for a single file.
+    /// </summary>
     public JcampImportDataSource(string fileName, JcampImportOptions options)
       : this(new string[] { fileName }, options)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="JcampImportDataSource"/> class for multiple files.
+    /// </summary>
     public JcampImportDataSource(IEnumerable<string> fileNames, JcampImportOptions options)
       : base(fileNames)
     {
       _processOptions = options;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="JcampImportDataSource"/> class by copying another instance.
+    /// </summary>
     public JcampImportDataSource(JcampImportDataSource from)
       : base(from)
     {
     }
 
+    /// <inheritdoc />
     public override object Clone() => new JcampImportDataSource(this);
 
     #endregion Construction
+    /// <inheritdoc />
     protected override void ImportFromFiles(string[] validFileNames, DataTable destinationTable, IProgressReporter reporter)
     {
       new JcampImporter().Import(validFileNames, destinationTable, _processOptions, attachDataSource: false);
     }
 
+    /// <inheritdoc />
     public override (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
     {
       return new JcampImporter().GetFileExtensions();

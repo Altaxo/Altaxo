@@ -45,6 +45,9 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="XYPlotLabelStyleController"/>.
+  /// </summary>
   public interface ILabelPlotStyleView : IDataContextAwareView
   {
   }
@@ -69,6 +72,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     /// </summary>
     private int _supposedGroupNumber;
 
+    /// <inheritdoc />
     public override bool InitializeDocument(params object[] args)
     {
       if (args.Length >= 2 && (args[1] is DataTable dt))
@@ -80,6 +84,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       return base.InitializeDocument(args);
     }
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -92,6 +97,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private string _labelColumnText;
 
+    /// <summary>
+    /// Gets or sets the text for the label column.
+    /// </summary>
     public string LabelColumnText
     {
       get => _labelColumnText;
@@ -106,6 +114,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
     private string _labelColumnToolTip;
 
+    /// <summary>
+    /// Gets or sets the tool tip for the label column.
+    /// </summary>
     public string LabelColumnToolTip
     {
       get => _labelColumnToolTip;
@@ -120,6 +131,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
     private int _labelColumnStatus;
 
+    /// <summary>
+    /// Gets or sets the status of the label column.
+    /// </summary>
     public int LabelColumnStatus
     {
       get => _labelColumnStatus;
@@ -134,6 +148,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
     private string _labelColumnTransformationText;
 
+    /// <summary>
+    /// Gets or sets the transformation text for the label column.
+    /// </summary>
     public string LabelColumnTransformationText
     {
       get => _labelColumnTransformationText;
@@ -148,10 +165,16 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the label column transformation is visible.
+    /// </summary>
     public bool IsLabelColumnTransformationVisible => !string.IsNullOrEmpty(LabelColumnTransformationText);
 
     private string _labelColumnTransformationToolTip;
 
+    /// <summary>
+    /// Gets or sets the tool tip for the label column transformation.
+    /// </summary>
     public string LabelColumnTransformationToolTip
     {
       get => _labelColumnTransformationToolTip;
@@ -170,6 +193,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _independentSkipFrequency;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the skip frequency is independent.
+    /// </summary>
     public bool IndependentSkipFrequency
     {
       get => _independentSkipFrequency;
@@ -185,6 +211,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private int _skipFrequency;
 
+    /// <summary>
+    /// Gets or sets the frequency at which labels are skipped.
+    /// </summary>
     public int SkipFrequency
     {
       get => _skipFrequency;
@@ -200,6 +229,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _ignoreMissingDataPoints;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether missing data points should be ignored.
+    /// </summary>
     public bool IgnoreMissingDataPoints
     {
       get => _ignoreMissingDataPoints;
@@ -216,6 +248,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _independentOnShiftingGroupStyles;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the style is independent of shifting group styles.
+    /// </summary>
     public bool IndependentOnShiftingGroupStyles
     {
       get => _independentOnShiftingGroupStyles;
@@ -231,6 +266,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private string _labelFormatString;
 
+    /// <summary>
+    /// Gets or sets the format string for the labels.
+    /// </summary>
     public string LabelFormatString
     {
       get => _labelFormatString;
@@ -246,6 +284,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _attachToAxis;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the labels are attached to the axis.
+    /// </summary>
     public bool AttachToAxis
     {
       get => _attachToAxis;
@@ -261,6 +302,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private ItemsController<CSPlaneID> _attachmentDirectionChoices;
 
+    /// <summary>
+    /// Gets or sets the available choices for attachment directions.
+    /// </summary>
     public ItemsController<CSPlaneID> AttachmentDirectionChoices
     {
       get => _attachmentDirectionChoices;
@@ -276,6 +320,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private bool _independentColor;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the color is independent.
+    /// </summary>
     public bool IndependentColor
     {
       get => _independentColor;
@@ -299,6 +346,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private IMaterial _labelBrush;
 
+    /// <summary>
+    /// Gets or sets the brush material for the label.
+    /// </summary>
     public IMaterial LabelBrush
     {
       get => _labelBrush;
@@ -319,6 +369,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     /// </summary>
     private bool _showPlotColorsOnly;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether only plot colors should be shown.
+    /// </summary>
     public bool ShowPlotColorsOnly
     {
       get => _showPlotColorsOnly;
@@ -350,6 +403,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets the GUI environment for the symbol size quantity with unit.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment SymbolSizeEnvironment => LineCapSizeEnvironment.Instance;
 
 
@@ -373,6 +429,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private FontX3DController _font;
 
+    /// <summary>
+    /// Gets or sets the font controller for the labels.
+    /// </summary>
     public FontX3DController Font
     {
       get => _font;
@@ -387,10 +446,16 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets the GUI environment for the font size offset quantity with unit.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment FontSizeOffsetEnvironment => FontSizeEnvironment.Instance;
 
     private DimensionfulQuantity _fontSizeOffset;
 
+    /// <summary>
+    /// Gets or sets the font size offset.
+    /// </summary>
     public DimensionfulQuantity FontSizeOffset
     {
       get => _fontSizeOffset;
@@ -405,10 +470,16 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     }
 
 
+    /// <summary>
+    /// Gets the GUI environment for the font size factor quantity with unit.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment FontSizeFactorEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _fontSizeFactor;
 
+    /// <summary>
+    /// Gets or sets the font size factor.
+    /// </summary>
     public DimensionfulQuantity FontSizeFactor
     {
       get => _fontSizeFactor;
@@ -422,10 +493,16 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets the GUI environment for the rotation angles.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment RotationEnvironment => AngleEnvironment.Instance;
 
     private DimensionfulQuantity _rotationX;
 
+    /// <summary>
+    /// Gets or sets the rotation angle around the X-axis.
+    /// </summary>
     public DimensionfulQuantity RotationX
     {
       get => _rotationX;
@@ -441,6 +518,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private DimensionfulQuantity _rotationY;
 
+    /// <summary>
+    /// Gets or sets the rotation angle around the Y-axis.
+    /// </summary>
     public DimensionfulQuantity RotationY
     {
       get => _rotationY;
@@ -456,6 +536,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private DimensionfulQuantity _rotationZ;
 
+    /// <summary>
+    /// Gets or sets the rotation angle around the Z-axis.
+    /// </summary>
     public DimensionfulQuantity RotationZ
     {
       get => _rotationZ;
@@ -472,6 +555,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private ItemsController<Alignment> _alignmentX;
 
+    /// <summary>
+    /// Gets or sets the available choices for alignment along the X-axis.
+    /// </summary>
     public ItemsController<Alignment> AlignmentX
     {
       get => _alignmentX;
@@ -487,6 +573,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private ItemsController<Alignment> _alignmentY;
 
+    /// <summary>
+    /// Gets or sets the available choices for alignment along the Y-axis.
+    /// </summary>
     public ItemsController<Alignment> AlignmentY
     {
       get => _alignmentY;
@@ -502,6 +591,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private ItemsController<Alignment> _alignmentZ;
 
+    /// <summary>
+    /// Gets or sets the available choices for alignment along the Z-axis.
+    /// </summary>
     public ItemsController<Alignment> AlignmentZ
     {
       get => _alignmentZ;
@@ -515,12 +607,24 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets the GUI environment for offset values in points.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment OffsetPointsEnvironment => SizeEnvironment.Instance;
+    /// <summary>
+    /// Gets the GUI environment for offset values in em units.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment OffsetEmUnitsEnvironment => RelationEnvironment.Instance;
+    /// <summary>
+    /// Gets the GUI environment for offset values in symbol size units.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment OffsetSymbolSizeEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _offsetXPoints;
 
+    /// <summary>
+    /// Gets or sets the offset in X direction in points.
+    /// </summary>
     public DimensionfulQuantity OffsetXPoints
     {
       get => _offsetXPoints;
@@ -537,6 +641,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private DimensionfulQuantity _offsetXEmUnits;
 
+    /// <summary>
+    /// Gets or sets the offset in X direction in em units.
+    /// </summary>
     public DimensionfulQuantity OffsetXEmUnits
     {
       get => _offsetXEmUnits;
@@ -552,6 +659,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private DimensionfulQuantity _offsetXSymbolSizeUnits;
 
+    /// <summary>
+    /// Gets or sets the offset in X direction in symbol size units.
+    /// </summary>
     public DimensionfulQuantity OffsetXSymbolSizeUnits
     {
       get => _offsetXSymbolSizeUnits;
@@ -568,6 +678,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private DimensionfulQuantity _offsetYPoints;
 
+    /// <summary>
+    /// Gets or sets the offset in Y direction in points.
+    /// </summary>
     public DimensionfulQuantity OffsetYPoints
     {
       get => _offsetYPoints;
@@ -583,6 +696,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private DimensionfulQuantity _offsetYEmUnits;
 
+    /// <summary>
+    /// Gets or sets the offset in Y direction in em units.
+    /// </summary>
     public DimensionfulQuantity OffsetYEmUnits
     {
       get => _offsetYEmUnits;
@@ -598,6 +714,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private DimensionfulQuantity _offsetYSymbolSizeUnits;
 
+    /// <summary>
+    /// Gets or sets the offset in Y direction in symbol size units.
+    /// </summary>
     public DimensionfulQuantity OffsetYSymbolSizeUnits
     {
       get => _offsetYSymbolSizeUnits;
@@ -614,6 +733,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private DimensionfulQuantity _offsetZPoints;
 
+    /// <summary>
+    /// Gets or sets the offset in Z direction in points.
+    /// </summary>
     public DimensionfulQuantity OffsetZPoints
     {
       get => _offsetZPoints;
@@ -629,6 +751,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private DimensionfulQuantity _offsetZEmUnits;
 
+    /// <summary>
+    /// Gets or sets the offset in Z direction in em units.
+    /// </summary>
     public DimensionfulQuantity OffsetZEmUnits
     {
       get => _offsetZEmUnits;
@@ -644,6 +769,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private DimensionfulQuantity _offsetZSymbolSizeUnits;
 
+    /// <summary>
+    /// Gets or sets the offset in Z direction in symbol size units.
+    /// </summary>
     public DimensionfulQuantity OffsetZSymbolSizeUnits
     {
       get => _offsetZSymbolSizeUnits;
@@ -661,6 +789,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private BackgroundStyleController _background;
 
+    /// <summary>
+    /// Gets or sets the background style controller.
+    /// </summary>
     public BackgroundStyleController Background
     {
       get => _background;
@@ -684,6 +815,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private ItemsController<ColorLinkage> _backgroundColorLinkage;
 
+    /// <summary>
+    /// Gets or sets the available choices for background color linkage.
+    /// </summary>
     public ItemsController<ColorLinkage> BackgroundColorLinkage
     {
       get => _backgroundColorLinkage;
@@ -702,6 +836,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     #endregion
 
 
+    /// <inheritdoc/>
     public override void Dispose(bool isDisposing)
     {
       _colorGroupStyleTracker = null;
@@ -715,6 +850,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -773,6 +909,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       // Data
@@ -829,6 +966,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       return ApplyEnd(true, disposeController);
     }
 
+    /// <summary>
+    /// Initializes the available attachment direction choices based on the plot area's coordinate system planes.
+    /// </summary>
     public void InitializeAttachmentDirectionChoices()
     {
       var layer = AbsoluteDocumentPath.GetRootNodeImplementing(_doc, typeof(IPlotArea)) as IPlotArea;

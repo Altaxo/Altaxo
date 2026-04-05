@@ -30,6 +30,9 @@ using Clipper2Lib;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
+  /// <summary>
+  /// Represents an open plus-shaped scatter symbol.
+  /// </summary>
   public class CrossPlus : OpenSymbolBase
   {
     #region Serialization
@@ -37,9 +40,13 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
     /// <summary>
     /// 2016-10-27 initial version.
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="CrossPlus"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CrossPlus), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         info.AddBaseValueEmbedded(obj, obj.GetType().BaseType!);
@@ -47,6 +54,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
         SerializeSetV0((IScatterSymbol)obj, info);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (CrossPlus?)o ?? new CrossPlus();
@@ -58,15 +66,24 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CrossPlus"/> class.
+    /// </summary>
     public CrossPlus()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CrossPlus"/> class.
+    /// </summary>
+    /// <param name="fillColor">The fill color.</param>
+    /// <param name="isFillColorInfluencedByPlotColor">If set to <c>true</c>, the fill color is influenced by the plot color.</param>
     public CrossPlus(NamedColor fillColor, bool isFillColorInfluencedByPlotColor)
       : base(fillColor, isFillColorInfluencedByPlotColor)
     {
     }
 
+    /// <inheritdoc/>
     public override Paths64 GetCopyOfOuterPolygon(double relativeStructureWidth)
     {
       relativeStructureWidth = Altaxo.Calc.RMath.ClampToInterval(relativeStructureWidth, 0, 0.5);

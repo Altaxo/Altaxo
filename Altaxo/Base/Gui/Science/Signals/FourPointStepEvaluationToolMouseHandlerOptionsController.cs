@@ -5,14 +5,21 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Science.Signals
 {
+  /// <summary>
+  /// View interface for four-point step evaluation tool options.
+  /// </summary>
   public interface IFourPointStepEvaluationToolMouseHandlerOptionsView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="FourPointStepEvaluationToolMouseHandlerOptions"/>.
+  /// </summary>
   [UserControllerForObject(typeof(FourPointStepEvaluationToolMouseHandlerOptions))]
   [ExpectedTypeOfView(typeof(IFourPointStepEvaluationToolMouseHandlerOptionsView))]
   public class FourPointStepEvaluationToolMouseHandlerOptionsController : MVCANControllerEditImmutableDocBase<FourPointStepEvaluationToolMouseHandlerOptions, IFourPointStepEvaluationToolMouseHandlerOptionsView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(PenController, () => PenController = null!);
@@ -22,6 +29,9 @@ namespace Altaxo.Gui.Science.Signals
 
     private bool _showOptionsWhenToolIsActivated;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the options dialog is shown when the tool is activated.
+    /// </summary>
     public bool ShowOptionsWhenToolIsActivated
     {
       get => _showOptionsWhenToolIsActivated;
@@ -38,6 +48,9 @@ namespace Altaxo.Gui.Science.Signals
 
     private bool _useRegressionForLeftAndRightLine;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether regression is used for the left and right line.
+    /// </summary>
     public bool UseRegressionForLeftAndRightLine
     {
       get => _useRegressionForLeftAndRightLine;
@@ -51,10 +64,16 @@ namespace Altaxo.Gui.Science.Signals
       }
     }
 
+    /// <summary>
+    /// Gets the unit environment for level values.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment LevelEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _MiddleRegressionLowerLevel;
 
+    /// <summary>
+    /// Gets or sets the lower middle-regression level.
+    /// </summary>
     public DimensionfulQuantity MiddleRegressionLowerLevel
     {
       get => _MiddleRegressionLowerLevel;
@@ -70,6 +89,9 @@ namespace Altaxo.Gui.Science.Signals
 
     private DimensionfulQuantity _MiddleRegressionUpperLevel;
 
+    /// <summary>
+    /// Gets or sets the upper middle-regression level.
+    /// </summary>
     public DimensionfulQuantity MiddleRegressionUpperLevel
     {
       get => _MiddleRegressionUpperLevel;
@@ -85,6 +107,9 @@ namespace Altaxo.Gui.Science.Signals
 
     private DimensionfulQuantity _MiddleLineOverlap;
 
+    /// <summary>
+    /// Gets or sets the middle-line overlap.
+    /// </summary>
     public DimensionfulQuantity MiddleLineOverlap
     {
       get => _MiddleLineOverlap;
@@ -100,6 +125,9 @@ namespace Altaxo.Gui.Science.Signals
 
     private ColorTypeThicknessPenController _penController;
 
+    /// <summary>
+    /// Gets or sets the controller for the preview pen.
+    /// </summary>
     public ColorTypeThicknessPenController PenController
     {
       get => _penController;
@@ -121,6 +149,7 @@ namespace Altaxo.Gui.Science.Signals
     #endregion
 
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -135,6 +164,7 @@ namespace Altaxo.Gui.Science.Signals
         PenController = new ColorTypeThicknessPenController(_doc.LinePen);
       }
     }
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       var middleRegressionLowerLevel = MiddleRegressionLowerLevel.AsValueInSIUnits;

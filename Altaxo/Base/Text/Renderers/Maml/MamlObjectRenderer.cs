@@ -29,7 +29,7 @@ using Markdig.Syntax;
 namespace Altaxo.Text.Renderers.Maml
 {
   /// <summary>
-  /// A base class for MAML rendering.
+  /// Base class for MAML renderers.
   /// </summary>
   /// <typeparam name="TObject">The type of the markdown syntax object.</typeparam>
   /// <seealso cref="IMarkdownObjectRenderer" />

@@ -28,14 +28,21 @@ using Altaxo.Science.Signals;
 
 namespace Altaxo.Gui.Science.Signals
 {
+  /// <summary>
+  /// View interface for Prony-series relaxation settings.
+  /// </summary>
   public interface IPronySeriesRelaxationView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="PronySeriesRelaxation"/>.
+  /// </summary>
   [UserControllerForObject(typeof(PronySeriesRelaxation))]
   [ExpectedTypeOfView(typeof(IPronySeriesRelaxationView))]
   public class PronySeriesRelaxationController : MVCANControllerEditImmutableDocBase<PronySeriesRelaxation, IPronySeriesRelaxationView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -45,6 +52,9 @@ namespace Altaxo.Gui.Science.Signals
 
     private double _timeMinimum;
 
+    /// <summary>
+    /// Gets or sets the minimum relaxation time.
+    /// </summary>
     public double TimeMinimum
     {
       get => _timeMinimum;
@@ -60,6 +70,9 @@ namespace Altaxo.Gui.Science.Signals
 
     private double _timeMaximum;
 
+    /// <summary>
+    /// Gets or sets the maximum relaxation time.
+    /// </summary>
     public double TimeMaximum
     {
       get => _timeMaximum;
@@ -76,6 +89,9 @@ namespace Altaxo.Gui.Science.Signals
 
     private int _numberOfRelaxationTimes;
 
+    /// <summary>
+    /// Gets or sets the number of relaxation times.
+    /// </summary>
     public int NumberOfRelaxationTimes
     {
       get => _numberOfRelaxationTimes;
@@ -91,6 +107,9 @@ namespace Altaxo.Gui.Science.Signals
 
     private double _regularizationParameter;
 
+    /// <summary>
+    /// Gets or sets the regularization parameter.
+    /// </summary>
     public double RegularizationParameter
     {
       get => _regularizationParameter;
@@ -106,6 +125,9 @@ namespace Altaxo.Gui.Science.Signals
 
     private bool _useIntercept;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether an intercept is used.
+    /// </summary>
     public bool UseIntercept
     {
       get => _useIntercept;
@@ -123,6 +145,7 @@ namespace Altaxo.Gui.Science.Signals
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -137,6 +160,7 @@ namespace Altaxo.Gui.Science.Signals
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       try

@@ -40,8 +40,8 @@ namespace Altaxo.Main
   public delegate void DocNodeProxyReporter(IProxy proxy, object owner, string propertyName);
 
   /// <summary>
-  /// Can be used to to relocate the <see cref="AbsoluteDocumentPath"/> that the <see cref="DocNodeProxy"/> is holding. The <see cref="Visit"/> function implements
-  /// the <see cref="DocNodeProxyReporter"/> delegate that is used to enumerate all proxies to document nodes<see cref="IDocumentNode"/>s and change their references
+  /// Can be used to relocate the <see cref="AbsoluteDocumentPath"/> that an <see cref="IProxy"/> is holding. The <see cref="Visit"/> function implements
+  /// the <see cref="DocNodeProxyReporter"/> delegate that is used to enumerate all proxies to <see cref="IDocumentNode"/> instances and change their references
   /// to the relocated <see cref="IDocumentNode"/>.
   /// </summary>
   public class DocNodePathReplacementOptions
@@ -100,10 +100,10 @@ namespace Altaxo.Main
     }
 
     /// <summary>
-    /// Adds a replacement entry for a project item. The paths given should be complete paths of the project item (original path and new path).
+    /// Adds a replacement rule for project-item paths.
     /// </summary>
-    /// <param name="originalPath">The original path of the project item (DataTable, Graph, ProjectFolderPropertyBag).</param>
-    /// <param name="newPath">The new path of the project item.</param>
+    /// <param name="originalPath">The original project-item path.</param>
+    /// <param name="newPath">The new project-item path.</param>
     public void AddProjectItemReplacement(AbsoluteDocumentPath originalPath, AbsoluteDocumentPath newPath)
     {
       _itemRelocationDictionary.Add(originalPath, newPath);

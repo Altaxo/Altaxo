@@ -27,6 +27,9 @@ using Clipper2Lib;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Frames
 {
+  /// <summary>
+  /// Represents a scatter-symbol frame with constant thickness.
+  /// </summary>
   public class ConstantThicknessFrame : FrameBase
   {
     #region Serialization
@@ -34,14 +37,19 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Frames
     /// <summary>
     /// 2016-10-27 initial version.
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="ConstantThicknessFrame"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ConstantThicknessFrame), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         info.AddBaseValueEmbedded(obj, obj.GetType().BaseType!);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (ConstantThicknessFrame?)o ?? new ConstantThicknessFrame();
@@ -52,6 +60,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Frames
 
     #endregion Serialization
 
+    /// <inheritdoc/>
     public override Paths64 GetCopyOfClipperPolygon(double relativeWidth, Paths64 outerPolygon)
     {
       var delta = (-2 * relativeWidth) * ClosedSymbolBase.ClipperScalingInt;

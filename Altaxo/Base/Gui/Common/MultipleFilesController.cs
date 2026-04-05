@@ -30,37 +30,72 @@ using Altaxo.Collections;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// View contract for selecting and ordering multiple file names.
+  /// </summary>
   public interface IMultipleFilesView
   {
+    /// <summary>
+    /// Sets the selectable file names.
+    /// </summary>
     SelectableListNodeList FileNames { set; }
 
+    /// <summary>
+    /// Occurs when the selected file name should be browsed.
+    /// </summary>
     event Action? BrowseSelectedFileName;
 
+    /// <summary>
+    /// Occurs when the selected file name should be deleted.
+    /// </summary>
     event Action? DeleteSelectedFileName;
 
+    /// <summary>
+    /// Occurs when the selected file name should move up.
+    /// </summary>
     event Action? MoveUpSelectedFileName;
 
+    /// <summary>
+    /// Occurs when the selected file name should move down.
+    /// </summary>
     event Action? MoveDownSelectedFileName;
 
+    /// <summary>
+    /// Occurs when a new file name should be added.
+    /// </summary>
     event Action? AddNewFileName;
 
+    /// <summary>
+    /// Occurs when a new file name should replace the current list.
+    /// </summary>
     event Action? NewFileNameExclusively;
 
+    /// <summary>
+    /// Occurs when the file names should be sorted in ascending order.
+    /// </summary>
     event Action? SortFileNamesAscending;
   }
 
+  /// <summary>
+  /// Controller for editing a collection of file names.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IMultipleFilesView))]
   public class MultipleFilesController : MVCANControllerEditImmutableDocBase<IEnumerable<string>, IMultipleFilesView>, IMVCSupportsApplyCallback
   {
     private SelectableListNodeList _fileNames = new SelectableListNodeList();
 
+    /// <summary>
+    /// Occurs after the controller was applied successfully.
+    /// </summary>
     public event Action? SuccessfullyApplied;
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       if (_doc is null)
@@ -85,6 +120,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = _fileNames.Select(x => (string)x.Tag!).ToArray();
@@ -93,6 +129,7 @@ namespace Altaxo.Gui.Common
       return ApplyEnd(true, disposeController);
     }
 
+    /// <inheritdoc/>
     protected override void AttachView()
     {
       if (_view is null)
@@ -108,6 +145,7 @@ namespace Altaxo.Gui.Common
       _view.SortFileNamesAscending += EhSortFileNamesAscending;
     }
 
+    /// <inheritdoc/>
     protected override void DetachView()
     {
       if (_view is null)
@@ -152,6 +190,12 @@ namespace Altaxo.Gui.Common
 
     /// <summary>
     /// Set the file filters.
+    /// </summary>
+    /// <summary>
+    /// Gets or sets the file filters.
+    /// </summary>
+    /// <summary>
+    /// Gets or sets the file filters.
     /// </summary>
     public IEnumerable<(string Filter, string Description)> FileFilters
     {

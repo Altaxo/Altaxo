@@ -31,17 +31,27 @@ using Altaxo.Collections;
 
 namespace Altaxo.Graph.Scales.Boundaries
 {
+  /// <summary>
+  /// Tracks the distinct text values used on a text scale.
+  /// </summary>
   [Serializable]
   public class TextBoundaries : Main.SuspendableDocumentLeafNodeWithSingleAccumulatedData<BoundariesChangedEventArgs>, IPhysicalBoundaries
   {
+    /// <summary>
+    /// The tracked text values.
+    /// </summary>
     private SetList<string> _itemList;
 
+    /// <summary>
+    /// Stores the serialized text items temporarily during deserialization.
+    /// </summary>
     [NonSerialized]
     protected string[]? _savedItems;
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextBoundaries), 10)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (TextBoundaries)obj;
@@ -51,6 +61,7 @@ namespace Altaxo.Graph.Scales.Boundaries
         info.CommitArray();
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (TextBoundaries?)o ?? new TextBoundaries();
@@ -64,11 +75,18 @@ namespace Altaxo.Graph.Scales.Boundaries
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextBoundaries"/> class.
+    /// </summary>
     public TextBoundaries()
     {
       _itemList = new SetList<string>();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextBoundaries"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public TextBoundaries(TextBoundaries from)
     {
       _itemList = new SetList<string>();
@@ -77,21 +95,26 @@ namespace Altaxo.Graph.Scales.Boundaries
 
     /// <summary>
     /// Try to find the text item and returns the index in the collection. If the
-    /// item is not found, the function returns -1.
+    /// item is not found, the function returns <c>-1</c>.
     /// </summary>
     /// <param name="item">The text item to find.</param>
-    /// <returns>The ordinal number  or double.NaN if the item is not found.</returns>
+    /// <returns>The ordinal number, or <c>-1</c> if the item is not found.</returns>
     public int IndexOf(string item)
     {
       return _itemList.IndexOf(item);
     }
 
+    /// <summary>
+    /// Gets the item at the specified index.
+    /// </summary>
+    /// <param name="i">The item index.</param>
+    /// <returns>The text item at the specified index.</returns>
     public string GetItem(int i)
     {
       return _itemList[i];
     }
 
-    #region AbstractPhysicalBoundaries implementation
+    #region IPhysicalBoundaries implementation
 
     /// <summary>
     /// Processes a single value from a data column.
@@ -103,13 +126,14 @@ namespace Altaxo.Graph.Scales.Boundaries
     /// <param name="col">The data column</param>
     /// <param name="idx">The index into this data column where the data value is located.</param>
     /// <returns>True if data is in the tracked range, false if the data is not in the tracked range.</returns>
+    /// <inheritdoc />
     public bool Add(Altaxo.Data.IReadableColumn col, int idx)
     {
       return Add(col[idx]);
     }
 
     /// <summary>
-    /// Processes a single value .
+    /// Processes a single value.
     /// If the data value is text, the boundaries are
     /// updated and the number of items is increased by one (if not contained already). The function returns true
     /// in this case. On the other hand, if the value is outside the range, the function has to
@@ -117,6 +141,7 @@ namespace Altaxo.Graph.Scales.Boundaries
     /// </summary>
     /// <param name="item">The data item.</param>
     /// <returns>True if data is in the tracked range, false if the data is not in the tracked range.</returns>
+    /// <inheritdoc />
     public bool Add(Altaxo.Data.AltaxoVariant item)
     {
       if (!(item.IsType(Altaxo.Data.AltaxoVariant.Content.VString)))
@@ -143,6 +168,7 @@ namespace Altaxo.Graph.Scales.Boundaries
       return true;
     }
 
+    /// <inheritdoc />
     public void Add(IPhysicalBoundaries b)
     {
       if (b is TextBoundaries from)
@@ -159,15 +185,17 @@ namespace Altaxo.Graph.Scales.Boundaries
       }
     }
 
+    /// <inheritdoc />
     public object Clone()
     {
       return new TextBoundaries(this);
     }
 
-    #endregion AbstractPhysicalBoundaries implementation
+    #endregion IPhysicalBoundaries implementation
 
     #region IPhysicalBoundaries Members
 
+    /// <inheritdoc />
     public void Reset()
     {
       var hasChanged = (_itemList.Count > 0);
@@ -177,6 +205,7 @@ namespace Altaxo.Graph.Scales.Boundaries
         EhSelfChanged(new BoundariesChangedEventArgs(BoundariesChangedData.NumberOfItemsChanged | BoundariesChangedData.UpperBoundChanged));
     }
 
+    /// <inheritdoc />
     public int NumberOfItems
     {
       get
@@ -185,6 +214,7 @@ namespace Altaxo.Graph.Scales.Boundaries
       }
     }
 
+    /// <inheritdoc />
     public bool IsEmpty
     {
       get
@@ -201,6 +231,7 @@ namespace Altaxo.Graph.Scales.Boundaries
     /// For performance reasons, we save the current state of this instance here if the item is suspended. When the item is resumed, we compare the saved state
     /// with the current state and set our accumulated data accordingly.
     /// </summary>
+    /// <inheritdoc />
     protected override void OnSuspended()
     {
       // because not only the number of items matter, but also their order, we have to save a full copy of the items
@@ -212,8 +243,9 @@ namespace Altaxo.Graph.Scales.Boundaries
 
     /// <summary>
     /// For performance reasons, we don't call EhSelfChanged during the suspended state. Instead, when we resume here, we compare the saved state of this instance with the current state of the instance
-    /// and and set our accumulated data accordingly.
+    /// and set our accumulated data accordingly.
     /// </summary>
+    /// <inheritdoc />
     protected override void OnResume()
     {
       BoundariesChangedData data = 0;
@@ -232,6 +264,7 @@ namespace Altaxo.Graph.Scales.Boundaries
       base.OnResume();
     }
 
+    /// <inheritdoc />
     protected override void AccumulateChangeData(object? sender, EventArgs e)
     {
       var eAsBCEA = e as BoundariesChangedEventArgs;

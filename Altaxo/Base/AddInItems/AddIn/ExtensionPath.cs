@@ -34,6 +34,9 @@ namespace Altaxo.AddInItems
     private AddIn _addIn;
     private List<List<Codon>> _codons = new List<List<Codon>>();
 
+    /// <summary>
+    /// Gets the owning add-in.
+    /// </summary>
     public AddIn AddIn
     {
       get
@@ -42,6 +45,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Gets the extension path name.
+    /// </summary>
     public string Name
     {
       get
@@ -50,6 +56,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Gets all codons in the extension path.
+    /// </summary>
     public IEnumerable<Codon> Codons
     {
       get
@@ -74,12 +83,18 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ExtensionPath"/> class.
+    /// </summary>
     public ExtensionPath(string name, AddIn addIn)
     {
       this._addIn = addIn;
       this._name = name;
     }
 
+    /// <summary>
+    /// Reads the extension path contents from XML.
+    /// </summary>
     public static void SetUp(ExtensionPath extensionPath, XmlReader reader, string endElement)
     {
       extensionPath.DoSetUp(reader, endElement, extensionPath._addIn);

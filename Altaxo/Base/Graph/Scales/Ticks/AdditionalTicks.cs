@@ -32,6 +32,9 @@ using Altaxo.Data;
 
 namespace Altaxo.Graph.Scales.Ticks
 {
+  /// <summary>
+  /// Stores additional tick values for a scale.
+  /// </summary>
   public class AdditionalTicks
     :
     Main.SuspendableDocumentLeafNodeWithEventArgs,
@@ -71,16 +74,26 @@ namespace Altaxo.Graph.Scales.Ticks
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AdditionalTicks"/> class.
+    /// </summary>
     public AdditionalTicks()
     {
       _additionalTicks = new List<AltaxoVariant>();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AdditionalTicks"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public AdditionalTicks(AdditionalTicks from)
     {
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies the additional tick values from another instance.
+    /// </summary>
     [MemberNotNull(nameof(_additionalTicks))]
     protected void CopyFrom(AdditionalTicks from)
     {
@@ -88,6 +101,7 @@ namespace Altaxo.Graph.Scales.Ticks
       EhSelfChanged();
     }
 
+    /// <inheritdoc/>
     public bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -103,11 +117,13 @@ namespace Altaxo.Graph.Scales.Ticks
       return false;
     }
 
+    /// <inheritdoc/>
     public object Clone()
     {
       return new AdditionalTicks(this);
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       if (ReferenceEquals(this, obj))
@@ -121,11 +137,15 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return _additionalTicks.GetHashCode();
     }
 
+    /// <summary>
+    /// Gets a value indicating whether no additional ticks are stored.
+    /// </summary>
     public bool IsEmpty
     {
       get
@@ -134,6 +154,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Gets or sets an additional tick value by index.
+    /// </summary>
     public AltaxoVariant this[int idx]
     {
       get
@@ -149,6 +172,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Clears all additional ticks.
+    /// </summary>
     public void Clear()
     {
       var oldCount = _additionalTicks.Count;
@@ -157,12 +183,18 @@ namespace Altaxo.Graph.Scales.Ticks
         EhSelfChanged();
     }
 
+    /// <summary>
+    /// Adds an additional tick value.
+    /// </summary>
     public void Add(AltaxoVariant additionalTick)
     {
       _additionalTicks.Add(additionalTick);
       EhSelfChanged();
     }
 
+    /// <summary>
+    /// Gets the stored additional tick values.
+    /// </summary>
     public IEnumerable<AltaxoVariant> Values
     {
       get

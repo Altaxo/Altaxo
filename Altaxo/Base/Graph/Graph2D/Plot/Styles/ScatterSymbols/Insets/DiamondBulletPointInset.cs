@@ -27,6 +27,9 @@ using Clipper2Lib;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
 {
+  /// <summary>
+  /// Represents a filled diamond-shaped inset for a scatter symbol.
+  /// </summary>
   public class DiamondBulletPointInset : InsetBase
   {
     #region Serialization
@@ -34,14 +37,19 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
     /// <summary>
     /// 2016-10-27 initial version.
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="DiamondBulletPointInset"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DiamondBulletPointInset), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         info.AddBaseValueEmbedded(obj, obj.GetType().BaseType!);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (DiamondBulletPointInset?)o ?? new DiamondBulletPointInset();
@@ -52,12 +60,19 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
 
     #endregion Serialization
 
+    /// <summary>
+    /// Converts local coordinates into a rotated point used by the diamond shape.
+    /// </summary>
+    /// <param name="w">The x-coordinate in local space.</param>
+    /// <param name="h">The y-coordinate in local space.</param>
+    /// <returns>The corresponding point in clipper coordinates.</returns>
     private Point64 GetPoint(double w, double h)
     {
       const double Scale = 2 * 0.707106781186547524400844;
       return new Point64((int)(Scale * (w + h) * ClipperScalingDouble), (int)(Scale * (h - w) * ClipperScalingDouble));
     }
 
+    /// <inheritdoc/>
     public override Paths64 GetCopyOfClipperPolygon(double relativeWidth)
     {
       double w = relativeWidth;

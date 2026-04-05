@@ -30,10 +30,16 @@ using Altaxo.Gui.Graph.Plot.Data;
 
 namespace Altaxo.Gui.Data.Selections
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="IncludeSingleNumericalValueController"/>.
+  /// </summary>
   public interface IIncludeSingleNumericalValueView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="IncludeSingleNumericalValue"/>.
+  /// </summary>
   [UserControllerForObject(typeof(IncludeSingleNumericalValue), 100)]
   [ExpectedTypeOfView(typeof(IIncludeSingleNumericalValueView))]
   public class IncludeSingleNumericalValueController : MVCANControllerEditCopyOfDocBase<IncludeSingleNumericalValue, IIncludeSingleNumericalValueView>, IDataColumnController
@@ -48,6 +54,7 @@ namespace Altaxo.Gui.Data.Selections
     /// </summary>
     private int _supposedGroupNumber;
 
+    /// <inheritdoc />
     public override bool InitializeDocument(params object[] args)
     {
       if (args.Length >= 2 && (args[1] is DataTable dt))
@@ -63,6 +70,9 @@ namespace Altaxo.Gui.Data.Selections
 
     private string _columnText;
 
+    /// <summary>
+    /// Gets or sets the column display text.
+    /// </summary>
     public string ColumnText
     {
       get => _columnText;
@@ -77,6 +87,9 @@ namespace Altaxo.Gui.Data.Selections
     }
     private string _columnToolTip;
 
+    /// <summary>
+    /// Gets or sets the column tooltip.
+    /// </summary>
     public string ColumnToolTip
     {
       get => _columnToolTip;
@@ -91,6 +104,9 @@ namespace Altaxo.Gui.Data.Selections
     }
     private int _columnStatus;
 
+    /// <summary>
+    /// Gets or sets the column status.
+    /// </summary>
     public int ColumnStatus
     {
       get => _columnStatus;
@@ -105,6 +121,9 @@ namespace Altaxo.Gui.Data.Selections
     }
     private string _columnTransformationText;
 
+    /// <summary>
+    /// Gets or sets the transformation display text.
+    /// </summary>
     public string ColumnTransformationText
     {
       get => _columnTransformationText;
@@ -119,6 +138,9 @@ namespace Altaxo.Gui.Data.Selections
     }
     private string _columnTransformationToolTip;
 
+    /// <summary>
+    /// Gets or sets the transformation tooltip.
+    /// </summary>
     public string ColumnTransformationToolTip
     {
       get => _columnTransformationToolTip;
@@ -133,6 +155,9 @@ namespace Altaxo.Gui.Data.Selections
     }
     private string _dataLabel;
 
+    /// <summary>
+    /// Gets or sets the data label.
+    /// </summary>
     public string DataLabel
     {
       get => _dataLabel;
@@ -147,6 +172,9 @@ namespace Altaxo.Gui.Data.Selections
     }
     private double _value;
 
+    /// <summary>
+    /// Gets or sets the numeric value.
+    /// </summary>
     public double Value
     {
       get => _value;
@@ -163,6 +191,7 @@ namespace Altaxo.Gui.Data.Selections
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -186,6 +215,7 @@ namespace Altaxo.Gui.Data.Selections
       ColumnTransformationToolTip = info.TransformationToolTip;
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       var column = _doc.Column;
@@ -208,6 +238,7 @@ namespace Altaxo.Gui.Data.Selections
       return ApplyEnd(true, disposeController);
     }
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;

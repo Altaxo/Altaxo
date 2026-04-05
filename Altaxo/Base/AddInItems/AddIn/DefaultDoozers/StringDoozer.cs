@@ -45,6 +45,7 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <inheritdoc/>
     public object? BuildItem(BuildItemArgs args)
     {
       return StringParser.Parse(args.Codon.Properties["text"]);

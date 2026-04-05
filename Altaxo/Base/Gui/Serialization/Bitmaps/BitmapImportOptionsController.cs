@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -28,12 +28,19 @@ using Altaxo.Serialization.Bitmaps;
 
 namespace Altaxo.Gui.Serialization.Bitmaps
 {
+  /// <summary>
+  /// View interface for editing <see cref="BitmapImportOptions"/>.
+  /// </summary>
   public interface IBitmapImportOptionsView : IDataContextAwareView { }
 
+  /// <summary>
+  /// Controller for editing <see cref="BitmapImportOptions"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IBitmapImportOptionsView))]
   [UserControllerForObject(typeof(BitmapImportOptions))]
   public class BitmapImportOptionsController : MVCANControllerEditImmutableDocBase<BitmapImportOptions, IBitmapImportOptionsView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -43,6 +50,9 @@ namespace Altaxo.Gui.Serialization.Bitmaps
 
     private string _neutralColumnName;
 
+    /// <summary>
+    /// Gets or sets the neutral column name used for imported pixel values.
+    /// </summary>
     public string NeutralColumnName
     {
       get => _neutralColumnName;
@@ -58,6 +68,9 @@ namespace Altaxo.Gui.Serialization.Bitmaps
 
     private bool _includeFilePathAsProperty;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the file path is imported as a property.
+    /// </summary>
     public bool IncludeFilePathAsProperty
     {
       get => _includeFilePathAsProperty;
@@ -73,6 +86,9 @@ namespace Altaxo.Gui.Serialization.Bitmaps
 
     private bool _includeDimensionColumns;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether dimension columns are included.
+    /// </summary>
     public bool IncludeDimensionColumns
     {
       get => _includeDimensionColumns;
@@ -88,6 +104,9 @@ namespace Altaxo.Gui.Serialization.Bitmaps
 
     private bool _includePixelNumberColumns;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether pixel number columns are included.
+    /// </summary>
     public bool IncludePixelNumberColumns
     {
       get => _includePixelNumberColumns;
@@ -103,6 +122,9 @@ namespace Altaxo.Gui.Serialization.Bitmaps
 
     private bool _importTransposed;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the imported data is transposed.
+    /// </summary>
     public bool ImportTransposed
     {
       get => _importTransposed;
@@ -118,6 +140,9 @@ namespace Altaxo.Gui.Serialization.Bitmaps
 
     private ItemsController<ColorChannel> _colorChannel;
 
+    /// <summary>
+    /// Gets or sets the selected color channel.
+    /// </summary>
     public ItemsController<ColorChannel> ColorChannel
     {
       get => _colorChannel;
@@ -135,6 +160,7 @@ namespace Altaxo.Gui.Serialization.Bitmaps
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -150,6 +176,7 @@ namespace Altaxo.Gui.Serialization.Bitmaps
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = _doc with

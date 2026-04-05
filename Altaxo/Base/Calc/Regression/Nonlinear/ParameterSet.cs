@@ -36,6 +36,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
   {
     List<ParameterSetElement> _inner;
 
+    /// <inheritdoc/>
     public int Count => _inner.Count;
 
     /// <summary>
@@ -49,6 +50,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ParameterSet), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ParameterSet)obj;
@@ -59,6 +61,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         info.CommitArray();
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         ParameterSet s = o is not null ? (ParameterSet)o : new ParameterSet();
@@ -74,21 +77,31 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ParameterSet"/> class.
+    /// </summary>
     public ParameterSet()
     {
       _inner = new List<ParameterSetElement>();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ParameterSet"/> class with the specified elements.
+    /// </summary>
     public ParameterSet(IEnumerable<ParameterSetElement> elements)
     {
       _inner = new List<ParameterSetElement>(elements);
     }
 
+    /// <summary>
+    /// Raises the <see cref="InitializationFinished"/> event.
+    /// </summary>
     public void OnInitializationFinished()
     {
       InitializationFinished?.Invoke(this, EventArgs.Empty);
     }
 
+    /// <inheritdoc/>
     public ParameterSetElement this[int i]
     {
       get
@@ -101,6 +114,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+    /// <summary>
+    /// Adds a parameter element to the set.
+    /// </summary>
     public void Add(ParameterSetElement ele)
     {
       _inner.Add(ele);
@@ -108,6 +124,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     #region ICloneable Members
 
+    /// <inheritdoc/>
     public object Clone()
     {
       var result = new ParameterSet();
@@ -122,6 +139,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       return _inner.GetEnumerator();
     }
 
+    /// <inheritdoc/>
     public IEnumerator GetEnumerator()
     {
       return _inner.GetEnumerator();

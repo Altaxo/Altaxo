@@ -50,6 +50,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       private MatrixD2D _spanningHalfYRhombus;
       private bool _hasMoved;
 
+      /// <summary>
+      /// Gets the graphic object associated with this grip handle.
+      /// </summary>
       private GraphicBase GraphObject { get { return (GraphicBase)_parent.HittedObject; } }
 
       /// <summary>
@@ -84,6 +87,9 @@ namespace Altaxo.Graph.Gdi.Shapes
         _hasMoved = false;
       }
 
+      /// <summary>
+      /// Deactivates this grip handle.
+      /// </summary>
       public bool Deactivate()
       {
         if (_hasMoved)
@@ -92,6 +98,9 @@ namespace Altaxo.Graph.Gdi.Shapes
         return false;
       }
 
+      /// <summary>
+      /// Moves the grip handle to the specified position.
+      /// </summary>
       public void MoveGrip(PointD2D newPosition)
       {
         newPosition = _parent.Transformation.InverseTransformPoint(newPosition);
@@ -114,12 +123,18 @@ namespace Altaxo.Graph.Gdi.Shapes
         g.FillPolygon(Brushes.Blue, pts);
       }
 
+      /// <summary>
+      /// Determines whether the grip is hit by the specified point.
+      /// </summary>
       public bool IsGripHitted(PointD2D point)
       {
         point = _spanningHalfYRhombus.InverseTransformPoint(point);
         return Calc.RMath.IsInIntervalCC(point.X, -0.1, 1) && Calc.RMath.IsInIntervalCC(point.Y, -_arrowHWidth, _arrowHWidth);
       }
 
+      /// <summary>
+      /// Gets a value indicating whether the gripped object has been disposed.
+      /// </summary>
       public bool IsGrippedObjectDisposed
       {
         get

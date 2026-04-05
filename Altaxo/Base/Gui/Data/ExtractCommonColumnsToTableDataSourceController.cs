@@ -27,6 +27,9 @@ using Altaxo.Data;
 
 namespace Altaxo.Gui.Data
 {
+  /// <summary>
+  /// Controller for <see cref="ExtractCommonColumnsToTableDataSource"/>.
+  /// </summary>
   [UserControllerForObject(typeof(ExtractCommonColumnsToTableDataSource))]
   public class ExtractCommonColumnsToTableDataSourceController : DataSourceControllerBase<ExtractCommonColumnsToTableDataSource>
   {

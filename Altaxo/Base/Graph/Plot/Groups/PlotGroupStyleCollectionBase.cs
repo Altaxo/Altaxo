@@ -29,6 +29,9 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Graph.Plot.Groups
 {
+  /// <summary>
+  /// Base collection for plot group styles keyed by their type.
+  /// </summary>
   public class PlotGroupStyleCollectionBase
     :
     Main.SuspendableDocumentNodeWithSetOfEventArgs,
@@ -36,16 +39,37 @@ namespace Altaxo.Graph.Plot.Groups
   {
     #region Internal Class
 
+    /// <summary>
+    /// Stores parent-child relationship metadata for a plot-group style.
+    /// </summary>
     protected class GroupInfo : ICloneable
     {
+      /// <summary>
+      /// Indicates whether the associated group style was already applied in the current processing pass.
+      /// </summary>
       public bool WasApplied;
+
+      /// <summary>
+      /// Stores the type of the child group style, if any.
+      /// </summary>
       public System.Type? ChildGroupType;
+
+      /// <summary>
+      /// Stores the type of the parent group style, if any.
+      /// </summary>
       public System.Type? ParentGroupType;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="GroupInfo"/> class.
+      /// </summary>
       public GroupInfo()
       {
       }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="GroupInfo"/> class by copying another instance.
+      /// </summary>
+      /// <param name="from">The instance to copy.</param>
       public GroupInfo(GroupInfo from)
       {
         WasApplied = false;
@@ -55,11 +79,16 @@ namespace Altaxo.Graph.Plot.Groups
 
       #region ICloneable Members
 
+      /// <inheritdoc/>
       object ICloneable.Clone()
       {
         return new GroupInfo(this);
       }
 
+      /// <summary>
+      /// Creates a copy of this metadata instance.
+      /// </summary>
+      /// <returns>The cloned metadata instance.</returns>
       public GroupInfo Clone()
       {
         return new GroupInfo(this);
@@ -79,8 +108,14 @@ namespace Altaxo.Graph.Plot.Groups
     /// <summary>Strictness of the plot group collection. This determines how the styles are distributed among the plot items.</summary>
     protected PlotGroupStrictness _plotGroupStrictness;
 
+    /// <summary>
+    /// Indicates whether styles should inherit values from parent groups.
+    /// </summary>
     protected bool _inheritFromParentGroups;
 
+    /// <summary>
+    /// Indicates whether styles should distribute values to child groups.
+    /// </summary>
     protected bool _distributeToChildGroups;
 
     #region Serialization
@@ -168,6 +203,9 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PlotGroupStyleCollectionBase"/> class.
+    /// </summary>
     public PlotGroupStyleCollectionBase()
     {
       _typeToInstance = new Dictionary<Type, IPlotGroupStyle>();
@@ -175,11 +213,19 @@ namespace Altaxo.Graph.Plot.Groups
       _inheritFromParentGroups = true;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PlotGroupStyleCollectionBase"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public PlotGroupStyleCollectionBase(PlotGroupStyleCollectionBase from)
     {
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies the contents from another collection.
+    /// </summary>
+    /// <param name="from">The source collection.</param>
     [MemberNotNull(nameof(_typeToInfo), nameof(_typeToInstance))]
     public void CopyFrom(PlotGroupStyleCollectionBase from)
     {
@@ -209,6 +255,7 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <inheritdoc/>
     public virtual bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -228,11 +275,16 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region ICloneable Members
 
+    /// <summary>
+    /// Creates a copy of this collection.
+    /// </summary>
+    /// <returns>The cloned collection.</returns>
     public PlotGroupStyleCollectionBase Clone()
     {
       return new PlotGroupStyleCollectionBase(this);
     }
 
+    /// <inheritdoc/>
     object ICloneable.Clone()
     {
       return new PlotGroupStyleCollectionBase(this);
@@ -240,6 +292,7 @@ namespace Altaxo.Graph.Plot.Groups
 
     #endregion ICloneable Members
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_typeToInstance is not null)
@@ -249,6 +302,7 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <inheritdoc/>
     protected override void Dispose(bool isDisposing)
     {
       if (_typeToInstance is not null)
@@ -282,6 +336,9 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether styles are inherited from parent groups.
+    /// </summary>
     public bool InheritFromParentGroups
     {
       get { return _inheritFromParentGroups; }
@@ -294,6 +351,9 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether styles are distributed to child groups.
+    /// </summary>
     public bool DistributeToChildGroups
     {
       get { return _distributeToChildGroups; }
@@ -518,41 +578,64 @@ namespace Altaxo.Graph.Plot.Groups
         EhSelfChanged(EventArgs.Empty);
     }
 
+    /// <summary>
+    /// Notifies all contained styles that a prepare phase begins.
+    /// </summary>
     public void BeginPrepare()
     {
       foreach (IPlotGroupStyle pgs in this)
         pgs.BeginPrepare();
     }
 
+    /// <summary>
+    /// Notifies all contained styles that the prepare phase has finished.
+    /// </summary>
     public void EndPrepare()
     {
       foreach (IPlotGroupStyle pgs in this)
         pgs.EndPrepare();
     }
 
+    /// <summary>
+    /// Executes one prepare step on all contained styles.
+    /// </summary>
     public void PrepareStep()
     {
       foreach (IPlotGroupStyle pgs in this)
         pgs.PrepareStep();
     }
 
+    /// <summary>
+    /// Resets application tracking before styles are applied.
+    /// </summary>
     public void BeginApply()
     {
       foreach (GroupInfo info in _typeToInfo.Values)
         info.WasApplied = false;
     }
 
+    /// <summary>
+    /// Resets application tracking after styles have been applied.
+    /// </summary>
     public void EndApply()
     {
       foreach (GroupInfo info in _typeToInfo.Values)
         info.WasApplied = false;
     }
 
+    /// <summary>
+    /// Marks the specified style as applied before stepping logic is evaluated.
+    /// </summary>
+    /// <param name="groupStyleType">The plot-group style type.</param>
     public void OnBeforeApplication(System.Type groupStyleType)
     {
       _typeToInfo[groupStyleType].WasApplied = true;
     }
 
+    /// <summary>
+    /// Advances all applied root styles and their children by the specified step value.
+    /// </summary>
+    /// <param name="step">The step value.</param>
     public void Step(int step)
     {
       foreach (KeyValuePair<Type, IPlotGroupStyle> entry in _typeToInstance)
@@ -580,9 +663,9 @@ namespace Altaxo.Graph.Plot.Groups
     }
 
     /// <summary>
-    /// Executes a prepare step only on those items, where in the own collection the stepping is enabled, but in the foreign collection it is present, but is not enabled.
+    /// Executes prepare steps for local styles whose matching foreign styles do not perform stepping.
     /// </summary>
-    /// <param name="foreignStyles"></param>
+    /// <param name="foreignStyles">The foreign style collection.</param>
     public void PrepareStepIfForeignSteppingFalse(PlotGroupStyleCollectionBase foreignStyles)
     {
       foreach (KeyValuePair<Type, IPlotGroupStyle> entry in _typeToInstance)
@@ -604,10 +687,10 @@ namespace Altaxo.Graph.Plot.Groups
     }
 
     /// <summary>
-    /// Executes a step only on those items, where in the own collection the stepping is enabled, but in the foreign collection it is present, but is not enabled.
+    /// Executes steps for local styles whose matching foreign styles do not perform stepping.
     /// </summary>
-    /// <param name="step"></param>
-    /// <param name="foreignStyles"></param>
+    /// <param name="step">The step value.</param>
+    /// <param name="foreignStyles">The foreign style collection.</param>
     public void StepIfForeignSteppingFalse(int step, PlotGroupStyleCollectionBase foreignStyles)
     {
       foreach (KeyValuePair<Type, IPlotGroupStyle> entry in _typeToInstance)
@@ -636,6 +719,11 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <summary>
+    /// Transfers state from one plot-group style collection to another for matching style types.
+    /// </summary>
+    /// <param name="from">The source collection.</param>
+    /// <param name="tothis">The target collection.</param>
     public static void TransferFromTo(PlotGroupStyleCollectionBase from, PlotGroupStyleCollectionBase tothis)
     {
       foreach (KeyValuePair<Type, IPlotGroupStyle> entry in from._typeToInstance)
@@ -650,6 +738,11 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <summary>
+    /// Transfers values from one plot group style collection to another when stepping is enabled in both styles.
+    /// </summary>
+    /// <param name="from">The source collection.</param>
+    /// <param name="tothis">The target collection.</param>
     public static void TransferFromToIfBothSteppingEnabled(PlotGroupStyleCollectionBase from, PlotGroupStyleCollectionBase tothis)
     {
       foreach (KeyValuePair<Type, IPlotGroupStyle> entry in from._typeToInstance)
@@ -670,6 +763,9 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <summary>
+    /// Marks all group styles in the collection as applied.
+    /// </summary>
     public void SetAllToApplied()
     {
       foreach (KeyValuePair<Type, GroupInfo> entry in _typeToInfo)
@@ -678,6 +774,7 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region IEnumerable<IPlotGroup> Members
 
+    /// <inheritdoc/>
     public IEnumerator<IPlotGroupStyle> GetEnumerator()
     {
       return _typeToInstance.Values.GetEnumerator();

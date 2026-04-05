@@ -31,12 +31,19 @@ using Altaxo.Science.Spectroscopy.Calibration;
 
 namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 {
+  /// <summary>
+  /// View interface for y-calibration by data source.
+  /// </summary>
   public interface IYCalibrationByDataSourceView : IDataContextAwareView { }
 
+  /// <summary>
+  /// Controller for <see cref="YCalibrationByDataSource"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IYCalibrationByDataSourceView))]
   [UserControllerForObject(typeof(YCalibrationByDataSource))]
   public class YCalibrationByDataSourceController : MVCANControllerEditImmutableDocBase<YCalibrationByDataSource, IYCalibrationByDataSourceView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -46,6 +53,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 
     private ItemsController<DataTable> _availableCalibrationTables;
 
+    /// <summary>
+    /// Gets or sets the available calibration tables.
+    /// </summary>
     public ItemsController<DataTable> AvailableCalibrationTables
     {
       get => _availableCalibrationTables;
@@ -62,6 +72,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -101,6 +112,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
     }
 
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (AvailableCalibrationTables.SelectedValue is { } calibTable)

@@ -87,6 +87,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 
     #endregion Serialization
 
+    /// <inheritdoc />
     public override bool Equals(IColorProvider? other)
     {
       if (!base.Equals(other))
@@ -105,11 +106,15 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
         _blue1 == from._blue1;
     }
 
+    /// <inheritdoc />
     public override int GetHashCode()
     {
       return base.GetHashCode() + (_alpha0 + _alpha1 + _red0 + _red1 + _green0 + _green1 + _blue0 + _blue1).GetHashCode() * 13;
     }
 
+    /// <summary>
+    /// Gets the start red component.
+    /// </summary>
     public double Red0
     {
       get
@@ -118,6 +123,11 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Creates a copy with a different start red component.
+    /// </summary>
+    /// <param name="value">The component value in the range 0 to 1.</param>
+    /// <returns>The updated provider or this instance if unchanged.</returns>
     public ColorProviderARGBGradient WithRed0(double value)
     {
       if (!(value >= 0 && value <= 1))
@@ -135,6 +145,9 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Gets the end red component.
+    /// </summary>
     public double Red1
     {
       get
@@ -143,6 +156,11 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Creates a copy with a different end red component.
+    /// </summary>
+    /// <param name="value">The component value in the range 0 to 1.</param>
+    /// <returns>The updated provider or this instance if unchanged.</returns>
     public ColorProviderARGBGradient WithRed1(double value)
     {
       if (!(value >= 0 && value <= 1))
@@ -160,6 +178,9 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Gets the start green component.
+    /// </summary>
     public double Green0
     {
       get
@@ -168,6 +189,11 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Creates a copy with a different start green component.
+    /// </summary>
+    /// <param name="value">The component value in the range 0 to 1.</param>
+    /// <returns>The updated provider or this instance if unchanged.</returns>
     public ColorProviderARGBGradient WithGreen0(double value)
     {
       if (!(value >= 0 && value <= 1))
@@ -185,6 +211,9 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Gets the end green component.
+    /// </summary>
     public double Green1
     {
       get
@@ -193,6 +222,11 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Creates a copy with a different end green component.
+    /// </summary>
+    /// <param name="value">The component value in the range 0 to 1.</param>
+    /// <returns>The updated provider or this instance if unchanged.</returns>
     public ColorProviderARGBGradient WithGreen1(double value)
     {
       if (!(value >= 0 && value <= 1))
@@ -210,6 +244,9 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Gets the start blue component.
+    /// </summary>
     public double Blue0
     {
       get
@@ -218,6 +255,11 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Creates a copy with a different start blue component.
+    /// </summary>
+    /// <param name="value">The component value in the range 0 to 1.</param>
+    /// <returns>The updated provider or this instance if unchanged.</returns>
     public ColorProviderARGBGradient WithBlue0(double value)
     {
       if (!(value >= 0 && value <= 1))
@@ -235,6 +277,9 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Gets the end blue component.
+    /// </summary>
     public double Blue1
     {
       get
@@ -243,6 +288,11 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Creates a copy with a different end blue component.
+    /// </summary>
+    /// <param name="value">The component value in the range 0 to 1.</param>
+    /// <returns>The updated provider or this instance if unchanged.</returns>
     public ColorProviderARGBGradient WithBlue1(double value)
     {
       if (!(value >= 0 && value <= 1))
@@ -260,6 +310,9 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Gets the start opaqueness.
+    /// </summary>
     public double Opaqueness0
     {
       get
@@ -268,6 +321,11 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Creates a copy with a different start opaqueness.
+    /// </summary>
+    /// <param name="value">The opaqueness value in the range 0 to 1.</param>
+    /// <returns>The updated provider or this instance if unchanged.</returns>
     public ColorProviderARGBGradient WithOpaqueness0(double value)
     {
       if (!(value >= 0 && value <= 1))
@@ -285,6 +343,9 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Gets the end opaqueness.
+    /// </summary>
     public double Opaqueness1
     {
       get
@@ -293,6 +354,11 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Creates a copy with a different end opaqueness.
+    /// </summary>
+    /// <param name="value">The opaqueness value in the range 0 to 1.</param>
+    /// <returns>The updated provider or this instance if unchanged.</returns>
     public ColorProviderARGBGradient WithOpaqueness1(double value)
     {
       if (!(value >= 0 && value <= 1))
@@ -310,6 +376,9 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Gets the color at relative position 0.
+    /// </summary>
     public Color ColorAtR0
     {
       get
@@ -318,6 +387,11 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Creates a copy with a different color at relative position 0.
+    /// </summary>
+    /// <param name="value">The color value.</param>
+    /// <returns>The updated provider or this instance if unchanged.</returns>
     public ColorProviderARGBGradient WithColorAtR0(Color value)
     {
       double a, r, g, b;
@@ -342,6 +416,9 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Gets the color at relative position 1.
+    /// </summary>
     public Color ColorAtR1
     {
       get
@@ -350,6 +427,11 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Creates a copy with a different color at relative position 1.
+    /// </summary>
+    /// <param name="value">The color value.</param>
+    /// <returns>The updated provider or this instance if unchanged.</returns>
     public ColorProviderARGBGradient WithColorAtR1(Color value)
     {
       double a, r, g, b;

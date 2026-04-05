@@ -30,6 +30,9 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
+  /// <summary>
+  /// Represents a rectangle shape.
+  /// </summary>
   [Serializable]
   public class RectangleShape : ClosedPathShapeBase
   {
@@ -39,12 +42,14 @@ namespace Altaxo.Graph.Gdi.Shapes
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RectangleShape), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (RectangleShape)obj;
         info.AddBaseValueEmbedded(s, typeof(RectangleShape).BaseType!);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (RectangleShape?)o ?? new RectangleShape(info);
@@ -58,16 +63,27 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RectangleShape"/> class for deserialization.
+    /// </summary>
     protected RectangleShape(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
       : base(new ItemLocationDirect(), info)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RectangleShape"/> class.
+    /// </summary>
+    /// <param name="context">The property context.</param>
     public RectangleShape(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
       : base(new ItemLocationDirect(), context)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RectangleShape"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public RectangleShape(RectangleShape from)
       :
       base(from)
@@ -82,6 +98,12 @@ namespace Altaxo.Graph.Gdi.Shapes
       y = h;
     }
 
+    /// <summary>
+    /// Creates a rectangle shape from left/top/right/bottom coordinates.
+    /// </summary>
+    /// <summary>
+    /// Creates a rectangle shape from left, top, right, and bottom coordinates.
+    /// </summary>
     public static RectangleShape FromLTRB(double left, double top, double right, double bottom, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       if (left > right)
@@ -100,6 +122,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #endregion Constructors
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new RectangleShape(this);
@@ -114,6 +137,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       return GetRectangularObjectOutline();
     }
 
+    /// <inheritdoc />
     public override void Paint(Graphics g, IPaintContext paintContext)
     {
       GraphicsState gs = g.Save();

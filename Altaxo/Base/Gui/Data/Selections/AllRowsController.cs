@@ -28,19 +28,27 @@ using Altaxo.Data.Selections;
 namespace Altaxo.Gui.Data.Selections
 {
 
+  /// <summary>
+  /// Provides the view contract for <see cref="AllRowsController"/>.
+  /// </summary>
   public interface IAllRowsView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for the <see cref="AllRows"/> row selection.
+  /// </summary>
   [UserControllerForObject(typeof(AllRows), 100)]
   [ExpectedTypeOfView(typeof(IAllRowsView))]
   public class AllRowsController : MVCANControllerEditImmutableDocBase<AllRows, IAllRowsView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -50,6 +58,7 @@ namespace Altaxo.Gui.Data.Selections
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);

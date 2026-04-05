@@ -31,29 +31,49 @@ namespace Altaxo.Gui.Common
   using Altaxo.Units;
 
   /// <summary>
-  /// Interface to show a length value. The use can input the value in any unit, but for the interface the value must be transfered in units of point (1/72 inch).
+  /// View interface for editing a dimensionful quantity in selectable units.
   /// </summary>
   public interface IDimensionfulQuantityView
   {
+    /// <summary>
+    /// Gets or sets the selected quantity.
+    /// </summary>
     DimensionfulQuantity SelectedQuantity { get; set; }
 
+    /// <summary>
+    /// Occurs when the selected quantity changes.
+    /// </summary>
     event Action SelectedQuantityChanged;
 
+    /// <summary>
+    /// Sets the unit environment used by the view.
+    /// </summary>
     QuantityWithUnitGuiEnvironment UnitEnvironment { set; }
   }
 
+  /// <summary>
+  /// Base controller for editing numeric values that are displayed in selectable units.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IDimensionfulQuantityView))]
   public abstract class ValueInSomeUnitControllerBase : MVCANDControllerEditImmutableDocBase<double, IDimensionfulQuantityView>
   {
+    /// <summary>
+    /// Gets the unit of the underlying stored value.
+    /// </summary>
     protected abstract IUnit UnitOfValue { get; }
 
+    /// <summary>
+    /// Gets the unit environment used by the view.
+    /// </summary>
     protected abstract QuantityWithUnitGuiEnvironment UnitEnvironment { get; }
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -65,12 +85,14 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       GetQuantityFromView();
       return ApplyEnd(true, disposeController);
     }
 
+    /// <inheritdoc/>
     protected override void AttachView()
     {
       if (_view is null) throw new InvalidProgramException();
@@ -79,6 +101,7 @@ namespace Altaxo.Gui.Common
       base.AttachView();
     }
 
+    /// <inheritdoc/>
     protected override void DetachView()
     {
       if (_view is null) throw new InvalidProgramException();

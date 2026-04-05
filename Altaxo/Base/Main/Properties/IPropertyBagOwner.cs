@@ -31,7 +31,7 @@ using System.Text;
 namespace Altaxo.Main.Properties
 {
   /// <summary>
-  /// Interface that objects which own a property bag have to implement.
+  /// Interface that objects owning a property bag have to implement.
   /// </summary>
   public interface IPropertyBagOwner
   {

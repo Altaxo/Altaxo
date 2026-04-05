@@ -27,27 +27,49 @@ using System;
 
 namespace Altaxo.Main
 {
+  /// <summary>
+  /// Event data describing a transition from one instance to another.
+  /// </summary>
   public class InstanceChangedEventArgs : SelfAccumulateableEventArgs
   {
+    /// <summary>
+    /// The previous instance.
+    /// </summary>
     protected object? _oldObject;
+
+    /// <summary>
+    /// The new instance.
+    /// </summary>
     protected object? _newObject;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="InstanceChangedEventArgs"/> class.
+    /// </summary>
+    /// <param name="oldObject">The previous instance.</param>
+    /// <param name="newObject">The new instance.</param>
     public InstanceChangedEventArgs(object? oldObject, object? newObject)
     {
       _oldObject = oldObject;
       _newObject = newObject;
     }
 
+    /// <summary>
+    /// Gets the new instance.
+    /// </summary>
     public object? NewInstance
     {
       get { return _newObject; }
     }
 
+    /// <summary>
+    /// Gets the previous instance.
+    /// </summary>
     public object? OldInstance
     {
       get { return _oldObject; }
     }
 
+    /// <inheritdoc/>
     public override void Add(SelfAccumulateableEventArgs e)
     {
       if (e is null)
@@ -61,11 +83,13 @@ namespace Altaxo.Main
       _newObject = other._newObject;
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return GetType().GetHashCode(); // unfortunately, we have to match all instances of the class, because in Equals we must compare the new Instance with the old Instance
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       if (obj is null || GetType() != obj.GetType())

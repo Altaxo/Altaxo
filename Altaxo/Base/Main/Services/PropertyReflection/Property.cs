@@ -31,7 +31,7 @@ using System.Text;
 namespace Altaxo.Main.Services.PropertyReflection
 {
   /// <summary>
-  ///
+  /// Represents a reflected property that can be displayed and edited through the property reflection infrastructure.
   /// </summary>
   /// <remarks>
   /// <para>This class originated from the 'WPG Property Grid' project (<see href="http://wpg.codeplex.com"/>), licensed under Ms-PL.</para>
@@ -40,13 +40,25 @@ namespace Altaxo.Main.Services.PropertyReflection
   {
     #region Fields
 
+    /// <summary>
+    /// The object instance that owns the reflected property.
+    /// </summary>
     protected object _instance;
+
+    /// <summary>
+    /// The reflected property descriptor.
+    /// </summary>
     protected PropertyDescriptor _property;
 
     #endregion Fields
 
     #region Initialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Property"/> class.
+    /// </summary>
+    /// <param name="instance">The object instance that owns the property.</param>
+    /// <param name="property">The reflected property descriptor.</param>
     public Property(object instance, PropertyDescriptor property)
     {
       _instance = instance is ICustomTypeDescriptor descriptor ? descriptor.GetPropertyOwner(property) : instance;
@@ -62,9 +74,9 @@ namespace Altaxo.Main.Services.PropertyReflection
 
     #region Properties
 
-    /// <value>
-    /// Initializes the reflected instance property
-    /// </value>
+    /// <summary>
+    /// Gets or sets the current property value.
+    /// </summary>
     /// <exception cref="NotSupportedException">
     /// The conversion cannot be performed
     /// </exception>
@@ -100,36 +112,57 @@ namespace Altaxo.Main.Services.PropertyReflection
       }
     }
 
+    /// <summary>
+    /// Gets the display name of the property.
+    /// </summary>
     public string Name
     {
       get { return _property.DisplayName ?? _property.Name; }
     }
 
+    /// <summary>
+    /// Gets the property description.
+    /// </summary>
     public string Description
     {
       get { return _property.Description; }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the property can be written.
+    /// </summary>
     public bool IsWriteable
     {
       get { return !IsReadOnly; }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the property is read-only.
+    /// </summary>
     public bool IsReadOnly
     {
       get { return _property.IsReadOnly; }
     }
 
+    /// <summary>
+    /// Gets the property type.
+    /// </summary>
     public Type PropertyType
     {
       get { return _property.PropertyType; }
     }
 
+    /// <summary>
+    /// Gets the category of the property.
+    /// </summary>
     public string Category
     {
       get { return _property.Category; }
     }
 
+    /// <summary>
+    /// Gets the attributes associated with the property.
+    /// </summary>
     public AttributeCollection Attributes
     {
       get { return _property.Attributes; }
@@ -148,6 +181,7 @@ namespace Altaxo.Main.Services.PropertyReflection
 
     #region IDisposable Members
 
+    /// <inheritdoc/>
     protected override void Dispose(bool disposing)
     {
       if (Disposed)
@@ -186,7 +220,13 @@ namespace Altaxo.Main.Services.PropertyReflection
       }
     }
 
+    /// <summary>
+    /// Compares properties first by category and then by name.
+    /// </summary>
     public static readonly IComparer<Property> CompareByCategoryThenByName = new ByCategoryThenByNameComparer();
+    /// <summary>
+    /// Compares properties by name.
+    /// </summary>
     public static readonly IComparer<Property> CompareByName = new ByNameComparer();
 
     #endregion Comparer for Sorting

@@ -30,16 +30,25 @@ using Altaxo.Main;
 
 namespace Altaxo.Graph.Gdi
 {
+  /// <summary>
+  /// Represents the collection of 2D graph documents in a project.
+  /// </summary>
   public class GraphDocumentCollection :
     ProjectItemCollectionBase<GraphDocument, IProjectItem>,
     IEnumerable<GraphDocument>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GraphDocumentCollection"/> class.
+    /// </summary>
+    /// <param name="parent">The parent document.</param>
+    /// <param name="commonDictionaryForGraphs">The shared dictionary used to store graph items.</param>
     public GraphDocumentCollection(AltaxoDocument parent, SortedDictionary<string, IProjectItem> commonDictionaryForGraphs)
       : base(parent)
     {
       _itemsByName = commonDictionaryForGraphs ?? throw new ArgumentNullException(nameof(commonDictionaryForGraphs));
     }
 
+    /// <inheritdoc />
     public override Main.IDocumentNode? ParentObject
     {
       get
@@ -54,6 +63,7 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <inheritdoc />
     public override string ItemBaseName { get { return "GRAPH"; } }
 
     /// <summary>

@@ -33,7 +33,7 @@ using Altaxo.Data;
 namespace Altaxo.Graph.Plot.Data
 {
   /// <summary>
-  /// Gui information about a required column, for instance for selection of rows.
+  /// GUI information about a required column, for instance for row selection.
   /// </summary>
   public struct ColumnInformationSimple
   {
@@ -93,7 +93,7 @@ namespace Altaxo.Graph.Plot.Data
 
 
   /// <summary>
-  /// Gui information about a required column, for instance for selection of columns for plot items.
+  /// GUI information about a required column, for instance for selecting columns for plot items.
   /// </summary>
   public struct ColumnInformation
   {
@@ -170,7 +170,7 @@ namespace Altaxo.Graph.Plot.Data
     /// <summary>
     /// Creates an instance of <see cref="GroupOfColumnsInformation"/>.
     /// </summary>
-    /// <param name="groupName">The Gui name of the column group, e.g. 'X-Y Data'.</param>
+  /// <param name="groupName">The GUI name of the column group, e.g. 'X-Y Data'.</param>
     /// <param name="columnInfos">The infos of the columns belonging to this group.</param>
     public GroupOfColumnsInformation(string groupName, IEnumerable<ColumnInformation> columnInfos)
     {
@@ -179,9 +179,9 @@ namespace Altaxo.Graph.Plot.Data
     }
 
     /// <summary>
-    /// Deconstruct this instance into its parts.
+    /// Deconstructs this instance into its parts.
     /// </summary>
-    /// <param name="groupName">The Gui name of the column group, e.g. 'X-Y Data'.</param>
+    /// <param name="groupName">The GUI name of the column group, e.g. 'X-Y Data'.</param>
     /// <param name="columnInfos">The infos of the columns belonging to this group.</param>
     public void Deconstruct(out string groupName, out IEnumerable<ColumnInformation> columnInfos)
     {

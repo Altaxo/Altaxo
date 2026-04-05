@@ -33,6 +33,9 @@ using Altaxo.Main.Services.ScriptCompilation;
 
 namespace Altaxo.Scripting
 {
+  /// <summary>
+  /// Represents a fit-function script together with the metadata required to edit and execute it.
+  /// </summary>
   public interface IFitFunctionScriptText : IScriptText, IFitFunction
   {
     /// <summary>
@@ -47,12 +50,26 @@ namespace Altaxo.Scripting
     /// </summary>
     string[]? UserDefinedParameterNames { get; set; }
 
+    /// <summary>
+    /// Sets the names of the dependent variables.
+    /// </summary>
     string[] DependentVariablesNames { set; }
 
+    /// <summary>
+    /// Sets the names of the independent variables.
+    /// </summary>
     string[] IndependentVariablesNames { set; }
 
+    /// <summary>
+    /// Gets or sets the number of parameters.
+    /// </summary>
     new int NumberOfParameters { get; set; }
 
+    /// <summary>
+    /// Copies the content of another fit-function script.
+    /// </summary>
+    /// <param name="from">The source script.</param>
+    /// <param name="forModification">If <c>true</c>, the copied script remains writable.</param>
     void CopyFrom(IFitFunctionScriptText from, bool forModification);
 
     /// <summary>
@@ -81,6 +98,9 @@ namespace Altaxo.Scripting
   /// Holds the text, the module (=executable), and some properties of a property column script.
   /// </summary>
 
+  /// <summary>
+  /// Holds the text, compiled module, and metadata of a fit-function script.
+  /// </summary>
   public class FitFunctionScript : AbstractScript, IFitFunctionScriptText, IFitFunction
   {
     /// <summary>
@@ -106,6 +126,7 @@ namespace Altaxo.Scripting
     private DateTime _fitFunctionCreationTime = DateTime.Now;
     private string _fitFunctionDescription = string.Empty;
 
+    /// <inheritdoc/>
     public DateTime CreationTime
     {
       get { return _fitFunctionCreationTime; }
@@ -139,6 +160,7 @@ namespace Altaxo.Scripting
       set { _fitFunctionDescription = value; }
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       return obj is FitFunctionScript from &&
@@ -147,11 +169,13 @@ namespace Altaxo.Scripting
                       this.FitFunctionName == from.FitFunctionName;
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return base.GetHashCode() + _fitFunctionCategory.GetHashCode() + _fitFunctionName.GetHashCode();
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return string.Format("FitFunctionScript {0} (created {1})", FitFunctionName, CreationTime.ToString("yyyy-MM-dd HH:mm:ss"));
@@ -164,6 +188,7 @@ namespace Altaxo.Scripting
     {
       private FitFunctionScript? _deserializedObject;
 
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (AbstractScript)obj;
@@ -171,6 +196,7 @@ namespace Altaxo.Scripting
         info.AddBaseValueEmbedded(s, typeof(AbstractScript));
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (FitFunctionScript?)o ?? new FitFunctionScript();
@@ -204,6 +230,7 @@ namespace Altaxo.Scripting
     {
       private FitFunctionScript? _deserializedObject;
 
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (FitFunctionScript)obj;
@@ -235,6 +262,7 @@ namespace Altaxo.Scripting
         info.AddArray("DependentVariableNames", s._DependentVariablesNames, s._DependentVariablesNames.Length);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (FitFunctionScript?)o ?? new FitFunctionScript();
@@ -281,6 +309,7 @@ namespace Altaxo.Scripting
     {
       private FitFunctionScript? _deserializedObject;
 
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (FitFunctionScript)obj;
@@ -313,6 +342,7 @@ namespace Altaxo.Scripting
         info.AddArray("DependentVariableNames", s._DependentVariablesNames, s._DependentVariablesNames.Length);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (FitFunctionScript?)o ?? new FitFunctionScript();
@@ -394,6 +424,11 @@ namespace Altaxo.Scripting
       _fitFunctionCreationTime = from._fitFunctionCreationTime;
     }
 
+    /// <summary>
+    /// Copies the content of another fit-function script.
+    /// </summary>
+    /// <param name="from">The source script.</param>
+    /// <param name="forModification">If <c>true</c>, the copied script remains writable.</param>
     public void CopyFrom(FitFunctionScript from, bool forModification)
     {
       if (ReferenceEquals(this, from))
@@ -416,6 +451,7 @@ namespace Altaxo.Scripting
       get { return "Altaxo.Calc.MyFitFunction"; }
     }
 
+    /// <inheritdoc/>
     public override string ScriptText
     {
       get
@@ -466,6 +502,7 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public override bool Compile()
     {
       bool success = base.Compile();
@@ -551,8 +588,14 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <summary>
+    /// Gets the indentation used in generated definition regions.
+    /// </summary>
     public string DefinitionRegionIndentation { get => "\t\t\t"; }
 
+    /// <summary>
+    /// Gets the start marker of the generated independent-variable definition region.
+    /// </summary>
     public string IndependentDefinitionRegionStart
     {
       get
@@ -561,6 +604,9 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <summary>
+    /// Gets the generated body of the independent-variable definition region.
+    /// </summary>
     public string IndependentDefinitionRegionCore
     {
       get
@@ -582,6 +628,9 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <summary>
+    /// Gets the end marker of the generated independent-variable definition region.
+    /// </summary>
     public string IndependentDefinitionRegionEnd
     {
       get
@@ -590,6 +639,9 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <summary>
+    /// Gets the start marker of the generated dependent-variable definition region.
+    /// </summary>
     public string DependentDefinitionRegionStart
     {
       get
@@ -598,6 +650,9 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <summary>
+    /// Gets the generated body of the dependent-variable definition region.
+    /// </summary>
     public string DependentDefinitionRegionCore
     {
       get
@@ -619,6 +674,9 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <summary>
+    /// Gets the end marker of the generated dependent-variable definition region.
+    /// </summary>
     public string DependentDefinitionRegionEnd
     {
       get
@@ -627,6 +685,9 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <summary>
+    /// Gets the start marker of the generated parameter-definition region.
+    /// </summary>
     public string ParameterDefinitionRegionStart
     {
       get
@@ -635,6 +696,9 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <summary>
+    /// Gets the generated body of the parameter-definition region.
+    /// </summary>
     public string ParameterDefinitionRegionCore
     {
       get
@@ -655,6 +719,9 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <summary>
+    /// Gets the end marker of the generated parameter-definition region.
+    /// </summary>
     public string ParameterDefinitionRegionEnd
     {
       get
@@ -663,8 +730,14 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <summary>
+    /// Gets the indentation used in generated assignment regions.
+    /// </summary>
     public string AssignmentRegionIndentation { get => "\t\t\t"; }
 
+    /// <summary>
+    /// Gets the start marker of the generated independent-variable assignment region.
+    /// </summary>
     public string IndependentAssignmentRegionStart
     {
       get
@@ -673,6 +746,9 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <summary>
+    /// Gets the generated body of the independent-variable assignment region.
+    /// </summary>
     public string IndependentAssignmentRegionCore
     {
       get
@@ -691,6 +767,9 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <summary>
+    /// Gets the end marker of the generated independent-variable assignment region.
+    /// </summary>
     public string IndependentAssignmentRegionEnd
     {
       get
@@ -699,6 +778,9 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <summary>
+    /// Gets the start marker of the generated parameter-assignment region.
+    /// </summary>
     public string ParameterAssignmentRegionStart
     {
       get
@@ -707,6 +789,9 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <summary>
+    /// Gets the generated body of the parameter-assignment region.
+    /// </summary>
     public string ParameterAssignmentRegionCore
     {
       get
@@ -728,6 +813,9 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <summary>
+    /// Gets the end marker of the generated parameter-assignment region.
+    /// </summary>
     public string ParameterAssignmentRegionEnd
     {
       get
@@ -736,6 +824,9 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <summary>
+    /// Gets the start marker of the generated dependent-variable declaration region.
+    /// </summary>
     public string DependentDeclarationRegionStart
     {
       get
@@ -744,6 +835,9 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <summary>
+    /// Gets the generated body of the dependent-variable declaration region.
+    /// </summary>
     public string DependentDeclarationRegionCore
     {
       get
@@ -760,6 +854,9 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <summary>
+    /// Gets the end marker of the generated dependent-variable declaration region.
+    /// </summary>
     public string DependentDeclarationRegionEnd
     {
       get
@@ -768,6 +865,9 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <summary>
+    /// Gets the start marker of the generated dependent-variable assignment region.
+    /// </summary>
     public string DependentAssignmentRegionStart
     {
       get
@@ -776,6 +876,9 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <summary>
+    /// Gets the generated body of the dependent-variable assignment region.
+    /// </summary>
     public string DependentAssignmentRegionCore
     {
       get
@@ -792,6 +895,9 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <summary>
+    /// Gets the end marker of the generated dependent-variable assignment region.
+    /// </summary>
     public string DependentAssignmentRegionEnd
     {
       get
@@ -800,6 +906,7 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public override string CodeStart
     {
       get
@@ -810,6 +917,7 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public override string CodeUserDefault
     {
       get
@@ -822,6 +930,7 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public override string CodeEnd
     {
       get
@@ -862,6 +971,7 @@ namespace Altaxo.Scripting
       return new FitFunctionScript(this, true);
     }
 
+    /// <inheritdoc/>
     public string[] DependentVariablesNames
     {
       set
@@ -917,6 +1027,7 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public string[] IndependentVariablesNames
     {
       set
@@ -959,6 +1070,7 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public bool IsUsingUserDefinedParameterNames
     {
       [MemberNotNullWhen(true, nameof(_UserDefinedParameterNames))]
@@ -1024,6 +1136,7 @@ namespace Altaxo.Scripting
       ScriptText = sb.ToString();
     }
 
+    /// <inheritdoc/>
     public string[]? UserDefinedParameterNames
     {
       get
@@ -1049,11 +1162,11 @@ namespace Altaxo.Scripting
     }
 
     /// <summary>
-    ///
+    /// Evaluates the fit function for a scalar input value and a parameter vector.
     /// </summary>
     /// <param name="x">The main function argument.</param>
-    /// <param name="parameters">The parameters used for evalulation of the function.</param>
-    /// <returns></returns>
+    /// <param name="parameters">The parameters used for evaluation of the function.</param>
+    /// <returns>The evaluated function value.</returns>
     public double Evaluate(double x, double[] parameters)
     {
       MakeSureWasTriedToCompile();
@@ -1078,6 +1191,7 @@ namespace Altaxo.Scripting
 
     #region IFitFunction Members
 
+    /// <inheritdoc/>
     public int NumberOfIndependentVariables
     {
       get
@@ -1089,6 +1203,7 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public int NumberOfDependentVariables
     {
       get
@@ -1100,6 +1215,7 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public int NumberOfParameters
     {
       get
@@ -1122,6 +1238,7 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public string IndependentVariableName(int i)
     {
       if (_scriptObject is not null)
@@ -1130,6 +1247,7 @@ namespace Altaxo.Scripting
         return _IndependentVariablesNames[i];
     }
 
+    /// <inheritdoc/>
     public string DependentVariableName(int i)
     {
       if (_scriptObject is not null)
@@ -1138,11 +1256,18 @@ namespace Altaxo.Scripting
         return _DependentVariablesNames[i];
     }
 
+    /// <inheritdoc/>
     public string ParameterName(int i)
     {
       return ParameterName(i, true);
     }
 
+    /// <summary>
+    /// Gets the name of the specified parameter.
+    /// </summary>
+    /// <param name="i">The parameter index.</param>
+    /// <param name="tryUseCompiledObject">If <c>true</c>, the compiled script object may be queried when available.</param>
+    /// <returns>The parameter name.</returns>
     public string ParameterName(int i, bool tryUseCompiledObject)
     {
       // try to avoid an exception if the script object is not compiled
@@ -1169,6 +1294,7 @@ namespace Altaxo.Scripting
       return result;
     }
 
+    /// <inheritdoc/>
     public double DefaultParameterValue(int i)
     {
       if (_scriptObject is not null)
@@ -1177,6 +1303,7 @@ namespace Altaxo.Scripting
         return 0;
     }
 
+    /// <inheritdoc/>
     public IVarianceScaling? DefaultVarianceScaling(int i)
     {
       if (_scriptObject is not null)
@@ -1206,6 +1333,7 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       MakeSureWasTriedToCompile();
@@ -1228,11 +1356,13 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesHardLimit()
     {
       return (null, null);
     }
 
+    /// <inheritdoc/>
     public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesSoftLimit()
     {
       return (null, null);

@@ -33,13 +33,16 @@ namespace Altaxo.Gui
   /// </summary>
   public abstract class SimpleCommand : ICommand
   {
+    /// <inheritdoc/>
     public virtual event EventHandler? CanExecuteChanged { add { } remove { } }
 
+    /// <inheritdoc/>
     public virtual bool CanExecute(object? parameter)
     {
       return true;
     }
 
+    /// <inheritdoc/>
     public abstract void Execute(object? parameter);
   }
 }

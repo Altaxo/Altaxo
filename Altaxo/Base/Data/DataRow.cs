@@ -41,7 +41,7 @@ namespace Altaxo.Data
     public bool IsEmpty => _col is null;
 
     /// <summary>
-    /// Constructor
+    /// Initializes a new instance of the <see cref="DataRow"/> struct.
     /// </summary>
     /// <param name="col">The underlying <see cref="DataColumnCollection"/>.</param>
     /// <param name="rowIndex">Index of the row of the data column collection.</param>

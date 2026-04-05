@@ -35,14 +35,21 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Gui.Graph.Scales.Rescaling
 {
+  /// <summary>
+  /// Provides the view contract for linear rescale-condition controllers.
+  /// </summary>
   public interface ILinearScaleRescaleConditionsView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="LinearScaleRescaleConditions"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(ILinearScaleRescaleConditionsView))]
   [UserControllerForObject(typeof(LinearScaleRescaleConditions))]
   public class LinearScaleRescaleConditionsController : MVCANControllerEditOriginalDocBase<LinearScaleRescaleConditions, ILinearScaleRescaleConditionsView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -52,6 +59,9 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
     private ItemsController<BoundaryRescaling> _orgRescaling;
 
+    /// <summary>
+    /// Gets or sets the origin rescaling mode.
+    /// </summary>
     public ItemsController<BoundaryRescaling> OrgRescaling
     {
       get => _orgRescaling;
@@ -66,6 +76,9 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
     }
     private ItemsController<BoundaryRescaling> _endRescaling;
 
+    /// <summary>
+    /// Gets or sets the end rescaling mode.
+    /// </summary>
     public ItemsController<BoundaryRescaling> EndRescaling
     {
       get => _endRescaling;
@@ -81,6 +94,9 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
     private ItemsController<BoundariesRelativeTo> _orgRelativeTo;
 
+    /// <summary>
+    /// Gets or sets the origin reference mode.
+    /// </summary>
     public ItemsController<BoundariesRelativeTo> OrgRelativeTo
     {
       get => _orgRelativeTo;
@@ -96,6 +112,9 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
     private ItemsController<BoundariesRelativeTo> _endRelativeTo;
 
+    /// <summary>
+    /// Gets or sets the end reference mode.
+    /// </summary>
     public ItemsController<BoundariesRelativeTo> EndRelativeTo
     {
       get => _endRelativeTo;
@@ -111,6 +130,9 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
     private double _orgValue;
 
+    /// <summary>
+    /// Gets or sets the origin value.
+    /// </summary>
     public double OrgValue
     {
       get => _orgValue;
@@ -136,6 +158,9 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
     private double _endValue;
 
+    /// <summary>
+    /// Gets or sets the end value.
+    /// </summary>
     public double EndValue
     {
       get => _endValue;
@@ -161,6 +186,7 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -176,6 +202,7 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       var orgRescaling = OrgRescaling.SelectedValue;
@@ -212,6 +239,11 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
     #endregion Special Listnode class with description
 
+    /// <summary>
+    /// Creates a selectable node list for the specified boundary-rescaling value.
+    /// </summary>
+    /// <param name="rescalingValue">The selected rescaling value.</param>
+    /// <returns>The selectable node list.</returns>
     public static SelectableListNodeList CreateListNodeList(BoundaryRescaling rescalingValue)
     {
       var result = new SelectableListNodeList();

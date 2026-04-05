@@ -49,6 +49,13 @@ namespace Altaxo.Worksheet.Commands
   /// </summary>
   public class PlotCommands3D
   {
+    /// <summary>
+    /// Creates 3D plot items from the selected worksheet columns.
+    /// </summary>
+    /// <param name="table">The source table.</param>
+    /// <param name="selectedColumns">The selected column indices.</param>
+    /// <param name="templatePlotStyle">The template plot style.</param>
+    /// <returns>The created plot items.</returns>
     public static List<IGPlotItem> CreatePlotItems(DataTable table, IAscendingIntegerCollection selectedColumns, G3DPlotStyleCollection templatePlotStyle)
     {
       var selColumns = new List<DataColumn>(selectedColumns.Count);
@@ -58,6 +65,13 @@ namespace Altaxo.Worksheet.Commands
       return CreatePlotItems(selColumns, templatePlotStyle, table.GetPropertyContext());
     }
 
+    /// <summary>
+    /// Creates 3D plot items from the specified columns.
+    /// </summary>
+    /// <param name="selectedColumns">The selected columns.</param>
+    /// <param name="templatePlotStyle">The template plot style.</param>
+    /// <param name="context">The property context used to determine default values.</param>
+    /// <returns>The created plot items.</returns>
     public static List<IGPlotItem> CreatePlotItems(IEnumerable<DataColumn> selectedColumns, G3DPlotStyleCollection templatePlotStyle, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       return CreatePlotItems(selectedColumns, templatePlotStyle, new HashSet<DataColumn>(), context);
@@ -68,7 +82,7 @@ namespace Altaxo.Worksheet.Commands
     /// </summary>
     /// <param name="selectedColumns">Columns for which to create plot items.</param>
     /// <param name="templatePlotStyle">The template plot style used to create the basic plot item.</param>
-    /// <param name="processedColumns">On return, contains all columns that where used in creating the plot items. That are
+    /// <param name="processedColumns">On return, contains all columns that were used in creating the plot items. These are
     /// not only the columns given in the first argument, but maybe also columns that are right to those columns in the table and have special kinds, like
     /// labels, yerr, and so on.</param>
     /// <param name="context">Property context used to determine default values, e.g. for the pen width or symbol size.</param>
@@ -85,7 +99,7 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="xColumnName">Name of the x column. If it is null or empty, or that column is not found in the table, the current assigned x column is used.</param>
     /// <param name="yColumnName">Name of the y column.</param>
     /// <param name="templatePlotStyle">The template plot style used to create the basic plot item.</param>
-    /// <param name="processedColumns">On return, contains all columns that where used in creating the plot items. That are
+    /// <param name="processedColumns">On return, contains all columns that were used in creating the plot items. These are
     /// not only the columns given in the first argument, but maybe also columns that are right to those columns in the table and have special kinds, like
     /// labels, yerr, and so on.</param>
     /// <param name="context">Property context used to determine default values, e.g. for the pen width or symbol size.</param>
@@ -198,6 +212,11 @@ namespace Altaxo.Worksheet.Commands
 
     #region Predefined plot style collections
 
+    /// <summary>
+    /// Creates a 3D line plot style collection.
+    /// </summary>
+    /// <param name="context">The property context.</param>
+    /// <returns>The plot style collection.</returns>
     public static G3DPlotStyleCollection PlotStyle_Line(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       var result = new G3DPlotStyleCollection
@@ -207,6 +226,11 @@ namespace Altaxo.Worksheet.Commands
       return result;
     }
 
+    /// <summary>
+    /// Creates a 3D symbol plot style collection.
+    /// </summary>
+    /// <param name="context">The property context.</param>
+    /// <returns>The plot style collection.</returns>
     public static G3DPlotStyleCollection PlotStyle_Symbol(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       var result = new G3DPlotStyleCollection
@@ -216,6 +240,11 @@ namespace Altaxo.Worksheet.Commands
       return result;
     }
 
+    /// <summary>
+    /// Creates a 3D line-and-symbol plot style collection.
+    /// </summary>
+    /// <param name="context">The property context.</param>
+    /// <returns>The plot style collection.</returns>
     public static G3DPlotStyleCollection PlotStyle_Line_Symbol(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       var result = new G3DPlotStyleCollection
@@ -248,6 +277,9 @@ namespace Altaxo.Worksheet.Commands
 
     #region Predefined group styles
 
+    /// <summary>
+    /// Gets a group-style collection for colored 3D line plots.
+    /// </summary>
     public static PlotGroupStyleCollection GroupStyle_Color_Line
     {
       get
@@ -262,6 +294,9 @@ namespace Altaxo.Worksheet.Commands
       }
     }
 
+    /// <summary>
+    /// Gets a group-style collection for stacked colored 3D line plots.
+    /// </summary>
     public static PlotGroupStyleCollection GroupStyle_Stack_Color_Line
     {
       get
@@ -272,6 +307,9 @@ namespace Altaxo.Worksheet.Commands
       }
     }
 
+    /// <summary>
+    /// Gets a group-style collection for relatively stacked colored 3D line plots.
+    /// </summary>
     public static PlotGroupStyleCollection GroupStyle_RelativeStack_Color_Line
     {
       get
@@ -282,6 +320,9 @@ namespace Altaxo.Worksheet.Commands
       }
     }
 
+    /// <summary>
+    /// Gets a group-style collection for colored 3D symbol plots.
+    /// </summary>
     public static PlotGroupStyleCollection GroupStyle_Color_Symbol
     {
       get
@@ -296,6 +337,9 @@ namespace Altaxo.Worksheet.Commands
       }
     }
 
+    /// <summary>
+    /// Gets a group-style collection for colored 3D line-and-symbol plots.
+    /// </summary>
     public static PlotGroupStyleCollection GroupStyle_Color_Line_Symbol
     {
       get
@@ -312,6 +356,9 @@ namespace Altaxo.Worksheet.Commands
       }
     }
 
+    /// <summary>
+    /// Gets a group-style collection for 3D bar plots.
+    /// </summary>
     public static PlotGroupStyleCollection GroupStyle_Bar
     {
       get
@@ -326,6 +373,9 @@ namespace Altaxo.Worksheet.Commands
       }
     }
 
+    /// <summary>
+    /// Gets a group-style collection for stacked 3D bar plots.
+    /// </summary>
     public static PlotGroupStyleCollection GroupStyle_Stack_Bar
     {
       get
@@ -342,6 +392,9 @@ namespace Altaxo.Worksheet.Commands
       }
     }
 
+    /// <summary>
+    /// Gets a group-style collection for relatively stacked 3D bar plots.
+    /// </summary>
     public static PlotGroupStyleCollection GroupStyle_RelativeStack_Bar
     {
       get

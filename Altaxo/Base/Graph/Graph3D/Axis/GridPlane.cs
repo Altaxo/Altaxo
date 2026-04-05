@@ -32,6 +32,9 @@ using Altaxo.Graph.Graph3D.GraphicsContext;
 
 namespace Altaxo.Graph.Graph3D.Axis
 {
+  /// <summary>
+  /// Represents a grid plane of a three-dimensional plot area.
+  /// </summary>
   [Serializable]
   public class GridPlane :
     Main.SuspendableDocumentNodeWithSetOfEventArgs,
@@ -60,6 +63,10 @@ namespace Altaxo.Graph.Graph3D.Axis
     [NonSerialized]
     private GridIndexer _cachedIndexer;
 
+    /// <summary>
+    /// Copies values from another <see cref="GridPlane"/> instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     [MemberNotNull(nameof(_planeID))]
     private void CopyFrom(GridPlane from)
     {
@@ -81,9 +88,13 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <summary>
     /// 2015-11-14 initial version-
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="GridPlane"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GridPlane), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (GridPlane)obj;
@@ -105,6 +116,7 @@ namespace Altaxo.Graph.Graph3D.Axis
         return s;
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         GridPlane s = SDeserialize(o, info, parent);
@@ -116,18 +128,27 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GridPlane"/> class.
+    /// </summary>
+    /// <param name="id">The plane identifier.</param>
     public GridPlane(CSPlaneID id)
     {
       _cachedIndexer = new GridIndexer(this);
       _planeID = id;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GridPlane"/> class by copying from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public GridPlane(GridPlane from)
     {
       _cachedIndexer = new GridIndexer(this);
       CopyFrom(from);
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_grid1 is not null)
@@ -136,16 +157,24 @@ namespace Altaxo.Graph.Graph3D.Axis
         yield return new Main.DocumentNodeAndName(_grid2, "Grid2");
     }
 
+    /// <summary>
+    /// Creates a strongly typed clone of this <see cref="GridPlane"/>.
+    /// </summary>
+    /// <returns>A cloned grid plane.</returns>
     public GridPlane Clone()
     {
       return new GridPlane(this);
     }
 
+    /// <inheritdoc/>
     object ICloneable.Clone()
     {
       return new GridPlane(this);
     }
 
+    /// <summary>
+    /// Gets the identifier of this grid plane.
+    /// </summary>
     public CSPlaneID PlaneID
     {
       get
@@ -154,6 +183,9 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets the first grid style of the plane.
+    /// </summary>
     public GridStyle? GridStyleFirst
     {
       get { return _grid1; }
@@ -166,6 +198,9 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets the second grid style of the plane.
+    /// </summary>
     public GridStyle? GridStyleSecond
     {
       get { return _grid2; }
@@ -178,11 +213,17 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Gets indexed access to the grid styles of the plane.
+    /// </summary>
     public Altaxo.Collections.IArray<GridStyle?> GridStyle
     {
       get { return _cachedIndexer; }
     }
 
+    /// <summary>
+    /// Gets or sets the background material of the plane.
+    /// </summary>
     public IMaterial? Background
     {
       get { return _background; }
@@ -205,6 +246,11 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Paints the background of the grid plane.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="layer">The plot area.</param>
     public void PaintBackground(IGraphicsContext3D g, IPlotArea layer)
     {
       if (_background is null)
@@ -250,6 +296,11 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    /// <summary>
+    /// Paints the grid lines of the grid plane.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="layer">The plot area.</param>
     public void PaintGrid(IGraphicsContext3D g, IPlotArea layer)
     {
       if (_grid1 is not null)
@@ -258,6 +309,11 @@ namespace Altaxo.Graph.Graph3D.Axis
         _grid2.Paint(g, layer, _planeID, _planeID.InPlaneAxisNumber2);
     }
 
+    /// <summary>
+    /// Paints the complete grid plane.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="layer">The plot area.</param>
     public void Paint(IGraphicsContext3D g, IPlotArea layer)
     {
       PaintBackground(g, layer);

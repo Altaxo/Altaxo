@@ -31,49 +31,99 @@ using Altaxo.Collections;
 
 namespace Altaxo.Gui.Main
 {
+  /// <summary>
+  /// Data for adding a basic property value.
+  /// </summary>
   public class AddBasicPropertyValueData : ICloneable
   {
+    /// <summary>
+    /// Gets or sets the property name.
+    /// </summary>
     public string PropertyName { get; set; }
 
+    /// <summary>
+    /// Gets or sets the property value.
+    /// </summary>
     public object PropertyValue { get; set; }
 
+    /// <inheritdoc/>
     public object Clone()
     {
       return MemberwiseClone();
     }
   }
 
+  /// <summary>
+  /// View interface for adding a basic property value.
+  /// </summary>
   public interface IAddBasicPropertyValueView
   {
+    /// <summary>
+    /// Gets or sets the property name.
+    /// </summary>
     string PropertyName { get; set; }
 
+    /// <summary>
+    /// Sets the list of available property types.
+    /// </summary>
     SelectableListNodeList PropertyTypes { set; }
 
+    /// <summary>
+    /// Occurs when the selected property type changes.
+    /// </summary>
     event Action PropertyTypeChanged;
 
+    /// <summary>
+    /// Sets a value indicating whether the string editor should be shown.
+    /// </summary>
     bool ShowValueAsString { set; }
 
+    /// <summary>
+    /// Gets or sets the value as a string.
+    /// </summary>
     string ValueAsString { get; set; }
 
+    /// <summary>
+    /// Sets a value indicating whether the double editor should be shown.
+    /// </summary>
     bool ShowValueAsDouble { set; }
 
+    /// <summary>
+    /// Gets or sets the value as a double.
+    /// </summary>
     double ValueAsDouble { get; set; }
 
+    /// <summary>
+    /// Sets a value indicating whether the integer editor should be shown.
+    /// </summary>
     bool ShowValueAsInt { set; }
 
+    /// <summary>
+    /// Gets or sets the value as an integer.
+    /// </summary>
     int ValueAsInt { get; set; }
 
+    /// <summary>
+    /// Sets a value indicating whether the <see cref="DateTime"/> editor should be shown.
+    /// </summary>
     bool ShowValueAsDateTime { set; }
 
+    /// <summary>
+    /// Gets or sets the value as a <see cref="DateTime"/>.
+    /// </summary>
     DateTime ValueAsDateTime { get; set; }
   }
 
+  /// <summary>
+  /// Controller for <see cref="AddBasicPropertyValueData"/>.
+  /// </summary>
   [UserControllerForObject(typeof(AddBasicPropertyValueData))]
   [ExpectedTypeOfView(typeof(IAddBasicPropertyValueView))]
   public class AddBasicPropertyValueController : MVCANControllerEditOriginalDocBase<AddBasicPropertyValueData, IAddBasicPropertyValueView>
   {
     private SelectableListNodeList _propertyTypes;
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -123,6 +173,7 @@ namespace Altaxo.Gui.Main
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       var name = _view.PropertyName;
@@ -155,17 +206,20 @@ namespace Altaxo.Gui.Main
       return ApplyEnd(true, disposeController);
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <inheritdoc/>
     protected override void AttachView()
     {
       base.AttachView();
       _view.PropertyTypeChanged += EhPropertyTypeChanged;
     }
 
+    /// <inheritdoc/>
     protected override void DetachView()
     {
       _view.PropertyTypeChanged -= EhPropertyTypeChanged;

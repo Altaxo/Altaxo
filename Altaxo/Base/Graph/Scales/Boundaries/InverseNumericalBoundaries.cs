@@ -29,8 +29,7 @@ using Altaxo.Data;
 namespace Altaxo.Graph.Scales.Boundaries
 {
   /// <summary>
-  /// PositiveFinitePhysicalBoundaries is intended to use for logarithmic axis
-  /// it keeps track of the smallest positive and biggest positive value
+  /// Tracks inverse-transformed numerical values for inverse scales.
   /// </summary>
   [Serializable]
   public class InverseNumericalBoundaries : NumericalBoundaries
@@ -40,12 +39,14 @@ namespace Altaxo.Graph.Scales.Boundaries
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(InverseNumericalBoundaries), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (InverseNumericalBoundaries)obj;
         info.AddBaseValueEmbedded(s, s.GetType().BaseType!);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (InverseNumericalBoundaries?)o ?? new InverseNumericalBoundaries();
@@ -56,31 +57,46 @@ namespace Altaxo.Graph.Scales.Boundaries
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="InverseNumericalBoundaries"/> class.
+    /// </summary>
     public InverseNumericalBoundaries()
       : base()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="InverseNumericalBoundaries"/> class by copying another instance.
+    /// </summary>
+    /// <param name="c">The instance to copy.</param>
     public InverseNumericalBoundaries(InverseNumericalBoundaries c)
       : base(c)
     {
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new InverseNumericalBoundaries(this);
     }
 
+    /// <inheritdoc />
     public override bool Add(IReadableColumn col, int idx)
     {
       return Add((col is INumericColumn) ? ((INumericColumn)col)[idx] : idx);
     }
 
+    /// <inheritdoc />
     public override bool Add(Altaxo.Data.AltaxoVariant val)
     {
       return Add(val.ToDouble());
     }
 
+    /// <summary>
+    /// Adds a numeric value to the inverse boundary tracker.
+    /// </summary>
+    /// <param name="d">The value to add.</param>
+    /// <returns><see langword="true"/> if the value contributed to the boundaries; otherwise, <see langword="false"/>.</returns>
     public bool Add(double d)
     {
       if (IsSuspended) // when suspended: performance tweak, see overrides OnSuspended and OnResume for details (if suspended, we have saved the state of the instance for comparison when we resume).
@@ -117,6 +133,9 @@ namespace Altaxo.Graph.Scales.Boundaries
       return false;
     }
 
+    /// <summary>
+    /// Gets the lower boundary in original scale coordinates.
+    /// </summary>
     public override double LowerBound
     {
       get
@@ -125,6 +144,9 @@ namespace Altaxo.Graph.Scales.Boundaries
       }
     }
 
+    /// <summary>
+    /// Gets the upper boundary in original scale coordinates.
+    /// </summary>
     public override double UpperBound
     {
       get

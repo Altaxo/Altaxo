@@ -42,6 +42,9 @@ namespace Altaxo.Main.Services
     private FileBasedFitFunctionService _applicationFunctionService;
     private BuiltinFitFunctionService _builtinFunctionService;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FitFunctionService"/> class.
+    /// </summary>
     public FitFunctionService()
     {
       string userFitFunctionDirectory = System.IO.Path.Combine(Current.PropertyService.ConfigDirectory.ToString(), "FitFunctionScripts");
@@ -82,7 +85,7 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// This will get all application wide defined fit functions.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Array of information about the application-wide fit functions.</returns>
     public FileBasedFitFunctionInformation[] GetApplicationFitFunctions()
     {
       return _applicationFunctionService.GetFitFunctions();
@@ -116,7 +119,7 @@ namespace Altaxo.Main.Services
     /// Gets all fit function creator attributes (search in all already (!) loaded assembly).
     /// </summary>
     /// <returns>The fit function creator attributes in all loaded assemblies. The value is a sorted list
-    /// of the attributes together with the method info it is attached to.</returns>
+    /// of the attributes together with the method info they are attached to.</returns>
     public static SortedList<FitFunctionCreatorAttribute, System.Reflection.MethodInfo> GetFitFunctionCreatorAttributes()
     {
       IEnumerable<Type> classentries = Altaxo.Main.Services.ReflectionService.GetUnsortedClassTypesHavingAttribute(typeof(FitFunctionClassAttribute), true);

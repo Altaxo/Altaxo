@@ -29,10 +29,22 @@ namespace Altaxo.Gui.Workbench
   public sealed class StartupSettings
   {
     // taken from StartupArguments
+    /// <summary>
+    /// Gets the application name.
+    /// </summary>
     public string ApplicationName { get; private set; }
 
+    /// <summary>
+    /// Gets the list of files requested at startup.
+    /// </summary>
     public string[] RequestedFileList { get; private set; } = new string[0];
+    /// <summary>
+    /// Gets the parameter list.
+    /// </summary>
     public string[] ParameterList { get; private set; } = new string[0];
+    /// <summary>
+    /// Gets the raw startup arguments.
+    /// </summary>
     public string[] StartupArgs { get; private set; } = new string[0];
 
     // additional parameters
@@ -45,10 +57,25 @@ namespace Altaxo.Gui.Workbench
     private string? _configDirectory;
     private string? _dataDirectory;
     private string _resourceAssemblyName;
+    /// <summary>
+    /// Gets the list of add-in directories.
+    /// </summary>
     public List<string> _addInDirectories { get; private set; } = new List<string>();
+    /// <summary>
+    /// Gets the list of explicit add-in files.
+    /// </summary>
     public List<string> _addInFiles { get; private set; } = new List<string>();
+    /// <summary>
+    /// Gets a value indicating whether the workbench should run on a new thread.
+    /// </summary>
     public bool RunWorkbenchOnNewThread { get; private set; }
+    /// <summary>
+    /// Gets the original UI culture.
+    /// </summary>
     public System.Globalization.CultureInfo OriginalUICulture { get; private set; }
+    /// <summary>
+    /// Gets the original culture.
+    /// </summary>
     public System.Globalization.CultureInfo OriginalCulture { get; private set; }
 
     static StartupSettings()

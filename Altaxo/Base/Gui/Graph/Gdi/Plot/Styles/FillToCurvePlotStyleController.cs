@@ -36,10 +36,16 @@ using Altaxo.Gui.Graph.Plot.Groups;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="FillToCurvePlotStyleController"/>.
+  /// </summary>
   public interface IFillToCurvePlotStyleView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="FillToCurvePlotStyle"/>.
+  /// </summary>
   [UserControllerForObject(typeof(FillToCurvePlotStyle))]
   [ExpectedTypeOfView(typeof(IFillToCurvePlotStyleView))]
   public class FillToCurvePlotStyleController : MVCANControllerEditOriginalDocBase<FillToCurvePlotStyle, IFillToCurvePlotStyleView>
@@ -47,6 +53,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     /// <summary>Tracks the presence of a color group style in the parent collection.</summary>
     private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_framePen, () => FramePen = null);
@@ -56,6 +63,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _useFill;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether filling is enabled.
+    /// </summary>
     public bool UseFill
     {
       get => _useFill;
@@ -86,6 +96,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _independentFillColor;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the fill color is independent from group styles.
+    /// </summary>
     public bool IndependentFillColor
     {
       get => _independentFillColor;
@@ -109,6 +122,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 
     private bool _showPlotColorsOnlyForFillBrush;
+    /// <summary>
+    /// Gets or sets a value indicating whether only plot colors are shown for the fill brush.
+    /// </summary>
     public bool ShowPlotColorsOnlyForFillBrush
     {
       get => _showPlotColorsOnlyForFillBrush;
@@ -125,6 +141,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private BrushX _fillBrush;
 
+    /// <summary>
+    /// Gets or sets the fill brush.
+    /// </summary>
     public BrushX FillBrush
     {
       get => _fillBrush;
@@ -149,6 +168,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _useFrame;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the frame is enabled.
+    /// </summary>
     public bool UseFrame
     {
       get => _useFrame;
@@ -179,6 +201,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _independentFrameColor;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the frame color is independent from group styles.
+    /// </summary>
     public bool IndependentFrameColor
     {
       get => _independentFrameColor;
@@ -209,6 +234,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private ColorTypeThicknessPenController _framePen;
 
+    /// <summary>
+    /// Gets or sets the frame pen controller.
+    /// </summary>
     public ColorTypeThicknessPenController FramePen
     {
       get => _framePen;
@@ -237,6 +265,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _fillToPrevious;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the area is filled to the previous curve.
+    /// </summary>
     public bool FillToPrevious
     {
       get => _fillToPrevious;
@@ -252,6 +283,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _fillToNext;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the area is filled to the next curve.
+    /// </summary>
     public bool FillToNext
     {
       get => _fillToNext;
@@ -267,12 +301,14 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 
     #endregion
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       _colorGroupStyleTracker = null;
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -296,6 +332,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (UseFill)

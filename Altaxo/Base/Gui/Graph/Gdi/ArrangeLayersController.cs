@@ -32,6 +32,9 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Gdi
 {
+  /// <summary>
+  /// View contract for arranging graph layers.
+  /// </summary>
   public interface IArrangeLayersView : IDataContextAwareView
   {
   }
@@ -43,6 +46,7 @@ namespace Altaxo.Gui.Graph.Gdi
   [ExpectedTypeOfView(typeof(IArrangeLayersView))]
   public class ArrangeLayersController : MVCANControllerEditOriginalDocBase<ArrangeLayersDocument, IArrangeLayersView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -52,6 +56,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private int _numberOfRows;
 
+    /// <summary>
+    /// Gets or sets the number of rows.
+    /// </summary>
     public int NumberOfRows
     {
       get => _numberOfRows;
@@ -67,6 +74,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private int _numberOfColumns;
 
+    /// <summary>
+    /// Gets or sets the number of columns.
+    /// </summary>
     public int NumberOfColumns
     {
       get => _numberOfColumns;
@@ -80,10 +90,16 @@ namespace Altaxo.Gui.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets the spacing environment.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment SpacingEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _rowSpacing;
 
+    /// <summary>
+    /// Gets or sets the row spacing.
+    /// </summary>
     public DimensionfulQuantity RowSpacing
     {
       get => _rowSpacing;
@@ -99,6 +115,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private DimensionfulQuantity _columnSpacing;
 
+    /// <summary>
+    /// Gets or sets the column spacing.
+    /// </summary>
     public DimensionfulQuantity ColumnSpacing
     {
       get => _columnSpacing;
@@ -112,11 +131,17 @@ namespace Altaxo.Gui.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets the margin environment.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment MarginEnvironment => RelationEnvironment.Instance;
 
 
     private DimensionfulQuantity _leftMargin;
 
+    /// <summary>
+    /// Gets or sets the left margin.
+    /// </summary>
     public DimensionfulQuantity LeftMargin
     {
       get => _leftMargin;
@@ -132,6 +157,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private DimensionfulQuantity _topMargin;
 
+    /// <summary>
+    /// Gets or sets the top margin.
+    /// </summary>
     public DimensionfulQuantity TopMargin
     {
       get => _topMargin;
@@ -150,6 +178,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private DimensionfulQuantity _rightMargin;
 
+    /// <summary>
+    /// Gets or sets the right margin.
+    /// </summary>
     public DimensionfulQuantity RightMargin
     {
       get => _rightMargin;
@@ -165,6 +196,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private DimensionfulQuantity _bottomMargin;
 
+    /// <summary>
+    /// Gets or sets the bottom margin.
+    /// </summary>
     public DimensionfulQuantity BottomMargin
     {
       get => _bottomMargin;
@@ -180,6 +214,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private ItemsController<SuperfluousLayersAction> _superfluousLayers;
 
+    /// <summary>
+    /// Gets or sets the action for superfluous layers.
+    /// </summary>
     public ItemsController<SuperfluousLayersAction> SuperfluousLayers
     {
       get => _superfluousLayers;
@@ -195,6 +232,7 @@ namespace Altaxo.Gui.Graph.Gdi
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -213,6 +251,7 @@ namespace Altaxo.Gui.Graph.Gdi
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc.NumberOfRows = NumberOfRows;

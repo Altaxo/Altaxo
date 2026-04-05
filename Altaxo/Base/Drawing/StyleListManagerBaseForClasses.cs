@@ -50,23 +50,33 @@ namespace Altaxo.Drawing
 
     private class ReferenceEqualityComparer : IEqualityComparer<TItem>
     {
+      /// <inheritdoc />
       public bool Equals(TItem? x, TItem? y)
       {
         return object.ReferenceEquals(x, y);
       }
 
+      /// <inheritdoc />
       public int GetHashCode(TItem obj)
       {
         return RuntimeHelpers.GetHashCode(obj);
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StyleListManagerBaseForClasses{TList, TItem, TListManagerEntry}"/> class.
+    /// </summary>
+    /// <param name="valueCreator">Factory used to create manager entries.</param>
+    /// <param name="builtinDefaultList">The builtin default list.</param>
     protected StyleListManagerBaseForClasses(Func<TList, ItemDefinitionLevel, TListManagerEntry> valueCreator, TList builtinDefaultList)
       :
       base(valueCreator, builtinDefaultList)
     {
     }
 
+    /// <summary>
+    /// Rebuilds the cache that maps style items to their parent lists.
+    /// </summary>
     protected void RebuildListEntryToListDictionary()
     {
       var dictListEntryToList = new Dictionary<TItem, TList>(new ReferenceEqualityComparer());
@@ -78,12 +88,14 @@ namespace Altaxo.Drawing
       _dictListEntryToList = dictListEntryToList;
     }
 
+    /// <inheritdoc/>
     protected override void OnListAdded(TList list, ItemDefinitionLevel level)
     {
       RebuildListEntryToListDictionary();
       base.OnListAdded(list, level);
     }
 
+    /// <inheritdoc/>
     protected override void OnListChanged([AllowNull] TList list, ItemDefinitionLevel level)
     {
       RebuildListEntryToListDictionary();
@@ -95,6 +107,7 @@ namespace Altaxo.Drawing
     /// </summary>
     /// <param name="item">The item.</param>
     /// <returns>The parent list of an item, or null if no parent list is found.</returns>
+    /// <inheritdoc />
     [return: MaybeNull]
     public override TList GetParentList(TItem item)
     {
@@ -107,6 +120,13 @@ namespace Altaxo.Drawing
         return default(TList);
     }
 
+    /// <summary>
+    /// Resolves a deserialized item template to the shared registered instance.
+    /// </summary>
+    /// <param name="deserializationInfo">The deserialization context.</param>
+    /// <param name="instanceTemplate">The template instance to resolve.</param>
+    /// <param name="setName">The name of the style list to search first.</param>
+    /// <returns>The matching registered instance if found; otherwise, <paramref name="instanceTemplate"/>.</returns>
     public TItem GetDeserializedInstanceFromInstanceAndSetName(Altaxo.Serialization.Xml.IXmlDeserializationInfo deserializationInfo, TItem instanceTemplate, string setName)
     {
       // first have a look in the rename dictionary - maybe our color set has been renamed during deserialization
@@ -133,6 +153,13 @@ namespace Altaxo.Drawing
       return instanceTemplate;
     }
 
+    /// <summary>
+    /// Tries to find a registered list containing an item equal to the specified item.
+    /// </summary>
+    /// <param name="item">The item to search for.</param>
+    /// <param name="list">When this method returns <c>true</c>, contains the list in which the item was found.</param>
+    /// <param name="foundItem">When this method returns <c>true</c>, contains the matching registered item.</param>
+    /// <returns><c>true</c> if a matching item was found; otherwise, <c>false</c>.</returns>
     public bool TryFindListContaining(TItem item, [MaybeNullWhen(false)] out TList list, [MaybeNullWhen(false)] out TItem foundItem)
     {
       int idx;

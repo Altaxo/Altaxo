@@ -44,6 +44,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
   using Plot.Data;
   using Plot.Groups;
 
+  /// <summary>
+  /// Draws three-dimensional plot points as scatter symbols.
+  /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.ScatterPlotStyle}")]
   public class ScatterPlotStyle
     :
@@ -90,9 +93,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// 2016-06-01 initial version.
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    /// <summary>
+    /// Serializes <see cref="ScatterPlotStyle"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScatterPlotStyle), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ScatterPlotStyle)obj;
@@ -124,6 +131,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         return s;
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         ScatterPlotStyle s = SDeserialize(o, info, parent);
@@ -147,6 +155,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     #endregion Serialization
 
+    /// <inheritdoc/>
     public bool CopyFrom(object obj, bool copyWithDataReferences)
     {
       if (ReferenceEquals(this, obj))
@@ -160,6 +169,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       return false;
     }
 
+    /// <summary>
+    /// Copies values from another <see cref="ScatterPlotStyle"/> instance.
+    /// </summary>
+    /// <param name="from">The style to copy from.</param>
+    /// <param name="eventFiring">Controls whether change events are fired during the copy.</param>
     [MemberNotNull(nameof(_symbolShape), nameof(_material))]
     public void CopyFrom(ScatterPlotStyle from, Main.EventFiring eventFiring)
     {
@@ -190,6 +204,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// </summary>
     /// <param name="obj">Another instance to copy the data from.</param>
     /// <returns>True if data was copied, otherwise false.</returns>
+    /// <inheritdoc/>
     public bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -210,11 +225,22 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       return new ScatterPlotStyle(this);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScatterPlotStyle"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The style to copy from.</param>
     public ScatterPlotStyle(ScatterPlotStyle from)
     {
       CopyFrom(from, Main.EventFiring.Suppressed);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScatterPlotStyle"/> class.
+    /// </summary>
+    /// <param name="symbol">The scatter symbol.</param>
+    /// <param name="size">The symbol size.</param>
+    /// <param name="penWidth">The line width parameter.</param>
+    /// <param name="penColor">The symbol color.</param>
     public ScatterPlotStyle(IScatterSymbol symbol, double size, double penWidth, NamedColor penColor)
     {
       if (symbol is null)
@@ -231,6 +257,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       SetCachedValues();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScatterPlotStyle"/> class from a property context.
+    /// </summary>
+    /// <param name="context">The property context.</param>
     public ScatterPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       double penWidth = GraphDocument.GetDefaultPenWidth(context);
@@ -246,11 +276,15 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       _skipFreq = 1;
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Gets or sets the scatter-symbol shape.
+    /// </summary>
     public IScatterSymbol Shape
     {
       get { return _symbolShape; }
@@ -270,6 +304,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this style produces visible output.
+    /// </summary>
     public bool IsVisible
     {
       get
@@ -278,6 +315,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the material used to draw the symbols.
+    /// </summary>
     public IMaterial Material
     {
       get { return _material; }
@@ -295,6 +335,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the symbol color.
+    /// </summary>
     public NamedColor Color
     {
       get { return _material.Color; }
@@ -304,6 +347,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the symbol color is independent of group styles.
+    /// </summary>
     public bool IndependentColor
     {
       get
@@ -319,6 +365,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the symbol size.
+    /// </summary>
     public double SymbolSize
     {
       get { return _symbolSize; }
@@ -332,6 +381,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the symbol size is independent of group styles.
+    /// </summary>
     public bool IndependentSymbolSize
     {
       get
@@ -347,6 +399,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the skip frequency used while drawing points.
+    /// </summary>
     public int SkipFrequency
     {
       get { return _skipFreq; }
@@ -360,6 +415,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the skip frequency is independent of group styles.
+    /// </summary>
     public bool IndependentSkipFrequency
     {
       get
@@ -375,12 +433,18 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Updates cached delegates and other transient values.
+    /// </summary>
     protected void SetCachedValues()
     {
     }
 
     #region I3DPlotItem Members
 
+    /// <summary>
+    /// Gets a value indicating whether this style provides colors to group styles.
+    /// </summary>
     public bool IsColorProvider
     {
       get
@@ -389,11 +453,17 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this style receives colors from group styles.
+    /// </summary>
     public bool IsColorReceiver
     {
       get { return !_independentColor; }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this style provides symbol sizes to group styles.
+    /// </summary>
     public bool IsSymbolSizeProvider
     {
       get
@@ -402,6 +472,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this style receives symbol sizes from group styles.
+    /// </summary>
     public bool IsSymbolSizeReceiver
     {
       get
@@ -412,6 +485,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     #endregion I3DPlotItem Members
 
+    /// <inheritdoc/>
     public void Paint(IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData pdata, Processed3DPlotData? prevItemData, Processed3DPlotData? nextItemData)
     {
       if (pdata is null || !(pdata.RangeList is { } rangeList) || rangeList.Count == 0 || !(pdata.PlotPointsInAbsoluteLayerCoordinates is { } ptArray))
@@ -465,6 +539,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <inheritdoc/>
     public RectangleD3D PaintSymbol(IGraphicsContext3D g, RectangleD3D bounds)
     {
       if (!ScatterSymbols.NoSymbol.Instance.Equals(_symbolShape))
@@ -486,6 +561,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     #region IPlotStyle Members
 
+    /// <inheritdoc/>
     public void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups)
     {
       if (IsColorProvider)
@@ -496,6 +572,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       ScatterSymbolGroupStyle.AddExternalGroupStyle(externalGroups);
     }
 
+    /// <inheritdoc/>
     public void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       ColorGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
@@ -504,6 +581,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       SkipFrequencyGroupStyle.AddLocalGroupStyle(externalGroups, localGroups); // (local group style only)
     }
 
+    /// <inheritdoc/>
     public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed3DPlotData pdata)
     {
       if (IsColorProvider)
@@ -523,6 +601,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         { return SkipFrequency; });
     }
 
+    /// <inheritdoc/>
     public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       if (IsColorReceiver)

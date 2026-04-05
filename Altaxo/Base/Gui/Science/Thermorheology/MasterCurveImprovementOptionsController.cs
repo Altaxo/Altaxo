@@ -34,14 +34,21 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Science.Thermorheology
 {
+  /// <summary>
+  /// View contract for editing master-curve improvement options.
+  /// </summary>
   public interface IMasterCurveImprovementOptionsView : IDataContextAwareView { }
 
+  /// <summary>
+  /// Controller for editing <see cref="MasterCurveImprovementOptions"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IMasterCurveImprovementOptionsView))]
   [UserControllerForObject(typeof(MasterCurveCreationOptions))]
   public class MasterCurveImprovementOptionsController : MVCANDControllerEditImmutableDocBase<MasterCurveImprovementOptions, IMasterCurveImprovementOptionsView>
   {
     IMVCAController? _selectedController;
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -49,6 +56,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     #region Bindings
 
+    /// <summary>
+    /// Marks the controller as modified.
+    /// </summary>
     public void TriggerOnMadeDirty()
     {
       OnMadeDirty();
@@ -73,6 +83,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private bool _useManualPivotCurveIndex;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether a manual pivot-curve index is used.
+    /// </summary>
     public bool UseManualPivotCurveIndex
     {
       get => _useManualPivotCurveIndex;
@@ -90,6 +103,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private int _indexOfPivotCurve;
 
+    /// <summary>
+    /// Gets or sets the manually selected pivot-curve index.
+    /// </summary>
     public int ManualPivotCurveIndex
     {
       get => _indexOfPivotCurve;
@@ -109,12 +125,21 @@ namespace Altaxo.Gui.Science.Thermorheology
       OnPropertyChanged(nameof(IsManualPivotIndexRequired));
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the selected shift order requires a pivot index.
+    /// </summary>
     public bool IsPivotIndexRequired => ShiftOrder?.SelectedValue?.IsPivotIndexRequired ?? false;
 
+    /// <summary>
+    /// Gets a value indicating whether a manual pivot index must be specified.
+    /// </summary>
     public bool IsManualPivotIndexRequired => IsPivotIndexRequired && UseManualPivotCurveIndex;
 
     private ItemsController<IShiftOrder> _shiftOrder;
 
+    /// <summary>
+    /// Gets or sets the selectable shift-order options.
+    /// </summary>
     public ItemsController<IShiftOrder> ShiftOrder
     {
       get => _shiftOrder;
@@ -130,6 +155,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private ItemsController<OptimizationMethod> _optimizationMethod;
 
+    /// <summary>
+    /// Gets or sets the selectable optimization methods.
+    /// </summary>
     public ItemsController<OptimizationMethod> OptimizationMethod
     {
       get => _optimizationMethod;
@@ -145,6 +173,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private int _numberOfIterations;
 
+    /// <summary>
+    /// Gets or sets the number of iterations.
+    /// </summary>
     public int NumberOfIterations
     {
       get => _numberOfIterations;
@@ -158,10 +189,16 @@ namespace Altaxo.Gui.Science.Thermorheology
       }
     }
 
+    /// <summary>
+    /// Gets the quantity environment used for the required relative overlap.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment RelativeOverlapEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _relativeOverlap;
 
+    /// <summary>
+    /// Gets or sets the required relative overlap.
+    /// </summary>
     public DimensionfulQuantity RelativeOverlap
     {
       get => _relativeOverlap;
@@ -178,6 +215,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private ItemsController<MasterCurveGroupOptionsChoice> _GroupOptionsChoice;
 
+    /// <summary>
+    /// Gets or sets how group options are organized.
+    /// </summary>
     public ItemsController<MasterCurveGroupOptionsChoice> GroupOptionsChoice
     {
       get => _GroupOptionsChoice;
@@ -194,6 +234,10 @@ namespace Altaxo.Gui.Science.Thermorheology
 
 
     ItemsController<IMVCAController> _tabControllers;
+
+    /// <summary>
+    /// Gets or sets the controllers used by the group-options tabs.
+    /// </summary>
     public ItemsController<IMVCAController> TabControllers
     {
       get => _tabControllers;
@@ -210,6 +254,7 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     #endregion Bindings
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -257,6 +302,10 @@ namespace Altaxo.Gui.Science.Thermorheology
       }
     }
 
+    /// <summary>
+    /// Adds the group-options controllers for the selected organization mode.
+    /// </summary>
+    /// <param name="choice">The group-options organization mode.</param>
     protected virtual void AddControllers(MasterCurveGroupOptionsChoice choice)
     {
       var list = new SelectableListNodeList();
@@ -351,6 +400,7 @@ namespace Altaxo.Gui.Science.Thermorheology
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (_selectedController is not null && !_selectedController.Apply(disposeController))

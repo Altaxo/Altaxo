@@ -26,18 +26,24 @@
 
 namespace Altaxo.Data.Transformations
 {
+  /// <summary>
+  /// Provides a base class for immutable classes without instance members.
+  /// </summary>
   public class ImmutableClassWithoutMembersBase : Main.IImmutable
   {
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return GetType().GetHashCode();
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       return GetType() == obj?.GetType();
     }
 
+    /// <inheritdoc/>
     public bool IsEditable { get { return false; } }
   }
 }

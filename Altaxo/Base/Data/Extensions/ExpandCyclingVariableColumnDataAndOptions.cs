@@ -29,11 +29,15 @@ using System.Linq;
 namespace Altaxo.Data
 {
   /// <summary>
-  /// Holds both the data (see <see cref="DataTableMultipleColumnProxy"/>) and the options (see <see cref="ExpandCyclingVariableColumnOptions"/>) to perform
-  /// the expanding of a table containing a column with a cycling variable.
+  /// Holds both the data (see <see cref="DataTableMultipleColumnProxy"/>) and the options (see <see cref="ExpandCyclingVariableColumnOptions"/>) needed to expand a table containing a cycling-variable column.
   /// </summary>
   public class ExpandCyclingVariableColumnDataAndOptions : ICloneable
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ExpandCyclingVariableColumnDataAndOptions"/> class.
+    /// </summary>
+    /// <param name="data">The selected source data.</param>
+    /// <param name="options">The expansion options.</param>
     public ExpandCyclingVariableColumnDataAndOptions(DataTableMultipleColumnProxy data, ExpandCyclingVariableColumnOptions options)
     {
       Data = data;
@@ -41,7 +45,7 @@ namespace Altaxo.Data
     }
 
     /// <summary>
-    /// Holds the data nessessary for expanding of a table containing a column with a cycling variable.
+    /// Holds the data necessary for expanding a table containing a cycling-variable column.
     /// </summary>
     /// <value>
     /// The data.
@@ -49,7 +53,7 @@ namespace Altaxo.Data
     public DataTableMultipleColumnProxy Data { get; private set; }
 
     /// <summary>
-    /// Holds the options nessessary for expanding of a table containing a column with a cycling variable.
+    /// Holds the options necessary for expanding a table containing a cycling-variable column.
     /// </summary>
     /// <value>
     /// The options.

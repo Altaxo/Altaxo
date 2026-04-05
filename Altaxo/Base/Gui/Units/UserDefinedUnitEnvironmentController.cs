@@ -38,12 +38,15 @@ namespace Altaxo.Gui.Units
   using System.Windows.Input;
   using Altaxo.Units;
 
+  /// <summary>
+  /// View interface for editing a <see cref="UserDefinedUnitEnvironment"/>.
+  /// </summary>
   public interface IUserDefinedUnitEnvironmentView : IDataContextAwareView
   {
   }
 
   /// <summary>
-  /// Creates a custom unit environment
+  /// Controller for creating and editing a <see cref="UserDefinedUnitEnvironment"/>.
   /// </summary>
   [ExpectedTypeOfView(typeof(IUserDefinedUnitEnvironmentView))]
   public class UserDefinedUnitEnvironmentController : MVCANControllerEditCopyOfDocBase<UserDefinedUnitEnvironment, IUserDefinedUnitEnvironmentView>, System.ComponentModel.INotifyPropertyChanged
@@ -56,6 +59,7 @@ namespace Altaxo.Gui.Units
 
     private UserDefinedUnitEnvironments? _availableEnvironments;
 
+    /// <inheritdoc/>
     public override bool InitializeDocument(params object[] args)
     {
       if (args.Length > 1 && args[1] is UserDefinedUnitEnvironments availableEnvironments)
@@ -64,6 +68,7 @@ namespace Altaxo.Gui.Units
       return base.InitializeDocument(args);
     }
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       CheckDocumentInitialized(ref _doc);
@@ -77,7 +82,7 @@ namespace Altaxo.Gui.Units
 
         // ------- Set available quantities --------------
         _quantities.Clear();
-        if (string.IsNullOrEmpty(_doc.Quantity)) // if doc has not quantitie still, then all quantities will be shown
+        if (string.IsNullOrEmpty(_doc.Quantity)) // if doc has no quantity yet, then all quantities will be shown
         {
           foreach (var quantity in UnitsExtensions.GetAllDefinedQuantities())
           {
@@ -101,18 +106,21 @@ namespace Altaxo.Gui.Units
       }
     }
 
+    /// <inheritdoc/>
     protected override void AttachView()
     {
       base.AttachView();
       _view!.DataContext = this;
     }
 
+    /// <inheritdoc/>
     protected override void DetachView()
     {
       _view!.DataContext = null;
       base.DetachView();
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (_unitController is null)
@@ -146,6 +154,7 @@ namespace Altaxo.Gui.Units
       return ApplyEnd(true, disposeController);
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       if (_unitController is not null)
@@ -154,6 +163,9 @@ namespace Altaxo.Gui.Units
 
     #region Binding properties
 
+    /// <summary>
+    /// Gets the view object of the nested unit controller.
+    /// </summary>
     public object? UnitControllerViewObject
     {
       get
@@ -162,6 +174,9 @@ namespace Altaxo.Gui.Units
       }
     }
 
+    /// <summary>
+    /// Gets the available quantities.
+    /// </summary>
     public SelectableListNodeList Quantities
     {
       get
@@ -170,6 +185,9 @@ namespace Altaxo.Gui.Units
       }
     }
 
+    /// <summary>
+    /// Gets or sets the selected quantity.
+    /// </summary>
     public SelectableListNode? SelectedQuantity
     {
       get
@@ -189,6 +207,9 @@ namespace Altaxo.Gui.Units
       }
     }
 
+    /// <summary>
+    /// Gets or sets the environment name.
+    /// </summary>
     public string? EnvironmentName
     {
       get

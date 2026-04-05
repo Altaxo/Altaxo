@@ -66,10 +66,14 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
     /// <returns>An array of <see cref="IMeasuredLabelItem" /> that can be used to determine the size of each item and to draw it.</returns>
     IMeasuredLabelItem[] GetMeasuredItems(IGraphicsContext3D g, FontX3D font, AltaxoVariant[] items);
 
-    /// <summary>Fixed Text that appears before the formatted label.</summary>
+    /// <summary>
+    /// Gets or sets the fixed text that appears before the formatted label.
+    /// </summary>
     string PrefixText { get; set; }
 
-    /// <summary>Fixed text that appears after the formatted label.</summary>
+    /// <summary>
+    /// Gets or sets the fixed text that appears after the formatted label.
+    /// </summary>
     string SuffixText { get; set; }
   }
 }

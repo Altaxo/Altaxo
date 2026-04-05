@@ -27,14 +27,21 @@ using Altaxo.Science.Spectroscopy.Normalization;
 
 namespace Altaxo.Gui.Science.Spectroscopy.Normalization
 {
+  /// <summary>
+  /// View interface for area normalization.
+  /// </summary>
   public interface INormalizationAreaView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="NormalizationArea"/>.
+  /// </summary>
   [UserControllerForObject(typeof(NormalizationArea))]
   [ExpectedTypeOfView(typeof(INormalizationAreaView))]
   public class NormalizationAreaController : MVCANControllerEditImmutableDocBase<NormalizationArea, INormalizationAreaView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -43,6 +50,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Normalization
     #region Bindings
 
 
+    /// <summary>
+    /// Gets or sets the minimum x value.
+    /// </summary>
     public double MinimumXValue
     {
       get => field;
@@ -57,6 +67,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Normalization
     }
 
 
+    /// <summary>
+    /// Gets or sets the maximum x value.
+    /// </summary>
     public double MaximumXValue
     {
       get => field;
@@ -71,6 +84,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Normalization
     }
 
 
+    /// <summary>
+    /// Gets or sets a value indicating whether normalization is based on the minimum y value.
+    /// </summary>
     public bool BasedOnMinimumYValue
     {
       get => field;
@@ -84,11 +100,15 @@ namespace Altaxo.Gui.Science.Spectroscopy.Normalization
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the minimum-y-value option can be changed.
+    /// </summary>
     public bool IsBasedOnMinimumYValueEnabled => true;
 
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -101,6 +121,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Normalization
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = _doc with

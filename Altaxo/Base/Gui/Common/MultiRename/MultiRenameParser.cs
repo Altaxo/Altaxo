@@ -103,6 +103,10 @@ namespace Altaxo.Gui.Common.MultiRename
       get { return _dateTimeTChars; }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MultiRenameParser"/> class.
+    /// </summary>
+    /// <param name="renameData">The rename data that provides the available shortcuts.</param>
     public MultiRenameParser(MultiRenameData renameData)
       : base()
     {
@@ -122,21 +126,25 @@ namespace Altaxo.Gui.Common.MultiRename
       return false;
     }
 
+    /// <inheritdoc/>
     public override bool IntegerTChar()
     {
       return TreeAST((int)EAltaxo_MultiRename.StringTChar, () => IsOneOf(_integerTChars));
     }
 
+    /// <inheritdoc/>
     public override bool StringTChar()
     {
       return TreeAST((int)EAltaxo_MultiRename.StringTChar, () => IsOneOf(_stringTChars));
     }
 
+    /// <inheritdoc/>
     public override bool ArrayTChar()
     {
       return TreeAST((int)EAltaxo_MultiRename.StringTChar, () => IsOneOf(_arrayTChars));
     }
 
+    /// <inheritdoc/>
     public override bool DateTimeTChar()
     {
       return TreeAST((int)EAltaxo_MultiRename.StringTChar, () => IsOneOf(_dateTimeTChars));

@@ -31,7 +31,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Altaxo.Data
 {
   /// <summary>
-  /// Summary description for Altaxo.Data.DoubleColumn.
+  /// Data column that stores <see cref="double"/> values.
   /// </summary>
   public class DoubleColumn
     :
@@ -43,16 +43,21 @@ namespace Altaxo.Data
     private double[] _data = _emptyDoubleArray;
     private int _capacity; // shortcut to _data.Length;
     private int _count;
+    /// <summary>
+    /// Represents an empty value in this column.
+    /// </summary>
     public static readonly double NullValue = double.NaN;
     // private const int MaxCount = 256 * 1024 * 1024 - 8; // this is the maximum possible number of double elements in 64-bit mode currently (Framework 4.0).
     private const int MaxCount = 2147483592; // MaxCount with gcAllowVeryLargeObjects set to true (see https://docs.microsoft.com/en-us/dotnet/framework/configure-apps/file-schema/runtime/gcallowverylargeobjects-element)
     #region Overridden functions
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new DoubleColumn(this);
     }
 
+    /// <inheritdoc />
     public override int Count
     {
       get { return _count; }
@@ -66,6 +71,7 @@ namespace Altaxo.Data
     }
 
     // indexers
+    /// <inheritdoc />
     public override void SetValueAt(int i, AltaxoVariant val)
     {
       try
@@ -78,22 +84,26 @@ namespace Altaxo.Data
       }
     }
 
+    /// <inheritdoc />
     public override AltaxoVariant GetVariantAt(int i)
     {
       return new AltaxoVariant(this[i]);
     }
 
+    /// <inheritdoc />
     public override bool IsElementEmpty(int i)
     {
       return i < _count ? double.IsNaN(_data[i]) : true;
     }
 
+    /// <inheritdoc />
     public override void SetElementEmpty(int i)
     {
       if (i < _count)
         this[i] = NullValue;
     }
 
+    /// <inheritdoc />
     public override void RemoveRows(int nDelFirstRow, int nDelCount)
     {
       if (nDelFirstRow < 0)
@@ -116,6 +126,7 @@ namespace Altaxo.Data
         EhSelfChanged(nDelFirstRow, prevCount, true);
     }
 
+    /// <inheritdoc />
     public override void InsertRows(int nInsBeforeColumn, int nInsCount)
     {
       if (nInsCount <= 0 || nInsBeforeColumn >= Count)
@@ -136,6 +147,7 @@ namespace Altaxo.Data
       EhSelfChanged(nInsBeforeColumn, _count, false);
     }
 
+    /// <inheritdoc />
     public override void CopyDataFrom(object o)
     {
       var oldCount = _count;
@@ -226,6 +238,7 @@ namespace Altaxo.Data
         ;
     }
 
+    /// <inheritdoc />
     public override System.Type GetColumnStyleType()
     {
       return typeof(Altaxo.Worksheet.DoubleColumnStyle);
@@ -233,10 +246,17 @@ namespace Altaxo.Data
 
     #endregion Overridden functions
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DoubleColumn"/> class.
+    /// </summary>
     public DoubleColumn()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DoubleColumn"/> class with the specified initial capacity.
+    /// </summary>
+    /// <param name="initialcapacity">The initial capacity.</param>
     public DoubleColumn(int initialcapacity)
     {
       _count = 0;
@@ -244,6 +264,10 @@ namespace Altaxo.Data
       _capacity = initialcapacity;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DoubleColumn"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The source column.</param>
     public DoubleColumn(DoubleColumn from)
     {
       _count = from._count;
@@ -309,6 +333,11 @@ namespace Altaxo.Data
       }
     }
 
+    /// <summary>
+    /// Gets the raw value stored at the specified index.
+    /// </summary>
+    /// <param name="idx">The zero-based row index.</param>
+    /// <returns>The stored value.</returns>
     protected internal double GetValueDirect(int idx)
     {
       return _data[idx];
@@ -338,6 +367,10 @@ namespace Altaxo.Data
       return 0;
     }
 
+    /// <summary>
+    /// Creates a column from an array of doubles.
+    /// </summary>
+    /// <param name="src">The source array.</param>
     public static explicit operator DoubleColumn(double[] src)
     {
       var c = new DoubleColumn();
@@ -403,6 +436,7 @@ namespace Altaxo.Data
       return new ROVector(this, start, count);
     }
 
+    /// <inheritdoc />
     public override Altaxo.Calc.LinearAlgebra.IVector<double> ToVector(int start, int count)
     {
       return new RWVector(this, start, count);
@@ -463,6 +497,10 @@ namespace Altaxo.Data
         EhSelfChanged(0, oldCount > _count ? (oldCount) : (_count), _count < oldCount);
     }
 
+    /// <summary>
+    /// Reallocates the internal storage so that the specified index can be addressed.
+    /// </summary>
+    /// <param name="i">The required index.</param>
     protected void Realloc(int i)
     {
       int newcapacity1 = (int)(_capacity * _increaseFactor + _addSpace);
@@ -483,6 +521,10 @@ namespace Altaxo.Data
       _capacity = _data.Length;
     }
 
+    /// <summary>
+    /// Gets or sets the <see cref="double"/> value at the specified row index.
+    /// </summary>
+    /// <param name="i">The zero-based row index.</param>
     public new double this[int i]
     {
       get
@@ -658,6 +700,12 @@ namespace Altaxo.Data
     // -----------------------------------------------------------------------------
 
     // ----------------------- Addition operator -----------------------------------
+    /// <summary>
+    /// Adds two double columns.
+    /// </summary>
+    /// <param name="c1">The first operand.</param>
+    /// <param name="c2">The second operand.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator +(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
       int len = c1._count < c2._count ? c1._count : c2._count;
@@ -670,6 +718,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Adds a scalar value to a double column.
+    /// </summary>
+    /// <param name="c1">The column.</param>
+    /// <param name="c2">The scalar value.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator +(Altaxo.Data.DoubleColumn c1, double c2)
     {
       int len = c1._count;
@@ -680,11 +734,18 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Adds a double column to a scalar value.
+    /// </summary>
+    /// <param name="c2">The scalar value.</param>
+    /// <param name="c1">The column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator +(double c2, Altaxo.Data.DoubleColumn c1)
     {
       return c1 + c2;
     }
 
+    /// <inheritdoc />
     public override bool vop_Addition(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
@@ -696,11 +757,13 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_Addition_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       return vop_Addition(c2, out c3);
     }
 
+    /// <inheritdoc />
     public override bool vop_Addition(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
@@ -713,6 +776,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_Addition_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       return vop_Addition(c2, out c3);
@@ -720,6 +784,12 @@ namespace Altaxo.Data
 
     // --------------------- Operator Subtract -------------------------------------
 
+    /// <summary>
+    /// Subtracts one double column from another.
+    /// </summary>
+    /// <param name="c1">The minuend column.</param>
+    /// <param name="c2">The subtrahend column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator -(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
       int len = c1._count < c2._count ? c1._count : c2._count;
@@ -732,6 +802,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Subtracts a scalar value from a double column.
+    /// </summary>
+    /// <param name="c1">The minuend column.</param>
+    /// <param name="c2">The scalar value.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator -(Altaxo.Data.DoubleColumn c1, double c2)
     {
       int len = c1._count;
@@ -744,6 +820,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Subtracts a double column from a scalar value.
+    /// </summary>
+    /// <param name="c2">The scalar value.</param>
+    /// <param name="c1">The subtrahend column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator -(double c2, Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -756,6 +838,7 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <inheritdoc />
     public override bool vop_Subtraction(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
@@ -767,6 +850,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_Subtraction_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
@@ -778,6 +862,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_Subtraction(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
@@ -790,6 +875,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_Subtraction_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
@@ -802,6 +888,12 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <summary>
+    /// Calculates the difference in seconds between two date-time columns.
+    /// </summary>
+    /// <param name="c1">The minuend column.</param>
+    /// <param name="c2">The subtrahend column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Subtraction(Altaxo.Data.DateTimeColumn c1, Altaxo.Data.DateTimeColumn c2)
     {
       int len = c1.Count < c2.Count ? c1.Count : c2.Count;
@@ -816,6 +908,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Calculates the difference in seconds between a date-time column and a constant date-time value.
+    /// </summary>
+    /// <param name="c1">The minuend column.</param>
+    /// <param name="c2">The subtrahend date-time value.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Subtraction(Altaxo.Data.DateTimeColumn c1, DateTime c2)
     {
       int len = c1.Count;
@@ -830,6 +928,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Calculates the difference in seconds between a constant date-time value and a date-time column.
+    /// </summary>
+    /// <param name="c1">The minuend date-time value.</param>
+    /// <param name="c2">The subtrahend column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Subtraction(DateTime c1, Altaxo.Data.DateTimeColumn c2)
     {
       int len = c2.Count;
@@ -845,6 +949,12 @@ namespace Altaxo.Data
     }
 
     // ----------------------- Multiplication operator -----------------------------------
+    /// <summary>
+    /// Multiplies two double columns.
+    /// </summary>
+    /// <param name="c1">The first operand.</param>
+    /// <param name="c2">The second operand.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator *(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
       int len = c1._count < c2._count ? c1._count : c2._count;
@@ -857,6 +967,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Multiplies a double column by a scalar value.
+    /// </summary>
+    /// <param name="c1">The column.</param>
+    /// <param name="c2">The scalar value.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator *(Altaxo.Data.DoubleColumn c1, double c2)
     {
       int len = c1._count;
@@ -867,6 +983,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Multiplies a scalar value by a double column.
+    /// </summary>
+    /// <param name="c2">The scalar value.</param>
+    /// <param name="c1">The column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator *(double c2, Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -877,6 +999,7 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <inheritdoc />
     public override bool vop_Multiplication(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
@@ -888,11 +1011,13 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_Multiplication_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       return vop_Multiplication(c2, out c3);
     }
 
+    /// <inheritdoc />
     public override bool vop_Multiplication(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
@@ -905,6 +1030,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_Multiplication_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       return vop_Multiplication(c2, out c3);
@@ -912,6 +1038,12 @@ namespace Altaxo.Data
 
     // ------------------------ Division operator --------------------------------
 
+    /// <summary>
+    /// Divides one double column by another.
+    /// </summary>
+    /// <param name="c1">The dividend column.</param>
+    /// <param name="c2">The divisor column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator /(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
       int len = c1._count < c2._count ? c1._count : c2._count;
@@ -924,6 +1056,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Divides a double column by a scalar value.
+    /// </summary>
+    /// <param name="c1">The dividend column.</param>
+    /// <param name="c2">The scalar divisor.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator /(Altaxo.Data.DoubleColumn c1, double c2)
     {
       int len = c1._count;
@@ -936,6 +1074,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Divides a scalar value by a double column.
+    /// </summary>
+    /// <param name="c2">The scalar dividend.</param>
+    /// <param name="c1">The divisor column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator /(double c2, Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -948,6 +1092,7 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <inheritdoc />
     public override bool vop_Division(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
@@ -959,6 +1104,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_Division_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
@@ -970,6 +1116,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_Division(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
@@ -982,6 +1129,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_Division_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
@@ -995,6 +1143,12 @@ namespace Altaxo.Data
     }
 
     // -------------------------- operator % ----------------------------------------------
+    /// <summary>
+    /// Calculates the modulo of one double column by another.
+    /// </summary>
+    /// <param name="c1">The dividend column.</param>
+    /// <param name="c2">The divisor column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator %(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
       int len = c1._count < c2._count ? c1._count : c2._count;
@@ -1007,6 +1161,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Calculates the modulo of a double column by a scalar value.
+    /// </summary>
+    /// <param name="c1">The dividend column.</param>
+    /// <param name="c2">The scalar divisor.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator %(Altaxo.Data.DoubleColumn c1, double c2)
     {
       int len = c1._count;
@@ -1019,6 +1179,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Calculates the modulo of a scalar value by a double column.
+    /// </summary>
+    /// <param name="c2">The scalar dividend.</param>
+    /// <param name="c1">The divisor column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator %(double c2, Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -1031,6 +1197,7 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <inheritdoc />
     public override bool vop_Modulo(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
@@ -1042,6 +1209,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_Modulo_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
@@ -1053,6 +1221,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_Modulo(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
@@ -1065,6 +1234,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_Modulo_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
@@ -1078,6 +1248,12 @@ namespace Altaxo.Data
     }
 
     // ----------------------- AND operator -----------------------------------
+    /// <summary>
+    /// Applies a bitwise AND between two double columns after converting values to integers.
+    /// </summary>
+    /// <param name="c1">The first operand.</param>
+    /// <param name="c2">The second operand.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator &(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
       int len = c1._count < c2._count ? c1._count : c2._count;
@@ -1090,6 +1266,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies a bitwise AND between a double column and a scalar value after converting values to integers.
+    /// </summary>
+    /// <param name="c1">The column.</param>
+    /// <param name="c2">The scalar value.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator &(Altaxo.Data.DoubleColumn c1, double c2)
     {
       int len = c1._count;
@@ -1101,6 +1283,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies a bitwise AND between a scalar value and a double column after converting values to integers.
+    /// </summary>
+    /// <param name="c2">The scalar value.</param>
+    /// <param name="c1">The column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator &(double c2, Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -1112,6 +1300,7 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <inheritdoc />
     public override bool vop_And(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
@@ -1123,6 +1312,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_And_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
@@ -1134,6 +1324,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_And(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
@@ -1146,6 +1337,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_And_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
@@ -1159,6 +1351,12 @@ namespace Altaxo.Data
     }
 
     // ----------------------- OR operator -----------------------------------
+    /// <summary>
+    /// Applies a bitwise OR between two double columns after converting values to integers.
+    /// </summary>
+    /// <param name="c1">The first operand.</param>
+    /// <param name="c2">The second operand.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator |(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
       int len = c1._count < c2._count ? c1._count : c2._count;
@@ -1171,6 +1369,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies a bitwise OR between a double column and a scalar value after converting values to integers.
+    /// </summary>
+    /// <param name="c1">The column.</param>
+    /// <param name="c2">The scalar value.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator |(Altaxo.Data.DoubleColumn c1, double c2)
     {
       int len = c1._count;
@@ -1182,6 +1386,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies a bitwise OR between a scalar value and a double column after converting values to integers.
+    /// </summary>
+    /// <param name="c2">The scalar value.</param>
+    /// <param name="c1">The column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator |(double c2, Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -1193,6 +1403,7 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <inheritdoc />
     public override bool vop_Or(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
@@ -1204,6 +1415,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_Or_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
@@ -1215,6 +1427,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_Or(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
@@ -1227,6 +1440,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_Or_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
@@ -1240,6 +1454,12 @@ namespace Altaxo.Data
     }
 
     // ----------------------- XOR operator -----------------------------------
+    /// <summary>
+    /// Applies a bitwise XOR between two double columns after converting values to integers.
+    /// </summary>
+    /// <param name="c1">The first operand.</param>
+    /// <param name="c2">The second operand.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator ^(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
       int len = c1._count < c2._count ? c1._count : c2._count;
@@ -1252,6 +1472,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies a bitwise XOR between a double column and a scalar value after converting values to integers.
+    /// </summary>
+    /// <param name="c1">The column.</param>
+    /// <param name="c2">The scalar value.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator ^(Altaxo.Data.DoubleColumn c1, double c2)
     {
       int len = c1._count;
@@ -1263,6 +1489,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies a bitwise XOR between a scalar value and a double column after converting values to integers.
+    /// </summary>
+    /// <param name="c2">The scalar value.</param>
+    /// <param name="c1">The column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator ^(double c2, Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -1274,6 +1506,7 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <inheritdoc />
     public override bool vop_Xor(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
@@ -1285,6 +1518,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_Xor_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
@@ -1296,6 +1530,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_Xor(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
@@ -1308,6 +1543,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_Xor_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
@@ -1322,6 +1558,12 @@ namespace Altaxo.Data
 
     // ----------------------- ShiftLeft operator -----------------------------------
 
+    /// <summary>
+    /// Shifts a double column left by the specified bit count after converting values to integers.
+    /// </summary>
+    /// <param name="c1">The column.</param>
+    /// <param name="c2">The shift count.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator <<(Altaxo.Data.DoubleColumn c1, int c2)
     {
       int len = c1._count;
@@ -1332,6 +1574,7 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <inheritdoc />
     public override bool vop_ShiftLeft(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
@@ -1352,6 +1595,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_ShiftLeft_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
@@ -1373,6 +1617,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_ShiftLeft(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
@@ -1385,6 +1630,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_ShiftLeft_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
@@ -1405,6 +1651,12 @@ namespace Altaxo.Data
 
     // ----------------------- ShiftRight operator -----------------------------------
 
+    /// <summary>
+    /// Shifts a double column right by the specified bit count after converting values to integers.
+    /// </summary>
+    /// <param name="c1">The column.</param>
+    /// <param name="c2">The shift count.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator >>(Altaxo.Data.DoubleColumn c1, int c2)
     {
       int len = c1._count;
@@ -1415,6 +1667,7 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <inheritdoc />
     public override bool vop_ShiftRight(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
@@ -1435,6 +1688,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_ShiftRight_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
@@ -1455,6 +1709,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_ShiftRight(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
@@ -1473,6 +1728,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_ShiftRight_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
@@ -1492,6 +1748,12 @@ namespace Altaxo.Data
     }
 
     // ----------------------- Lesser operator -----------------------------------
+    /// <summary>
+    /// Compares whether one double column is less than another.
+    /// </summary>
+    /// <param name="c1">The first operand.</param>
+    /// <param name="c2">The second operand.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator <(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
       int len = c1._count < c2._count ? c1._count : c2._count;
@@ -1504,6 +1766,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Compares whether a double column is less than a scalar value.
+    /// </summary>
+    /// <param name="c1">The column.</param>
+    /// <param name="c2">The scalar value.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator <(Altaxo.Data.DoubleColumn c1, double c2)
     {
       int len = c1._count;
@@ -1514,6 +1782,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Compares whether a scalar value is less than a double column.
+    /// </summary>
+    /// <param name="c2">The scalar value.</param>
+    /// <param name="c1">The column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator <(double c2, Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -1524,6 +1798,7 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <inheritdoc />
     public override bool vop_Lesser(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
@@ -1535,6 +1810,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_Lesser_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
@@ -1546,6 +1822,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_Lesser(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
@@ -1558,6 +1835,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_Lesser_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
@@ -1571,6 +1849,12 @@ namespace Altaxo.Data
     }
 
     // ----------------------- Greater operator -----------------------------------
+    /// <summary>
+    /// Compares whether one double column is greater than another.
+    /// </summary>
+    /// <param name="c1">The first operand.</param>
+    /// <param name="c2">The second operand.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator >(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
       int len = c1._count < c2._count ? c1._count : c2._count;
@@ -1583,6 +1867,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Compares whether a double column is greater than a scalar value.
+    /// </summary>
+    /// <param name="c1">The column.</param>
+    /// <param name="c2">The scalar value.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator >(Altaxo.Data.DoubleColumn c1, double c2)
     {
       int len = c1._count;
@@ -1593,6 +1883,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Compares whether a scalar value is greater than a double column.
+    /// </summary>
+    /// <param name="c2">The scalar value.</param>
+    /// <param name="c1">The column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator >(double c2, Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -1603,6 +1899,7 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <inheritdoc />
     public override bool vop_Greater(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
@@ -1614,6 +1911,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_Greater_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
@@ -1625,6 +1923,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_Greater(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
@@ -1637,6 +1936,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_Greater_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
@@ -1650,6 +1950,12 @@ namespace Altaxo.Data
     }
 
     // ----------------------- LesserOrEqual operator -----------------------------------
+    /// <summary>
+    /// Compares whether one double column is less than or equal to another.
+    /// </summary>
+    /// <param name="c1">The first operand.</param>
+    /// <param name="c2">The second operand.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator <=(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
       int len = c1._count < c2._count ? c1._count : c2._count;
@@ -1662,6 +1968,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Compares whether a double column is less than or equal to a scalar value.
+    /// </summary>
+    /// <param name="c1">The column.</param>
+    /// <param name="c2">The scalar value.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator <=(Altaxo.Data.DoubleColumn c1, double c2)
     {
       int len = c1._count;
@@ -1672,6 +1984,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Compares whether a scalar value is less than or equal to a double column.
+    /// </summary>
+    /// <param name="c2">The scalar value.</param>
+    /// <param name="c1">The column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator <=(double c2, Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -1682,6 +2000,7 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <inheritdoc />
     public override bool vop_LesserOrEqual(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
@@ -1693,6 +2012,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_LesserOrEqual_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
@@ -1704,6 +2024,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_LesserOrEqual(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
@@ -1716,6 +2037,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_LesserOrEqual_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
@@ -1729,6 +2051,12 @@ namespace Altaxo.Data
     }
 
     // ----------------------- GreaterOrEqual operator -----------------------------------
+    /// <summary>
+    /// Compares whether one double column is greater than or equal to another.
+    /// </summary>
+    /// <param name="c1">The first operand.</param>
+    /// <param name="c2">The second operand.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator >=(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
       int len = c1._count < c2._count ? c1._count : c2._count;
@@ -1741,6 +2069,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Compares whether a double column is greater than or equal to a scalar value.
+    /// </summary>
+    /// <param name="c1">The column.</param>
+    /// <param name="c2">The scalar value.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator >=(Altaxo.Data.DoubleColumn c1, double c2)
     {
       int len = c1._count;
@@ -1751,6 +2085,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Compares whether a scalar value is greater than or equal to a double column.
+    /// </summary>
+    /// <param name="c2">The scalar value.</param>
+    /// <param name="c1">The column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator >=(double c2, Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -1761,6 +2101,7 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <inheritdoc />
     public override bool vop_GreaterOrEqual(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
@@ -1772,6 +2113,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_GreaterOrEqual_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
@@ -1783,6 +2125,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_GreaterOrEqual(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
@@ -1795,6 +2138,7 @@ namespace Altaxo.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override bool vop_GreaterOrEqual_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
@@ -1808,6 +2152,11 @@ namespace Altaxo.Data
     }
 
     // --------------------------------- Unary Plus ----------------------------
+    /// <summary>
+    /// Applies the unary plus operator to a double column.
+    /// </summary>
+    /// <param name="c1">The operand.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator +(Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -1820,6 +2169,7 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <inheritdoc />
     public override bool vop_Plus(out DataColumn c3)
     {
       c3 = +this;
@@ -1827,6 +2177,11 @@ namespace Altaxo.Data
     }
 
     // --------------------------------- Unary Minus ----------------------------
+    /// <summary>
+    /// Applies the unary minus operator to a double column.
+    /// </summary>
+    /// <param name="c1">The operand.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator -(Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -1839,6 +2194,7 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <inheritdoc />
     public override bool vop_Minus(out DataColumn c3)
     {
       c3 = -this;
@@ -1846,6 +2202,11 @@ namespace Altaxo.Data
     }
 
     // --------------------------------- Unary NOT ----------------------------
+    /// <summary>
+    /// Applies the logical NOT operator to a double column.
+    /// </summary>
+    /// <param name="c1">The operand.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator !(Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -1858,6 +2219,7 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <inheritdoc />
     public override bool vop_Not(out DataColumn c3)
     {
       c3 = !this;
@@ -1865,6 +2227,11 @@ namespace Altaxo.Data
     }
 
     // --------------------------------- Unary Complement ----------------------------
+    /// <summary>
+    /// Applies the bitwise complement operator to a double column after converting values to integers.
+    /// </summary>
+    /// <param name="c1">The operand.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator ~(Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -1877,6 +2244,7 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <inheritdoc />
     public override bool vop_Complement(out DataColumn c3)
     {
       c3 = ~this;
@@ -1884,6 +2252,11 @@ namespace Altaxo.Data
     }
 
     // --------------------------------- Unary Increment ----------------------------
+    /// <summary>
+    /// Applies the increment operator to a double column.
+    /// </summary>
+    /// <param name="c1">The operand.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator ++(Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -1896,6 +2269,7 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <inheritdoc />
     public override bool vop_Increment(out DataColumn c3)
     {
       int len = _count;
@@ -1910,6 +2284,11 @@ namespace Altaxo.Data
     }
 
     // --------------------------------- Unary Decrement ----------------------------
+    /// <summary>
+    /// Applies the decrement operator to a double column.
+    /// </summary>
+    /// <param name="c1">The operand.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn operator --(Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -1922,6 +2301,7 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <inheritdoc />
     public override bool vop_Decrement(out DataColumn c3)
     {
       int len = _count;
@@ -1941,6 +2321,11 @@ namespace Altaxo.Data
     //
     // -----------------------------------------------------------------------------
 
+    /// <summary>
+    /// Applies <see cref="Math.Abs(double)"/> to each element of a double column.
+    /// </summary>
+    /// <param name="c1">The source column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Abs(Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -1953,6 +2338,11 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Acos(double)"/> to each element of a double column.
+    /// </summary>
+    /// <param name="c1">The source column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Acos(Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -1965,6 +2355,11 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Asin(double)"/> to each element of a double column.
+    /// </summary>
+    /// <param name="c1">The source column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Asin(Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -1977,6 +2372,11 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Atan(double)"/> to each element of a double column.
+    /// </summary>
+    /// <param name="c1">The source column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Atan(Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -1989,6 +2389,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Atan2(double, double)"/> element-wise to two double columns.
+    /// </summary>
+    /// <param name="c1">The first operand column.</param>
+    /// <param name="c2">The second operand column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Atan2(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
       int len = c1._count < c2._count ? c1._count : c2._count;
@@ -2001,6 +2407,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Atan2(double, double)"/> to a double column and a scalar value.
+    /// </summary>
+    /// <param name="c1">The first operand column.</param>
+    /// <param name="c2">The second operand scalar.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Atan2(Altaxo.Data.DoubleColumn c1, double c2)
     {
       int len = c1._count;
@@ -2013,6 +2425,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Atan2(double, double)"/> to a scalar value and a double column.
+    /// </summary>
+    /// <param name="c1">The first operand scalar.</param>
+    /// <param name="c2">The second operand column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Atan2(double c1, Altaxo.Data.DoubleColumn c2)
     {
       int len = c2._count;
@@ -2025,6 +2443,11 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Ceiling(double)"/> to each element of a double column.
+    /// </summary>
+    /// <param name="c1">The source column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Ceiling(Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -2037,6 +2460,11 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Cos(double)"/> to each element of a double column.
+    /// </summary>
+    /// <param name="c1">The source column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Cos(Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -2049,6 +2477,11 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Cosh(double)"/> to each element of a double column.
+    /// </summary>
+    /// <param name="c1">The source column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Cosh(Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -2061,6 +2494,11 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Exp(double)"/> to each element of a double column.
+    /// </summary>
+    /// <param name="c1">The source column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Exp(Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -2073,6 +2511,11 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Floor(double)"/> to each element of a double column.
+    /// </summary>
+    /// <param name="c1">The source column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Floor(Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -2085,6 +2528,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.IEEERemainder(double, double)"/> element-wise to two double columns.
+    /// </summary>
+    /// <param name="c1">The first operand column.</param>
+    /// <param name="c2">The second operand column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn IEEERemainder(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
       int len = c1._count < c2._count ? c1._count : c2._count;
@@ -2097,6 +2546,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.IEEERemainder(double, double)"/> to a double column and a scalar value.
+    /// </summary>
+    /// <param name="c1">The first operand column.</param>
+    /// <param name="c2">The second operand scalar.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn IEEERemainder(Altaxo.Data.DoubleColumn c1, double c2)
     {
       int len = c1._count;
@@ -2109,6 +2564,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.IEEERemainder(double, double)"/> to a scalar value and a double column.
+    /// </summary>
+    /// <param name="c1">The first operand scalar.</param>
+    /// <param name="c2">The second operand column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn IEEERemainder(double c1, Altaxo.Data.DoubleColumn c2)
     {
       int len = c2._count;
@@ -2121,6 +2582,11 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Log(double)"/> to each element of a double column.
+    /// </summary>
+    /// <param name="c1">The source column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Log(Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -2133,6 +2599,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Log(double, double)"/> element-wise to two double columns.
+    /// </summary>
+    /// <param name="c1">The value column.</param>
+    /// <param name="c2">The base column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Log(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
       int len = c1._count < c2._count ? c1._count : c2._count;
@@ -2145,6 +2617,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Log(double, double)"/> to a double column with a scalar base.
+    /// </summary>
+    /// <param name="c1">The value column.</param>
+    /// <param name="c2">The base scalar.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Log(Altaxo.Data.DoubleColumn c1, double c2)
     {
       int len = c1._count;
@@ -2157,6 +2635,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Log(double, double)"/> to a scalar value with element-wise bases from a double column.
+    /// </summary>
+    /// <param name="c1">The value scalar.</param>
+    /// <param name="c2">The base column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Log(double c1, Altaxo.Data.DoubleColumn c2)
     {
       int len = c2._count;
@@ -2171,6 +2655,11 @@ namespace Altaxo.Data
 
     #region Log10
 
+    /// <summary>
+    /// Applies <see cref="Math.Log10(double)"/> to each element of a double column.
+    /// </summary>
+    /// <param name="c1">The source column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Log10(Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -2185,6 +2674,12 @@ namespace Altaxo.Data
 
     #endregion Log10
 
+    /// <summary>
+    /// Applies <see cref="Math.Max(double, double)"/> element-wise to two double columns.
+    /// </summary>
+    /// <param name="c1">The first operand column.</param>
+    /// <param name="c2">The second operand column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Max(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
       int len = c1._count < c2._count ? c1._count : c2._count;
@@ -2197,6 +2692,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Max(double, double)"/> to a double column and a scalar value.
+    /// </summary>
+    /// <param name="c1">The first operand column.</param>
+    /// <param name="c2">The second operand scalar.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Max(Altaxo.Data.DoubleColumn c1, double c2)
     {
       int len = c1._count;
@@ -2209,6 +2710,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Max(double, double)"/> to a scalar value and a double column.
+    /// </summary>
+    /// <param name="c1">The first operand scalar.</param>
+    /// <param name="c2">The second operand column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Max(double c1, Altaxo.Data.DoubleColumn c2)
     {
       int len = c2._count;
@@ -2221,6 +2728,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Min(double, double)"/> element-wise to two double columns.
+    /// </summary>
+    /// <param name="c1">The first operand column.</param>
+    /// <param name="c2">The second operand column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Min(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
       int len = c1._count < c2._count ? c1._count : c2._count;
@@ -2233,6 +2746,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Min(double, double)"/> to a double column and a scalar value.
+    /// </summary>
+    /// <param name="c1">The first operand column.</param>
+    /// <param name="c2">The second operand scalar.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Min(Altaxo.Data.DoubleColumn c1, double c2)
     {
       int len = c1._count;
@@ -2245,6 +2764,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Min(double, double)"/> to a scalar value and a double column.
+    /// </summary>
+    /// <param name="c1">The first operand scalar.</param>
+    /// <param name="c2">The second operand column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Min(double c1, Altaxo.Data.DoubleColumn c2)
     {
       int len = c2._count;
@@ -2257,6 +2782,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Pow(double, double)"/> element-wise to two double columns.
+    /// </summary>
+    /// <param name="c1">The base column.</param>
+    /// <param name="c2">The exponent column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Pow(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
       int len = c1._count < c2._count ? c1._count : c2._count;
@@ -2269,6 +2800,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Raises each element of a double column to the specified integer power.
+    /// </summary>
+    /// <param name="c1">The base column.</param>
+    /// <param name="c2">The exponent.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Pow(Altaxo.Data.DoubleColumn c1, int c2)
     {
       int len = c1._count;
@@ -2281,6 +2818,11 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Squares each element of a double column.
+    /// </summary>
+    /// <param name="c1">The source column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Pow2(Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -2293,6 +2835,11 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Cubes each element of a double column.
+    /// </summary>
+    /// <param name="c1">The source column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Pow3(Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -2305,6 +2852,11 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Raises each element of a double column to the fourth power.
+    /// </summary>
+    /// <param name="c1">The source column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Pow4(Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -2317,6 +2869,11 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Raises each element of a double column to the fifth power.
+    /// </summary>
+    /// <param name="c1">The source column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Pow5(Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -2329,6 +2886,11 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Raises each element of a double column to the sixth power.
+    /// </summary>
+    /// <param name="c1">The source column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Pow6(Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -2341,6 +2903,11 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Raises each element of a double column to the seventh power.
+    /// </summary>
+    /// <param name="c1">The source column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Pow7(Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -2353,6 +2920,11 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Raises each element of a double column to the eighth power.
+    /// </summary>
+    /// <param name="c1">The source column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Pow8(Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -2365,6 +2937,11 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Raises each element of a double column to the ninth power.
+    /// </summary>
+    /// <param name="c1">The source column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Pow9(Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -2377,6 +2954,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Pow(double, double)"/> to a double column with a scalar exponent.
+    /// </summary>
+    /// <param name="c1">The base column.</param>
+    /// <param name="c2">The exponent scalar.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Pow(Altaxo.Data.DoubleColumn c1, double c2)
     {
       int len = c1._count;
@@ -2389,6 +2972,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Pow(double, double)"/> to a scalar base with element-wise exponents from a double column.
+    /// </summary>
+    /// <param name="c1">The base scalar.</param>
+    /// <param name="c2">The exponent column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Pow(double c1, Altaxo.Data.DoubleColumn c2)
     {
       int len = c2._count;
@@ -2401,6 +2990,11 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Round(double)"/> to each element of a double column.
+    /// </summary>
+    /// <param name="c1">The source column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Round(Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -2413,6 +3007,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Round(double, int)"/> to a double column with element-wise precision values from another column.
+    /// </summary>
+    /// <param name="c1">The value column.</param>
+    /// <param name="c2">The precision column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Round(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
       int len = c1._count < c2._count ? c1._count : c2._count;
@@ -2425,6 +3025,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Round(double, int)"/> to a double column with a scalar precision.
+    /// </summary>
+    /// <param name="c1">The value column.</param>
+    /// <param name="c2">The precision.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Round(Altaxo.Data.DoubleColumn c1, int c2)
     {
       int len = c1._count;
@@ -2437,6 +3043,12 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Round(double, int)"/> to a scalar value with element-wise precision values from a double column.
+    /// </summary>
+    /// <param name="c1">The value scalar.</param>
+    /// <param name="c2">The precision column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Round(double c1, Altaxo.Data.DoubleColumn c2)
     {
       int len = c2._count;
@@ -2449,6 +3061,11 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Sign(double)"/> to each element of a double column.
+    /// </summary>
+    /// <param name="c1">The source column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Sign(Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -2461,6 +3078,11 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Sin(double)"/> to each element of a double column.
+    /// </summary>
+    /// <param name="c1">The source column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Sin(Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -2473,6 +3095,11 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Sinh(double)"/> to each element of a double column.
+    /// </summary>
+    /// <param name="c1">The source column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Sinh(Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -2485,6 +3112,11 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Sqrt(double)"/> to each element of a double column.
+    /// </summary>
+    /// <param name="c1">The source column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Sqrt(Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -2497,6 +3129,11 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Tan(double)"/> to each element of a double column.
+    /// </summary>
+    /// <param name="c1">The source column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Tan(Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -2509,6 +3146,11 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies <see cref="Math.Tanh(double)"/> to each element of a double column.
+    /// </summary>
+    /// <param name="c1">The source column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Tanh(Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -2525,6 +3167,12 @@ namespace Altaxo.Data
 
     #region Apply functions
 
+    /// <summary>
+    /// Applies a unary mapping function to each element of a double column.
+    /// </summary>
+    /// <param name="function">The mapping function.</param>
+    /// <param name="c1">The source column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Map(Func<double, double> function, Altaxo.Data.DoubleColumn c1)
     {
       int len = c1._count;
@@ -2537,6 +3185,13 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies a binary mapping function element-wise to two double columns.
+    /// </summary>
+    /// <param name="function">The mapping function.</param>
+    /// <param name="c1">The first operand column.</param>
+    /// <param name="c2">The second operand column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Map(Func<double, double, double> function, Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
       int len = c1._count < c2._count ? c1._count : c2._count;
@@ -2549,6 +3204,13 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies a binary mapping function to a double column and a scalar value.
+    /// </summary>
+    /// <param name="function">The mapping function.</param>
+    /// <param name="c1">The first operand column.</param>
+    /// <param name="c2">The second operand scalar.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Map(Func<double, double, double> function, Altaxo.Data.DoubleColumn c1, double c2)
     {
       int len = c1._count;
@@ -2561,6 +3223,13 @@ namespace Altaxo.Data
       return c3;
     }
 
+    /// <summary>
+    /// Applies a binary mapping function to a scalar value and a double column.
+    /// </summary>
+    /// <param name="function">The mapping function.</param>
+    /// <param name="c1">The first operand scalar.</param>
+    /// <param name="c2">The second operand column.</param>
+    /// <returns>The result column.</returns>
     public static Altaxo.Data.DoubleColumn Map(Func<double, double, double> function, double c1, Altaxo.Data.DoubleColumn c2)
     {
       int len = c2._count;
@@ -2580,7 +3249,7 @@ namespace Altaxo.Data
     /// such an index is found, the fractional index is returned. If no such index is found, the return value is null.
     /// </summary>
     /// <param name="value">The value to search.</param>
-    /// <returns></returns>
+    /// <returns>The fractional index if a containing interval is found; otherwise, <see langword="null"/>.</returns>
     public double? FractionalIndexOf(double value)
     {
       for (int i = 1; i < Count; i++)

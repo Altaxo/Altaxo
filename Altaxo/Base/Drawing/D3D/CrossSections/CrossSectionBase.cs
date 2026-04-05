@@ -37,12 +37,31 @@ namespace Altaxo.Drawing.D3D.CrossSections
   /// </summary>
   public class CrossSectionOfLine
   {
+    /// <summary>
+    /// The first and second characteristic sizes of the cross section.
+    /// </summary>
     protected double _size1, _size2;
 
+    /// <summary>
+    /// The vertices of the cross section.
+    /// </summary>
     protected PointD2D[] _vertices;
+
+    /// <summary>
+    /// Flags indicating whether a vertex is sharp.
+    /// </summary>
     protected bool[] _isVertexSharp;
+
+    /// <summary>
+    /// The normal vectors of the cross section.
+    /// </summary>
     protected VectorD2D[] _normals;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CrossSectionOfLine"/> class.
+    /// </summary>
+    /// <param name="numberOfVertices">The number of vertices.</param>
+    /// <param name="numberOfNormals">The number of normals.</param>
     protected CrossSectionOfLine(int numberOfVertices, int numberOfNormals)
     {
       _vertices = new PointD2D[numberOfVertices];
@@ -50,27 +69,60 @@ namespace Altaxo.Drawing.D3D.CrossSections
       _normals = new VectorD2D[numberOfNormals];
     }
 
+    /// <summary>
+    /// Gets the first characteristic size of the cross section.
+    /// </summary>
     public double Size1 { get { return _size1; } }
+
+    /// <summary>
+    /// Gets the second characteristic size of the cross section.
+    /// </summary>
     public double Size2 { get { return _size2; } }
 
+    /// <summary>
+    /// Gets the specified vertex.
+    /// </summary>
+    /// <param name="idx">The vertex index.</param>
+    /// <returns>The vertex at the specified index.</returns>
     public PointD2D Vertices(int idx)
     {
       return _vertices[idx];
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the specified vertex is sharp.
+    /// </summary>
+    /// <param name="idx">The vertex index.</param>
+    /// <returns><c>true</c> if the vertex is sharp; otherwise, <c>false</c>.</returns>
     public bool IsVertexSharp(int idx)
     {
       return _isVertexSharp[idx];
     }
 
+    /// <summary>
+    /// Gets the specified normal vector.
+    /// </summary>
+    /// <param name="idx">The normal index.</param>
+    /// <returns>The normal vector at the specified index.</returns>
     public VectorD2D Normals(int idx)
     {
       return _normals[idx];
     }
 
+    /// <summary>
+    /// Gets the number of vertices.
+    /// </summary>
     public int NumberOfVertices { get { return _vertices.Length; } }
+
+    /// <summary>
+    /// Gets the number of normals.
+    /// </summary>
     public int NumberOfNormals { get { return _normals.Length; } }
 
+    /// <summary>
+    /// Gets the maximal distance of any vertex from the center.
+    /// </summary>
+    /// <returns>The maximal distance from the center.</returns>
     public double GetMaximalDistanceFromCenter()
     {
       double result = 0;
@@ -83,12 +135,23 @@ namespace Altaxo.Drawing.D3D.CrossSections
       return result;
     }
 
+    /// <summary>
+    /// Gets the distance of a vertex from the center.
+    /// </summary>
+    /// <param name="i">The vertex index.</param>
+    /// <returns>The distance from the center.</returns>
     public double GetDistanceFromCenter(int i)
     {
       var p = _vertices[i];
       return Math.Sqrt(p.X * p.X + p.Y * p.Y);
     }
 
+    /// <summary>
+    /// Creates a regular polygon with sharp vertices.
+    /// </summary>
+    /// <param name="radius">The polygon radius.</param>
+    /// <param name="edges">The number of edges.</param>
+    /// <returns>The created cross section.</returns>
     public static CrossSectionOfLine GetRegularSharpPolygon(double radius, int edges)
     {
       var result = new CrossSectionOfLine(numberOfVertices: edges, numberOfNormals: 2 * edges);
@@ -108,6 +171,12 @@ namespace Altaxo.Drawing.D3D.CrossSections
       return result;
     }
 
+    /// <summary>
+    /// Creates a regular polygon with rounded vertices.
+    /// </summary>
+    /// <param name="radius">The polygon radius.</param>
+    /// <param name="edges">The number of edges.</param>
+    /// <returns>The created cross section.</returns>
     public static CrossSectionOfLine GetRegularRoundedPolygon(double radius, int edges)
     {
       var result = new CrossSectionOfLine(numberOfVertices: edges, numberOfNormals: edges);
@@ -124,6 +193,13 @@ namespace Altaxo.Drawing.D3D.CrossSections
       return result;
     }
 
+    /// <summary>
+    /// Creates a star-shaped polygon.
+    /// </summary>
+    /// <param name="innerRadius">The inner radius.</param>
+    /// <param name="outerRadius">The outer radius.</param>
+    /// <param name="starArms">The number of star arms.</param>
+    /// <returns>The created cross section.</returns>
     public static CrossSectionOfLine GetStarShapedPolygon(double innerRadius, double outerRadius, int starArms)
     {
       int numVertices = starArms * 2;
@@ -152,6 +228,11 @@ namespace Altaxo.Drawing.D3D.CrossSections
       return result;
     }
 
+    /// <summary>
+    /// Creates a quadratic cross section with equal width and height.
+    /// </summary>
+    /// <param name="width">The side length.</param>
+    /// <returns>The created cross section.</returns>
     public static CrossSectionOfLine GetQuadraticCrossSection(double width)
     {
       var result = new CrossSectionOfLine(numberOfVertices: 4, numberOfNormals: 8);
@@ -179,6 +260,12 @@ namespace Altaxo.Drawing.D3D.CrossSections
       return result;
     }
 
+    /// <summary>
+    /// Creates a rectangular cross section.
+    /// </summary>
+    /// <param name="width">The width.</param>
+    /// <param name="height">The height.</param>
+    /// <returns>The created cross section.</returns>
     public static CrossSectionOfLine GetSquareCrossSection(double width, double height)
     {
       var result = new CrossSectionOfLine(numberOfVertices: 4, numberOfNormals: 8);

@@ -31,10 +31,10 @@ using System.Threading.Tasks;
 namespace Altaxo.Gui.Common
 {
   /// <summary>
-  /// Interface for a tabbed element view (data context aware).
-  /// The controller must have a 'Tabs' property (of type <see cref="Altaxo.Collections.SelectableListNodeList"/>
+  /// Interface for a tabbed element view that is aware of its data context.
+  /// The controller must have a <c>Tabs</c> property of type <see cref="Altaxo.Collections.SelectableListNodeList"/>
   /// with items of type <see cref="Altaxo.Gui.SelectableListNodeWithController"/>,
-  /// and a 'SelectedTab' property of any type (the type should match the type of the tags in <see cref="Altaxo.Gui.SelectableListNodeWithController"/>.
+  /// and a <c>SelectedTab</c> property whose type matches the type of the tags in <see cref="Altaxo.Gui.SelectableListNodeWithController"/>.
   /// </summary>
   /// <seealso cref="Altaxo.Gui.IDataContextAwareView" />
   public interface ITabbedElementViewDC : IDataContextAwareView

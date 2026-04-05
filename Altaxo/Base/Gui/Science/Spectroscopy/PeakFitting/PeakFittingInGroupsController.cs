@@ -29,13 +29,20 @@ using Altaxo.Units;
 namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
 {
 
+  /// <summary>
+  /// View interface for peak fitting in groups.
+  /// </summary>
   public interface IPeakFittingInGroupsView : IDataContextAwareView { }
 
 
+  /// <summary>
+  /// Controller for <see cref="PeakFittingInGroups"/>.
+  /// </summary>
   [UserControllerForObject(typeof(PeakFittingInGroups))]
   [ExpectedTypeOfView(typeof(IPeakFittingInGroupsView))]
   public class PeakFittingInGroupsController : PeakFittingBaseController<PeakFittingInGroups, IPeakFittingInGroupsView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -45,6 +52,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
 
     private DimensionfulQuantity _minimalGroupSeparationFWHMFactor;
 
+    /// <summary>
+    /// Gets or sets the minimal group separation in FWHM factors.
+    /// </summary>
     public DimensionfulQuantity MinimalGroupSeparationFWHMFactor
     {
       get => _minimalGroupSeparationFWHMFactor;
@@ -60,6 +70,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
 
     private int _minimumOrderOfBaselinePolynomial;
 
+    /// <summary>
+    /// Gets or sets the minimum order of the baseline polynomial.
+    /// </summary>
     public int MinimumOrderOfBaselinePolynomial
     {
       get => _minimumOrderOfBaselinePolynomial;
@@ -75,6 +88,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
 
     private int _maximumOrderOfBaselinePolynomial;
 
+    /// <summary>
+    /// Gets or sets the maximum order of the baseline polynomial.
+    /// </summary>
     public int MaximumOrderOfBaselinePolynomial
     {
       get => _maximumOrderOfBaselinePolynomial;
@@ -90,6 +106,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
 
     private int _numberOfPeaksAtMaximalOrderOfBaselinePolynomial;
 
+    /// <summary>
+    /// Gets or sets the number of peaks at the maximal baseline polynomial order.
+    /// </summary>
     public int NumberOfPeaksAtMaximalOrderOfBaselinePolynomial
     {
       get => _numberOfPeaksAtMaximalOrderOfBaselinePolynomial;
@@ -107,6 +126,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
 
     private bool _isEvaluatingSeparateVariances;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether separate variances are evaluated.
+    /// </summary>
     public bool IsEvaluatingSeparateVariances
     {
       get => _isEvaluatingSeparateVariances;
@@ -124,6 +146,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -146,6 +169,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = _doc with

@@ -31,6 +31,9 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D.Shapes
 {
+  /// <summary>
+  /// Provides the base implementation for image-based graphics.
+  /// </summary>
   [Serializable]
   public abstract class ImageGraphic : GraphicBase
   {
@@ -42,6 +45,10 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     #region Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ImageGraphic"/> class during deserialization.
+    /// </summary>
+    /// <param name="info">The deserialization info.</param>
     protected ImageGraphic(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     :
     base(info)
@@ -51,9 +58,13 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// <summary>
     /// 2016-02-23: Initial version
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="ImageGraphic"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ImageGraphic), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ImageGraphic)obj;
@@ -61,6 +72,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
         info.AddValue("SizeBasedOnSourceSize", s._isSizeCalculationBasedOnSourceSize);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (ImageGraphic)(o ?? throw new ArgumentNullException(nameof(o)));
@@ -73,6 +85,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ImageGraphic"/> class.
+    /// </summary>
     protected ImageGraphic()
       :
       base(new ItemLocationDirectAspectPreserving())
@@ -80,11 +95,20 @@ namespace Altaxo.Graph.Graph3D.Shapes
       _location = new ItemLocationDirectAspectPreserving() { ParentObject = this };
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ImageGraphic"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The image graphic to copy from.</param>
     protected ImageGraphic(ImageGraphic from)
       : base(from)
     {
     }
 
+    /// <summary>
+    /// Copies values from another <see cref="ImageGraphic"/> instance.
+    /// </summary>
+    /// <param name="from">The image graphic to copy from.</param>
+    /// <param name="withBaseMembers">If set to <c>true</c>, base members are copied as well.</param>
     protected void CopyFrom(ImageGraphic from, bool withBaseMembers)
     {
       if (withBaseMembers)
@@ -93,6 +117,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       _isSizeCalculationBasedOnSourceSize = from._isSizeCalculationBasedOnSourceSize;
     }
 
+    /// <inheritdoc/>
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -112,6 +137,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       }
     }
 
+    /// <inheritdoc/>
     public override bool AutoSize
     {
       get
@@ -120,6 +146,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the size calculation is based on the source image size.
+    /// </summary>
     public bool IsSizeCalculationBasedOnSourceSize
     {
       get
@@ -133,6 +162,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets the aspect-ratio preserving mode.
+    /// </summary>
     public AspectRatioPreservingMode AspectRatioPreserving
     {
       get
@@ -148,8 +180,12 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// <summary>Get the size of the original image in points (1/72 inch).</summary>
     public abstract PointD2D GetImageSizePt();
 
+    /// <summary>
+    /// Gets the image represented by this graphic.
+    /// </summary>
     public abstract Image GetImage();
 
+    /// <inheritdoc/>
     public override IHitTestObject? HitTest(HitTestPointData htd)
     {
       var result = base.HitTest(htd);

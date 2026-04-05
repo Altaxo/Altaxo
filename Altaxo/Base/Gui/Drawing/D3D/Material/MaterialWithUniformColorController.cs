@@ -30,10 +30,16 @@ using Altaxo.Drawing.D3D.Material;
 
 namespace Altaxo.Gui.Drawing.D3D.Material
 {
+  /// <summary>
+  /// View contract for editing a uniform-color material.
+  /// </summary>
   public interface IMaterialWithUniformColorView : IMaterialView, IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for editing <see cref="MaterialWithUniformColor"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IMaterialWithUniformColorView))]
   [UserControllerForObject(typeof(MaterialWithUniformColor), 101)]
   public class MaterialWithUniformColorController : MVCANControllerEditImmutableDocBase<MaterialWithUniformColor, IMaterialWithUniformColorView>
@@ -42,6 +48,9 @@ namespace Altaxo.Gui.Drawing.D3D.Material
 
     private double _indexOfRefraction;
 
+    /// <summary>
+    /// Gets or sets the index of refraction.
+    /// </summary>
     public double IndexOfRefraction
     {
       get => _indexOfRefraction;
@@ -56,6 +65,9 @@ namespace Altaxo.Gui.Drawing.D3D.Material
     }
     private double _smoothness;
 
+    /// <summary>
+    /// Gets or sets the smoothness.
+    /// </summary>
     public double Smoothness
     {
       get => _smoothness;
@@ -70,6 +82,9 @@ namespace Altaxo.Gui.Drawing.D3D.Material
     }
     private double _metalness;
 
+    /// <summary>
+    /// Gets or sets the metalness.
+    /// </summary>
     public double Metalness
     {
       get => _metalness;
@@ -85,6 +100,9 @@ namespace Altaxo.Gui.Drawing.D3D.Material
 
     private NamedColor _color;
 
+    /// <summary>
+    /// Gets or sets the uniform material color.
+    /// </summary>
     public NamedColor Color
     {
       get => _color;
@@ -101,6 +119,7 @@ namespace Altaxo.Gui.Drawing.D3D.Material
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -114,6 +133,7 @@ namespace Altaxo.Gui.Drawing.D3D.Material
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       try
@@ -131,6 +151,7 @@ namespace Altaxo.Gui.Drawing.D3D.Material
       }
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;

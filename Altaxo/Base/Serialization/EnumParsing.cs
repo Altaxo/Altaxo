@@ -30,10 +30,15 @@ using System.Reflection;
 namespace Altaxo.Serialization
 {
   /// <summary>
-  /// Summary description for EnumParsing.
+  /// Provides helper methods for working with enums.
   /// </summary>
   public class EnumParsing
   {
+    /// <summary>
+    /// Gets the <see cref="DescriptionAttribute"/> text for an enum value, if available.
+    /// </summary>
+    /// <param name="value">The enum value.</param>
+    /// <returns>The description text, or the enum value converted to string if no description is available.</returns>
     public static string GetDescription(Enum value)
     {
       FieldInfo? fi = value.GetType().GetField(value.ToString());

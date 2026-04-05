@@ -27,14 +27,20 @@ using Altaxo.Data;
 
 namespace Altaxo.Gui.Data
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="ProcessSourceTablesScriptDataSourceController"/>.
+  /// </summary>
   public interface IProcessSourceTablesScriptDataSourceView : IDataContextAwareView { }
 
+  /// <summary>
+  /// Controller for <see cref="ProcessSourceTablesScriptDataSource"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IProcessSourceTablesScriptDataSourceView))]
-
   [UserControllerForObject(typeof(ProcessSourceTablesScriptDataSource))]
   public class ProcessSourceTablesScriptDataSourceController : DataSourceControllerBase<ProcessSourceTablesScriptDataSource>
   {
 
+    /// <inheritdoc />
     public override bool ShowProcessDataBeforeProcessOptions
     {
       get
@@ -43,11 +49,13 @@ namespace Altaxo.Gui.Data
       }
     }
 
+    /// <inheritdoc />
     protected override bool IsProcessDataInitiallyExpanded()
     {
       return true;
     }
 
+    /// <inheritdoc />
     protected override bool IsProcessOptionsInitiallyExpanded()
     {
       return true;

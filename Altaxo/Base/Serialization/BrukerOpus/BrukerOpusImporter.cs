@@ -38,6 +38,7 @@ namespace Altaxo.Serialization.BrukerOpus
   /// </remarks>
   public record BrukerOpusImporter : DataFileImporterBase
   {
+    /// <inheritdoc />
     public override (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
     {
       return ([".0"], "Bruker Opus files (*.0)");
@@ -50,12 +51,14 @@ namespace Altaxo.Serialization.BrukerOpus
     }
 
 
+    /// <inheritdoc />
     public override IAltaxoTableDataSource? CreateTableDataSource(IReadOnlyList<string> fileNames, object importOptions)
     {
       return new BrukerOpusImportDataSource(fileNames, (BrukerOpusImportOptions)importOptions);
     }
 
 
+    /// <inheritdoc />
     public override double GetProbabilityForBeingThisFileFormat(string fileName)
     {
       double p = 0;
@@ -87,6 +90,7 @@ namespace Altaxo.Serialization.BrukerOpus
 
 
 
+    /// <inheritdoc />
     public override string? Import(IReadOnlyList<string> filenames, DataTable table, object importOptionsObj, bool attachDataSource = true)
     {
       var importOptions = (BrukerOpusImportOptions)importOptionsObj;

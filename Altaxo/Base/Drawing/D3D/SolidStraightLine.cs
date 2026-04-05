@@ -38,6 +38,9 @@ namespace Altaxo.Drawing.D3D
   {
     private SolidStraightLineDashSegment _dashSegment;
 
+    /// <summary>
+    /// Adds geometry for a solid straight 3D line using the specified pen.
+    /// </summary>
     public void AddGeometry(
     Action<PointD3D, VectorD3D> AddPositionAndNormal,
     Action<int, int, int, bool> AddIndices,

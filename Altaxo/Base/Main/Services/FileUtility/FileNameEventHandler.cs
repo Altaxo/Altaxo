@@ -21,14 +21,15 @@
 namespace Altaxo.Main.Services
 {
   /// <summary>
-  /// EventArgs with a path name.
+  /// Event arguments that carry a <see cref="PathName"/> value.
   /// </summary>
   public class PathNameEventArgs : System.EventArgs
   {
     private PathName _pathName;
 
-    /// <summary>Gets the name of the path.</summary>
-    /// <value>The name of the path.</value>
+    /// <summary>
+    /// Gets the path name.
+    /// </summary>
     public PathName PathName
     {
       get
@@ -37,6 +38,10 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PathNameEventArgs"/> class.
+    /// </summary>
+    /// <param name="pathName">The path name.</param>
     public PathNameEventArgs(PathName pathName)
     {
       this._pathName = pathName;
@@ -47,12 +52,15 @@ namespace Altaxo.Main.Services
 
 
   /// <summary>
-  /// EventArgs with a file name.
+  /// Event arguments that carry a <see cref="FileName"/> value.
   /// </summary>
   public class FileNameEventArgs : System.EventArgs
   {
     private FileName fileName;
 
+    /// <summary>
+    /// Gets the file name.
+    /// </summary>
     public FileName FileName
     {
       get
@@ -61,11 +69,19 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileNameEventArgs"/> class.
+    /// </summary>
+    /// <param name="fileName">The file name.</param>
     public FileNameEventArgs(FileName fileName)
     {
       this.fileName = fileName;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileNameEventArgs"/> class.
+    /// </summary>
+    /// <param name="fileName">The file name as string.</param>
     public FileNameEventArgs(string fileName)
     {
       this.fileName = FileName.Create(fileName);

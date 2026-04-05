@@ -31,33 +31,54 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi
 {
+  /// <summary>
+  /// Provides extension methods and helper functions for GDI geometry types.
+  /// </summary>
   public static class GdiExtensionMethods
   {
+    /// <summary>
+    /// Subtracts one point from another.
+    /// </summary>
     public static PointF Subtract(this PointF p1, PointF p2)
     {
       return new PointF(p1.X - p2.X, p1.Y - p2.Y);
     }
 
+    /// <summary>
+    /// Adds two points.
+    /// </summary>
     public static PointF Add(this PointF p1, PointF p2)
     {
       return new PointF(p1.X + p2.X, p1.Y + p2.Y);
     }
 
+    /// <summary>
+    /// Adds a scaled point to another point.
+    /// </summary>
     public static PointF AddScaled(this PointF p1, PointF p2, float s)
     {
       return new PointF(p1.X + p2.X * s, p1.Y + p2.Y * s);
     }
 
+    /// <summary>
+    /// Gets the vector length.
+    /// </summary>
     public static float VectorLength(this PointF p)
     {
       return (float)Math.Sqrt(p.X * p.X + p.Y * p.Y);
     }
 
+    /// <summary>
+    /// Gets the squared vector length.
+    /// </summary>
     public static float VectorLengthSquared(this PointF p)
     {
       return (p.X * p.X + p.Y * p.Y);
     }
 
+    /// <summary>
+    /// Gets the distance to another point.
+    /// </summary>
     public static float DistanceTo(this PointF p, PointF q)
     {
       var dx = p.X - q.X;
@@ -65,6 +86,9 @@ namespace Altaxo.Graph.Gdi
       return (float)Math.Sqrt(dx * dx + dy * dy);
     }
 
+    /// <summary>
+    /// Gets the squared distance to another point.
+    /// </summary>
     public static float DistanceSquaredTo(this PointF p, PointF q)
     {
       var dx = p.X - q.X;
@@ -72,26 +96,41 @@ namespace Altaxo.Graph.Gdi
       return dx * dx + dy * dy;
     }
 
+    /// <summary>
+    /// Returns a point with exchanged x- and y-coordinates.
+    /// </summary>
     public static PointF FlipXY(this PointF p)
     {
       return new PointF(p.Y, p.X);
     }
 
+    /// <summary>
+    /// Rotates a point by 90 degrees around the origin.
+    /// </summary>
     public static PointF Rotate90Degree(this PointF p)
     {
       return new PointF(-p.Y, p.X);
     }
 
+    /// <summary>
+    /// Flips the sign of both coordinates.
+    /// </summary>
     public static PointF FlipSign(this PointF p)
     {
       return new PointF(-p.X, -p.Y);
     }
 
+    /// <summary>
+    /// Calculates the dot product of two points interpreted as vectors.
+    /// </summary>
     public static float DotProduct(this PointF p, PointF q)
     {
       return p.X * q.X + p.Y * q.Y;
     }
 
+    /// <summary>
+    /// Normalizes the point interpreted as a vector.
+    /// </summary>
     public static PointF Normalize(this PointF p)
     {
       var s = 1 / Math.Sqrt(p.X * p.X + p.Y * p.Y);
@@ -191,8 +230,8 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     /// <param name="polyline">The polyline.</param>
     /// <returns>Total length of the polyline.</returns>
-    /// <exception cref="ArgumentNullException">polyline</exception>
-    /// <exception cref="ArgumentException">Polyline must have at least 2 points - polyline</exception>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="polyline"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown if <paramref name="polyline"/> contains fewer than two points.</exception>
     public static double TotalLineLength(this PointF[] polyline)
     {
       if (polyline is null)
@@ -223,8 +262,8 @@ namespace Altaxo.Graph.Gdi
     /// <param name="startIdx">Index of the first point of the polyline in array <paramref name="polyline"/>.</param>
     /// <param name="count">The number of points of the polyline. An exception is thrown if this argument is less than 2.</param>
     /// <returns>The total length of the polyline, from index <paramref name="startIdx"/> with number of points equal to <paramref name="count"/>.</returns>
-    /// <exception cref="ArgumentNullException">polyline</exception>
-    /// <exception cref="ArgumentException">Polyline must have at least 2 points - polyline</exception>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="polyline"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown if <paramref name="count"/> is less than two.</exception>
     public static double TotalLineLength(this PointF[] polyline, int startIdx, int count)
     {
       if (polyline is null)
@@ -250,6 +289,9 @@ namespace Altaxo.Graph.Gdi
       return sum;
     }
 
+    /// <summary>
+    /// Gets the distance between two points.
+    /// </summary>
     public static double LengthBetween(PointF p0, PointF p1)
     {
       var dx = p1.X - p0.X;
@@ -633,6 +675,9 @@ namespace Altaxo.Graph.Gdi
 
     #region String Alignment
 
+    /// <summary>
+    /// Converts a GDI string alignment to an Altaxo alignment.
+    /// </summary>
     public static Altaxo.Drawing.Alignment ToAltaxo(System.Drawing.StringAlignment alignment)
     {
       Altaxo.Drawing.Alignment result;
@@ -656,6 +701,9 @@ namespace Altaxo.Graph.Gdi
       return result;
     }
 
+    /// <summary>
+    /// Converts an Altaxo alignment to a GDI string alignment.
+    /// </summary>
     public static System.Drawing.StringAlignment ToGdi(Altaxo.Drawing.Alignment alignment)
     {
       System.Drawing.StringAlignment result;
@@ -679,9 +727,9 @@ namespace Altaxo.Graph.Gdi
       return result;
     }
 
-    #endregion String Alignement
+    #endregion String Alignment
 
-    #region CardialSpline to BezierSegments
+    #region CardinalSpline to BezierSegments
 
     // see also source of wine at: http://source.winehq.org/source/dlls/gdiplus/graphicspath.c#L445
     //
@@ -692,7 +740,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="end">The end point.</param>
     /// <param name="adj">The adjacent point next to the endpoint.</param>
     /// <param name="tension">The tension.</param>
-    /// <returns></returns>
+    /// <returns>The calculated Bezier endpoint control point.</returns>
     /// <remarks>Original name in Wine sources: calc_curve_bezier_endp</remarks>
     private static PointF Calc_Curve_Bezier_Endpoint(PointF end, PointF adj, float tension)
     {
@@ -725,7 +773,7 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Calculates the control points of the incoming and outgoing Bezier segment around the original point <paramref name="p1"/>.
     /// </summary>
-    /// <param name="pts0">The previous point on a cardinal spline curce.</param>
+    /// <param name="pts0">The previous point on a cardinal spline curve.</param>
     /// <param name="pts1">The point on a cardinal spline curve for which to calculate the incoming and outgoing Bezier control points.</param>
     /// <param name="pts2">The nex point on the cardinal spline curve.</param>
     /// <param name="tension">The tension of the cardinal spline.</param>
@@ -901,7 +949,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="t1">The curve parameter that corresponds to the point <paramref name="p3_0"/>.</param>
     /// <param name="flattenedList">The list with flattened points.</param>
     /// <param name="insertIdx">Index in the <paramref name="flattenedList"/> where to insert the next calculated point.</param>
-    /// <returns></returns>
+    /// <returns><see langword="true"/> if the segment was split further; otherwise, <see langword="false"/>.</returns>
     public static bool FlattenBezierSegment(double absoluteTolerance, int maxRecursionLevel, PointF p0_0, PointF p1_0, PointF p2_0, PointF p3_0, float t0, float t1, List<Tuple<float, PointF>> flattenedList, int insertIdx)
     {
       // First, test for absolute deviation of the curve
@@ -952,6 +1000,9 @@ namespace Altaxo.Graph.Gdi
       return false;
     }
 
+    /// <summary>
+    /// Returns the square of a value.
+    /// </summary>
     private static float Pow2(float x)
     {
       return x * x;
@@ -970,7 +1021,7 @@ namespace Altaxo.Graph.Gdi
     /// If false, the solution with the lower t is returned, presuming that t is in the range[0,1]. If neither of the both solutions is in
     /// the range [0,1], <see cref="double.NaN"/> is returned.
     /// </param>
-    /// <returns></returns>
+    /// <returns>The requested parameter on the line segment, or <see cref="double.NaN"/> if no valid solution exists.</returns>
     public static double GetParameterOnLineSegmentFromDistanceToPoint(PointF p0, PointF p1, PointF pivot, double dsqr, bool chooseFarSolution)
     {
       var dx = p1.X - p0.X;
@@ -1005,6 +1056,9 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Gets the fractional index on a Bezier curve for a specified distance from the start.
+    /// </summary>
     public static double GetFractionalIndexFromDistanceFromStartOfBezierCurve(PointF[] points, double distanceFromStart)
     {
       var pivot = points[0];
@@ -1040,6 +1094,9 @@ namespace Altaxo.Graph.Gdi
       return double.NaN;
     }
 
+    /// <summary>
+    /// Gets the fractional index on a Bezier curve for a specified distance from the end.
+    /// </summary>
     public static double GetFractionalIndexFromDistanceFromEndOfBezierCurve(PointF[] points, double distanceFromEnd)
     {
       var pivot = points[points.Length - 1];
@@ -1075,6 +1132,9 @@ namespace Altaxo.Graph.Gdi
       return double.NaN;
     }
 
+    /// <summary>
+    /// Shortens a Bezier curve by distances from its start and end.
+    /// </summary>
     public static PointF[]? ShortenBezierCurve(PointF[] points, double distanceFromStart, double distanceFromEnd)
     {
       int totalSegments = (points.Length - 1) / 3;
@@ -1133,7 +1193,7 @@ namespace Altaxo.Graph.Gdi
       return result;
     }
 
-    #endregion CardialSpline to BezierSegments
+    #endregion CardinalSpline to BezierSegments
 
     #region Distance Line to Point
 
@@ -1275,6 +1335,9 @@ namespace Altaxo.Graph.Gdi
       return (float)Math.Sqrt(Math.Min(horz, vert));
     }
 
+    /// <summary>
+    /// Translates the cross by the specified offset.
+    /// </summary>
     public void Translate(float dx, float dy)
     {
       Center.X += dx;

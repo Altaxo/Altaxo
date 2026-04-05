@@ -31,10 +31,13 @@ using Altaxo.Gui;
 
 namespace Altaxo.Main.Services
 {
+  /// <summary>
+  /// Provides factory and dialog services for GUI-related controllers and views.
+  /// </summary>
   public interface IGuiFactoryService
   {
     /// <summary>
-    /// Gets the window handle of the main window;
+    /// Gets the window handle of the main window.
     /// </summary>
     IntPtr MainWindowHandle { get; }
 
@@ -57,16 +60,38 @@ namespace Altaxo.Main.Services
     /// <summary>Gets the screen resolution that is set in windows in dots per inch.</summary>
     PointD2D ScreenResolutionDpi { get; }
 
+    /// <summary>
+    /// Finds and attaches a suitable control to the specified controller.
+    /// </summary>
+    /// <param name="controller">The controller to attach a control to.</param>
     void FindAndAttachControlTo(IMVCController controller);
 
+    /// <summary>
+    /// Finds and attaches a suitable control of the expected type to the specified controller.
+    /// </summary>
+    /// <param name="controller">The controller to attach a control to.</param>
+    /// <param name="expectedType">The expected control type.</param>
+    /// <returns>The attached control, or <c>null</c> if no suitable control was found.</returns>
     object? FindAndAttachControlTo(IMVCController controller, Type expectedType);
 
+    /// <summary>
+    /// Gets a controller for the specified arguments.
+    /// </summary>
     IMVCController? GetController(object[] args, Type expectedControllerType);
 
+    /// <summary>
+    /// Gets a controller for the specified arguments and document usage mode.
+    /// </summary>
     IMVCController? GetController(object[] args, Type expectedControllerType, UseDocument copyDocument);
 
+    /// <summary>
+    /// Gets a controller for the specified arguments while overriding the type of the first argument.
+    /// </summary>
     IMVCController? GetController(object[] creationArgs, Type overrideArg0Type, Type expectedControllerType, UseDocument copyDocument);
 
+    /// <summary>
+    /// Gets a controller together with an attached control for the specified arguments.
+    /// </summary>
     IMVCController? GetControllerAndControl(object[] args, Type expectedControllerType);
 
     /// <summary>
@@ -78,20 +103,56 @@ namespace Altaxo.Main.Services
     /// <returns>The controller for the provided arguments. A control is already set.</returns>
     T GetRequiredControllerAndControl<T>(object arg, params object?[]? args) where T : class, IMVCController;
 
+    /// <summary>
+    /// Gets a controller together with an attached control for the specified arguments and document usage mode.
+    /// </summary>
     IMVCController? GetControllerAndControl(object[] args, Type expectedControllerType, UseDocument copyDocument);
 
+    /// <summary>
+    /// Gets a controller together with an attached control while overriding the type of the first argument.
+    /// </summary>
     IMVCController? GetControllerAndControl(object[] args, Type overrideArg0Type, Type expectedControllerType, UseDocument copyDocument);
 
+    /// <summary>
+    /// Gets a user-friendly class name for the specified type.
+    /// </summary>
+    /// <param name="definedtype">The type to describe.</param>
+    /// <returns>A user-friendly class name.</returns>
     string GetUserFriendlyClassName(Type definedtype);
 
+    /// <summary>
+    /// Gets user-friendly class names for the specified types.
+    /// </summary>
+    /// <param name="types">The types to describe.</param>
+    /// <param name="withStartingNone">If set to <c>true</c>, a leading `None` entry is included.</param>
+    /// <returns>The user-friendly class names.</returns>
     string[] GetUserFriendlyClassName(Type[] types, bool withStartingNone);
 
+    /// <summary>
+    /// Gets a user-friendly name for the specified enumeration value.
+    /// </summary>
+    /// <param name="value">The enumeration value.</param>
+    /// <returns>A user-friendly name.</returns>
     string GetUserFriendlyName(Enum value);
 
+    /// <summary>
+    /// Shows a cancel dialog for a background thread that is started by the service.
+    /// </summary>
     bool ShowBackgroundCancelDialog(int millisecondsDelay, System.Threading.ThreadStart threadstart, IExternalDrivenBackgroundMonitor monitor);
 
+    /// <summary>
+    /// Shows a cancel dialog for an already created background thread.
+    /// </summary>
     bool ShowBackgroundCancelDialog(int millisecondsDelay, System.Threading.Thread thread, IExternalDrivenBackgroundMonitor monitor);
+
+    /// <summary>
+    /// Shows a cancel dialog for a task.
+    /// </summary>
     bool ShowTaskCancelDialog(int millisecondsDelay, System.Threading.Tasks.Task task, IExternalDrivenBackgroundMonitor monitor);
+
+    /// <summary>
+    /// Executes an action that can be cancelled by the user.
+    /// </summary>
     Exception? ExecuteAsUserCancellable(int millisecondsDelay, Action<IProgressReporter> action);
 
     /// <summary>
@@ -102,13 +163,22 @@ namespace Altaxo.Main.Services
     /// <param name="addInTreePath">Add in tree path used to build the context menu.</param>
     /// <param name="x">The x coordinate of the location where to show the context menu.</param>
     /// <param name="y">The y coordinate of the location where to show the context menu.</param>
-    /// <returns>The context menu. Returns Null if there is no registered context menu provider</returns>
+    /// <returns>The context menu. Returns <c>null</c> if there is no registered context menu provider.</returns>
     void ShowContextMenu(object parent, object owner, string addInTreePath, double x, double y);
 
+    /// <summary>
+    /// Shows a dialog for the specified controller.
+    /// </summary>
     bool ShowDialog(IMVCAController controller, string title);
 
+    /// <summary>
+    /// Shows a dialog for selecting an enumeration value.
+    /// </summary>
     bool ShowDialog(ref Enum arg, string title);
 
+    /// <summary>
+    /// Shows a dialog for editing enumeration flags.
+    /// </summary>
     bool ShowDialogForEnumFlag(ref System.Enum arg, string title);
 
     /// <summary>
@@ -118,7 +188,7 @@ namespace Altaxo.Main.Services
     /// If the return value is true, arg contains the configured object. </param>
     /// <param name="title">The title of the dialog.</param>
     /// <returns>True if the object was successfully configured, false otherwise.</returns>
-    /// <remarks>The presumtions to get this function working are:
+    /// <remarks>The prerequisites for this function are:
     /// <list>
     /// <item>A controller which implements <see cref="IMVCAController" /> has to exist.</item>
     /// <item>A <see cref="UserControllerForObjectAttribute" /> has to be assigned to that controller, and the argument has to be the type of the object you want to configure.</item>
@@ -135,7 +205,7 @@ namespace Altaxo.Main.Services
     /// <param name="title">The title of the dialog.</param>
     /// <param name="showApplyButton">If true, the Apply button is shown.</param>
     /// <returns>True if the object was successfully configured, false otherwise.</returns>
-    /// <remarks>The presumtions to get this function working are:
+    /// <remarks>The prerequisites for this function are:
     /// <list>
     /// <item>A controller which implements <see cref="IMVCAController" /> has to exist.</item>
     /// <item>A <see cref="UserControllerForObjectAttribute" /> has to be assigned to that controller, and the argument has to be the type of the object you want to configure.</item>
@@ -144,22 +214,43 @@ namespace Altaxo.Main.Services
     /// </remarks>
     bool ShowDialog<T>([DisallowNull][NotNull] ref T arg, string title, bool showApplyButton);
 
+    /// <summary>
+    /// Shows a dialog for the specified controller and controls whether the Apply button is visible.
+    /// </summary>
     bool ShowDialog(IMVCAController controller, string title, bool showApplyButton);
 
+    /// <summary>
+    /// Shows a dialog for the specified arguments and controls whether the Apply button is visible.
+    /// </summary>
     bool ShowDialog(object[] args, string title, bool showApplyButton);
 
+    /// <summary>
+    /// Shows a dialog for the specified arguments.
+    /// </summary>
     bool ShowDialog(object[] args, string title);
 
+    /// <summary>
+    /// Shows an open-file dialog.
+    /// </summary>
     bool ShowOpenFileDialog(OpenFileOptions options);
 
+    /// <summary>
+    /// Shows a save-file dialog.
+    /// </summary>
     bool ShowSaveFileDialog(SaveFileOptions options);
 
+    /// <summary>
+    /// Shows a folder-selection dialog.
+    /// </summary>
     bool ShowFolderDialog(FolderChoiceOptions options);
 
+    /// <summary>
+    /// Shows a yes/no message box.
+    /// </summary>
     bool YesNoMessageBox(string txt, string caption, bool defaultanswer);
 
     /// <summary>
-    /// Shows a message box with a questtion to be answered either by YES, NO, or CANCEL.
+    /// Shows a message box with a question to be answered either by YES, NO, or CANCEL.
     /// </summary>
     /// <param name="text">The question text.</param>
     /// <param name="caption">The caption of the dialog box.</param>
@@ -167,6 +258,9 @@ namespace Altaxo.Main.Services
     /// <returns>True if the user answered with Yes, false if the user answered No, null if the user pressed Cancel.</returns>
     bool? YesNoCancelMessageBox(string text, string caption, bool? defaultAnswer);
 
+    /// <summary>
+    /// Shows a message box with the error text.
+    /// </summary>
     void ErrorMessageBox(string errortxt);
 
     /// <summary>
@@ -176,14 +270,20 @@ namespace Altaxo.Main.Services
     /// <param name="title">The title of the message box.</param>
     void ErrorMessageBox(string errortxt, string title);
 
+    /// <summary>
+    /// Shows an information message box.
+    /// </summary>
     void InfoMessageBox(string errortxt);
 
+    /// <summary>
+    /// Shows an information message box with the specified title.
+    /// </summary>
     void InfoMessageBox(string errortxt, string title);
 
     #region Clipboard
 
     /// <summary>
-    /// Get a new clipboard data object. You can use this to put data on the clipboard.
+    /// Gets a new clipboard data object. You can use this to put data on the clipboard.
     /// </summary>
     /// <returns>A newly created data object.</returns>
     IClipboardSetDataObject GetNewClipboardDataObject();
@@ -211,29 +311,32 @@ namespace Altaxo.Main.Services
 
     #region Commands
 
+    /// <summary>
+    /// Invalidates command requery suggestions.
+    /// </summary>
     void InvalidateRequerySuggested();
 
     /// <summary>
     /// Gets a command that executes an action and evaluates the <paramref name="canExecute"/> condition every time when
-    /// something in the Gui has changed.
+    /// something in the GUI has changed.
     /// </summary>
     /// <param name="execute">The execute action.</param>
     /// <param name="canExecute">The canExecute function that evaluates if the execute action can be executed under the current conditions. May be null (in this case, it is considered to return true).</param>
-    /// <returns>A command that can be used, e.g. for binding to the Gui.</returns>
+    /// <returns>A command that can be used, for example for binding to the GUI.</returns>
     ICommand NewRelayCommand(Action execute, Func<bool>? canExecute = null);
 
     /// <summary>
     /// Gets a command that executes an action and evaluates the <paramref name="canExecute"/> condition every time when
-    /// something in the Gui has changed.
+    /// something in the GUI has changed.
     /// </summary>
     /// <param name="execute">The execute action.</param>
     /// <param name="canExecute">The canExecute function that evaluates if the execute action can be executed under the current conditions. May be null (in this case, it is considered to return true).</param>
-    /// <returns>A command that can be used, e.g. for binding to the Gui.</returns>
+    /// <returns>A command that can be used, for example for binding to the GUI.</returns>
     ICommand NewRelayCommand(Action<object> execute, Predicate<object>? canExecute = null);
 
     /// <summary>
     /// Registers a handler that will be called back if something in the Gui has changed so that
-    /// a requery of CanExecute() functions might be neccessary. This handler will be bound weak to the event.
+    /// a requery of `CanExecute()` functions might be necessary. This handler will be bound weakly to the event.
     /// Unregister by using <see cref="UnregisterRequerySuggestedHandler(EventHandler)"/>.
     /// </summary>
     /// <param name="handler">The handler.</param>

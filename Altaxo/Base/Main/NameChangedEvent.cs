@@ -74,7 +74,7 @@ namespace Altaxo.Main
   /// <summary>
   /// Event handler of the name changed event.
   /// </summary>
-  /// <param name="sender">The sender of the event (not neccessarily the instance whose name has changed).</param>
+  /// <param name="sender">The sender of the event, not necessarily the instance whose name has changed.</param>
   /// <param name="e">The <see cref="NameChangedEventArgs"/> instance containing the event data.</param>
   public delegate void NameChangedEventHandler(object sender, NameChangedEventArgs e);
 }

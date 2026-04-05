@@ -32,10 +32,16 @@ using AUL = Altaxo.Units.Length;
 
 namespace Altaxo.Gui.Graph
 {
+  /// <summary>
+  /// View contract for editing grid partitioning.
+  /// </summary>
   public interface IGridPartitioningView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for editing <see cref="GridPartitioning"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IGridPartitioningView))]
   [UserControllerForObject(typeof(GridPartitioning))]
   public class GridPartitioningController : MVCANControllerEditOriginalDocBase<GridPartitioning, IGridPartitioningView>
@@ -45,6 +51,7 @@ namespace Altaxo.Gui.Graph
 
     private PointD2D _parentLayerSize;
 
+    /// <inheritdoc/>
     public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -52,12 +59,21 @@ namespace Altaxo.Gui.Graph
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the column partition collection.
+    /// </summary>
     public ObservableCollection<DimensionfulQuantity> ColumnCollection { get; } = new();
 
+    /// <summary>
+    /// Gets the row partition collection.
+    /// </summary>
     public ObservableCollection<DimensionfulQuantity> RowCollection { get; } = new();
 
     private QuantityWithUnitGuiEnvironment _xSizeEnvironment;
 
+    /// <summary>
+    /// Gets or sets the unit environment for X sizes.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment XSizeEnvironment
     {
       get => _xSizeEnvironment;
@@ -72,6 +88,9 @@ namespace Altaxo.Gui.Graph
     }
     private QuantityWithUnitGuiEnvironment _ySizeEnvironment;
 
+    /// <summary>
+    /// Gets or sets the unit environment for Y sizes.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment YSizeEnvironment
     {
       get => _ySizeEnvironment;
@@ -94,6 +113,7 @@ namespace Altaxo.Gui.Graph
 
     #endregion
 
+    /// <inheritdoc/>
     public override void Dispose(bool isDisposing)
     {
       ColumnCollection.Clear();
@@ -106,6 +126,7 @@ namespace Altaxo.Gui.Graph
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc/>
     public override bool InitializeDocument(params object[] args)
     {
       if (args.Length < 2)
@@ -123,6 +144,7 @@ namespace Altaxo.Gui.Graph
       return base.InitializeDocument(args);
     }
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -148,6 +170,7 @@ namespace Altaxo.Gui.Graph
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc.XPartitioning.Clear();

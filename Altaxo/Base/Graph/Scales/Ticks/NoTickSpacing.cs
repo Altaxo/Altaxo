@@ -32,16 +32,18 @@ using System.Text;
 namespace Altaxo.Graph.Scales.Ticks
 {
   /// <summary>
-  /// Class that return no ticks at all.
+  /// Represents a tick-spacing implementation that returns no ticks at all.
   /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Graph.Scales.Ticks.NoTickSpacing}")]
   public class NoTickSpacing : TickSpacing
   {
+    /// <inheritdoc />
     public override object Clone()
     {
       return new NoTickSpacing();
     }
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -50,6 +52,7 @@ namespace Altaxo.Graph.Scales.Ticks
       return obj is NoTickSpacing;
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
@@ -60,11 +63,13 @@ namespace Altaxo.Graph.Scales.Ticks
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NoTickSpacing), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (NoTickSpacing)obj;
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
        var s = (NoTickSpacing?)o ?? new NoTickSpacing();
@@ -77,20 +82,24 @@ namespace Altaxo.Graph.Scales.Ticks
 
     #endregion Serialization
 
+    /// <inheritdoc />
     public override bool PreProcessScaleBoundaries(ref Altaxo.Data.AltaxoVariant org, ref Altaxo.Data.AltaxoVariant end, bool isOrgExtendable, bool isEndExtendable)
     {
       return false;
     }
 
+    /// <inheritdoc />
     public override void FinalProcessScaleBoundaries(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end, Scale scale)
     {
     }
 
+    /// <inheritdoc />
     public override Altaxo.Data.AltaxoVariant[] GetMajorTicksAsVariant()
     {
       return new Altaxo.Data.AltaxoVariant[0];
     }
 
+    /// <inheritdoc />
     public override Altaxo.Data.AltaxoVariant[] GetMinorTicksAsVariant()
     {
       return new Altaxo.Data.AltaxoVariant[0];

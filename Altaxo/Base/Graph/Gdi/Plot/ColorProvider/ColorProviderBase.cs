@@ -66,6 +66,9 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
     /// <summary>Cached Gdi color for <see cref="_colorInvalid"/>.</summary>
     protected Color _cachedGdiColorInvalid;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColorProviderBase"/> class.
+    /// </summary>
     public ColorProviderBase()
     {
       _colorBelow = NamedColors.Black;
@@ -127,6 +130,11 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       get { return _colorBelow; }
     }
 
+    /// <summary>
+    /// Creates a copy with a different color for values below the range.
+    /// </summary>
+    /// <param name="color">The color to use below the range.</param>
+    /// <returns>The updated provider or this instance if unchanged.</returns>
     public ColorProviderBase WithColorBelow(NamedColor color)
     {
       if (color == _colorBelow)
@@ -150,6 +158,11 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       get { return _colorAbove; }
     }
 
+    /// <summary>
+    /// Creates a copy with a different color for values above the range.
+    /// </summary>
+    /// <param name="color">The color to use above the range.</param>
+    /// <returns>The updated provider or this instance if unchanged.</returns>
     public ColorProviderBase WithColorAbove(NamedColor color)
     {
       if (color == _colorAbove)
@@ -173,6 +186,11 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       get { return _colorInvalid; }
     }
 
+    /// <summary>
+    /// Creates a copy with a different color for invalid values.
+    /// </summary>
+    /// <param name="color">The color to use for invalid values.</param>
+    /// <returns>The updated provider or this instance if unchanged.</returns>
     public ColorProviderBase WithColorInvalid(NamedColor color)
     {
       if (color == _colorInvalid)
@@ -196,6 +214,11 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       get { return 1 - _alphaChannel / 255.0; }
     }
 
+    /// <summary>
+    /// Gets the alpha channel value for the specified transparency.
+    /// </summary>
+    /// <param name="transparency">The transparency in the range from 0 (fully opaque) to 1 (fully transparent).</param>
+    /// <returns>The corresponding alpha channel value.</returns>
     protected static int GetAlphaFromTransparency(double transparency)
     {
       int alphaChannel;
@@ -208,6 +231,11 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       return alphaChannel;
     }
 
+    /// <summary>
+    /// Creates a copy with a different transparency.
+    /// </summary>
+    /// <param name="transparency">The transparency in the range 0 to 1.</param>
+    /// <returns>The updated provider or this instance if unchanged.</returns>
     public ColorProviderBase WithTransparency(double transparency)
     {
       int alphaChannel = GetAlphaFromTransparency(transparency);
@@ -235,6 +263,11 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Creates a copy with a different number of color steps.
+    /// </summary>
+    /// <param name="colorSteps">The number of color steps.</param>
+    /// <returns>The updated provider or this instance if unchanged.</returns>
     public ColorProviderBase WithColorSteps(int colorSteps)
     {
       if (colorSteps < 0)
@@ -252,6 +285,11 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Gets the color used for values outside the valid range.
+    /// </summary>
+    /// <param name="relVal">The relative value.</param>
+    /// <returns>The out-of-bounds color.</returns>
     public virtual Color GetOutOfBoundsColor(double relVal)
     {
       if (relVal < 0)
@@ -282,6 +320,11 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
     }
 
+    /// <summary>
+    /// Gets an <see cref="Altaxo.Drawing.AxoColor"/> for the specified relative value.
+    /// </summary>
+    /// <param name="relVal">The relative value.</param>
+    /// <returns>The corresponding color.</returns>
     public Altaxo.Drawing.AxoColor GetAxoColor(double relVal)
     {
       var c = GetColor(relVal);
@@ -295,6 +338,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
     /// <returns>A color associated with the relative value.</returns>
     protected abstract Color GetColorFrom0To1Continuously(double relVal);
 
+    /// <inheritdoc />
     public virtual bool Equals(IColorProvider? other)
     {
       if (other is null || other.GetType() != GetType())
@@ -310,11 +354,13 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
         _colorSteps == from._colorSteps;
     }
 
+    /// <inheritdoc />
     public override bool Equals(object? obj)
     {
       return obj is IColorProvider from ? Equals(from) : false;
     }
 
+    /// <inheritdoc />
     public override int GetHashCode()
     {
       return GetType().GetHashCode() + 13 * _colorSteps.GetHashCode();

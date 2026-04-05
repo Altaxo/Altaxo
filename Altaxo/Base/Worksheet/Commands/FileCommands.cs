@@ -29,7 +29,7 @@ using Altaxo.Data;
 namespace Altaxo.Worksheet
 {
   /// <summary>
-  /// Routines for saving the worksheet layout and corresponding table.
+  /// Provides routines for saving a worksheet layout and its corresponding table.
   /// </summary>
   public static class FileCommands
   {
@@ -37,7 +37,7 @@ namespace Altaxo.Worksheet
     /// Saves the worksheet (data table and the corresponding layout, including scripts) into a xml file.
     /// </summary>
     /// <param name="worksheet">The worksheet to save.</param>
-    /// <param name="myStream">The stream where the xml data are to save into.</param>
+    /// <param name="myStream">The stream where the XML data are saved.</param>
     /// <param name="saveAsTemplate">If true, the data are not saved, but only the layout of the worksheet (columns, property columns, scripts). If false, everything including the data is saved.</param>
     public static void Save(this WorksheetLayout worksheet, System.IO.Stream myStream, bool saveAsTemplate)
     {
@@ -62,7 +62,7 @@ namespace Altaxo.Worksheet
     }
 
     /// <summary>
-    /// Shows the SaveAs dialog and then saves the worksheet (data table and the corresponding layout, including scripts) into a xml file.
+    /// Shows the Save As dialog and then saves the worksheet (data table and the corresponding layout, including scripts) into an XML file.
     /// </summary>
     /// <param name="worksheet">The worksheet to save.</param>
     /// <param name="saveAsTemplate">If true, the data are not saved, but only the layout of the worksheet (columns, property columns, scripts). If false, everything including the data is saved.</param>

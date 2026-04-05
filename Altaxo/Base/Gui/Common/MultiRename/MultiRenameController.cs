@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -36,6 +36,9 @@ namespace Altaxo.Gui.Common.MultiRename
   {
   }
 
+  /// <summary>
+  /// Controller for bulk renaming operations.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IMultiRenameView))]
   [UserControllerForObject(typeof(MultiRenameData))]
   public class MultiRenameController : ControllerBase, IMVCANController
@@ -59,6 +62,9 @@ namespace Altaxo.Gui.Common.MultiRename
     {
       private MultiRenameData _data;
 
+      /// <summary>
+      /// Gets or sets the proposed new name.
+      /// </summary>
       public string NewName
       {
         get
@@ -78,12 +84,16 @@ namespace Altaxo.Gui.Common.MultiRename
         }
       }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="MyNode"/> class.
+      /// </summary>
       public MyNode(MultiRenameData data, int idx)
         : base(data.ColumnsOfObjectInformation[0].Value(data.GetObjectToRename(idx), string.Empty), idx)
       {
         _data = data;
       }
 
+      /// <inheritdoc/>
       public override string? Text
       {
         get
@@ -110,6 +120,7 @@ namespace Altaxo.Gui.Common.MultiRename
           return newName;
       }
 
+      /// <inheritdoc/>
       public override int SubItemCount
       {
         get
@@ -123,12 +134,16 @@ namespace Altaxo.Gui.Common.MultiRename
     {
       private string _description;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="DescriptionNode"/> class.
+      /// </summary>
       public DescriptionNode(string shortcutType, string shortcut, string description)
         : base(shortcutType, shortcut)
       {
         _description = description;
       }
 
+      /// <inheritdoc/>
       public override string? SubItemText(int i)
       {
         switch (i)
@@ -147,6 +162,9 @@ namespace Altaxo.Gui.Common.MultiRename
 
     #endregion ListNode
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MultiRenameController"/> class.
+    /// </summary>
     public MultiRenameController()
     {
       CmdChooseBaseDirectory = new RelayCommand(EhChooseBaseDirectory);
@@ -158,6 +176,9 @@ namespace Altaxo.Gui.Common.MultiRename
     #region Binding
 
     private string _renameStringTemplate;
+    /// <summary>
+    /// Gets or sets the rename template string.
+    /// </summary>
     public string RenameStringTemplate
     {
       get => _renameStringTemplate;
@@ -187,6 +208,9 @@ namespace Altaxo.Gui.Common.MultiRename
     }
 
 
+    /// <summary>
+    /// Gets the command used to choose the base directory.
+    /// </summary>
     public ICommand CmdChooseBaseDirectory { get; }
     private void EhChooseBaseDirectory()
     {
@@ -239,6 +263,7 @@ namespace Altaxo.Gui.Common.MultiRename
 
     #endregion
 
+    /// <inheritdoc/>
     public bool InitializeDocument(params object[] args)
     {
       if (args is null || args.Length == 0 || !(args[0] is MultiRenameData))
@@ -296,11 +321,13 @@ namespace Altaxo.Gui.Common.MultiRename
       }
     }
 
+    /// <inheritdoc/>
     public UseDocument UseDocumentCopy
     {
       set { }
     }
 
+    /// <inheritdoc/>
     public object? ViewObject
     {
       get
@@ -354,6 +381,7 @@ namespace Altaxo.Gui.Common.MultiRename
 
 
 
+    /// <inheritdoc/>
     public object ModelObject
     {
       get
@@ -366,6 +394,7 @@ namespace Altaxo.Gui.Common.MultiRename
 
 
 
+    /// <inheritdoc/>
     public bool Apply(bool disposeController)
     {
       if (_doc is null)

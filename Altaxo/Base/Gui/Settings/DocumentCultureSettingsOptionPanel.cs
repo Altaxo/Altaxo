@@ -31,8 +31,12 @@ using Altaxo.Settings;
 
 namespace Altaxo.Gui.Settings
 {
+  /// <summary>
+  /// Option panel for overriding the document culture settings.
+  /// </summary>
   public class DocumentCultureSettingsOptionPanel : OptionPanelBase<Altaxo.Gui.Common.ConditionalDocumentControllerWithDisabledView<CultureSettings>>
   {
+    /// <inheritdoc/>
     public override void Initialize(object optionPanelOwner)
     {
       CultureSettings sysCulture = null;
@@ -46,6 +50,7 @@ namespace Altaxo.Gui.Settings
       _controller.InitializeDocument(new object[] { docCulture, sysCulture });
     }
 
+    /// <inheritdoc/>
     protected override void ProcessControllerResult()
     {
       if (_controller.ModelObject is not null)

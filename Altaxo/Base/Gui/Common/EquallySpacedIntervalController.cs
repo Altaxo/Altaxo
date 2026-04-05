@@ -35,6 +35,9 @@ namespace Altaxo.Gui.Common
 {
   #region Interfaces
 
+  /// <summary>
+  /// Defines the view contract for editing equally spaced intervals.
+  /// </summary>
   public interface IEquallySpacedIntervalView : IDataContextAwareView
   {
   }
@@ -47,15 +50,23 @@ namespace Altaxo.Gui.Common
   [ExpectedTypeOfView(typeof(IEquallySpacedIntervalView))]
   public class EquallySpacedIntervalController : MVCANControllerEditImmutableDocBase<ISpacedInterval, IEquallySpacedIntervalView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EquallySpacedIntervalController"/> class.
+    /// </summary>
     public EquallySpacedIntervalController()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EquallySpacedIntervalController"/> class.
+    /// </summary>
+    /// <param name="doc">The interval to edit.</param>
     public EquallySpacedIntervalController(ISpacedInterval doc)
     {
       _doc = _originalDoc = doc ?? throw new ArgumentNullException(nameof(doc));
@@ -66,6 +77,9 @@ namespace Altaxo.Gui.Common
 
     private ItemsController<Type> _intervalChoice;
 
+    /// <summary>
+    /// Gets or sets the selected interval type.
+    /// </summary>
     public ItemsController<Type> IntervalChoice
     {
       get => _intervalChoice;
@@ -81,6 +95,9 @@ namespace Altaxo.Gui.Common
 
     private SelectableListNodeList _previewList;
 
+    /// <summary>
+    /// Gets or sets the preview list.
+    /// </summary>
     public SelectableListNodeList PreviewList
     {
       get => _previewList;
@@ -96,6 +113,9 @@ namespace Altaxo.Gui.Common
 
     private double _start;
 
+    /// <summary>
+    /// Gets or sets the start value.
+    /// </summary>
     public double Start
     {
       get => _start;
@@ -115,6 +135,9 @@ namespace Altaxo.Gui.Common
 
     private bool _isStartEnabled;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the start value can be edited.
+    /// </summary>
     public bool IsStartEnabled
     {
       get => _isStartEnabled;
@@ -131,6 +154,9 @@ namespace Altaxo.Gui.Common
 
     private double _end;
 
+    /// <summary>
+    /// Gets or sets the end value.
+    /// </summary>
     public double End
     {
       get => _end;
@@ -150,6 +176,9 @@ namespace Altaxo.Gui.Common
 
     private bool _isEndEnabled;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the end value can be edited.
+    /// </summary>
     public bool IsEndEnabled
     {
       get => _isEndEnabled;
@@ -166,6 +195,9 @@ namespace Altaxo.Gui.Common
 
     private double _step;
 
+    /// <summary>
+    /// Gets or sets the step value.
+    /// </summary>
     public double Step
     {
       get => _step;
@@ -185,6 +217,9 @@ namespace Altaxo.Gui.Common
 
     private bool _isStepEnabled;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the step value can be edited.
+    /// </summary>
     public bool IsStepEnabled
     {
       get => _isStepEnabled;
@@ -201,6 +236,9 @@ namespace Altaxo.Gui.Common
 
     private int _count;
 
+    /// <summary>
+    /// Gets or sets the point count.
+    /// </summary>
     public int Count
     {
       get => _count;
@@ -220,6 +258,9 @@ namespace Altaxo.Gui.Common
 
     private bool _isCountEnabled;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the point count can be edited.
+    /// </summary>
     public bool IsCountEnabled
     {
       get => _isCountEnabled;
@@ -235,6 +276,7 @@ namespace Altaxo.Gui.Common
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -355,6 +397,7 @@ namespace Altaxo.Gui.Common
     }
 
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (false == CreateDocument(IntervalChoice.SelectedValue, silentlyIgnoreException: false))

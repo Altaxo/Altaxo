@@ -40,7 +40,14 @@ namespace Altaxo.Graph.Gdi
   /// </summary>
   public static class GraphDocumentClipboardActions
   {
+    /// <summary>
+    /// Gets the default paste options for entire graph documents.
+    /// </summary>
     public static readonly GraphCopyOptions DefaultGraphDocumentPasteOptions;
+
+    /// <summary>
+    /// Gets the default paste options for graph layers.
+    /// </summary>
     public static readonly GraphCopyOptions DefaultGraphLayerPasteOptions;
     private static GraphCopyOptions _lastChoosenGraphDocumentPasteOptions;
     private static GraphCopyOptions _lastChoosenGraphLayerPasteOptions;
@@ -167,6 +174,12 @@ namespace Altaxo.Graph.Gdi
       ClipboardSerialization.PutObjectToClipboard("Altaxo.Graph.GraphLayerAsXml", doc.RootLayer.ElementAt(layerNumber));
     }
 
+    /// <summary>
+    /// Pastes the layer from the clipboard as a template onto the specified layer using explicit copy options.
+    /// </summary>
+    /// <param name="doc">The target graph document.</param>
+    /// <param name="layerNumber">The target layer index path.</param>
+    /// <param name="options">The copy options.</param>
     public static void PasteFromClipboardAsTemplateForLayer(GraphDocument doc, IEnumerable<int> layerNumber, GraphCopyOptions options)
     {
       var o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.GraphLayerAsXml");
@@ -179,6 +192,11 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Shows a dialog for paste options and pastes the clipboard layer as a template onto the specified layer.
+    /// </summary>
+    /// <param name="doc">The target graph document.</param>
+    /// <param name="layerNumber">The target layer index path.</param>
     public static void PasteFromClipboardAsTemplateForLayer(this GraphDocument doc, IEnumerable<int> layerNumber)
     {
       /*
@@ -199,6 +217,10 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    /// <summary>
+    /// Pastes the layer on the clipboard as a new top-level layer.
+    /// </summary>
+    /// <param name="doc">The target graph document.</param>
     public static void PasteFromClipboardAsNewLayer(this GraphDocument doc)
     {
       var o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.GraphLayerAsXml");

@@ -36,12 +36,18 @@ namespace Altaxo.Gui.Graph.Plot.Data
 {
   #region Interfaces
 
+  /// <summary>
+  /// Provides the view contract for <see cref="ColumnPlotDataExchangeTableController"/>.
+  /// </summary>
   public interface IColumnPlotDataExchangeTableView : IDataContextAwareView
   {
   }
 
   #endregion Interfaces
 
+  /// <summary>
+  /// Controller for exchanging the source table of column-based plot data.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IColumnPlotDataExchangeTableView))]
   [UserControllerForObject(typeof(ColumnPlotDataExchangeTableData))]
   public class ColumnPlotDataExchangeTableController
@@ -50,6 +56,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
   {
     #region Members
 
+    /// <summary>
+    /// Indicates whether the controller contains unapplied changes.
+    /// </summary>
     protected bool _isDirty = false;
 
     /// <summary>Tasks which updates the _fittingTables.</summary>
@@ -62,6 +71,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     #region Infrastructur Dispose and GetSubControllers
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -71,7 +81,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     private ItemsController<DataTable> _availableTables;
 
-    /// <summary>All datatables of the document</summary>
+    /// <summary>
+    /// Gets or sets all data tables of the document.
+    /// </summary>
     public ItemsController<DataTable> AvailableTables
     {
       get => _availableTables;
@@ -88,7 +100,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     private ItemsController<DataTable> _matchingTables;
 
-    /// <summary>Tuples from tables and group numbers, for which the columns in that group contain all that column names which are currently plot columns in our controller.</summary>
+    /// <summary>
+    /// Gets or sets the matching tables whose columns best fit the plot-column names used by the controller.
+    /// </summary>
     public ItemsController<DataTable> MatchingTables
     {
       get => _matchingTables;
@@ -105,6 +119,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     private string _diagnosticsNumberOfPlotItemsText = "-x plot items changed";
 
+    /// <summary>
+    /// Gets or sets the diagnostics text that reports how many plot items would be affected.
+    /// </summary>
     public string DiagnosticsNumberOfPlotItemsText
     {
       get => _diagnosticsNumberOfPlotItemsText;
@@ -120,6 +137,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     private string _diagnosticsNumberOfSuccessfullyChangedColumnsText = "- x columns successfully exchanged";
 
+    /// <summary>
+    /// Gets or sets the diagnostics text that reports how many columns could be exchanged successfully.
+    /// </summary>
     public string DiagnosticsNumberOfSuccessfullyChangedColumnsText
     {
       get => _diagnosticsNumberOfSuccessfullyChangedColumnsText;
@@ -135,6 +155,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     private bool _DiagnosticsNumberOfSuccessfullyChangedColumnsIsVisible;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the success diagnostics text is visible.
+    /// </summary>
     public bool DiagnosticsNumberOfSuccessfullyChangedColumnsIsVisible
     {
       get => _DiagnosticsNumberOfSuccessfullyChangedColumnsIsVisible;
@@ -151,6 +174,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     private string _DiagnosticsNumberOfUnsuccessfullyChangedColumnsText = "- x columns failed to exchange";
 
+    /// <summary>
+    /// Gets or sets the diagnostics text that reports how many columns could not be exchanged.
+    /// </summary>
     public string DiagnosticsNumberOfUnsuccessfullyChangedColumnsText
     {
       get => _DiagnosticsNumberOfUnsuccessfullyChangedColumnsText;
@@ -166,6 +192,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     private bool _DiagnosticsNumberOfUnsuccessfullyChangedColumnsIsVisible;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the failure diagnostics text is visible.
+    /// </summary>
     public bool DiagnosticsNumberOfUnsuccessfullyChangedColumnsIsVisible
     {
       get => _DiagnosticsNumberOfUnsuccessfullyChangedColumnsIsVisible;
@@ -182,6 +211,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     #endregion
 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       _availableTables = null;
@@ -197,6 +227,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
       base.Dispose(isDisposing);
     }
 
+    /// <summary>
+    /// Marks this controller as dirty.
+    /// </summary>
     public void SetDirty()
     {
       _isDirty = true;
@@ -206,6 +239,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     #region Initialize, Apply, Attach, Detach
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -231,11 +265,18 @@ namespace Altaxo.Gui.Graph.Plot.Data
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);
     }
 
+    /// <summary>
+    /// Initializes the diagnostics texts shown by the controller.
+    /// </summary>
+    /// <param name="numberOfPlotItems">The number of plot items whose source tables would be changed.</param>
+    /// <param name="numberOfSuccessfullyChangedColumns">The number of columns that could be exchanged successfully.</param>
+    /// <param name="numberOfUnsuccessfullyChangedColumns">The number of columns that could not be exchanged.</param>
     public void Diagnostics_Initialize(int numberOfPlotItems, int numberOfSuccessfullyChangedColumns, int numberOfUnsuccessfullyChangedColumns)
     {
       string text1, text2, text3;
@@ -273,6 +314,10 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     #region AvailableDataTables
 
+    /// <summary>
+    /// Handles changes to the selection in the list of available tables.
+    /// </summary>
+    /// <param name="tg">The newly selected table.</param>
     public void EhView_TableSelectionChanged(DataTable tg)
     {
       if (tg is null || object.ReferenceEquals(_doc.NewTable, tg))
@@ -335,7 +380,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     /// </summary>
     /// <param name="groupsOfColumnNames">The groups of column names.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns></returns>
+    /// <returns>The tables that contain matching column groups for all specified column-name groups.</returns>
     public static IEnumerable<DataTable> GetTablesThatFitExistingGroupsOfPlotColumns(IEnumerable<IEnumerable<string>> groupsOfColumnNames, System.Threading.CancellationToken cancellationToken)
     {
       HashSet<DataTable> result = null;
@@ -360,7 +405,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     /// </summary>
     /// <param name="columnNames">The column names to match.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns></returns>
+    /// <returns>The table/group combinations whose column names match the specified plot-column names.</returns>
     public static IEnumerable<(DataTable dataTable, int groupNumber)> GetTablesWithGroupThatFitExistingPlotColumns(IEnumerable<string> columnNames, System.Threading.CancellationToken cancellationToken)
     {
       var columnNamesThatMustFit = columnNames is HashSet<string> ? (HashSet<string>)columnNames : new HashSet<string>(columnNames);

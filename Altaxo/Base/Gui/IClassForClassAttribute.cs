@@ -32,12 +32,12 @@ namespace Altaxo.Gui
   public interface IClassForClassAttribute
   {
     /// <summary>
-    /// The destination class type.
+    /// Gets the destination class type.
     /// </summary>
     System.Type TargetType { get; }
 
     /// <summary>
-    /// The priority. Attributes with higher priority are preferred over such attributes with lower priority.
+    /// Gets the priority. Attributes with higher priority are preferred over attributes with lower priority.
     /// </summary>
     int Priority { get; }
   }

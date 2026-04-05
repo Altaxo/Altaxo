@@ -31,10 +31,19 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Main
 {
+  /// <summary>
+  /// Provides Altaxo-specific project services for creating, opening, and deleting project items and views.
+  /// </summary>
   public interface IAltaxoProjectService : IProjectService
   {
+    /// <summary>
+    /// Gets the current open project.
+    /// </summary>
     AltaxoDocument CurrentOpenProject { get; }
 
+    /// <summary>
+    /// Gets the current open project, or <see langword="null"/> if none is open.
+    /// </summary>
     AltaxoDocument? CurrentOpenProjectOrNull { get; }
 
 
@@ -43,7 +52,7 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="table">The data table to delete.</param>
     /// <param name="force">If true, the table is deleted without safety question,
-    /// if false, the user is ask before the table is deleted.</param>
+    /// if false, the user is asked before the table is deleted.</param>
     void DeleteTable(Altaxo.Data.DataTable table, bool force);
 
     /// <summary>
@@ -51,7 +60,7 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="graph">The graph document to delete.</param>
     /// <param name="force">If true, the graph document is deleted without safety question,
-    /// if false, the user is ask before the graph document is deleted.</param>
+    /// if false, the user is asked before the graph document is deleted.</param>
     void DeleteGraphDocument(Graph.Gdi.GraphDocument graph, bool force);
 
     /// <summary>

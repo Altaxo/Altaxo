@@ -33,11 +33,18 @@ namespace Altaxo.Collections
   /// <summary>
   /// Wraps an observable collection, so that the elements appear in reverse order compared to the original collection.
   /// </summary>
-  /// <typeparam name="T"></typeparam>
+  /// <typeparam name="T">The item type.</typeparam>
   public class ObservableCollectionReversingWrapper<T> : IList<T>, IReadOnlyList<T>, INotifyCollectionChanged
   {
+    /// <summary>
+    /// The wrapped collection.
+    /// </summary>
     private ObservableCollection<T> _coll;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ObservableCollectionReversingWrapper{T}"/> class.
+    /// </summary>
+    /// <param name="coll">The wrapped collection.</param>
     public ObservableCollectionReversingWrapper(ObservableCollection<T> coll)
     {
       _coll = coll;
@@ -82,26 +89,31 @@ namespace Altaxo.Collections
         CollectionChanged(this, result);
     }
 
+    /// <inheritdoc />
     public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
     #region IList<T>
 
+    /// <inheritdoc />
     public int IndexOf(T item)
     {
       int r = _coll.IndexOf(item);
       return r < 0 ? r : _coll.Count - r;
     }
 
+    /// <inheritdoc />
     public void Insert(int index, T item)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc />
     public void RemoveAt(int index)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc />
     public T this[int index]
     {
       get
@@ -114,42 +126,50 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <inheritdoc />
     public void Add(T item)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc />
     public void Clear()
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc />
     public bool Contains(T item)
     {
       return _coll.Contains(item);
     }
 
+    /// <inheritdoc />
     public void CopyTo(T[] array, int arrayIndex)
     {
       for (int i = _coll.Count - 1; i >= 0; i--)
         array[arrayIndex++] = _coll[i];
     }
 
+    /// <inheritdoc />
     public int Count
     {
       get { return _coll.Count; }
     }
 
+    /// <inheritdoc />
     public bool IsReadOnly
     {
       get { return true; }
     }
 
+    /// <inheritdoc />
     public bool Remove(T item)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc />
     public IEnumerator<T> GetEnumerator()
     {
       for (int i = _coll.Count - 1; i >= 0; i--)

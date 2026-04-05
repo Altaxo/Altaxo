@@ -31,10 +31,16 @@ using AUL = Altaxo.Units.Length;
 
 namespace Altaxo.Gui.Graph.Graph3D
 {
+  /// <summary>
+  /// Provides the view for editing 3D grid partitioning.
+  /// </summary>
   public interface IGridPartitioningView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controls the editing of <see cref="GridPartitioning"/> instances.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IGridPartitioningView))]
   [UserControllerForObject(typeof(GridPartitioning))]
   public class GridPartitioningController : MVCANControllerEditOriginalDocBase<GridPartitioning, IGridPartitioningView>
@@ -49,6 +55,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private VectorD3D _parentLayerSize;
 
+    /// <inheritdoc />
     public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -56,15 +63,27 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the quantity environment used for X partition values.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment XPartitionEnvironment => _xSizeEnvironment;
 
+    /// <summary>
+    /// Gets the quantity environment used for Y partition values.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment YPartitionEnvironment => _ySizeEnvironment;
 
+    /// <summary>
+    /// Gets the quantity environment used for Z partition values.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment ZPartitionEnvironment => _zSizeEnvironment;
 
     /// <summary>Sets the default x quantity, i.e. the quantity that is used if the user inserts a new item in the XPartition.</summary>
     private DimensionfulQuantity _defaultXQuantity;
 
+    /// <summary>
+    /// Gets or sets the default quantity for newly inserted X partition entries.
+    /// </summary>
     public DimensionfulQuantity DefaultXQuantity
     {
       get => _defaultXQuantity;
@@ -83,6 +102,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private DimensionfulQuantity _defaultYQuantity;
 
+    /// <summary>
+    /// Gets or sets the default quantity for newly inserted Y partition entries.
+    /// </summary>
     public DimensionfulQuantity DefaultYQuantity
     {
       get => _defaultYQuantity;
@@ -101,6 +123,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private DimensionfulQuantity _defaultZQuantity;
 
+    /// <summary>
+    /// Gets or sets the default quantity for newly inserted Z partition entries.
+    /// </summary>
     public DimensionfulQuantity DefaultZQuantity
     {
       get => _defaultZQuantity;
@@ -115,14 +140,24 @@ namespace Altaxo.Gui.Graph.Graph3D
     }
 
 
+    /// <summary>
+    /// Gets the editable X partition values.
+    /// </summary>
     public ObservableCollection<DimensionfulQuantity> XPartitionValues { get; } = new ObservableCollection<DimensionfulQuantity>();
 
+    /// <summary>
+    /// Gets the editable Y partition values.
+    /// </summary>
     public ObservableCollection<DimensionfulQuantity> YPartitionValues { get; } = new ObservableCollection<DimensionfulQuantity>();
 
+    /// <summary>
+    /// Gets the editable Z partition values.
+    /// </summary>
     public ObservableCollection<DimensionfulQuantity> ZPartitionValues { get; } = new ObservableCollection<DimensionfulQuantity>();
 
     #endregion
 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       XPartitionValues.Clear();
@@ -138,6 +173,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc />
     public override bool InitializeDocument(params object[] args)
     {
       if (args.Length < 2)
@@ -155,6 +191,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       return base.InitializeDocument(args);
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -188,6 +225,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       _doc.XPartitioning.Clear();

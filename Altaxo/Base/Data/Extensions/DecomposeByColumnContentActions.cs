@@ -30,8 +30,17 @@ using Altaxo.Collections;
 namespace Altaxo.Data
 {
 
+  /// <summary>
+  /// Actions for decomposing columns by the content of a cycling-variable column.
+  /// </summary>
   public static class DecomposeByColumnContentActions
   {
+    /// <summary>
+    /// Shows the dialog for decomposing a table by the content of selected columns.
+    /// </summary>
+    /// <param name="srcTable">The source table.</param>
+    /// <param name="selectedDataRows">The selected data rows.</param>
+    /// <param name="selectedDataColumns">The selected data columns.</param>
     public static void ShowDecomposeByColumnContentDialog(this DataTable srcTable, IAscendingIntegerCollection selectedDataRows, IAscendingIntegerCollection selectedDataColumns)
     {
       DataTableMultipleColumnProxy? proxy = null;

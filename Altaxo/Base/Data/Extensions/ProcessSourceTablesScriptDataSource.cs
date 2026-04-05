@@ -30,12 +30,18 @@ using Altaxo.Scripting;
 
 namespace Altaxo.Data
 {
+  /// <summary>
+  /// Table data source that executes a processing script on multiple source tables.
+  /// </summary>
   public class ProcessSourceTablesScriptDataSource : TableDataSourceBase, Altaxo.Data.IAltaxoTableDataSource
   {
     private ProcessSourceTablesScript _processOptions;
     private ProcessSourceTablesScriptData _processData;
     private IDataSourceImportOptions _importOptions;
 
+    /// <summary>
+    /// Stores the combined handlers for <see cref="DataSourceChanged"/>.
+    /// </summary>
     public Action<IAltaxoTableDataSource>? _dataSourceChanged;
 
     #region Serialization
@@ -79,6 +85,11 @@ namespace Altaxo.Data
 
     #endregion Version 0
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ProcessSourceTablesScriptDataSource"/> class during XML deserialization.
+    /// </summary>
+    /// <param name="info">The deserialization information.</param>
+    /// <param name="version">The serialized version.</param>
     protected ProcessSourceTablesScriptDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     {
       switch (version)
@@ -303,6 +314,7 @@ namespace Altaxo.Data
 
     #region Change event handling
 
+    /// <inheritdoc />
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (object.ReferenceEquals(_processData, sender)) // incoming call from data proxy
@@ -324,6 +336,7 @@ namespace Altaxo.Data
 
     #region Document Node functions
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_processData is not null)

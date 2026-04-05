@@ -27,14 +27,21 @@ using Altaxo.Science.Spectroscopy.EnsembleProcessing;
 
 namespace Altaxo.Gui.Science.Spectroscopy.EnsembleProcessing
 {
+  /// <summary>
+  /// View interface for multiplicative scatter correction.
+  /// </summary>
   public interface IMultiplicativeScatterCorrectionView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="MultiplicativeScatterCorrection"/>.
+  /// </summary>
   [UserControllerForObject(typeof(MultiplicativeScatterCorrection))]
   [ExpectedTypeOfView(typeof(IMultiplicativeScatterCorrectionView))]
   public class MultiplicativeScatterCorrectionController : MVCANControllerEditImmutableDocBase<MultiplicativeScatterCorrection, IMultiplicativeScatterCorrectionView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -44,6 +51,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.EnsembleProcessing
 
     private bool _ensembleScale;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether ensemble scaling is used.
+    /// </summary>
     public bool EnsembleScale
     {
       get => _ensembleScale;
@@ -63,6 +73,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.EnsembleProcessing
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -73,6 +84,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.EnsembleProcessing
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = _doc with { EnsembleScale = EnsembleScale };

@@ -28,7 +28,7 @@ using System;
 namespace Altaxo.Graph.Scales.Rescaling
 {
   /// <summary>
-  /// Summary description for AxisRescaleConditions.
+  /// Stores rescaling conditions for date-time scales.
   /// </summary>
   [Serializable]
   public class DateTimeScaleRescaleConditions
@@ -86,25 +86,76 @@ namespace Altaxo.Graph.Scales.Rescaling
 
     #endregion InnerClasses
 
+    /// <summary>
+    /// Stores the rescaling mode for the origin boundary.
+    /// </summary>
     protected BoundaryRescaling _orgRescaling;
+
+    /// <summary>
+    /// Stores the rescaling mode for the end boundary.
+    /// </summary>
     protected BoundaryRescaling _endRescaling;
 
+    /// <summary>
+    /// Stores how the user-provided origin value is interpreted relative to the data bounds.
+    /// </summary>
     protected BoundariesRelativeTo _userProvidedOrgRelativeTo;
+
+    /// <summary>
+    /// Stores how the user-provided end value is interpreted relative to the data bounds.
+    /// </summary>
     protected BoundariesRelativeTo _userProvidedEndRelativeTo;
 
+    /// <summary>
+    /// Stores the user-provided origin value.
+    /// </summary>
     protected long _userProvidedOrgValue;
+
+    /// <summary>
+    /// Stores the user-provided end value.
+    /// </summary>
     protected long _userProvidedEndValue;
+
+    /// <summary>
+    /// Stores the <see cref="DateTimeKind"/> of the user-provided origin value.
+    /// </summary>
     protected DateTimeKind _userProvidedOrgDateTimeKind;
+
+    /// <summary>
+    /// Stores the <see cref="DateTimeKind"/> of the user-provided end value.
+    /// </summary>
     protected DateTimeKind _userProvidedEndDateTimeKind;
 
+    /// <summary>
+    /// Stores the lower data bound in ticks.
+    /// </summary>
     protected long _dataBoundsOrg = 1;
+
+    /// <summary>
+    /// Stores the upper data bound in ticks.
+    /// </summary>
     protected long _dataBoundsEnd = 2;
 
     // Results
 
+    /// <summary>
+    /// Stores the resulting origin value in ticks.
+    /// </summary>
     protected long _resultingOrg = 1;
+
+    /// <summary>
+    /// Stores the resulting end value in ticks.
+    /// </summary>
     protected long _resultingEnd = 2;
+
+    /// <summary>
+    /// Stores the minimum permissible resulting origin value.
+    /// </summary>
     protected long _resultingMinOrg = UnboundMinOrg;
+
+    /// <summary>
+    /// Stores the maximum permissible resulting end value.
+    /// </summary>
     protected long _resultingMaxEnd = UnboundMaxEnd;
 
     private const long UnboundMinOrg = 0;
@@ -225,10 +276,17 @@ namespace Altaxo.Graph.Scales.Rescaling
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DateTimeScaleRescaleConditions"/> class.
+    /// </summary>
     public DateTimeScaleRescaleConditions()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DateTimeScaleRescaleConditions"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public DateTimeScaleRescaleConditions(DateTimeScaleRescaleConditions from)
     {
       CopyFrom(from);
@@ -269,6 +327,7 @@ namespace Altaxo.Graph.Scales.Rescaling
       return true;
     }
 
+    /// <inheritdoc/>
     public virtual object Clone()
     {
       return new DateTimeScaleRescaleConditions(this);
@@ -276,21 +335,43 @@ namespace Altaxo.Graph.Scales.Rescaling
 
     #region public properties
 
+    /// <summary>
+    /// Gets the currently resulting origin.
+    /// </summary>
     public virtual DateTime ResultingOrg { get { return new DateTime(_resultingOrg, _userProvidedOrgDateTimeKind); } }
 
+    /// <summary>
+    /// Gets the currently resulting end value.
+    /// </summary>
     public virtual DateTime ResultingEnd { get { return new DateTime(_resultingEnd, _userProvidedEndDateTimeKind); } }
 
+    /// <summary>
+    /// Gets a value indicating whether the resulting origin is fixed.
+    /// </summary>
     public bool IsResultingOrgFixed { get { return _resultingOrg == _resultingMinOrg; } }
 
+    /// <summary>
+    /// Gets a value indicating whether the resulting end is fixed.
+    /// </summary>
     public bool IsResultingEndFixed { get { return _resultingEnd == _resultingMaxEnd; } }
 
     #endregion public properties
 
+    /// <summary>
+    /// Sets user-provided rescaling parameters using absolute date-time values.
+    /// </summary>
+    /// <param name="orgRescaling">The origin rescaling mode.</param>
+    /// <param name="orgValue">The origin value.</param>
+    /// <param name="endRescaling">The end rescaling mode.</param>
+    /// <param name="endValue">The end value.</param>
     public virtual void SetUserParameters(BoundaryRescaling orgRescaling, DateTime orgValue, BoundaryRescaling endRescaling, DateTime endValue)
     {
       SetUserParameters(orgRescaling, BoundariesRelativeTo.Absolute, orgValue.Ticks, orgValue.Kind, endRescaling, BoundariesRelativeTo.Absolute, endValue.Ticks, endValue.Kind);
     }
 
+    /// <summary>
+    /// Sets user-provided rescaling parameters using raw tick values and relative modes.
+    /// </summary>
     public virtual void SetUserParameters(BoundaryRescaling orgRescaling, BoundariesRelativeTo orgRelativeTo, long orgValue, DateTimeKind orgValueKind, BoundaryRescaling endRescaling, BoundariesRelativeTo endRelativeTo, long endValue, DateTimeKind endValueKind)
     {
       bool isChange =
@@ -320,6 +401,9 @@ namespace Altaxo.Graph.Scales.Rescaling
 
     #region Accessors
 
+    /// <summary>
+    /// Gets the origin rescaling mode.
+    /// </summary>
     public BoundaryRescaling OrgRescaling
     {
       get
@@ -328,6 +412,9 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <summary>
+    /// Gets the end rescaling mode.
+    /// </summary>
     public BoundaryRescaling EndRescaling
     {
       get
@@ -336,26 +423,55 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <summary>
+    /// Gets the reference mode used for the origin.
+    /// </summary>
     public BoundariesRelativeTo OrgRelativeTo { get { return _userProvidedOrgRelativeTo; } }
 
+    /// <summary>
+    /// Gets the reference mode used for the end value.
+    /// </summary>
     public BoundariesRelativeTo EndRelativeTo { get { return _userProvidedEndRelativeTo; } }
 
+    /// <summary>
+    /// Gets the user-provided origin value in ticks.
+    /// </summary>
     public virtual long UserProvidedOrgValue { get { return _userProvidedOrgValue; } }
 
+    /// <summary>
+    /// Gets the <see cref="DateTimeKind"/> of the user-provided origin value.
+    /// </summary>
     public virtual DateTimeKind UserProvidedOrgKind { get { return _userProvidedOrgDateTimeKind; } }
 
+    /// <summary>
+    /// Gets the user-provided end value in ticks.
+    /// </summary>
     public virtual long UserProvidedEndValue { get { return _userProvidedEndValue; } }
 
+    /// <summary>
+    /// Gets the <see cref="DateTimeKind"/> of the user-provided end value.
+    /// </summary>
     public virtual DateTimeKind UserProvidedEndKind { get { return _userProvidedEndDateTimeKind; } }
 
+    /// <summary>
+    /// Gets the current data-bound origin.
+    /// </summary>
     public DateTime DataBoundsOrg { get { return new DateTime(_dataBoundsOrg, DateTimeKind.Utc); } }
 
+    /// <summary>
+    /// Gets the current data-bound end value.
+    /// </summary>
     public DateTime DataBoundsEnd { get { return new DateTime(_dataBoundsEnd, DateTimeKind.Utc); } }
 
     #endregion Accessors
 
     #region Event handling
 
+    /// <summary>
+    /// Updates the rescaling state after a user zoom action.
+    /// </summary>
+    /// <param name="newZoomOrg">The new zoom origin.</param>
+    /// <param name="newZoomEnd">The new zoom end.</param>
     public void OnUserZoomed(DateTime newZoomOrg, DateTime newZoomEnd)
     {
       if (!(newZoomOrg < newZoomEnd))
@@ -381,6 +497,9 @@ namespace Altaxo.Graph.Scales.Rescaling
 
     }
 
+    /// <summary>
+    /// Updates the rescaling state after a user-initiated rescale command.
+    /// </summary>
     public void OnUserRescaled()
     {
       var oldResultingOrg = _resultingOrg;
@@ -443,6 +562,12 @@ namespace Altaxo.Graph.Scales.Rescaling
     {
     }
 
+    /// <summary>
+    /// Announces a change of the data bounds of the set of data belonging to a scale.
+    /// </summary>
+    /// <param name="dataBoundsOrg">One side of the data bounds.</param>
+    /// <param name="dataBoundsEnd">The other side of the data bounds.</param>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="dataBoundsOrg"/> should be less than or equal to <paramref name="dataBoundsEnd"/>.</exception>
     public void OnDataBoundsChanged(DateTime dataBoundsOrg, DateTime dataBoundsEnd)
     {
       if (!(dataBoundsOrg <= dataBoundsEnd))
@@ -475,6 +600,10 @@ namespace Altaxo.Graph.Scales.Rescaling
 
     #region Resulting Org/End to/fron User Org/End
 
+    /// <summary>
+    /// Converts the user-provided origin value to the resulting origin value.
+    /// </summary>
+    /// <returns>The resulting origin value.</returns>
     protected virtual long GetResultingOrgFromUserProvidedOrg()
     {
       switch (_userProvidedOrgRelativeTo)
@@ -496,6 +625,11 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <summary>
+    /// Converts a resulting origin value back to the user-provided origin value.
+    /// </summary>
+    /// <param name="resultingOrg">The resulting origin value.</param>
+    /// <returns>The user-provided origin value.</returns>
     protected virtual long GetUserProvidedOrgFromResultingOrg(long resultingOrg)
     {
       switch (_userProvidedOrgRelativeTo)
@@ -517,6 +651,10 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <summary>
+    /// Converts the user-provided end value to the resulting end value.
+    /// </summary>
+    /// <returns>The resulting end value.</returns>
     protected virtual long GetResultingEndFromUserProvidedEnd()
     {
       switch (_userProvidedEndRelativeTo)
@@ -538,6 +676,11 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <summary>
+    /// Converts a resulting end value back to the user-provided end value.
+    /// </summary>
+    /// <param name="resultingEnd">The resulting end value.</param>
+    /// <returns>The user-provided end value.</returns>
     protected virtual long GetUserProvidedEndFromResultingEnd(long resultingEnd)
     {
       switch (_userProvidedEndRelativeTo)
@@ -563,6 +706,9 @@ namespace Altaxo.Graph.Scales.Rescaling
 
     #region Process Org End
 
+    /// <summary>
+    /// Recalculates the resulting origin after the data bounds changed.
+    /// </summary>
     protected void ProcessOrg_DataBoundsChanged()
     {
       var resultingUserProvidedOrgValue = GetResultingOrgFromUserProvidedOrg();
@@ -615,6 +761,9 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <summary>
+    /// Recalculates the resulting origin after the user changed the rescaling mode.
+    /// </summary>
     protected void ProcessOrg_UserRescaled()
     {
       var resultingUserProvidedOrgValue = GetResultingOrgFromUserProvidedOrg();
@@ -677,6 +826,10 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <summary>
+    /// Recalculates the resulting origin after the user zoomed the origin boundary.
+    /// </summary>
+    /// <param name="zoomValueOrg">The zoomed origin value.</param>
     protected void ProcessOrg_UserZoomed(long zoomValueOrg)
     {
       var resultingUserProvidedOrgValue = GetResultingOrgFromUserProvidedOrg();
@@ -725,6 +878,9 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <summary>
+    /// Recalculates the resulting origin after user parameters changed.
+    /// </summary>
     protected void ProcessOrg_UserParametersChanged()
     {
       var resultingUserProvidedOrgValue = GetResultingOrgFromUserProvidedOrg();
@@ -777,6 +933,9 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <summary>
+    /// Recalculates the resulting end after the data bounds changed.
+    /// </summary>
     protected void ProcessEnd_DataBoundsChanged()
     {
       var resultingUserProvidedEndValue = GetResultingEndFromUserProvidedEnd();
@@ -829,6 +988,9 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <summary>
+    /// Recalculates the resulting end after the user changed the rescaling mode.
+    /// </summary>
     protected void ProcessEnd_UserRescaled()
     {
       var resultingUserProvidedEndValue = GetResultingEndFromUserProvidedEnd();
@@ -891,6 +1053,10 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <summary>
+    /// Recalculates the resulting end after the user zoomed the end boundary.
+    /// </summary>
+    /// <param name="zoomValueEnd">The zoomed end value.</param>
     protected void ProcessEnd_UserZoomed(long zoomValueEnd)
     {
       var resultingUserProvidedEndValue = GetResultingEndFromUserProvidedEnd();
@@ -939,6 +1105,9 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+    /// <summary>
+    /// Recalculates the resulting end after user parameters changed.
+    /// </summary>
     protected void ProcessEnd_UserParametersChanged()
     {
       var resultingUserProvidedEndValue = GetResultingEndFromUserProvidedEnd();

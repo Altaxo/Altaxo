@@ -33,16 +33,34 @@ using Altaxo.Graph;
 
 namespace Altaxo.Drawing.ColorManagement
 {
+  /// <summary>
+  /// Immutable set of named colors.
+  /// </summary>
   public class ColorSet : IColorSet
   {
     /// <summary>First part of the key that is used during serialization to decide whether a color set was already serialized before.</summary>
     private static readonly string _serializationRegistrationKey = typeof(ColorSet).FullName + " ";
 
     private NamedColor[] _innerList;
+
+    /// <summary>
+    /// The immutable name of this color set.
+    /// </summary>
     protected readonly string _name;
 
+    /// <summary>
+    /// Lazily created lookup from color name to item index.
+    /// </summary>
     protected Lazy<Dictionary<string, int>> _nameToIndexDictionary;
+
+    /// <summary>
+    /// Lazily created lookup from color value to item index.
+    /// </summary>
     protected Lazy<Dictionary<AxoColor, int>> _colorToIndexDictionary;
+
+    /// <summary>
+    /// Lazily created lookup from the combination of color value and name to item index.
+    /// </summary>
     protected Lazy<Dictionary<ColorNameKey, int>> _namecolorToIndexDictionary;
 
     #region Serialization
@@ -233,6 +251,7 @@ namespace Altaxo.Drawing.ColorManagement
       }
     }
 
+    /// <inheritdoc/>
     public int Count
     {
       get
@@ -241,6 +260,7 @@ namespace Altaxo.Drawing.ColorManagement
       }
     }
 
+    /// <inheritdoc/>
     public bool IsReadOnly
     {
       get
@@ -249,6 +269,7 @@ namespace Altaxo.Drawing.ColorManagement
       }
     }
 
+    /// <inheritdoc/>
     public NamedColor this[int index]
     {
       get
@@ -372,6 +393,7 @@ namespace Altaxo.Drawing.ColorManagement
       }
     }
 
+    /// <inheritdoc/>
     public IStyleList<NamedColor> WithName(string name)
     {
       if (Name == name)
@@ -380,6 +402,7 @@ namespace Altaxo.Drawing.ColorManagement
         return new ColorSet(name, _innerList);
     }
 
+    /// <inheritdoc/>
     public bool IsStructuralEquivalentTo(IEnumerable<NamedColor> l1)
     {
       if (l1 is null)
@@ -405,41 +428,49 @@ namespace Altaxo.Drawing.ColorManagement
       return true;
     }
 
+    /// <inheritdoc/>
     public void Insert(int index, NamedColor item)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public void RemoveAt(int index)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public void Add(NamedColor item)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public void Clear()
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public bool Contains(NamedColor item)
     {
       return _innerList.Contains(item);
     }
 
+    /// <inheritdoc/>
     public void CopyTo(NamedColor[] array, int arrayIndex)
     {
       _innerList.CopyTo(array, arrayIndex);
     }
 
+    /// <inheritdoc/>
     public bool Remove(NamedColor item)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public IEnumerator<NamedColor> GetEnumerator()
     {
       return ((IList<NamedColor>)_innerList).GetEnumerator();

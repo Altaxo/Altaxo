@@ -73,6 +73,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Science.Thermorheology.MasterCurves.MasterCurveTableOutputOptions", 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (MasterCurveTableOutputOptions)obj;
@@ -83,6 +84,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         info.AddValue("InterpolatedCurve", s.OutputInterpolatedCurve);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var originalCurves = info.GetBoolean("OriginalCurves");
@@ -107,6 +109,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MasterCurveTableOutputOptions), 1)]
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (MasterCurveTableOutputOptions)obj;
@@ -120,6 +123,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         info.AddValue("XValuesForActivationEnergiesAreRates", s.XValuesForActivationEnergiesAreRates);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var originalCurves = info.GetBoolean("OriginalCurves");
@@ -143,7 +147,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       }
     }
 
-    #endregion
+    #endregion Serialization
   }
 
   /// <summary>

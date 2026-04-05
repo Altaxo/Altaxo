@@ -28,10 +28,14 @@ using Altaxo.Graph.Graph3D.LabelFormatting;
 
 namespace Altaxo.Gui.Graph.Graph3D.LabelFormatting
 {
+  /// <summary>
+  /// Controls the editing of scientific numeric label formatting for 3D graphs.
+  /// </summary>
   [UserControllerForObject(typeof(NumericLabelFormattingScientific))]
   [ExpectedTypeOfView(typeof(Gdi.LabelFormatting.INumericLabelFormattingScientificView))]
   public class NumericLabelFormattingScientificController : MVCANControllerEditOriginalDocBase<NumericLabelFormattingScientific, Graph.Gdi.LabelFormatting.INumericLabelFormattingScientificView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -41,6 +45,9 @@ namespace Altaxo.Gui.Graph.Graph3D.LabelFormatting
 
     private bool _showExponentAlways;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the exponent is always shown.
+    /// </summary>
     public bool ShowExponentAlways
     {
       get => _showExponentAlways;
@@ -58,6 +65,7 @@ namespace Altaxo.Gui.Graph.Graph3D.LabelFormatting
     #endregion
 
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -68,6 +76,7 @@ namespace Altaxo.Gui.Graph.Graph3D.LabelFormatting
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       _doc.ShowExponentAlways = ShowExponentAlways;

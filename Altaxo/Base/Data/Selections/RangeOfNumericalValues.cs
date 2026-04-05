@@ -30,6 +30,9 @@ using Altaxo.Main;
 
 namespace Altaxo.Data.Selections
 {
+  /// <summary>
+  /// Selects rows whose numeric values lie within a configured range.
+  /// </summary>
   public class RangeOfNumericalValues : Main.SuspendableDocumentNodeWithEventArgs, IRowSelection
   {
     private AltaxoVariant _lowerValue;
@@ -77,6 +80,9 @@ namespace Altaxo.Data.Selections
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RangeOfNumericalValues"/> class.
+    /// </summary>
     public RangeOfNumericalValues()
     {
       _lowerValue = 0;
@@ -101,6 +107,7 @@ namespace Altaxo.Data.Selections
       ChildCloneToMember(ref _columnProxy, from._columnProxy);
     }
 
+    /// <inheritdoc/>
     public object Clone()
     {
       return new RangeOfNumericalValues(this);
@@ -124,6 +131,14 @@ namespace Altaxo.Data.Selections
       ChildSetMember(ref _columnProxy, columnProxy);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RangeOfNumericalValues"/> class with explicit bounds and a source column.
+    /// </summary>
+    /// <param name="lower">The lower bound.</param>
+    /// <param name="isLowerInclusive"><see langword="true"/> to include the lower bound; otherwise, <see langword="false"/>.</param>
+    /// <param name="upper">The upper bound.</param>
+    /// <param name="isUpperInclusive"><see langword="true"/> to include the upper bound; otherwise, <see langword="false"/>.</param>
+    /// <param name="column">The column whose values are evaluated.</param>
     public RangeOfNumericalValues(double lower, bool isLowerInclusive, double upper, bool isUpperInclusive, IReadableColumn column)
     {
       _lowerValue = lower;
@@ -185,6 +200,7 @@ namespace Altaxo.Data.Selections
       }
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_columnProxy is not null)
@@ -225,6 +241,9 @@ namespace Altaxo.Data.Selections
       }
     }
 
+    /// <summary>
+    /// Gets or sets the lower bound of the accepted value range.
+    /// </summary>
     public double LowerValue
     {
       get
@@ -244,6 +263,9 @@ namespace Altaxo.Data.Selections
       }
     }
 
+    /// <summary>
+    /// Gets or sets the upper bound of the accepted value range.
+    /// </summary>
     public double UpperValue
     {
       get
@@ -263,6 +285,9 @@ namespace Altaxo.Data.Selections
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the lower bound is included in the accepted range.
+    /// </summary>
     public bool IsLowerValueInclusive
     {
       get
@@ -279,6 +304,9 @@ namespace Altaxo.Data.Selections
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the upper bound is included in the accepted range.
+    /// </summary>
     public bool IsUpperValueInclusive
     {
       get

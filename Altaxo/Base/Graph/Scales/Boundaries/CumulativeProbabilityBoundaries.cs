@@ -29,8 +29,7 @@ using Altaxo.Data;
 namespace Altaxo.Graph.Scales.Boundaries
 {
   /// <summary>
-  /// This type of boundary is intended for cumulative probability data in the range (0,1) (note the open boundaries)
-  /// it keeps track of the smallest and the highest probability value that are neither 0 nor 1.
+  /// Tracks cumulative-probability data in the open interval <c>(0, 1)</c>.
   /// </summary>
   [Serializable]
   public class CumulativeProbabilityBoundaries : NumericalBoundaries
@@ -40,12 +39,14 @@ namespace Altaxo.Graph.Scales.Boundaries
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CumulativeProbabilityBoundaries), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (CumulativeProbabilityBoundaries)obj;
         info.AddBaseValueEmbedded(s, s.GetType().BaseType!);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (CumulativeProbabilityBoundaries?)o ?? new CumulativeProbabilityBoundaries();
@@ -56,31 +57,46 @@ namespace Altaxo.Graph.Scales.Boundaries
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CumulativeProbabilityBoundaries"/> class.
+    /// </summary>
     public CumulativeProbabilityBoundaries()
       : base()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CumulativeProbabilityBoundaries"/> class by copying another instance.
+    /// </summary>
+    /// <param name="c">The instance to copy.</param>
     public CumulativeProbabilityBoundaries(CumulativeProbabilityBoundaries c)
       : base(c)
     {
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new CumulativeProbabilityBoundaries(this);
     }
 
+    /// <inheritdoc />
     public override bool Add(IReadableColumn col, int idx)
     {
       return Add((col is INumericColumn) ? ((INumericColumn)col)[idx] : idx);
     }
 
+    /// <inheritdoc />
     public override bool Add(Altaxo.Data.AltaxoVariant val)
     {
       return Add(val.ToDouble());
     }
 
+    /// <summary>
+    /// Adds a cumulative-probability value to the tracked boundaries.
+    /// </summary>
+    /// <param name="d">The value to add.</param>
+    /// <returns><see langword="true"/> if the value contributed to the boundaries; otherwise, <see langword="false"/>.</returns>
     public bool Add(double d)
     {
       if (IsSuspended) // when suspended: performance tweak, see overrides OnSuspended and OnResume for details (if suspended, we have saved the state of the instance for comparison when we resume).
@@ -115,6 +131,7 @@ namespace Altaxo.Graph.Scales.Boundaries
       return false;
     }
 
+    /// <inheritdoc />
     public override double LowerBound
     {
       get
@@ -123,6 +140,7 @@ namespace Altaxo.Graph.Scales.Boundaries
       }
     }
 
+    /// <inheritdoc />
     public override double UpperBound
     {
       get

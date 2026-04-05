@@ -47,14 +47,14 @@ namespace Altaxo.Main.Services
     private T? _instance;
 
     /// <summary>
-    /// True if it was tried to retrieve the instance
+    /// Gets a value indicating whether retrieving the instance was already attempted.
     /// </summary>
     private bool _instanceRetrievalTried;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CachedService{T, U}"/> struct.
     /// </summary>
-    /// <param name="isRequiredService">If set to <c>true</c>, it is threated as a required service, and thus, an exception will be thrown if the service is not found.</param>
+    /// <param name="isRequiredService">If set to <c>true</c>, the service is treated as required, and an exception is thrown if the service is not found.</param>
     /// <param name="serviceAttached">Action that will be executed if a new service instance is cached here.</param>
     /// <param name="serviceDetached">Action that is executed if an old service instance is released from this cache.</param>
     public CachedService(bool isRequiredService, Action<T>? serviceAttached, Action<T>? serviceDetached)

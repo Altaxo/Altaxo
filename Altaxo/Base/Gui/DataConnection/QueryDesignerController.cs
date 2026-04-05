@@ -32,39 +32,89 @@ using Altaxo.DataConnection;
 
 namespace Altaxo.Gui.DataConnection
 {
+  /// <summary>
+  /// View contract for designing SQL queries interactively.
+  /// </summary>
   public interface IQueryDesignerView
   {
     /// <summary>Sets content of the tree view that shows the tables, views and stored procedures of a data base.</summary>
     /// <remarks>The image indices 0, 1, 2 and 3 correspond to the nodes: Table , View, Procedure and DataColumn.</remarks>
     void SetTableTreeDataSource(NGTreeNode rootNode);
 
+    /// <summary>
+    /// Sets the data source of the field grid.
+    /// </summary>
+    /// <param name="data">The query fields to display.</param>
+    /// <param name="isGrouped">If set to <c>true</c>, the grid is shown in grouped mode.</param>
     void SetDataGridDataSource(QueryFieldCollection data, bool isGrouped);
 
+    /// <summary>
+    /// Updates the SQL preview text and status visibility.
+    /// </summary>
+    /// <param name="sqlText">The SQL text to show.</param>
+    /// <param name="isStatusVisible">If set to <c>true</c>, the status should be visible.</param>
     void UpdateSqlDisplay(string sqlText, bool isStatusVisible);
 
+    /// <summary>
+    /// Updates the visible grid columns for grouped or ungrouped mode.
+    /// </summary>
+    /// <param name="isGrouped">If set to <c>true</c>, grouped columns are shown.</param>
     void UpdateGridColumns(bool isGrouped);
 
+    /// <summary>
+    /// Occurs when grouping is enabled or disabled.
+    /// </summary>
     event Action<bool> GroupByChanged;
 
+    /// <summary>
+    /// Occurs when query field properties should be edited.
+    /// </summary>
     event Action ChooseProperties;
 
+    /// <summary>
+    /// Occurs when the SQL statement should be validated.
+    /// </summary>
     event Action CheckSql;
 
+    /// <summary>
+    /// Occurs when query results should be previewed.
+    /// </summary>
     event Action ViewResults;
 
+    /// <summary>
+    /// Occurs when the current query should be cleared.
+    /// </summary>
     event Action ClearQuery;
 
+    /// <summary>
+    /// Occurs when a table tree node is double-clicked.
+    /// </summary>
     event Action<NGTreeNode> TreeNodeMouseDoubleClick;
 
+    /// <summary>
+    /// Occurs when related tables are requested for a node.
+    /// </summary>
     event Action<NGTreeNode, List<string>> RelatedTablesRequired;
 
+    /// <summary>
+    /// Occurs when a table should be hidden from the designer.
+    /// </summary>
     event Action<NGTreeNode> HideTableChosen;
 
+    /// <summary>
+    /// Occurs when all hidden tables should be shown again.
+    /// </summary>
     event Action ShowTablesAllChosen;
 
+    /// <summary>
+    /// Occurs when a related table name has been chosen.
+    /// </summary>
     event Action<string> RelatedTableNameChosen;
   }
 
+  /// <summary>
+  /// Controller for interactive query design.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IQueryDesignerView))]
   public class QueryDesignerController : IMVCAController
   {
@@ -75,6 +125,9 @@ namespace Altaxo.Gui.DataConnection
 
     private IQueryDesignerView _view;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="QueryDesignerController"/> class.
+    /// </summary>
     public QueryDesignerController()
     {
       Initialize(true);
@@ -112,11 +165,18 @@ namespace Altaxo.Gui.DataConnection
     }
 
     // for easy access
+    /// <summary>
+    /// Gets the current schema helper.
+    /// </summary>
     private OleDbSchema Schema
     {
       get { return _builder.Schema; }
     }
 
+    /// <summary>
+    /// Initializes controller state and the view.
+    /// </summary>
+    /// <param name="initData">If set to <c>true</c>, initializes controller data.</param>
     protected void Initialize(bool initData)
     {
       if (initData)
@@ -434,6 +494,7 @@ namespace Altaxo.Gui.DataConnection
       return null;
     }
 
+    /// <inheritdoc />
     public object ViewObject
     {
       get
@@ -457,16 +518,19 @@ namespace Altaxo.Gui.DataConnection
       }
     }
 
+    /// <inheritdoc />
     public object ModelObject
     {
       get { return SelectionStatement; }
     }
 
+    /// <inheritdoc />
     public void Dispose()
     {
       ViewObject = null;
     }
 
+    /// <inheritdoc />
     public bool Apply(bool disposeController)
     {
       return !string.IsNullOrEmpty(_builder.ConnectionString) && !string.IsNullOrEmpty(SelectionStatement);

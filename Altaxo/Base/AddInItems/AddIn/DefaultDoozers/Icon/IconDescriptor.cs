@@ -21,10 +21,16 @@ using System;
 
 namespace Altaxo.AddInItems
 {
+  /// <summary>
+  /// Describes an icon association declared in the add-in tree.
+  /// </summary>
   public class IconDescriptor
   {
     private Codon _codon;
 
+    /// <summary>
+    /// Gets the icon descriptor identifier.
+    /// </summary>
     public string Id
     {
       get
@@ -33,6 +39,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Gets the associated language, if any.
+    /// </summary>
     public string Language
     {
       get
@@ -41,6 +50,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Gets the resource name of the icon.
+    /// </summary>
     public string Resource
     {
       get
@@ -49,6 +61,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Gets the file extensions associated with the icon.
+    /// </summary>
     public string[] Extensions
     {
       get
@@ -57,6 +72,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IconDescriptor"/> class.
+    /// </summary>
     public IconDescriptor(Codon codon)
     {
       this._codon = codon;

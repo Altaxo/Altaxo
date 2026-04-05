@@ -32,8 +32,16 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 {
   using GraphicsContext;
 
+  /// <summary>
+  /// Provides helper methods for coordinate-transforming plot-group styles.
+  /// </summary>
   public class CoordinateTransformingStyleBase
   {
+    /// <summary>
+    /// Merges x bounds from all eligible plot items into the specified boundaries.
+    /// </summary>
+    /// <param name="pb">The physical boundaries.</param>
+    /// <param name="coll">The plot-item collection.</param>
     public static void MergeXBoundsInto(IPhysicalBoundaries pb, PlotItemCollection coll)
     {
       foreach (IGPlotItem pi in coll)
@@ -46,6 +54,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
       }
     }
 
+    /// <summary>
+    /// Merges y bounds from all eligible plot items into the specified boundaries.
+    /// </summary>
+    /// <param name="pb">The physical boundaries.</param>
+    /// <param name="coll">The plot-item collection.</param>
     public static void MergeYBoundsInto(IPhysicalBoundaries pb, PlotItemCollection coll)
     {
       foreach (IGPlotItem pi in coll)
@@ -58,6 +71,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
       }
     }
 
+    /// <summary>
+    /// Merges z bounds from all eligible plot items into the specified boundaries.
+    /// </summary>
+    /// <param name="pb">The physical boundaries.</param>
+    /// <param name="coll">The plot-item collection.</param>
     public static void MergeZBoundsInto(IPhysicalBoundaries pb, PlotItemCollection coll)
     {
       foreach (IGPlotItem pi in coll)
@@ -70,6 +88,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
       }
     }
 
+    /// <summary>
+    /// Paints the plot items in reverse order.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="paintContext">The paint context.</param>
+    /// <param name="layer">The plot layer.</param>
+    /// <param name="coll">The plot-item collection.</param>
     public static void Paint(IGraphicsContext3D g, Altaxo.Graph.IPaintContext paintContext, IPlotArea layer, PlotItemCollection coll)
     {
       for (int i = coll.Count - 1; i >= 0; --i)

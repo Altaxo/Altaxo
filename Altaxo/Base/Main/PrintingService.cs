@@ -38,8 +38,14 @@ namespace Altaxo.Main
     /// </summary>
     System.Drawing.Printing.PrintDocument PrintDocument { get; }
 
+    /// <summary>
+    /// Gets the margins used for printing.
+    /// </summary>
     System.Drawing.Printing.Margins PrintingMargins { get; }
 
+    /// <summary>
+    /// Gets the printable page bounds.
+    /// </summary>
     System.Drawing.RectangleF PrintingBounds { get; }
 
     /// <summary>
@@ -50,7 +56,7 @@ namespace Altaxo.Main
   }
 
   /// <summary>
-  /// Summary description for PrintingService.
+  /// Provides printer settings, bounds, and margins for the current application instance.
   /// </summary>
   public class PrintingService : IPrintingService
   {
@@ -59,6 +65,9 @@ namespace Altaxo.Main
     private System.Drawing.Printing.Margins _printerMargins;
     private System.Drawing.RectangleF _printerPageBounds;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PrintingService"/> class.
+    /// </summary>
     public PrintingService()
     {
       // we initialize the printer variables
@@ -100,16 +109,19 @@ namespace Altaxo.Main
 
     #region Properties
 
+    /// <inheritdoc/>
     public System.Drawing.Printing.Margins PrintingMargins
     {
       get { return _printerMargins; }
     }
 
+    /// <inheritdoc/>
     public System.Drawing.RectangleF PrintingBounds
     {
       get { return _printerPageBounds; }
     }
 
+    /// <inheritdoc/>
     public System.Drawing.Printing.PrintDocument PrintDocument
     {
       get { return _printDocument; }

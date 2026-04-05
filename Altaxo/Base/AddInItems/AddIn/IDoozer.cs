@@ -36,6 +36,7 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Construct the item.
     /// </summary>
+    /// <param name="args">The build arguments.</param>
     /// <returns>
     /// The constructed item.
     /// May return an object implementing <see cref="IBuildItemsModifier"/> for returning

@@ -29,10 +29,19 @@ using System.Text;
 
 namespace Altaxo.Collections
 {
+  /// <summary>
+  /// Represents a mutable array-like collection with indexed access.
+  /// </summary>
   public interface IArray<T>
   {
+    /// <summary>
+    /// Gets or sets the element at the specified index.
+    /// </summary>
     T this[int i] { get; set; }
 
+    /// <summary>
+    /// Gets the number of elements contained in the array.
+    /// </summary>
     int Count { get; }
   }
 }

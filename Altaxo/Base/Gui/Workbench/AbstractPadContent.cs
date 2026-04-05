@@ -23,19 +23,57 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Gui.Workbench
 {
+  /// <summary>
+  /// Base class for pad content view models.
+  /// </summary>
   public abstract class AbstractPadContent : IPadContent, INotifyPropertyChanged
   {
+    /// <inheritdoc/>
     public event PropertyChangedEventHandler? PropertyChanged;
 
+    /// <summary>
+    /// Stores whether the pad is visible.
+    /// </summary>
     protected bool _isVisible = true;
+
+    /// <summary>
+    /// Stores whether the pad is selected.
+    /// </summary>
     protected bool _isSelected;
+
+    /// <summary>
+    /// Stores whether the pad is active.
+    /// </summary>
     protected bool _isActive;
 
+    /// <summary>
+    /// Stores the pad category when no descriptor is assigned.
+    /// </summary>
     protected string? _category;
+
+    /// <summary>
+    /// Stores the icon source when no descriptor is assigned.
+    /// </summary>
     protected string? _iconSource;
+
+    /// <summary>
+    /// Stores the pad title when no descriptor is assigned.
+    /// </summary>
     protected string? _title;
+
+    /// <summary>
+    /// Stores the shortcut when no descriptor is assigned.
+    /// </summary>
     protected string? _shortCut;
+
+    /// <summary>
+    /// Stores the content identifier when no descriptor is assigned.
+    /// </summary>
     protected string? _contentId;
+
+    /// <summary>
+    /// Stores the descriptor that defines the pad metadata.
+    /// </summary>
     protected PadDescriptor? _padDescriptor;
 
     /// <inheritdoc/>
@@ -53,18 +91,21 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <inheritdoc/>
     public virtual void Dispose()
     {
       ViewObject = null;
     }
 
+    /// <summary>
+    /// Raises the <see cref="PropertyChanged"/> event.
+    /// </summary>
     protected virtual void OnPropertyChanged(string propertyName)
     {
       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
     /// <summary>
-    ///
     /// Gets or sets the visibility of the pad.
     /// If false, the pad is not visible.
     /// If true, the pad may be visible or is collapsed.
@@ -132,12 +173,16 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Brings the pad to the front by making it visible and selected.
+    /// </summary>
     public void BringToFront()
     {
       IsVisible = true;
       IsSelected = true;
     }
 
+    /// <inheritdoc/>
     [MaybeNull]
     public virtual PadDescriptor PadDescriptor
     {
@@ -151,6 +196,7 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <inheritdoc/>
     [MaybeNull]
     public string Category
     {
@@ -172,6 +218,7 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <inheritdoc/>
     public string? IconSource
     {
       get
@@ -180,6 +227,7 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <inheritdoc/>
     public string? Title
     {
       get
@@ -188,6 +236,7 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <inheritdoc/>
     [MaybeNull]
     public string Shortcut
     {
@@ -209,6 +258,7 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <inheritdoc/>
     public string ContentId
     {
       get
@@ -217,6 +267,7 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <inheritdoc/>
     public DefaultPadPositions DefaultPosition
     {
       get
@@ -225,6 +276,11 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Gets a service provided by this pad content.
+    /// </summary>
+    /// <param name="serviceType">The requested service type.</param>
+    /// <returns>The requested service, or <c>null</c> if it is not available.</returns>
     public virtual object? GetService(Type serviceType)
     {
       if (serviceType.IsInstanceOfType(this))

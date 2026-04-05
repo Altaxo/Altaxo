@@ -71,15 +71,23 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PlotGroupStyleCollection"/> class.
+    /// </summary>
     public PlotGroupStyleCollection()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PlotGroupStyleCollection"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public PlotGroupStyleCollection(PlotGroupStyleCollection from)
     {
       CopyFrom(from);
     }
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -110,11 +118,16 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
     #region ICloneable Members
 
+    /// <summary>
+    /// Creates a copy of this collection.
+    /// </summary>
+    /// <returns>The cloned collection.</returns>
     public new PlotGroupStyleCollection Clone()
     {
       return new PlotGroupStyleCollection(this);
     }
 
+    /// <inheritdoc />
     object ICloneable.Clone()
     {
       return new PlotGroupStyleCollection(this);
@@ -122,6 +135,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
     #endregion ICloneable Members
 
+    /// <inheritdoc />
     public override void Clear()
     {
       using (var suspendToken = SuspendGetToken())
@@ -137,6 +151,9 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
     /// <summary>
     /// Gets/sets the coordinate transforming style.
+    /// </summary>
+    /// <summary>
+    /// Gets or sets the coordinate transforming style.
     /// </summary>
     public ICoordinateTransformingGroupStyle? CoordinateTransformingStyle
     {

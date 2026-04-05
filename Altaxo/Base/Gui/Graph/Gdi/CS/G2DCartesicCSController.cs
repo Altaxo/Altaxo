@@ -32,25 +32,39 @@ namespace Altaxo.Gui.Graph.Gdi.CS
 {
   #region Interfaces
 
+  /// <summary>
+  /// View contract for editing the 2D cartesian coordinate system.
+  /// </summary>
   public interface IG2DCartesicCSView : IDataContextAwareView
   {
   }
 
   #endregion Interfaces
 
+  /// <summary>
+  /// Controller for editing <see cref="G2DCartesicCoordinateSystem"/>.
+  /// </summary>
   [UserControllerForObject(typeof(G2DCartesicCoordinateSystem), 101)]
   [ExpectedTypeOfView(typeof(IG2DCartesicCSView))]
   public class G2DCartesicCSController : MVCANControllerEditOriginalDocBase<G2DCartesicCoordinateSystem, IG2DCartesicCSView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="G2DCartesicCSController"/> class.
+    /// </summary>
     public G2DCartesicCSController()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="G2DCartesicCSController"/> class.
+    /// </summary>
+    /// <param name="doc">The coordinate system document.</param>
     public G2DCartesicCSController(G2DCartesicCoordinateSystem doc)
     {
       InitializeDocument(doc);
@@ -60,6 +74,9 @@ namespace Altaxo.Gui.Graph.Gdi.CS
 
     private bool _exchangeXY;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether X and Y are exchanged.
+    /// </summary>
     public bool ExchangeXY
     {
       get => _exchangeXY;
@@ -74,6 +91,9 @@ namespace Altaxo.Gui.Graph.Gdi.CS
     }
     private bool _reverseX;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the X direction is reversed.
+    /// </summary>
     public bool ReverseX
     {
       get => _reverseX;
@@ -88,6 +108,9 @@ namespace Altaxo.Gui.Graph.Gdi.CS
     }
     private bool _reverseY;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the Y direction is reversed.
+    /// </summary>
     public bool ReverseY
     {
       get => _reverseY;
@@ -105,6 +128,7 @@ namespace Altaxo.Gui.Graph.Gdi.CS
 
     #region IMVCController Members
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -117,6 +141,7 @@ namespace Altaxo.Gui.Graph.Gdi.CS
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc.IsXYInterchanged = ExchangeXY;

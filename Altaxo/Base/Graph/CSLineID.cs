@@ -157,11 +157,11 @@ namespace Altaxo.Graph
     }
 
     /// <summary>
-    /// Initialize a 3D identifier from the parallel axis and the physical value of the perpendicular axis.
+    /// Initializes a 3D identifier from the parallel axis and the logical values of the perpendicular axes.
     /// </summary>
-    /// <param name="parallelAxisNumber">Number of parallel axis (0=X, 1=Y, 2=Z).</param>
-    /// <param name="logicalValueOtherFirst">The logical value of the 1st axis perpendicular to the parallel axis.</param>
-    /// <param name="logicalValueOtherSecond">The logical value of the 2nd axis perpendicular to the parallel axis.</param>
+    /// <param name="parallelAxisNumber">Number of the parallel axis (0 = X, 1 = Y, 2 = Z).</param>
+    /// <param name="logicalValueOtherFirst">The logical value of the first perpendicular axis.</param>
+    /// <param name="logicalValueOtherSecond">The logical value of the second perpendicular axis.</param>
     public CSLineID(int parallelAxisNumber, double logicalValueOtherFirst, double logicalValueOtherSecond)
     {
       // test arguments
@@ -178,10 +178,10 @@ namespace Altaxo.Graph
     }
 
     /// <summary>
-    /// Constructs the identifier from the axis number, and a set of logical values. The part of the logical value that belongs to the provided axis number is ignored.
+    /// Initializes a new instance of the <see cref="CSLineID"/> class from a logical point template.
     /// </summary>
-    /// <param name="parallelAxisNumber">Number of the axis (0: X, 1: Y, 2: Z).</param>
-    /// <param name="logicalValuesOther">Set of values that determine the position of the axis line in the coordinate space.</param>
+    /// <param name="parallelAxisNumber">Number of the axis that varies along the line.</param>
+    /// <param name="logicalValuesOther">Logical coordinates whose component on the parallel axis is ignored.</param>
     public CSLineID(int parallelAxisNumber, Logical3D logicalValuesOther)
     {
       _parallelAxisNumber = parallelAxisNumber;
@@ -354,6 +354,11 @@ namespace Altaxo.Graph
       }
     }
 
+    /// <summary>
+    /// Returns a copy of this identifier with an updated first logical value.
+    /// </summary>
+    /// <param name="logicalValueOtherFirst">The new first logical value.</param>
+    /// <returns>The current instance if the value is unchanged; otherwise, a modified copy.</returns>
     public CSLineID WithLogicalValueOtherFirst(double logicalValueOtherFirst)
     {
       if (_logicalValueFirstOther == logicalValueOtherFirst)
@@ -385,6 +390,11 @@ namespace Altaxo.Graph
       }
     }
 
+    /// <summary>
+    /// Returns a copy of this identifier with an updated second logical value.
+    /// </summary>
+    /// <param name="logicalValueOtherSecond">The new second logical value.</param>
+    /// <returns>The current instance if the value is unchanged; otherwise, a modified copy.</returns>
     public CSLineID WithLogicalValueOtherSecond(double logicalValueOtherSecond)
     {
       if (_logicalValueSecondOther == logicalValueOtherSecond)
@@ -471,10 +481,17 @@ namespace Altaxo.Graph
       }
     }
 
+    /// <summary>
+    /// Gets the logical start point of the line.
+    /// </summary>
     public Logical3D Begin { get { return GetLogicalPoint(0); } }
 
+    /// <summary>
+    /// Gets the logical end point of the line.
+    /// </summary>
     public Logical3D End { get { return GetLogicalPoint(1); } }
 
+    /// <inheritdoc />
     public override bool Equals(object? obj)
     {
       if (!(obj is CSLineID))
@@ -510,6 +527,7 @@ namespace Altaxo.Graph
       return result;
     }
 
+    /// <inheritdoc />
     public override int GetHashCode()
     {
       int result = _parallelAxisNumber.GetHashCode();
@@ -531,31 +549,55 @@ namespace Altaxo.Graph
       return result;
     }
 
+    /// <summary>
+    /// Determines whether two line identifiers are equal.
+    /// </summary>
+    /// <param name="a">The first identifier.</param>
+    /// <param name="b">The second identifier.</param>
+    /// <returns><c>true</c> if both identifiers are equal; otherwise, <c>false</c>.</returns>
     public static bool operator ==(CSLineID a, CSLineID b)
     {
       return ReferenceEquals(a, b) || (a is not null && b is not null && a.Equals(b));
     }
 
+    /// <summary>
+    /// Determines whether two line identifiers are not equal.
+    /// </summary>
+    /// <param name="x">The first identifier.</param>
+    /// <param name="y">The second identifier.</param>
+    /// <returns><c>true</c> if both identifiers differ; otherwise, <c>false</c>.</returns>
     public static bool operator !=(CSLineID x, CSLineID y)
     {
       return !(x == y);
     }
 
+    /// <summary>
+    /// Gets the default X axis at logical position 0.
+    /// </summary>
     public static CSLineID X0
     {
       get { return new CSLineID(0, 0); }
     }
 
+    /// <summary>
+    /// Gets the default X axis at logical position 1.
+    /// </summary>
     public static CSLineID X1
     {
       get { return new CSLineID(0, 1); }
     }
 
+    /// <summary>
+    /// Gets the default Y axis at logical position 0.
+    /// </summary>
     public static CSLineID Y0
     {
       get { return new CSLineID(1, 0); }
     }
 
+    /// <summary>
+    /// Gets the default Y axis at logical position 1.
+    /// </summary>
     public static CSLineID Y1
     {
       get { return new CSLineID(1, 1); }

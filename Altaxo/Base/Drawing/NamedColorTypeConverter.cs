@@ -29,21 +29,24 @@ using System.Globalization;
 namespace Altaxo.Drawing
 {
   /// <summary>
-  /// Converts known <see cref="NamedColors"/> from and to a string.
+  /// Converts <see cref="NamedColor"/> values to and from strings.
   /// </summary>
   /// <seealso cref="System.ComponentModel.TypeConverter" />
   public class NamedColorTypeConverter : TypeConverter
   {
+    /// <inheritdoc/>
     public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
     {
       return sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
     }
 
+    /// <inheritdoc/>
     public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
     {
       return destinationType == typeof(NamedColor) || base.CanConvertFrom(context, destinationType);
     }
 
+    /// <inheritdoc/>
     public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
     {
       if (value is string s && NamedColors.Instance.TryGetValue(s, out var result))
@@ -55,6 +58,7 @@ namespace Altaxo.Drawing
         return base.ConvertFrom(context, culture, value);
       }
     }
+    /// <inheritdoc/>
     public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
     {
       if (value is NamedColor namedColor && destinationType == typeof(string))
@@ -67,11 +71,13 @@ namespace Altaxo.Drawing
       }
     }
 
+    /// <inheritdoc/>
     public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
     {
       return true;
     }
 
+    /// <inheritdoc/>
     public override System.ComponentModel.TypeConverter.StandardValuesCollection GetStandardValues(System.ComponentModel.ITypeDescriptorContext context)
     {
       return new StandardValuesCollection(NamedColors.Instance.ToArray());

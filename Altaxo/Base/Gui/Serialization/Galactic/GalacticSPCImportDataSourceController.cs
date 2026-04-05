@@ -29,9 +29,13 @@ using Altaxo.Serialization.Galactic;
 
 namespace Altaxo.Gui.Serialization.Galactic
 {
+  /// <summary>
+  /// Controller for <see cref="GalacticSPCImportDataSource"/>.
+  /// </summary>
   [UserControllerForObject(typeof(GalacticSPCImportDataSource))]
   public class GalacticSPCImportDataSourceController : DataSourceControllerBase<GalacticSPCImportDataSource>
   {
+    /// <inheritdoc />
     protected override IMVCANController GetProcessDataController()
     {
       var processDataController = new MultipleFilesController();
@@ -41,7 +45,9 @@ namespace Altaxo.Gui.Serialization.Galactic
       return processDataController;
     }
 
+    /// <inheritdoc />
     protected override bool IsProcessDataInitiallyExpanded() => true;
+    /// <inheritdoc />
     protected override bool IsProcessOptionsInitiallyExpanded() => false;
   }
 }

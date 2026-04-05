@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -38,10 +38,16 @@ using Altaxo.Units;
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
 
+  /// <summary>
+  /// Provides the view contract for <see cref="ErrorBarPlotStyleController"/>.
+  /// </summary>
   public interface IErrorBarPlotStyleView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="ErrorBarPlotStyle"/>.
+  /// </summary>
   [UserControllerForObject(typeof(ErrorBarPlotStyle))]
   [ExpectedTypeOfView(typeof(IErrorBarPlotStyleView))]
   public class ErrorBarPlotStyleController : MVCANControllerEditOriginalDocBase<ErrorBarPlotStyle, IErrorBarPlotStyleView>, IColumnDataExternallyControlled
@@ -59,6 +65,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     /// </summary>
     private int _supposedGroupNumber;
 
+    /// <inheritdoc />
     public override bool InitializeDocument(params object[] args)
     {
       if (args.Length >= 2 && (args[1] is DataTable dt))
@@ -70,6 +77,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       return base.InitializeDocument(args);
     }
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_pen, () => Pen = null);
@@ -79,6 +87,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _useCommonErrorColumn;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool UseCommonErrorColumn
     {
       get => _useCommonErrorColumn;
@@ -98,6 +109,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private string _commonErrorColumnText;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public string CommonErrorColumnText
     {
       get => _commonErrorColumnText;
@@ -112,6 +126,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     }
     private string _commonErrorColumnToolTip;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public string CommonErrorColumnToolTip
     {
       get => _commonErrorColumnToolTip;
@@ -126,6 +143,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     }
     private int _commonErrorColumnStatus;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public int CommonErrorColumnStatus
     {
       get => _commonErrorColumnStatus;
@@ -140,6 +160,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     }
     private string _commonErrorColumnTransformationText;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public string CommonErrorColumnTransformationText
     {
       get => _commonErrorColumnTransformationText;
@@ -154,6 +177,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     }
     private string _commonErrorColumnTransformationToolTip;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public string CommonErrorColumnTransformationToolTip
     {
       get => _commonErrorColumnTransformationToolTip;
@@ -173,6 +199,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private string _positiveErrorColumnText;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public string PositiveErrorColumnText
     {
       get => _positiveErrorColumnText;
@@ -187,6 +216,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     }
     private string _positiveErrorColumnToolTip;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public string PositiveErrorColumnToolTip
     {
       get => _positiveErrorColumnToolTip;
@@ -201,6 +233,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     }
     private int _positiveErrorColumnStatus;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public int PositiveErrorColumnStatus
     {
       get => _positiveErrorColumnStatus;
@@ -215,6 +250,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     }
     private string _positiveErrorColumnTransformationText;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public string PositiveErrorColumnTransformationText
     {
       get => _positiveErrorColumnTransformationText;
@@ -229,6 +267,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     }
     private string _positiveErrorColumnTransformationToolTip;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public string PositiveErrorColumnTransformationToolTip
     {
       get => _positiveErrorColumnTransformationToolTip;
@@ -248,6 +289,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private string _negativeErrorColumnText;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public string NegativeErrorColumnText
     {
       get => _negativeErrorColumnText;
@@ -262,6 +306,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     }
     private string _negativeErrorColumnToolTip;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public string NegativeErrorColumnToolTip
     {
       get => _negativeErrorColumnToolTip;
@@ -276,6 +323,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     }
     private int _negativeErrorColumnStatus;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public int NegativeErrorColumnStatus
     {
       get => _negativeErrorColumnStatus;
@@ -290,6 +340,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     }
     private string _negativeErrorColumnTransformationText;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public string NegativeErrorColumnTransformationText
     {
       get => _negativeErrorColumnTransformationText;
@@ -304,6 +357,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     }
     private string _negativeErrorColumnTransformationToolTip;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public string NegativeErrorColumnTransformationToolTip
     {
       get => _negativeErrorColumnTransformationToolTip;
@@ -321,6 +377,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private ItemsController<ErrorBarPlotStyle.ValueInterpretation> _meaningOfValues;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public ItemsController<ErrorBarPlotStyle.ValueInterpretation> MeaningOfValues
     {
       get => _meaningOfValues;
@@ -338,6 +397,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _independentSkipFrequency;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool IndependentSkipFrequency
     {
       get => _independentSkipFrequency;
@@ -353,6 +415,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private int _skipFrequency;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public int SkipFrequency
     {
       get => _skipFrequency;
@@ -368,6 +433,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _ignoreMissingDataPoints;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool IgnoreMissingDataPoints
     {
       get => _ignoreMissingDataPoints;
@@ -384,6 +452,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _independentOnShiftingGroupStyles;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool IndependentOnShiftingGroupStyles
     {
       get => _independentOnShiftingGroupStyles;
@@ -399,6 +470,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _independentColor;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool IndependentColor
     {
       get => _independentColor;
@@ -415,6 +489,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _independentDashPattern;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool IndependentDashPattern
     {
       get => _independentDashPattern;
@@ -432,6 +509,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _independentSymbolSize;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool IndependentSymbolSize
     {
       get => _independentSymbolSize;
@@ -445,11 +525,17 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the s ym bo ls iz ee nv ir on me nt.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment SymbolSizeEnvironment => LineCapSizeEnvironment.Instance;
 
 
     private DimensionfulQuantity _symbolSize;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity SymbolSize
     {
       get => _symbolSize;
@@ -463,10 +549,16 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the l in ew id th en vi ro nm en t.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment LineWidthEnvironment => LineCapSizeEnvironment.Instance;
 
     private DimensionfulQuantity _lineWidth1Offset;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity LineWidth1Offset
     {
       get => _lineWidth1Offset;
@@ -480,10 +572,16 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <summary>
+    /// Gets or sets the l in ef ac to re nv ir on me nt.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment LineFactorEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _lineWidth1Factor;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity LineWidth1Factor
     {
       get => _lineWidth1Factor;
@@ -499,6 +597,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _useSymbolGap;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool UseSymbolGap
     {
       get => _useSymbolGap;
@@ -515,6 +616,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private DimensionfulQuantity _symbolGapOffset;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity SymbolGapOffset
     {
       get => _symbolGapOffset;
@@ -530,6 +634,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private DimensionfulQuantity _symbolGapFactor;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity SymbolGapFactor
     {
       get => _symbolGapFactor;
@@ -545,6 +652,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private bool _forceVisibilityOfEndCap;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public bool ForceVisibilityOfEndCap
     {
       get => _forceVisibilityOfEndCap;
@@ -561,6 +671,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private DimensionfulQuantity _endCapSizeOffset;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity EndCapSizeOffset
     {
       get => _endCapSizeOffset;
@@ -576,6 +689,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private DimensionfulQuantity _endCapSizeFactor;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public DimensionfulQuantity EndCapSizeFactor
     {
       get => _endCapSizeFactor;
@@ -591,6 +707,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private PenAllPropertiesController _pen;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public PenAllPropertiesController Pen
     {
       get => _pen;
@@ -607,6 +726,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     #endregion
 
+ 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       _colorGroupStyleTracker = null;
@@ -614,6 +735,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       base.Dispose(isDisposing);
     }
 
+ 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -666,6 +789,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
     }
 
+ 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       _doc.IndependentColor = IndependentColor;

@@ -50,6 +50,7 @@ namespace Altaxo.Main
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RelativeDocumentPath), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (RelativeDocumentPath)obj;
@@ -62,6 +63,7 @@ namespace Altaxo.Main
         info.CommitArray();
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         int numberOfLevelsDown = info.GetInt32("LevelsDown");
@@ -78,11 +80,20 @@ namespace Altaxo.Main
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RelativeDocumentPath"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public RelativeDocumentPath(RelativeDocumentPath from)
       : this(from._numberOfLevelsDown, from._pathParts)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RelativeDocumentPath"/> class.
+    /// </summary>
+    /// <param name="numberOfLevelsDown">The number of levels to move up from the start node.</param>
+    /// <param name="path">The path parts to traverse afterwards.</param>
     public RelativeDocumentPath(int numberOfLevelsDown, IEnumerable<string> path)
     {
       if (numberOfLevelsDown < 0)
@@ -92,6 +103,9 @@ namespace Altaxo.Main
       _pathParts = path.ToArray();
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this path represents the identity path.
+    /// </summary>
     public bool IsIdentity
     {
       get
@@ -100,6 +114,9 @@ namespace Altaxo.Main
       }
     }
 
+    /// <summary>
+    /// Gets the number of upward steps.
+    /// </summary>
     public int NumberOfStepsDown
     {
       get
@@ -108,6 +125,9 @@ namespace Altaxo.Main
       }
     }
 
+    /// <summary>
+    /// Gets the number of stored path parts.
+    /// </summary>
     public int Count
     {
       get
@@ -116,6 +136,9 @@ namespace Altaxo.Main
       }
     }
 
+    /// <summary>
+    /// Gets the path part at the specified index.
+    /// </summary>
     public string this[int idx]
     {
       get
@@ -124,6 +147,7 @@ namespace Altaxo.Main
       }
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       var stringBuilder = new System.Text.StringBuilder(128);
@@ -147,6 +171,7 @@ namespace Altaxo.Main
       return stringBuilder.ToString();
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       if (!(obj is RelativeDocumentPath o))
@@ -165,6 +190,7 @@ namespace Altaxo.Main
       return true;
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return ToString().GetHashCode();
@@ -250,6 +276,12 @@ namespace Altaxo.Main
           .Select(x => x.ParentObject?.GetNameOfChildObject(x) ?? throw new InvalidOperationException($"Can not get name of object {x} (parent is {x.ParentObject})")));
     }
 
+    /// <summary>
+    /// Resolves the specified relative path starting from the given node.
+    /// </summary>
+    /// <param name="path">The relative path.</param>
+    /// <param name="startnode">The start node.</param>
+    /// <returns>The resolved node, or <c>null</c> if the path cannot be resolved.</returns>
     public static IDocumentLeafNode? GetObject(RelativeDocumentPath path, IDocumentLeafNode startnode)
     {
       if (path is null)
@@ -335,6 +367,10 @@ namespace Altaxo.Main
       return new RelativeDocumentPath(this);
     }
 
+    /// <summary>
+    /// Creates a copy of this relative document path.
+    /// </summary>
+    /// <returns>A cloned <see cref="RelativeDocumentPath"/> instance.</returns>
     public RelativeDocumentPath Clone()
     {
       return new RelativeDocumentPath(this);
@@ -342,6 +378,11 @@ namespace Altaxo.Main
 
     #endregion ICloneable Members
 
+    /// <summary>
+    /// Converts an older absolute-path representation into a relative document path.
+    /// </summary>
+    /// <param name="absPath">The deprecated absolute-path representation.</param>
+    /// <returns>The converted relative document path.</returns>
     public static RelativeDocumentPath FromOldDeprecated(AbsoluteDocumentPath absPath)
     {
       if (absPath is null)

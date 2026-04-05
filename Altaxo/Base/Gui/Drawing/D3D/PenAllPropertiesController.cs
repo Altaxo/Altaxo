@@ -34,24 +34,38 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Drawing.D3D
 {
+  /// <summary>
+  /// View contract for editing all 3D pen properties.
+  /// </summary>
   public interface IPenAllPropertiesView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for editing all properties of a <see cref="PenX3D"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IPenAllPropertiesView))]
   public class PenAllPropertiesController : MVCANDControllerEditImmutableDocBase<PenX3D, IPenAllPropertiesView>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PenAllPropertiesController"/> class.
+    /// </summary>
     public PenAllPropertiesController()
     {
       CmdShowCustomPen = new RelayCommand(EhShowCustomPen);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PenAllPropertiesController"/> class.
+    /// </summary>
+    /// <param name="pen">The pen to edit.</param>
     public PenAllPropertiesController(PenX3D pen) : this()
     {
       _doc = _originalDoc = pen ?? throw new ArgumentNullException(nameof(pen));
       Initialize(true);
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_dashStartCap, () => DashStartCap = null);
@@ -64,9 +78,15 @@ namespace Altaxo.Gui.Drawing.D3D
 
     #region Binding
 
+    /// <summary>
+    /// Gets the command that opens the full pen editor dialog.
+    /// </summary>
     public ICommand CmdShowCustomPen { get; }
 
     private bool _showPlotColorsOnly;
+    /// <summary>
+    /// Gets or sets a value indicating whether only plot colors are shown.
+    /// </summary>
     public bool ShowPlotColorsOnly
     {
       get => _showPlotColorsOnly;
@@ -80,6 +100,9 @@ namespace Altaxo.Gui.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the pen material.
+    /// </summary>
     public IMaterial Material
     {
       get => _doc.Material;
@@ -94,6 +117,9 @@ namespace Altaxo.Gui.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the first line-thickness component.
+    /// </summary>
     public double LineThickness1
     {
       get => _doc.Thickness1;
@@ -108,6 +134,9 @@ namespace Altaxo.Gui.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the second line-thickness component.
+    /// </summary>
     public double LineThickness2
     {
       get => _doc.Thickness2;
@@ -124,6 +153,9 @@ namespace Altaxo.Gui.Drawing.D3D
 
     private ItemsController<Type> _crossSection;
 
+    /// <summary>
+    /// Gets or sets the available cross-section choices.
+    /// </summary>
     public ItemsController<Type> CrossSection
     {
       get => _crossSection;
@@ -142,6 +174,9 @@ namespace Altaxo.Gui.Drawing.D3D
 
 
 
+    /// <summary>
+    /// Gets or sets the dash pattern.
+    /// </summary>
     public Altaxo.Drawing.IDashPattern DashPattern
     {
       get => _doc.DashPattern;
@@ -158,6 +193,9 @@ namespace Altaxo.Gui.Drawing.D3D
 
     private StartEndCapController _dashStartCap;
 
+    /// <summary>
+    /// Gets or sets the controller for the dash start cap.
+    /// </summary>
     public StartEndCapController DashStartCap
     {
       get => _dashStartCap;
@@ -180,6 +218,9 @@ namespace Altaxo.Gui.Drawing.D3D
 
     private StartEndCapController _dashEndCap;
 
+    /// <summary>
+    /// Gets or sets the controller for the dash end cap.
+    /// </summary>
     public StartEndCapController DashEndCap
     {
       get => _dashEndCap;
@@ -203,6 +244,9 @@ namespace Altaxo.Gui.Drawing.D3D
 
     private StartEndCapController _startCap;
 
+    /// <summary>
+    /// Gets or sets the controller for the line start cap.
+    /// </summary>
     public StartEndCapController StartCap
     {
       get => _startCap;
@@ -226,6 +270,9 @@ namespace Altaxo.Gui.Drawing.D3D
 
     private StartEndCapController _endCap;
 
+    /// <summary>
+    /// Gets or sets the controller for the line end cap.
+    /// </summary>
     public StartEndCapController EndCap
     {
       get => _endCap;
@@ -247,6 +294,9 @@ namespace Altaxo.Gui.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the line-join mode.
+    /// </summary>
     public PenLineJoin LineJoin
     {
       get => _doc.LineJoin;
@@ -261,7 +311,13 @@ namespace Altaxo.Gui.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the GUI environment used for the miter limit.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment MiterLimitEnvironment { get; set; } = Altaxo.Gui.RelationEnvironment.Instance;
+    /// <summary>
+    /// Gets or sets the miter-limit value.
+    /// </summary>
     public DimensionfulQuantity MiterLimit
     {
       get => new DimensionfulQuantity(_doc.MiterLimit, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(MiterLimitEnvironment.DefaultUnit);
@@ -276,6 +332,9 @@ namespace Altaxo.Gui.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the edited pen.
+    /// </summary>
     public PenX3D Pen
 
     {
@@ -306,6 +365,7 @@ namespace Altaxo.Gui.Drawing.D3D
     #endregion
 
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -329,6 +389,9 @@ namespace Altaxo.Gui.Drawing.D3D
     }
 
 
+    /// <summary>
+    /// Initializes the available cross-section choices.
+    /// </summary>
     public void InitializeCrossSection()
     {
       var crossSectionChoices = new SelectableListNodeList();
@@ -384,12 +447,14 @@ namespace Altaxo.Gui.Drawing.D3D
       OnMadeDirty();
     }
 
+    /// <inheritdoc/>
     protected override void OnMadeDirty()
     {
       OnPropertyChanged(nameof(Pen));
       base.OnMadeDirty();
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);

@@ -27,14 +27,22 @@ using System;
 
 namespace Altaxo.Main.Properties
 {
+  /// <summary>
+  /// Collection of <see cref="ProjectFolderPropertyDocument"/> instances.
+  /// </summary>
   public class ProjectFolderPropertyDocumentCollection :
     ProjectItemCollectionBase<ProjectFolderPropertyDocument>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ProjectFolderPropertyDocumentCollection"/> class.
+    /// </summary>
+    /// <param name="parent">The owning project.</param>
     public ProjectFolderPropertyDocumentCollection(IProject parent)
       : base(parent)
     {
     }
 
+    /// <inheritdoc/>
     public override Main.IDocumentNode? ParentObject
     {
       get { return _parent; }
@@ -47,6 +55,7 @@ namespace Altaxo.Main.Properties
       }
     }
 
+    /// <inheritdoc/>
     public override string ItemBaseName { get { return ""; } }
 
     /// <summary>
@@ -75,10 +84,10 @@ namespace Altaxo.Main.Properties
     }
 
     /// <summary>
-    /// Gets the parent ProjectFolderPropertyBagCollection of a child graph.
+    /// Gets the parent <see cref="ProjectFolderPropertyDocumentCollection"/> of a child node.
     /// </summary>
-    /// <param name="child">A graph for which the parent collection is searched.</param>
-    /// <returns>The parent ProjectFolderPropertyBagCollection, if it exists, or null otherwise.</returns>
+    /// <param name="child">The child node for which the parent collection is searched.</param>
+    /// <returns>The parent <see cref="ProjectFolderPropertyDocumentCollection"/>, if it exists; otherwise, <c>null</c>.</returns>
     public static ProjectFolderPropertyDocumentCollection? GetParentProjectFolderPropertyBagCollectionOf(Main.IDocumentLeafNode child)
     {
       return (ProjectFolderPropertyDocumentCollection?)Main.AbsoluteDocumentPath.GetRootNodeImplementing(child, typeof(ProjectFolderPropertyDocumentCollection));

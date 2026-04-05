@@ -39,12 +39,21 @@ namespace Altaxo.Gui
   /// </summary>
   public struct StartDragData
   {
+    /// <summary>
+    /// Gets or sets the dragged data packed in a serializable format.
+    /// </summary>
     /// <summary>The data that are dragged, packed in a serializable format.</summary>
     public object Data;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the drag/drop operation can be a copy operation.
+    /// </summary>
     /// <summary>True if the drag/drop operation can be a copy operation.</summary>
     public bool CanCopy;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the drag/drop operation can be a move operation.
+    /// </summary>
     /// <summary>True if the drag/drop operation can be a move operation.</summary>
     public bool CanMove;
   }
@@ -63,7 +72,9 @@ namespace Altaxo.Gui
   /// <param name="isMove">Is set to <c>true</c> if the drag/drop operation was a move operation (in this case e.g. the source item should be removed).</param>
   public delegate void DragEndedDelegate(bool isCopy, bool isMove);
 
-  /// <summary>Called when the drag operation was cancelled. Can be used to return the state of your items to the state before the start of the drag operation.</summary>
+  /// <summary>
+  /// Called when the drag operation was cancelled. Can be used to return the state of your items to the state before the start of the drag operation.
+  /// </summary>
   public delegate void DragCancelledDelegate();
 
   /// <summary>
@@ -71,12 +82,21 @@ namespace Altaxo.Gui
   /// </summary>
   public struct DropCanAcceptDataReturnData
   {
+    /// <summary>
+    /// Gets or sets a value indicating whether the drag/drop operation can be a copy operation.
+    /// </summary>
     /// <summary>Is set to true if the drag/drop operation can be a copy operation.</summary>
     public bool CanCopy;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the drag/drop operation can be a move operation.
+    /// </summary>
     /// <summary>Is set to true if the drag/drop operation can be a move operation.</summary>
     public bool CanMove;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the target item consumes the dropped data.
+    /// </summary>
     /// <summary>
     /// Is set to true if the item is swallowing the data, i.e. the data must be removed on the source side.
     /// </summary>
@@ -100,10 +120,16 @@ namespace Altaxo.Gui
   public struct DropReturnData
   {
     /// <summary>
+    /// Gets or sets a value indicating whether the drop operation was a copy operation.
+    /// </summary>
+    /// <summary>
     /// If true, the drop operation was a copy operation.
     /// </summary>
     public bool IsCopy;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the drop operation was a move operation.
+    /// </summary>
     /// <summary>
     /// If true, the drop operation was a move operation.
     /// </summary>
@@ -118,6 +144,6 @@ namespace Altaxo.Gui
   /// <param name="insertPosition">The insert position (applies for lists and trees only).</param>
   /// <param name="isCtrlKeyPressed">If set to <c>true</c>, the control key is pressed.</param>
   /// <param name="isShiftKeyPressed">If set to <c>true</c>, the shift key is pressed.</param>
-  /// <returns>Data that indicate whether the drop operation was successful, and whether the items were copyied or moved. See <see cref="DropReturnData"/>.</returns>
+  /// <returns>Data that indicate whether the drop operation was successful, and whether the items were copied or moved. See <see cref="DropReturnData"/>.</returns>
   public delegate DropReturnData DropDelegate(object data, object nonGuiTargetItem, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed);
 }

@@ -32,7 +32,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
   public interface IToolTwoPointsOnCurve : ITool
   {
     /// <summary>
-    /// Gets a value indicating whether the data privided by this instance are ready.
+    /// Gets a value indicating whether the data provided by this instance are ready.
     /// </summary>
     public bool IsReadyToBeUsed { get; }
 

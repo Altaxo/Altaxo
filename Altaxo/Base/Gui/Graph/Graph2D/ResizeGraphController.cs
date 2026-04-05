@@ -33,14 +33,21 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Graph2D
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="ResizeGraphController"/>.
+  /// </summary>
   public interface IResizeGraphView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for resizing a 2D graph.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IResizeGraphView))]
   [UserControllerForObject(typeof(ResizeGraphOptions))]
   public class ResizeGraphController : MVCANControllerEditOriginalDocBase<ResizeGraphOptions, IResizeGraphView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -50,6 +57,9 @@ namespace Altaxo.Gui.Graph.Graph2D
 
     private string _reportOfOldValues;
 
+    /// <summary>
+    /// Gets or sets the report of old values.
+    /// </summary>
     public string ReportOfOldValues
     {
       get => _reportOfOldValues;
@@ -65,6 +75,9 @@ namespace Altaxo.Gui.Graph.Graph2D
 
     private string _reportOfDerivedValues;
 
+    /// <summary>
+    /// Gets or sets the report of derived values.
+    /// </summary>
     public string ReportOfDerivedValues
     {
       get => _reportOfDerivedValues;
@@ -80,6 +93,9 @@ namespace Altaxo.Gui.Graph.Graph2D
 
     private bool _isNewRootLayerSizeChosen;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether a new root layer size is chosen.
+    /// </summary>
     public bool IsNewRootLayerSizeChosen
     {
       get => _isNewRootLayerSizeChosen;
@@ -93,10 +109,16 @@ namespace Altaxo.Gui.Graph.Graph2D
       }
     }
 
+    /// <summary>
+    /// Gets the root layer size environment.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment RootLayerSizeEnvironment => SizeEnvironment.Instance;
 
     private DimensionfulQuantity _rootLayerSizeX;
 
+    /// <summary>
+    /// Gets or sets the root layer size in the X direction.
+    /// </summary>
     public DimensionfulQuantity RootLayerSizeX
     {
       get => _rootLayerSizeX;
@@ -111,6 +133,9 @@ namespace Altaxo.Gui.Graph.Graph2D
     }
     private DimensionfulQuantity _rootLayerSizeY;
 
+    /// <summary>
+    /// Gets or sets the root layer size in the Y direction.
+    /// </summary>
     public DimensionfulQuantity RootLayerSizeY
     {
       get => _rootLayerSizeY;
@@ -126,6 +151,9 @@ namespace Altaxo.Gui.Graph.Graph2D
 
     private bool _isNewStandardFontFamilyChosen;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether a new standard font family is chosen.
+    /// </summary>
     public bool IsNewStandardFontFamilyChosen
     {
       get => _isNewStandardFontFamilyChosen;
@@ -141,6 +169,9 @@ namespace Altaxo.Gui.Graph.Graph2D
 
     private string _standardFontFamilyName;
 
+    /// <summary>
+    /// Gets or sets the name of the standard font family.
+    /// </summary>
     public string StandardFontFamilyName
     {
       get => _standardFontFamilyName;
@@ -157,6 +188,9 @@ namespace Altaxo.Gui.Graph.Graph2D
 
     private bool _isResetAllFontsToStandardFontFamilyChosen;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether to reset all fonts to the standard font family.
+    /// </summary>
     public bool IsResetAllFontsToStandardFontFamilyChosen
     {
       get => _isResetAllFontsToStandardFontFamilyChosen;
@@ -172,6 +206,9 @@ namespace Altaxo.Gui.Graph.Graph2D
 
     private bool _isNewStandardFontSizeChosen;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether a new standard font size is chosen.
+    /// </summary>
     public bool IsNewStandardFontSizeChosen
     {
       get => _isNewStandardFontSizeChosen;
@@ -187,6 +224,9 @@ namespace Altaxo.Gui.Graph.Graph2D
 
     private double _standardFontSize;
 
+    /// <summary>
+    /// Gets or sets the standard font size.
+    /// </summary>
     public double StandardFontSize
     {
       get => _standardFontSize;
@@ -202,6 +242,9 @@ namespace Altaxo.Gui.Graph.Graph2D
 
     private ItemsController<ResizeGraphOptions.ScalarSizeActions> _actionForFontSize;
 
+    /// <summary>
+    /// Gets or sets the action for font size.
+    /// </summary>
     public ItemsController<ResizeGraphOptions.ScalarSizeActions> ActionForFontSize
     {
       get => _actionForFontSize;
@@ -217,6 +260,9 @@ namespace Altaxo.Gui.Graph.Graph2D
 
     private ItemsController<ResizeGraphOptions.ScalarSizeActions> _actionForSymbolSize;
 
+    /// <summary>
+    /// Gets or sets the action for symbol size.
+    /// </summary>
     public ItemsController<ResizeGraphOptions.ScalarSizeActions> ActionForSymbolSize
     {
       get => _actionForSymbolSize;
@@ -232,6 +278,9 @@ namespace Altaxo.Gui.Graph.Graph2D
 
     private ItemsController<ResizeGraphOptions.ScalarSizeActions> _actionForLineThickness;
 
+    /// <summary>
+    /// Gets or sets the action for line thickness.
+    /// </summary>
     public ItemsController<ResizeGraphOptions.ScalarSizeActions> ActionForLineThickness
     {
       get => _actionForLineThickness;
@@ -247,6 +296,9 @@ namespace Altaxo.Gui.Graph.Graph2D
 
     private bool _isUserDefinedLineThicknessChosen;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether a user-defined line thickness is chosen.
+    /// </summary>
     public bool IsUserDefinedLineThicknessChosen
     {
       get => _isUserDefinedLineThicknessChosen;
@@ -262,6 +314,9 @@ namespace Altaxo.Gui.Graph.Graph2D
 
     private double _userDefinedLineThicknessValue;
 
+    /// <summary>
+    /// Gets or sets the value of the user-defined line thickness.
+    /// </summary>
     public double UserDefinedLineThicknessValue
     {
       get => _userDefinedLineThicknessValue;
@@ -278,6 +333,9 @@ namespace Altaxo.Gui.Graph.Graph2D
 
     private ItemsController<ResizeGraphOptions.ScalarSizeActions> _actionForTickLength;
 
+    /// <summary>
+    /// Gets or sets the action for tick length.
+    /// </summary>
     public ItemsController<ResizeGraphOptions.ScalarSizeActions> ActionForTickLength
     {
       get => _actionForTickLength;
@@ -294,6 +352,9 @@ namespace Altaxo.Gui.Graph.Graph2D
 
     private bool _isUserDefinedMajorTickLengthChosen;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether a user-defined major tick length is chosen.
+    /// </summary>
     public bool IsUserDefinedMajorTickLengthChosen
     {
       get => _isUserDefinedMajorTickLengthChosen;
@@ -309,6 +370,9 @@ namespace Altaxo.Gui.Graph.Graph2D
 
     private double _userDefinedMajorTickLength;
 
+    /// <summary>
+    /// Gets or sets the value of the user-defined major tick length.
+    /// </summary>
     public double UserDefinedMajorTickLength
     {
       get => _userDefinedMajorTickLength;
@@ -325,6 +389,8 @@ namespace Altaxo.Gui.Graph.Graph2D
 
     #endregion
 
+ 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -390,6 +456,8 @@ namespace Altaxo.Gui.Graph.Graph2D
         UserDefinedMajorTickLength = newMajorTickLength;
     }
 
+ 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (IsNewRootLayerSizeChosen)
@@ -430,6 +498,9 @@ namespace Altaxo.Gui.Graph.Graph2D
       return ApplyEnd(true, disposeController);
     }
 
+    /// <summary>
+    /// Gets or sets the last used instance of the resize graph options.
+    /// </summary>
     public static ResizeGraphOptions _lastUsedInstance;
 
     /// <summary>

@@ -30,7 +30,7 @@ using System.Text;
 namespace Altaxo.Graph.Plot.Groups
 {
   /// <summary>
-  /// Support of plotting properties, that can be grouped together, for instance color or line style.
+  /// Represents plotting properties that can be grouped together, for instance color or line style.
   /// </summary>
   public interface IPlotGroupStyle : Main.IDocumentLeafNode, ICloneable
   {
@@ -45,16 +45,16 @@ namespace Altaxo.Graph.Plot.Groups
     void EndPrepare();
 
     /// <summary>
-    /// PrepareStep is called every time after for each PlotItem Prepare is called.
+    /// Prepares the next step after each plot item has been prepared.
     /// </summary>
     void PrepareStep();
 
     /// <summary>
-    /// Determines if this style can carry over during the <see cref="Step"/> operation. If yes, then the style can have childs, i.e. other plot group
+    /// Determines whether this style can carry over during the <see cref="Step"/> operation. If yes, then the style can have children, i.e. other plot group
     /// styles that are incremented if this group style carries over.
     /// When <see cref="Step" /> can return a nonzero value, true is returned here.
-    /// For instance, color or line style can be stepped and they can carry over, so they return true here. In constract, bar graph group style
-    /// can be stepped, but it can not carry over, so false is returned here.
+    /// For instance, color or line style can be stepped and can carry over, so they return true here. In contrast, a bar graph group style
+    /// can be stepped, but it cannot carry over, so false is returned here.
     /// </summary>
     bool CanCarryOver { get; }
 
@@ -71,13 +71,13 @@ namespace Altaxo.Graph.Plot.Groups
     bool CanStep { get; }
 
     /// <summary>
-    /// Get/sets whether or not stepping is allowed.
+    /// Gets or sets whether stepping is allowed.
     /// </summary>
     bool IsStepEnabled { get; set; }
 
     /// <summary>
-    /// Return true when this group style contains valid grouping data.
-    /// You should set IsInitialized to false when BeginPrepare is called.
+    /// Returns <c>true</c> when this group style contains valid grouping data.
+    /// You should set <see cref="IsInitialized"/> to <c>false</c> when <see cref="BeginPrepare"/> is called.
     /// </summary>
     bool IsInitialized { get; }
 

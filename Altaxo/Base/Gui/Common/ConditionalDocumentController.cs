@@ -27,6 +27,9 @@ using System.ComponentModel;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// Defines the view contract for a conditionally enabled document view.
+  /// </summary>
   public interface IConditionalDocumentView : IDataContextAwareView
   {
   }
@@ -36,14 +39,30 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public interface IConditionalDocumentController : INotifyPropertyChanged, IMVCANController
   {
+    /// <summary>
+    /// Gets the underlying view object, if enabled.
+    /// </summary>
     object? UnderlyingView { get; }
+
+    /// <summary>
+    /// Gets the text used to enable the conditional view.
+    /// </summary>
     string EnablingText { get; }
 
+    /// <summary>
+    /// Gets a value indicating whether the conditional view is enabled.
+    /// </summary>
     bool IsConditionalViewEnabled { get; }
 
+    /// <summary>
+    /// Gets the model object or <see langword="null"/> if the conditional view is disabled.
+    /// </summary>
     object? ModelObjectOrNull { get; }
   }
 
+  /// <summary>
+  /// Wraps a controller that can be enabled or disabled together with its model.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IConditionalDocumentView))]
   public class ConditionalDocumentController<TModel> : IConditionalDocumentController, IMVCANController where TModel : notnull
   {
@@ -55,14 +74,26 @@ namespace Altaxo.Gui.Common
     private IMVCANController? _controller;
     private UseDocument _useDocumentCopy;
 
+    /// <inheritdoc/>
     public event PropertyChangedEventHandler? PropertyChanged;
+
+    /// <summary>
+    /// Raises the <see cref="PropertyChanged"/> event.
+    /// </summary>
+    /// <param name="propertyName">The name of the changed property.</param>
     protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConditionalDocumentController{TModel}"/> class.
+    /// </summary>
     public ConditionalDocumentController(Func<TModel> CreationAction, Action RemovalAction)
       : this(CreationAction, RemovalAction, InternalCreateController)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConditionalDocumentController{TModel}"/> class.
+    /// </summary>
     public ConditionalDocumentController(Func<TModel> CreationAction, Action RemovalAction, Func<TModel, UseDocument, IMVCANController?> ControllerCreationAction)
     {
       if (CreationAction is null)
@@ -79,6 +110,9 @@ namespace Altaxo.Gui.Common
 
     #region Binding
 
+    /// <summary>
+    /// Gets or sets the underlying controller.
+    /// </summary>
     public IMVCANController? UnderlyingController
     {
       get
@@ -97,8 +131,10 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     public object? UnderlyingView => _controller?.ViewObject;
 
+    /// <inheritdoc/>
     public bool IsConditionalViewEnabled
     {
       get => _controller is not null;
@@ -113,6 +149,7 @@ namespace Altaxo.Gui.Common
 
     private string _enablingText = "Enable";
 
+    /// <inheritdoc/>
     public string EnablingText
     {
       get => _enablingText;
@@ -135,6 +172,7 @@ namespace Altaxo.Gui.Common
       return (IMVCANController?)Current.Gui.GetControllerAndControl(new object[] { doc }, typeof(IMVCANController), useDocumentCopy);
     }
 
+    /// <inheritdoc/>
     public bool InitializeDocument(params object[] args)
     {
       if (args is null || args.Length == 0 || args[0] is not TModel)
@@ -146,6 +184,7 @@ namespace Altaxo.Gui.Common
       return true;
     }
 
+    /// <inheritdoc/>
     public UseDocument UseDocumentCopy
     {
       set
@@ -156,6 +195,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     public object? ViewObject
     {
       get
@@ -179,18 +219,22 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     public object ModelObject
     {
       get { return _controller?.ModelObject ?? new object(); }
     }
 
+    /// <inheritdoc/>
     public object? ModelObjectOrNull => _controller?.ModelObject;
 
+    /// <inheritdoc/>
     public void Dispose()
     {
       _controller?.Dispose();
     }
 
+    /// <inheritdoc/>
     public bool Apply(bool disposeController)
     {
       bool result;
@@ -227,6 +271,10 @@ namespace Altaxo.Gui.Common
     {
     }
 
+    /// <summary>
+    /// Updates the controller state after the enabled flag has changed.
+    /// </summary>
+    /// <param name="enableState">The new enabled state.</param>
     protected void OnEnabledChanged(bool enableState)
     {
       if (true == enableState && _controller is null)

@@ -38,12 +38,15 @@ namespace Altaxo.Gui.Units
   using System.Windows.Input;
   using Altaxo.Units;
 
+  /// <summary>
+  /// View interface for editing a <see cref="QuantityWithUnitGuiEnvironment"/>.
+  /// </summary>
   public interface IUnitEnvironmentView : IDataContextAwareView
   {
   }
 
   /// <summary>
-  /// Creates a custom unit environment
+  /// Controller for creating and editing a custom unit environment.
   /// </summary>
   [ExpectedTypeOfView(typeof(IUnitEnvironmentView))]
   public class UnitEnvironmentController : MVCANControllerEditCopyOfDocBase<QuantityWithUnitGuiEnvironment, IUnitEnvironmentView>, System.ComponentModel.INotifyPropertyChanged
@@ -60,11 +63,16 @@ namespace Altaxo.Gui.Units
 
     private Dictionary<IUnit, List<SIPrefix>> _prefixesForUnit = new Dictionary<IUnit, List<SIPrefix>>();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="UnitEnvironmentController"/> class.
+    /// </summary>
+    /// <param name="quantity">Quantity (dimension) whose units are to be managed.</param>
     public UnitEnvironmentController(string quantity)
     {
       _quantity = quantity;
     }
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -97,6 +105,10 @@ namespace Altaxo.Gui.Units
       }
     }
 
+    /// <summary>
+    /// Sets the quantity (dimension) for which units are to be shown.
+    /// </summary>
+    /// <param name="quantity">Quantity identifier.</param>
     public void SetQuantity(string quantity)
     {
       _quantity = quantity;
@@ -123,18 +135,21 @@ namespace Altaxo.Gui.Units
       }
     }
 
+    /// <inheritdoc/>
     protected override void AttachView()
     {
       base.AttachView();
       _view!.DataContext = this;
     }
 
+    /// <inheritdoc/>
     protected override void DetachView()
     {
       _view!.DataContext = null;
       base.DetachView();
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       var prefixedUnits = new List<IUnit>();
@@ -157,6 +172,7 @@ namespace Altaxo.Gui.Units
       return ApplyEnd(true, disposeController);
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -258,6 +274,9 @@ namespace Altaxo.Gui.Units
 
     #region Binding properties
 
+    /// <summary>
+    /// Gets the available units.
+    /// </summary>
     public SelectableListNodeList AvailableUnits
     {
       get
@@ -266,6 +285,9 @@ namespace Altaxo.Gui.Units
       }
     }
 
+    /// <summary>
+    /// Gets or sets the selected available unit.
+    /// </summary>
     public SelectableListNode? SelectedAvailableUnit
     {
       get
@@ -282,6 +304,9 @@ namespace Altaxo.Gui.Units
       }
     }
 
+    /// <summary>
+    /// Gets the included units.
+    /// </summary>
     public SelectableListNodeList IncludedUnits
     {
       get
@@ -290,6 +315,9 @@ namespace Altaxo.Gui.Units
       }
     }
 
+    /// <summary>
+    /// Gets or sets the selected included unit.
+    /// </summary>
     public SelectableListNode? SelectedIncludedUnit
     {
       get
@@ -310,6 +338,9 @@ namespace Altaxo.Gui.Units
       }
     }
 
+    /// <summary>
+    /// Gets the available prefixes for the selected included unit.
+    /// </summary>
     public SelectableListNodeList Prefixes
     {
       get
@@ -318,6 +349,9 @@ namespace Altaxo.Gui.Units
       }
     }
 
+    /// <summary>
+    /// Gets all selected prefixed units.
+    /// </summary>
     public SelectableListNodeList AllPrefixedUnits
     {
       get
@@ -326,10 +360,19 @@ namespace Altaxo.Gui.Units
       }
     }
 
+    /// <summary>
+    /// Gets the command that adds units to the included list.
+    /// </summary>
     public ICommand? AddToIncludedUnits { get; private set; }
 
+    /// <summary>
+    /// Gets the command that removes units from the included list.
+    /// </summary>
     public ICommand? RemoveFromIncludedUnits { get; private set; }
 
+    /// <summary>
+    /// Gets the command that reacts to changes of selected prefixes.
+    /// </summary>
     public ICommand? SelectedPrefixesChangedCommand { get; private set; }
 
     #endregion Binding properties

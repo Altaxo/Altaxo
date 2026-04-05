@@ -30,10 +30,16 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Common.Drawing
 {
+  /// <summary>
+  /// Defines the view contract for advanced brush editing.
+  /// </summary>
   public interface IBrushViewAdvanced : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for editing advanced <see cref="BrushX"/> settings.
+  /// </summary>
   [UserControllerForObject(typeof(BrushX))]
   [ExpectedTypeOfView(typeof(IBrushViewAdvanced))]
   public class BrushControllerAdvanced : MVCANDControllerEditImmutableDocBase<BrushX, IBrushViewAdvanced>
@@ -43,6 +49,7 @@ namespace Altaxo.Gui.Common.Drawing
     private TextureScalingController _textureScalingController;
 
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_additionalPropertiesController, () => _additionalPropertiesController = null);
@@ -51,8 +58,14 @@ namespace Altaxo.Gui.Common.Drawing
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the current brush document.
+    /// </summary>
     public BrushX BrushDocument => _doc;
 
+    /// <summary>
+    /// Gets or sets the brush type.
+    /// </summary>
     public BrushType BrushType
     {
       get => _doc.BrushType;
@@ -90,8 +103,14 @@ namespace Altaxo.Gui.Common.Drawing
     }
 
     private bool _foreColorEnable;
+    /// <summary>
+    /// Gets or sets a value indicating whether the foreground color editor is enabled.
+    /// </summary>
     public bool ForeColorEnable { get => _foreColorEnable; set { if (!(ForeColorEnable == value)) { _foreColorEnable = value; OnPropertyChanged(nameof(ForeColorEnable)); } } }
 
+    /// <summary>
+    /// Gets or sets the foreground color.
+    /// </summary>
     public NamedColor ForeColor
     {
       get => _doc.Color;
@@ -107,10 +126,19 @@ namespace Altaxo.Gui.Common.Drawing
     }
 
     private bool _restrictBrushColorToPlotColorsOnly;
+    /// <summary>
+    /// Gets or sets a value indicating whether only plot colors are shown.
+    /// </summary>
     public bool ShowPlotColorsOnly { get => _restrictBrushColorToPlotColorsOnly; set { if (!(ShowPlotColorsOnly == value)) { _restrictBrushColorToPlotColorsOnly = value; OnPropertyChanged(nameof(ShowPlotColorsOnly)); } } }
 
     private bool _backColorEnable;
+    /// <summary>
+    /// Gets or sets a value indicating whether the background color editor is enabled.
+    /// </summary>
     public bool BackColorEnable { get => _backColorEnable; set { if (!(BackColorEnable == value)) { _backColorEnable = value; OnPropertyChanged(nameof(BackColorEnable)); } } }
+    /// <summary>
+    /// Gets or sets the background color.
+    /// </summary>
     public NamedColor BackColor
     {
       get => _doc.BackColor;
@@ -126,8 +154,14 @@ namespace Altaxo.Gui.Common.Drawing
     }
 
     private bool _exchangeColorsEnable;
+    /// <summary>
+    /// Gets or sets a value indicating whether the color exchange option is enabled.
+    /// </summary>
     public bool ExchangeColorsEnable { get => _exchangeColorsEnable; set { if (!(ExchangeColorsEnable == value)) { _exchangeColorsEnable = value; OnPropertyChanged(nameof(ExchangeColorsEnable)); } } }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether foreground and background colors are exchanged.
+    /// </summary>
     public bool ExchangeColors
     {
       get => _doc.ExchangeColors;
@@ -145,9 +179,15 @@ namespace Altaxo.Gui.Common.Drawing
     }
 
     private bool _wrapModeEnable;
+    /// <summary>
+    /// Gets or sets a value indicating whether the wrap mode editor is enabled.
+    /// </summary>
     public bool WrapModeEnable { get => _wrapModeEnable; set { if (!(WrapModeEnable == value)) { _wrapModeEnable = value; OnPropertyChanged(nameof(WrapModeEnable)); } } }
 
 
+    /// <summary>
+    /// Gets or sets the wrap mode.
+    /// </summary>
     public System.Drawing.Drawing2D.WrapMode WrapMode
     {
       get => _doc.WrapMode;
@@ -162,11 +202,20 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets or sets the unit environment for the gradient angle.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment GradientAngleEnvironment { get; set; }
 
     private bool _gradientAngleEnable;
+    /// <summary>
+    /// Gets or sets a value indicating whether the gradient angle editor is enabled.
+    /// </summary>
     public bool GradientAngleEnable { get => _gradientAngleEnable; set { if (!(GradientAngleEnable == value)) { _gradientAngleEnable = value; OnPropertyChanged(nameof(GradientAngleEnable)); } } }
 
+    /// <summary>
+    /// Gets or sets the gradient angle.
+    /// </summary>
     public DimensionfulQuantity GradientAngle
     {
       get => new DimensionfulQuantity(_doc.GradientAngle, Altaxo.Units.Angle.Degree.Instance).AsQuantityIn(GradientAngleEnvironment.DefaultUnit);
@@ -181,11 +230,20 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets or sets the unit environment for the gradient focus.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment GradientFocusEnvironment { get; set; }
 
     private bool _gradientFocusEnable;
+    /// <summary>
+    /// Gets or sets a value indicating whether the gradient focus editor is enabled.
+    /// </summary>
     public bool GradientFocusEnable { get => _gradientFocusEnable; set { if (!(GradientFocusEnable == value)) { _gradientFocusEnable = value; OnPropertyChanged(nameof(GradientFocusEnable)); } } }
 
+    /// <summary>
+    /// Gets or sets the gradient focus.
+    /// </summary>
     public DimensionfulQuantity GradientFocus
     {
       get => new DimensionfulQuantity(_doc.GradientFocus, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(GradientFocusEnvironment.DefaultUnit);
@@ -200,10 +258,19 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets or sets the unit environment for the gradient color scale.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment GradientColorScaleEnvironment { get; set; }
 
     private bool _gradientColorScaleEnable;
+    /// <summary>
+    /// Gets or sets a value indicating whether the gradient color scale editor is enabled.
+    /// </summary>
     public bool GradientColorScaleEnable { get => _gradientColorScaleEnable; set { if (!(GradientColorScaleEnable == value)) { _gradientColorScaleEnable = value; OnPropertyChanged(nameof(GradientColorScaleEnable)); } } }
+    /// <summary>
+    /// Gets or sets the gradient color scale.
+    /// </summary>
     public DimensionfulQuantity GradientColorScale
     {
       get => new DimensionfulQuantity(_doc.GradientColorScale, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(GradientColorScaleEnvironment.DefaultUnit);
@@ -219,10 +286,19 @@ namespace Altaxo.Gui.Common.Drawing
     }
 
 
+    /// <summary>
+    /// Gets the unit environment for the x texture offset.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment TextureOffsetXEnvironment => RelationEnvironment.Instance;
 
     private bool _textureOffsetXEnable;
+    /// <summary>
+    /// Gets or sets a value indicating whether the x texture offset editor is enabled.
+    /// </summary>
     public bool TextureOffsetXEnable { get => _textureOffsetXEnable; set { if (!(TextureOffsetXEnable == value)) { _textureOffsetXEnable = value; OnPropertyChanged(nameof(TextureOffsetXEnable)); } } }
+    /// <summary>
+    /// Gets or sets the x texture offset.
+    /// </summary>
     public DimensionfulQuantity TextureOffsetX
     {
       get => new DimensionfulQuantity(_doc.TextureOffsetX, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(TextureOffsetXEnvironment.DefaultUnit);
@@ -239,11 +315,20 @@ namespace Altaxo.Gui.Common.Drawing
 
 
 
+    /// <summary>
+    /// Gets the unit environment for the y texture offset.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment TextureOffsetYEnvironment => RelationEnvironment.Instance;
 
     private bool _textureOffsetYEnable;
+    /// <summary>
+    /// Gets or sets a value indicating whether the y texture offset editor is enabled.
+    /// </summary>
     public bool TextureOffsetYEnable { get => _textureOffsetYEnable; set { if (!(TextureOffsetYEnable == value)) { _textureOffsetYEnable = value; OnPropertyChanged(nameof(TextureOffsetYEnable)); } } }
 
+    /// <summary>
+    /// Gets or sets the y texture offset.
+    /// </summary>
     public DimensionfulQuantity TextureOffsetY
     {
       get => new DimensionfulQuantity(_doc.TextureOffsetY, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(TextureOffsetYEnvironment.DefaultUnit);
@@ -259,13 +344,25 @@ namespace Altaxo.Gui.Common.Drawing
     }
 
     private bool _textureScalingEnable;
+    /// <summary>
+    /// Gets or sets a value indicating whether texture scaling is enabled.
+    /// </summary>
     public bool TextureScalingEnable { get => _textureScalingEnable; set { if (!(TextureScalingEnable == value)) { _textureScalingEnable = value; OnPropertyChanged(nameof(TextureScalingEnable)); } } }
 
+    /// <summary>
+    /// Gets the texture scaling controller.
+    /// </summary>
     public TextureScalingController TextureScalingController => _textureScalingController;
 
     private bool _textureImageEnable;
+    /// <summary>
+    /// Gets or sets a value indicating whether the texture image editor is enabled.
+    /// </summary>
     public bool TextureImageEnable { get => _textureImageEnable; set { if (!(TextureImageEnable == value)) { _textureImageEnable = value; OnPropertyChanged(nameof(TextureImageEnable)); } } }
 
+    /// <summary>
+    /// Gets or sets the texture image.
+    /// </summary>
     public ImageProxy TextureImage
     {
       get { return _doc.TextureImage; }
@@ -288,10 +385,14 @@ namespace Altaxo.Gui.Common.Drawing
         _textureScalingController.SourceTextureSize = GetSizeOfImageProxy(_doc.TextureImage);
     }
 
+    /// <summary>
+    /// Gets the controller for additional image properties.
+    /// </summary>
     public Main.InstancePropertyController AdditionalPropertiesController => _additionalPropertiesController;
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -311,11 +412,13 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);
     }
 
+    /// <inheritdoc/>
     protected override void OnMadeDirty()
     {
       base.OnMadeDirty();

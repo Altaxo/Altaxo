@@ -27,14 +27,21 @@ using Altaxo.Science.Spectroscopy.PeakEnhancement;
 
 namespace Altaxo.Gui.Science.Spectroscopy.PeakEnhancement
 {
+  /// <summary>
+  /// View interface for peak enhancement by second derivative of smoothing spline.
+  /// </summary>
   public interface IPeakEnhancement2ndDerivativeOfSmoothingSplineView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="PeakEnhancement2ndDerivativeOfSmoothingSpline"/>.
+  /// </summary>
   [UserControllerForObject(typeof(PeakEnhancement2ndDerivativeOfSmoothingSpline), 100)]
   [ExpectedTypeOfView(typeof(IPeakEnhancement2ndDerivativeOfSmoothingSplineView))]
   public class PeakEnhancement2ndDerivativeOfSmoothingSplineController : MVCANControllerEditImmutableDocBase<PeakEnhancement2ndDerivativeOfSmoothingSpline, IPeakEnhancement2ndDerivativeOfSmoothingSplineView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -44,6 +51,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakEnhancement
 
     private bool _isSmoothnessManual;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the smoothness is specified manually.
+    /// </summary>
     public bool IsSmoothnessManual
     {
       get => _isSmoothnessManual;
@@ -60,6 +70,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakEnhancement
 
     private double _smoothness;
 
+    /// <summary>
+    /// Gets or sets the smoothing value.
+    /// </summary>
     public double Smoothness
     {
       get => _smoothness;
@@ -76,6 +89,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakEnhancement
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -87,6 +101,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakEnhancement
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = _doc with

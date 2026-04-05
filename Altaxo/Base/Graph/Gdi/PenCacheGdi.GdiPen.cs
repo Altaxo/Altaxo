@@ -57,12 +57,10 @@ namespace Altaxo.Graph.Gdi
       private PenCacheGdi? _parentCache;
 
       /// <summary>
-      /// Performs an implicit conversion from <see cref="GdiPen"/> to <see cref="System.Drawing.Brush"/>.
+      /// Performs an implicit conversion from <see cref="GdiPen"/> to <see cref="System.Drawing.Pen"/>.
       /// </summary>
-      /// <param name="pen">The <see cref="GdiPen"/> object to convert.</param>
-      /// <returns>
-      /// The <see cref="System.Drawing.Brush"/> object.
-      /// </returns>
+      /// <param name="pen">The pen wrapper.</param>
+      /// <returns>The native GDI pen.</returns>
       public static implicit operator System.Drawing.Pen(GdiPen pen)
       {
         if (pen is null)

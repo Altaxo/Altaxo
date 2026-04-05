@@ -31,7 +31,8 @@ using System.Text;
 namespace Altaxo.Drawing.ColorManagement
 {
   /// <summary>
-  /// Structure that stores <see cref="Altaxo.Main.ItemDefinitionLevel"/> and name of a color set. This is used as key value in the internal dictionaries.
+  /// Immutable identifier that stores the <see cref="Altaxo.Main.ItemDefinitionLevel"/> and name of a color set.
+  /// It is used as a key value in internal dictionaries.
   /// </summary>
   [System.ComponentModel.ImmutableObject(true)]
   public class ColorSetIdentifier : IEquatable<ColorSetIdentifier>, IComparable<ColorSetIdentifier>, Main.IImmutable
@@ -65,6 +66,11 @@ namespace Altaxo.Drawing.ColorManagement
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColorSetIdentifier"/> class.
+    /// </summary>
+    /// <param name="colorSetLevel">The definition level of the color set.</param>
+    /// <param name="colorSetName">The color set name.</param>
     public ColorSetIdentifier(Altaxo.Main.ItemDefinitionLevel colorSetLevel, string colorSetName)
     {
       if (string.IsNullOrEmpty(colorSetName))
@@ -90,21 +96,25 @@ namespace Altaxo.Drawing.ColorManagement
     /// </value>
     public string Name { get { return _name; } }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return _level.GetHashCode() * 29 + _name.GetHashCode() * 31;
     }
 
+    /// <inheritdoc/>
     public bool Equals(ColorSetIdentifier? other)
     {
       return other is not null && _level == other._level && 0 == string.Compare(_name, other._name);
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       return obj is ColorSetIdentifier other ? _level == other._level && 0 == string.Compare(_name, other._name) : false;
     }
 
+    /// <inheritdoc/>
     public int CompareTo(ColorSetIdentifier? other)
     {
       if (other is null)
@@ -115,6 +125,7 @@ namespace Altaxo.Drawing.ColorManagement
       return 0 != result ? result : string.Compare(_name, other._name);
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return string.Format("{0} ({1})", _name, _level);

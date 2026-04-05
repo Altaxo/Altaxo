@@ -29,7 +29,7 @@ using Altaxo.Graph.Gdi.LineCaps;
 namespace Altaxo.Drawing
 {
   /// <summary>
-  /// Interface to a start or end line cap of a line.
+  /// Represents a start or end line cap of a line.
   /// </summary>
   public interface ILineCap : IEquatable<ILineCap>, Main.IImmutable
   {
@@ -58,10 +58,10 @@ namespace Altaxo.Drawing
     string Name { get; }
 
     /// <summary>
-    /// Gets a new instance of the line cap with the designated minimum absolute and relative sizes. Note that not all line cap types support one or both values; in this case, those values are ignored.
+    /// Gets a new instance of the line cap with the designated minimum absolute and relative sizes. Note that not all line cap types support one or both values; in that case, those values are ignored.
     /// </summary>
-    /// <param name="minimumAbsoluteSizePt">The minimum absolute size pt.</param>
-    /// <param name="minimumRelativeSize">Minimum size of the relative.</param>
+    /// <param name="minimumAbsoluteSizePt">The minimum absolute size in points.</param>
+    /// <param name="minimumRelativeSize">The minimum relative size.</param>
     /// <returns>A new instance of the line cap with the designated minimum absolute and relative sizes.</returns>
     ILineCap WithMinimumAbsoluteAndRelativeSize(double minimumAbsoluteSizePt, double minimumRelativeSize);
   }

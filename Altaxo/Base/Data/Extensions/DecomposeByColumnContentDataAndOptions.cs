@@ -29,13 +29,12 @@ using System.Linq;
 namespace Altaxo.Data
 {
   /// <summary>
-  /// Holds both the data (see <see cref="DataTableMultipleColumnProxy"/>) and the options (see <see cref="DecomposeByColumnContentOptions"/>) to perform
-  /// the decomposition of a table containing a column with a cycling variable.
+  /// Holds both the data (see <see cref="DataTableMultipleColumnProxy"/>) and the options (see <see cref="DecomposeByColumnContentOptions"/>) needed to decompose a table containing a cycling-variable column.
   /// </summary>
   public class DecomposeByColumnContentDataAndOptions : ICloneable
   {
     /// <summary>
-    /// Holds the data nessessary for decomposing of a table containing a column with a cycling variable.
+    /// Holds the data necessary for decomposing a table containing a cycling-variable column.
     /// </summary>
     /// <value>
     /// The data.
@@ -43,7 +42,7 @@ namespace Altaxo.Data
     public DataTableMultipleColumnProxy Data { get; private set; }
 
     /// <summary>
-    /// Holds the options nessessary for decomposing of a table containing a column with a cycling variable.
+    /// Holds the options necessary for decomposing a table containing a cycling-variable column.
     /// </summary>
     /// <value>
     /// The options.
@@ -56,6 +55,11 @@ namespace Altaxo.Data
     /// <summary>Identifies all columns which participate in the <see cref="DataTableMultipleColumnProxy"/> instance.</summary>
     public const string ColumnsParticipatingIdentifier = "ColumnsParticipating";
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DecomposeByColumnContentDataAndOptions"/> class.
+    /// </summary>
+    /// <param name="data">The selected source data.</param>
+    /// <param name="options">The decomposition options.</param>
     public DecomposeByColumnContentDataAndOptions(DataTableMultipleColumnProxy data, DecomposeByColumnContentOptions options)
     {
       Data = data;

@@ -42,6 +42,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
   /// <seealso cref="Altaxo.Main.IImmutable" />
   public class BezierConnection : LineConnectionStyleBase
   {
+    /// <summary>
+    /// Gets the singleton instance.
+    /// </summary>
     public static BezierConnection Instance { get; private set; } = new BezierConnection();
 
     #region Serialization

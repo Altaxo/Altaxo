@@ -32,9 +32,19 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Main.Services.Files
 {
+  /// <summary>
+  /// Represents a project archive stored in a file system folder.
+  /// </summary>
   public class FileSystemFolderAsProjectArchive : IProjectArchive
   {
+    /// <summary>
+    /// The base folder of the archive.
+    /// </summary>
     private string _baseFolder;
+
+    /// <summary>
+    /// The files contained in the archive folder.
+    /// </summary>
     private FileInfo[] _files;
 
     /// <summary>
@@ -42,8 +52,15 @@ namespace Altaxo.Main.Services.Files
     /// </summary>
     private HashSet<string> _entryHash;
 
+    /// <summary>
+    /// Gets the folder name of the archive.
+    /// </summary>
     public PathName? FileName => new DirectoryName(_baseFolder);
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileSystemFolderAsProjectArchive"/> class.
+    /// </summary>
+    /// <param name="folderName">The folder containing the archive entries.</param>
     public FileSystemFolderAsProjectArchive(DirectoryName folderName)
     {
       if (folderName is null)
@@ -67,6 +84,7 @@ namespace Altaxo.Main.Services.Files
       }
     }
 
+    /// <inheritdoc/>
     public IEnumerable<IProjectArchiveEntry> Entries
     {
       get
@@ -91,11 +109,13 @@ namespace Altaxo.Main.Services.Files
     /// </remarks>
     public bool SupportsDeferredLoading => false;
 
+    /// <inheritdoc/>
     public bool ContainsEntry(string entryName)
     {
       return _entryHash.Contains(entryName);
     }
 
+    /// <inheritdoc/>
     public void CopyEntryFrom(IProjectArchive sourceArchive, string sourceEntryName, string destinationEntryName)
     {
       var destEntry = CreateEntry(destinationEntryName);
@@ -109,6 +129,7 @@ namespace Altaxo.Main.Services.Files
       srcStream.CopyTo(destStream);
     }
 
+    /// <inheritdoc/>
     public IProjectArchiveEntry CreateEntry(string name)
     {
       name = name.Trim();
@@ -122,11 +143,13 @@ namespace Altaxo.Main.Services.Files
       return new FileSystemFileAsProjectArchiveEntry(_baseFolder, name);
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
       // Nothing to dispose here!
     }
 
+    /// <inheritdoc/>
     public IProjectArchiveEntry? GetEntry(string entryName)
     {
       if (_entryHash.Contains(entryName))
@@ -135,12 +158,14 @@ namespace Altaxo.Main.Services.Files
         return null;
     }
 
+    /// <inheritdoc/>
     public IProjectArchiveEntryMemento? GetEntryMemento(string entryName)
     {
       throw new NotSupportedException(); // see property SupportsDeferredLoading why this is not supported yet.
       // return new FileSystemFileAsProjectArchiveMemento(entryName, null, _baseFolder);
     }
 
+    /// <inheritdoc/>
     public bool SupportsCopyEntryFrom(IProjectArchive archive)
     {
       return archive is not FileSystemFolderAsProjectArchive ||

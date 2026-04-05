@@ -36,10 +36,12 @@ namespace Altaxo.Serialization.AutoUpdates
   {
     private const string UpdateInstallerFileName = "AltaxoUpdateInstaller.exe";
 
-    /// <summary>Starts the installer program, when all presumtions are fullfilled.</summary>
+    /// <summary>
+    /// Starts the installer program when all prerequisites are fulfilled.
+    /// </summary>
     /// <param name="isAltaxoCurrentlyStarting">If set to <c>true</c>, Altaxo will be restarted after the installation is done.</param>
     /// <param name="commandLineArgs">Original command line arguments. Can be <c>null</c> when calling this function on shutdown.</param>
-    /// <returns>True if the installer program was started. Then Altaxo have to be shut down immediately. Returns <c>false</c> if the installer program was not started.</returns>
+    /// <returns><c>true</c> if the installer program was started; otherwise, <c>false</c>.</returns>
     public bool Run(bool isAltaxoCurrentlyStarting, string[]? commandLineArgs)
     {
       var updateSettings = Current.PropertyService.GetValue(Altaxo.Settings.AutoUpdateSettings.PropertyKeyAutoUpdate, Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin, () => new Altaxo.Settings.AutoUpdateSettings());

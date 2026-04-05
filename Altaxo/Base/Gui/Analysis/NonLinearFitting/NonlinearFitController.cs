@@ -46,6 +46,9 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
+  /// <summary>
+  /// Defines the view contract for nonlinear fitting.
+  /// </summary>
   public interface INonlinearFitView : IDataContextAwareView
   {
   }
@@ -54,6 +57,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
   /// Summary description for NonlinearFitController.
   /// </summary>
   /// <seealso cref="Altaxo.Gui.IMVCAController" />
+  /// <summary>
+  /// Controller for <see cref="NonlinearFitDocument"/>.
+  /// </summary>
   [UserControllerForObject(typeof(NonlinearFitDocument))]
   [ExpectedTypeOfView(typeof(INonlinearFitView))]
   public class NonlinearFitController : MVCANControllerEditImmutableDocBase<NonlinearFitDocument, INonlinearFitView>
@@ -71,6 +77,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private XYPlotLayer _activeLayer;
 
+    /// <inheritdoc/>
     public override bool InitializeDocument(params object[] args)
     {
       if (args is null || args.Length == 0)
@@ -92,6 +99,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       return true;
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_fitFunctionSelectionController, () => FitFunctionSelectionController = null);
@@ -104,13 +112,28 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     #region Tabs
 
+    /// <summary>
+    /// Gets the tab identifier for the selection page.
+    /// </summary>
     public const string TabSelection = "Selection";
+    /// <summary>
+    /// Gets the tab identifier for the details page.
+    /// </summary>
     public const string TabDetails = "Details";
+    /// <summary>
+    /// Gets the tab identifier for the fitting page.
+    /// </summary>
     public const string TabFit = "Fit";
+    /// <summary>
+    /// Gets the tab identifier for the simulation page.
+    /// </summary>
     public const string TabSimulation = "Simulation";
 
     private string _selectedTab;
 
+    /// <summary>
+    /// Gets or sets the currently selected tab.
+    /// </summary>
     public string SelectedTab
     {
       get => _selectedTab;
@@ -129,13 +152,22 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     #region FitFunctionSelection
     private ICommand _cmdSelectFitFunction;
+    /// <summary>
+    /// Gets the command for selecting a fit function.
+    /// </summary>
     public ICommand CmdSelectFitFunction => _cmdSelectFitFunction ??= new RelayCommand(EhView_SelectFitFunction);
 
     private ICommand _cmdCreateNewFitFunction;
+    /// <summary>
+    /// Gets the command for creating a new fit function.
+    /// </summary>
     public ICommand CmdCreateNewFitFunction => _cmdCreateNewFitFunction ??= new RelayCommand(EhView_NewFitFunction);
 
     private FitFunctionSelectionController _fitFunctionSelectionController;
 
+    /// <summary>
+    /// Gets or sets the fit-function selection controller.
+    /// </summary>
     public FitFunctionSelectionController FitFunctionSelectionController
     {
       get => _fitFunctionSelectionController;
@@ -157,6 +189,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private IMVCANController _fitEnsembleController;
 
+    /// <summary>
+    /// Gets or sets the fit-ensemble controller.
+    /// </summary>
     public IMVCANController FitEnsembleController
     {
       get => _fitEnsembleController;
@@ -177,39 +212,72 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     #region MakeFit
 
     private ICommand _cmdCopyParameterNV;
+    /// <summary>
+    /// Gets the command for copying parameter names and values.
+    /// </summary>
     public ICommand CmdCopyParameterNV => _cmdCopyParameterNV ??= new RelayCommand(EhView_CopyParameterNV);
 
     private ICommand _cmdCopyParameterNVV;
+    /// <summary>
+    /// Gets the command for copying parameter names, values, and variances.
+    /// </summary>
     public ICommand CmdCopyParameterNVV => _cmdCopyParameterNVV ??= new RelayCommand(EhView_CopyParameterNVV);
 
     private ICommand _cmdCopyParameterVAsCDef;
+    /// <summary>
+    /// Gets the command for copying parameter values as C definitions.
+    /// </summary>
     public ICommand CmdCopyParameterVAsCDef => _cmdCopyParameterVAsCDef ??= new RelayCommand(EhView_CopyParameterVAsCDef);
 
     private ICommand _cmdCopyParameterV;
+    /// <summary>
+    /// Gets the command for copying parameter values.
+    /// </summary>
     public ICommand CmdCopyParameterV => _cmdCopyParameterV ??= new RelayCommand(EhView_CopyParameterV);
 
     private ICommand _cmdCopyParameterWithCVM;
+    /// <summary>
+    /// Gets the command for copying parameters with the covariance matrix.
+    /// </summary>
     public ICommand CmdCopyParameterWithCVM => _cmdCopyParameterWithCVM ??= new RelayCommand(EhView_CopyParameterNCM);
 
 
     private ICommand _cmdCopyParameterNSVCVInOneRow;
+    /// <summary>
+    /// Gets the command for copying the fit summary in one row.
+    /// </summary>
     public ICommand CmdCopyParameterNSVCVInOneRow => _cmdCopyParameterNSVCVInOneRow ??= new RelayCommand(EhView_CopyParameterNSVCVInOneRow);
 
 
     private ICommand _cmdPasteParameterV;
+    /// <summary>
+    /// Gets the command for pasting parameter values.
+    /// </summary>
     public ICommand CmdPasteParameterV => _cmdPasteParameterV ??= new RelayCommand(EhView_PasteParameterV);
 
     private ICommand _cmdEvaluateChiSquare;
+    /// <summary>
+    /// Gets the command for evaluating the chi-square value.
+    /// </summary>
     public ICommand CmdEvaluateChiSquare => _cmdEvaluateChiSquare ??= new RelayCommand(EhView_EvaluateChiSqr);
 
     private ICommand _cmdDoFit;
+    /// <summary>
+    /// Gets the command for starting the fit.
+    /// </summary>
     public ICommand CmdDoFit => _cmdDoFit ??= new RelayCommand(EhView_DoFit);
 
     private ICommand _cmdDoSimplex;
+    /// <summary>
+    /// Gets the command for starting simplex fitting.
+    /// </summary>
     public ICommand CmdDoSimplex => _cmdDoSimplex ??= new RelayCommand(EhView_DoSimplex);
 
     private double _chiSquareValue;
 
+    /// <summary>
+    /// Gets or sets the current chi-square value.
+    /// </summary>
     public double ChiSquareValue
     {
       get => _chiSquareValue;
@@ -226,6 +294,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private bool _showUnusedDependentVariables = true;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether unused dependent variables are shown.
+    /// </summary>
     public bool ShowUnusedDependentVariables
     {
       get => _showUnusedDependentVariables;
@@ -241,6 +312,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private bool _showConfidenceBands;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether confidence bands are shown.
+    /// </summary>
     public bool ShowConfidenceBands
     {
       get => _showConfidenceBands;
@@ -254,10 +328,16 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
     }
 
+    /// <summary>
+    /// Gets the environment used for confidence levels.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment ConfidenceLevelEnvironment => RelationEnvironment.Instance;
 
     private DimensionfulQuantity _confidenceLevel = new DimensionfulQuantity(0.95, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(RelationEnvironment.Instance.DefaultUnit);
 
+    /// <summary>
+    /// Gets or sets the confidence level.
+    /// </summary>
     public DimensionfulQuantity ConfidenceLevel
     {
       get => _confidenceLevel;
@@ -276,6 +356,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private IMVCANController _parameterController;
 
+    /// <summary>
+    /// Gets or sets the parameter controller.
+    /// </summary>
     public IMVCANController ParameterController
     {
       get => _parameterController;
@@ -297,6 +380,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private bool _useUnusedDependentVarsAlsoInSimulation;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether unused dependent variables are also used in simulation.
+    /// </summary>
     public bool UseUnusedDependentVarsAlsoInSimulation
     {
       get => _useUnusedDependentVarsAlsoInSimulation;
@@ -311,11 +397,17 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     }
 
     private ICommand _cmdDoSimulation;
+    /// <summary>
+    /// Gets the command for simulation.
+    /// </summary>
     public ICommand CmdDoSimulation => _cmdDoSimulation ??= new RelayCommand(EhView_DoSimulation);
 
 
     private bool _simulationGenerateFromIndependentVars;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether simulation points are generated from the independent variables.
+    /// </summary>
     public bool SimulationGenerateFromIndependentVars
     {
       get => _simulationGenerateFromIndependentVars;
@@ -330,6 +422,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether simulation uses an equally spaced interval.
+    /// </summary>
     public bool SimulationFromEquallySpacedInterval
     {
       get => !SimulationGenerateFromIndependentVars;
@@ -339,6 +434,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private Common.EquallySpacedIntervalController _generationIntervalController;
 
+    /// <summary>
+    /// Gets or sets the controller for the generation interval.
+    /// </summary>
     public Common.EquallySpacedIntervalController GenerationIntervalController
     {
       get => _generationIntervalController;
@@ -359,21 +457,34 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     #region Bounds
 
     private ICommand _cmdBoundsLoadAbsoluteLimits;
+    /// <summary>
+    /// Gets the command for loading absolute bounds.
+    /// </summary>
     public ICommand CmdBoundsLoadAbsoluteLimits => _cmdBoundsLoadAbsoluteLimits ??= new RelayCommand(EhView_CmdBoundsLoadHardLimits);
 
     private ICommand _cmdBoundsLoadSensibleLimits;
+    /// <summary>
+    /// Gets the command for loading sensible bounds.
+    /// </summary>
     public ICommand CmdBoundsLoadSensibleLimits => _cmdBoundsLoadSensibleLimits ??= new RelayCommand(EhView_CmdBoundsLoadSoftLimits);
 
     private ICommand _cmdBoundsMergeAbsoluteLimits;
+    /// <summary>
+    /// Gets the command for merging absolute bounds.
+    /// </summary>
     public ICommand CmdBoundsMergeAbsoluteLimits => _cmdBoundsMergeAbsoluteLimits ??= new RelayCommand(EhView_CmdBoundsMergeHardLimits);
 
     private ICommand _cmdBoundsMergeSensibleLimits;
+    /// <summary>
+    /// Gets the command for merging sensible bounds.
+    /// </summary>
     public ICommand CmdBoundsMergeSensibleLimits => _cmdBoundsMergeSensibleLimits ??= new RelayCommand(EhView_CmdBoundsMergeSoftLimits);
 
     #endregion
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -419,6 +530,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     }
 
 
+    /// <summary>
+    /// Evaluates the current chi-square value for the configured model.
+    /// </summary>
     public void EhView_EvaluateChiSqr()
     {
       if (true == _parameterController.Apply(false))
@@ -441,6 +555,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
     }
 
+    /// <summary>
+    /// Starts the nonlinear fit.
+    /// </summary>
     public void EhView_DoFit()
     {
       if (_showConfidenceBands)
@@ -548,57 +665,103 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       private string _reportText = "Operation in progress - please wait ...";
       private bool _reportTextDirty = true;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ReportCostMonitor"/> class.
+      /// </summary>
       public ReportCostMonitor()
       {
         _cancellationTokenSource = new CancellationTokenSource();
       }
 
+      /// <summary>
+      /// Gets the cancellation token.
+      /// </summary>
+      /// <returns>The cancellation token.</returns>
       public CancellationToken GetCancellationToken()
       {
         return _cancellationTokenSource.Token;
       }
 
+      /// <summary>
+      /// Updates the monitor with a new minimum cost value.
+      /// </summary>
+      /// <param name="minCost">The new minimum cost.</param>
       public void NewMinimumCostValueAvailable(double minCost)
       {
         _reportText = string.Format("Minimum cost value so far: {0}", minCost);
         _reportTextDirty = true;
       }
 
+      /// <summary>
+      /// Gets a value indicating whether cancellation is pending.
+      /// </summary>
       public new bool CancellationPending => _cancellationTokenSource.IsCancellationRequested;
 
+      /// <summary>
+      /// Gets a value indicating whether report text is available.
+      /// </summary>
       public new bool HasReportText => _reportTextDirty;
 
+      /// <summary>
+      /// Gets a value indicating whether reporting should occur now.
+      /// </summary>
       public new bool ShouldReportNow => _reportTextDirty;
 
+      /// <summary>
+      /// Gets the progress fraction.
+      /// </summary>
+      /// <returns>The progress fraction.</returns>
       public new double GetProgressFraction()
       {
         return 0;
       }
 
+      /// <summary>
+      /// Gets the current report text.
+      /// </summary>
+      /// <returns>The report text.</returns>
       public new string GetReportText()
       {
         return _reportText;
       }
 
+      /// <summary>
+      /// Reports progress text.
+      /// </summary>
+      /// <param name="text">The progress text.</param>
       public new void ReportProgress(string text)
       {
       }
 
+      /// <summary>
+      /// Reports progress text and a progress value.
+      /// </summary>
+      /// <param name="text">The progress text.</param>
+      /// <param name="progressValue">The progress value.</param>
       public new void ReportProgress(string text, double progressValue)
       {
       }
 
+      /// <summary>
+      /// Requests cancellation.
+      /// </summary>
       public new void SetCancellationPending()
       {
         _cancellationTokenSource.Cancel();
       }
 
+      /// <summary>
+      /// Marks the monitor to report immediately.
+      /// </summary>
       public new void SetShouldReportNow()
       {
         _reportTextDirty = true;
       }
     }
 
+    /// <summary>
+    /// Starts simplex-based fitting.
+    /// </summary>
     public void EhView_DoSimplex()
     {
       if (true == _parameterController.Apply(false))
@@ -640,6 +803,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
     }
 
+    /// <summary>
+    /// Starts the simulation.
+    /// </summary>
     public void EhView_DoSimulation()
     {
       var useInterval = SimulationFromEquallySpacedInterval;
@@ -752,6 +918,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
     }
 
+    /// <summary>
+    /// Selects the fit function currently chosen in the selector.
+    /// </summary>
     public void EhView_SelectFitFunction()
     {
       if (_fitFunctionSelectionController.Apply(false))
@@ -767,6 +936,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       SelectedTab = TabDetails;
     }
 
+    /// <summary>
+    /// Creates a new fit function script.
+    /// </summary>
     public void EhView_NewFitFunction()
     {
       var script = new FitFunctionScript();
@@ -790,6 +962,9 @@ Label_EditScript:
       }
     }
 
+    /// <summary>
+    /// Performs updates after a fitting step completed.
+    /// </summary>
     public void OnAfterFittingStep()
     {
       _parameterController.InitializeDocument(_doc.CurrentParameters);
@@ -1119,6 +1294,10 @@ Label_EditScript:
       }
     }
 
+    /// <summary>
+    /// Simulates the fit on the original data rows.
+    /// </summary>
+    /// <param name="calculateUnusedDependentVariablesAlso">Whether unused dependent variables should also be simulated.</param>
     public void OnSimulation(bool calculateUnusedDependentVariablesAlso)
     {
       // we investigate for every fit element the corresponding table, and add columns to that table
@@ -1197,6 +1376,11 @@ Label_EditScript:
       }
     }
 
+    /// <summary>
+    /// Simulates the fit on a generated interval.
+    /// </summary>
+    /// <param name="calculateUnusedDependentVariablesAlso">Whether unused dependent variables should also be simulated.</param>
+    /// <param name="interval">The interval used to generate simulation points.</param>
     public void OnSimulationWithInterval(bool calculateUnusedDependentVariablesAlso, ISpacedInterval interval)
     {
       // we investigate for every fit element the corresponding table, and add columns to that table
@@ -1258,36 +1442,54 @@ Label_EditScript:
       }
     }
 
+    /// <summary>
+    /// Pastes parameter values from the clipboard.
+    /// </summary>
     public void EhView_PasteParameterV()
     {
       if (_parameterController is ParameterSetController psc)
         psc.EhPasteParameterValues();
     }
 
+    /// <summary>
+    /// Copies parameter values to the clipboard.
+    /// </summary>
     public void EhView_CopyParameterV()
     {
       if (_parameterController is ParameterSetController psc)
         psc.EhCopyParameterValues();
     }
 
+    /// <summary>
+    /// Copies parameter values as C definitions.
+    /// </summary>
     public void EhView_CopyParameterVAsCDef()
     {
       if (_parameterController is ParameterSetController psc)
         psc.EhCopyParameterVAsCDef();
     }
 
+    /// <summary>
+    /// Copies parameter names and values.
+    /// </summary>
     public void EhView_CopyParameterNV()
     {
       if (_parameterController is ParameterSetController psc)
         psc.EhCopyParameterNV();
     }
 
+    /// <summary>
+    /// Copies parameter names, values, and variances.
+    /// </summary>
     public void EhView_CopyParameterNVV()
     {
       if (_parameterController is ParameterSetController psc)
         psc.EhCopyParameterNVV();
     }
 
+    /// <summary>
+    /// Copies parameters together with the covariance matrix.
+    /// </summary>
     public void EhView_CopyParameterNCM()
     {
       if (_covarianceMatrix is null)
@@ -1340,6 +1542,9 @@ Label_EditScript:
       }
     }
 
+    /// <summary>
+    /// Copies the fit summary into a single row.
+    /// </summary>
     public void EhView_CopyParameterNSVCVInOneRow()
     {
       if (_covarianceMatrix is null)
@@ -1609,6 +1814,7 @@ Label_EditScript:
       return stb;
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);

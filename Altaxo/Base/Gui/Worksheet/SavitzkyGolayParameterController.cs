@@ -31,31 +31,42 @@ namespace Altaxo.Gui.Worksheet
 {
   #region Interfaces
 
-  public interface ISavitzkyGolayParameterView : IDataContextAwareView
+   /// <summary>
+   /// View contract for editing <see cref="SavitzkyGolayParameters"/>.
+   /// </summary>
+   public interface ISavitzkyGolayParameterView : IDataContextAwareView
   {
   }
 
   #endregion Interfaces
 
   /// <summary>
-  /// Summary description for SavitzkyGolayParameterController.
+  /// Controller for editing <see cref="SavitzkyGolayParameters"/>.
   /// </summary>
   [UserControllerForObject(typeof(SavitzkyGolayParameters), 100)]
   [ExpectedTypeOfView(typeof(ISavitzkyGolayParameterView))]
   public class SavitzkyGolayParameterController : MVCANControllerEditImmutableDocBase<SavitzkyGolayParameters, ISavitzkyGolayParameterView>
   {
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SavitzkyGolayParameterController"/> class.
+    /// </summary>
     public SavitzkyGolayParameterController()
     {
 
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SavitzkyGolayParameterController"/> class.
+    /// </summary>
+    /// <param name="parameters">The parameters to edit.</param>
     public SavitzkyGolayParameterController(SavitzkyGolayParameters parameters)
     {
       _originalDoc =  _doc = parameters;
       Initialize(true);
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -66,6 +77,9 @@ namespace Altaxo.Gui.Worksheet
 
     private int _numberOfPoints;
 
+    /// <summary>
+    /// Gets or sets the number of points used for the filter window.
+    /// </summary>
     public int NumberOfPoints
     {
       get => _numberOfPoints;
@@ -81,6 +95,9 @@ namespace Altaxo.Gui.Worksheet
 
     private int _polynomialOrder;
 
+    /// <summary>
+    /// Gets or sets the polynomial order.
+    /// </summary>
     public int PolynomialOrder
     {
       get => _polynomialOrder;
@@ -96,6 +113,9 @@ namespace Altaxo.Gui.Worksheet
 
     private int _derivativeOrder;
 
+    /// <summary>
+    /// Gets or sets the derivative order.
+    /// </summary>
     public int DerivativeOrder
     {
       get => _derivativeOrder;
@@ -112,6 +132,7 @@ namespace Altaxo.Gui.Worksheet
     #endregion
 
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -123,6 +144,7 @@ namespace Altaxo.Gui.Worksheet
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = _doc with

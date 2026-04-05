@@ -34,17 +34,24 @@ using Altaxo.Gui.Common.Drawing;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="ClosedPathShapeController"/>.
+  /// </summary>
   public interface IClosedPathShapeView : IDataContextAwareView
   {
    
   }
 
+  /// <summary>
+  /// Controller for <see cref="ClosedPathShapeBase"/>.
+  /// </summary>
   [UserControllerForObject(typeof(ClosedPathShapeBase))]
   [ExpectedTypeOfView(typeof(IClosedPathShapeView))]
   public class ClosedPathShapeController : MVCANControllerEditOriginalDocBase<ClosedPathShapeBase, IClosedPathShapeView>
   {
   
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_locationController, () => _locationController = null);
@@ -56,6 +63,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private PenSimpleConditionalController _penController;
 
+    /// <summary>
+    /// Gets or sets the pen controller.
+    /// </summary>
     public PenSimpleConditionalController PenController
     {
       get => _penController;
@@ -71,6 +81,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private BrushSimpleConditionalController _brushController;
 
+    /// <summary>
+    /// Gets or sets the brush controller.
+    /// </summary>
     public BrushSimpleConditionalController BrushController
     {
       get => _brushController;
@@ -89,6 +102,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private IMVCANController _locationController;
 
+    /// <summary>
+    /// Gets or sets the location controller.
+    /// </summary>
     public IMVCANController LocationController
     {
       get => _locationController;
@@ -105,6 +121,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -119,6 +136,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (!_locationController.Apply(disposeController))

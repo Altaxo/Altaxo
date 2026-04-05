@@ -30,9 +30,13 @@ using Altaxo.Serialization.BrukerOpus;
 
 namespace Altaxo.Gui.Serialization.BrukerOpus
 {
+  /// <summary>
+  /// Controller for <see cref="BrukerOpusImportDataSource"/>.
+  /// </summary>
   [UserControllerForObject(typeof(BrukerOpusImportDataSource))]
   public class BrukerOpusImportDataSourceController : DataSourceControllerBase<BrukerOpusImportDataSource>
   {
+    /// <inheritdoc />
     protected override IMVCANController GetProcessDataController()
     {
       var processDataController = new MultipleFilesController();
@@ -42,7 +46,9 @@ namespace Altaxo.Gui.Serialization.BrukerOpus
       return processDataController;
     }
 
+    /// <inheritdoc />
     protected override bool IsProcessDataInitiallyExpanded() => true;
+    /// <inheritdoc />
     protected override bool IsProcessOptionsInitiallyExpanded() => false;
   }
 }

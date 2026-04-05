@@ -54,12 +54,22 @@ namespace Altaxo.Graph.Plot.Data
     /// </value>
     public DataTable? NewTable { get; set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColumnPlotDataExchangeTableData"/> class.
+    /// </summary>
+    /// <param name="plotItems">The plot items.</param>
+    /// <param name="originalTable">The original table.</param>
     public ColumnPlotDataExchangeTableData(IEnumerable<IGPlotItem> plotItems, DataTable originalTable)
     {
       PlotItemsOrPlotData = plotItems;
       OriginalTable = originalTable;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColumnPlotDataExchangeTableData"/> class.
+    /// </summary>
+    /// <param name="plotItems">The plot-data items.</param>
+    /// <param name="originalTable">The original table.</param>
     public ColumnPlotDataExchangeTableData(IEnumerable<IColumnPlotData> plotItems, DataTable originalTable)
     {
       PlotItemsOrPlotData = plotItems;
@@ -102,7 +112,7 @@ namespace Altaxo.Graph.Plot.Data
     /// <summary>
     /// Shows a dialog that allows to change the underlying data table for the provided plot items.
     /// </summary>
-    /// <param name="plotItems">The plot items.</param>
+    /// <param name="plotDataItems">The plot items.</param>
     /// <returns>True if the dialog was shown and for at least one plot item the underlying table was exchanged; otherwise false.</returns>
     public static bool ShowChangeTableForSelectedItemsDialog(IEnumerable<IColumnPlotData> plotDataItems)
     {

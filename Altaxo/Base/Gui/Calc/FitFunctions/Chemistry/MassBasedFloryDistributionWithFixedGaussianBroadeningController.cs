@@ -27,15 +27,22 @@ using Altaxo.Calc.FitFunctions.Chemistry;
 
 namespace Altaxo.Gui.Calc.FitFunctions.Chemistry
 {
+  /// <summary>
+  /// Defines the view contract for editing <see cref="MassBasedFloryDistributionWithFixedGaussianBroadening"/>.
+  /// </summary>
   public interface IMassBasedFloryDistributionWithFixedGaussianBroadeningView : IDataContextAwareView
   {
   }
 
 
+  /// <summary>
+  /// Controller for <see cref="MassBasedFloryDistributionWithFixedGaussianBroadening"/>.
+  /// </summary>
   [UserControllerForObject(typeof(MassBasedFloryDistributionWithFixedGaussianBroadening))]
   [ExpectedTypeOfView(typeof(IMassBasedFloryDistributionWithFixedGaussianBroadeningView))]
   public class MassBasedFloryDistributionWithFixedGaussianBroadeningController : MVCANControllerEditImmutableDocBase<MassBasedFloryDistributionWithFixedGaussianBroadening, IMassBasedFloryDistributionWithFixedGaussianBroadeningView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -43,6 +50,9 @@ namespace Altaxo.Gui.Calc.FitFunctions.Chemistry
 
     #region Bindings
 
+    /// <summary>
+    /// Gets or sets the baseline polynomial order.
+    /// </summary>
     public int OrderOfBaselinePolynominal
     {
       get => field;
@@ -56,6 +66,9 @@ namespace Altaxo.Gui.Calc.FitFunctions.Chemistry
       }
     }
 
+    /// <summary>
+    /// Gets or sets the number of terms.
+    /// </summary>
     public int NumberOfTerms
     {
       get => field;
@@ -70,6 +83,9 @@ namespace Altaxo.Gui.Calc.FitFunctions.Chemistry
     }
 
 
+    /// <summary>
+    /// Gets or sets the accuracy used for the broadening calculation.
+    /// </summary>
     public double Accuracy
     {
       get => field;
@@ -84,6 +100,9 @@ namespace Altaxo.Gui.Calc.FitFunctions.Chemistry
     }
 
 
+    /// <summary>
+    /// Gets or sets the molecular weight of the monomer unit.
+    /// </summary>
     public double MolecularWeightOfMonomerUnit
     {
       get => field;
@@ -98,6 +117,9 @@ namespace Altaxo.Gui.Calc.FitFunctions.Chemistry
     }
 
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the independent variable is the decadic logarithm.
+    /// </summary>
     public bool IndependentVariableIsDecadicLogarithm
     {
       get => field;
@@ -112,6 +134,9 @@ namespace Altaxo.Gui.Calc.FitFunctions.Chemistry
     }
 
 
+    /// <summary>
+    /// Gets or sets the order of the polynomial used for sigma.
+    /// </summary>
     public int OrderOfPolynomial
     {
       get => field;
@@ -135,18 +160,31 @@ namespace Altaxo.Gui.Calc.FitFunctions.Chemistry
       }
     }
 
+    /// <summary>Gets a value indicating whether coefficient 0 is enabled.</summary>
     public bool Coeff0IsEnabled => OrderOfPolynomial >= 0;
+    /// <summary>Gets a value indicating whether coefficient 1 is enabled.</summary>
     public bool Coeff1IsEnabled => OrderOfPolynomial >= 1;
+    /// <summary>Gets a value indicating whether coefficient 2 is enabled.</summary>
     public bool Coeff2IsEnabled => OrderOfPolynomial >= 2;
+    /// <summary>Gets a value indicating whether coefficient 3 is enabled.</summary>
     public bool Coeff3IsEnabled => OrderOfPolynomial >= 3;
+    /// <summary>Gets a value indicating whether coefficient 4 is enabled.</summary>
     public bool Coeff4IsEnabled => OrderOfPolynomial >= 4;
+    /// <summary>Gets a value indicating whether coefficient 5 is enabled.</summary>
     public bool Coeff5IsEnabled => OrderOfPolynomial >= 5;
+    /// <summary>Gets a value indicating whether coefficient 6 is enabled.</summary>
     public bool Coeff6IsEnabled => OrderOfPolynomial >= 6;
+    /// <summary>Gets a value indicating whether coefficient 7 is enabled.</summary>
     public bool Coeff7IsEnabled => OrderOfPolynomial >= 7;
+    /// <summary>Gets a value indicating whether coefficient 8 is enabled.</summary>
     public bool Coeff8IsEnabled => OrderOfPolynomial >= 8;
+    /// <summary>Gets a value indicating whether coefficient 9 is enabled.</summary>
     public bool Coeff9IsEnabled => OrderOfPolynomial >= 9;
 
 
+    /// <summary>
+    /// Gets or sets polynomial coefficient 0.
+    /// </summary>
     public double Coeff0
     {
       get => field;
@@ -161,6 +199,9 @@ namespace Altaxo.Gui.Calc.FitFunctions.Chemistry
     }
 
 
+    /// <summary>
+    /// Gets or sets polynomial coefficient 1.
+    /// </summary>
     public double Coeff1
     {
       get => field;
@@ -175,6 +216,9 @@ namespace Altaxo.Gui.Calc.FitFunctions.Chemistry
     }
 
 
+    /// <summary>
+    /// Gets or sets polynomial coefficient 2.
+    /// </summary>
     public double Coeff2
     {
       get => field;
@@ -189,6 +233,9 @@ namespace Altaxo.Gui.Calc.FitFunctions.Chemistry
     }
 
 
+    /// <summary>
+    /// Gets or sets polynomial coefficient 3.
+    /// </summary>
     public double Coeff3
     {
       get => field;
@@ -203,6 +250,9 @@ namespace Altaxo.Gui.Calc.FitFunctions.Chemistry
     }
 
 
+    /// <summary>
+    /// Gets or sets polynomial coefficient 4.
+    /// </summary>
     public double Coeff4
     {
       get => field;
@@ -216,6 +266,9 @@ namespace Altaxo.Gui.Calc.FitFunctions.Chemistry
       }
     }
 
+    /// <summary>
+    /// Gets or sets polynomial coefficient 5.
+    /// </summary>
     public double Coeff5
     {
       get => field;
@@ -229,6 +282,9 @@ namespace Altaxo.Gui.Calc.FitFunctions.Chemistry
       }
     }
 
+    /// <summary>
+    /// Gets or sets polynomial coefficient 6.
+    /// </summary>
     public double Coeff6
     {
       get => field;
@@ -242,6 +298,9 @@ namespace Altaxo.Gui.Calc.FitFunctions.Chemistry
       }
     }
 
+    /// <summary>
+    /// Gets or sets polynomial coefficient 7.
+    /// </summary>
     public double Coeff7
     {
       get => field;
@@ -255,6 +314,9 @@ namespace Altaxo.Gui.Calc.FitFunctions.Chemistry
       }
     }
 
+    /// <summary>
+    /// Gets or sets polynomial coefficient 8.
+    /// </summary>
     public double Coeff8
     {
       get => field;
@@ -267,6 +329,9 @@ namespace Altaxo.Gui.Calc.FitFunctions.Chemistry
         }
       }
     }
+    /// <summary>
+    /// Gets or sets polynomial coefficient 9.
+    /// </summary>
     public double Coeff9
     {
       get => field;
@@ -286,6 +351,7 @@ namespace Altaxo.Gui.Calc.FitFunctions.Chemistry
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -316,6 +382,7 @@ namespace Altaxo.Gui.Calc.FitFunctions.Chemistry
     }
 
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       var arr = new double[]

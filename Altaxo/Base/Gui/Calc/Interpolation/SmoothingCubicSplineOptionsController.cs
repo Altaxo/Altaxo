@@ -30,6 +30,9 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Calc.Interpolation
 {
+  /// <summary>
+  /// Defines the view contract for editing smoothing cubic spline options.
+  /// </summary>
   public interface ISmoothingCubicSplineOptionsView : IDataContextAwareView
   {
   }
@@ -41,6 +44,7 @@ namespace Altaxo.Gui.Calc.Interpolation
   [ExpectedTypeOfView(typeof(ISmoothingCubicSplineOptionsView))]
   public class SmoothingCubicSplineOptionsController : MVCANControllerEditImmutableDocBase<SmoothingCubicSplineOptions, ISmoothingCubicSplineOptionsView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -49,6 +53,9 @@ namespace Altaxo.Gui.Calc.Interpolation
     #region Bindings
 
 
+    /// <summary>
+    /// Gets or sets the smoothness value.
+    /// </summary>
     public double SmoothnessValue
     {
       get => field;
@@ -63,6 +70,9 @@ namespace Altaxo.Gui.Calc.Interpolation
     }
 
 
+    /// <summary>
+    /// Gets or sets how the smoothness is specified.
+    /// </summary>
     public ItemsController<SmoothnessSpecification> SmoothnessSpecifiedBy
     {
       get => field;
@@ -77,6 +87,9 @@ namespace Altaxo.Gui.Calc.Interpolation
       }
     }
 
+    /// <summary>
+    /// Gets the tooltip describing the currently selected smoothness specification.
+    /// </summary>
     public string SmoothnessValueToolTip
     {
       get
@@ -94,6 +107,7 @@ namespace Altaxo.Gui.Calc.Interpolation
 
     #endregion Bindings
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -109,6 +123,7 @@ namespace Altaxo.Gui.Calc.Interpolation
       OnPropertyChanged(nameof(SmoothnessValueToolTip));
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       try

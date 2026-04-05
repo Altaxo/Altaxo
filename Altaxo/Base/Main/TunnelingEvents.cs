@@ -31,25 +31,34 @@ using System.Text;
 namespace Altaxo.Main
 {
   /// <summary>
-  /// Interface that indicates that its owner can announce tunneling events by firing the <see cref="TunneledEvent"/>.
+  /// Indicates that the owner can announce tunneling events by firing <see cref="TunneledEvent"/>.
   /// </summary>
   public interface ITunnelingEventSource
   {
     /// <summary>
-    /// The event that is fired when the object is disposed.
+    /// The event that is fired when a tunneling event occurs.
     /// First argument is the sender,
     /// second argument is the original source,
-    /// and third argument is the event arg.
+    /// and third argument is the event arguments.
     /// </summary>
     event Action<object, object, Main.TunnelingEventArgs> TunneledEvent;
   }
 
+  /// <summary>
+  /// Base class for tunneled event arguments.
+  /// </summary>
   public class TunnelingEventArgs : EventArgs
   {
   }
 
+  /// <summary>
+  /// Event arguments indicating that an object was disposed.
+  /// </summary>
   public class DisposeEventArgs : TunnelingEventArgs
   {
+    /// <summary>
+    /// Gets the shared empty instance.
+    /// </summary>
     public static new readonly DisposeEventArgs Empty = new DisposeEventArgs();
 
     private DisposeEventArgs()
@@ -57,8 +66,14 @@ namespace Altaxo.Main
     }
   }
 
+  /// <summary>
+  /// Event arguments indicating that a document path changed.
+  /// </summary>
   public class DocumentPathChangedEventArgs : TunnelingEventArgs
   {
+    /// <summary>
+    /// Gets the shared empty instance.
+    /// </summary>
     public static new readonly DocumentPathChangedEventArgs Empty = new DocumentPathChangedEventArgs();
 
     private DocumentPathChangedEventArgs()
@@ -72,6 +87,9 @@ namespace Altaxo.Main
   /// <seealso cref="Altaxo.Main.TunnelingEventArgs" />
   public class DirtyResetEventArgs : TunnelingEventArgs
   {
+    /// <summary>
+    /// Gets the shared empty instance.
+    /// </summary>
     public static new readonly DirtyResetEventArgs Empty = new DirtyResetEventArgs();
 
     private DirtyResetEventArgs()

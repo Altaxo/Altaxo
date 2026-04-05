@@ -41,8 +41,19 @@ namespace Altaxo.DataConnection
   /// </summary>
   public enum Sort
   {
+    /// <summary>
+    /// No sorting is applied.
+    /// </summary>
     NoSort,
+
+    /// <summary>
+    /// Sorts in ascending order.
+    /// </summary>
     Ascending,
+
+    /// <summary>
+    /// Sorts in descending order.
+    /// </summary>
     Descending
   }
 
@@ -51,24 +62,81 @@ namespace Altaxo.DataConnection
   /// </summary>
   public enum Aggregate
   {
+    /// <summary>
+    /// Groups by the field value.
+    /// </summary>
     GroupBy,
+
+    /// <summary>
+    /// Calculates the sum.
+    /// </summary>
     Sum,
+
+    /// <summary>
+    /// Calculates the average.
+    /// </summary>
     Avg,
+
+    /// <summary>
+    /// Gets the minimum value.
+    /// </summary>
     Min,
+
+    /// <summary>
+    /// Gets the maximum value.
+    /// </summary>
     Max,
+
+    /// <summary>
+    /// Counts the values.
+    /// </summary>
     Count,
 
     //Expression,
     //Where,
+    /// <summary>
+    /// Calculates the sum of distinct values.
+    /// </summary>
     SumDistinct,
 
+    /// <summary>
+    /// Calculates the average of distinct values.
+    /// </summary>
     AvgDistinct,
+
+    /// <summary>
+    /// Gets the minimum of distinct values.
+    /// </summary>
     MinDistinct,
+
+    /// <summary>
+    /// Gets the maximum of distinct values.
+    /// </summary>
     MaxDistinct,
+
+    /// <summary>
+    /// Counts distinct values.
+    /// </summary>
     CountDistinct,
+
+    /// <summary>
+    /// Calculates the sample standard deviation.
+    /// </summary>
     StDev,
+
+    /// <summary>
+    /// Calculates the population standard deviation.
+    /// </summary>
     StDevP,
+
+    /// <summary>
+    /// Calculates the sample variance.
+    /// </summary>
     Var,
+
+    /// <summary>
+    /// Calculates the population variance.
+    /// </summary>
     VarP
   }
 
@@ -102,6 +170,10 @@ namespace Altaxo.DataConnection
 
     #region ** ctor
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="QueryField"/> class from a data column.
+    /// </summary>
+    /// <param name="col">The data column represented by this query field.</param>
     public QueryField(DataColumn col)
     {
       _table = col.Table ?? throw new InvalidOperationException($"Table of column {col} is null!");
@@ -109,6 +181,10 @@ namespace Altaxo.DataConnection
       _output = true;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="QueryField"/> class from a table.
+    /// </summary>
+    /// <param name="dt">The table represented by this query field.</param>
     public QueryField(DataTable dt)
     {
       _table = dt;
@@ -268,6 +344,7 @@ namespace Altaxo.DataConnection
 
     #region ** ICloneable
 
+    /// <inheritdoc/>
     public object Clone()
     {
       return MemberwiseClone();

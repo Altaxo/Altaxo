@@ -27,21 +27,23 @@ using Altaxo.Main.Services;
 namespace Altaxo.Main.Services
 {
   /// <summary>
-  /// This class handles the recent open files and the recent open project files. This is a class with almost all functionality neccessary,
-  /// with the exeption that recent files are not added to the windows shell jumplist, since this requires a reference to the Wpf Dlls.
+  /// This class handles the recent open files and the recent open project files. It provides almost all functionality necessary,
+  /// with the exception that recent files are not added to the Windows shell jump list, since this requires a reference to the WPF assemblies.
   /// Use a class (RecentOpen) derived from here that implements this functionality.
   /// </summary>
   public class RecentOpenBase : IRecentOpen
   {
     /// <summary>
-    /// This variable is the maximal length of lastfile/lastopen entries
-    /// must be > 0
+    /// The maximum length of recent-file and recent-project entries.
     /// </summary>
     private int MAX_LENGTH = 10;
 
     private IList<FileName> _recentFiles = new List<FileName>();
     private IList<FileName> _recentProjects = new List<FileName>();
 
+    /// <summary>
+    /// Gets the property key used to persist recent files.
+    /// </summary>
     public static readonly Altaxo.Main.Properties.PropertyKey<IList<FileName>> PropertyKeyRecentFiles =
         new Altaxo.Main.Properties.PropertyKey<IList<FileName>>(
             "E89CEABA-079C-4523-A594-CCDB67023BA7",
@@ -64,6 +66,7 @@ namespace Altaxo.Main.Services
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(List<FileName>), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (List<FileName>)obj;
@@ -78,6 +81,7 @@ namespace Altaxo.Main.Services
         info.CommitArray();
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = o as List<FileName> ?? new List<FileName>();
@@ -97,22 +101,28 @@ namespace Altaxo.Main.Services
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RecentOpenBase"/> class.
+    /// </summary>
     public RecentOpenBase()
     {
       _recentProjects = Current.PropertyService.GetValue(PropertyKeyRecentProjects, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin, () => new List<FileName>()) ?? new List<FileName>();
       _recentFiles = Current.PropertyService.GetValue(PropertyKeyRecentFiles, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin, () => new List<FileName>());
     }
 
+    /// <inheritdoc/>
     public IReadOnlyList<FileName> RecentFiles
     {
       get { return new ReadOnlyCollection<FileName>(_recentFiles); }
     }
 
+    /// <inheritdoc/>
     public IReadOnlyList<PathName> RecentProjects
     {
       get { return new ReadOnlyCollection<FileName>(_recentProjects); }
     }
 
+    /// <inheritdoc/>
     public void AddRecentFile(FileName name)
     {
       _recentFiles.Remove(name); // remove if the filename is already in the list
@@ -127,18 +137,21 @@ namespace Altaxo.Main.Services
       Current.PropertyService.SetValue(PropertyKeyRecentFiles, _recentFiles);
     }
 
+    /// <inheritdoc/>
     public void ClearRecentFiles()
     {
       _recentFiles.Clear();
       Current.PropertyService.SetValue(PropertyKeyRecentFiles, _recentFiles);
     }
 
+    /// <inheritdoc/>
     public void ClearRecentProjects()
     {
       _recentProjects.Clear();
       Current.PropertyService.SetValue(PropertyKeyRecentProjects, _recentProjects);
     }
 
+    /// <inheritdoc/>
     public void RemoveRecentProject(PathName pathName)
     {
       if (pathName is FileName name)
@@ -148,6 +161,7 @@ namespace Altaxo.Main.Services
       Current.PropertyService.SetValue(PropertyKeyRecentProjects, _recentProjects);
     }
 
+    /// <inheritdoc/>
     public virtual void AddRecentProject(PathName pathName)
     {
       if (pathName is FileName name)
@@ -165,6 +179,9 @@ namespace Altaxo.Main.Services
       Current.PropertyService.SetValue(PropertyKeyRecentProjects, _recentProjects);
     }
 
+    /// <summary>
+    /// Handles removal of a file from the recent file list.
+    /// </summary>
     protected virtual void FileRemoved(object sender, FileEventArgs e)
     {
       for (int i = 0; i < _recentFiles.Count; ++i)
@@ -178,6 +195,9 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <summary>
+    /// Handles renaming of a file in the recent file list.
+    /// </summary>
     protected virtual void FileRenamed(object sender, FileRenameEventArgs e)
     {
       for (int i = 0; i < _recentFiles.Count; ++i)

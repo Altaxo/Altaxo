@@ -54,7 +54,13 @@ namespace Altaxo.Graph.Graph3D.Plot
     IYBoundsHolder,
     IZBoundsHolder
   {
+    /// <summary>
+    /// Stores the plot data.
+    /// </summary>
     protected XYZMeshedColumnPlotData _plotData;
+    /// <summary>
+    /// Stores the plot style.
+    /// </summary>
     protected DataMeshPlotStyle _plotStyle;
 
     #region Serialization
@@ -62,9 +68,13 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <summary>
     /// 2015-11-14 initial version.
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="DataMeshPlotItem"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DataMeshPlotItem), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DataMeshPlotItem)obj;
@@ -72,6 +82,7 @@ namespace Altaxo.Graph.Graph3D.Plot
         info.AddValue("Style", s._plotStyle);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var pa = (XYZMeshedColumnPlotData)info.GetValue("Data", null);
@@ -93,6 +104,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     #endregion Serialization
 
+    /// <inheritdoc/>
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_plotData is not null)
@@ -101,17 +113,31 @@ namespace Altaxo.Graph.Graph3D.Plot
         yield return new Main.DocumentNodeAndName(_plotStyle, () => _plotStyle = null!, "Style");
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DataMeshPlotItem"/> class.
+    /// </summary>
+    /// <param name="pa">The plot data.</param>
+    /// <param name="ps">The plot style.</param>
     public DataMeshPlotItem(XYZMeshedColumnPlotData pa, DataMeshPlotStyle ps) 
     {
       ChildSetMember(ref _plotStyle, ps);
       ChildSetMember(ref _plotData, pa);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DataMeshPlotItem"/> class by copying from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public DataMeshPlotItem(DataMeshPlotItem from)
     {
       CopyFrom(from, false);
     }
 
+    /// <summary>
+    /// Copies values from another <see cref="DataMeshPlotItem"/> instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
+    /// <param name="withBaseMembers">If set to <c>true</c>, base-class members are copied as well.</param>
     [MemberNotNull(nameof(_plotData), nameof(_plotStyle))]
     protected void CopyFrom(DataMeshPlotItem from, bool withBaseMembers)
     {
@@ -122,6 +148,7 @@ namespace Altaxo.Graph.Graph3D.Plot
       ChildCopyToMember(ref _plotStyle, from._plotStyle);
     }
 
+    /// <inheritdoc/>
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -141,11 +168,15 @@ namespace Altaxo.Graph.Graph3D.Plot
       }
     }
 
+    /// <inheritdoc/>
     public override object Clone()
     {
       return new DataMeshPlotItem(this);
     }
 
+    /// <summary>
+    /// Gets or sets the plot data object.
+    /// </summary>
     public object Data
     {
       get { return _plotData; }
@@ -165,17 +196,22 @@ namespace Altaxo.Graph.Graph3D.Plot
       }
     }
 
+    /// <inheritdoc/>
     public override Main.IDocumentLeafNode StyleObject
     {
       get { return _plotStyle; }
       set { Style = (DataMeshPlotStyle)value; }
     }
 
+    /// <inheritdoc/>
     public override Main.IDocumentLeafNode DataObject
     {
       get { return _plotData; }
     }
 
+    /// <summary>
+    /// Gets or sets the plot style.
+    /// </summary>
     public DataMeshPlotStyle Style
     {
       get { return _plotStyle; }
@@ -190,16 +226,22 @@ namespace Altaxo.Graph.Graph3D.Plot
       }
     }
 
+    /// <inheritdoc/>
     public override string GetName(int level)
     {
       return _plotData.ToString();
     }
 
+    /// <summary>
+    /// Returns the string representation of this plot item.
+    /// </summary>
+    /// <returns>The plot-item name.</returns>
     public override string ToString()
     {
       return GetName(int.MaxValue);
     }
 
+    /// <inheritdoc/>
     public override void Paint(IGraphicsContext3D g, Altaxo.Graph.IPaintContext context, IPlotArea layer, IGPlotItem? previousPlotItem, IGPlotItem? nextPlotItem)
     {
       if (_plotStyle is not null)
@@ -225,6 +267,10 @@ namespace Altaxo.Graph.Graph3D.Plot
       }
     }
 
+    /// <summary>
+    /// Handles change notifications raised by child objects.
+    /// </summary>
+    /// <param name="e">The event arguments.</param>
     protected override void OnChanged(EventArgs e)
     {
       if (e is PlotItemDataChangedEventArgs)
@@ -239,11 +285,13 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     #region IXBoundsHolder Members
 
+    /// <inheritdoc/>
     public void SetXBoundsFromTemplate(IPhysicalBoundaries val)
     {
       _plotData.SetXBoundsFromTemplate(val);
     }
 
+    /// <inheritdoc/>
     public void MergeXBoundsInto(IPhysicalBoundaries pb)
     {
       _plotData.MergeXBoundsInto(pb);
@@ -253,11 +301,15 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     #region IYBoundsHolder Members
 
+    /// <inheritdoc/>
     public void SetYBoundsFromTemplate(IPhysicalBoundaries val)
     {
       _plotData.SetYBoundsFromTemplate(val);
     }
 
+    /// <summary>
+    /// Merges y bounds from this item into the specified boundary accumulator.
+    /// </summary>
     public void MergeYBoundsInto(IPhysicalBoundaries pb)
     {
       _plotData.MergeYBoundsInto(pb);
@@ -267,11 +319,17 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     #region IZBoundHolder
 
+    /// <summary>
+    /// Initializes z bounds from a template boundary object.
+    /// </summary>
     public void SetZBoundsFromTemplate(IPhysicalBoundaries val)
     {
       _plotData.SetVBoundsFromTemplate(val);
     }
 
+    /// <summary>
+    /// Merges z bounds from this item into the specified boundary accumulator.
+    /// </summary>
     public void MergeZBoundsInto(IPhysicalBoundaries pb)
     {
       _plotData.MergeVBoundsInto(pb);
@@ -279,14 +337,23 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     #endregion IZBoundHolder
 
+    /// <summary>
+    /// Collects group styles required by this plot item.
+    /// </summary>
     public override void CollectStyles(PlotGroupStyleCollection styles)
     {
     }
 
+    /// <summary>
+    /// Prepares group styles for this plot item.
+    /// </summary>
     public override void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, IPlotArea layer)
     {
     }
 
+    /// <summary>
+    /// Applies prepared group styles to this plot item.
+    /// </summary>
     public override void ApplyGroupStyles(PlotGroupStyleCollection externalGroups)
     {
     }

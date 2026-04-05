@@ -28,14 +28,21 @@ using Altaxo.Science.Signals;
 
 namespace Altaxo.Gui.Science.Signals
 {
+  /// <summary>
+  /// View interface for four-point peak evaluation tool options.
+  /// </summary>
   public interface IFourPointPeakEvaluationToolMouseHandlerOptionsView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="FourPointPeakEvaluationToolMouseHandlerOptions"/>.
+  /// </summary>
   [UserControllerForObject(typeof(FourPointPeakEvaluationToolMouseHandlerOptions))]
   [ExpectedTypeOfView(typeof(IFourPointPeakEvaluationToolMouseHandlerOptionsView))]
   public class FourPointPeakEvaluationToolMouseHandlerOptionsController : MVCANControllerEditImmutableDocBase<FourPointPeakEvaluationToolMouseHandlerOptions, IFourPointPeakEvaluationToolMouseHandlerOptionsView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(PenController, () => PenController = null!);
@@ -46,6 +53,9 @@ namespace Altaxo.Gui.Science.Signals
 
     private bool _showOptionsWhenToolIsActivated;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether options are shown when the tool is activated.
+    /// </summary>
     public bool ShowOptionsWhenToolIsActivated
     {
       get => _showOptionsWhenToolIsActivated;
@@ -61,6 +71,9 @@ namespace Altaxo.Gui.Science.Signals
 
     private ColorTypeThicknessPenController _penController;
 
+    /// <summary>
+    /// Gets or sets the controller for the line pen.
+    /// </summary>
     public ColorTypeThicknessPenController PenController
     {
       get => _penController;
@@ -77,6 +90,9 @@ namespace Altaxo.Gui.Science.Signals
 
     private BrushControllerAdvanced _brushController;
 
+    /// <summary>
+    /// Gets or sets the controller for the area brush.
+    /// </summary>
     public BrushControllerAdvanced BrushController
     {
       get => _brushController;
@@ -94,6 +110,7 @@ namespace Altaxo.Gui.Science.Signals
     #endregion
 
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -106,6 +123,7 @@ namespace Altaxo.Gui.Science.Signals
         BrushController.InitializeDocument(_doc.AreaBrush);
       }
     }
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = new FourPointPeakEvaluationToolMouseHandlerOptions()

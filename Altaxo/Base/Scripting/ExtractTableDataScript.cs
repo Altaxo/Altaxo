@@ -30,12 +30,15 @@ using Altaxo.Main.Services.ScriptCompilation;
 
 namespace Altaxo.Scripting
 {
+  /// <summary>
+  /// Provides the contract for extract-table-data script texts.
+  /// </summary>
   public interface IExtractTableDataScriptText : IScriptText
   {
     /// <summary>
-    /// Executes the script. If no instance of the script object exists, a error message will be stored and the return value is false.
+    /// Executes the script. If no instance of the script object exists, an error message is stored and the return value is <see langword="false"/>.
     /// If the script object exists, the function "IsRowIncluded" will be called for every row in the source tables data column collection.
-    /// If this function returns true, the corresponding row will be copyied to a new data table.
+    /// If this function returns <see langword="true"/>, the corresponding row is copied to a new data table.
     /// </summary>
     /// <param name="myTable">The data table this script is working on.</param>
     /// <returns>True if executed without exceptions, otherwise false.</returns>
@@ -45,7 +48,7 @@ namespace Altaxo.Scripting
   }
 
   /// <summary>
-  /// Holds the text, the module (=executable), and some properties of a property column script.
+  /// Holds the text, the module (= executable), and properties of an extract-table-data script.
   /// </summary>
 
   public class ExtractTableDataScript : AbstractScript, IExtractTableDataScriptText
@@ -56,6 +59,7 @@ namespace Altaxo.Scripting
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Scripting.ExtractTableDataScript), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (AbstractScript)obj;
@@ -63,6 +67,7 @@ namespace Altaxo.Scripting
         info.AddBaseValueEmbedded(s, typeof(AbstractScript));
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (ExtractTableDataScript?)o ?? new ExtractTableDataScript();
@@ -103,7 +108,7 @@ namespace Altaxo.Scripting
     }
 
     /// <summary>
-    /// Gives the type of the script object (full name), which is created after successfull compilation.
+    /// Gives the type of the script object (full name), which is created after successful compilation.
     /// </summary>
     public override string ScriptObjectType
     {
@@ -135,6 +140,9 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <summary>
+    /// Gets the script text that starts the user-editable code region.
+    /// </summary>
     public override string CodeStart
     {
       get
@@ -145,6 +153,9 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <summary>
+    /// Gets the default user code.
+    /// </summary>
     public override string CodeUserDefault
     {
       get
@@ -157,6 +168,9 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <summary>
+    /// Gets the script text that ends the user-editable code region.
+    /// </summary>
     public override string CodeEnd
     {
       get
@@ -193,7 +207,7 @@ namespace Altaxo.Scripting
     }
 
     /// <summary>
-    /// Executes the script. If no instance of the script object exists, a error message will be stored and the return value is false.
+    /// Executes the script. If no instance of the script object exists, an error message is stored and the return value is <see langword="false"/>.
     /// If the script object exists, the Execute function of this script object is called.
     /// </summary>
     /// <param name="myTable">The data table this script is working on.</param>

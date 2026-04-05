@@ -36,21 +36,36 @@ namespace Altaxo.DataConnection
   /// <seealso cref="System.ICloneable" />
   public class LoginCredentials : ICloneable
   {
+    /// <summary>
+    /// Gets the user name.
+    /// </summary>
     public string UserName { get; private set; }
 
+    /// <summary>
+    /// Gets the password.
+    /// </summary>
     public string Password { get; private set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LoginCredentials"/> class.
+    /// </summary>
+    /// <param name="username">The user name.</param>
+    /// <param name="password">The password.</param>
     public LoginCredentials(string username, string password)
     {
       UserName = username;
       Password = password;
     }
 
+    /// <inheritdoc/>
     public object Clone()
     {
       return MemberwiseClone();
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the credentials are empty.
+    /// </summary>
     public bool AreEmpty
     {
       get

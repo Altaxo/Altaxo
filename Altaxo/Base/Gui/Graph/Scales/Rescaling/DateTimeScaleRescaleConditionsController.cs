@@ -35,14 +35,21 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Gui.Graph.Scales.Rescaling
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="DateTimeScaleRescaleConditionsController"/>.
+  /// </summary>
   public interface IDateTimeScaleRescaleConditionsView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="DateTimeScaleRescaleConditions"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IDateTimeScaleRescaleConditionsView))]
   [UserControllerForObject(typeof(DateTimeScaleRescaleConditions))]
   public class DateTimeScaleRescaleConditionsController : MVCANControllerEditOriginalDocBase<DateTimeScaleRescaleConditions, IDateTimeScaleRescaleConditionsView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -52,6 +59,9 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
     private ItemsController<BoundaryRescaling> _orgRescaling;
 
+    /// <summary>
+    /// Gets or sets the rescaling mode for the origin boundary.
+    /// </summary>
     public ItemsController<BoundaryRescaling> OrgRescaling
     {
       get => _orgRescaling;
@@ -66,6 +76,9 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
     }
     private ItemsController<BoundaryRescaling> _endRescaling;
 
+    /// <summary>
+    /// Gets or sets the rescaling mode for the end boundary.
+    /// </summary>
     public ItemsController<BoundaryRescaling> EndRescaling
     {
       get => _endRescaling;
@@ -81,6 +94,9 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
     private ItemsController<BoundariesRelativeTo> _orgRelativeTo;
 
+    /// <summary>
+    /// Gets or sets the reference used for the origin boundary.
+    /// </summary>
     public ItemsController<BoundariesRelativeTo> OrgRelativeTo
     {
       get => _orgRelativeTo;
@@ -101,6 +117,9 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
     private ItemsController<BoundariesRelativeTo> _endRelativeTo;
 
+    /// <summary>
+    /// Gets or sets the reference used for the end boundary.
+    /// </summary>
     public ItemsController<BoundariesRelativeTo> EndRelativeTo
     {
       get => _endRelativeTo;
@@ -121,6 +140,9 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
     private DateTime _orgValueDT;
 
+    /// <summary>
+    /// Gets or sets the origin value when an absolute <see cref="DateTime"/> value is shown.
+    /// </summary>
     public DateTime OrgValueDT
     {
       get => _orgValueDT;
@@ -146,6 +168,9 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
     private DateTime _endValueDT;
 
+    /// <summary>
+    /// Gets or sets the end value when an absolute <see cref="DateTime"/> value is shown.
+    /// </summary>
     public DateTime EndValueDT
     {
       get => _endValueDT;
@@ -170,6 +195,9 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
     private TimeSpan _orgValueTS;
 
+    /// <summary>
+    /// Gets or sets the origin value when a relative <see cref="TimeSpan"/> is shown.
+    /// </summary>
     public TimeSpan OrgValueTS
     {
       get => _orgValueTS;
@@ -184,6 +212,9 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
     }
     private TimeSpan _endValueTS;
 
+    /// <summary>
+    /// Gets or sets the end value when a relative <see cref="TimeSpan"/> is shown.
+    /// </summary>
     public TimeSpan EndValueTS
     {
       get => _endValueTS;
@@ -199,6 +230,9 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
     private bool _showOrgTS;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the origin is edited as a <see cref="TimeSpan"/>.
+    /// </summary>
     public bool ShowOrgTS
     {
       get => _showOrgTS;
@@ -213,6 +247,9 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
     }
     private bool _showEndTS;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the end boundary is edited as a <see cref="TimeSpan"/>.
+    /// </summary>
     public bool ShowEndTS
     {
       get => _showEndTS;
@@ -230,6 +267,7 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
     #endregion
 
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -269,6 +307,7 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       var orgRescaling = _orgRescaling.SelectedValue;

@@ -30,14 +30,37 @@ using Altaxo.Data;
 
 namespace Altaxo.Graph
 {
+  /// <summary>
+  /// Provides indexed access to physical x, y, and z values.
+  /// </summary>
   public interface I3DPhysicalVariantAccessor
   {
+    /// <summary>
+    /// Gets the physical x value for the specified original row index.
+    /// </summary>
+    /// <param name="originalRowIndex">The original row index.</param>
+    /// <returns>The physical x value.</returns>
     AltaxoVariant GetXPhysical(int originalRowIndex);
 
+    /// <summary>
+    /// Gets the physical y value for the specified original row index.
+    /// </summary>
+    /// <param name="originalRowIndex">The original row index.</param>
+    /// <returns>The physical y value.</returns>
     AltaxoVariant GetYPhysical(int originalRowIndex);
 
+    /// <summary>
+    /// Gets the physical z value for the specified original row index.
+    /// </summary>
+    /// <param name="originalRowIndex">The original row index.</param>
+    /// <returns>The physical z value.</returns>
     AltaxoVariant GetZPhysical(int originalRowIndex);
   }
 
+  /// <summary>
+  /// Represents a delegate that returns a physical value for a given index.
+  /// </summary>
+  /// <param name="i">The index.</param>
+  /// <returns>The physical value.</returns>
   public delegate AltaxoVariant IndexedPhysicalValueAccessor(int i);
 }

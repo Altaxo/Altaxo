@@ -32,7 +32,7 @@ namespace Altaxo.Graph.Scales.Deprecated
   using Rescaling;
 
   /// <summary>
-  /// Axis is the abstract base class of all axis types including linear axis, logarithmic axis and so on.
+  /// Provides the deprecated abstract base class for numerical scales.
   /// </summary>
   [Serializable]
   public abstract class NumericalScale : Scale
@@ -70,6 +70,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     /// </summary>
     public abstract NumericScaleRescaleConditions Rescaling { get; }
 
+    /// <inheritdoc />
     public override object RescalingObject
     {
       get
@@ -88,6 +89,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       return new double[] { }; // return a empty array per default
     }
 
+    /// <inheritdoc />
     public override double[] GetMajorTicksNormal()
     {
       double[] ticks = GetMajorTicks();
@@ -98,6 +100,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       return ticks;
     }
 
+    /// <inheritdoc />
     public override double[] GetMinorTicksNormal()
     {
       double[] ticks = GetMinorTicks();
@@ -108,6 +111,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       return ticks;
     }
 
+    /// <inheritdoc />
     public override AltaxoVariant[] GetMajorTicksAsVariant()
     {
       double[] ticks = GetMajorTicks();
@@ -117,6 +121,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       return vticks;
     }
 
+    /// <inheritdoc />
     public override AltaxoVariant[] GetMinorTicksAsVariant()
     {
       double[] ticks = GetMinorTicks();
@@ -131,6 +136,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     /// </summary>
     public abstract NumericalBoundaries DataBounds { get; } // return a PhysicalBoundarie object that is associated with that axis
 
+    /// <inheritdoc />
     public override IPhysicalBoundaries DataBoundsObject
     {
       get { return DataBounds; }
@@ -142,6 +148,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     /// <summary>The axis end point in physical units.</summary>
     public abstract double End { get; set; }
 
+    /// <inheritdoc />
     public override AltaxoVariant OrgAsVariant
     {
       get
@@ -154,6 +161,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       }
     }
 
+    /// <inheritdoc />
     public override AltaxoVariant EndAsVariant
     {
       get
@@ -172,9 +180,8 @@ namespace Altaxo.Graph.Scales.Deprecated
     // public abstract bool   EndFixed { get; set; }
 
     /// <summary>
-    /// calculates the axis org and end using the databounds
-    /// the org / end is adjusted only if it is not fixed
-    /// and the DataBound object contains valid data
+    /// Calculates the axis origin and end using the data bounds.
+    /// The origin and end are adjusted only if they are not fixed and the data-bound object contains valid data.
     /// </summary>
     public abstract void ProcessDataBounds(double org, bool orgfixed, double end, bool endfixed);
 
@@ -183,6 +190,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     /// the org / end is adjusted only if it is not fixed
     /// and the DataBound object contains valid data
     /// </summary>
+    /// <inheritdoc />
     public override void ProcessDataBounds(AltaxoVariant org, bool orgfixed, AltaxoVariant end, bool endfixed)
     {
       double dorg = org.ToDouble();

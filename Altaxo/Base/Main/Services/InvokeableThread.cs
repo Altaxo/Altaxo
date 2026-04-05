@@ -34,7 +34,7 @@ namespace Altaxo.Main.Services
 {
   /// <summary>
   /// Thread that can be invoked, i.e. code can be executed using <see cref="Invoke"/> or <see cref="InvokeAsync"/> always from this thread. This is especially important
-  /// for objects which are thread sensitive. These objects must be created and it's functions must be called always from the same thread.
+  /// for objects that are thread-sensitive. These objects must be created and their functions must always be called from the same thread.
   /// </summary>
   public class InvokeableThread : IInvokeableThread
   {
@@ -73,7 +73,7 @@ namespace Altaxo.Main.Services
     /// Initializes a new instance of the <see cref="InvokeableThread"/> class.
     /// </summary>
     /// <param name="name">The name of the thread to create.</param>
-    /// <param name="dispatcherForReThrowingExceptions">The dispatcher for re throwing exceptions. Normally, you should use the dispatcher of the MainWindow.</param>
+    /// <param name="dispatcherForReThrowingExceptions">The dispatcher for rethrowing exceptions. Normally, you should use the dispatcher of the main window.</param>
     public InvokeableThread(string name, ISynchronizeInvoke dispatcherForReThrowingExceptions)
       : this(name, System.Threading.ThreadPriority.Normal, dispatcherForReThrowingExceptions)
     {
@@ -84,13 +84,16 @@ namespace Altaxo.Main.Services
     /// </summary>
     /// <param name="name">The name of the thread to create.</param>
     /// <param name="priority">The thread priority this thread should be executed with.</param>
-    /// <param name="dispatcherForReThrowingExceptions">The dispatcher for re throwing exceptions. Normally, you should use the dispatcher of the MainWindow.</param>
+    /// <param name="dispatcherForReThrowingExceptions">The dispatcher for rethrowing exceptions. Normally, you should use the dispatcher of the main window.</param>
     public InvokeableThread(string name, System.Threading.ThreadPriority priority, ISynchronizeInvoke dispatcherForReThrowingExceptions)
     {
       _dispatcherForReThrowingExceptions = dispatcherForReThrowingExceptions;
       Start(name, priority);
     }
 
+    /// <summary>
+    /// Finalizes an instance of the <see cref="InvokeableThread"/> class.
+    /// </summary>
     ~InvokeableThread()
     {
       // Finalizer calls Dispose(false)
@@ -101,6 +104,9 @@ namespace Altaxo.Main.Services
     /// Releases unmanaged and - optionally - managed resources.
     /// </summary>
     /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+    /// <summary>
+    /// Releases resources used by the invokeable thread.
+    /// </summary>
     protected virtual void Dispose(bool disposing)
     {
       if (disposing && _thread is not null)
@@ -115,9 +121,7 @@ namespace Altaxo.Main.Services
       }
     }
 
-    /// <summary>
-    /// Releases unmanaged and - optionally - managed resources. If the thread is still running, it is stopped.
-    /// </summary>
+    /// <inheritdoc/>
     public void Dispose()
     {
       Dispose(true);
@@ -151,10 +155,7 @@ namespace Altaxo.Main.Services
       _triggeringEvent?.Set();
     }
 
-    /// <summary>
-    /// Executes the provided action synchronously. This means that this function returns only after the provided action was executed.
-    /// </summary>
-    /// <param name="action">The action to execute.</param>
+    /// <inheritdoc/>
     public void Invoke(Action action)
     {
       if (_triggeringEvent is null)
@@ -171,10 +172,7 @@ namespace Altaxo.Main.Services
         throw invokeData.Exception;
     }
 
-    /// <summary>
-    /// Executes the provided action asynchronously. This means that this function immediately returns, without waiting for the action to be executed.
-    /// </summary>
-    /// <param name="action">The action to execute.</param>
+    /// <inheritdoc/>
     public void InvokeAsync(Action action)
     {
       if (_triggeringEvent is null)

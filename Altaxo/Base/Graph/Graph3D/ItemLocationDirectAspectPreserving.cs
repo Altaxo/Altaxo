@@ -52,9 +52,13 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// 2016-02-16 Version 0 initial version
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="ItemLocationDirectAspectPreserving"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ItemLocationDirectAspectPreserving), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ItemLocationDirectAspectPreserving)obj;
@@ -63,6 +67,7 @@ namespace Altaxo.Graph.Graph3D
         info.AddBaseValueEmbedded(obj, typeof(ItemLocationDirectAspectPreserving).BaseType!);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (ItemLocationDirectAspectPreserving?)o ?? new ItemLocationDirectAspectPreserving();
@@ -77,35 +82,53 @@ namespace Altaxo.Graph.Graph3D
 
     #region Construction and copying
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ItemLocationDirectAspectPreserving"/> class.
+    /// </summary>
     public ItemLocationDirectAspectPreserving()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ItemLocationDirectAspectPreserving"/> class by copying from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public ItemLocationDirectAspectPreserving(ItemLocationDirectAspectPreserving from)
     {
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ItemLocationDirectAspectPreserving"/> class from a direct item location.
+    /// </summary>
+    /// <param name="from">The item location to copy from.</param>
     public ItemLocationDirectAspectPreserving(ItemLocationDirect from)
     {
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ItemLocationDirectAspectPreserving"/> class from another item location.
+    /// </summary>
+    /// <param name="from">The item location to copy from.</param>
     public ItemLocationDirectAspectPreserving(IItemLocation from)
     {
       CopyFrom(from);
     }
 
+    /// <inheritdoc/>
     object System.ICloneable.Clone()
     {
       return new ItemLocationDirectAspectPreserving(this);
     }
 
+    /// <inheritdoc/>
     public override ItemLocationDirect Clone()
     {
       return new ItemLocationDirectAspectPreserving(this);
     }
 
+    /// <inheritdoc/>
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -170,6 +193,9 @@ namespace Altaxo.Graph.Graph3D
 
     #region New functions/properties
 
+    /// <summary>
+    /// Gets or sets how the aspect ratio is preserved when the item size changes.
+    /// </summary>
     public AspectRatioPreservingMode AspectRatioPreserving
     {
       get
@@ -198,6 +224,9 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the original size of the item whose aspect ratio should be preserved.
+    /// </summary>
     public VectorD3D OriginalItemSize
     {
       get
@@ -233,6 +262,7 @@ namespace Altaxo.Graph.Graph3D
 
     #region Overrides
 
+    /// <inheritdoc/>
     public override bool IsAutoSized
     {
       get
@@ -241,6 +271,7 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <inheritdoc/>
     public override void SetParentSize(VectorD3D parentSize, bool shouldTriggerChangedEvent)
     {
       var oldValue = _parentSize;
@@ -261,6 +292,9 @@ namespace Altaxo.Graph.Graph3D
         EhSelfChanged();
     }
 
+    /// <summary>
+    /// Updates the x size while preserving the configured aspect ratio.
+    /// </summary>
     protected override void InternalSetSizeXSilent(RADouble value)
     {
       _sizeX = value;
@@ -268,6 +302,9 @@ namespace Altaxo.Graph.Graph3D
         InternalSetAbsoluteSizeYSilentHere(AbsoluteSizeX * _originalItemSize.Y / _originalItemSize.X);
     }
 
+    /// <summary>
+    /// Updates the y size while preserving the configured aspect ratio.
+    /// </summary>
     protected override void InternalSetSizeYSilent(RADouble value)
     {
       _sizeY = value;
@@ -275,6 +312,9 @@ namespace Altaxo.Graph.Graph3D
         InternalSetAbsoluteSizeXSilentHere(AbsoluteSizeY * _originalItemSize.X / _originalItemSize.Y);
     }
 
+    /// <summary>
+    /// Updates all size components while preserving the configured aspect ratio.
+    /// </summary>
     protected override void InternalSetSizeSilent(RADouble valueX, RADouble valueY, RADouble valueZ)
     {
       _sizeX = valueX;
@@ -292,6 +332,9 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    /// <summary>
+    /// Updates the x scale while preserving the configured aspect ratio.
+    /// </summary>
     protected override bool InternalSetScaleXSilent(double value)
     {
       _scaleX = 1;
@@ -303,6 +346,9 @@ namespace Altaxo.Graph.Graph3D
       return false;
     }
 
+    /// <summary>
+    /// Updates the y scale while preserving the configured aspect ratio.
+    /// </summary>
     protected override bool InternalSetScaleYSilent(double value)
     {
       _scaleY = 1;
@@ -314,6 +360,9 @@ namespace Altaxo.Graph.Graph3D
       return false;
     }
 
+    /// <summary>
+    /// Updates all scale components while preserving the configured aspect ratio.
+    /// </summary>
     protected override bool InternalSetScaleSilent(VectorD3D value)
     {
       _scaleX = 1;

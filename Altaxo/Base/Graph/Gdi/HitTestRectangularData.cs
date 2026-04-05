@@ -32,7 +32,7 @@ using Altaxo.Geometry;
 namespace Altaxo.Graph.Gdi
 {
   /// <summary>
-  /// Holds information about a hitted point on the screen.
+  /// Holds information about a hit area on the screen.
   /// </summary>
   public class HitTestRectangularData
   {
@@ -49,7 +49,7 @@ namespace Altaxo.Graph.Gdi
     /// Constructor.
     /// </summary>
     /// <param name="hitAreaPageCoord">Page coordinates (unit: points).</param>
-    /// <param name="pageScale">Current zoom factor, i.e. ration between displayed size on the screen and given size.</param>
+    /// <param name="pageScale">Current zoom factor, i.e. ratio between displayed size on the screen and given size.</param>
     public HitTestRectangularData(RectangleD2D hitAreaPageCoord, double pageScale)
     {
       _hittedAreaInPageCoord = hitAreaPageCoord;
@@ -69,7 +69,7 @@ namespace Altaxo.Graph.Gdi
     }
 
     /// <summary>
-    /// Returns the hitted point in page coordinates (unit: Points).
+    /// Returns the hit area in page coordinates (unit: points).
     /// </summary>
     public RectangleD2D HittedAreaInPageCoord
     {
@@ -99,7 +99,7 @@ namespace Altaxo.Graph.Gdi
     /// Gets the transformation of this item plus an additional transformation. Both together transform world coordinates to page coordinates.
     /// </summary>
     /// <param name="additionalTransformation">The additional transformation matrix.</param>
-    /// <returns></returns>
+    /// <returns>The combined transformation matrix.</returns>
     public MatrixD2D GetTransformation(MatrixD2D additionalTransformation)
     {
       var result = new MatrixD2D(_transformation);
@@ -107,6 +107,9 @@ namespace Altaxo.Graph.Gdi
       return result;
     }
 
+    /// <summary>
+    /// Creates a new instance with an additional translation, rotation, scaling, and shear transformation.
+    /// </summary>
     public HitTestRectangularData NewFromTranslationRotationScaleShear(double x, double y, double rotation, double scaleX, double scaleY, double shear)
     {
       var result = new HitTestRectangularData(this);
@@ -121,6 +124,9 @@ namespace Altaxo.Graph.Gdi
       return result;
     }
 
+    /// <summary>
+    /// Creates a new instance with an additional transformation.
+    /// </summary>
     public HitTestRectangularData NewFromAdditionalTransformation(MatrixD2D additionalTransformation)
     {
       var result = new HitTestRectangularData(this);
@@ -129,9 +135,9 @@ namespace Altaxo.Graph.Gdi
     }
 
     /// <summary>
-    /// Returns the hitted area in world coordinated by applying the inverse current coordinate transformation.
+    /// Returns the hit area in world coordinates by applying the inverse current coordinate transformation.
     /// </summary>
-    /// <returns>Hitted point in world coordinates.</returns>
+    /// <returns>The hit area in world coordinates.</returns>
     public MatrixD2D GetHittedAreaInWorldCoord()
     {
       var pt0 = _transformation.InverseTransformPoint(_hittedAreaInPageCoord.Location);
@@ -143,9 +149,9 @@ namespace Altaxo.Graph.Gdi
     }
 
     /// <summary>
-    /// Returns the hitted area in world coordinated by applying the inverse current coordinate transformation and then the provided inverse coordinate transformation.
+    /// Returns the hit area in world coordinates by applying the inverse current coordinate transformation and then the provided inverse coordinate transformation.
     /// </summary>
-    /// <returns>Hitted point in world coordinates.</returns>
+    /// <returns>The hit area in world coordinates.</returns>
     public MatrixD2D GetHittedAreaInWorldCoord(MatrixD2D additionalTransform)
     {
       var pt0 = _transformation.InverseTransformPoint(_hittedAreaInPageCoord.Location);
@@ -160,18 +166,27 @@ namespace Altaxo.Graph.Gdi
       return result;
     }
 
+    /// <summary>
+    /// Determines whether the hit area covers the specified point.
+    /// </summary>
     public bool IsCovering(PointD2D pt)
     {
       pt = _transformation.TransformPoint(pt);
       return _hittedAreaInPageCoord.Contains(pt);
     }
 
+    /// <summary>
+    /// Determines whether the hit area covers the specified point after applying an additional transformation.
+    /// </summary>
     public bool IsCovering(PointD2D pt, MatrixD2D additionalTransform)
     {
       pt = _transformation.TransformPoint(additionalTransform.TransformPoint(pt));
       return _hittedAreaInPageCoord.Contains(pt);
     }
 
+    /// <summary>
+    /// Determines whether the hit area covers the specified rectangle.
+    /// </summary>
     public bool IsCovering(RectangleD2D rect)
     {
       PointD2D pt;
@@ -194,6 +209,9 @@ namespace Altaxo.Graph.Gdi
       return true;
     }
 
+    /// <summary>
+    /// Determines whether the hit area covers the specified path points.
+    /// </summary>
     public bool IsCovering(System.Drawing.PointF[] pathPoints)
     {
       foreach (var pathPoint in pathPoints)
@@ -205,6 +223,9 @@ namespace Altaxo.Graph.Gdi
       return true;
     }
 
+    /// <summary>
+    /// Determines whether the hit area covers the specified rectangle after applying an additional transformation.
+    /// </summary>
     public bool IsCovering(RectangleD2D rect, MatrixD2D additionalTransform)
     {
       PointD2D pt;

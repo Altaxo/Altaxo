@@ -32,16 +32,32 @@ using Altaxo.Main;
 
 namespace Altaxo.Gui.ProjectBrowser
 {
+  /// <summary>
+  /// Data for copying items to multiple folders.
+  /// </summary>
   public class CopyItemsToMultipleFolderData : ICloneable
   {
+    /// <summary>
+    /// Gets or sets a value indicating whether references should be relocated.
+    /// </summary>
     public bool RelocateReferences { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether existing items should be overwritten.
+    /// </summary>
     public bool OverwriteExistingItems { get; set; }
 
+    /// <summary>
+    /// The folders selected as copy targets.
+    /// </summary>
     protected List<string> _foldersToCopyTo = new List<string>();
 
+    /// <summary>
+    /// Gets the folders to copy to.
+    /// </summary>
     public List<string> FoldersToCopyTo { get { return _foldersToCopyTo; } }
 
+    /// <inheritdoc/>
     public object Clone()
     {
       var result = (CopyItemsToMultipleFolderData)MemberwiseClone();
@@ -50,32 +66,59 @@ namespace Altaxo.Gui.ProjectBrowser
     }
   }
 
+  /// <summary>
+  /// View interface for copying items to multiple folders.
+  /// </summary>
   public interface ICopyItemsToMultipleFolderView
   {
+    /// <summary>
+    /// Initializes the folder tree.
+    /// </summary>
+    /// <param name="rootNode">The root node.</param>
     void InitializeFolderTree(NGTreeNode rootNode);
 
+    /// <summary>
+    /// Gets or sets a value indicating whether references should be relocated.
+    /// </summary>
     bool RelocateReferences { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether existing items should be overwritten.
+    /// </summary>
     bool OverwriteExistingItems { get; set; }
 
+    /// <summary>
+    /// Gets the additional folders, one per line.
+    /// </summary>
     string AdditionalFoldersLineByLine { get; }
 
+    /// <summary>
+    /// Occurs when the selected folder names should be copied.
+    /// </summary>
     event Action CopySelectedFolderNames;
 
+    /// <summary>
+    /// Occurs when all folders should be unselected.
+    /// </summary>
     event Action UnselectAllFolders;
   }
 
+  /// <summary>
+  /// Controller for <see cref="CopyItemsToMultipleFolderData"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(ICopyItemsToMultipleFolderView))]
   [UserControllerForObject(typeof(CopyItemsToMultipleFolderData))]
   public class CopyItemsToMultipleFoldersController : MVCANControllerEditCopyOfDocBase<CopyItemsToMultipleFolderData, ICopyItemsToMultipleFolderView>
   {
     private NGTreeNode _projectFolders;
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -94,6 +137,7 @@ namespace Altaxo.Gui.ProjectBrowser
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       var foldersToCopyTo = new HashSet<string>();
@@ -121,6 +165,7 @@ namespace Altaxo.Gui.ProjectBrowser
       return ApplyEnd(true, disposeController);
     }
 
+    /// <inheritdoc/>
     protected override void AttachView()
     {
       base.AttachView();
@@ -128,6 +173,7 @@ namespace Altaxo.Gui.ProjectBrowser
       _view.UnselectAllFolders += EhUnselectAllFolders;
     }
 
+    /// <inheritdoc/>
     protected override void DetachView()
     {
       _view.CopySelectedFolderNames -= EhCopySelectedFolderNames;

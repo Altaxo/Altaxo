@@ -67,16 +67,28 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RegularPolygon"/> class from XML deserialization data.
+    /// </summary>
+    /// <param name="info">The XML deserialization information.</param>
     protected RegularPolygon(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
       : base(new ItemLocationDirect(), info)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RegularPolygon"/> class.
+    /// </summary>
+    /// <param name="context">The property context.</param>
     public RegularPolygon(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
       : base(new ItemLocationDirect(), context)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RegularPolygon"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public RegularPolygon(RegularPolygon from)
       :
       base(from)
@@ -84,6 +96,11 @@ namespace Altaxo.Graph.Gdi.Shapes
       CopyFrom(from, false);
     }
 
+    /// <summary>
+    /// Copies the values from another <see cref="RegularPolygon"/> instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
+    /// <param name="withBaseMembers">If set to <see langword="true"/>, base class members are copied as well.</param>
     protected void CopyFrom(RegularPolygon from, bool withBaseMembers)
     {
       if (withBaseMembers)
@@ -93,6 +110,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       _cornerRadius = from._cornerRadius;
     }
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -119,6 +137,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       y = h;
     }
 
+    /// <summary>
+    /// Creates a regular polygon from left/top/right/bottom coordinates.
+    /// </summary>
     public static RegularPolygon FromLTRB(double left, double top, double right, double bottom, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       if (left > right)
@@ -139,6 +160,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #endregion Constructors
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new RegularPolygon(this);
@@ -153,6 +175,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       return GetPath();
     }
 
+    /// <summary>
+    /// Gets or sets the number of vertices.
+    /// </summary>
     public int NumberOfVertices
     {
       get
@@ -171,6 +196,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets or sets the corner radius.
+    /// </summary>
     public double CornerRadius
     {
       get
@@ -190,6 +218,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the polygon has an even number of vertices.
+    /// </summary>
     public bool HasEvenNumberOfVertices
     {
       get
@@ -296,6 +327,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       return gp;
     }
 
+    /// <summary>
+    /// Creates a polygon path around a center point.
+    /// </summary>
     public static GraphicsPath GetPath(double x0, double y0, double radius, int vertices)
     {
       // we adjust the lower edge to be parallel to the x-axis
@@ -318,6 +352,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       return gp;
     }
 
+    /// <inheritdoc />
     public override IHitTestObject? HitTest(HitTestPointData htd)
     {
       HitTestObjectBase? result = null;
@@ -348,6 +383,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       return result;
     }
 
+    /// <inheritdoc />
     public override void Paint(Graphics g, IPaintContext paintContext)
     {
       var path = GetPath();

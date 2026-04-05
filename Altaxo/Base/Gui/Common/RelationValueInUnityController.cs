@@ -28,14 +28,23 @@ using Altaxo.Units.Dimensionless;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// Controller for editing dimensionless relation values stored in unity.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IDimensionfulQuantityView))]
   public class RelationValueInUnityController : ValueInSomeUnitControllerBase
   {
+    /// <summary>
+    /// Gets the base unit of the edited value.
+    /// </summary>
     protected override IUnit UnitOfValue
     {
       get { return Unity.Instance; }
     }
 
+    /// <summary>
+    /// Gets the unit environment used for display and editing.
+    /// </summary>
     protected override QuantityWithUnitGuiEnvironment UnitEnvironment
     {
       get { return RelationEnvironment.Instance; }

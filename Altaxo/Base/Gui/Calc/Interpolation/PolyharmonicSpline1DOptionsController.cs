@@ -29,14 +29,18 @@ using Altaxo.Gui.Common.PropertyGrid;
 namespace Altaxo.Gui.Calc.Interpolation
 {
   /// <summary>
-  /// Controls the Smoothing parameter of a rational cubic spline.
+  /// Controls options for a one-dimensional polyharmonic spline.
   /// </summary>
   [UserControllerForObject(typeof(PolyharmonicSpline1DOptions), 100)]
   public class PolyharmonicSpline1DOptionsController : PropertyGridController
   {
+    /// <summary>
+    /// Gets the spline options document.
+    /// </summary>
     internal PolyharmonicSpline1DOptions Spline => (PolyharmonicSpline1DOptions)_doc;
 
 
+    /// <inheritdoc/>
     protected override void InitializeValueInfos()
     {
 
@@ -55,6 +59,7 @@ namespace Altaxo.Gui.Calc.Interpolation
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       var controller0 = ValueInfos[0].Controller;

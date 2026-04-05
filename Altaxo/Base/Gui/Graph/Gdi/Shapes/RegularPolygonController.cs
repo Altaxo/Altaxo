@@ -29,16 +29,23 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
+  /// <summary>
+  /// Provides the view contract for <see cref="RegularPolygonController"/>.
+  /// </summary>
   public interface IRegularPolygonView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="RegularPolygon"/>.
+  /// </summary>
   [UserControllerForObject(typeof(RegularPolygon), 110)]
   [ExpectedTypeOfView(typeof(IRegularPolygonView))]
   public class RegularPolygonController : MVCANControllerEditOriginalDocBase<RegularPolygon, IRegularPolygonView>
   {
 
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_shapeCtrl, () => ShapeCtrl = null);
@@ -48,6 +55,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private ClosedPathShapeController _shapeCtrl;
 
+    /// <summary>
+    /// Gets or sets the nested shape controller.
+    /// </summary>
     public ClosedPathShapeController ShapeCtrl
     {
       get => _shapeCtrl;
@@ -65,6 +75,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private int _vertices;
 
+    /// <summary>
+    /// Gets or sets the number of vertices.
+    /// </summary>
     public int Vertices
     {
       get => _vertices;
@@ -78,9 +91,15 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Gets the unit environment for the corner radius.
+    /// </summary>
     public QuantityWithUnitGuiEnvironment CornerRadiusEnvironment => SizeEnvironment.Instance;
     private DimensionfulQuantity _cornerRadius;
 
+    /// <summary>
+    /// Gets or sets the corner radius.
+    /// </summary>
     public DimensionfulQuantity CornerRadius
     {
       get => _cornerRadius;
@@ -96,6 +115,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -112,6 +132,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (!_shapeCtrl.Apply(disposeController))

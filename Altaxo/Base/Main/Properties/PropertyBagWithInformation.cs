@@ -30,11 +30,25 @@ using System.Text;
 
 namespace Altaxo.Main.Properties
 {
+  /// <summary>
+  /// Combines a property bag with metadata describing its role.
+  /// </summary>
   public struct PropertyBagWithInformation
   {
+    /// <summary>
+    /// Gets or sets the property bag information.
+    /// </summary>
     public PropertyBagInformation BagInformation;
+    /// <summary>
+    /// Gets or sets the property bag.
+    /// </summary>
     public IPropertyBag Bag;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PropertyBagWithInformation"/> struct.
+    /// </summary>
+    /// <param name="bagInformation">The associated bag information.</param>
+    /// <param name="bag">The property bag.</param>
     public PropertyBagWithInformation(PropertyBagInformation bagInformation, IPropertyBag bag)
     {
       BagInformation = bagInformation;

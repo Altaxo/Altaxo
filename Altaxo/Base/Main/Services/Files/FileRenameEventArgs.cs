@@ -21,10 +21,16 @@ using System;
 
 namespace Altaxo.Main.Services
 {
+  /// <summary>
+  /// Provides data for cancellable file or directory rename operations.
+  /// </summary>
   public class FileRenamingEventArgs : FileRenameEventArgs
   {
     private bool cancel;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the rename operation should be canceled.
+    /// </summary>
     public bool Cancel
     {
       get
@@ -39,6 +45,9 @@ namespace Altaxo.Main.Services
 
     private bool operationAlreadyDone;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the rename operation has already been completed.
+    /// </summary>
     public bool OperationAlreadyDone
     {
       get
@@ -51,12 +60,21 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileRenamingEventArgs"/> class.
+    /// </summary>
+    /// <param name="sourceFile">The source file or directory name.</param>
+    /// <param name="targetFile">The target file or directory name.</param>
+    /// <param name="isDirectory">If set to <c>true</c>, the paths refer to a directory.</param>
     public FileRenamingEventArgs(string sourceFile, string targetFile, bool isDirectory)
         : base(sourceFile, targetFile, isDirectory)
     {
     }
   }
 
+  /// <summary>
+  /// Provides data for file or directory rename operations.
+  /// </summary>
   public class FileRenameEventArgs : EventArgs
   {
     private bool isDirectory;
@@ -64,6 +82,9 @@ namespace Altaxo.Main.Services
     private string sourceFile;
     private string targetFile;
 
+    /// <summary>
+    /// Gets the source file or directory name.
+    /// </summary>
     public string SourceFile
     {
       get
@@ -72,6 +93,9 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <summary>
+    /// Gets the target file or directory name.
+    /// </summary>
     public string TargetFile
     {
       get
@@ -80,6 +104,9 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the affected paths refer to a directory.
+    /// </summary>
     public bool IsDirectory
     {
       get
@@ -88,6 +115,12 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileRenameEventArgs"/> class.
+    /// </summary>
+    /// <param name="sourceFile">The source file or directory name.</param>
+    /// <param name="targetFile">The target file or directory name.</param>
+    /// <param name="isDirectory">If set to <c>true</c>, the paths refer to a directory.</param>
     public FileRenameEventArgs(string sourceFile, string targetFile, bool isDirectory)
     {
       this.sourceFile = sourceFile;

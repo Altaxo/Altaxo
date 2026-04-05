@@ -28,10 +28,13 @@ using System;
 namespace Altaxo.Graph.Gdi.LabelFormatting
 {
   /// <summary>
-  /// Base class that can be used to derive a numeric abel formatting class
+  /// Provides a base class for numeric label formatting implementations.
   /// </summary>
   public abstract class NumericLabelFormattingBase : LabelFormattingBase
   {
+    /// <summary>
+    /// The configured number of decimal places.
+    /// </summary>
     protected int _decimalPlaces;
 
     #region Serialization
@@ -58,15 +61,23 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NumericLabelFormattingBase"/> class.
+    /// </summary>
     protected NumericLabelFormattingBase()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NumericLabelFormattingBase"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     protected NumericLabelFormattingBase(NumericLabelFormattingBase from)
       : base(from) // everything is done here, since CopyFrom is virtual
     {
     }
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))

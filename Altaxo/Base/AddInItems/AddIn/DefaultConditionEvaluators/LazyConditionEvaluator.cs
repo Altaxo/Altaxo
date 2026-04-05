@@ -31,6 +31,9 @@ namespace Altaxo.AddInItems
     private string name;
     private string className;
 
+    /// <summary>
+    /// Gets the evaluator name.
+    /// </summary>
     public string Name
     {
       get
@@ -39,6 +42,9 @@ namespace Altaxo.AddInItems
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LazyConditionEvaluator"/> class.
+    /// </summary>
     public LazyConditionEvaluator(AddIn addIn, Properties properties)
     {
       if (addIn is null)
@@ -48,6 +54,7 @@ namespace Altaxo.AddInItems
       className = properties["class"];
     }
 
+    /// <inheritdoc/>
     public bool IsValid(object? parameter, Condition condition)
     {
       var evaluator = (IConditionEvaluator?)addIn.CreateObject(className);
@@ -57,6 +64,7 @@ namespace Altaxo.AddInItems
       return evaluator.IsValid(parameter, condition);
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return string.Format("[LazyLoadConditionEvaluator: className = {0}, name = {1}]",

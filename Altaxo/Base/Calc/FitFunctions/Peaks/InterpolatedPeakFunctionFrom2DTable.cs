@@ -119,7 +119,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// The name of the property column that stores the peak position values or width values for each participating column.
     /// </param>
     /// <param name="propertyIsPeakWidth">
-    /// Indicates whether the property column stores peak width values (true) or peak position values (false).
+    /// Indicates whether the property column stores peak width values (<see langword="true"/>) or peak position values (<see langword="false"/>).
     /// </param>
     /// <exception cref="ArgumentException">
     /// Thrown if no participating columns are found, if no x column can be determined, or if the x column is not a
@@ -177,7 +177,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     }
 
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override void Initialize()
     {
       if (string.IsNullOrEmpty(TableName) || string.IsNullOrEmpty(NameOfPropertyForPeakPositionOrWidth))
@@ -194,8 +194,8 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// Initializes the internal state using data from the specified table, extracting relevant columns and preparing
     /// data for spline processing.
     /// </summary>
-    /// <param name="table">The data table containing the columns and data required for initialization. Must include a property column named
-    /// as specified by 'NameOfPropertyForPeakPositionOrWidth'.</param>
+    /// <param name="table">The data table containing the columns and data required for initialization. It must include a property column named
+    /// as specified by <see cref="NameOfPropertyForPeakPositionOrWidth"/>.</param>
     protected void Initialize(DataTable table)
     {
       var pcol = table.PropCols.TryGetColumn(NameOfPropertyForPeakPositionOrWidth) ?? throw new ArgumentException($"The table '{TableName}' does not contain a property column with the name '{NameOfPropertyForPeakPositionOrWidth}'.");

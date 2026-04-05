@@ -29,14 +29,21 @@ using Altaxo.Data.Selections;
 namespace Altaxo.Gui.Data.Selections
 {
 
+  /// <summary>
+  /// Provides the view contract for <see cref="RangeOfRowIndicesController"/>.
+  /// </summary>
   public interface IRangeOfRowIndicesView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for the <see cref="RangeOfRowIndices"/> row selection.
+  /// </summary>
   [UserControllerForObject(typeof(RangeOfRowIndices), 100)]
   [ExpectedTypeOfView(typeof(IRangeOfRowIndicesView))]
   public class RangeOfRowIndicesController : MVCANControllerEditImmutableDocBase<RangeOfRowIndices, IRangeOfRowIndicesView>
   {
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -46,6 +53,9 @@ namespace Altaxo.Gui.Data.Selections
 
     private int _rangeStart;
 
+    /// <summary>
+    /// Gets or sets the inclusive range start.
+    /// </summary>
     public int RangeStart
     {
       get => _rangeStart;
@@ -61,6 +71,9 @@ namespace Altaxo.Gui.Data.Selections
 
     private int _rangeEndInclusive;
 
+    /// <summary>
+    /// Gets or sets the inclusive range end.
+    /// </summary>
     public int RangeEndInclusive
     {
       get => _rangeEndInclusive;
@@ -77,6 +90,7 @@ namespace Altaxo.Gui.Data.Selections
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -89,6 +103,7 @@ namespace Altaxo.Gui.Data.Selections
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       int start = RangeStart;

@@ -43,12 +43,15 @@ namespace Altaxo.Science.Spectroscopy
     private ListOfXAndYColumn _processData;
     private IDataSourceImportOptions _importOptions;
 
+    /// <summary>
+    /// Holds the subscribers for <see cref="DataSourceChanged"/>.
+    /// </summary>
     public Action<IAltaxoTableDataSource>? _dataSourceChanged;
 
     #region Serialization
 
     /// <summary>
-    /// This resolver is neccessary because in Version 0 and 1 the ProcessData was stored as DataTableMultipleColumnProxy without X column.
+    /// This resolver is necessary because in version 0 and 1 the ProcessData was stored as DataTableMultipleColumnProxy without an X column.
     /// The resolver waits until the deserialization is finished and then tries to resolve the X column from the data table.
     /// </summary>
     private class ColumnProxyResolver
@@ -57,6 +60,12 @@ namespace Altaxo.Science.Spectroscopy
       private DataTableMultipleColumnProxy _mcp;
       private PeakSearchingAndFittingDataSource _dataSource;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ColumnProxyResolver"/> class.
+      /// </summary>
+      /// <param name="mcp">The legacy multiple-column proxy to resolve.</param>
+      /// <param name="spectralPreprocessingDataSource">The owning data source.</param>
+      /// <param name="info">The deserialization info.</param>
       public ColumnProxyResolver(DataTableMultipleColumnProxy mcp, PeakSearchingAndFittingDataSource spectralPreprocessingDataSource, IXmlDeserializationInfo info)
       {
         this._mcp = mcp;
@@ -115,6 +124,7 @@ namespace Altaxo.Science.Spectroscopy
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Data.PeakFindingAndFittingDataSource", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
@@ -128,6 +138,7 @@ namespace Altaxo.Science.Spectroscopy
         */
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (o is PeakSearchingAndFittingDataSource s)
@@ -166,6 +177,7 @@ namespace Altaxo.Science.Spectroscopy
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Science.Spectroscopy.PeakSearchingAndFittingDataSource", 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PeakSearchingAndFittingDataSource)obj;
@@ -175,6 +187,7 @@ namespace Altaxo.Science.Spectroscopy
         info.AddValue("ImportOptions", s._importOptions);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (o is PeakSearchingAndFittingDataSource s)
@@ -214,6 +227,7 @@ namespace Altaxo.Science.Spectroscopy
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakSearchingAndFittingDataSource), 2)]
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PeakSearchingAndFittingDataSource)obj;
@@ -223,6 +237,7 @@ namespace Altaxo.Science.Spectroscopy
         info.AddValue("ImportOptions", s._importOptions);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (o is PeakSearchingAndFittingDataSource s)
@@ -243,6 +258,11 @@ namespace Altaxo.Science.Spectroscopy
 
     #endregion Version 2
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PeakSearchingAndFittingDataSource"/> class from serialized data.
+    /// </summary>
+    /// <param name="info">The deserialization info.</param>
+    /// <param name="version">The serialized version.</param>
     protected PeakSearchingAndFittingDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     {
       switch (version)
@@ -264,10 +284,10 @@ namespace Altaxo.Science.Spectroscopy
     #endregion Serialization
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ConvertXYVToMatrixDataSource"/> class.
+    /// Initializes a new instance of the <see cref="PeakSearchingAndFittingDataSource"/> class.
     /// </summary>
     /// <param name="inputData">The input data designates the original source of data (used then for the processing).</param>
-    /// <param name="dataSourceOptions">The Fourier transformation options.</param>
+    /// <param name="dataSourceOptions">The peak-searching and fitting options.</param>
     /// <param name="importOptions">The data source import options.</param>
     /// <exception cref="System.ArgumentNullException">
     /// inputData
@@ -300,6 +320,10 @@ namespace Altaxo.Science.Spectroscopy
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies state from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     [MemberNotNull(nameof(_importOptions), nameof(_processOptions), nameof(_processData))]
     public void CopyFrom(PeakSearchingAndFittingDataSource from)
     {
@@ -325,7 +349,7 @@ namespace Altaxo.Science.Spectroscopy
     /// Copies from another instance.
     /// </summary>
     /// <param name="obj">The object to copy from.</param>
-    /// <returns><c>True</c> if anything could be copied from the object, otherwise <c>false</c>.</returns>
+    /// <returns><c>True</c> if anything could be copied from the object; otherwise, <c>false</c>.</returns>
     public bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -360,7 +384,7 @@ namespace Altaxo.Science.Spectroscopy
     /// Fills (or refills) the data table with the processed data. The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable" />.
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
-    /// <param name="reporter"></param>
+    /// <param name="reporter">The progress reporter.</param>
     public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter reporter)
     {
       var peakFindingAndFittingOptions = _processOptions.GetPeakSearchingAndFittingOptions();
@@ -477,6 +501,7 @@ namespace Altaxo.Science.Spectroscopy
 
     #region Change event handling
 
+    /// <inheritdoc />
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (sender is not null && object.ReferenceEquals(_processData, sender)) // incoming call from data proxy
@@ -498,6 +523,7 @@ namespace Altaxo.Science.Spectroscopy
 
     #region Document Node functions
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_processOptions is not null)
@@ -510,7 +536,7 @@ namespace Altaxo.Science.Spectroscopy
     #endregion Document Node functions
 
     /// <summary>
-    /// Called after deserization of a data source instance, when it is already associated with a data table.
+    /// Called after deserialization of a data source instance, when it is already associated with a data table.
     /// </summary>
     public void OnAfterDeserialization()
     {

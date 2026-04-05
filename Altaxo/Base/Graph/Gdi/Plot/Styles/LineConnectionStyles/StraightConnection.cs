@@ -35,11 +35,14 @@ using Altaxo.Graph.Plot.Data;
 namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 {
   /// <summary>
-  /// Represents a symbol shape for a 3D scatter plot. Instances of this class have to be immutable.
+  /// Represents a connection style that connects points using straight line segments.
   /// </summary>
   /// <seealso cref="Altaxo.Main.IImmutable" />
   public class StraightConnection : LineConnectionStyleBase
   {
+    /// <summary>
+    /// Gets the singleton instance.
+    /// </summary>
     public static StraightConnection Instance { get; private set; } = new StraightConnection();
 
     #region Serialization

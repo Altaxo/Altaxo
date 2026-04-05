@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -42,6 +42,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 {
   #region Interfaces
 
+  /// <summary>
+  /// Provides the view contract for <see cref="G2DPlotItemController"/>.
+  /// </summary>
   public interface IG2DPlotItemView : IDataContextAwareView
   {
   }
@@ -49,7 +52,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
   #endregion Interfaces
 
   /// <summary>
-  /// Summary description for XYColumnPlotItemController.
+  /// Controller for <see cref="G2DPlotItem"/>.
   /// </summary>
   [UserControllerForObject(typeof(G2DPlotItem))]
   [ExpectedTypeOfView(typeof(IG2DPlotItemView))]
@@ -65,6 +68,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 
     private Dictionary<IG2DPlotStyle, IMVCANController> _styleControllerDictionary = new Dictionary<IG2DPlotStyle, IMVCANController>();
 
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_plotGroupController, () => _plotGroupController = null);
@@ -93,6 +97,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 
     private IXYPlotStyleCollectionController _styleCollectionController;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public IXYPlotStyleCollectionController StyleCollectionController
     {
       get => _styleCollectionController;
@@ -124,6 +131,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
     /// <summary>Controller for the <see cref="PlotGroupStyleCollection"/> that is associated with the parent of this plot item.</summary>
     private PlotGroupCollectionController _plotGroupController;
 
+    /// <summary>
+    /// Provides access to this member.
+    /// </summary>
     public PlotGroupCollectionController PlotGroupController
     {
       get => _plotGroupController;
@@ -138,6 +148,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
       }
     }
 
+    /// <summary>
+    /// Performs the n ew operation.
+    /// </summary>
     public SelectableListNodeList Tabs { get; } = new();
 
     private int? _selectedTab;
@@ -163,6 +176,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
       }
     }
 
+    /// <summary>
+    /// Gets the c on tr ol le rf ro mt ag.
+    /// </summary>
     public IMVCAController? GetControllerFromTag(int? tag)
     {
         if (tag is { } selIndex && Tabs is { } tabs)
@@ -181,7 +197,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
     #endregion
 
     /// <summary>
-    /// We have to override GetSuspendTokenForControllerDocument here because we want to suspend the parent plot item collection instead of the plot item.
+    /// Overrides the suspend-token retrieval to suspend the parent plot-item collection instead of the plot item.
     /// This is because we also want to change for instance the plot groups, or distribute style changes to other plot items.
     /// </summary>
     /// <returns>
@@ -197,6 +213,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
         return null;
     }
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -225,7 +242,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
       }
     }
 
-    // have this here as controller too
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       if (_applySuspend++ > 0)
@@ -291,6 +308,9 @@ end_of_function:
     private SuspendableObject _disablerOfActiveChildControlChanged = new SuspendableObject();
    
 
+    /// <summary>
+    /// Handles the v ie w a ct iv ec hi ld co nt ro lc ha ng ed.
+    /// </summary>
     protected void EhView_ActiveChildControlChanged(int? selectedTab, int? oldSelectedTab)
     {
       if (_disablerOfActiveChildControlChanged.IsSuspended)
@@ -453,6 +473,9 @@ end_of_function:
       BringTabToFront(styleIndex);
     }
 
+    /// <summary>
+    /// Performs the b ri ng ta bt of ro nt operation.
+    /// </summary>
     protected void BringTabToFront(int styleIndex)
     {
       SelectedTab = styleIndex;

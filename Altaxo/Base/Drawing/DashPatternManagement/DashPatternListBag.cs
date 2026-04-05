@@ -33,13 +33,24 @@ using Altaxo.Graph;
 
 namespace Altaxo.Drawing.DashPatternManagement
 {
+  /// <summary>
+  /// Bag of dash pattern lists used for persistence.
+  /// </summary>
   public class DashPatternListBag : StyleListBag<DashPatternList, IDashPattern>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DashPatternListBag"/> class.
+    /// </summary>
+    /// <param name="lists">The dash pattern lists to persist.</param>
     public DashPatternListBag(IEnumerable<DashPatternList> lists)
       : base(lists)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DashPatternListBag"/> class from XML deserialization data.
+    /// </summary>
+    /// <param name="info">The deserialization info.</param>
     protected DashPatternListBag(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
       : base(info)
     {

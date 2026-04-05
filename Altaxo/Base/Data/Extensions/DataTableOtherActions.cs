@@ -51,6 +51,10 @@ namespace Altaxo.Data
     {
       private Altaxo.Data.DataTable _table;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="WorksheetRenameValidator"/> class.
+      /// </summary>
+      /// <param name="table">The table being renamed.</param>
       public WorksheetRenameValidator(DataTable table)
         : base("The worksheet name must not be empty! Please enter a valid name.")
       {

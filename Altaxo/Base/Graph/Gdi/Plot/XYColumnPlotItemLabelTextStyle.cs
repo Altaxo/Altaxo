@@ -28,7 +28,7 @@ using System;
 namespace Altaxo.Graph.Gdi.Plot
 {
   /// <summary>
-  /// Enumerates the style how a <see cref="XYColumnPlotItem" /> is labeled into the <see cref="Altaxo.Graph.Gdi.Shapes.TextGraphic" />.
+  /// Enumerates how an <see cref="XYColumnPlotItem"/> is labeled in a <see cref="Altaxo.Graph.Gdi.Shapes.TextGraphic"/>.
   /// </summary>
   public enum XYColumnPlotItemLabelTextStyle
   {
@@ -68,7 +68,7 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <summary>X column name, collection name and table name is shown.</summary>
     XL = 0x03,
 
-    /// <summary>X column name, collection name and table name and Y column name is shown.</summary>
+    /// <summary>X column name, collection name and table name, and Y column name are shown.</summary>
     XLXS = 0x13,
 
     /// <summary>X column name, collection name and table name and Y column name and table name is shown.</summary>

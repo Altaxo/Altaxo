@@ -35,12 +35,15 @@ namespace Altaxo.Graph.Plot.Data
   #region XYFunctionPlotData
 
   /// <summary>
-  /// Summary description for XYFunctionPlotData.
+  /// Represents plot data produced by evaluating a scalar function.
   /// </summary>
   [Serializable]
   public class XYFunctionPlotData : XYFunctionPlotDataBase
 
   {
+    /// <summary>
+    /// Stores the function evaluated by this plot data.
+    /// </summary>
     protected Altaxo.Calc.IScalarFunctionDD _function;
 
     #region Serialization
@@ -49,6 +52,7 @@ namespace Altaxo.Graph.Plot.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYFunctionPlotData), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (XYFunctionPlotData)obj;
@@ -56,6 +60,7 @@ namespace Altaxo.Graph.Plot.Data
         info.AddValue("Function", s._function);
       }
 
+      /// <inheritdoc />
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (XYFunctionPlotData?)o ?? new XYFunctionPlotData();
@@ -80,11 +85,19 @@ namespace Altaxo.Graph.Plot.Data
       _function = Calc.NullFunction.Instance;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYFunctionPlotData"/> class using the specified function.
+    /// </summary>
+    /// <param name="function">The function to evaluate.</param>
     public XYFunctionPlotData(Altaxo.Calc.IScalarFunctionDD function)
     {
       Function = function;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYFunctionPlotData"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public XYFunctionPlotData(XYFunctionPlotData from)
     {
       if (from is null)
@@ -93,6 +106,10 @@ namespace Altaxo.Graph.Plot.Data
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies all data from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     [MemberNotNull(nameof(_function))]
     public void CopyFrom(XYFunctionPlotData from)
     {
@@ -104,6 +121,7 @@ namespace Altaxo.Graph.Plot.Data
       ChildCloneToMemberAlt(ref _function, from._function);
     }
 
+    /// <inheritdoc />
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -121,6 +139,7 @@ namespace Altaxo.Graph.Plot.Data
       return false;
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new XYFunctionPlotData(this);
@@ -128,6 +147,7 @@ namespace Altaxo.Graph.Plot.Data
 
     #endregion Construction and Copying
 
+    /// <inheritdoc />
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_function is not null && Function is Main.IDocumentLeafNode)
@@ -136,6 +156,7 @@ namespace Altaxo.Graph.Plot.Data
 
 
 
+    /// <inheritdoc />
     public override string ToString()
     {
       if (_function is not null)
@@ -145,7 +166,7 @@ namespace Altaxo.Graph.Plot.Data
     }
 
     /// <summary>
-    /// Get/sets the function used for evaluation. Must be serializable in order to store the graph to disk.
+    /// Gets or sets the function used for evaluation. It must be serializable in order to store the graph to disk.
     /// </summary>
     /// <value>The function.</value>
     public Altaxo.Calc.IScalarFunctionDD Function
@@ -166,6 +187,7 @@ namespace Altaxo.Graph.Plot.Data
 
     #region IScalarFunctionDD Members
 
+    /// <inheritdoc />
     public override double Evaluate(double x)
     {
       return _function is null ? 0 : _function.Evaluate(x);
@@ -267,6 +289,9 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
+    /// <summary>
+    /// Gets the polynomial order.
+    /// </summary>
     public int Order
     {
       get
@@ -275,6 +300,7 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       var stb = new System.Text.StringBuilder();
@@ -438,6 +464,7 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       if (_baseFunction is not null)
@@ -598,6 +625,7 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return "SumOfScaledFunctions";
@@ -763,6 +791,7 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return "ProductOfFunctions";

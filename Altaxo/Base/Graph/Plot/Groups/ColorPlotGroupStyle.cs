@@ -146,6 +146,10 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColorGroupStyle"/> class.
+    /// </summary>
+    /// <param name="isLocalGroupStyle">If set to <see langword="true"/>, the instance is used only locally and will not be serialized.</param>
     protected ColorGroupStyle(bool isLocalGroupStyle)
     {
       _listOfValues = ColorSetManager.Instance.BuiltinDarkPlotColors;
@@ -190,6 +194,10 @@ namespace Altaxo.Graph.Plot.Groups
       return new ColorGroupStyle(true);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColorGroupStyle"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public ColorGroupStyle(ColorGroupStyle from)
     {
       _isStepEnabled = from._isStepEnabled;
@@ -204,6 +212,10 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region ICloneable Members
 
+    /// <summary>
+    /// Creates a copy of this color group style.
+    /// </summary>
+    /// <returns>A copy of this instance.</returns>
     public ColorGroupStyle Clone()
     {
       return new ColorGroupStyle(this);
@@ -218,6 +230,7 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region IGroupStyle Members
 
+    /// <inheritdoc/>
     public void TransferFrom(IPlotGroupStyle fromb)
     {
       var from = (ColorGroupStyle)fromb;
@@ -228,21 +241,25 @@ namespace Altaxo.Graph.Plot.Groups
       _cachedColor = from._cachedColor;
     }
 
+    /// <inheritdoc/>
     public void BeginPrepare()
     {
       _isInitialized = false;
       //System.Diagnostics.Debug.WriteLine(string.Format("ColorGroupStyle.BeginPrepare"));
     }
 
+    /// <inheritdoc/>
     public void PrepareStep()
     {
     }
 
+    /// <inheritdoc/>
     public void EndPrepare()
     {
       //System.Diagnostics.Debug.WriteLine(string.Format("ColorGroupStyle.EndPrepare, ini={0}, col={1}",_isInitialized,_color.Color.ToString()));
     }
 
+    /// <inheritdoc/>
     public bool CanCarryOver
     {
       get
@@ -251,6 +268,7 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <inheritdoc/>
     public bool CanStep
     {
       get
@@ -259,6 +277,7 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <inheritdoc/>
     public int Step(int step)
     {
       if (_listOfValues is null)
@@ -288,6 +307,9 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region Other members
 
+    /// <summary>
+    /// Gets a value indicating whether the style has been initialized.
+    /// </summary>
     public bool IsInitialized
     {
       get
@@ -296,6 +318,10 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <summary>
+    /// Initializes the group style with the specified color.
+    /// </summary>
+    /// <param name="c">The initial color.</param>
     public void Initialize(NamedColor c)
     {
       // we will not accept the known color set here
@@ -314,6 +340,9 @@ namespace Altaxo.Graph.Plot.Groups
       _isInitialized = true;
     }
 
+    /// <summary>
+    /// Gets the current color.
+    /// </summary>
     public NamedColor Color
     {
       get
@@ -383,6 +412,10 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region Static helpers
 
+    /// <summary>
+    /// Adds the color group style to the external collection when required.
+    /// </summary>
+    /// <param name="externalGroups">The external group-style collection.</param>
     public static void AddExternalGroupStyle(IPlotGroupStyleCollection externalGroups)
     {
       if (PlotGroupStyle.ShouldAddExternalGroupStyle(externalGroups, typeof(ColorGroupStyle)))
@@ -392,6 +425,11 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <summary>
+    /// Adds the color group style to the local collection when required.
+    /// </summary>
+    /// <param name="externalGroups">The external group-style collection.</param>
+    /// <param name="localGroups">The local group-style collection.</param>
     public static void AddLocalGroupStyle(
       IPlotGroupStyleCollection externalGroups,
       IPlotGroupStyleCollection localGroups)
@@ -400,8 +438,17 @@ namespace Altaxo.Graph.Plot.Groups
         localGroups.Add(ColorGroupStyle.NewLocalGroupStyle());
     }
 
+    /// <summary>
+    /// Represents a delegate that returns a color.
+    /// </summary>
     public delegate NamedColor Getter();
 
+    /// <summary>
+    /// Prepares a color group style for later application.
+    /// </summary>
+    /// <param name="externalGroups">The external group-style collection.</param>
+    /// <param name="localGroups">The local group-style collection.</param>
+    /// <param name="getter">The delegate that supplies the current color.</param>
     public static void PrepareStyle(
       IPlotGroupStyleCollection externalGroups,
       IPlotGroupStyleCollection localGroups,
@@ -424,8 +471,18 @@ namespace Altaxo.Graph.Plot.Groups
         grpStyle.Initialize(getter());
     }
 
+    /// <summary>
+    /// Represents a delegate that applies a color.
+    /// </summary>
+    /// <param name="c">The color to apply.</param>
     public delegate void Setter(NamedColor c);
 
+    /// <summary>
+    /// Applies the prepared color group style.
+    /// </summary>
+    /// <param name="externalGroups">The external group-style collection.</param>
+    /// <param name="localGroups">The local group-style collection.</param>
+    /// <param name="setter">The delegate that applies the color.</param>
     public static void ApplyStyle(
       IPlotGroupStyleCollection externalGroups,
       IPlotGroupStyleCollection localGroups,

@@ -32,6 +32,9 @@ namespace Altaxo.Data
   /// </summary>
   public class EmptyDoubleColumn : INumericColumn, IReadableColumn, ICloneable, Main.IImmutable
   {
+    /// <summary>
+    /// Gets the singleton instance.
+    /// </summary>
     public static EmptyDoubleColumn Instance { get; } = new EmptyDoubleColumn();
 
 
@@ -53,6 +56,9 @@ namespace Altaxo.Data
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EmptyDoubleColumn"/> class.
+    /// </summary>
     public EmptyDoubleColumn()
     {
     }
@@ -116,6 +122,9 @@ namespace Altaxo.Data
       get { return "Empty DoubleColumn"; }
     }
 
+    /// <summary>
+    /// Gets the number of rows if known.
+    /// </summary>
     public int? Count
     {
       get
@@ -124,11 +133,15 @@ namespace Altaxo.Data
       }
     }
 
+    /// <inheritdoc />
     public override string ToString()
     {
       return "Empty DoubleColumn";
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the column is editable.
+    /// </summary>
     public bool IsEditable { get { return false; } }
   }
 }

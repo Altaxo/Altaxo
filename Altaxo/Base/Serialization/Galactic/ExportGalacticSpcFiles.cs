@@ -31,9 +31,9 @@ namespace Altaxo.Serialization.Galactic
   namespace Options
   {
     /// <summary>
-    /// Creating a spectrum either from a row or from a column.
+    /// Creates a spectrum either from a row or from a column.
     /// </summary>
-    /// <remarks>Choosing creating a spectrum from a row, the values of a single table row (or parts of it) are used to create
+    /// <remarks>Choosing to create a spectrum from a row means the values of a single table row, or parts of it, are used to create
     /// a spectrum, i.e. the y-values of the spectrum. In this case the x-values can come from a numeric property column.<para/>
     /// Creating a spectrum from a column (or parts of a column, i.e. some rows of it) means the y-values
     /// of the spectrum stem from a single column of the data table. The x-values of the spectrum then have
@@ -69,7 +69,7 @@ namespace Altaxo.Serialization.Galactic
   }
 
   /// <summary>
-  /// This class hosts all routines neccessary to export Galactic SPC files
+  /// Hosts the routines necessary to export Galactic SPC files.
   /// </summary>
   public class Export
   {
@@ -167,7 +167,7 @@ namespace Altaxo.Serialization.Galactic
     /// <param name="xcolumn">The x column that contains the x data.</param>
     /// <param name="selectedColumns">The columns that where selected in the table, i.e. the columns which are exported. If this parameter is null
     /// or no columns are selected, then all data of a row will be exported.</param>
-    /// <returns>Null if export was successfull, error description otherwise.</returns>
+    /// <returns>Null if export was successful, error description otherwise.</returns>
     public static string? FromRow(
       string filename,
       Altaxo.Data.DataTable table,
@@ -195,7 +195,7 @@ namespace Altaxo.Serialization.Galactic
           return $"Table cell [{i},{rownumber}] (column {table[i].FullName}) has no numeric value!";
       }
 
-      // this first test was successfull, so start exporting now
+      // this first test was successful, so start exporting now
 
       double[] xvalues = new double[spectrumlen];
       double[] yvalues = new double[spectrumlen];
@@ -218,7 +218,7 @@ namespace Altaxo.Serialization.Galactic
     /// <param name="xcolumn">The x column that contains the x data.</param>
     /// <param name="selectedRows">The rows that where selected in the table, i.e. the rows which are exported. If this parameter is null
     /// or no rows are selected, then all data of a column will be exported.</param>
-    /// <returns>Null if export was successfull, error description otherwise.</returns>
+    /// <returns>Null if export was successful, error description otherwise.</returns>
     public static string? FromColumn(
       string filename,
       Altaxo.Data.DataTable table,
@@ -246,7 +246,7 @@ namespace Altaxo.Serialization.Galactic
           return $"Table cell [{columnnumber},{i}] (column {table.DataColumns[columnnumber].FullName}) has no numeric value!";
       }
 
-      // this first test was successfull, so start exporting now
+      // this first test was successful, so start exporting now
 
       double[] xvalues = new double[spectrumlen];
       double[] yvalues = new double[spectrumlen];

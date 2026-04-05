@@ -38,6 +38,9 @@ namespace Altaxo.Graph.Gdi
   {
     private System.Collections.Concurrent.ConcurrentDictionary<BrushXEnv, GdiBrush> _dictionary = new System.Collections.Concurrent.ConcurrentDictionary<BrushXEnv, GdiBrush>();
 
+    /// <summary>
+    /// Gets the shared brush cache instance.
+    /// </summary>
     public static BrushCacheGdi Instance { get; } = new BrushCacheGdi();
 
     /// <summary>

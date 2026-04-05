@@ -29,7 +29,7 @@ using Altaxo.Main;
 namespace Altaxo.Data
 {
   /// <summary>
-  /// Summary description for DataColumnPlaceHolder.
+  /// Proxy for a <see cref="DataTable"/> document node.
   /// </summary>
   [Serializable]
   public class DataTableProxy : DocNodeProxy
@@ -99,6 +99,10 @@ namespace Altaxo.Data
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DataTableProxy"/> class.
+    /// </summary>
+    /// <param name="table">The table to proxy.</param>
     public DataTableProxy(DataTable table)
       : base(table)
     {
@@ -121,11 +125,15 @@ namespace Altaxo.Data
     {
     }
 
+    /// <inheritdoc />
     protected override bool IsValidDocument(object obj)
     {
       return (obj is DataTable) || obj is null;
     }
 
+    /// <summary>
+    /// Gets the proxied data table.
+    /// </summary>
     public DataTable? Document
     {
       get
@@ -134,11 +142,17 @@ namespace Altaxo.Data
       }
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new DataTableProxy(this);
     }
 
+    /// <summary>
+    /// Gets the table name or full document path depending on <paramref name="level"/>.
+    /// </summary>
+    /// <param name="level">The detail level of the returned name.</param>
+    /// <returns>The table name or the full document path.</returns>
     public string GetName(int level)
     {
       var table = Document; // this may have the side effect that the object is tried to resolve, is this o.k.?
@@ -152,6 +166,9 @@ namespace Altaxo.Data
       }
     }
 
+    /// <summary>
+    /// Gets the proxied table name.
+    /// </summary>
     public string TableName => GetName(0);
   }
 }

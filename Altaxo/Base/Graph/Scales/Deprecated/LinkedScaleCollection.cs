@@ -28,6 +28,9 @@ using System.Collections.Generic;
 
 namespace Altaxo.Graph.Scales.Deprecated
 {
+  /// <summary>
+  /// Represents a deprecated collection of linked scales.
+  /// </summary>
   [Serializable]
   public class LinkedScaleCollection
     :
@@ -47,6 +50,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Scales.LinkedScaleCollection", 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (LinkedScaleCollection)obj;
@@ -57,6 +61,7 @@ namespace Altaxo.Graph.Scales.Deprecated
         info.CommitArray();
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (LinkedScaleCollection?)o ?? new LinkedScaleCollection();
@@ -75,6 +80,9 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinkedScaleCollection"/> class.
+    /// </summary>
     public LinkedScaleCollection()
     {
       _linkedScales = new LinkedScale[2];
@@ -82,11 +90,19 @@ namespace Altaxo.Graph.Scales.Deprecated
       SetLinkedScale(new LinkedScale(), 1);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinkedScaleCollection"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public LinkedScaleCollection(LinkedScaleCollection from)
     {
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies the state from another <see cref="LinkedScaleCollection"/>.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public void CopyFrom(LinkedScaleCollection from)
     {
       if (ReferenceEquals(this, from))
@@ -108,11 +124,16 @@ namespace Altaxo.Graph.Scales.Deprecated
       EhSelfChanged(EventArgs.Empty);
     }
 
+    /// <summary>
+    /// Creates a strongly typed clone of this collection.
+    /// </summary>
+    /// <returns>A cloned <see cref="LinkedScaleCollection"/>.</returns>
     public LinkedScaleCollection Clone()
     {
       return new LinkedScaleCollection(this);
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_linkedScales is not null)
@@ -125,6 +146,9 @@ namespace Altaxo.Graph.Scales.Deprecated
       }
     }
 
+    /// <summary>
+    /// Gets the X linked scale.
+    /// </summary>
     public LinkedScale X
     {
       get
@@ -133,6 +157,9 @@ namespace Altaxo.Graph.Scales.Deprecated
       }
     }
 
+    /// <summary>
+    /// Gets the Y linked scale.
+    /// </summary>
     public LinkedScale Y
     {
       get
@@ -141,16 +168,31 @@ namespace Altaxo.Graph.Scales.Deprecated
       }
     }
 
+    /// <summary>
+    /// Gets the scale at the specified index.
+    /// </summary>
+    /// <param name="i">The scale index.</param>
+    /// <returns>The scale at the specified index.</returns>
     public Scale Scale(int i)
     {
       return _linkedScales[i].Scale;
     }
 
+    /// <summary>
+    /// Sets the scale at the specified index.
+    /// </summary>
+    /// <param name="i">The scale index.</param>
+    /// <param name="ax">The scale to assign.</param>
     public void SetScale(int i, Scale ax)
     {
       _linkedScales[i].Scale = ax;
     }
 
+    /// <summary>
+    /// Gets the index of the specified scale.
+    /// </summary>
+    /// <param name="ax">The scale to look up.</param>
+    /// <returns>The index of the scale, or <c>-1</c> if not found.</returns>
     public int IndexOf(Scale ax)
     {
       for (int i = 0; i < _linkedScales.Length; i++)
@@ -162,6 +204,9 @@ namespace Altaxo.Graph.Scales.Deprecated
       return -1;
     }
 
+    /// <summary>
+    /// Replaces the linked scale at the specified index.
+    /// </summary>
     protected void SetLinkedScale(LinkedScale newvalue, int i)
     {
       var oldvalue = _linkedScales[i];

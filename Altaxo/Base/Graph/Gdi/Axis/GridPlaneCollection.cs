@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -30,6 +30,9 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi.Axis
 {
+  /// <summary>
+  /// Represents a collection of <see cref="GridPlane"/> objects.
+  /// </summary>
   [Serializable]
   public class GridPlaneCollection
     :
@@ -39,6 +42,10 @@ namespace Altaxo.Graph.Gdi.Axis
   {
     private List<GridPlane> _innerList = new List<GridPlane>();
 
+    /// <summary>
+    /// Copies the contents from another collection.
+    /// </summary>
+    /// <param name="from">The collection to copy from.</param>
     private void CopyFrom(GridPlaneCollection from)
     {
       if (ReferenceEquals(this, from))
@@ -93,15 +100,23 @@ namespace Altaxo.Graph.Gdi.Axis
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GridPlaneCollection"/> class.
+    /// </summary>
     public GridPlaneCollection()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GridPlaneCollection"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The collection to copy from.</param>
     public GridPlaneCollection(GridPlaneCollection from)
     {
       CopyFrom(from);
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       int i = -1;
@@ -113,18 +128,30 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Creates a copy of this collection.
+    /// </summary>
+    /// <returns>The cloned collection.</returns>
     public GridPlaneCollection Clone()
     {
       return new GridPlaneCollection(this);
     }
 
+    /// <inheritdoc />
     object ICloneable.Clone()
     {
       return new GridPlaneCollection(this);
     }
 
+    /// <summary>
+    /// Gets the number of planes in the collection.
+    /// </summary>
     public int Count { get { return _innerList.Count; } }
 
+    /// <summary>
+    /// Gets the plane at the specified index.
+    /// </summary>
+    /// <param name="idx">The zero-based index.</param>
     public GridPlane this[int idx]
     {
       get
@@ -133,6 +160,10 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets the plane with the specified identifier.
+    /// </summary>
+    /// <param name="planeid">The plane identifier.</param>
     public GridPlane? this[CSPlaneID planeid]
     {
       get
@@ -163,6 +194,10 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Adds a plane to the collection.
+    /// </summary>
+    /// <param name="plane">The plane to add.</param>
     public void Add(GridPlane plane)
     {
       if (plane is null)
@@ -172,6 +207,9 @@ namespace Altaxo.Graph.Gdi.Axis
       _innerList.Add(plane);
     }
 
+    /// <summary>
+    /// Removes all planes from the collection.
+    /// </summary>
     public void Clear()
     {
       var list = _innerList;
@@ -180,6 +218,9 @@ namespace Altaxo.Graph.Gdi.Axis
         plane.Dispose();
     }
 
+    /// <summary>
+    /// Removes all planes that are not used.
+    /// </summary>
     public void RemoveUnused()
     {
       for (int i = _innerList.Count - 1; i >= 0; i--)
@@ -193,6 +234,11 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Determines whether a plane with the specified identifier exists.
+    /// </summary>
+    /// <param name="planeid">The plane identifier.</param>
+    /// <returns><c>true</c> if the collection contains the specified plane; otherwise, <c>false</c>.</returns>
     public bool Contains(CSPlaneID planeid)
     {
       foreach (GridPlane plane in _innerList)
@@ -203,6 +249,11 @@ namespace Altaxo.Graph.Gdi.Axis
       return false;
     }
 
+    /// <summary>
+    /// Paints all planes in the collection.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="layer">The plot layer.</param>
     public void Paint(Graphics g, IPlotArea layer)
     {
       for (int i = 0; i < _innerList.Count; ++i)
@@ -233,6 +284,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
     #region IEnumerable<GridPlane> Members
 
+    /// <inheritdoc />
     public IEnumerator<GridPlane> GetEnumerator()
     {
       return _innerList.GetEnumerator();
@@ -242,6 +294,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
     #region IEnumerable Members
 
+    /// <inheritdoc />
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
       return _innerList.GetEnumerator();

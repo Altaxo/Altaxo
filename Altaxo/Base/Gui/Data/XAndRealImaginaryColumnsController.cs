@@ -28,9 +28,12 @@ using Altaxo.Gui.Graph.Plot.Data;
 namespace Altaxo.Gui.Data
 {
   /// <summary>
-  /// Controls the data of a single <see cref="XAndRealImaginaryColumns"/>
+  /// Controls the data of a single <see cref="XAndRealImaginaryColumns"/>.
   /// </summary>
 
+  /// <summary>
+  /// Controller for <see cref="XAndRealImaginaryColumns"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IColumnPlotDataView))]
   public class XAndRealImaginaryColumnsController
     :

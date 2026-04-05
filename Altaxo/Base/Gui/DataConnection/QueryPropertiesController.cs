@@ -32,15 +32,30 @@ using Altaxo.DataConnection;
 
 namespace Altaxo.Gui.DataConnection
 {
+  /// <summary>
+  /// View contract for editing query-builder properties.
+  /// </summary>
   public interface IQueryPropertiesView
   {
+    /// <summary>
+    /// Updates the dialog values.
+    /// </summary>
     void UpdateDialogValues(bool isDistinct, int topN, SelectableListNodeList groupBy);
 
+    /// <summary>
+    /// Gets the requested top-N value.
+    /// </summary>
     int GetTopN();
 
+    /// <summary>
+    /// Gets a value indicating whether distinct rows are requested.
+    /// </summary>
     bool GetDistinct();
   }
 
+  /// <summary>
+  /// Controller for editing query-builder properties.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IQueryPropertiesView))]
   public class QueryPropertiesController : IMVCAController
   {
@@ -48,12 +63,19 @@ namespace Altaxo.Gui.DataConnection
     private QueryBuilder _builder;
     private SelectableListNodeList _groupByChoices;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="QueryPropertiesController"/> class.
+    /// </summary>
+    /// <param name="builder">The query builder.</param>
     public QueryPropertiesController(QueryBuilder builder)
     {
       _builder = builder;
       Initialize(true);
     }
 
+    /// <summary>
+    /// Gets or sets the query builder.
+    /// </summary>
     public QueryBuilder QueryBuilder
     {
       get { return _builder; }
@@ -85,6 +107,7 @@ namespace Altaxo.Gui.DataConnection
       }
     }
 
+    /// <inheritdoc/>
     public object ViewObject
     {
       get
@@ -104,16 +127,19 @@ namespace Altaxo.Gui.DataConnection
       }
     }
 
+    /// <inheritdoc/>
     public object ModelObject
     {
       get { return null; }
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
       ViewObject = null;
     }
 
+    /// <inheritdoc/>
     public bool Apply(bool disposeController)
     {
       _builder.Top = _view.GetTopN();
@@ -131,7 +157,7 @@ namespace Altaxo.Gui.DataConnection
     /// </summary>
     /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
     /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    ///   <c>true</c> if the revert operation was successful; otherwise, <c>false</c>.
     /// </returns>
     public bool Revert(bool disposeController)
     {

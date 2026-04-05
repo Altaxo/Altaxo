@@ -34,25 +34,57 @@ using Altaxo.DataConnection;
 
 namespace Altaxo.Gui.DataConnection
 {
+  /// <summary>
+  /// View contract for editing query filter expressions.
+  /// </summary>
   public interface IFilterEditView
   {
+    /// <summary>
+    /// Updates the combined filter text shown by the view.
+    /// </summary>
+    /// <param name="txt">The filter text.</param>
     void SetValueText(string txt);
 
+    /// <summary>
+    /// Gets or sets the single comparison value.
+    /// </summary>
     string SingleValueText { get; set; }
 
+    /// <summary>
+    /// Gets or sets the lower interval bound text.
+    /// </summary>
     string IntervalFromText { get; set; }
 
+    /// <summary>
+    /// Gets or sets the upper interval bound text.
+    /// </summary>
     string intervalToText { get; set; }
 
+    /// <summary>
+    /// Updates the available operator choices.
+    /// </summary>
+    /// <param name="list">The selectable operator list.</param>
     void SetOperatorChoices(SelectableListNodeList list);
 
+    /// <summary>
+    /// Occurs when the simple filter value changes.
+    /// </summary>
     event Action SimpleUpdated;
 
+    /// <summary>
+    /// Occurs when the interval filter values change.
+    /// </summary>
     event Action IntervalUpdated;
 
+    /// <summary>
+    /// Occurs when the filter should be cleared.
+    /// </summary>
     event Action ClearAll;
   }
 
+  /// <summary>
+  /// Controller for editing simple and interval-based query filters.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IFilterEditView))]
   public class FilterEditController : IMVCAController
   {
@@ -65,6 +97,10 @@ namespace Altaxo.Gui.DataConnection
 
     private SelectableListNodeList _operatorChoices;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FilterEditController"/> class.
+    /// </summary>
+    /// <param name="field">The query field to edit.</param>
     public FilterEditController(QueryField field)
     {
       QueryField = field;
@@ -107,6 +143,12 @@ namespace Altaxo.Gui.DataConnection
       }
     }
 
+    /// <summary>
+    /// Gets the query field.
+    /// </summary>
+    /// <summary>
+    /// Gets the edited query field.
+    /// </summary>
     public QueryField QueryField
     {
       get { return _field; }
@@ -117,6 +159,7 @@ namespace Altaxo.Gui.DataConnection
       }
     }
 
+    /// <inheritdoc/>
     public object ViewObject
     {
       get
@@ -143,16 +186,19 @@ namespace Altaxo.Gui.DataConnection
       }
     }
 
+    /// <inheritdoc/>
     public object ModelObject
     {
       get { return _value; }
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
       ViewObject = null;
     }
 
+    /// <inheritdoc/>
     public bool Apply(bool disposeController)
     {
       return true;
@@ -163,7 +209,7 @@ namespace Altaxo.Gui.DataConnection
     /// </summary>
     /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
     /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    ///   <c>true</c> if the revert operation was successful; otherwise, <c>false</c>.
     /// </returns>
     public bool Revert(bool disposeController)
     {

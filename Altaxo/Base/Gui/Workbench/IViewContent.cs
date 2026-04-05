@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Workbench
   /// </summary>
   public interface IViewContent : IWorkbenchContent, ICanBeDirty
   {
+    /// <summary>
+    /// Gets the command that closes the view content.
+    /// </summary>
     System.Windows.Input.ICommand CloseCommand { get; }
 
     /// <summary>
@@ -52,8 +55,14 @@ namespace Altaxo.Gui.Workbench
     /// </summary>
     void SetDisposeInProgress();
 
+    /// <summary>
+    /// Gets a value indicating whether the view content has already been disposed.
+    /// </summary>
     bool IsDisposed { get; }
 
+    /// <summary>
+    /// Occurs when the view content is disposed.
+    /// </summary>
     event EventHandler Disposed;
 
     /// <summary>

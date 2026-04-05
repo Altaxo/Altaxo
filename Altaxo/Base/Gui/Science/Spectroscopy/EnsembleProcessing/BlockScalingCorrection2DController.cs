@@ -27,14 +27,21 @@ using Altaxo.Science.Spectroscopy.EnsembleProcessing;
 
 namespace Altaxo.Gui.Science.Spectroscopy.EnsembleProcessing
 {
+  /// <summary>
+  /// View interface for 2D block-scaling correction.
+  /// </summary>
   public interface IBlockScalingCorrection2DView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="BlockScalingCorrection2D"/>.
+  /// </summary>
   [UserControllerForObject(typeof(BlockScalingCorrection2D))]
   [ExpectedTypeOfView(typeof(IBlockScalingCorrection2DView))]
   public class BlockScalingCorrection2DController : MVCANControllerEditImmutableDocBase<BlockScalingCorrection2D, IBlockScalingCorrection2DView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -43,6 +50,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.EnsembleProcessing
     #region Bindings
 
 
+    /// <summary>
+    /// Gets or sets the size of dimension 0.
+    /// </summary>
     public int SizeOfDimension0
     {
       get => field;
@@ -57,6 +67,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.EnsembleProcessing
     }
 
 
+    /// <summary>
+    /// Gets or sets the size of dimension 1.
+    /// </summary>
     public int SizeOfDimension1
     {
       get => field;
@@ -70,6 +83,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.EnsembleProcessing
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the size of dimension 1 is known.
+    /// </summary>
     public bool SizeOfDimension1IsKnown
     {
       get => field;
@@ -83,6 +99,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.EnsembleProcessing
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether dimension 0 is averaged.
+    /// </summary>
     public bool DimensionToAverageIsZero
     {
       get => field;
@@ -98,6 +117,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.EnsembleProcessing
     }
 
 
+    /// <summary>
+    /// Gets or sets a value indicating whether dimension 1 is averaged.
+    /// </summary>
     public bool DimensionToAverageIsOne
     {
       get => !DimensionToAverageIsZero;
@@ -108,6 +130,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.EnsembleProcessing
     }
 
 
+    /// <summary>
+    /// Gets or sets the minimum X value.
+    /// </summary>
     public double MinimumX
     {
       get => field;
@@ -122,6 +147,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.EnsembleProcessing
     }
 
 
+    /// <summary>
+    /// Gets or sets the maximum X value.
+    /// </summary>
     public double MaximumX
     {
       get => field;
@@ -136,6 +164,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.EnsembleProcessing
     }
 
 
+    /// <summary>
+    /// Gets or sets a value indicating whether X is expressed in spectral units.
+    /// </summary>
     public bool XIsInSpectralUnits
     {
       get => field;
@@ -151,6 +182,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.EnsembleProcessing
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -167,6 +199,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.EnsembleProcessing
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = _doc with

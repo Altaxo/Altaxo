@@ -33,7 +33,7 @@ using Altaxo.Graph.Graph3D.GraphicsContext;
 namespace Altaxo.Graph.Graph3D
 {
   /// <summary>
-  /// This class holds the arrangement path by itself.
+  /// Represents a hit-test object that stores its own arrangement outline.
   /// </summary>
   public class HitTestObject : HitTestObjectBase
   {
@@ -60,6 +60,7 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Returns the object path in page coordinates. This path is used for the arrangement of multiple selected objects.
     /// </summary>
+    /// <inheritdoc/>
     public override IObjectOutlineForArrangements ObjectOutlineForArrangements
     {
       get
@@ -73,6 +74,7 @@ namespace Altaxo.Graph.Graph3D
     /// </summary>
     /// <param name="gripLevel">The grip level. For 0, only the translation grip is shown.</param>
     /// <returns>Grip manipulation handles that are used to show the grips and to manipulate the object.</returns>
+    /// <inheritdoc/>
     public override IGripManipulationHandle[] GetGrips(int gripLevel)
     {
       return new IGripManipulationHandle[] { new NoopGrip(_objectPath) };
@@ -84,11 +86,13 @@ namespace Altaxo.Graph.Graph3D
     /// <param name="dx">Shift value of x in root layer coordinates.</param>
     /// <param name="dy">Shift value of y in root layer coordinates.</param>
     /// <param name="dz">Shift value of z in root layer coordinates.</param>
+    /// <inheritdoc/>
     public override void ShiftPosition(double dx, double dy, double dz)
     {
       // per default: do nothing
     }
 
+    /// <inheritdoc/>
     public override void ChangeSize(double? x, double? y, double? z)
     {
       // per default: do nothing

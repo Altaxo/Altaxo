@@ -34,10 +34,16 @@ namespace Altaxo.Gui.Data
   using Altaxo.Collections;
   using Altaxo.Data;
 
+  /// <summary>
+  /// Defines the view contract for editing XYV-to-matrix conversion options.
+  /// </summary>
   public interface IConvertXYVToMatrixOptionsView : Altaxo.Gui.IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="ConvertXYVToMatrixOptions"/>.
+  /// </summary>
   [UserControllerForObject(typeof(ConvertXYVToMatrixOptions))]
   [ExpectedTypeOfView(typeof(IConvertXYVToMatrixOptionsView))]
   public class ConvertXYVToMatrixOptionsController : MVCANControllerEditOriginalDocBase<ConvertXYVToMatrixOptions, IConvertXYVToMatrixOptionsView>, INotifyPropertyChanged
@@ -54,11 +60,13 @@ namespace Altaxo.Gui.Data
     private bool _createStdDevX;
     private bool _createStdDevY;
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <inheritdoc/>
     public override void Dispose(bool isDisposing)
     {
       base.Dispose(isDisposing);
@@ -66,26 +74,63 @@ namespace Altaxo.Gui.Data
 
     #region ViewModel
 
+    /// <summary>
+    /// Gets or sets the x-column sorting options.
+    /// </summary>
     public SelectableListNodeList ColumnXSorting { get { return _xColumnSorting; } set { _xColumnSorting = value; OnPropertyChanged(nameof(ColumnXSorting)); } }
+    /// <summary>
+    /// Gets or sets the y-column sorting options.
+    /// </summary>
     public SelectableListNodeList ColumnYSorting { get { return _yColumnSorting; } set { _yColumnSorting = value; OnPropertyChanged(nameof(ColumnYSorting)); } }
+    /// <summary>
+    /// Gets or sets the averaging options.
+    /// </summary>
     public SelectableListNodeList Averaging { get { return _averaging; } set { _averaging = value; OnPropertyChanged(nameof(Averaging)); } }
+    /// <summary>
+    /// Gets or sets the column naming options.
+    /// </summary>
     public SelectableListNodeList ColumnNaming { get { return _columnNaming; } set { _columnNaming = value; OnPropertyChanged(nameof(ColumnNaming)); OnPropertyChanged(nameof(IsColumnNameFormatStringEnabled)); } }
+    /// <summary>
+    /// Gets a value indicating whether the column name format string can be edited.
+    /// </summary>
     public bool IsColumnNameFormatStringEnabled { get { return (ConvertXYVToMatrixOptions.OutputNaming?)(_columnNaming.FirstSelectedNode?.Tag) == ConvertXYVToMatrixOptions.OutputNaming.FormatString; } }
+    /// <summary>
+    /// Gets or sets the column name format string.
+    /// </summary>
     public string ColumnNameFormatString { get { return _columnNameFormatString; } set { _columnNameFormatString = value; OnPropertyChanged(nameof(ColumnNameFormatString)); } }
 
 
+    /// <summary>
+    /// Gets or sets a value indicating whether clustering is used for x values.
+    /// </summary>
     public bool UseClusteringForX { get { return _useClusteringForX; } set { _useClusteringForX = value; OnPropertyChanged(nameof(UseClusteringForX)); } }
+    /// <summary>
+    /// Gets or sets a value indicating whether clustering is used for y values.
+    /// </summary>
     public bool UseClusteringForY { get { return _useClusteringForY; } set { _useClusteringForY = value; OnPropertyChanged(nameof(UseClusteringForY)); } }
 
+    /// <summary>
+    /// Gets or sets the number of clusters for x values.
+    /// </summary>
     public int? NumberOfClustersX { get { return _numberOfClustersX; } set { _numberOfClustersX = value; OnPropertyChanged(nameof(NumberOfClustersX)); } }
+    /// <summary>
+    /// Gets or sets the number of clusters for y values.
+    /// </summary>
     public int? NumberOfClustersY { get { return _numberOfClustersY; } set { _numberOfClustersY = value; OnPropertyChanged(nameof(NumberOfClustersY)); } }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether standard deviation for x is created.
+    /// </summary>
     public bool CreateStdDevX { get { return _createStdDevX; } set { _createStdDevX = value; OnPropertyChanged(nameof(CreateStdDevX)); } }
+    /// <summary>
+    /// Gets or sets a value indicating whether standard deviation for y is created.
+    /// </summary>
     public bool CreateStdDevY { get { return _createStdDevY; } set { _createStdDevY = value; OnPropertyChanged(nameof(CreateStdDevY)); } }
 
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void AttachView()
     {
 
@@ -95,6 +140,7 @@ namespace Altaxo.Gui.Data
         _view.DataContext = this;
     }
 
+    /// <inheritdoc/>
     protected override void DetachView()
     {
       if (_view is not null)
@@ -103,6 +149,7 @@ namespace Altaxo.Gui.Data
       base.DetachView();
     }
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -132,6 +179,7 @@ namespace Altaxo.Gui.Data
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc.DestinationXColumnSorting = (SortDirection)_xColumnSorting.FirstSelectedNode.Tag;

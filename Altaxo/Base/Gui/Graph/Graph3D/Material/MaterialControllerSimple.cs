@@ -32,14 +32,21 @@ using Altaxo.Graph.Graph3D;
 
 namespace Altaxo.Gui.Graph.Graph3D.Material
 {
+  /// <summary>
+  /// View contract for simple material selection.
+  /// </summary>
   public interface IMaterialViewSimple : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for simple selection of 3D materials.
+  /// </summary>
   [UserControllerForObject(typeof(IMaterial))]
   [ExpectedTypeOfView(typeof(IMaterialViewSimple))]
   public class MaterialControllerSimple : MVCANControllerEditImmutableDocBase<IMaterial, IMaterialViewSimple>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -71,6 +78,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Material
 
     private IMaterial _selectedMaterial;
 
+    /// <summary>
+    /// Gets or sets the selected material.
+    /// </summary>
     public IMaterial SelectedMaterial
     {
       get => _selectedMaterial;
@@ -86,6 +96,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Material
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -97,6 +108,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Material
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = SelectedMaterial ?? MaterialInvisible.Instance;

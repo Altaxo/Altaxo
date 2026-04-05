@@ -33,13 +33,16 @@ namespace Altaxo.Gui.Units
 {
   /// <summary>
   /// Collection of unit environments defined by the user.
-  /// Key is a quantity that is not neccessarily a unit quantity (for instance: unit quanity is 'Length' but quantities can be 'CapSize', 'LineThickness' etc).
+  /// Key is a quantity that is not necessarily a unit quantity (for instance, the unit quantity is `Length`, but quantities can be `CapSize`, `LineThickness`, and so on).
   /// Value is the user defined unit environment for that quantity.
   /// </summary>
   public class UserDefinedUnitEnvironments : IDictionary<string, UserDefinedUnitEnvironment>, INotifyCollectionChanged
   {
     private IDictionary<string, UserDefinedUnitEnvironment> _dictionary;
 
+    /// <summary>
+    /// Occurs when the contents of the collection change.
+    /// </summary>
     public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
     /// <summary>
@@ -61,6 +64,7 @@ namespace Altaxo.Gui.Units
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(UserDefinedUnitEnvironments), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (UserDefinedUnitEnvironments)obj;
@@ -71,6 +75,7 @@ namespace Altaxo.Gui.Units
         info.CommitArray();
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (UserDefinedUnitEnvironments?)o ?? new UserDefinedUnitEnvironments(info);
@@ -89,11 +94,17 @@ namespace Altaxo.Gui.Units
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="UserDefinedUnitEnvironments"/> class for deserialization.
+    /// </summary>
     protected UserDefinedUnitEnvironments(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
       _dictionary = new Dictionary<string, UserDefinedUnitEnvironment>();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="UserDefinedUnitEnvironments"/> class.
+    /// </summary>
     public UserDefinedUnitEnvironments()
     {
       _dictionary = new Dictionary<string, UserDefinedUnitEnvironment>();
@@ -104,54 +115,67 @@ namespace Altaxo.Gui.Units
       CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
     }
 
+    /// <inheritdoc/>
     public UserDefinedUnitEnvironment this[string key] { get => _dictionary[key]; set => _dictionary[key] = value; }
 
+    /// <inheritdoc/>
     public ICollection<string> Keys => _dictionary.Keys;
 
+    /// <inheritdoc/>
     public ICollection<UserDefinedUnitEnvironment> Values => _dictionary.Values;
 
+    /// <inheritdoc/>
     public int Count => _dictionary.Count;
 
+    /// <inheritdoc/>
     public bool IsReadOnly => _dictionary.IsReadOnly;
 
+    /// <inheritdoc/>
     public void Add(string key, UserDefinedUnitEnvironment value)
     {
       _dictionary.Add(key, value);
       OnContentsChanged();
     }
 
+    /// <inheritdoc/>
     public void Add(KeyValuePair<string, UserDefinedUnitEnvironment> item)
     {
       _dictionary.Add(item);
       OnContentsChanged();
     }
 
+    /// <inheritdoc/>
     public void Clear()
     {
       _dictionary.Clear();
       OnContentsChanged();
     }
 
+    /// <inheritdoc/>
     public bool Contains(KeyValuePair<string, UserDefinedUnitEnvironment> item)
     {
       return _dictionary.Contains(item);
     }
 
+    /// <inheritdoc/>
     public bool ContainsKey(string key)
     {
       return _dictionary.ContainsKey(key);
     }
 
+    /// <inheritdoc/>
     public void CopyTo(KeyValuePair<string, UserDefinedUnitEnvironment>[] array, int arrayIndex)
     {
       _dictionary.CopyTo(array, arrayIndex);
     }
 
+    /// <inheritdoc/>
     public IEnumerator<KeyValuePair<string, UserDefinedUnitEnvironment>> GetEnumerator()
     {
       return _dictionary.GetEnumerator();
     }
 
+    /// <inheritdoc/>
     public bool Remove(string key)
     {
       var success = _dictionary.Remove(key);
@@ -160,6 +184,7 @@ namespace Altaxo.Gui.Units
       return success;
     }
 
+    /// <inheritdoc/>
     public bool Remove(KeyValuePair<string, UserDefinedUnitEnvironment> item)
     {
       var success = _dictionary.Remove(item);
@@ -168,11 +193,13 @@ namespace Altaxo.Gui.Units
       return success;
     }
 
+    /// <inheritdoc/>
     public bool TryGetValue(string key, [MaybeNullWhen(false)] out UserDefinedUnitEnvironment value)
     {
       return _dictionary.TryGetValue(key, out value);
     }
 
+    /// <inheritdoc/>
     IEnumerator IEnumerable.GetEnumerator()
     {
       return _dictionary.GetEnumerator();

@@ -33,7 +33,7 @@ using Altaxo.Geometry;
 namespace Altaxo.Graph.Gdi.Background
 {
   /// <summary>
-  /// Backs the item with a color filled rectangle.
+  /// Draws a beveled dark marble style background around the item area.
   /// </summary>
   [Serializable]
   public class DarkMarbel
@@ -41,7 +41,13 @@ namespace Altaxo.Graph.Gdi.Background
     Main.SuspendableDocumentNodeWithEventArgs,
     IBackgroundStyle
   {
+    /// <summary>
+    /// The main background brush.
+    /// </summary>
     protected BrushX _brush;
+    /// <summary>
+    /// The size of the bevel or shadow effect.
+    /// </summary>
     protected double _shadowLength = 5;
 
     #region Serialization
@@ -92,21 +98,36 @@ namespace Altaxo.Graph.Gdi.Background
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DarkMarbel"/> class.
+    /// </summary>
     public DarkMarbel()
     {
       _brush = new BrushX(NamedColors.LightGray);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DarkMarbel"/> class with the specified color.
+    /// </summary>
+    /// <param name="c">The brush color.</param>
     public DarkMarbel(NamedColor c)
     {
       _brush = new BrushX(c);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DarkMarbel"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public DarkMarbel(DarkMarbel from)
     {
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies the state from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     [MemberNotNull(nameof(_brush))]
     public void CopyFrom(DarkMarbel from)
     {
@@ -119,11 +140,13 @@ namespace Altaxo.Graph.Gdi.Background
       _brush = from._brush;
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       yield break;
     }
 
+    /// <inheritdoc />
     public object Clone()
     {
       return new DarkMarbel(this);
@@ -131,17 +154,20 @@ namespace Altaxo.Graph.Gdi.Background
 
     #region IBackgroundStyle Members
 
+    /// <inheritdoc />
     public RectangleD2D MeasureItem(System.Drawing.Graphics g, RectangleD2D innerArea)
     {
       innerArea.Inflate(3.0 * _shadowLength / 2, 3.0 * _shadowLength / 2);
       return innerArea;
     }
 
+    /// <inheritdoc />
     public void Draw(System.Drawing.Graphics g, RectangleD2D innerArea)
     {
       Draw(g, _brush, innerArea);
     }
 
+    /// <inheritdoc />
     public void Draw(Graphics g, BrushX brush, RectangleD2D innerArea)
     {
       innerArea.Inflate(_shadowLength / 2, _shadowLength / 2); // Padding
@@ -176,6 +202,7 @@ namespace Altaxo.Graph.Gdi.Background
       });
     }
 
+    /// <inheritdoc />
     public bool SupportsBrush
     {
       get
@@ -184,6 +211,7 @@ namespace Altaxo.Graph.Gdi.Background
       }
     }
 
+    /// <inheritdoc />
     [MaybeNull]
     public BrushX Brush
     {

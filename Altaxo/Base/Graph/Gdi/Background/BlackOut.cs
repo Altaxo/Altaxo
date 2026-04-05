@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -32,7 +32,7 @@ using Altaxo.Geometry;
 namespace Altaxo.Graph.Gdi.Background
 {
   /// <summary>
-  /// Backs the item with a color filled rectangle.
+  /// Fills the item area with a solid black background.
   /// </summary>
   [Serializable]
   public class BlackOut
@@ -61,21 +61,33 @@ namespace Altaxo.Graph.Gdi.Background
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BlackOut"/> class.
+    /// </summary>
     public BlackOut()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BlackOut"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public BlackOut(BlackOut from)
     {
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies the state from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public void CopyFrom(BlackOut from)
     {
       if (ReferenceEquals(this, from))
         return;
     }
 
+    /// <inheritdoc />
     public object Clone()
     {
       return new BlackOut(this);
@@ -83,23 +95,28 @@ namespace Altaxo.Graph.Gdi.Background
 
     #region IBackgroundStyle Members
 
+    /// <inheritdoc />
     public RectangleD2D MeasureItem(System.Drawing.Graphics g, RectangleD2D innerArea)
     {
       return innerArea;
     }
 
+    /// <inheritdoc />
     public void Draw(System.Drawing.Graphics g, RectangleD2D innerArea)
     {
       g.FillRectangle(Brushes.Black, (float)innerArea.Left, (float)innerArea.Top, (float)innerArea.Width, (float)innerArea.Height);
     }
 
+    /// <inheritdoc />
     public void Draw(Graphics g, BrushX brush, RectangleD2D innerArea)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc />
     public bool SupportsBrush { get { return false; } }
 
+    /// <inheritdoc />
     [MaybeNull]
     public BrushX Brush
     {

@@ -4,8 +4,8 @@ using Altaxo.Data;
 namespace Altaxo.Serialization
 {
   /// <summary>
-  /// Interface for a data file importer, such as import of Ascii, SPC, JCAMP, SPA etc.
-  /// This does not cover files that contain full projects
+  /// Interface for a data file importer, such as ASCII, SPC, JCAMP, or SPA import.
+  /// This does not cover files that contain full projects.
   /// </summary>
   public interface IDataFileImporter
   {

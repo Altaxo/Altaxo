@@ -33,6 +33,9 @@ using Altaxo.Data;
 
 namespace Altaxo.Graph.Scales.Ticks
 {
+  /// <summary>
+  /// Stores tick values or tick indices that should be suppressed.
+  /// </summary>
   public class SuppressedTicks
     :
     Main.SuspendableDocumentLeafNodeWithEventArgs,
@@ -85,6 +88,9 @@ namespace Altaxo.Graph.Scales.Ticks
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SuppressedTicks"/> class.
+    /// </summary>
     public SuppressedTicks()
     {
       _suppressedTickValues = new ObservableCollection<AltaxoVariant>();
@@ -94,16 +100,26 @@ namespace Altaxo.Graph.Scales.Ticks
       _suppressedTickValues.CollectionChanged += EhCollectionChanged;
     }
 
+    /// <summary>
+    /// Handles collection changes of the suppressed-tick lists.
+    /// </summary>
     private void EhCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
       EhSelfChanged();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SuppressedTicks"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public SuppressedTicks(SuppressedTicks from)
     {
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies values from another <see cref="SuppressedTicks"/> instance.
+    /// </summary>
     [MemberNotNull(nameof(_suppressedTickValues), nameof(_suppressedTicksByNumber))]
     protected void CopyFrom(SuppressedTicks from)
     {
@@ -114,6 +130,7 @@ namespace Altaxo.Graph.Scales.Ticks
       EhSelfChanged();
     }
 
+    /// <inheritdoc/>
     public virtual bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -128,11 +145,13 @@ namespace Altaxo.Graph.Scales.Ticks
       return false;
     }
 
+    /// <inheritdoc/>
     public object Clone()
     {
       return new SuppressedTicks(this);
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       if (ReferenceEquals(this, obj))
@@ -151,11 +170,15 @@ namespace Altaxo.Graph.Scales.Ticks
       return true;
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return base.GetHashCode() + 17 * _suppressedTicksByNumber.Count + 31 * _suppressedTickValues.Count;
     }
 
+    /// <summary>
+    /// Gets a value indicating whether no suppressed ticks are stored.
+    /// </summary>
     public bool IsEmpty
     {
       get
@@ -164,6 +187,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Gets the suppressed tick values.
+    /// </summary>
     public IList<AltaxoVariant> ByValues
     {
       get
@@ -172,6 +198,9 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    /// <summary>
+    /// Gets the suppressed tick numbers.
+    /// </summary>
     public IList<int> ByNumbers
     {
       get

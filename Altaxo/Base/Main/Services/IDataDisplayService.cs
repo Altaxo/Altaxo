@@ -28,7 +28,7 @@ using System;
 namespace Altaxo.Main.Services
 {
   /// <summary>
-  /// Provides methods for displaying the information obtained from the data reader (number of item, x data, y data).
+  /// Provides methods for displaying information obtained from a data reader, such as item counts and x/y values.
   /// </summary>
   public interface IDataDisplayService
   {
@@ -48,7 +48,7 @@ namespace Altaxo.Main.Services
     /// </summary>
     /// <param name="line1">First line.</param>
     /// <param name="line2">Second line.</param>
-    /// <param name="line3">Three line.</param>
+    /// <param name="line3">Third line.</param>
     void WriteThreeLines(string line1, string line2, string line3);
   }
 }

@@ -30,8 +30,14 @@ namespace Altaxo.Calc.Regression.Multivariate
   public record DimensionReductionOutputOptions : Main.IImmutable
   {
 
+    /// <summary>
+    /// Gets a value indicating whether auxiliary data from ensemble preprocessing should be included in the output.
+    /// </summary>
     public bool IncludeEnsemblePreprocessingAuxiliaryData { get; init; } = true;
 
+    /// <summary>
+    /// Gets a value indicating whether preprocessed spectra should be included in the output.
+    /// </summary>
     public bool IncludePreprocessedSpectra { get; init; } = false;
 
 

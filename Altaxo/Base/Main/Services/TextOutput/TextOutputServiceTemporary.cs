@@ -30,11 +30,17 @@ using System.Text;
 
 namespace Altaxo.Main.Services
 {
+  /// <summary>
+  /// Temporary in-memory implementation of <see cref="TextOutputServiceBase"/>.
+  /// </summary>
   public class TextOutputServiceTemporary : TextOutputServiceBase
   {
     private StringBuilder _stb = new StringBuilder();
     private object _locker = new object();
 
+    /// <summary>
+    /// Gets the accumulated text.
+    /// </summary>
     public string Text
     {
       get
@@ -43,6 +49,7 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <inheritdoc/>
     protected override void InternalWrite(string text)
     {
       lock (_locker)

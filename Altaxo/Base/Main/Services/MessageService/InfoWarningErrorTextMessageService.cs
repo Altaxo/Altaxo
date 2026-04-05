@@ -41,6 +41,7 @@ namespace Altaxo.Main.Services
     /// Occurs when a message is available. The first subscriber how subscribe to this event will receive all messages
     /// that were up-to-now stored in this call.
     /// </summary>
+    /// <inheritdoc/>
     public event Action<InfoWarningErrorTextMessageItem> MessageAdded
     {
       add
@@ -63,6 +64,7 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <inheritdoc/>
     public void WriteLine(MessageLevel messageLevel, string source, string text)
     {
       var msg = new InfoWarningErrorTextMessageItem(level: messageLevel,
@@ -83,11 +85,13 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <inheritdoc/>
     public void WriteLine(MessageLevel messageLevel, string source, string format, params object[] args)
     {
       WriteLine(messageLevel, source, string.Format(format, args));
     }
 
+    /// <inheritdoc/>
     public void WriteLine(MessageLevel messageLevel, string source, System.IFormatProvider provider, string format, params object[] args)
     {
       WriteLine(messageLevel, source, string.Format(provider, format, args));

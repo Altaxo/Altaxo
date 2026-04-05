@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -241,16 +241,25 @@ namespace Altaxo.Graph.Gdi.Axis
     #endregion Serialization
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AxisStyle"/> class for deserialization only.
+    /// </summary>
+    /// <param name="info">The deserialization information.</param>
     protected AxisStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AxisStyle"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public AxisStyle(AxisStyle from)
     {
       CopyFrom(from);
     }
 
+    /// <inheritdoc />
     public bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -263,6 +272,10 @@ namespace Altaxo.Graph.Gdi.Axis
       return false;
     }
 
+    /// <summary>
+    /// Copies the state from another <see cref="AxisStyle"/> instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     [MemberNotNull(nameof(_styleID))]
     protected void CopyFrom(AxisStyle from)
     {
@@ -271,6 +284,10 @@ namespace Altaxo.Graph.Gdi.Axis
       CopyWithoutIdFrom(from);
     }
 
+    /// <summary>
+    /// Copies all data except the axis identifier from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public void CopyWithoutIdFrom(AxisStyle from)
     {
       ChildCloneToMember(ref _customTickSpacing, from._customTickSpacing);
@@ -280,6 +297,15 @@ namespace Altaxo.Graph.Gdi.Axis
       ChildCloneToMember(ref _axisTitle, from._axisTitle);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AxisStyle"/> class.
+    /// </summary>
+    /// <param name="id">The axis identifier.</param>
+    /// <param name="isAxisLineEnabled">If set to <c>true</c>, the axis line is created.</param>
+    /// <param name="areMajorTicksEnabled">If set to <c>true</c>, the major label style is created.</param>
+    /// <param name="areMinorTicksEnabled">If set to <c>true</c>, the minor label style is created.</param>
+    /// <param name="axisTitleOrNull">The axis title, or <c>null</c> if no title should be created.</param>
+    /// <param name="context">The property context used to obtain default values.</param>
     public AxisStyle(CSLineID id, bool isAxisLineEnabled, bool areMajorTicksEnabled, bool areMinorTicksEnabled, string? axisTitleOrNull, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       _styleID = id;
@@ -306,6 +332,7 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_axisLineStyle is not null)
@@ -335,6 +362,9 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets the cached axis information used by child styles.
+    /// </summary>
     public CSAxisInformation? CachedAxisInformation
     {
       get
@@ -353,6 +383,9 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this axis style contains no visible elements.
+    /// </summary>
     public bool IsEmpty
     {
       get
@@ -399,11 +432,20 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Updates internal caches using the specified layer.
+    /// </summary>
+    /// <param name="layer">The plot layer.</param>
     public void FixupInternalDataStructures(IPlotArea layer)
     {
       FixupInternalDataStructures(layer, layer.CoordinateSystem.GetAxisStyleInformation);
     }
 
+    /// <summary>
+    /// Updates internal caches using the specified layer and axis information provider.
+    /// </summary>
+    /// <param name="layer">The plot layer.</param>
+    /// <param name="GetAxisStyleInformation">The function used to obtain axis information.</param>
     public void FixupInternalDataStructures(IPlotArea layer, Func<CSLineID, CSAxisInformation> GetAxisStyleInformation)
     {
       // update the logical values of the physical axes before
@@ -437,15 +479,32 @@ namespace Altaxo.Graph.Gdi.Axis
         _axisTitle.SetParentSize(layer.Size, false);
     }
 
+    /// <summary>
+    /// Performs preprocessing before painting.
+    /// </summary>
+    /// <param name="layer">The plot layer.</param>
     public void PaintPreprocessing(IPlotArea layer)
     {
     }
 
+    /// <summary>
+    /// Paints the axis style using the layer default axis information provider.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="paintContext">The paint context.</param>
+    /// <param name="layer">The plot layer.</param>
     public void Paint(Graphics g, IPaintContext paintContext, IPlotArea layer)
     {
       Paint(g, paintContext, layer, layer.CoordinateSystem.GetAxisStyleInformation);
     }
 
+    /// <summary>
+    /// Paints the axis style.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="paintContext">The paint context.</param>
+    /// <param name="layer">The plot layer.</param>
+    /// <param name="GetAxisStyleInformation">The function used to obtain axis information.</param>
     public void Paint(Graphics g, IPaintContext paintContext, IPlotArea layer, Func<CSLineID, CSAxisInformation> GetAxisStyleInformation)
     {
       PaintLine(g, layer);
@@ -454,6 +513,11 @@ namespace Altaxo.Graph.Gdi.Axis
       PaintTitle(g, paintContext, layer);
     }
 
+    /// <summary>
+    /// Paints the axis line and ticks.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="layer">The plot layer.</param>
     public void PaintLine(Graphics g, IPlotArea layer)
     {
       if (_cachedAxisInfo is null)
@@ -465,6 +529,11 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Paints the major labels.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="layer">The plot layer.</param>
     public void PaintMajorLabels(Graphics g, IPlotArea layer)
     {
       if (_cachedAxisInfo is null)
@@ -479,6 +548,11 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Paints the minor labels.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="layer">The plot layer.</param>
     public void PaintMinorLabels(Graphics g, IPlotArea layer)
     {
       if (_cachedAxisInfo is null)
@@ -493,6 +567,12 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Paints the axis title.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="paintContext">The paint context.</param>
+    /// <param name="layer">The plot layer.</param>
     public void PaintTitle(Graphics g, IPaintContext paintContext, IPlotArea layer)
     {
       if (_axisTitle is not null)
@@ -501,6 +581,9 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Performs postprocessing after painting.
+    /// </summary>
     public void PaintPostprocessing()
     {
     }
@@ -518,12 +601,19 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Ensures that an axis line style exists.
+    /// </summary>
+    /// <param name="context">The property context used to obtain default values.</param>
     public void ShowAxisLine(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       if (_axisLineStyle is null)
         AxisLineStyle = new AxisLineStyle(context);
     }
 
+    /// <summary>
+    /// Removes the axis line style.
+    /// </summary>
     public void HideAxisLine()
     {
       AxisLineStyle = null;
@@ -540,12 +630,19 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Ensures that a major label style exists.
+    /// </summary>
+    /// <param name="context">The property context used to obtain default values.</param>
     public void ShowMajorLabels(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       if (_majorLabelStyle is null)
         MajorLabelStyle = new AxisLabelStyle(context) { CachedAxisInformation = _cachedAxisInfo };
     }
 
+    /// <summary>
+    /// Removes the major label style.
+    /// </summary>
     public void HideMajorLabels()
     {
       MajorLabelStyle = null;
@@ -562,12 +659,19 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Ensures that a minor label style exists.
+    /// </summary>
+    /// <param name="context">The property context used to obtain default values.</param>
     public void ShowMinorLabels(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       if (_minorLabelStyle is null)
         MinorLabelStyle = new AxisLabelStyle(context) { CachedAxisInformation = _cachedAxisInfo };
     }
 
+    /// <summary>
+    /// Removes the minor label style.
+    /// </summary>
     public void HideMinorLabels()
     {
       MinorLabelStyle = null;
@@ -584,6 +688,10 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Ensures that an axis title exists.
+    /// </summary>
+    /// <param name="context">The property context used to obtain default values.</param>
     [MemberNotNull(nameof(_axisTitle))]
     public void ShowTitle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
@@ -594,6 +702,9 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Removes the axis title.
+    /// </summary>
     public void HideTitle()
     {
       Title = null;
@@ -650,6 +761,9 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets the title graphic.
+    /// </summary>
     public TextGraphic? Title
     {
       get { return _axisTitle; }
@@ -660,6 +774,9 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    /// <summary>
+    /// Gets or sets the title text.
+    /// </summary>
     public string TitleText
     {
       get { return _axisTitle?.Text ?? string.Empty; }
@@ -688,6 +805,10 @@ namespace Altaxo.Graph.Gdi.Axis
 
     #region ICloneable Members
 
+    /// <summary>
+    /// Creates a copy of this axis style.
+    /// </summary>
+    /// <returns>The cloned instance.</returns>
     public object Clone()
     {
       return new AxisStyle(this);

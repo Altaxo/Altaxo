@@ -29,6 +29,9 @@ using System.Text;
 
 namespace Altaxo.Graph.Scales.Boundaries
 {
+  /// <summary>
+  /// Represents boundaries that intentionally ignore all incoming values.
+  /// </summary>
   public class DummyBoundaries : Main.SuspendableDocumentLeafNodeWithEventArgs, IPhysicalBoundaries
   {
     #region Serialization
@@ -36,10 +39,12 @@ namespace Altaxo.Graph.Scales.Boundaries
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DummyBoundaries), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (DummyBoundaries?)o ?? new DummyBoundaries();
@@ -51,30 +56,36 @@ namespace Altaxo.Graph.Scales.Boundaries
 
     #region IPhysicalBoundaries Members
 
+    /// <inheritdoc />
     public bool Add(Altaxo.Data.IReadableColumn col, int idx)
     {
       return true;
     }
 
+    /// <inheritdoc />
     public bool Add(Altaxo.Data.AltaxoVariant item)
     {
       return true;
     }
 
+    /// <inheritdoc />
     public void Reset()
     {
     }
 
+    /// <inheritdoc />
     public int NumberOfItems
     {
       get { return 0; }
     }
 
+    /// <inheritdoc />
     public bool IsEmpty
     {
       get { return true; }
     }
 
+    /// <inheritdoc />
     public void Add(IPhysicalBoundaries b)
     {
     }
@@ -83,6 +94,7 @@ namespace Altaxo.Graph.Scales.Boundaries
 
     #region ICloneable Members
 
+    /// <inheritdoc />
     public object Clone()
     {
       return new DummyBoundaries();

@@ -40,6 +40,9 @@ namespace Altaxo.Main.Services
 
 
   /// <summary>
+  /// Delegate that saves the current project and window state into an archive.
+  /// </summary>
+  /// <summary>
   /// Saves the current project and the windows state to an archive.
   /// </summary>
   /// <param name="newArchive">The archive to save the project and windows state to.</param>
@@ -86,14 +89,14 @@ namespace Altaxo.Main.Services
     /// Gets an archive, for read-only purposes only. The call to this function should be thread-safe.
     /// It is required to call <see cref="ReleaseArchiveThreadSave(object, ref IProjectArchive)"/> to release the returned archive if it is no longer in use.
     /// </summary>
-    /// <param name="claimer">The claimer. If the returned archive is no longer </param>
+    /// <param name="claimer">The object claiming the archive.</param>
     /// <returns>The archive that can be used to retrieve data (read-only).</returns>
     IProjectArchive GetArchiveReadOnlyThreadSave(object claimer);
 
     /// <summary>
     /// Releases the archive that was claimed with <see cref="GetArchiveReadOnlyThreadSave(object)"/>.
     /// </summary>
-    /// <param name="claimer">The claimer. This parameter should be identical to that used in the call to <see cref="GetArchiveReadOnlyThreadSave(object)"/></param>.
+    /// <param name="claimer">The claimer. This parameter should be identical to that used in the call to <see cref="GetArchiveReadOnlyThreadSave(object)"/>.</param>
     /// <param name="archive">The archive to release.</param>
     void ReleaseArchiveThreadSave(object claimer, ref IProjectArchive? archive);
   }

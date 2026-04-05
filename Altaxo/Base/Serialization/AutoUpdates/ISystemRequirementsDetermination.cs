@@ -28,7 +28,7 @@ using System;
 namespace Altaxo.Serialization.AutoUpdates
 {
   /// <summary>
-  /// Interface to a class that is able to determine whether a given version of .NET framework and .NET core is installed.
+  /// Determines whether required .NET Framework or .NET runtime versions are installed.
   /// </summary>
   public interface ISystemRequirementsDetermination
   {
@@ -42,11 +42,11 @@ namespace Altaxo.Serialization.AutoUpdates
     bool IsNetFrameworkVersionInstalled(Version version);
 
     /// <summary>
-    /// Determines whether the specified DotNet core version is installed on the current system.
+    /// Determines whether the specified .NET runtime version is installed on the current system.
     /// </summary>
     /// <param name="version">The version string.</param>
     /// <returns>
-    ///   <c>true</c> if the specified .NET core version is installed; otherwise, <c>false</c>.
+    ///   <c>true</c> if the specified .NET runtime version is installed; otherwise, <c>false</c>.
     /// </returns>
     public bool IsNetCoreVersionInstalled(Version version);
   }

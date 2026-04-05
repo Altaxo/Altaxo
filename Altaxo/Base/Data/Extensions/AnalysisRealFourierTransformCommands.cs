@@ -27,38 +27,87 @@ using System;
 
 namespace Altaxo.Data
 {
+  /// <summary>
+  /// Commands for applying a real Fourier transform to worksheet columns.
+  /// </summary>
   public static class AnalysisRealFourierTransformationCommands
   {
     #region Helper types
 
+    /// <summary>
+    /// Output kinds for the real Fourier transform.
+    /// </summary>
     [Flags]
     public enum RealFourierTransformOutput
     {
+      /// <summary>
+      /// Real part.
+      /// </summary>
       Re = 0x01,
+      /// <summary>
+      /// Imaginary part.
+      /// </summary>
       Im = 0x02,
+      /// <summary>
+      /// Magnitude.
+      /// </summary>
       Abs = 0x04,
+      /// <summary>
+      /// Phase.
+      /// </summary>
       Phase = 0x08,
+      /// <summary>
+      /// Power.
+      /// </summary>
       Power = 0x10
     }
 
+    /// <summary>
+    /// Determines where transform results are written.
+    /// </summary>
     public enum RealFourierTransformOutputPlacement
     {
+      /// <summary>
+      /// Create the result in the same worksheet.
+      /// </summary>
       CreateInSameWorksheet,
+      /// <summary>
+      /// Create the result in a new worksheet.
+      /// </summary>
       CreateInNewWorksheet
     }
 
+    /// <summary>
+    /// Options for a real Fourier transform operation.
+    /// </summary>
     public class RealFourierTransformOptions : ICloneable
     {
+      /// <summary>
+      /// Gets or sets the column to transform.
+      /// </summary>
       public DataColumn? ColumnToTransform { get; set; }
 
+      /// <summary>
+      /// Gets or sets the message describing the x-increment determination.
+      /// </summary>
       public string? XIncrementMessage { get; set; }
 
+      /// <summary>
+      /// Gets or sets the x-increment value.
+      /// </summary>
       public double XIncrementValue { get; set; }
 
+      /// <summary>
+      /// Gets or sets the requested output kinds.
+      /// </summary>
       public RealFourierTransformOutput Output { get; set; }
 
+      /// <summary>
+      /// Gets or sets where the output is written.
+      /// </summary>
       public RealFourierTransformOutputPlacement OutputPlacement { get; set; }
 
+      /// <inheritdoc />
       public object Clone()
       {
         return MemberwiseClone();
@@ -67,6 +116,12 @@ namespace Altaxo.Data
 
     #endregion Helper types
 
+    /// <summary>
+    /// Determines the x-increment from the x-column associated with the specified y-column.
+    /// </summary>
+    /// <param name="yColumnToTransform">The y-column to be transformed.</param>
+    /// <param name="xIncrement">Receives the determined x-increment.</param>
+    /// <returns>An error message if the increment could not be determined exactly; otherwise, <see langword="null"/>.</returns>
     public static string? DetermineXIncrement(DataColumn yColumnToTransform, out double xIncrement)
     {
       xIncrement = 1;
@@ -94,6 +149,10 @@ namespace Altaxo.Data
         return null;
     }
 
+    /// <summary>
+    /// Performs a real Fourier transform using the specified options.
+    /// </summary>
+    /// <param name="options">The transform options.</param>
     public static void RealFourierTransform(RealFourierTransformOptions options)
     {
       var yCol = options.ColumnToTransform ?? throw new InvalidOperationException("Y-column to be transformed is null");
@@ -186,6 +245,10 @@ namespace Altaxo.Data
       }
     }
 
+    /// <summary>
+    /// Shows the dialog for configuring and running a real Fourier transform.
+    /// </summary>
+    /// <param name="ycolumnToTransform">The y-column to transform.</param>
     public static void ShowRealFourierTransformDialog(DataColumn ycolumnToTransform)
     {
       var options = new RealFourierTransformOptions() { ColumnToTransform = ycolumnToTransform };

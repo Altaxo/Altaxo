@@ -32,14 +32,25 @@ namespace Altaxo.Gui.Graph.Gdi
 {
 
   /// <summary>
-  /// Summary description for LayerController.
+  /// Controller for editing a <see cref="HostLayer"/>.
   /// </summary>
   [UserControllerForObject(typeof(HostLayer))]
   [ExpectedTypeOfView(typeof(ITabbedElementViewDC))]
   public class HostLayerController : MVCANControllerEditOriginalDocBase<HostLayer, ITabbedElementViewDC>
   {
+    /// <summary>
+    /// The controller for the position page.
+    /// </summary>
     protected IMVCANController? _layerPositionController;
+
+    /// <summary>
+    /// The controller for the graphic-items page.
+    /// </summary>
     protected IMVCANController? _layerGraphItemsController;
+
+    /// <summary>
+    /// The controller for the host-grid page.
+    /// </summary>
     protected IMVCANController? _layerGridController;
 
     private IMVCANController? _currentController;
@@ -49,10 +60,25 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private SelectableListNodeList _listOfUniqueItem = new();
 
+    /// <summary>
+    /// Tag for the position page.
+    /// </summary>
     public const string PositionTag = "Position";
+
+    /// <summary>
+    /// Tag for the host grid page.
+    /// </summary>
     public const string HostGridTag = "HostGrid";
+
+    /// <summary>
+    /// Tag for the graphic items page.
+    /// </summary>
     public const string GraphItemsTag = "GraphicItems";
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HostLayerController"/> class.
+    /// </summary>
+    /// <param name="layer">The host layer.</param>
     public HostLayerController(HostLayer layer)
       : this(layer, PositionTag)
     {
@@ -63,6 +89,7 @@ namespace Altaxo.Gui.Graph.Gdi
       _initialTab = currentPage;
       InitializeDocument(layer);
     }
+    /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_layerPositionController, () => _layerPositionController = null);
@@ -73,10 +100,16 @@ namespace Altaxo.Gui.Graph.Gdi
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the available tabs.
+    /// </summary>
     public SelectableListNodeList Tabs { get; } = new();
 
     private string? _selectedTab;
 
+    /// <summary>
+    /// Gets or sets the selected tab.
+    /// </summary>
     public string? SelectedTab
     {
       get => _selectedTab;
@@ -96,6 +129,7 @@ namespace Altaxo.Gui.Graph.Gdi
 
     #endregion
 
+    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -115,6 +149,7 @@ namespace Altaxo.Gui.Graph.Gdi
       }
     }
 
+    /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
       ApplyCurrentController(true, disposeController);
@@ -122,6 +157,7 @@ namespace Altaxo.Gui.Graph.Gdi
       return ApplyEnd(true, disposeController);
     }
 
+    /// <inheritdoc />
     public override void Dispose(bool isDisposing)
     {
       _lastControllerApplied = null;
@@ -196,11 +232,17 @@ namespace Altaxo.Gui.Graph.Gdi
 
     #region Dialog
 
+    /// <summary>
+    /// Shows the dialog for editing the specified host layer.
+    /// </summary>
     public static bool ShowDialog(HostLayer layer)
     {
       return ShowDialog(layer, PositionTag);
     }
 
+    /// <summary>
+    /// Shows the dialog for editing the specified host layer and initial page.
+    /// </summary>
     public static bool ShowDialog(HostLayer layer, string currentPage)
     {
       var ctrl = new HostLayerController(layer, currentPage);
@@ -211,6 +253,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     #region Edit Handlers
 
+    /// <summary>
+    /// Registers edit handlers for host layers.
+    /// </summary>
     public static void RegisterEditHandlers()
     {
       // register here editor methods
@@ -218,6 +263,9 @@ namespace Altaxo.Gui.Graph.Gdi
       HostLayer.LayerPositionEditorMethod = new DoubleClickHandler(EhLayerPositionEdit);
     }
 
+    /// <summary>
+    /// Edits the position of the host layer associated with the hit-test object.
+    /// </summary>
     public static bool EhLayerPositionEdit(IHitTestObject hit)
     {
       if (hit.HittedObject is not XYPlotLayer layer)

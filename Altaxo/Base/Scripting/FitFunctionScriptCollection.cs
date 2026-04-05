@@ -31,6 +31,9 @@ using System.Text;
 
 namespace Altaxo.Scripting
 {
+  /// <summary>
+  /// Represents a collection of <see cref="FitFunctionScript"/> instances.
+  /// </summary>
   public class FitFunctionScriptCollection
     :
     Main.SuspendableDocumentNodeWithSetOfEventArgs,
@@ -43,11 +46,16 @@ namespace Altaxo.Scripting
     /// </summary>
     private Dictionary<FitFunctionScript, FitFunctionScript> _innerList = new Dictionary<FitFunctionScript, FitFunctionScript>();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FitFunctionScriptCollection"/> class.
+    /// </summary>
+    /// <param name="parent">The parent document node.</param>
     public FitFunctionScriptCollection(Main.IDocumentNode parent)
     {
       _parent = parent;
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       foreach (var entry in _innerList.Keys)
@@ -58,6 +66,7 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <inheritdoc />
     protected override void Dispose(bool isDisposing)
     {
       var list = _innerList;
@@ -71,6 +80,12 @@ namespace Altaxo.Scripting
       base.Dispose(isDisposing);
     }
 
+    /// <summary>
+    /// Finds scripts by category and name.
+    /// </summary>
+    /// <param name="category">The category to match, or <see langword="null"/> to ignore the category.</param>
+    /// <param name="name">The name to match, or <see langword="null"/> to ignore the name.</param>
+    /// <returns>The matching scripts, sorted by creation time.</returns>
     public List<FitFunctionScript> Find(string category, string name)
     {
       var result = new List<FitFunctionScript>();
@@ -119,11 +134,20 @@ namespace Altaxo.Scripting
       Add(script);
     }
 
+    /// <summary>
+    /// Determines whether the collection contains the specified script.
+    /// </summary>
+    /// <param name="script">The script to locate.</param>
+    /// <returns><see langword="true"/> if the script is contained in the collection; otherwise, <see langword="false"/>.</returns>
     public bool Contains(FitFunctionScript script)
     {
       return _innerList.ContainsKey(script);
     }
 
+    /// <summary>
+    /// Removes the specified script from the collection.
+    /// </summary>
+    /// <param name="script">The script to remove.</param>
     public void Remove(FitFunctionScript script)
     {
       if (_innerList.ContainsKey(script))
@@ -135,16 +159,25 @@ namespace Altaxo.Scripting
 
     #region ICollection Members
 
+    /// <summary>
+    /// Copies the scripts to the specified array.
+    /// </summary>
     public void CopyTo(FitFunctionScript[] array, int index)
     {
       _innerList.Keys.CopyTo(array, index);
     }
 
+    /// <summary>
+    /// Gets the number of scripts in the collection.
+    /// </summary>
     public int Count
     {
       get { return _innerList.Count; }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether access to the collection is synchronized.
+    /// </summary>
     public bool IsSynchronized
     {
       get { return false; }
@@ -152,6 +185,9 @@ namespace Altaxo.Scripting
 
     private object _syncRoot = new object();
 
+    /// <summary>
+    /// Gets an object that can be used to synchronize access to the collection.
+    /// </summary>
     public object SyncRoot
     {
       get { return _syncRoot; }
@@ -166,6 +202,9 @@ namespace Altaxo.Scripting
       return _innerList.Keys.GetEnumerator();
     }
 
+    /// <summary>
+    /// Removes all scripts from the collection.
+    /// </summary>
     public void Clear()
     {
       var list = _innerList;
@@ -177,6 +216,9 @@ namespace Altaxo.Scripting
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the collection is read-only.
+    /// </summary>
     public bool IsReadOnly
     {
       get { return false; }

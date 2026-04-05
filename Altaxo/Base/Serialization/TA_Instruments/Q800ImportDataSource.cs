@@ -30,6 +30,9 @@ using Altaxo.Data;
 
 namespace Altaxo.Serialization.TA_Instruments
 {
+  /// <summary>
+  /// Table data source for importing TA Instruments Q800 files.
+  /// </summary>
   public class Q800ImportDataSource : FileImportTableDataSourceBase<Q800ImportOptions>
   {
     #region Serialization
@@ -42,6 +45,7 @@ namespace Altaxo.Serialization.TA_Instruments
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Q800ImportDataSource), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (Q800ImportDataSource)obj;
@@ -51,6 +55,7 @@ namespace Altaxo.Serialization.TA_Instruments
         info.AddArray("ProcessData", s._files.ToArray(), s._files.Count);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (o is Q800ImportDataSource s)
@@ -96,30 +101,42 @@ namespace Altaxo.Serialization.TA_Instruments
 
     #region Construction
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Q800ImportDataSource"/> class for a single file.
+    /// </summary>
     public Q800ImportDataSource(string fileName, Q800ImportOptions options)
       : this(new string[] { fileName }, options)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Q800ImportDataSource"/> class for multiple files.
+    /// </summary>
     public Q800ImportDataSource(IEnumerable<string> fileNames, Q800ImportOptions options)
       : base(fileNames)
     {
       _processOptions = options;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Q800ImportDataSource"/> class by copying another instance.
+    /// </summary>
     public Q800ImportDataSource(Q800ImportDataSource from)
       : base(from)
     {
     }
 
+    /// <inheritdoc />
     public override object Clone() => new Q800ImportDataSource(this);
 
     #endregion Construction
+    /// <inheritdoc />
     protected override void ImportFromFiles(string[] validFileNames, DataTable destinationTable, IProgressReporter reporter)
     {
       new Q800Importer().Import(validFileNames, destinationTable, _processOptions, attachDataSource: false);
     }
 
+    /// <inheritdoc />
     public override (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
     {
       return new Q800Importer().GetFileExtensions();

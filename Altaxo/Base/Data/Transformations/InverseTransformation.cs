@@ -27,8 +27,14 @@ using System;
 
 namespace Altaxo.Data.Transformations
 {
+  /// <summary>
+  /// Applies the inverse transformation <c>1/x</c>.
+  /// </summary>
   public class InverseTransformation : ImmutableClassWithoutMembersBase, IDoubleToDoubleTransformation
   {
+    /// <summary>
+    /// Gets the singleton instance.
+    /// </summary>
     public static InverseTransformation Instance { get; private set; } = new InverseTransformation();
 
     #region Serialization
@@ -58,11 +64,13 @@ namespace Altaxo.Data.Transformations
     /// <inheritdoc/>
     public Type OutputValueType { get { return typeof(double); } }
 
+    /// <inheritdoc/>
     public AltaxoVariant Transform(AltaxoVariant value)
     {
       return 1 / value;
     }
 
+    /// <inheritdoc/>
     public double Transform(double value)
     {
       return 1 / value;
@@ -75,21 +83,25 @@ namespace Altaxo.Data.Transformations
     }
 
 
+    /// <inheritdoc/>
     public string RepresentationAsFunction
     {
       get { return GetRepresentationAsFunction("x"); }
     }
 
+    /// <inheritdoc/>
     public string GetRepresentationAsFunction(string arg)
     {
       return arg.Length == 1 ? string.Format("1/{0}", arg) : string.Format("1/({0})", arg);
     }
 
+    /// <inheritdoc/>
     public string RepresentationAsOperator
     {
       get { return "1/"; }
     }
 
+    /// <inheritdoc/>
     public IVariantToVariantTransformation BackTransformation
     {
       get { return this; }

@@ -31,8 +31,9 @@ using System.Reflection;
 namespace Altaxo.AddInItems
 {
   /// <summary>
-  /// Service that loads plugin assemblies and their dependencies. Special care is taken that almost all
-  /// of the dependencies are loaded into the default AssemblyLoadContext in order to avoid multiple loadings of the same assembly into different contexts.
+  /// Provides methods for loading plug-in assemblies and their dependencies.
+  /// Special care is taken to load almost all dependencies into the default <see cref="System.Runtime.Loader.AssemblyLoadContext"/>
+  /// in order to avoid loading the same assembly into multiple contexts.
   /// </summary>
   public class AssemblyLoaderService
   {
@@ -49,8 +50,8 @@ namespace Altaxo.AddInItems
     /// the application domain, the already loaded assembly is returned.
     /// </summary>
     /// <param name="assemblyString">The partial assembly string.</param>
-    /// <param name="hintPath">A directory where to search for the assembly. Can be null. If not null, first this directory, and
-    /// then the directory of the entry assembly is searched for the assembly.</param>
+    /// <param name="hintPath">A directory in which to search for the assembly. If the directory exists, it is searched first,
+    /// followed by the directory of the entry assembly.</param>
     /// <returns>The assembly that was loaded, or null if the assembly was not found.</returns>
     public Assembly? LoadAssemblyFromPartialName(string assemblyString, string hintPath)
     {
@@ -80,8 +81,8 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Loads the assembly, using the full file name of the assembly.
     /// </summary>
-    /// <param name="fullName">The full name of the assembly.</param>
-    /// <returns>The assembly that was loaded, or null if the assembly was not found.</returns>
+    /// <param name="fullName">The fully qualified file name of the assembly.</param>
+    /// <returns>The loaded assembly.</returns>
     public Assembly LoadAssemblyFromFullySpecifiedName(string fullName)
     {
       var context = new LoadContextIntoDefault(fullName);
@@ -95,20 +96,28 @@ namespace Altaxo.AddInItems
   using System.Runtime.Loader;
 
   /// <summary>
-  /// LoadContextIntoDefault is an assembly load context intended for plugin assemblies with dependencies.
-  /// The original plugin assembly is loaded into a newly created instance of this class (this can not be helped?),
-  /// but at least all dependencies of the original plugin dependency are loaded into the same context, which is <see cref="Instance"/>.
-  /// The default context can not be used, because then the resolution of 3rd level assemblies will fail.
-  /// But in this way it can be avoided that we have unintentionally load multiple instances of the same assembly.
+  /// Represents an assembly load context intended for plug-in assemblies with dependencies.
+  /// The original plug-in assembly is loaded into a newly created instance of this class,
+  /// but at least all dependencies of the original plug-in assembly are loaded into the same context, namely <see cref="Instance"/>.
+  /// The default context cannot be used because resolution of third-level assemblies would then fail.
+  /// This approach avoids unintentionally loading multiple instances of the same assembly.
   /// </summary>
   /// <seealso cref="System.Runtime.Loader.AssemblyLoadContext" />
   public class LoadContextIntoDefault : AssemblyLoadContext
   {
+    /// <summary>
+    /// Gets the shared load context used to load dependent assemblies.
+    /// </summary>
     static LoadContextIntoDefault Instance { get; } = new LoadContextIntoDefault(Assembly.GetEntryAssembly().Location);
 
-    /// <summary>Resolver for the addin folder</summary>
+    /// <summary>
+    /// Resolves assembly dependencies for the plug-in folder.
+    /// </summary>
     private AssemblyDependencyResolver _resolver;
 
+    /// <summary>
+    /// Stores the fully qualified file name of the original plug-in assembly.
+    /// </summary>
     private string _pluginAssemblyFileName;
 
     /// <summary>
@@ -121,16 +130,7 @@ namespace Altaxo.AddInItems
       _resolver = new AssemblyDependencyResolver(pluginAssemblyFileName);
     }
 
-    /// <summary>
-    /// Allows an assembly to be resolved and loaded based on its <see cref="T:System.Reflection.AssemblyName" />.
-    /// Here, we first look into the current application domain, and if an assembly with the same name is already loaded,
-    /// we return this assembly. Otherwise, we try to resolve the assembly name, and then load the assembly into
-    /// the Default (!) context (and not in the context represented by this instance).
-    /// </summary>
-    /// <param name="assemblyName">The object that describes the assembly to be loaded.</param>
-    /// <returns>
-    /// The loaded assembly, or <see langword="null" />.
-    /// </returns>
+    /// <inheritdoc/>
     protected override Assembly? Load(AssemblyName assemblyName)
     {
       // this function is called when dependencies of the pluginAssembly should be loaded
@@ -167,13 +167,7 @@ namespace Altaxo.AddInItems
       return result;
     }
 
-    /// <summary>
-    /// Load an unmanaged library by name.
-    /// </summary>
-    /// <param name="unmanagedDllName">Name of the unmanaged library. Typically this is the filename without its path or extensions.</param>
-    /// <returns>
-    /// A handle to the loaded library, or <see cref="F:System.IntPtr.Zero" />.
-    /// </returns>
+    /// <inheritdoc/>
     protected override IntPtr LoadUnmanagedDll(string unmanagedDllName)
     {
       var libraryPath = _resolver.ResolveUnmanagedDllToPath(unmanagedDllName);

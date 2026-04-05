@@ -73,6 +73,9 @@ namespace Altaxo.Gui.Workbench
       get;
     }
 
+    /// <summary>
+    /// Gets the sort index of the navigation point.
+    /// </summary>
     int Index
     {
       get;
@@ -86,7 +89,7 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Updates the <see cref="FileName"/>.
     /// </summary>
-    /// <param name="newName"></param>
+    /// <param name="newName">The new file name.</param>
     void FileNameChanged(string newName);
 
     /// <summary>
@@ -94,8 +97,8 @@ namespace Altaxo.Gui.Workbench
     /// <see cref="INavigationPoint"/> to synch it with
     /// changes in the IViewContent containing the point.
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
+    /// <param name="sender">The source of the change.</param>
+    /// <param name="e">The event data.</param>
     void ContentChanging(object sender, EventArgs e);
   }
 }

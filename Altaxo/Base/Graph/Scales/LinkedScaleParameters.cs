@@ -30,6 +30,9 @@ using System.Text;
 
 namespace Altaxo.Graph.Scales
 {
+  /// <summary>
+  /// Stores the parameters used to link one scale to another.
+  /// </summary>
   public class LinkedScaleParameters
     :
     Main.SuspendableDocumentLeafNodeWithEventArgs,
@@ -52,6 +55,7 @@ namespace Altaxo.Graph.Scales
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinkedScaleParameters), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+    /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (LinkedScaleParameters)obj;
@@ -62,6 +66,7 @@ namespace Altaxo.Graph.Scales
         info.AddValue("EndB", s._endB);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (LinkedScaleParameters?)o ?? new LinkedScaleParameters();
@@ -77,6 +82,9 @@ namespace Altaxo.Graph.Scales
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinkedScaleParameters"/> class.
+    /// </summary>
     public LinkedScaleParameters()
     {
       _orgA = 0;
@@ -85,11 +93,16 @@ namespace Altaxo.Graph.Scales
       _endB = 1;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinkedScaleParameters"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public LinkedScaleParameters(LinkedScaleParameters from)
     {
       CopyFrom(from);
     }
 
+    /// <inheritdoc/>
     public bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -105,11 +118,18 @@ namespace Altaxo.Graph.Scales
       return false;
     }
 
+    /// <summary>
+    /// Creates a copy of this instance.
+    /// </summary>
+    /// <returns>The cloned instance.</returns>
     public object Clone()
     {
       return new LinkedScaleParameters(this);
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the link is the identity link.
+    /// </summary>
     public bool IsStraightLink
     {
       get
@@ -118,11 +138,18 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <summary>
+    /// Sets the parameters to the identity link.
+    /// </summary>
     public void SetToStraightLink()
     {
       SetTo(0, 1, 0, 1);
     }
 
+    /// <summary>
+    /// Copies the parameter values from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public void SetTo(LinkedScaleParameters from)
     {
       SetTo(from.OrgA, from.OrgB, from.EndA, from.EndB);
@@ -152,6 +179,9 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <summary>
+    /// Gets or sets the additive origin parameter.
+    /// </summary>
     public double OrgA
     {
       get { return _orgA; }
@@ -165,6 +195,9 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <summary>
+    /// Gets or sets the multiplicative origin parameter.
+    /// </summary>
     public double OrgB
     {
       get { return _orgB; }
@@ -178,6 +211,9 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <summary>
+    /// Gets or sets the additive end parameter.
+    /// </summary>
     public double EndA
     {
       get { return _endA; }
@@ -191,6 +227,9 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    /// <summary>
+    /// Gets or sets the multiplicative end parameter.
+    /// </summary>
     public double EndB
     {
       get { return _endB; }

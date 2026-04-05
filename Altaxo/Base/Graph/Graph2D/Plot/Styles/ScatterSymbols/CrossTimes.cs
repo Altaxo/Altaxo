@@ -30,6 +30,9 @@ using Clipper2Lib;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
+  /// <summary>
+  /// Represents an open times-shaped scatter symbol.
+  /// </summary>
   public class CrossTimes : OpenSymbolBase
   {
     #region Serialization
@@ -37,9 +40,13 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
     /// <summary>
     /// 2016-10-27 initial version.
     /// </summary>
+    /// <summary>
+    /// Serializes <see cref="CrossTimes"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CrossTimes), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         info.AddBaseValueEmbedded(obj, obj.GetType().BaseType!);
@@ -47,6 +54,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
         SerializeSetV0((IScatterSymbol)obj, info);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (CrossTimes?)o ?? new CrossTimes();
@@ -58,21 +66,36 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CrossTimes"/> class.
+    /// </summary>
     public CrossTimes()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CrossTimes"/> class.
+    /// </summary>
+    /// <param name="fillColor">The fill color.</param>
+    /// <param name="isFillColorInfluencedByPlotColor">If set to <c>true</c>, the fill color is influenced by the plot color.</param>
     public CrossTimes(NamedColor fillColor, bool isFillColorInfluencedByPlotColor)
       : base(fillColor, isFillColorInfluencedByPlotColor)
     {
     }
 
+    /// <summary>
+    /// Converts local coordinates into a rotated point used by the times shape.
+    /// </summary>
+    /// <param name="w">The transverse offset.</param>
+    /// <param name="h">The longitudinal offset.</param>
+    /// <returns>The corresponding point in clipper coordinates.</returns>
     private Point64 GetPoint(double w, double h)
     {
       const double Sqrt05 = 0.707106781186547524400844;
       return new Point64((int)(Sqrt05 * (w + h) * ClipperScalingDouble), (int)(Sqrt05 * (h - w) * ClipperScalingDouble));
     }
 
+    /// <inheritdoc/>
     public override Paths64 GetCopyOfOuterPolygon(double relativeStructureWidth)
     {
       relativeStructureWidth = Altaxo.Calc.RMath.ClampToInterval(relativeStructureWidth, 0, 0.5);

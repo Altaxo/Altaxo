@@ -30,15 +30,26 @@ using System.Text;
 
 namespace Altaxo.DataConnection
 {
+  /// <summary>
+  /// Connects an OLE DB data reader to an Altaxo data table.
+  /// </summary>
   public class AltaxoTableConnector
   {
     private Altaxo.Data.DataTable _table;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AltaxoTableConnector"/> class.
+    /// </summary>
+    /// <param name="table">The target table.</param>
     public AltaxoTableConnector(Altaxo.Data.DataTable table)
     {
       _table = table;
     }
 
+    /// <summary>
+    /// Reads the current result set into the target table.
+    /// </summary>
+    /// <param name="reader">The data reader.</param>
     public void ReadAction(System.Data.Common.DbDataReader reader)
     {
       var columnMapping = new List<AltaxoColumnMapping>();
@@ -127,6 +138,11 @@ namespace Altaxo.DataConnection
         item.AltaxoColumn.Clear();
     }
 
+    /// <summary>
+    /// Gets the Altaxo column type corresponding to an OLE DB type.
+    /// </summary>
+    /// <param name="oledbType">The OLE DB type.</param>
+    /// <returns>The Altaxo column type.</returns>
     public static Type GetAltaxoColumnType(Type oledbType)
     {
       if (OleDbSchema.IsNumeric(oledbType))
@@ -137,6 +153,12 @@ namespace Altaxo.DataConnection
         return typeof(Altaxo.Data.TextColumn);
     }
 
+    /// <summary>
+    /// Gets a delegate that writes OLE DB values into an Altaxo column.
+    /// </summary>
+    /// <param name="oledbType">The OLE DB source type.</param>
+    /// <param name="destinationColumnType">The destination Altaxo column type.</param>
+    /// <returns>A delegate that stores values in the destination column.</returns>
     public static Action<Altaxo.Data.DataColumn, int, object> GetColumnItemSetter(Type oledbType, Type destinationColumnType)
     {
       return (col, idx, obj) =>

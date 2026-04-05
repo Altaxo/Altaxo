@@ -33,8 +33,16 @@ using Altaxo.Main.Properties;
 
 namespace Altaxo.Graph.Graph3D.Templates
 {
+  /// <summary>
+  /// Provides common helper methods for three-dimensional graph templates.
+  /// </summary>
   public static class TemplateBase
   {
+    /// <summary>
+    /// Adds standard template properties to a graph.
+    /// </summary>
+    /// <param name="graph">The graph to initialize.</param>
+    /// <param name="propertyContext">The property context.</param>
     public static void AddStandardPropertiesToGraph(GraphDocument graph, IReadOnlyPropertyBag propertyContext)
     {
       // Set default font property exclusively for the graph

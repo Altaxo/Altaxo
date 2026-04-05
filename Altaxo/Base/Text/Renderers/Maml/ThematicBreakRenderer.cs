@@ -33,6 +33,9 @@ namespace Altaxo.Text.Renderers.Maml
   /// <seealso cref="MamlObjectRenderer{T}" />
   public class ThematicBreakRenderer : MamlObjectRenderer<ThematicBreakBlock>
   {
+    /// <summary>
+    /// Writes a thematic break.
+    /// </summary>
     protected override void Write(MamlRenderer renderer, ThematicBreakBlock obj)
     {
       // since there is no direct equivalent to a thematic break in Maml,

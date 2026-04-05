@@ -28,12 +28,19 @@ using System;
 namespace Altaxo.Serialization.Xml
 {
   /// <summary>
-  /// Used to point to the target type for which this class provides a serialization surrogate.
+  /// Identifies a serialization helper method for a target type and version.
   /// </summary>
   [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
   public class XmlSerializationCodeForAttribute : Attribute
   {
+    /// <summary>
+    /// The version of the target type.
+    /// </summary>
     protected int _version;
+
+    /// <summary>
+    /// The target serialization type.
+    /// </summary>
     protected System.Type _serializationType;
 
     /// <summary>
@@ -48,7 +55,7 @@ namespace Altaxo.Serialization.Xml
     }
 
     /// <summary>
-    /// returns the version of the class, for which the surrogate is intended
+    /// Gets the version of the class for which the serialization code is intended.
     /// </summary>
     public int Version
     {
@@ -56,11 +63,11 @@ namespace Altaxo.Serialization.Xml
     }
 
     /// <summary>
-    ///Returns the target type for which the class this attribute is applied for is the serialization surrogate.
+    /// Gets the target type for which the attributed method provides serialization code.
     /// </summary>
     public System.Type SerializationType
     {
       get { return _serializationType; }
     }
-  } // end class SerializationCodeForAttribute
+  }
 }

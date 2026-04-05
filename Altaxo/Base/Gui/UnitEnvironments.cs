@@ -31,6 +31,9 @@ using Altaxo.Units.Speed;
 
 namespace Altaxo.Gui
 {
+  /// <summary>
+  /// Provides the unit environment for relation values.
+  /// </summary>
   public static class RelationEnvironment
   {
     private static QuantityWithUnitGuiEnvironment _instance;
@@ -61,6 +64,9 @@ namespace Altaxo.Gui
       Current.PropertyService.SetValue(PropertyKeyDefaultUnit, _instance.DefaultUnit);
     }
 
+    /// <summary>
+    /// Gets the property key used to persist the default relation unit.
+    /// </summary>
     public static readonly PropertyKey<IPrefixedUnit> PropertyKeyDefaultUnit =
       new PropertyKey<IPrefixedUnit>(
       "3D70027C-2582-4112-BD72-BF2CAC395939",
@@ -69,6 +75,9 @@ namespace Altaxo.Gui
       () => new PrefixedUnit(SIPrefix.None, Altaxo.Units.Dimensionless.Unity.Instance));
   }
 
+  /// <summary>
+  /// Provides the unit environment for angle values.
+  /// </summary>
   public static class AngleEnvironment
   {
     private static QuantityWithUnitGuiEnvironment _instance;
@@ -98,6 +107,9 @@ namespace Altaxo.Gui
       Current.PropertyService.SetValue(PropertyKeyDefaultUnit, _instance.DefaultUnit);
     }
 
+    /// <summary>
+    /// Gets the property key for the default angle unit.
+    /// </summary>
     public static readonly PropertyKey<IPrefixedUnit> PropertyKeyDefaultUnit =
       new PropertyKey<IPrefixedUnit>(
       "CB04CD5A-2A34-451A-A5FA-00C9C9C000A0",
@@ -106,6 +118,9 @@ namespace Altaxo.Gui
       () => new PrefixedUnit(SIPrefix.None, Altaxo.Units.Angle.Degree.Instance));
   }
 
+  /// <summary>
+  /// Provides the unit environment for positions.
+  /// </summary>
   public static class PositionEnvironment
   {
     private static QuantityWithUnitGuiEnvironment _instance;
@@ -135,6 +150,9 @@ namespace Altaxo.Gui
       Current.PropertyService.SetValue(PropertyKeyDefaultUnit, _instance.DefaultUnit);
     }
 
+    /// <summary>
+    /// Gets the property key for the default position unit.
+    /// </summary>
     public static readonly PropertyKey<IPrefixedUnit> PropertyKeyDefaultUnit =
     new PropertyKey<IPrefixedUnit>(
     "8979E39B-5D9C-4C50-966D-5B64EEEB97F2",
@@ -143,6 +161,9 @@ namespace Altaxo.Gui
     () => new PrefixedUnit(SIPrefix.None, Altaxo.Units.Length.Point.Instance));
   }
 
+  /// <summary>
+  /// Provides the unit environment for speeds.
+  /// </summary>
   public static class SpeedEnvironment
   {
     private static QuantityWithUnitGuiEnvironment _instance;
@@ -177,6 +198,9 @@ namespace Altaxo.Gui
       Current.PropertyService.SetValue(PropertyKeyDefaultUnit, _instance.DefaultUnit);
     }
 
+    /// <summary>
+    /// Gets the property key for the default speed unit.
+    /// </summary>
     public static readonly PropertyKey<IPrefixedUnit> PropertyKeyDefaultUnit =
     new PropertyKey<IPrefixedUnit>(
     "2EAC8982-E624-4B13-ADD2-91EAA75690A3",
@@ -186,6 +210,9 @@ namespace Altaxo.Gui
   }
 
 
+  /// <summary>
+  /// Provides the unit environment for sizes.
+  /// </summary>
   public static class SizeEnvironment
   {
     private static QuantityWithUnitGuiEnvironment _instance;
@@ -215,6 +242,9 @@ namespace Altaxo.Gui
       Current.PropertyService.SetValue(PropertyKeyDefaultUnit, _instance.DefaultUnit);
     }
 
+    /// <summary>
+    /// Gets the property key for the default size unit.
+    /// </summary>
     public static readonly PropertyKey<IPrefixedUnit> PropertyKeyDefaultUnit =
     new PropertyKey<IPrefixedUnit>(
     "30AC5D99-A5B8-4358-A978-4DC530B7E601",
@@ -223,6 +253,9 @@ namespace Altaxo.Gui
     () => new PrefixedUnit(SIPrefix.None, Altaxo.Units.Length.Point.Instance));
   }
 
+  /// <summary>
+  /// Provides the unit environment for font sizes.
+  /// </summary>
   public static class FontSizeEnvironment
   {
     private static QuantityWithUnitGuiEnvironment _instance;
@@ -252,6 +285,9 @@ namespace Altaxo.Gui
       Current.PropertyService.SetValue(PropertyKeyDefaultUnit, _instance.DefaultUnit);
     }
 
+    /// <summary>
+    /// Gets the property key used to persist the default font size unit.
+    /// </summary>
     public static readonly PropertyKey<IPrefixedUnit> PropertyKeyDefaultUnit =
     new PropertyKey<IPrefixedUnit>(
     "A4C55ABB-3499-4A01-B10E-E5CB91679B7E",
@@ -260,6 +296,9 @@ namespace Altaxo.Gui
     () => new PrefixedUnit(SIPrefix.None, Altaxo.Units.Length.Point.Instance));
   }
 
+  /// <summary>
+  /// Provides the shared unit environment for line cap sizes.
+  /// </summary>
   public static class LineCapSizeEnvironment
   {
     private static QuantityWithUnitGuiEnvironment _instance;
@@ -289,6 +328,9 @@ namespace Altaxo.Gui
       Current.PropertyService.SetValue(PropertyKeyDefaultUnit, _instance.DefaultUnit);
     }
 
+    /// <summary>
+    /// Gets the property key used to persist the default line cap size unit.
+    /// </summary>
     public static readonly PropertyKey<IPrefixedUnit> PropertyKeyDefaultUnit =
     new PropertyKey<IPrefixedUnit>(
     "0091F3B2-8996-42A6-8426-60E9919ABCC4",
@@ -297,6 +339,9 @@ namespace Altaxo.Gui
     () => new PrefixedUnit(SIPrefix.None, Altaxo.Units.Length.Point.Instance));
   }
 
+  /// <summary>
+  /// Provides the shared unit environment for line thickness values.
+  /// </summary>
   public static class LineThicknessEnvironment
   {
     private static QuantityWithUnitGuiEnvironment _instance;
@@ -326,6 +371,9 @@ namespace Altaxo.Gui
       Current.PropertyService.SetValue(PropertyKeyDefaultUnit, _instance.DefaultUnit);
     }
 
+    /// <summary>
+    /// Gets the property key used to persist the default line thickness unit.
+    /// </summary>
     public static readonly PropertyKey<IPrefixedUnit> PropertyKeyDefaultUnit =
     new PropertyKey<IPrefixedUnit>(
     "5160F793-463A-484A-9E1B-67B22482C56C",
@@ -334,6 +382,9 @@ namespace Altaxo.Gui
     () => new PrefixedUnit(SIPrefix.None, Altaxo.Units.Length.Point.Instance));
   }
 
+  /// <summary>
+  /// Provides the shared unit environment for miter limits.
+  /// </summary>
   public static class MiterLimitEnvironment
   {
     private static QuantityWithUnitGuiEnvironment _instance;
@@ -363,6 +414,9 @@ namespace Altaxo.Gui
       Current.PropertyService.SetValue(PropertyKeyDefaultUnit, _instance.DefaultUnit);
     }
 
+    /// <summary>
+    /// Gets the property key used to persist the default miter limit unit.
+    /// </summary>
     public static readonly PropertyKey<IPrefixedUnit> PropertyKeyDefaultUnit =
     new PropertyKey<IPrefixedUnit>(
     "C04AA492-9328-4D07-985D-57A20A708495",
@@ -371,6 +425,9 @@ namespace Altaxo.Gui
     () => new PrefixedUnit(SIPrefix.None, Altaxo.Units.Length.Point.Instance));
   }
 
+  /// <summary>
+  /// Provides the shared unit environment for paper margins.
+  /// </summary>
   public static class PaperMarginEnvironment
   {
     private static QuantityWithUnitGuiEnvironment _instance;
@@ -400,6 +457,9 @@ namespace Altaxo.Gui
       Current.PropertyService.SetValue(PropertyKeyDefaultUnit, _instance.DefaultUnit);
     }
 
+    /// <summary>
+    /// Gets the property key used to persist the default paper margin unit.
+    /// </summary>
     public static readonly PropertyKey<IPrefixedUnit> PropertyKeyDefaultUnit =
     new PropertyKey<IPrefixedUnit>(
     "F0D18F89-F159-4DC9-B20B-ACDFC14EF1D1",
@@ -408,6 +468,9 @@ namespace Altaxo.Gui
     () => new PrefixedUnit(SIPrefix.None, Altaxo.Units.Length.Point.Instance));
   }
 
+  /// <summary>
+  /// Provides the shared unit environment for time values.
+  /// </summary>
   public static class TimeEnvironment
   {
     private static QuantityWithUnitGuiEnvironment _instance;
@@ -437,6 +500,9 @@ namespace Altaxo.Gui
       Current.PropertyService.SetValue(PropertyKeyDefaultUnit, _instance.DefaultUnit);
     }
 
+    /// <summary>
+    /// Gets the property key used to persist the default time unit.
+    /// </summary>
     public static readonly PropertyKey<IPrefixedUnit> PropertyKeyDefaultUnit =
     new PropertyKey<IPrefixedUnit>(
     "4F742DC7-60DE-4FAB-ABF7-F72E489E6A6E",

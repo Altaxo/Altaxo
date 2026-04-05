@@ -28,7 +28,7 @@ using System.ComponentModel;
 namespace Altaxo.Gui.Common
 {
   /// <summary>
-  /// Controller that shows to documents: one document in the enabled state, which can be changed. And another document in the disabled state, which can not be changed.
+  /// Controller that shows two documents: one in the enabled state that can be changed, and one in the disabled state that cannot be changed.
   /// </summary>
   /// <typeparam name="TModel">The type of the model.</typeparam>
   [ExpectedTypeOfView(typeof(IConditionalDocumentView))]
@@ -43,6 +43,9 @@ namespace Altaxo.Gui.Common
     private IMVCANController? _controllerForDisabledState;
     private UseDocument _useDocumentCopy;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConditionalDocumentControllerWithDisabledView{TModel}"/> class.
+    /// </summary>
     public ConditionalDocumentControllerWithDisabledView(
       Func<TModel> DocumentCreationActionForEnabledState,
       Func<TModel> DocumentCreationActionForDisabledState
@@ -51,6 +54,9 @@ namespace Altaxo.Gui.Common
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConditionalDocumentControllerWithDisabledView{TModel}"/> class.
+    /// </summary>
     public ConditionalDocumentControllerWithDisabledView(
       Func<TModel> DocumentCreationActionForEnabledState,
       Func<TModel> DocumentCreationActionForDisabledState,
@@ -68,7 +74,13 @@ namespace Altaxo.Gui.Common
       _controllerCreationAction = ControllerCreationAction;
     }
 
+    /// <inheritdoc/>
     public event PropertyChangedEventHandler? PropertyChanged;
+
+    /// <summary>
+    /// Raises the <see cref="PropertyChanged"/> event.
+    /// </summary>
+    /// <param name="propertyName">The name of the changed property.</param>
     protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
 
@@ -76,6 +88,9 @@ namespace Altaxo.Gui.Common
 
     private IMVCANController? _controller;
 
+    /// <summary>
+    /// Gets or sets the underlying controller that is currently active.
+    /// </summary>
     public IMVCANController? UnderlyingController
     {
       get
@@ -94,8 +109,14 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <summary>
+    /// Gets the view object of the currently active underlying controller.
+    /// </summary>
     public object? UnderlyingView => _controller?.ViewObject;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the enabled-state controller is active.
+    /// </summary>
     public bool IsConditionalViewEnabled
     {
       get => _controller is not null && object.ReferenceEquals(_controller, _controllerForEnabledState);
@@ -110,6 +131,9 @@ namespace Altaxo.Gui.Common
 
     private string _enablingText = "Enable";
 
+    /// <summary>
+    /// Gets or sets the text used to enable the conditional view.
+    /// </summary>
     public string EnablingText
     {
       get => _enablingText;
@@ -134,12 +158,12 @@ namespace Altaxo.Gui.Common
     }
 
     /// <summary>
-    /// Initialize the controller with the document. If successfull, the function has to return true.
+    /// Initialize the controller with the document. If successful, the function has to return true.
     /// Here, you can give two arguments. The first is the document for the enabled state, the second is the document to show in the disabled state.
     /// </summary>
-    /// <param name="args">The arguments neccessary to create the controller. Normally, the first argument is the document, the second can be the parent of the document and so on.</param>
+    /// <param name="args">The arguments necessary to create the controller. Normally, the first argument is the document, the second can be the parent of the document and so on.</param>
     /// <returns>
-    /// Returns <see langword="true" /> if successfull; otherwise <see langword="false" />.
+    /// Returns <see langword="true" /> if successful; otherwise <see langword="false" />.
     /// </returns>
     public bool InitializeDocument(params object[] args)
     {
@@ -162,6 +186,7 @@ namespace Altaxo.Gui.Common
       return true;
     }
 
+    /// <inheritdoc/>
     public UseDocument UseDocumentCopy
     {
       set
@@ -174,6 +199,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     public object? ViewObject
     {
       get
@@ -196,6 +222,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     public object ModelObject
     {
       get
@@ -209,11 +236,15 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <summary>
+    /// Gets the model object for the enabled controller, or <c>null</c> if none exists.
+    /// </summary>
     public object? ModelObjectOrNull
     {
       get => _controllerForEnabledState?.ModelObject;
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
       _controller = null;
@@ -221,6 +252,7 @@ namespace Altaxo.Gui.Common
       _controllerForEnabledState?.Dispose();
     }
 
+    /// <inheritdoc/>
     public bool Apply(bool disposeController)
     {
       try
@@ -244,7 +276,7 @@ namespace Altaxo.Gui.Common
     /// </summary>
     /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
     /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    ///   <c>true</c> if the revert operation was successful; otherwise, <c>false</c> if the revert operation was not possible.
     /// </returns>
     public bool Revert(bool disposeController)
     {
@@ -259,6 +291,10 @@ namespace Altaxo.Gui.Common
     {
     }
 
+    /// <summary>
+    /// Switches the active controller according to the enabled state.
+    /// </summary>
+    /// <param name="enableState">If set to <c>true</c>, the enabled controller is activated; otherwise, the disabled controller is activated.</param>
     public void OnEnabledChanged(bool enableState)
     {
       if (enableState)

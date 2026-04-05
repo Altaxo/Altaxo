@@ -33,10 +33,19 @@ namespace Altaxo.Gui.Main
   using Altaxo.Collections;
   using Altaxo.Main.Properties;
 
+  /// <summary>
+  /// View contract for editing a property hierarchy.
+  /// </summary>
   public interface IPropertyHierarchyView
   {
+    /// <summary>
+    /// Sets the list of existing property values.
+    /// </summary>
     SelectableListNodeList PropertyValueList { set; }
 
+    /// <summary>
+    /// Sets the list of available property keys.
+    /// </summary>
     SelectableListNodeList AvailablePropertyKeyList { set; }
 
     /// <summary>
@@ -65,14 +74,14 @@ namespace Altaxo.Gui.Main
     event Action<bool> ShowAllPropertiesChanged;
 
     /// <summary>
-    /// Sets a value indicating to the user whether to show all properties or only those of the topmost property bag.
+    /// Sets a value indicating to the user whether all properties or only those of the topmost property bag should be shown.
     /// </summary>
-    /// <value>
-    ///   <c>true</c> if to show all properties; otherwise, <c>false</c>.
-    /// </value>
     bool ShowAllProperties { set; }
   }
 
+  /// <summary>
+  /// Controller for viewing and editing a <see cref="PropertyHierarchy"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IPropertyHierarchyView))]
   [UserControllerForObject(typeof(PropertyHierarchy))]
   public class PropertyHierarchyController : MVCANControllerEditCopyOfDocBase<PropertyHierarchy, IPropertyHierarchyView>
@@ -83,11 +92,17 @@ namespace Altaxo.Gui.Main
     {
       private string[] _subText = new string[3];
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="MyListNode"/> class.
+      /// </summary>
+      /// <param name="text">The display text.</param>
+      /// <param name="tag">The associated tag value.</param>
       public MyListNode(string text, object tag)
         : base(text, tag, false)
       {
       }
 
+      /// <inheritdoc/>
       public override int SubItemCount
       {
         get
@@ -96,15 +111,25 @@ namespace Altaxo.Gui.Main
         }
       }
 
+      /// <inheritdoc/>
       public override string SubItemText(int i)
       {
         return _subText[i - 1];
       }
 
+      /// <summary>
+      /// Sets the text of the first subitem column.
+      /// </summary>
       public string Text1S { set { _subText[0] = value; } }
 
+      /// <summary>
+      /// Sets the text of the second subitem column.
+      /// </summary>
       public string Text2S { set { _subText[1] = value; } }
 
+      /// <summary>
+      /// Sets the text of the third subitem column.
+      /// </summary>
       public string Text3S { set { _subText[2] = value; } }
     }
 
@@ -117,11 +142,13 @@ namespace Altaxo.Gui.Main
     /// <summary>If <c>true</c>, all properties (also the inherited properties) are shown. If <c>false</c>, only the inherited properties are shown.</summary>
     protected bool _showAllProperties = true;
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    /// <inheritdoc/>
     public override void Dispose(bool isDisposing)
     {
       _propertyList = null;
@@ -130,6 +157,7 @@ namespace Altaxo.Gui.Main
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc/>
     public override bool InitializeDocument(params object[] args)
     {
       if (args is null || 0 == args.Length || !(args[0] is PropertyHierarchy))
@@ -143,6 +171,7 @@ namespace Altaxo.Gui.Main
       return true;
     }
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -219,6 +248,7 @@ namespace Altaxo.Gui.Main
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (!object.ReferenceEquals(_doc, _originalDoc))
@@ -230,6 +260,7 @@ namespace Altaxo.Gui.Main
       return true;
     }
 
+    /// <inheritdoc/>
     protected override void AttachView()
     {
       base.AttachView();
@@ -240,6 +271,7 @@ namespace Altaxo.Gui.Main
       _view.AddNewBasicProperty += EhAddNewBasicProperty;
     }
 
+    /// <inheritdoc/>
     protected override void DetachView()
     {
       _view.AddNewBasicProperty -= EhAddNewBasicProperty;

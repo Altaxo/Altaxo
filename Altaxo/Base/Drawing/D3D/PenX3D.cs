@@ -33,6 +33,9 @@ using Altaxo.Drawing.DashPatternManagement;
 
 namespace Altaxo.Drawing.D3D
 {
+  /// <summary>
+  /// Immutable 3D pen definition containing material, cross section, dash pattern, and caps.
+  /// </summary>
   public class PenX3D : Altaxo.Main.IImmutable
   {
     #region Member variables
@@ -145,6 +148,11 @@ namespace Altaxo.Drawing.D3D
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PenX3D"/> class using a uniform color and thickness.
+    /// </summary>
+    /// <param name="color">The pen color.</param>
+    /// <param name="thickness">The uniform line thickness.</param>
     public PenX3D(NamedColor color, double thickness)
     {
       _material = Materials.GetSolidMaterial(color);
@@ -152,6 +160,11 @@ namespace Altaxo.Drawing.D3D
       _dashPattern = DashPatternListManager.Instance.BuiltinDefaultSolid;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PenX3D"/> class using the specified material and cross section.
+    /// </summary>
+    /// <param name="material">The material used to draw the pen.</param>
+    /// <param name="crossSection">The line cross section.</param>
     public PenX3D(IMaterial material, ICrossSectionOfLine crossSection)
     {
       _material = material;
@@ -159,6 +172,20 @@ namespace Altaxo.Drawing.D3D
       _dashPattern = DashPatternListManager.Instance.BuiltinDefaultSolid;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PenX3D"/> class with full line, dash, and cap configuration.
+    /// </summary>
+    /// <param name="material">The material used to draw the pen.</param>
+    /// <param name="crossSection">The line cross section.</param>
+    /// <param name="lineJoin">The line join style.</param>
+    /// <param name="miterLimit">The miter limit used for miter joins.</param>
+    /// <param name="lineStartCap">The cap applied at the start of the full line.</param>
+    /// <param name="lineEndCap">The cap applied at the end of the full line.</param>
+    /// <param name="dashPattern">The dash pattern.</param>
+    /// <param name="dashStartCap">The cap applied at the start of each dash.</param>
+    /// <param name="dashStartCapSuppressionIfSpaceInsufficient">If set, suppresses the dash start cap when space is insufficient.</param>
+    /// <param name="dashEndCap">The cap applied at the end of each dash.</param>
+    /// <param name="dashEndCapSuppressionIfSpaceInsufficient">If set, suppresses the dash end cap when space is insufficient.</param>
     public PenX3D(
         IMaterial material,
         ICrossSectionOfLine crossSection,
@@ -184,6 +211,9 @@ namespace Altaxo.Drawing.D3D
       _dashEndCapSuppressionIfSpaceInsufficient = dashEndCapSuppressionIfSpaceInsufficient;
     }
 
+    /// <summary>
+    /// Gets the first line thickness component.
+    /// </summary>
     public double Thickness1
     {
       get
@@ -192,6 +222,11 @@ namespace Altaxo.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Returns a copy of this pen with a different first thickness component.
+    /// </summary>
+    /// <param name="thickness1">The new first thickness component.</param>
+    /// <returns>A pen with the updated first thickness component.</returns>
     public PenX3D WithThickness1(double thickness1)
     {
       var newCrossSection = _crossSection.WithSize1(thickness1);
@@ -207,6 +242,9 @@ namespace Altaxo.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Gets the second line thickness component.
+    /// </summary>
     public double Thickness2
     {
       get
@@ -215,6 +253,11 @@ namespace Altaxo.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Returns a copy of this pen with a different second thickness component.
+    /// </summary>
+    /// <param name="thickness2">The new second thickness component.</param>
+    /// <returns>A pen with the updated second thickness component.</returns>
     public PenX3D WithThickness2(double thickness2)
     {
       var newCrossSection = _crossSection.WithSize2(thickness2);
@@ -230,6 +273,11 @@ namespace Altaxo.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Returns a copy of this pen with the same thickness in both cross-section dimensions.
+    /// </summary>
+    /// <param name="thickness">The new uniform thickness.</param>
+    /// <returns>A pen with the updated uniform thickness.</returns>
     public PenX3D WithUniformThickness(double thickness)
     {
       var newCrossSection = _crossSection.WithSize(thickness, thickness);
@@ -245,6 +293,9 @@ namespace Altaxo.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Gets the material used to render the pen.
+    /// </summary>
     public IMaterial Material
     {
       get
@@ -253,6 +304,11 @@ namespace Altaxo.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Returns a copy of this pen with a different material.
+    /// </summary>
+    /// <param name="material">The new material.</param>
+    /// <returns>A pen with the updated material.</returns>
     public PenX3D WithMaterial(IMaterial material)
     {
       if (material is null)
@@ -263,6 +319,9 @@ namespace Altaxo.Drawing.D3D
       return result;
     }
 
+    /// <summary>
+    /// Gets the color exposed by the current material.
+    /// </summary>
     public NamedColor Color
     {
       get
@@ -271,6 +330,11 @@ namespace Altaxo.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Returns a copy of this pen with a different material color.
+    /// </summary>
+    /// <param name="color">The new color.</param>
+    /// <returns>A pen with the updated color.</returns>
     public PenX3D WithColor(NamedColor color)
     {
       var result = (PenX3D)MemberwiseClone();
@@ -278,6 +342,9 @@ namespace Altaxo.Drawing.D3D
       return result;
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this pen uses the invisible material.
+    /// </summary>
     public bool IsInvisible
     {
       get
@@ -286,6 +353,9 @@ namespace Altaxo.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Gets the line cross section.
+    /// </summary>
     public ICrossSectionOfLine CrossSection
     {
       get
@@ -294,6 +364,11 @@ namespace Altaxo.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Returns a copy of this pen with a different cross section.
+    /// </summary>
+    /// <param name="crossSection">The new cross section.</param>
+    /// <returns>A pen with the updated cross section.</returns>
     public PenX3D WithCrossSection(ICrossSectionOfLine crossSection)
     {
       if (!object.ReferenceEquals(crossSection, _crossSection))
@@ -310,6 +385,9 @@ namespace Altaxo.Drawing.D3D
 
     #region Line Join
 
+    /// <summary>
+    /// Gets the line join style.
+    /// </summary>
     public PenLineJoin LineJoin
     {
       get
@@ -318,6 +396,11 @@ namespace Altaxo.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Returns a copy of this pen with a different line join style.
+    /// </summary>
+    /// <param name="lineJoin">The new line join style.</param>
+    /// <returns>A pen with the updated line join style.</returns>
     public PenX3D WithLineJoin(PenLineJoin lineJoin)
     {
       if (!(lineJoin == _lineJoin))
@@ -332,6 +415,9 @@ namespace Altaxo.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Gets the miter limit used when <see cref="LineJoin"/> is set to miter.
+    /// </summary>
     public double MiterLimit
     {
       get
@@ -340,6 +426,11 @@ namespace Altaxo.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Returns a copy of this pen with a different miter limit.
+    /// </summary>
+    /// <param name="miterLimit">The new miter limit.</param>
+    /// <returns>A pen with the updated miter limit.</returns>
     public PenX3D WithMiterLimit(double miterLimit)
     {
       if (!(miterLimit >= 1))
@@ -406,6 +497,9 @@ namespace Altaxo.Drawing.D3D
 
     #region Line Start cap
 
+    /// <summary>
+    /// Gets the cap applied at the start of the whole line.
+    /// </summary>
     public ILineCap? LineStartCap
     {
       get
@@ -414,6 +508,11 @@ namespace Altaxo.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Returns a copy of this pen with a different line start cap.
+    /// </summary>
+    /// <param name="cap">The new start cap, or <see langword="null"/> for the default flat cap.</param>
+    /// <returns>A pen with the updated line start cap.</returns>
     public PenX3D WithLineStartCap(ILineCap? cap)
     {
       if (cap is LineCaps.Flat)
@@ -431,6 +530,9 @@ namespace Altaxo.Drawing.D3D
 
     #region Line end cap
 
+    /// <summary>
+    /// Gets the cap applied at the end of the whole line.
+    /// </summary>
     public ILineCap? LineEndCap
     {
       get
@@ -439,6 +541,11 @@ namespace Altaxo.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Returns a copy of this pen with a different line end cap.
+    /// </summary>
+    /// <param name="cap">The new end cap, or <see langword="null"/> for the default flat cap.</param>
+    /// <returns>A pen with the updated line end cap.</returns>
     public PenX3D WithLineEndCap(ILineCap? cap)
     {
       if (cap is LineCaps.Flat)
@@ -456,6 +563,9 @@ namespace Altaxo.Drawing.D3D
 
     #region Dash start cap
 
+    /// <summary>
+    /// Gets the cap applied at the start of each dash.
+    /// </summary>
     public ILineCap? DashStartCap
     {
       get
@@ -464,6 +574,11 @@ namespace Altaxo.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Returns a copy of this pen with a different dash start cap.
+    /// </summary>
+    /// <param name="cap">The new dash start cap, or <see langword="null"/> for the default flat cap.</param>
+    /// <returns>A pen with the updated dash start cap.</returns>
     public PenX3D WithDashStartCap(ILineCap? cap)
     {
       if (cap is LineCaps.Flat)
@@ -481,6 +596,9 @@ namespace Altaxo.Drawing.D3D
 
     #region Dash end cap
 
+    /// <summary>
+    /// Gets the cap applied at the end of each dash.
+    /// </summary>
     public ILineCap? DashEndCap
     {
       get
@@ -489,6 +607,11 @@ namespace Altaxo.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Returns a copy of this pen with a different dash end cap.
+    /// </summary>
+    /// <param name="cap">The new dash end cap, or <see langword="null"/> for the default flat cap.</param>
+    /// <returns>A pen with the updated dash end cap.</returns>
     public PenX3D WithDashEndCap(ILineCap? cap)
     {
       if (cap is LineCaps.Flat)
@@ -504,6 +627,12 @@ namespace Altaxo.Drawing.D3D
 
     #endregion Dash end cap
 
+    /// <summary>
+    /// Determines whether two pens are equal except for their thickness values.
+    /// </summary>
+    /// <param name="pen1">The first pen.</param>
+    /// <param name="pen2">The second pen.</param>
+    /// <returns><see langword="true"/> if the pens are equal except for thickness; otherwise, <see langword="false"/>.</returns>
     public static bool AreEqualUnlessThickness(PenX3D pen1, PenX3D pen2)
     {
       bool isEqual =

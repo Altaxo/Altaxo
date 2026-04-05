@@ -30,6 +30,9 @@ using Altaxo.Units.VolumetricMassDensity;
 
 namespace Altaxo.Gui
 {
+  /// <summary>
+  /// Provides the density units available in the GUI.
+  /// </summary>
   public static class GuiDensityUnits
   {
     private static ReadOnlyCollection<IUnit> _instance;
@@ -46,7 +49,7 @@ namespace Altaxo.Gui
     }
 
     /// <summary>
-    /// Gets a read-only collection of the units that can be used for the Gui when a physical distance is needed.
+    /// Gets a read-only collection of the units that can be used in the GUI when a density is needed.
     /// </summary>
     public static IList<IUnit> Collection
     {

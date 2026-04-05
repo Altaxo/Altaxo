@@ -29,12 +29,18 @@ using Altaxo.Data;
 
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
+  /// <summary>
+  /// Data source for master-curve creation results.
+  /// </summary>
   public class MasterCurveCreationDataSource : TableDataSourceBase, Altaxo.Data.IAltaxoTableDataSource
   {
     private MasterCurveCreationOptions _processOptions;
     private MasterCurveData _processData;
     private IDataSourceImportOptions _importOptions;
 
+    /// <summary>
+    /// Callback that is invoked when the data source changes.
+    /// </summary>
     public Action<IAltaxoTableDataSource>? _dataSourceChanged;
 
     #region Serialization
@@ -47,6 +53,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MasterCurveCreationDataSource), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (MasterCurveCreationDataSource)obj;
@@ -58,6 +65,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
 
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (o is MasterCurveCreationDataSource s)
@@ -80,6 +88,11 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
     #endregion Version 0
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MasterCurveCreationDataSource"/> class from XML deserialization data.
+    /// </summary>
+    /// <param name="info">The deserialization information.</param>
+    /// <param name="version">The serialized version.</param>
     protected MasterCurveCreationDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     {
       switch (version)
@@ -98,7 +111,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// Initializes a new instance of the <see cref="MasterCurveCreationDataSource"/> class.
     /// </summary>
     /// <param name="inputData">The input data designates the original source of data (used then for the processing).</param>
-    /// <param name="dataSourceOptions">The Fourier transformation options.</param>
+    /// <param name="dataSourceOptions">The master-curve creation options.</param>
     /// <param name="importOptions">The data source import options.</param>
     /// <exception cref="System.ArgumentNullException">
     /// inputData
@@ -133,6 +146,10 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies state from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     [MemberNotNull(nameof(_importOptions), nameof(_processOptions), nameof(_processData))]
     void CopyFrom(MasterCurveCreationDataSource from)
     {
@@ -156,7 +173,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// Copies from another instance.
     /// </summary>
     /// <param name="obj">The object to copy from.</param>
-    /// <returns><c>True</c> if anything could be copied from the object, otherwise <c>false</c>.</returns>
+    /// <returns><c>True</c> if anything could be copied from the object; otherwise, <c>false</c>.</returns>
     public bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -187,7 +204,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// Fills (or refills) the data table with the processed data. The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable" />.
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
-    /// <param name="reporter"></param>
+    /// <param name="reporter">The progress reporter.</param>
     public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter reporter)
     {
       var masterCurveCreation = new MasterCurveCreation();
@@ -222,7 +239,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// Gets or sets the input data.
     /// </summary>
     /// <value>
-    /// The input data. This data is the input for the 2D-Fourier transformation.
+    /// The input data. This data is the input for master-curve creation.
     /// </value>
     public MasterCurveData ProcessData
     {
@@ -270,7 +287,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <value>
     /// The data source options.
     /// </value>
-    /// <exception cref="System.ArgumentNullException">FourierTransformation2DOptions</exception>
+    /// <exception cref="System.ArgumentNullException">ProcessOptions</exception>
     public MasterCurveCreationOptions ProcessOptions
     {
       get
@@ -304,6 +321,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
     #region Change event handling
 
+    /// <inheritdoc/>
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (object.ReferenceEquals(_processData, sender)) // incoming call from data proxy
@@ -325,6 +343,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
     #region Document Node functions
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_processData is not null)
@@ -334,7 +353,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     #endregion Document Node functions
 
     /// <summary>
-    /// Called after deserization of a data source instance, when it is already associated with a data table.
+    /// Called after deserialization of a data source instance, when it is already associated with a data table.
     /// </summary>
     public void OnAfterDeserialization()
     {

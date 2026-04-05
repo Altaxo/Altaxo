@@ -31,13 +31,20 @@ using Altaxo.Science.Spectroscopy.Calibration;
 
 namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 {
+  /// <summary>
+  /// View interface for selecting an x-calibration method.
+  /// </summary>
   public interface IXCalibrationView : IDataContextAwareView
   {
   }
 
+  /// <summary>
+  /// Controller for <see cref="IXCalibration"/>.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IXCalibrationView))]
   public class XCalibrationController : MVCANControllerEditImmutableDocBase<IXCalibration, IXCalibrationView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_subController, () => SubController = null);
@@ -47,6 +54,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 
     private ItemsController<Type> _availableMethods;
 
+    /// <summary>
+    /// Gets or sets the available calibration methods.
+    /// </summary>
     public ItemsController<Type> AvailableMethods
     {
       get => _availableMethods;
@@ -63,6 +73,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 
     private IMVCANController? _subController;
 
+    /// <summary>
+    /// Gets or sets the sub-controller for the selected calibration method.
+    /// </summary>
     public IMVCANController? SubController
     {
       get => _subController;
@@ -81,6 +94,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
     #endregion
 
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -101,6 +115,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
       }
     }
 
+    /// <summary>
+    /// Creates the sub-controller for the current calibration method.
+    /// </summary>
     private void CreateSubController()
     {
       var subController = (IMVCANController)Current.Gui.GetController(new object[] { _doc }, typeof(IMVCANController));
@@ -115,12 +132,16 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
       SubController = subController;
     }
 
+    /// <summary>
+    /// Handles changes of the selected calibration type.
+    /// </summary>
     private void EhMethodTypeChanged(Type newMethodType)
     {
       _doc = (IXCalibration)Activator.CreateInstance(newMethodType);
       CreateSubController();
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (SubController is not null)
@@ -137,8 +158,12 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 
     #region TypeSorter
 
+    /// <summary>
+    /// Sorts method types for display.
+    /// </summary>
     class TypeSorter : IComparer<Type>
     {
+      /// <inheritdoc/>
       public int Compare(Type x, Type y)
       {
         var xn = x.Name.EndsWith("None");

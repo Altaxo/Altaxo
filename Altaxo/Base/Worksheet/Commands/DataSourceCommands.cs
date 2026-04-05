@@ -33,10 +33,13 @@ using Altaxo.Main;
 
 namespace Altaxo.Worksheet.Commands
 {
+  /// <summary>
+  /// Contains commands for working with worksheet data sources.
+  /// </summary>
   public static class DataSourceCommands
   {
     /// <summary>
-    /// Shows the data source editor dialog. After sucessful execution of the dialog, the modified data source is stored back in the <see cref="DataTable"/>, and the data source is requeried.
+    /// Shows the data source editor dialog. After successful execution of the dialog, the modified data source is stored back in the <see cref="DataTable"/>, and the data source is requeried.
     /// </summary>
     /// <param name="ctrl">The controller that controls the data table.</param>
     public static void ShowDataSourceEditor(WorksheetController ctrl)
@@ -104,7 +107,7 @@ namespace Altaxo.Worksheet.Commands
     }
 
     /// <summary>
-    /// This command will sort provided tables containing data sources in a way, that tables dependent on
+    /// This command sorts the provided tables containing data sources in a way that tables dependent on
     /// data of other tables come after the tables they are dependent on.
     /// </summary>
     /// <param name="dataTables">The data tables for which to execute the data sources.</param>

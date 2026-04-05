@@ -29,13 +29,17 @@ using Altaxo.Gui.Common.PropertyGrid;
 namespace Altaxo.Gui.Worksheet
 {
   /// <summary>
-  /// Controls the Smoothing parameter of a rational cubic spline.
+  /// Controls options for polynomial regression used as interpolation.
   /// </summary>
   [UserControllerForObject(typeof(Altaxo.Calc.Interpolation.PolynomialRegressionAsInterpolationOptions), 100)]
   public class PolynomialRegressionAsInterpolationOptionsController : PropertyGridController
   {
+    /// <summary>
+    /// Gets the interpolation options document.
+    /// </summary>
     private PolynomialRegressionAsInterpolationOptions Spline => (PolynomialRegressionAsInterpolationOptions)_doc;
 
+    /// <inheritdoc/>
     protected override void InitializeValueInfos()
     {
       var controller = new Altaxo.Gui.Common.BasicTypes.IntegerValueController(Spline.Order);
@@ -44,6 +48,7 @@ namespace Altaxo.Gui.Worksheet
       ValueInfos.Add(new ValueInfo("Order of the polynom:", controller));
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       var controller = ValueInfos[0].Controller;

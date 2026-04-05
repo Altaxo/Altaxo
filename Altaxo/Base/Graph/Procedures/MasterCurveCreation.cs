@@ -35,6 +35,10 @@ namespace Altaxo.Graph.Procedures
   /// </summary>
   public static class MasterCurveCreation
   {
+    /// <summary>
+    /// Shows the master-curve creation dialog for the specified graph.
+    /// </summary>
+    /// <param name="doc">The graph document.</param>
     public static void ShowMasterCurveCreationDialog(GraphDocument doc)
     {
       var opt = new MasterCurveCreationOptions();
@@ -49,11 +53,11 @@ namespace Altaxo.Graph.Procedures
     }
 
     /// <summary>
-    /// Tries to extract from the graph document
+    /// Tries to extract data groups from the graph document.
     /// </summary>
-    /// <param name="doc"></param>
-    /// <param name="groupList"></param>
-    /// <returns></returns>
+    /// <param name="doc">The graph document.</param>
+    /// <param name="groupList">The extracted data groups.</param>
+    /// <returns>An error message, or <see langword="null"/> if successful.</returns>
     private static string? FillDataListFromGraphDocument(GraphDocument doc, List<List<DoubleColumn>> groupList)
     {
       if (doc.RootLayer.Layers.Count == 0)

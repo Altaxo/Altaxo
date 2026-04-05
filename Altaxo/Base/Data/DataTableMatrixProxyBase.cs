@@ -42,21 +42,36 @@ namespace Altaxo.Data
   {
     #region Inner classes
 
+    /// <summary>
+    /// Matrix implementation that discards all incoming values.
+    /// </summary>
     protected class DoubleMatrixAsNullDevice : Altaxo.Calc.LinearAlgebra.IMatrix<double>
     {
       private int _rows, _columns;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="DoubleMatrixAsNullDevice"/> class.
+      /// </summary>
+      /// <param name="rows">The number of rows.</param>
+      /// <param name="columns">The number of columns.</param>
       public DoubleMatrixAsNullDevice(int rows, int columns)
       {
         _rows = rows;
         _columns = columns;
       }
 
+      /// <summary>
+      /// Creates a null-device matrix with the specified dimensions.
+      /// </summary>
+      /// <param name="rows">The number of rows.</param>
+      /// <param name="columns">The number of columns.</param>
+      /// <returns>The created matrix.</returns>
       public static DoubleMatrixAsNullDevice GetMatrix(int rows, int columns)
       {
         return new DoubleMatrixAsNullDevice(rows, columns);
       }
 
+      /// <inheritdoc />
       public double this[int row, int col]
       {
         get
@@ -68,17 +83,22 @@ namespace Altaxo.Data
         }
       }
 
+      /// <inheritdoc />
       public int RowCount
       {
         get { return _rows; }
       }
 
+      /// <inheritdoc />
       public int ColumnCount
       {
         get { return _columns; }
       }
     }
 
+    /// <summary>
+    /// Wraps a header column and participating row indices as a read-only list.
+    /// </summary>
     protected class HeaderColumnWrapper : IReadOnlyList<double>, IReadableColumn
     {
       private IReadableColumn _col;
@@ -90,6 +110,7 @@ namespace Altaxo.Data
         _participatingDataRows = participatingDataRows;
       }
 
+      /// <inheritdoc />
       public int Count
       {
         get { return _participatingDataRows.Count; }
@@ -108,6 +129,7 @@ namespace Altaxo.Data
       /// </value>
       public Type ItemType { get { return typeof(double); } }
 
+      /// <inheritdoc />
       public double this[int i]
       {
         get { return _col[_participatingDataRows[i]]; }
@@ -124,21 +146,25 @@ namespace Altaxo.Data
         }
       }
 
+      /// <inheritdoc />
       public bool IsElementEmpty(int i)
       {
         return false;
       }
 
+      /// <inheritdoc />
       public string FullName
       {
         get { return GetType().ToString(); }
       }
 
+      /// <inheritdoc />
       public object Clone()
       {
         throw new NotImplementedException();
       }
 
+      /// <inheritdoc />
       public IEnumerator<double> GetEnumerator()
       {
         var length = Count;
@@ -154,15 +180,23 @@ namespace Altaxo.Data
       }
     }
 
+    /// <summary>
+    /// Compares readable-column proxies by their column position.
+    /// </summary>
     protected class ColumnPositionComparer : IComparer<IReadableColumnProxy>
     {
       private DataColumnCollection _coll;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ColumnPositionComparer"/> class.
+      /// </summary>
+      /// <param name="coll">The column collection used to resolve positions.</param>
       public ColumnPositionComparer(DataColumnCollection coll)
       {
         _coll = coll;
       }
 
+      /// <inheritdoc />
       public int Compare(IReadableColumnProxy? a, IReadableColumnProxy? b)
       {
         var ca = a?.Document() as DataColumn;
@@ -183,6 +217,9 @@ namespace Altaxo.Data
       }
     }
 
+    /// <summary>
+    /// Read-only matrix wrapper around selected rows and columns of a data table.
+    /// </summary>
     private class MyMatrixWrapper : IROMatrix<double>
     {
       private DataColumnCollection _data;
@@ -220,6 +257,9 @@ namespace Altaxo.Data
     /// <summary>Holds a reference to the underlying data table. If the Empty property of the proxy is null, the underlying table must be determined from the column proxies.</summary>
     protected DataTableProxy? _dataTable;
 
+    /// <summary>
+    /// The data columns that are involved in the matrix.
+    /// </summary>
     protected List<IReadableColumnProxy> _dataColumns; // the columns that are involved in the matrix
 
     /// <summary>The group number of the data columns. All data columns must be columns of ColumnKind.V and must have this group number. Data columns having other group numbers will be removed.</summary>
@@ -285,6 +325,7 @@ namespace Altaxo.Data
       return result;
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_dataTable is not null)
@@ -385,6 +426,12 @@ namespace Altaxo.Data
     }
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DataTableMatrixProxyBase"/> class for legacy deserialization scenarios.
+    /// </summary>
+    /// <param name="xColumn">The row-header column proxy.</param>
+    /// <param name="yColumn">The column-header column proxy.</param>
+    /// <param name="dataColumns">The data-column proxies.</param>
     [Obsolete("This is intended for legacy deserialization (of XYZMeshedColumnPlotData) only.")]
     public DataTableMatrixProxyBase(IReadableColumnProxy xColumn, IReadableColumnProxy yColumn, IReadableColumnProxy[] dataColumns)
     {
@@ -429,6 +476,10 @@ namespace Altaxo.Data
       ChildSetMember(ref _dataTable, proxy);
     }
 
+    /// <summary>
+    /// Sets the row-header column proxy.
+    /// </summary>
+    /// <param name="proxy">The row-header column proxy.</param>
     [MemberNotNull(nameof(_rowHeaderColumn))]
     protected void InternalSetRowHeaderColumn(IReadableColumnProxy proxy)
     {
@@ -436,6 +487,10 @@ namespace Altaxo.Data
     }
 
 
+    /// <summary>
+    /// Replaces the single column-header column proxy.
+    /// </summary>
+    /// <param name="proxy">The column-header column proxy.</param>
     protected void InternalSetColumnHeaderColumn(IReadableColumnProxy? proxy)
     {
       InternalClearColumnHeaderColumns();
@@ -1267,6 +1322,7 @@ namespace Altaxo.Data
 
     #region Changed event handling
 
+    /// <inheritdoc />
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       _isDirty = true;
@@ -1279,6 +1335,7 @@ namespace Altaxo.Data
         return true;
     }
 
+    /// <inheritdoc />
     protected override bool HandleLowPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       // Ignore all child changes from the column proxies - that are handled already by the table

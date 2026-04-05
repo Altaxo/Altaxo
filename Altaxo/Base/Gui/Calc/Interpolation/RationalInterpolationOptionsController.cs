@@ -29,13 +29,17 @@ using Altaxo.Gui.Common.PropertyGrid;
 namespace Altaxo.Gui.Worksheet
 {
   /// <summary>
-  /// Controls the Smoothing parameter of a rational cubic spline.
+  /// Controls options for rational interpolation.
   /// </summary>
   [UserControllerForObject(typeof(Altaxo.Calc.Interpolation.RationalInterpolationOptions), 100)]
   public class RationalInterpolationOptionsController : PropertyGridController
   {
+    /// <summary>
+    /// Gets the interpolation options document.
+    /// </summary>
     private RationalInterpolationOptions Spline => (RationalInterpolationOptions)_doc;
 
+    /// <inheritdoc/>
     protected override void InitializeValueInfos()
     {
       var controller = new Altaxo.Gui.Common.BasicTypes.IntegerValueController(Spline.NumeratorDegree);
@@ -44,6 +48,7 @@ namespace Altaxo.Gui.Worksheet
       ValueInfos.Add(new ValueInfo("Numerator degree N (N>(n-1)/2, where n is the original number of points for this interpolation) :", controller));
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       var controller = ValueInfos[0].Controller;
