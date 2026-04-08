@@ -15,7 +15,12 @@ namespace Altaxo.Gui.Common.Converters
   /// <seealso cref="System.Windows.Data.IValueConverter" />
   public class PlotDataSeverityToBackground : IValueConverter
   {
+    /// <summary>
+    /// Gets the shared converter instance.
+    /// </summary>
     public static PlotDataSeverityToBackground Instance { get; } = new PlotDataSeverityToBackground();
+
+    /// <inheritdoc/>
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
       if(value is int severity)
@@ -25,6 +30,7 @@ namespace Altaxo.Gui.Common.Converters
       return Binding.DoNothing;
     }
 
+    /// <inheritdoc/>
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
       throw new NotImplementedException();

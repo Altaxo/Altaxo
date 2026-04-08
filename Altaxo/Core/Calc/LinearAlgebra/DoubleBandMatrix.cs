@@ -54,6 +54,12 @@ namespace Altaxo.Calc.LinearAlgebra
       _array = new double[(_kl + _ku + 1) * _n];
     }
 
+    /// <summary>
+    /// Gets or sets the element at the specified row and column indices.
+    /// </summary>
+    /// <param name="i">The row index.</param>
+    /// <param name="j">The column index.</param>
+    /// <returns>The element at the specified row and column indices.</returns>
     public double this[int i, int j]
     {
       get
@@ -84,8 +90,14 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
+    /// <summary>
+    /// Gets the number of rows in the matrix.
+    /// </summary>
     public int RowCount => _m;
 
+    /// <summary>
+    /// Gets the number of columns in the matrix.
+    /// </summary>
     public int ColumnCount => _n;
   }
 }

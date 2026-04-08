@@ -55,8 +55,17 @@ namespace Altaxo.Gui.Workbench
     /// </summary>
     IReadOnlyList<DisplayBindingDescriptor> GetCodonsPerFileName(FileName filename);
 
+    /// <summary>
+    /// Adds an external process binding.
+    /// </summary>
+    /// <param name="binding">The binding to add.</param>
+    /// <returns>The descriptor created for the binding.</returns>
     DisplayBindingDescriptor AddExternalProcessDisplayBinding(ExternalProcessDisplayBinding binding);
 
+    /// <summary>
+    /// Removes an external process binding.
+    /// </summary>
+    /// <param name="binding">The binding to remove.</param>
     void RemoveExternalProcessDisplayBinding(ExternalProcessDisplayBinding binding);
   }
 }

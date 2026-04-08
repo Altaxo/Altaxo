@@ -4,6 +4,9 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization
 {
+  /// <summary>
+  /// Provides shared functionality for nonlinear minimizers.
+  /// </summary>
   public abstract class NonlinearMinimizerBase
   {
     /// <summary>
@@ -43,6 +46,13 @@ namespace Altaxo.Calc.Optimization
 
     private bool IsBounded => LowerBound != null || UpperBound != null || Scales != null;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NonlinearMinimizerBase"/> class.
+    /// </summary>
+    /// <param name="gradientTolerance">The stopping threshold for the gradient norm.</param>
+    /// <param name="stepTolerance">The stopping threshold for the parameter step norm.</param>
+    /// <param name="functionTolerance">The stopping threshold for the function value.</param>
+    /// <param name="maximumIterations">The maximum number of iterations.</param>
     protected NonlinearMinimizerBase(double gradientTolerance = 1E-18, double stepTolerance = 1E-18, double functionTolerance = 1E-18, int maximumIterations = -1)
     {
       GradientTolerance = gradientTolerance;
@@ -51,6 +61,13 @@ namespace Altaxo.Calc.Optimization
       MaximumIterations = maximumIterations;
     }
 
+    /// <summary>
+    /// Validates parameter bounds and scales.
+    /// </summary>
+    /// <param name="parameters">The parameter vector.</param>
+    /// <param name="lowerBound">The optional lower bounds.</param>
+    /// <param name="upperBound">The optional upper bounds.</param>
+    /// <param name="scales">The optional scaling factors.</param>
     protected void ValidateBounds(Vector<double> parameters, Vector<double> lowerBound = null, Vector<double> upperBound = null, Vector<double> scales = null)
     {
       if (parameters == null)
@@ -93,6 +110,12 @@ namespace Altaxo.Calc.Optimization
       Scales = scales;
     }
 
+    /// <summary>
+    /// Evaluates the objective function at the specified internal parameters.
+    /// </summary>
+    /// <param name="objective">The objective model.</param>
+    /// <param name="Pint">The internal parameter vector.</param>
+    /// <returns>The objective value.</returns>
     protected double EvaluateFunction(IObjectiveModel objective, Vector<double> Pint)
     {
       var Pext = ProjectToExternalParameters(Pint);
@@ -100,6 +123,12 @@ namespace Altaxo.Calc.Optimization
       return objective.Value;
     }
 
+    /// <summary>
+    /// Evaluates gradient and Hessian information for the specified internal parameters.
+    /// </summary>
+    /// <param name="objective">The objective model.</param>
+    /// <param name="Pint">The internal parameter vector.</param>
+    /// <returns>The gradient and Hessian.</returns>
     protected (Vector<double> Gradient, Matrix<double> Hessian) EvaluateJacobian(IObjectiveModel objective, Vector<double> Pint)
     {
       var gradient = objective.Gradient;
@@ -161,6 +190,11 @@ namespace Altaxo.Calc.Optimization
     // Except when it is initial guess, the parameters argument is always internal parameter.
     // So, first map the parameters argument to the external parameters in order to calculate function values.
 
+    /// <summary>
+    /// Projects external parameters into the internal optimization space.
+    /// </summary>
+    /// <param name="Pext">The external parameter vector.</param>
+    /// <returns>The internal parameter vector.</returns>
     protected Vector<double> ProjectToInternalParameters(Vector<double> Pext)
     {
       var Pint = Pext.Clone();
@@ -212,6 +246,11 @@ namespace Altaxo.Calc.Optimization
       return Pint;
     }
 
+    /// <summary>
+    /// Projects internal parameters into the external parameter space.
+    /// </summary>
+    /// <param name="Pint">The internal parameter vector.</param>
+    /// <returns>The external parameter vector.</returns>
     protected Vector<double> ProjectToExternalParameters(Vector<double> Pint)
     {
       var Pext = Pint.Clone();
@@ -263,6 +302,11 @@ namespace Altaxo.Calc.Optimization
       return Pext;
     }
 
+    /// <summary>
+    /// Gets the Jacobian scale factors for the specified internal parameters.
+    /// </summary>
+    /// <param name="Pint">The internal parameter vector.</param>
+    /// <returns>The Jacobian scale factors.</returns>
     protected Vector<double> ScaleFactorsOfJacobian(Vector<double> Pint)
     {
       var scale = Vector<double>.Build.Dense(Pint.Count, 1.0);

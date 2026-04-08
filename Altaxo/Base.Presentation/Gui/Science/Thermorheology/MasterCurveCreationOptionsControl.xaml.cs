@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Science.Thermorheology
   /// </summary>
   public partial class MasterCurveCreationOptionsControl : UserControl, IMasterCurveCreationOptionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MasterCurveCreationOptionsControl"/> class.
+    /// </summary>
     public MasterCurveCreationOptionsControl()
     {
       InitializeComponent();

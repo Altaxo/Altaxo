@@ -36,8 +36,14 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public partial class SingleTreeViewItemChoiceControl : UserControl, Altaxo.Gui.Worksheet.ISingleTreeViewItemChoiceView
   {
+    /// <summary>
+    /// Occurs when the selection changes.
+    /// </summary>
     public event Action<Collections.NGTreeNode>? SelectionChanged;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SingleTreeViewItemChoiceControl"/> class.
+    /// </summary>
     public SingleTreeViewItemChoiceControl()
     {
       InitializeComponent();
@@ -52,6 +58,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     public void Initialize(Collections.NGTreeNodeCollection nodes)
     {
       _guiTreeView.ItemsSource = null;

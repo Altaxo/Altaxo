@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Data
   /// </summary>
   public partial class ListOfXAndYColumnControl : UserControl, IListOfXAndYColumnView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ListOfXAndYColumnControl"/> class.
+    /// </summary>
     public ListOfXAndYColumnControl()
     {
       InitializeComponent();

@@ -51,7 +51,13 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     private double[] _hueOfButtons;
     private Point[] _posOfButtons;
     private Ellipse _pivotEllipse;
+    /// <summary>
+    /// Gets the primary selection rectangles.
+    /// </summary>
     public Rectangle[] _rectanglesA;
+    /// <summary>
+    /// Gets the secondary selection rectangles.
+    /// </summary>
     public Rectangle[] _rectanglesB;
     private const double _rectangleWidthHeight = 12;
 
@@ -67,6 +73,9 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     /// </summary>
     public event Action<IReadOnlyList<double>>? HueValuesChanged;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColorCircleSurfaceControl"/> class.
+    /// </summary>
     public ColorCircleSurfaceControl()
     {
       InitializeComponent();
@@ -77,6 +86,9 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       InitializeHueButtons();
     }
 
+    /// <summary>
+    /// Gets or sets the color-circle model.
+    /// </summary>
     public IColorCircleModel ColorCircleModel
     {
       get
@@ -110,6 +122,11 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       }
     }
 
+    /// <summary>
+    /// Sets the base hue value.
+    /// </summary>
+    /// <param name="hueBaseValue">The new base hue value.</param>
+    /// <param name="silentSet">If set to <see langword="true"/>, suppresses the changed event.</param>
     public void SetHueBaseValue(double hueBaseValue, bool silentSet)
     {
       var diff = hueBaseValue - _hueOfButtons[0];
@@ -122,6 +139,11 @@ namespace Altaxo.Gui.Drawing.ColorManagement
         HueValuesChanged?.Invoke(_hueOfButtons);
     }
 
+    /// <summary>
+    /// Normalizes the specified value to the inclusive range from 0 to 1.
+    /// </summary>
+    /// <param name="x">The value to normalize.</param>
+    /// <returns>The normalized value.</returns>
     protected static double BringInbetween0To1(double x)
     {
       if (x < 0)
@@ -276,6 +298,10 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       }
     }
 
+    /// <summary>
+    /// Creates the bitmap used for the color circle background.
+    /// </summary>
+    /// <returns>The generated bitmap source.</returns>
     public static BitmapSource GetBitmap()
     {
       const int widthheight = 256;

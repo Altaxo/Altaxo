@@ -36,6 +36,9 @@ namespace Altaxo.Gui.Graph.Scales
   /// </summary>
   public partial class AxisLinkControl : UserControl, IAxisLinkView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AxisLinkControl"/> class.
+    /// </summary>
     public AxisLinkControl()
     {
       InitializeComponent();

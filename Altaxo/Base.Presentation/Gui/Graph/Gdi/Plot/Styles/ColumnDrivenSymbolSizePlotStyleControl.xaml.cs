@@ -38,6 +38,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
   /// </summary>
   public partial class ColumnDrivenSymbolSizePlotStyleControl : UserControl, IColumnDrivenSymbolSizePlotStyleView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColumnDrivenSymbolSizePlotStyleControl"/> class.
+    /// </summary>
     public ColumnDrivenSymbolSizePlotStyleControl()
     {
       InitializeComponent();

@@ -12,6 +12,9 @@ using System.Linq;
 
 namespace Altaxo.Calc.Ode.Obsolete
 {
+  /// <summary>
+  /// Contains helper extension methods for working with ODE solutions.
+  /// </summary>
   public static class OdeHelpers
   {
     /// <summary>Extracts points with time less than or equal to <paramref name="to"/></summary>

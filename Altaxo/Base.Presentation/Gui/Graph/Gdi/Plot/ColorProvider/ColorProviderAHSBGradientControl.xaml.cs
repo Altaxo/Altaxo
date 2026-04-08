@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
   /// </summary>
   public partial class ColorProviderAHSBGradientControl : UserControl, IColorProviderAHSBGradientView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColorProviderAHSBGradientControl"/> class.
+    /// </summary>
     public ColorProviderAHSBGradientControl()
     {
       InitializeComponent();

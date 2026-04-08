@@ -39,24 +39,44 @@ using System.Collections.Generic;
 
 namespace Poly2Tri
 {
+  /// <summary>
+  /// Represents a collection of polygons to triangulate.
+  /// </summary>
   public class PolygonSet
   {
+    /// <summary>
+    /// Stores the polygons contained in the set.
+    /// </summary>
     protected List<Polygon> _polygons = new List<Polygon>();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PolygonSet"/> class.
+    /// </summary>
     public PolygonSet()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PolygonSet"/> class with the specified polygon.
+    /// </summary>
+    /// <param name="poly">The polygon to add initially.</param>
     public PolygonSet(Polygon poly)
     {
       _polygons.Add(poly);
     }
 
+    /// <summary>
+    /// Adds a polygon to the set.
+    /// </summary>
+    /// <param name="p">The polygon to add.</param>
     public void Add(Polygon p)
     {
       _polygons.Add(p);
     }
 
+    /// <summary>
+    /// Gets the polygons contained in this set.
+    /// </summary>
     public IEnumerable<Polygon> Polygons { get { return _polygons; } }
   }
 }

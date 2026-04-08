@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Gdi
   /// </summary>
   public partial class LayerPositionControl : UserControl, ILayerPositionView, Graph3D.ILayerPositionView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LayerPositionControl"/> class.
+    /// </summary>
     public LayerPositionControl()
     {
       InitializeComponent();

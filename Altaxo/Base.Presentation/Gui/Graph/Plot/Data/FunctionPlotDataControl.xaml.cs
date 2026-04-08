@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
   /// </summary>
   public partial class FunctionPlotDataControl : UserControl, IFunctionPlotDataView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FunctionPlotDataControl"/> class.
+    /// </summary>
     public FunctionPlotDataControl()
     {
       InitializeComponent();

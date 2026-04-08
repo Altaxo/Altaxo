@@ -47,12 +47,14 @@ namespace Altaxo.Calc.Interpolation
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BSpline1DOptions), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (BSpline1DOptions)obj;
         info.AddValue("Degree", s._degree);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var degree = info.GetInt32("Degree");

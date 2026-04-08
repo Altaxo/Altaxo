@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Serialization.Ascii
   /// </summary>
   public partial class SingleCharSeparationStrategyControl : UserControl, ISingleCharSeparationStrategyView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SingleCharSeparationStrategyControl"/> class.
+    /// </summary>
     public SingleCharSeparationStrategyControl()
     {
       InitializeComponent();

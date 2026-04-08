@@ -27,10 +27,8 @@ using System;
 namespace Altaxo.Calc.Probability
 {
   /// <summary>
-  /// Represents the base of all StableDistributions classes in different parametrizations.
+  /// Represents the base class for stable distributions in different parametrizations.
   /// </summary>
-  /// <remarks>
-  /// </remarks>
   public class StableDistributionBase : ContinuousDistribution
   {
     private ExponentialDistribution _expDist = new ExponentialDistribution();
@@ -56,49 +54,42 @@ namespace Altaxo.Calc.Probability
       _contDist = new ContinuousUniformDistribution(generator);
     }
 
-    /// <summary>Gets the minimum possible value of distributed random numbers.</summary>
     /// <inheritdoc/>
     public override double Minimum
     {
       get { throw new Exception("The method or operation is not implemented."); }
     }
 
-    /// <summary>Gets the maximum possible value of distributed random numbers.</summary>
     /// <inheritdoc/>
     public override double Maximum
     {
       get { throw new Exception("The method or operation is not implemented."); }
     }
 
-    /// <summary>Gets the mean of distributed random numbers.</summary>
     /// <inheritdoc/>
     public override double Mean
     {
       get { throw new Exception("The method or operation is not implemented."); }
     }
 
-    /// <summary>Gets the median of distributed random numbers.</summary>
     /// <inheritdoc/>
     public override double Median
     {
       get { throw new Exception("The method or operation is not implemented."); }
     }
 
-    /// <summary>Gets the variance of distributed random numbers.</summary>
     /// <inheritdoc/>
     public override double Variance
     {
       get { throw new Exception("The method or operation is not implemented."); }
     }
 
-    /// <summary>Gets the mode of distributed random numbers.</summary>
     /// <inheritdoc/>
     public override double[] Mode
     {
       get { throw new Exception("The method or operation is not implemented."); }
     }
 
-    /// <summary>Returns a distributed floating point random number.</summary>
     /// <inheritdoc/>
     public override double NextDouble()
     {
@@ -111,19 +102,26 @@ namespace Altaxo.Calc.Probability
 
     /// <summary>
     /// Returns the number of logarithmically spaced subdivisions to span a certain range.
-    /// This mean that if span==smallestDivision, the function will return 1.
-    /// If span = smallestdivision + smallestdivision*span + smallestdivision*span^2, the function will return 3.
+    /// This means that if span==smallestDivision, the function will return 1.
+    /// If span = smallestDivision + smallestDivision*span + smallestDivision*span^2, the function will return 3.
     /// </summary>
     /// <param name="span">The range to space logarithmically.</param>
     /// <param name="smallestDivision">The smallest division.</param>
     /// <param name="scale">Value &gt; 1 which is the ratio of the value of the next subdivision to the current subdivision.</param>
-    /// <returns></returns>
+    /// <returns>The number of logarithmic subdivisions required to span the specified range.</returns>
     private static double GetNumberOfLogarithmicDivisions(double span, double smallestDivision, double scale)
     {
       double ges = span / smallestDivision;
       return Math.Log(ges * (scale - 1) + scale) / Math.Log(scale) - 1;
     }
 
+    /// <summary>
+    /// Returns the scale factor for logarithmically spaced subdivisions over the specified span.
+    /// </summary>
+    /// <param name="span">The range to span logarithmically.</param>
+    /// <param name="smallestDivision">The smallest subdivision width.</param>
+    /// <param name="n">The number of subdivisions.</param>
+    /// <returns>The ratio between two consecutive subdivision widths.</returns>
     private static double GetScaleOfLogarithmicSubdivision(double span, double smallestDivision, double n)
     {
       double scale = double.MaxValue;
@@ -403,6 +401,15 @@ namespace Altaxo.Calc.Probability
 
     #region Parameter conversion between different parametrizations
 
+    /// <summary>
+    /// Converts the skewness parameter from beta-form to Feller's gamma-form using a precomputed tangent term.
+    /// </summary>
+    /// <param name="alpha">The characteristic exponent.</param>
+    /// <param name="beta">The skewness parameter in beta-form.</param>
+    /// <param name="abe">The alternative beta helper value.</param>
+    /// <param name="tan_pi_alpha_2">The tangent of <c>alpha * Pi / 2</c>.</param>
+    /// <param name="aga">On return, the alternative gamma helper value.</param>
+    /// <returns>The gamma parameter in Feller's parametrization.</returns>
     protected static double GammaFromAlphaBetaTanPiA2(double alpha, double beta, double abe, double tan_pi_alpha_2, out double aga)
     {
       // The orginal formula is gamma=(2/Pi)*ArcTan(-beta*Tan(alpha Pi/2))
@@ -446,6 +453,14 @@ namespace Altaxo.Calc.Probability
       return gamma;
     }
 
+    /// <summary>
+    /// Converts Feller's gamma-form skewness parameters to beta-form.
+    /// </summary>
+    /// <param name="alpha">The characteristic exponent.</param>
+    /// <param name="gamma">The gamma parameter in Feller's parametrization.</param>
+    /// <param name="aga">The alternative gamma helper value.</param>
+    /// <param name="abe">On return, the alternative beta helper value.</param>
+    /// <returns>The skewness parameter beta.</returns>
     public static double BetaFromAlphaGammaAga(double alpha, double gamma, double aga, out double abe)
     {
       // The original formula is:
@@ -694,6 +709,18 @@ namespace Altaxo.Calc.Probability
       return isBetaNegative ? -1 + abe : 1 - abe;
     }
 
+    /// <summary>
+    /// Converts parameters from the S0 parametrization to Feller's parametrization.
+    /// </summary>
+    /// <param name="alpha">The characteristic exponent.</param>
+    /// <param name="beta">The skewness parameter.</param>
+    /// <param name="abe">The alternative beta helper value.</param>
+    /// <param name="sigma0">The S0 scale parameter.</param>
+    /// <param name="mu0">The S0 location parameter.</param>
+    /// <param name="gamma">On return, the Feller gamma parameter.</param>
+    /// <param name="aga">On return, the alternative gamma helper value.</param>
+    /// <param name="sigmaf">On return, the Feller scale parameter.</param>
+    /// <param name="muf">On return, the Feller location parameter.</param>
     public static void ParameterConversionS0ToFeller(double alpha, double beta, double abe, double sigma0, double mu0, out double gamma, out double aga, out double sigmaf, out double muf)
     {
       if (alpha != 1)
@@ -719,6 +746,18 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+    /// <summary>
+    /// Converts parameters from the S1 parametrization to Feller's parametrization.
+    /// </summary>
+    /// <param name="alpha">The characteristic exponent.</param>
+    /// <param name="beta">The skewness parameter.</param>
+    /// <param name="abe">The alternative beta helper value.</param>
+    /// <param name="sigma1">The S1 scale parameter.</param>
+    /// <param name="mu1">The S1 location parameter.</param>
+    /// <param name="gamma">On return, the Feller gamma parameter.</param>
+    /// <param name="aga">On return, the alternative gamma helper value.</param>
+    /// <param name="sigmaf">On return, the Feller scale parameter.</param>
+    /// <param name="muf">On return, the Feller location parameter.</param>
     public static void ParameterConversionS1ToFeller(double alpha, double beta, double abe, double sigma1, double mu1, out double gamma, out double aga, out double sigmaf, out double muf)
     {
       if (alpha != 1)
@@ -744,6 +783,18 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+    /// <summary>
+    /// Converts parameters from Feller's parametrization to the S0 parametrization.
+    /// </summary>
+    /// <param name="alpha">The characteristic exponent.</param>
+    /// <param name="gamma">The Feller gamma parameter.</param>
+    /// <param name="aga">The alternative gamma helper value.</param>
+    /// <param name="sigmaf">The Feller scale parameter.</param>
+    /// <param name="muf">The Feller location parameter.</param>
+    /// <param name="beta">On return, the skewness parameter.</param>
+    /// <param name="abe">On return, the alternative beta helper value.</param>
+    /// <param name="sigma0">On return, the S0 scale parameter.</param>
+    /// <param name="mu0">On return, the S0 location parameter.</param>
     public static void ParameterConversionFellerToS0(double alpha, double gamma, double aga, double sigmaf, double muf, out double beta, out double abe, out double sigma0, out double mu0)
     {
       if (alpha != 1 && alpha != 2)
@@ -769,6 +820,18 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+    /// <summary>
+    /// Converts parameters from Feller's parametrization to the S1 parametrization.
+    /// </summary>
+    /// <param name="alpha">The characteristic exponent.</param>
+    /// <param name="gamma">The Feller gamma parameter.</param>
+    /// <param name="aga">The alternative gamma helper value.</param>
+    /// <param name="sigmaf">The Feller scale parameter.</param>
+    /// <param name="muf">The Feller location parameter.</param>
+    /// <param name="beta">On return, the skewness parameter.</param>
+    /// <param name="abe">On return, the alternative beta helper value.</param>
+    /// <param name="sigma1">On return, the S1 scale parameter.</param>
+    /// <param name="mu1">On return, the S1 location parameter.</param>
     public static void ParameterConversionFellerToS1(double alpha, double gamma, double aga, double sigmaf, double muf, out double beta, out double abe, out double sigma1, out double mu1)
     {
       if (alpha != 1 && alpha != 2)
@@ -794,6 +857,14 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+    /// <summary>
+    /// Converts the location parameter from the S0 parametrization to the S1 parametrization.
+    /// </summary>
+    /// <param name="alpha">The characteristic exponent.</param>
+    /// <param name="beta">The skewness parameter.</param>
+    /// <param name="sigma0">The S0 scale parameter.</param>
+    /// <param name="mu0">The S0 location parameter.</param>
+    /// <param name="mu1">On return, the S1 location parameter.</param>
     public static void ParameterConversionS0ToS1(double alpha, double beta, double sigma0, double mu0, out double mu1)
     {
       if (alpha != 1)
@@ -806,6 +877,14 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+    /// <summary>
+    /// Converts the location parameter from the S1 parametrization to the S0 parametrization.
+    /// </summary>
+    /// <param name="alpha">The characteristic exponent.</param>
+    /// <param name="beta">The skewness parameter.</param>
+    /// <param name="sigma1">The S1 scale parameter.</param>
+    /// <param name="mu1">The S1 location parameter.</param>
+    /// <param name="mu0">On return, the S0 location parameter.</param>
     public static void ParameterConversionS1ToS0(double alpha, double beta, double sigma1, double mu1, out double mu0)
     {
       if (alpha != 1)
@@ -967,17 +1046,38 @@ namespace Altaxo.Calc.Probability
     /// </summary>
     public class Alt1GnI
     {
+      /// <summary>Core prefactor used by the transformed density representation.</summary>
       protected double factorp;
+
+      /// <summary>Core divisor used by the transformed density representation.</summary>
       protected double facdiv;
+
+      /// <summary>The characteristic exponent.</summary>
       protected double alpha;
+
+      /// <summary>The deviation angle used by the integration transform.</summary>
       protected double dev;
+
+      /// <summary>The logarithm of the PDF prefactor.</summary>
       protected double logPdfPrefactor;
 
+      /// <summary>Reference point used by logarithmic integration transforms.</summary>
       protected double _x0;
 
+      /// <summary>Cached delegate for the transformed PDF core.</summary>
       protected Func<double, double> pdfCore;
+
+      /// <summary>Cached delegate for the transformed PDF integrand.</summary>
       protected Func<double, double> pdfFunc;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="Alt1GnI"/> class.
+      /// </summary>
+      /// <param name="factorp">The multiplicative core factor.</param>
+      /// <param name="facdiv">The divisive core factor.</param>
+      /// <param name="logPdfPrefactor">The logarithm of the PDF prefactor.</param>
+      /// <param name="alpha">The characteristic exponent.</param>
+      /// <param name="dev">The deviation angle.</param>
       public Alt1GnI(double factorp, double facdiv, double logPdfPrefactor, double alpha, double dev)
       {
         this.factorp = factorp;
@@ -989,12 +1089,20 @@ namespace Altaxo.Calc.Probability
         pdfFunc = new Func<double, double>(PDFFunc);
       }
 
+      /// <summary>
+      /// Reinitializes the cached delegates for the transformed PDF functions.
+      /// </summary>
       public void Initialize()
       {
         pdfCore = new Func<double, double>(PDFCore);
         pdfFunc = new Func<double, double>(PDFFunc);
       }
 
+      /// <summary>
+      /// Evaluates the transformed PDF core.
+      /// </summary>
+      /// <param name="thetas">The transformed integration angle.</param>
+      /// <returns>The value of the transformed PDF core.</returns>
       public double PDFCore(double thetas)
       {
         double r1;
@@ -1017,6 +1125,11 @@ namespace Altaxo.Calc.Probability
         return result;
       }
 
+      /// <summary>
+      /// Evaluates the derivative of the transformed PDF core.
+      /// </summary>
+      /// <param name="thetas">The transformed integration angle.</param>
+      /// <returns>The derivative of the transformed PDF core.</returns>
       public double PDFCoreDerivative(double thetas)
       {
         if (thetas == 0)
@@ -1036,6 +1149,11 @@ namespace Altaxo.Calc.Probability
         return r1 * r2s + r1s * r2;
       }
 
+      /// <summary>
+      /// Evaluates the transformed PDF integrand.
+      /// </summary>
+      /// <param name="x">The transformed integration variable.</param>
+      /// <returns>The transformed PDF integrand value.</returns>
       public double PDFFunc(double x)
       {
         double f = PDFCore(x);
@@ -1045,6 +1163,11 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Evaluates the logarithmically transformed PDF integrand.
+      /// </summary>
+      /// <param name="z">The logarithmic integration variable.</param>
+      /// <returns>The transformed PDF integrand value.</returns>
       public double PDFFuncLogInt(double z)
       {
         double x = Math.Exp(z);
@@ -1055,6 +1178,11 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Evaluates the logarithmically transformed PDF integrand to the left of <see cref="_x0"/>.
+      /// </summary>
+      /// <param name="z">The logarithmic integration variable.</param>
+      /// <returns>The transformed PDF integrand value.</returns>
       public double PDFFuncLogIntToLeft(double z)
       {
         double x = _x0 - Math.Exp(z);
@@ -1068,6 +1196,11 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Evaluates the logarithmically transformed PDF integrand to the right of <see cref="_x0"/>.
+      /// </summary>
+      /// <param name="z">The logarithmic integration variable.</param>
+      /// <returns>The transformed PDF integrand value.</returns>
       public double PDFFuncLogIntToRight(double z)
       {
         double x = _x0 + Math.Exp(z);
@@ -1078,6 +1211,12 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Integrates the transformed PDF for the current parameter set.
+      /// </summary>
+      /// <param name="tempStorage">Temporary integration storage reused across calls.</param>
+      /// <param name="precision">The requested integration precision.</param>
+      /// <returns>The integrated PDF contribution.</returns>
       public double PDFIntegrate(ref object? tempStorage, double precision)
       {
         double integrand;
@@ -1099,6 +1238,12 @@ namespace Altaxo.Calc.Probability
         return integrand;
       }
 
+      /// <summary>
+      /// Integrates the transformed PDF for the special case <c>dev == 0</c>.
+      /// </summary>
+      /// <param name="tempStorage">Temporary integration storage reused across calls.</param>
+      /// <param name="precision">The requested integration precision.</param>
+      /// <returns>The integrated PDF contribution.</returns>
       protected double PDFIntegrateZeroDev(ref object? tempStorage, double precision)
       {
         const double logPrefactorOffset = 100;
@@ -1366,11 +1511,18 @@ namespace Altaxo.Calc.Probability
           return double.NaN;
       }
 
+      /// <summary>
+      /// Determines whether the maximum of the transformed PDF core lies on the left-hand side.
+      /// </summary>
+      /// <returns><see langword="true"/> if the maximum lies on the left-hand side; otherwise, <see langword="false"/>.</returns>
       public bool IsMaximumLeftHandSide()
       {
         return PDFCore(0.5 * UpperIntegrationLimit) > 1;
       }
 
+      /// <summary>
+      /// Gets the upper integration limit.
+      /// </summary>
       public double UpperIntegrationLimit
       {
         get
@@ -1379,6 +1531,12 @@ namespace Altaxo.Calc.Probability
         }
       }
 
+      /// <summary>
+      /// Finds the abscissa where the transformed PDF core reaches a given value.
+      /// </summary>
+      /// <param name="ysearch">The target core value.</param>
+      /// <param name="tolerance">The tolerated deviation.</param>
+      /// <returns>The corresponding abscissa.</returns>
       public double FindXOfPDFCoreY(double ysearch, double tolerance)
       {
         double result;
@@ -1388,6 +1546,11 @@ namespace Altaxo.Calc.Probability
 
       #region CDF
 
+      /// <summary>
+      /// Evaluates the transformed CDF integrand.
+      /// </summary>
+      /// <param name="x">The transformed integration variable.</param>
+      /// <returns>The transformed CDF integrand value.</returns>
       public double CDFFunc(double x)
       {
         double f = PDFCore(x);
@@ -1397,6 +1560,11 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Evaluates the logarithmically transformed CDF integrand.
+      /// </summary>
+      /// <param name="z">The logarithmic integration variable.</param>
+      /// <returns>The transformed CDF integrand value.</returns>
       public double CDFFuncLogInt(double z)
       {
         double x = Math.Exp(z) + _x0;
@@ -1407,6 +1575,12 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Integrates the transformed CDF for the current parameter set.
+      /// </summary>
+      /// <param name="tempStorage">Temporary integration storage reused across calls.</param>
+      /// <param name="precision">The requested integration precision.</param>
+      /// <returns>The integrated CDF contribution.</returns>
       public double CDFIntegrate(ref object? tempStorage, double precision)
       {
         GSL_ERROR? error1;
@@ -1445,6 +1619,9 @@ namespace Altaxo.Calc.Probability
       #endregion CDF
     }
 
+    /// <summary>
+    /// Specialized helper for the <c>alpha &lt; 1</c>, <c>gamma &lt; 0</c>, increasing case when <c>alpha</c> is close to one.
+    /// </summary>
     public class Alt1GnIA1 : Alt1GnI
     {
       /// <summary>X-value where the core function is equal to 1.</summary>
@@ -1459,11 +1636,24 @@ namespace Altaxo.Calc.Probability
       /// <summary>Distance from _xm, for which points we use the derivative approximation.</summary>
       private double _xmax;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="Alt1GnIA1"/> class.
+      /// </summary>
+      /// <param name="factorp">The multiplicative core factor.</param>
+      /// <param name="facdiv">The divisive core factor.</param>
+      /// <param name="logPdfPrefactor">The logarithm of the PDF prefactor.</param>
+      /// <param name="alpha">The characteristic exponent.</param>
+      /// <param name="dev">The deviation angle.</param>
       public Alt1GnIA1(double factorp, double facdiv, double logPdfPrefactor, double alpha, double dev)
         : base(factorp, facdiv, logPdfPrefactor, alpha, dev)
       {
       }
 
+      /// <summary>
+      /// Evaluates the modified PDF core around the peak region.
+      /// </summary>
+      /// <param name="dx">The offset from the peak location.</param>
+      /// <returns>The modified PDF core value.</returns>
       public double PDFCoreMod(double dx)
       {
         if (Math.Abs(dx) < _xmax)
@@ -1481,8 +1671,8 @@ namespace Altaxo.Calc.Probability
       /// <summary>
       /// Special calculation of the core function if dev==0. Especially accurate when alpha is very close to 1.
       /// </summary>
-      /// <param name="thetas"></param>
-      /// <returns></returns>
+      /// <param name="thetas">The integration angle.</param>
+      /// <returns>The value of the core function for the specified angle.</returns>
       public double PDFCoreZeroDev(double thetas)
       {
         double ala = 1 - alpha;
@@ -1519,8 +1709,8 @@ namespace Altaxo.Calc.Probability
       /// <summary>
       /// Special calculation of the core function if dev==0. Especially accurate when alpha is very close to 1.
       /// </summary>
-      /// <param name="thetas"></param>
-      /// <returns></returns>
+      /// <param name="thetas">The integration angle.</param>
+      /// <returns>The value of the core function for the specified angle.</returns>
       public double PDFCoreSmallDev(double thetas)
       {
         double ala = 1 - alpha;
@@ -1559,6 +1749,11 @@ namespace Altaxo.Calc.Probability
         return result;
       }
 
+      /// <summary>
+      /// Evaluates the transformed PDF integrand for the zero-deviation special case.
+      /// </summary>
+      /// <param name="x">The transformed integration variable.</param>
+      /// <returns>The transformed PDF integrand value.</returns>
       public double PDFFuncZeroDev(double x)
       {
         double f = PDFCoreZeroDev(x);
@@ -1568,6 +1763,11 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Evaluates the logarithmically transformed PDF integrand for the zero-deviation special case.
+      /// </summary>
+      /// <param name="z">The logarithmic integration variable.</param>
+      /// <returns>The transformed PDF integrand value.</returns>
       public double PDFFuncLogIntZeroDev(double z)
       {
         double x = Math.Exp(z);
@@ -1578,6 +1778,11 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Evaluates the logarithmically transformed PDF integrand to the left of the peak region.
+      /// </summary>
+      /// <param name="z">The logarithmic integration variable.</param>
+      /// <returns>The transformed PDF integrand value.</returns>
       public new double PDFFuncLogIntToLeft(double z)
       {
         double x = Math.Max(-_xm, _x0 - Math.Exp(z));
@@ -1588,6 +1793,11 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Evaluates the logarithmically transformed PDF integrand to the right of the peak region.
+      /// </summary>
+      /// <param name="z">The logarithmic integration variable.</param>
+      /// <returns>The transformed PDF integrand value.</returns>
       public new double PDFFuncLogIntToRight(double z)
       {
         double x = _x0 + Math.Exp(z);
@@ -1598,6 +1808,12 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Integrates the transformed PDF for the near-one alpha case.
+      /// </summary>
+      /// <param name="tempStorage">Temporary integration storage reused across calls.</param>
+      /// <param name="precision">The requested integration precision.</param>
+      /// <returns>The integrated PDF contribution.</returns>
       public double PDFIntegrateAlphaNearOne(ref object? tempStorage, double precision)
       {
         if (dev == 0)
@@ -1647,6 +1863,12 @@ namespace Altaxo.Calc.Probability
         return (resultLeft + resultRight);
       }
 
+      /// <summary>
+      /// Integrates the transformed PDF for the zero-deviation near-one alpha case.
+      /// </summary>
+      /// <param name="tempStorage">Temporary integration storage reused across calls.</param>
+      /// <param name="precision">The requested integration precision.</param>
+      /// <returns>The integrated PDF contribution.</returns>
       protected double PDFIntegrateZeroDevAlphaNearOne(ref object? tempStorage, double precision)
       {
         const double logPrefactorOffset = 100;
@@ -1722,15 +1944,50 @@ namespace Altaxo.Calc.Probability
     /// </summary>
     public class Alt1GnD
     {
+      /// <summary>
+      /// The multiplicative core factor.
+      /// </summary>
       protected double _factorp;
+
+      /// <summary>
+      /// The divisive core factor.
+      /// </summary>
       protected double _facdiv;
+
+      /// <summary>
+      /// The characteristic exponent.
+      /// </summary>
       protected double _alpha;
+
+      /// <summary>
+      /// The deviation angle.
+      /// </summary>
       protected double _dev;
+
+      /// <summary>
+      /// The logarithm of the PDF prefactor.
+      /// </summary>
       protected double _logPdfPrefactor;
+
+      /// <summary>
+      /// The logarithmic integration offset.
+      /// </summary>
       protected double _x0;
+
+      /// <summary>
+      /// The cached transformed PDF core delegate.
+      /// </summary>
       protected Func<double, double> _pdfCore;
       private Func<double, double> _pdfFunc;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="Alt1GnD"/> class.
+      /// </summary>
+      /// <param name="factorp">The multiplicative core factor.</param>
+      /// <param name="facdiv">The divisive core factor.</param>
+      /// <param name="logPdfPrefactor">The logarithm of the PDF prefactor.</param>
+      /// <param name="alpha">The characteristic exponent.</param>
+      /// <param name="dev">The deviation angle.</param>
       public Alt1GnD(double factorp, double facdiv, double logPdfPrefactor, double alpha, double dev)
       {
         this._factorp = factorp;
@@ -1742,12 +1999,20 @@ namespace Altaxo.Calc.Probability
         _pdfFunc = new Func<double, double>(PDFFunc);
       }
 
+      /// <summary>
+      /// Reinitializes the cached delegates for the transformed PDF functions.
+      /// </summary>
       public void Initialize()
       {
         _pdfCore = new Func<double, double>(PDFCore);
         _pdfFunc = new Func<double, double>(PDFFunc);
       }
 
+      /// <summary>
+      /// Evaluates the transformed PDF core.
+      /// </summary>
+      /// <param name="thetas">The transformed integration angle.</param>
+      /// <returns>The value of the transformed PDF core.</returns>
       public double PDFCore(double thetas)
       {
         double r1;
@@ -1762,6 +2027,11 @@ namespace Altaxo.Calc.Probability
         return result;
       }
 
+      /// <summary>
+      /// Evaluates the transformed PDF integrand.
+      /// </summary>
+      /// <param name="x">The transformed integration variable.</param>
+      /// <returns>The transformed PDF integrand value.</returns>
       public double PDFFunc(double x)
       {
         double f = PDFCore(x);
@@ -1771,6 +2041,11 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Evaluates the logarithmically transformed PDF integrand.
+      /// </summary>
+      /// <param name="z">The logarithmic integration variable.</param>
+      /// <returns>The transformed PDF integrand value.</returns>
       public double PDFFuncLogInt(double z)
       {
         double x = Math.Exp(z);
@@ -1781,6 +2056,9 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Gets the upper integration limit.
+      /// </summary>
       public double UpperIntegrationLimit
       {
         get
@@ -1789,6 +2067,12 @@ namespace Altaxo.Calc.Probability
         }
       }
 
+      /// <summary>
+      /// Integrates the probability density function.
+      /// </summary>
+      /// <param name="tempStorage">Temporary storage reused between calls.</param>
+      /// <param name="precision">Relative precision goal.</param>
+      /// <returns>The integrated value or <see cref="double.NaN"/> on failure.</returns>
       public double Integrate(ref object? tempStorage, double precision)
       {
         GSL_ERROR? error;
@@ -1834,6 +2118,11 @@ namespace Altaxo.Calc.Probability
 
       #region CDF
 
+      /// <summary>
+      /// Evaluates the cumulative distribution integrand.
+      /// </summary>
+      /// <param name="x">The evaluation point.</param>
+      /// <returns>The integrand value.</returns>
       public double CDFFunc(double x)
       {
         double f = PDFCore(x);
@@ -1843,6 +2132,11 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Evaluates the logarithmic cumulative distribution integrand.
+      /// </summary>
+      /// <param name="z">The logarithmic integration variable.</param>
+      /// <returns>The integrand value.</returns>
       public double CDFFuncLogInt(double z)
       {
         double x = Math.Exp(z) + _x0;
@@ -1853,6 +2147,12 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Integrates the cumulative distribution function.
+      /// </summary>
+      /// <param name="tempStorage">Temporary storage reused between calls.</param>
+      /// <param name="precision">Relative precision goal.</param>
+      /// <returns>The integrated value or <see cref="double.NaN"/> on failure.</returns>
       public double CDFIntegrate(ref object? tempStorage, double precision)
       {
         GSL_ERROR? error1;
@@ -1889,6 +2189,9 @@ namespace Altaxo.Calc.Probability
       #endregion CDF
     }
 
+    /// <summary>
+    /// Specialized helper for the <c>alpha &lt; 1</c>, <c>gamma &lt; 0</c>, decreasing case when <c>alpha</c> is close to one.
+    /// </summary>
     public class Alt1GnDA1 : Alt1GnD
     {
       /// <summary>X-value where the core function is equal to 1.</summary>
@@ -1903,11 +2206,24 @@ namespace Altaxo.Calc.Probability
       /// <summary>Distance from _xm, for which points we use the derivative approximation.</summary>
       private double _xmax;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="Alt1GnDA1"/> class.
+      /// </summary>
+      /// <param name="factorp">The multiplicative core factor.</param>
+      /// <param name="facdiv">The divisive core factor.</param>
+      /// <param name="logPdfPrefactor">The logarithm of the PDF prefactor.</param>
+      /// <param name="alpha">The characteristic exponent.</param>
+      /// <param name="dev">The deviation angle.</param>
       public Alt1GnDA1(double factorp, double facdiv, double logPdfPrefactor, double alpha, double dev)
         : base(factorp, facdiv, logPdfPrefactor, alpha, dev)
       {
       }
 
+      /// <summary>
+      /// Evaluates the modified PDF core around the peak region.
+      /// </summary>
+      /// <param name="dx">The offset from the peak location.</param>
+      /// <returns>The modified PDF core value.</returns>
       public double PDFCoreMod(double dx)
       {
         if (Math.Abs(dx) < _xmax)
@@ -1922,6 +2238,11 @@ namespace Altaxo.Calc.Probability
         }
       }
 
+      /// <summary>
+      /// Evaluates the logarithmically transformed PDF integrand to the left of the peak region.
+      /// </summary>
+      /// <param name="z">The logarithmic integration variable.</param>
+      /// <returns>The transformed PDF integrand value.</returns>
       public double PDFFuncLogIntToLeft(double z)
       {
         double x = Math.Max(-_xm, _x0 - Math.Exp(z));
@@ -1932,6 +2253,11 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Evaluates the logarithmically transformed PDF integrand to the right of the peak region.
+      /// </summary>
+      /// <param name="z">The logarithmic integration variable.</param>
+      /// <returns>The transformed PDF integrand value.</returns>
       public double PDFFuncLogIntToRight(double z)
       {
         double x = _x0 + Math.Exp(z);
@@ -1942,6 +2268,12 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Integrates the transformed PDF for the near-one alpha case.
+      /// </summary>
+      /// <param name="tempStorage">Temporary integration storage reused across calls.</param>
+      /// <param name="precision">The requested integration precision.</param>
+      /// <returns>The integrated PDF contribution.</returns>
       public double PDFIntegrateAlphaNearOne(ref object? tempStorage, double precision)
       {
         GSL_ERROR? error;
@@ -2003,17 +2335,55 @@ namespace Altaxo.Calc.Probability
 
     #region Function increasing
 
+    /// <summary>
+    /// Helper class for calculation used if alpha&lt;1, gamma&gt;0 and for increasing integration direction.
+    /// </summary>
     public class Alt1GpI
     {
+      /// <summary>
+      /// The multiplicative core factor.
+      /// </summary>
       protected double _factorp;
+
+      /// <summary>
+      /// The divisive core factor.
+      /// </summary>
       protected double _facdiv;
+
+      /// <summary>
+      /// The characteristic exponent.
+      /// </summary>
       protected double _alpha;
+
+      /// <summary>
+      /// The deviation angle.
+      /// </summary>
       protected double _dev;
+
+      /// <summary>
+      /// The logarithm of the PDF prefactor.
+      /// </summary>
       protected double _logPdfPrefactor;
+
+      /// <summary>
+      /// The logarithmic integration offset.
+      /// </summary>
       protected double _x0;
+
+      /// <summary>
+      /// The cached transformed PDF core delegate.
+      /// </summary>
       protected Func<double, double> _pdfCore;
       private Func<double, double> _pdfFunc;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="Alt1GpI"/> class.
+      /// </summary>
+      /// <param name="factorp">The multiplicative core factor.</param>
+      /// <param name="facdiv">The divisive core factor.</param>
+      /// <param name="logPdfPrefactor">The logarithm of the PDF prefactor.</param>
+      /// <param name="alpha">The characteristic exponent.</param>
+      /// <param name="dev">The deviation angle.</param>
       public Alt1GpI(double factorp, double facdiv, double logPdfPrefactor, double alpha, double dev)
       {
         this._factorp = factorp;
@@ -2025,6 +2395,9 @@ namespace Altaxo.Calc.Probability
         _pdfFunc = new Func<double, double>(PDFFunc);
       }
 
+      /// <summary>
+      /// Reinitializes the cached delegates for the transformed PDF functions.
+      /// </summary>
       public void Initialize()
       {
         _pdfCore = new Func<double, double>(PDFCore);
@@ -2033,6 +2406,11 @@ namespace Altaxo.Calc.Probability
 
       // Note that in the moment we dont have a directional change here, but one can easily change
       // the integration direction by replacing thetas with d-thetas (since the integration goes from 0 to dev).
+      /// <summary>
+      /// Evaluates the transformed PDF core.
+      /// </summary>
+      /// <param name="thetas">The transformed integration angle.</param>
+      /// <returns>The value of the transformed PDF core.</returns>
       public double PDFCore(double thetas)
       {
         double r1;
@@ -2049,6 +2427,11 @@ namespace Altaxo.Calc.Probability
         return result;
       }
 
+      /// <summary>
+      /// Evaluates the transformed PDF integrand.
+      /// </summary>
+      /// <param name="x">The transformed integration variable.</param>
+      /// <returns>The transformed PDF integrand value.</returns>
       public double PDFFunc(double x)
       {
         double f = PDFCore(x);
@@ -2058,6 +2441,11 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Evaluates the logarithmically transformed PDF integrand.
+      /// </summary>
+      /// <param name="z">The logarithmic integration variable.</param>
+      /// <returns>The transformed PDF integrand value.</returns>
       public double PDFFuncLogInt(double z)
       {
         double x = Math.Exp(z);
@@ -2068,6 +2456,12 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Integrates the transformed PDF for the current parameter set.
+      /// </summary>
+      /// <param name="tempStorage">Temporary integration storage reused across calls.</param>
+      /// <param name="precision">The requested integration precision.</param>
+      /// <returns>The integrated PDF contribution or <see cref="double.NaN"/> on failure.</returns>
       public double Integrate(ref object? tempStorage, double precision)
       {
         GSL_ERROR? error;
@@ -2111,6 +2505,9 @@ namespace Altaxo.Calc.Probability
         }
       }
 
+      /// <summary>
+      /// Gets the upper integration limit.
+      /// </summary>
       public double UpperIntegrationLimit
       {
         get
@@ -2119,6 +2516,10 @@ namespace Altaxo.Calc.Probability
         }
       }
 
+      /// <summary>
+      /// Determines whether the maximum of the transformed PDF core lies on the left-hand side.
+      /// </summary>
+      /// <returns><see langword="true"/> if the maximum lies on the left-hand side; otherwise, <see langword="false"/>.</returns>
       public bool IsMaximumLeftHandSide()
       {
         return PDFCore(0.5 * _dev) > 1;
@@ -2126,6 +2527,11 @@ namespace Altaxo.Calc.Probability
 
       #region CDF
 
+      /// <summary>
+      /// Evaluates the cumulative distribution integrand.
+      /// </summary>
+      /// <param name="x">The evaluation point.</param>
+      /// <returns>The integrand value.</returns>
       public double CDFFunc(double x)
       {
         double f = PDFCore(x);
@@ -2135,6 +2541,11 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Evaluates the logarithmic cumulative distribution integrand.
+      /// </summary>
+      /// <param name="z">The logarithmic integration variable.</param>
+      /// <returns>The integrand value.</returns>
       public double CDFFuncLogInt(double z)
       {
         double x = Math.Exp(z) + _x0;
@@ -2145,6 +2556,12 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Integrates the cumulative distribution function.
+      /// </summary>
+      /// <param name="tempStorage">Temporary storage reused between calls.</param>
+      /// <param name="precision">Relative precision goal.</param>
+      /// <returns>The integrated value or <see cref="double.NaN"/> on failure.</returns>
       public double CDFIntegrate(ref object? tempStorage, double precision)
       {
         GSL_ERROR? error1;
@@ -2183,6 +2600,9 @@ namespace Altaxo.Calc.Probability
       #endregion CDF
     }
 
+    /// <summary>
+    /// Specialized helper for the near-one alpha case with increasing integration direction.
+    /// </summary>
     public class Alt1GpIA1 : Alt1GpI
     {
       /// <summary>X-value where the core function is equal to 1.</summary>
@@ -2197,11 +2617,24 @@ namespace Altaxo.Calc.Probability
       /// <summary>Distance from _xm, for which points we use the derivative approximation.</summary>
       private double _xmax;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="Alt1GpIA1"/> class.
+      /// </summary>
+      /// <param name="factorp">The multiplicative core factor.</param>
+      /// <param name="facdiv">The divisive core factor.</param>
+      /// <param name="logPdfPrefactor">The logarithm of the PDF prefactor.</param>
+      /// <param name="alpha">The characteristic exponent.</param>
+      /// <param name="dev">The deviation angle.</param>
       public Alt1GpIA1(double factorp, double facdiv, double logPdfPrefactor, double alpha, double dev)
         : base(factorp, facdiv, logPdfPrefactor, alpha, dev)
       {
       }
 
+      /// <summary>
+      /// Evaluates the modified PDF core around the peak region.
+      /// </summary>
+      /// <param name="dx">The offset from the peak location.</param>
+      /// <returns>The modified PDF core value.</returns>
       public double PDFCoreMod(double dx)
       {
         if (Math.Abs(dx) < _xmax)
@@ -2216,6 +2649,11 @@ namespace Altaxo.Calc.Probability
         }
       }
 
+      /// <summary>
+      /// Evaluates the logarithmically transformed PDF integrand to the left of the peak region.
+      /// </summary>
+      /// <param name="z">The logarithmic integration variable.</param>
+      /// <returns>The transformed PDF integrand value.</returns>
       public double PDFFuncLogIntToLeft(double z)
       {
         double x = Math.Max(-_xm, _x0 - Math.Exp(z));
@@ -2226,6 +2664,11 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Evaluates the logarithmically transformed PDF integrand to the right of the peak region.
+      /// </summary>
+      /// <param name="z">The logarithmic integration variable.</param>
+      /// <returns>The transformed PDF integrand value.</returns>
       public double PDFFuncLogIntToRight(double z)
       {
         double x = _x0 + Math.Exp(z);
@@ -2236,6 +2679,12 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Integrates the transformed PDF for the near-one alpha case.
+      /// </summary>
+      /// <param name="tempStorage">Temporary integration storage reused across calls.</param>
+      /// <param name="precision">The requested integration precision.</param>
+      /// <returns>The integrated PDF contribution.</returns>
       public double PDFIntegrateAlphaNearOne(ref object? tempStorage, double precision)
       {
         GSL_ERROR? error;
@@ -2290,17 +2739,55 @@ namespace Altaxo.Calc.Probability
 
     #region Function decreasing
 
+    /// <summary>
+    /// Helper class for calculation used if alpha&lt;1, gamma&gt;0 and for decreasing integration direction.
+    /// </summary>
     public class Alt1GpD
     {
+      /// <summary>
+      /// The multiplicative core factor.
+      /// </summary>
       protected double factorp;
+
+      /// <summary>
+      /// The divisive core factor.
+      /// </summary>
       protected double facdiv;
+
+      /// <summary>
+      /// The characteristic exponent.
+      /// </summary>
       protected double alpha;
+
+      /// <summary>
+      /// The deviation angle.
+      /// </summary>
       protected double dev;
+
+      /// <summary>
+      /// The logarithm of the PDF prefactor.
+      /// </summary>
       protected double logPdfPrefactor;
+
+      /// <summary>
+      /// The logarithmic integration offset.
+      /// </summary>
       protected double _x0;
+
+      /// <summary>
+      /// The cached transformed PDF core delegate.
+      /// </summary>
       protected Func<double, double> pdfCore;
       private Func<double, double> pdfFunc;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="Alt1GpD"/> class.
+      /// </summary>
+      /// <param name="factorp">The multiplicative core factor.</param>
+      /// <param name="facdiv">The divisive core factor.</param>
+      /// <param name="logPdfPrefactor">The logarithm of the PDF prefactor.</param>
+      /// <param name="alpha">The characteristic exponent.</param>
+      /// <param name="dev">The deviation angle.</param>
       public Alt1GpD(double factorp, double facdiv, double logPdfPrefactor, double alpha, double dev)
       {
         this.factorp = factorp;
@@ -2312,12 +2799,20 @@ namespace Altaxo.Calc.Probability
         pdfFunc = new Func<double, double>(PDFFunc);
       }
 
+      /// <summary>
+      /// Reinitializes the cached delegates for the transformed PDF functions.
+      /// </summary>
       public void Initialize()
       {
         pdfCore = new Func<double, double>(PDFCore);
         pdfFunc = new Func<double, double>(PDFFunc);
       }
 
+      /// <summary>
+      /// Evaluates the transformed PDF core.
+      /// </summary>
+      /// <param name="thetas">The transformed angle variable.</param>
+      /// <returns>The transformed PDF core value.</returns>
       public double PDFCore(double thetas)
       {
         double r1;
@@ -2334,6 +2829,11 @@ namespace Altaxo.Calc.Probability
         return result;
       }
 
+      /// <summary>
+      /// Evaluates the transformed probability density function.
+      /// </summary>
+      /// <param name="x">The evaluation point.</param>
+      /// <returns>The transformed PDF value.</returns>
       public double PDFFunc(double x)
       {
         double f = PDFCore(x);
@@ -2343,6 +2843,11 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Evaluates the logarithmically transformed PDF integrand.
+      /// </summary>
+      /// <param name="z">The logarithmic integration variable.</param>
+      /// <returns>The transformed PDF integrand value.</returns>
       public double PDFFuncLogInt(double z)
       {
         double x = Math.Exp(z);
@@ -2353,6 +2858,9 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Gets the upper integration limit.
+      /// </summary>
       public double UpperIntegrationLimit
       {
         get
@@ -2361,6 +2869,12 @@ namespace Altaxo.Calc.Probability
         }
       }
 
+      /// <summary>
+      /// Integrates the transformed PDF for the current parameter set.
+      /// </summary>
+      /// <param name="tempStorage">Temporary integration storage reused across calls.</param>
+      /// <param name="precision">The requested integration precision.</param>
+      /// <returns>The integrated PDF contribution.</returns>
       public double Integrate(ref object? tempStorage, double precision)
       {
         GSL_ERROR? error;
@@ -2406,6 +2920,11 @@ namespace Altaxo.Calc.Probability
 
       #region CDF
 
+      /// <summary>
+      /// Evaluates the cumulative distribution integrand.
+      /// </summary>
+      /// <param name="x">The evaluation point.</param>
+      /// <returns>The integrand value.</returns>
       public double CDFFunc(double x)
       {
         double f = PDFCore(x);
@@ -2415,6 +2934,11 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Evaluates the logarithmic cumulative distribution integrand.
+      /// </summary>
+      /// <param name="z">The logarithmic integration variable.</param>
+      /// <returns>The integrand value.</returns>
       public double CDFFuncLogInt(double z)
       {
         double x = Math.Exp(z) + _x0;
@@ -2425,6 +2949,12 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Integrates the cumulative distribution function.
+      /// </summary>
+      /// <param name="tempStorage">Temporary storage reused between calls.</param>
+      /// <param name="precision">Relative precision goal.</param>
+      /// <returns>The integrated value or <see cref="double.NaN"/> on failure.</returns>
       public double CDFIntegrate(ref object? tempStorage, double precision)
       {
         GSL_ERROR? error1;
@@ -2461,6 +2991,9 @@ namespace Altaxo.Calc.Probability
       #endregion CDF
     }
 
+    /// <summary>
+    /// Specialized helper for the near-one alpha case with decreasing integration direction.
+    /// </summary>
     public class Alt1GpDA1 : Alt1GpD
     {
       /// <summary>X-value where the core function is equal to 1.</summary>
@@ -2475,11 +3008,24 @@ namespace Altaxo.Calc.Probability
       /// <summary>Distance from _xm, for which points we use the derivative approximation.</summary>
       private double _xmax;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="Alt1GpDA1"/> class.
+      /// </summary>
+      /// <param name="factorp">The multiplicative core factor.</param>
+      /// <param name="facdiv">The divisive core factor.</param>
+      /// <param name="logPdfPrefactor">The logarithm of the PDF prefactor.</param>
+      /// <param name="alpha">The characteristic exponent.</param>
+      /// <param name="dev">The deviation angle.</param>
       public Alt1GpDA1(double factorp, double facdiv, double logPdfPrefactor, double alpha, double dev)
         : base(factorp, facdiv, logPdfPrefactor, alpha, dev)
       {
       }
 
+      /// <summary>
+      /// Evaluates the modified PDF core around the peak region.
+      /// </summary>
+      /// <param name="dx">The offset from the peak location.</param>
+      /// <returns>The modified PDF core value.</returns>
       public double PDFCoreMod(double dx)
       {
         if (Math.Abs(dx) < _xmax)
@@ -2494,6 +3040,11 @@ namespace Altaxo.Calc.Probability
         }
       }
 
+      /// <summary>
+      /// Evaluates the logarithmically transformed PDF integrand to the left of the peak region.
+      /// </summary>
+      /// <param name="z">The logarithmic integration variable.</param>
+      /// <returns>The transformed PDF integrand value.</returns>
       public double PDFFuncLogIntToLeft(double z)
       {
         double x = Math.Max(-_xm, _x0 - Math.Exp(z));
@@ -2504,6 +3055,11 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Evaluates the logarithmic PDF integrand on the right-hand interval.
+      /// </summary>
+      /// <param name="z">The logarithmic integration variable.</param>
+      /// <returns>The transformed PDF value.</returns>
       public double PDFFuncLogIntToRight(double z)
       {
         double x = _x0 + Math.Exp(z);
@@ -2514,6 +3070,12 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Integrates the transformed PDF for the near-one alpha case.
+      /// </summary>
+      /// <param name="tempStorage">Temporary integration storage reused across calls.</param>
+      /// <param name="precision">The requested integration precision.</param>
+      /// <returns>The integrated PDF contribution.</returns>
       public double PDFIntegrateAlphaNearOne(ref object? tempStorage, double precision)
       {
         GSL_ERROR? error;
@@ -2572,6 +3134,9 @@ namespace Altaxo.Calc.Probability
 
     #region Classes for integration (alpha==1)
 
+    /// <summary>
+    /// Helper class for calculation used if alpha equals one and for increasing integration direction.
+    /// </summary>
     public class Aeq1I
     {
       private double beta;
@@ -2580,6 +3145,12 @@ namespace Altaxo.Calc.Probability
       private double logPdfPrefactor;
       private double _x0;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="Aeq1I"/> class.
+      /// </summary>
+      /// <param name="x">The transformed argument.</param>
+      /// <param name="beta">The skewness parameter.</param>
+      /// <param name="abe">The alternative beta helper value.</param>
       public Aeq1I(double x, double beta, double abe)
       {
         this.beta = beta;
@@ -2588,6 +3159,11 @@ namespace Altaxo.Calc.Probability
         logPdfPrefactor = -Math.Log(2 * Math.Abs(beta));
       }
 
+      /// <summary>
+      /// Evaluates the transformed PDF core.
+      /// </summary>
+      /// <param name="thetas">The transformed integration angle.</param>
+      /// <returns>The value of the transformed PDF core.</returns>
       public double PDFCore(double thetas)
       {
         double r1;
@@ -2612,6 +3188,11 @@ namespace Altaxo.Calc.Probability
         return result;
       }
 
+      /// <summary>
+      /// Evaluates the transformed PDF core derivative divided by the core value.
+      /// </summary>
+      /// <param name="thetas">The transformed integration angle.</param>
+      /// <returns>The normalized derivative of the transformed PDF core.</returns>
       public double PDFCoreDerivativeByCore(double thetas)
       {
         double abeta = Math.Abs(beta);
@@ -2624,6 +3205,11 @@ namespace Altaxo.Calc.Probability
         return s1 + s2 + s3;
       }
 
+      /// <summary>
+      /// Evaluates the transformed probability density function.
+      /// </summary>
+      /// <param name="x">The evaluation point.</param>
+      /// <returns>The transformed PDF value.</returns>
       public double PDFFunc(double x)
       {
         double f = PDFCore(x);
@@ -2633,6 +3219,11 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Evaluates the logarithmically transformed PDF integrand.
+      /// </summary>
+      /// <param name="z">The logarithmic integration variable.</param>
+      /// <returns>The transformed PDF integrand value.</returns>
       public double PDFFuncLogInt(double z)
       {
         double x = Math.Exp(z);
@@ -2643,6 +3234,11 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Evaluates the logarithmic PDF integrand on the left-hand interval.
+      /// </summary>
+      /// <param name="z">The logarithmic integration variable.</param>
+      /// <returns>The transformed PDF value.</returns>
       public double PDFFuncLogIntToLeft(double z)
       {
         double x = _x0 - Math.Exp(z);
@@ -2656,6 +3252,11 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Evaluates the logarithmic PDF integrand on the right-hand interval.
+      /// </summary>
+      /// <param name="z">The logarithmic integration variable.</param>
+      /// <returns>The transformed PDF value.</returns>
       public double PDFFuncLogIntToRight(double z)
       {
         double x = _x0 + Math.Exp(z);
@@ -2666,6 +3267,12 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Integrates the probability density function.
+      /// </summary>
+      /// <param name="tempStorage">Temporary storage reused between calls.</param>
+      /// <param name="precision">Relative precision goal.</param>
+      /// <returns>The integrated value or <see cref="double.NaN"/> on failure.</returns>
       public double Integrate(ref object? tempStorage, double precision)
       {
         if (abe == 0)
@@ -2674,6 +3281,12 @@ namespace Altaxo.Calc.Probability
           return IntegrateAbeNotEqZero(ref tempStorage, precision);
       }
 
+      /// <summary>
+      /// Integrates the probability density function for nonzero <c>abe</c>.
+      /// </summary>
+      /// <param name="tempStorage">Temporary storage reused between calls.</param>
+      /// <param name="precision">Relative precision goal.</param>
+      /// <returns>The integrated value or <see cref="double.NaN"/> on failure.</returns>
       public double IntegrateAbeNotEqZero(ref object? tempStorage, double precision)
       {
         GSL_ERROR? error;
@@ -2740,6 +3353,12 @@ namespace Altaxo.Calc.Probability
         }
       }
 
+      /// <summary>
+      /// Integrates the probability density function for zero <c>abe</c>.
+      /// </summary>
+      /// <param name="tempStorage">Temporary storage reused between calls.</param>
+      /// <param name="precision">Relative precision goal.</param>
+      /// <returns>The integrated value or <see cref="double.NaN"/> on failure.</returns>
       public double IntegrateAbeEqZero(ref object? tempStorage, double precision)
       {
         GSL_ERROR? error;
@@ -2774,6 +3393,9 @@ namespace Altaxo.Calc.Probability
         }
       }
 
+      /// <summary>
+      /// Gets the upper integration limit.
+      /// </summary>
       public double UpperIntegrationLimit
       {
         get
@@ -2782,6 +3404,10 @@ namespace Altaxo.Calc.Probability
         }
       }
 
+      /// <summary>
+      /// Determines whether the transformed PDF maximum lies on the left-hand side.
+      /// </summary>
+      /// <returns><see langword="true"/> if the maximum lies on the left-hand side; otherwise, <see langword="false"/>.</returns>
       public bool IsMaximumLeftHandSide()
       {
         return PDFCore(0.5 * UpperIntegrationLimit) > 1;
@@ -2789,6 +3415,11 @@ namespace Altaxo.Calc.Probability
 
       #region CDF
 
+      /// <summary>
+      /// Evaluates the cumulative distribution integrand.
+      /// </summary>
+      /// <param name="x">The evaluation point.</param>
+      /// <returns>The integrand value.</returns>
       public double CDFFunc(double x)
       {
         double f = PDFCore(x);
@@ -2798,6 +3429,11 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Evaluates the logarithmic cumulative distribution integrand.
+      /// </summary>
+      /// <param name="z">The logarithmic integration variable.</param>
+      /// <returns>The integrand value.</returns>
       public double CDFFuncLogInt(double z)
       {
         double x = Math.Exp(z) + _x0;
@@ -2808,6 +3444,12 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Integrates the cumulative distribution function.
+      /// </summary>
+      /// <param name="tempStorage">Temporary storage reused between calls.</param>
+      /// <param name="precision">Relative precision goal.</param>
+      /// <returns>The integrated value or <see cref="double.NaN"/> on failure.</returns>
       public double CDFIntegrate(ref object? tempStorage, double precision)
       {
         GSL_ERROR? error1;
@@ -2844,6 +3486,9 @@ namespace Altaxo.Calc.Probability
       #endregion CDF
     }
 
+    /// <summary>
+    /// Helper class for calculation used if alpha equals one and for decreasing integration direction.
+    /// </summary>
     public class Aeq1D
     {
       private double beta;
@@ -2852,6 +3497,12 @@ namespace Altaxo.Calc.Probability
       private double logPdfPrefactor;
       private double _x0;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="Aeq1D"/> class.
+      /// </summary>
+      /// <param name="x">The transformed argument.</param>
+      /// <param name="beta">The skewness parameter.</param>
+      /// <param name="abe">The alternative beta helper value.</param>
       public Aeq1D(double x, double beta, double abe)
       {
         this.beta = beta;
@@ -2860,6 +3511,11 @@ namespace Altaxo.Calc.Probability
         logPdfPrefactor = -Math.Log(2 * Math.Abs(beta));
       }
 
+      /// <summary>
+      /// Evaluates the transformed PDF core.
+      /// </summary>
+      /// <param name="thetas">The transformed integration angle.</param>
+      /// <returns>The value of the transformed PDF core.</returns>
       public double PDFCore(double thetas)
       {
         double r1;
@@ -2877,6 +3533,11 @@ namespace Altaxo.Calc.Probability
         return result;
       }
 
+      /// <summary>
+      /// Evaluates the transformed PDF core derivative divided by the core value.
+      /// </summary>
+      /// <param name="thetas">The transformed integration angle.</param>
+      /// <returns>The normalized derivative of the transformed PDF core.</returns>
       public double PDFCoreDerivativeByCore(double thetas)
       {
         double abeta = Math.Abs(beta);
@@ -2888,6 +3549,11 @@ namespace Altaxo.Calc.Probability
         return s1 + s2 + s3;
       }
 
+      /// <summary>
+      /// Evaluates the transformed probability density function.
+      /// </summary>
+      /// <param name="x">The evaluation point.</param>
+      /// <returns>The transformed PDF value.</returns>
       public double PDFFunc(double x)
       {
         double f = PDFCore(x);
@@ -2897,6 +3563,11 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Evaluates the logarithmically transformed PDF integrand.
+      /// </summary>
+      /// <param name="z">The logarithmic integration variable.</param>
+      /// <returns>The transformed PDF integrand value.</returns>
       public double PDFFuncLogInt(double z)
       {
         double x = Math.Exp(z);
@@ -2907,6 +3578,11 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Evaluates the logarithmic PDF integrand on the left-hand interval.
+      /// </summary>
+      /// <param name="z">The logarithmic integration variable.</param>
+      /// <returns>The transformed PDF value.</returns>
       public double PDFFuncLogIntToLeft(double z)
       {
         double x = _x0 - Math.Exp(z);
@@ -2920,6 +3596,11 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Evaluates the logarithmic PDF integrand on the right-hand interval.
+      /// </summary>
+      /// <param name="z">The logarithmic integration variable.</param>
+      /// <returns>The transformed PDF value.</returns>
       public double PDFFuncLogIntToRight(double z)
       {
         double x = _x0 + Math.Exp(z);
@@ -2930,6 +3611,12 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Integrates the probability density function.
+      /// </summary>
+      /// <param name="tempStorage">Temporary storage reused between calls.</param>
+      /// <param name="precision">Relative precision goal.</param>
+      /// <returns>The integrated value or <see cref="double.NaN"/> on failure.</returns>
       public double Integrate(ref object? tempStorage, double precision)
       {
         GSL_ERROR? error;
@@ -2993,6 +3680,9 @@ namespace Altaxo.Calc.Probability
         }
       }
 
+      /// <summary>
+      /// Gets the upper integration limit.
+      /// </summary>
       public double UpperIntegrationLimit
       {
         get
@@ -3001,6 +3691,10 @@ namespace Altaxo.Calc.Probability
         }
       }
 
+      /// <summary>
+      /// Determines whether the transformed PDF maximum lies on the left-hand side.
+      /// </summary>
+      /// <returns><see langword="true"/> if the maximum lies on the left-hand side; otherwise, <see langword="false"/>.</returns>
       public bool IsMaximumLeftHandSide()
       {
         return PDFCore(0.5 * UpperIntegrationLimit) > 1;
@@ -3008,6 +3702,11 @@ namespace Altaxo.Calc.Probability
 
       #region CDF
 
+      /// <summary>
+      /// Evaluates the cumulative distribution integrand.
+      /// </summary>
+      /// <param name="x">The evaluation point.</param>
+      /// <returns>The integrand value.</returns>
       public double CDFFunc(double x)
       {
         double f = PDFCore(x);
@@ -3017,6 +3716,11 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Evaluates the logarithmic cumulative distribution integrand.
+      /// </summary>
+      /// <param name="z">The logarithmic integration variable.</param>
+      /// <returns>The integrand value.</returns>
       public double CDFFuncLogInt(double z)
       {
         double x = Math.Exp(z) + _x0;
@@ -3027,6 +3731,12 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Integrates the cumulative distribution function.
+      /// </summary>
+      /// <param name="tempStorage">Temporary storage reused between calls.</param>
+      /// <param name="precision">Relative precision goal.</param>
+      /// <returns>The integrated value or <see cref="double.NaN"/> on failure.</returns>
       public double CDFIntegrate(ref object? tempStorage, double precision)
       {
         GSL_ERROR? error1;
@@ -3078,6 +3788,14 @@ namespace Altaxo.Calc.Probability
       private Func<double, double> pdfCore;
       private Func<double, double> pdfFunc;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="Agt1GnI"/> class.
+      /// </summary>
+      /// <param name="factorp">The multiplicative core factor.</param>
+      /// <param name="factorw">The multiplicative weight factor.</param>
+      /// <param name="logPdfPrefactor">The logarithm of the PDF prefactor.</param>
+      /// <param name="alpha">The characteristic exponent.</param>
+      /// <param name="dev">The deviation angle.</param>
       public Agt1GnI(double factorp, double factorw, double logPdfPrefactor, double alpha, double dev)
       {
         this.factorp = factorp;
@@ -3089,12 +3807,20 @@ namespace Altaxo.Calc.Probability
         pdfFunc = new Func<double, double>(PDFFunc);
       }
 
+      /// <summary>
+      /// Reinitializes the cached delegates for the transformed PDF functions.
+      /// </summary>
       public void Initialize()
       {
         pdfCore = new Func<double, double>(PDFCore);
         pdfFunc = new Func<double, double>(PDFFunc);
       }
 
+      /// <summary>
+      /// Evaluates the transformed PDF core.
+      /// </summary>
+      /// <param name="thetas">The transformed angle variable.</param>
+      /// <returns>The transformed PDF core value.</returns>
       public double PDFCore(double thetas)
       {
         double r1;
@@ -3118,6 +3844,11 @@ namespace Altaxo.Calc.Probability
         return result;
       }
 
+      /// <summary>
+      /// Evaluates the transformed probability density function.
+      /// </summary>
+      /// <param name="x">The evaluation point.</param>
+      /// <returns>The transformed PDF value.</returns>
       public double PDFFunc(double x)
       {
         double f = PDFCore(x);
@@ -3127,6 +3858,11 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Evaluates the logarithmic PDF integrand on the right-hand interval.
+      /// </summary>
+      /// <param name="z">The logarithmic integration variable.</param>
+      /// <returns>The transformed PDF value.</returns>
       public double PDFFuncLogIntToRight(double z)
       {
         double x = _x0 + Math.Exp(z);
@@ -3137,6 +3873,12 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Integrates the probability density function.
+      /// </summary>
+      /// <param name="tempStorage">Temporary storage reused between calls.</param>
+      /// <param name="precision">Relative precision goal.</param>
+      /// <returns>The integrated value or <see cref="double.NaN"/> on failure.</returns>
       public double Integrate(ref object? tempStorage, double precision)
       {
         double xm = FindIncreasingYEqualToOne(pdfCore, 0, UpperIntegrationLimit);
@@ -3179,6 +3921,9 @@ namespace Altaxo.Calc.Probability
         }
       }
 
+      /// <summary>
+      /// Gets the upper integration limit.
+      /// </summary>
       public double UpperIntegrationLimit
       {
         get
@@ -3187,6 +3932,10 @@ namespace Altaxo.Calc.Probability
         }
       }
 
+      /// <summary>
+      /// Determines whether the transformed PDF maximum lies on the left-hand side.
+      /// </summary>
+      /// <returns><see langword="true"/> if the maximum lies on the left-hand side; otherwise, <see langword="false"/>.</returns>
       public bool IsMaximumLeftHandSide()
       {
         return PDFCore(0.5 * UpperIntegrationLimit) > 1;
@@ -3194,6 +3943,11 @@ namespace Altaxo.Calc.Probability
 
       #region CDF
 
+      /// <summary>
+      /// Evaluates the cumulative distribution integrand.
+      /// </summary>
+      /// <param name="x">The evaluation point.</param>
+      /// <returns>The integrand value.</returns>
       public double CDFFunc(double x)
       {
         double f = PDFCore(x);
@@ -3203,6 +3957,11 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Evaluates the logarithmic cumulative distribution integrand.
+      /// </summary>
+      /// <param name="z">The logarithmic integration variable.</param>
+      /// <returns>The integrand value.</returns>
       public double CDFFuncLogInt(double z)
       {
         double x = Math.Exp(z) + _x0;
@@ -3213,6 +3972,12 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Integrates the cumulative distribution function.
+      /// </summary>
+      /// <param name="tempStorage">Temporary storage reused between calls.</param>
+      /// <param name="precision">Relative precision goal.</param>
+      /// <returns>The integrated value or <see cref="double.NaN"/> on failure.</returns>
       public double CDFIntegrate(ref object? tempStorage, double precision)
       {
         GSL_ERROR? error1;
@@ -3266,6 +4031,14 @@ namespace Altaxo.Calc.Probability
       private Func<double, double> pdfCore;
       private Func<double, double> pdfFunc;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="Agt1GnD"/> class.
+      /// </summary>
+      /// <param name="factorp">The multiplicative core factor.</param>
+      /// <param name="factorw">The multiplicative weight factor.</param>
+      /// <param name="logPdfPrefactor">The logarithm of the PDF prefactor.</param>
+      /// <param name="alpha">The characteristic exponent.</param>
+      /// <param name="dev">The deviation angle.</param>
       public Agt1GnD(double factorp, double factorw, double logPdfPrefactor, double alpha, double dev)
       {
         this.factorp = factorp;
@@ -3277,12 +4050,20 @@ namespace Altaxo.Calc.Probability
         pdfFunc = new Func<double, double>(PDFFunc);
       }
 
+      /// <summary>
+      /// Reinitializes the cached delegates for the transformed PDF functions.
+      /// </summary>
       public void Initialize()
       {
         pdfCore = new Func<double, double>(PDFCore);
         pdfFunc = new Func<double, double>(PDFFunc);
       }
 
+      /// <summary>
+      /// Evaluates the transformed PDF core.
+      /// </summary>
+      /// <param name="thetas">The transformed angle variable.</param>
+      /// <returns>The transformed PDF core value.</returns>
       public double PDFCore(double thetas)
       {
         double r1;
@@ -3302,6 +4083,11 @@ namespace Altaxo.Calc.Probability
         return result;
       }
 
+      /// <summary>
+      /// Evaluates the transformed probability density function.
+      /// </summary>
+      /// <param name="x">The evaluation point.</param>
+      /// <returns>The transformed PDF value.</returns>
       public double PDFFunc(double x)
       {
         double f = PDFCore(x);
@@ -3311,6 +4097,11 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Evaluates the logarithmic PDF integrand on the right-hand interval.
+      /// </summary>
+      /// <param name="z">The logarithmic integration variable.</param>
+      /// <returns>The transformed PDF value.</returns>
       public double PDFFuncLogIntToRight(double z)
       {
         double x = _x0 + Math.Exp(z);
@@ -3321,6 +4112,12 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Integrates the probability density function.
+      /// </summary>
+      /// <param name="tempStorage">Temporary storage reused between calls.</param>
+      /// <param name="precision">Relative precision goal.</param>
+      /// <returns>The integrated value or <see cref="double.NaN"/> on failure.</returns>
       public double Integrate(ref object? tempStorage, double precision)
       {
         double xm = FindDecreasingYEqualToOne(pdfCore, 0, UpperIntegrationLimit);
@@ -3363,6 +4160,9 @@ namespace Altaxo.Calc.Probability
         }
       }
 
+      /// <summary>
+      /// Gets the upper integration limit.
+      /// </summary>
       public double UpperIntegrationLimit
       {
         get
@@ -3373,6 +4173,11 @@ namespace Altaxo.Calc.Probability
 
       #region CDF
 
+      /// <summary>
+      /// Evaluates the cumulative distribution integrand.
+      /// </summary>
+      /// <param name="x">The evaluation point.</param>
+      /// <returns>The integrand value.</returns>
       public double CDFFunc(double x)
       {
         double f = PDFCore(x);
@@ -3382,6 +4187,11 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Evaluates the logarithmic cumulative distribution integrand.
+      /// </summary>
+      /// <param name="z">The logarithmic integration variable.</param>
+      /// <returns>The integrand value.</returns>
       public double CDFFuncLogInt(double z)
       {
         double x = Math.Exp(z) + _x0;
@@ -3392,6 +4202,12 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Integrates the cumulative distribution function.
+      /// </summary>
+      /// <param name="tempStorage">Temporary storage reused between calls.</param>
+      /// <param name="precision">Relative precision goal.</param>
+      /// <returns>The integrated value or <see cref="double.NaN"/> on failure.</returns>
       public double CDFIntegrate(ref object? tempStorage, double precision)
       {
         GSL_ERROR? error1;
@@ -3443,6 +4259,14 @@ namespace Altaxo.Calc.Probability
       private Func<double, double> pdfCore;
       private Func<double, double> pdfFunc;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="Agt1GpI"/> class.
+      /// </summary>
+      /// <param name="factorp">The multiplicative core factor.</param>
+      /// <param name="factorw">The multiplicative weight factor.</param>
+      /// <param name="logPdfPrefactor">The logarithm of the PDF prefactor.</param>
+      /// <param name="alpha">The characteristic exponent.</param>
+      /// <param name="dev">The deviation angle.</param>
       public Agt1GpI(double factorp, double factorw, double logPdfPrefactor, double alpha, double dev)
       {
         this.factorp = factorp;
@@ -3454,12 +4278,20 @@ namespace Altaxo.Calc.Probability
         pdfFunc = new Func<double, double>(PDFFunc);
       }
 
+      /// <summary>
+      /// Reinitializes the cached delegates for the transformed PDF functions.
+      /// </summary>
       public void Initialize()
       {
         pdfCore = new Func<double, double>(PDFCore);
         pdfFunc = new Func<double, double>(PDFFunc);
       }
 
+      /// <summary>
+      /// Evaluates the transformed PDF core.
+      /// </summary>
+      /// <param name="thetas">The transformed angle variable.</param>
+      /// <returns>The transformed PDF core value.</returns>
       public double PDFCore(double thetas)
       {
         double r1;
@@ -3477,6 +4309,11 @@ namespace Altaxo.Calc.Probability
         return result;
       }
 
+      /// <summary>
+      /// Evaluates the transformed probability density function.
+      /// </summary>
+      /// <param name="x">The evaluation point.</param>
+      /// <returns>The transformed PDF value.</returns>
       public double PDFFunc(double x)
       {
         double f = PDFCore(x);
@@ -3486,6 +4323,11 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Evaluates the logarithmic PDF integrand on the right-hand interval.
+      /// </summary>
+      /// <param name="z">The logarithmic integration variable.</param>
+      /// <returns>The transformed PDF value.</returns>
       public double PDFFuncLogIntToRight(double z)
       {
         double x = _x0 + Math.Exp(z);
@@ -3496,6 +4338,12 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Integrates the probability density function.
+      /// </summary>
+      /// <param name="tempStorage">Temporary storage reused between calls.</param>
+      /// <param name="precision">Relative precision goal.</param>
+      /// <returns>The integrated value or <see cref="double.NaN"/> on failure.</returns>
       public double Integrate(ref object? tempStorage, double precision)
       {
         double xm = FindIncreasingYEqualToOne(pdfCore, 0, UpperIntegrationLimit);
@@ -3538,6 +4386,9 @@ namespace Altaxo.Calc.Probability
         }
       }
 
+      /// <summary>
+      /// Gets the upper integration limit.
+      /// </summary>
       public double UpperIntegrationLimit
       {
         get
@@ -3548,6 +4399,11 @@ namespace Altaxo.Calc.Probability
 
       #region CDF
 
+      /// <summary>
+      /// Evaluates the cumulative distribution integrand.
+      /// </summary>
+      /// <param name="x">The evaluation point.</param>
+      /// <returns>The integrand value.</returns>
       public double CDFFunc(double x)
       {
         double f = PDFCore(x);
@@ -3557,6 +4413,11 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Evaluates the logarithmic cumulative distribution integrand.
+      /// </summary>
+      /// <param name="z">The logarithmic integration variable.</param>
+      /// <returns>The integrand value.</returns>
       public double CDFFuncLogInt(double z)
       {
         double x = Math.Exp(z) + _x0;
@@ -3567,6 +4428,12 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Integrates the cumulative distribution function.
+      /// </summary>
+      /// <param name="tempStorage">Temporary storage reused between calls.</param>
+      /// <param name="precision">Relative precision goal.</param>
+      /// <returns>The integrated value or <see cref="double.NaN"/> on failure.</returns>
       public double CDFIntegrate(ref object? tempStorage, double precision)
       {
         GSL_ERROR? error1;
@@ -3618,6 +4485,14 @@ namespace Altaxo.Calc.Probability
       private Func<double, double> pdfCore;
       private Func<double, double> pdfFunc;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="Agt1GpD"/> class.
+      /// </summary>
+      /// <param name="factorp">The multiplicative core factor.</param>
+      /// <param name="factorw">The multiplicative weight factor.</param>
+      /// <param name="logPdfPrefactor">The logarithm of the PDF prefactor.</param>
+      /// <param name="alpha">The characteristic exponent.</param>
+      /// <param name="dev">The deviation angle.</param>
       public Agt1GpD(double factorp, double factorw, double logPdfPrefactor, double alpha, double dev)
       {
         this.factorp = factorp;
@@ -3629,12 +4504,20 @@ namespace Altaxo.Calc.Probability
         pdfFunc = new Func<double, double>(PDFFunc);
       }
 
+      /// <summary>
+      /// Reinitializes the cached delegates for the transformed PDF functions.
+      /// </summary>
       public void Initialize()
       {
         pdfCore = new Func<double, double>(PDFCore);
         pdfFunc = new Func<double, double>(PDFFunc);
       }
 
+      /// <summary>
+      /// Evaluates the transformed PDF core.
+      /// </summary>
+      /// <param name="thetas">The transformed angle variable.</param>
+      /// <returns>The transformed PDF core value.</returns>
       public double PDFCore(double thetas)
       {
         double r1;
@@ -3652,6 +4535,11 @@ namespace Altaxo.Calc.Probability
         return result;
       }
 
+      /// <summary>
+      /// Evaluates the transformed probability density function.
+      /// </summary>
+      /// <param name="x">The evaluation point.</param>
+      /// <returns>The transformed PDF value.</returns>
       public double PDFFunc(double x)
       {
         double f = PDFCore(x);
@@ -3661,6 +4549,11 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Evaluates the logarithmic PDF integrand on the right-hand interval.
+      /// </summary>
+      /// <param name="z">The logarithmic integration variable.</param>
+      /// <returns>The transformed PDF value.</returns>
       public double PDFFuncLogIntToRight(double z)
       {
         double x = _x0 + Math.Exp(z);
@@ -3671,6 +4564,12 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Integrates the probability density function.
+      /// </summary>
+      /// <param name="tempStorage">Temporary storage reused between calls.</param>
+      /// <param name="precision">Relative precision goal.</param>
+      /// <returns>The integrated value or <see cref="double.NaN"/> on failure.</returns>
       public double Integrate(ref object? tempStorage, double precision)
       {
         double xm = FindDecreasingYEqualToOne(pdfCore, 0, UpperIntegrationLimit);
@@ -3702,10 +4601,10 @@ namespace Altaxo.Calc.Probability
                         0, precision, 200, out var result, out var abserr, ref tempStorage);
 
             if (error is null)
-          return result;
+              return result;
             else
               return double.NaN;
-        }
+          }
         }
         catch (Exception)
         {
@@ -3713,6 +4612,9 @@ namespace Altaxo.Calc.Probability
         }
       }
 
+      /// <summary>
+      /// Gets the upper integration limit.
+      /// </summary>
       public double UpperIntegrationLimit
       {
         get
@@ -3723,6 +4625,11 @@ namespace Altaxo.Calc.Probability
 
       #region CDF
 
+      /// <summary>
+      /// Evaluates the cumulative distribution integrand.
+      /// </summary>
+      /// <param name="x">The evaluation point.</param>
+      /// <returns>The integrand value.</returns>
       public double CDFFunc(double x)
       {
         double f = PDFCore(x);
@@ -3732,6 +4639,11 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Evaluates the logarithmic cumulative distribution integrand.
+      /// </summary>
+      /// <param name="z">The logarithmic integration variable.</param>
+      /// <returns>The integrand value.</returns>
       public double CDFFuncLogInt(double z)
       {
         double x = Math.Exp(z) + _x0;
@@ -3742,6 +4654,12 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      /// <summary>
+      /// Integrates the cumulative distribution function.
+      /// </summary>
+      /// <param name="tempStorage">Temporary storage reused between calls.</param>
+      /// <param name="precision">Relative precision goal.</param>
+      /// <returns>The integrated value or <see cref="double.NaN"/> on failure.</returns>
       public double CDFIntegrate(ref object? tempStorage, double precision)
       {
         GSL_ERROR? error1;

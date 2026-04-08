@@ -32,11 +32,20 @@ using System.Threading;
 
 namespace Altaxo.Calc.Providers
 {
+  /// <summary>
+  /// Lazily probes for and creates provider instances.
+  /// </summary>
+  /// <typeparam name="T">The provider type.</typeparam>
   public class ProviderProbe<T> where T : class
   {
     private readonly bool _disabled;
     private readonly Lazy<IProviderCreator<T>> _creator;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ProviderProbe{T}"/> class.
+    /// </summary>
+    /// <param name="typeName">The assembly-qualified type name of the provider creator.</param>
+    /// <param name="disabled">If set to <see langword="true"/>, probing is disabled.</param>
     public ProviderProbe(string typeName, bool disabled = false)
     {
       _disabled = disabled;
@@ -47,6 +56,10 @@ namespace Altaxo.Calc.Providers
       }, LazyThreadSafetyMode.ExecutionAndPublication);
     }
 
+    /// <summary>
+    /// Creates the provider or throws if probing is disabled or fails.
+    /// </summary>
+    /// <returns>The created provider.</returns>
     public T Create()
     {
       if (_disabled)
@@ -73,6 +86,10 @@ namespace Altaxo.Calc.Providers
       return creator.CreateProvider();
     }
 
+    /// <summary>
+    /// Attempts to create the provider without throwing on failure.
+    /// </summary>
+    /// <returns>The created provider, or <see langword="null"/> if probing fails.</returns>
     public T TryCreate()
     {
       if (_disabled || AppSwitches.DisableNativeProviderProbing || AppSwitches.DisableNativeProviders)

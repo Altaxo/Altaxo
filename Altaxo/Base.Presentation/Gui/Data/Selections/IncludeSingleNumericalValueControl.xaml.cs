@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Data.Selections
   /// </summary>
   public partial class IncludeSingleNumericalValueControl : UserControl, IIncludeSingleNumericalValueView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IncludeSingleNumericalValueControl"/> class.
+    /// </summary>
     public IncludeSingleNumericalValueControl()
     {
       InitializeComponent();

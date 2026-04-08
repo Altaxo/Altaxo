@@ -36,10 +36,16 @@ namespace Altaxo.Gui.Pads.LightingPad
   /// </summary>
   public partial class LightingControl : UserControl, ILightingView
   {
+    /// <summary>
+    /// Occurs when the lighting settings change.
+    /// </summary>
     public event EventHandler? LightingChanged;
 
     private Altaxo.Graph.Graph3D.LightSettings _lighting = new Altaxo.Graph.Graph3D.LightSettings();
 
+    /// <summary>
+    /// Gets or sets the current lighting settings.
+    /// </summary>
     public Altaxo.Graph.Graph3D.LightSettings Lighting
     {
       get
@@ -61,6 +67,9 @@ namespace Altaxo.Gui.Pads.LightingPad
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LightingControl"/> class.
+    /// </summary>
     public LightingControl()
     {
       InitializeComponent();

@@ -34,6 +34,9 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public partial class MultiChoiceCheckboxControl : UserControl
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MultiChoiceCheckboxControl"/> class.
+    /// </summary>
     public MultiChoiceCheckboxControl()
     {
       InitializeComponent();

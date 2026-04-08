@@ -39,6 +39,9 @@ namespace Altaxo.Gui.Worksheet
   {
     private List<MasterCurveCreationDataColumnControl> _columns = new List<MasterCurveCreationDataColumnControl>();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MasterCurveCreationDataControl"/> class.
+    /// </summary>
     public MasterCurveCreationDataControl()
     {
       InitializeComponent();
@@ -69,6 +72,7 @@ namespace Altaxo.Gui.Worksheet
       }
     }
 
+    /// <inheritdoc/>
     public void InitializeListData(List<SelectableListNodeList> list)
     {
       AddRemoveGroups(list.Count);

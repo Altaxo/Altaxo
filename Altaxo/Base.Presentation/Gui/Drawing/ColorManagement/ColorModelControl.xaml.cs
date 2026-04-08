@@ -59,13 +59,21 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     private ITextOnlyColorModel _altColorModel;
     private AxoColor _currentColor;
 
+    /// <inheritdoc/>
     public AxoColor CurrentColor { get { return _currentColor; } }
 
 
+    /// <inheritdoc/>
     public event Action<AxoColor>? CurrentColorChanged;
 
+    /// <summary>
+    /// Gets a value indicating whether the control has finished loading.
+    /// </summary>
     public bool _isLoaded;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColorModelControl"/> class.
+    /// </summary>
     public ColorModelControl()
     {
       InitializeComponent();
@@ -101,6 +109,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       _isLoaded = true;
     }
 
+    /// <inheritdoc/>
     public void ChangeCurrentColor(AxoColor newColor, bool update1D, bool update2D, bool updateComponents, bool updateAltComponents)
     {
       _currentColor = newColor;
@@ -143,6 +152,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       CurrentColorChanged?.Invoke(_currentColor);
     }
 
+    /// <inheritdoc/>
     public void AmendAlphaComponent(ref AxoColor color)
     {
       if (_colorModel.IsUsingByteComponents)
@@ -304,6 +314,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
    
 
+    /// <inheritdoc/>
     public void InitializeColorModel(IColorModel colorModel, bool silentSet)
     {
       _colorModel = colorModel;
@@ -314,6 +325,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
    
 
+    /// <inheritdoc/>
     public void InitializeTextOnlyColorModel(ITextOnlyColorModel colorModel, bool silentSet)
     {
       _altColorModel = colorModel;
@@ -341,6 +353,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       }
     }
 
+    /// <inheritdoc/>
     public void InitializeCurrentColor(AxoColor color)
     {
       _currentColor = color;

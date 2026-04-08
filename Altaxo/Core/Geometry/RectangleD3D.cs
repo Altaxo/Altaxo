@@ -57,6 +57,7 @@ namespace Altaxo.Geometry
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RectangleD3D), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (RectangleD3D)obj;
@@ -68,6 +69,7 @@ namespace Altaxo.Geometry
         info.AddValue("SizeZ", s._sizeZ);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (RectangleD3D?)o ?? new RectangleD3D();
@@ -86,6 +88,15 @@ namespace Altaxo.Geometry
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RectangleD3D"/> struct.
+    /// </summary>
+    /// <param name="posX">The x-coordinate of the left side.</param>
+    /// <param name="posY">The y-coordinate of the top side.</param>
+    /// <param name="posZ">The z-coordinate of the front side.</param>
+    /// <param name="sizeX">The size in x-direction.</param>
+    /// <param name="sizeY">The size in y-direction.</param>
+    /// <param name="sizeZ">The size in z-direction.</param>
     public RectangleD3D(double posX, double posY, double posZ, double sizeX, double sizeY, double sizeZ)
     {
       _x = posX;
@@ -96,6 +107,11 @@ namespace Altaxo.Geometry
       _sizeZ = sizeZ;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RectangleD3D"/> struct.
+    /// </summary>
+    /// <param name="position">The position of the left-top-front corner.</param>
+    /// <param name="size">The size vector.</param>
     public RectangleD3D(PointD3D position, VectorD3D size)
     {
       _x = position.X;
@@ -170,41 +186,81 @@ namespace Altaxo.Geometry
       return new RectangleD3D(X, Y, Z + addZ, SizeX, SizeY, SizeZ);
     }
 
+    /// <summary>
+    /// Returns a new instance with <see cref="SizeX"/> set to the provided value.
+    /// </summary>
+    /// <param name="newSizeX">The new size in x-direction.</param>
+    /// <returns>A new rectangle with the updated x-size.</returns>
     public RectangleD3D WithSizeX(double newSizeX)
     {
       return new RectangleD3D(X, Y, Z, newSizeX, SizeY, SizeZ);
     }
 
+    /// <summary>
+    /// Returns a new instance with <see cref="SizeX"/> increased by the provided value.
+    /// </summary>
+    /// <param name="offsetSizeX">The size offset in x-direction.</param>
+    /// <returns>A new rectangle with the updated x-size.</returns>
     public RectangleD3D WithSizeXPlus(double offsetSizeX)
     {
       return new RectangleD3D(X, Y, Z, SizeX + offsetSizeX, SizeY, SizeZ);
     }
 
+    /// <summary>
+    /// Returns a new instance with <see cref="SizeY"/> set to the provided value.
+    /// </summary>
+    /// <param name="newSizeY">The new size in y-direction.</param>
+    /// <returns>A new rectangle with the updated y-size.</returns>
     public RectangleD3D WithSizeY(double newSizeY)
     {
       return new RectangleD3D(X, Y, Z, SizeX, newSizeY, SizeZ);
     }
 
+    /// <summary>
+    /// Returns a new instance with <see cref="SizeY"/> increased by the provided value.
+    /// </summary>
+    /// <param name="offsetSizeY">The size offset in y-direction.</param>
+    /// <returns>A new rectangle with the updated y-size.</returns>
     public RectangleD3D WithSizeYPlus(double offsetSizeY)
     {
       return new RectangleD3D(X, Y, Z, SizeX, SizeY + offsetSizeY, SizeZ);
     }
 
+    /// <summary>
+    /// Returns a new instance with <see cref="SizeZ"/> set to the provided value.
+    /// </summary>
+    /// <param name="newSizeZ">The new size in z-direction.</param>
+    /// <returns>A new rectangle with the updated z-size.</returns>
     public RectangleD3D WithSizeZ(double newSizeZ)
     {
       return new RectangleD3D(X, Y, Z, SizeX, SizeY, newSizeZ);
     }
 
+    /// <summary>
+    /// Returns a new instance with <see cref="SizeZ"/> increased by the provided value.
+    /// </summary>
+    /// <param name="offsetSizeZ">The size offset in z-direction.</param>
+    /// <returns>A new rectangle with the updated z-size.</returns>
     public RectangleD3D WithSizeZPlus(double offsetSizeZ)
     {
       return new RectangleD3D(X, Y, Z, SizeX, SizeY, SizeZ + offsetSizeZ);
     }
 
+    /// <summary>
+    /// Returns a new instance with the specified size.
+    /// </summary>
+    /// <param name="newSize">The new size vector.</param>
+    /// <returns>A new rectangle with the updated size.</returns>
     public RectangleD3D WithSize(VectorD3D newSize)
     {
       return new RectangleD3D(X, Y, Z, newSize.X, newSize.Y, newSize.Z);
     }
 
+    /// <summary>
+    /// Returns a new instance with the specified size offset applied.
+    /// </summary>
+    /// <param name="sizeOffset">The size offset.</param>
+    /// <returns>A new rectangle with the updated size.</returns>
     public RectangleD3D WithSizePlus(VectorD3D sizeOffset)
     {
       return new RectangleD3D(X, Y, Z, SizeX + sizeOffset.X, SizeY + sizeOffset.Y, SizeZ + sizeOffset.Z);
@@ -212,66 +268,105 @@ namespace Altaxo.Geometry
 
     #endregion Setter
 
+    /// <summary>
+    /// Gets the x-coordinate of the left side.
+    /// </summary>
     public double X
     {
       get { return _x; }
     }
 
+    /// <summary>
+    /// Gets the x-coordinate of the right side.
+    /// </summary>
     public double XPlusSizeX
     {
       get { return _x + _sizeX; }
     }
 
+    /// <summary>
+    /// Gets the x-coordinate of the rectangle center.
+    /// </summary>
     public double XCenter
     {
       get { return _x + 0.5 * _sizeX; }
     }
 
+    /// <summary>
+    /// Gets the y-coordinate of the top side.
+    /// </summary>
     public double Y
     {
       get { return _y; }
     }
 
+    /// <summary>
+    /// Gets the y-coordinate of the bottom side.
+    /// </summary>
     public double YPlusSizeY
     {
       get { return _y + _sizeY; }
     }
 
+    /// <summary>
+    /// Gets the y-coordinate of the rectangle center.
+    /// </summary>
     public double YCenter
     {
       get { return _y + 0.5 * _sizeY; }
     }
 
+    /// <summary>
+    /// Gets the z-coordinate of the front side.
+    /// </summary>
     public double Z
     {
       get { return _z; }
     }
 
+    /// <summary>
+    /// Gets the z-coordinate of the back side.
+    /// </summary>
     public double ZPlusSizeZ
     {
       get { return _z + _sizeZ; }
     }
 
+    /// <summary>
+    /// Gets the z-coordinate of the rectangle center.
+    /// </summary>
     public double ZCenter
     {
       get { return _z + 0.5 * _sizeZ; }
     }
 
+    /// <summary>
+    /// Gets the size in x-direction.
+    /// </summary>
     public double SizeX
     {
       get { return _sizeX; }
     }
 
+    /// <summary>
+    /// Gets the size in y-direction.
+    /// </summary>
     public double SizeY
     {
       get { return _sizeY; }
     }
 
+    /// <summary>
+    /// Gets the size in z-direction.
+    /// </summary>
     public double SizeZ
     {
       get { return _sizeZ; }
     }
 
+    /// <summary>
+    /// Gets the empty rectangle.
+    /// </summary>
     public static RectangleD3D Empty
     {
       get
@@ -290,11 +385,23 @@ namespace Altaxo.Geometry
       }
     }
 
+    /// <summary>
+    /// Determines whether two rectangles are equal.
+    /// </summary>
+    /// <param name="p">The first rectangle.</param>
+    /// <param name="q">The second rectangle.</param>
+    /// <returns><see langword="true"/> if both rectangles are equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator ==(RectangleD3D p, RectangleD3D q)
     {
       return p._x == q._x && p._y == q._y && p._z == q._z && p._sizeX == q._sizeX && p._sizeY == q._sizeY && p._sizeZ == q._sizeZ;
     }
 
+    /// <summary>
+    /// Determines whether two rectangles are not equal.
+    /// </summary>
+    /// <param name="p">The first rectangle.</param>
+    /// <param name="q">The second rectangle.</param>
+    /// <returns><see langword="true"/> if both rectangles are not equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator !=(RectangleD3D p, RectangleD3D q)
     {
       return !(p._x == q._x && p._y == q._y && p._z == q._z && p._sizeX == q._sizeX && p._sizeY == q._sizeY && p._sizeZ == q._sizeZ);
@@ -338,6 +445,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Gets the center of this rectangle.
     /// </summary>
+    /// <summary>
+    /// Gets the center point of this rectangle.
+    /// </summary>
     public PointD3D Center
     {
       get
@@ -346,11 +456,19 @@ namespace Altaxo.Geometry
       }
     }
 
+    /// <summary>
+    /// Returns a new instance with the specified location.
+    /// </summary>
+    /// <param name="newLocation">The new location of the left-top-front corner.</param>
+    /// <returns>A new rectangle with the updated location.</returns>
     public RectangleD3D WithLocation(PointD3D newLocation)
     {
       return new RectangleD3D(newLocation.X, newLocation.Y, newLocation.Z, SizeX, SizeY, SizeZ);
     }
 
+    /// <summary>
+    /// Gets the size vector of this rectangle.
+    /// </summary>
     public VectorD3D Size
     {
       get
@@ -359,6 +477,11 @@ namespace Altaxo.Geometry
       }
     }
 
+    /// <summary>
+    /// Determines whether the specified point is contained in this rectangle.
+    /// </summary>
+    /// <param name="p">The point to test.</param>
+    /// <returns><see langword="true"/> if the point is contained in this rectangle; otherwise, <see langword="false"/>.</returns>
     public bool Contains(PointD3D p)
     {
       return p.X >= X && p.Y >= Y && p.Z >= Z && p.X <= (_x + _sizeX) && p.Y <= (_y + _sizeY) && p.Z <= (_z + _sizeZ);

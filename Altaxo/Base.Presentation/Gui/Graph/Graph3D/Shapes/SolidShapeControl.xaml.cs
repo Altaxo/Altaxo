@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
   /// </summary>
   public partial class SolidShapeControl : UserControl, ISolidShapeView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SolidShapeControl"/> class.
+    /// </summary>
     public SolidShapeControl()
     {
       InitializeComponent();

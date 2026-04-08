@@ -26,6 +26,9 @@
 
 namespace Altaxo.Units.Angle
 {
+  /// <summary>
+  /// Represents the radian unit of angular measure.
+  /// </summary>
   [UnitDescription("Angular measure", 0, 0, 0, 0, 0, 0, 0)]
   public class Radian : SIUnit
   {
@@ -41,13 +44,18 @@ namespace Altaxo.Units.Angle
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="Radian"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Radian), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return Radian.Instance;

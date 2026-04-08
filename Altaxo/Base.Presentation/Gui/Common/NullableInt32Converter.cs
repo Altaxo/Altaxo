@@ -28,10 +28,19 @@ using System.Windows.Data;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// Converts nullable <see cref="int"/> values to and from their string representation and validates the entered text.
+  /// </summary>
   public class NullableInt32Converter : ValidationRule, IValueConverter
   {
+    /// <summary>
+    /// Gets or sets a value indicating whether zero is rejected.
+    /// </summary>
     public bool DisallowZeroValues { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether negative values are rejected.
+    /// </summary>
     public bool DisallowNegativeValues
     {
       get
@@ -48,16 +57,34 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <summary>
+    /// Stores the configured minimum value.
+    /// </summary>
     public int _minValue = int.MinValue;
 
+    /// <summary>
+    /// Gets or sets the minimum allowed value.
+    /// </summary>
     public int MinValue { get { return _minValue; } set { _minValue = value; } }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the minimum value is inclusive.
+    /// </summary>
     public bool IsMinValueInclusive { get; set; }
 
+    /// <summary>
+    /// Stores the configured maximum value.
+    /// </summary>
     public int _maxValue = int.MaxValue;
 
+    /// <summary>
+    /// Gets or sets the maximum allowed value.
+    /// </summary>
     public int MaxValue { get { return _maxValue; } set { _maxValue = value; } }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the maximum value is inclusive.
+    /// </summary>
     public bool IsMaxValueInclusive { get; set; }
 
     private System.Globalization.CultureInfo _conversionCulture = Altaxo.Settings.GuiCulture.Instance;
@@ -65,10 +92,14 @@ namespace Altaxo.Gui.Common
     private string? _lastConvertedString;
     private int? _lastConvertedValue;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NullableInt32Converter"/> class.
+    /// </summary>
     public NullableInt32Converter()
     {
     }
 
+    /// <inheritdoc/>
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo cultureDontUseIsBuggy)
     {
       var val = (int?)value;
@@ -83,6 +114,7 @@ namespace Altaxo.Gui.Common
       return _lastConvertedString;
     }
 
+    /// <inheritdoc/>
     public object? ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo cultureDontUseIsBuggy)
     {
       var validationResult = ConvertAndValidate(value, out var result);
@@ -94,6 +126,7 @@ namespace Altaxo.Gui.Common
       return result;
     }
 
+    /// <inheritdoc/>
     public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureDontUseIsBuggy)
     {
       var validationResult = ConvertAndValidate(value, out var result);

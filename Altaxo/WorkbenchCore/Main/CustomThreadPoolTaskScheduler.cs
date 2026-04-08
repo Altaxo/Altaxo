@@ -30,16 +30,22 @@ namespace Altaxo.Main
     private int currentThreadCount;
     private readonly int maxThreadCount;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CustomThreadPoolTaskScheduler"/> class.
+    /// </summary>
+    /// <param name="maxThreadCount">The maximum number of worker threads.</param>
     public CustomThreadPoolTaskScheduler(int maxThreadCount)
     {
       this.maxThreadCount = maxThreadCount;
     }
 
+    /// <inheritdoc/>
     public override int MaximumConcurrencyLevel
     {
       get { return maxThreadCount; }
     }
 
+    /// <inheritdoc/>
     protected override void QueueTask(Task task)
     {
       base.QueueTask(task);
@@ -51,6 +57,10 @@ namespace Altaxo.Main
       }
     }
 
+    /// <summary>
+    /// Starts a worker thread.
+    /// </summary>
+    /// <param name="start">The thread entry point.</param>
     protected virtual void StartThread(ThreadStart start)
     {
       var t = new Thread(start)

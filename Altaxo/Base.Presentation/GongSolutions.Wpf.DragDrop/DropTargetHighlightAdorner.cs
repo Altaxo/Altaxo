@@ -18,13 +18,21 @@ using System.Windows.Media;
 
 namespace GongSolutions.Wpf.DragDrop
 {
+  /// <summary>
+  /// Draws a highlight rectangle around the current drop target item.
+  /// </summary>
   public class DropTargetHighlightAdorner : DropTargetAdorner
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DropTargetHighlightAdorner"/> class.
+    /// </summary>
+    /// <param name="adornedElement">The element to adorn.</param>
     public DropTargetHighlightAdorner(UIElement adornedElement)
       : base(adornedElement)
     {
     }
 
+    /// <inheritdoc/>
     protected override void OnRender(DrawingContext drawingContext)
     {
       var visualTargetItem = DropInfo.VisualTargetItem;

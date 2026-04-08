@@ -36,6 +36,9 @@ using Altaxo.Drawing.DashPatterns;
 
 namespace Altaxo.Gui.Drawing.DashPatternManagement
 {
+  /// <summary>
+  /// Converts dash patterns to display names.
+  /// </summary>
   public class DashPatternToItemNameConverter : IValueConverter
   {
     private System.Windows.Controls.ComboBox _comboBox;
@@ -49,11 +52,16 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DashPatternToItemNameConverter"/> class.
+    /// </summary>
+    /// <param name="comboBox">The combo box whose tooltip is updated during validation.</param>
     public DashPatternToItemNameConverter(System.Windows.Controls.ComboBox comboBox)
     {
       _comboBox = comboBox;
     }
 
+    /// <inheritdoc/>
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       string result;
@@ -85,6 +93,7 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
       return result;
     }
 
+    /// <inheritdoc/>
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       string text = (string)value;
@@ -128,6 +137,9 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
       return error is not null ? null : new Altaxo.Drawing.DashPatterns.Custom(valList);
     }
 
+    /// <summary>
+    /// Validates the textual dash-pattern input.
+    /// </summary>
     public string EhValidateText(object obj, System.Globalization.CultureInfo info)
     {
       string text = (string)obj;
@@ -151,8 +163,12 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
     }
   }
 
+  /// <summary>
+  /// Converts dash patterns to image sources.
+  /// </summary>
   public class DashPatternToImageSourceConverter : IValueConverter
   {
+    /// <inheritdoc/>
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       const double height = 1;
@@ -216,14 +232,19 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
       return geometryImage;
     }
 
+    /// <inheritdoc/>
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       throw new NotImplementedException();
     }
   }
 
+  /// <summary>
+  /// Converts dash patterns to the names of their parent lists.
+  /// </summary>
   public class DashPatternToListNameConverter : IValueConverter
   {
+    /// <inheritdoc/>
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       var listName = DashPatternListManager.Instance.GetParentList(value as IDashPattern)?.Name;
@@ -239,6 +260,7 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
       }
     }
 
+    /// <inheritdoc/>
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       throw new NotImplementedException();

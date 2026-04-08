@@ -65,9 +65,17 @@ namespace Altaxo.Calc.FitFunctions.Materials
 
 
 
+    /// <summary>
+    /// Gets the energy representation used for the energy parameter.
+    /// </summary>
     [Category("OptionsForParameters")]
     public EnergyRepresentation ParameterEnergyRepresentation => _paramEnergyUnit;
 
+    /// <summary>
+    /// Creates a copy with a different energy representation for the energy parameter.
+    /// </summary>
+    /// <param name="value">The energy representation to use.</param>
+    /// <returns>A new instance with the requested representation, or the same instance if unchanged.</returns>
     [Category("OptionsForParameters")]
     public ArrheniusLawTime WithParameterEnergyRepresentation(EnergyRepresentation value)
     {
@@ -83,11 +91,18 @@ namespace Altaxo.Calc.FitFunctions.Materials
       }
     }
 
-
+    /// <summary>
+    /// Gets the temperature representation used for the independent variable.
+    /// </summary>
     [Category("OptionsForIndependentVariables")]
     public TemperatureRepresentation IndependentVariableRepresentation => _temperatureUnitOfX;
 
 
+    /// <summary>
+    /// Creates a copy with a different representation for the independent variable.
+    /// </summary>
+    /// <param name="value">The representation to use.</param>
+    /// <returns>A new instance with the requested representation, or the same instance if unchanged.</returns>
     [Category("OptionsForIndependentVariables")]
     public ArrheniusLawTime WithIndependentVariableRepresentation(TemperatureRepresentation value)
     {
@@ -114,6 +129,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ArrheniusLawTime), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ArrheniusLawTime)obj;
@@ -121,6 +137,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
         info.AddEnum("ParamEnergyUnit", s._paramEnergyUnit);
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         ArrheniusLawTime s = (ArrheniusLawTime?)o ?? new ArrheniusLawTime();

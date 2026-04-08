@@ -30,7 +30,7 @@ using PureHDF;
 namespace Altaxo.Serialization.HDF5.Nexus
 {
   /// <summary>
-  /// Extensions that make work with Nexus files easier.
+  /// Extensions that make working with NeXus files easier.
   /// </summary>
   public static class NexusExtensions
   {
@@ -52,7 +52,7 @@ namespace Altaxo.Serialization.HDF5.Nexus
     }
 
     /// <summary>
-    /// Gets the first objects with a given class name.
+    /// Gets the first object with a given class name.
     /// </summary>
     /// <typeparam name="T">Type of HDF5 object that is expected.</typeparam>
     /// <param name="group">The HDF5 group whose children should be searched.</param>
@@ -141,11 +141,11 @@ namespace Altaxo.Serialization.HDF5.Nexus
     }
 
     /// <summary>
-    /// Try to get an attribute value as string. If this fails, null is returned.
+    /// Tries to get an attribute value as a string. If this fails, <see langword="null"/> is returned.
     /// </summary>
     /// <param name="obj">The HDF5 object that has the attribute.</param>
     /// <param name="name">The attribute's name.</param>
-    /// <returns>Either the attributes value, if it is a string, or null, if the attribute don't exist.
+    /// <returns>The attribute value if it is a string; otherwise, <see langword="null"/> if the attribute does not exist.
     /// Note that if the attribute exists but its value is not a string, an exception is thrown.</returns>
     public static string? TryGetAttributeValueAsString(this IH5Object obj, string name)
     {

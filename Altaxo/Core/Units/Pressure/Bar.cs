@@ -31,9 +31,15 @@ using System.Text;
 
 namespace Altaxo.Units.Pressure
 {
+  /// <summary>
+  /// Represents the bar unit of pressure.
+  /// </summary>
   [UnitDescription("Pressure", -1, 1, -2, 0, 0, 0, 0)]
   public class Bar : UnitBase, IUnit
   {
+    /// <summary>
+    /// The number of pascals in one bar.
+    /// </summary>
     public const double OneBarInPascal = 100000;
 
     /// <summary>
@@ -43,13 +49,18 @@ namespace Altaxo.Units.Pressure
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="Bar"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Bar), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return Bar.Instance;
@@ -57,6 +68,9 @@ namespace Altaxo.Units.Pressure
     }
     #endregion
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Bar"/> class.
+    /// </summary>
     protected Bar()
     {
     }

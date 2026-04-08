@@ -40,6 +40,9 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     private int _numberOfRelaxations = 1;
     private bool _logarithmizeResult;
 
+    /// <summary>
+    /// Number of parameters per Kohlrausch term: amplitude, tau, and beta.
+    /// </summary>
     public const int ParametersPerTerm = 3; // amplitude, tau, beta
 
     #region Serialization
@@ -85,6 +88,9 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="KohlrauschDecay"/> class.
+    /// </summary>
     public KohlrauschDecay()
     {
     }
@@ -122,11 +128,16 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return "KohlrauschDecay";
     }
 
+    /// <summary>
+    /// Creates the default Kohlrausch decay fit function.
+    /// </summary>
+    /// <returns>A new <see cref="KohlrauschDecay"/> instance.</returns>
     public static IFitFunction CreateDefault()
     {
       return new KohlrauschDecay();
@@ -195,6 +206,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <inheritdoc/>
     public double DefaultParameterValue(int i)
     {
       if (0 == i)
@@ -221,11 +233,13 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <inheritdoc/>
     public IVarianceScaling? DefaultVarianceScaling(int i)
     {
       return null;
     }
 
+    /// <inheritdoc/>
     public void Evaluate(double[] X, double[] P, double[] Y)
     {
       double sum = P[0];
@@ -236,6 +250,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       Y[0] = _logarithmizeResult ? Math.Log10(sum) : sum;
     }
 
+    /// <inheritdoc/>
     public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;

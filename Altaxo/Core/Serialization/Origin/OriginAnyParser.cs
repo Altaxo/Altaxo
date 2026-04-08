@@ -700,6 +700,10 @@ namespace Altaxo.Serialization.Origin
       return true;
     }
 
+    /// <summary>
+    /// Reads the next window element from the Origin project stream.
+    /// </summary>
+    /// <returns><see langword="true"/> if a window element was read; otherwise, <see langword="false"/>.</returns>
     public bool ReadWindowElement()
     {
       /* get general info and details of a window
@@ -776,6 +780,10 @@ namespace Altaxo.Serialization.Origin
       return true;
     }
 
+    /// <summary>
+    /// Reads the next layer element from the current window.
+    /// </summary>
+    /// <returns><see langword="true"/> if a layer element was read; otherwise, <see langword="false"/>.</returns>
     public bool ReadLayerElement()
     {
       /* get general info and details of a layer
@@ -893,6 +901,10 @@ namespace Altaxo.Serialization.Origin
       return true;
     }
 
+    /// <summary>
+    /// Reads all consecutive annotation elements at the current stream position.
+    /// </summary>
+    /// <returns>The number of annotation elements that were read.</returns>
     public int ReadAnnotationList()
     {
       /* Purpose of this function is to allow recursive call for groups of annotation elements. */
@@ -910,6 +922,10 @@ namespace Altaxo.Serialization.Origin
       return annotationListSize;
     }
 
+    /// <summary>
+    /// Reads the next annotation element from the current layer.
+    /// </summary>
+    /// <returns><see langword="true"/> if an annotation element was read; otherwise, <see langword="false"/>.</returns>
     public bool ReadAnnotationElement()
     {
       /* get general info and details of an Annotation
@@ -1004,6 +1020,10 @@ namespace Altaxo.Serialization.Origin
       return true;
     }
 
+    /// <summary>
+    /// Reads the next curve element from the current layer.
+    /// </summary>
+    /// <returns><see langword="true"/> if a curve element was read; otherwise, <see langword="false"/>.</returns>
     public bool ReadCurveElement()
     {
       /* get general info and details of a Curve
@@ -1051,6 +1071,10 @@ namespace Altaxo.Serialization.Origin
       return true;
     }
 
+    /// <summary>
+    /// Reads the next axis-break element from the current layer.
+    /// </summary>
+    /// <returns><see langword="true"/> if an axis-break element was read; otherwise, <see langword="false"/>.</returns>
     public bool ReadAxisBreakElement()
     {
       /* get info of Axis breaks
@@ -1078,6 +1102,11 @@ namespace Altaxo.Serialization.Origin
       return true;
     }
 
+    /// <summary>
+    /// Reads the next axis-parameter element for the specified axis.
+    /// </summary>
+    /// <param name="naxis">The axis identifier: 1 for x, 2 for y, and 3 for z.</param>
+    /// <returns><see langword="true"/> if an axis-parameter element was read; otherwise, <see langword="false"/>.</returns>
     public bool ReadAxisParameterElement(int naxis)
     {
       /* get info of Axis parameters for naxis-axis (x,y,z) = (1,2,3)
@@ -1105,6 +1134,10 @@ namespace Altaxo.Serialization.Origin
       return true;
     }
 
+    /// <summary>
+    /// Reads the next scalar parameter entry.
+    /// </summary>
+    /// <returns><see langword="true"/> if a parameter was read; otherwise, <see langword="false"/>.</returns>
     public bool ReadParameterElement()
     {
       // get parameter name
@@ -1142,6 +1175,10 @@ namespace Altaxo.Serialization.Origin
       return true;
     }
 
+    /// <summary>
+    /// Reads the next note element, including the results log window.
+    /// </summary>
+    /// <returns><see langword="true"/> if a note element was read; otherwise, <see langword="false"/>.</returns>
     public bool ReadNoteElement()
     {
       /* get info of Note windows, including "Results Log"
@@ -1194,6 +1231,9 @@ namespace Altaxo.Serialization.Origin
       return true;
     }
 
+    /// <summary>
+    /// Reads the project tree structure from the current stream position.
+    /// </summary>
     public void ReadProjectTree()
     {
       int pteDepth = 0;
@@ -1228,6 +1268,12 @@ namespace Altaxo.Serialization.Origin
       return;
     }
 
+    /// <summary>
+    /// Reads a folder node and its descendants from the project tree.
+    /// </summary>
+    /// <param name="parent">The parent folder node, or <see langword="null"/> for the root.</param>
+    /// <param name="depth">The current folder depth.</param>
+    /// <returns>The number of direct file entries contained in the folder.</returns>
     protected int ReadFolderTree(ProjectNode? parent, int depth)
     {
       int fle_header_size = 0, fle_eofh_size = 0, fle_name_size = 0, fle_prop_size = 0;
@@ -1304,6 +1350,10 @@ namespace Altaxo.Serialization.Origin
       return number_of_files;
     }
 
+    /// <summary>
+    /// Reads a project leaf node and appends it to the specified folder.
+    /// </summary>
+    /// <param name="currentFolder">The folder that receives the parsed leaf node.</param>
     public void ReadProjectLeaf(ProjectNode currentFolder)
     {
       // preamble size (usually 0) and data
@@ -1327,6 +1377,9 @@ namespace Altaxo.Serialization.Origin
       GetProjectLeafProperties(currentFolder, ptlData, ptlDataSize);
     }
 
+    /// <summary>
+    /// Reads all attachments from the current stream position.
+    /// </summary>
     public void ReadAttachmentList()
     {
       /* Attachments are divided in two groups (which can be empty)
@@ -1432,6 +1485,14 @@ namespace Altaxo.Serialization.Origin
       }
     }
 
+    /// <summary>
+    /// Decodes column or matrix metadata together with the associated data payload.
+    /// </summary>
+    /// <param name="colHeader">The raw column header bytes.</param>
+    /// <param name="colHeaderSize">The size of <paramref name="colHeader"/> in bytes.</param>
+    /// <param name="colData">The raw column data bytes.</param>
+    /// <param name="colDataSize">The size of <paramref name="colData"/> in bytes.</param>
+    /// <returns><see langword="true"/> if the column information was processed successfully.</returns>
     public bool GetColumnInfoAndData(byte[] colHeader, int colHeaderSize, byte[] colData, int colDataSize)
     {
       short dataType;
@@ -1725,6 +1786,15 @@ namespace Altaxo.Serialization.Origin
       return true;
     }
 
+    /// <summary>
+    /// Decodes matrix cell values from a raw data block.
+    /// </summary>
+    /// <param name="colData">The raw matrix data bytes.</param>
+    /// <param name="colDataSize">The size of <paramref name="colData"/> in bytes.</param>
+    /// <param name="dataType">The Origin data type identifier.</param>
+    /// <param name="dataTypeU">The auxiliary Origin data type identifier.</param>
+    /// <param name="valueSize">The stored value size in bytes.</param>
+    /// <param name="mIndex">The matrix index to populate.</param>
     public void GetMatrixValues(byte[] colData, int colDataSize, short dataType, byte dataTypeU, byte valueSize, int mIndex)
     {
       if (Matrixes.Count == 0)
@@ -1819,6 +1889,12 @@ namespace Altaxo.Serialization.Origin
 
     }
 
+    /// <summary>
+    /// Extracts window properties from a window header block.
+    /// </summary>
+    /// <param name="window">The window instance to populate.</param>
+    /// <param name="wde_header">The raw window header bytes.</param>
+    /// <param name="wde_header_size">The size of <paramref name="wde_header"/> in bytes.</param>
     public void GetWindowProperties(Origin.Window window, byte[] wde_header, int wde_header_size)
     {
       window.ObjectID = _objectIndex;
@@ -1940,6 +2016,11 @@ namespace Altaxo.Serialization.Origin
       }
     }
 
+    /// <summary>
+    /// Extracts layer properties from a layer header block.
+    /// </summary>
+    /// <param name="lye_header">The raw layer header bytes.</param>
+    /// <param name="lye_header_size">The size of <paramref name="lye_header"/> in bytes.</param>
     public void GetLayerProperties(byte[] lye_header, int lye_header_size)
     {
       int cursor = 0;
@@ -2029,6 +2110,11 @@ namespace Altaxo.Serialization.Origin
       }
     }
 
+    /// <summary>
+    /// Decodes an Origin color descriptor from its binary string representation.
+    /// </summary>
+    /// <param name="strbincolor">The four-byte color descriptor encoded as a string.</param>
+    /// <returns>The decoded <see cref="Color"/> value.</returns>
     public Color GetColor(string strbincolor)
     {
       /* decode a color value from a 4 byte binary string */
@@ -2096,6 +2182,17 @@ namespace Altaxo.Serialization.Origin
       return result;
     }
 
+    /// <summary>
+    /// Extracts annotation properties from the annotation header and data blocks.
+    /// </summary>
+    /// <param name="anhd">The annotation header bytes.</param>
+    /// <param name="anhdsz">The size of <paramref name="anhd"/> in bytes.</param>
+    /// <param name="andt1">The first annotation data block.</param>
+    /// <param name="andt1sz">The size of <paramref name="andt1"/> in bytes.</param>
+    /// <param name="andt2">The second annotation data block.</param>
+    /// <param name="andt2sz">The size of <paramref name="andt2"/> in bytes.</param>
+    /// <param name="andt3">The third annotation data block.</param>
+    /// <param name="andt3sz">The size of <paramref name="andt3"/> in bytes.</param>
     public void GetAnnotationProperties(byte[] anhd, int anhdsz, byte[] andt1, int andt1sz, byte[] andt2, int andt2sz, byte[] andt3, int andt3sz)
     {
       //StringReader stmp = new StringReader(andt1);
@@ -2646,6 +2743,13 @@ namespace Altaxo.Serialization.Origin
       }
     }
 
+    /// <summary>
+    /// Extracts curve properties from the curve header and data blocks.
+    /// </summary>
+    /// <param name="cvehd">The curve header bytes.</param>
+    /// <param name="cvehdsz">The size of <paramref name="cvehd"/> in bytes.</param>
+    /// <param name="cvedt">The curve data bytes.</param>
+    /// <param name="cvedtsz">The size of <paramref name="cvedt"/> in bytes.</param>
     public void GetCurveProperties(byte[] cvehd, int cvehdsz, byte[] cvedt, int cvedtsz)
     {
       byte h;
@@ -3311,6 +3415,11 @@ namespace Altaxo.Serialization.Origin
       }
     }
 
+    /// <summary>
+    /// Extracts axis-break properties from a raw axis-break block.
+    /// </summary>
+    /// <param name="abdata">The axis-break data bytes.</param>
+    /// <param name="abdatasz">The size of <paramref name="abdata"/> in bytes.</param>
     public void GetAxisBreakProperties(byte[] abdata, int abdatasz)
     {
       int cursor = 0;
@@ -3361,6 +3470,12 @@ namespace Altaxo.Serialization.Origin
       }
     }
 
+    /// <summary>
+    /// Extracts axis-parameter properties for the specified axis.
+    /// </summary>
+    /// <param name="apdata">The axis-parameter data bytes.</param>
+    /// <param name="apdatasz">The size of <paramref name="apdata"/> in bytes.</param>
+    /// <param name="naxis">The axis identifier: 1 for x, 2 for y, and 3 for z.</param>
     public void GetAxisParameterProperties(byte[] apdata, int apdatasz, int naxis)
     {
       if (_igraph != -1)
@@ -3601,6 +3716,15 @@ namespace Altaxo.Serialization.Origin
       }
     }
 
+    /// <summary>
+    /// Extracts note properties from the note header, label, and content blocks.
+    /// </summary>
+    /// <param name="nwehd">The note header bytes.</param>
+    /// <param name="nwehdsz">The size of <paramref name="nwehd"/> in bytes.</param>
+    /// <param name="nwelb">The note label bytes.</param>
+    /// <param name="nwelbsz">The size of <paramref name="nwelb"/> in bytes.</param>
+    /// <param name="nwect">The note content bytes.</param>
+    /// <param name="nwectsz">The size of <paramref name="nwect"/> in bytes.</param>
     public void GetNoteProperties(byte[] nwehd, int nwehdsz, byte[] nwelb, int nwelbsz, byte[] nwect, int nwectsz)
     {
       int cursor = 0;
@@ -3701,6 +3825,12 @@ namespace Altaxo.Serialization.Origin
       }
     }
 
+    /// <summary>
+    /// Extracts a color map from a raw color-map block.
+    /// </summary>
+    /// <param name="cmap">The color map instance to populate.</param>
+    /// <param name="cmapdata">The raw color-map data bytes.</param>
+    /// <param name="cmapdatasz">The size of <paramref name="cmapdata"/> in bytes.</param>
     public void GetColorMap(ColorMap cmap, byte[] cmapdata, int cmapdatasz)
     {
       int cmoffset = 0;
@@ -3759,6 +3889,12 @@ namespace Altaxo.Serialization.Origin
       }
     }
 
+    /// <summary>
+    /// Extracts z-color mapping information from a raw color-map block.
+    /// </summary>
+    /// <param name="colorMap">The color map instance to populate.</param>
+    /// <param name="cmapdata">The raw color-map data bytes.</param>
+    /// <param name="cmapdatasz">The size of <paramref name="cmapdata"/> in bytes.</param>
     public void GetZColorsMap(ColorMap colorMap, byte[] cmapdata, int cmapdatasz)
     {
       Color lowColor = new Color(); // color below
@@ -3829,6 +3965,12 @@ namespace Altaxo.Serialization.Origin
 
     }
 
+    /// <summary>
+    /// Extracts project-leaf properties and appends the corresponding node to the project tree.
+    /// </summary>
+    /// <param name="currentFolder">The folder that receives the parsed child node.</param>
+    /// <param name="ptldt">The raw project-leaf data bytes.</param>
+    /// <param name="ptldtsz">The size of <paramref name="ptldt"/> in bytes.</param>
     public void GetProjectLeafProperties(ProjectNode currentFolder, byte[] ptldt, int ptldtsz)
     {
 
@@ -3869,6 +4011,12 @@ namespace Altaxo.Serialization.Origin
       }
     }
 
+    /// <summary>
+    /// Applies folder properties parsed from the project tree data.
+    /// </summary>
+    /// <param name="currentFolder">The folder node to update.</param>
+    /// <param name="flehd">The raw folder-header data.</param>
+    /// <param name="flehdsz">The size of the folder-header data.</param>
     public void GetProjectFolderProperties(ProjectNode currentFolder, byte[] flehd, int flehdsz)
     {
 
@@ -3884,6 +4032,10 @@ namespace Altaxo.Serialization.Origin
       currentFolder.ModificationDate = DoubleToPosixTime(modificationDate);
     }
 
+    /// <summary>
+    /// Assigns parsed Origin objects to the corresponding nodes in the project tree.
+    /// </summary>
+    /// <param name="current">The current project-tree node.</param>
     public void AssignObjectsToProjectTree(ProjectNode current)
     {
       int index;
@@ -3928,11 +4080,20 @@ namespace Altaxo.Serialization.Origin
       }
     }
 
+    /// <summary>
+    /// Writes the project tree to the specified writer.
+    /// </summary>
+    /// <param name="writer">The writer that receives the project-tree output.</param>
     protected void OutputProjectTree(StreamWriter writer)
     {
       throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Converts a Julian-date based Origin timestamp to a <see cref="DateTime"/>.
+    /// </summary>
+    /// <param name="jdt">The timestamp value.</param>
+    /// <returns>The converted date and time.</returns>
     public static DateTime DoubleToPosixTime(double jdt)
     {
       if (jdt == 0)
@@ -3944,6 +4105,11 @@ namespace Altaxo.Serialization.Origin
 
     #region From original file "originparser.cpp"
 
+    /// <summary>
+    /// Finds a spreadsheet by name.
+    /// </summary>
+    /// <param name="name">The spreadsheet name.</param>
+    /// <returns>The zero-based spreadsheet index, or <c>-1</c> if it was not found.</returns>
     public int FindSpreadByName(string name)
     {
       for (int i = 0; i < SpreadSheets.Count; i++)
@@ -3956,6 +4122,11 @@ namespace Altaxo.Serialization.Origin
       return -1;
     }
 
+    /// <summary>
+    /// Finds a matrix by name.
+    /// </summary>
+    /// <param name="name">The matrix name.</param>
+    /// <returns>The zero-based matrix index, or <c>-1</c> if it was not found.</returns>
     public int FindMatrixByName(string name)
     {
       for (int i = 0; i < Matrixes.Count; i++)
@@ -3968,6 +4139,11 @@ namespace Altaxo.Serialization.Origin
       return -1;
     }
 
+    /// <summary>
+    /// Finds a function by name.
+    /// </summary>
+    /// <param name="name">The function name.</param>
+    /// <returns>The zero-based function index, or <c>-1</c> if it was not found.</returns>
     public int FindFunctionByName(string name)
     {
       for (int i = 0; i < Functions.Count; i++)
@@ -3980,6 +4156,11 @@ namespace Altaxo.Serialization.Origin
       return -1;
     }
 
+    /// <summary>
+    /// Finds an Excel workbook by name.
+    /// </summary>
+    /// <param name="name">The workbook name.</param>
+    /// <returns>The zero-based workbook index, or <c>-1</c> if it was not found.</returns>
     public int FindExcelByName(string name)
     {
       for (int i = 0; i < Excels.Count; i++)
@@ -3992,6 +4173,11 @@ namespace Altaxo.Serialization.Origin
       return -1;
     }
 
+    /// <summary>
+    /// Finds a note by name.
+    /// </summary>
+    /// <param name="name">The note name.</param>
+    /// <returns>The zero-based note index, or <c>-1</c> if it was not found.</returns>
     public int FindNoteByName(string name)
     {
       for (int i = 0; i < Notes.Count; i++)
@@ -4004,6 +4190,11 @@ namespace Altaxo.Serialization.Origin
       return -1;
     }
 
+    /// <summary>
+    /// Finds a graph by name.
+    /// </summary>
+    /// <param name="name">The graph name.</param>
+    /// <returns>The zero-based graph index, or <c>-1</c> if it was not found.</returns>
     public int FindGraphByName(string name)
     {
       for (int i = 0; i < Graphs.Count; i++)
@@ -4016,6 +4207,12 @@ namespace Altaxo.Serialization.Origin
       return -1;
     }
 
+    /// <summary>
+    /// Finds a spreadsheet column by name.
+    /// </summary>
+    /// <param name="spread">The spreadsheet index.</param>
+    /// <param name="name">The column name.</param>
+    /// <returns>The zero-based column index, or <c>-1</c> if it was not found.</returns>
     protected int FindSpreadColumnByName(int spread, string name)
     {
       for (int i = 0; i < SpreadSheets[spread].Columns.Count; i++)
@@ -4028,6 +4225,13 @@ namespace Altaxo.Serialization.Origin
       return -1;
     }
 
+    /// <summary>
+    /// Finds an Excel column by name.
+    /// </summary>
+    /// <param name="idxExcel">The Excel workbook index.</param>
+    /// <param name="idxSheet">The sheet index.</param>
+    /// <param name="name">The column name.</param>
+    /// <returns>The zero-based column index, or <c>-1</c> if it was not found.</returns>
     protected int FindExcelColumnByName(int idxExcel, int idxSheet, string name)
     {
       if (idxExcel < Excels.Count)
@@ -4048,6 +4252,11 @@ namespace Altaxo.Serialization.Origin
       return -1;
     }
 
+    /// <summary>
+    /// Finds dataset identifiers for the specified object index.
+    /// </summary>
+    /// <param name="index">The dataset index.</param>
+    /// <returns>A tuple containing the container name and the object name.</returns>
     protected (string, string) FindDataByIndex(int index)
     {
       foreach (var sheet in SpreadSheets)
@@ -4106,6 +4315,11 @@ namespace Altaxo.Serialization.Origin
       return (string.Empty, string.Empty);
     }
 
+    /// <summary>
+    /// Finds a project object by its object identifier.
+    /// </summary>
+    /// <param name="index">The object identifier.</param>
+    /// <returns>A tuple containing the project node type and object name.</returns>
     protected (ProjectNodeType, string) FindObjectByIndex(uint index)
     {
       for (int i = 0; i < SpreadSheets.Count; i++)
@@ -4150,6 +4364,11 @@ namespace Altaxo.Serialization.Origin
       return ((ProjectNodeType)0, null);
     }
 
+    /// <summary>
+    /// Finds a window object by its object identifier.
+    /// </summary>
+    /// <param name="index">The object identifier.</param>
+    /// <returns>A tuple containing the project node type and the matching window object.</returns>
     public (ProjectNodeType nodeType, Origin.Window? window) FindWindowObjectByIndex(int index)
     {
       for (int i = 0; i < SpreadSheets.Count; i++)
@@ -4194,6 +4413,10 @@ namespace Altaxo.Serialization.Origin
       return ((ProjectNodeType)0, null);
     }
 
+    /// <summary>
+    /// Converts a multi-sheet spreadsheet into an Excel workbook representation.
+    /// </summary>
+    /// <param name="spread">The index of the spreadsheet to convert.</param>
     public void ConvertSpreadToExcel(int spread)
     {
       //add new Excel sheet
@@ -4236,6 +4459,12 @@ namespace Altaxo.Serialization.Origin
       SpreadSheets.RemoveAt(spread);
     }
 
+    /// <summary>
+    /// Finds a spreadsheet column by name, truncated to Origin's eleven-character lookup width.
+    /// </summary>
+    /// <param name="spread">The spreadsheet index.</param>
+    /// <param name="name">The column name to find.</param>
+    /// <returns>The zero-based column index, or <c>-1</c> if it was not found.</returns>
     public int FindColumnByName(int spread, string name)
     {
       int columns = SpreadSheets[spread].Columns.Count;
@@ -4262,7 +4491,7 @@ namespace Altaxo.Serialization.Origin
     /// </summary>
     /// <param name="size">The size of the string.</param>
     /// <param name="readNewlineDelimiterInAnyCase">If true, the newline delimiter is also read if the size argument is 0.</param>
-    /// <returns></returns>
+    /// <returns>The string that was read from the stream.</returns>
     public string ReadObjectAsString(int size, bool readNewlineDelimiterInAnyCase = false)
     {
       // read a size-byte blob of data followed by '\n'
@@ -4302,7 +4531,7 @@ namespace Altaxo.Serialization.Origin
     /// <param name="buffer">The byte buffer.</param>
     /// <param name="start">The start index where to read from.</param>
     /// <param name="maxLength">The maximum length of the string. This count includes the '\0' character.</param>
-    /// <returns></returns>
+    /// <returns>The decoded string without the terminating null character.</returns>
     public string GetNullTerminatedString(byte[] buffer, int start, int maxLength)
     {
       var idx = Array.IndexOf<byte>(buffer, 0, start, maxLength);

@@ -45,11 +45,19 @@ namespace Altaxo.Gui.Common.PropertyGrid
   /// </summary>
   public partial class PropertyGrid : UserControl, IPropertyGridView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PropertyGrid"/> class.
+    /// </summary>
     public PropertyGrid()
     {
       InitializeComponent();
     }
 
+    /// <summary>
+    /// Rebuilds the displayed property grid when the data context changes.
+    /// </summary>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The property change arguments.</param>
     protected void EhDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
       if(e.NewValue is IEnumerable<ICategoryNameView> collection)
@@ -58,6 +66,7 @@ namespace Altaxo.Gui.Common.PropertyGrid
       }
     }
 
+    /// <inheritdoc/>
     public void Values_Initialize(IEnumerable<ICategoryNameView> values)
     {
       _guiGrid.Children.Clear();

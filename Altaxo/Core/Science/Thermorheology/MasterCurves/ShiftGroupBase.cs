@@ -46,7 +46,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// </summary>
     public bool LogarithmizeYForInterpolation { get; }
 
-
+    /// <summary>
+    /// Tracks the current minimum and maximum x-values of the master-curve points.
+    /// </summary>
     protected double _trackedXMinimum, _trackedXMaximum;
 
     /// <summary>

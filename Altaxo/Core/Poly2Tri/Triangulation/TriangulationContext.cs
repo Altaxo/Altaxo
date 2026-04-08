@@ -34,24 +34,58 @@ using System.Collections.Generic;
 
 namespace Poly2Tri
 {
+  /// <summary>
+  /// Provides the shared state required by triangulation algorithms.
+  /// </summary>
   public abstract class TriangulationContext
   {
+    /// <summary>
+    /// Gets the debug context associated with this triangulation context.
+    /// </summary>
     public TriangulationDebugContext DebugContext { get; protected set; }
 
+    /// <summary>
+    /// Stores the triangles created during triangulation.
+    /// </summary>
     public readonly List<DelaunayTriangle> Triangles = new List<DelaunayTriangle>();
+
+    /// <summary>
+    /// Stores the points participating in triangulation.
+    /// </summary>
     public readonly List<TriangulationPoint> Points = new List<TriangulationPoint>(200);
+
+    /// <summary>
+    /// Gets the current triangulation mode.
+    /// </summary>
     public TriangulationMode TriangulationMode { get; protected set; }
+
+    /// <summary>
+    /// Gets the triangulatable object currently associated with this context.
+    /// </summary>
     public Triangulatable Triangulatable { get; private set; }
 
+    /// <summary>
+    /// Gets the number of completed processing steps.
+    /// </summary>
     public int StepCount { get; private set; }
 
+    /// <summary>
+    /// Marks the current processing step as completed.
+    /// </summary>
     public void Done()
     {
       StepCount++;
     }
 
+    /// <summary>
+    /// Gets the triangulation algorithm implemented by this context.
+    /// </summary>
     public abstract TriangulationAlgorithm Algorithm { get; }
 
+    /// <summary>
+    /// Prepares this context for triangulating the specified object.
+    /// </summary>
+    /// <param name="t">The object to triangulate.</param>
     public virtual void PrepareTriangulation(Triangulatable t)
     {
       Triangulatable = t;
@@ -59,12 +93,25 @@ namespace Poly2Tri
       t.Prepare(this);
     }
 
+    /// <summary>
+    /// Creates a new constraint between the specified points.
+    /// </summary>
+    /// <param name="a">The first point.</param>
+    /// <param name="b">The second point.</param>
+    /// <returns>The created constraint.</returns>
     public abstract TriangulationConstraint NewConstraint(TriangulationPoint a, TriangulationPoint b);
 
+    /// <summary>
+    /// Updates the context state for debugging purposes.
+    /// </summary>
+    /// <param name="message">The update message.</param>
     public void Update(string message)
     {
     }
 
+    /// <summary>
+    /// Clears the context state.
+    /// </summary>
     public virtual void Clear()
     {
       Points.Clear();
@@ -73,8 +120,14 @@ namespace Poly2Tri
       StepCount = 0;
     }
 
+    /// <summary>
+    /// Gets a value indicating whether debugging is enabled.
+    /// </summary>
     public virtual bool IsDebugEnabled { get; protected set; }
 
+    /// <summary>
+    /// Gets the sweep-specific debug context.
+    /// </summary>
     public DTSweepDebugContext DTDebugContext { get { return DebugContext as DTSweepDebugContext; } }
   }
 }

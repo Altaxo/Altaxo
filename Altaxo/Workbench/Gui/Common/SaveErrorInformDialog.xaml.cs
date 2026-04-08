@@ -33,13 +33,16 @@ using Altaxo.Main.Services;
 namespace Altaxo.Gui.Common
 {
   /// <summary>
-  /// Interaction logic for SaveErrorChooseDialog.xaml
+  /// Interaction logic for <c>SaveErrorInformDialog.xaml</c>.
   /// </summary>
   public partial class SaveErrorInformDialog : Window
   {
     private string? displayMessage;
     private Exception? exceptionGot;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SaveErrorInformDialog"/> class.
+    /// </summary>
     public SaveErrorInformDialog()
     {
       InitializeComponent();
@@ -49,6 +52,13 @@ namespace Altaxo.Gui.Common
       okButton.Content = StringParser.Parse("${res:Global.OKButtonText}");
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SaveErrorInformDialog"/> class.
+    /// </summary>
+    /// <param name="fileName">The file name involved in the failed save operation.</param>
+    /// <param name="message">The message template shown to the user.</param>
+    /// <param name="dialogName">The dialog title.</param>
+    /// <param name="exceptionGot">The exception that caused the failure.</param>
     public SaveErrorInformDialog(string fileName, string message, string dialogName, Exception exceptionGot)
     {
       //  Must be called for initialization

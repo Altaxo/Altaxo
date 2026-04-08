@@ -32,6 +32,9 @@ namespace Altaxo.Gui.Serialization.WITec
   public partial class WITecImportOptionsControl : UserControl,
     IWITecImportOptionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WITecImportOptionsControl"/> class.
+    /// </summary>
     public WITecImportOptionsControl()
     {
       InitializeComponent();

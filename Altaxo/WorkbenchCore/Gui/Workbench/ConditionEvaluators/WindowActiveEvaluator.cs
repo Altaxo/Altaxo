@@ -39,6 +39,7 @@ namespace Altaxo.Gui.Workbench
   /// </example>
   public class WindowActiveConditionEvaluator : IConditionEvaluator
   {
+    /// <inheritdoc/>
     public bool IsValid(object? caller, Condition condition)
     {
       IViewContent? activeViewContent = caller as IViewContent;

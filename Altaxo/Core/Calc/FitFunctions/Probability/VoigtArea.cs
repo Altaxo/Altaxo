@@ -79,12 +79,20 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance with one term and no baseline.
+    /// </summary>
     public VoigtArea()
     {
       _numberOfTerms = 1;
       _orderOfBaselinePolynomial = -1;
     }
 
+    /// <summary>
+    /// Initializes a new instance with the specified number of peak terms and baseline order.
+    /// </summary>
+    /// <param name="numberOfGaussianTerms">The number of peak terms.</param>
+    /// <param name="orderOfBackgroundPolynomial">The order of the background polynomial.</param>
     public VoigtArea(int numberOfGaussianTerms, int orderOfBackgroundPolynomial)
     {
       _numberOfTerms = numberOfGaussianTerms;
@@ -102,6 +110,10 @@ namespace Altaxo.Calc.FitFunctions.Probability
       return $"{this.GetType().Name} NumberOfTerms={NumberOfTerms} OrderOfBaseline={OrderOfBaselinePolynomial}";
     }
 
+    /// <summary>
+    /// Creates a Voigt-area fit function with one peak and a constant baseline.
+    /// </summary>
+    /// <returns>The fit function.</returns>
     [FitFunctionCreator("VoigtArea", "General", 1, 1, NumberOfParametersPerPeak + 1)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.VoigtArea}")]
     public static IFitFunction Create_1_0()
@@ -109,6 +121,10 @@ namespace Altaxo.Calc.FitFunctions.Probability
       return new VoigtArea(1, 0);
     }
 
+    /// <summary>
+    /// Creates a Voigt-area fit function with one peak and no baseline.
+    /// </summary>
+    /// <returns>The fit function.</returns>
     [FitFunctionCreator("VoigtArea", "Peaks", 1, 1, NumberOfParametersPerPeak)]
     [FitFunctionCreator("VoigtArea", "Probability", 1, 1, NumberOfParametersPerPeak)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.VoigtArea}")]
@@ -330,7 +346,11 @@ namespace Altaxo.Calc.FitFunctions.Probability
     /// <summary>
     /// Gets the parameter boundaries in order to have positive peaks only.
     /// </summary>
-    /// <returns></returns>
+    /// <param name="minimalPosition">The minimal position, if specified.</param>
+    /// <param name="maximalPosition">The maximal position, if specified.</param>
+    /// <param name="minimalFWHM">The minimal full width at half maximum, if specified.</param>
+    /// <param name="maximalFWHM">The maximal full width at half maximum, if specified.</param>
+    /// <returns>The lower and upper parameter bounds.</returns>
     public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesForPositivePeaks(double? minimalPosition = null, double? maximalPosition = null, double? minimalFWHM = null, double? maximalFWHM = null)
     {
       var lowerBounds = new double?[NumberOfParameters];
@@ -507,6 +527,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     private static double Pow2(double x) => x * x;
 
+    /// <inheritdoc/>
     public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> parameters, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DF, IReadOnlyList<bool>? dependentVariableChoice)
     {
       const double Sqrt2 = 1.4142135623730950488016887242097;  // Math.Sqrt(2)

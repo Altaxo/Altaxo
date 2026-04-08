@@ -39,6 +39,9 @@ namespace Altaxo.Gui.Common
   {
     private BindingExpressionBase _bindingExpression;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FreeTextComboBoxControl"/> class.
+    /// </summary>
     public FreeTextComboBoxControl()
     {
       InitializeComponent();
@@ -63,12 +66,18 @@ namespace Altaxo.Gui.Common
 
     #region Dependency property
 
+    /// <summary>
+    /// Gets or sets the validated text displayed by the control.
+    /// </summary>
     public string ValidatedText
     {
       get { return (string)GetValue(ValidatedTextProperty); }
       set { SetValue(ValidatedTextProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="ValidatedText"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty ValidatedTextProperty =
         DependencyProperty.Register("ValidatedText", typeof(string), typeof(FreeTextComboBoxControl),
         new FrameworkPropertyMetadata(EhValidatedTextChanged));
@@ -113,15 +122,19 @@ namespace Altaxo.Gui.Common
 
     #region IFreeTextChoiceView
 
+    /// <inheritdoc/>
     public event Action<int>? SelectionChangeCommitted;
 
+    /// <inheritdoc/>
     public event Action<string, System.ComponentModel.CancelEventArgs>? TextValidating;
 
+    /// <inheritdoc/>
     public void SetDescription(string value)
     {
       _lblDescription.Content = value;
     }
 
+    /// <inheritdoc/>
     public void SetChoices(string[] values, int initialselection, bool allowFreeText)
     {
       _cbChoice.ItemsSource = null;

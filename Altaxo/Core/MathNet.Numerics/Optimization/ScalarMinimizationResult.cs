@@ -29,13 +29,37 @@
 
 namespace Altaxo.Calc.Optimization
 {
+  /// <summary>
+  /// Represents the result of a scalar minimization.
+  /// </summary>
   public class ScalarMinimizationResult
   {
+    /// <summary>
+    /// Gets the minimizing point.
+    /// </summary>
     public double MinimizingPoint => FunctionInfoAtMinimum.Point;
+
+    /// <summary>
+    /// Gets the objective function information at the minimum.
+    /// </summary>
     public IScalarObjectiveFunctionEvaluation FunctionInfoAtMinimum { get; }
+
+    /// <summary>
+    /// Gets the number of iterations performed.
+    /// </summary>
     public int Iterations { get; }
+
+    /// <summary>
+    /// Gets the reason why the minimization terminated.
+    /// </summary>
     public ExitCondition ReasonForExit { get; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScalarMinimizationResult"/> class.
+    /// </summary>
+    /// <param name="functionInfo">The objective function information at the minimum.</param>
+    /// <param name="iterations">The number of iterations performed.</param>
+    /// <param name="reasonForExit">The reason why the minimization terminated.</param>
     public ScalarMinimizationResult(IScalarObjectiveFunctionEvaluation functionInfo, int iterations, ExitCondition reasonForExit)
     {
       FunctionInfoAtMinimum = functionInfo;

@@ -5,6 +5,9 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization.TrustRegion
 {
+  /// <summary>
+  /// Provides the shared implementation for trust-region based minimizers.
+  /// </summary>
   public abstract class TrustRegionMinimizerBase : NonlinearMinimizerBase
   {
     /// <summary>
@@ -17,6 +20,15 @@ namespace Altaxo.Calc.Optimization.TrustRegion
     /// </summary>
     public double RadiusTolerance { get; set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TrustRegionMinimizerBase"/> class.
+    /// </summary>
+    /// <param name="subproblem">The trust-region subproblem solver.</param>
+    /// <param name="gradientTolerance">The stopping threshold for the infinity norm of the gradient vector.</param>
+    /// <param name="stepTolerance">The stopping threshold for the L2 norm of the parameter change.</param>
+    /// <param name="functionTolerance">The stopping threshold for the L2 norm of the residuals.</param>
+    /// <param name="radiusTolerance">The stopping threshold for the trust-region radius.</param>
+    /// <param name="maximumIterations">The maximum number of iterations.</param>
     public TrustRegionMinimizerBase(ITrustRegionSubproblem subproblem,
         double gradientTolerance = 1E-8, double stepTolerance = 1E-8, double functionTolerance = 1E-8, double radiusTolerance = 1E-8, int maximumIterations = -1)
         : base(gradientTolerance, stepTolerance, functionTolerance, maximumIterations)
@@ -25,6 +37,16 @@ namespace Altaxo.Calc.Optimization.TrustRegion
       RadiusTolerance = radiusTolerance;
     }
 
+    /// <summary>
+    /// Finds a minimum of the specified objective model.
+    /// </summary>
+    /// <param name="objective">The objective model.</param>
+    /// <param name="initialGuess">The initial parameter guess.</param>
+    /// <param name="lowerBound">Optional lower bounds for the parameters.</param>
+    /// <param name="upperBound">Optional upper bounds for the parameters.</param>
+    /// <param name="scales">Optional scaling factors for the parameters.</param>
+    /// <param name="isFixed">Optional flags indicating which parameters are fixed.</param>
+    /// <returns>The minimization result.</returns>
     public NonlinearMinimizationResult FindMinimum(IObjectiveModel objective, Vector<double> initialGuess,
         Vector<double> lowerBound = null, Vector<double> upperBound = null, Vector<double> scales = null, List<bool> isFixed = null)
     {
@@ -32,6 +54,16 @@ namespace Altaxo.Calc.Optimization.TrustRegion
           GradientTolerance, StepTolerance, FunctionTolerance, RadiusTolerance, MaximumIterations);
     }
 
+    /// <summary>
+    /// Finds a minimum of the specified objective model.
+    /// </summary>
+    /// <param name="objective">The objective model.</param>
+    /// <param name="initialGuess">The initial parameter guess.</param>
+    /// <param name="lowerBound">Optional lower bounds for the parameters.</param>
+    /// <param name="upperBound">Optional upper bounds for the parameters.</param>
+    /// <param name="scales">Optional scaling factors for the parameters.</param>
+    /// <param name="isFixed">Optional flags indicating which parameters are fixed.</param>
+    /// <returns>The minimization result.</returns>
     public NonlinearMinimizationResult FindMinimum(IObjectiveModel objective, double[] initialGuess,
         double[] lowerBound = null, double[] upperBound = null, double[] scales = null, bool[] isFixed = null)
     {
@@ -48,7 +80,7 @@ namespace Altaxo.Calc.Optimization.TrustRegion
     /// Non-linear least square fitting by the trust-region algorithm.
     /// </summary>
     /// <param name="objective">The objective model, including function, jacobian, observations, and parameter bounds.</param>
-    /// <param name="subproblem">The subproblem</param>
+    /// <param name="subproblem">The trust-region subproblem solver.</param>
     /// <param name="initialGuess">The initial guess values.</param>
     /// <param name="lowerBound">The optional lower bounds for the parameters.</param>
     /// <param name="upperBound">The optional upper bounds for the parameters.</param>
@@ -57,9 +89,9 @@ namespace Altaxo.Calc.Optimization.TrustRegion
     /// <param name="gradientTolerance">The stopping threshold for infinity norm of the gradient vector.</param>
     /// <param name="stepTolerance">The stopping threshold for L2 norm of the change of parameters.</param>
     /// <param name="functionTolerance">The stopping threshold for L2 norm of the residuals.</param>
-    /// <param name="radiusTolerance">The stopping threshold for trust region radius</param>
-    /// <param name="maximumIterations">The max iterations.</param>
-    /// <returns></returns>
+    /// <param name="radiusTolerance">The stopping threshold for the trust-region radius.</param>
+    /// <param name="maximumIterations">The maximum number of iterations.</param>
+    /// <returns>The nonlinear minimization result produced by the trust-region algorithm.</returns>
     public NonlinearMinimizationResult Minimum(ITrustRegionSubproblem subproblem, IObjectiveModel objective, Vector<double> initialGuess,
         Vector<double> lowerBound = null, Vector<double> upperBound = null, Vector<double> scales = null, List<bool> isFixed = null,
         double gradientTolerance = 1E-8, double stepTolerance = 1E-8, double functionTolerance = 1E-8, double radiusTolerance = 1E-18, int maximumIterations = -1)

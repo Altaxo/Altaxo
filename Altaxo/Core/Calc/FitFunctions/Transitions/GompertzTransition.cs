@@ -57,6 +57,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     [Serialization.Xml.XmlSerializationSurrogateFor(typeof(GompertzTransition), 0)]
     private class XmlSerializationSurrogate0 : Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (GompertzTransition)obj;
@@ -64,6 +65,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
         info.AddValue("OrderRight", s._order_r);
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var order_l = info.GetInt32("OrderLeft");
@@ -102,6 +104,10 @@ namespace Altaxo.Calc.FitFunctions.Transitions
         throw new ArgumentOutOfRangeException("Order for right segment has to be greater than or equal to zero");
     }
 
+    /// <summary>
+    /// Creates a Gompertz transition fit function with both polynomial orders set to zero.
+    /// </summary>
+    /// <returns>A new <see cref="GompertzTransition"/> instance.</returns>
     [FitFunctionCreator("GompertzTransition", "Transitions", 1, 1, 4)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Transitions.GompertzTransition}")]
     public static IFitFunction Create()

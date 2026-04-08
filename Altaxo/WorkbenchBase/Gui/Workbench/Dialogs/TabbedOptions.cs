@@ -33,6 +33,10 @@ namespace Altaxo.Gui.Workbench
   /// </summary>
   public class TabbedOptions : TabControl, ICanBeDirty
   {
+    /// <summary>
+    /// Adds the option panels described by the specified descriptors.
+    /// </summary>
+    /// <param name="dialogPanelDescriptors">The descriptors to add.</param>
     public void AddOptionPanels(IEnumerable<IOptionPanelDescriptor> dialogPanelDescriptors)
     {
       if (dialogPanelDescriptors is null)
@@ -56,6 +60,7 @@ namespace Altaxo.Gui.Workbench
 
     private bool oldIsDirty;
 
+    /// <inheritdoc/>
     public bool IsDirty
     {
       get
@@ -64,6 +69,7 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <inheritdoc/>
     public event EventHandler? IsDirtyChanged;
 
     private void OnIsDirtyChanged(object? sender, EventArgs e)
@@ -86,6 +92,9 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Gets the option panels that have been created for the tab pages.
+    /// </summary>
     public IEnumerable<IOptionPanel> OptionPanels
     {
       get

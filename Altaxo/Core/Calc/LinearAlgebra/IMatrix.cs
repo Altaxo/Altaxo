@@ -87,14 +87,32 @@ namespace Altaxo.Calc.LinearAlgebra
   {
   }
 
+  /// <summary>
+  /// IROBandMatrix represents a read-only band matrix of values.
+  /// </summary>
   public interface IROBandMatrix<T> : IROMatrix<T> where T : struct
   {
+    /// <summary>
+    /// Gets the lower bandwidth of the matrix.
+    /// </summary>
     int LowerBandwidth { get; }
+
+    /// <summary>
+    /// Gets the upper bandwidth of the matrix.
+    /// </summary>
     int UpperBandwidth { get; }
 
+    /// <summary>
+    /// Enumerates the matrix elements with their indices.
+    /// </summary>
+    /// <param name="zeros">Whether zero elements may be skipped for sparse/banded matrices.</param>
+    /// <returns>An enumeration of (row, column, value) tuples.</returns>
     IEnumerable<(int row, int column, T value)> EnumerateElementsIndexed(Zeros zeros = Zeros.AllowSkip);
   }
 
+  /// <summary>
+  /// IROSparseMatrix represents a read-only sparse matrix of values.
+  /// </summary>
   public interface IROSparseMatrix<T> : IROMatrix<T> where T : struct
   {
   }
@@ -130,6 +148,10 @@ namespace Altaxo.Calc.LinearAlgebra
     void MapIndexed<T1>(T1 sourceParameter1, Func<int, int, T, T1, T> function, IMatrix<T> result, Zeros zeros = Zeros.AllowSkip);
   }
 
+  /// <summary>
+  /// IMatrixLevel1 represents the simplest form of a 2D matrix, which is readable and writeable,
+  /// and provides level-1 matrix operations.
+  /// </summary>
   public interface IMatrixLevel1<T> : IROMatrixLevel1<T> where T : struct
   {
     /// <summary>

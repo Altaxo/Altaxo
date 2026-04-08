@@ -7,6 +7,9 @@ namespace Altaxo.Gui.Analysis.Multivariate
   /// </summary>
   public partial class DimensionReductionOutputOptionsControl : UserControl, IDimensionReductionOutputOptionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DimensionReductionOutputOptionsControl"/> class.
+    /// </summary>
     public DimensionReductionOutputOptionsControl()
     {
       InitializeComponent();

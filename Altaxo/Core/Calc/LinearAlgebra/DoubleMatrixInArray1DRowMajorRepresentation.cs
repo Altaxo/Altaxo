@@ -37,12 +37,27 @@ namespace Altaxo.Calc.LinearAlgebra
   /// </summary>
   public class RODoubleMatrixInArray1DRowMajorRepresentation : IROMatrix<double>
   {
+    /// <summary>
+    /// The underlying array storing the matrix data in row-major order.
+    /// </summary>
     protected double[] _arrayRowMajor;
+    /// <summary>
+    /// The number of rows in the matrix.
+    /// </summary>
     protected int _numberOfRows;
+    /// <summary>
+    /// The number of columns in the matrix.
+    /// </summary>
     protected int _numberOfColumns;
 
     #region IROMatrix Members
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RODoubleMatrixInArray1DRowMajorRepresentation"/> class.
+    /// </summary>
+    /// <param name="rows">The number of rows in the matrix.</param>
+    /// <param name="columns">The number of columns in the matrix.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when rows or columns are less than zero.</exception>
     public RODoubleMatrixInArray1DRowMajorRepresentation(int rows, int columns)
     {
       if (rows < 0 && columns < 0)
@@ -53,6 +68,15 @@ namespace Altaxo.Calc.LinearAlgebra
       _numberOfColumns = columns;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RODoubleMatrixInArray1DRowMajorRepresentation"/> class.
+    /// </summary>
+    /// <param name="array">The array containing the matrix data in row-major order.</param>
+    /// <param name="rows">The number of rows in the matrix.</param>
+    /// <param name="columns">The number of columns in the matrix.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when rows or columns are less than zero.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when array is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when the length of the array is not a multiple of the number of rows.</exception>
     public RODoubleMatrixInArray1DRowMajorRepresentation(double[] array, int rows, int columns)
     {
       if (rows < 0 && columns < 0)
@@ -67,6 +91,12 @@ namespace Altaxo.Calc.LinearAlgebra
       _numberOfColumns = columns;
     }
 
+    /// <summary>
+    /// Gets the element at the specified row and column indices.
+    /// </summary>
+    /// <param name="row">The zero-based row index.</param>
+    /// <param name="column">The zero-based column index.</param>
+    /// <returns>The element at the specified row and column indices.</returns>
     public double this[int row, int column]
     {
       get
@@ -75,11 +105,17 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
+    /// <summary>
+    /// Gets the number of rows in the matrix.
+    /// </summary>
     public int RowCount
     {
       get { return _numberOfRows; }
     }
 
+    /// <summary>
+    /// Gets the number of columns in the matrix.
+    /// </summary>
     public int ColumnCount
     {
       get { return _numberOfColumns; }
@@ -96,11 +132,24 @@ namespace Altaxo.Calc.LinearAlgebra
   /// </summary>
   public class DoubleMatrixInArray1DRowMajorRepresentation : RODoubleMatrixInArray1DRowMajorRepresentation, IMatrix<double>, IMatrixInArray1DRowMajorRepresentation<double>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DoubleMatrixInArray1DRowMajorRepresentation"/> class.
+    /// </summary>
+    /// <param name="rows">The number of rows in the matrix.</param>
+    /// <param name="columns">The number of columns in the matrix.</param>
+    /// <seealso cref="RODoubleMatrixInArray1DRowMajorRepresentation.RODoubleMatrixInArray1DRowMajorRepresentation(int, int)"/>
     public DoubleMatrixInArray1DRowMajorRepresentation(int rows, int columns)
       : base(rows, columns)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DoubleMatrixInArray1DRowMajorRepresentation"/> class.
+    /// </summary>
+    /// <param name="array">The array containing the matrix data in row-major order.</param>
+    /// <param name="nRows">The number of rows in the matrix.</param>
+    /// <param name="columns">The number of columns in the matrix.</param>
+    /// <seealso cref="RODoubleMatrixInArray1DRowMajorRepresentation.RODoubleMatrixInArray1DRowMajorRepresentation(double[], int, int)"/>
     public DoubleMatrixInArray1DRowMajorRepresentation(double[] array, int nRows, int columns)
       : base(array, nRows, columns)
     {
@@ -108,6 +157,12 @@ namespace Altaxo.Calc.LinearAlgebra
 
     #region IMatrix Members
 
+    /// <summary>
+    /// Gets or sets the element at the specified row and column indices.
+    /// </summary>
+    /// <param name="row">The zero-based row index.</param>
+    /// <param name="column">The zero-based column index.</param>
+    /// <returns>The element at the specified row and column indices.</returns>
     public new double this[int row, int column]
     {
       get
@@ -121,6 +176,10 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
+    /// <summary>
+    /// Gets the underlying array storing the matrix data in row-major order.
+    /// </summary>
+    /// <returns>The underlying array.</returns>
     public double[] GetArray1DRowMajor()
     {
       return _arrayRowMajor;

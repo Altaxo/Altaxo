@@ -38,6 +38,9 @@ namespace Altaxo.Gui.DataConnection
   {
     private bool _isPasswordVisible;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LoginCredentialsControl"/> class.
+    /// </summary>
     public LoginCredentialsControl()
     {
       InitializeComponent();
@@ -65,6 +68,7 @@ namespace Altaxo.Gui.DataConnection
       _guiPasswordVisible.Visibility = _isPasswordVisible ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
     }
 
+    /// <inheritdoc/>
     public string Username
     {
       get
@@ -77,6 +81,7 @@ namespace Altaxo.Gui.DataConnection
       }
     }
 
+    /// <inheritdoc/>
     public string Password
     {
       get

@@ -65,6 +65,9 @@ namespace Altaxo.Gui.Drawing.D3D
 
     private Dictionary<sdd.PenLineJoin, ImageComboBoxItem> _cachedItems = new Dictionary<sdd.PenLineJoin, ImageComboBoxItem>();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LineJoinComboBox"/> class.
+    /// </summary>
     public LineJoinComboBox()
     {
       InitializeComponent();
@@ -88,12 +91,18 @@ namespace Altaxo.Gui.Drawing.D3D
 
     private const string _nameOfValueProp = "SelectedLineJoin";
 
+    /// <summary>
+    /// Gets or sets the selected line join.
+    /// </summary>
     public sdd.PenLineJoin SelectedLineJoin
     {
       get { var result = (sdd.PenLineJoin)GetValue(SelectedLineJoinProperty); return result; }
       set { SetValue(SelectedLineJoinProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="SelectedLineJoin"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty SelectedLineJoinProperty =
         DependencyProperty.Register(_nameOfValueProp, typeof(sdd.PenLineJoin), typeof(LineJoinComboBox),
         new FrameworkPropertyMetadata(OnSelectedLineJoinChanged));
@@ -105,16 +114,23 @@ namespace Altaxo.Gui.Drawing.D3D
 
     #endregion Dependency property
 
+    /// <summary>
+    /// Handles a change of the selected line join.
+    /// </summary>
+    /// <param name="obj">The dependency object.</param>
+    /// <param name="args">The property change arguments.</param>
     protected virtual void EhSelectedLineJoinChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
     }
 
+    /// <inheritdoc/>
     public override string GetItemText(object item)
     {
       var val = (sdd.PenLineJoin)item;
       return val.ToString();
     }
 
+    /// <inheritdoc/>
     public override ImageSource GetItemImage(object item)
     {
       var val = (sdd.PenLineJoin)item;
@@ -123,6 +139,11 @@ namespace Altaxo.Gui.Drawing.D3D
       return result;
     }
 
+    /// <summary>
+    /// Creates an image for a line join.
+    /// </summary>
+    /// <param name="join">The line join.</param>
+    /// <returns>The generated image.</returns>
     public static DrawingImage GetImage(sdd.PenLineJoin join)
     {
       const double height = 1;

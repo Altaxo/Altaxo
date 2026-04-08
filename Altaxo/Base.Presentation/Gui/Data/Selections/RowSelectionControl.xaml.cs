@@ -32,6 +32,9 @@ namespace Altaxo.Gui.Data.Selections
   /// </summary>
   public partial class RowSelectionControl : UserControl, IRowSelectionView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RowSelectionControl"/> class.
+    /// </summary>
     public RowSelectionControl()
     {
       InitializeComponent();

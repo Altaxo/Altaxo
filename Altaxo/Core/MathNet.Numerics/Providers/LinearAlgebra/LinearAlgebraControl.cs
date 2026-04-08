@@ -31,6 +31,9 @@ using System;
 
 namespace Altaxo.Calc.Providers.LinearAlgebra
 {
+  /// <summary>
+  /// Controls selection and lifetime of the active linear algebra provider.
+  /// </summary>
   public static class LinearAlgebraControl
   {
     private const string EnvVarLAProvider = "AltaxoCoreLAProvider";
@@ -82,15 +85,39 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
       }
     }
 
+    /// <summary>
+    /// Switches to the managed linear algebra provider.
+    /// </summary>
     public static void UseManaged() => Provider = ManagedLinearAlgebraProvider.Instance;
 
+    /// <summary>
+    /// Switches to the native MKL linear algebra provider.
+    /// </summary>
     public static void UseNativeMKL() => Provider = MklProbe.Create();
+    /// <summary>
+    /// Attempts to switch to the native MKL linear algebra provider.
+    /// </summary>
+    /// <returns><see langword="true"/> if the provider was selected; otherwise, <see langword="false"/>.</returns>
     public static bool TryUseNativeMKL() => TryUse(MklProbe.TryCreate());
 
+    /// <summary>
+    /// Switches to the native CUDA linear algebra provider.
+    /// </summary>
     public static void UseNativeCUDA() => Provider = CudaProbe.Create();
+    /// <summary>
+    /// Attempts to switch to the native CUDA linear algebra provider.
+    /// </summary>
+    /// <returns><see langword="true"/> if the provider was selected; otherwise, <see langword="false"/>.</returns>
     public static bool TryUseNativeCUDA() => TryUse(CudaProbe.TryCreate());
 
+    /// <summary>
+    /// Switches to the native OpenBLAS linear algebra provider.
+    /// </summary>
     public static void UseNativeOpenBLAS() => Provider = OpenBlasProbe.Create();
+    /// <summary>
+    /// Attempts to switch to the native OpenBLAS linear algebra provider.
+    /// </summary>
+    /// <returns><see langword="true"/> if the provider was selected; otherwise, <see langword="false"/>.</returns>
     public static bool TryUseNativeOpenBLAS() => TryUse(OpenBlasProbe.TryCreate());
 
     /// <summary>
@@ -106,6 +133,11 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
       return TryUseNativeMKL() || TryUseNativeOpenBLAS() || TryUseNativeCUDA();
     }
 
+    /// <summary>
+    /// Attempts to switch to the specified linear algebra provider.
+    /// </summary>
+    /// <param name="provider">The provider to use.</param>
+    /// <returns><see langword="true"/> if the provider was selected; otherwise, <see langword="false"/>.</returns>
     public static bool TryUse(ILinearAlgebraProvider provider)
     {
       try
@@ -176,6 +208,9 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
       }
     }
 
+    /// <summary>
+    /// Frees resources held by the active linear algebra provider.
+    /// </summary>
     public static void FreeResources() => Provider.FreeResources();
   }
 }

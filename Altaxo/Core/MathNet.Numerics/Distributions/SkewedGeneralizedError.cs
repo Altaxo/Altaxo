@@ -42,7 +42,7 @@ namespace Altaxo.Calc.Distributions
   /// It includes Laplace, Normal and Student-t distributions.
   /// This is the <see cref="SkewedGeneralizedT"/> distribution with q=Inf.
   /// </summary>
-  /// <remarks><para>This implementation is based on the R package dsgt and corresponding viginette, see
+  /// <remarks><para>This implementation is based on the R package dsgt and corresponding vignette, see
   /// <a href="">https://cran.r-project.org/web/packages/sgt/vignettes/sgt.pdf</a>. Compared to that
   /// implementation, the options for mean adjustment and variance adjustment are always true.
   /// The location (μ) is the mean of the distribution.
@@ -145,26 +145,35 @@ namespace Altaxo.Calc.Distributions
     /// </summary>
     public double P { get; }
 
+    /// <inheritdoc/>
     // No skew implies Median=Mode=Mean
     public double Mode =>
         Skew == 0 ? Mean : Mean - AdjustAddend(AdjustScale(Scale, Skew, P), Skew, P);
 
+    /// <inheritdoc/>
     public double Minimum => double.NegativeInfinity;
 
+    /// <inheritdoc/>
     public double Maximum => double.PositiveInfinity;
 
+    /// <inheritdoc/>
     // Mean=Location due to our adjustments made
     public double Mean => Location;
 
+    /// <inheritdoc/>
     // Variance=Scale*Scale due to our adjustments made
     public double Variance => Scale * Scale;
 
+    /// <inheritdoc/>
     public double StdDev => Scale;
 
+    /// <inheritdoc/>
     public double Entropy => throw new NotImplementedException();
 
+    /// <inheritdoc/>
     public double Skewness => _skewness;
 
+    /// <inheritdoc/>
     // No skew implies Median=Mode=Mean
     // Else find it via the point where CDF gives 0.5
     public double Median =>
@@ -214,6 +223,15 @@ namespace Altaxo.Calc.Distributions
           Constants.SqrtPi;
     }
 
+    /// <summary>
+    /// Computes the probability density of the distribution at <paramref name="x"/>.
+    /// </summary>
+    /// <param name="location">The location (μ) of the distribution.</param>
+    /// <param name="scale">The scale (σ) of the distribution. Range: σ &gt; 0.</param>
+    /// <param name="skew">The skew, 1 &gt; λ &gt; -1.</param>
+    /// <param name="p">Parameter that controls kurtosis. Range: p &gt; 0.</param>
+    /// <param name="x">The location at which to compute the density.</param>
+    /// <returns>The density at <paramref name="x"/>.</returns>
     public static double PDF(double location, double scale, double skew, double p, double x)
     {
       if (!IsValidParameterSet(location, scale, skew, p))
@@ -231,6 +249,15 @@ namespace Altaxo.Calc.Distributions
       return p / (Math.Exp(Math.Pow(d1 / d2, p)) * d3);
     }
 
+    /// <summary>
+    /// Computes the logarithm of the probability density of the distribution at <paramref name="x"/>.
+    /// </summary>
+    /// <param name="location">The location (μ) of the distribution.</param>
+    /// <param name="scale">The scale (σ) of the distribution. Range: σ &gt; 0.</param>
+    /// <param name="skew">The skew, 1 &gt; λ &gt; -1.</param>
+    /// <param name="p">Parameter that controls kurtosis. Range: p &gt; 0.</param>
+    /// <param name="x">The location at which to compute the log density.</param>
+    /// <returns>The log density at <paramref name="x"/>.</returns>
     public static double PDFLn(double location, double scale, double skew, double p, double x)
     {
       if (!IsValidParameterSet(location, scale, skew, p))
@@ -245,6 +272,15 @@ namespace Altaxo.Calc.Distributions
           Math.Pow(Math.Abs(x - location) / (scale * (1.0 + skew * Math.Sign(x - location))), p);
     }
 
+    /// <summary>
+    /// Computes the cumulative distribution of the distribution at <paramref name="x"/>.
+    /// </summary>
+    /// <param name="location">The location (μ) of the distribution.</param>
+    /// <param name="scale">The scale (σ) of the distribution. Range: σ &gt; 0.</param>
+    /// <param name="skew">The skew, 1 &gt; λ &gt; -1.</param>
+    /// <param name="p">Parameter that controls kurtosis. Range: p &gt; 0.</param>
+    /// <param name="x">The location at which to compute the cumulative distribution.</param>
+    /// <returns>The cumulative distribution value at <paramref name="x"/>.</returns>
     public static double CDF(double location, double scale, double skew, double p, double x)
     {
       if (!IsValidParameterSet(location, scale, skew, p))
@@ -266,6 +302,15 @@ namespace Altaxo.Calc.Distributions
       return flip ? 1.0 - res : res;
     }
 
+    /// <summary>
+    /// Computes the inverse cumulative distribution for the specified probability.
+    /// </summary>
+    /// <param name="location">The location (μ) of the distribution.</param>
+    /// <param name="scale">The scale (σ) of the distribution. Range: σ &gt; 0.</param>
+    /// <param name="skew">The skew, 1 &gt; λ &gt; -1.</param>
+    /// <param name="p">Parameter that controls kurtosis. Range: p &gt; 0.</param>
+    /// <param name="pr">The probability.</param>
+    /// <returns>The quantile corresponding to <paramref name="pr"/>.</returns>
     public static double InvCDF(double location, double scale, double skew, double p, double pr)
     {
       if (!IsValidParameterSet(location, scale, skew, p))
@@ -291,36 +336,43 @@ namespace Altaxo.Calc.Distributions
       return res - AdjustAddend(scale, skew, p);
     }
 
+    /// <inheritdoc/>
     public double InverseCumulativeDistribution(double p)
     {
       return InvCDF(Location, Scale, Skew, P, p);
     }
 
+    /// <inheritdoc/>
     public double CumulativeDistribution(double x)
     {
       return CDF(Location, Scale, Skew, P, x);
     }
 
+    /// <inheritdoc/>
     public double Density(double x)
     {
       return PDF(Location, Scale, Skew, P, x);
     }
 
+    /// <inheritdoc/>
     public double DensityLn(double x)
     {
       return PDFLn(Location, Scale, Skew, P, x);
     }
 
+    /// <inheritdoc/>
     public double Sample()
     {
       return SampleUnchecked(_random, Location, Scale, Skew, P);
     }
 
+    /// <inheritdoc/>
     public void Samples(double[] values)
     {
       SamplesUnchecked(_random, values, Location, Scale, Skew, P);
     }
 
+    /// <inheritdoc/>
     public IEnumerable<double> Samples()
     {
       return SamplesUnchecked(_random, Location, Scale, Skew, P);

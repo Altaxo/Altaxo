@@ -33,6 +33,9 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Common.Drawing
 {
+  /// <summary>
+  /// ComboBox for selecting the focus of a gradient.
+  /// </summary>
   public partial class GradientFocusComboBox : DimensionfulQuantityImageComboBox
   {
     private static Dictionary<double, ImageSource> _cachedImages = new Dictionary<double, ImageSource>();
@@ -45,6 +48,9 @@ namespace Altaxo.Gui.Common.Drawing
       SelectedQuantityProperty.OverrideMetadata(typeof(GradientFocusComboBox), new FrameworkPropertyMetadata(new Altaxo.Units.DimensionfulQuantity(0.5, Altaxo.Units.Dimensionless.Unity.Instance)));
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GradientFocusComboBox"/> class.
+    /// </summary>
     public GradientFocusComboBox()
     {
       _converter.ValidationAfterSuccessfulConversion = EhValidateQuantity;
@@ -56,6 +62,7 @@ namespace Altaxo.Gui.Common.Drawing
       _img.Source = GetImage(SelectedQuantityInSIUnits);
     }
 
+    /// <inheritdoc/>
     protected override void ImplantImage(double width, double height)
     {
       base.ImplantImage(width, height);
@@ -81,6 +88,7 @@ namespace Altaxo.Gui.Common.Drawing
       return error is null ? ValidationResult.ValidResult : new ValidationResult(false, error);
     }
 
+    /// <inheritdoc/>
     protected override void OnSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
       base.OnSelectedQuantityChanged(obj, args);
@@ -92,6 +100,7 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <inheritdoc/>
     public override ImageSource GetItemImage(object item)
     {
       double val = ((Altaxo.Units.DimensionfulQuantity)item).AsValueInSIUnits;
@@ -100,11 +109,17 @@ namespace Altaxo.Gui.Common.Drawing
       return result;
     }
 
+    /// <inheritdoc/>
     public override string GetItemText(object item)
     {
       return (string)_converter.Convert(item, typeof(string), null, System.Globalization.CultureInfo.CurrentUICulture);
     }
 
+    /// <summary>
+    /// Creates an image that represents the specified gradient focus value.
+    /// </summary>
+    /// <param name="val">The gradient focus value.</param>
+    /// <returns>An image representing <paramref name="val"/>.</returns>
     public static ImageSource GetImage(double val)
     {
       const double height = 1;

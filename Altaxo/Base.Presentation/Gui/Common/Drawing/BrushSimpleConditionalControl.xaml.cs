@@ -37,11 +37,17 @@ namespace Altaxo.Gui.Common.Drawing
   /// </summary>
   public partial class BrushSimpleConditionalControl : UserControl
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BrushSimpleConditionalControl"/> class.
+    /// </summary>
     public BrushSimpleConditionalControl()
     {
       InitializeComponent();
     }
 
+    /// <summary>
+    /// Gets or sets the selected brush.
+    /// </summary>
     public BrushX SelectedBrush
     {
       get

@@ -32,15 +32,21 @@ using System.Windows.Input;
 
 namespace Altaxo.Gui.Autostart
 {
+  /// <summary>
+  /// Starts the automatic update downloader during application startup.
+  /// </summary>
   public class StartUpdateDownloader : ICommand
   {
+    /// <inheritdoc/>
     public event EventHandler CanExecuteChanged { add { } remove { } }
 
+    /// <inheritdoc/>
     public bool CanExecute(object parameter)
     {
       return true;
     }
 
+    /// <inheritdoc/>
     public void Execute(object parameter)
     {
       Altaxo.Serialization.AutoUpdates.UpdateDownloaderStarter.Run();

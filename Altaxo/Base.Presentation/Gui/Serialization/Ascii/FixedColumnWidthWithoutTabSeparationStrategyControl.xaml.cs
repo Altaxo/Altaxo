@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Serialization.Ascii
   /// </summary>
   public partial class FixedColumnWidthWithoutTabSeparationStrategyControl : UserControl, IFixedColumnWidthWithoutTabSeparationStrategyView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FixedColumnWidthWithoutTabSeparationStrategyControl"/> class.
+    /// </summary>
     public FixedColumnWidthWithoutTabSeparationStrategyControl()
     {
       InitializeComponent();

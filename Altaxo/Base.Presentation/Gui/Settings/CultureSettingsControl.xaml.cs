@@ -35,18 +35,24 @@ namespace Altaxo.Gui.Settings
   /// </summary>
   public partial class CultureSettingsControl : UserControl, ICultureSettingsView
   {
+    /// <inheritdoc/>
     public event Action? CultureChanged;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CultureSettingsControl"/> class.
+    /// </summary>
     public CultureSettingsControl()
     {
       InitializeComponent();
     }
 
+    /// <inheritdoc/>
     public void InitializeCultureFormatList(Collections.SelectableListNodeList list)
     {
       GuiHelper.Initialize(_guiCultures, list);
     }
 
+    /// <inheritdoc/>
     public string NumberDecimalSeparator
     {
       get
@@ -59,6 +65,7 @@ namespace Altaxo.Gui.Settings
       }
     }
 
+    /// <inheritdoc/>
     public string NumberGroupSeparator
     {
       get

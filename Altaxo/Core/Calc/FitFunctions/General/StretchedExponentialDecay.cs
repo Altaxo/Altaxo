@@ -100,6 +100,10 @@ namespace Altaxo.Calc.FitFunctions.General
       return new StretchedExponentialDecay(1);
     }
 
+    /// <summary>
+    /// Creates a Kohlrausch decay fit function with one exponential term.
+    /// </summary>
+    /// <returns>A new <see cref="StretchedExponentialDecay"/> instance configured with one term.</returns>
     [FitFunctionCreator("KohlrauschDecay", "Relaxation", 1, 1, 5)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.General.StretchedExponentialDecay}")]
     public static IFitFunction CreateKohlrauschDecay()

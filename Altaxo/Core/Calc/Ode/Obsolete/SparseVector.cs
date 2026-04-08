@@ -10,6 +10,9 @@ using System;
 
 namespace Altaxo.Calc.Ode.Obsolete
 {
+  /// <summary>
+  /// Represents a sparse vector of double-precision values.
+  /// </summary>
   public struct SparseVector
   {
     private const int IncrementSize = 16; // Size of chunk for array increments
@@ -51,12 +54,18 @@ namespace Altaxo.Calc.Ode.Obsolete
       this.n = n;
     }
 
-    /// <summary>Length of the sparse vector</summary>
+    /// <summary>
+    /// Gets the logical length of the sparse vector.
+    /// </summary>
     public int Length
     {
       get { return n; }
     }
 
+    /// <summary>
+    /// Creates a copy of this sparse vector.
+    /// </summary>
+    /// <returns>A cloned sparse vector.</returns>
     public SparseVector Clone()
     {
       return n == 0 ? new SparseVector() : new SparseVector((double[])items.Clone(), (int[])indices.Clone(), n);

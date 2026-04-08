@@ -35,6 +35,9 @@ namespace Altaxo.Gui.Graph
   /// </summary>
   public partial class PositionSizeRotationScaleControl : UserControl
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PositionSizeRotationScaleControl"/> class.
+    /// </summary>
     public PositionSizeRotationScaleControl()
     {
       InitializeComponent();
@@ -50,6 +53,9 @@ namespace Altaxo.Gui.Graph
       _positionSizeGlue.GuiScaleY = _edScaleY;
     }
 
+    /// <summary>
+    /// Gets the glue object that synchronizes position, size, rotation, and scale controls.
+    /// </summary>
     public ObjectPositionAndSizeGlue PositionSizeGlue
     {
       get

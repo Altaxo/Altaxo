@@ -35,16 +35,21 @@ namespace Altaxo.Gui.Worksheet
   /// </summary>
   public partial class MasterCurveCreationMainControl : UserControl, IMasterCurveCreationMainView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MasterCurveCreationMainControl"/> class.
+    /// </summary>
     public MasterCurveCreationMainControl()
     {
       InitializeComponent();
     }
 
+    /// <inheritdoc/>
     public void InitializeDataTab(object guiControl)
     {
       _dataTab.Content = guiControl;
     }
 
+    /// <inheritdoc/>
     public void InitializeEditTab(object guiControl)
     {
       _editTab.Content = guiControl;

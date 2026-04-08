@@ -36,6 +36,9 @@ namespace Altaxo.Calc.Regression.Multivariate
 #nullable disable
     private PCRCalibrationModel _calib;
 
+    /// <summary>
+    /// Stores the predicted error sum of squares (PRESS) values.
+    /// </summary>
     protected IExtensibleVector<double> _PRESS;
 #nullable enable
 

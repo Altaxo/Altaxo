@@ -43,6 +43,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Lighting
   /// </summary>
   public partial class PointLightControl : UserControl, IDiscreteLightControl
   {
+    /// <summary>
+    /// Occurs when the selected value changes.
+    /// </summary>
     public event EventHandler? SelectedValueChanged;
 
     private double _lightAmplitude;
@@ -51,11 +54,17 @@ namespace Altaxo.Gui.Graph.Graph3D.Lighting
 
     private GuiChangeLocker _lock;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PointLightControl"/> class.
+    /// </summary>
     public PointLightControl()
     {
       InitializeComponent();
     }
 
+    /// <summary>
+    /// Raises the <see cref="SelectedValueChanged"/> event.
+    /// </summary>
     protected virtual void OnSelectedValueChanged()
     {
       if (_lock.IsNotLocked)
@@ -67,6 +76,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Lighting
       OnSelectedValueChanged();
     }
 
+    /// <summary>
+    /// Gets or sets the selected point light.
+    /// </summary>
     public Altaxo.Graph.Graph3D.Lighting.PointLight SelectedValue
     {
       get
@@ -108,6 +120,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Lighting
       }
     }
 
+    /// <inheritdoc/>
     public Altaxo.Graph.Graph3D.Lighting.IDiscreteLight SelectedValueAsIDiscreteLight
     {
       get

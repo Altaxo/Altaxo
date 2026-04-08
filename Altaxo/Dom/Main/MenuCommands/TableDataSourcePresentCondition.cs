@@ -29,10 +29,11 @@ using Altaxo.AddInItems;
 namespace Altaxo.Worksheet.Commands
 {
   /// <summary>
-  /// Evaluates the condition, whether or not a data source is present for a table.
+  /// Evaluates whether a data source is present for the active table.
   /// </summary>
   public class TableDataSourcePresentConditionEvaluator : IConditionEvaluator
   {
+    /// <inheritdoc/>
     public bool IsValid(object caller, Condition condition)
     {
       if (Current.Workbench.ActiveViewContent is null)

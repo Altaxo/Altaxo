@@ -75,10 +75,28 @@ namespace Altaxo.Calc.Optimization
     /// </remarks>
     public enum CriteriaType
     {
-      None, MaximumIteration,
-      MaximumFunctionEvaluation, MaximumGradientEvaluation, MaximumHessianEvaluation,
-      StationaryPoint, StationaryGradient, StationaryHessian,
-      FunctionEpsilon, GradientEpsilon, HessianEpsilon
+      /// <summary>No termination criterion has been met.</summary>
+      None,
+      /// <summary>The maximum number of iterations was reached.</summary>
+      MaximumIteration,
+      /// <summary>The maximum number of function evaluations was reached.</summary>
+      MaximumFunctionEvaluation,
+      /// <summary>The maximum number of gradient evaluations was reached.</summary>
+      MaximumGradientEvaluation,
+      /// <summary>The maximum number of Hessian evaluations was reached.</summary>
+      MaximumHessianEvaluation,
+      /// <summary>A stationary point criterion was met.</summary>
+      StationaryPoint,
+      /// <summary>A stationary gradient criterion was met.</summary>
+      StationaryGradient,
+      /// <summary>A stationary Hessian criterion was met.</summary>
+      StationaryHessian,
+      /// <summary>The function epsilon criterion was met.</summary>
+      FunctionEpsilon,
+      /// <summary>The gradient epsilon criterion was met.</summary>
+      GradientEpsilon,
+      /// <summary>The Hessian epsilon criterion was met.</summary>
+      HessianEpsilon
     };
 
     /// <summary>Maximum number of iterations.</summary>

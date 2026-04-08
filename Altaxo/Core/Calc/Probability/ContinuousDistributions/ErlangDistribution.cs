@@ -61,7 +61,14 @@ namespace Altaxo.Calc.Probability
 
   public class ErlangDistribution : ContinuousDistribution
   {
+    /// <summary>
+    /// Stores the order parameter of the distribution.
+    /// </summary>
     protected int A;
+
+    /// <summary>
+    /// Stores the scale, rate, and helper values used during random number generation.
+    /// </summary>
     protected double B, a1, sq, scale, scale2, lambda;
 
     /// <summary>

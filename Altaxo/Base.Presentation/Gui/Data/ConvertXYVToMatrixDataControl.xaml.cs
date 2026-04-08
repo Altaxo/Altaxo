@@ -38,19 +38,27 @@ namespace Altaxo.Gui.Data
   /// </summary>
   public partial class ConvertXYVToMatrixDataControl : UserControl, IConvertXYVToMatrixDataView
   {
+    /// <inheritdoc/>
     public event Action? SelectedTableChanged;
 
+    /// <inheritdoc/>
     public event Action? SelectedGroupNumberChanged;
 
+    /// <inheritdoc/>
     public event Action? UseSelectedAvailableColumnsAsParticipatingColumns;
 
+    /// <inheritdoc/>
     public event Action? DeleteSelectedParticipatingColumn;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConvertXYVToMatrixDataControl"/> class.
+    /// </summary>
     public ConvertXYVToMatrixDataControl()
     {
       InitializeComponent();
     }
 
+    /// <inheritdoc/>
     public void InitializeXColumn(SelectableListNodeList list)
     {
       GuiHelper.Initialize(_guiColumnX, list);
@@ -61,6 +69,7 @@ namespace Altaxo.Gui.Data
       GuiHelper.SynchronizeSelectionFromGui(_guiColumnX);
     }
 
+    /// <inheritdoc/>
     public void InitializeYColumn(SelectableListNodeList list)
     {
       GuiHelper.Initialize(_guiColumnY, list);
@@ -92,6 +101,7 @@ namespace Altaxo.Gui.Data
         DeleteSelectedParticipatingColumn();
     }
 
+    /// <inheritdoc/>
     public void InitializeAvailableTables(SelectableListNodeList items)
     {
       GuiHelper.Initialize(_guiAvailableTables, items);
@@ -104,6 +114,7 @@ namespace Altaxo.Gui.Data
         ev();
     }
 
+    /// <inheritdoc/>
     public int GroupNumber
     {
       get
@@ -116,11 +127,13 @@ namespace Altaxo.Gui.Data
       }
     }
 
+    /// <inheritdoc/>
     public void InitializeAvailableColumns(SelectableListNodeList items)
     {
       GuiHelper.Initialize(_guiAvailableColumnNames, items);
     }
 
+    /// <inheritdoc/>
     public void InitializeParticipatingColumns(SelectableListNodeList items)
     {
       GuiHelper.Initialize(_guiColumnsParticipating, items);

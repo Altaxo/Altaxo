@@ -20,6 +20,9 @@ using System.Windows.Data;
 
 namespace GongSolutions.Wpf.DragDrop
 {
+  /// <summary>
+  /// Provides information about the target side of a drag operation.
+  /// </summary>
   public interface IDropInfo
   {
     /// <summary>

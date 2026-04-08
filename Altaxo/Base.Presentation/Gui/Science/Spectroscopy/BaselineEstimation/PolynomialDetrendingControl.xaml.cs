@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
   /// </summary>
   public partial class PolynomialDetrendingControl : UserControl, IPolynomialDetrendingView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PolynomialDetrendingControl"/> class.
+    /// </summary>
     public PolynomialDetrendingControl()
     {
       InitializeComponent();

@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
   /// </summary>
   public partial class MultiLineLabelFormattingBaseControl : UserControl, IMultiLineLabelFormattingBaseView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MultiLineLabelFormattingBaseControl"/> class.
+    /// </summary>
     public MultiLineLabelFormattingBaseControl()
     {
       InitializeComponent();

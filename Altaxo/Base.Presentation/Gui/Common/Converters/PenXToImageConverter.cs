@@ -90,11 +90,13 @@ namespace Altaxo.Gui.Common.Converters
       }
     }
 
+    /// <inheritdoc/>
     public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
       _previewBitmap?.Dispose();

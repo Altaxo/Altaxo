@@ -17,11 +17,18 @@ namespace Altaxo.Gui.Behaviors
   /// Used to bind read-only dependence properties one way to source. This is not possible in WPF by design.
   /// See <see cref="PushBindingManager"/> for an example.
   /// </summary>
-  /// <seealso cref="System.Windows.FreezableCollection&lt;Altaxo.Gui.Behaviors.PushBinding&gt;" />
+  /// <seealso cref="FreezableCollection{PushBinding}" />
   public class PushBindingCollection : FreezableCollection<PushBinding>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PushBindingCollection"/> class.
+    /// </summary>
     public PushBindingCollection() { }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PushBindingCollection"/> class.
+    /// </summary>
+    /// <param name="targetObject">The target object whose read-only dependency properties are observed.</param>
     public PushBindingCollection(DependencyObject targetObject)
     {
       TargetObject = targetObject;
@@ -39,6 +46,9 @@ namespace Altaxo.Gui.Behaviors
       }
     }
 
+    /// <summary>
+    /// Gets the target object whose dependency properties are mirrored back to the source.
+    /// </summary>
     public DependencyObject TargetObject
     {
       get;

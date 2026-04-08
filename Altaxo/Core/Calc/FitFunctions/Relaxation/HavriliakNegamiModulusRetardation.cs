@@ -215,6 +215,10 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return "HavriliakNegami Modulus Complex " + (_useFrequencyInsteadOfOmega ? "(Frequency)" : "(Omega)");
     }
 
+    /// <summary>
+    /// Creates a Havriliak-Negami modulus fit function that uses omega as the independent variable.
+    /// </summary>
+    /// <returns>A configured modulus fit function instance.</returns>
     [FitFunctionCreator("HavriliakNegami Complex (Omega)", "Retardation/Modulus", 1, 2, 6)]
     [Description("${res:Altaxo.Calc.FitFunctions.Retardation.Modulus.HavriliakNegamiComplexOmega}")]
     public static IFitFunction CreateModulusOfOmega()
@@ -229,6 +233,10 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return result;
     }
 
+    /// <summary>
+    /// Creates a Havriliak-Negami modulus fit function that uses omega and returns logarithmized results.
+    /// </summary>
+    /// <returns>A configured modulus fit function instance.</returns>
     [FitFunctionCreator("Lg10 HavriliakNegami Complex (Omega)", "Retardation/Modulus", 1, 2, 6)]
     [Description("${res:Altaxo.Calc.FitFunctions.Retardation.Modulus.Lg10HavriliakNegamiComplexOmega}")]
     public static IFitFunction CreateLg10ModulusOfOmega()
@@ -244,6 +252,10 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return result;
     }
 
+    /// <summary>
+    /// Creates a Havriliak-Negami modulus fit function that uses frequency as the independent variable.
+    /// </summary>
+    /// <returns>A configured modulus fit function instance.</returns>
     [FitFunctionCreator("HavriliakNegami Complex (Frequency)", "Retardation/Modulus", 1, 2, 6)]
     [Description("${res:Altaxo.Calc.FitFunctions.Retardation.Modulus.HavriliakNegamiComplexFrequency}")]
     public static IFitFunction CreateModulusOfFrequency()
@@ -259,6 +271,10 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return result;
     }
 
+    /// <summary>
+    /// Creates a Havriliak-Negami modulus fit function that uses frequency and returns logarithmized results.
+    /// </summary>
+    /// <returns>A configured modulus fit function instance.</returns>
     [FitFunctionCreator("Lg10 HavriliakNegami Complex (Frequency)", "Retardation/Modulus", 1, 2, 6)]
     [Description("${res:Altaxo.Calc.FitFunctions.Retardation.Modulus.Lg10HavriliakNegamiComplexFrequency}")]
     public static IFitFunction CreateLg10ModulusOfFrequency()

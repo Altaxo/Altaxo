@@ -31,8 +31,14 @@ using Complex = System.Numerics.Complex;
 
 namespace Altaxo.Calc.Providers.FourierTransform
 {
+  /// <summary>
+  /// Provides a managed implementation of Fourier transforms.
+  /// </summary>
   public sealed partial class ManagedFourierTransformProvider : IFourierTransformProvider
   {
+    /// <summary>
+    /// Gets the singleton instance of the managed Fourier transform provider.
+    /// </summary>
     public static ManagedFourierTransformProvider Instance { get; } = new ManagedFourierTransformProvider();
 
     /// <summary>
@@ -59,11 +65,13 @@ namespace Altaxo.Calc.Providers.FourierTransform
     {
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return "Managed";
     }
 
+    /// <inheritdoc/>
     public void Forward(Complex32[] samples, FourierTransformScaling scaling)
     {
       if (samples.Length.IsPowerOfTwo())
@@ -97,6 +105,7 @@ namespace Altaxo.Calc.Providers.FourierTransform
       }
     }
 
+    /// <inheritdoc/>
     public void Forward(Complex[] samples, FourierTransformScaling scaling)
     {
       if (samples.Length.IsPowerOfTwo())
@@ -130,6 +139,7 @@ namespace Altaxo.Calc.Providers.FourierTransform
       }
     }
 
+    /// <inheritdoc/>
     public void Backward(Complex32[] spectrum, FourierTransformScaling scaling)
     {
       if (spectrum.Length.IsPowerOfTwo())
@@ -163,6 +173,7 @@ namespace Altaxo.Calc.Providers.FourierTransform
       }
     }
 
+    /// <inheritdoc/>
     public void Backward(Complex[] spectrum, FourierTransformScaling scaling)
     {
       if (spectrum.Length.IsPowerOfTwo())
@@ -196,6 +207,7 @@ namespace Altaxo.Calc.Providers.FourierTransform
       }
     }
 
+    /// <inheritdoc/>
     public void ForwardReal(float[] samples, int n, FourierTransformScaling scaling)
     {
       // TODO: backport proper, optimized implementation from Iridium
@@ -227,6 +239,7 @@ namespace Altaxo.Calc.Providers.FourierTransform
       }
     }
 
+    /// <inheritdoc/>
     public void ForwardReal(double[] samples, int n, FourierTransformScaling scaling)
     {
       // TODO: backport proper, optimized implementation from Iridium
@@ -258,6 +271,7 @@ namespace Altaxo.Calc.Providers.FourierTransform
       }
     }
 
+    /// <inheritdoc/>
     public void BackwardReal(float[] spectrum, int n, FourierTransformScaling scaling)
     {
       // TODO: backport proper, optimized implementation from Iridium
@@ -288,6 +302,7 @@ namespace Altaxo.Calc.Providers.FourierTransform
       spectrum[n] = 0f;
     }
 
+    /// <inheritdoc/>
     public void BackwardReal(double[] spectrum, int n, FourierTransformScaling scaling)
     {
       // TODO: backport proper, optimized implementation from Iridium
@@ -318,21 +333,25 @@ namespace Altaxo.Calc.Providers.FourierTransform
       spectrum[n] = 0d;
     }
 
+    /// <inheritdoc/>
     public void ForwardMultidim(Complex32[] samples, int[] dimensions, FourierTransformScaling scaling)
     {
       throw new NotSupportedException();
     }
 
+    /// <inheritdoc/>
     public void ForwardMultidim(Complex[] samples, int[] dimensions, FourierTransformScaling scaling)
     {
       throw new NotSupportedException();
     }
 
+    /// <inheritdoc/>
     public void BackwardMultidim(Complex32[] spectrum, int[] dimensions, FourierTransformScaling scaling)
     {
       throw new NotSupportedException();
     }
 
+    /// <inheritdoc/>
     public void BackwardMultidim(Complex[] spectrum, int[] dimensions, FourierTransformScaling scaling)
     {
       throw new NotSupportedException();

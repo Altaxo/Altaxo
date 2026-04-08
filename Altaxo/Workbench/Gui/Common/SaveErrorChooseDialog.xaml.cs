@@ -33,22 +33,42 @@ using Altaxo.Main.Services;
 namespace Altaxo.Gui.Common
 {
   /// <summary>
-  /// Interaction logic for SaveErrorChooseDialog.xaml
+  /// Interaction logic for <c>SaveErrorChooseDialog.xaml</c>.
   /// </summary>
   public partial class SaveErrorChooseDialog : Window
   {
     private string? displayMessage;
     private Exception? exceptionGot;
 
+    /// <summary>
+    /// Gets the detailed result selected by the user.
+    /// </summary>
     public SaveErrorChooseDialogResult DetailedDialogResult { get; private set; }
 
+    /// <summary>
+    /// Defines the available actions for the save-error dialog.
+    /// </summary>
     public enum SaveErrorChooseDialogResult
     {
+      /// <summary>
+      /// Retries the save operation.
+      /// </summary>
       Retry,
+
+      /// <summary>
+      /// Ignores the error.
+      /// </summary>
       Ignore,
+
+      /// <summary>
+      /// Lets the user choose a different location.
+      /// </summary>
       ChooseLocation
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SaveErrorChooseDialog"/> class.
+    /// </summary>
     public SaveErrorChooseDialog()
     {
       InitializeComponent();
@@ -60,6 +80,14 @@ namespace Altaxo.Gui.Common
       chooseLocationButton.Content = Current.ResourceService.GetString("Global.ChooseLocationButtonText");
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SaveErrorChooseDialog"/> class.
+    /// </summary>
+    /// <param name="fileName">The file name involved in the failed save operation.</param>
+    /// <param name="message">The message template shown to the user.</param>
+    /// <param name="dialogName">The dialog title.</param>
+    /// <param name="exceptionGot">The exception that caused the failure.</param>
+    /// <param name="chooseLocationEnabled"><see langword="true"/> to enable the alternative-location option; otherwise, <see langword="false"/>.</param>
     public SaveErrorChooseDialog(string fileName, string message, string dialogName, Exception exceptionGot, bool chooseLocationEnabled)
     {
       InitializeComponent();

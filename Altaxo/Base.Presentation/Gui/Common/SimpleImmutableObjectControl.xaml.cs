@@ -46,11 +46,15 @@ namespace Altaxo.Gui.Common
   {
     private List<Tuple<Type, FrameworkElement>> _elements = new List<Tuple<Type, FrameworkElement>>();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SimpleImmutableObjectControl"/> class.
+    /// </summary>
     public SimpleImmutableObjectControl()
     {
       InitializeComponent();
     }
 
+    /// <inheritdoc/>
     public void Values_Initialize(IEnumerable<Tuple<string, Type, object>> values)
     {
       _elements.Clear();
@@ -93,6 +97,7 @@ namespace Altaxo.Gui.Common
       _guiGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(4, GridUnitType.Star) });
     }
 
+    /// <inheritdoc/>
     public object Value_Get(int idx)
     {
       if (_elements[idx].Item2 is Altaxo.Gui.Common.NumericDoubleTextBox)

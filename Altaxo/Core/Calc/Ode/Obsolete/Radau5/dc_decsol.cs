@@ -22,6 +22,9 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
   // C     VERSION OF SEPTEMBER 18, 1995
   // C ******************************************
   // C
+  /// <summary>
+  /// Builds and factorizes the real-valued matrices used by the obsolete `Radau5` solver.
+  /// </summary>
   public class DECOMR
   {
     #region Dependencies
@@ -41,6 +44,14 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
 
     #endregion Common variables
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DECOMR"/> class with explicit dependencies.
+    /// </summary>
+    /// <param name="dec">The dense real decomposition helper.</param>
+    /// <param name="decb">The banded real decomposition helper.</param>
+    /// <param name="elmhes">The Hessenberg reduction helper.</param>
+    /// <param name="dech">The Hessenberg decomposition helper.</param>
+    /// <param name="LINAL">The shared linear algebra common block.</param>
     public DECOMR(DEC dec, DECB decb, ELMHES elmhes, DECH dech, CommonBlock LINAL)
     {
       #region Set Dependencies
@@ -70,6 +81,9 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DECOMR"/> class with default dependencies.
+    /// </summary>
     public DECOMR()
     {
       #region Initialization Common Blocks
@@ -114,6 +128,32 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Builds and factorizes the real system matrix for the selected `Radau5` linear algebra mode.
+    /// </summary>
+    /// <param name="N">The system dimension.</param>
+    /// <param name="FJAC">The Jacobian storage array.</param>
+    /// <param name="offset_fjac">The starting offset in <paramref name="FJAC"/>.</param>
+    /// <param name="LDJAC">The leading dimension of <paramref name="FJAC"/>.</param>
+    /// <param name="FMAS">The mass matrix storage array.</param>
+    /// <param name="offset_fmas">The starting offset in <paramref name="FMAS"/>.</param>
+    /// <param name="LDMAS">The leading dimension of <paramref name="FMAS"/>.</param>
+    /// <param name="MLMAS">The lower bandwidth of the mass matrix.</param>
+    /// <param name="MUMAS">The upper bandwidth of the mass matrix.</param>
+    /// <param name="M1">The size of the first block in the second-order formulation.</param>
+    /// <param name="M2">The block stride used by the second-order formulation.</param>
+    /// <param name="NM1">The reduced dimension used by the second-order formulation.</param>
+    /// <param name="FAC1">The scalar factor applied to the identity or mass matrix contribution.</param>
+    /// <param name="E1">The real factorization workspace.</param>
+    /// <param name="offset_e1">The starting offset in <paramref name="E1"/>.</param>
+    /// <param name="LDE1">The leading dimension of <paramref name="E1"/>.</param>
+    /// <param name="IP1">The pivot array for the real factorization.</param>
+    /// <param name="offset_ip1">The starting offset in <paramref name="IP1"/>.</param>
+    /// <param name="IER">The factorization error flag.</param>
+    /// <param name="IJOB">The linear algebra job selector.</param>
+    /// <param name="CALHES">Indicates whether the Hessenberg reduction must be recomputed.</param>
+    /// <param name="IPHES">The pivot information for the Hessenberg reduction.</param>
+    /// <param name="offset_iphes">The starting offset in <paramref name="IPHES"/>.</param>
     public void Run(int N, ref double[] FJAC, int offset_fjac, int LDJAC, double[] FMAS, int offset_fmas, int LDMAS, int MLMAS
                      , int MUMAS, int M1, int M2, int NM1, double FAC1, ref double[] E1, int offset_e1
                      , int LDE1, ref int[] IP1, int offset_ip1, ref int IER, int IJOB, ref bool CALHES, ref int[] IPHES, int offset_iphes)
@@ -471,6 +511,9 @@ LABEL55:
   // C
   // C ***********************************************************
   // C
+  /// <summary>
+  /// Builds and factorizes the complex-valued matrices used by the obsolete `Radau5` solver.
+  /// </summary>
   public class DECOMC
   {
     #region Dependencies
@@ -490,6 +533,13 @@ LABEL55:
 
     #endregion Common variables
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DECOMC"/> class with explicit dependencies.
+    /// </summary>
+    /// <param name="decc">The dense complex decomposition helper.</param>
+    /// <param name="decbc">The banded complex decomposition helper.</param>
+    /// <param name="dechc">The Hessenberg complex decomposition helper.</param>
+    /// <param name="LINAL">The shared linear algebra common block.</param>
     public DECOMC(DECC decc, DECBC decbc, DECHC dechc, CommonBlock LINAL)
     {
       #region Set Dependencies
@@ -518,6 +568,9 @@ LABEL55:
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DECOMC"/> class with default dependencies.
+    /// </summary>
     public DECOMC()
     {
       #region Initialization Common Blocks
@@ -560,6 +613,32 @@ LABEL55:
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Builds and factorizes the complex system matrix for the selected `Radau5` linear algebra mode.
+    /// </summary>
+    /// <param name="N">The system dimension.</param>
+    /// <param name="FJAC">The Jacobian storage array.</param>
+    /// <param name="offset_fjac">The starting offset in <paramref name="FJAC"/>.</param>
+    /// <param name="LDJAC">The leading dimension of <paramref name="FJAC"/>.</param>
+    /// <param name="FMAS">The mass matrix storage array.</param>
+    /// <param name="offset_fmas">The starting offset in <paramref name="FMAS"/>.</param>
+    /// <param name="LDMAS">The leading dimension of <paramref name="FMAS"/>.</param>
+    /// <param name="MLMAS">The lower bandwidth of the mass matrix.</param>
+    /// <param name="MUMAS">The upper bandwidth of the mass matrix.</param>
+    /// <param name="M1">The size of the first block in the second-order formulation.</param>
+    /// <param name="M2">The block stride used by the second-order formulation.</param>
+    /// <param name="NM1">The reduced dimension used by the second-order formulation.</param>
+    /// <param name="ALPHN">The real part of the complex factor.</param>
+    /// <param name="BETAN">The imaginary part of the complex factor.</param>
+    /// <param name="E2R">The real part of the factorization workspace.</param>
+    /// <param name="offset_e2r">The starting offset in <paramref name="E2R"/>.</param>
+    /// <param name="E2I">The imaginary part of the factorization workspace.</param>
+    /// <param name="offset_e2i">The starting offset in <paramref name="E2I"/>.</param>
+    /// <param name="LDE1">The leading dimension of the factorization workspaces.</param>
+    /// <param name="IP2">The pivot array for the complex factorization.</param>
+    /// <param name="offset_ip2">The starting offset in <paramref name="IP2"/>.</param>
+    /// <param name="IER">The factorization error flag.</param>
+    /// <param name="IJOB">The linear algebra job selector.</param>
     public void Run(int N, double[] FJAC, int offset_fjac, int LDJAC, double[] FMAS, int offset_fmas, int LDMAS, int MLMAS
                      , int MUMAS, int M1, int M2, int NM1, double ALPHN, double BETAN
                      , ref double[] E2R, int offset_e2r, ref double[] E2I, int offset_e2i, int LDE1, ref int[] IP2, int offset_ip2, ref int IER, int IJOB)
@@ -979,6 +1058,9 @@ LABEL55:
   // C
   // C ***********************************************************
   // C
+  /// <summary>
+  /// Solves the real-valued stage systems used by the obsolete `Radau5` implementation.
+  /// </summary>
   public class SLVRAR
   {
     #region Dependencies
@@ -998,6 +1080,13 @@ LABEL55:
 
     #endregion Common variables
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SLVRAR"/> class with explicit dependencies.
+    /// </summary>
+    /// <param name="sol">The dense real solver helper.</param>
+    /// <param name="solb">The banded real solver helper.</param>
+    /// <param name="solh">The Hessenberg real solver helper.</param>
+    /// <param name="LINAL">The shared linear algebra common block.</param>
     public SLVRAR(SOL sol, SOLB solb, SOLH solh, CommonBlock LINAL)
     {
       #region Set Dependencies
@@ -1026,6 +1115,9 @@ LABEL55:
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SLVRAR"/> class with default dependencies.
+    /// </summary>
     public SLVRAR()
     {
       #region Initialization Common Blocks
@@ -1068,6 +1160,37 @@ LABEL55:
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Solves the real stage system for the selected `Radau5` linear algebra mode.
+    /// </summary>
+    /// <param name="N">The system dimension.</param>
+    /// <param name="FJAC">The Jacobian storage array.</param>
+    /// <param name="offset_fjac">The starting offset in <paramref name="FJAC"/>.</param>
+    /// <param name="LDJAC">The leading dimension of <paramref name="FJAC"/>.</param>
+    /// <param name="MLJAC">The lower bandwidth of the Jacobian.</param>
+    /// <param name="MUJAC">The upper bandwidth of the Jacobian.</param>
+    /// <param name="FMAS">The mass matrix storage array.</param>
+    /// <param name="offset_fmas">The starting offset in <paramref name="FMAS"/>.</param>
+    /// <param name="LDMAS">The leading dimension of <paramref name="FMAS"/>.</param>
+    /// <param name="MLMAS">The lower bandwidth of the mass matrix.</param>
+    /// <param name="MUMAS">The upper bandwidth of the mass matrix.</param>
+    /// <param name="M1">The size of the first block in the second-order formulation.</param>
+    /// <param name="M2">The block stride used by the second-order formulation.</param>
+    /// <param name="NM1">The reduced dimension used by the second-order formulation.</param>
+    /// <param name="FAC1">The scalar factor used by the transformed system.</param>
+    /// <param name="E1">The real factorized system matrix.</param>
+    /// <param name="offset_e1">The starting offset in <paramref name="E1"/>.</param>
+    /// <param name="LDE1">The leading dimension of <paramref name="E1"/>.</param>
+    /// <param name="Z1">The right-hand side and solution vector.</param>
+    /// <param name="offset_z1">The starting offset in <paramref name="Z1"/>.</param>
+    /// <param name="F1">The real residual vector.</param>
+    /// <param name="offset_f1">The starting offset in <paramref name="F1"/>.</param>
+    /// <param name="IP1">The pivot array for the real factorization.</param>
+    /// <param name="offset_ip1">The starting offset in <paramref name="IP1"/>.</param>
+    /// <param name="IPHES">The pivot information for the Hessenberg transformation.</param>
+    /// <param name="offset_iphes">The starting offset in <paramref name="IPHES"/>.</param>
+    /// <param name="IER">The factorization error flag.</param>
+    /// <param name="IJOB">The linear algebra job selector.</param>
     public void Run(int N, double[] FJAC, int offset_fjac, int LDJAC, int MLJAC, int MUJAC, double[] FMAS, int offset_fmas
                      , int LDMAS, int MLMAS, int MUMAS, int M1, int M2, int NM1
                      , double FAC1, double[] E1, int offset_e1, int LDE1, ref double[] Z1, int offset_z1, double[] F1, int offset_f1, int[] IP1, int offset_ip1
@@ -1404,6 +1527,9 @@ LABEL55:
   // C
   // C ***********************************************************
   // C
+  /// <summary>
+  /// Solves the complex-valued stage systems used by the obsolete `Radau5` implementation.
+  /// </summary>
   public class SLVRAI
   {
     #region Dependencies
@@ -1423,6 +1549,13 @@ LABEL55:
 
     #endregion Common variables
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SLVRAI"/> class with explicit dependencies.
+    /// </summary>
+    /// <param name="solc">The dense complex solver helper.</param>
+    /// <param name="solbc">The banded complex solver helper.</param>
+    /// <param name="solhc">The Hessenberg complex solver helper.</param>
+    /// <param name="LINAL">The shared linear algebra common block.</param>
     public SLVRAI(SOLC solc, SOLBC solbc, SOLHC solhc, CommonBlock LINAL)
     {
       #region Set Dependencies
@@ -1451,6 +1584,9 @@ LABEL55:
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SLVRAI"/> class with default dependencies.
+    /// </summary>
     public SLVRAI()
     {
       #region Initialization Common Blocks
@@ -1493,6 +1629,45 @@ LABEL55:
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Solves the complex stage system for the selected `Radau5` linear algebra mode.
+    /// </summary>
+    /// <param name="N">The system dimension.</param>
+    /// <param name="FJAC">The Jacobian storage array.</param>
+    /// <param name="offset_fjac">The starting offset in <paramref name="FJAC"/>.</param>
+    /// <param name="LDJAC">The leading dimension of <paramref name="FJAC"/>.</param>
+    /// <param name="MLJAC">The lower bandwidth of the Jacobian.</param>
+    /// <param name="MUJAC">The upper bandwidth of the Jacobian.</param>
+    /// <param name="FMAS">The mass matrix storage array.</param>
+    /// <param name="offset_fmas">The starting offset in <paramref name="FMAS"/>.</param>
+    /// <param name="LDMAS">The leading dimension of <paramref name="FMAS"/>.</param>
+    /// <param name="MLMAS">The lower bandwidth of the mass matrix.</param>
+    /// <param name="MUMAS">The upper bandwidth of the mass matrix.</param>
+    /// <param name="M1">The size of the first block in the second-order formulation.</param>
+    /// <param name="M2">The block stride used by the second-order formulation.</param>
+    /// <param name="NM1">The reduced dimension used by the second-order formulation.</param>
+    /// <param name="ALPHN">The real part of the complex factor.</param>
+    /// <param name="BETAN">The imaginary part of the complex factor.</param>
+    /// <param name="E2R">The real part of the factorized system matrix.</param>
+    /// <param name="offset_e2r">The starting offset in <paramref name="E2R"/>.</param>
+    /// <param name="E2I">The imaginary part of the factorized system matrix.</param>
+    /// <param name="offset_e2i">The starting offset in <paramref name="E2I"/>.</param>
+    /// <param name="LDE1">The leading dimension of the factorized system matrices.</param>
+    /// <param name="Z2">The real part of the right-hand side and solution vector.</param>
+    /// <param name="offset_z2">The starting offset in <paramref name="Z2"/>.</param>
+    /// <param name="Z3">The imaginary part of the right-hand side and solution vector.</param>
+    /// <param name="offset_z3">The starting offset in <paramref name="Z3"/>.</param>
+    /// <param name="F2">The real part of the residual vector.</param>
+    /// <param name="offset_f2">The starting offset in <paramref name="F2"/>.</param>
+    /// <param name="F3">The imaginary part of the residual vector.</param>
+    /// <param name="offset_f3">The starting offset in <paramref name="F3"/>.</param>
+    /// <param name="CONT">The continuation value used by the caller.</param>
+    /// <param name="IP2">The pivot array for the complex factorization.</param>
+    /// <param name="offset_ip2">The starting offset in <paramref name="IP2"/>.</param>
+    /// <param name="IPHES">The pivot information for the Hessenberg transformation.</param>
+    /// <param name="offset_iphes">The starting offset in <paramref name="IPHES"/>.</param>
+    /// <param name="IER">The factorization error flag.</param>
+    /// <param name="IJOB">The linear algebra job selector.</param>
     public void Run(int N, double[] FJAC, int offset_fjac, int LDJAC, int MLJAC, int MUJAC, double[] FMAS, int offset_fmas
                      , int LDMAS, int MLMAS, int MUMAS, int M1, int M2, int NM1
                      , double ALPHN, double BETAN, double[] E2R, int offset_e2r, double[] E2I, int offset_e2i, int LDE1, ref double[] Z2, int offset_z2
@@ -1916,6 +2091,9 @@ LABEL55:
   // C
   // C ***********************************************************
   // C
+  /// <summary>
+  /// Solves the coupled real and complex stage systems used by the obsolete `Radau5` implementation.
+  /// </summary>
   public class SLVRAD
   {
     #region Dependencies
@@ -1935,6 +2113,16 @@ LABEL55:
 
     #endregion Common variables
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SLVRAD"/> class with explicit dependencies.
+    /// </summary>
+    /// <param name="sol">The dense real solver helper.</param>
+    /// <param name="solc">The dense complex solver helper.</param>
+    /// <param name="solb">The banded real solver helper.</param>
+    /// <param name="solbc">The banded complex solver helper.</param>
+    /// <param name="solh">The Hessenberg real solver helper.</param>
+    /// <param name="solhc">The Hessenberg complex solver helper.</param>
+    /// <param name="LINAL">The shared linear algebra common block.</param>
     public SLVRAD(SOL sol, SOLC solc, SOLB solb, SOLBC solbc, SOLH solh, SOLHC solhc, CommonBlock LINAL)
     {
       #region Set Dependencies
@@ -1966,6 +2154,9 @@ LABEL55:
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SLVRAD"/> class with default dependencies.
+    /// </summary>
     public SLVRAD()
     {
       #region Initialization Common Blocks
@@ -2014,6 +2205,54 @@ LABEL55:
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Solves the coupled real and complex stage systems for the selected `Radau5` linear algebra mode.
+    /// </summary>
+    /// <param name="N">The system dimension.</param>
+    /// <param name="FJAC">The Jacobian storage array.</param>
+    /// <param name="offset_fjac">The starting offset in <paramref name="FJAC"/>.</param>
+    /// <param name="LDJAC">The leading dimension of <paramref name="FJAC"/>.</param>
+    /// <param name="MLJAC">The lower bandwidth of the Jacobian.</param>
+    /// <param name="MUJAC">The upper bandwidth of the Jacobian.</param>
+    /// <param name="FMAS">The mass matrix storage array.</param>
+    /// <param name="offset_fmas">The starting offset in <paramref name="FMAS"/>.</param>
+    /// <param name="LDMAS">The leading dimension of <paramref name="FMAS"/>.</param>
+    /// <param name="MLMAS">The lower bandwidth of the mass matrix.</param>
+    /// <param name="MUMAS">The upper bandwidth of the mass matrix.</param>
+    /// <param name="M1">The size of the first block in the second-order formulation.</param>
+    /// <param name="M2">The block stride used by the second-order formulation.</param>
+    /// <param name="NM1">The reduced dimension used by the second-order formulation.</param>
+    /// <param name="FAC1">The scalar factor used by the real transformed system.</param>
+    /// <param name="ALPHN">The real part of the complex factor.</param>
+    /// <param name="BETAN">The imaginary part of the complex factor.</param>
+    /// <param name="E1">The real factorized system matrix.</param>
+    /// <param name="offset_e1">The starting offset in <paramref name="E1"/>.</param>
+    /// <param name="E2R">The real part of the complex factorized system matrix.</param>
+    /// <param name="offset_e2r">The starting offset in <paramref name="E2R"/>.</param>
+    /// <param name="E2I">The imaginary part of the complex factorized system matrix.</param>
+    /// <param name="offset_e2i">The starting offset in <paramref name="E2I"/>.</param>
+    /// <param name="LDE1">The leading dimension of the factorized system matrices.</param>
+    /// <param name="Z1">The real right-hand side and solution vector.</param>
+    /// <param name="offset_z1">The starting offset in <paramref name="Z1"/>.</param>
+    /// <param name="Z2">The real part of the complex right-hand side and solution vector.</param>
+    /// <param name="offset_z2">The starting offset in <paramref name="Z2"/>.</param>
+    /// <param name="Z3">The imaginary part of the complex right-hand side and solution vector.</param>
+    /// <param name="offset_z3">The starting offset in <paramref name="Z3"/>.</param>
+    /// <param name="F1">The real residual vector.</param>
+    /// <param name="offset_f1">The starting offset in <paramref name="F1"/>.</param>
+    /// <param name="F2">The real part of the complex residual vector.</param>
+    /// <param name="offset_f2">The starting offset in <paramref name="F2"/>.</param>
+    /// <param name="F3">The imaginary part of the complex residual vector.</param>
+    /// <param name="offset_f3">The starting offset in <paramref name="F3"/>.</param>
+    /// <param name="CONT">The continuation value used by the caller.</param>
+    /// <param name="IP1">The pivot array for the real factorization.</param>
+    /// <param name="offset_ip1">The starting offset in <paramref name="IP1"/>.</param>
+    /// <param name="IP2">The pivot array for the complex factorization.</param>
+    /// <param name="offset_ip2">The starting offset in <paramref name="IP2"/>.</param>
+    /// <param name="IPHES">The pivot information for the Hessenberg transformation.</param>
+    /// <param name="offset_iphes">The starting offset in <paramref name="IPHES"/>.</param>
+    /// <param name="IER">The factorization error flag.</param>
+    /// <param name="IJOB">The linear algebra job selector.</param>
     public void Run(int N, double[] FJAC, int offset_fjac, int LDJAC, int MLJAC, int MUJAC, double[] FMAS, int offset_fmas
                      , int LDMAS, int MLMAS, int MUMAS, int M1, int M2, int NM1
                      , double FAC1, double ALPHN, double BETAN, double[] E1, int offset_e1, double[] E2R, int offset_e2r, double[] E2I, int offset_e2i
@@ -2497,6 +2736,9 @@ LABEL55:
   // C
   // C ***********************************************************
   // C
+  /// <summary>
+  /// Estimates the real-valued local error for the obsolete `Radau5` implementation.
+  /// </summary>
   public class ESTRAD
   {
     #region Dependencies
@@ -2516,6 +2758,13 @@ LABEL55:
 
     #endregion Common variables
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ESTRAD"/> class with explicit dependencies.
+    /// </summary>
+    /// <param name="sol">The dense real solver helper.</param>
+    /// <param name="solb">The banded real solver helper.</param>
+    /// <param name="solh">The Hessenberg real solver helper.</param>
+    /// <param name="LINAL">The shared linear algebra common block.</param>
     public ESTRAD(SOL sol, SOLB solb, SOLH solh, CommonBlock LINAL)
     {
       #region Set Dependencies
@@ -2544,6 +2793,9 @@ LABEL55:
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ESTRAD"/> class with default dependencies.
+    /// </summary>
     public ESTRAD()
     {
       #region Initialization Common Blocks
@@ -2586,6 +2838,64 @@ LABEL55:
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Computes the real-valued local error estimate for the selected `Radau5` linear algebra mode.
+    /// </summary>
+    /// <param name="N">The system dimension.</param>
+    /// <param name="FJAC">The Jacobian storage array.</param>
+    /// <param name="offset_fjac">The starting offset in <paramref name="FJAC"/>.</param>
+    /// <param name="LDJAC">The leading dimension of <paramref name="FJAC"/>.</param>
+    /// <param name="MLJAC">The lower bandwidth of the Jacobian.</param>
+    /// <param name="MUJAC">The upper bandwidth of the Jacobian.</param>
+    /// <param name="FMAS">The mass matrix storage array.</param>
+    /// <param name="offset_fmas">The starting offset in <paramref name="FMAS"/>.</param>
+    /// <param name="LDMAS">The leading dimension of <paramref name="FMAS"/>.</param>
+    /// <param name="MLMAS">The lower bandwidth of the mass matrix.</param>
+    /// <param name="MUMAS">The upper bandwidth of the mass matrix.</param>
+    /// <param name="H">The step size.</param>
+    /// <param name="DD1">The first error coefficient.</param>
+    /// <param name="DD2">The second error coefficient.</param>
+    /// <param name="DD3">The third error coefficient.</param>
+    /// <param name="FCN">The differential equation evaluator.</param>
+    /// <param name="NFCN">The function evaluation counter.</param>
+    /// <param name="Y0">The base solution vector.</param>
+    /// <param name="offset_y0">The starting offset in <paramref name="Y0"/>.</param>
+    /// <param name="Y">The current solution vector.</param>
+    /// <param name="offset_y">The starting offset in <paramref name="Y"/>.</param>
+    /// <param name="IJOB">The linear algebra job selector.</param>
+    /// <param name="X">The current integration point.</param>
+    /// <param name="M1">The size of the first block in the second-order formulation.</param>
+    /// <param name="M2">The block stride used by the second-order formulation.</param>
+    /// <param name="NM1">The reduced dimension used by the second-order formulation.</param>
+    /// <param name="E1">The real factorized system matrix.</param>
+    /// <param name="offset_e1">The starting offset in <paramref name="E1"/>.</param>
+    /// <param name="LDE1">The leading dimension of <paramref name="E1"/>.</param>
+    /// <param name="Z1">The first stage vector.</param>
+    /// <param name="offset_z1">The starting offset in <paramref name="Z1"/>.</param>
+    /// <param name="Z2">The second stage vector.</param>
+    /// <param name="offset_z2">The starting offset in <paramref name="Z2"/>.</param>
+    /// <param name="Z3">The third stage vector.</param>
+    /// <param name="offset_z3">The starting offset in <paramref name="Z3"/>.</param>
+    /// <param name="CONT">The continuation and error workspace.</param>
+    /// <param name="offset_cont">The starting offset in <paramref name="CONT"/>.</param>
+    /// <param name="F1">The first real work vector.</param>
+    /// <param name="offset_f1">The starting offset in <paramref name="F1"/>.</param>
+    /// <param name="F2">The second real work vector.</param>
+    /// <param name="offset_f2">The starting offset in <paramref name="F2"/>.</param>
+    /// <param name="IP1">The pivot array for the real factorization.</param>
+    /// <param name="offset_ip1">The starting offset in <paramref name="IP1"/>.</param>
+    /// <param name="IPHES">The pivot information for the Hessenberg transformation.</param>
+    /// <param name="offset_iphes">The starting offset in <paramref name="IPHES"/>.</param>
+    /// <param name="SCAL">The scaling vector used for the error norm.</param>
+    /// <param name="offset_scal">The starting offset in <paramref name="SCAL"/>.</param>
+    /// <param name="ERR">The resulting error estimate.</param>
+    /// <param name="FIRST">Indicates whether the current step is the first step.</param>
+    /// <param name="REJECT">Indicates whether the previous step was rejected.</param>
+    /// <param name="FAC1">The scalar factor used by the transformed system.</param>
+    /// <param name="RPAR">The user-provided real parameter array.</param>
+    /// <param name="offset_rpar">The starting offset in <paramref name="RPAR"/>.</param>
+    /// <param name="IPAR">The user-provided integer parameter array.</param>
+    /// <param name="offset_ipar">The starting offset in <paramref name="IPAR"/>.</param>
     public void Run(int N, double[] FJAC, int offset_fjac, int LDJAC, int MLJAC, int MUJAC, double[] FMAS, int offset_fmas
                      , int LDMAS, int MLMAS, int MUMAS, double H, double DD1, double DD2
                      , double DD3, IFVPOL FCN, ref int NFCN, double[] Y0, int offset_y0, double[] Y, int offset_y, int IJOB
@@ -3134,6 +3444,9 @@ LABEL55:
   // C
   // C ***********************************************************
   // C
+  /// <summary>
+  /// Estimates the multi-stage local error for the obsolete `Radau5` implementation.
+  /// </summary>
   public class ESTRAV
   {
     #region Dependencies
@@ -3153,6 +3466,13 @@ LABEL55:
 
     #endregion Common variables
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ESTRAV"/> class with explicit dependencies.
+    /// </summary>
+    /// <param name="sol">The dense real solver helper.</param>
+    /// <param name="solb">The banded real solver helper.</param>
+    /// <param name="solh">The Hessenberg real solver helper.</param>
+    /// <param name="LINAL">The shared linear algebra common block.</param>
     public ESTRAV(SOL sol, SOLB solb, SOLH solh, CommonBlock LINAL)
     {
       #region Set Dependencies
@@ -3181,6 +3501,9 @@ LABEL55:
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ESTRAV"/> class with default dependencies.
+    /// </summary>
     public ESTRAV()
     {
       #region Initialization Common Blocks
@@ -3223,6 +3546,59 @@ LABEL55:
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Computes the multi-stage local error estimate for the selected `Radau5` linear algebra mode.
+    /// </summary>
+    /// <param name="N">The system dimension.</param>
+    /// <param name="FJAC">The Jacobian storage array.</param>
+    /// <param name="offset_fjac">The starting offset in <paramref name="FJAC"/>.</param>
+    /// <param name="LDJAC">The leading dimension of <paramref name="FJAC"/>.</param>
+    /// <param name="MLJAC">The lower bandwidth of the Jacobian.</param>
+    /// <param name="MUJAC">The upper bandwidth of the Jacobian.</param>
+    /// <param name="FMAS">The mass matrix storage array.</param>
+    /// <param name="offset_fmas">The starting offset in <paramref name="FMAS"/>.</param>
+    /// <param name="LDMAS">The leading dimension of <paramref name="FMAS"/>.</param>
+    /// <param name="MLMAS">The lower bandwidth of the mass matrix.</param>
+    /// <param name="MUMAS">The upper bandwidth of the mass matrix.</param>
+    /// <param name="H">The step size.</param>
+    /// <param name="DD">The stage combination coefficients.</param>
+    /// <param name="offset_dd">The starting offset in <paramref name="DD"/>.</param>
+    /// <param name="FCN">The differential equation evaluator.</param>
+    /// <param name="NFCN">The function evaluation counter.</param>
+    /// <param name="Y0">The base solution vector.</param>
+    /// <param name="offset_y0">The starting offset in <paramref name="Y0"/>.</param>
+    /// <param name="Y">The current solution vector.</param>
+    /// <param name="offset_y">The starting offset in <paramref name="Y"/>.</param>
+    /// <param name="IJOB">The linear algebra job selector.</param>
+    /// <param name="X">The current integration point.</param>
+    /// <param name="M1">The size of the first block in the second-order formulation.</param>
+    /// <param name="M2">The block stride used by the second-order formulation.</param>
+    /// <param name="NM1">The reduced dimension used by the second-order formulation.</param>
+    /// <param name="NS">The number of stages combined in <paramref name="DD"/>.</param>
+    /// <param name="NNS">The total stage storage length supplied by the caller.</param>
+    /// <param name="E1">The real factorized system matrix.</param>
+    /// <param name="offset_e1">The starting offset in <paramref name="E1"/>.</param>
+    /// <param name="LDE1">The leading dimension of <paramref name="E1"/>.</param>
+    /// <param name="ZZ">The stacked stage vectors.</param>
+    /// <param name="offset_zz">The starting offset in <paramref name="ZZ"/>.</param>
+    /// <param name="CONT">The continuation and error workspace.</param>
+    /// <param name="offset_cont">The starting offset in <paramref name="CONT"/>.</param>
+    /// <param name="FF">The work array used for function and mass-matrix values.</param>
+    /// <param name="offset_ff">The starting offset in <paramref name="FF"/>.</param>
+    /// <param name="IP1">The pivot array for the real factorization.</param>
+    /// <param name="offset_ip1">The starting offset in <paramref name="IP1"/>.</param>
+    /// <param name="IPHES">The pivot information for the Hessenberg transformation.</param>
+    /// <param name="offset_iphes">The starting offset in <paramref name="IPHES"/>.</param>
+    /// <param name="SCAL">The scaling vector used for the error norm.</param>
+    /// <param name="offset_scal">The starting offset in <paramref name="SCAL"/>.</param>
+    /// <param name="ERR">The resulting error estimate.</param>
+    /// <param name="FIRST">Indicates whether the current step is the first step.</param>
+    /// <param name="REJECT">Indicates whether the previous step was rejected.</param>
+    /// <param name="FAC1">The scalar factor used by the transformed system.</param>
+    /// <param name="RPAR">The user-provided real parameter array.</param>
+    /// <param name="offset_rpar">The starting offset in <paramref name="RPAR"/>.</param>
+    /// <param name="IPAR">The user-provided integer parameter array.</param>
+    /// <param name="offset_ipar">The starting offset in <paramref name="IPAR"/>.</param>
     public void Run(int N, double[] FJAC, int offset_fjac, int LDJAC, int MLJAC, int MUJAC, double[] FMAS, int offset_fmas
                      , int LDMAS, int MLMAS, int MUMAS, double H, double[] DD, int offset_dd, IFVPOL FCN
                      , ref int NFCN, double[] Y0, int offset_y0, double[] Y, int offset_y, int IJOB, double X, int M1
@@ -3834,6 +4210,9 @@ LABEL55:
   // C
   // C ***********************************************************
   // C
+  /// <summary>
+  /// Solves the stage correction system for the obsolete `Radau5` implementation.
+  /// </summary>
   public class SLVROD
   {
     #region Dependencies
@@ -3853,6 +4232,12 @@ LABEL55:
 
     #endregion Common variables
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SLVROD"/> class with explicit dependencies.
+    /// </summary>
+    /// <param name="sol">The dense real solver helper.</param>
+    /// <param name="solb">The banded real solver helper.</param>
+    /// <param name="LINAL">The shared linear algebra common block.</param>
     public SLVROD(SOL sol, SOLB solb, CommonBlock LINAL)
     {
       #region Set Dependencies
@@ -3880,6 +4265,9 @@ LABEL55:
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SLVROD"/> class with default dependencies.
+    /// </summary>
     public SLVROD()
     {
       #region Initialization Common Blocks
@@ -3920,6 +4308,40 @@ LABEL55:
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Solves the stage correction system for the selected `Radau5` linear algebra mode.
+    /// </summary>
+    /// <param name="N">The system dimension.</param>
+    /// <param name="FJAC">The Jacobian storage array.</param>
+    /// <param name="offset_fjac">The starting offset in <paramref name="FJAC"/>.</param>
+    /// <param name="LDJAC">The leading dimension of <paramref name="FJAC"/>.</param>
+    /// <param name="MLJAC">The lower bandwidth of the Jacobian.</param>
+    /// <param name="MUJAC">The upper bandwidth of the Jacobian.</param>
+    /// <param name="FMAS">The mass matrix storage array.</param>
+    /// <param name="offset_fmas">The starting offset in <paramref name="FMAS"/>.</param>
+    /// <param name="LDMAS">The leading dimension of <paramref name="FMAS"/>.</param>
+    /// <param name="MLMAS">The lower bandwidth of the mass matrix.</param>
+    /// <param name="MUMAS">The upper bandwidth of the mass matrix.</param>
+    /// <param name="M1">The size of the first block in the second-order formulation.</param>
+    /// <param name="M2">The block stride used by the second-order formulation.</param>
+    /// <param name="NM1">The reduced dimension used by the second-order formulation.</param>
+    /// <param name="FAC1">The scalar factor used by the transformed system.</param>
+    /// <param name="E">The factorized system matrix.</param>
+    /// <param name="offset_e">The starting offset in <paramref name="E"/>.</param>
+    /// <param name="LDE">The leading dimension of <paramref name="E"/>.</param>
+    /// <param name="IP">The pivot array for the factorization.</param>
+    /// <param name="offset_ip">The starting offset in <paramref name="IP"/>.</param>
+    /// <param name="DY">The defect or correction vector.</param>
+    /// <param name="offset_dy">The starting offset in <paramref name="DY"/>.</param>
+    /// <param name="AK">The correction workspace and result vector.</param>
+    /// <param name="offset_ak">The starting offset in <paramref name="AK"/>.</param>
+    /// <param name="FX">The derivative vector.</param>
+    /// <param name="offset_fx">The starting offset in <paramref name="FX"/>.</param>
+    /// <param name="YNEW">The stage solution estimate.</param>
+    /// <param name="offset_ynew">The starting offset in <paramref name="YNEW"/>.</param>
+    /// <param name="HD">The step-related scaling factor.</param>
+    /// <param name="IJOB">The linear algebra job selector.</param>
+    /// <param name="STAGE1">Indicates whether first-stage contributions must be added.</param>
     public void Run(int N, double[] FJAC, int offset_fjac, int LDJAC, int MLJAC, int MUJAC, double[] FMAS, int offset_fmas
                      , int LDMAS, int MLMAS, int MUMAS, int M1, int M2, int NM1
                      , double FAC1, double[] E, int offset_e, int LDE, int[] IP, int offset_ip, double[] DY, int offset_dy, ref double[] AK, int offset_ak
@@ -4261,6 +4683,9 @@ LABEL55:
   // C
   // C ***********************************************************
   // C
+  /// <summary>
+  /// Solves the simplified error update system for the obsolete `Radau5` implementation.
+  /// </summary>
   public class SLVSEU
   {
     #region Dependencies
@@ -4280,6 +4705,13 @@ LABEL55:
 
     #endregion Common variables
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SLVSEU"/> class with explicit dependencies.
+    /// </summary>
+    /// <param name="sol">The dense real solver helper.</param>
+    /// <param name="solb">The banded real solver helper.</param>
+    /// <param name="solh">The Hessenberg real solver helper.</param>
+    /// <param name="LINAL">The shared linear algebra common block.</param>
     public SLVSEU(SOL sol, SOLB solb, SOLH solh, CommonBlock LINAL)
     {
       #region Set Dependencies
@@ -4308,6 +4740,9 @@ LABEL55:
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SLVSEU"/> class with default dependencies.
+    /// </summary>
     public SLVSEU()
     {
       #region Initialization Common Blocks
@@ -4350,6 +4785,34 @@ LABEL55:
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Solves the simplified error update system for the selected `Radau5` linear algebra mode.
+    /// </summary>
+    /// <param name="N">The system dimension.</param>
+    /// <param name="FJAC">The Jacobian storage array.</param>
+    /// <param name="offset_fjac">The starting offset in <paramref name="FJAC"/>.</param>
+    /// <param name="LDJAC">The leading dimension of <paramref name="FJAC"/>.</param>
+    /// <param name="MLJAC">The lower bandwidth of the Jacobian.</param>
+    /// <param name="MUJAC">The upper bandwidth of the Jacobian.</param>
+    /// <param name="FMAS">The mass matrix storage array.</param>
+    /// <param name="offset_fmas">The starting offset in <paramref name="FMAS"/>.</param>
+    /// <param name="LDMAS">The leading dimension of <paramref name="FMAS"/>.</param>
+    /// <param name="MLMAS">The lower bandwidth of the mass matrix.</param>
+    /// <param name="MUMAS">The upper bandwidth of the mass matrix.</param>
+    /// <param name="M1">The size of the first block in the second-order formulation.</param>
+    /// <param name="M2">The block stride used by the second-order formulation.</param>
+    /// <param name="NM1">The reduced dimension used by the second-order formulation.</param>
+    /// <param name="FAC1">The scalar factor used by the transformed system.</param>
+    /// <param name="E">The factorized system matrix.</param>
+    /// <param name="offset_e">The starting offset in <paramref name="E"/>.</param>
+    /// <param name="LDE">The leading dimension of <paramref name="E"/>.</param>
+    /// <param name="IP">The pivot array for the factorization.</param>
+    /// <param name="offset_ip">The starting offset in <paramref name="IP"/>.</param>
+    /// <param name="IPHES">The pivot information for the Hessenberg transformation.</param>
+    /// <param name="offset_iphes">The starting offset in <paramref name="IPHES"/>.</param>
+    /// <param name="DEL">The defect vector that is overwritten with the solution.</param>
+    /// <param name="offset_del">The starting offset in <paramref name="DEL"/>.</param>
+    /// <param name="IJOB">The linear algebra job selector.</param>
     public void Run(int N, double[] FJAC, int offset_fjac, int LDJAC, int MLJAC, int MUJAC, double[] FMAS, int offset_fmas
                      , int LDMAS, int MLMAS, int MUMAS, int M1, int M2, int NM1
                      , double FAC1, double[] E, int offset_e, int LDE, int[] IP, int offset_ip, int[] IPHES, int offset_iphes, ref double[] DEL, int offset_del

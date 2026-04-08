@@ -32,6 +32,9 @@ namespace Altaxo.Gui.Serialization.HDF5.Nexus
   public partial class NexusImportOptionsControl : UserControl,
     INexusImportOptionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NexusImportOptionsControl"/> class.
+    /// </summary>
     public NexusImportOptionsControl()
     {
       InitializeComponent();

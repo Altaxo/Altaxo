@@ -22,12 +22,7 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -35,14 +30,14 @@ using System.Windows.Controls.Primitives;
 namespace Altaxo.Gui.Main
 {
   /// <summary>
-  /// ItemsControl (to with items can be bound to using <see cref="ItemsControl.ItemsSource"/>, but which features a <see cref="Grid"/> control as the ItemsHost.
+  /// ItemsControl to which items can be bound using <see cref="ItemsControl.ItemsSource"/>, but which features a <see cref="Grid"/> control as the items host.
   /// The number of columns in the Grid must be fixed using <see cref="NumberOfColumns"/> (default is 4).
-  /// Items that are derived from <see cref="FrameworkElement"/> will be used directly. All other items are using the item template of the <see cref="ItemsControl"/>.
+  /// Items that are derived from <see cref="FrameworkElement"/> will be used directly. All other items use the item template of the <see cref="ItemsControl"/>.
   /// </summary>
   /// <seealso cref="System.Windows.Controls.ItemsControl" />
   /// <example>
   /// Use this class in a way like this:
-  /// <code>
+  /// <code><![CDATA[
   ///     <local:ItemsControlWithGridItemsHost ItemsSource="{Binding ControllerList}" NumberOfColumns="4">
   ///      <ItemsControl.ItemsPanel>
   ///          <ItemsPanelTemplate>
@@ -69,10 +64,13 @@ namespace Altaxo.Gui.Main
   ///          </Style>
   ///      </ItemsControl.ItemContainerStyle>
   ///  </local:ItemsControlWithGridItemsHost>
-  /// </code>
+  /// ]]></code>
   /// </example>
   public class ItemsControlWithGridItemsHost : ItemsControl
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ItemsControlWithGridItemsHost"/> class.
+    /// </summary>
     public ItemsControlWithGridItemsHost()
     {
       AlternationCount = 65535; // is neccessary in order to use AlternationIndex as an index of the container elements

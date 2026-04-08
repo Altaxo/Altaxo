@@ -25,10 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using Altaxo.Calc.LinearAlgebra;
-using Altaxo.Calc.LinearAlgebra.Double.Factorization;
-using Altaxo.Calc.LinearAlgebra.Factorization;
 using Complex64T = System.Numerics.Complex;
 
 namespace Altaxo.Calc.Regression
@@ -44,7 +41,7 @@ namespace Altaxo.Calc.Regression
     /// <param name="a">Matrix <c>a</c>.</param>
     /// <param name="b">Vector <c>b</c>.</param>
     /// <param name="result">Vector <c>result</c>, such that <c>||a * result - b||</c> is minimized.</param>
-    void Solve(Matrix<double> a, Vector<double> b, Vector<double> result);
+    public void Solve(Matrix<double> a, Vector<double> b, Vector<double> result);
   }
 
   /// <summary>
@@ -615,7 +612,7 @@ namespace Altaxo.Calc.Regression
       if (yOrder < 1)
         throw new ArgumentException("yOrder must be at least 1");
       if (yOrder >= (yTraining.Count - yOrder))
-        throw new ArgumentException("Not enough data points for this degree (yOrder must be less than yTraining.Length/2)." );
+        throw new ArgumentException("Not enough data points for this degree (yOrder must be less than yTraining.Length/2).");
 
       var est = new DynamicParameterEstimation(null, yTraining, 0, yOrder, 0);
       // now calculate the extrapolation data
@@ -647,7 +644,7 @@ namespace Altaxo.Calc.Regression
       [MemberNotNull(nameof(_decomposition))]
       public void Solve(Matrix<double> a, Vector<double> b, Vector<double> result)
       {
-        a.Svd().Solve(b,result);
+        a.Svd().Solve(b, result);
       }
 
       #endregion IDynamicParameterEstimationSolver Members
@@ -757,6 +754,9 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <inheritdoc/>
+    /// <inheritdoc/>
+    /// <inheritdoc/>
+    /// <inheritdoc/>
     protected override void CalculateStartingPoint()
     {
       base.CalculateStartingPoint();
@@ -787,6 +787,9 @@ namespace Altaxo.Calc.Regression
       }
     }
 
+    /// <inheritdoc/>
+    /// <inheritdoc/>
+    /// <inheritdoc/>
     /// <inheritdoc/>
     protected override Matrix<double> FillInputMatrix(IReadOnlyList<double>? x, IReadOnlyList<double> y, Matrix<double>? M)
     {
@@ -894,6 +897,11 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <inheritdoc/>
+    /// <inheritdoc/>
+    /// <inheritdoc/>
+    /// <inheritdoc/>
+    /// <inheritdoc/>
+    /// <inheritdoc/>
     public override Complex64T GetFrequencyResponse(double fdt)
     {
       double w = fdt * 2 * Math.PI;
@@ -961,7 +969,7 @@ namespace Altaxo.Calc.Regression
         {
           list.Add(curridx);
           curridx = 0;
-  }
+        }
         else
         {
           int current_down = curridx - (int)Math.Ceiling(delements);
@@ -1141,7 +1149,7 @@ namespace Altaxo.Calc.Regression
           {
             result[i]--;
             decreaseby--;
-  }
+          }
         }
       } while (decreaseby > 0);
 
@@ -1149,7 +1157,7 @@ namespace Altaxo.Calc.Regression
       return result;
     }
 
-  /// <summary>
+    /// <summary>
     /// Gets an array where the first history point (y[0]) is excluded from the history (this is because y[0] is already on the right side of the equation.
     /// If the first element of xcount is greater than one, the result is a cloned xcount array with the first element reduced by one.
     /// If the first element of xcount is one, than an copyied version of xcount, without the first element, is returned.
@@ -1219,6 +1227,7 @@ namespace Altaxo.Calc.Regression
       _ySpacing = ySpacing;
     }
 
+    /// <inheritdoc/>
     protected override void CalculateStartingPoint()
     {
       base.CalculateStartingPoint();
@@ -1229,6 +1238,7 @@ namespace Altaxo.Calc.Regression
         _startingPoint = Math.Max(_startingPoint, 1 + (_numY - 1) * _ySpacing);
     }
 
+    /// <inheritdoc/>
     protected override Matrix<double> FillInputMatrix(IReadOnlyList<double>? x, IReadOnlyList<double> y, Matrix<double>? M)
     {
       int numberOfData = CalculateNumberOfData(x, y);
@@ -1265,7 +1275,7 @@ namespace Altaxo.Calc.Regression
 
     /// <summary>
     /// Gets the impulse response to a pulse at t=0, i.e. to x[0]==1, x[1]...x[n]==0. The background component is not taken into account.
-  /// </summary>
+    /// </summary>
     /// <param name="output">Used to store the output result. Can be of arbitrary size.</param>
     /// <param name="yValueBeforePulse">This is the y-value (not x!) before the pulse. If the <c>NumberOfY</c> is set to zero, this parameter is ignored, since no information about y for t&lt;0 is neccessary.</param>
     public override void GetTransferFunction(double yValueBeforePulse, IVector<double> output)
@@ -1298,6 +1308,7 @@ namespace Altaxo.Calc.Regression
       }
     }
 
+    /// <inheritdoc/>
     public override Complex64T GetFrequencyResponse(double fdt)
     {
       double w = fdt * 2 * Math.PI;
@@ -1317,6 +1328,9 @@ namespace Altaxo.Calc.Regression
     }
   }
 
+  /// <summary>
+  /// Dynamic parameter estimation that uses explicitly specified x and y lag bins.
+  /// </summary>
   public class DynamicParameterEstimationWithChooseableBins : DynamicParameterEstimation
   {
     private int[] _xBins;

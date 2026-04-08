@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
   /// </summary>
   public partial class XToXLineControl : UserControl, IXToXLineView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XToXLineControl"/> class.
+    /// </summary>
     public XToXLineControl()
     {
       InitializeComponent();

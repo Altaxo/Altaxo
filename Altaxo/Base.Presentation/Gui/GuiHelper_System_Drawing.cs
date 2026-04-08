@@ -40,15 +40,28 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Gui
 {
+  /// <summary>
+  /// Provides helper methods for converting System.Drawing types to and from WPF types.
+  /// </summary>
   public static partial class GuiHelper
   {
     #region Brush and Pen
 
+    /// <summary>
+    /// Converts a GDI color to a WPF color.
+    /// </summary>
+    /// <param name="c">The GDI color.</param>
+    /// <returns>The converted WPF color.</returns>
     public static System.Windows.Media.Color ToWpf(this System.Drawing.Color c)
     {
       return Color.FromArgb(c.A, c.R, c.G, c.B);
     }
 
+    /// <summary>
+    /// Converts a WPF color to a GDI color.
+    /// </summary>
+    /// <param name="c">The WPF color.</param>
+    /// <returns>The converted GDI color.</returns>
     public static System.Drawing.Color ToSysDraw(this System.Windows.Media.Color c)
     {
       return System.Drawing.Color.FromArgb(c.A, c.R, c.G, c.B);
@@ -58,21 +71,41 @@ namespace Altaxo.Gui
 
     #region Point
 
+    /// <summary>
+    /// Converts a <see cref="System.Drawing.PointF"/> to a WPF point.
+    /// </summary>
+    /// <param name="pt">The source point.</param>
+    /// <returns>The converted WPF point.</returns>
     public static Point ToWpf(this System.Drawing.PointF pt)
     {
       return new Point(pt.X, pt.Y);
     }
 
+    /// <summary>
+    /// Converts a <see cref="System.Drawing.Point"/> to a WPF point.
+    /// </summary>
+    /// <param name="pt">The source point.</param>
+    /// <returns>The converted WPF point.</returns>
     public static Point ToWpf(this System.Drawing.Point pt)
     {
       return new Point(pt.X, pt.Y);
     }
 
+    /// <summary>
+    /// Converts a WPF point to a <see cref="System.Drawing.PointF"/>.
+    /// </summary>
+    /// <param name="pt">The WPF point.</param>
+    /// <returns>The converted drawing point.</returns>
     public static System.Drawing.PointF ToSysDraw(this Point pt)
     {
       return new System.Drawing.PointF((float)pt.X, (float)pt.Y);
     }
 
+    /// <summary>
+    /// Converts a WPF point to an integer <see cref="System.Drawing.Point"/>.
+    /// </summary>
+    /// <param name="pt">The WPF point.</param>
+    /// <returns>The converted drawing point.</returns>
     public static System.Drawing.Point ToSysDrawInt(this Point pt)
     {
       return new System.Drawing.Point((int)pt.X, (int)pt.Y);
@@ -82,21 +115,41 @@ namespace Altaxo.Gui
 
     #region Rectangle
 
+    /// <summary>
+    /// Converts a <see cref="System.Drawing.RectangleF"/> to a WPF rectangle.
+    /// </summary>
+    /// <param name="rect">The source rectangle.</param>
+    /// <returns>The converted WPF rectangle.</returns>
     public static Rect ToWpf(this System.Drawing.RectangleF rect)
     {
       return new Rect(rect.X, rect.Y, rect.Width, rect.Height);
     }
 
+    /// <summary>
+    /// Converts a <see cref="System.Drawing.Rectangle"/> to a WPF rectangle.
+    /// </summary>
+    /// <param name="rect">The source rectangle.</param>
+    /// <returns>The converted WPF rectangle.</returns>
     public static Rect ToWpf(this System.Drawing.Rectangle rect)
     {
       return new Rect(rect.X, rect.Y, rect.Width, rect.Height);
     }
 
+    /// <summary>
+    /// Converts a WPF rectangle to a <see cref="System.Drawing.RectangleF"/>.
+    /// </summary>
+    /// <param name="rect">The WPF rectangle.</param>
+    /// <returns>The converted drawing rectangle.</returns>
     public static System.Drawing.RectangleF ToSysDraw(this Rect rect)
     {
       return new System.Drawing.RectangleF((float)rect.X, (float)rect.Y, (float)rect.Width, (float)rect.Height);
     }
 
+    /// <summary>
+    /// Converts a WPF rectangle to an integer <see cref="System.Drawing.Rectangle"/>.
+    /// </summary>
+    /// <param name="rect">The WPF rectangle.</param>
+    /// <returns>The converted drawing rectangle.</returns>
     public static System.Drawing.Rectangle ToSysDrawInt(this Rect rect)
     {
       return new System.Drawing.Rectangle((int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height);
@@ -106,6 +159,11 @@ namespace Altaxo.Gui
 
     #region Image from System.Drawing to WPF
 
+    /// <summary>
+    /// Converts a <see cref="System.Drawing.Bitmap"/> to a WPF bitmap source.
+    /// </summary>
+    /// <param name="bitmap">The source bitmap.</param>
+    /// <returns>The converted WPF bitmap source.</returns>
     public static System.Windows.Media.Imaging.BitmapSource ToWpf(this System.Drawing.Bitmap bitmap)
     {
       using (var stream = new System.IO.MemoryStream())

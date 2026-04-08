@@ -32,6 +32,9 @@ namespace Altaxo.Gui.Common.BasicTypes
   /// </summary>
   public partial class EnumValueControl : UserControl, IEnumValueView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EnumValueControl"/> class.
+    /// </summary>
     public EnumValueControl()
     {
       InitializeComponent();

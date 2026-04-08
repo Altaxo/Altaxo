@@ -26,8 +26,17 @@ using System.Windows;
 
 namespace Altaxo.Gui
 {
+  /// <summary>
+  /// Provides helper methods for drag-and-drop conversions.
+  /// </summary>
   public static partial class GuiHelper
   {
+    /// <summary>
+    /// Converts copy and move flags to a WPF drag-and-drop effect.
+    /// </summary>
+    /// <param name="copy">Whether copy is allowed.</param>
+    /// <param name="move">Whether move is allowed.</param>
+    /// <returns>The resulting drag-and-drop effect.</returns>
     public static DragDropEffects ConvertCopyMoveToDragDropEffect(bool copy, bool move)
     {
       var result = DragDropEffects.None;
@@ -38,22 +47,43 @@ namespace Altaxo.Gui
       return result;
     }
 
+    /// <summary>
+    /// Converts a WPF drag-and-drop effect to copy and move flags.
+    /// </summary>
+    /// <param name="effects">The drag-and-drop effects.</param>
+    /// <param name="copy">Set to <c>true</c> if copy is allowed.</param>
+    /// <param name="move">Set to <c>true</c> if move is allowed.</param>
     public static void ConvertDragDropEffectToCopyMove(DragDropEffects effects, out bool copy, out bool move)
     {
       copy = effects.HasFlag(DragDropEffects.Copy);
       move = effects.HasFlag(DragDropEffects.Move);
     }
 
+    /// <summary>
+    /// Converts an Altaxo clipboard data object to a WPF data object.
+    /// </summary>
+    /// <param name="dao">The Altaxo data object.</param>
+    /// <returns>The converted WPF data object.</returns>
     public static System.Windows.IDataObject ToWpf(Altaxo.Serialization.Clipboard.IDataObject dao)
     {
       return DataObjectAdapterAltaxoToWpf.FromAltaxoDataObject(dao);
     }
 
+    /// <summary>
+    /// Converts a WPF data object to an Altaxo clipboard data object.
+    /// </summary>
+    /// <param name="dao">The WPF data object.</param>
+    /// <returns>The converted Altaxo data object.</returns>
     public static Altaxo.Serialization.Clipboard.IDataObject ToAltaxo(System.Windows.IDataObject dao)
     {
       return DataObjectAdapterWpfToAltaxo.FromWpfDataObject(dao);
     }
 
+    /// <summary>
+    /// Converts a GongSolutions relative insert position to the Altaxo equivalent.
+    /// </summary>
+    /// <param name="pos">The GongSolutions relative insert position.</param>
+    /// <returns>The converted Altaxo relative insert position.</returns>
     public static Altaxo.Gui.Common.DragDropRelativeInsertPosition ToAltaxo(GongSolutions.Wpf.DragDrop.RelativeInsertPosition pos)
     {
       Altaxo.Gui.Common.DragDropRelativeInsertPosition result = 0;

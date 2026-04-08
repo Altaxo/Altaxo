@@ -40,6 +40,9 @@ namespace Altaxo.Gui.Workbench
   /// </summary>
   public partial class MainWorkbenchWindow : FullScreenEnabledWindow
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MainWorkbenchWindow"/> class.
+    /// </summary>
     public MainWorkbenchWindow()
     {
       InitializeComponent();
@@ -99,12 +102,14 @@ namespace Altaxo.Gui.Workbench
 
 
 
+    /// <inheritdoc/>
     protected override void OnStateChanged(EventArgs e)
     {
       WorkbenchStateObserver.UpdateWorkbenchStateFromMainWindow(this);
       base.OnStateChanged(e);
     }
 
+    /// <inheritdoc/>
     protected override void OnClosing(CancelEventArgs e)
     {
       base.OnClosing(e);
@@ -119,6 +124,7 @@ namespace Altaxo.Gui.Workbench
 
     #region Drag/Drop handling
 
+    /// <inheritdoc/>
     protected override void OnDragEnter(DragEventArgs e)
     {
       try
@@ -136,6 +142,7 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <inheritdoc/>
     protected override void OnDragOver(DragEventArgs e)
     {
       try
@@ -179,6 +186,7 @@ namespace Altaxo.Gui.Workbench
       return DragDropEffects.None;
     }
 
+    /// <inheritdoc/>
     protected override void OnDrop(DragEventArgs e)
     {
       try

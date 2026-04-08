@@ -34,6 +34,9 @@ using Altaxo.Calc.Threading;
 
 namespace Altaxo.Calc.Distributions
 {
+  /// <summary>
+  /// Continuous univariate beta distribution scaled to an arbitrary location and range.
+  /// </summary>
   public class BetaScaled : IContinuousDistribution
   {
     private System.Random _random;

@@ -33,6 +33,9 @@ using Altaxo.Calc.Random;
 
 namespace Altaxo.Calc.Distributions
 {
+  /// <summary>
+  /// Continuous univariate Burr Type XII distribution.
+  /// </summary>
   public class Burr : IContinuousDistribution
   {
     private System.Random _random;

@@ -50,6 +50,9 @@ namespace Altaxo.Gui.Common.Drawing
       SelectedQuantityProperty.OverrideMetadata(typeof(MiterLimitComboBox), new FrameworkPropertyMetadata(new DimensionfulQuantity(10, Unity.Instance)));
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MiterLimitComboBox"/> class.
+    /// </summary>
     public MiterLimitComboBox()
     {
       InitializeComponent();
@@ -60,6 +63,7 @@ namespace Altaxo.Gui.Common.Drawing
       _img.Source = GetImage(SelectedQuantityInSIUnits);
     }
 
+    /// <inheritdoc/>
     protected override void OnSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
       base.OnSelectedQuantityChanged(obj, args);
@@ -71,6 +75,7 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <inheritdoc/>
     public override ImageSource GetItemImage(object item)
     {
       double val = ((DimensionfulQuantity)item).AsValueIn(Unity.Instance);
@@ -79,11 +84,17 @@ namespace Altaxo.Gui.Common.Drawing
       return result;
     }
 
+    /// <inheritdoc/>
     public override string GetItemText(object item)
     {
       return (string)_converter.Convert(item, typeof(string), null, System.Globalization.CultureInfo.CurrentUICulture);
     }
 
+    /// <summary>
+    /// Creates an image that represents the specified miter limit.
+    /// </summary>
+    /// <param name="miterLimit">The miter limit value.</param>
+    /// <returns>An image representing <paramref name="miterLimit"/>.</returns>
     public static DrawingImage GetImage(double miterLimit)
     {
       const double height = 1;

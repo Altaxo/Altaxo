@@ -30,16 +30,30 @@ namespace Altaxo.Gui.Workbench
   [TypeConverter(typeof(ExternalProcessDisplayBindingConverter))]
   public sealed class ExternalProcessDisplayBinding : IDisplayBinding
   {
+    /// <summary>
+    /// Gets or sets the file extension handled by the binding.
+    /// </summary>
     public string? FileExtension { get; set; }
+    /// <summary>
+    /// Gets or sets the command line used to launch the external process.
+    /// </summary>
     public string? CommandLine { get; set; }
+    /// <summary>
+    /// Gets or sets the display title.
+    /// </summary>
     public string? Title { get; set; }
+    /// <summary>
+    /// Gets or sets the binding identifier.
+    /// </summary>
     public string? Id { get; set; }
 
+    /// <inheritdoc/>
     public bool CanCreateContentForFile(FileName fileName)
     {
       return string.Equals(Path.GetExtension(fileName), FileExtension, StringComparison.OrdinalIgnoreCase);
     }
 
+    /// <inheritdoc/>
     public IViewContent? CreateContentForFile(OpenedFile file)
     {
       if (file.IsDirty)
@@ -90,11 +104,13 @@ namespace Altaxo.Gui.Workbench
       Process.Start(info);
     }
 
+    /// <inheritdoc/>
     public bool IsPreferredBindingForFile(FileName fileName)
     {
       return false;
     }
 
+    /// <inheritdoc/>
     public double AutoDetectFileContent(FileName fileName, Stream fileContent, string detectedMimeType)
     {
       return double.NegativeInfinity;

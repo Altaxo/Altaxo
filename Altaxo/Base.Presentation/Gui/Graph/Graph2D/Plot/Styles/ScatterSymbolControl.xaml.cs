@@ -50,6 +50,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
   /// </summary>
   public partial class ScatterSymbolControl : UserControl, IScatterSymbolView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScatterSymbolControl"/> class.
+    /// </summary>
     public ScatterSymbolControl()
     {
       InitializeComponent();

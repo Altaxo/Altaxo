@@ -34,8 +34,10 @@ namespace Altaxo.Gui.Workbench
   /// </returns>
   public class DirectoryDoozer : IDoozer
   {
+    /// <inheritdoc/>
     public bool HandleConditions { get { return false; } }
 
+    /// <inheritdoc/>
     public object BuildItem(BuildItemArgs args)
     {
       return Path.Combine(Path.GetDirectoryName(args.AddIn.FileName) ?? string.Empty, args.Codon["path"]);

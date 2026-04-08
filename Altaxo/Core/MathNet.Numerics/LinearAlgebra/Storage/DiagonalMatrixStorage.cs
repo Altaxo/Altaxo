@@ -35,6 +35,9 @@ using Altaxo.Calc.Threading;
 
 namespace Altaxo.Calc.LinearAlgebra.Storage
 {
+  /// <summary>
+  /// Stores a diagonal matrix by its diagonal entries.
+  /// </summary>
   [Serializable]
   [DataContract(Namespace = "urn:MathNet/Numerics/LinearAlgebra")]
   public class DiagonalMatrixStorage<T> : MatrixStorage<T>
@@ -42,6 +45,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
   {
     // [ruegg] public fields are OK here
 
+    /// <summary>
+    /// Gets the stored diagonal entries.
+    /// </summary>
     [DataMember(Order = 1)]
     public readonly T[] Data;
 
@@ -132,6 +138,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // CLEARING
 
+    /// <inheritdoc/>
     public override void Clear()
     {
       Array.Clear(Data, 0, Data.Length);
@@ -165,6 +172,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // INITIALIZATION
 
+    /// <summary>
+    /// Creates a diagonal matrix storage from another matrix storage.
+    /// </summary>
     public static DiagonalMatrixStorage<T> OfMatrix(MatrixStorage<T> matrix)
     {
       var storage = new DiagonalMatrixStorage<T>(matrix.RowCount, matrix.ColumnCount);
@@ -172,6 +182,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return storage;
     }
 
+    /// <summary>
+    /// Creates a diagonal matrix storage from a two-dimensional array.
+    /// </summary>
     public static DiagonalMatrixStorage<T> OfArray(T[,] array)
     {
       var storage = new DiagonalMatrixStorage<T>(array.GetLength(0), array.GetLength(1));
@@ -194,6 +207,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return storage;
     }
 
+    /// <summary>
+    /// Creates a diagonal matrix storage initialized with a constant diagonal value.
+    /// </summary>
     public static DiagonalMatrixStorage<T> OfValue(int rows, int columns, T diagonalValue)
     {
       var storage = new DiagonalMatrixStorage<T>(rows, columns);
@@ -206,6 +222,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return storage;
     }
 
+    /// <summary>
+    /// Creates a diagonal matrix storage initialized by an index-based initializer.
+    /// </summary>
     public static DiagonalMatrixStorage<T> OfInit(int rows, int columns, Func<int, T> init)
     {
       var storage = new DiagonalMatrixStorage<T>(rows, columns);
@@ -218,6 +237,13 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return storage;
     }
 
+    /// <summary>
+    /// Creates a diagonal matrix storage from diagonal values.
+    /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="data">The diagonal values.</param>
+    /// <returns>The initialized diagonal matrix storage.</returns>
     public static DiagonalMatrixStorage<T> OfEnumerable(int rows, int columns, IEnumerable<T> data)
     {
       if (data == null)
@@ -235,6 +261,13 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return new DiagonalMatrixStorage<T>(rows, columns, data.ToArray());
     }
 
+    /// <summary>
+    /// Creates a diagonal matrix storage from indexed diagonal values.
+    /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="data">The indexed diagonal values.</param>
+    /// <returns>The initialized diagonal matrix storage.</returns>
     public static DiagonalMatrixStorage<T> OfIndexedEnumerable(int rows, int columns, IEnumerable<Tuple<int, T>> data)
     {
       if (data == null)
@@ -252,6 +285,13 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return storage;
     }
 
+    /// <summary>
+    /// Creates a diagonal matrix storage from indexed tuple diagonal values.
+    /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="data">The indexed diagonal values.</param>
+    /// <returns>The initialized diagonal matrix storage.</returns>
     public static DiagonalMatrixStorage<T> OfIndexedEnumerable(int rows, int columns, IEnumerable<(int, T)> data)
     {
       if (data == null)
@@ -514,6 +554,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // EXTRACT
 
+    /// <inheritdoc/>
     public override T[] ToRowMajorArray()
     {
       var ret = new T[RowCount * ColumnCount];
@@ -525,6 +566,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return ret;
     }
 
+    /// <inheritdoc/>
     public override T[] ToColumnMajorArray()
     {
       var ret = new T[RowCount * ColumnCount];
@@ -536,6 +578,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return ret;
     }
 
+    /// <inheritdoc/>
     public override T[][] ToRowArrays()
     {
       var ret = new T[RowCount][];
@@ -550,6 +593,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return ret;
     }
 
+    /// <inheritdoc/>
     public override T[][] ToColumnArrays()
     {
       var ret = new T[ColumnCount][];
@@ -564,6 +608,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return ret;
     }
 
+    /// <inheritdoc/>
     public override T[,] ToArray()
     {
       var ret = new T[RowCount, ColumnCount];
@@ -576,6 +621,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // ENUMERATION
 
+    /// <inheritdoc/>
     public override IEnumerable<T> Enumerate()
     {
       for (int j = 0; j < ColumnCount; j++)
@@ -588,6 +634,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       }
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<(int, int, T)> EnumerateIndexed()
     {
       for (int j = 0; j < ColumnCount; j++)
@@ -600,11 +647,13 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       }
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<T> EnumerateNonZero()
     {
       return Data.Where(x => !Zero.Equals(x));
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<(int, int, T)> EnumerateNonZeroIndexed()
     {
       for (int i = 0; i < Data.Length; i++)
@@ -618,6 +667,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // FIND
 
+    /// <inheritdoc/>
     public override Tuple<int, int, T> Find(Func<T, bool> predicate, Zeros zeros)
     {
       for (int i = 0; i < Data.Length; i++)
@@ -746,6 +796,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // FUNCTIONAL COMBINATORS: MAP
 
+    /// <inheritdoc/>
     public override void MapInplace(Func<T, T> f, Zeros zeros)
     {
       if (zeros == Zeros.Include)
@@ -762,6 +813,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       });
     }
 
+    /// <inheritdoc/>
     public override void MapIndexedInplace(Func<int, int, T, T> f, Zeros zeros)
     {
       if (zeros == Zeros.Include)

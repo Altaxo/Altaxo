@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
   /// </summary>
   public partial class WaterfallTransformControl : UserControl, IWaterfallTransformView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WaterfallTransformControl"/> class.
+    /// </summary>
     public WaterfallTransformControl()
     {
       InitializeComponent();

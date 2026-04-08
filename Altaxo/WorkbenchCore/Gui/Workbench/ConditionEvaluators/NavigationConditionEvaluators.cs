@@ -31,6 +31,7 @@ namespace Altaxo.Gui.Workbench
   /// </example>
   public class CanNavigateBackConditionEvaluator : IConditionEvaluator
   {
+    /// <inheritdoc/>
     public bool IsValid(object? caller, Condition condition)
     {
       return NavigationService.CanNavigateBack || NavigationService.CanNavigateForwards;
@@ -46,6 +47,7 @@ namespace Altaxo.Gui.Workbench
   /// </example>
   public class CanNavigateForwardConditionEvaluator : IConditionEvaluator
   {
+    /// <inheritdoc/>
     public bool IsValid(object? caller, Condition condition)
     {
       return NavigationService.CanNavigateForwards;

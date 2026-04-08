@@ -813,6 +813,9 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       return peaks;
     }
 
+    /// <summary>
+    /// Clears cached peak-search results so a new search can be executed.
+    /// </summary>
     protected void Reset()
     {
       _isExecuted = false;
@@ -834,6 +837,10 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
 
     }
 
+    /// <summary>
+    /// Applies a boolean mask to all cached property arrays.
+    /// </summary>
+    /// <param name="keep">The mask indicating which peak entries remain selected.</param>
     protected void CombArrays(bool[] keep)
     {
       CombArray(ref _plateauSizes, keep);
@@ -851,15 +858,33 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       CombArray(ref _rightIps, keep);
     }
 
+    /// <summary>
+    /// Applies a boolean mask to an integer property array.
+    /// </summary>
+    /// <param name="array">The array to filter.</param>
+    /// <param name="keep">The mask indicating which entries remain selected.</param>
     protected void CombArray(ref int[]? array, bool[] keep)
     {
       array = array?.ElementsWhere(keep);
     }
+    /// <summary>
+    /// Applies a boolean mask to a floating-point property array.
+    /// </summary>
+    /// <param name="array">The array to filter.</param>
+    /// <param name="keep">The mask indicating which entries remain selected.</param>
     protected void CombArray(ref double[]? array, bool[] keep)
     {
       array = array?.ElementsWhere(keep);
     }
 
+    /// <summary>
+    /// Evaluates threshold constraints for the supplied peaks.
+    /// </summary>
+    /// <param name="x">The signal values.</param>
+    /// <param name="peaks">The peak indices.</param>
+    /// <param name="tmin">The minimum threshold values for each peak.</param>
+    /// <param name="tmax">The maximum threshold values for each peak.</param>
+    /// <returns>A mask of accepted peaks together with the left and right threshold differences.</returns>
     protected (bool[] keep, double[] leftDiff, double[] rightDiff) _select_by_peak_threshold(IReadOnlyList<double> x, int[] peaks, double[] tmin, double[] tmax)
     {
       var leftDiff = new double[peaks.Length];
@@ -955,6 +980,13 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     }
 
 
+    /// <summary>
+    /// Converts interval arguments into per-peak lower and upper bounds.
+    /// </summary>
+    /// <param name="interval">The interval specification supplied by the caller.</param>
+    /// <param name="x">The source data used to expand scalar interval specifications.</param>
+    /// <param name="peaks">The selected peak indices.</param>
+    /// <returns>The lower and upper bounds aligned with <paramref name="peaks"/>.</returns>
     protected (double[]? pmin, double[]? pmax) _unpack_condition_args(object interval, IReadOnlyList<double> x, int[] peaks)
     {
       IReadOnlyList<double>? imin = null;
@@ -1010,6 +1042,13 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       return (imin is null ? null : peaks.Select(idx => (double)imin[idx]).ToArray(), imax is null ? null : peaks.Select(idx => (double)imax[idx]).ToArray());
     }
 
+    /// <summary>
+    /// Selects floating-point values that lie inside the optional lower and upper bounds.
+    /// </summary>
+    /// <param name="x">The values to test.</param>
+    /// <param name="pmin">The optional lower bounds.</param>
+    /// <param name="pmax">The optional upper bounds.</param>
+    /// <returns>A mask indicating which values satisfy the bounds.</returns>
     protected bool[] _select_by_property(double[] x, System.Collections.Generic.IReadOnlyList<double>? pmin = null, System.Collections.Generic.IReadOnlyList<double>? pmax = null)
     {
       var result = new bool[x.Length];
@@ -1020,6 +1059,13 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       return result;
     }
 
+    /// <summary>
+    /// Selects integer values that lie inside the optional lower and upper bounds.
+    /// </summary>
+    /// <param name="x">The values to test.</param>
+    /// <param name="pmin">The optional lower bounds.</param>
+    /// <param name="pmax">The optional upper bounds.</param>
+    /// <returns>A mask indicating which values satisfy the bounds.</returns>
     protected bool[] _select_by_property(int[] x, System.Collections.Generic.IReadOnlyList<double>? pmin = null, System.Collections.Generic.IReadOnlyList<double>? pmax = null)
     {
       var result = new bool[x.Length];

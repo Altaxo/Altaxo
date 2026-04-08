@@ -60,6 +60,9 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       }
     }
 
+    /// <summary>
+    /// Stores the maximal relative amplitude influence.
+    /// </summary>
     public double _maximalRelativeAmplitudeInfluence = double.PositiveInfinity;
 
     /// <summary>

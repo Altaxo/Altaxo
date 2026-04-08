@@ -58,6 +58,9 @@ namespace Altaxo.Calc.Probability
   /// </code></remarks>
   public class PoissonDistribution : DiscreteDistribution
   {
+    /// <summary>
+    /// Stores the distribution parameters and helper values used during random number generation.
+    /// </summary>
     protected double scale, scalepi, m, sq, alm, g;
 
     /// <summary>

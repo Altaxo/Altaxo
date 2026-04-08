@@ -45,13 +45,37 @@ using System.Diagnostics;
 
 namespace Poly2Tri
 {
+  /// <summary>
+  /// Represents a triangle in the Delaunay triangulation.
+  /// </summary>
   public class DelaunayTriangle
   {
+    /// <summary>
+    /// The triangle vertices.
+    /// </summary>
     public FixedArray3<TriangulationPoint> Points;
+
+    /// <summary>
+    /// Neighbor triangles across the three triangle edges.
+    /// </summary>
     public FixedArray3<DelaunayTriangle> Neighbors;
+
+    /// <summary>
+    /// Flags indicating whether the triangle edges are constrained or marked as Delaunay edges.
+    /// </summary>
     public FixedBitArray3 EdgeIsConstrained, EdgeIsDelaunay;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether this triangle is part of the interior result.
+    /// </summary>
     public bool IsInterior { get; set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DelaunayTriangle"/> class.
+    /// </summary>
+    /// <param name="p1">The first vertex.</param>
+    /// <param name="p2">The second vertex.</param>
+    /// <param name="p3">The third vertex.</param>
     public DelaunayTriangle(TriangulationPoint p1, TriangulationPoint p2, TriangulationPoint p3)
     {
       Points[0] = p1;
@@ -59,6 +83,11 @@ namespace Poly2Tri
       Points[2] = p3;
     }
 
+    /// <summary>
+    /// Gets the index of the specified point within the triangle.
+    /// </summary>
+    /// <param name="p">The point to locate.</param>
+    /// <returns>The point index.</returns>
     public int IndexOf(TriangulationPoint p)
     {
       int i = Points.IndexOf(p);
@@ -67,16 +96,31 @@ namespace Poly2Tri
       return i;
     }
 
+    /// <summary>
+    /// Gets the clockwise index relative to the specified point.
+    /// </summary>
+    /// <param name="p">The reference point.</param>
+    /// <returns>The clockwise index.</returns>
     public int IndexCWFrom(TriangulationPoint p)
     {
       return (IndexOf(p) + 2) % 3;
     }
 
+    /// <summary>
+    /// Gets the counterclockwise index relative to the specified point.
+    /// </summary>
+    /// <param name="p">The reference point.</param>
+    /// <returns>The counterclockwise index.</returns>
     public int IndexCCWFrom(TriangulationPoint p)
     {
       return (IndexOf(p) + 1) % 3;
     }
 
+    /// <summary>
+    /// Determines whether the specified point is one of the triangle vertices.
+    /// </summary>
+    /// <param name="p">The point to test.</param>
+    /// <returns><see langword="true"/> if the point is a vertex of the triangle; otherwise, <see langword="false"/>.</returns>
     public bool Contains(TriangulationPoint p)
     {
       return Points.Contains(p);
@@ -116,8 +160,12 @@ namespace Poly2Tri
         throw new Exception("Failed to mark neighbor, doesn't share an edge!");
     }
 
-    /// <param name="t">Opposite triangle</param>
-    /// <param name="p">The point in t that isn't shared between the triangles</param>
+    /// <summary>
+    /// Gets the point in this triangle opposite to the point <paramref name="p"/> in the neighboring triangle <paramref name="t"/>.
+    /// </summary>
+    /// <param name="t">The neighboring triangle.</param>
+    /// <param name="p">The non-shared point in <paramref name="t"/>.</param>
+    /// <returns>The point opposite the shared edge in this triangle.</returns>
     public TriangulationPoint OppositePoint(DelaunayTriangle t, TriangulationPoint p)
     {
       if (!(t != this))
@@ -125,26 +173,51 @@ namespace Poly2Tri
       return PointCWFrom(t.PointCWFrom(p));
     }
 
+    /// <summary>
+    /// Gets the clockwise neighbor relative to the specified point.
+    /// </summary>
+    /// <param name="point">The reference point.</param>
+    /// <returns>The clockwise neighbor triangle.</returns>
     public DelaunayTriangle NeighborCWFrom(TriangulationPoint point)
     {
       return Neighbors[(Points.IndexOf(point) + 1) % 3];
     }
 
+    /// <summary>
+    /// Gets the counterclockwise neighbor relative to the specified point.
+    /// </summary>
+    /// <param name="point">The reference point.</param>
+    /// <returns>The counterclockwise neighbor triangle.</returns>
     public DelaunayTriangle NeighborCCWFrom(TriangulationPoint point)
     {
       return Neighbors[(Points.IndexOf(point) + 2) % 3];
     }
 
+    /// <summary>
+    /// Gets the neighbor across from the specified point.
+    /// </summary>
+    /// <param name="point">The reference point.</param>
+    /// <returns>The opposite neighbor triangle.</returns>
     public DelaunayTriangle NeighborAcrossFrom(TriangulationPoint point)
     {
       return Neighbors[Points.IndexOf(point)];
     }
 
+    /// <summary>
+    /// Gets the counterclockwise point relative to the specified point.
+    /// </summary>
+    /// <param name="point">The reference point.</param>
+    /// <returns>The counterclockwise point.</returns>
     public TriangulationPoint PointCCWFrom(TriangulationPoint point)
     {
       return Points[(IndexOf(point) + 1) % 3];
     }
 
+    /// <summary>
+    /// Gets the clockwise point relative to the specified point.
+    /// </summary>
+    /// <param name="point">The reference point.</param>
+    /// <returns>The clockwise point.</returns>
     public TriangulationPoint PointCWFrom(TriangulationPoint point)
     {
       return Points[(IndexOf(point) + 2) % 3];
@@ -162,13 +235,17 @@ namespace Poly2Tri
     /// Legalize triangle by rotating clockwise around oPoint
     /// </summary>
     /// <param name="oPoint">The origin point to rotate around</param>
-    /// <param name="nPoint">???</param>
+    /// <param name="nPoint">The point that replaces the counterclockwise vertex from <paramref name="oPoint"/> after the rotation.</param>
     public void Legalize(TriangulationPoint oPoint, TriangulationPoint nPoint)
     {
       RotateCW();
       Points[IndexCCWFrom(oPoint)] = nPoint;
     }
 
+    /// <summary>
+    /// Returns a string representation of this triangle.
+    /// </summary>
+    /// <returns>A string representation of this triangle.</returns>
     public override string ToString()
     {
       return Points[0] + "," + Points[1] + "," + Points[2];
@@ -186,6 +263,10 @@ namespace Poly2Tri
         }
     }
 
+    /// <summary>
+    /// Marks all constrained edges on the specified triangle.
+    /// </summary>
+    /// <param name="triangle">The triangle to update.</param>
     public void MarkEdge(DelaunayTriangle triangle)
     {
       for (int i = 0; i < 3; i++)
@@ -195,6 +276,10 @@ namespace Poly2Tri
         }
     }
 
+    /// <summary>
+    /// Marks constrained edges based on the specified triangles.
+    /// </summary>
+    /// <param name="tList">The triangles providing constrained-edge information.</param>
     public void MarkEdge(List<DelaunayTriangle> tList)
     {
       foreach (DelaunayTriangle t in tList)
@@ -205,11 +290,19 @@ namespace Poly2Tri
           }
     }
 
+    /// <summary>
+    /// Marks the edge at the specified index as constrained.
+    /// </summary>
+    /// <param name="index">The edge index.</param>
     public void MarkConstrainedEdge(int index)
     {
       EdgeIsConstrained[index] = true;
     }
 
+    /// <summary>
+    /// Marks the specified constrained edge.
+    /// </summary>
+    /// <param name="edge">The constrained edge.</param>
     public void MarkConstrainedEdge(DTSweepConstraint edge)
     {
       MarkConstrainedEdge(edge.P, edge.Q);
@@ -225,6 +318,10 @@ namespace Poly2Tri
         EdgeIsConstrained[i] = true;
     }
 
+    /// <summary>
+    /// Computes the triangle area.
+    /// </summary>
+    /// <returns>The triangle area.</returns>
     public double Area()
     {
       double b = Points[0].X - Points[1].X;
@@ -233,6 +330,10 @@ namespace Poly2Tri
       return Math.Abs((b * h * 0.5f));
     }
 
+    /// <summary>
+    /// Computes the triangle centroid.
+    /// </summary>
+    /// <returns>The centroid point.</returns>
     public TriangulationPoint Centroid()
     {
       double cx = (Points[0].X + Points[1].X + Points[2].X) / 3f;
@@ -263,61 +364,121 @@ namespace Poly2Tri
       return -1;
     }
 
+    /// <summary>
+    /// Gets the constrained-edge flag counterclockwise from the specified point.
+    /// </summary>
+    /// <param name="p">The reference point.</param>
+    /// <returns>The constrained-edge flag.</returns>
     public bool GetConstrainedEdgeCCW(TriangulationPoint p)
     {
       return EdgeIsConstrained[(IndexOf(p) + 2) % 3];
     }
 
+    /// <summary>
+    /// Gets the constrained-edge flag clockwise from the specified point.
+    /// </summary>
+    /// <param name="p">The reference point.</param>
+    /// <returns>The constrained-edge flag.</returns>
     public bool GetConstrainedEdgeCW(TriangulationPoint p)
     {
       return EdgeIsConstrained[(IndexOf(p) + 1) % 3];
     }
 
+    /// <summary>
+    /// Gets the constrained-edge flag across from the specified point.
+    /// </summary>
+    /// <param name="p">The reference point.</param>
+    /// <returns>The constrained-edge flag.</returns>
     public bool GetConstrainedEdgeAcross(TriangulationPoint p)
     {
       return EdgeIsConstrained[IndexOf(p)];
     }
 
+    /// <summary>
+    /// Sets the constrained-edge flag counterclockwise from the specified point.
+    /// </summary>
+    /// <param name="p">The reference point.</param>
+    /// <param name="ce">The constrained-edge flag to set.</param>
     public void SetConstrainedEdgeCCW(TriangulationPoint p, bool ce)
     {
       EdgeIsConstrained[(IndexOf(p) + 2) % 3] = ce;
     }
 
+    /// <summary>
+    /// Sets the constrained-edge flag clockwise from the specified point.
+    /// </summary>
+    /// <param name="p">The reference point.</param>
+    /// <param name="ce">The constrained-edge flag to set.</param>
     public void SetConstrainedEdgeCW(TriangulationPoint p, bool ce)
     {
       EdgeIsConstrained[(IndexOf(p) + 1) % 3] = ce;
     }
 
+    /// <summary>
+    /// Sets the constrained-edge flag across from the specified point.
+    /// </summary>
+    /// <param name="p">The reference point.</param>
+    /// <param name="ce">The constrained-edge flag to set.</param>
     public void SetConstrainedEdgeAcross(TriangulationPoint p, bool ce)
     {
       EdgeIsConstrained[IndexOf(p)] = ce;
     }
 
+    /// <summary>
+    /// Gets the Delaunay-edge flag counterclockwise from the specified point.
+    /// </summary>
+    /// <param name="p">The reference point.</param>
+    /// <returns>The Delaunay-edge flag.</returns>
     public bool GetDelaunayEdgeCCW(TriangulationPoint p)
     {
       return EdgeIsDelaunay[(IndexOf(p) + 2) % 3];
     }
 
+    /// <summary>
+    /// Gets the Delaunay-edge flag clockwise from the specified point.
+    /// </summary>
+    /// <param name="p">The reference point.</param>
+    /// <returns>The Delaunay-edge flag.</returns>
     public bool GetDelaunayEdgeCW(TriangulationPoint p)
     {
       return EdgeIsDelaunay[(IndexOf(p) + 1) % 3];
     }
 
+    /// <summary>
+    /// Gets the Delaunay-edge flag across from the specified point.
+    /// </summary>
+    /// <param name="p">The reference point.</param>
+    /// <returns>The Delaunay-edge flag.</returns>
     public bool GetDelaunayEdgeAcross(TriangulationPoint p)
     {
       return EdgeIsDelaunay[IndexOf(p)];
     }
 
+    /// <summary>
+    /// Sets the Delaunay-edge flag counterclockwise from the specified point.
+    /// </summary>
+    /// <param name="p">The reference point.</param>
+    /// <param name="ce">The Delaunay-edge flag to set.</param>
     public void SetDelaunayEdgeCCW(TriangulationPoint p, bool ce)
     {
       EdgeIsDelaunay[(IndexOf(p) + 2) % 3] = ce;
     }
 
+    /// <summary>
+    /// Sets the Delaunay-edge flag clockwise from the specified point.
+    /// </summary>
+    /// <param name="p">The reference point.</param>
+    /// <param name="ce">The Delaunay-edge flag to set.</param>
     public void SetDelaunayEdgeCW(TriangulationPoint p, bool ce)
     {
       EdgeIsDelaunay[(IndexOf(p) + 1) % 3] = ce;
     }
 
+    /// <summary>
+    /// Sets the Delaunay-edge flag across from the specified point.
+    /// </summary>
+    /// <param name="p">The reference point.</param>
+    /// <param name="ce">The Delaunay-edge flag to set.</param>
     public void SetDelaunayEdgeAcross(TriangulationPoint p, bool ce)
     {
       EdgeIsDelaunay[IndexOf(p)] = ce;

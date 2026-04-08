@@ -32,8 +32,19 @@ using System.Collections.Generic;
 
 namespace Altaxo.Calc.RootFinding
 {
+  /// <summary>
+  /// Provides helper methods to bracket zero crossings of scalar functions.
+  /// </summary>
   public static class ZeroCrossingBracketing
   {
+    /// <summary>
+    /// Finds subintervals within a range that contain a sign change.
+    /// </summary>
+    /// <param name="f">The function to evaluate.</param>
+    /// <param name="lowerBound">The lower bound of the search interval.</param>
+    /// <param name="upperBound">The upper bound of the search interval.</param>
+    /// <param name="subdivisions">The number of subdivisions to inspect.</param>
+    /// <returns>A sequence of intervals that contain a sign change.</returns>
     public static IEnumerable<(double, double)> FindIntervalsWithin(Func<double, double> f, double lowerBound, double upperBound, int subdivisions)
     {
       // TODO: Consider binary-style search instead of linear scan
@@ -116,6 +127,14 @@ namespace Altaxo.Calc.RootFinding
       return false;
     }
 
+    /// <summary>
+    /// Attempts to reduce a range to a smaller interval containing a sign change.
+    /// </summary>
+    /// <param name="f">The function to inspect.</param>
+    /// <param name="lowerBound">On input, the lower bound of the interval. On success, the reduced lower bound.</param>
+    /// <param name="upperBound">On input, the upper bound of the interval. On success, the reduced upper bound.</param>
+    /// <param name="subdivisions">The number of subdivisions to inspect.</param>
+    /// <returns><see langword="true"/> if a reduced bracketing interval was found; otherwise, <see langword="false"/>.</returns>
     public static bool Reduce(Func<double, double> f, ref double lowerBound, ref double upperBound, int subdivisions = 1000)
     {
       double originalLowerBound = lowerBound;
@@ -165,6 +184,16 @@ namespace Altaxo.Calc.RootFinding
       return false;
     }
 
+    /// <summary>
+    /// Attempts to bracket a zero crossing by expanding the interval and then, if necessary, reducing it.
+    /// </summary>
+    /// <param name="f">The function to inspect.</param>
+    /// <param name="lowerBound">On input, the lower bound of the interval. On success, the bracketing lower bound.</param>
+    /// <param name="upperBound">On input, the upper bound of the interval. On success, the bracketing upper bound.</param>
+    /// <param name="expansionFactor">The factor used while expanding the interval.</param>
+    /// <param name="expansionMaxIterations">The maximum number of expansion iterations.</param>
+    /// <param name="reduceSubdivisions">The number of subdivisions to inspect during reduction.</param>
+    /// <returns><see langword="true"/> if a bracketing interval was found; otherwise, <see langword="false"/>.</returns>
     public static bool ExpandReduce(Func<double, double> f, ref double lowerBound, ref double upperBound, double expansionFactor = 1.6, int expansionMaxIterations = 50, int reduceSubdivisions = 100)
     {
       return Expand(f, ref lowerBound, ref upperBound, expansionFactor, expansionMaxIterations) || Reduce(f, ref lowerBound, ref upperBound, reduceSubdivisions);

@@ -15,6 +15,7 @@ namespace Altaxo.Calc.Ode.Obsolete
   /// <summary>Vector implementation. This is thin wrapper over 1D array</summary>
   public struct Vector
   {
+    /// <summary>Backing store for the vector components</summary>
     public double[] v { get; private set; }
 
     /// <summary>Gets number of components in a vector</summary>
@@ -510,6 +511,12 @@ namespace Altaxo.Calc.Ode.Obsolete
       return sb.ToString();
     }
 
+    /// <summary>
+    /// Determines whether the specified object is equal to the current vector.
+    /// </summary>
+    /// <param name="obj">The object to compare with the current vector.</param>
+    /// <returns><c>true</c> if the specified object is equal to the current vector; otherwise, <c>false</c>.</returns>
+    /// <seealso cref="GetHashCode"/>
     public override bool Equals(object? obj)
     {
       if (obj is Vector v2)
@@ -526,6 +533,11 @@ namespace Altaxo.Calc.Ode.Obsolete
         return false;
     }
 
+    /// <summary>
+    /// Returns a hash code for this instance.
+    /// </summary>
+    /// <returns>A hash code for the current vector.</returns>
+    /// <seealso cref="Equals(object?)"/>
     public override int GetHashCode()
     {
       return v is null ? base.GetHashCode() : v.GetHashCode();

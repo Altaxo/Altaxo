@@ -82,6 +82,10 @@ namespace Altaxo.Collections.Text
       }
     }
 
+    /// <summary>
+    /// Returns a string representation of this substring position.
+    /// </summary>
+    /// <returns>A string representation of this substring position.</returns>
     public override string ToString()
     {
       return string.Format("Word:{0}; Start:{1}; Length:{2}", _wordIndex, _start, _count);
@@ -99,7 +103,7 @@ namespace Altaxo.Collections.Text
 
     /// <summary>Gets the common substring.</summary>
     /// <typeparam name="T">Type of the characters of the original words that are used to build the common substring query.</typeparam>
-    /// <param name="words">The words that were originally used to build the common substring query. If the original words were strings, please use the non-generic version of this function..</param>
+    /// <param name="words">The words that were originally used to build the common substring query. If the original words were strings, use the non-generic overload of this method.</param>
     /// <returns>The common substring that is represented by this instance.</returns>
     public List<T> GetCommonSubstring<T>(IList<IList<T>> words)
     {
@@ -191,7 +195,7 @@ namespace Altaxo.Collections.Text
 
     /// <summary>Gets the common substring.</summary>
     /// <typeparam name="T">Type of the characters of the original words that are used to build the common substring query.</typeparam>
-    /// <param name="words">The words that were originally used to build the common substring query. If the original words were strings, please use this <see cref="M:Altaxo.Collections.Text.GetCommonSubstring(string)">this overloaded version of the function</see>.</param>
+    /// <param name="words">The words that were originally used to build the common substring query. If the original words were strings, use <see cref="GetCommonSubstring(IList{string})"/> instead.</param>
     /// <returns>The common substring that is represented by this instance.</returns>
     public List<T> GetCommonSubstring<T>(IList<IList<T>> words)
     {

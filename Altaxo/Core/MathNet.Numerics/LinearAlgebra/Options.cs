@@ -30,6 +30,9 @@
 
 namespace Altaxo.Calc.LinearAlgebra
 {
+  /// <summary>
+  /// Specifies assumptions about data already present in a target storage area.
+  /// </summary>
   public enum ExistingData
   {
     /// <summary>
@@ -45,6 +48,9 @@ namespace Altaxo.Calc.LinearAlgebra
     AssumeZeros = 1
   }
 
+  /// <summary>
+  /// Specifies how zero values should be treated during linear algebra operations.
+  /// </summary>
   public enum Zeros
   {
     /// <summary>
@@ -59,6 +65,9 @@ namespace Altaxo.Calc.LinearAlgebra
     Include = 1
   }
 
+  /// <summary>
+  /// Specifies whether a matrix is known to be symmetric or Hermitian.
+  /// </summary>
   public enum Symmetricity
   {
     /// <summary>

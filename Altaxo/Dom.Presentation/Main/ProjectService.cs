@@ -192,6 +192,7 @@ namespace Altaxo.Main
 
     #region Project opening
 
+    /// <inheritdoc/>
     protected override IProjectArchiveManager InternalCreateProjectArchiveManagerFromFileOrFolderLocation(PathName fileOrFolderName)
     {
       var context = Current.Project.GetPropertyContext();
@@ -214,6 +215,7 @@ namespace Altaxo.Main
       }
     }
 
+    /// <inheritdoc/>
     protected override void InternalLoadProjectAndWindowsStateFromArchive(IProjectArchive projectArchive)
     {
       var exceptions = new List<Exception>();
@@ -375,6 +377,7 @@ namespace Altaxo.Main
       }
     }
 
+    /// <inheritdoc/>
     public override void ExecuteActionsImmediatelyBeforeRunningApplication(string[] cmdArgs, string[] cmdParameter, string[] cmdFiles)
     {
       // first, find out if among the files is an Altaxo project
@@ -427,6 +430,10 @@ namespace Altaxo.Main
       }
     }
 
+    /// <summary>
+    /// Imports files that are not recognized as Altaxo project files.
+    /// </summary>
+    /// <param name="otherFiles">The set of file paths to import.</param>
     public void ImportFilesOtherThanAltaxoProjects(HashSet<string> otherFiles)
     {
       var importers = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Serialization.IDataFileImporter))

@@ -32,8 +32,14 @@ using System.Windows.Data;
 
 namespace Altaxo.Gui.Common.BasicTypes
 {
+  /// <summary>
+  /// Represents a check box for editing boolean values.
+  /// </summary>
   public class BooleanValueControl : CheckBox, IBooleanValueView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BooleanValueControl"/> class.
+    /// </summary>
     public BooleanValueControl()
     {
       this.DataContextChanged += EhDataContextChanged;

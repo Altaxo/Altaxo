@@ -46,6 +46,9 @@ namespace Altaxo.Gui
   {
     #region Constants and members
 
+    /// <summary>
+    /// Gets the preferred XML languages for resolving localized font family names.
+    /// </summary>
     protected static readonly System.Windows.Markup.XmlLanguage[] _familyNameLanguagesToTry = new System.Windows.Markup.XmlLanguage[]
     {
       System.Windows.Markup.XmlLanguage.GetLanguage("en-us"),
@@ -56,6 +59,9 @@ namespace Altaxo.Gui
     /// <summary>The instance used by the static methods of this class. Is not neccessarily of type <see cref="WpfFontManager"/>, but could also be a derived type.</summary>
     protected static new CachedService<WpfFontManager, WpfFontManager> _instanceCached = new CachedService<WpfFontManager, WpfFontManager>(true, null, null);
 
+    /// <summary>
+    /// Gets the cached font manager instance.
+    /// </summary>
     protected static new WpfFontManager _instance { get { return _instanceCached; } }
 
     /// <summary>
@@ -64,6 +70,9 @@ namespace Altaxo.Gui
     /// </summary>
     protected ConcurrentDictionary<string, Typeface> _dictDescriptionStringToWpfTypeface = new ConcurrentDictionary<string, Typeface>();
 
+    /// <summary>
+    /// Counts active references to WPF font descriptions.
+    /// </summary>
     protected ConcurrentDictionary<string, int> _wpfFontReferenceCounter = new ConcurrentDictionary<string, int>();
 
     /// <summary>
@@ -108,6 +117,9 @@ namespace Altaxo.Gui
 
     #endregion Public static functions and properties
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WpfFontManager"/> class.
+    /// </summary>
     public WpfFontManager()
     {
       FontManager3D.Instance = new WpfFontManager3D();

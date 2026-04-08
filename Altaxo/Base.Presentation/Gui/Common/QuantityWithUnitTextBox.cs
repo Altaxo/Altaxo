@@ -35,8 +35,14 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public class QuantityWithUnitTextBox : TextBox, IDimensionfulQuantityView
   {
+    /// <summary>
+    /// Occurs when <see cref="SelectedQuantity"/> changes.
+    /// </summary>
     public event DependencyPropertyChangedEventHandler? SelectedQuantityChanged;
 
+    /// <summary>
+    /// Occurs when the selected quantity or its unit environment changes.
+    /// </summary>
     public event DependencyPropertyChangedEventHandler? SelectedQuantityWithUnitEnvironmentChanged;
 
     private QuantityWithUnitConverter _converter;
@@ -51,6 +57,9 @@ namespace Altaxo.Gui.Common
 
     /// <summary>
     /// Default constructor.
+    /// </summary>
+    /// <summary>
+    /// Initializes a new instance of the <see cref="QuantityWithUnitTextBox"/> class.
     /// </summary>
     public QuantityWithUnitTextBox()
     {
@@ -69,14 +78,29 @@ namespace Altaxo.Gui.Common
       TextChanged += new TextChangedEventHandler(QuantityWithUnitTextBox_TextChanged);
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether <see cref="double.NaN"/> values are allowed.
+    /// </summary>
     public bool AllowNaNValues { get { return _converter.AllowNaNValues; } set { _converter.AllowNaNValues = value; } }
 
+    /// <summary>
+    /// Gets or sets the string representation used for <see cref="double.NaN"/>.
+    /// </summary>
     public string RepresentationOfNaN { get { return _converter.RepresentationOfNaN; } set { _converter.RepresentationOfNaN = value; } }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether infinite values are allowed.
+    /// </summary>
     public bool AllowInfiniteValues { get { return _converter.AllowInfiniteValues; } set { _converter.AllowInfiniteValues = value; } }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether negative values are rejected.
+    /// </summary>
     public bool DisallowNegativeValues { get { return _converter.DisallowNegativeValues; } set { _converter.DisallowNegativeValues = value; } }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether zero values are rejected.
+    /// </summary>
     public bool DisallowZeroValues { get { return _converter.DisallowZeroValues; } set { _converter.DisallowZeroValues = value; } }
 
     #region Change selection behaviour
@@ -85,12 +109,14 @@ namespace Altaxo.Gui.Common
     // 'How to SelectAll in TextBox when TextBox gets focus by mouse click?'
     // (http://social.msdn.microsoft.com/Forums/en-US/wpf/thread/564b5731-af8a-49bf-b297-6d179615819f/)
 
+    /// <inheritdoc/>
     protected override void OnGotKeyboardFocus(System.Windows.Input.KeyboardFocusChangedEventArgs e)
     {
       SelectAll();
       base.OnGotKeyboardFocus(e);
     }
 
+    /// <inheritdoc/>
     protected override void OnLostFocus(RoutedEventArgs e)
     {
       base.OnLostFocus(e); // update the Quantity by the default comversion mechanism
@@ -102,6 +128,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     protected override void OnKeyDown(System.Windows.Input.KeyEventArgs e)
     {
       if (e.Key == System.Windows.Input.Key.F5) // interpret the text and update the quantity
@@ -119,12 +146,14 @@ namespace Altaxo.Gui.Common
       base.OnKeyDown(e);
     }
 
+    /// <inheritdoc/>
     protected override void OnMouseDoubleClick(System.Windows.Input.MouseButtonEventArgs e)
     {
       SelectAll();
       base.OnMouseDoubleClick(e);
     }
 
+    /// <inheritdoc/>
     protected override void OnPreviewMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs e)
     {
       if (!IsKeyboardFocusWithin)
@@ -142,6 +171,9 @@ namespace Altaxo.Gui.Common
 
     private bool _validateWhenTextChange;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the quantity is updated whenever the text changes.
+    /// </summary>
     public bool UpdateQuantityIfTextChanged
     {
       set
@@ -158,6 +190,7 @@ namespace Altaxo.Gui.Common
         _converter.BindingExpression.ValidateWithoutUpdate();
     }
 
+    /// <inheritdoc/>
     protected override void OnContextMenuOpening(ContextMenuEventArgs e)
     {
       _converter.OnContextMenuOpening();
@@ -166,6 +199,9 @@ namespace Altaxo.Gui.Common
 
     #region Dependency property
 
+    /// <summary>
+    /// Identifies the <see cref="SelectedQuantity"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty SelectedQuantityProperty =
     DependencyProperty.Register(nameof(SelectedQuantity), typeof(DimensionfulQuantity), typeof(QuantityWithUnitTextBox),
     new FrameworkPropertyMetadata(EhSelectedQuantityChanged) { BindsTwoWayByDefault=true});
@@ -211,6 +247,9 @@ namespace Altaxo.Gui.Common
 
     #region Dependency property UnitEnvironment
 
+    /// <summary>
+    /// Identifies the <see cref="UnitEnvironment"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty UnitEnvironmentProperty =
         DependencyProperty.Register(nameof(UnitEnvironment), typeof(QuantityWithUnitGuiEnvironment), typeof(QuantityWithUnitTextBox),
          new FrameworkPropertyMetadata(EhUnitEnvironmentChanged));

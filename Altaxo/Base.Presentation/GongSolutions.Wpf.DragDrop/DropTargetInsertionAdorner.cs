@@ -23,13 +23,21 @@ using GongSolutions.Wpf.DragDrop.Utilities;
 
 namespace GongSolutions.Wpf.DragDrop
 {
+  /// <summary>
+  /// Draws an insertion marker at the current drop position.
+  /// </summary>
   public class DropTargetInsertionAdorner : DropTargetAdorner
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DropTargetInsertionAdorner"/> class.
+    /// </summary>
+    /// <param name="adornedElement">The element to adorn.</param>
     public DropTargetInsertionAdorner(UIElement adornedElement)
       : base(adornedElement)
     {
     }
 
+    /// <inheritdoc/>
     protected override void OnRender(DrawingContext drawingContext)
     {
       var itemsControl = DropInfo.VisualTarget as ItemsControl;

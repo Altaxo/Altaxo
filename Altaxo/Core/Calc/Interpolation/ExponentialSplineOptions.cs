@@ -65,12 +65,14 @@ namespace Altaxo.Calc.Interpolation
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ExponentialSplineOptions), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ExponentialSplineOptions)obj;
         info.AddValue("Smoothing", s.Smoothing);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var smoothing = info.GetDouble("Smoothing");

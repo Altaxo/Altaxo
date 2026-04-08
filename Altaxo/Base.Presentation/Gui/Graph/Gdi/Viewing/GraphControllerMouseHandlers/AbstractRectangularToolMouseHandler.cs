@@ -37,15 +37,31 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
   {
     #region Member variables
 
+    /// <summary>
+    /// The graph controller.
+    /// </summary>
     protected GraphController _grac;
 
+    /// <summary>
+    /// The tool to activate after the current drawing operation completes.
+    /// </summary>
     protected GraphToolType NextMouseHandlerType = GraphToolType.ObjectPointer;
 
+    /// <summary>
+    /// The points collected during the drawing operation.
+    /// </summary>
     protected POINT[] _Points = new POINT[2];
+    /// <summary>
+    /// The number of points currently collected.
+    /// </summary>
     protected int _currentPoint;
 
     #endregion Member variables
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AbstractRectangularToolMouseHandler"/> class.
+    /// </summary>
+    /// <param name="ctrl">The graph controller.</param>
     public AbstractRectangularToolMouseHandler(GraphController ctrl)
     {
       _grac = ctrl;
@@ -54,6 +70,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
         _grac.SetPanelCursor(Cursors.Pen);
     }
 
+    /// <inheritdoc/>
     public override void OnMouseDown(PointD2D position, MouseButtonEventArgs e)
     {
       base.OnMouseDown(position, e);
@@ -76,6 +93,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       }
     }
 
+    /// <inheritdoc/>
     public override void OnMouseMove(PointD2D position, MouseEventArgs e)
     {
       base.OnMouseMove(position, e);
@@ -94,6 +112,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       }
     }
 
+    /// <inheritdoc/>
     public override void OnMouseUp(PointD2D position, MouseButtonEventArgs e)
     {
       base.OnMouseUp(position, e);
@@ -118,6 +137,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       }
     }
 
+    /// <summary>
+    /// Modifies the current mouse position according to keyboard modifiers.
+    /// </summary>
     protected virtual void ModifyCurrentMousePrintAreaCoordinate()
     {
       if (_currentPoint > 0)
@@ -187,6 +209,12 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       }
     }
 
+    /// <summary>
+    /// Gets a rectangle with normalized bounds from two corner points.
+    /// </summary>
+    /// <param name="a">The first corner point.</param>
+    /// <param name="b">The second corner point.</param>
+    /// <returns>The normalized rectangle.</returns>
     public RectangleD2D GetNormalRectangle(PointD2D a, PointD2D b)
     {
       var x = Math.Min(a.X, b.X);
@@ -209,6 +237,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       //      g.DrawRectangle(Pens.Blue,rect.X,rect.Y,rect.Width,rect.Height);
     }
 
+    /// <summary>
+    /// Finalizes the drawing operation.
+    /// </summary>
     protected abstract void FinishDrawing();
   }
 }

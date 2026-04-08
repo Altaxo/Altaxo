@@ -50,17 +50,30 @@ namespace Altaxo.Gui.Workbench
   {
     #region Observe property
 
+    /// <summary>
+    /// Identifies the attached property that enables observation.
+    /// </summary>
     public static readonly DependencyProperty ObserveProperty = DependencyProperty.RegisterAttached(
         "Observe",
         typeof(bool),
         typeof(WorkbenchStateObserver),
         new FrameworkPropertyMetadata(OnObserveChanged));
 
+    /// <summary>
+    /// Gets whether observation is enabled.
+    /// </summary>
+    /// <param name="frameworkElement">The associated window.</param>
+    /// <returns><see langword="true"/> if observation is enabled; otherwise, <see langword="false"/>.</returns>
     public static bool GetObserve(Window frameworkElement)
     {
       return (bool)frameworkElement.GetValue(ObserveProperty);
     }
 
+    /// <summary>
+    /// Sets whether observation is enabled.
+    /// </summary>
+    /// <param name="frameworkElement">The associated window.</param>
+    /// <param name="observe"><see langword="true"/> to enable observation; otherwise, <see langword="false"/>.</param>
     public static void SetObserve(Window frameworkElement, bool observe)
     {
       frameworkElement.SetValue(ObserveProperty, observe);
@@ -74,17 +87,30 @@ namespace Altaxo.Gui.Workbench
 
     #region Observed property (RestoreBounds)
 
+    /// <summary>
+    /// Identifies the attached property that stores the observed workbench state.
+    /// </summary>
     public static readonly DependencyProperty ObservedWorkbenchStateProperty = DependencyProperty.RegisterAttached(
         "ObservedWorkbenchState",
         typeof(WorkbenchState),
         typeof(WorkbenchStateObserver),
         new PropertyMetadata(null, OnWorkbenchStateChanged));
 
+    /// <summary>
+    /// Gets the observed workbench state.
+    /// </summary>
+    /// <param name="frameworkElement">The associated window.</param>
+    /// <returns>The observed workbench state.</returns>
     public static WorkbenchState GetObservedWorkbenchState(Window frameworkElement)
     {
       return (WorkbenchState)frameworkElement.GetValue(ObservedWorkbenchStateProperty);
     }
 
+    /// <summary>
+    /// Sets the observed workbench state.
+    /// </summary>
+    /// <param name="frameworkElement">The associated window.</param>
+    /// <param name="observedValue">The workbench state.</param>
     public static void SetObservedWorkbenchState(Window frameworkElement, WorkbenchState observedValue)
     {
       frameworkElement.SetValue(ObservedWorkbenchStateProperty, observedValue);

@@ -349,6 +349,20 @@ namespace Altaxo.Calc.LinearAlgebra
       return sb.ToString();
     }
 
+    /// <summary>
+    /// Formats the matrix using separate row and column ellipsis controls.
+    /// </summary>
+    /// <param name="upperRows">The number of rows to show from the top.</param>
+    /// <param name="lowerRows">The number of rows to show from the bottom.</param>
+    /// <param name="leftColumns">The number of columns to show from the left.</param>
+    /// <param name="rightColumns">The number of columns to show from the right.</param>
+    /// <param name="horizontalEllipsis">The string used for omitted columns.</param>
+    /// <param name="verticalEllipsis">The string used for omitted rows.</param>
+    /// <param name="diagonalEllipsis">The string used when both rows and columns are omitted.</param>
+    /// <param name="columnSeparator">The separator between columns.</param>
+    /// <param name="rowSeparator">The separator between rows.</param>
+    /// <param name="formatValue">The delegate used to format values.</param>
+    /// <returns>The formatted matrix string.</returns>
     public string ToMatrixString(int upperRows, int lowerRows, int leftColumns, int rightColumns,
         string horizontalEllipsis, string verticalEllipsis, string diagonalEllipsis,
         string columnSeparator, string rowSeparator, Func<T, string> formatValue)
@@ -369,6 +383,21 @@ namespace Altaxo.Calc.LinearAlgebra
           rowSeparator);
     }
 
+    /// <summary>
+    /// Formats the matrix within a maximum width using separate row and column ellipsis controls.
+    /// </summary>
+    /// <param name="upperRows">The number of rows to show from the top.</param>
+    /// <param name="lowerRows">The number of rows to show from the bottom.</param>
+    /// <param name="minLeftColumns">The minimum number of columns to show from the left.</param>
+    /// <param name="rightColumns">The number of columns to show from the right.</param>
+    /// <param name="maxWidth">The maximum target width.</param>
+    /// <param name="horizontalEllipsis">The string used for omitted columns.</param>
+    /// <param name="verticalEllipsis">The string used for omitted rows.</param>
+    /// <param name="diagonalEllipsis">The string used when both rows and columns are omitted.</param>
+    /// <param name="columnSeparator">The separator between columns.</param>
+    /// <param name="rowSeparator">The separator between rows.</param>
+    /// <param name="formatValue">The delegate used to format values.</param>
+    /// <returns>The formatted matrix string.</returns>
     public string ToMatrixString(int upperRows, int lowerRows, int minLeftColumns, int rightColumns, int maxWidth,
         string horizontalEllipsis, string verticalEllipsis, string diagonalEllipsis,
         string columnSeparator, string rowSeparator, Func<T, string> formatValue)

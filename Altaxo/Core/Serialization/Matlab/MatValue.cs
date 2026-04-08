@@ -43,8 +43,15 @@ namespace Altaxo.Serialization.Matlab
     /// </summary>
     public sealed record Vector : MatValue
     {
+      /// <summary>
+      /// Gets the vector data.
+      /// </summary>
       public Vector<double> Data { get; }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="Vector"/> record.
+      /// </summary>
+      /// <param name="data">The vector data.</param>
       public Vector(ReadOnlyMemory<double> data)
       {
         Data = CreateVector.Dense<double>(data.ToArray());

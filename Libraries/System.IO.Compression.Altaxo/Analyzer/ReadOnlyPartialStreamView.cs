@@ -32,16 +32,33 @@ using System.Threading.Tasks;
 
 namespace System.IO.Compression
 {
+  /// <summary>
+  /// Provides a read-only view onto a contiguous range of an underlying stream.
+  /// </summary>
   public class ReadOnlyPartialStreamView : System.IO.Stream
   {
     private Stream _stream;
     private long _offset;
     private long _streamLength;
     private long _myPosition;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether this instance owns the underlying stream.
+    /// </summary>
     public bool IsStreamOwner { get; set; }
+
+    /// <summary>
+    /// Gets a value indicating whether this instance has been closed or disposed.
+    /// </summary>
     public bool IsClosedDisposed { get; private set; }
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ReadOnlyPartialStreamView"/> class.
+    /// </summary>
+    /// <param name="stream">The underlying stream.</param>
+    /// <param name="offset">The starting offset of the readable range.</param>
+    /// <param name="count">The length of the readable range.</param>
     public ReadOnlyPartialStreamView(Stream stream, long offset, long count)
     {
       _stream = stream;
@@ -51,14 +68,19 @@ namespace System.IO.Compression
       _stream.Seek(_offset, SeekOrigin.Begin);
     }
 
+    /// <inheritdoc/>
     public override bool CanRead => _stream.CanRead;
 
+    /// <inheritdoc/>
     public override bool CanSeek => _stream.CanSeek;
 
+    /// <inheritdoc/>
     public override bool CanWrite => false;
 
+    /// <inheritdoc/>
     public override long Length => _stream.Length;
 
+    /// <inheritdoc/>
     public override long Position
     {
       get => _stream.Position - _offset;
@@ -72,11 +94,13 @@ namespace System.IO.Compression
     }
 
 
+    /// <inheritdoc/>
     public override void Flush()
     {
       _stream.Flush();
     }
 
+    /// <inheritdoc/>
     public override int Read(byte[] buffer, int offset, int count)
     {
       if (IsClosedDisposed)
@@ -91,6 +115,7 @@ namespace System.IO.Compression
       return result;
     }
 
+    /// <inheritdoc/>
     public override long Seek(long offset, SeekOrigin origin)
     {
       switch (origin)
@@ -110,16 +135,19 @@ namespace System.IO.Compression
       }
     }
 
+    /// <inheritdoc/>
     public override void SetLength(long value)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public override void Write(byte[] buffer, int offset, int count)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public override void Close()
     {
       if (IsClosedDisposed)
@@ -135,6 +163,7 @@ namespace System.IO.Compression
       }
     }
 
+    /// <inheritdoc/>
     protected override void Dispose(bool disposing)
     {
       Close();

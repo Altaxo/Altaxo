@@ -46,33 +46,59 @@ namespace Altaxo.Gui.Workbench
   /// </remarks>
   public static class ToolBarTrayItemsSourceObserver
   {
+    /// <summary>
+    /// Identifies the attached property that enables observation.
+    /// </summary>
     public static readonly DependencyProperty ObserveProperty = DependencyProperty.RegisterAttached(
         "Observe",
         typeof(bool),
         typeof(ToolBarTrayItemsSourceObserver),
         new FrameworkPropertyMetadata(OnObserveChanged));
 
+    /// <summary>
+    /// Identifies the attached property that stores the observed toolbar collection.
+    /// </summary>
     public static readonly DependencyProperty ObservedItemsSourceProperty = DependencyProperty.RegisterAttached(
         "ObservedItemsSource",
         typeof(IEnumerable<ToolBar>),
         typeof(ToolBarTrayItemsSourceObserver),
         new PropertyMetadata(null, OnObservedItemsSourceChanged));
 
+    /// <summary>
+    /// Gets whether observation is enabled.
+    /// </summary>
+    /// <param name="frameworkElement">The associated toolbar tray.</param>
+    /// <returns><see langword="true"/> if observation is enabled; otherwise, <see langword="false"/>.</returns>
     public static bool GetObserve(ToolBarTray frameworkElement)
     {
       return (bool)frameworkElement.GetValue(ObserveProperty);
     }
 
+    /// <summary>
+    /// Sets whether observation is enabled.
+    /// </summary>
+    /// <param name="frameworkElement">The associated toolbar tray.</param>
+    /// <param name="observe"><see langword="true"/> to enable observation; otherwise, <see langword="false"/>.</param>
     public static void SetObserve(ToolBarTray frameworkElement, bool observe)
     {
       frameworkElement.SetValue(ObserveProperty, observe);
     }
 
+    /// <summary>
+    /// Gets the observed toolbar collection.
+    /// </summary>
+    /// <param name="frameworkElement">The associated toolbar tray.</param>
+    /// <returns>The observed toolbar collection.</returns>
     public static IEnumerable<ToolBar> GetObservedItemsSource(ToolBarTray frameworkElement)
     {
       return (IEnumerable<ToolBar>)frameworkElement.GetValue(ObservedItemsSourceProperty);
     }
 
+    /// <summary>
+    /// Sets the observed toolbar collection.
+    /// </summary>
+    /// <param name="frameworkElement">The associated toolbar tray.</param>
+    /// <param name="observedItemsSource">The toolbar collection.</param>
     public static void SetObservedItemsSource(ToolBarTray frameworkElement, IEnumerable<ToolBar> observedItemsSource)
     {
       frameworkElement.SetValue(ObservedItemsSourceProperty, observedItemsSource);

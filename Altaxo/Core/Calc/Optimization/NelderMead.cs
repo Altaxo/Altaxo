@@ -73,7 +73,21 @@ namespace Altaxo.Calc.Optimization
     }
 
     /// <summary>Types of steps the Nelder-Mead simplex algorithm can take.</summary>
-    public enum Step { Initialization, Reflection, Expansion, OutsideContraction, InsideContraction, Shrink };
+    public enum Step
+    {
+      /// <summary>The initial simplex construction step.</summary>
+      Initialization,
+      /// <summary>The reflection step.</summary>
+      Reflection,
+      /// <summary>The expansion step.</summary>
+      Expansion,
+      /// <summary>The outside contraction step.</summary>
+      OutsideContraction,
+      /// <summary>The inside contraction step.</summary>
+      InsideContraction,
+      /// <summary>The shrink step.</summary>
+      Shrink
+    };
 
     private Step laststep_ = Step.Initialization;
 

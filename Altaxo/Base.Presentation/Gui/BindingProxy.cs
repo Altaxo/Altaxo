@@ -60,6 +60,9 @@ namespace Altaxo.Gui
   /// </example>
   public class BindingProxy : Freezable
   {
+    /// <summary>
+    /// Identifies the <see cref="Data"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty DataProperty =
             DependencyProperty.Register("Data", typeof(object), typeof(BindingProxy), new UIPropertyMetadata(null));
 
@@ -77,6 +80,7 @@ namespace Altaxo.Gui
     /// Overrides of Freezable
     /// </summary>
     /// <returns></returns>
+    /// <inheritdoc/>
     protected override Freezable CreateInstanceCore()
     {
       return new BindingProxy();

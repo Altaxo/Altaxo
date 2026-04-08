@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakSearching
   /// </summary>
   public partial class PeakSearchingByCwtControl : UserControl, IPeakSearchingByCwtView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PeakSearchingByCwtControl"/> class.
+    /// </summary>
     public PeakSearchingByCwtControl()
     {
       InitializeComponent();

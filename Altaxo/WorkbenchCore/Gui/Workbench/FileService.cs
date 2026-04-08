@@ -27,6 +27,9 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Workbench
 {
+  /// <summary>
+  /// Provides the default implementation of <see cref="IFileService"/>.
+  /// </summary>
   public class FileService : IFileService
   {
     private void ParserServiceLoadSolutionProjectsThreadEnded(object sender, EventArgs e)
@@ -48,6 +51,7 @@ namespace Altaxo.Gui.Workbench
 
     private IRecentOpen? _recentOpen;
 
+    /// <inheritdoc/>
     public IRecentOpen RecentOpen
     {
       get
@@ -56,6 +60,7 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <inheritdoc/>
     public bool DeleteToRecycleBin
     {
       get
@@ -68,6 +73,7 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <inheritdoc/>
     public bool SaveUsingTemporaryFile
     {
       get
@@ -84,12 +90,16 @@ namespace Altaxo.Gui.Workbench
 
     #region DefaultFileEncoding
 
+    /// <summary>
+    /// Gets or sets the code page of the default file encoding.
+    /// </summary>
     public int DefaultFileEncodingCodePage
     {
       get { return Current.PropertyService.GetValue("Application.DefaultFileEncoding", 65001); }
       set { Current.PropertyService.SetValue("Application.DefaultFileEncoding", value); }
     }
 
+    /// <inheritdoc/>
     public Encoding DefaultFileEncoding
     {
       get
@@ -100,11 +110,13 @@ namespace Altaxo.Gui.Workbench
 
     private readonly EncodingInfo[] allEncodings = Encoding.GetEncodings().OrderBy(e => e.DisplayName).ToArray();
 
+    /// <inheritdoc/>
     public IReadOnlyList<EncodingInfo> AllEncodings
     {
       get { return allEncodings; }
     }
 
+    /// <inheritdoc/>
     public EncodingInfo DefaultFileEncodingInfo
     {
       get
@@ -122,6 +134,7 @@ namespace Altaxo.Gui.Workbench
 
     #region BrowseForFolder
 
+    /// <inheritdoc/>
     public string? BrowseForFolder(string description, string? selectedPath)
     {
       var dlg = new FolderChoiceOptions()
@@ -494,6 +507,7 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <inheritdoc/>
     public IEnumerable<IFileViewContent> ShowOpenWithDialog(IEnumerable<FileName> fileNames, bool switchToOpenedView = true)
     {
       yield break;
@@ -695,16 +709,22 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <inheritdoc/>
     public event EventHandler<FileRenamingEventArgs>? FileRenaming;
 
+    /// <inheritdoc/>
     public event EventHandler<FileRenameEventArgs>? FileRenamed;
 
+    /// <inheritdoc/>
     public event EventHandler<FileRenamingEventArgs>? FileCopying;
 
+    /// <inheritdoc/>
     public event EventHandler<FileRenameEventArgs>? FileCopied;
 
+    /// <inheritdoc/>
     public event EventHandler<FileCancelEventArgs>? FileRemoving;
 
+    /// <inheritdoc/>
     public event EventHandler<FileEventArgs>? FileRemoved;
 
     #endregion Remove/Rename/Copy
@@ -753,10 +773,13 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <inheritdoc/>
     public event EventHandler<FileEventArgs>? FileCreated;
 
+    /// <inheritdoc/>
     public event EventHandler<FileCancelEventArgs>? FileReplacing;
 
+    /// <inheritdoc/>
     public event EventHandler<FileEventArgs>? FileReplaced;
 
     #endregion FileCreated/Replaced

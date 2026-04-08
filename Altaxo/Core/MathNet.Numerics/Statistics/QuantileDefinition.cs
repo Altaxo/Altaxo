@@ -29,16 +29,154 @@
 
 namespace Altaxo.Calc.Statistics
 {
+  /// <summary>
+  /// Specifies the algorithm used to compute quantiles.
+  /// </summary>
   public enum QuantileDefinition
   {
-    R1 = 1, SAS3 = 1, EmpiricalInvCDF = 1,
-    R2 = 2, SAS5 = 2, EmpiricalInvCDFAverage = 2,
-    R3 = 3, SAS2 = 3, Nearest = 3,
-    R4 = 4, SAS1 = 4, California = 4,
-    R5 = 5, Hydrology = 5, Hazen = 5,
-    R6 = 6, SAS4 = 6, Nist = 6, Weibull = 6, SPSS = 6,
-    R7 = 7, Excel = 7, Mode = 7, S = 7,
-    R8 = 8, Median = 8, Default = 8,
-    R9 = 9, Normal = 9,
+    /// <summary>
+    /// R1 definition.
+    /// </summary>
+    R1 = 1,
+
+    /// <summary>
+    /// SAS3 definition.
+    /// </summary>
+    SAS3 = 1,
+
+    /// <summary>
+    /// Empirical inverse CDF definition.
+    /// </summary>
+    EmpiricalInvCDF = 1,
+
+    /// <summary>
+    /// R2 definition.
+    /// </summary>
+    R2 = 2,
+
+    /// <summary>
+    /// SAS5 definition.
+    /// </summary>
+    SAS5 = 2,
+
+    /// <summary>
+    /// Averaged empirical inverse CDF definition.
+    /// </summary>
+    EmpiricalInvCDFAverage = 2,
+
+    /// <summary>
+    /// R3 definition.
+    /// </summary>
+    R3 = 3,
+
+    /// <summary>
+    /// SAS2 definition.
+    /// </summary>
+    SAS2 = 3,
+
+    /// <summary>
+    /// Nearest-order-statistic definition.
+    /// </summary>
+    Nearest = 3,
+
+    /// <summary>
+    /// R4 definition.
+    /// </summary>
+    R4 = 4,
+
+    /// <summary>
+    /// SAS1 definition.
+    /// </summary>
+    SAS1 = 4,
+
+    /// <summary>
+    /// California definition.
+    /// </summary>
+    California = 4,
+
+    /// <summary>
+    /// R5 definition.
+    /// </summary>
+    R5 = 5,
+
+    /// <summary>
+    /// Hydrology definition.
+    /// </summary>
+    Hydrology = 5,
+
+    /// <summary>
+    /// Hazen definition.
+    /// </summary>
+    Hazen = 5,
+
+    /// <summary>
+    /// R6 definition.
+    /// </summary>
+    R6 = 6,
+
+    /// <summary>
+    /// SAS4 definition.
+    /// </summary>
+    SAS4 = 6,
+
+    /// <summary>
+    /// NIST definition.
+    /// </summary>
+    Nist = 6,
+
+    /// <summary>
+    /// Weibull definition.
+    /// </summary>
+    Weibull = 6,
+
+    /// <summary>
+    /// SPSS definition.
+    /// </summary>
+    SPSS = 6,
+
+    /// <summary>
+    /// R7 definition.
+    /// </summary>
+    R7 = 7,
+
+    /// <summary>
+    /// Excel definition.
+    /// </summary>
+    Excel = 7,
+
+    /// <summary>
+    /// Mode definition.
+    /// </summary>
+    Mode = 7,
+
+    /// <summary>
+    /// S definition.
+    /// </summary>
+    S = 7,
+
+    /// <summary>
+    /// R8 definition.
+    /// </summary>
+    R8 = 8,
+
+    /// <summary>
+    /// Median-unbiased definition.
+    /// </summary>
+    Median = 8,
+
+    /// <summary>
+    /// Default quantile definition.
+    /// </summary>
+    Default = 8,
+
+    /// <summary>
+    /// R9 definition.
+    /// </summary>
+    R9 = 9,
+
+    /// <summary>
+    /// Normal-unbiased definition.
+    /// </summary>
+    Normal = 9,
   }
 }

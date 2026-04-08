@@ -51,6 +51,13 @@ namespace Altaxo.Gui.Worksheet.Viewing
       Altaxo.Worksheet.BooleanColumnStyle.RegisteredPaintMethods.Add(typeof(DrawingContext), BooleanColumnStyle_Paint);
     }
 
+    /// <summary>
+    /// Paints the background of a worksheet cell.
+    /// </summary>
+    /// <param name="thiss">The column style that provides the brushes and borders.</param>
+    /// <param name="dc">The drawing context.</param>
+    /// <param name="cellRectangle">The rectangle of the cell to paint.</param>
+    /// <param name="bSelected"><see langword="true"/> to paint the selected background; otherwise, <see langword="false"/>.</param>
     public static void PaintBackground(this Altaxo.Worksheet.ColumnStyle thiss, DrawingContext dc, RectangleD2D cellRectangle, bool bSelected)
     {
       var cellRect = cellRectangle.ToWpf();
@@ -180,6 +187,15 @@ namespace Altaxo.Gui.Worksheet.Viewing
       dc.DrawText(t, cellRectangle.Location);
     }
 
+    /// <summary>
+    /// Paints the content of a worksheet cell.
+    /// </summary>
+    /// <param name="thiss">The column style that paints the cell.</param>
+    /// <param name="dc">The drawing context.</param>
+    /// <param name="cellRectangle">The rectangle of the cell to paint.</param>
+    /// <param name="nRow">The row index to paint.</param>
+    /// <param name="data">The data column that provides the cell content.</param>
+    /// <param name="bSelected"><see langword="true"/> to paint the cell as selected; otherwise, <see langword="false"/>.</param>
     public static void Paint(this Altaxo.Worksheet.ColumnStyle thiss, DrawingContext dc, RectangleD2D cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
     {
       thiss.Paint(typeof(DrawingContext), dc, cellRectangle, nRow, data, bSelected);

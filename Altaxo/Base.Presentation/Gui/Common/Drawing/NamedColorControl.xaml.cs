@@ -20,6 +20,9 @@ namespace Altaxo.Gui.Common.Drawing
   /// </summary>
   public partial class NamedColorControl : UserControl, INamedColorView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NamedColorControl"/> class.
+    /// </summary>
     public NamedColorControl()
     {
       InitializeComponent();

@@ -31,20 +31,31 @@ using Altaxo.Drawing;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
+  /// <summary>
+  /// Control for selecting a color with brightness and opacity adjustment.
+  /// </summary>
   public partial class ColorPickerControl : UserControl, IColorPickerView
   {
     private AxoColor _oldColor, _newColor;
 
+    /// <inheritdoc/>
     public event Action<AxoColor>? CurrentColorChanged;
 
     //
     // Initialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColorPickerControl"/> class.
+    /// </summary>
     public ColorPickerControl()
       : this(AxoColors.Red)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColorPickerControl"/> class.
+    /// </summary>
+    /// <param name="oldColor">The initial color.</param>
     public ColorPickerControl(AxoColor oldColor)
     {
       _oldColor = oldColor;
@@ -52,6 +63,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       InitializeComponent();
     }
 
+    /// <inheritdoc/>
     public AxoColor SelectedColor
     {
       get
@@ -71,6 +83,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     }
 
     // Completes initialization after all XAML member vars have been initialized.
+    /// <inheritdoc/>
     protected override void OnInitialized(EventArgs e)
     {
       base.OnInitialized(e);

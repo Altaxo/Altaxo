@@ -34,15 +34,37 @@ namespace Altaxo.Com
 {
   using UnmanagedApi.Advapi32;
 
+  /// <summary>
+  /// Specifies the registry view that should be used when accessing WOW64 redirected keys.
+  /// </summary>
   public enum WOW_Mode
   {
+    /// <summary>
+    /// Use the default registry view.
+    /// </summary>
     None,
+    /// <summary>
+    /// Use the 64-bit registry view.
+    /// </summary>
     Reg64,
+    /// <summary>
+    /// Use the 32-bit registry view.
+    /// </summary>
     Reg32
   }
 
+  /// <summary>
+  /// Provides helper methods for registry access.
+  /// </summary>
   public static class RegistryHelper
   {
+    /// <summary>
+    /// Creates a subkey by using the requested registry view.
+    /// </summary>
+    /// <param name="mainKey">The parent registry key.</param>
+    /// <param name="name">The subkey name.</param>
+    /// <param name="mode">The registry view to use.</param>
+    /// <returns>The created or opened subkey.</returns>
     public static RegistryKey CreateSubKey(this RegistryKey mainKey, string name, WOW_Mode mode)
     {
 

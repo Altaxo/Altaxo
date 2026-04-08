@@ -36,6 +36,9 @@ namespace Altaxo.Gui.Common.Converters
   [ValueConversion(typeof(bool), typeof(Visibility))]
   public class FalseToVisibilityHiddenConverter : IValueConverter
   {
+    /// <summary>
+    /// Gets the shared converter instance.
+    /// </summary>
     public static FalseToVisibilityHiddenConverter Instance { get; private set; } = new FalseToVisibilityHiddenConverter();
 
     /// <inheritdoc/>

@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Analysis.Statistics
   /// </summary>
   public partial class HistogramCreationControl : UserControl, IHistogramCreationView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HistogramCreationControl"/> class.
+    /// </summary>
     public HistogramCreationControl()
     {
       InitializeComponent();

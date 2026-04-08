@@ -34,17 +34,24 @@ namespace Altaxo.Gui.Behaviors
   /// </remarks>
   public class BindingProxy : Freezable
   {
+    /// <inheritdoc/>
     protected override Freezable CreateInstanceCore()
     {
       return new BindingProxy();
     }
 
+    /// <summary>
+    /// Gets or sets the proxied data object.
+    /// </summary>
     public object Data
     {
       get { return (object)GetValue(DataProperty); }
       set { SetValue(DataProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="Data"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty DataProperty =
         DependencyProperty.Register(nameof(Data), typeof(object), typeof(BindingProxy), new UIPropertyMetadata(null));
   }

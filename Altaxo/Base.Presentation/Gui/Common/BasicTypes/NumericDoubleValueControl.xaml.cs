@@ -44,6 +44,9 @@ namespace Altaxo.Gui.Common.BasicTypes
   /// </summary>
   public partial class NumericDoubleValueControl : UserControl, INumericDoubleValueView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NumericDoubleValueControl"/> class.
+    /// </summary>
     public NumericDoubleValueControl()
     {
       InitializeComponent();

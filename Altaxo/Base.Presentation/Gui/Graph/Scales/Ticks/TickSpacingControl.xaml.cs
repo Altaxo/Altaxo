@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
   /// </summary>
   public partial class TickSpacingControl : UserControl, ITickSpacingView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TickSpacingControl"/> class.
+    /// </summary>
     public TickSpacingControl()
     {
       InitializeComponent();

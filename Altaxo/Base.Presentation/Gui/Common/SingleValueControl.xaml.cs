@@ -35,6 +35,9 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public partial class SingleValueControl : UserControl, ISingleValueView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SingleValueControl"/> class.
+    /// </summary>
     public SingleValueControl()
     {
       InitializeComponent();
@@ -42,11 +45,13 @@ namespace Altaxo.Gui.Common
 
     #region ISingleValueView
 
+    /// <inheritdoc/>
     public string DescriptionText
     {
       set { _lblDescription.Content = value; }
     }
 
+    /// <inheritdoc/>
     public string ValueText
     {
       get
@@ -59,6 +64,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     public event Action<ValidationEventArgs<string>>? ValueText_Validating;
 
     #endregion ISingleValueView

@@ -31,6 +31,9 @@ using System;
 
 namespace Altaxo.Calc.Providers.FourierTransform
 {
+  /// <summary>
+  /// Controls selection and lifetime of the active Fourier transform provider.
+  /// </summary>
   public static class FourierTransformControl
   {
     private const string EnvVarFFTProvider = "AltaxoCoreFFTProvider";
@@ -77,9 +80,19 @@ namespace Altaxo.Calc.Providers.FourierTransform
       }
     }
 
+    /// <summary>
+    /// Switches to the managed Fourier transform provider.
+    /// </summary>
     public static void UseManaged() => Provider = ManagedFourierTransformProvider.Instance;
 
+    /// <summary>
+    /// Switches to the native MKL Fourier transform provider.
+    /// </summary>
     public static void UseNativeMKL() => Provider = MklProbe.Create();
+    /// <summary>
+    /// Attempts to switch to the native MKL Fourier transform provider.
+    /// </summary>
+    /// <returns><see langword="true"/> if the provider was selected; otherwise, <see langword="false"/>.</returns>
     public static bool TryUseNativeMKL() => TryUse(MklProbe.TryCreate());
 
 
@@ -96,6 +109,11 @@ namespace Altaxo.Calc.Providers.FourierTransform
       return TryUseNativeMKL();
     }
 
+    /// <summary>
+    /// Attempts to switch to the specified Fourier transform provider.
+    /// </summary>
+    /// <param name="provider">The provider to use.</param>
+    /// <returns><see langword="true"/> if the provider was selected; otherwise, <see langword="false"/>.</returns>
     public static bool TryUse(IFourierTransformProvider provider)
     {
       try
@@ -159,6 +177,9 @@ namespace Altaxo.Calc.Providers.FourierTransform
       }
     }
 
+    /// <summary>
+    /// Frees resources held by the active Fourier transform provider.
+    /// </summary>
     public static void FreeResources() => Provider.FreeResources();
   }
 }

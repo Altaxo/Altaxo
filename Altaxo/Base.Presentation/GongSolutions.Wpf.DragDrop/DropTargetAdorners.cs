@@ -19,13 +19,22 @@ using System.Text;
 
 namespace GongSolutions.Wpf.DragDrop
 {
+  /// <summary>
+  /// Provides access to the standard drop target adorner types.
+  /// </summary>
   public class DropTargetAdorners
   {
+    /// <summary>
+    /// Gets the adorner type that highlights the target item.
+    /// </summary>
     public static Type Highlight
     {
       get { return typeof(DropTargetHighlightAdorner); }
     }
 
+    /// <summary>
+    /// Gets the adorner type that shows an insertion marker.
+    /// </summary>
     public static Type Insert
     {
       get { return typeof(DropTargetInsertionAdorner); }

@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Analysis.Multivariate
   /// </summary>
   public partial class DimensionReductionByFactorizationMethodControl : UserControl, IDimensionReductionByFactorizationMethodView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DimensionReductionByFactorizationMethodControl"/> class.
+    /// </summary>
     public DimensionReductionByFactorizationMethodControl()
     {
       InitializeComponent();

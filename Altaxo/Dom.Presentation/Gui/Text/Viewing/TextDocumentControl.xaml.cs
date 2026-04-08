@@ -52,6 +52,9 @@ namespace Altaxo.Gui.Text.Viewing
     private ITextDocumentController _controller;
     private string _documentName;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextDocumentControl"/> class.
+    /// </summary>
     public TextDocumentControl()
     {
       InitializeComponent();
@@ -66,6 +69,7 @@ namespace Altaxo.Gui.Text.Viewing
       _controller?.EhReferencedImageUrlsChanged(obj);
     }
 
+    /// <inheritdoc/>
     public ITextDocumentController Controller
     {
       set
@@ -74,6 +78,7 @@ namespace Altaxo.Gui.Text.Viewing
       }
     }
 
+    /// <inheritdoc/>
     public bool IsInInitializationMode { set { _guiEditor.IsInInitializationMode = value; } }
 
     /// <inheritdoc/>
@@ -95,21 +100,20 @@ namespace Altaxo.Gui.Text.Viewing
       }
     }
 
+    /// <inheritdoc/>
     public string SourceText
     {
       get { return _guiEditor.SourceText; }
       set { _guiEditor.SourceText = value; }
     }
 
-    /// <summary>
-    /// Inserts the provided markdown source text at the current caret position.
-    /// </summary>
-    /// <param name="text">The text to insert.</param>
+    /// <inheritdoc/>
     public void InsertSourceTextAtCaretPosition(string text)
     {
       _guiEditor.InsertSourceTextAtCaretPosition(text);
     }
 
+    /// <inheritdoc/>
     public string StyleName
     {
       set
@@ -118,6 +122,7 @@ namespace Altaxo.Gui.Text.Viewing
       }
     }
 
+    /// <inheritdoc/>
     public event EventHandler SourceTextChanged
     {
       add
@@ -130,6 +135,7 @@ namespace Altaxo.Gui.Text.Viewing
       }
     }
 
+    /// <inheritdoc/>
     public bool IsViewerSelected
     {
       get
@@ -152,6 +158,7 @@ namespace Altaxo.Gui.Text.Viewing
       _controller?.EhBeforeCompleteRendering();
     }
 
+    /// <inheritdoc/>
     public ViewerConfiguration WindowConfiguration
     {
       get
@@ -169,6 +176,7 @@ namespace Altaxo.Gui.Text.Viewing
       _controller?.EhViewerConfigurationChanged(WindowConfiguration);
     }
 
+    /// <inheritdoc/>
     public double FractionOfEditorWindow
     {
       get
@@ -181,6 +189,7 @@ namespace Altaxo.Gui.Text.Viewing
       }
     }
 
+    /// <inheritdoc/>
     public bool IsWordWrappingEnabled
     {
       set
@@ -189,6 +198,7 @@ namespace Altaxo.Gui.Text.Viewing
       }
     }
 
+    /// <inheritdoc/>
     public bool IsLineNumberingEnabled
     {
       set
@@ -197,6 +207,7 @@ namespace Altaxo.Gui.Text.Viewing
       }
     }
 
+    /// <inheritdoc/>
     public bool IsOutlineWindowVisible
     {
       get
@@ -209,6 +220,7 @@ namespace Altaxo.Gui.Text.Viewing
       }
     }
 
+    /// <inheritdoc/>
     public double OutlineWindowRelativeWidth
     {
       get
@@ -221,9 +233,7 @@ namespace Altaxo.Gui.Text.Viewing
       }
     }
 
-    /// <summary>
-    /// Sets the culture for this document. This is important for instance for spell checking.
-    /// </summary>
+    /// <inheritdoc/>
     public System.Globalization.CultureInfo DocumentCulture
     {
       set
@@ -232,6 +242,7 @@ namespace Altaxo.Gui.Text.Viewing
       }
     }
 
+    /// <inheritdoc/>
     public bool IsSpellCheckingEnabled
     {
       set
@@ -240,6 +251,7 @@ namespace Altaxo.Gui.Text.Viewing
       }
     }
 
+    /// <inheritdoc/>
     public bool IsHyphenationEnabled
     {
       set
@@ -248,6 +260,7 @@ namespace Altaxo.Gui.Text.Viewing
       }
     }
 
+    /// <inheritdoc/>
     public bool IsFoldingEnabled
     {
       set
@@ -256,6 +269,7 @@ namespace Altaxo.Gui.Text.Viewing
       }
     }
 
+    /// <inheritdoc/>
     public string HighlightingStyle
     {
       set
@@ -264,6 +278,7 @@ namespace Altaxo.Gui.Text.Viewing
       }
     }
 
+    /// <inheritdoc/>
     public void PrintShowDialog()
     {
       _imageProvider.TargetResolution = 600;

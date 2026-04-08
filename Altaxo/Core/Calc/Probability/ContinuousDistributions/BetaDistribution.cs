@@ -61,8 +61,44 @@ namespace Altaxo.Calc.Probability
   /// </code></remarks>
   public class BetaDistribution : ContinuousDistribution
   {
+    /// <summary>
+    /// Fields for internal use
+    /// </summary>
+    /// <remarks>
+    /// <para><b>_alpha</b></para>
+    /// First parameter of the distribution.
+    /// <para><b>_beta</b></para>
+    /// Second parameter of the distribution.
+    /// <para><b>scale</b></para>
+    /// Scale random long to (0,1) - boundaries are not allowed !
+    /// <para><b>a</b></para>
+    ///
+    /// <para><b>hlpalpha</b></para>
+    ///
+    /// <para><b>b</b></para>
+    ///
+    /// <para><b>hlpbeta</b></para>
+    ///
+    /// <para><b>delta</b></para>
+    ///
+    /// <para><b>gamma</b></para>
+    ///
+    /// <para><b>k1</b></para>
+    ///
+    /// <para><b>k2</b></para>
+    ///
+    /// <para><b>maxexp</b></para>
+    /// Maximal exponent for exp() function in evaluation "a*exp(v)" below
+    /// </remarks>
     protected double _alpha, _beta;
+    /// <summary>
+    /// Internal cached constants used by the beta-distribution sampling algorithms.
+    /// </summary>
     protected double scale, a, hlpalpha, b, hlpbeta, delta, gamma, k1, k2, maxexp;
+
+    /// <summary>
+    /// Indicates whether the BB acceptance-rejection algorithm is used.
+    /// </summary>
     protected bool algorithmBB;
 
     /// <summary>

@@ -30,13 +30,20 @@ using Altaxo.Gui;
 
 namespace Altaxo.Main.Commands
 {
+  /// <summary>
+  /// Provides development and diagnostic test commands.
+  /// </summary>
   public class DevelopmentTest : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       Run6();
     }
 
+    /// <summary>
+    /// Reports unconnected and inconsistent document nodes.
+    /// </summary>
     public void Run6()
     {
       GC.Collect();
@@ -46,6 +53,9 @@ namespace Altaxo.Main.Commands
       Altaxo.Main.SuspendableDocumentNode.ReportWrongChildParentRelations();
     }
 
+    /// <summary>
+    /// Opens the named color dialog for testing.
+    /// </summary>
     public void Run5()
     {
       var ctrl = new Altaxo.Gui.Common.Drawing.NamedColorController();
@@ -53,6 +63,9 @@ namespace Altaxo.Main.Commands
       Current.Gui.ShowDialog(ctrl, "ddd");
     }
 
+    /// <summary>
+    /// Forces a full garbage collection and waits for finalizers.
+    /// </summary>
     public void Run3()
     {
       GC.Collect();
@@ -60,6 +73,9 @@ namespace Altaxo.Main.Commands
       GC.Collect();
     }
 
+    /// <summary>
+    /// Opens the pen properties dialog for testing.
+    /// </summary>
     public void Run2()
     {
       var pen = new PenX(NamedColors.Red, 2);
@@ -67,6 +83,9 @@ namespace Altaxo.Main.Commands
       Current.Gui.ShowDialog(ctrl, "Pen properties");
     }
 
+    /// <summary>
+    /// Opens the advanced brush dialog for testing.
+    /// </summary>
     public void Run1()
     {
       var brush = new BrushX(NamedColors.Black);
@@ -76,8 +95,12 @@ namespace Altaxo.Main.Commands
     }
   }
 
+  /// <summary>
+  /// Reports parent-child and suspension problems in the current document tree.
+  /// </summary>
   public class ReportParentChildProblemsInDocument : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       GC.Collect();
@@ -87,8 +110,12 @@ namespace Altaxo.Main.Commands
     }
   }
 
+  /// <summary>
+  /// Opens the auto-update download directory in Windows Explorer.
+  /// </summary>
   public class OpenDownloadDirectory : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       var dir1 = Altaxo.Serialization.AutoUpdates.PackageInfo.GetDownloadDirectory(false);
@@ -120,8 +147,12 @@ namespace Altaxo.Main.Commands
     }
   }
 
+  /// <summary>
+  /// Opens the Altaxo settings directory in Windows Explorer.
+  /// </summary>
   public class OpenSettingsDirectory : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Altaxo");
@@ -149,6 +180,7 @@ namespace Altaxo.Main.Commands
   /// </summary>
   public class OpenProjectDirectory : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       if (string.IsNullOrEmpty(Current.IProjectService.CurrentProjectFileName))
@@ -182,6 +214,7 @@ namespace Altaxo.Main.Commands
   /// </summary>
   public class OpenInstallationDirectory : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       var dir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);

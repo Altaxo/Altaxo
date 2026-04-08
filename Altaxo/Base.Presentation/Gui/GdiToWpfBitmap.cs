@@ -103,6 +103,9 @@ namespace Altaxo.Gui
       InternalAllocate(width, height);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GdiToWpfBitmap"/> class.
+    /// </summary>
     public GdiToWpfBitmap()
     {
     }
@@ -207,6 +210,9 @@ namespace Altaxo.Gui
       _height = 0;
     }
 
+    /// <summary>
+    /// Gets the underlying GDI bitmap.
+    /// </summary>
     public System.Drawing.Bitmap GdiBitmap
     {
       get
@@ -225,6 +231,9 @@ namespace Altaxo.Gui
       return System.Drawing.Graphics.FromImage(_bmp);
     }
 
+    /// <summary>
+    /// Ends GDI painting and invalidates the WPF bitmap source.
+    /// </summary>
     public void EndGdiPainting()
     {
       Current.Dispatcher.InvokeIfRequired(
@@ -239,6 +248,9 @@ namespace Altaxo.Gui
           });
     }
 
+    /// <summary>
+    /// Gets the GDI rectangle representing the current bitmap bounds.
+    /// </summary>
     public System.Drawing.Rectangle GdiRectangle
     {
       get
@@ -247,6 +259,9 @@ namespace Altaxo.Gui
       }
     }
 
+    /// <summary>
+    /// Gets the GDI size of the current bitmap.
+    /// </summary>
     public System.Drawing.Size GdiSize
     {
       get
@@ -255,6 +270,9 @@ namespace Altaxo.Gui
       }
     }
 
+    /// <summary>
+    /// Gets the interop bitmap.
+    /// </summary>
     public System.Windows.Interop.InteropBitmap WpfBitmap
     {
       get
@@ -263,6 +281,9 @@ namespace Altaxo.Gui
       }
     }
 
+    /// <summary>
+    /// Gets the WPF bitmap source.
+    /// </summary>
     public System.Windows.Media.Imaging.BitmapSource WpfBitmapSource
     {
       get
@@ -282,12 +303,16 @@ namespace Altaxo.Gui
 
     #region IDisposable Members
 
+    /// <inheritdoc/>
     public void Dispose()
     {
       InternalDeallocate(true);
       GC.SuppressFinalize(this);
     }
 
+    /// <summary>
+    /// Finalizes an instance of the <see cref="GdiToWpfBitmap"/> class.
+    /// </summary>
     ~GdiToWpfBitmap()
     {
       // Do not re-create Dispose clean-up code here.
@@ -298,8 +323,13 @@ namespace Altaxo.Gui
 
     #endregion IDisposable Members
 
+    /// <inheritdoc/>
     public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
 
+    /// <summary>
+    /// Raises the <see cref="PropertyChanged"/> event.
+    /// </summary>
+    /// <param name="name">The name of the changed property.</param>
     public virtual void OnPropertyChanged(string name)
     {
       if (PropertyChanged is not null)

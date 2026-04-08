@@ -48,61 +48,90 @@ namespace Altaxo.Worksheet.Commands
 {
   #region File commands
 
+  /// <summary>
+  /// Saves the active worksheet.
+  /// </summary>
   public class SaveAs : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       ctrl.WorksheetLayout.ShowSaveAsDialog(false);
     }
   }
 
+  /// <summary>
+  /// Saves the active worksheet as a template.
+  /// </summary>
   public class SaveAsTemplate : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       ctrl.WorksheetLayout.ShowSaveAsDialog(true);
     }
   }
 
+  /// <summary>
+  /// Imports ASCII data into the active worksheet.
+  /// </summary>
   public class ImportAscii : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Data.FileCommands.ShowImportAsciiDialog(ctrl.DataTable);
     }
   }
 
+  /// <summary>
+  /// Imports ASCII data horizontally into a single worksheet.
+  /// </summary>
   public class ImportAsciiInSingleWorksheetHorizontally : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Data.FileCommands.ShowImportAsciiDialog(ctrl.DataTable, false, false);
     }
   }
 
+  /// <summary>
+  /// Imports ASCII data vertically into a single worksheet.
+  /// </summary>
   public class ImportAsciiInSingleWorksheetVertically : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Data.FileCommands.ShowImportAsciiDialog(ctrl.DataTable, false, true);
     }
   }
 
+  /// <summary>
+  /// Imports database data into the active worksheet.
+  /// </summary>
   public class ImportDatabase : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Data.DatabaseCommands.ShowImportDatabaseDialog(ctrl.DataTable);
     }
   }
 
+  /// <summary>
+  /// Opens a reduced import dialog for any supported data file type.
+  /// </summary>
   public class ImportAnyDataFile : SimpleCommand
   {
+    /// <inheritdoc/>
     public override bool CanExecute(object? parameter)
     {
       return true;
     }
 
+    /// <inheritdoc/>
     public override void Execute(object? parameter)
     {
       if (!(parameter is IViewContent activeViewContent))
@@ -112,14 +141,19 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
-
+  /// <summary>
+  /// Provides a generic base class for data-file import commands.
+  /// </summary>
+  /// <typeparam name="TImporter">The importer type.</typeparam>
   public class ImportDataFileCommandBase<TImporter> : SimpleCommand where TImporter : IDataFileImporter, new()
   {
+    /// <inheritdoc/>
     public override bool CanExecute(object? parameter)
     {
       return true;
     }
 
+    /// <inheritdoc/>
     public override void Execute(object? parameter)
     {
       if (!(parameter is IViewContent activeViewContent))
@@ -129,73 +163,121 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  /// <summary>
+  /// Imports Galactic SPC files.
+  /// </summary>
   public class ImportGalacticSPC : ImportDataFileCommandBase<GalacticSPCImporter>
   {
   }
 
+  /// <summary>
+  /// Imports JCAMP files.
+  /// </summary>
   public class ImportJcamp : ImportDataFileCommandBase<JcampImporter>
   {
   }
 
+  /// <summary>
+  /// Imports Renishaw WDF files.
+  /// </summary>
   public class ImportRenishawWdf : ImportDataFileCommandBase<Altaxo.Serialization.Renishaw.RenishawImporter>
   {
   }
 
+  /// <summary>
+  /// Imports NeXus files.
+  /// </summary>
   public class ImportNexus : ImportDataFileCommandBase<NexusImporter>
   {
   }
 
 
+  /// <summary>
+  /// Imports Omnic SPA files.
+  /// </summary>
   public class ImportOmnicSPA : ImportDataFileCommandBase<OmnicSPAImporter>
   {
   }
 
+  /// <summary>
+  /// Imports Omnic SPG files.
+  /// </summary>
   public class ImportOmnicSPG : ImportDataFileCommandBase<OmnicSPGImporter>
   {
   }
 
+  /// <summary>
+  /// Imports Origin files.
+  /// </summary>
   public class ImportOrigin : ImportDataFileCommandBase<OriginImporter>
   {
   }
 
+  /// <summary>
+  /// Imports Princeton Instruments SPE files.
+  /// </summary>
   public class ImportPrincetonInstrumentsSPE : ImportDataFileCommandBase<PrincetonInstrumentsSPEImporter>
   {
   }
 
+  /// <summary>
+  /// Imports Bruker OPUS files.
+  /// </summary>
   public class ImportBrukerOpus : ImportDataFileCommandBase<BrukerOpusImporter>
   {
   }
 
+  /// <summary>
+  /// Imports WITec files.
+  /// </summary>
   public class ImportWiTec : ImportDataFileCommandBase<WITecImporter>
   {
   }
 
+  /// <summary>
+  /// Imports image files.
+  /// </summary>
   public class ImportImage : ImportDataFileCommandBase<Altaxo.Serialization.Bitmaps.BitmapImporter>
   {
   }
 
+  /// <summary>
+  /// Imports Raman CHADA files.
+  /// </summary>
   public class ImportRamanCHADA : ImportDataFileCommandBase<Altaxo.Serialization.HDF5.Chada.ChadaImporter>
   {
   }
 
+  /// <summary>
+  /// Exports the active worksheet as a Raman CHADA file.
+  /// </summary>
   public class ExportRamanCHADA : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Serialization.HDF5.Chada.ChadaExport.ShowExportRamanChadaDialog(ctrl.DataTable);
     }
   }
 
+  /// <summary>
+  /// Exports the active worksheet as ASCII text.
+  /// </summary>
   public class ExportAscii : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Data.FileCommands.ShowExportAsciiDialog(ctrl.DataTable);
     }
   }
 
+  /// <summary>
+  /// Exports the active worksheet as a Galactic SPC file.
+  /// </summary>
   public class ExportGalacticSPC : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Data.FileCommands.ShowExportGalacticSPCDialog(ctrl.DataTable, ctrl.SelectedDataRows, ctrl.SelectedDataColumns);
@@ -206,48 +288,72 @@ namespace Altaxo.Worksheet.Commands
 
   #region Edit commands
 
+  /// <summary>
+  /// Removes the selected worksheet content.
+  /// </summary>
   public class EditRemove : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.EditCommands.RemoveSelected(ctrl);
     }
   }
 
+  /// <summary>
+  /// Removes all worksheet content except the current selection.
+  /// </summary>
   public class RemoveAllButSelected : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.EditCommands.RemoveAllButSelected(ctrl);
     }
   }
 
+  /// <summary>
+  /// Cleans the selected worksheet content.
+  /// </summary>
   public class EditClean : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.EditCommands.CleanSelected(ctrl);
     }
   }
 
+  /// <summary>
+  /// Copies the current worksheet selection.
+  /// </summary>
   public class EditCopy : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.EditCommands.CopyToClipboard(ctrl);
     }
   }
 
+  /// <summary>
+  /// Pastes clipboard content into the active worksheet.
+  /// </summary>
   public class EditPaste : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.EditCommands.PasteFromClipboard(ctrl);
     }
   }
 
+  /// <summary>
+  /// Converts selected X-Y-value data into a matrix.
+  /// </summary>
   public class XYVToMatrix : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       string msg = Altaxo.Worksheet.Commands.EditCommands.XYVToMatrix(ctrl);
@@ -256,8 +362,12 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  /// <summary>
+  /// Shows the properties of the active worksheet.
+  /// </summary>
   public class TableShowProperties : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       ctrl.DataTable.ShowPropertyDialog();
@@ -296,128 +406,192 @@ namespace Altaxo.Worksheet.Commands
 
   #region Plot commands
 
+  /// <summary>
+  /// Plots the selected data as a line plot.
+  /// </summary>
   public class PlotLine : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.PlotCommands.PlotLine(ctrl, true, false);
     }
   }
 
+  /// <summary>
+  /// Plots the selected data as a line-area plot.
+  /// </summary>
   public class PlotLineArea : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.PlotCommands.PlotLineArea(ctrl);
     }
   }
 
+  /// <summary>
+  /// Plots the selected data as a stacked line plot.
+  /// </summary>
   public class PlotLineStack : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.PlotCommands.PlotLineStack(ctrl);
     }
   }
 
+  /// <summary>
+  /// Plots the selected data as a relative stacked line plot.
+  /// </summary>
   public class PlotLineRelativeStack : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.PlotCommands.PlotLineRelativeStack(ctrl);
     }
   }
 
+  /// <summary>
+  /// Plots the selected data as a waterfall plot.
+  /// </summary>
   public class PlotLineWaterfall : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.PlotCommands.PlotLineWaterfall(ctrl);
     }
   }
 
+  /// <summary>
+  /// Plots the selected data as a polar line plot.
+  /// </summary>
   public class PlotLinePolar : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.PlotCommands.PlotLinePolar(ctrl);
     }
   }
 
+  /// <summary>
+  /// Plots the selected data as a scatter plot.
+  /// </summary>
   public class PlotScatter : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.PlotCommands.PlotLine(ctrl, false, true);
     }
   }
 
+  /// <summary>
+  /// Plots the selected data as a combined line and scatter plot.
+  /// </summary>
   public class PlotLineAndScatter : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.PlotCommands.PlotLine(ctrl, true, true);
     }
   }
 
+  /// <summary>
+  /// Plots the selected data as a normal bar chart.
+  /// </summary>
   public class PlotBarChartNormal : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.PlotCommands.PlotBarChartNormal(ctrl);
     }
   }
 
+  /// <summary>
+  /// Plots the selected data as a stacked bar chart.
+  /// </summary>
   public class PlotBarChartStack : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.PlotCommands.PlotBarChartStack(ctrl);
     }
   }
 
+  /// <summary>
+  /// Plots the selected data as a relative stacked bar chart.
+  /// </summary>
   public class PlotBarChartRelativeStack : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.PlotCommands.PlotBarChartRelativeStack(ctrl);
     }
   }
 
+  /// <summary>
+  /// Plots the selected data as a normal column chart.
+  /// </summary>
   public class PlotColumnChartNormal : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.PlotCommands.PlotColumnChartNormal(ctrl);
     }
   }
 
+  /// <summary>
+  /// Plots the selected data as a stacked column chart.
+  /// </summary>
   public class PlotColumnChartStack : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.PlotCommands.PlotColumnChartStack(ctrl);
     }
   }
 
+  /// <summary>
+  /// Plots the selected data as a relative stacked column chart.
+  /// </summary>
   public class PlotColumnChartRelativeStack : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.PlotCommands.PlotColumnChartRelativeStack(ctrl);
     }
   }
 
+  /// <summary>
+  /// Plots the selected data as a density image.
+  /// </summary>
   public class PlotDensityImage : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.PlotCommands.PlotDensityImage(ctrl);
     }
   }
 
+  /// <summary>
+  /// Plots the selected XYZ data as a density image.
+  /// </summary>
   public class PlotDensityImageFromXYZ : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.PlotCommands.PlotDensityImageFromXYZ(ctrl);
@@ -428,64 +602,96 @@ namespace Altaxo.Worksheet.Commands
 
   #region Worksheet
 
+  /// <summary>
+  /// Renames the active worksheet.
+  /// </summary>
   public class WorksheetRename : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Data.DataTableOtherActions.ShowRenameDialog(ctrl.DataTable);
     }
   }
 
+  /// <summary>
+  /// Moves the active worksheet to another project folder.
+  /// </summary>
   public class WorksheetMoveTo : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Gui.Pads.ProjectBrowser.ProjectBrowserExtensions.MoveDocuments(new[] { ctrl.DataTable });
     }
   }
 
+  /// <summary>
+  /// Duplicates the active worksheet.
+  /// </summary>
   public class WorksheetDuplicate : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.WorksheetCommands.Duplicate(ctrl);
     }
   }
 
+  /// <summary>
+  /// Transposes the active worksheet.
+  /// </summary>
   public class WorksheetTranspose : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.WorksheetCommands.Transpose(ctrl);
     }
   }
 
+  /// <summary>
+  /// Adds data columns to the active worksheet.
+  /// </summary>
   public class AddDataColumns : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.WorksheetCommands.AddDataColumns(ctrl);
     }
   }
 
+  /// <summary>
+  /// Adds property columns to the active worksheet.
+  /// </summary>
   public class AddPropertyColumns : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.WorksheetCommands.AddPropertyColumns(ctrl);
     }
   }
 
+  /// <summary>
+  /// Creates a property column that contains the data column names.
+  /// </summary>
   public class CreatePropertyColumnOfColumnNames : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.WorksheetCommands.CreatePropertyColumnOfColumnNames(ctrl);
     }
   }
 
+  /// <summary>
+  /// Clears all worksheet data.
+  /// </summary>
   public class WorksheetClearDataAll : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       using (var token = ctrl.DataTable.SuspendGetToken())
@@ -495,8 +701,12 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  /// <summary>
+  /// Clears only the data values of the active worksheet.
+  /// </summary>
   public class WorksheetClearDataOnly : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       using (var token = ctrl.DataTable.SuspendGetToken())
@@ -506,8 +716,12 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  /// <summary>
+  /// Removes all data columns from the active worksheet.
+  /// </summary>
   public class WorksheetRemoveDataColumnsOnly : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       using (var token = ctrl.DataTable.SuspendGetToken())
@@ -517,8 +731,12 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  /// <summary>
+  /// Removes all property columns from the active worksheet.
+  /// </summary>
   public class WorksheetRemovePropertyColumnsOnly : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       using (var token = ctrl.DataTable.SuspendGetToken())
@@ -528,8 +746,12 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  /// <summary>
+  /// Removes all data and property columns from the active worksheet.
+  /// </summary>
   public class WorksheetRemoveDataAndPropertyColumns : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       using (var token = ctrl.DataTable.SuspendGetToken())
@@ -539,8 +761,12 @@ namespace Altaxo.Worksheet.Commands
       }
     }
   }
+  /// <summary>
+  /// Opens the worksheet cleaning dialog.
+  /// </summary>
   public class WorksheetClearDataTableShowDialog : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       object optionsO = new DataTableCleaningOptions();
@@ -552,27 +778,39 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  /// <summary>
+  /// Decomposes a cycling independent variable into separate columns.
+  /// </summary>
   public class DecomposeCyclingIndependentVariable : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       ctrl.DataTable.ShowExpandCyclingVariableColumnDialog(ctrl.SelectedDataRows, ctrl.SelectedDataColumns);
     }
   }
 
+  /// <summary>
+  /// Decomposes selected data by column content.
+  /// </summary>
   public class DecomposeByColumnContent : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       ctrl.DataTable.ShowDecomposeByColumnContentDialog(ctrl.SelectedDataRows, ctrl.SelectedDataColumns);
     }
   }
 
+  /// <summary>
+  /// Opens the extract-table-data script dialog.
+  /// </summary>
   public class OpenExtractTableDataScriptDialog : AbstractWorksheetControllerCommand
   {
     private const string ExtractTableDataScriptPropertyName = "Scripts/ExtractTableData";
     private Altaxo.Data.DataTable m_Table;
 
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       m_Table = ctrl.DataTable;
@@ -590,6 +828,12 @@ namespace Altaxo.Worksheet.Commands
       m_Table = null;
     }
 
+    /// <summary>
+    /// Executes the extract-table-data script.
+    /// </summary>
+    /// <param name="script">The script to execute.</param>
+    /// <param name="reporter">The progress reporter.</param>
+    /// <returns><see langword="true"/> if the script executed successfully; otherwise, <see langword="false"/>.</returns>
     public bool EhScriptExecution(IScriptText script, IProgressReporter reporter)
     {
       return ((ExtractTableDataScript)script).Execute(m_Table);
@@ -597,11 +841,15 @@ namespace Altaxo.Worksheet.Commands
   }
 
 
+  /// <summary>
+  /// Creates a table aggregation data source from the active worksheet.
+  /// </summary>
   public class DataTablesAggregationCreation : AbstractWorksheetControllerCommand
   {
     private const string ExtractTableDataScriptPropertyName = "Scripts/ExtractTableData";
     private Altaxo.Data.DataTable m_Table;
 
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       var srcTable = ctrl.DataTable;
@@ -620,10 +868,14 @@ namespace Altaxo.Worksheet.Commands
   }
 
 
+  /// <summary>
+  /// Opens the worksheet table script dialog.
+  /// </summary>
   public class OpenTableScriptDialog : AbstractWorksheetControllerCommand
   {
     private Altaxo.Data.DataTable _table;
 
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       _table = ctrl.DataTable;
@@ -639,16 +891,26 @@ namespace Altaxo.Worksheet.Commands
       _table = null;
     }
 
+    /// <summary>
+    /// Executes the worksheet table script.
+    /// </summary>
+    /// <param name="script">The script to execute.</param>
+    /// <param name="reporter">The progress reporter.</param>
+    /// <returns><see langword="true"/> if the script executed successfully; otherwise, <see langword="false"/>.</returns>
     public bool EhScriptExecution(IScriptText script, IProgressReporter reporter)
     {
       return ((TableScript)script).ExecuteWithSuspendedNotifications(_table, reporter);
     }
   }
 
+  /// <summary>
+  /// Opens the file-import script dialog.
+  /// </summary>
   public class OpenFileImportScriptDialog : AbstractWorksheetControllerCommand
   {
     private Altaxo.Data.DataTable _table;
 
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       _table = ctrl.DataTable;
@@ -664,6 +926,12 @@ namespace Altaxo.Worksheet.Commands
       _table = null;
     }
 
+    /// <summary>
+    /// Executes the file-import script.
+    /// </summary>
+    /// <param name="script">The script to execute.</param>
+    /// <param name="reporter">The progress reporter.</param>
+    /// <returns><see langword="true"/> if the import was executed successfully; otherwise, <see langword="false"/>.</returns>
     public bool EhScriptExecution(IScriptText script, IProgressReporter reporter)
     {
       if (script is FileImportScript fileImportScript)
@@ -684,8 +952,12 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  /// <summary>
+  /// Opens the process-source-tables script dialog.
+  /// </summary>
   public class OpenProcessSourceTablesScriptDialog : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       var table = new DataTable();
@@ -714,8 +986,12 @@ namespace Altaxo.Worksheet.Commands
 
   #region Column commands
 
+  /// <summary>
+  /// Sets values of the selected data or property column.
+  /// </summary>
   public class SetColumnValues : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       if (ctrl.SelectedDataColumns.Count > 0)
@@ -725,8 +1001,12 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  /// <summary>
+  /// Selects columns based on properties of the currently selected data column.
+  /// </summary>
   public class SelectColumns : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       if (ctrl.SelectedDataColumns.Count != 1)
@@ -809,10 +1089,14 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  /// <summary>
+  /// Opens the data-column script dialog.
+  /// </summary>
   public class OpenDataColumnScriptDialog : AbstractWorksheetControllerCommand
   {
     private Altaxo.Data.DataColumn m_Column;
 
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Data.DataTable dataTable = ctrl.DataTable;
@@ -832,16 +1116,26 @@ namespace Altaxo.Worksheet.Commands
       m_Column = null;
     }
 
+    /// <summary>
+    /// Executes the data-column script.
+    /// </summary>
+    /// <param name="script">The script to execute.</param>
+    /// <param name="reporter">The progress reporter.</param>
+    /// <returns><see langword="true"/> if the script executed successfully; otherwise, <see langword="false"/>.</returns>
     public bool EhScriptExecution(IScriptText script, IProgressReporter reporter)
     {
       return ((DataColumnScript)script).ExecuteWithSuspendedNotifications(m_Column, reporter);
     }
   }
 
+  /// <summary>
+  /// Opens the property-column script dialog.
+  /// </summary>
   public class OpenPropertyColumnScriptDialog : AbstractWorksheetControllerCommand
   {
     private Altaxo.Data.DataColumn m_Column;
 
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Data.DataTable dataTable = ctrl.DataTable;
@@ -861,107 +1155,166 @@ namespace Altaxo.Worksheet.Commands
       m_Column = null;
     }
 
+    /// <summary>
+    /// Executes the property-column script.
+    /// </summary>
+    /// <param name="script">The script to execute.</param>
+    /// <param name="reporter">The progress reporter.</param>
+    /// <returns><see langword="true"/> if the script executed successfully; otherwise, <see langword="false"/>.</returns>
     public bool EhScriptExecution(IScriptText script, IProgressReporter reporter)
     {
       return ((PropertyColumnScript)script).ExecuteWithSuspendedNotifications(m_Column, reporter);
     }
   }
 
+  /// <summary>
+  /// Marks the selected column as an X column.
+  /// </summary>
   public class SetColumnAsX : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.ColumnCommands.SetSelectedColumnAsX(ctrl);
     }
   }
 
+  /// <summary>
+  /// Marks the selected column as a Y column.
+  /// </summary>
   public class SetColumnAsY : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.ColumnCommands.SetSelectedColumnAsY(ctrl);
     }
   }
 
+  /// <summary>
+  /// Marks the selected column as a label column.
+  /// </summary>
   public class SetColumnAsLabel : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.ColumnCommands.SetSelectedColumnAsLabel(ctrl);
     }
   }
 
+  /// <summary>
+  /// Marks the selected column as a value column.
+  /// </summary>
   public class SetColumnAsValue : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.ColumnCommands.SetSelectedColumnAsValue(ctrl);
     }
   }
 
+  /// <summary>
+  /// Marks the selected column as an error column.
+  /// </summary>
   public class SetColumnAsError : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.ColumnCommands.SetSelectedColumnAsKind(ctrl, Altaxo.Data.ColumnKind.Err);
     }
   }
 
+  /// <summary>
+  /// Marks the selected column as a positive error column.
+  /// </summary>
   public class SetColumnAsPositiveError : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.ColumnCommands.SetSelectedColumnAsKind(ctrl, Altaxo.Data.ColumnKind.pErr);
     }
   }
 
+  /// <summary>
+  /// Marks the selected column as a negative error column.
+  /// </summary>
   public class SetColumnAsNegativeError : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.ColumnCommands.SetSelectedColumnAsKind(ctrl, Altaxo.Data.ColumnKind.mErr);
     }
   }
 
+  /// <summary>
+  /// Renames the selected column.
+  /// </summary>
   public class RenameColumn : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.ColumnCommands.RenameSelectedColumn(ctrl);
     }
   }
 
+  /// <summary>
+  /// Sets the group number of the selected columns.
+  /// </summary>
   public class SetColumnGroupNumber : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.ColumnCommands.ShowSetColumnGroupNumberDialog(ctrl);
     }
   }
 
+  /// <summary>
+  /// Sets the position of the selected column.
+  /// </summary>
   public class SetColumnPosition : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.ColumnCommands.SetSelectedColumnPosition(ctrl);
     }
   }
 
+  /// <summary>
+  /// Extracts property values into worksheet data.
+  /// </summary>
   public class ExtractPropertyValues : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.ColumnCommands.ExtractPropertyValues(ctrl);
     }
   }
 
+  /// <summary>
+  /// Sorts the table in ascending order.
+  /// </summary>
   public class SortTableAscending : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Sort(ctrl, true);
     }
 
+    /// <summary>
+    /// Sorts the table using the current selection.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
+    /// <param name="ascending"><see langword="true"/> to sort ascending; otherwise, <see langword="false"/>.</param>
     public static void Sort(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl, bool ascending)
     {
       if (ctrl.SelectedDataColumns.Count == 0 && ctrl.SelectedPropertyColumns.Count == 0)
@@ -1022,8 +1375,12 @@ namespace Altaxo.Worksheet.Commands
 
 
 
+  /// <summary>
+  /// Sorts the table in descending order.
+  /// </summary>
   public class SortTableDescending : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       SortTableAscending.Sort(ctrl, false);
@@ -1034,32 +1391,48 @@ namespace Altaxo.Worksheet.Commands
 
   #region Row commands
 
+  /// <summary>
+  /// Sets the position of the selected row.
+  /// </summary>
   public class SetRowPosition : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.RowCommands.SetSelectedRowPosition(ctrl);
     }
   }
 
+  /// <summary>
+  /// Inserts a single data row.
+  /// </summary>
   public class InsertOneDataRow : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.RowCommands.InsertOneDataRow(ctrl);
     }
   }
 
+  /// <summary>
+  /// Inserts multiple data rows.
+  /// </summary>
   public class InsertDataRows : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.RowCommands.InsertDataRows(ctrl);
     }
   }
 
+  /// <summary>
+  /// Converts selected rows into property columns.
+  /// </summary>
   public class ChangeRowsToPropertyColumns : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       ctrl.DataTable.ChangeRowsToPropertyColumns(ctrl.SelectedDataRows, ctrl.SelectedDataColumns);
@@ -1071,13 +1444,22 @@ namespace Altaxo.Worksheet.Commands
 
   #region Property column commands
 
+  /// <summary>
+  /// Sorts columns by the selected property column in ascending order.
+  /// </summary>
   public class SortColumnsByPropertyColumnAscending : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Sort(ctrl, true);
     }
 
+    /// <summary>
+    /// Sorts columns by the selected property column.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
+    /// <param name="ascending"><see langword="true"/> to sort ascending; otherwise, <see langword="false"/>.</param>
     public static void Sort(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl, bool ascending)
     {
       Altaxo.Collections.IAscendingIntegerCollection selectedDataColumns = ctrl.SelectedDataColumns;
@@ -1091,8 +1473,12 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  /// <summary>
+  /// Sorts columns by the selected property column in descending order.
+  /// </summary>
   public class SortColumnsByPropertyColumnDescending : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       SortColumnsByPropertyColumnAscending.Sort(ctrl, false);
@@ -1103,104 +1489,156 @@ namespace Altaxo.Worksheet.Commands
 
   #region Analysis
 
+  /// <summary>
+  /// Opens the data source editor for the active worksheet.
+  /// </summary>
   public class EditTableDataSource : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.DataSourceCommands.ShowDataSourceEditor(ctrl);
     }
   }
 
+  /// <summary>
+  /// Requeries the data source of the active worksheet.
+  /// </summary>
   public class RequeryTableDataSource : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.DataSourceCommands.ExecuteDataSourceOfTableUserCancellable(ctrl);
     }
   }
 
+  /// <summary>
+  /// Performs a Fourier transform on the active worksheet data.
+  /// </summary>
   public class AnalysisFFT : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.FourierCommands.FFT(ctrl);
     }
   }
 
+  /// <summary>
+  /// Performs a two-dimensional Fourier transform on the active worksheet data.
+  /// </summary>
   public class Analysis2DFFT : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.FourierCommands.TwoDimensionalFFT(ctrl);
     }
   }
 
+  /// <summary>
+  /// Performs a centered two-dimensional Fourier transform on the active worksheet data.
+  /// </summary>
   public class Analysis2DCenteredFFT : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.FourierCommands.TwoDimensionalCenteredFFT(ctrl);
     }
   }
 
+  /// <summary>
+  /// Convolves the selected worksheet data.
+  /// </summary>
   public class Convolute : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.FourierCommands.Convolution(ctrl);
     }
   }
 
+  /// <summary>
+  /// Correlates the selected worksheet data.
+  /// </summary>
   public class Correlate : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.FourierCommands.Correlation(ctrl);
     }
   }
 
+  /// <summary>
+  /// Calculates statistics on columns.
+  /// </summary>
   public class AnalysisStatisticsOnColumns : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.StatisticCommands.StatisticsOnColumns(ctrl);
     }
   }
 
+  /// <summary>
+  /// Calculates statistics on rows.
+  /// </summary>
   public class AnalysisStatisticsOnRows : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.StatisticCommands.StatisticsOnRows(ctrl);
     }
   }
 
+  /// <summary>
+  /// Creates a histogram from the selected data.
+  /// </summary>
   public class AnalysisStatisticsCreateHistogram : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.StatisticCommands.CreateHistogram(ctrl);
     }
   }
 
+  /// <summary>
+  /// Multiplies selected columns to form a matrix.
+  /// </summary>
   public class AnalysisMultiplyColumnsToMatrix : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.MultiplyColumnsToMatrix(ctrl);
     }
   }
 
+  /// <summary>
+  /// Performs principal component analysis on rows.
+  /// </summary>
   public class AnalysisPCAOnRows : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PCAOnRows(ctrl);
     }
   }
 
+  /// <summary>
+  /// Performs principal component analysis on columns.
+  /// </summary>
   public class AnalysisPCAOnCols : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PCAOnColumns(ctrl);
@@ -1216,136 +1654,204 @@ namespace Altaxo.Worksheet.Commands
   }
   */
 
+  /// <summary>
+  /// Performs partial least squares analysis on columns.
+  /// </summary>
   public class AnalysisPLSOnCols : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PLSOnColumns(ctrl);
     }
   }
 
+  /// <summary>
+  /// Predicts values by using a partial least squares model on columns.
+  /// </summary>
   public class AnalysisPLSPredictOnCols : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PredictOnColumns(ctrl);
     }
   }
 
+  /// <summary>
+  /// Exports a partial least squares calibration.
+  /// </summary>
   public class AnalysisExportPLSCalibration : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.ExportPLSCalibration(ctrl.DataTable);
     }
   }
 
+  /// <summary>
+  /// Differentiates and smooths the selected data.
+  /// </summary>
   public class AnalysisDifferentiateSmooth : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.CalculusCommands.SavitzkyGolayFiltering(ctrl);
     }
   }
 
+  /// <summary>
+  /// Interpolates the selected data.
+  /// </summary>
   public class AnalysisInterpolation : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.CalculusCommands.Interpolation(ctrl);
     }
   }
 
+  /// <summary>
+  /// Performs multivariate linear regression.
+  /// </summary>
   public class AnalysisMultivariateLinearRegression : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.CalculusCommands.MultivariateLinearFit(ctrl);
     }
   }
+  /// <summary>
+  /// Performs Prony relaxation analysis in the time domain.
+  /// </summary>
   public class AnalysisPronyRelaxationTimeDomain : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.CalculusCommands.PronyRelaxationTimeDomain(ctrl);
     }
   }
 
+  /// <summary>
+  /// Performs Prony relaxation analysis in the frequency domain.
+  /// </summary>
   public class AnalysisPronyRelaxationFrequencyDomain : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.CalculusCommands.PronyRelaxationFrequencyDomain(ctrl);
     }
   }
 
+  /// <summary>
+  /// Performs Prony retardation analysis in the time domain.
+  /// </summary>
   public class AnalysisPronyRetardationTimeDomain : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.CalculusCommands.PronyRetardationTimeDomain(ctrl);
     }
   }
 
+  /// <summary>
+  /// Performs Prony retardation analysis in the frequency domain.
+  /// </summary>
   public class AnalysisPronyRetardationFrequencyDomain : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.CalculusCommands.PronyRetardationFrequencyDomain(ctrl);
     }
   }
 
+  /// <summary>
+  /// Opens the master-curve creation dialog.
+  /// </summary>
   public class AnalysisMasterCurveCreation : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Science.Thermorheology.MasterCurves.MasterCurveCreation.CreateMasterCurveShowDialog(ctrl.DataTable, ctrl.SelectedDataColumns, ctrl.SelectedDataRows);
     }
   }
 
+  /// <summary>
+  /// Opens the spectroscopy preprocessing dialog.
+  /// </summary>
   public class SpectroscopyPreprocessing : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Science.Spectroscopy.SpectroscopyCommands.SpectralPreprocessingShowDialog(ctrl);
     }
   }
 
+  /// <summary>
+  /// Opens the spectroscopy peak finding and fitting dialog.
+  /// </summary>
   public class SpectroscopyPeakFindingFitting : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Science.Spectroscopy.SpectroscopyCommands.SpectralPeakFindingFittingShowDialog(ctrl);
     }
   }
 
+  /// <summary>
+  /// Opens the peak finding and fitting dialog for multiple spectra.
+  /// </summary>
   public class SpectroscopyFitPeaksInMultipleSpectra
     : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Science.Spectroscopy.SpectroscopyCommands.PeakFindingFittingInMultipleSpectraShowDialog(ctrl);
     }
   }
 
+  /// <summary>
+  /// Calibrates Raman data by using a neon spectrum.
+  /// </summary>
   public class SpectroscopyRamanNeonCalibration : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Science.Spectroscopy.SpectroscopyCommands.Raman_CalibrateWithNeonSpectrum(ctrl);
     }
   }
 
+  /// <summary>
+  /// Calibrates Raman data by using a silicon spectrum.
+  /// </summary>
   public class SpectroscopyRamanSiliconCalibration : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Science.Spectroscopy.SpectroscopyCommands.Raman_CalibrateWithSiliconSpectrum(ctrl);
     }
   }
 
+  /// <summary>
+  /// Calibrates the Y axis by using an intensity spectrum.
+  /// </summary>
   public class SpectroscopyYCalibration : AbstractWorksheetControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Science.Spectroscopy.SpectroscopyCommands.CalibrateWithIntensitySpectrum(ctrl);

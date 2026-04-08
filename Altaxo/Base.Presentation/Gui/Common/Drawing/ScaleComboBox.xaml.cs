@@ -36,6 +36,9 @@ namespace Altaxo.Gui.Common.Drawing
   using Altaxo.Units;
   using Altaxo.Units.Dimensionless;
 
+  /// <summary>
+  /// Combo box for selecting a scale factor.
+  /// </summary>
   public partial class ScaleComboBox : DimensionfulQuantityImageComboBox
   {
     /// <summary>The items here were stored for the x scale only.</summary>
@@ -54,6 +57,9 @@ namespace Altaxo.Gui.Common.Drawing
       SelectedQuantityProperty.OverrideMetadata(typeof(ScaleComboBox), new FrameworkPropertyMetadata(new Altaxo.Units.DimensionfulQuantity(1, Unity.Instance)));
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScaleComboBox"/> class.
+    /// </summary>
     public ScaleComboBox()
     {
       _converter.ValidationAfterSuccessfulConversion = EhValidateQuantity;
@@ -80,6 +86,9 @@ namespace Altaxo.Gui.Common.Drawing
       return error is null ? ValidationResult.ValidResult : new ValidationResult(false, error);
     }
 
+    /// <summary>
+    /// Sets a value indicating whether the generated preview should represent a Y scale.
+    /// </summary>
     public bool IsForYScale
     {
       set
@@ -88,6 +97,7 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <inheritdoc/>
     protected override void OnSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
       base.OnSelectedQuantityChanged(obj, args);
@@ -99,6 +109,7 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <inheritdoc/>
     public override ImageSource GetItemImage(object item)
     {
       double value = ((DimensionfulQuantity)item).AsValueInSIUnits;
@@ -117,11 +128,18 @@ namespace Altaxo.Gui.Common.Drawing
       return result;
     }
 
+    /// <inheritdoc/>
     public override string GetItemText(object item)
     {
       return (string)_converter.Convert(item, typeof(string), null, System.Globalization.CultureInfo.CurrentUICulture);
     }
 
+    /// <summary>
+    /// Creates the preview image for the specified scale factor.
+    /// </summary>
+    /// <param name="scale">The scale factor.</param>
+    /// <param name="isForY"><see langword="true"/> to create a Y-axis preview; otherwise, <see langword="false"/>.</param>
+    /// <returns>The generated preview image.</returns>
     public static ImageSource GetImage(double scale, bool isForY)
     {
       double height = 1;

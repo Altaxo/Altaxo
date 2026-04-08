@@ -40,6 +40,9 @@ namespace Altaxo.Calc.Optimization
   /// </summary>
   public class LimitedMemoryBfgsMinimizer : MinimizerBase, IUnconstrainedMinimizer
   {
+    /// <summary>
+    /// Gets or sets the number of gradient and step pairs retained in memory.
+    /// </summary>
     public int Memory { get; set; }
 
     /// <inheritdoc />

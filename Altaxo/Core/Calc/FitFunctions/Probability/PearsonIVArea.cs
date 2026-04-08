@@ -80,12 +80,20 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance with one term and no baseline.
+    /// </summary>
     public PearsonIVArea()
     {
       _numberOfTerms = 1;
       _orderOfBaselinePolynomial = -1;
     }
 
+    /// <summary>
+    /// Initializes a new instance with the specified number of terms and baseline order.
+    /// </summary>
+    /// <param name="numberOfTerms">The number of peak terms.</param>
+    /// <param name="orderOfBackgroundPolynomial">The order of the background polynomial.</param>
     public PearsonIVArea(int numberOfTerms, int orderOfBackgroundPolynomial)
     {
       _numberOfTerms = numberOfTerms;
@@ -104,6 +112,10 @@ namespace Altaxo.Calc.FitFunctions.Probability
     }
 
 
+    /// <summary>
+    /// Creates a fit function with one Pearson IV peak and no baseline.
+    /// </summary>
+    /// <returns>The fit function.</returns>
     [FitFunctionCreator("PearsonIVArea", "Probability", 1, 1, NumberOfParametersPerPeak)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.PearsonIVArea}")]
     public static IFitFunction Create_1_M1()

@@ -27,16 +27,24 @@ using Altaxo.Gui;
 
 namespace Altaxo.Main.Commands
 {
+  /// <summary>
+  /// Closes the main application window.
+  /// </summary>
   public class FileExit : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       ((System.Windows.Window)Current.Workbench.ViewObject).Close();
     }
   }
 
+  /// <summary>
+  /// Shows the About dialog for Altaxo.
+  /// </summary>
   public class HelpAboutAltaxo : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       var ctrl = new Altaxo.Gui.Common.HelpAboutControl();

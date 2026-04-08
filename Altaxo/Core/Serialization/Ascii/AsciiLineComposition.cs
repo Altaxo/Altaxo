@@ -46,7 +46,14 @@ namespace Altaxo.Serialization.Ascii
     /// </summary>
     public string ShortCuts { get; }
 
+    /// <summary>
+    /// Caches the hash value of the composition.
+    /// </summary>
     protected int _hashValue;
+
+    /// <summary>
+    /// Caches the scoring value of the composition.
+    /// </summary>
     protected int _priorityValue;
 
     /// <summary>
@@ -182,7 +189,7 @@ namespace Altaxo.Serialization.Ascii
     }
 
     /// <summary>
-    /// Determines whether this line structure is is compatible with another line structure.
+    /// Determines whether this line structure is compatible with another line structure.
     /// </summary>
     /// <param name="ano">The other line structure to compare with.</param>
     /// <returns><c>True</c> if this line structure is compatible with the line structure specified in <paramref name="ano"/>; otherwise, <c>false</c>.

@@ -45,17 +45,26 @@ namespace Altaxo.Gui.Behaviors
   {
     #region TriggerValue property
 
+    /// <summary>
+    /// Identifies the attached property that monitors a boolean trigger value.
+    /// </summary>
     public static readonly DependencyProperty TriggerValueProperty = DependencyProperty.RegisterAttached(
         "TriggerValue",
         typeof(bool),
         typeof(BoolTriggersAction),
         new FrameworkPropertyMetadata(false, OnTriggerValueChanged));
 
+    /// <summary>
+    /// Gets the trigger value for the specified framework element.
+    /// </summary>
     public static bool GetTriggerValue(FrameworkElement frameworkElement)
     {
       return (bool)frameworkElement.GetValue(TriggerValueProperty);
     }
 
+    /// <summary>
+    /// Sets the trigger value for the specified framework element.
+    /// </summary>
     public static void SetTriggerValue(FrameworkElement frameworkElement, bool value)
     {
       frameworkElement.SetValue(TriggerValueProperty, value);
@@ -82,17 +91,26 @@ namespace Altaxo.Gui.Behaviors
 
     #region WhenFalseToTrue
 
+    /// <summary>
+    /// Identifies the attached property that stores the action to invoke when the trigger changes from <see langword="false"/> to <see langword="true"/>.
+    /// </summary>
     public static readonly DependencyProperty WhenFalseToTrueProperty = DependencyProperty.RegisterAttached(
    "WhenFalseToTrue",
    typeof(EventHandler),
    typeof(BoolTriggersAction)
    );
 
+    /// <summary>
+    /// Gets the action that is invoked when the trigger changes from <see langword="false"/> to <see langword="true"/>.
+    /// </summary>
     public static EventHandler GetWhenFalseToTrue(FrameworkElement frameworkElement)
     {
       return (EventHandler)frameworkElement.GetValue(WhenFalseToTrueProperty);
     }
 
+    /// <summary>
+    /// Sets the action that is invoked when the trigger changes from <see langword="false"/> to <see langword="true"/>.
+    /// </summary>
     public static void SetWhenFalseToTrue(FrameworkElement frameworkElement, EventHandler value)
     {
       frameworkElement.SetValue(WhenFalseToTrueProperty, value);
@@ -102,17 +120,26 @@ namespace Altaxo.Gui.Behaviors
 
     #region WhenTrueToFalse
 
+    /// <summary>
+    /// Identifies the attached property that stores the action to invoke when the trigger changes from <see langword="true"/> to <see langword="false"/>.
+    /// </summary>
     public static readonly DependencyProperty WhenTrueToFalseProperty = DependencyProperty.RegisterAttached(
    "WhenTrueToFalse",
    typeof(EventHandler),
    typeof(BoolTriggersAction)
    );
 
+    /// <summary>
+    /// Gets the action that is invoked when the trigger changes from <see langword="true"/> to <see langword="false"/>.
+    /// </summary>
     public static EventHandler GetWhenTrueToFalse(FrameworkElement frameworkElement)
     {
       return (EventHandler)frameworkElement.GetValue(WhenTrueToFalseProperty);
     }
 
+    /// <summary>
+    /// Sets the action that is invoked when the trigger changes from <see langword="true"/> to <see langword="false"/>.
+    /// </summary>
     public static void SetWhenTrueToFalse(FrameworkElement frameworkElement, EventHandler value)
     {
       frameworkElement.SetValue(WhenTrueToFalseProperty, value);

@@ -39,8 +39,14 @@ namespace Altaxo.Com
   public abstract class OleObjectBase : DataObjectBase
   {
     // Manages our communication with the container.
+    /// <summary>
+    /// The current OLE client site.
+    /// </summary>
     protected IOleClientSite _clientSite;
 
+    /// <summary>
+    /// The OLE advise holder used for container notifications.
+    /// </summary>
     protected ManagedOleAdviseHolderFM _oleAdviseHolder;
 
     /// <summary>
@@ -58,6 +64,10 @@ namespace Altaxo.Com
     /// </summary>
     protected int _documentMonikerRotCookie;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OleObjectBase"/> class.
+    /// </summary>
+    /// <param name="comManager">The COM manager.</param>
     public OleObjectBase(ComManager comManager)
       : base(comManager)
     {
@@ -114,6 +124,7 @@ namespace Altaxo.Com
       }
     }
 
+    /// <inheritdoc/>
     public override void SendAdvise_DataChanged()
     {
       base.SendAdvise_DataChanged();
@@ -185,6 +196,7 @@ namespace Altaxo.Com
 
     #region IOleObject members
 
+    /// <inheritdoc cref="IOleObject.SetClientSite(IOleClientSite)"/>
     public int SetClientSite(IOleClientSite pClientSite)
     {
       ComDebug.ReportInfo("{0}.IOleObject.SetClientSite", GetType().Name);
@@ -192,6 +204,7 @@ namespace Altaxo.Com
       return ComReturnValue.NOERROR;
     }
 
+    /// <inheritdoc/>
     public IOleClientSite GetClientSite()
     {
       ComDebug.ReportInfo("{0}.IOleObject.GetClientSite", GetType().Name);
@@ -199,6 +212,7 @@ namespace Altaxo.Com
       return _clientSite;
     }
 
+    /// <inheritdoc cref="IOleObject.SetHostNames(string, string)"/>
     public int SetHostNames(string containerApplicationName, string containerDocumentName)
     {
       // see Brockschmidt, Inside Ole 2nd ed. page 992
@@ -211,6 +225,7 @@ namespace Altaxo.Com
       return ComReturnValue.NOERROR;
     }
 
+    /// <inheritdoc cref="IOleObject.GetMoniker(int, int, out object)"/>
     public int GetMoniker(int dwAssign, int dwWhichMoniker, out object moniker)
     {
       // Brockschmidt Inside Ole 2nd ed. page 994
@@ -225,6 +240,7 @@ namespace Altaxo.Com
       return ComReturnValue.E_FAIL;
     }
 
+    /// <inheritdoc cref="IOleObject.SetMoniker(int, object)"/>
     public int SetMoniker(int dwWhichMoniker, object pmk)
     {
       // Brockschmidt Inside Ole 2nd ed. page 993
@@ -233,12 +249,14 @@ namespace Altaxo.Com
       return ComReturnValue.E_NOTIMPL;
     }
 
+    /// <inheritdoc cref="IOleObject.InitFromData(System.Runtime.InteropServices.ComTypes.IDataObject, int, int)"/>
     public int InitFromData(System.Runtime.InteropServices.ComTypes.IDataObject pDataObject, int fCreation, int dwReserved)
     {
       ComDebug.ReportWarning("{0}.IOleObject.InitFromData => not implemented!", GetType().Name);
       return ComReturnValue.E_NOTIMPL;
     }
 
+    /// <inheritdoc cref="IOleObject.GetClipboardData(int, out System.Runtime.InteropServices.ComTypes.IDataObject)"/>
     public int GetClipboardData(int dwReserved, out System.Runtime.InteropServices.ComTypes.IDataObject data)
     {
       ComDebug.ReportInfo("{0}.IOleObject.GetClipboardData => not implemented!", GetType().Name);
@@ -246,6 +264,7 @@ namespace Altaxo.Com
       return ComReturnValue.E_NOTIMPL;
     }
 
+    /// <inheritdoc cref="IOleObject.EnumVerbs(out IEnumOLEVERB)"/>
     public int EnumVerbs(out IEnumOLEVERB e)
     {
       ComDebug.ReportInfo("{0}.IOleObject.EnumVerbs -> use registry", GetType().Name);
@@ -253,18 +272,21 @@ namespace Altaxo.Com
       return ComReturnValue.OLE_S_USEREG;
     }
 
+    /// <inheritdoc/>
     public int OleUpdate()
     {
       ComDebug.ReportInfo("{0}.IOleObject.OleUpdate", GetType().Name);
       return ComReturnValue.NOERROR;
     }
 
+    /// <inheritdoc cref="IOleObject.IsUpToDate()"/>
     public int IsUpToDate()
     {
       ComDebug.ReportInfo("{0}.IOleObject.IsUpToDate", GetType().Name);
       return ComReturnValue.NOERROR;
     }
 
+    /// <inheritdoc cref="IOleObject.GetUserClassID(ref System.Guid)"/>
     public int GetUserClassID(ref Guid pClsid)
     {
       ComDebug.ReportInfo("{0}.IOleObject.GetUserClassID", GetType().Name);
@@ -272,6 +294,7 @@ namespace Altaxo.Com
       return ComReturnValue.NOERROR;
     }
 
+    /// <inheritdoc cref="IOleObject.GetUserType(int, out string)"/>
     public int GetUserType(int dwFormOfType, out string userType)
     {
       ComDebug.ReportInfo("{0}.IOleObject.GetUserType -> use registry.", GetType().Name);
@@ -279,6 +302,7 @@ namespace Altaxo.Com
       return ComReturnValue.OLE_S_USEREG;
     }
 
+    /// <inheritdoc cref="IOleObject.Advise(System.Runtime.InteropServices.ComTypes.IAdviseSink, out int)"/>
     public int Advise(System.Runtime.InteropServices.ComTypes.IAdviseSink pAdvSink, out int cookie)
     {
       ComDebug.ReportInfo("{0}.IOleObject.Advise", GetType().Name);
@@ -294,6 +318,7 @@ namespace Altaxo.Com
       }
     }
 
+    /// <inheritdoc cref="IOleObject.Unadvise(int)"/>
     public int Unadvise(int dwConnection)
     {
       ComDebug.ReportInfo("{0}.IOleObject.Unadvise", GetType().Name);
@@ -309,6 +334,7 @@ namespace Altaxo.Com
       }
     }
 
+    /// <inheritdoc cref="IOleObject.EnumAdvise(out System.Runtime.InteropServices.ComTypes.IEnumSTATDATA)"/>
     public int EnumAdvise(out System.Runtime.InteropServices.ComTypes.IEnumSTATDATA e)
     {
       ComDebug.ReportInfo("{0}.IOleObject.EnumAdvise", GetType().Name);
@@ -317,6 +343,7 @@ namespace Altaxo.Com
       return ComReturnValue.NOERROR;
     }
 
+    /// <inheritdoc cref="IOleObject.SetColorScheme(tagLOGPALETTE)"/>
     public int SetColorScheme(tagLOGPALETTE pLogpal)
     {
       ComDebug.ReportInfo("{0}.IOleObject.SetColorScheme (not implemented)", GetType().Name);

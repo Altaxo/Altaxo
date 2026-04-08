@@ -39,6 +39,7 @@ namespace Altaxo.Gui.MenuCommands
   /// </summary>
   public class RecentProjectsMenuBuilder : IMenuItemBuilder
   {
+    /// <inheritdoc/>
     public IEnumerable<object> BuildItems(Codon codon, object owner)
     {
       // search either as part of IFileService or directly as service IRecentOpen

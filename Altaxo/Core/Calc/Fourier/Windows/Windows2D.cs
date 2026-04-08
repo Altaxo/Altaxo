@@ -165,8 +165,14 @@ namespace Altaxo.Calc.Fourier.Windows
   /// </summary>
   public class GaussWindow2D : IWindows2D
   {
+    /// <summary>
+    /// The default sigma value used by the Gauss window.
+    /// </summary>
     public const double DefaultSigma = 0.35;
 
+    /// <summary>
+    /// Stores the sigma value used when applying the Gauss window.
+    /// </summary>
     public double _sigma = DefaultSigma;
 
     /// <summary>
@@ -224,8 +230,14 @@ namespace Altaxo.Calc.Fourier.Windows
   /// </summary>
   public class SuperGaussWindow2D : IWindows2D
   {
+    /// <summary>
+    /// The default kappa value used by the super-Gauss window.
+    /// </summary>
     public const double DefaultKappa = 0.35;
 
+    /// <summary>
+    /// Stores the kappa value used when applying the super-Gauss window.
+    /// </summary>
     public double _kappa = DefaultKappa;
 
     /// <summary>

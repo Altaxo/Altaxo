@@ -74,8 +74,15 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// </summary>
     protected PointD2D _positionOfCrossInRootLayerCoordinates;
 
+    /// <summary>
+    /// The graph controller.
+    /// </summary>
     protected GraphController _grac;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ReadPlotItemDataMouseHandler"/> class.
+    /// </summary>
+    /// <param name="grac">The graph controller.</param>
     public ReadPlotItemDataMouseHandler(GraphController grac)
     {
       _grac = grac;
@@ -83,6 +90,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
         _grac.SetPanelCursor(Cursors.Cross);
     }
 
+    /// <inheritdoc/>
     public override GraphToolType GraphToolType
     {
       get { return GraphToolType.ReadPlotItemData; }
@@ -93,6 +101,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// </summary>
     /// <param name="position">Mouse position.</param>
     /// <param name="e">The mouse event args</param>
+    /// <inheritdoc/>
     public override void OnMouseDown(PointD2D position, MouseButtonEventArgs e)
     {
       base.OnMouseDown(position, e);
@@ -261,6 +270,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       }
     }
 
+    /// <inheritdoc/>
     public override void AfterPaint(Graphics g)
     {
       // draw a red cross onto the selected data point
@@ -284,6 +294,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// </summary>
     /// <param name="e">Key event arguments.</param>
     /// <returns></returns>
+    /// <inheritdoc/>
     public override bool ProcessCmdKey(KeyEventArgs e)
     {
       var keyData = e.Key;

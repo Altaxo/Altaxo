@@ -39,6 +39,7 @@ namespace Altaxo.Gui.Workbench
   /// <seealso cref="System.Windows.Data.IValueConverter" />
   public class DockManagerThemeConverter : IValueConverter
   {
+    /// <inheritdoc/>
     public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
       if (value is string themeName)
@@ -73,6 +74,7 @@ namespace Altaxo.Gui.Workbench
       return null;
     }
 
+    /// <inheritdoc/>
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
       return Binding.DoNothing;

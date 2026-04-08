@@ -26,6 +26,9 @@ namespace Altaxo.Calc.Ode.Obsolete
     /// </summary>
     internal RKSolOut _RKSolOut;
 
+    /// <summary>
+    /// The final time point of the simulation.
+    /// </summary>
     protected double MeTf = 0;
 
     /// <summary>

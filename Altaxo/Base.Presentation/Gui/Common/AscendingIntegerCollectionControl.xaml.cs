@@ -36,27 +36,48 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public partial class AscendingIntegerCollectionControl : UserControl, IAscendingIntegerCollectionView
   {
+    /// <summary>
+    /// Occurs when the control should switch to the advanced view.
+    /// </summary>
     public event Action? SwitchToAdvandedView;
 
+    /// <summary>
+    /// Occurs when a new range item is being initialized.
+    /// </summary>
     public event Action<object>? InitializingNewRangeItem;
 
+    /// <summary>
+    /// Occurs when a range should be added in advanced mode.
+    /// </summary>
     public event Action<int, int>? AdvancedAddRange;
 
+    /// <summary>
+    /// Occurs when a range should be removed in advanced mode.
+    /// </summary>
     public event Action<int, int>? AdvancedRemoveRange;
 
     private IEnumerable<object>? _ranges;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AscendingIntegerCollectionControl"/> class.
+    /// </summary>
     public AscendingIntegerCollectionControl()
     {
       InitializeComponent();
     }
 
+    /// <summary>
+    /// Sets the range list source displayed by the control.
+    /// </summary>
     public void SetRangeListSource(IEnumerable<object> ranges)
     {
       _ranges = ranges;
       _guiDataGrid.ItemsSource = _ranges;
     }
 
+    /// <summary>
+    /// Switches between the simple and advanced presentations.
+    /// </summary>
     public void SwitchEasyAdvanced(bool showAdvanced)
     {
       if (showAdvanced)
@@ -81,6 +102,9 @@ namespace Altaxo.Gui.Common
         ev();
     }
 
+    /// <summary>
+    /// Gets or sets the start value of the simple range editor.
+    /// </summary>
     public int EasyRangeFrom
     {
       get
@@ -93,6 +117,9 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <summary>
+    /// Gets or sets the end value of the simple range editor.
+    /// </summary>
     public int EasyRangeTo
     {
       get

@@ -45,12 +45,31 @@ namespace Poly2Tri
      * @author Thomas Åhlen (thahlen@gmail.com)
      */
 
+  /// <summary>
+  /// Represents the advancing front used during the sweep triangulation algorithm.
+  /// </summary>
   public class AdvancingFront
   {
+    /// <summary>
+    /// The head node of the front.
+    /// </summary>
     public AdvancingFrontNode Head;
+
+    /// <summary>
+    /// The tail node of the front.
+    /// </summary>
     public AdvancingFrontNode Tail;
+
+    /// <summary>
+    /// The current search node used as a starting point for front lookups.
+    /// </summary>
     protected AdvancingFrontNode Search;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AdvancingFront"/> class.
+    /// </summary>
+    /// <param name="head">The head node.</param>
+    /// <param name="tail">The tail node.</param>
     public AdvancingFront(AdvancingFrontNode head, AdvancingFrontNode tail)
     {
       Head = head;
@@ -60,14 +79,26 @@ namespace Poly2Tri
       AddNode(tail);
     }
 
+    /// <summary>
+    /// Adds a node to the front bookkeeping.
+    /// </summary>
+    /// <param name="node">The node to add.</param>
     public void AddNode(AdvancingFrontNode node)
     {
     }
 
+    /// <summary>
+    /// Removes a node from the front bookkeeping.
+    /// </summary>
+    /// <param name="node">The node to remove.</param>
     public void RemoveNode(AdvancingFrontNode node)
     {
     }
 
+    /// <summary>
+    /// Returns a string representation of the advancing front.
+    /// </summary>
+    /// <returns>A string representation of the advancing front.</returns>
     public override string ToString()
     {
       var sb = new StringBuilder();
@@ -91,8 +122,10 @@ namespace Poly2Tri
     }
 
     /// <summary>
-    /// We use a balancing tree to locate a node smaller or equal to given key value (in theory)
+    /// Locates the node at or immediately before the specified point on the advancing front.
     /// </summary>
+    /// <param name="point">The point to locate.</param>
+    /// <returns>The located front node, or <see langword="null"/> if none is found.</returns>
     public AdvancingFrontNode LocateNode(TriangulationPoint point)
     {
       return LocateNode(point.X);
@@ -123,8 +156,10 @@ namespace Poly2Tri
     }
 
     /// <summary>
-    /// This implementation will use simple node traversal algorithm to find a point on the front
+    /// Locates the node corresponding to the specified point on the advancing front.
     /// </summary>
+    /// <param name="point">The point to locate.</param>
+    /// <returns>The located front node.</returns>
     public AdvancingFrontNode LocatePoint(TriangulationPoint point)
     {
       double px = point.X;

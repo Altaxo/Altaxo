@@ -79,11 +79,16 @@ namespace Altaxo.Gui.Common.Drawing
       private DataTemplate _colorSetTemplate;
       private DataTemplate _treeOtherTemplate;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="TreeViewDataTemplateSelector"/> class.
+      /// </summary>
+      /// <param name="ele">The framework element used to resolve templates.</param>
       public TreeViewDataTemplateSelector(FrameworkElement ele)
       {
         _parent = ele;
       }
 
+      /// <inheritdoc/>
       public override DataTemplate SelectTemplate(object item, DependencyObject container)
       {
         var node = item as NGTreeNode;
@@ -139,8 +144,8 @@ namespace Altaxo.Gui.Common.Drawing
     /// Fills the combo box with items, whose name starts with a given <paramref name="filterString"/> .
     /// </summary>
     /// <param name="filterString">The filter string.</param>
-    /// <param name="onlyIfItemsRemaining">If set to <c>false</c>, and no items match the filter criterium, the content of the ComboBox is left unchanged. Otherwise, even if no items match the filter criterium, the contents of the ComboBox is set to those items that match the criterium.</param>
-    /// <returns><c>True</c> if at least one item match the filter criterium. <c>False</c> if no item match the criterium.</returns>
+    /// <param name="onlyIfItemsRemaining">If set to <c>false</c>, and no items match the filter criterion, the content of the ComboBox is left unchanged. Otherwise, even if no items match the filter criterion, the contents of the ComboBox are set to those items that match the criterion.</param>
+    /// <returns><c>True</c> if at least one item matches the filter criterion. <c>False</c> if no item matches the criterion.</returns>
     protected abstract bool FillComboBoxWithFilteredItems(string filterString, bool onlyIfItemsRemaining);
 
     /// <summary>
@@ -162,7 +167,7 @@ namespace Altaxo.Gui.Common.Drawing
     /// <summary>Property that describes whether the TreeView dropdown is open.</summary>
     public static readonly DependencyProperty IsTreeDropDownOpenProperty;
 
-    /// <summary>Poperty that describes whether only plot colors should be shown in the TreeView and the ComboBox.</summary>
+    /// <summary>Property that describes whether only plot colors should be shown in the TreeView and the ComboBox.</summary>
     public static readonly DependencyProperty ShowPlotColorsOnlyProperty;
 
     #region Constructors
@@ -173,6 +178,9 @@ namespace Altaxo.Gui.Common.Drawing
       ShowPlotColorsOnlyProperty = DependencyProperty.Register("ShowPlotColorsOnly", typeof(bool), typeof(ColorComboBoxBase), new FrameworkPropertyMetadata(false, EhShowPlotColorsOnlyChanged));
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColorComboBoxBase"/> class.
+    /// </summary>
     protected ColorComboBoxBase()
     {
       _colorSetManager = ColorSetManager.Instance;
@@ -584,6 +592,11 @@ namespace Altaxo.Gui.Common.Drawing
         _listOfLocalLastUsedItems.RemoveAt(i);
     }
 
+    /// <summary>
+    /// Shows the color set manager dialog.
+    /// </summary>
+    /// <param name="sender">The menu item that raised the event.</param>
+    /// <param name="e">The event arguments.</param>
     protected virtual void EhShowColorSetManagerDialog(object sender, RoutedEventArgs e)
     {
       var listController = new ColorSetController();
@@ -617,12 +630,18 @@ namespace Altaxo.Gui.Common.Drawing
 
     #region Code to close the TreeView popup
 
+    /// <summary>
+    /// Closes the tree-view drop-down when the ComboBox drop-down opens.
+    /// </summary>
+    /// <param name="sender">The ComboBox that raised the event.</param>
+    /// <param name="e">The event arguments.</param>
     protected virtual void EhComboBox_DropDownOpened(object sender, EventArgs e)
     {
       if (IsTreeDropDownOpen)
         IsTreeDropDownOpen = false;
     }
 
+    /// <inheritdoc/>
     protected override void OnContextMenuClosing(ContextMenuEventArgs e)
     {
       base.OnContextMenuClosing(e);

@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Science.Signals
   /// </summary>
   public partial class FourPointStepEvaluationToolMouseHandlerOptionsControl : UserControl, IFourPointStepEvaluationToolMouseHandlerOptionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FourPointStepEvaluationToolMouseHandlerOptionsControl"/> class.
+    /// </summary>
     public FourPointStepEvaluationToolMouseHandlerOptionsControl()
     {
       InitializeComponent();

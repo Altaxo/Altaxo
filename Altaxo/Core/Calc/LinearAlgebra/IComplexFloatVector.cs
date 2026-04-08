@@ -27,6 +27,9 @@ using Complex32T = Altaxo.Calc.Complex32;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
+  /// <summary>
+  /// Interface for a sequence of Complex values.
+  /// </summary>
   public interface IComplexFloatSequence
   {
     /// <summary>Gets the element of the sequence at index i.</summary>

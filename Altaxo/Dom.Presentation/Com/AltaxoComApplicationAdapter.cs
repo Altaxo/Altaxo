@@ -34,16 +34,28 @@ namespace Altaxo.Com
   /// </summary>
   public class AltaxoComApplicationAdapter
   {
+    /// <summary>
+    /// Gets a value indicating whether invoking the GUI thread is required for the current call.
+    /// </summary>
+    /// <returns><c>true</c> if the current call must be marshalled to the GUI thread; otherwise, <c>false</c>.</returns>
     public bool IsInvokeRequiredForGuiThread()
     {
       return Current.Dispatcher.InvokeRequired;
     }
 
+    /// <summary>
+    /// Executes the specified action on the GUI thread.
+    /// </summary>
+    /// <param name="action">The action to execute.</param>
     public void InvokeGuiThread(Action action)
     {
       Current.Dispatcher.InvokeIfRequired(action);
     }
 
+    /// <summary>
+    /// Begins executing the specified action on the GUI thread asynchronously.
+    /// </summary>
+    /// <param name="action">The action to execute.</param>
     public void BeginInvokeGuiThread(Action action)
     {
       Current.Dispatcher.InvokeAndForget(action);

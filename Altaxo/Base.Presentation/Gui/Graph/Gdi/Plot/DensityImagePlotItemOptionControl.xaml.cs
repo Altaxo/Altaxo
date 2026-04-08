@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
   /// </summary>
   public partial class DensityImagePlotItemOptionControl : UserControl, IDensityImagePlotItemOptionView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DensityImagePlotItemOptionControl"/> class.
+    /// </summary>
     public DensityImagePlotItemOptionControl()
     {
       InitializeComponent();

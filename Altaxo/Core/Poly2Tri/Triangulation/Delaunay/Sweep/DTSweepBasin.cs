@@ -33,12 +33,34 @@
 
 namespace Poly2Tri
 {
+  /// <summary>
+  /// Stores the nodes and metadata that describe a basin in the advancing front.
+  /// </summary>
   public class DTSweepBasin
   {
+    /// <summary>
+    /// The left boundary node of the basin.
+    /// </summary>
     public AdvancingFrontNode leftNode;
+
+    /// <summary>
+    /// The lowest node of the basin.
+    /// </summary>
     public AdvancingFrontNode bottomNode;
+
+    /// <summary>
+    /// The right boundary node of the basin.
+    /// </summary>
     public AdvancingFrontNode rightNode;
+
+    /// <summary>
+    /// The horizontal width of the basin.
+    /// </summary>
     public double width;
+
+    /// <summary>
+    /// Indicates whether the left boundary is higher than the right boundary.
+    /// </summary>
     public bool leftHighest;
   }
 }

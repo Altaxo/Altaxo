@@ -36,16 +36,21 @@ namespace Altaxo.Gui.Data
   /// </summary>
   public partial class ExpandCyclingVariableControl : UserControl, IExpandCyclingVariableView, IDecomposeByColumnContentView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ExpandCyclingVariableControl"/> class.
+    /// </summary>
     public ExpandCyclingVariableControl()
     {
       InitializeComponent();
     }
 
+    /// <inheritdoc/>
     public void SetDataControl(object control)
     {
       _guiDataControlHost.Child = control as FrameworkElement;
     }
 
+    /// <inheritdoc/>
     public void SetOptionsControl(object control)
     {
       _guiOptionsControlHost.Child = control as FrameworkElement;

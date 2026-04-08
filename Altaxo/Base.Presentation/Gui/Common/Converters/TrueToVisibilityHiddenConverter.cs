@@ -30,12 +30,15 @@ using System.Windows.Data;
 namespace Altaxo.Gui.Common.Converters
 {
   /// <summary>
-  /// Converter that converts a boolean to a visibility. True is translated to <see cref="Visibility.Hidden"/>, False is translated to <see cref="Visibility.Visibility"/>.
+  /// Converter that converts a boolean to a visibility. True is translated to <see cref="Visibility.Hidden"/>, false is translated to <see cref="Visibility.Visible"/>.
   /// </summary>
   /// <seealso cref="System.Windows.Data.IValueConverter" />
   [ValueConversion(typeof(bool), typeof(Visibility))]
   public class TrueToVisibilityHiddenConverter : IValueConverter
   {
+    /// <summary>
+    /// Gets the shared converter instance.
+    /// </summary>
     public static TrueToVisibilityHiddenConverter Instance { get; private set; } = new TrueToVisibilityHiddenConverter();
 
     /// <inheritdoc/>

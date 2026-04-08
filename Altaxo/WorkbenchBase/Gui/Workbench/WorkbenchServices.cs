@@ -61,6 +61,9 @@ namespace Altaxo.Gui.Workbench
       get { return Altaxo.Current.GetRequiredService<IWorkbench>(); }
     }
 
+    /// <summary>
+    /// Gets the main window of the workbench.
+    /// </summary>
     public static System.Windows.Window MainWindow
     {
       get { return (System.Windows.Window)Altaxo.Current.GetRequiredService<IWorkbench>().ViewObject; }
@@ -86,8 +89,14 @@ namespace Altaxo.Gui.Workbench
       get { return Altaxo.Current.GetRequiredService<IStatusBarService>(); }
     }
 
+    /// <summary>
+    /// Occurs when the workbench has been created.
+    /// </summary>
     public static event Action? WorkbenchCreated;
 
+    /// <summary>
+    /// Raises the <see cref="WorkbenchCreated"/> event.
+    /// </summary>
     public static void OnWorkbenchCreated()
     {
       WorkbenchCreated?.Invoke();

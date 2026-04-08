@@ -258,6 +258,11 @@ namespace Altaxo.Collections
     #region IList interface
 
     /// <inheritdoc/>
+    /// <summary>
+    /// Returns the zero-based index of the specified item within the range.
+    /// </summary>
+    /// <param name="item">The item to locate.</param>
+    /// <returns>The zero-based index of <paramref name="item"/> if it is contained in the range; otherwise, <c>-1</c>.</returns>
     public int IndexOf(int item)
     {
       if (item >= _start && item <= LastInclusive)
@@ -267,18 +272,32 @@ namespace Altaxo.Collections
     }
 
     /// <inheritdoc/>
+    /// <summary>
+    /// Throws because this range is read-only.
+    /// </summary>
+    /// <param name="index">The insertion index.</param>
+    /// <param name="item">The item to insert.</param>
     public void Insert(int index, int item)
     {
       throw new InvalidOperationException("This instance is read-only");
     }
 
     /// <inheritdoc/>
+    /// <summary>
+    /// Throws because this range is read-only.
+    /// </summary>
+    /// <param name="index">The index of the item to remove.</param>
     public void RemoveAt(int index)
     {
       throw new InvalidOperationException("This instance is read-only");
     }
 
     /// <inheritdoc/>
+    /// <summary>
+    /// Gets the item at the specified zero-based index.
+    /// </summary>
+    /// <param name="index">The zero-based index.</param>
+    /// <returns>The item at the specified index.</returns>
     public int this[int index]
     {
       get
@@ -293,21 +312,38 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <summary>
+    /// Throws because this range is read-only.
+    /// </summary>
+    /// <param name="item">The item to add.</param>
     public void Add(int item)
     {
       throw new InvalidOperationException("This instance is read-only");
     }
 
+    /// <summary>
+    /// Throws because this range is read-only.
+    /// </summary>
     public void Clear()
     {
       throw new InvalidOperationException("This instance is read-only");
     }
 
+    /// <summary>
+    /// Determines whether the specified item is contained in the range.
+    /// </summary>
+    /// <param name="item">The item to test.</param>
+    /// <returns><see langword="true"/> if the item is contained in the range; otherwise, <see langword="false"/>.</returns>
     public bool Contains(int item)
     {
       return (item >= _start && item <= LastInclusive);
     }
 
+    /// <summary>
+    /// Copies the contents of the range into the specified array.
+    /// </summary>
+    /// <param name="array">The destination array.</param>
+    /// <param name="arrayIndex">The zero-based index in <paramref name="array"/> at which copying begins.</param>
     public void CopyTo(int[] array, int arrayIndex)
     {
       var lastInclusive = LastInclusive;
@@ -315,16 +351,28 @@ namespace Altaxo.Collections
         array[j] = i;
     }
 
+    /// <summary>
+    /// Gets a value indicating that this range is read-only.
+    /// </summary>
     public bool IsReadOnly
     {
       get { return true; }
     }
 
+    /// <summary>
+    /// Throws because this range is read-only.
+    /// </summary>
+    /// <param name="item">The item to remove.</param>
+    /// <returns>This method never returns because it always throws.</returns>
     public bool Remove(int item)
     {
       throw new InvalidOperationException("This instance is read-only");
     }
 
+    /// <summary>
+    /// Returns an enumerator that iterates through all integers in the range.
+    /// </summary>
+    /// <returns>An enumerator for the integers in the range.</returns>
     public IEnumerator<int> GetEnumerator()
     {
       var lastInclusive = LastInclusive;
@@ -368,6 +416,10 @@ namespace Altaxo.Collections
     #region ICloneable Members
 
     /// <inheritdoc/>
+    /// <summary>
+    /// Creates a copy of this range.
+    /// </summary>
+    /// <returns>A copy of this range.</returns>
     public object Clone()
     {
       return new ContiguousIntegerRange { _start = _start, _count = _count };

@@ -35,10 +35,21 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Gui.Pads.FileBrowser
 {
+  /// <summary>
+  /// Defines the view used by <see cref="FileListController"/>.
+  /// </summary>
   public interface IFileListView
   {
+    /// <summary>
+    /// Initializes the file list column names.
+    /// </summary>
+    /// <param name="names">The column names to display.</param>
     void Initialize_FileListColumnNames(ICollection<string> names);
 
+    /// <summary>
+    /// Initializes the file list items.
+    /// </summary>
+    /// <param name="files">The file nodes to display.</param>
     void Initialize_FileList(SelectableListNodeList files);
 
     /// <summary>
@@ -47,6 +58,9 @@ namespace Altaxo.Gui.Pads.FileBrowser
     event Action SelectedItemsActivated;
   }
 
+  /// <summary>
+  /// Controls the list of files shown for the selected directory.
+  /// </summary>
   public class FileListController
   {
     #region FileItem
@@ -136,6 +150,9 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
     private SelectableListNodeList _fileList = new SelectableListNodeList();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileListController"/> class.
+    /// </summary>
     public FileListController()
     {
       Initialize(true);
@@ -246,6 +263,9 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
     #region User handlers
 
+    /// <summary>
+    /// Opens or imports the currently selected files.
+    /// </summary>
     public void EhView_ActivateSelectedItems()
     {
       var importers = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Serialization.IDataFileImporter))
@@ -322,6 +342,10 @@ namespace Altaxo.Gui.Pads.FileBrowser
       }
     }
 
+    /// <summary>
+    /// Updates the list with files from the specified path.
+    /// </summary>
+    /// <param name="path">The directory path to display.</param>
     public void ShowFilesInPath(string path)
     {
       string[] files;
@@ -357,6 +381,9 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
     #endregion User handlers
 
+    /// <summary>
+    /// Gets or sets the attached file list view.
+    /// </summary>
     public object? ViewObject
     {
       get

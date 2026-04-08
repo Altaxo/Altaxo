@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.DarkSubtraction
   /// </summary>
   public partial class SpectrumSubtractionControl : UserControl, ISpectrumSubtractionView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SpectrumSubtractionControl"/> class.
+    /// </summary>
     public SpectrumSubtractionControl()
     {
       InitializeComponent();

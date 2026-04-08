@@ -35,6 +35,9 @@ using Altaxo.Calc.Threading;
 
 namespace Altaxo.Calc.LinearAlgebra.Storage
 {
+  /// <summary>
+  /// Stores a dense matrix in column-major order.
+  /// </summary>
   [Serializable]
   [DataContract(Namespace = "urn:MathNet/Numerics/LinearAlgebra")]
   public class DenseColumnMajorMatrixStorage<T> : MatrixStorage<T>
@@ -42,6 +45,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
   {
     // [ruegg] public fields are OK here
 
+    /// <summary>
+    /// Gets the backing array in column-major order.
+    /// </summary>
     [DataMember(Order = 1)]
     public readonly T[] Data;
 
@@ -113,6 +119,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // CLEARING
 
+    /// <inheritdoc/>
     public override void Clear()
     {
       Array.Clear(Data, 0, Data.Length);
@@ -155,6 +162,11 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // INITIALIZATION
 
+    /// <summary>
+    /// Creates a dense column-major matrix storage from another matrix storage.
+    /// </summary>
+    /// <param name="matrix">The source matrix storage.</param>
+    /// <returns>The initialized matrix storage.</returns>
     public static DenseColumnMajorMatrixStorage<T> OfMatrix(MatrixStorage<T> matrix)
     {
       var storage = new DenseColumnMajorMatrixStorage<T>(matrix.RowCount, matrix.ColumnCount);
@@ -162,6 +174,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return storage;
     }
 
+    /// <summary>
+    /// Creates a dense column-major matrix storage initialized with a constant value.
+    /// </summary>
     public static DenseColumnMajorMatrixStorage<T> OfValue(int rows, int columns, T value)
     {
       var storage = new DenseColumnMajorMatrixStorage<T>(rows, columns);
@@ -176,6 +191,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return storage;
     }
 
+    /// <summary>
+    /// Creates a dense column-major matrix storage initialized by an index-based initializer.
+    /// </summary>
     public static DenseColumnMajorMatrixStorage<T> OfInit(int rows, int columns, Func<int, int, T> init)
     {
       var storage = new DenseColumnMajorMatrixStorage<T>(rows, columns);
@@ -191,6 +209,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return storage;
     }
 
+    /// <summary>
+    /// Creates a dense column-major matrix storage with initialized diagonal entries.
+    /// </summary>
     public static DenseColumnMajorMatrixStorage<T> OfDiagonalInit(int rows, int columns, Func<int, T> init)
     {
       var storage = new DenseColumnMajorMatrixStorage<T>(rows, columns);
@@ -205,6 +226,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return storage;
     }
 
+    /// <summary>
+    /// Creates a dense column-major matrix storage from a two-dimensional array.
+    /// </summary>
     public static DenseColumnMajorMatrixStorage<T> OfArray(T[,] array)
     {
       var storage = new DenseColumnMajorMatrixStorage<T>(array.GetLength(0), array.GetLength(1));
@@ -220,6 +244,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return storage;
     }
 
+    /// <summary>
+    /// Creates a dense column-major matrix storage from column arrays.
+    /// </summary>
     public static DenseColumnMajorMatrixStorage<T> OfColumnArrays(T[][] data)
     {
       if (data.Length <= 0)
@@ -237,6 +264,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return new DenseColumnMajorMatrixStorage<T>(rows, columns, array);
     }
 
+    /// <summary>
+    /// Creates a dense column-major matrix storage from row arrays.
+    /// </summary>
     public static DenseColumnMajorMatrixStorage<T> OfRowArrays(T[][] data)
     {
       if (data.Length <= 0)
@@ -258,6 +288,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return new DenseColumnMajorMatrixStorage<T>(rows, columns, array);
     }
 
+    /// <summary>
+    /// Creates a dense column-major matrix storage from a column-major array.
+    /// </summary>
     public static DenseColumnMajorMatrixStorage<T> OfColumnMajorArray(int rows, int columns, T[] data)
     {
       T[] ret = new T[rows * columns];
@@ -265,6 +298,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return new DenseColumnMajorMatrixStorage<T>(rows, columns, ret);
     }
 
+    /// <summary>
+    /// Creates a dense column-major matrix storage from a row-major array.
+    /// </summary>
     public static DenseColumnMajorMatrixStorage<T> OfRowMajorArray(int rows, int columns, T[] data)
     {
       T[] ret = new T[rows * columns];
@@ -279,6 +315,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return new DenseColumnMajorMatrixStorage<T>(rows, columns, ret);
     }
 
+    /// <summary>
+    /// Creates a dense column-major matrix storage from column vectors.
+    /// </summary>
     public static DenseColumnMajorMatrixStorage<T> OfColumnVectors(VectorStorage<T>[] data)
     {
       if (data.Length <= 0)
@@ -309,6 +348,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return new DenseColumnMajorMatrixStorage<T>(rows, columns, array);
     }
 
+    /// <summary>
+    /// Creates a dense column-major matrix storage from row vectors.
+    /// </summary>
     public static DenseColumnMajorMatrixStorage<T> OfRowVectors(VectorStorage<T>[] data)
     {
       if (data.Length <= 0)
@@ -330,6 +372,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return new DenseColumnMajorMatrixStorage<T>(rows, columns, array);
     }
 
+    /// <summary>
+    /// Creates a dense column-major matrix storage from indexed values.
+    /// </summary>
     public static DenseColumnMajorMatrixStorage<T> OfIndexedEnumerable(int rows, int columns, IEnumerable<Tuple<int, int, T>> data)
     {
       var array = new T[rows * columns];
@@ -340,6 +385,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return new DenseColumnMajorMatrixStorage<T>(rows, columns, array);
     }
 
+    /// <summary>
+    /// Creates a dense column-major matrix storage from indexed tuple values.
+    /// </summary>
     public static DenseColumnMajorMatrixStorage<T> OfIndexedEnumerable(int rows, int columns, IEnumerable<(int, int, T)> data)
     {
       var array = new T[rows * columns];
@@ -350,6 +398,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return new DenseColumnMajorMatrixStorage<T>(rows, columns, array);
     }
 
+    /// <summary>
+    /// Creates a dense column-major matrix storage from a column-major enumerable sequence.
+    /// </summary>
     public static DenseColumnMajorMatrixStorage<T> OfColumnMajorEnumerable(int rows, int columns, IEnumerable<T> data)
     {
       if (data is T[] arrayData)
@@ -360,11 +411,17 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return new DenseColumnMajorMatrixStorage<T>(rows, columns, data.ToArray());
     }
 
+    /// <summary>
+    /// Creates a dense column-major matrix storage from a row-major enumerable sequence.
+    /// </summary>
     public static DenseColumnMajorMatrixStorage<T> OfRowMajorEnumerable(int rows, int columns, IEnumerable<T> data)
     {
       return OfRowMajorArray(rows, columns, data as T[] ?? data.ToArray());
     }
 
+    /// <summary>
+    /// Creates a dense column-major matrix storage from column enumerables.
+    /// </summary>
     public static DenseColumnMajorMatrixStorage<T> OfColumnEnumerables(int rows, int columns, IEnumerable<IEnumerable<T>> data)
     {
       var array = new T[rows * columns];
@@ -396,6 +453,13 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return new DenseColumnMajorMatrixStorage<T>(rows, columns, array);
     }
 
+    /// <summary>
+    /// Creates a dense column-major matrix storage from row enumerables.
+    /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="data">The row-wise source data.</param>
+    /// <returns>The initialized matrix storage.</returns>
     public static DenseColumnMajorMatrixStorage<T> OfRowEnumerables(int rows, int columns, IEnumerable<IEnumerable<T>> data)
     {
       var array = new T[rows * columns];
@@ -608,6 +672,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // EXTRACT
 
+    /// <inheritdoc/>
     public override T[] ToRowMajorArray()
     {
       var data = Data;
@@ -623,6 +688,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return ret;
     }
 
+    /// <inheritdoc/>
     public override T[] ToColumnMajorArray()
     {
       var ret = new T[Data.Length];
@@ -630,6 +696,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return ret;
     }
 
+    /// <inheritdoc/>
     public override T[][] ToRowArrays()
     {
       var ret = new T[RowCount][];
@@ -649,6 +716,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return ret;
     }
 
+    /// <inheritdoc/>
     public override T[][] ToColumnArrays()
     {
       var ret = new T[ColumnCount][];
@@ -664,6 +732,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return ret;
     }
 
+    /// <inheritdoc/>
     public override T[,] ToArray()
     {
       var data = Data;
@@ -678,6 +747,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return ret;
     }
 
+    /// <inheritdoc/>
     public override T[] AsColumnMajorArray()
     {
       return Data;
@@ -685,11 +755,13 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // ENUMERATION
 
+    /// <inheritdoc/>
     public override IEnumerable<T> Enumerate()
     {
       return Data;
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<(int, int, T)> EnumerateIndexed()
     {
       var data = Data;
@@ -704,11 +776,13 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       }
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<T> EnumerateNonZero()
     {
       return Data.Where(x => !Zero.Equals(x));
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<(int, int, T)> EnumerateNonZeroIndexed()
     {
       var data = Data;
@@ -729,6 +803,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // FIND
 
+    /// <inheritdoc/>
     public override Tuple<int, int, T> Find(Func<T, bool> predicate, Zeros zeros)
     {
       var data = Data;
@@ -818,6 +893,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // FUNCTIONAL COMBINATORS: MAP
 
+    /// <inheritdoc/>
     public override void MapInplace(Func<T, T> f, Zeros zeros)
     {
       CommonParallel.For(0, Data.Length, 4096, (a, b) =>
@@ -830,6 +906,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       });
     }
 
+    /// <inheritdoc/>
     public override void MapIndexedInplace(Func<int, int, T, T> f, Zeros zeros)
     {
       CommonParallel.For(0, ColumnCount, Math.Max(4096 / RowCount, 32), (a, b) =>

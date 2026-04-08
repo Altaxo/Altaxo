@@ -41,6 +41,9 @@ namespace Altaxo.Gui.Common
     private string displayMessage;
     private Exception exceptionGot;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SaveErrorInformDialog"/> class.
+    /// </summary>
     public SaveErrorInformDialog()
     {
       InitializeComponent();
@@ -50,6 +53,13 @@ namespace Altaxo.Gui.Common
       okButton.Content = StringParser.Parse("${res:Global.OKButtonText}");
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SaveErrorInformDialog"/> class.
+    /// </summary>
+    /// <param name="fileName">The file name.</param>
+    /// <param name="message">The message template.</param>
+    /// <param name="dialogName">The dialog title.</param>
+    /// <param name="exceptionGot">The exception that occurred.</param>
     public SaveErrorInformDialog(string fileName, string message, string dialogName, Exception exceptionGot)
     {
       //  Must be called for initialization

@@ -36,6 +36,12 @@ namespace Altaxo.Calc.LinearAlgebra
   /// </summary>
   public static partial class MatrixMath
   {
+    /// <summary>
+    /// Creates a dense matrix from the given matrix x.
+    /// </summary>
+    /// <typeparam name="T">The type of the matrix elements.</typeparam>
+    /// <param name="x">The input matrix.</param>
+    /// <returns>A dense matrix with the same values as the input matrix.</returns>
     public static Matrix<T> DenseOfMatrix<T>(IROMatrix<T> x) where T : struct, IEquatable<T>, IFormattable
     {
       var result = CreateMatrix.Dense<T>(x.RowCount, x.ColumnCount);
@@ -96,6 +102,13 @@ namespace Altaxo.Calc.LinearAlgebra
       return result;
     }
 
+    /// <summary>
+    /// Converts the given matrix to a human-readable string format.
+    /// </summary>
+    /// <typeparam name="T">The type of the matrix elements.</typeparam>
+    /// <param name="name">An optional name for the matrix.</param>
+    /// <param name="a">The input matrix.</param>
+    /// <returns>A string representation of the matrix.</returns>
     public static string MatrixToString<T>(string? name, IROMatrix<T> a) where T : struct
     {
       name = name ?? string.Empty;
@@ -120,6 +133,12 @@ namespace Altaxo.Calc.LinearAlgebra
       return s.ToString();
     }
 
+    /// <summary>
+    /// Converts the given matrix to a human-readable string format.
+    /// </summary>
+    /// <param name="name">An optional name for the matrix.</param>
+    /// <param name="a">The input matrix.</param>
+    /// <returns>A string representation of the matrix.</returns>
     public static string MatrixToString(string name, IROMatrix<float> a)
     {
       if (name is null)
@@ -145,6 +164,12 @@ namespace Altaxo.Calc.LinearAlgebra
       return s.ToString();
     }
 
+    /// <summary>
+    /// Converts the given matrix to a human-readable string format.
+    /// </summary>
+    /// <param name="name">An optional name for the matrix.</param>
+    /// <param name="a">The input matrix.</param>
+    /// <returns>A string representation of the matrix.</returns>
     public static string MatrixToString(string name, IROComplexDoubleMatrix a)
     {
       if (name is null)
@@ -170,6 +195,12 @@ namespace Altaxo.Calc.LinearAlgebra
       return s.ToString();
     }
 
+    /// <summary>
+    /// Converts the given matrix to a human-readable string format.
+    /// </summary>
+    /// <param name="name">An optional name for the matrix.</param>
+    /// <param name="a">The input matrix.</param>
+    /// <returns>A string representation of the matrix.</returns>
     public static string MatrixToString(string name, IROComplexFloatMatrix a)
     {
       if (name is null)
@@ -219,6 +250,12 @@ namespace Altaxo.Calc.LinearAlgebra
       return new LeftSpineJaggedArrayMatrix<T>(x);
     }
 
+    /// <summary>
+    /// Converts a wrapped left spine jagged array to a matrix.
+    /// </summary>
+    /// <typeparam name="T">The type of the matrix elements.</typeparam>
+    /// <param name="wrapper">The wrapper around a left spine jagged array.</param>
+    /// <returns>A matrix with the jagged array's data.</returns>
     public static IBottomExtensibleMatrix<T> ToMatrix<T>(MatrixWrapperStructForLeftSpineJaggedArray<T> wrapper) where T : struct
     {
       return new LeftSpineJaggedArrayMatrix<T>(wrapper);
@@ -304,6 +341,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="x">The matrix.</param>
     /// <param name="row">The row number of the matrix that is wrapped to a vector.</param>
+    /// <returns>A read-only vector representing the specified row of the matrix.</returns>
     public static IReadOnlyList<T> RowToROVector<T>(IROMatrix<T> x, int row) where T : struct
     {
       return new MatrixRowROVector<T>(x, row);
@@ -316,6 +354,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="row">The row number of the matrix that is wrapped to a vector.</param>
     /// <param name="columnoffset">The column of the matrix that corresponds to the first element of the vector.</param>
     /// <param name="length">The length of the resulting vector.</param>
+    /// <returns>A read-only vector representing the specified row of the matrix.</returns>
     public static IReadOnlyList<T> RowToROVector<T>(IROMatrix<T> x, int row, int columnoffset, int length) where T : struct
     {
       return new MatrixRowROVector<T>(x, row, columnoffset, length);
@@ -326,6 +365,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="x">The matrix.</param>
     /// <param name="row">The row number of the matrix that is wrapped to a vector.</param>
+    /// <returns>A vector representing the specified row of the matrix.</returns>
     public static IVector<T> RowToVector<T>(IMatrix<T> x, int row) where T : struct
     {
       return new MatrixRowVector<T>(x, row);
@@ -338,6 +378,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="row">The row number of the matrix that is wrapped to a vector.</param>
     /// <param name="columnoffset">The column of the matrix that corresponds to the first element of the vector.</param>
     /// <param name="length">The length of the resulting vector.</param>
+    /// <returns>A vector representing the specified row of the matrix.</returns>
     public static IVector<T> RowToVector<T>(IMatrix<T> x, int row, int columnoffset, int length) where T : struct
     {
       return new MatrixRowVector<T>(x, row, columnoffset, length);
@@ -348,6 +389,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="x">The matrix.</param>
     /// <param name="column">The column number of the matrix that is wrapped to a vector.</param>
+    /// <returns>A read-only vector representing the specified column of the matrix.</returns>
     public static IReadOnlyList<T> ColumnToROVector<T>(IROMatrix<T> x, int column) where T : struct
     {
       return new MatrixColumnROVector<T>(x, column);
@@ -358,6 +400,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="x">The matrix.</param>
     /// <param name="column">The column number of the matrix that is wrapped to a vector.</param>
+    /// <returns>A vector representing the specified column of the matrix.</returns>
     public static IVector<T> ColumnToVector<T>(IMatrix<T> x, int column) where T : struct
     {
       return new MatrixColumnVector<T>(x, column);
@@ -407,6 +450,11 @@ namespace Altaxo.Calc.LinearAlgebra
 
     #region Clear
 
+    /// <summary>
+    /// Clears the specified matrix, setting all its elements to their default value.
+    /// </summary>
+    /// <typeparam name="T">The type of the matrix elements.</typeparam>
+    /// <param name="matrix">The matrix to clear.</param>
     public static void Clear<T>(IMatrix<T> matrix) where T : struct
     {
       if (matrix is IMatrixLevel1<T> l1)
@@ -419,6 +467,11 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
+    /// <summary>
+    /// Default implementation of the Clear method, used when the matrix does not implement the IMatrixLevel1 interface.
+    /// </summary>
+    /// <typeparam name="T">The type of the matrix elements.</typeparam>
+    /// <param name="matrix">The matrix to clear.</param>
     public static void Clear_DefaultImpl<T>(IMatrix<T> matrix) where T : struct
     {
       var rowCount = matrix.RowCount;
@@ -998,6 +1051,13 @@ namespace Altaxo.Calc.LinearAlgebra
       return false;
     }
 
+    /// <summary>
+    /// Enumerates the elements of the specified matrix, yielding each element's row and column indices along with the element value.
+    /// </summary>
+    /// <typeparam name="T">The matrix element type.</typeparam>
+    /// <param name="matrix">The matrix to enumerate.</param>
+    /// <param name="zeros">Specifies how to handle zero elements. Default is to allow skipping zeros.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> sequence that contains tuples with the row, column, and value of each element in the matrix.</returns>
     public static IEnumerable<(int row, int column, T value)> EnumerateElementsIndexed<T>(IROMatrix<T> matrix, Zeros zeros = Zeros.AllowSkip) where T : struct
     {
       if (matrix is IROBandMatrix<T> bm)
@@ -1019,6 +1079,16 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
+    /// <summary>
+    /// Applies the specified function to each element of the matrix, providing the element's row and column indices as well as an additional parameter.
+    /// </summary>
+    /// <typeparam name="T">The matrix element type.</typeparam>
+    /// <typeparam name="T1">The type of the additional parameter.</typeparam>
+    /// <param name="src1">The source matrix.</param>
+    /// <param name="parameter1">The additional parameter to pass to the function.</param>
+    /// <param name="function">The function to apply to each matrix element. It receives the row index, column index, element value, and the additional parameter.</param>
+    /// <param name="result">The matrix to store the result. Must have the same dimensions as src1.</param>
+    /// <param name="zeros">Specifies how to handle zero elements. Default is to allow skipping zeros.</param>
     public static void MapIndexed<T, T1>(this IROMatrix<T> src1, T1 parameter1, Func<int, int, T, T1, T> function, IMatrix<T> result, Zeros zeros = Zeros.AllowSkip) where T : struct
     {
       if (src1 is IROMatrixLevel1<T> l1)
@@ -1451,7 +1521,7 @@ namespace Altaxo.Calc.LinearAlgebra
     public static double SumOfSquaredDifferences(IROMatrix<double> a, IROMatrix<double> b)
     {
       if (a.RowCount != b.RowCount || a.ColumnCount != b.ColumnCount)
-        throw new ArithmeticException(string.Format("The two provided matrices (a({0},{1})) and b({2},{3})) have not the same dimensions.", a.RowCount, a.ColumnCount, b.RowCount, b.ColumnCount));
+        throw new ArithmeticException(string.Format("The two provided matrices (a({0},{1}) and b({2},{3})) have not the same dimensions.", a.RowCount, a.ColumnCount, b.RowCount, b.ColumnCount));
 
       double sum = 0;
       for (int i = 0; i < a.RowCount; i++)
@@ -1920,6 +1990,12 @@ namespace Altaxo.Calc.LinearAlgebra
       return sum;
     }
 
+    /// <summary>
+    ///     Norms the matrix.
+    /// </summary>
+    /// <param name="a">The matrix.</param>
+    /// <param name="ntype">Type of the norm.</param>
+    /// <returns></returns>
     public static double Norm(this IROMatrix<double> a, MatrixNorm ntype)
     {
       if (a is null)
@@ -1960,7 +2036,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// (X' X)    = V (1/w^2) V'  (usually called covariance matrix)
     ///
     ///                        -1
-    /// Hat matrix H = X (X' X)  X' = U U'
+    /// Hat matrix H = X  (X' X)  X' = U U'
     ///
     ///
     /// </code>
@@ -1987,7 +2063,7 @@ namespace Altaxo.Calc.LinearAlgebra
       /// <param name="a">Matrix to decompose, on return: decomposed matrix.</param>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
       public SingularValueDecomposition(IMatrix<double> a)
-#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable
       {
         ComputeSingularValueDecomposition(a);
       }
@@ -2436,9 +2512,20 @@ namespace Altaxo.Calc.LinearAlgebra
 
       private class SolveTempStorage
       {
+        /// <summary>
+        /// The matrix A in the equation A·X = B.
+        /// </summary>
         public IMatrix<double> A;
+        /// <summary>
+        /// The Singular Value Decomposition of the matrix A.
+        /// </summary>
         public SingularValueDecomposition SVD;
 
+        /// <summary>
+        /// Creates an instance of temporary storage for solving linear systems.
+        /// </summary>
+        /// <param name="a">The matrix A.</param>
+        /// <param name="svd">The singular value decomposition of A.</param>
         public SolveTempStorage(IMatrix<double> a, SingularValueDecomposition svd)
         {
           A = a;
@@ -2555,16 +2642,25 @@ namespace Altaxo.Calc.LinearAlgebra
             s[i] = 0;
       }
 
+      /// <summary>
+      /// Gets the condition number of the matrix, defined as the ratio of the largest singular value to the smallest.
+      /// </summary>
       public double Condition
       {
         get { return s[0] / s[Math.Min(m, n) - 1]; }
       }
 
+      /// <summary>
+      /// Gets the 2-norm of the matrix, which is the largest singular value.
+      /// </summary>
       public double Norm2
       {
         get { return s[0]; }
       }
 
+      /// <summary>
+      /// Gets the rank of the matrix, which is the number of singular values greater than a small threshold.
+      /// </summary>
       public int Rank
       {
         get
@@ -2579,6 +2675,9 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 
+      /// <summary>
+      /// Gets the array of singular values.
+      /// </summary>
       public double[] Diagonal
       {
         get { return s; }
@@ -2604,6 +2703,9 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 
+      /// <summary>
+      /// Builds the diagonal of the hat matrix for the current singular value decomposition.
+      /// </summary>
       protected void BuildHatDiagonal()
       {
         _HatDiagonal = new double[u.Length];
@@ -2618,11 +2720,17 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 
+      /// <summary>
+      /// Gets the left singular vectors matrix.
+      /// </summary>
       public double[][] U
       {
         get { return u; }
       }
 
+      /// <summary>
+      /// Gets the right singular vectors matrix.
+      /// </summary>
       public double[][] V
       {
         get { return v; }

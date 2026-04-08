@@ -43,11 +43,17 @@ namespace Altaxo.Gui.Common
   {
     #region Set0 // this is Set0, more sets can be created by copying this code and replace 0 with 1, 2, 3...
 
+    /// <summary>
+    /// Gets the attached event name.
+    /// </summary>
     public static string GetEventName0(DependencyObject obj)
     {
       return (string)obj.GetValue(EventNameProperty0);
     }
 
+    /// <summary>
+    /// Sets the attached event name.
+    /// </summary>
     public static void SetEventName0(DependencyObject obj, string value)
     {
       obj.SetValue(EventNameProperty0, value);
@@ -71,32 +77,53 @@ namespace Altaxo.Gui.Common
       command?.Execute(commandParameter);
     }
 
+    /// <summary>
+    /// Identifies the attached event-name property.
+    /// </summary>
     public static readonly DependencyProperty EventNameProperty0 =
         DependencyProperty.RegisterAttached("EventName0", typeof(string), typeof(EventHandler));
 
+    /// <summary>
+    /// Gets the attached command.
+    /// </summary>
     public static ICommand GetCommand0(DependencyObject obj)
     {
       return (ICommand)obj.GetValue(CommandProperty0);
     }
 
+    /// <summary>
+    /// Sets the attached command.
+    /// </summary>
     public static void SetCommand0(DependencyObject obj, ICommand value)
     {
       obj.SetValue(CommandProperty0, value);
     }
 
+    /// <summary>
+    /// Identifies the attached command property.
+    /// </summary>
     public static readonly DependencyProperty CommandProperty0 =
         DependencyProperty.RegisterAttached("Command0", typeof(ICommand), typeof(EventToCommandBinding));
 
+    /// <summary>
+    /// Gets the attached command parameter.
+    /// </summary>
     public static object GetCommandParameter0(DependencyObject obj)
     {
       return obj.GetValue(CommandParameterProperty0);
     }
 
+    /// <summary>
+    /// Sets the attached command parameter.
+    /// </summary>
     public static void SetCommandParameter0(DependencyObject obj, object value)
     {
       obj.SetValue(CommandParameterProperty0, value);
     }
 
+    /// <summary>
+    /// Identifies the attached command-parameter property.
+    /// </summary>
     public static readonly DependencyProperty CommandParameterProperty0 =
         DependencyProperty.RegisterAttached("CommandParameter0", typeof(object), typeof(EventToCommandBinding));
 

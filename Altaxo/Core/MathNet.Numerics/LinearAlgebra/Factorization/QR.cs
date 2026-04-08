@@ -32,7 +32,7 @@ using System;
 namespace Altaxo.Calc.LinearAlgebra.Factorization
 {
   /// <summary>
-  /// The type of QR factorization go perform.
+  /// The type of QR factorization to perform.
   /// </summary>
   public enum QRMethod
   {
@@ -65,9 +65,22 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
   {
     private readonly Lazy<Matrix<T>> _lazyR;
 
+    /// <summary>
+    /// Stores the full upper-triangular factor.
+    /// </summary>
     protected readonly Matrix<T> FullR;
+
+    /// <summary>
+    /// Stores the QR factorization method used to compute this decomposition.
+    /// </summary>
     protected readonly QRMethod Method;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="QR{T}"/> class.
+    /// </summary>
+    /// <param name="q">The orthogonal factor.</param>
+    /// <param name="rFull">The full upper-triangular factor.</param>
+    /// <param name="method">The factorization method.</param>
     protected QR(Matrix<T> q, Matrix<T> rFull, QRMethod method)
     {
       Q = q;

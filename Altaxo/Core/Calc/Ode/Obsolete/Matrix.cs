@@ -330,6 +330,10 @@ namespace Altaxo.Calc.Ode.Obsolete
 
     #region Arithmetic operators
 
+    /// <summary>Matrix addition</summary>
+    /// <param name="A">First addend</param>
+    /// <param name="B">Second addend</param>
+    /// <returns>Sum of the two matrices</returns>
     public static Matrix operator +(Matrix A, Matrix B)
     {
       if (A is null)
@@ -349,6 +353,10 @@ namespace Altaxo.Calc.Ode.Obsolete
       return X;
     }
 
+    /// <summary>Matrix subtraction</summary>
+    /// <param name="A">Minuend</param>
+    /// <param name="B">Subtrahend</param>
+    /// <returns>Difference of the two matrices</returns>
     public static Matrix operator -(Matrix A, Matrix B)
     {
       if (A is null)
@@ -385,6 +393,10 @@ namespace Altaxo.Calc.Ode.Obsolete
       return X;
     }
 
+    /// <summary>Matrix-scalar multiplication</summary>
+    /// <param name="A">Matrix operand</param>
+    /// <param name="s">Scalar operand</param>
+    /// <returns>Product of the matrix and the scalar</returns>
     public static Matrix operator *(Matrix A, double s)
     {
       if (A is null)
@@ -401,6 +413,10 @@ namespace Altaxo.Calc.Ode.Obsolete
       return X;
     }
 
+    /// <summary>Scalar-matrix multiplication</summary>
+    /// <param name="s">Scalar operand</param>
+    /// <param name="A">Matrix operand</param>
+    /// <returns>Product of the scalar and the matrix</returns>
     public static Matrix operator *(double s, Matrix A)
     {
       return A * s;
@@ -421,6 +437,10 @@ namespace Altaxo.Calc.Ode.Obsolete
       return this;
     }
 
+    /// <summary>Matrix multiplication</summary>
+    /// <param name="A">Left operand</param>
+    /// <param name="B">Right operand</param>
+    /// <returns>Product of the two matrices</returns>
     public static Matrix operator *(Matrix A, Matrix B)
     {
       if (B is null)
@@ -539,6 +559,10 @@ namespace Altaxo.Calc.Ode.Obsolete
       return invL;
     }
 
+    /// <summary>Solves the equation A*x = b for a lower triangular matrix A using forward substitution.
+    /// </summary>
+    /// <param name="b">The vector b in the equation A*x = b.</param>
+    /// <returns>The solution vector x.</returns>
     public Vector SolveLower(Vector b)
     {
       double[] x = new double[m];
@@ -554,6 +578,10 @@ namespace Altaxo.Calc.Ode.Obsolete
       return new Vector(x);
     }
 
+    /// <summary>Solves the equation A*x = b for an upper triangular matrix A using backward substitution.
+    /// </summary>
+    /// <param name="b">The vector b in the equation A*x = b.</param>
+    /// <returns>The solution vector x.</returns>
     public Vector SolveUpper(Vector b)
     {
       double[] x = new double[m];

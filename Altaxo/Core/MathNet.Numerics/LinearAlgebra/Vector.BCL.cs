@@ -37,6 +37,9 @@ using Altaxo.Calc.LinearAlgebra.Storage;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
+  /// <summary>
+  /// Provides BCL interface implementations and formatting helpers for vectors.
+  /// </summary>
   [DebuggerDisplay("Vector {" + nameof(Count) + "}")]
   public abstract partial class Vector<T>
   {
@@ -59,6 +62,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>
     ///     <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
     /// </returns>
+    /// <inheritdoc />
     public sealed override bool Equals(object obj)
     {
       return obj is Vector<T> other && Storage.Equals(other.Storage);
@@ -70,6 +74,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>
     /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
     /// </returns>
+    /// <inheritdoc />
     public sealed override int GetHashCode()
     {
       return Storage.GetHashCode();
@@ -81,6 +86,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>
     /// A new object that is a copy of this instance.
     /// </returns>
+    /// <inheritdoc />
     object ICloneable.Clone()
     {
       return Clone();
@@ -232,11 +238,21 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Returns a string that describes the type, dimensions and shape of this vector.
     /// </summary>
+    /// <returns>A string describing the vector type and dimensions.</returns>
     public virtual string ToTypeString()
     {
       return FormattableString.Invariant($"{GetType().Name} {Count}-{typeof(T).Name}");
     }
 
+    /// <summary>
+    /// Formats the vector content into a two-dimensional string array.
+    /// </summary>
+    /// <param name="maxPerColumn">The maximum number of entries per column.</param>
+    /// <param name="maxCharactersWidth">The maximum total character width.</param>
+    /// <param name="padding">The padding between columns.</param>
+    /// <param name="ellipsis">The placeholder used when values are omitted.</param>
+    /// <param name="formatValue">The value formatter.</param>
+    /// <returns>A two-dimensional string array representing the formatted vector.</returns>
     public string[,] ToVectorStringArray(int maxPerColumn, int maxCharactersWidth, int padding, string ellipsis, Func<T, string> formatValue)
     {
       // enforce minima to avoid pathetic cases
@@ -338,6 +354,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="columnSeparator">Character to use to separate two columns on a line. Typical value: "  " (2 spaces).</param>
     /// <param name="rowSeparator">Character to use to separate two rows/lines. Typical value: Environment.NewLine.</param>
     /// <param name="formatValue">Function to provide a string for any given entry value.</param>
+    /// <returns>A formatted string representation of the vector.</returns>
     public string ToVectorString(int maxPerColumn, int maxCharactersWidth, string ellipsis, string columnSeparator, string rowSeparator, Func<T, string> formatValue)
     {
       return FormatStringArrayToString(
@@ -352,6 +369,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="maxCharactersWidth">Maximum number of characters per line over all columns. Typical value: 80; Minimum: 16.</param>
     /// <param name="format">Floating point format string. Can be null. Default value: G6.</param>
     /// <param name="provider">Format provider or culture. Can be null.</param>
+    /// <returns>A formatted string representation of the vector.</returns>
     public string ToVectorString(int maxPerColumn, int maxCharactersWidth, string format = null, IFormatProvider provider = null)
     {
       if (format == null)
@@ -367,6 +385,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="format">Floating point format string. Can be null. Default value: G6.</param>
     /// <param name="provider">Format provider or culture. Can be null.</param>
+    /// <returns>A formatted string representation of the vector.</returns>
     public string ToVectorString(string format = null, IFormatProvider provider = null)
     {
       if (format == null)
@@ -384,6 +403,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="maxCharactersWidth">Maximum number of characters per line over all columns. Typical value: 80; Minimum: 16.</param>
     /// <param name="format">Floating point format string. Can be null. Default value: G6.</param>
     /// <param name="provider">Format provider or culture. Can be null.</param>
+    /// <returns>A formatted summary string for the vector.</returns>
     public string ToString(int maxPerColumn, int maxCharactersWidth, string format = null, IFormatProvider provider = null)
     {
       return string.Concat(ToTypeString(), Environment.NewLine, ToVectorString(maxPerColumn, maxCharactersWidth, format, provider));
@@ -393,6 +413,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Returns a string that summarizes this vector.
     /// The maximum number of cells can be configured in the <see cref="Control"/> class.
     /// </summary>
+    /// <inheritdoc />
     public sealed override string ToString()
     {
       return string.Concat(ToTypeString(), Environment.NewLine, ToVectorString());

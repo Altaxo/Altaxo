@@ -125,12 +125,16 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       _busyWithRenderingDrawing = new DrawingImage(drawing);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GraphViewWpf"/> class.
+    /// </summary>
     public GraphViewWpf()
     {
       InitializeComponent();
       _graphImage.Source = _busyWithRenderingDrawing;
     }
 
+    /// <inheritdoc/>
     public virtual void Dispose()
     {
       _isDisposed = true;
@@ -148,6 +152,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       }
     }
 
+    /// <inheritdoc/>
     public GraphToolType CurrentGraphTool
     {
       get
@@ -259,6 +264,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 
     private static IList<IHitTestObject> _emptyReadOnlyList = new List<IHitTestObject>().AsReadOnly();
 
+    /// <inheritdoc/>
     public IList<IHitTestObject> SelectedObjects
     {
       get
@@ -270,24 +276,32 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       }
     }
 
+    /// <inheritdoc/>
     public bool MouseState_IsOverlayPaintingRequired { get { return _mouseState?.IsOverlayPaintingRequired ?? false; } }
 
+    /// <inheritdoc/>
     public void MouseState_AfterPaint(System.Drawing.Graphics g)
     {
       _mouseState?.AfterPaint(g);
     }
 
+    /// <inheritdoc/>
     public void FocusOnGraphPanel()
     {
       bool result = _guiCanvas.Focus();
       Keyboard.Focus(_guiCanvas);
     }
 
+    /// <summary>
+    /// Sets the panel cursor using a WPF cursor instance.
+    /// </summary>
+    /// <param name="cursor">The cursor to apply.</param>
     public void SetPanelCursor(Cursor cursor)
     {
       _guiCanvas.Cursor = cursor;
     }
 
+    /// <inheritdoc/>
     public void SetPanelCursor(object cursor)
     {
       _guiCanvas.Cursor = (Cursor)cursor;
@@ -427,6 +441,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       }
     }
 
+    /// <inheritdoc/>
     public void AnnounceContentVisibilityChanged(bool isVisible)
     {
       _isGraphVisible = isVisible;
@@ -633,6 +648,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       }
     }
 
+    /// <inheritdoc/>
     public string GraphViewTitle
     {
       set
@@ -641,6 +657,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       }
     }
 
+    /// <inheritdoc/>
     public bool ShowGraphScrollBars
     {
       set
@@ -650,6 +667,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       }
     }
 
+    /// <inheritdoc/>
     public PointD2D GraphScrollPosition
     {
       get
@@ -658,6 +676,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       }
     }
 
+    /// <inheritdoc/>
     public void SetHorizontalScrollbarParameter(bool isEnabled, double value, double maximum, double viewportSize, double largeIncrement, double smallIncrement)
     {
       var controller = _controller;
@@ -673,6 +692,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       _controller = controller;
     }
 
+    /// <inheritdoc/>
     public void SetVerticalScrollbarParameter(bool isEnabled, double value, double maximum, double viewportSize, double largeIncrement, double smallIncrement)
     {
       var controller = _controller;
@@ -688,6 +708,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       _controller = controller;
     }
 
+    /// <inheritdoc/>
     public void SetLayerStructure(NGTreeNode value, int[] currentLayerNumber)
     {
       _layerToolBar.Children.Clear();
@@ -726,6 +747,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       }
     }
 
+    /// <inheritdoc/>
     public int[] CurrentLayer
     {
       set
@@ -742,6 +764,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       }
     }
 
+    /// <inheritdoc/>
     public PointD2D ViewportSizeInPoints
     {
       get
@@ -841,6 +864,11 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       }
     }
 
+    /// <summary>
+    /// Builds a glyph run for the specified text.
+    /// </summary>
+    /// <param name="text">The text to convert to a glyph run.</param>
+    /// <returns>The glyph run for the specified text.</returns>
     public static GlyphRun BuildGlyphRun(string text)
     {
       double fontSize = 50;

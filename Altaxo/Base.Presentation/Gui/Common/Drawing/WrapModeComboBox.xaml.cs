@@ -95,6 +95,9 @@ namespace Altaxo.Gui.Common.Drawing
       triangleDrawing.Freeze();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WrapModeComboBox"/> class.
+    /// </summary>
     public WrapModeComboBox()
     {
       InitializeComponent();
@@ -118,12 +121,18 @@ namespace Altaxo.Gui.Common.Drawing
 
     private const string _nameOfValueProp = "WrapMode";
 
+    /// <summary>
+    /// Gets or sets the selected wrap mode.
+    /// </summary>
     public WrapMode WrapMode
     {
       get { return (WrapMode)GetValue(WrapModeProperty); }
       set { SetValue(WrapModeProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="WrapMode"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty WrapModeProperty =
         DependencyProperty.Register(_nameOfValueProp, typeof(WrapMode), typeof(WrapModeComboBox),
         new FrameworkPropertyMetadata(OnWrapModeChanged));
@@ -135,16 +144,23 @@ namespace Altaxo.Gui.Common.Drawing
 
     #endregion Dependency property
 
+    /// <summary>
+    /// Handles changes to the <see cref="WrapMode"/> property.
+    /// </summary>
+    /// <param name="obj">The dependency object whose property changed.</param>
+    /// <param name="args">The event arguments.</param>
     protected virtual void EhWrapModeChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
     }
 
+    /// <inheritdoc/>
     public override string GetItemText(object item)
     {
       var val = (WrapMode)item;
       return val.ToString();
     }
 
+    /// <inheritdoc/>
     public override ImageSource GetItemImage(object item)
     {
       var val = (WrapMode)item;
@@ -153,6 +169,11 @@ namespace Altaxo.Gui.Common.Drawing
       return result;
     }
 
+    /// <summary>
+    /// Creates the preview image for the specified wrap mode.
+    /// </summary>
+    /// <param name="val">The wrap mode to visualize.</param>
+    /// <returns>The generated preview image.</returns>
     public static DrawingImage GetImage(WrapMode val)
     {
       double height = 1;

@@ -33,6 +33,10 @@ using System.Runtime.Serialization;
 
 namespace Altaxo.Calc.LinearAlgebra.Storage
 {
+  /// <summary>
+  /// Represents the storage backing a matrix.
+  /// </summary>
+  /// <typeparam name="T">The element type.</typeparam>
   [Serializable]
   [DataContract(Namespace = "urn:MathNet/Numerics/LinearAlgebra")]
   public abstract partial class MatrixStorage<T> : IEquatable<MatrixStorage<T>>
@@ -40,14 +44,28 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
   {
     // [ruegg] public fields are OK here
 
+    /// <summary>
+    /// Gets the default zero value for the storage element type.
+    /// </summary>
     protected static readonly T Zero = BuilderInstance<T>.Matrix.Zero;
 
+    /// <summary>
+    /// Gets the number of rows in the matrix.
+    /// </summary>
     [DataMember(Order = 1)]
     public readonly int RowCount;
 
+    /// <summary>
+    /// Gets the number of columns in the matrix.
+    /// </summary>
     [DataMember(Order = 2)]
     public readonly int ColumnCount;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MatrixStorage{T}"/> class.
+    /// </summary>
+    /// <param name="rowCount">The number of rows.</param>
+    /// <param name="columnCount">The number of columns.</param>
     protected MatrixStorage(int rowCount, int columnCount)
     {
       if (rowCount < 0)
@@ -199,6 +217,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // CLEARING
 
+    /// <summary>
+    /// Sets all matrix entries to zero.
+    /// </summary>
     public virtual void Clear()
     {
       for (var i = 0; i < RowCount; i++)
@@ -210,6 +231,13 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       }
     }
 
+    /// <summary>
+    /// Sets a submatrix to zero.
+    /// </summary>
+    /// <param name="rowIndex">The starting row index.</param>
+    /// <param name="rowCount">The number of rows to clear.</param>
+    /// <param name="columnIndex">The starting column index.</param>
+    /// <param name="columnCount">The number of columns to clear.</param>
     public void Clear(int rowIndex, int rowCount, int columnIndex, int columnCount)
     {
       if (rowCount < 1 || columnCount < 1)
@@ -241,6 +269,10 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       }
     }
 
+    /// <summary>
+    /// Sets the specified rows to zero.
+    /// </summary>
+    /// <param name="rowIndices">The row indices to clear.</param>
     public void ClearRows(int[] rowIndices)
     {
       if (rowIndices.Length == 0)
@@ -259,6 +291,10 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       ClearRowsUnchecked(rowIndices);
     }
 
+    /// <summary>
+    /// Sets the specified columns to zero.
+    /// </summary>
+    /// <param name="columnIndices">The column indices to clear.</param>
     public void ClearColumns(int[] columnIndices)
     {
       if (columnIndices.Length == 0)
@@ -303,6 +339,11 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // MATRIX COPY
 
+    /// <summary>
+    /// Copies this matrix into another storage instance.
+    /// </summary>
+    /// <param name="target">The target storage.</param>
+    /// <param name="existingData">How existing target data is handled.</param>
     public void CopyTo(MatrixStorage<T> target, ExistingData existingData = ExistingData.Clear)
     {
       if (target == null)
@@ -335,6 +376,17 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       }
     }
 
+    /// <summary>
+    /// Copies a submatrix into another storage instance.
+    /// </summary>
+    /// <param name="target">The target storage.</param>
+    /// <param name="sourceRowIndex">The starting source row index.</param>
+    /// <param name="targetRowIndex">The starting target row index.</param>
+    /// <param name="rowCount">The number of rows to copy.</param>
+    /// <param name="sourceColumnIndex">The starting source column index.</param>
+    /// <param name="targetColumnIndex">The starting target column index.</param>
+    /// <param name="columnCount">The number of columns to copy.</param>
+    /// <param name="existingData">How existing target data is handled.</param>
     public void CopySubMatrixTo(MatrixStorage<T> target,
         int sourceRowIndex, int targetRowIndex, int rowCount,
         int sourceColumnIndex, int targetColumnIndex, int columnCount,
@@ -386,6 +438,12 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // ROW COPY
 
+    /// <summary>
+    /// Copies a row into vector storage.
+    /// </summary>
+    /// <param name="target">The target vector storage.</param>
+    /// <param name="rowIndex">The row index to copy.</param>
+    /// <param name="existingData">How existing target data is handled.</param>
     public void CopyRowTo(VectorStorage<T> target, int rowIndex, ExistingData existingData = ExistingData.Clear)
     {
       if (target == null)
@@ -397,6 +455,15 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       CopySubRowToUnchecked(target, rowIndex, 0, 0, ColumnCount, existingData);
     }
 
+    /// <summary>
+    /// Copies part of a row into vector storage.
+    /// </summary>
+    /// <param name="target">The target vector storage.</param>
+    /// <param name="rowIndex">The source row index.</param>
+    /// <param name="sourceColumnIndex">The starting source column index.</param>
+    /// <param name="targetColumnIndex">The starting target column index.</param>
+    /// <param name="columnCount">The number of columns to copy.</param>
+    /// <param name="existingData">How existing target data is handled.</param>
     public void CopySubRowTo(VectorStorage<T> target, int rowIndex,
         int sourceColumnIndex, int targetColumnIndex, int columnCount,
         ExistingData existingData = ExistingData.Clear)
@@ -426,6 +493,12 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // COLUMN COPY
 
+    /// <summary>
+    /// Copies a column into vector storage.
+    /// </summary>
+    /// <param name="target">The target vector storage.</param>
+    /// <param name="columnIndex">The column index to copy.</param>
+    /// <param name="existingData">How existing target data is handled.</param>
     public void CopyColumnTo(VectorStorage<T> target, int columnIndex, ExistingData existingData = ExistingData.Clear)
     {
       if (target == null)
@@ -437,6 +510,15 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       CopySubColumnToUnchecked(target, columnIndex, 0, 0, RowCount, existingData);
     }
 
+    /// <summary>
+    /// Copies part of a column into vector storage.
+    /// </summary>
+    /// <param name="target">The target vector storage.</param>
+    /// <param name="columnIndex">The source column index.</param>
+    /// <param name="sourceRowIndex">The starting source row index.</param>
+    /// <param name="targetRowIndex">The starting target row index.</param>
+    /// <param name="rowCount">The number of rows to copy.</param>
+    /// <param name="existingData">How existing target data is handled.</param>
     public void CopySubColumnTo(VectorStorage<T> target, int columnIndex,
         int sourceRowIndex, int targetRowIndex, int rowCount,
         ExistingData existingData = ExistingData.Clear)
@@ -466,6 +548,11 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // TRANSPOSE
 
+    /// <summary>
+    /// Copies the transpose of this matrix into another storage instance.
+    /// </summary>
+    /// <param name="target">The target storage.</param>
+    /// <param name="existingData">How existing target data is handled.</param>
     public void TransposeTo(MatrixStorage<T> target, ExistingData existingData = ExistingData.Clear)
     {
       if (target == null)
@@ -514,6 +601,10 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // EXTRACT
 
+    /// <summary>
+    /// Creates a row-major array copy of the matrix data.
+    /// </summary>
+    /// <returns>A new row-major array.</returns>
     public virtual T[] ToRowMajorArray()
     {
       var ret = new T[RowCount * ColumnCount];
@@ -528,6 +619,10 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return ret;
     }
 
+    /// <summary>
+    /// Creates a column-major array copy of the matrix data.
+    /// </summary>
+    /// <returns>A new column-major array.</returns>
     public virtual T[] ToColumnMajorArray()
     {
       var ret = new T[RowCount * ColumnCount];
@@ -542,6 +637,10 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return ret;
     }
 
+    /// <summary>
+    /// Creates jagged row-array copies of the matrix data.
+    /// </summary>
+    /// <returns>A new array of row arrays.</returns>
     public virtual T[][] ToRowArrays()
     {
       var ret = new T[RowCount][];
@@ -557,6 +656,10 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return ret;
     }
 
+    /// <summary>
+    /// Creates jagged column-array copies of the matrix data.
+    /// </summary>
+    /// <returns>A new array of column arrays.</returns>
     public virtual T[][] ToColumnArrays()
     {
       var ret = new T[ColumnCount][];
@@ -572,6 +675,10 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return ret;
     }
 
+    /// <summary>
+    /// Creates a rectangular array copy of the matrix data.
+    /// </summary>
+    /// <returns>A new two-dimensional array.</returns>
     public virtual T[,] ToArray()
     {
       var ret = new T[RowCount, ColumnCount];
@@ -585,26 +692,46 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return ret;
     }
 
+    /// <summary>
+    /// Gets the underlying row-major array when directly available.
+    /// </summary>
+    /// <returns>The underlying row-major array, or <see langword="null"/> if unavailable.</returns>
     public virtual T[] AsRowMajorArray()
     {
       return null;
     }
 
+    /// <summary>
+    /// Gets the underlying column-major array when directly available.
+    /// </summary>
+    /// <returns>The underlying column-major array, or <see langword="null"/> if unavailable.</returns>
     public virtual T[] AsColumnMajorArray()
     {
       return null;
     }
 
+    /// <summary>
+    /// Gets the underlying row arrays when directly available.
+    /// </summary>
+    /// <returns>The underlying row arrays, or <see langword="null"/> if unavailable.</returns>
     public virtual T[][] AsRowArrays()
     {
       return null;
     }
 
+    /// <summary>
+    /// Gets the underlying column arrays when directly available.
+    /// </summary>
+    /// <returns>The underlying column arrays, or <see langword="null"/> if unavailable.</returns>
     public virtual T[][] AsColumnArrays()
     {
       return null;
     }
 
+    /// <summary>
+    /// Gets the underlying two-dimensional array when directly available.
+    /// </summary>
+    /// <returns>The underlying two-dimensional array, or <see langword="null"/> if unavailable.</returns>
     public virtual T[,] AsArray()
     {
       return null;
@@ -612,6 +739,10 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // ENUMERATION
 
+    /// <summary>
+    /// Enumerates all matrix values.
+    /// </summary>
+    /// <returns>A sequence of all matrix values.</returns>
     public virtual IEnumerable<T> Enumerate()
     {
       for (int i = 0; i < RowCount; i++)
@@ -623,6 +754,10 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       }
     }
 
+    /// <summary>
+    /// Enumerates all matrix values together with their indices.
+    /// </summary>
+    /// <returns>A sequence of indexed matrix values.</returns>
     public virtual IEnumerable<(int, int, T)> EnumerateIndexed()
     {
       for (int i = 0; i < RowCount; i++)
@@ -634,6 +769,10 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       }
     }
 
+    /// <summary>
+    /// Enumerates all non-zero matrix values.
+    /// </summary>
+    /// <returns>A sequence of non-zero matrix values.</returns>
     public virtual IEnumerable<T> EnumerateNonZero()
     {
       for (int i = 0; i < RowCount; i++)
@@ -649,6 +788,10 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       }
     }
 
+    /// <summary>
+    /// Enumerates all non-zero matrix values together with their indices.
+    /// </summary>
+    /// <returns>A sequence of indexed non-zero matrix values.</returns>
     public virtual IEnumerable<(int, int, T)> EnumerateNonZeroIndexed()
     {
       for (int i = 0; i < RowCount; i++)
@@ -666,6 +809,12 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // FIND
 
+    /// <summary>
+    /// Finds the first element matching a predicate.
+    /// </summary>
+    /// <param name="predicate">The predicate used to test values.</param>
+    /// <param name="zeros">How zeros are handled during the search.</param>
+    /// <returns>The first matching indexed value, or <see langword="null"/> if none is found.</returns>
     public virtual Tuple<int, int, T> Find(Func<T, bool> predicate, Zeros zeros)
     {
       for (int i = 0; i < RowCount; i++)
@@ -682,6 +831,14 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return null;
     }
 
+    /// <summary>
+    /// Finds the first pair of elements from two matrices that matches a predicate.
+    /// </summary>
+    /// <typeparam name="TOther">The element type of the other matrix.</typeparam>
+    /// <param name="other">The other matrix storage.</param>
+    /// <param name="predicate">The predicate used to test value pairs.</param>
+    /// <param name="zeros">How zeros are handled during the search.</param>
+    /// <returns>The first matching indexed value pair, or <see langword="null"/> if none is found.</returns>
     public Tuple<int, int, T, TOther> Find2<TOther>(MatrixStorage<TOther> other, Func<T, TOther, bool> predicate, Zeros zeros)
         where TOther : struct, IEquatable<TOther>, IFormattable
     {
@@ -719,6 +876,11 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // FUNCTIONAL COMBINATORS: MAP
 
+    /// <summary>
+    /// Applies a mapping function to each value in place.
+    /// </summary>
+    /// <param name="f">The mapping function.</param>
+    /// <param name="zeros">How zeros are handled during the mapping.</param>
     public virtual void MapInplace(Func<T, T> f, Zeros zeros)
     {
       for (int i = 0; i < RowCount; i++)
@@ -730,6 +892,11 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       }
     }
 
+    /// <summary>
+    /// Applies an indexed mapping function to each value in place.
+    /// </summary>
+    /// <param name="f">The indexed mapping function.</param>
+    /// <param name="zeros">How zeros are handled during the mapping.</param>
     public virtual void MapIndexedInplace(Func<int, int, T, T> f, Zeros zeros)
     {
       for (int i = 0; i < RowCount; i++)
@@ -741,6 +908,14 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       }
     }
 
+    /// <summary>
+    /// Maps each value into another matrix storage.
+    /// </summary>
+    /// <typeparam name="TU">The target element type.</typeparam>
+    /// <param name="target">The target storage.</param>
+    /// <param name="f">The mapping function.</param>
+    /// <param name="zeros">How zeros are handled during the mapping.</param>
+    /// <param name="existingData">How existing target data is handled.</param>
     public void MapTo<TU>(MatrixStorage<TU> target, Func<T, TU> f, Zeros zeros, ExistingData existingData)
         where TU : struct, IEquatable<TU>, IFormattable
     {
@@ -770,6 +945,14 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       }
     }
 
+    /// <summary>
+    /// Maps each indexed value into another matrix storage.
+    /// </summary>
+    /// <typeparam name="TU">The target element type.</typeparam>
+    /// <param name="target">The target storage.</param>
+    /// <param name="f">The indexed mapping function.</param>
+    /// <param name="zeros">How zeros are handled during the mapping.</param>
+    /// <param name="existingData">How existing target data is handled.</param>
     public void MapIndexedTo<TU>(MatrixStorage<TU> target, Func<int, int, T, TU> f, Zeros zeros, ExistingData existingData)
         where TU : struct, IEquatable<TU>, IFormattable
     {
@@ -799,6 +982,20 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       }
     }
 
+    /// <summary>
+    /// Maps an indexed submatrix into another matrix storage.
+    /// </summary>
+    /// <typeparam name="TU">The target element type.</typeparam>
+    /// <param name="target">The target storage.</param>
+    /// <param name="f">The indexed mapping function.</param>
+    /// <param name="sourceRowIndex">The starting source row index.</param>
+    /// <param name="targetRowIndex">The starting target row index.</param>
+    /// <param name="rowCount">The number of rows to map.</param>
+    /// <param name="sourceColumnIndex">The starting source column index.</param>
+    /// <param name="targetColumnIndex">The starting target column index.</param>
+    /// <param name="columnCount">The number of columns to map.</param>
+    /// <param name="zeros">How zeros are handled during the mapping.</param>
+    /// <param name="existingData">How existing target data is handled.</param>
     public void MapSubMatrixIndexedTo<TU>(MatrixStorage<TU> target, Func<int, int, T, TU> f,
         int sourceRowIndex, int targetRowIndex, int rowCount,
         int sourceColumnIndex, int targetColumnIndex, int columnCount,
@@ -842,6 +1039,14 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       }
     }
 
+    /// <summary>
+    /// Maps pairs of values from two matrices into a target matrix.
+    /// </summary>
+    /// <param name="target">The target storage.</param>
+    /// <param name="other">The other matrix storage.</param>
+    /// <param name="f">The mapping function.</param>
+    /// <param name="zeros">How zeros are handled during the mapping.</param>
+    /// <param name="existingData">How existing target data is handled.</param>
     public void Map2To(MatrixStorage<T> target, MatrixStorage<T> other, Func<T, T, T> f, Zeros zeros, ExistingData existingData)
     {
       if (target == null)
@@ -882,7 +1087,16 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // FUNCTIONAL COMBINATORS: FOLD
 
-    /// <remarks>The state array will not be modified, unless it is the same instance as the target array (which is allowed).</remarks>
+    /// <summary>
+    /// Folds each row into a target state array.
+    /// </summary>
+    /// <typeparam name="TU">The accumulator type.</typeparam>
+    /// <param name="target">The array receiving the finalized row states.</param>
+    /// <param name="f">The accumulation function.</param>
+    /// <param name="finalize">The finalization function.</param>
+    /// <param name="state">The initial state array.</param>
+    /// <param name="zeros">How zeros are handled during the fold.</param>
+    /// <remarks>The state array will not be modified, unless it is the same instance as the target array, which is allowed.</remarks>
     public void FoldByRow<TU>(TU[] target, Func<TU, T, TU> f, Func<TU, int, TU> finalize, TU[] state, Zeros zeros)
     {
       if (target == null)
@@ -920,7 +1134,16 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       }
     }
 
-    /// <remarks>The state array will not be modified, unless it is the same instance as the target array (which is allowed).</remarks>
+    /// <summary>
+    /// Folds each column into a target state array.
+    /// </summary>
+    /// <typeparam name="TU">The accumulator type.</typeparam>
+    /// <param name="target">The array receiving the finalized column states.</param>
+    /// <param name="f">The accumulation function.</param>
+    /// <param name="finalize">The finalization function.</param>
+    /// <param name="state">The initial state array.</param>
+    /// <param name="zeros">How zeros are handled during the fold.</param>
+    /// <remarks>The state array will not be modified, unless it is the same instance as the target array, which is allowed.</remarks>
     public void FoldByColumn<TU>(TU[] target, Func<TU, T, TU> f, Func<TU, int, TU> finalize, TU[] state, Zeros zeros)
     {
       if (target == null)
@@ -958,6 +1181,16 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       }
     }
 
+    /// <summary>
+    /// Folds values from this matrix and another matrix into a single state value.
+    /// </summary>
+    /// <typeparam name="TOther">The element type of the other matrix.</typeparam>
+    /// <typeparam name="TState">The accumulator type.</typeparam>
+    /// <param name="other">The other matrix storage.</param>
+    /// <param name="f">The accumulation function.</param>
+    /// <param name="state">The initial state.</param>
+    /// <param name="zeros">How zeros are handled during the fold.</param>
+    /// <returns>The final accumulated state.</returns>
     public TState Fold2<TOther, TState>(MatrixStorage<TOther> other, Func<TState, T, TOther, TState> f, TState state, Zeros zeros)
         where TOther : struct, IEquatable<TOther>, IFormattable
     {

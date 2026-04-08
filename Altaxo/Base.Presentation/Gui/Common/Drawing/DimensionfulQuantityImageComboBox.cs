@@ -41,8 +41,14 @@ namespace Altaxo.Gui.Common.Drawing
   /// </summary>
   public class DimensionfulQuantityImageComboBox : EditableImageComboBox
   {
+    /// <summary>
+    /// Converter used for the quantity binding.
+    /// </summary>
     protected QuantityWithUnitConverter _converter;
 
+    /// <summary>
+    /// Occurs when <see cref="SelectedQuantity"/> changes.
+    /// </summary>
     public event DependencyPropertyChangedEventHandler? SelectedQuantityChanged;
 
     static DimensionfulQuantityImageComboBox()
@@ -50,6 +56,9 @@ namespace Altaxo.Gui.Common.Drawing
       DefaultStyleKeyProperty.OverrideMetadata(typeof(DimensionfulQuantityImageComboBox), new FrameworkPropertyMetadata(typeof(DimensionfulQuantityImageComboBox)));
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DimensionfulQuantityImageComboBox"/> class.
+    /// </summary>
     public DimensionfulQuantityImageComboBox()
     {
       SetBinding("SelectedQuantity");
@@ -57,6 +66,10 @@ namespace Altaxo.Gui.Common.Drawing
       _converter.UnitEnvironment = UnitEnvironment;
     }
 
+    /// <summary>
+    /// Creates the text binding for the specified quantity property.
+    /// </summary>
+    /// <param name="nameOfValueProperty">The name of the quantity property.</param>
     protected void SetBinding(string nameOfValueProperty)
     {
       var binding = new Binding
@@ -81,6 +94,7 @@ namespace Altaxo.Gui.Common.Drawing
       _converter.BindingExpression.ValidateWithoutUpdate();
     }
 
+    /// <inheritdoc/>
     protected override void OnIsKeyboardFocusWithinChanged(DependencyPropertyChangedEventArgs e)
     {
       base.OnIsKeyboardFocusWithinChanged(e);
@@ -95,6 +109,7 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <inheritdoc/>
     protected override void OnKeyDown(System.Windows.Input.KeyEventArgs e)
     {
       if (e.Key == System.Windows.Input.Key.F5) // interpret the text and update the quantity
@@ -111,6 +126,7 @@ namespace Altaxo.Gui.Common.Drawing
       base.OnKeyDown(e);
     }
 
+    /// <inheritdoc/>
     protected override void OnContextMenuOpening(ContextMenuEventArgs e)
     {
       _converter.OnContextMenuOpening();
@@ -128,6 +144,9 @@ namespace Altaxo.Gui.Common.Drawing
       set { SetValue(SelectedQuantityProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="SelectedQuantity"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty SelectedQuantityProperty =
         DependencyProperty.Register("SelectedQuantity", typeof(DimensionfulQuantity), typeof(DimensionfulQuantityImageComboBox),
         new FrameworkPropertyMetadata(EhSelectedQuantityChanged) { BindsTwoWayByDefault=true});
@@ -150,6 +169,9 @@ namespace Altaxo.Gui.Common.Drawing
 
     #region Dependency property UnitEnvironment
 
+    /// <summary>
+    /// Identifies the <see cref="UnitEnvironment"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty UnitEnvironmentProperty =
         DependencyProperty.Register(nameof(UnitEnvironment), typeof(QuantityWithUnitGuiEnvironment), typeof(DimensionfulQuantityImageComboBox),
          new FrameworkPropertyMetadata(EhUnitEnvironmentChanged));
@@ -182,6 +204,9 @@ namespace Altaxo.Gui.Common.Drawing
 
     #endregion Dependency property
 
+    /// <summary>
+    /// Gets or sets the selected quantity value in SI units.
+    /// </summary>
     public double SelectedQuantityInSIUnits
     {
       get { return SelectedQuantity.AsValueInSIUnits; }

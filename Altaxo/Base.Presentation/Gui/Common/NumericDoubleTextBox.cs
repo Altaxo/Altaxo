@@ -32,8 +32,14 @@ using System.Windows.Data;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// Text box for editing <see cref="double"/> values.
+  /// </summary>
   public class NumericDoubleTextBox : TextBox
   {
+    /// <summary>
+    /// Occurs when <see cref="SelectedValue"/> changes.
+    /// </summary>
     public event DependencyPropertyChangedEventHandler? SelectedValueChanged;
 
     private NumericDoubleConverter _converter;
@@ -64,12 +70,24 @@ namespace Altaxo.Gui.Common
       SetBinding(TextBox.TextProperty, binding);
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether NaN values are accepted.
+    /// </summary>
     public bool AllowNaNValues { get { return _converter.AllowNaNValues; } set { _converter.AllowNaNValues = value; } }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether infinite values are accepted.
+    /// </summary>
     public bool AllowInfiniteValues { get { return _converter.AllowInfiniteValues; } set { _converter.AllowInfiniteValues = value; } }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether negative values are rejected.
+    /// </summary>
     public bool DisallowNegativeValues { get { return _converter.DisallowNegativeValues; } set { _converter.DisallowNegativeValues = value; } }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether zero is rejected.
+    /// </summary>
     public bool DisallowZeroValues { get { return _converter.DisallowZeroValues; } set { _converter.DisallowZeroValues = value; } }
 
 
@@ -79,18 +97,21 @@ namespace Altaxo.Gui.Common
     // 'How to SelectAll in TextBox when TextBox gets focus by mouse click?'
     // (http://social.msdn.microsoft.com/Forums/en-US/wpf/thread/564b5731-af8a-49bf-b297-6d179615819f/)
 
+    /// <inheritdoc/>
     protected override void OnGotKeyboardFocus(System.Windows.Input.KeyboardFocusChangedEventArgs e)
     {
       SelectAll();
       base.OnGotKeyboardFocus(e);
     }
 
+    /// <inheritdoc/>
     protected override void OnMouseDoubleClick(System.Windows.Input.MouseButtonEventArgs e)
     {
       SelectAll();
       base.OnMouseDoubleClick(e);
     }
 
+    /// <inheritdoc/>
     protected override void OnPreviewMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs e)
     {
       if (!IsKeyboardFocusWithin)
@@ -109,7 +130,7 @@ namespace Altaxo.Gui.Common
     #region SelectedValue
 
     /// <summary>
-    /// Gets/sets the quantity. The quantity consist of a numeric value together with a unit.
+    /// Gets or sets the selected value.
     /// </summary>
     public double SelectedValue
     {
@@ -117,6 +138,9 @@ namespace Altaxo.Gui.Common
       set { SetValue(SelectedValueProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="SelectedValue"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty SelectedValueProperty =
         DependencyProperty.Register(nameof(SelectedValue), typeof(double), typeof(NumericDoubleTextBox),
         new FrameworkPropertyMetadata(EhSelectedValueChanged) { BindsTwoWayByDefault=true});
@@ -127,7 +151,7 @@ namespace Altaxo.Gui.Common
     }
 
     /// <summary>
-    /// Triggers the <see cref="SelectedValueChanged"/> event.
+    /// Updates listeners after <see cref="SelectedValue"/> changes.
     /// </summary>
     /// <param name="obj">Dependency object (here: the control).</param>
     /// <param name="args">Property changed event arguments.</param>
@@ -142,7 +166,7 @@ namespace Altaxo.Gui.Common
     #region MinValue
 
     /// <summary>
-    /// Gets/sets the quantity. The quantity consist of a numeric value together with a unit.
+    /// Gets or sets the minimum allowed value.
     /// </summary>
     public double MinValue
     {
@@ -150,6 +174,9 @@ namespace Altaxo.Gui.Common
       set { SetValue(MinValueProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="MinValue"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty MinValueProperty =
     DependencyProperty.Register(nameof(MinValue), typeof(double), typeof(NumericDoubleTextBox),
     new FrameworkPropertyMetadata(NumericDoubleConverter.DefaultValue_MinValue, EhMinValueChanged));
@@ -160,7 +187,7 @@ namespace Altaxo.Gui.Common
     }
 
     /// <summary>
-    /// Triggers the <see cref="SelectedValueChanged"/> event.
+    /// Updates the converter when <see cref="MinValue"/> changes.
     /// </summary>
     /// <param name="obj">Dependency object (here: the control).</param>
     /// <param name="args">Property changed event arguments.</param>
@@ -174,7 +201,7 @@ namespace Altaxo.Gui.Common
     #region MaxValue
 
     /// <summary>
-    /// Gets/sets the quantity. The quantity consist of a numeric value together with a unit.
+    /// Gets or sets the maximum allowed value.
     /// </summary>
     public double MaxValue
     {
@@ -182,6 +209,9 @@ namespace Altaxo.Gui.Common
       set { SetValue(MaxValueProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="MaxValue"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty MaxValueProperty =
     DependencyProperty.Register(nameof(MaxValue), typeof(double), typeof(NumericDoubleTextBox),
     new FrameworkPropertyMetadata(NumericDoubleConverter.DefaultValue_MaxValue, EhMaxValueChanged));
@@ -192,7 +222,7 @@ namespace Altaxo.Gui.Common
     }
 
     /// <summary>
-    /// Triggers the <see cref="SelectedValueChanged"/> event.
+    /// Updates the converter when <see cref="MaxValue"/> changes.
     /// </summary>
     /// <param name="obj">Dependency object (here: the control).</param>
     /// <param name="args">Property changed event arguments.</param>
@@ -206,7 +236,7 @@ namespace Altaxo.Gui.Common
     #region IsMinValueInclusive
 
     /// <summary>
-    /// Gets/sets the quantity. The quantity consist of a numeric value together with a unit.
+    /// Gets or sets a value indicating whether the minimum value is inclusive.
     /// </summary>
     public bool IsMinValueInclusive
     {
@@ -214,6 +244,9 @@ namespace Altaxo.Gui.Common
       set { SetValue(IsMinValueInclusiveProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="IsMinValueInclusive"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty IsMinValueInclusiveProperty =
     DependencyProperty.Register(nameof(IsMinValueInclusive), typeof(bool), typeof(NumericDoubleTextBox),
     new FrameworkPropertyMetadata(NumericDoubleConverter.DefaultValue_IsMinValueInclusive, EhIsMinValueInclusiveChanged));
@@ -224,7 +257,7 @@ namespace Altaxo.Gui.Common
     }
 
     /// <summary>
-    /// Triggers the <see cref="SelectedValueChanged"/> event.
+    /// Updates the converter when <see cref="IsMinValueInclusive"/> changes.
     /// </summary>
     /// <param name="obj">Dependency object (here: the control).</param>
     /// <param name="args">Property changed event arguments.</param>
@@ -238,7 +271,7 @@ namespace Altaxo.Gui.Common
     #region IsMaxValueInclusive
 
     /// <summary>
-    /// Gets/sets the quantity. The quantity consist of a numeric value together with a unit.
+    /// Gets or sets a value indicating whether the maximum value is inclusive.
     /// </summary>
     public bool IsMaxValueInclusive
     {
@@ -246,6 +279,9 @@ namespace Altaxo.Gui.Common
       set { SetValue(IsMaxValueInclusiveProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="IsMaxValueInclusive"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty IsMaxValueInclusiveProperty =
     DependencyProperty.Register(nameof(IsMaxValueInclusive), typeof(bool), typeof(NumericDoubleTextBox),
     new FrameworkPropertyMetadata(NumericDoubleConverter.DefaultValue_IsMaxValueInclusive, EhIsMaxValueInclusiveChanged));
@@ -256,7 +292,7 @@ namespace Altaxo.Gui.Common
     }
 
     /// <summary>
-    /// Triggers the <see cref="SelectedValueChanged"/> event.
+    /// Updates the converter when <see cref="IsMaxValueInclusive"/> changes.
     /// </summary>
     /// <param name="obj">Dependency object (here: the control).</param>
     /// <param name="args">Property changed event arguments.</param>

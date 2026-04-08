@@ -34,6 +34,10 @@ using System.Reflection;
 
 namespace Altaxo.Calc.LinearAlgebra.Solvers
 {
+  /// <summary>
+  /// Provides helpers to discover iterative solver setups.
+  /// </summary>
+  /// <typeparam name="T">The numeric element type.</typeparam>
   public static class SolverSetup<T> where T : struct, IEquatable<T>, IFormattable
   {
     /// <summary>

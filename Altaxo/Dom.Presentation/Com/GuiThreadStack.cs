@@ -51,6 +51,11 @@ namespace Altaxo.Com
     private Func<bool> _isInvokeRequiredForGuiThread;
     private Action<Action> _invokeGuiThread;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GuiThreadStack"/> class.
+    /// </summary>
+    /// <param name="IsInvokeRequiredForGuiThread">A function that returns whether GUI thread invocation is required.</param>
+    /// <param name="InvokeGuiThread">An action that invokes work on the GUI thread.</param>
     public GuiThreadStack(Func<bool> IsInvokeRequiredForGuiThread, Action<Action> InvokeGuiThread)
     {
       if (IsInvokeRequiredForGuiThread is null)

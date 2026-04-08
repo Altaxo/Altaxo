@@ -1256,31 +1256,37 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
       return true;
     }
 
+    /// <inheritdoc/>
     public override Cholesky<Complex> Cholesky()
     {
       return DenseCholesky.Create(this);
     }
 
+    /// <inheritdoc/>
     public override LU<Complex> LU()
     {
       return DenseLU.Create(this);
     }
 
+    /// <inheritdoc/>
     public override QR<Complex> QR(QRMethod method = QRMethod.Thin)
     {
       return DenseQR.Create(this, method);
     }
 
+    /// <inheritdoc/>
     public override GramSchmidt<Complex> GramSchmidt()
     {
       return DenseGramSchmidt.Create(this);
     }
 
+    /// <inheritdoc/>
     public override Svd<Complex> Svd(bool computeVectors = true)
     {
       return DenseSvd.Create(this, computeVectors);
     }
 
+    /// <inheritdoc/>
     public override Evd<Complex> Evd(Symmetricity symmetricity = Symmetricity.Unknown)
     {
       return DenseEvd.Create(this, symmetricity);

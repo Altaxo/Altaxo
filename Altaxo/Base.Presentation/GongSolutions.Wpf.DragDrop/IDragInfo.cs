@@ -19,6 +19,9 @@ using System.Windows.Input;
 
 namespace GongSolutions.Wpf.DragDrop
 {
+  /// <summary>
+  /// Provides information about the source side of a drag operation.
+  /// </summary>
   public interface IDragInfo
   {
     /// <summary>

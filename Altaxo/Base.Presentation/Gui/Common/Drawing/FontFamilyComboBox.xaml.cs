@@ -76,6 +76,9 @@ namespace Altaxo.Gui.Common.Drawing
 
     #region Item
 
+    /// <summary>
+    /// Represents a font family item in the ComboBox.
+    /// </summary>
     public class FontComboBoxItem : ImageComboBoxItem
     {
       private static char[] _defaultChars;
@@ -91,11 +94,16 @@ namespace Altaxo.Gui.Common.Drawing
         _defaultChars = chars.ToArray();
       }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="FontComboBoxItem"/> class.
+      /// </summary>
+      /// <param name="familyName">The font family name.</param>
       public FontComboBoxItem(string familyName)
       {
         Value = familyName;
       }
 
+      /// <inheritdoc/>
       public override ImageSource Image
       {
         get
@@ -106,6 +114,7 @@ namespace Altaxo.Gui.Common.Drawing
         }
       }
 
+      /// <inheritdoc/>
       public override string Text
       {
         get
@@ -198,6 +207,9 @@ namespace Altaxo.Gui.Common.Drawing
     private static List<FontComboBoxItem> _allItems = new List<FontComboBoxItem>();
     private static Dictionary<string, FontComboBoxItem> _cachedItems = new Dictionary<string, FontComboBoxItem>();
 
+    /// <summary>
+    /// Occurs when <see cref="SelectedFontFamilyName"/> changes.
+    /// </summary>
     public event DependencyPropertyChangedEventHandler? SelectedFontFamilyNameChanged;
 
     static FontFamilyComboBox()
@@ -217,6 +229,9 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FontFamilyComboBox"/> class.
+    /// </summary>
     public FontFamilyComboBox()
     {
       InitializeComponent();
@@ -234,6 +249,9 @@ namespace Altaxo.Gui.Common.Drawing
 
     #region Dependency property
 
+    /// <summary>
+    /// Gets or sets the selected font family name.
+    /// </summary>
     public string SelectedFontFamilyName
     {
       get
@@ -246,6 +264,9 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="SelectedFontFamilyName"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty SelectedFontFamilyNameProperty =
         DependencyProperty.Register(nameof(SelectedFontFamilyName), typeof(string), typeof(FontFamilyComboBox),
         new FrameworkPropertyMetadata(Altaxo.Graph.Gdi.GdiFontManager.GenericSansSerifFontFamilyName, EhSelectedFontFamilyNameChanged) { BindsTwoWayByDefault=true});
@@ -255,6 +276,11 @@ namespace Altaxo.Gui.Common.Drawing
       ((FontFamilyComboBox)obj).OnSelectedFontFamilyNameChanged(obj, args);
     }
 
+    /// <summary>
+    /// Raises the <see cref="SelectedFontFamilyNameChanged"/> event.
+    /// </summary>
+    /// <param name="obj">The dependency object whose selected font family changed.</param>
+    /// <param name="args">The event arguments.</param>
     protected virtual void OnSelectedFontFamilyNameChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
       SelectedFontFamilyNameChanged?.Invoke(obj, args);

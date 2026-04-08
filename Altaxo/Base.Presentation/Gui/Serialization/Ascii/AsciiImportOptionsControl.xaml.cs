@@ -35,10 +35,15 @@ namespace Altaxo.Gui.Serialization.Ascii
   /// </summary>
   public partial class AsciiImportOptionsControl : UserControl, IAsciiImportOptionsView
   {
+    /// <inheritdoc/>
     public event Action? DoAnalyze;
 
+    /// <inheritdoc/>
     public event Action? SeparationStrategyChanged;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AsciiImportOptionsControl"/> class.
+    /// </summary>
     public AsciiImportOptionsControl()
     {
       InitializeComponent();
@@ -50,6 +55,7 @@ namespace Altaxo.Gui.Serialization.Ascii
         DoAnalyze();
     }
 
+    /// <inheritdoc/>
     public int? NumberOfMainHeaderLines
     {
       get
@@ -69,6 +75,7 @@ namespace Altaxo.Gui.Serialization.Ascii
       }
     }
 
+    /// <inheritdoc/>
     public int? IndexOfCaptionLine
     {
       get
@@ -88,11 +95,13 @@ namespace Altaxo.Gui.Serialization.Ascii
       }
     }
 
+    /// <inheritdoc/>
     public void SetGuiSeparationStrategy(Collections.SelectableListNodeList list)
     {
       GuiHelper.Initialize(_guiSeparationStrategy, list);
     }
 
+    /// <inheritdoc/>
     public bool RenameColumnsWithHeaderNames
     {
       get
@@ -105,6 +114,7 @@ namespace Altaxo.Gui.Serialization.Ascii
       }
     }
 
+    /// <inheritdoc/>
     public bool RenameWorksheetWithFileName
     {
       get
@@ -117,6 +127,7 @@ namespace Altaxo.Gui.Serialization.Ascii
       }
     }
 
+    /// <inheritdoc/>
     public SelectableListNodeList HeaderLinesDestination
     {
       set
@@ -125,6 +136,7 @@ namespace Altaxo.Gui.Serialization.Ascii
       }
     }
 
+    /// <inheritdoc/>
     public object AsciiSeparationStrategyDetailView
     {
       set { _guiSeparationStrategyDetailsHost.Content = value; }
@@ -137,6 +149,7 @@ namespace Altaxo.Gui.Serialization.Ascii
         SeparationStrategyChanged();
     }
 
+    /// <inheritdoc/>
     public bool GuiSeparationStrategyIsKnown
     {
       get
@@ -149,6 +162,7 @@ namespace Altaxo.Gui.Serialization.Ascii
       }
     }
 
+    /// <inheritdoc/>
     public void SetNumberFormatCulture(Collections.SelectableListNodeList list)
     {
       GuiHelper.Initialize(_guiNumberFormats, list);
@@ -159,6 +173,7 @@ namespace Altaxo.Gui.Serialization.Ascii
       GuiHelper.SynchronizeSelectionFromGui(_guiNumberFormats);
     }
 
+    /// <inheritdoc/>
     public bool NumberFormatCultureIsKnown
     {
       get
@@ -171,6 +186,7 @@ namespace Altaxo.Gui.Serialization.Ascii
       }
     }
 
+    /// <inheritdoc/>
     public void SetDateTimeFormatCulture(Collections.SelectableListNodeList list)
     {
       GuiHelper.Initialize(_guiDateTimeFormats, list);
@@ -181,6 +197,7 @@ namespace Altaxo.Gui.Serialization.Ascii
       GuiHelper.SynchronizeSelectionFromGui(_guiDateTimeFormats);
     }
 
+    /// <inheritdoc/>
     public bool DateTimeFormatCultureIsKnown
     {
       get
@@ -193,6 +210,7 @@ namespace Altaxo.Gui.Serialization.Ascii
       }
     }
 
+    /// <inheritdoc/>
     public bool TableStructureIsKnown
     {
       get
@@ -205,6 +223,7 @@ namespace Altaxo.Gui.Serialization.Ascii
       }
     }
 
+    /// <inheritdoc/>
     public System.Collections.ObjectModel.ObservableCollection<Boxed<Altaxo.Serialization.Ascii.AsciiColumnType>> TableStructure
     {
       set
@@ -214,11 +233,13 @@ namespace Altaxo.Gui.Serialization.Ascii
       }
     }
 
+    /// <inheritdoc/>
     public object AsciiDocumentAnalysisOptionsView
     {
       get { return _guiAnalysisControl; }
     }
 
+    /// <inheritdoc/>
     public bool ImportMultipleAsciiVertically
     {
       get

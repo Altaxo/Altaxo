@@ -37,8 +37,14 @@ namespace Altaxo.Gui.Common
   /// New data context aware single choice radio stack panel.
   /// </summary>
   /// <seealso cref="System.Windows.Controls.ItemsControl" />
+  /// <summary>
+  /// Data-context-aware items control that displays a single selection as radio buttons in a stack panel.
+  /// </summary>
   public class SingleChoiceRadioStackPanelDC : ItemsControl
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SingleChoiceRadioStackPanelDC"/> class.
+    /// </summary>
     public SingleChoiceRadioStackPanelDC()
     {
       // set the ItemsPanelTemplate to a StackPanel (default: vertical orientation)
@@ -46,6 +52,9 @@ namespace Altaxo.Gui.Common
     }
 
 
+    /// <summary>
+    /// Identifies the <see cref="Orientation"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty OrientationProperty = DependencyProperty.Register(
         nameof(Orientation),
         typeof(System.Windows.Controls.Orientation),
@@ -54,6 +63,9 @@ namespace Altaxo.Gui.Common
 
 
 
+    /// <summary>
+    /// Gets or sets the arrangement direction of the generated radio buttons.
+    /// </summary>
     public System.Windows.Controls.Orientation Orientation
     {
       get
@@ -74,12 +86,18 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="SelectedItem"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty SelectedItemProperty = DependencyProperty.Register(
         nameof(SelectedItem),
         typeof(object),
         typeof(SingleChoiceRadioStackPanelDC),
         new FrameworkPropertyMetadata(null, EhSelectedItemChanged) { BindsTwoWayByDefault = true });
 
+    /// <summary>
+    /// Gets or sets the selected item.
+    /// </summary>
     public object SelectedItem
     {
       get
@@ -102,6 +120,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     protected override DependencyObject GetContainerForItemOverride()
     {
       var rb = new RadioButton();
@@ -148,6 +167,7 @@ namespace Altaxo.Gui.Common
 
 
 
+    /// <inheritdoc/>
     protected override void ClearContainerForItemOverride(DependencyObject element, object item)
     {
       if (element is ToggleButton rb)
@@ -158,6 +178,7 @@ namespace Altaxo.Gui.Common
       base.ClearContainerForItemOverride(element, item);
     }
 
+    /// <inheritdoc/>
     protected override bool IsItemItsOwnContainerOverride(object item)
     {
       return item is RadioButton;
@@ -168,12 +189,21 @@ namespace Altaxo.Gui.Common
 
 
   
+  /// <summary>
+  /// Stack panel that displays a single selectable list as radio buttons.
+  /// </summary>
   public class SingleChoiceRadioStackPanel : StackPanel
   {
+    /// <summary>
+    /// Occurs when the selected item changes.
+    /// </summary>
     public event EventHandler? SelectionChanged;
 
     #region Dependency properties
 
+    /// <summary>
+    /// Identifies the <see cref="ItemsSource"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty ItemsSourceProperty =
     DependencyProperty.Register(
       nameof(ItemsSource),
@@ -182,7 +212,7 @@ namespace Altaxo.Gui.Common
       new FrameworkPropertyMetadata(EhItemsSourceChanged));
 
     /// <summary>
-    /// Gets/sets the quantity. The quantity consist of a numeric value together with a unit.
+    /// Gets or sets the selectable items.
     /// </summary>
     public SelectableListNodeList? ItemsSource
     {
@@ -195,6 +225,11 @@ namespace Altaxo.Gui.Common
       ((SingleChoiceRadioStackPanel)obj).OnItemsSourceChanged(obj, args);
     }
 
+    /// <summary>
+    /// Updates the control after <see cref="ItemsSource"/> changes.
+    /// </summary>
+    /// <param name="obj">The dependency object whose property changed.</param>
+    /// <param name="args">The property change arguments.</param>
     protected void OnItemsSourceChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
       if (args.NewValue is SelectableListNodeList newItemsSource)
@@ -208,6 +243,9 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="SelectedItem"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty SelectedItemProperty =
       DependencyProperty.Register(
         nameof(SelectedItem),
@@ -216,7 +254,7 @@ namespace Altaxo.Gui.Common
         new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, EhSelectedItemChanged));
 
     /// <summary>
-    /// Gets/sets the quantity. The quantity consist of a numeric value together with a unit.
+    /// Gets or sets the selected item.
     /// </summary>
     public SelectableListNode? SelectedItem
     {
@@ -229,6 +267,11 @@ namespace Altaxo.Gui.Common
       ((SingleChoiceRadioStackPanel)obj).OnSelectedItemChanged(obj, args);
     }
 
+    /// <summary>
+    /// Raises <see cref="SelectionChanged"/> after <see cref="SelectedItem"/> changes.
+    /// </summary>
+    /// <param name="obj">The dependency object whose property changed.</param>
+    /// <param name="args">The property change arguments.</param>
     protected void OnSelectedItemChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
       SelectionChanged?.Invoke(this, EventArgs.Empty);
@@ -238,6 +281,10 @@ namespace Altaxo.Gui.Common
 
     private SelectableListNodeList _choices;
 
+    /// <summary>
+    /// Initializes the control with the specified choices.
+    /// </summary>
+    /// <param name="choices">The selectable items to display.</param>
     public void Initialize(SelectableListNodeList choices)
     {
       _choices = choices;

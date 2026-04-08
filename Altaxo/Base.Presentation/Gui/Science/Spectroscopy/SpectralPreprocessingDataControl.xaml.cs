@@ -38,6 +38,9 @@ namespace Altaxo.Gui.Science.Spectroscopy
   /// </summary>
   public partial class SpectralPreprocessingDataControl : UserControl, ISpectralPreprocessingDataView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SpectralPreprocessingDataControl"/> class.
+    /// </summary>
     public SpectralPreprocessingDataControl()
     {
       InitializeComponent();

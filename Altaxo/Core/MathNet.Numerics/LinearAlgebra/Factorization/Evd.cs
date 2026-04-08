@@ -53,6 +53,13 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
   public abstract class Evd<T> : ISolver<T>
     where T : struct, IEquatable<T>, IFormattable
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Evd{T}"/> class.
+    /// </summary>
+    /// <param name="eigenVectors">The eigenvector matrix.</param>
+    /// <param name="eigenValues">The eigenvalues.</param>
+    /// <param name="blockDiagonal">The block-diagonal eigenvalue matrix.</param>
+    /// <param name="isSymmetric">Whether the source matrix is symmetric.</param>
     protected Evd(Matrix<T> eigenVectors, Vector<Complex> eigenValues, Matrix<T> blockDiagonal, bool isSymmetric)
     {
       EigenVectors = eigenVectors;

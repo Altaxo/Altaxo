@@ -32,6 +32,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
   /// </summary>
   public partial class AxisLabelStyleControl : UserControl, IAxisLabelStyleView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AxisLabelStyleControl"/> class.
+    /// </summary>
     public AxisLabelStyleControl()
     {
       InitializeComponent();

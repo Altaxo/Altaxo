@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
   /// </summary>
   public partial class DensityImagePlotStyleControl : UserControl, IDensityImagePlotStyleView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DensityImagePlotStyleControl"/> class.
+    /// </summary>
     public DensityImagePlotStyleControl()
     {
       InitializeComponent();

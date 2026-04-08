@@ -42,6 +42,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     /// </summary>
     public event Action<double, double>? RenderTriggered;
 
+    /// <inheritdoc/>
     protected override void OnRender(DrawingContext drawingContext)
     {
       base.OnRender(drawingContext);

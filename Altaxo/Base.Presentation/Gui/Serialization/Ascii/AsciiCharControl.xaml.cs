@@ -33,11 +33,17 @@ namespace Altaxo.Gui.Serialization.Ascii
   /// </summary>
   public partial class AsciiCharControl : UserControl
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AsciiCharControl"/> class.
+    /// </summary>
     public AsciiCharControl()
     {
       InitializeComponent();
     }
 
+    /// <summary>
+    /// Gets or sets the selected ASCII character.
+    /// </summary>
     public char Value
     {
       get { return (char)GetValue(ValueProperty); }
@@ -69,6 +75,9 @@ namespace Altaxo.Gui.Serialization.Ascii
       }
     }
 
+    /// <summary>
+    /// Gets or sets the text shown in the editor.
+    /// </summary>
     public string Text
     {
       get

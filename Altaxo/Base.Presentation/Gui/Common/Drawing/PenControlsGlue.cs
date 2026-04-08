@@ -34,6 +34,9 @@ using Altaxo.Gui.Drawing.DashPatternManagement;
 
 namespace Altaxo.Gui.Common.Drawing
 {
+  /// <summary>
+  /// Synchronizes pen-related controls with a <see cref="PenX"/> instance.
+  /// </summary>
   public class PenControlsGlue : FrameworkElement
   {
     private bool _userChangedAbsStartCapSize;
@@ -44,11 +47,18 @@ namespace Altaxo.Gui.Common.Drawing
 
     private bool _isAllPropertiesGlue;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PenControlsGlue"/> class.
+    /// </summary>
     public PenControlsGlue()
       : this(false)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PenControlsGlue"/> class.
+    /// </summary>
+    /// <param name="isAllPropertiesGlue"><see langword="true"/> to wire controls for all pen properties; otherwise, <see langword="false"/>.</param>
     public PenControlsGlue(bool isAllPropertiesGlue)
     {
       InternalSelectedPen = new PenX(ColorSetManager.Instance.BuiltinDarkPlotColors[0]);
@@ -146,8 +156,14 @@ namespace Altaxo.Gui.Common.Drawing
       _userChangedRelEndCapSize = false;
     }
 
+    /// <summary>
+    /// Occurs when the current pen changes.
+    /// </summary>
     public event EventHandler? PenChanged;
 
+    /// <summary>
+    /// Raises the <see cref="PenChanged"/> event.
+    /// </summary>
     protected virtual void OnPenChanged()
     {
       if (PenChanged is not null)
@@ -170,6 +186,9 @@ namespace Altaxo.Gui.Common.Drawing
     private bool _showPlotColorsOnly;
     private BrushComboBox _cbBrush;
 
+    /// <summary>
+    /// Gets or sets the brush combo box synchronized with the pen.
+    /// </summary>
     public BrushComboBox CbBrush
     {
       get { return _cbBrush; }
@@ -203,6 +222,9 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether only plot colors should be shown.
+    /// </summary>
     public bool ShowPlotColorsOnly
     {
       get
@@ -232,6 +254,9 @@ namespace Altaxo.Gui.Common.Drawing
 
     private DashPatternComboBox _cbDashPattern;
 
+    /// <summary>
+    /// Gets or sets the dash pattern combo box synchronized with the pen.
+    /// </summary>
     public DashPatternComboBox CbDashPattern
     {
       get { return _cbDashPattern; }
@@ -262,6 +287,9 @@ namespace Altaxo.Gui.Common.Drawing
 
     private DashCapComboBox _cbDashCap;
 
+    /// <summary>
+    /// Gets or sets the dash cap combo box synchronized with the pen.
+    /// </summary>
     public DashCapComboBox CbDashCap
     {
       get { return _cbDashCap; }
@@ -296,6 +324,9 @@ namespace Altaxo.Gui.Common.Drawing
 
     private LineThicknessComboBox _cbThickness;
 
+    /// <summary>
+    /// Gets or sets the line thickness combo box synchronized with the pen.
+    /// </summary>
     public LineThicknessComboBox CbLineThickness
     {
       get { return _cbThickness; }
@@ -328,6 +359,9 @@ namespace Altaxo.Gui.Common.Drawing
 
     private LineCapComboBox _cbStartCap;
 
+    /// <summary>
+    /// Gets or sets the start cap combo box synchronized with the pen.
+    /// </summary>
     public LineCapComboBox CbStartCap
     {
       get { return _cbStartCap; }
@@ -378,6 +412,9 @@ namespace Altaxo.Gui.Common.Drawing
 
     private LineCapSizeComboBox _cbStartCapAbsSize;
 
+    /// <summary>
+    /// Gets or sets the control that edits the absolute size of the start cap.
+    /// </summary>
     public LineCapSizeComboBox CbStartCapAbsSize
     {
       get { return _cbStartCapAbsSize; }
@@ -412,6 +449,9 @@ namespace Altaxo.Gui.Common.Drawing
 
     private QuantityWithUnitTextBox _cbStartCapRelSize;
 
+    /// <summary>
+    /// Gets or sets the control that edits the relative size of the start cap.
+    /// </summary>
     public QuantityWithUnitTextBox CbStartCapRelSize
     {
       get { return _cbStartCapRelSize; }
@@ -449,6 +489,9 @@ namespace Altaxo.Gui.Common.Drawing
 
     private LineCapComboBox _cbEndCap;
 
+    /// <summary>
+    /// Gets or sets the end cap combo box synchronized with the pen.
+    /// </summary>
     public LineCapComboBox CbEndCap
     {
       get { return _cbEndCap; }
@@ -499,6 +542,9 @@ namespace Altaxo.Gui.Common.Drawing
 
     private LineCapSizeComboBox _cbEndCapAbsSize;
 
+    /// <summary>
+    /// Gets or sets the control that edits the absolute size of the end cap.
+    /// </summary>
     public LineCapSizeComboBox CbEndCapAbsSize
     {
       get { return _cbEndCapAbsSize; }
@@ -532,6 +578,9 @@ namespace Altaxo.Gui.Common.Drawing
 
     private QuantityWithUnitTextBox _cbEndCapRelSize;
 
+    /// <summary>
+    /// Gets or sets the control that edits the relative size of the end cap.
+    /// </summary>
     public QuantityWithUnitTextBox CbEndCapRelSize
     {
       get { return _cbEndCapRelSize; }
@@ -568,6 +617,9 @@ namespace Altaxo.Gui.Common.Drawing
 
     private LineJoinComboBox _cbLineJoin;
 
+    /// <summary>
+    /// Gets or sets the line join combo box synchronized with the pen.
+    /// </summary>
     public LineJoinComboBox CbLineJoin
     {
       get { return _cbLineJoin; }
@@ -602,6 +654,9 @@ namespace Altaxo.Gui.Common.Drawing
 
     private MiterLimitComboBox _cbMiterLimit;
 
+    /// <summary>
+    /// Gets or sets the control that edits the miter limit.
+    /// </summary>
     public MiterLimitComboBox CbMiterLimit
     {
       get { return _cbMiterLimit; }
@@ -652,6 +707,9 @@ namespace Altaxo.Gui.Common.Drawing
     private Image _previewPanel;
     private GdiToWpfBitmap _previewBitmap;
 
+    /// <summary>
+    /// Gets or sets the preview image that displays the current pen.
+    /// </summary>
     public Image PreviewPanel
     {
       get

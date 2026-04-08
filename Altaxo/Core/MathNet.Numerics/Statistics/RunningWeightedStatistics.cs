@@ -110,10 +110,17 @@ namespace Altaxo.Calc.Statistics
     [DataMember(Order = 12)]
     private double _den;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RunningWeightedStatistics"/> class.
+    /// </summary>
     public RunningWeightedStatistics()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RunningWeightedStatistics"/> class and populates it with weighted values.
+    /// </summary>
+    /// <param name="values">The weighted samples as tuples of weight and value.</param>
     public RunningWeightedStatistics(IEnumerable<System.Tuple<double, double>> values)
     {
       PushRange(values);
@@ -234,13 +241,15 @@ namespace Altaxo.Calc.Statistics
     public double TotalWeight => _w1;
 
     /// <summary>
-    /// The Kish's Effective Sample Size
+    /// Gets Kish's effective sample size.
     /// </summary>
     public double EffectiveSampleSize => _w2 / _w1;
 
     /// <summary>
     /// Update the running statistics by adding another observed sample (in-place).
     /// </summary>
+    /// <param name="weight">The reliability weight of the sample.</param>
+    /// <param name="value">The sample value to add.</param>
     public void Push(double weight, double value)
     {
       if (weight == 0.0)
@@ -283,8 +292,9 @@ namespace Altaxo.Calc.Statistics
     }
 
     /// <summary>
-    /// Update the running statistics by adding a sequence of weighted observatopms (in-place).
+    /// Update the running statistics by adding a sequence of weighted observations (in-place).
     /// </summary>
+    /// <param name="values">The weighted samples as tuples of weight and value.</param>
     public void PushRange(IEnumerable<System.Tuple<double, double>> values)
     {
       foreach (var v in values)
@@ -294,8 +304,10 @@ namespace Altaxo.Calc.Statistics
     }
 
     /// <summary>
-    /// Update the running statistics by adding a sequence of weighted observatopms (in-place).
+    /// Update the running statistics by adding a sequence of weighted observations (in-place).
     /// </summary>
+    /// <param name="weights">The sample weights.</param>
+    /// <param name="values">The sample values.</param>
     public void PushRange(IEnumerable<double> weights, IEnumerable<double> values)
     {
       using (var itW = weights.GetEnumerator())
@@ -318,6 +330,9 @@ namespace Altaxo.Calc.Statistics
     /// <summary>
     /// Create a new running statistics over the combined samples of two existing running statistics.
     /// </summary>
+    /// <param name="a">The first weighted running statistics instance.</param>
+    /// <param name="b">The second weighted running statistics instance.</param>
+    /// <returns>A new instance representing the combined statistics.</returns>
     public static RunningWeightedStatistics Combine(RunningWeightedStatistics a, RunningWeightedStatistics b)
     {
       if (a._n == 0)
@@ -353,6 +368,12 @@ namespace Altaxo.Calc.Statistics
       return new RunningWeightedStatistics { _n = n, _m1 = m1, _m2 = m2, _m3 = m3, _m4 = m4, _min = min, _max = max, _w1 = w1, _den = den, _w2 = w2, _w3 = w3, _w4 = w4 };
     }
 
+    /// <summary>
+    /// Combines two weighted running statistics instances.
+    /// </summary>
+    /// <param name="a">The first weighted running statistics instance.</param>
+    /// <param name="b">The second weighted running statistics instance.</param>
+    /// <returns>A new instance representing the combined statistics.</returns>
     public static RunningWeightedStatistics operator +(RunningWeightedStatistics a, RunningWeightedStatistics b)
     {
       return Combine(a, b);

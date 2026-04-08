@@ -48,10 +48,16 @@ namespace Altaxo.Gui.Geometry
     private double _elevationAngleDegrees;
     private double _distance;
 
+    /// <summary>
+    /// Occurs when <see cref="SelectedValue"/> changes.
+    /// </summary>
     public event EventHandler? SelectedValueChanged;
 
     private GuiChangeLocker _lock;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Position3DSphericalControl"/> class.
+    /// </summary>
     public Position3DSphericalControl()
     {
       InitializeComponent();

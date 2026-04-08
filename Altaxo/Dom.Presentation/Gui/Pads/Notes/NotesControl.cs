@@ -27,8 +27,14 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Pads.Notes
 {
+  /// <summary>
+  /// Displays the notes pad content.
+  /// </summary>
   public class NotesControl : TextBox, INotesView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NotesControl"/> class.
+    /// </summary>
     public NotesControl()
     {
       TextWrapping = System.Windows.TextWrapping.NoWrap;

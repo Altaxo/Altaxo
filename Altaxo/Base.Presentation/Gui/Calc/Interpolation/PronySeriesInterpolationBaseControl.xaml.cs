@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Calc.Interpolation
   /// </summary>
   public partial class PronySeriesInterpolationBaseControl : UserControl, IPronySeriesInterpolationBaseView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PronySeriesInterpolationBaseControl"/> class.
+    /// </summary>
     public PronySeriesInterpolationBaseControl()
     {
       InitializeComponent();

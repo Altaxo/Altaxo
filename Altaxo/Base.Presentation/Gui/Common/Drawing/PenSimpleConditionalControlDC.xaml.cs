@@ -37,6 +37,9 @@ namespace Altaxo.Gui.Common.Drawing
   /// </summary>
   public partial class PenSimpleConditionalControlDC : UserControl, IPenSimpleConditionalView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PenSimpleConditionalControlDC"/> class.
+    /// </summary>
     public PenSimpleConditionalControlDC()
     {
       InitializeComponent();

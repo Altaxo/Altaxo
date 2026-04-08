@@ -30,14 +30,23 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public class SplitButton : ButtonBase
   {
+    /// <summary>
+    /// Identifies the <see cref="DropDownMenu"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty DropDownMenuProperty
       = DropDownButton.DropDownMenuProperty.AddOwner(typeof(SplitButton));
 
+    /// <summary>
+    /// Identifies the read-only dependency-property key for <see cref="IsDropDownMenuOpen"/>.
+    /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
     protected static readonly DependencyPropertyKey IsDropDownMenuOpenPropertyKey
       = DependencyProperty.RegisterReadOnly("IsDropDownMenuOpen", typeof(bool),
                                             typeof(SplitButton), new FrameworkPropertyMetadata(false));
 
+    /// <summary>
+    /// Identifies the <see cref="IsDropDownMenuOpen"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty IsDropDownMenuOpenProperty = IsDropDownMenuOpenPropertyKey.DependencyProperty;
 
     static SplitButton()
@@ -45,12 +54,18 @@ namespace Altaxo.Gui.Common
       DefaultStyleKeyProperty.OverrideMetadata(typeof(SplitButton), new FrameworkPropertyMetadata(typeof(SplitButton)));
     }
 
+    /// <summary>
+    /// Gets or sets the drop-down menu shown by the button.
+    /// </summary>
     public ContextMenu DropDownMenu
     {
       get { return (ContextMenu)GetValue(DropDownMenuProperty); }
       set { SetValue(DropDownMenuProperty, value); }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the drop-down menu is currently open.
+    /// </summary>
     public bool IsDropDownMenuOpen
     {
       get { return (bool)GetValue(IsDropDownMenuOpenProperty); }
@@ -59,6 +74,7 @@ namespace Altaxo.Gui.Common
 
     private FrameworkElement dropDownArrow;
 
+    /// <inheritdoc/>
     public override void OnApplyTemplate()
     {
       base.OnApplyTemplate();
@@ -72,6 +88,7 @@ namespace Altaxo.Gui.Common
       return e.GetPosition(dropDownArrow).X >= 0;
     }
 
+    /// <inheritdoc/>
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {
       if (IsOverDropDownArrow(e))
@@ -98,6 +115,7 @@ namespace Altaxo.Gui.Common
       IsDropDownMenuOpen = false;
     }
 
+    /// <inheritdoc/>
     protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
     {
       if (!IsMouseCaptured && IsOverDropDownArrow(e))

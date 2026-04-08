@@ -38,6 +38,7 @@ namespace Altaxo.Worksheet.Commands
 
     internal bool Disable { set { _disable = value; } }
 
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       if (!_disable)
@@ -49,8 +50,12 @@ namespace Altaxo.Worksheet.Commands
 
 namespace Altaxo.Main.Commands.ScriptEditorCommands
 {
+  /// <summary>
+  /// Cuts the current selection in the active clipboard-aware content.
+  /// </summary>
   public class Cut : SimpleCommand
   {
+    /// <inheritdoc/>
     public override bool CanExecute(object parameter)
     {
       if (!(parameter is IWorkbenchContent activeContent))
@@ -63,6 +68,7 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
       return false;
     }
 
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       if (CanExecute(parameter))
@@ -78,8 +84,12 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
     }
   }
 
+  /// <summary>
+  /// Copies the current selection in the active clipboard-aware content.
+  /// </summary>
   public class Copy : SimpleCommand
   {
+    /// <inheritdoc/>
     public override bool CanExecute(object parameter)
     {
       if (!(parameter is IWorkbenchContent activeContent))
@@ -92,6 +102,7 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
       return false;
     }
 
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       if (CanExecute(parameter))
@@ -107,8 +118,12 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
     }
   }
 
+  /// <summary>
+  /// Pastes clipboard content into the active clipboard-aware content.
+  /// </summary>
   public class Paste : SimpleCommand
   {
+    /// <inheritdoc/>
     public override bool CanExecute(object parameter)
     {
       if (!(parameter is IWorkbenchContent activeContent))
@@ -121,6 +136,7 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
       return false;
     }
 
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       if (CanExecute(parameter))
@@ -136,8 +152,12 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
     }
   }
 
+  /// <summary>
+  /// Deletes the current selection in the active clipboard-aware content.
+  /// </summary>
   public class Delete : SimpleCommand
   {
+    /// <inheritdoc/>
     public override bool CanExecute(object parameter)
     {
       if (!(parameter is IWorkbenchContent activeContent))
@@ -150,6 +170,7 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
       return false;
     }
 
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       if (!(parameter is IWorkbenchContent activeContent))

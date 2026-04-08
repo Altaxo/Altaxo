@@ -32,6 +32,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
   /// </summary>
   public partial class LinePlotStyleControl : UserControl, ILinePlotStyleView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinePlotStyleControl"/> class.
+    /// </summary>
     public LinePlotStyleControl()
     {
       InitializeComponent();

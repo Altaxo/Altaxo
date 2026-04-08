@@ -42,11 +42,17 @@ namespace Altaxo.Gui
   /// <seealso cref="System.Windows.IWeakEventListener" />
   public abstract class LanguageDependentExtension : MarkupExtension, INotifyPropertyChanged
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LanguageDependentExtension"/> class.
+    /// </summary>
     protected LanguageDependentExtension()
     {
       UpdateOnLanguageChange = true;
     }
 
+    /// <summary>
+    /// Gets the language-dependent value.
+    /// </summary>
     public abstract string Value { get; }
 
     /// <summary>
@@ -58,6 +64,7 @@ namespace Altaxo.Gui
 
     private bool isRegisteredForLanguageChange;
 
+    /// <inheritdoc/>
     public override object ProvideValue(IServiceProvider serviceProvider)
     {
       if (UpdateOnLanguageChange)
@@ -73,6 +80,7 @@ namespace Altaxo.Gui
 
     private event System.ComponentModel.PropertyChangedEventHandler? ChangedEvent;
 
+    /// <inheritdoc/>
     public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged
     {
       add

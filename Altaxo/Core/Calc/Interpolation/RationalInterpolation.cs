@@ -64,10 +64,29 @@ namespace Altaxo.Calc.Interpolation
   /// </remarks>
   public class RationalInterpolation : CurveBase, IInterpolationFunction
   {
+    /// <summary>
+    /// Stores the transformed abscissa values used by the rational interpolation algorithm.
+    /// </summary>
     protected Vector<double> xr = CreateVector.Dense<double>(0);
+
+    /// <summary>
+    /// Stores the transformed ordinate values used by the rational interpolation algorithm.
+    /// </summary>
     protected Vector<double> yr = CreateVector.Dense<double>(0);
+
+    /// <summary>
+    /// Stores the interpolation order assigned to each support point.
+    /// </summary>
     protected Vector<int> m = CreateVector.Dense<int>(0);
+
+    /// <summary>
+    /// Stores the numerator degree used by the interpolation.
+    /// </summary>
     protected int num;
+
+    /// <summary>
+    /// Stores the comparison tolerance used by the algorithm.
+    /// </summary>
     protected double epsilon;
 
     /// <summary>

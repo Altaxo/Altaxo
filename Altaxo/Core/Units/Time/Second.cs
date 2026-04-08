@@ -31,6 +31,9 @@ using System.Text;
 
 namespace Altaxo.Units.Time
 {
+  /// <summary>
+  /// Represents the second SI unit of time.
+  /// </summary>
   [UnitDescription("Time", 0, 0, 1, 0, 0, 0, 0)]
   public class Second : SIUnit
   {
@@ -43,13 +46,18 @@ namespace Altaxo.Units.Time
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="Second"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Second), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return Second.Instance;
@@ -57,6 +65,9 @@ namespace Altaxo.Units.Time
     }
     #endregion
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Second"/> class.
+    /// </summary>
     private Second()
         : base(0, 0, 1, 0, 0, 0, 0)
     {

@@ -31,10 +31,14 @@ using Altaxo.Graph.Gdi.Plot;
 namespace Altaxo.Graph.Commands
 {
   /// <summary>
-  /// Taken from Commands.MenuItemBuilders. See last line for change.
+  /// Builds menu items for the plot items of the active graph layer.
   /// </summary>
+  /// <remarks>
+  /// Taken from <c>Commands.MenuItemBuilders</c>. See the last line for the change.
+  /// </remarks>
   public class LayerItemsBuilder : IMenuItemBuilder
   {
+    /// <inheritdoc/>
     public IEnumerable<object> BuildItems(Codon codon, object owner)
     {
       var ctrl = Current.Workbench.ActiveViewContent as Altaxo.Gui.Graph.Gdi.Viewing.GraphController;

@@ -68,6 +68,9 @@ namespace Altaxo.Gui.Common.Drawing
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HatchStyleComboBox"/> class.
+    /// </summary>
     public HatchStyleComboBox()
     {
       InitializeComponent();
@@ -91,12 +94,18 @@ namespace Altaxo.Gui.Common.Drawing
 
     private const string _nameOfValueProp = "HatchStyle";
 
+    /// <summary>
+    /// Gets or sets the selected hatch style.
+    /// </summary>
     public HatchStyle HatchStyle
     {
       get { return (HatchStyle)GetValue(HatchStyleProperty); }
       set { SetValue(HatchStyleProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="HatchStyle"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty HatchStyleProperty =
         DependencyProperty.Register(_nameOfValueProp, typeof(HatchStyle), typeof(HatchStyleComboBox),
         new FrameworkPropertyMetadata(HatchStyle.ForwardDiagonal, OnHatchStyleChanged));
@@ -108,16 +117,23 @@ namespace Altaxo.Gui.Common.Drawing
 
     #endregion Dependency property
 
+    /// <summary>
+    /// Handles changes of the selected hatch style.
+    /// </summary>
+    /// <param name="obj">The dependency object whose hatch style changed.</param>
+    /// <param name="args">The event arguments.</param>
     protected virtual void EhHatchStyleChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
     }
 
+    /// <inheritdoc/>
     public override string GetItemText(object item)
     {
       var val = (HatchStyle)item;
       return val.ToString();
     }
 
+    /// <inheritdoc/>
     public override ImageSource GetItemImage(object item)
     {
       var val = (HatchStyle)item;
@@ -126,6 +142,11 @@ namespace Altaxo.Gui.Common.Drawing
       return result;
     }
 
+    /// <summary>
+    /// Creates an image that represents the specified <see cref="HatchStyle"/>.
+    /// </summary>
+    /// <param name="val">The hatch style to visualize.</param>
+    /// <returns>An image representing <paramref name="val"/>.</returns>
     public static DrawingImage GetImage(HatchStyle val)
     {
       double height = 1;

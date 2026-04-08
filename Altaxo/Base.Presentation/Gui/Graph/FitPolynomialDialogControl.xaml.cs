@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph
   /// </summary>
   public partial class FitPolynomialDialogControl : UserControl, IFitPolynomialView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FitPolynomialDialogControl"/> class.
+    /// </summary>
     public FitPolynomialDialogControl()
     {
       InitializeComponent();

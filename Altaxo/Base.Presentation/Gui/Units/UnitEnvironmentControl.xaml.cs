@@ -44,6 +44,9 @@ namespace Altaxo.Gui.Units
   /// </summary>
   public partial class UnitEnvironmentControl : UserControl, IUnitEnvironmentView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="UnitEnvironmentControl"/> class.
+    /// </summary>
     public UnitEnvironmentControl()
     {
       InitializeComponent();

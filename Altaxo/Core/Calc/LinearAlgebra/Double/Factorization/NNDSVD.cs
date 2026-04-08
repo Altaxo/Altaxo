@@ -26,6 +26,10 @@ using System;
 
 namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 {
+  /// <summary>
+  /// This class contains the implementation of the NNDSVD (Non-Negative Singular Value Decomposition)
+  /// initialization for Non-Negative Matrix Factorization (NMF).
+  /// </summary>
   public record NNDSVD : INonnegativeMatrixFactorizationInitializer, Main.IImmutable
   {
     #region Serialization

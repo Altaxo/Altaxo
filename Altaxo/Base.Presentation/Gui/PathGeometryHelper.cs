@@ -36,8 +36,19 @@ namespace Altaxo.Gui
   using Altaxo.Geometry;
   using Altaxo.Graph;
 
+  /// <summary>
+  /// Provides helper methods for extracting polygon information from WPF path geometry.
+  /// </summary>
   public static class PathGeometryHelper
   {
+    /// <summary>
+    /// Gets a closed polygon representation of a glyph path figure.
+    /// </summary>
+    /// <param name="figure">The path figure to convert.</param>
+    /// <param name="reverseY">If set to <c>true</c>, the Y coordinate is inverted.</param>
+    /// <param name="deviationAngleInDegrees">The allowed angular deviation in degrees.</param>
+    /// <param name="deviationAbsolute">The allowed absolute deviation.</param>
+    /// <returns>The extracted closed polygon.</returns>
     public static PolygonClosedD2D GetGlyphPolygon(PathFigure figure, bool reverseY, double deviationAngleInDegrees, double deviationAbsolute)
     {
       PolyBezierSegment polyBezierSegment;
@@ -107,6 +118,12 @@ namespace Altaxo.Gui
         return new PointD2D(pt.X, pt.Y);
     }
 
+    /// <summary>
+    /// Determines whether two vectors form a smooth joint.
+    /// </summary>
+    /// <param name="v1">The first vector.</param>
+    /// <param name="v2">The second vector.</param>
+    /// <returns><c>true</c> if the joint is smooth; otherwise, <c>false</c>.</returns>
     public static bool IsSmoothJoint(Vector v1, Vector v2)
     {
       double r = v1.X * v2.X + v1.Y * v2.Y;
@@ -117,6 +134,14 @@ namespace Altaxo.Gui
       return r > 0.9997; // 1 Degree
     }
 
+    /// <summary>
+    /// Gets the start and end vectors of a path segment.
+    /// </summary>
+    /// <param name="startPoint">The start point of the segment.</param>
+    /// <param name="seg">The path segment.</param>
+    /// <param name="endPoint">The end point of the segment.</param>
+    /// <param name="startVector">The vector at the start of the segment.</param>
+    /// <param name="endVector">The vector at the end of the segment.</param>
     public static void GetStartAndEndVector(Point startPoint, PathSegment seg, out Point endPoint, out Vector startVector, out Vector endVector)
     {
       if (seg is LineSegment lineSegment)

@@ -146,6 +146,9 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
         _knownStylesDict.Add(e.GetType().Name, e);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="InnerDashPatternComboBox"/> class.
+    /// </summary>
     public InnerDashPatternComboBox()
     {
       InitializeComponent();
@@ -167,12 +170,18 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
 
     private const string _nameOfValueProp = "SelectedDashStyle";
 
+    /// <summary>
+    /// Gets or sets the selected dash pattern.
+    /// </summary>
     public IDashPattern SelectedDashStyle
     {
       get { return (IDashPattern)GetValue(SelectedDashStyleProperty); }
       set { SetValue(SelectedDashStyleProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="SelectedDashStyle"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty SelectedDashStyleProperty =
         DependencyProperty.Register(_nameOfValueProp, typeof(IDashPattern), typeof(InnerDashPatternComboBox),
         new FrameworkPropertyMetadata(new Solid(), OnSelectedDashStyleChanged, EhDashPatternCoerce));
@@ -192,6 +201,9 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
 
     #endregion Dependency property
 
+    /// <summary>
+    /// Handles a change of the selected dash pattern.
+    /// </summary>
     protected virtual void EhSelectedDashStyleChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
       if (_img is not null)
@@ -201,6 +213,7 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
       }
     }
 
+    /// <inheritdoc/>
     protected override void OnSelectionChanged(SelectionChangedEventArgs e)
     {
       if (e.AddedItems.Count == 1)
@@ -214,6 +227,7 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
       base.OnSelectionChanged(e);
     }
 
+    /// <inheritdoc/>
     public override ImageSource GetItemImage(object item)
     {
       var val = (IDashPattern)item;
@@ -222,11 +236,15 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
       return result;
     }
 
+    /// <inheritdoc/>
     public override string GetItemText(object item)
     {
       return (string)_valueConverter.Convert(item, typeof(string), null, System.Globalization.CultureInfo.CurrentUICulture);
     }
 
+    /// <summary>
+    /// Creates an image for a dash pattern.
+    /// </summary>
     public static ImageSource GetImage(IDashPattern val)
     {
       const double height = 1;

@@ -37,7 +37,7 @@ using Altaxo.Graph.Gdi.Plot;
 namespace Altaxo.Gui.Common.Converters
 {
   /// <summary>
-  /// Converts a <see cref="IColorProvider"/> instance to an image that visualize that provider
+  /// Converts an <see cref="IColorProvider"/> instance to an image that visualizes that provider
   /// (intended for the color provider preview panel).
   /// </summary>
   /// <seealso cref="System.Windows.Data.IValueConverter" />
@@ -46,15 +46,14 @@ namespace Altaxo.Gui.Common.Converters
     private GdiToWpfBitmap? _previewBitmap;
 
     /// <summary>
-    /// Converts a <see cref="BrushX"/> value. 
-    /// It is expected that the argument <paramref name="values"/> contains [0] the brush, [1] the width of the preview image, and [2] the height of the preview image.
+    /// Converts an <see cref="IColorProvider"/> value to a preview image.
     /// </summary>
     /// <param name="value">The value produced by the binding source.</param>
     /// <param name="targetType">The type of the binding target property.</param>
     /// <param name="parameter">The converter parameter to use.</param>
     /// <param name="culture">The culture to use in the converter.</param>
     /// <returns>
-    /// A <see cref="System.Windows.Media.ImageSource"/> value if successfull; otherwise,  <see cref="Binding.DoNothing"/>.
+    /// A <see cref="System.Windows.Media.ImageSource"/> value if successful; otherwise, <see cref="Binding.DoNothing"/>.
     /// </returns>
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
@@ -84,11 +83,13 @@ namespace Altaxo.Gui.Common.Converters
       }
     }
 
+    /// <inheritdoc/>
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
       _previewBitmap?.Dispose();

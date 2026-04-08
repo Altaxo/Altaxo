@@ -33,13 +33,38 @@ using static System.FormattableString;
 
 namespace Altaxo.Calc.Optimization.LineSearch
 {
+  /// <summary>
+  /// Provides a base implementation for line searches that enforce Wolfe conditions.
+  /// </summary>
   public abstract class WolfeLineSearch
   {
+    /// <summary>
+    /// Gets the sufficient decrease constant.
+    /// </summary>
     protected double C1 { get; }
+
+    /// <summary>
+    /// Gets the curvature constant.
+    /// </summary>
     protected double C2 { get; }
+
+    /// <summary>
+    /// Gets the parameter tolerance used to detect lack of progress.
+    /// </summary>
     protected double ParameterTolerance { get; }
+
+    /// <summary>
+    /// Gets the maximum number of iterations allowed for the line search.
+    /// </summary>
     protected int MaximumIterations { get; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WolfeLineSearch"/> class.
+    /// </summary>
+    /// <param name="c1">The sufficient decrease constant.</param>
+    /// <param name="c2">The curvature constant.</param>
+    /// <param name="parameterTolerance">The tolerance used to detect lack of progress.</param>
+    /// <param name="maxIterations">The maximum number of iterations.</param>
     public WolfeLineSearch(double c1, double c2, double parameterTolerance, int maxIterations = 10)
     {
       if (c1 <= 0)
@@ -59,16 +84,20 @@ namespace Altaxo.Calc.Optimization.LineSearch
     /// <param name="startingPoint">The objective function being optimized, evaluated at the starting point of the search</param>
     /// <param name="searchDirection">Search direction</param>
     /// <param name="initialStep">Initial size of the step in the search direction</param>
+    /// <returns>The result of the line search.</returns>
     public LineSearchResult FindConformingStep(IObjectiveFunctionEvaluation startingPoint, Vector<double> searchDirection, double initialStep)
     {
       return FindConformingStep(startingPoint, searchDirection, initialStep, double.PositiveInfinity);
     }
 
-    /// <summary></summary>
+    /// <summary>
+    /// Finds a step length that satisfies the configured Wolfe conditions within the specified upper bound.
+    /// </summary>
     /// <param name="startingPoint">The objective function being optimized, evaluated at the starting point of the search</param>
     /// <param name="searchDirection">Search direction</param>
     /// <param name="initialStep">Initial size of the step in the search direction</param>
     /// <param name="upperBound">The upper bound</param>
+    /// <returns>The result of the line search.</returns>
     public LineSearchResult FindConformingStep(IObjectiveFunctionEvaluation startingPoint, Vector<double> searchDirection, double initialStep, double upperBound)
     {
       ValidateInputArguments(startingPoint, searchDirection, initialStep, upperBound);
@@ -138,18 +167,42 @@ namespace Altaxo.Calc.Optimization.LineSearch
       return new LineSearchResult(objective, ii, step, reasonForExit);
     }
 
+    /// <summary>
+    /// Gets the exit condition used when the Wolfe condition is satisfied.
+    /// </summary>
     protected abstract ExitCondition WolfeExitCondition { get; }
 
+    /// <summary>
+    /// Tests whether the Wolfe condition is satisfied.
+    /// </summary>
+    /// <param name="stepDd">The directional derivative at the current step.</param>
+    /// <param name="initialDd">The directional derivative at the starting point.</param>
+    /// <returns><see langword="true"/> if the Wolfe condition is satisfied; otherwise, <see langword="false"/>.</returns>
     protected abstract bool WolfeCondition(double stepDd, double initialDd);
 
+    /// <summary>
+    /// Validates the gradient of the current objective evaluation.
+    /// </summary>
+    /// <param name="objective">The current objective evaluation.</param>
     protected virtual void ValidateGradient(IObjectiveFunctionEvaluation objective)
     {
     }
 
+    /// <summary>
+    /// Validates the objective value of the current evaluation.
+    /// </summary>
+    /// <param name="objective">The current objective evaluation.</param>
     protected virtual void ValidateValue(IObjectiveFunctionEvaluation objective)
     {
     }
 
+    /// <summary>
+    /// Validates the input arguments for the line search.
+    /// </summary>
+    /// <param name="startingPoint">The objective function evaluation at the starting point.</param>
+    /// <param name="searchDirection">The search direction.</param>
+    /// <param name="initialStep">The initial step size.</param>
+    /// <param name="upperBound">The upper bound for the step size.</param>
     protected virtual void ValidateInputArguments(IObjectiveFunctionEvaluation startingPoint, Vector<double> searchDirection, double initialStep, double upperBound)
     {
     }

@@ -42,10 +42,19 @@ using Altaxo.Science.Signals;
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 {
+  /// <summary>
+  /// Evaluates a peak using four points on a curve.
+  /// </summary>
   public class FourPointPeakEvaluationToolMouseHandler : FourPointsOnCurveMouseHandler
   {
+    /// <summary>
+    /// Gets the property key used to store the default options.
+    /// </summary>
     public static PropertyKey<FourPointPeakEvaluationToolMouseHandlerOptions> DefaultOptionsKey = new PropertyKey<FourPointPeakEvaluationToolMouseHandlerOptions>("380D19F1-2F14-49E8-B4F6-5BFB6CA10A46", "Graph\\PeakEvaluationToolOptions", PropertyLevel.Application, null, () => new FourPointPeakEvaluationToolMouseHandlerOptions());
 
+    /// <summary>
+    /// The current evaluation options.
+    /// </summary>
     protected FourPointPeakEvaluationToolMouseHandlerOptions _options;
 
     private double[] _xOuter = new double[100];
@@ -148,8 +157,13 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       }
     }
 
+    /// <inheritdoc/>
     public override GraphToolType GraphToolType => GraphToolType.FourPointPeakEvaluation;
 
+    /// <summary>
+    /// Called when the plot item should be set.
+    /// </summary>
+    /// <param name="plotItem">The plot item.</param>
     protected override void OnPlotItemSet(XYColumnPlotItem plotItem)
     {
       const string NameOfNewTableEntry = "New evaluation table";
@@ -225,6 +239,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       OnHandlesUpdated();
     }
 
+    /// <inheritdoc/>
     public override void OnLeaveTool(MouseStateHandler newTool)
     {
       base.OnLeaveTool(newTool);
@@ -237,6 +252,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     }
 
 
+    /// <inheritdoc/>
     protected override void OnHandlesUpdated()
     {
       CalculateLines();
@@ -244,6 +260,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       _grac.RenderOverlay();
     }
 
+    /// <inheritdoc/>
     public override void AfterPaint(Graphics g)
     {
       using (var pen = new Pen(new SolidBrush(_options.LinePen.Color), (float)(2 / _grac.ZoomFactor)))
@@ -422,6 +439,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       (_height, _peakX, _FWHM) = FourPointPeakEvaluationDataSource.CalculatePeakParameters(xcol, ycol, lineReg, _handle[1].PlotIndex, _handle[2].PlotIndex);
     }
 
+    /// <inheritdoc/>
     protected override void UpdateDataDisplay()
     {
       if (!string.IsNullOrEmpty(_errorMessage))
@@ -443,6 +461,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       }
     }
 
+    /// <inheritdoc/>
     public override bool ProcessCmdKey(KeyEventArgs e)
     {
       if (base.ProcessCmdKey(e))
@@ -492,6 +511,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       return result;
     }
 
+    /// <summary>
+    /// Saves the current evaluation to a destination table and adds the corresponding plots.
+    /// </summary>
     public virtual void MakeEvaluationPermanent()
     {
       if (PlotItem?.XYColumnPlotData?.XColumn is not { } xcol || PlotItem?.XYColumnPlotData?.YColumn is not { } ycol)

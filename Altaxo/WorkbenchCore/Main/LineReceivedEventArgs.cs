@@ -27,11 +27,18 @@ namespace Altaxo.Main
   {
     private string line = string.Empty;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LineReceivedEventArgs"/> class.
+    /// </summary>
+    /// <param name="line">The received line.</param>
     public LineReceivedEventArgs(string line)
     {
       this.line = line;
     }
 
+    /// <summary>
+    /// Gets the received line.
+    /// </summary>
     public string Line
     {
       get

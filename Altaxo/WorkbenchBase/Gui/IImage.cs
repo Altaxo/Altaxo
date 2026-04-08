@@ -115,16 +115,19 @@ namespace Altaxo.Gui
       }
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       return obj is ResourceServiceImage other && resourceName == other.resourceName;
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return resourceName.GetHashCode();
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return string.Format("[ResourceServiceImage {0}]", resourceName);

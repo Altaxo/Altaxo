@@ -53,9 +53,17 @@ namespace Altaxo.Calc.LinearAlgebra
 
     #region Serialization
 
+    /// <summary>
+    /// Serialization surrogate for <see cref="LinearlySpacedIntervalByStartEndCount"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinearlySpacedIntervalByStartEndCount), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <summary>
+      /// Serializes the specified object.
+      /// </summary>
+      /// <param name="obj">The object to serialize.</param>
+      /// <param name="info">The serialization information.</param>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (LinearlySpacedIntervalByStartEndCount)obj;
@@ -64,6 +72,13 @@ namespace Altaxo.Calc.LinearAlgebra
         info.AddValue("Count", s.Count);
       }
 
+      /// <summary>
+      /// Deserializes the specified object.
+      /// </summary>
+      /// <param name="o">The object to deserialize.</param>
+      /// <param name="info">The deserialization information.</param>
+      /// <param name="parent">The parent object.</param>
+      /// <returns>The deserialized object.</returns>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var start = info.GetDouble("Start");
@@ -110,6 +125,12 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>Element at the specified index.</returns>
     public double this[int index] => Start + index * Step;
 
+    /// <summary>
+    /// Gets an enumerator that iterates through the collection.
+    /// </summary>
+    /// <returns>
+    /// An enumerator that can be used to iterate through the collection.
+    /// </returns>
     /// <inheritdoc/>
     public IEnumerator<double> GetEnumerator()
     {
@@ -119,6 +140,12 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
+    /// <summary>
+    /// Gets an enumerator that iterates through a non-generic collection.
+    /// </summary>
+    /// <returns>
+    /// An enumerator that can be used to iterate through the collection.
+    /// </returns>
     /// <inheritdoc/>
     IEnumerator IEnumerable.GetEnumerator()
     {
@@ -128,9 +155,24 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the start of the interval is editable.
+    /// </summary>
     public bool IsStartEditable => true;
+
+    /// <summary>
+    /// Gets a value indicating whether the end of the interval is editable.
+    /// </summary>
     public bool IsEndEditable => true;
+
+    /// <summary>
+    /// Gets a value indicating whether the step size is editable.
+    /// </summary>
     public bool IsStepEditable => false;
+
+    /// <summary>
+    /// Gets a value indicating whether the count of elements is editable.
+    /// </summary>
     public bool IsCountEditable => true;
   }
 }

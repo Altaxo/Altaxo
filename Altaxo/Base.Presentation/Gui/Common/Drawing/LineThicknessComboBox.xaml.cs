@@ -50,6 +50,9 @@ namespace Altaxo.Gui.Common.Drawing
       SelectedQuantityProperty.OverrideMetadata(typeof(LineThicknessComboBox), new FrameworkPropertyMetadata(new DimensionfulQuantity(0, AUL.Point.Instance)));
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LineThicknessComboBox"/> class.
+    /// </summary>
     public LineThicknessComboBox()
     {
       InitializeComponent();
@@ -60,6 +63,7 @@ namespace Altaxo.Gui.Common.Drawing
       _img.Source = GetImage(SelectedQuantityAsValueInPoints);
     }
 
+    /// <inheritdoc/>
     protected override void OnSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
       base.OnSelectedQuantityChanged(obj, args);
@@ -71,6 +75,7 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <inheritdoc/>
     public override ImageSource GetItemImage(object item)
     {
       double val = ((DimensionfulQuantity)item).AsValueIn(AUL.Point.Instance);
@@ -79,11 +84,17 @@ namespace Altaxo.Gui.Common.Drawing
       return result;
     }
 
+    /// <inheritdoc/>
     public override string GetItemText(object item)
     {
       return (string)_converter.Convert(item, typeof(string), null, System.Globalization.CultureInfo.CurrentUICulture);
     }
 
+    /// <summary>
+    /// Creates an image that represents the specified line thickness.
+    /// </summary>
+    /// <param name="thickness">The line thickness value in points.</param>
+    /// <returns>An image representing <paramref name="thickness"/>.</returns>
     public static DrawingImage GetImage(double thickness)
     {
       const double nominalHeight = 24; // Height as it occurs in the combobox

@@ -36,6 +36,10 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
   {
     private GraphController _grac;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextToolMouseHandler"/> class.
+    /// </summary>
+    /// <param name="grac">The graph controller.</param>
     public TextToolMouseHandler(GraphController grac)
     {
       _grac = grac;
@@ -43,6 +47,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
         _grac.SetPanelCursor(Cursors.IBeam);
     }
 
+    /// <inheritdoc/>
     public override GraphToolType GraphToolType
     {
       get { return GraphToolType.TextDrawing; }

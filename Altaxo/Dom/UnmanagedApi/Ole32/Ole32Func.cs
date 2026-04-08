@@ -29,29 +29,41 @@ using System.Text;
 
 namespace Altaxo.UnmanagedApi.Ole32
 {
+  /// <summary>
+  /// Provides unmanaged Ole32 function imports.
+  /// </summary>
   public static class Ole32Func
   {
-    // CoInitializeEx() can be used to set the apartment model
-    // of individual threads.
+    /// <summary>
+    /// Initializes the COM library for the calling thread.
+    /// </summary>
     [DllImport("ole32.dll")]
     public static extern int CoInitializeEx(IntPtr pvReserved, uint dwCoInit);
 
-    // CoUninitialize() is used to uninitialize a COM thread.
+    /// <summary>
+    /// Uninitializes the COM library on the current thread.
+    /// </summary>
     [DllImport("ole32.dll")]
     public static extern void CoUninitialize();
 
-    // CoRegisterClassObject() is used to register a Class Factory
-    // into COM's internal table of Class Factories.
+    /// <summary>
+    /// Registers a class factory with COM.
+    /// </summary>
     [DllImport("ole32.dll")]
     public static extern int CoRegisterClassObject([In] ref Guid rclsid,
       [MarshalAs(UnmanagedType.IUnknown)] object pUnk, uint dwClsContext,
       uint flags, out uint lpdwRegister);
 
-    // Called by an COM EXE Server that can register multiple class objects
-    // to inform COM about all registered classes, and permits activation
-    // requests for those class objects.
-    // This function causes OLE to inform the SCM about all the registered
-    // classes, and begins letting activation requests into the server process.
+    /// <summary>
+    /// Informs COM that all registered class objects are ready to receive activation requests.
+    /// </summary>
+    /// <remarks>
+    /// Called by an COM EXE Server that can register multiple class objects
+    /// to inform COM about all registered classes, and permits activation
+    /// requests for those class objects.
+    /// This function causes OLE to inform the SCM about all the registered
+    /// classes, and begins letting activation requests into the server process.
+    /// </remarks>
     [DllImport("ole32.dll")]
     public static extern int CoResumeClassObjects();
 
@@ -68,48 +80,95 @@ namespace Altaxo.UnmanagedApi.Ole32
     [DllImport("ole32.dll")]
     public static extern int CoRevokeClassObject(uint dwRegister);
 
+    /// <summary>
+    /// Disconnects an object from all its external connections.
+    /// </summary>
+    /// <param name="pUnk">The object to disconnect.</param>
+    /// <param name="dwReserved">Reserved. Must be zero.</param>
     [DllImport("ole32.dll", ExactSpelling = true, PreserveSig = false)]
     public static extern void CoDisconnectObject([MarshalAs(UnmanagedType.IUnknown)] object pUnk, uint dwReserved);
 
+    /// <summary>
+    /// Creates a data advise holder object.
+    /// </summary>
     [DllImport("ole32.dll")]
     public static extern int CreateDataAdviseHolder(out IDataAdviseHolder ppDAHolder);
 
+    /// <summary>
+    /// Creates an OLE advise holder object.
+    /// </summary>
     [DllImport("ole32.dll")]
     public static extern int CreateOleAdviseHolder([MarshalAs(UnmanagedType.Interface)] out IOleAdviseHolder ppOAHolder);
 
+    /// <summary>
+    /// Retrieves a user-readable type name from the registry.
+    /// </summary>
     [DllImport("ole32.dll")]
     public static extern int OleRegGetUserType([In] ref Guid clsid, uint dwFormOfType, [Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszUserType);
 
+    /// <summary>
+    /// Writes a class identifier to a storage object.
+    /// </summary>
     [DllImport("ole32.dll", ExactSpelling = true, PreserveSig = false)]
     public static extern void WriteClassStg(IStorage pStg, [In, MarshalAs(UnmanagedType.LPStruct)] Guid rclsid);
 
+    /// <summary>
+    /// Retrieves the running object table.
+    /// </summary>
     [DllImport("ole32.dll")]
     public static extern int GetRunningObjectTable(uint reserved, out IRunningObjectTable pprot);
 
+    /// <summary>
+    /// Creates a bind context.
+    /// </summary>
     [DllImport("Ole32.dll", EntryPoint = "CreateBindCtx", CharSet = CharSet.Auto)]
     public static extern int CreateBindCtx(uint reserved, out IBindCtx bc);
 
+    /// <summary>
+    /// Retrieves the current system time as a COM file time.
+    /// </summary>
     [DllImport("ole32.dll", ExactSpelling = true, PreserveSig = false)]
     public static extern void CoFileTimeNow(out System.Runtime.InteropServices.ComTypes.FILETIME time);
 
+    /// <summary>
+    /// Creates a file moniker.
+    /// </summary>
     [DllImport("ole32.dll")]
     public static extern int CreateFileMoniker([MarshalAs(UnmanagedType.LPWStr)] string lpszPathName, out IMoniker ppmk);
 
+    /// <summary>
+    /// Creates an item moniker.
+    /// </summary>
     [DllImport("ole32.dll")]
     public static extern int CreateItemMoniker([MarshalAs(UnmanagedType.LPWStr)] string lpszDelim, [MarshalAs(UnmanagedType.LPWStr)] string lpszItem, out System.Runtime.InteropServices.ComTypes.IMoniker ppmk);
 
+    /// <summary>
+    /// Creates a composite moniker from two monikers.
+    /// </summary>
     [DllImport("ole32.dll")]
     public static extern int CreateGenericComposite(IMoniker pmkFirst, IMoniker pmkRest, out IMoniker ppmkComposite);
 
+    /// <summary>
+    /// Saves an object to a stream.
+    /// </summary>
     [DllImport("ole32.dll")]
     public static extern int OleSaveToStream(IPersistStream pPStm, IStream pStm);
 
+    /// <summary>
+    /// Determines whether the specified data object is on the clipboard.
+    /// </summary>
     [DllImport("ole32.dll")]
-    public static extern int OleIsCurrentClipboard([In]IDataObject pDataObject);
+    public static extern int OleIsCurrentClipboard([In] IDataObject pDataObject);
 
+    /// <summary>
+    /// Creates a stream object on a global memory handle.
+    /// </summary>
     [DllImport("ole32.dll")]
     public static extern int CreateStreamOnHGlobal(IntPtr hGlobal, bool fDeleteOnRelease, out IStream ppstm);
 
+    /// <summary>
+    /// Opens an existing structured storage object.
+    /// </summary>
     [DllImport("ole32.dll")]
     public static extern int StgOpenStorage([MarshalAs(UnmanagedType.LPWStr)] string pwcsName, IStorage? pstgPriority, STGM grfmode, IntPtr snbExclude, uint researved, out IStorage ppstgOpen);
   }

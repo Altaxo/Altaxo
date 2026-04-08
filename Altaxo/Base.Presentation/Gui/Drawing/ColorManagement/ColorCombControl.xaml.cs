@@ -30,6 +30,9 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
+  /// <summary>
+  /// Displays a honeycomb color picker.
+  /// </summary>
   public partial class ColorCombControl : UserControl
   {
     private Color _selectedColor;
@@ -37,6 +40,9 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     //
     // Initialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColorCombControl"/> class.
+    /// </summary>
     public ColorCombControl()
     {
       InitializeComponent();
@@ -47,6 +53,9 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     //
     // Interface
 
+    /// <summary>
+    /// Gets or sets the selected color.
+    /// </summary>
     public Color SelectedColor
     {
       get
@@ -55,6 +64,9 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       { _selectedColor = value; }
     }
 
+    /// <summary>
+    /// Occurs when a color is selected.
+    /// </summary>
     public event EventHandler<ColorEventArgs>? ColorSelected;
 
     //
@@ -253,14 +265,27 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     }
   }
 
+  /// <summary>
+  /// Hexagonal button used by <see cref="ColorCombControl"/>.
+  /// </summary>
   public class HexagonButton : Button
   {
+    /// <summary>
+    /// The radius of a hexagon button.
+    /// </summary>
     public const double Radius = 12d; // matches pathgeometry coded in XAML
+    /// <summary>
+    /// The center-to-center offset between neighboring hexagon buttons.
+    /// </summary>
     public static readonly double Offset = Radius * 2 * Math.Cos(30d * Math.PI / 180d) + 1.5;
 
     //
     // Interface
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HexagonButton"/> class.
+    /// </summary>
+    /// <param name="style">The button style.</param>
     public HexagonButton(Style style)
     {
       Style = style;
@@ -269,6 +294,9 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       _nominalColor = Color.FromScRgb(1f, 1f, 1f, 1f);
     }
 
+    /// <summary>
+    /// Gets or sets the nominal color of the button.
+    /// </summary>
     public Color NominalColor
     {
       get
@@ -313,18 +341,21 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       return lgb;
     }
 
+    /// <inheritdoc/>
     protected override void OnMouseEnter(System.Windows.Input.MouseEventArgs e)
     {
       base.OnMouseEnter(e);
       Background = ConstructBackgroundGradient(0.2f);
     }
 
+    /// <inheritdoc/>
     protected override void OnMouseLeave(System.Windows.Input.MouseEventArgs e)
     {
       base.OnMouseLeave(e);
       Background = ConstructBackgroundGradient(0.5f);
     }
 
+    /// <inheritdoc/>
     protected override void OnIsPressedChanged(DependencyPropertyChangedEventArgs e)
     {
       base.OnIsPressedChanged(e);
@@ -339,18 +370,31 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     }
   }
 
+  /// <summary>
+  /// Provides color data for color-selection events.
+  /// </summary>
   public class ColorEventArgs : EventArgs
   {
     private Color _color;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColorEventArgs"/> class.
+    /// </summary>
     public ColorEventArgs()
     { }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColorEventArgs"/> class.
+    /// </summary>
+    /// <param name="c">The selected color.</param>
     public ColorEventArgs(Color c)
     {
       _color = c;
     }
 
+    /// <summary>
+    /// Gets or sets the selected color.
+    /// </summary>
     public Color Color
     {
       get

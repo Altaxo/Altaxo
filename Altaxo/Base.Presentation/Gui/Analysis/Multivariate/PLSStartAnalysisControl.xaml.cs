@@ -37,6 +37,9 @@ namespace Altaxo.Gui.Worksheet
   /// </summary>
   public partial class PLSStartAnalysisControl : UserControl, IPLSStartAnalysisView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PLSStartAnalysisControl"/> class.
+    /// </summary>
     public PLSStartAnalysisControl()
     {
       InitializeComponent();

@@ -25,11 +25,25 @@ namespace Clipper2Lib
   // Vertex: a pre-clipping data structure. It is used to separate polygons
   // into ascending and descending 'bounds' (or sides) that start at local
   // minima and ascend to a local maxima, before descending again.
+  /// <summary>
+  /// Indicates the result of a point-in-polygon test.
+  /// </summary>
   [Flags]
   public enum PointInPolygonResult
   {
+    /// <summary>
+    /// The point lies on the polygon boundary.
+    /// </summary>
     IsOn = 0,
+
+    /// <summary>
+    /// The point lies inside the polygon.
+    /// </summary>
     IsInside = 1,
+
+    /// <summary>
+    /// The point lies outside the polygon.
+    /// </summary>
     IsOutside = 2
   }
 
@@ -329,27 +343,47 @@ namespace Clipper2Lib
     }
   }
 
+  /// <summary>
+  /// Stores reusable integer clipping input data for repeated executions.
+  /// </summary>
   public class ReuseableDataContainer64
   {
     internal readonly List<LocalMinima> _minimaList;
     internal readonly VertexPoolList _vertexList;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ReuseableDataContainer64"/> class.
+    /// </summary>
     public ReuseableDataContainer64()
     {
       _minimaList = new List<LocalMinima>();
       _vertexList = new VertexPoolList();
     }
+
+    /// <summary>
+    /// Removes all cached path data from this container.
+    /// </summary>
     public void Clear()
     {
       _minimaList.Clear();
       _vertexList.Clear();
     }
 
+    /// <summary>
+    /// Adds paths to the reusable input container.
+    /// </summary>
+    /// <param name="paths">The paths to add.</param>
+    /// <param name="pt">The path role in the clipping operation.</param>
+    /// <param name="isOpen">Set to <see langword="true"/> when the paths are open.</param>
     public void AddPaths(Paths64 paths, PathType pt, bool isOpen)
     {
       ClipperEngine.AddPathsToVertexList(paths, pt, isOpen, _minimaList, _vertexList);
     }
   }
 
+  /// <summary>
+  /// Provides the core integer clipping engine shared by the concrete clipper implementations.
+  /// </summary>
   public class ClipperBase
   {
     private ClipType _cliptype;
@@ -371,16 +405,37 @@ namespace Clipper2Lib
     private bool _hasOpenPaths;
     internal bool _using_polytree;
     internal bool _succeeded;
+    /// <summary>
+    /// Gets or sets a value indicating whether collinear edges should be preserved.
+    /// </summary>
     public bool PreserveCollinear { get; set; }
+    /// <summary>
+    /// Gets or sets a value indicating whether the output polygon orientation is reversed.
+    /// </summary>
     public bool ReverseSolution { get; set; }
 
 #if USINGZ
+    /// <summary>
+    /// Represents a callback that assigns a Z value to an intersection point.
+    /// </summary>
+    /// <param name="bot1">The lower point of the first segment.</param>
+    /// <param name="top1">The upper point of the first segment.</param>
+    /// <param name="bot2">The lower point of the second segment.</param>
+    /// <param name="top2">The upper point of the second segment.</param>
+    /// <param name="intersectPt">The intersection point whose Z value can be updated.</param>
     public delegate void ZCallback64(Point64 bot1, Point64 top1,
         Point64 bot2, Point64 top2, ref Point64 intersectPt);
 
+    /// <summary>
+    /// Gets or sets the default Z value used when no vertex Z value can be inferred.
+    /// </summary>
     public long DefaultZ { get; set; }
     protected ZCallback64? _zCallback;
 #endif
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ClipperBase"/> class.
+    /// </summary>
     public ClipperBase()
     {
       _minimaList = new List<LocalMinima>();
@@ -756,6 +811,9 @@ namespace Clipper2Lib
       return (inode.edge1.nextInAEL == inode.edge2) || (inode.edge1.prevInAEL == inode.edge2);
     }
 
+    /// <summary>
+    /// Clears solution-only state while preserving the added input paths.
+    /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected void ClearSolutionOnly()
     {
@@ -769,6 +827,9 @@ namespace Clipper2Lib
       _freeActives.Clear();
     }
 
+    /// <summary>
+    /// Clears all input and solution state from the clipper.
+    /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Clear()
     {
@@ -780,6 +841,9 @@ namespace Clipper2Lib
       _hasOpenPaths = false;
     }
 
+    /// <summary>
+    /// Resets the engine before execution using the currently stored input paths.
+    /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected void Reset()
     {
@@ -838,24 +902,42 @@ namespace Clipper2Lib
       return _minimaList[_currentLocMin++];
     }
 
+    /// <summary>
+    /// Adds a subject path.
+    /// </summary>
+    /// <param name="path">The subject path to add.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void AddSubject(Path64 path)
     {
       AddPath(path, PathType.Subject);
     }
 
+    /// <summary>
+    /// Adds an open subject path.
+    /// </summary>
+    /// <param name="path">The open subject path to add.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void AddOpenSubject(Path64 path)
     {
       AddPath(path, PathType.Subject, true);
     }
 
+    /// <summary>
+    /// Adds a clip path.
+    /// </summary>
+    /// <param name="path">The clip path to add.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void AddClip(Path64 path)
     {
       AddPath(path, PathType.Clip);
     }
 
+    /// <summary>
+    /// Adds a single path with the specified role.
+    /// </summary>
+    /// <param name="path">The path to add.</param>
+    /// <param name="polytype">The path role in the clipping operation.</param>
+    /// <param name="isOpen">Set to <see langword="true"/> when the path is open.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected void AddPath(Path64 path, PathType polytype, bool isOpen = false)
     {
@@ -863,6 +945,12 @@ namespace Clipper2Lib
       AddPaths(tmp, polytype, isOpen);
     }
 
+    /// <summary>
+    /// Adds multiple paths with the specified role.
+    /// </summary>
+    /// <param name="paths">The paths to add.</param>
+    /// <param name="polytype">The path role in the clipping operation.</param>
+    /// <param name="isOpen">Set to <see langword="true"/> when the paths are open.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected void AddPaths(Paths64 paths, PathType polytype, bool isOpen = false)
     {
@@ -871,6 +959,10 @@ namespace Clipper2Lib
       ClipperEngine.AddPathsToVertexList(paths, polytype, isOpen, _minimaList, _vertexList);
     }
 
+    /// <summary>
+    /// Adds preprocessed reusable input data to the clipper.
+    /// </summary>
+    /// <param name="reuseableData">The reusable input container.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected void AddReuseableData(ReuseableDataContainer64 reuseableData)
     {
@@ -1873,6 +1965,11 @@ namespace Clipper2Lib
       }
     }
 
+    /// <summary>
+    /// Executes the clipping engine using the currently added input data.
+    /// </summary>
+    /// <param name="ct">The clipping operation to perform.</param>
+    /// <param name="fillRule">The fill rule used during clipping.</param>
     protected void ExecuteInternal(ClipType ct, FillRule fillRule)
     {
       if (ct == ClipType.NoClip) return;
@@ -3032,6 +3129,12 @@ namespace Clipper2Lib
       return path.Count != 3 || isOpen || !IsVerySmallTriangle(op2);
     }
 
+    /// <summary>
+    /// Builds closed and open output paths from the current solution state.
+    /// </summary>
+    /// <param name="solutionClosed">Receives the closed solution paths.</param>
+    /// <param name="solutionOpen">Receives the open solution paths.</param>
+    /// <returns><see langword="true"/> when path construction succeeds.</returns>
     protected bool BuildPaths(Paths64 solutionClosed, Paths64 solutionOpen)
     {
       solutionClosed.Clear();
@@ -3130,6 +3233,11 @@ namespace Clipper2Lib
         outrec.polypath = polypath.AddChild(outrec.path);
     }
 
+    /// <summary>
+    /// Builds a solution polytree and any open output paths from the current solution state.
+    /// </summary>
+    /// <param name="polytree">Receives the hierarchical polygon solution.</param>
+    /// <param name="solutionOpen">Receives the open solution paths.</param>
     protected void BuildTree(PolyPathBase polytree, Paths64 solutionOpen)
     {
       polytree.Clear();
@@ -3159,6 +3267,10 @@ namespace Clipper2Lib
     }
 
 
+    /// <summary>
+    /// Gets the bounds of all currently added input geometry.
+    /// </summary>
+    /// <returns>The bounds of the input geometry.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Rect64 GetBounds()
     {
@@ -3181,6 +3293,9 @@ namespace Clipper2Lib
   } // ClipperBase class
 
 
+  /// <summary>
+  /// Performs clipping operations on integer coordinates.
+  /// </summary>
   public class Clipper64 : ClipperBase
   {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -3189,6 +3304,10 @@ namespace Clipper2Lib
       base.AddPath(path, polytype, isOpen);
     }
 
+    /// <summary>
+    /// Adds reusable preprocessed input data.
+    /// </summary>
+    /// <param name="reuseableData">The reusable input container.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public new void AddReuseableData(ReuseableDataContainer64 reuseableData)
     {
@@ -3201,24 +3320,44 @@ namespace Clipper2Lib
       base.AddPaths(paths, polytype, isOpen);
     }
 
+    /// <summary>
+    /// Adds subject paths.
+    /// </summary>
+    /// <param name="paths">The subject paths to add.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void AddSubject(Paths64 paths)
     {
       AddPaths(paths, PathType.Subject);
     }
 
+    /// <summary>
+    /// Adds open subject paths.
+    /// </summary>
+    /// <param name="paths">The open subject paths to add.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void AddOpenSubject(Paths64 paths)
     {
       AddPaths(paths, PathType.Subject, true);
     }
 
+    /// <summary>
+    /// Adds clip paths.
+    /// </summary>
+    /// <param name="paths">The clip paths to add.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void AddClip(Paths64 paths)
     {
       AddPaths(paths, PathType.Clip);
     }
 
+    /// <summary>
+    /// Executes the clipper and returns closed and open integer output paths.
+    /// </summary>
+    /// <param name="clipType">The clipping operation to perform.</param>
+    /// <param name="fillRule">The fill rule used during clipping.</param>
+    /// <param name="solutionClosed">Receives the closed solution paths.</param>
+    /// <param name="solutionOpen">Receives the open solution paths.</param>
+    /// <returns><see langword="true"/> when execution succeeds.</returns>
     public bool Execute(ClipType clipType, FillRule fillRule,
         Paths64 solutionClosed, Paths64 solutionOpen)
     {
@@ -3238,12 +3377,27 @@ namespace Clipper2Lib
       return _succeeded;
     }
 
+    /// <summary>
+    /// Executes the clipper and returns closed integer output paths.
+    /// </summary>
+    /// <param name="clipType">The clipping operation to perform.</param>
+    /// <param name="fillRule">The fill rule used during clipping.</param>
+    /// <param name="solutionClosed">Receives the closed solution paths.</param>
+    /// <returns><see langword="true"/> when execution succeeds.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool Execute(ClipType clipType, FillRule fillRule, Paths64 solutionClosed)
     {
       return Execute(clipType, fillRule, solutionClosed, new Paths64());
     }
 
+    /// <summary>
+    /// Executes the clipper and returns a hierarchical integer solution plus open paths.
+    /// </summary>
+    /// <param name="clipType">The clipping operation to perform.</param>
+    /// <param name="fillRule">The fill rule used during clipping.</param>
+    /// <param name="polytree">Receives the hierarchical closed solution.</param>
+    /// <param name="openPaths">Receives the open solution paths.</param>
+    /// <returns><see langword="true"/> when execution succeeds.</returns>
     public bool Execute(ClipType clipType, FillRule fillRule, PolyTree64 polytree, Paths64 openPaths)
     {
       polytree.Clear();
@@ -3263,6 +3417,13 @@ namespace Clipper2Lib
       return _succeeded;
     }
 
+    /// <summary>
+    /// Executes the clipper and returns a hierarchical integer solution.
+    /// </summary>
+    /// <param name="clipType">The clipping operation to perform.</param>
+    /// <param name="fillRule">The fill rule used during clipping.</param>
+    /// <param name="polytree">Receives the hierarchical closed solution.</param>
+    /// <returns><see langword="true"/> when execution succeeds.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool Execute(ClipType clipType, FillRule fillRule, PolyTree64 polytree)
     {
@@ -3270,6 +3431,9 @@ namespace Clipper2Lib
     }
 
 #if USINGZ
+    /// <summary>
+    /// Gets or sets the callback used to assign Z values during integer clipping.
+    /// </summary>
     public ZCallback64? ZCallback {
       get { return this._zCallback; }
       set { this._zCallback = value; } 
@@ -3278,6 +3442,9 @@ namespace Clipper2Lib
 
   } // Clipper64 class
 
+  /// <summary>
+  /// Performs clipping operations on floating-point coordinates using scaled integer arithmetic internally.
+  /// </summary>
   public class ClipperD : ClipperBase
   {
     private const string precision_range_error = "Error: Precision is out of range.";
@@ -3286,9 +3453,20 @@ namespace Clipper2Lib
     private readonly double _invScale;
 
 #if USINGZ
+    /// <summary>
+    /// Represents a callback that assigns a Z value to an intersection point for floating-point clipping.
+    /// </summary>
+    /// <param name="bot1">The lower point of the first segment.</param>
+    /// <param name="top1">The upper point of the first segment.</param>
+    /// <param name="bot2">The lower point of the second segment.</param>
+    /// <param name="top2">The upper point of the second segment.</param>
+    /// <param name="intersectPt">The intersection point whose Z value can be updated.</param>
     public delegate void ZCallbackD(PointD bot1, PointD top1,
         PointD bot2, PointD top2, ref PointD intersectPt);
 
+    /// <summary>
+    /// Gets or sets the callback used to assign Z values during floating-point clipping.
+    /// </summary>
     public ZCallbackD? ZCallback { get; set; }
 
     private void CheckZCallback()
@@ -3300,6 +3478,10 @@ namespace Clipper2Lib
     }
 #endif
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ClipperD"/> class.
+    /// </summary>
+    /// <param name="roundingDecimalPrecision">The decimal precision used when scaling floating-point coordinates to integers.</param>
     public ClipperD(int roundingDecimalPrecision = 2)
     {
       if (roundingDecimalPrecision < -8 || roundingDecimalPrecision > 8)
@@ -3328,54 +3510,98 @@ namespace Clipper2Lib
     }
 #endif
 
+    /// <summary>
+    /// Adds a floating-point path.
+    /// </summary>
+    /// <param name="path">The path to add.</param>
+    /// <param name="polytype">The path role in the clipping operation.</param>
+    /// <param name="isOpen">Set to <see langword="true"/> when the path is open.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void AddPath(PathD path, PathType polytype, bool isOpen = false)
     {
       base.AddPath(Clipper.ScalePath64(path, _scale), polytype, isOpen);
     }
 
+    /// <summary>
+    /// Adds multiple floating-point paths.
+    /// </summary>
+    /// <param name="paths">The paths to add.</param>
+    /// <param name="polytype">The path role in the clipping operation.</param>
+    /// <param name="isOpen">Set to <see langword="true"/> when the paths are open.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void AddPaths(PathsD paths, PathType polytype, bool isOpen = false)
     {
       base.AddPaths(Clipper.ScalePaths64(paths, _scale), polytype, isOpen);
     }
 
+    /// <summary>
+    /// Adds a subject path.
+    /// </summary>
+    /// <param name="path">The subject path to add.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void AddSubject(PathD path)
     {
       AddPath(path, PathType.Subject);
     }
 
+    /// <summary>
+    /// Adds an open subject path.
+    /// </summary>
+    /// <param name="path">The open subject path to add.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void AddOpenSubject(PathD path)
     {
       AddPath(path, PathType.Subject, true);
     }
 
+    /// <summary>
+    /// Adds a clip path.
+    /// </summary>
+    /// <param name="path">The clip path to add.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void AddClip(PathD path)
     {
       AddPath(path, PathType.Clip);
     }
 
+    /// <summary>
+    /// Adds subject paths.
+    /// </summary>
+    /// <param name="paths">The subject paths to add.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void AddSubject(PathsD paths)
     {
       AddPaths(paths, PathType.Subject);
     }
 
+    /// <summary>
+    /// Adds open subject paths.
+    /// </summary>
+    /// <param name="paths">The open subject paths to add.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void AddOpenSubject(PathsD paths)
     {
       AddPaths(paths, PathType.Subject, true);
     }
 
+    /// <summary>
+    /// Adds clip paths.
+    /// </summary>
+    /// <param name="paths">The clip paths to add.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void AddClip(PathsD paths)
     {
       AddPaths(paths, PathType.Clip);
     }
 
+    /// <summary>
+    /// Executes the clipper and returns closed and open floating-point output paths.
+    /// </summary>
+    /// <param name="clipType">The clipping operation to perform.</param>
+    /// <param name="fillRule">The fill rule used during clipping.</param>
+    /// <param name="solutionClosed">Receives the closed solution paths.</param>
+    /// <param name="solutionOpen">Receives the open solution paths.</param>
+    /// <returns><see langword="true"/> when execution succeeds.</returns>
     public bool Execute(ClipType clipType, FillRule fillRule,
         PathsD solutionClosed, PathsD solutionOpen)
     {
@@ -3410,12 +3636,27 @@ namespace Clipper2Lib
       return true;
     }
 
+    /// <summary>
+    /// Executes the clipper and returns closed floating-point output paths.
+    /// </summary>
+    /// <param name="clipType">The clipping operation to perform.</param>
+    /// <param name="fillRule">The fill rule used during clipping.</param>
+    /// <param name="solutionClosed">Receives the closed solution paths.</param>
+    /// <returns><see langword="true"/> when execution succeeds.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool Execute(ClipType clipType, FillRule fillRule, PathsD solutionClosed)
     {
       return Execute(clipType, fillRule, solutionClosed, new PathsD());
     }
 
+    /// <summary>
+    /// Executes the clipper and returns a hierarchical floating-point solution plus open paths.
+    /// </summary>
+    /// <param name="clipType">The clipping operation to perform.</param>
+    /// <param name="fillRule">The fill rule used during clipping.</param>
+    /// <param name="polytree">Receives the hierarchical closed solution.</param>
+    /// <param name="openPaths">Receives the open solution paths.</param>
+    /// <returns><see langword="true"/> when execution succeeds.</returns>
     public bool Execute(ClipType clipType, FillRule fillRule, PolyTreeD polytree, PathsD openPaths)
     {
       polytree.Clear();
@@ -3446,12 +3687,22 @@ namespace Clipper2Lib
       return true;
     }
 
+    /// <summary>
+    /// Executes the clipper and returns a hierarchical floating-point solution.
+    /// </summary>
+    /// <param name="clipType">The clipping operation to perform.</param>
+    /// <param name="fillRule">The fill rule used during clipping.</param>
+    /// <param name="polytree">Receives the hierarchical closed solution.</param>
+    /// <returns><see langword="true"/> when execution succeeds.</returns>
     public bool Execute(ClipType clipType, FillRule fillRule, PolyTreeD polytree)
     {
       return Execute(clipType, fillRule, polytree, new PathsD());
     }
   } // ClipperD class
 
+  /// <summary>
+  /// Represents a node in a polygon tree hierarchy.
+  /// </summary>
   public abstract class PolyPathBase : IEnumerable
   {
     internal PolyPathBase? _parent;
@@ -3459,6 +3710,7 @@ namespace Clipper2Lib
 
 
 
+    /// <inheritdoc />
     public IEnumerator GetEnumerator()
     {
       return new NodeEnumerator(_childs);
@@ -3500,8 +3752,15 @@ namespace Clipper2Lib
 
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this node represents a hole.
+    /// </summary>
     public bool IsHole => GetIsHole();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PolyPathBase"/> class.
+    /// </summary>
+    /// <param name="parent">The parent node, or <see langword="null"/> for the root.</param>
     public PolyPathBase(PolyPathBase? parent = null) { _parent = parent; }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -3513,6 +3772,9 @@ namespace Clipper2Lib
       return result;
     }
 
+    /// <summary>
+    /// Gets the nesting level of this node in the polygon tree.
+    /// </summary>
     public int Level => GetLevel();
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -3522,9 +3784,21 @@ namespace Clipper2Lib
       return lvl != 0 && (lvl & 1) == 0;
     }
 
+    /// <summary>
+    /// Gets the number of child nodes.
+    /// </summary>
     public int Count => _childs.Count;
+
+    /// <summary>
+    /// Adds a child polygon and returns the created node.
+    /// </summary>
+    /// <param name="p">The child polygon to add.</param>
+    /// <returns>The created child node.</returns>
     public abstract PolyPathBase AddChild(Path64 p);
 
+    /// <summary>
+    /// Removes all child nodes.
+    /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Clear()
     {
@@ -3547,6 +3821,7 @@ namespace Clipper2Lib
       return result;
     }
 
+    /// <inheritdoc />
     public override string ToString()
     {
       if (Level > 0) return ""; //only accept tree root 
@@ -3561,14 +3836,28 @@ namespace Clipper2Lib
 
   } // PolyPathBase class
 
+  /// <summary>
+  /// Represents an integer polygon tree node.
+  /// </summary>
   public class PolyPath64 : PolyPathBase
   {
+    /// <summary>
+    /// Gets the polygon stored in this node, or <see langword="null"/> for the tree root.
+    /// </summary>
     public Path64? Polygon { get; private set; } // polytree root's polygon == null
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PolyPath64"/> class.
+    /// </summary>
+    /// <param name="parent">The parent node, or <see langword="null"/> for the root.</param>
     public PolyPath64(PolyPathBase? parent = null) : base(parent) { }
 
+    /// <summary>
+    /// Gets the parent node.
+    /// </summary>
     public PolyPath64? Parent => (PolyPath64?)_parent; // Lellinger 25-11-27 we need the parent if we have a hole
 
+    /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override PolyPathBase AddChild(Path64 p)
     {
@@ -3578,6 +3867,10 @@ namespace Clipper2Lib
       return newChild;
     }
 
+    /// <summary>
+    /// Gets the child node at the specified index.
+    /// </summary>
+    /// <param name="index">The zero-based child index.</param>
     public PolyPath64 this[int index]
     {
       get
@@ -3588,6 +3881,11 @@ namespace Clipper2Lib
       }
     }
 
+    /// <summary>
+    /// Returns the child node at the specified index.
+    /// </summary>
+    /// <param name="index">The zero-based child index.</param>
+    /// <returns>The child node.</returns>
     public PolyPath64 Child(int index)
     {
       if (index < 0 || index >= _childs.Count)
@@ -3596,6 +3894,10 @@ namespace Clipper2Lib
     }
 
 
+    /// <summary>
+    /// Calculates the signed area of this node and all descendant polygons.
+    /// </summary>
+    /// <returns>The accumulated signed area.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public double Area()
     {
@@ -3608,13 +3910,25 @@ namespace Clipper2Lib
       return result;
     }
   }
+  /// <summary>
+  /// Represents a floating-point polygon tree node.
+  /// </summary>
   public class PolyPathD : PolyPathBase
   {
     internal double Scale { get; set; }
+
+    /// <summary>
+    /// Gets the polygon stored in this node, or <see langword="null"/> for the tree root.
+    /// </summary>
     public PathD? Polygon { get; private set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PolyPathD"/> class.
+    /// </summary>
+    /// <param name="parent">The parent node, or <see langword="null"/> for the root.</param>
     public PolyPathD(PolyPathBase? parent = null) : base(parent) { }
 
+    /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override PolyPathBase AddChild(Path64 p)
     {
@@ -3625,6 +3939,11 @@ namespace Clipper2Lib
       return newChild;
     }
 
+    /// <summary>
+    /// Adds a floating-point child polygon and returns the created node.
+    /// </summary>
+    /// <param name="p">The child polygon to add.</param>
+    /// <returns>The created child node.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public PolyPathBase AddChild(PathD p)
     {
@@ -3635,6 +3954,10 @@ namespace Clipper2Lib
       return newChild;
     }
 
+    /// <summary>
+    /// Gets the child node at the specified index.
+    /// </summary>
+    /// <param name="index">The zero-based child index.</param>
     [IndexerName("Child")]
     public PolyPathD this[int index]
     {
@@ -3645,6 +3968,10 @@ namespace Clipper2Lib
         return (PolyPathD)_childs[index];
       }
     }
+    /// <summary>
+    /// Calculates the signed area of this node and all descendant polygons.
+    /// </summary>
+    /// <returns>The accumulated signed area.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public double Area()
     {
@@ -3658,15 +3985,31 @@ namespace Clipper2Lib
     }
   }
 
+  /// <summary>
+  /// Represents the root of an integer polygon tree.
+  /// </summary>
   public class PolyTree64 : PolyPath64 { }
 
+  /// <summary>
+  /// Represents the root of a floating-point polygon tree.
+  /// </summary>
   public class PolyTreeD : PolyPathD
   {
+    /// <summary>
+    /// Gets the scale factor used to convert between stored integer coordinates and floating-point coordinates.
+    /// </summary>
     public new double Scale => base.Scale;
   }
 
+  /// <summary>
+  /// Represents errors raised by the Clipper library.
+  /// </summary>
   public class ClipperLibException : Exception
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ClipperLibException"/> class.
+    /// </summary>
+    /// <param name="description">The error description.</param>
     public ClipperLibException(string description) : base(description) { }
   }
 } // namespace

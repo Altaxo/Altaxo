@@ -38,6 +38,9 @@ namespace Altaxo.Com
   using UnmanagedApi.Kernel32;
   using UnmanagedApi.Ole32;
 
+  /// <summary>
+  /// Provides clipboard and drag-and-drop data for graph documents.
+  /// </summary>
   public class GraphDocumentDataObject : DataObjectBase, System.Runtime.InteropServices.ComTypes.IDataObject
   {
     private ManagedDataAdviseHolder _dataAdviseHolder;
@@ -49,6 +52,12 @@ namespace Altaxo.Com
     private string _graphDocumentDropdownFileName;
     private ClipboardRenderingOptions _graphExportOptions;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GraphDocumentDataObject"/> class.
+    /// </summary>
+    /// <param name="graphDocument">The graph document.</param>
+    /// <param name="fileComObject">The project file COM object.</param>
+    /// <param name="comManager">The COM manager.</param>
     public GraphDocumentDataObject(GraphDocumentBase graphDocument, ProjectFileComObject fileComObject, ComManager comManager)
       : base(comManager)
     {
@@ -95,6 +104,9 @@ namespace Altaxo.Com
       }
     }
 
+    /// <summary>
+    /// Finalizes an instance of the <see cref="GraphDocumentDataObject"/> class.
+    /// </summary>
     ~GraphDocumentDataObject()
     {
       ComDebug.ReportInfo("{0} destructor.", GetType().Name);
@@ -108,6 +120,7 @@ namespace Altaxo.Com
 
     #region Base class overrides
 
+    /// <inheritdoc/>
     protected override IList<Rendering> Renderings
     {
       get
@@ -152,6 +165,7 @@ namespace Altaxo.Com
       }
     }
 
+    /// <inheritdoc/>
     public override void ConvertToNetDataObjectAndPutToClipboard()
     {
       var result = new System.Windows.Forms.DataObject();
@@ -231,11 +245,13 @@ namespace Altaxo.Com
       }
     }
 
+    /// <inheritdoc/>
     protected override ManagedDataAdviseHolder DataAdviseHolder
     {
       get { return _dataAdviseHolder; }
     }
 
+    /// <inheritdoc/>
     protected override bool InternalGetDataHere(ref System.Runtime.InteropServices.ComTypes.FORMATETC format, ref System.Runtime.InteropServices.ComTypes.STGMEDIUM medium)
     {
       if (format.cfFormat == DataObjectHelper.CF_EMBEDSOURCE && (format.tymed & TYMED.TYMED_ISTORAGE) != 0)
@@ -406,6 +422,11 @@ namespace Altaxo.Com
       return DataObjectHelper.RenderMonikerToNewStream(tymed, CreateNewDocumentMoniker());
     }
 
+    /// <summary>
+    /// Gets the OLE miscellaneous status flags for the specified aspect.
+    /// </summary>
+    /// <param name="aspect">The requested draw aspect.</param>
+    /// <returns>The OLE miscellaneous status flags.</returns>
     public static int MiscStatus(int aspect)
     {
       int misc = (int)OLEMISC.OLEMISC_CANTLINKINSIDE;
@@ -417,11 +438,22 @@ namespace Altaxo.Com
       return misc;
     }
 
+    /// <summary>
+    /// Renders the embedded object descriptor for the current graph document.
+    /// </summary>
+    /// <param name="tymed">The storage medium to use.</param>
+    /// <returns>A handle to the rendered descriptor.</returns>
     public IntPtr RenderEmbeddedObjectDescriptor(TYMED tymed)
     {
       return RenderEmbeddedObjectDescriptor(tymed, _graphDocumentSize);
     }
 
+    /// <summary>
+    /// Renders an embedded object descriptor for the specified graph size.
+    /// </summary>
+    /// <param name="tymed">The storage medium to use.</param>
+    /// <param name="graphDocumentSize">The graph document size.</param>
+    /// <returns>A handle to the rendered descriptor.</returns>
     public static IntPtr RenderEmbeddedObjectDescriptor(TYMED tymed, PointD2D graphDocumentSize)
     {
       ComDebug.ReportInfo("GraphDocumentDataObject.RenderEmbeddedObjectDescriptor");
@@ -471,6 +503,11 @@ namespace Altaxo.Com
       return hod;
     }
 
+    /// <summary>
+    /// Renders a linked object descriptor.
+    /// </summary>
+    /// <param name="tymed">The storage medium to use.</param>
+    /// <returns>A handle to the rendered descriptor.</returns>
     public static IntPtr RenderLinkedObjectDescriptor(TYMED tymed)
     {
       ComDebug.ReportInfo("GraphDocumentDataObject.RenderLinkedObjectDescriptor");
@@ -542,6 +579,12 @@ namespace Altaxo.Com
       return documentMoniker;
     }
 
+    /// <summary>
+    /// Saves a mini project into the specified storage.
+    /// </summary>
+    /// <param name="pStgSave">The destination storage.</param>
+    /// <param name="projectToSave">The project to save.</param>
+    /// <param name="graphDocumentName">The graph document name.</param>
     public static void InternalSaveMiniProject(IStorage pStgSave, AltaxoDocument projectToSave, string graphDocumentName)
     {
       ComDebug.ReportInfo("GraphDocumentDataObject.InternalSaveMiniProject BEGIN");

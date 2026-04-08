@@ -276,30 +276,60 @@ namespace Altaxo.Calc.LinearAlgebra
       return dividend.PointwiseRemainder(divisor);
     }
 
+    /// <summary>
+    /// Pointwise multiplies two matrices.
+    /// </summary>
+    /// <param name="x">The left matrix.</param>
+    /// <param name="y">The right matrix.</param>
+    /// <returns>A matrix containing the pointwise multiplication results.</returns>
     [SpecialName]
     public static Matrix<T> op_DotMultiply(Matrix<T> x, Matrix<T> y)
     {
       return x.PointwiseMultiply(y);
     }
 
+    /// <summary>
+    /// Pointwise divides one matrix by another.
+    /// </summary>
+    /// <param name="dividend">The matrix to divide.</param>
+    /// <param name="divisor">The matrix providing the divisors.</param>
+    /// <returns>A matrix containing the pointwise division results.</returns>
     [SpecialName]
     public static Matrix<T> op_DotDivide(Matrix<T> dividend, Matrix<T> divisor)
     {
       return dividend.PointwiseDivide(divisor);
     }
 
+    /// <summary>
+    /// Computes the pointwise remainder of two matrices.
+    /// </summary>
+    /// <param name="dividend">The matrix whose elements are used as dividends.</param>
+    /// <param name="divisor">The matrix whose elements are used as divisors.</param>
+    /// <returns>A matrix containing the pointwise remainder results.</returns>
     [SpecialName]
     public static Matrix<T> op_DotPercent(Matrix<T> dividend, Matrix<T> divisor)
     {
       return dividend.PointwiseRemainder(divisor);
     }
 
+    /// <summary>
+    /// Raises each matrix element to the corresponding matrix exponent.
+    /// </summary>
+    /// <param name="matrix">The base matrix.</param>
+    /// <param name="exponent">The matrix containing the exponents.</param>
+    /// <returns>A matrix containing the pointwise power results.</returns>
     [SpecialName]
     public static Matrix<T> op_DotHat(Matrix<T> matrix, Matrix<T> exponent)
     {
       return matrix.PointwisePower(exponent);
     }
 
+    /// <summary>
+    /// Raises each matrix element to the same exponent.
+    /// </summary>
+    /// <param name="matrix">The base matrix.</param>
+    /// <param name="exponent">The exponent applied to each element.</param>
+    /// <returns>A matrix containing the pointwise power results.</returns>
     [SpecialName]
     public static Matrix<T> op_DotHat(Matrix<T> matrix, T exponent)
     {
@@ -310,7 +340,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes the sqrt of a matrix pointwise
     /// </summary>
     /// <param name="x">The input matrix</param>
-    /// <returns></returns>
+    /// <returns>A matrix containing the pointwise square root of <paramref name="x"/>.</returns>
     public static Matrix<T> Sqrt(Matrix<T> x)
     {
       return x.PointwiseSqrt();
@@ -320,7 +350,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes the exponential of a matrix pointwise
     /// </summary>
     /// <param name="x">The input matrix</param>
-    /// <returns></returns>
+    /// <returns>A matrix containing the pointwise exponential of <paramref name="x"/>.</returns>
     public static Matrix<T> Exp(Matrix<T> x)
     {
       return x.PointwiseExp();
@@ -330,7 +360,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes the log of a matrix pointwise
     /// </summary>
     /// <param name="x">The input matrix</param>
-    /// <returns></returns>
+    /// <returns>A matrix containing the pointwise natural logarithm of <paramref name="x"/>.</returns>
     public static Matrix<T> Log(Matrix<T> x)
     {
       return x.PointwiseLog();
@@ -340,7 +370,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes the log10 of a matrix pointwise
     /// </summary>
     /// <param name="x">The input matrix</param>
-    /// <returns></returns>
+    /// <returns>A matrix containing the pointwise base-10 logarithm of <paramref name="x"/>.</returns>
     public static Matrix<T> Log10(Matrix<T> x)
     {
       return x.PointwiseLog10();
@@ -350,7 +380,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes the sin of a matrix pointwise
     /// </summary>
     /// <param name="x">The input matrix</param>
-    /// <returns></returns>
+    /// <returns>A matrix containing the pointwise sine of <paramref name="x"/>.</returns>
     public static Matrix<T> Sin(Matrix<T> x)
     {
       return x.PointwiseSin();
@@ -360,7 +390,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes the cos of a matrix pointwise
     /// </summary>
     /// <param name="x">The input matrix</param>
-    /// <returns></returns>
+    /// <returns>A matrix containing the pointwise cosine of <paramref name="x"/>.</returns>
     public static Matrix<T> Cos(Matrix<T> x)
     {
       return x.PointwiseCos();
@@ -370,7 +400,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes the tan of a matrix pointwise
     /// </summary>
     /// <param name="x">The input matrix</param>
-    /// <returns></returns>
+    /// <returns>A matrix containing the pointwise tangent of <paramref name="x"/>.</returns>
     public static Matrix<T> Tan(Matrix<T> x)
     {
       return x.PointwiseTan();
@@ -380,7 +410,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes the asin of a matrix pointwise
     /// </summary>
     /// <param name="x">The input matrix</param>
-    /// <returns></returns>
+    /// <returns>A matrix containing the pointwise arcsine of <paramref name="x"/>.</returns>
     public static Matrix<T> Asin(Matrix<T> x)
     {
       return x.PointwiseAsin();
@@ -390,7 +420,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes the acos of a matrix pointwise
     /// </summary>
     /// <param name="x">The input matrix</param>
-    /// <returns></returns>
+    /// <returns>A matrix containing the pointwise arccosine of <paramref name="x"/>.</returns>
     public static Matrix<T> Acos(Matrix<T> x)
     {
       return x.PointwiseAcos();
@@ -400,7 +430,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes the atan of a matrix pointwise
     /// </summary>
     /// <param name="x">The input matrix</param>
-    /// <returns></returns>
+    /// <returns>A matrix containing the pointwise arctangent of <paramref name="x"/>.</returns>
     public static Matrix<T> Atan(Matrix<T> x)
     {
       return x.PointwiseAtan();
@@ -410,7 +440,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes the sinh of a matrix pointwise
     /// </summary>
     /// <param name="x">The input matrix</param>
-    /// <returns></returns>
+    /// <returns>A matrix containing the pointwise hyperbolic sine of <paramref name="x"/>.</returns>
     public static Matrix<T> Sinh(Matrix<T> x)
     {
       return x.PointwiseSinh();
@@ -420,7 +450,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes the cosh of a matrix pointwise
     /// </summary>
     /// <param name="x">The input matrix</param>
-    /// <returns></returns>
+    /// <returns>A matrix containing the pointwise hyperbolic cosine of <paramref name="x"/>.</returns>
     public static Matrix<T> Cosh(Matrix<T> x)
     {
       return x.PointwiseCosh();
@@ -430,7 +460,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes the tanh of a matrix pointwise
     /// </summary>
     /// <param name="x">The input matrix</param>
-    /// <returns></returns>
+    /// <returns>A matrix containing the pointwise hyperbolic tangent of <paramref name="x"/>.</returns>
     public static Matrix<T> Tanh(Matrix<T> x)
     {
       return x.PointwiseTanh();
@@ -440,7 +470,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes the absolute value of a matrix pointwise
     /// </summary>
     /// <param name="x">The input matrix</param>
-    /// <returns></returns>
+    /// <returns>A matrix containing the pointwise absolute value of <paramref name="x"/>.</returns>
     public static Matrix<T> Abs(Matrix<T> x)
     {
       return x.PointwiseAbs();
@@ -450,7 +480,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes the floor of a matrix pointwise
     /// </summary>
     /// <param name="x">The input matrix</param>
-    /// <returns></returns>
+    /// <returns>A matrix containing the pointwise floor of <paramref name="x"/>.</returns>
     public static Matrix<T> Floor(Matrix<T> x)
     {
       return x.PointwiseFloor();
@@ -460,7 +490,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes the ceiling of a matrix pointwise
     /// </summary>
     /// <param name="x">The input matrix</param>
-    /// <returns></returns>
+    /// <returns>A matrix containing the pointwise ceiling of <paramref name="x"/>.</returns>
     public static Matrix<T> Ceiling(Matrix<T> x)
     {
       return x.PointwiseCeiling();
@@ -470,7 +500,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes the rounded value of a matrix pointwise
     /// </summary>
     /// <param name="x">The input matrix</param>
-    /// <returns></returns>
+    /// <returns>A matrix containing the pointwise rounded values of <paramref name="x"/>.</returns>
     public static Matrix<T> Round(Matrix<T> x)
     {
       return x.PointwiseRound();

@@ -31,8 +31,24 @@
 
 namespace Poly2Tri
 {
+  /// <summary>
+  /// Specifies the orientation of three points.
+  /// </summary>
   public enum Orientation
   {
-    CW, CCW, Collinear
+    /// <summary>
+    /// Clockwise orientation.
+    /// </summary>
+    CW,
+
+    /// <summary>
+    /// Counter-clockwise orientation.
+    /// </summary>
+    CCW,
+
+    /// <summary>
+    /// Collinear orientation.
+    /// </summary>
+    Collinear
   }
 }

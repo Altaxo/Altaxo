@@ -31,7 +31,7 @@ namespace Altaxo.Gui.Workbench
   /// integrates with extendable <see cref="IViewContent"/>
   /// interface so that each window has the opportunity to implement a
   /// contextually appropriate navigation scheme.</para>
-  /// <para>The default scheme, <see cref="DefaultNavigationPoint"/>, is
+  /// <para>The default scheme, <c>DefaultNavigationPoint</c>, is
   /// created automatically in the <see cref="AbstractViewContent"/>
   /// implementation.  This scheme supports the basic function of logging a
   /// filename and returning to that file's default view.</para>
@@ -165,6 +165,11 @@ namespace Altaxo.Gui.Workbench
     // TODO: FxCop says "find another way to do this" (ReviewVisibleEventHandlers)
     // we'd have to ask each point that cares to subscribe to the appropriate event
     // listeners in their respective IViewContent implementation's underlying models.
+    /// <summary>
+    /// Notifies all navigation points that content is changing.
+    /// </summary>
+    /// <param name="sender">The sender of the change notification.</param>
+    /// <param name="e">The event arguments.</param>
     public static void ContentChanging(object sender, EventArgs e)
     {
       foreach (INavigationPoint p in _history)

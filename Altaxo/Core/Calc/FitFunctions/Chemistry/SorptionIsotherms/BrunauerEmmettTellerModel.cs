@@ -67,6 +67,10 @@ namespace Altaxo.Calc.FitFunctions.Chemistry.SorptionIsotherms
     #endregion Serialization
 
 
+    /// <summary>
+    /// Creates the fit function.
+    /// </summary>
+    /// <returns>The fit function.</returns>
     [FitFunctionCreator("Mass uptake BET model", "Chemistry/SorptionIsotherms", 1, 1, 3)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Chemistry.SorptionIsotherms.BrunauerEmmettTellerModel}")]
     public static IFitFunction Create()

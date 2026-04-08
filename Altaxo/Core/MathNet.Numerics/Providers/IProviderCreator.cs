@@ -29,8 +29,15 @@
 
 namespace Altaxo.Calc.Providers
 {
+  /// <summary>
+  /// Defines a factory for creating native or managed providers.
+  /// </summary>
   public interface IProviderCreator<T> where T : class
   {
+    /// <summary>
+    /// Creates a provider instance.
+    /// </summary>
+    /// <returns>The created provider instance.</returns>
     public T CreateProvider();
   }
 }

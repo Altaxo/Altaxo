@@ -58,6 +58,10 @@ namespace Altaxo.Calc.LinearAlgebra.Complex.Solvers
     /// </summary>
     private readonly List<Tuple<IIterativeSolver<Complex>, IPreconditioner<Complex>>> _solvers;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CompositeSolver"/> class.
+    /// </summary>
+    /// <param name="solvers">The solver setups to apply in sequence.</param>
     public CompositeSolver(IEnumerable<IIterativeSolverSetup<Complex>> solvers)
     {
       _solvers = solvers.Select(setup => new Tuple<IIterativeSolver<Complex>, IPreconditioner<Complex>>(setup.CreateSolver(), setup.CreatePreconditioner() ?? new UnitPreconditioner<Complex>())).ToList();

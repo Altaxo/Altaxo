@@ -28,6 +28,9 @@ using Altaxo.Collections;
 
 namespace Altaxo.Gui.AddInItems
 {
+  /// <summary>
+  /// Wraps add-in commands and supports lazy command creation.
+  /// </summary>
   public sealed class CommandWrapper : ICommand
   {
     private bool _commandCreated;
@@ -51,7 +54,13 @@ namespace Altaxo.Gui.AddInItems
     /// </summary>
     public static Func<string, ICommand> WellKnownCommandCreator { get; set; }
 
+    /// <summary>
+    /// Gets or sets the callback used to subscribe to condition requery notifications.
+    /// </summary>
     public static Action<EventHandler> RegisterConditionRequerySuggestedHandler { get; set; }
+    /// <summary>
+    /// Gets or sets the callback used to unsubscribe from condition requery notifications.
+    /// </summary>
     public static Action<EventHandler> UnregisterConditionRequerySuggestedHandler { get; set; }
 
     /// <summary>
@@ -87,6 +96,11 @@ namespace Altaxo.Gui.AddInItems
         return new CommandWrapper(command, conditions);
     }
 
+    /// <summary>
+    /// Unwraps the specified command and forces lazy command creation when necessary.
+    /// </summary>
+    /// <param name="command">The command to unwrap.</param>
+    /// <returns>The underlying command instance.</returns>
     public static ICommand Unwrap(ICommand command)
     {
       if (command is CommandWrapper w)
@@ -189,6 +203,7 @@ namespace Altaxo.Gui.AddInItems
       }
     }
 
+    /// <inheritdoc/>
     public event EventHandler CanExecuteChanged
     {
       add
@@ -217,6 +232,7 @@ namespace Altaxo.Gui.AddInItems
       }
     }
 
+    /// <inheritdoc/>
     public void Execute(object parameter)
     {
       EnsureCommandCreated();
@@ -226,6 +242,7 @@ namespace Altaxo.Gui.AddInItems
       }
     }
 
+    /// <inheritdoc/>
     public bool CanExecute(object parameter)
     {
       if (Condition.GetFailedAction(_conditions, parameter) != ConditionFailedAction.Nothing)

@@ -38,6 +38,9 @@ using Complex = System.Numerics.Complex;
 
 namespace Altaxo.Calc
 {
+  /// <summary>
+  /// Provides helper methods to generate numeric samples and sequences.
+  /// </summary>
   public static class Generate
   {
     /// <summary>

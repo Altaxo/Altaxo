@@ -48,7 +48,7 @@ using Altaxo.Scripting;
 namespace Altaxo.Graph.Commands
 {
   /// <summary>
-  /// Provides a abstract class for issuing commands that apply to worksheet controllers.
+  /// Provides an abstract base class for commands that apply to graph controllers.
   /// </summary>
   public abstract class AbstractGraphControllerCommand : SimpleCommand
   {
@@ -64,8 +64,8 @@ namespace Altaxo.Graph.Commands
     }
 
     /// <summary>
-    /// Determines the currently active worksheet and issues the command to that worksheet by calling
-    /// Run with the worksheet as a parameter.
+    /// Determines the currently active graph controller and issues the command to that controller by calling
+    /// <see cref="Run"/> with the controller as a parameter.
     /// </summary>
     public override void Execute(object parameter)
     {
@@ -77,10 +77,9 @@ namespace Altaxo.Graph.Commands
     }
 
     /// <summary>
-    /// Override this function for adding own worksheet commands. You will get
-    /// the worksheet controller in the parameter.
+    /// Override this function to implement custom graph commands.
     /// </summary>
-    /// <param name="ctrl">The worksheet controller this command is applied to.</param>
+    /// <param name="ctrl">The graph controller this command is applied to.</param>
     public abstract void Run(GraphController ctrl);
   }
 
@@ -89,6 +88,7 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class Print : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.Doc.ShowPrintDialogAndPrint();
@@ -100,6 +100,7 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class PrintOptionsSetup : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.Doc.ShowPrintOptionsDialog();
@@ -111,6 +112,7 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class SetCopyPageOptions : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.Doc.ShowCopyPageOptionsDialog();
@@ -122,6 +124,7 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class ResizeGraph : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       Altaxo.Gui.Graph.Graph2D.ResizeGraphController.ShowResizeGraphDialog(ctrl.Doc);
@@ -133,6 +136,7 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class CopyPage : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       //ctrl.Doc.CopyToClipboardAsImage();
@@ -145,6 +149,7 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class CopyPageAsBitmap150dpiARGB : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.Doc.CopyToClipboardAsBitmap(150, null, PixelFormat.Format32bppArgb);
@@ -157,6 +162,7 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class CopyPageAsBitmap150dpiRGB : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       var brush = new BrushX(NamedColors.White);
@@ -170,6 +176,7 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class CopyPageAsBitmap300dpiARGB : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.Doc.CopyToClipboardAsBitmap(300, null, PixelFormat.Format32bppArgb);
@@ -182,6 +189,7 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class CopyPageAsBitmap300dpiRGB : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       var brush = new BrushX(NamedColors.White);
@@ -189,8 +197,12 @@ namespace Altaxo.Graph.Commands
     }
   }
 
+  /// <summary>
+  /// Saves the active graph as a reusable graph template.
+  /// </summary>
   public class SaveGraphAsTemplate : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       var saveFileDialog1 = new Altaxo.Gui.SaveFileOptions
@@ -218,6 +230,7 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class FileExportMetafile : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.Doc.ShowFileExportMetafileDialog();
@@ -229,14 +242,19 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class FileExportTiff : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.Doc.ShowFileExportTiffDialog();
     }
   }
 
+  /// <summary>
+  /// Opens the export dialog for a specific graph export binding.
+  /// </summary>
   public class FileExportSpecific : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.Doc.ShowFileExportSpecificDialog();
@@ -248,6 +266,7 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class NewLayerNormalBottomXLeftY : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.Doc.CreateNewLayerNormalBottomXLeftY();
@@ -259,6 +278,7 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class NewLayerLinkedTopXRightY : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.Doc.CreateNewLayerLinkedTopXRightY(ctrl.CurrentLayerNumber);
@@ -270,6 +290,7 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class NewLayerLinkedTopX : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.Doc.CreateNewLayerLinkedTopX(ctrl.CurrentLayerNumber);
@@ -281,6 +302,7 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class NewLayerLinkedRightY : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.Doc.CreateNewLayerLinkedRightY(ctrl.CurrentLayerNumber);
@@ -292,246 +314,367 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class NewLayerLinkedTopXRightY_XAxisStraight : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.Doc.CreateNewLayerLinkedTopXRightY_XAxisStraight(ctrl.CurrentLayerNumber);
     }
   }
 
+  /// <summary>
+  /// Renames the active graph.
+  /// </summary>
   public class GraphRename : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.Doc.ShowRenameDialog();
     }
   }
 
+  /// <summary>
+  /// Shows the properties of the active graph.
+  /// </summary>
   public class GraphShowProperties : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.Doc.ShowPropertyDialog();
     }
   }
 
+  /// <summary>
+  /// Moves the active graph to a different project folder.
+  /// </summary>
   public class GraphMoveToFolder : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       Altaxo.Gui.Pads.ProjectBrowser.ProjectBrowserExtensions.MoveDocuments(new[] { ctrl.Doc });
     }
   }
 
+  /// <summary>
+  /// Refreshes the active graph.
+  /// </summary>
   public class GraphRefresh : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.RefreshGraph();
     }
   }
 
+  /// <summary>
+  /// Arranges the graph layers.
+  /// </summary>
   public class ArrangeLayers : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.Doc.ShowLayerArrangementDialog(ctrl.ActiveLayer);
     }
   }
 
+  /// <summary>
+  /// Groups the selected graph objects.
+  /// </summary>
   public class GroupSelectedObjects : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.GroupSelectedObjects();
     }
   }
 
+  /// <summary>
+  /// Ungroups the selected graph objects.
+  /// </summary>
   public class UngroupSelectedObjects : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.UngroupSelectedObjects();
     }
   }
 
+  /// <summary>
+  /// Aligns the selected graph objects at the top.
+  /// </summary>
   public class ArrangeTop : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.ArrangeTopToTop();
     }
   }
 
+  /// <summary>
+  /// Aligns the selected graph objects at the bottom.
+  /// </summary>
   public class ArrangeBottom : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.ArrangeBottomToBottom();
     }
   }
 
+  /// <summary>
+  /// Arranges the selected graph objects from top to bottom.
+  /// </summary>
   public class ArrangeTopToBottom : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.ArrangeTopToBottom();
     }
   }
 
+  /// <summary>
+  /// Arranges the selected graph objects from bottom to top.
+  /// </summary>
   public class ArrangeBottomToTop : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.ArrangeBottomToTop();
     }
   }
 
+  /// <summary>
+  /// Aligns the selected graph objects at the left.
+  /// </summary>
   public class ArrangeLeft : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.ArrangeLeftToLeft();
     }
   }
 
+  /// <summary>
+  /// Aligns the selected graph objects at the right.
+  /// </summary>
   public class ArrangeRight : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.ArrangeRightToRight();
     }
   }
 
+  /// <summary>
+  /// Arranges the selected graph objects from left to right.
+  /// </summary>
   public class ArrangeLeftToRight : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.ArrangeLeftToRight();
     }
   }
 
+  /// <summary>
+  /// Arranges the selected graph objects from right to left.
+  /// </summary>
   public class ArrangeRightToLeft : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.ArrangeRightToLeft();
     }
   }
 
+  /// <summary>
+  /// Arranges the selected graph objects horizontally.
+  /// </summary>
   public class ArrangeHorizontal : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.ArrangeHorizontal();
     }
   }
 
+  /// <summary>
+  /// Arranges the selected graph objects vertically.
+  /// </summary>
   public class ArrangeVertical : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.ArrangeVertical();
     }
   }
 
+  /// <summary>
+  /// Arranges the selected graph objects in a horizontal table.
+  /// </summary>
   public class ArrangeHorizontalTable : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.ArrangeHorizontalTable();
     }
   }
 
+  /// <summary>
+  /// Arranges the selected graph objects in a vertical table.
+  /// </summary>
   public class ArrangeVerticalTable : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.ArrangeVerticalTable();
     }
   }
 
+  /// <summary>
+  /// Makes the selected graph objects equally wide.
+  /// </summary>
   public class ArrangeSameHorizontalSize : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.ArrangeSameHorizontalSize();
     }
   }
 
+  /// <summary>
+  /// Makes the selected graph objects equally tall.
+  /// </summary>
   public class ArrangeSameVerticalSize : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.ArrangeSameVerticalSize();
     }
   }
 
+  /// <summary>
+  /// Moves the selected graph items one position up.
+  /// </summary>
   public class MoveGraphItemUp : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.MoveSelectedGraphItemsUp();
     }
   }
 
+  /// <summary>
+  /// Moves the selected graph items one position down.
+  /// </summary>
   public class MoveGraphItemDown : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.MoveSelectedGraphItemsDown();
     }
   }
 
+  /// <summary>
+  /// Moves the selected graph items to the top.
+  /// </summary>
   public class MoveGraphItemToTop : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.MoveSelectedGraphItemsToTop();
     }
   }
 
+  /// <summary>
+  /// Moves the selected graph items to the bottom.
+  /// </summary>
   public class MoveGraphItemToBottom : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.MoveSelectedGraphItemsToBottom();
     }
   }
 
+  /// <summary>
+  /// Enables automatic zoom.
+  /// </summary>
   public class ZoomAutomatic : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.IsAutoZoomActive = true;
     }
   }
 
+  /// <summary>
+  /// Sets the zoom factor to 50 percent.
+  /// </summary>
   public class Zoom50Percent : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.ZoomFactor = 0.5;
     }
   }
 
+  /// <summary>
+  /// Sets the zoom factor to 100 percent.
+  /// </summary>
   public class Zoom100Percent : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.ZoomFactor = 1.0;
     }
   }
 
+  /// <summary>
+  /// Sets the zoom factor to 200 percent.
+  /// </summary>
   public class Zoom200Percent : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.ZoomFactor = 2.0;
     }
   }
 
+  /// <summary>
+  /// Prompts for a custom zoom factor.
+  /// </summary>
   public class ZoomUserPercent : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       double zoom = ctrl.ZoomFactor * 100;
@@ -542,8 +685,12 @@ namespace Altaxo.Graph.Commands
     }
   }
 
+  /// <summary>
+  /// Prompts for a custom graph margin.
+  /// </summary>
   public class MarginUserPercent : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       double zoom = ctrl.Margin * 100;
@@ -554,32 +701,48 @@ namespace Altaxo.Graph.Commands
     }
   }
 
+  /// <summary>
+  /// Sets the graph margin to zero.
+  /// </summary>
   public class Margin0Percent : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.Margin = 0;
     }
   }
 
+  /// <summary>
+  /// Sets the graph margin to 10 percent.
+  /// </summary>
   public class Margin10Percent : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.Margin = 0.1;
     }
   }
 
+  /// <summary>
+  /// Sets the graph margin to 50 percent.
+  /// </summary>
   public class Margin50Percent : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.Margin = 0.5;
     }
   }
 
+  /// <summary>
+  /// Adds a floating scale to the active layer.
+  /// </summary>
   public class AddScale : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       var layer = ctrl.ActiveLayer;
@@ -595,8 +758,12 @@ namespace Altaxo.Graph.Commands
     }
   }
 
+  /// <summary>
+  /// Adds a legend for the active density image plot.
+  /// </summary>
   public class AddDensityImageLegend : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       var layer = ctrl.ActiveLayer as XYPlotLayer;
@@ -617,6 +784,7 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class DuplicateGraph : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       var newDoc = new GraphDocument(ctrl.Doc);
@@ -627,8 +795,12 @@ namespace Altaxo.Graph.Commands
     }
   }
 
+  /// <summary>
+  /// Opens the controller for the active layer.
+  /// </summary>
   public class LayerControl : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.EnsureValidityOfCurrentLayerNumber();
@@ -647,8 +819,12 @@ namespace Altaxo.Graph.Commands
     }
   }
 
+  /// <summary>
+  /// Adds a sample curve plot to the active layer.
+  /// </summary>
   public class AddCurvePlot : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.EnsureValidityOfCurrentLayerNumber();
@@ -663,6 +839,7 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class NewLayerLegend : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.Doc.RootLayer.IsValidIndex(ctrl.CurrentLayerNumber, out var l);
@@ -677,6 +854,7 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class RescaleAxes : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.Doc.RootLayer.IsValidIndex(ctrl.CurrentLayerNumber, out var l);
@@ -693,6 +871,7 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class FitPolynomial : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       var dlg = new FitPolynomialDialogController(2, double.NegativeInfinity, double.PositiveInfinity, false);
@@ -716,6 +895,7 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class FitNonlinear : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       string result = Altaxo.Graph.Procedures.NonlinearFitting.ShowFitDialog(ctrl);
@@ -724,16 +904,24 @@ namespace Altaxo.Graph.Commands
     }
   }
 
+  /// <summary>
+  /// Opens the master-curve creation dialog for the active graph.
+  /// </summary>
   public class CreateMasterCurve : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       Altaxo.Graph.Procedures.MasterCurveCreation.ShowMasterCurveCreationDialog(ctrl.Doc);
     }
   }
 
+  /// <summary>
+  /// Creates a user-defined function plot.
+  /// </summary>
   public class NewUserFunction : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.Doc.RootLayer.IsValidIndex(ctrl.CurrentLayerNumber, out var activeLayer);
@@ -757,6 +945,12 @@ namespace Altaxo.Graph.Commands
       }
     }
 
+    /// <summary>
+    /// Executes the function script.
+    /// </summary>
+    /// <param name="script">The script to execute.</param>
+    /// <param name="reporter">The progress reporter.</param>
+    /// <returns><see langword="true"/> if execution is allowed; otherwise, <see langword="false"/>.</returns>
     public bool EhScriptExecution(IScriptText script, IProgressReporter reporter)
     {
       return true;
@@ -768,6 +962,10 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public static class SaveAsMiniProjectBase
   {
+    /// <summary>
+    /// Creates a mini project from the specified graph document and saves it.
+    /// </summary>
+    /// <param name="doc">The graph document to save as a mini project.</param>
     public static void Run(Altaxo.Graph.GraphDocumentBase doc)
     {
       var newDocument = Altaxo.Graph.Procedures.MiniProjectBuilder.CreateMiniProject(doc, false);
@@ -777,6 +975,7 @@ namespace Altaxo.Graph.Commands
     /// <summary>
     /// Asks the user for a file name for the current project, and then saves the project under the given name.
     /// </summary>
+    /// <param name="projectToSave">The project to save.</param>
     public static void SaveProjectAs(Altaxo.AltaxoDocument projectToSave)
     {
       var dlg = new Altaxo.Gui.SaveFileOptions();
@@ -804,7 +1003,7 @@ namespace Altaxo.Graph.Commands
     /// Internal routine to save a project under a given name.
     /// </summary>
     /// <param name="projectToSave">The project to save.</param>
-    /// <param name="filename"></param>
+    /// <param name="filename">The file name to save to.</param>
     public static void SaveProject(Altaxo.AltaxoDocument projectToSave, string filename)
     {
       using (var myStream = new System.IO.FileStream(filename, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.Write, System.IO.FileShare.None))
@@ -824,6 +1023,7 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class SaveAsMiniProject : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       SaveAsMiniProjectBase.Run(ctrl.Doc);
@@ -840,6 +1040,7 @@ namespace Altaxo.Graph.Commands
     /// </summary>
     public const string ClipboardFormat_MiniProjectItems = "Altaxo.Main.ProjectItems.GraphAsMiniProject";
 
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       var newDocument = Altaxo.Graph.Procedures.MiniProjectBuilder.CreateMiniProject(ctrl.Doc, false);
@@ -864,6 +1065,7 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class PasteGraphAsMiniProject : SimpleCommand
   {
+    /// <inheritdoc/>
     public override bool CanExecute(object parameter)
     {
       return
@@ -871,6 +1073,7 @@ namespace Altaxo.Graph.Commands
         Altaxo.Serialization.Clipboard.ClipboardSerialization.IsClipboardFormatAvailable(Main.Commands.ProjectItemCommands.ClipboardFormat_ListOfProjectItems);
     }
 
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       if (!CanExecute(parameter))
@@ -898,10 +1101,13 @@ namespace Altaxo.Graph.Commands
   }
 
   /// <summary>
-  /// Provides a abstract class for issuing commands that apply to worksheet controllers.
+  /// Provides an abstract base class for checkable commands that apply to graph controllers.
   /// </summary>
   public abstract class AbstractCheckableGraphControllerCommand : SimpleCheckableCommand, System.ComponentModel.INotifyPropertyChanged
   {
+    /// <summary>
+    /// Gets the currently active graph controller.
+    /// </summary>
     public GraphController Controller
     {
       get
@@ -915,14 +1121,13 @@ namespace Altaxo.Graph.Commands
       }
     }
 
-    /// <summary>
-    /// This function is never be called, since this is a CheckableMenuCommand.
-    /// </summary>
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       base.Execute(parameter);
     }
 
+    /// <inheritdoc/>
     public override bool IsChecked
     {
       get
@@ -939,8 +1144,13 @@ namespace Altaxo.Graph.Commands
       }
     }
 
+    /// <inheritdoc/>
     public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
+    /// <summary>
+    /// Raises the <see cref="PropertyChanged"/> event.
+    /// </summary>
+    /// <param name="propertyName">The name of the property that changed.</param>
     protected virtual void OnPropertyChanged(string propertyName)
     {
       if (PropertyChanged is not null)

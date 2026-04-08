@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Science.Thermorheology
   /// </summary>
   public partial class MasterCurveGroupOptionsWithComplexInterpolationControl : UserControl, IMasterCurveGroupOptionsWithComplexInterpolationView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MasterCurveGroupOptionsWithComplexInterpolationControl"/> class.
+    /// </summary>
     public MasterCurveGroupOptionsWithComplexInterpolationControl()
     {
       InitializeComponent();

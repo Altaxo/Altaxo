@@ -44,6 +44,9 @@ namespace Altaxo.Gui.Common.BasicTypes
   /// </summary>
   public partial class NumericFloatValueControl : UserControl, INumericFloatValueView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NumericFloatValueControl"/> class.
+    /// </summary>
     public NumericFloatValueControl()
     {
       InitializeComponent();

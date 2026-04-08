@@ -29,15 +29,24 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public class DropDownButton : ButtonBase
   {
+    /// <summary>
+    /// Identifies the <see cref="DropDownMenu"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty DropDownMenuProperty
       = DependencyProperty.Register("DropDownMenu", typeof(ContextMenu),
                                     typeof(DropDownButton), new FrameworkPropertyMetadata(null));
 
+    /// <summary>
+    /// Identifies the read-only key for the <see cref="IsDropDownMenuOpen"/> dependency property.
+    /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
     protected static readonly DependencyPropertyKey IsDropDownMenuOpenPropertyKey
       = DependencyProperty.RegisterReadOnly("IsDropDownMenuOpen", typeof(bool),
                                             typeof(DropDownButton), new FrameworkPropertyMetadata(false));
 
+    /// <summary>
+    /// Identifies the <see cref="IsDropDownMenuOpen"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty IsDropDownMenuOpenProperty = IsDropDownMenuOpenPropertyKey.DependencyProperty;
 
     static DropDownButton()
@@ -45,18 +54,25 @@ namespace Altaxo.Gui.Common
       DefaultStyleKeyProperty.OverrideMetadata(typeof(DropDownButton), new FrameworkPropertyMetadata(typeof(DropDownButton)));
     }
 
+    /// <summary>
+    /// Gets or sets the context menu displayed when the button is clicked.
+    /// </summary>
     public ContextMenu DropDownMenu
     {
       get { return (ContextMenu)GetValue(DropDownMenuProperty); }
       set { SetValue(DropDownMenuProperty, value); }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the drop-down menu is currently open.
+    /// </summary>
     public bool IsDropDownMenuOpen
     {
       get { return (bool)GetValue(IsDropDownMenuOpenProperty); }
       protected set { SetValue(IsDropDownMenuOpenPropertyKey, value); }
     }
 
+    /// <inheritdoc/>
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {
       if (DropDownMenu is not null && !IsDropDownMenuOpen)
@@ -75,6 +91,7 @@ namespace Altaxo.Gui.Common
       IsDropDownMenuOpen = false;
     }
 
+    /// <inheritdoc/>
     protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
     {
       if (!IsMouseCaptured)

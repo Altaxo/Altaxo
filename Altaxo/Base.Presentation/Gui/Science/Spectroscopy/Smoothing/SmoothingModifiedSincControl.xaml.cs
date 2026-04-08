@@ -32,6 +32,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Smoothing
   /// </summary>
   public partial class SmoothingModifiedSincControl : UserControl, ISmoothingModifiedSincView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SmoothingModifiedSincControl"/> class.
+    /// </summary>
     public SmoothingModifiedSincControl()
     {
       InitializeComponent();

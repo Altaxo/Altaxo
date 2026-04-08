@@ -35,6 +35,9 @@ namespace Altaxo.Gui.Common.Converters
   /// <seealso cref="System.Windows.Data.IValueConverter" />
   public class NullToVisibilityCollapsedConverter : IValueConverter
   {
+    /// <summary>
+    /// Gets the shared converter instance.
+    /// </summary>
     public static NullToVisibilityCollapsedConverter Instance { get; private set; } = new NullToVisibilityCollapsedConverter();
 
     /// <inheritdoc/>
@@ -56,6 +59,9 @@ namespace Altaxo.Gui.Common.Converters
   /// <seealso cref="System.Windows.Data.IValueConverter" />
   public class NotNullToVisibilityCollapsedConverter : IValueConverter
   {
+    /// <summary>
+    /// Gets the shared converter instance.
+    /// </summary>
     public static NotNullToVisibilityCollapsedConverter Instance { get; private set; } = new NotNullToVisibilityCollapsedConverter();
 
     /// <inheritdoc/>
@@ -77,6 +83,9 @@ namespace Altaxo.Gui.Common.Converters
   /// <seealso cref="System.Windows.Data.IValueConverter" />
   public class NullToVisibilityHiddenConverter : IValueConverter
   {
+    /// <summary>
+    /// Gets the shared converter instance.
+    /// </summary>
     public static NullToVisibilityHiddenConverter Instance { get; private set; } = new NullToVisibilityHiddenConverter();
 
     /// <inheritdoc/>
@@ -98,6 +107,9 @@ namespace Altaxo.Gui.Common.Converters
   /// <seealso cref="System.Windows.Data.IValueConverter" />
   public class NotNullToVisibilityHiddenConverter : IValueConverter
   {
+    /// <summary>
+    /// Gets the shared converter instance.
+    /// </summary>
     public static NotNullToVisibilityHiddenConverter Instance { get; private set; } = new NotNullToVisibilityHiddenConverter();
 
     /// <inheritdoc/>

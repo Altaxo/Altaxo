@@ -34,6 +34,7 @@ namespace Altaxo.Gui.Workbench
   /// </summary>
   public class OptionPanel : UserControl, IOptionPanel, IOptionBindingContainer, INotifyPropertyChanged
   {
+    /// <inheritdoc/>
     public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
 
     static OptionPanel()
@@ -42,6 +43,9 @@ namespace Altaxo.Gui.Workbench
                                       new FrameworkPropertyMetadata(new Thickness(2, 0, 4, 0)));
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OptionPanel"/> class.
+    /// </summary>
     public OptionPanel()
     {
       Resources.Add(
@@ -56,6 +60,7 @@ namespace Altaxo.Gui.Workbench
       Resources.Add(typeof(RadioButton), GlobalStyles.WordWrapCheckBoxStyle);
     }
 
+    /// <inheritdoc/>
     public virtual object? Owner { get; set; }
 
     private readonly List<OptionBinding> bindings = new List<OptionBinding>();
@@ -65,6 +70,7 @@ namespace Altaxo.Gui.Workbench
       bindings.Add(binding);
     }
 
+    /// <inheritdoc/>
     public virtual object ViewObject
     {
       get
@@ -73,10 +79,17 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Loads the current option values into the panel.
+    /// </summary>
     public virtual void LoadOptions()
     {
     }
 
+    /// <summary>
+    /// Saves the current option values from the panel.
+    /// </summary>
+    /// <returns><see langword="true"/> if saving succeeded; otherwise, <see langword="false"/>.</returns>
     public virtual bool SaveOptions()
     {
       foreach (OptionBinding b in bindings)
@@ -90,11 +103,20 @@ namespace Altaxo.Gui.Workbench
 
     #region INotifyPropertyChanged implementation
 
+    /// <summary>
+    /// Raises the <see cref="PropertyChanged"/> event for the specified property name.
+    /// </summary>
+    /// <param name="propertyName">The property name.</param>
     protected void RaisePropertyChanged(string propertyName)
     {
       RaiseInternal(propertyName);
     }
 
+    /// <summary>
+    /// Raises the <see cref="PropertyChanged"/> event for the property referenced by the expression.
+    /// </summary>
+    /// <typeparam name="T">The property type.</typeparam>
+    /// <param name="propertyExpresssion">The expression that identifies the property.</param>
     protected void RaisePropertyChanged<T>(Expression<Func<T>> propertyExpresssion)
     {
       var propertyName = ExtractPropertyName(propertyExpresssion);
@@ -142,11 +164,13 @@ namespace Altaxo.Gui.Workbench
       return memberExpression.Member.Name;
     }
 
+    /// <inheritdoc/>
     public void Initialize(object? optionPanelOwner)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public bool Apply()
     {
       throw new NotImplementedException();

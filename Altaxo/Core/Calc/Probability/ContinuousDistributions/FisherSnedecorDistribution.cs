@@ -167,6 +167,12 @@ namespace Altaxo.Calc.Probability
     }
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FisherSnedecorDistribution"/> class with the given parameters and generator.
+    /// </summary>
+    /// <param name="alpha">The first (numerator degrees of freedom) parameter.</param>
+    /// <param name="beta">The second (denominator degrees of freedom) parameter.</param>
+    /// <param name="generator">A <see cref="Generator"/> object.</param>
     public FisherSnedecorDistribution(double alpha, double beta, Generator generator)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
       : base(generator)

@@ -33,17 +33,41 @@ namespace Altaxo.Gui.Common
 {
   public partial class BigIntegerUpDown
   {
+    /// <summary>
+    /// Converts and validates textual representations of <see cref="BigInteger"/> values.
+    /// </summary>
     protected class BigIntegerConverter : ValidationRule, IValueConverter
     {
+      /// <summary>
+      /// Gets the default minimum value.
+      /// </summary>
       public BigInteger? DefaultMinimumValue => null;
+      /// <summary>
+      /// Gets the default maximum value.
+      /// </summary>
       public BigInteger? DefaultMaximumValue => null;
 
+      /// <summary>
+      /// Gets or sets the minimum allowed value.
+      /// </summary>
       public BigInteger? MinValue { get; set; } = null;
+      /// <summary>
+      /// Gets or sets the maximum allowed value.
+      /// </summary>
       public BigInteger? MaxValue { get; set; } = null;
 
+      /// <summary>
+      /// Gets or sets the value used when the text is empty.
+      /// </summary>
       public BigInteger? ValueIfTextIsEmpty { get; set; } = null;
 
+      /// <summary>
+      /// Gets or sets the replacement text displayed for the minimum value.
+      /// </summary>
       public string MinimumReplacementText { get; set; } = "Min";
+      /// <summary>
+      /// Gets or sets the replacement text displayed for the maximum value.
+      /// </summary>
       public string MaximumReplacementText { get; set; } = "Max";
 
       private System.Globalization.CultureInfo _conversionCulture = Altaxo.Settings.GuiCulture.Instance;
@@ -52,11 +76,15 @@ namespace Altaxo.Gui.Common
       private BigInteger? _lastConvertedValue;
 
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="BigIntegerConverter"/> class.
+      /// </summary>
       public BigIntegerConverter()
       {
       }
 
 
+      /// <inheritdoc/>
       public object Convert(object value, Type targetType, object parameter, CultureInfo cultureBuggyDontUse)
       {
         BigInteger val = (BigInteger)value;
@@ -82,6 +110,7 @@ namespace Altaxo.Gui.Common
         }
       }
 
+      /// <inheritdoc/>
       public object ConvertBack(object value, Type targetType, object parameter, CultureInfo cultureBuggyDontUse)
       {
         var validationResult = ConvertAndValidate(value, out var result);
@@ -93,6 +122,7 @@ namespace Altaxo.Gui.Common
         return result;
       }
 
+      /// <inheritdoc/>
       public override ValidationResult Validate(object value, CultureInfo cultureInfoBuggyDontUse)
       {
         var validationResult = ConvertAndValidate(value, out var result);

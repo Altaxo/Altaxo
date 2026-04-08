@@ -44,6 +44,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles.ScatterSymbols
   /// </summary>
   public partial class PlotColorInfluenceControl : UserControl, IPlotColorInfluenceView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PlotColorInfluenceControl"/> class.
+    /// </summary>
     public PlotColorInfluenceControl()
     {
       InitializeComponent();

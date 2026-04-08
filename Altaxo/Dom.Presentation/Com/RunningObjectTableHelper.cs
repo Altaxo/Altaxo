@@ -32,10 +32,17 @@ namespace Altaxo.Com
 {
   using UnmanagedApi.Ole32;
 
+  /// <summary>
+  /// Provides helper methods for working with the running object table.
+  /// </summary>
   public static class RunningObjectTableHelper
   {
     #region Running Object Table management (ROT)
 
+    /// <summary>
+    /// Gets the running object table.
+    /// </summary>
+    /// <returns>The running object table.</returns>
     public static IRunningObjectTable GetROT()
     {
       Int32 hr = Ole32Func.GetRunningObjectTable(0, out var rot);
@@ -44,6 +51,10 @@ namespace Altaxo.Com
       return rot;
     }
 
+    /// <summary>
+    /// Unregisters a running object table entry.
+    /// </summary>
+    /// <param name="cookie">The registration cookie.</param>
     public static void ROTUnregister(ref int cookie)
     {
       // Revoke any existing file moniker. See Brockschmidt, Inside Ole 2nd ed. p988
@@ -55,6 +66,13 @@ namespace Altaxo.Com
       }
     }
 
+    /// <summary>
+    /// Registers an object as running in the running object table.
+    /// </summary>
+    /// <param name="new_moniker">The moniker to register.</param>
+    /// <param name="o">The object to register.</param>
+    /// <param name="rot_cookie">The resulting registration cookie.</param>
+    /// <param name="intf">The interface type used for registration.</param>
     public static void ROTRegisterAsRunning(IMoniker new_moniker, object o, ref int rot_cookie, Type intf)
     {
       // Revoke any existing file moniker. See Brockschmidt, Inside Ole 2nd ed. p988

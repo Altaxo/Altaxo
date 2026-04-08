@@ -33,6 +33,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
   using Altaxo.Geometry;
   using WA = Altaxo.Worksheet.AreaRetrieval;
 
+  /// <summary>
+  /// Provides WPF-specific worksheet painting helpers.
+  /// </summary>
   public static class WorksheetPaintingWpf
   {
     #region Selection

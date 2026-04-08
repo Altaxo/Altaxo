@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Resampling
   /// </summary>
   public partial class ResamplingByInterpolationControl : UserControl, IResamplingByInterpolationView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ResamplingByInterpolationControl"/> class.
+    /// </summary>
     public ResamplingByInterpolationControl()
     {
       InitializeComponent();

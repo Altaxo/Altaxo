@@ -46,10 +46,14 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
   public class ResourceOnlyImageProvider
         : Markdig.Renderers.WpfImageProviderBase
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ResourceOnlyImageProvider"/> class.
+    /// </summary>
     public ResourceOnlyImageProvider()
     {
     }
 
+    /// <inheritdoc/>
     public override Inline GetInlineItem(string url, out bool inlineItemIsErrorMessage)
     {
       if (url.StartsWith(ImagePretext.ResourceImagePretext))

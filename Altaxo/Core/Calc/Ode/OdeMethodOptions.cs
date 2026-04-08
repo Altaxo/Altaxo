@@ -87,6 +87,9 @@ namespace Altaxo.Calc.Ode
         _stepSize = value;
       }
     }
+    /// <summary>
+    /// Stores the fixed step size configured through <see cref="StepSize"/>.
+    /// </summary>
     protected double? _stepSize;
 
 

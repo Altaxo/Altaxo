@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
   /// </summary>
   public partial class FitEnsembleControl : UserControl, IFitEnsembleView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FitEnsembleControl"/> class.
+    /// </summary>
     public FitEnsembleControl()
     {
       InitializeComponent();

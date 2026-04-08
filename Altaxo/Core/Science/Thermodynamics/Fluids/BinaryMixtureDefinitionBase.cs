@@ -72,8 +72,19 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// <summary>The F parameter (prefactor of the departure function, see <see cref="DepartureFunction_OfReducedVariables(double, double)"/>).</summary>
     public double F { get { return _F; } }
 
+    /// <summary>
+    /// Shared empty array for polynomial departure coefficients.
+    /// </summary>
     protected static readonly (double, double, double)[] _emptyArrayOfThreeDoubles = new (double, double, double)[0];
+
+    /// <summary>
+    /// Shared empty array for exponential departure coefficients.
+    /// </summary>
     protected static readonly (double, double, double, double)[] _emptyArrayOfFourDoubles = new (double, double, double, double)[0];
+
+    /// <summary>
+    /// Shared empty array for special departure coefficients.
+    /// </summary>
     protected static readonly (double, double, double, double, double, double, double)[] _emptyArrayOfSevenDoubles = new (double, double, double, double, double, double, double)[0];
 
     /// <summary>

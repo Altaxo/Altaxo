@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Gdi
   /// </summary>
   public partial class ClipboardRenderingOptionsControl : UserControl, IClipboardRenderingOptionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ClipboardRenderingOptionsControl"/> class.
+    /// </summary>
     public ClipboardRenderingOptionsControl()
     {
       InitializeComponent();

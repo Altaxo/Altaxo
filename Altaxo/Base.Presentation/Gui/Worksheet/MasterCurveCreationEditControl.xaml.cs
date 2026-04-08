@@ -36,6 +36,9 @@ namespace Altaxo.Gui.Worksheet
   /// </summary>
   public partial class MasterCurveCreationEditControl : UserControl
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MasterCurveCreationEditControl"/> class.
+    /// </summary>
     public MasterCurveCreationEditControl()
     {
       InitializeComponent();

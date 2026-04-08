@@ -38,6 +38,10 @@ namespace System.IO.Compression
   public class ZipAnalyzerAxo
   {
 
+    /// <summary>
+    /// Analyzes the specified ZIP archive file.
+    /// </summary>
+    /// <param name="inputFileName">The path to the ZIP archive file.</param>
     public static void Analyze(string inputFileName)
     {
       using var fs = new FileStream(inputFileName, FileMode.Open, FileAccess.Read, FileShare.None);
@@ -365,6 +369,11 @@ namespace System.IO.Compression
       }
     }
 
+    /// <summary>
+    /// Analyzes the specified ZIP archive stream and returns the detected issues.
+    /// </summary>
+    /// <param name="str">The ZIP archive stream to analyze.</param>
+    /// <returns>The analysis result for the provided stream.</returns>
     public static ZipAnalyzerResult Analyze(Stream str)
     {
       var result = new ZipAnalyzerResult();

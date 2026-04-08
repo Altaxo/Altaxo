@@ -31,14 +31,32 @@ using Complex = System.Numerics.Complex;
 
 namespace Altaxo.Calc.Providers.FourierTransform
 {
+  /// <summary>
+  /// Specifies scaling options for Fourier transforms.
+  /// </summary>
   public enum FourierTransformScaling : int
   {
+    /// <summary>
+    /// Apply no scaling.
+    /// </summary>
     NoScaling = 0,
+    /// <summary>
+    /// Apply symmetric scaling.
+    /// </summary>
     SymmetricScaling = 1,
+    /// <summary>
+    /// Apply backward scaling.
+    /// </summary>
     BackwardScaling = 2,
+    /// <summary>
+    /// Apply forward scaling.
+    /// </summary>
     ForwardScaling = 3
   }
 
+  /// <summary>
+  /// Defines a Fourier transform provider.
+  /// </summary>
   public interface IFourierTransformProvider
   {
     /// <summary>
@@ -48,7 +66,7 @@ namespace Altaxo.Calc.Providers.FourierTransform
     public bool IsAvailable();
 
     /// <summary>
-    /// Initialize and verify that the provided is indeed available. If not, fall back to alternatives like the managed provider
+    /// Initialize and verify that the provider is indeed available. If not, fall back to alternatives like the managed provider.
     /// </summary>
     public void InitializeVerify();
 
@@ -58,19 +76,64 @@ namespace Altaxo.Calc.Providers.FourierTransform
     /// </summary>
     public void FreeResources();
 
+    /// <summary>
+    /// Computes the forward transform of complex single-precision samples.
+    /// </summary>
     public void Forward(Complex32[] samples, FourierTransformScaling scaling);
+
+    /// <summary>
+    /// Computes the forward transform of complex double-precision samples.
+    /// </summary>
     public void Forward(Complex[] samples, FourierTransformScaling scaling);
+
+    /// <summary>
+    /// Computes the inverse transform of complex single-precision spectrum data.
+    /// </summary>
     public void Backward(Complex32[] spectrum, FourierTransformScaling scaling);
+
+    /// <summary>
+    /// Computes the inverse transform of complex double-precision spectrum data.
+    /// </summary>
     public void Backward(Complex[] spectrum, FourierTransformScaling scaling);
 
+    /// <summary>
+    /// Computes the forward transform of real single-precision samples.
+    /// </summary>
     public void ForwardReal(float[] samples, int n, FourierTransformScaling scaling);
+
+    /// <summary>
+    /// Computes the forward transform of real double-precision samples.
+    /// </summary>
     public void ForwardReal(double[] samples, int n, FourierTransformScaling scaling);
+
+    /// <summary>
+    /// Computes the inverse transform of real single-precision spectrum data.
+    /// </summary>
     public void BackwardReal(float[] spectrum, int n, FourierTransformScaling scaling);
+
+    /// <summary>
+    /// Computes the inverse transform of real double-precision spectrum data.
+    /// </summary>
     public void BackwardReal(double[] spectrum, int n, FourierTransformScaling scaling);
 
+    /// <summary>
+    /// Computes the forward multidimensional transform of complex single-precision samples.
+    /// </summary>
     public void ForwardMultidim(Complex32[] samples, int[] dimensions, FourierTransformScaling scaling);
+
+    /// <summary>
+    /// Computes the forward multidimensional transform of complex double-precision samples.
+    /// </summary>
     public void ForwardMultidim(Complex[] samples, int[] dimensions, FourierTransformScaling scaling);
+
+    /// <summary>
+    /// Computes the inverse multidimensional transform of complex single-precision spectrum data.
+    /// </summary>
     public void BackwardMultidim(Complex32[] spectrum, int[] dimensions, FourierTransformScaling scaling);
+
+    /// <summary>
+    /// Computes the inverse multidimensional transform of complex double-precision spectrum data.
+    /// </summary>
     public void BackwardMultidim(Complex[] spectrum, int[] dimensions, FourierTransformScaling scaling);
   }
 }

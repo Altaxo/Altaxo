@@ -39,6 +39,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
   /// </summary>
   public partial class AnchoringControl : UserControl, IAnchoringView 
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AnchoringControl"/> class.
+    /// </summary>
     public AnchoringControl()
     {
       InitializeComponent();

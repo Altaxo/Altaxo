@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
   /// </summary>
   public partial class OptionsAndDestinationTableControl : UserControl, IOptionsAndDestinationTableView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OptionsAndDestinationTableControl"/> class.
+    /// </summary>
     public OptionsAndDestinationTableControl()
     {
       InitializeComponent();

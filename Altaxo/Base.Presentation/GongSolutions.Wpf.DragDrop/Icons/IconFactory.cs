@@ -29,12 +29,24 @@ namespace GongSolutions.Wpf.DragDrop.Icons
   /// </summary>
   public static class IconFactory
   {
+    /// <summary>
+    /// Gets the standard icon for a disallowed drop effect.
+    /// </summary>
     public static BitmapImage EffectNone { get { return GetImage("EffectNone.png", 12); } }
 
+    /// <summary>
+    /// Gets the standard icon for a copy drop effect.
+    /// </summary>
     public static BitmapImage EffectCopy { get { return GetImage("EffectCopy.png", 12); } }
 
+    /// <summary>
+    /// Gets the standard icon for a move drop effect.
+    /// </summary>
     public static BitmapImage EffectMove { get { return GetImage("EffectMove.png", 12); } }
 
+    /// <summary>
+    /// Gets the standard icon for a link drop effect.
+    /// </summary>
     public static BitmapImage EffectLink { get { return GetImage("EffectLink.png", 12); } }
 
     /// <summary>
@@ -56,6 +68,14 @@ namespace GongSolutions.Wpf.DragDrop.Icons
       return icon;
     }
 
+    /// <summary>
+    /// Creates a cursor from a rendered rectangle.
+    /// </summary>
+    /// <param name="rx">The rectangle width.</param>
+    /// <param name="ry">The rectangle height.</param>
+    /// <param name="brush">The fill brush.</param>
+    /// <param name="pen">The outline pen.</param>
+    /// <returns>The created cursor.</returns>
     public static Cursor CreateCursor(double rx, double ry, SolidColorBrush brush, Pen pen)
     {
       var vis = new DrawingVisual();

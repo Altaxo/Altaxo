@@ -41,6 +41,9 @@ using Altaxo.Calc.Integration.GaussRule;
 
 namespace Altaxo.Calc.Integration
 {
+  /// <summary>
+  /// Provides Gauss-Kronrod quadrature rules and adaptive integration helpers.
+  /// </summary>
   public class GaussKronrodRule
   {
     private readonly GaussPointPair _gaussKronrodPoint;
@@ -65,6 +68,10 @@ namespace Altaxo.Calc.Integration
     /// </summary>
     public double[] GaussWeights => _gaussKronrodPoint.SecondWeights.Clone() as double[];
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GaussKronrodRule"/> class.
+    /// </summary>
+    /// <param name="order">The number of Kronrod points in the rule.</param>
     public GaussKronrodRule(int order)
     {
       _gaussKronrodPoint = GaussKronrodPointFactory.GetGaussPoint(order);
@@ -154,7 +161,7 @@ namespace Altaxo.Calc.Integration
     /// <param name="targetRelativeError">The maximum relative error in the result</param>
     /// <param name="maximumDepth">The maximum number of interval splittings permitted before stopping</param>
     /// <param name="order">The number of Gauss-Kronrod points. Pre-computed for 15, 21, 31, 41, 51 and 61 points</param>
-    /// <returns></returns>
+    /// <returns>The estimated contour integral over the specified interval.</returns>
     public static Complex ContourIntegrate(Func<double, Complex> f, double intervalBegin, double intervalEnd, out double error, out double L1Norm, double targetRelativeError = 1E-10, int maximumDepth = 15, int order = 15)
     {
       // Formula used for variable subsitution from

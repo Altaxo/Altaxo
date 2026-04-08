@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
   /// </summary>
   public partial class ISREAControl : UserControl, IISREAView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ISREAControl"/> class.
+    /// </summary>
     public ISREAControl()
     {
       InitializeComponent();

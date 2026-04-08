@@ -46,32 +46,58 @@ namespace Altaxo.Gui.Workbench
   /// </remarks>
   public static class IsActiveObserver
   {
+    /// <summary>
+    /// Identifies the attached property that enables observation.
+    /// </summary>
     public static readonly DependencyProperty ObserveProperty = DependencyProperty.RegisterAttached(
         "Observe",
         typeof(bool),
         typeof(IsActiveObserver),
         new FrameworkPropertyMetadata(OnObserveChanged));
 
+    /// <summary>
+    /// Identifies the attached property that mirrors the window active state.
+    /// </summary>
     public static readonly DependencyProperty ObservedIsActiveProperty = DependencyProperty.RegisterAttached(
         "ObservedIsActive",
         typeof(bool),
         typeof(IsActiveObserver));
 
+    /// <summary>
+    /// Gets whether observation is enabled.
+    /// </summary>
+    /// <param name="frameworkElement">The associated window.</param>
+    /// <returns><see langword="true"/> if observation is enabled; otherwise, <see langword="false"/>.</returns>
     public static bool GetObserve(Window frameworkElement)
     {
       return (bool)frameworkElement.GetValue(ObserveProperty);
     }
 
+    /// <summary>
+    /// Sets whether observation is enabled.
+    /// </summary>
+    /// <param name="frameworkElement">The associated window.</param>
+    /// <param name="observe"><see langword="true"/> to enable observation; otherwise, <see langword="false"/>.</param>
     public static void SetObserve(Window frameworkElement, bool observe)
     {
       frameworkElement.SetValue(ObserveProperty, observe);
     }
 
+    /// <summary>
+    /// Gets the observed active state.
+    /// </summary>
+    /// <param name="frameworkElement">The associated window.</param>
+    /// <returns><see langword="true"/> if the window is active; otherwise, <see langword="false"/>.</returns>
     public static bool GetObservedIsActive(Window frameworkElement)
     {
       return (bool)frameworkElement.GetValue(ObservedIsActiveProperty);
     }
 
+    /// <summary>
+    /// Sets the observed active state.
+    /// </summary>
+    /// <param name="frameworkElement">The associated window.</param>
+    /// <param name="observedIsActive">The active state.</param>
     public static void SetObservedIsActive(Window frameworkElement, bool observedIsActive)
     {
       frameworkElement.SetValue(ObservedIsActiveProperty, observedIsActive);

@@ -39,7 +39,13 @@ namespace Altaxo.Gui.Common.Converters
   public class ScaleOffsetConverter
         : IValueConverter
   {
+    /// <summary>
+    /// Gets or sets the scale factor.
+    /// </summary>
     public double Scale { get; set; } = 1;
+    /// <summary>
+    /// Gets or sets the additive offset.
+    /// </summary>
     public double Offset { get; set; } = 0;
 
     /// <summary>

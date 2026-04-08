@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Worksheet
   /// </summary>
   public partial class PLSPredictValueControl : UserControl, IPLSPredictValueView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PLSPredictValueControl"/> class.
+    /// </summary>
     public PLSPredictValueControl()
     {
       InitializeComponent();

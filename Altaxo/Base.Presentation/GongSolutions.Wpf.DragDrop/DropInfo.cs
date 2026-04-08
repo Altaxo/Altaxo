@@ -273,14 +273,32 @@ namespace GongSolutions.Wpf.DragDrop
     /// </summary>
     public DragDropKeyStates KeyStates { get; private set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the current drop information should be handled by the originating element itself.
+    /// </summary>
     public bool NotHandled { get; set; }
   }
 
+  /// <summary>
+  /// Specifies the position of the drop marker relative to the target item.
+  /// </summary>
+  /// <remarks>
+  /// This enumeration is used to determine where the item will be inserted in relation to the target item.
+  /// </remarks>
   [Flags]
   public enum RelativeInsertPosition
   {
+    /// <summary>
+    /// Indicates insertion before the target item.
+    /// </summary>
     BeforeTargetItem = 1, // ModifiedByLelliD: value should not be 0, because HasFlag can not handle zero values (it would always return true)
+    /// <summary>
+    /// Indicates insertion after the target item.
+    /// </summary>
     AfterTargetItem = 2,
+    /// <summary>
+    /// Indicates insertion into the center region of the target item.
+    /// </summary>
     TargetItemCenter = 4
   }
 }

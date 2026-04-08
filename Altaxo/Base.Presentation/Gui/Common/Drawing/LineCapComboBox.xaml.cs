@@ -80,6 +80,9 @@ namespace Altaxo.Gui.Common.Drawing
 
     private bool _isForEndCap;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LineCapComboBox"/> class.
+    /// </summary>
     public LineCapComboBox()
     {
       InitializeComponent();
@@ -94,6 +97,9 @@ namespace Altaxo.Gui.Common.Drawing
       SetBinding(ComboBox.SelectedItemProperty, binding);
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the control shows end caps instead of start caps.
+    /// </summary>
     public bool IsForEndCap
     {
       get { return _isForEndCap; }
@@ -114,12 +120,18 @@ namespace Altaxo.Gui.Common.Drawing
 
     private const string _nameOfValueProp = "SelectedLineCap";
 
+    /// <summary>
+    /// Gets or sets the selected line cap.
+    /// </summary>
     public ILineCap SelectedLineCap
     {
       get { return (ILineCap)GetValue(SelectedLineCapProperty); }
       set { SetValue(SelectedLineCapProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="SelectedLineCap"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty SelectedLineCapProperty =
         DependencyProperty.Register(_nameOfValueProp, typeof(ILineCap), typeof(LineCapComboBox),
         new FrameworkPropertyMetadata(FlatCap.Instance, OnSelectedLineCapChanged) { BindsTwoWayByDefault=true });
@@ -130,12 +142,14 @@ namespace Altaxo.Gui.Common.Drawing
 
     #endregion Dependency property
 
+    /// <inheritdoc/>
     public override string GetItemText(object item)
     {
       var value = (ILineCap)item;
       return value.Name;
     }
 
+    /// <inheritdoc/>
     public override ImageSource GetItemImage(object item)
     {
       var val = (ILineCap)item;
@@ -153,6 +167,12 @@ namespace Altaxo.Gui.Common.Drawing
       return result;
     }
 
+    /// <summary>
+    /// Creates an image that represents the specified <see cref="ILineCap"/>.
+    /// </summary>
+    /// <param name="join">The line cap to visualize.</param>
+    /// <param name="isForEndCap"><c>true</c> to render an end cap; otherwise, a start cap.</param>
+    /// <returns>An image representing the requested line cap.</returns>
     public static ImageSource GetImage(ILineCap join, bool isForEndCap)
     {
       const int bmpHeight = 24;

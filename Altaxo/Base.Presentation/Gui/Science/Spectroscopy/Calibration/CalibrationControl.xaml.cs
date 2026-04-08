@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
   /// </summary>
   public partial class CalibrationControl : UserControl, IXCalibrationView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CalibrationControl"/> class.
+    /// </summary>
     public CalibrationControl()
     {
       InitializeComponent();

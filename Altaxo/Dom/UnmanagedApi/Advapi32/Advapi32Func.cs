@@ -31,8 +31,14 @@ using Microsoft.Win32.SafeHandles;
 
 namespace Altaxo.UnmanagedApi.Advapi32
 {
+  /// <summary>
+  /// Provides unmanaged Advapi32 function imports.
+  /// </summary>
   public static class Advapi32Func
   {
+    /// <summary>
+    /// Creates or opens the specified registry key.
+    /// </summary>
     [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Auto)]
     public static extern int RegCreateKeyEx(
                 [In] SafeRegistryHandle hKey,

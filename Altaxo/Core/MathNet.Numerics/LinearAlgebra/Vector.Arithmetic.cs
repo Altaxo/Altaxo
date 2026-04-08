@@ -232,31 +232,170 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="result">The vector to store the result.</param>
     protected abstract void DoPointwiseLog(Vector<T> result);
 
+    /// <summary>
+    /// Pointwise applies the absolute value function to each element and stores the result in <paramref name="result"/>.
+    /// </summary>
+    /// <param name="result">The vector to store the result.</param>
     protected abstract void DoPointwiseAbs(Vector<T> result);
+
+    /// <summary>
+    /// Pointwise applies the arccosine function to each element and stores the result in <paramref name="result"/>.
+    /// </summary>
+    /// <param name="result">The vector to store the result.</param>
     protected abstract void DoPointwiseAcos(Vector<T> result);
+
+    /// <summary>
+    /// Pointwise applies the arcsine function to each element and stores the result in <paramref name="result"/>.
+    /// </summary>
+    /// <param name="result">The vector to store the result.</param>
     protected abstract void DoPointwiseAsin(Vector<T> result);
+
+    /// <summary>
+    /// Pointwise applies the arctangent function to each element and stores the result in <paramref name="result"/>.
+    /// </summary>
+    /// <param name="result">The vector to store the result.</param>
     protected abstract void DoPointwiseAtan(Vector<T> result);
+
+    /// <summary>
+    /// Pointwise applies the ceiling function to each element and stores the result in <paramref name="result"/>.
+    /// </summary>
+    /// <param name="result">The vector to store the result.</param>
     protected abstract void DoPointwiseCeiling(Vector<T> result);
+
+    /// <summary>
+    /// Pointwise applies the cosine function to each element and stores the result in <paramref name="result"/>.
+    /// </summary>
+    /// <param name="result">The vector to store the result.</param>
     protected abstract void DoPointwiseCos(Vector<T> result);
+
+    /// <summary>
+    /// Pointwise applies the hyperbolic cosine function to each element and stores the result in <paramref name="result"/>.
+    /// </summary>
+    /// <param name="result">The vector to store the result.</param>
     protected abstract void DoPointwiseCosh(Vector<T> result);
+
+    /// <summary>
+    /// Pointwise applies the floor function to each element and stores the result in <paramref name="result"/>.
+    /// </summary>
+    /// <param name="result">The vector to store the result.</param>
     protected abstract void DoPointwiseFloor(Vector<T> result);
+
+    /// <summary>
+    /// Pointwise applies the base-10 logarithm function to each element and stores the result in <paramref name="result"/>.
+    /// </summary>
+    /// <param name="result">The vector to store the result.</param>
     protected abstract void DoPointwiseLog10(Vector<T> result);
+
+    /// <summary>
+    /// Pointwise applies the round function to each element and stores the result in <paramref name="result"/>.
+    /// </summary>
+    /// <param name="result">The vector to store the result.</param>
     protected abstract void DoPointwiseRound(Vector<T> result);
+
+    /// <summary>
+    /// Pointwise applies the sign function to each element and stores the result in <paramref name="result"/>.
+    /// </summary>
+    /// <param name="result">The vector to store the result.</param>
     protected abstract void DoPointwiseSign(Vector<T> result);
+
+    /// <summary>
+    /// Pointwise applies the sine function to each element and stores the result in <paramref name="result"/>.
+    /// </summary>
+    /// <param name="result">The vector to store the result.</param>
     protected abstract void DoPointwiseSin(Vector<T> result);
+
+    /// <summary>
+    /// Pointwise applies the hyperbolic sine function to each element and stores the result in <paramref name="result"/>.
+    /// </summary>
+    /// <param name="result">The vector to store the result.</param>
     protected abstract void DoPointwiseSinh(Vector<T> result);
+
+    /// <summary>
+    /// Pointwise applies the square root function to each element and stores the result in <paramref name="result"/>.
+    /// </summary>
+    /// <param name="result">The vector to store the result.</param>
     protected abstract void DoPointwiseSqrt(Vector<T> result);
+
+    /// <summary>
+    /// Pointwise applies the tangent function to each element and stores the result in <paramref name="result"/>.
+    /// </summary>
+    /// <param name="result">The vector to store the result.</param>
     protected abstract void DoPointwiseTan(Vector<T> result);
+
+    /// <summary>
+    /// Pointwise applies the hyperbolic tangent function to each element and stores the result in <paramref name="result"/>.
+    /// </summary>
+    /// <param name="result">The vector to store the result.</param>
     protected abstract void DoPointwiseTanh(Vector<T> result);
+
+    /// <summary>
+    /// Pointwise applies the two-argument arctangent using another vector and stores the result in <paramref name="result"/>.
+    /// </summary>
+    /// <param name="other">The vector providing the x-values.</param>
+    /// <param name="result">The vector to store the result.</param>
     protected abstract void DoPointwiseAtan2(Vector<T> other, Vector<T> result);
+
+    /// <summary>
+    /// Pointwise applies the two-argument arctangent using a scalar and stores the result in <paramref name="result"/>.
+    /// </summary>
+    /// <param name="scalar">The scalar providing the x-values.</param>
+    /// <param name="result">The vector to store the result.</param>
     protected abstract void DoPointwiseAtan2(T scalar, Vector<T> result);
+
+    /// <summary>
+    /// Pointwise applies the minimum with a scalar and stores the result in <paramref name="result"/>.
+    /// </summary>
+    /// <param name="scalar">The scalar to compare against.</param>
+    /// <param name="result">The vector to store the result.</param>
     protected abstract void DoPointwiseMinimum(T scalar, Vector<T> result);
+
+    /// <summary>
+    /// Pointwise applies the minimum with another vector and stores the result in <paramref name="result"/>.
+    /// </summary>
+    /// <param name="other">The vector to compare against.</param>
+    /// <param name="result">The vector to store the result.</param>
     protected abstract void DoPointwiseMinimum(Vector<T> other, Vector<T> result);
+
+    /// <summary>
+    /// Pointwise applies the maximum with a scalar and stores the result in <paramref name="result"/>.
+    /// </summary>
+    /// <param name="scalar">The scalar to compare against.</param>
+    /// <param name="result">The vector to store the result.</param>
     protected abstract void DoPointwiseMaximum(T scalar, Vector<T> result);
+
+    /// <summary>
+    /// Pointwise applies the maximum with another vector and stores the result in <paramref name="result"/>.
+    /// </summary>
+    /// <param name="other">The vector to compare against.</param>
+    /// <param name="result">The vector to store the result.</param>
     protected abstract void DoPointwiseMaximum(Vector<T> other, Vector<T> result);
+
+    /// <summary>
+    /// Pointwise applies the absolute minimum with a scalar and stores the result in <paramref name="result"/>.
+    /// </summary>
+    /// <param name="scalar">The scalar to compare against.</param>
+    /// <param name="result">The vector to store the result.</param>
     protected abstract void DoPointwiseAbsoluteMinimum(T scalar, Vector<T> result);
+
+    /// <summary>
+    /// Pointwise applies the absolute minimum with another vector and stores the result in <paramref name="result"/>.
+    /// </summary>
+    /// <param name="other">The vector to compare against.</param>
+    /// <param name="result">The vector to store the result.</param>
     protected abstract void DoPointwiseAbsoluteMinimum(Vector<T> other, Vector<T> result);
+
+    /// <summary>
+    /// Pointwise applies the absolute maximum with a scalar and stores the result in <paramref name="result"/>.
+    /// </summary>
+    /// <param name="scalar">The scalar to compare against.</param>
+    /// <param name="result">The vector to store the result.</param>
     protected abstract void DoPointwiseAbsoluteMaximum(T scalar, Vector<T> result);
+
+    /// <summary>
+    /// Pointwise applies the absolute maximum with another vector and stores the result in <paramref name="result"/>.
+    /// </summary>
+    /// <param name="other">The vector to compare against.</param>
+    /// <param name="result">The vector to store the result.</param>
     protected abstract void DoPointwiseAbsoluteMaximum(Vector<T> other, Vector<T> result);
 
     /// <summary>
@@ -832,6 +971,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Pointwise raise this vector to an exponent.
     /// </summary>
     /// <param name="exponent">The exponent to raise this vector values to.</param>
+    /// <returns>A new vector containing the pointwise powers.</returns>
     public Vector<T> PointwisePower(T exponent)
     {
       var result = Build.SameAs(this);
@@ -859,6 +999,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Pointwise raise this vector to an exponent and store the result into the result vector.
     /// </summary>
     /// <param name="exponent">The exponent to raise this vector values to.</param>
+    /// <returns>A new vector containing the pointwise powers.</returns>
     public Vector<T> PointwisePower(Vector<T> exponent)
     {
       if (Count != exponent.Count)
@@ -897,6 +1038,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// of this vector with another vector.
     /// </summary>
     /// <param name="divisor">The pointwise denominator vector to use.</param>
+    /// <returns>A new vector containing the pointwise modulus values.</returns>
     /// <exception cref="ArgumentException">If this vector and <paramref name="divisor"/> are not the same size.</exception>
     public Vector<T> PointwiseModulus(Vector<T> divisor)
     {
@@ -937,6 +1079,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// of this vector with another vector.
     /// </summary>
     /// <param name="divisor">The pointwise denominator vector to use.</param>
+    /// <returns>A new vector containing the pointwise remainder values.</returns>
     /// <exception cref="ArgumentException">If this vector and <paramref name="divisor"/> are not the same size.</exception>
     public Vector<T> PointwiseRemainder(Vector<T> divisor)
     {
@@ -1085,6 +1228,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Pointwise applies the exponent function to each value.
     /// </summary>
+    /// <returns>A new vector containing the pointwise exponentials.</returns>
     public Vector<T> PointwiseExp()
     {
       return PointwiseUnary(DoPointwiseExp);
@@ -1103,6 +1247,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Pointwise applies the natural logarithm function to each value.
     /// </summary>
+    /// <returns>A new vector containing the pointwise natural logarithms.</returns>
     public Vector<T> PointwiseLog()
     {
       return PointwiseUnary(DoPointwiseLog);
@@ -1119,8 +1264,9 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// Pointwise applies the abs function to each value
+    /// Pointwise applies the absolute value function to each value.
     /// </summary>
+    /// <returns>A new vector containing the pointwise absolute values.</returns>
     public Vector<T> PointwiseAbs()
     {
       return PointwiseUnary(DoPointwiseAbs);
@@ -1136,8 +1282,9 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// Pointwise applies the acos function to each value
+    /// Pointwise applies the arccosine function to each value.
     /// </summary>
+    /// <returns>A new vector containing the pointwise arccosines.</returns>
     public Vector<T> PointwiseAcos()
     {
       return PointwiseUnary(DoPointwiseAcos);
@@ -1153,8 +1300,9 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// Pointwise applies the asin function to each value
+    /// Pointwise applies the arcsine function to each value.
     /// </summary>
+    /// <returns>A new vector containing the pointwise arcsines.</returns>
     public Vector<T> PointwiseAsin()
     {
       return PointwiseUnary(DoPointwiseAsin);
@@ -1170,8 +1318,9 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// Pointwise applies the atan function to each value
+    /// Pointwise applies the arctangent function to each value.
     /// </summary>
+    /// <returns>A new vector containing the pointwise arctangents.</returns>
     public Vector<T> PointwiseAtan()
     {
       return PointwiseUnary(DoPointwiseAtan);
@@ -1189,9 +1338,10 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Pointwise applies the atan2 function to each value of the current
     /// vector and a given other vector being the 'x' of atan2 and the
-    /// 'this' vector being the 'y'
+     /// current vector being the 'y'.
     /// </summary>
-    /// <param name="other"></param>
+    /// <param name="other">The vector providing the x values for the atan2 operation.</param>
+    /// <returns>A new vector containing the pointwise two-argument arctangents.</returns>
     public Vector<T> PointwiseAtan2(Vector<T> other)
     {
       return PointwiseBinary(DoPointwiseAtan2, other);
@@ -1202,7 +1352,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// vector and a given other vector being the 'x' of atan2 and the
     /// 'this' vector being the 'y'
     /// </summary>
-    /// <param name="other"></param>
+    /// <param name="other">The vector providing the x values for the atan2 operation.</param>
     /// <param name="result">The vector to store the result</param>
     public void PointwiseAtan2(Vector<T> other, Vector<T> result)
     {
@@ -1210,8 +1360,9 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// Pointwise applies the ceiling function to each value
+    /// Pointwise applies the ceiling function to each value.
     /// </summary>
+    /// <returns>A new vector containing the pointwise ceilings.</returns>
     public Vector<T> PointwiseCeiling()
     {
       return PointwiseUnary(DoPointwiseCeiling);
@@ -1227,8 +1378,9 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// Pointwise applies the cos function to each value
+    /// Pointwise applies the cosine function to each value.
     /// </summary>
+    /// <returns>A new vector containing the pointwise cosines.</returns>
     public Vector<T> PointwiseCos()
     {
       return PointwiseUnary(DoPointwiseCos);
@@ -1244,8 +1396,9 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// Pointwise applies the cosh function to each value
+    /// Pointwise applies the hyperbolic cosine function to each value.
     /// </summary>
+    /// <returns>A new vector containing the pointwise hyperbolic cosines.</returns>
     public Vector<T> PointwiseCosh()
     {
       return PointwiseUnary(DoPointwiseCosh);
@@ -1261,8 +1414,9 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// Pointwise applies the floor function to each value
+    /// Pointwise applies the floor function to each value.
     /// </summary>
+    /// <returns>A new vector containing the pointwise floors.</returns>
     public Vector<T> PointwiseFloor()
     {
       return PointwiseUnary(DoPointwiseFloor);
@@ -1278,8 +1432,9 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// Pointwise applies the log10 function to each value
+    /// Pointwise applies the base-10 logarithm function to each value.
     /// </summary>
+    /// <returns>A new vector containing the pointwise base-10 logarithms.</returns>
     public Vector<T> PointwiseLog10()
     {
       return PointwiseUnary(DoPointwiseLog10);
@@ -1295,8 +1450,9 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// Pointwise applies the round function to each value
+    /// Pointwise applies the round function to each value.
     /// </summary>
+    /// <returns>A new vector containing the pointwise rounded values.</returns>
     public Vector<T> PointwiseRound()
     {
       return PointwiseUnary(DoPointwiseRound);
@@ -1312,8 +1468,9 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// Pointwise applies the sign function to each value
+    /// Pointwise applies the sign function to each value.
     /// </summary>
+    /// <returns>A new vector containing the pointwise signs.</returns>
     public Vector<T> PointwiseSign()
     {
       return PointwiseUnary(DoPointwiseSign);
@@ -1329,8 +1486,9 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// Pointwise applies the sin function to each value
+    /// Pointwise applies the sine function to each value.
     /// </summary>
+    /// <returns>A new vector containing the pointwise sines.</returns>
     public Vector<T> PointwiseSin()
     {
       return PointwiseUnary(DoPointwiseSin);
@@ -1346,8 +1504,9 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// Pointwise applies the sinh function to each value
+    /// Pointwise applies the hyperbolic sine function to each value.
     /// </summary>
+    /// <returns>A new vector containing the pointwise hyperbolic sines.</returns>
     public Vector<T> PointwiseSinh()
     {
       return PointwiseUnary(DoPointwiseSinh);
@@ -1363,8 +1522,9 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// Pointwise applies the sqrt function to each value
+    /// Pointwise applies the square root function to each value.
     /// </summary>
+    /// <returns>A new vector containing the pointwise square roots.</returns>
     public Vector<T> PointwiseSqrt()
     {
       return PointwiseUnary(DoPointwiseSqrt);
@@ -1380,8 +1540,9 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// Pointwise applies the tan function to each value
+    /// Pointwise applies the tangent function to each value.
     /// </summary>
+    /// <returns>A new vector containing the pointwise tangents.</returns>
     public Vector<T> PointwiseTan()
     {
       return PointwiseUnary(DoPointwiseTan);
@@ -1397,8 +1558,9 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// Pointwise applies the tanh function to each value
+    /// Pointwise applies the hyperbolic tangent function to each value.
     /// </summary>
+    /// <returns>A new vector containing the pointwise hyperbolic tangents.</returns>
     public Vector<T> PointwiseTanh()
     {
       return PointwiseUnary(DoPointwiseTanh);
@@ -1439,6 +1601,12 @@ namespace Altaxo.Calc.LinearAlgebra
       DoOuterProduct(other, result);
     }
 
+    /// <summary>
+    /// Computes the outer product <c>M[i,j] = u[i] * v[j]</c> of two vectors.
+    /// </summary>
+    /// <param name="u">The left vector.</param>
+    /// <param name="v">The right vector.</param>
+    /// <returns>A matrix containing the outer product.</returns>
     public static Matrix<T> OuterProduct(Vector<T> u, Vector<T> v)
     {
       return u.OuterProduct(v);
@@ -1448,6 +1616,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Pointwise applies the minimum with a scalar to each value.
     /// </summary>
     /// <param name="scalar">The scalar value to compare to.</param>
+    /// <returns>A new vector containing the pointwise minima.</returns>
     public Vector<T> PointwiseMinimum(T scalar)
     {
       var result = Build.SameAs(this);
@@ -1475,6 +1644,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Pointwise applies the maximum with a scalar to each value.
     /// </summary>
     /// <param name="scalar">The scalar value to compare to.</param>
+    /// <returns>A new vector containing the pointwise maxima.</returns>
     public Vector<T> PointwiseMaximum(T scalar)
     {
       var result = Build.SameAs(this);
@@ -1502,6 +1672,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Pointwise applies the absolute minimum with a scalar to each value.
     /// </summary>
     /// <param name="scalar">The scalar value to compare to.</param>
+    /// <returns>A new vector containing the pointwise absolute minima.</returns>
     public Vector<T> PointwiseAbsoluteMinimum(T scalar)
     {
       var result = Build.SameAs(this);
@@ -1529,6 +1700,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Pointwise applies the absolute maximum with a scalar to each value.
     /// </summary>
     /// <param name="scalar">The scalar value to compare to.</param>
+    /// <returns>A new vector containing the pointwise absolute maxima.</returns>
     public Vector<T> PointwiseAbsoluteMaximum(T scalar)
     {
       var result = Build.SameAs(this);
@@ -1556,6 +1728,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Pointwise applies the minimum with the values of another vector to each value.
     /// </summary>
     /// <param name="other">The vector with the values to compare to.</param>
+    /// <returns>A new vector containing the pointwise minima.</returns>
     public Vector<T> PointwiseMinimum(Vector<T> other)
     {
       var result = Build.SameAs(this);
@@ -1583,6 +1756,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Pointwise applies the maximum with the values of another vector to each value.
     /// </summary>
     /// <param name="other">The vector with the values to compare to.</param>
+    /// <returns>A new vector containing the pointwise maxima.</returns>
     public Vector<T> PointwiseMaximum(Vector<T> other)
     {
       var result = Build.SameAs(this);
@@ -1610,6 +1784,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Pointwise applies the absolute minimum with the values of another vector to each value.
     /// </summary>
     /// <param name="other">The vector with the values to compare to.</param>
+    /// <returns>A new vector containing the pointwise absolute minima.</returns>
     public Vector<T> PointwiseAbsoluteMinimum(Vector<T> other)
     {
       var result = Build.SameAs(this);
@@ -1637,6 +1812,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Pointwise applies the absolute maximum with the values of another vector to each value.
     /// </summary>
     /// <param name="other">The vector with the values to compare to.</param>
+    /// <returns>A new vector containing the pointwise absolute maxima.</returns>
     public Vector<T> PointwiseAbsoluteMaximum(Vector<T> other)
     {
       var result = Build.SameAs(this);

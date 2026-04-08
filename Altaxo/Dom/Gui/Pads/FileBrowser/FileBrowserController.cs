@@ -31,10 +31,16 @@ using Altaxo.Gui.Workbench;
 
 namespace Altaxo.Gui.Pads.FileBrowser
 {
+  /// <summary>
+  /// Defines the combined view for the file browser pad.
+  /// </summary>
   public interface IFileBrowserView : IFileTreeView, IFileListView
   {
   }
 
+  /// <summary>
+  /// Controls the file browser pad.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IFileBrowserView))]
   public class FileBrowserController : AbstractPadContent
   {
@@ -43,6 +49,9 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
     private IFileBrowserView _view;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileBrowserController"/> class.
+    /// </summary>
     public FileBrowserController()
     {
       _treeController = new FileSystemTreeController();
@@ -63,6 +72,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
       _listController.ViewObject = null;
     }
 
+    /// <inheritdoc/>
     public override object ViewObject
     {
       get
@@ -88,6 +98,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
       }
     }
 
+    /// <inheritdoc/>
     public override object InitiallyFocusedControl
     {
       get
@@ -111,6 +122,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
     /// <value>
     /// The model object.
     /// </value>
+    /// <inheritdoc/>
     public override object ModelObject
     {
       get
@@ -119,6 +131,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
       }
     }
 
+    /// <inheritdoc/>
     public override void Dispose()
     {
       ViewObject = null;

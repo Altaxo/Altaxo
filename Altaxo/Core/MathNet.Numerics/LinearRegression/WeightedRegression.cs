@@ -33,14 +33,19 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.LinearRegression
 {
+  /// <summary>
+  /// Provides weighted and locally weighted linear regression helpers.
+  /// </summary>
   public static class WeightedRegression
   {
     /// <summary>
     /// Weighted Linear Regression using normal equations.
     /// </summary>
+    /// <typeparam name="T">The numeric element type.</typeparam>
     /// <param name="x">Predictor matrix X</param>
     /// <param name="y">Response vector Y</param>
     /// <param name="w">Weight matrix W, usually diagonal with an entry for each predictor (row).</param>
+    /// <returns>The fitted regression coefficients.</returns>
     public static Vector<T> Weighted<T>(Matrix<T> x, Vector<T> y, Matrix<T> w) where T : struct, IEquatable<T>, IFormattable
     {
       return x.TransposeThisAndMultiply(w * x).Cholesky().Solve(x.TransposeThisAndMultiply(w * y));
@@ -49,9 +54,11 @@ namespace Altaxo.Calc.LinearRegression
     /// <summary>
     /// Weighted Linear Regression using normal equations.
     /// </summary>
+    /// <typeparam name="T">The numeric element type.</typeparam>
     /// <param name="x">Predictor matrix X</param>
     /// <param name="y">Response matrix Y</param>
     /// <param name="w">Weight matrix W, usually diagonal with an entry for each predictor (row).</param>
+    /// <returns>The fitted regression coefficient matrix.</returns>
     public static Matrix<T> Weighted<T>(Matrix<T> x, Matrix<T> y, Matrix<T> w) where T : struct, IEquatable<T>, IFormattable
     {
       return x.TransposeThisAndMultiply(w * x).Cholesky().Solve(x.TransposeThisAndMultiply(w * y));
@@ -60,10 +67,12 @@ namespace Altaxo.Calc.LinearRegression
     /// <summary>
     /// Weighted Linear Regression using normal equations.
     /// </summary>
+    /// <typeparam name="T">The numeric element type.</typeparam>
     /// <param name="x">Predictor matrix X</param>
     /// <param name="y">Response vector Y</param>
     /// <param name="w">Weight matrix W, usually diagonal with an entry for each predictor (row).</param>
     /// <param name="intercept">True if an intercept should be added as first artificial predictor value. Default = false.</param>
+    /// <returns>The fitted regression coefficients.</returns>
     public static T[] Weighted<T>(T[][] x, T[] y, T[] w, bool intercept = false) where T : struct, IEquatable<T>, IFormattable
     {
       var predictor = Matrix<T>.Build.DenseOfRowArrays(x);
@@ -80,9 +89,11 @@ namespace Altaxo.Calc.LinearRegression
     /// <summary>
     /// Weighted Linear Regression using normal equations.
     /// </summary>
+    /// <typeparam name="T">The numeric element type.</typeparam>
     /// <param name="samples">List of sample vectors (predictor) together with their response.</param>
     /// <param name="weights">List of weights, one for each sample.</param>
     /// <param name="intercept">True if an intercept should be added as first artificial predictor value. Default = false.</param>
+    /// <returns>The fitted regression coefficients.</returns>
     public static T[] Weighted<T>(IEnumerable<Tuple<T[], T>> samples, T[] weights, bool intercept = false) where T : struct, IEquatable<T>, IFormattable
     {
       var (u, v) = samples.UnpackSinglePass();
@@ -92,9 +103,11 @@ namespace Altaxo.Calc.LinearRegression
     /// <summary>
     /// Weighted Linear Regression using normal equations.
     /// </summary>
+    /// <typeparam name="T">The numeric element type.</typeparam>
     /// <param name="samples">List of sample vectors (predictor) together with their response.</param>
     /// <param name="weights">List of weights, one for each sample.</param>
     /// <param name="intercept">True if an intercept should be added as first artificial predictor value. Default = false.</param>
+    /// <returns>The fitted regression coefficients.</returns>
     public static T[] Weighted<T>(IEnumerable<(T[], T)> samples, T[] weights, bool intercept = false) where T : struct, IEquatable<T>, IFormattable
     {
       var (u, v) = samples.UnpackSinglePass();
@@ -104,6 +117,13 @@ namespace Altaxo.Calc.LinearRegression
     /// <summary>
     /// Locally-Weighted Linear Regression using normal equations.
     /// </summary>
+    /// <typeparam name="T">The numeric element type.</typeparam>
+    /// <param name="x">Predictor matrix X.</param>
+    /// <param name="y">Response vector Y.</param>
+    /// <param name="t">The query point.</param>
+    /// <param name="radius">The kernel radius.</param>
+    /// <param name="kernel">The weighting kernel.</param>
+    /// <returns>The fitted regression coefficients.</returns>
     [Obsolete("Warning: This function is here to stay but its signature will likely change. Opting out from semantic versioning.")]
     public static Vector<T> Local<T>(Matrix<T> x, Vector<T> y, Vector<T> t, double radius, Func<double, T> kernel) where T : struct, IEquatable<T>, IFormattable
     {
@@ -120,6 +140,13 @@ namespace Altaxo.Calc.LinearRegression
     /// <summary>
     /// Locally-Weighted Linear Regression using normal equations.
     /// </summary>
+    /// <typeparam name="T">The numeric element type.</typeparam>
+    /// <param name="x">Predictor matrix X.</param>
+    /// <param name="y">Response matrix Y.</param>
+    /// <param name="t">The query point.</param>
+    /// <param name="radius">The kernel radius.</param>
+    /// <param name="kernel">The weighting kernel.</param>
+    /// <returns>The fitted regression coefficient matrix.</returns>
     [Obsolete("Warning: This function is here to stay but its signature will likely change. Opting out from semantic versioning.")]
     public static Matrix<T> Local<T>(Matrix<T> x, Matrix<T> y, Vector<T> t, double radius, Func<double, T> kernel) where T : struct, IEquatable<T>, IFormattable
     {
@@ -133,6 +160,11 @@ namespace Altaxo.Calc.LinearRegression
       return Weighted(x, y, w);
     }
 
+    /// <summary>
+    /// Evaluates a Gaussian kernel at the specified normalized distance.
+    /// </summary>
+    /// <param name="normalizedDistance">The normalized distance.</param>
+    /// <returns>The kernel value.</returns>
     [Obsolete("Warning: This function is here to stay but will likely be refactored and/or moved to another place. Opting out from semantic versioning.")]
     public static double GaussianKernel(double normalizedDistance)
     {

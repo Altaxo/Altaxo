@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Science.Signals
   /// </summary>
   public partial class FourPointPeakEvaluationToolMouseHandlerOptionsControl : UserControl, IFourPointPeakEvaluationToolMouseHandlerOptionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FourPointPeakEvaluationToolMouseHandlerOptionsControl"/> class.
+    /// </summary>
     public FourPointPeakEvaluationToolMouseHandlerOptionsControl()
     {
       InitializeComponent();

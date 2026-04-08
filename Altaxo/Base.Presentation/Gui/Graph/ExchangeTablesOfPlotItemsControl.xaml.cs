@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph
   /// </summary>
   public partial class ExchangeTablesOfPlotItemsControl : UserControl, IExchangeTablesOfPlotItemsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ExchangeTablesOfPlotItemsControl"/> class.
+    /// </summary>
     public ExchangeTablesOfPlotItemsControl()
     {
       InitializeComponent();

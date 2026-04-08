@@ -44,11 +44,15 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     private ContextMenu _treeNodeContextMenu;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ProjectBrowseControl"/> class.
+    /// </summary>
     public ProjectBrowseControl()
     {
       InitializeComponent();
     }
 
+    /// <inheritdoc/>
     public ProjectBrowseController Controller
     {
       get { return _controller; }
@@ -80,15 +84,22 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       }
     }
 
+    /// <summary>
+    /// Gets the control that should receive the initial focus.
+    /// </summary>
     public object InitiallyFocusedControl
     {
       get { return null; }
     }
 
+    /// <summary>
+    /// Releases resources used by the project browser control.
+    /// </summary>
     public void Dispose()
     {
     }
 
+    /// <inheritdoc/>
     public void InitializeTree(Collections.NGTreeNode root)
     {
       root.Nodes[0].IsExpanded = true;
@@ -97,6 +108,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       _treeView.ItemsSource = root.Nodes;
     }
 
+    /// <inheritdoc/>
     public void SilentSelectTreeNode(Collections.NGTreeNode node)
     {
       // Trick to silently select the node: disable the controller temporarily
@@ -106,12 +118,14 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       _controller = helper;
     }
 
+    /// <inheritdoc/>
     public object TreeNodeContextMenu
     {
       get { return _treeNodeContextMenu; }
     }
 
 
+    /// <inheritdoc/>
     public void InitializeList(Collections.SelectableListNodeList list)
     {
       _listView.ItemsSource = null;
@@ -124,6 +138,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     bool _isFullNameFolder = true;
     double _columnNameRev_Width = 100;
 
+    /// <inheritdoc/>
     public void InitializeCurrentFolder(string currentFolder, bool isFullNameFolder)
     {
       _guiCurrentFolderName.Text = currentFolder;
@@ -145,6 +160,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       }
     }
 
+    /// <inheritdoc/>
     public void SynchronizeListSelection()
     {
       foreach (Collections.SelectableListNode node in _listView.Items)
@@ -279,6 +295,12 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     private Adorner _nameColumnSortAdorner;
 
+    /// <summary>
+    /// Sets the sort indicator for the name column.
+    /// </summary>
+    /// <param name="isSorted">Whether the column is currently sorted.</param>
+    /// <param name="isDescendingSort">Whether the sort direction is descending.</param>
+    /// <param name="isSecondaryAdorner">Whether the indicator represents a secondary sort.</param>
     public void SetSortIndicator_NameColumn(bool isSorted, bool isDescendingSort, bool isSecondaryAdorner)
     {
       SetSortAdorner(_listViewColHeader_Name, ref _nameColumnSortAdorner, isSorted, isDescendingSort, isSecondaryAdorner);
@@ -286,6 +308,12 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     private Adorner _creationDateColumnSortAdorner;
 
+    /// <summary>
+    /// Sets the sort indicator for the creation date column.
+    /// </summary>
+    /// <param name="isSorted">Whether the column is currently sorted.</param>
+    /// <param name="isDescendingSort">Whether the sort direction is descending.</param>
+    /// <param name="isSecondaryAdorner">Whether the indicator represents a secondary sort.</param>
     public void SetSortIndicator_CreationDateColumn(bool isSorted, bool isDescendingSort, bool isSecondaryAdorner)
     {
       SetSortAdorner(_listViewColHeader_CreationDate, ref _creationDateColumnSortAdorner, isSorted, isDescendingSort, isSecondaryAdorner);
@@ -293,6 +321,12 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     private Adorner _changeDateColumnSortAdorner;
 
+    /// <summary>
+    /// Sets the sort indicator for the change date column.
+    /// </summary>
+    /// <param name="isSorted">Whether the column is currently sorted.</param>
+    /// <param name="isDescendingSort">Whether the sort direction is descending.</param>
+    /// <param name="isSecondaryAdorner">Whether the indicator represents a secondary sort.</param>
     public void SetSortIndicator_ChangeDateColumn(bool isSorted, bool isDescendingSort, bool isSecondaryAdorner)
     {
       SetSortAdorner(_listViewColHeader_ChangeDate, ref _changeDateColumnSortAdorner, isSorted, isDescendingSort, isSecondaryAdorner);
@@ -300,6 +334,12 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     private Adorner _nameRevColumnSortAdorner;
 
+    /// <summary>
+    /// Sets the sort indicator for the revision name column.
+    /// </summary>
+    /// <param name="isSorted">Whether the column is currently sorted.</param>
+    /// <param name="isDescendingSort">Whether the sort direction is descending.</param>
+    /// <param name="isSecondaryAdorner">Whether the indicator represents a secondary sort.</param>
     public void SetSortIndicator_NameRevColumn(bool isSorted, bool isDescendingSort, bool isSecondaryAdorner)
     {
       SetSortAdorner(_listViewColHeader_NameRev, ref _nameRevColumnSortAdorner, isSorted, isDescendingSort, isSecondaryAdorner);
@@ -408,6 +448,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     private IDragSource _listViewDragHandler;
 
+    /// <summary>
+    /// Gets the drag handler for the project browser list view.
+    /// </summary>
     public IDragSource ListViewDragHandler
     {
       get
@@ -420,6 +463,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     private IDropTarget _listViewDropHandler;
 
+    /// <summary>
+    /// Gets the drop handler for the project browser list view.
+    /// </summary>
     public IDropTarget ListViewDropHandler
     {
       get
@@ -436,6 +482,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     private IDragSource _treeViewDragHandler;
 
+    /// <summary>
+    /// Gets the drag handler for the project browser tree view.
+    /// </summary>
     public IDragSource TreeViewDragHandler
     {
       get
@@ -448,6 +497,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     private IDropTarget _treeViewDropHandler;
 
+    /// <summary>
+    /// Gets the drop handler for the project browser tree view.
+    /// </summary>
     public IDropTarget TreeViewDropHandler
     {
       get

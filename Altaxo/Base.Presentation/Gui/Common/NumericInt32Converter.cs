@@ -32,6 +32,9 @@ using System.Windows.Data;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// Converts <see cref="int"/> values to and from their string representation and validates the entered text.
+  /// </summary>
   public class NumericInt32Converter : ValidationRule, IValueConverter
   {
     private System.Globalization.CultureInfo _conversionCulture = Altaxo.Settings.GuiCulture.Instance;
@@ -39,16 +42,26 @@ namespace Altaxo.Gui.Common
 
     private int? _lastConvertedValue;
 
+    /// <summary>
+    /// Gets or sets the minimum allowed value.
+    /// </summary>
     public int MinimumValue { get; set; }
 
+    /// <summary>
+    /// Gets or sets the maximum allowed value.
+    /// </summary>
     public int MaximumValue { get; set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NumericInt32Converter"/> class.
+    /// </summary>
     public NumericInt32Converter()
     {
       MinimumValue = int.MinValue;
       MaximumValue = int.MaxValue;
     }
 
+    /// <inheritdoc/>
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo cultureDontUseIsBuggy)
     {
       var val = (int)value;
@@ -63,6 +76,7 @@ namespace Altaxo.Gui.Common
       return _lastConvertedString;
     }
 
+    /// <inheritdoc/>
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo cultureDontUseIsBuggy)
     {
       var validationResult = ConvertAndValidate(value, out var result);
@@ -74,6 +88,7 @@ namespace Altaxo.Gui.Common
       return result;
     }
 
+    /// <inheritdoc/>
     public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureDontUseIsBuggy)
     {
       var validationResult = ConvertAndValidate(value, out var result);

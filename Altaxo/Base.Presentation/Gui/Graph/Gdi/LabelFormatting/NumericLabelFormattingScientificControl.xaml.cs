@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
   /// </summary>
   public partial class NumericLabelFormattingScientificControl : UserControl, INumericLabelFormattingScientificView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NumericLabelFormattingScientificControl"/> class.
+    /// </summary>
     public NumericLabelFormattingScientificControl()
     {
       InitializeComponent();

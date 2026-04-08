@@ -543,11 +543,24 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
     private double _assumedLaserWavelength_nm = double.NaN;
 
+    /// <summary>
+    /// Gets the peak descriptions produced by the peak-searching step.
+    /// </summary>
     public List<PeakSearching.PeakDescription>? PeakSearchingDescriptions { get; private set; }
+
+    /// <summary>
+    /// Gets the peak descriptions produced by the peak-fitting step.
+    /// </summary>
     public IReadOnlyList<PeakFitting.PeakDescription>? PeakFittingDescriptions { get; private set; }
 
+    /// <summary>
+    /// Gets the wavelength converter derived from the calibration results.
+    /// </summary>
     public WavelengthConverter Converter { get; protected set; }
 
+    /// <summary>
+    /// Gets the accumulated error message if calibration failed.
+    /// </summary>
     public string ErrorMessage { get; protected set; } = string.Empty;
 
     /// <summary>
@@ -605,7 +618,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
     /// <param name="x">The array of x-values of the Neon spectrum.</param>
     /// <param name="y">The array of y-values of the Neon spectrum.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>True if the evaluation was successfull; otherwise, if no peaks could be matched, false.</returns>
+    /// <returns><see langword="true"/> if the evaluation was successful; otherwise, <see langword="false"/>.</returns>
     public bool Evaluate(NeonCalibrationOptions options, double[] x, double[] y, CancellationToken cancellationToken)
     {
       if (options is null)

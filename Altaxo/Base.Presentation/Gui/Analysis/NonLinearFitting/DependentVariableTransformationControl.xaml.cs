@@ -47,6 +47,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
   /// </summary>
   public partial class DependentVariableTransformationControl : UserControl, IDependentVariableTransformationView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DependentVariableTransformationControl"/> class.
+    /// </summary>
     public DependentVariableTransformationControl()
     {
       InitializeComponent();

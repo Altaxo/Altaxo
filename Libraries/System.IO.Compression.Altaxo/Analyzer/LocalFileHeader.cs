@@ -33,27 +33,70 @@ using System.Threading.Tasks;
 
 namespace System.IO.Compression
 {
+  /// <summary>
+  /// Represents a local file header in a ZIP archive.
+  /// </summary>
   public class LocalFileHeader
   {
+    /// <summary>
+    /// Gets the minimum size, in bytes, of the local file header structure.
+    /// </summary>
     public const int MinimumSizeOfStructure = LocalFileHeaderStruct.MinimumSizeOfStructure;
 
+    /// <summary>
+    /// Gets the local file header signature.
+    /// </summary>
     public const int LocalFileHeaderSignature = LocalFileHeaderStruct.MinimumSizeOfStructure;
     private LocalFileHeaderStruct _lfh;
 
 
     // Data that are not part of the local file header structure
 
+    /// <summary>
+    /// Gets the version needed to extract the entry.
+    /// </summary>
     public int VersionNeeded { get => _lfh.VersionNeeded; } // Position 4
+
+    /// <summary>
+    /// Gets the general purpose bit flag.
+    /// </summary>
     public int GeneralPurposeFlag { get => _lfh.GeneralPurposeFlag; } // Position 6
+
+    /// <summary>
+    /// Gets the compression method.
+    /// </summary>
     public int CompressionMethod { get => _lfh.CompressionMethod; } // Position 8
+
+    /// <summary>
+    /// Gets the CRC-32 checksum.
+    /// </summary>
     public UInt32 Crc { get => _lfh.Crc; } // Position 14
 
+    /// <summary>
+    /// Gets the compressed size.
+    /// </summary>
     public long CompressedSize => _lfh.CompressedSize;  // Position 18
+
+    /// <summary>
+    /// Gets the uncompressed size.
+    /// </summary>
     public long UncompressedSize => _lfh.UncompressedSize; // Position 22
+
+    /// <summary>
+    /// Gets the file name length.
+    /// </summary>
     public int FileNameLength => _lfh.FileNameLength; // Position 26
+
+    /// <summary>
+    /// Gets the extra field length.
+    /// </summary>
     public int ExtraFieldLength => _lfh.ExtraFieldLength; // Position 28
 
     private long _originalStreamPosition = long.MinValue;
+
+    /// <summary>
+    /// Gets the original stream position of the local file header.
+    /// </summary>
     public long OriginalStreamPosition => _originalStreamPosition;
 
     /// <summary>
@@ -68,18 +111,33 @@ namespace System.IO.Compression
     /// </summary>
     public int ExternalFileAttributes { get; set; }
 
+    /// <summary>
+    /// Gets the position immediately after the local file data in the underlying stream.
+    /// </summary>
     public long NextStreamPosition => OriginalStreamPosition + MinimumSizeOfStructure + FileNameLength + ExtraFieldLength + CompressedSize;
 
 
+    /// <summary>
+    /// Gets the stream position of the end of the local file.
+    /// </summary>
     public long StreamPositionOfEndOfLocalFile => OriginalStreamPosition + MinimumSizeOfStructure + FileNameLength + ExtraFieldLength + CompressedSize;
 
+    /// <summary>
+    /// Gets the stream position at which the file content begins.
+    /// </summary>
     public long StreamPositionOfContentBegin => OriginalStreamPosition + MinimumSizeOfStructure + FileNameLength + ExtraFieldLength;
 
+    /// <summary>
+    /// Gets the total size of the local file header including file name and extra field.
+    /// </summary>
     public int SizeOfLocalFileHeader => MinimumSizeOfStructure + FileNameLength + ExtraFieldLength;
 
 
     #region Properties
 
+    /// <summary>
+    /// Gets or sets the file last modification time.
+    /// </summary>
     public UInt32 FileLastModificationTime
     {
       get => _lfh.FileLastModificationTime;
@@ -91,6 +149,9 @@ namespace System.IO.Compression
       }
     }
 
+    /// <summary>
+    /// Gets or sets the file name.
+    /// </summary>
     public string FileName
     {
       get => _lfh.FileName;
@@ -110,6 +171,10 @@ namespace System.IO.Compression
 
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LocalFileHeader"/> class.
+    /// </summary>
+    /// <param name="fileName">The file name stored in the local file header.</param>
     public LocalFileHeader(string fileName)
     {
       _lfh = new LocalFileHeaderStruct(fileName);
@@ -120,7 +185,7 @@ namespace System.IO.Compression
     /// <summary>
     /// Gets the clone of the local file header, but with another original position.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A clone of the local file header.</returns>
     public LocalFileHeader GetClone()
     {
       var r = new LocalFileHeader()
@@ -131,6 +196,12 @@ namespace System.IO.Compression
       return r;
     }
 
+    /// <summary>
+    /// Creates a local file header from the specified buffer and central directory record.
+    /// </summary>
+    /// <param name="buffer">The buffer containing the local file header bytes.</param>
+    /// <param name="cde">The corresponding central directory record.</param>
+    /// <returns>The created local file header.</returns>
     public static LocalFileHeader Create(byte[] buffer, CentralDirectoryRecord cde)
     {
       var originalStreamPosition = cde.RelativeOffsetToLocalFileHeader;
@@ -156,6 +227,13 @@ namespace System.IO.Compression
       _lfh.WriteSizesAndCrc(uncompressedStream, _originalStreamPosition, compressedSize, uncompressedSize, crc);
     }
 
+    /// <summary>
+    /// Creates and writes a local file header to the specified ZIP archive stream.
+    /// </summary>
+    /// <param name="zipArchiveStream">The ZIP archive stream to write to.</param>
+    /// <param name="fileName">The file name to store in the local file header.</param>
+    /// <param name="compressionLevel">The compression level associated with the entry.</param>
+    /// <returns>The written local file header.</returns>
     public static LocalFileHeader Write(Stream zipArchiveStream, string fileName, int compressionLevel)
     {
       var lfh = new LocalFileHeader(fileName);
@@ -164,6 +242,10 @@ namespace System.IO.Compression
     }
 
 
+    /// <summary>
+    /// Writes the local file header to the specified ZIP archive stream.
+    /// </summary>
+    /// <param name="zipArchiveStream">The ZIP archive stream to write to.</param>
     public void Write(Stream zipArchiveStream)
     {
       _originalStreamPosition = zipArchiveStream.Position;

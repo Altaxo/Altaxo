@@ -189,10 +189,17 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// </summary>
     protected RectangleD2D? _rectangleSelectionArea_GraphCoordinates;
 
+    /// <summary>
+    /// Brush used to draw the translucent selection rectangle.
+    /// </summary>
     protected static Brush _blueTransparentBrush = new SolidBrush(Color.FromArgb(64, 0, 0, 255));
 
     #endregion Members
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ObjectPointerMouseHandler"/> class.
+    /// </summary>
+    /// <param name="grac">The graph controller.</param>
     public ObjectPointerMouseHandler(GraphController grac)
     {
       _grac = grac;
@@ -202,6 +209,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       _selectedObjects = new List<IHitTestObject>();
     }
 
+    /// <inheritdoc/>
     public override GraphToolType GraphToolType
     {
       get { return GraphToolType.ObjectPointer; }
@@ -215,6 +223,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       get { return _selectedObjects.Count; }
     }
 
+    /// <summary>
+    /// Gets the selected hit-test objects.
+    /// </summary>
     public IList<IHitTestObject> SelectedObjects
     {
       get
@@ -272,6 +283,10 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
         DisplayedGrips[i].Show(g, _grac.ZoomFactor);
     }
 
+    /// <summary>
+    /// Draws the current selection rectangle.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
     public void DisplaySelectionRectangle(Graphics g)
     {
       RectangleF r = GuiHelper.ToSysDraw(_rectangleSelectionArea_GraphCoordinates.Value);
@@ -573,6 +588,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       }
     }
 
+    /// <inheritdoc/>
     public override void AfterPaint(Graphics g)
     {
       if (_rectangleSelectionArea_GraphCoordinates is not null)

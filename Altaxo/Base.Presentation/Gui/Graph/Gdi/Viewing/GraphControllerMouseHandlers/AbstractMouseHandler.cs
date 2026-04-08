@@ -38,9 +38,18 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
   /// depending on which GraphTool is choosen by the user.</remarks>
   public abstract class MouseStateHandler : ITool
   {
+    /// <summary>
+    /// Represents a point in both root-layer and active-layer coordinates.
+    /// </summary>
     protected struct POINT
     {
+      /// <summary>
+      /// The point in root-layer coordinates.
+      /// </summary>
       public PointD2D RootLayerCoordinates;
+      /// <summary>
+      /// The point in active-layer coordinates.
+      /// </summary>
       public PointD2D LayerCoordinates;
     }
 
@@ -62,6 +71,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// <summary>The current mouse position in root layer coordinates</summary>
     protected PointD2D _positionCurrentMouseInRootLayerCoordinates;
 
+    /// <inheritdoc/>
     public abstract GraphToolType GraphToolType { get; }
 
     /// <summary>

@@ -44,16 +44,29 @@ namespace Altaxo.Gui.Scripting
   [UserControlPriority(1)]
   public partial class SDPureScriptControlWpf : UserControl, IScriptView, IViewRequiresSpecialShellWindow
   {
+    /// <summary>
+    /// The factory used to create code editor instances.
+    /// </summary>
     protected static CodeEditing.CodeTextEditorFactory _factory;
     private Altaxo.Gui.CodeEditing.CodeEditorWithDiagnostics _codeView;
 
+    /// <summary>
+    /// The application domain used for the help viewer.
+    /// </summary>
     protected static AppDomain _helpViewerAppDomain;
+    /// <summary>
+    /// The starter used to launch the help viewer.
+    /// </summary>
     protected static Altaxo.Gui.HelpViewing.HelpViewerStarter _helpViewerStarter;
+    /// <summary>
+    /// The main thread of the help viewer.
+    /// </summary>
     protected static Thread _helpViewerMainThread;
 
     /// <summary>
     /// Not used here because this is handled by the view.
     /// </summary>
+    /// <inheritdoc/>
     public event Action<string> CompilerMessageClicked
     {
       add { }
@@ -66,6 +79,9 @@ namespace Altaxo.Gui.Scripting
       _factory = new CodeEditing.CodeTextEditorFactory();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SDPureScriptControlWpf"/> class.
+    /// </summary>
     public SDPureScriptControlWpf()
     {
       InitializeComponent();
@@ -119,6 +135,10 @@ namespace Altaxo.Gui.Scripting
       }
     }
 
+    /// <summary>
+    /// Shows Microsoft documentation for the requested help item.
+    /// </summary>
+    /// <param name="helpItem">The help item that identifies the requested documentation.</param>
     protected static void ShowMicrosoftClassReferenceHelp(ExternalHelpItem helpItem)
     {
       string url = "https://docs.microsoft.com/en-us/dotnet/api/";
@@ -148,6 +168,10 @@ namespace Altaxo.Gui.Scripting
       System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url) { UseShellExecute = true });
     }
 
+    /// <summary>
+    /// Shows the Altaxo class reference for the requested help item on the web.
+    /// </summary>
+    /// <param name="helpItem">The help item that identifies the requested documentation.</param>
     protected static void ShowAltaxoClassRefHelpFromWeb(ExternalHelpItem helpItem)
     {
       string url = "https://altaxo.github.io/AltaxoClassReference/html/" + helpItem.DocumentationReferenceIdentifier + ".htm";
@@ -156,6 +180,11 @@ namespace Altaxo.Gui.Scripting
       System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url) { UseShellExecute = true });
     }
 
+    /// <summary>
+    /// Shows the Altaxo class reference help topic from a CHM help file.
+    /// </summary>
+    /// <param name="chmFileName">The path to the CHM help file.</param>
+    /// <param name="chmTopic">The topic within the CHM help file.</param>
     protected static void ShowAltaxoClassRefHelpFromChmFile(string chmFileName, string chmTopic)
     {
       if (_helpViewerAppDomain is null)
@@ -185,6 +214,7 @@ namespace Altaxo.Gui.Scripting
 
     #region IPureScriptView Members
 
+    /// <inheritdoc/>
     public string ScriptText
     {
       get
@@ -205,6 +235,7 @@ namespace Altaxo.Gui.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public int ScriptCursorLocation
     {
       set
@@ -213,6 +244,7 @@ namespace Altaxo.Gui.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public int InitialScriptCursorLocation
     {
       set
@@ -221,18 +253,16 @@ namespace Altaxo.Gui.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public Type TypeOfShellWindowRequired => typeof(Altaxo.Gui.Scripting.ScriptExecutionDialog);
 
-    /// <summary>
-    /// Sets the cursor location inside the script and focuses on the text. Line and column are starting with 1.
-    /// </summary>
-    /// <param name="line">Script line (1-based).</param>
-    /// <param name="column">Script column (1-based).</param>
+    /// <inheritdoc/>
     public void SetScriptCursorLocation(int line, int column)
     {
       _codeView.SetCaretOffsetWithScrolling(line, column);
     }
 
+    /// <inheritdoc/>
     public void MarkText(int pos1, int pos2)
     {
       _codeView.MarkText(pos1, pos2);
@@ -240,6 +270,11 @@ namespace Altaxo.Gui.Scripting
 
     #endregion IPureScriptView Members
 
+    /// <summary>
+    /// Converts the specified string content to a byte array.
+    /// </summary>
+    /// <param name="fileContent">The string content to convert.</param>
+    /// <returns>The UTF-8 encoded byte array for the provided content.</returns>
     public static byte[] StringToByte(string fileContent)
     {
       var memoryStream = new MemoryStream();
@@ -249,6 +284,7 @@ namespace Altaxo.Gui.Scripting
       return memoryStream.ToArray();
     }
 
+    /// <inheritdoc/>
     public void SetCompilerErrors(IEnumerable<ICompilerDiagnostic> errors)
     {
       var arr = ImmutableArray.Create<AltaxoDiagnostic>();

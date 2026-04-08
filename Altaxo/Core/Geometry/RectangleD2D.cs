@@ -83,6 +83,7 @@ namespace Altaxo.Geometry
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RectangleD2D), 2)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (RectangleD2D)obj;
@@ -92,6 +93,7 @@ namespace Altaxo.Geometry
         info.AddValue("Height", s.Height);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         RectangleD2D s = o is not null ? (RectangleD2D)o : new RectangleD2D();
@@ -353,11 +355,21 @@ namespace Altaxo.Geometry
     /// </summary>
     public RectangleD2D BottomHalf { get { return new RectangleD2D(_x, _y + _h / 2, _w, _h / 2); } }
 
-
+    /// <summary>
+    /// Determines whether the specified point is contained in this rectangle.
+    /// </summary>
+    /// <param name="p">The point to test.</param>
+    /// <returns><see langword="true"/> if the point is contained in this rectangle; otherwise, <see langword="false"/>.</returns>
     public bool Contains(PointD2D p)
     {
       return _x <= p.X && p.X < (_x + _w) && _y <= p.Y && p.Y < (_y + _h);
     }
+
+    /// <summary>
+    /// Determines whether the specified rectangle is fully contained in this rectangle.
+    /// </summary>
+    /// <param name="r">The rectangle to test.</param>
+    /// <returns><see langword="true"/> if <paramref name="r"/> is fully contained in this rectangle; otherwise, <see langword="false"/>.</returns>
     public bool Contains(RectangleD2D r)
     {
       return (_x <= r._x) && (r._x + r._w) <= (_x + _w) &&

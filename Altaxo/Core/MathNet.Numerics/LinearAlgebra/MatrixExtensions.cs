@@ -31,6 +31,9 @@ namespace Altaxo.Calc.LinearAlgebra
 {
   using Complex64 = System.Numerics.Complex;
 
+  /// <summary>
+  /// Provides extension methods for converting matrices between numeric types.
+  /// </summary>
   public static class MatrixExtensions
   {
     /// <summary>

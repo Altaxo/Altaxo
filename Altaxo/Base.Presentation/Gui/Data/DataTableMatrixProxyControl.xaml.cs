@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Data
   /// </summary>
   public partial class DataTableMatrixProxyControl : UserControl, IDataTableMatrixProxyView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DataTableMatrixProxyControl"/> class.
+    /// </summary>
     public DataTableMatrixProxyControl()
     {
       InitializeComponent();

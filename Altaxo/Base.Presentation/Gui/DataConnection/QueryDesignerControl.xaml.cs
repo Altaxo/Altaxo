@@ -41,28 +41,42 @@ namespace Altaxo.Gui.DataConnection
   /// </summary>
   public partial class QueryDesignerControl : UserControl, IQueryDesignerView
   {
+    /// <inheritdoc/>
     public event Action? ChooseConnectionString;
 
+    /// <inheritdoc/>
     public event Action<bool>? GroupByChanged;
 
+    /// <inheritdoc/>
     public event Action? ChooseProperties;
 
+    /// <inheritdoc/>
     public event Action? CheckSql;
 
+    /// <inheritdoc/>
     public event Action? ViewResults;
 
+    /// <inheritdoc/>
     public event Action? ClearQuery;
 
+    /// <inheritdoc/>
     public event Action<NGTreeNode>? TreeNodeMouseDoubleClick;
 
+    /// <inheritdoc/>
     public event Action<NGTreeNode, List<string>>? RelatedTablesRequired;
 
+    /// <inheritdoc/>
     public event Action<NGTreeNode>? HideTableChosen;
 
+    /// <inheritdoc/>
     public event Action? ShowTablesAllChosen;
 
+    /// <inheritdoc/>
     public event Action<string>? RelatedTableNameChosen;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="QueryDesignerControl"/> class.
+    /// </summary>
     public QueryDesignerControl()
     {
       InitializeComponent();
@@ -76,6 +90,9 @@ namespace Altaxo.Gui.DataConnection
     [IconResource] const string IconResource_Procedure = "Icons.16x16.DataConnection.Procedure";
     [IconResource] const string IconResource_Column = "Icons.16x16.DataConnection.Column";
 
+    /// <summary>
+    /// Gets an image converter for schema tree nodes.
+    /// </summary>
     public static IValueConverter TreeImageConverter
     {
       get
@@ -99,12 +116,14 @@ namespace Altaxo.Gui.DataConnection
       UpdateGridColumns(_btnGroupBy.IsChecked == true);
     }
 
+    /// <inheritdoc/>
     public void UpdateSqlDisplay(string sqlText, bool isStatusVisible)
     {
       _txtSql.Text = sqlText;
       _lblStatus.Visibility = isStatusVisible ? Visibility.Visible : Visibility.Hidden;
     }
 
+    /// <inheritdoc/>
     public void SetDataGridDataSource(QueryFieldCollection data, bool isGrouped)
     {
       _grid.ItemsSource = data;
@@ -125,6 +144,7 @@ namespace Altaxo.Gui.DataConnection
     }
 
     // update state of the grid columns
+    /// <inheritdoc/>
     public void UpdateGridColumns(bool isGrouped)
     {
       // freeze the first column so that it is visible even when horizontally scrolling
@@ -354,6 +374,7 @@ namespace Altaxo.Gui.DataConnection
         ev();
     }
 
+    /// <inheritdoc/>
     public void SetTableTreeDataSource(Collections.NGTreeNode rootNode)
     {
       _treeTables.ItemsSource = rootNode.Nodes;

@@ -34,6 +34,9 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Common.Drawing
 {
+  /// <summary>
+  /// ComboBox for selecting a dimensionless color scale value.
+  /// </summary>
   public partial class ColorScaleComboBox : DimensionfulQuantityImageComboBox
   {
     private static Dictionary<double, ImageSource> _cachedImages = new Dictionary<double, ImageSource>();
@@ -46,6 +49,9 @@ namespace Altaxo.Gui.Common.Drawing
       SelectedQuantityProperty.OverrideMetadata(typeof(ColorScaleComboBox), new FrameworkPropertyMetadata(new Altaxo.Units.DimensionfulQuantity(1, Altaxo.Units.Dimensionless.Unity.Instance)));
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColorScaleComboBox"/> class.
+    /// </summary>
     public ColorScaleComboBox()
     {
       _converter.ValidationAfterSuccessfulConversion = EhValidateQuantity;
@@ -58,6 +64,7 @@ namespace Altaxo.Gui.Common.Drawing
       _img.Source = GetImage(SelectedQuantityInSIUnits);
     }
 
+    /// <inheritdoc/>
     protected override void ImplantImage(double width, double height)
     {
       base.ImplantImage(width, height);
@@ -83,6 +90,7 @@ namespace Altaxo.Gui.Common.Drawing
       return error is null ? ValidationResult.ValidResult : new ValidationResult(false, error);
     }
 
+    /// <inheritdoc/>
     protected override void OnSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
       base.OnSelectedQuantityChanged(obj, args);
@@ -94,6 +102,7 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <inheritdoc/>
     public override ImageSource GetItemImage(object item)
     {
       double val = ((DimensionfulQuantity)item).AsValueInSIUnits;
@@ -102,11 +111,17 @@ namespace Altaxo.Gui.Common.Drawing
       return result;
     }
 
+    /// <inheritdoc/>
     public override string GetItemText(object item)
     {
       return (string)_converter.Convert(item, typeof(string), null, System.Globalization.CultureInfo.CurrentUICulture);
     }
 
+    /// <summary>
+    /// Creates an image for the specified color scale value.
+    /// </summary>
+    /// <param name="val">The color scale value.</param>
+    /// <returns>An image representing the specified color scale value.</returns>
     public static ImageSource GetImage(double val)
     {
       const double height = 1;

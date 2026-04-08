@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
   /// </summary>
   public partial class YCalibrationOptionsControl : UserControl, IYCalibrationOptionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="YCalibrationOptionsControl"/> class.
+    /// </summary>
     public YCalibrationOptionsControl()
     {
       InitializeComponent();

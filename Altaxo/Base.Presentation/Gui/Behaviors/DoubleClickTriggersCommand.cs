@@ -35,21 +35,33 @@ using System.Windows.Markup;
 
 namespace Altaxo.Gui.Behaviors
 {
+  /// <summary>
+  /// Attached behavior that executes a command when a control is double-clicked.
+  /// </summary>
   public class DoubleClickTriggersCommand
   {
     #region IsHandled property
 
+    /// <summary>
+    /// Identifies the attached property that controls whether the double-click event is marked as handled.
+    /// </summary>
     public static readonly DependencyProperty IsHandledProperty = DependencyProperty.RegisterAttached(
         "IsHandled",
         typeof(bool),
         typeof(DoubleClickTriggersCommand),
         new FrameworkPropertyMetadata(true));
 
+    /// <summary>
+    /// Gets a value indicating whether the handled flag is set for the specified framework element.
+    /// </summary>
     public static bool GetIsHandled(FrameworkElement frameworkElement)
     {
       return (bool)frameworkElement.GetValue(IsHandledProperty);
     }
 
+    /// <summary>
+    /// Sets a value indicating whether the double-click event is marked as handled for the specified framework element.
+    /// </summary>
     public static void SetIsHandled(FrameworkElement frameworkElement, bool observe)
     {
       frameworkElement.SetValue(IsHandledProperty, observe);
@@ -59,6 +71,9 @@ namespace Altaxo.Gui.Behaviors
 
     #region Command
 
+    /// <summary>
+    /// Identifies the attached property that stores the command to execute.
+    /// </summary>
     public static readonly DependencyProperty CommandProperty = DependencyProperty.RegisterAttached(
     "Command",
     typeof(ICommand),
@@ -84,11 +99,17 @@ namespace Altaxo.Gui.Behaviors
       }
     }
 
+    /// <summary>
+    /// Gets the command associated with the specified framework element.
+    /// </summary>
     public static ICommand GetCommand(FrameworkElement frameworkElement)
     {
       return (ICommand)frameworkElement.GetValue(CommandProperty);
     }
 
+    /// <summary>
+    /// Sets the command associated with the specified framework element.
+    /// </summary>
     public static void SetCommand(FrameworkElement frameworkElement, ICommand value)
     {
       frameworkElement.SetValue(CommandProperty, value);
@@ -98,17 +119,26 @@ namespace Altaxo.Gui.Behaviors
 
     #region Command parameter
 
+    /// <summary>
+    /// Identifies the attached property that stores the command parameter.
+    /// </summary>
     public static readonly DependencyProperty CommandParameterProperty = DependencyProperty.RegisterAttached(
     "CommandParameter",
     typeof(object),
     typeof(DoubleClickTriggersCommand)
     );
 
+    /// <summary>
+    /// Gets the command parameter associated with the specified framework element.
+    /// </summary>
     public static object GetCommandParameter(FrameworkElement frameworkElement)
     {
       return frameworkElement.GetValue(CommandParameterProperty);
     }
 
+    /// <summary>
+    /// Sets the command parameter associated with the specified framework element.
+    /// </summary>
     public static void SetCommandParameter(FrameworkElement frameworkElement, object value)
     {
       frameworkElement.SetValue(CommandParameterProperty, value);

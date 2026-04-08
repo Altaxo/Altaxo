@@ -38,23 +38,33 @@ using Altaxo.Graph.Graph3D;
 
 namespace Altaxo.Gui.Drawing.D3D
 {
+  /// <summary>
+  /// Converts materials to image sources.
+  /// </summary>
   public class MaterialToImageSourceConverter : IValueConverter
   {
     private int _width = 16;
     private int _height = 16;
 
+    /// <summary>
+    /// Gets or sets the preview width.
+    /// </summary>
     public int Width
     {
       get { return _width; }
       set { _width = value; }
     }
 
+    /// <summary>
+    /// Gets or sets the preview height.
+    /// </summary>
     public int Height
     {
       get { return _height; }
       set { _height = value; }
     }
 
+    /// <inheritdoc/>
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       if (value is IMaterial)
@@ -67,11 +77,15 @@ namespace Altaxo.Gui.Drawing.D3D
         return null;
     }
 
+    /// <inheritdoc/>
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Creates an image source from an <see cref="AxoColor"/>.
+    /// </summary>
     public static ImageSource GetImageSourceFromAxoColor(AxoColor axoColor, int width, int height)
     {
       var innerRect = new Rect(0, 0, width, height);
@@ -82,6 +96,9 @@ namespace Altaxo.Gui.Drawing.D3D
       return geometryImage;
     }
 
+    /// <summary>
+    /// Creates an image source from a material.
+    /// </summary>
     public static ImageSource GetImageSourceFromBrushX(IMaterial val, int width, int height)
     {
       //
@@ -106,6 +123,9 @@ namespace Altaxo.Gui.Drawing.D3D
   /// <summary>
   /// Converts a <see cref="IMaterial"/> to a string, which represents the name of this brush.
   /// </summary>
+  /// <summary>
+  /// Converts a material to its display name.
+  /// </summary>
   public class MaterialToMaterialNameConverter : IValueConverter
   {
     /// <summary>
@@ -128,6 +148,9 @@ namespace Altaxo.Gui.Drawing.D3D
         return null;
     }
 
+    /// <summary>
+    /// Gets a display name for a material.
+    /// </summary>
     public static string GetNameForMaterial(IMaterial material)
     {
       string name;
@@ -155,6 +178,7 @@ namespace Altaxo.Gui.Drawing.D3D
       return name;
     }
 
+    /// <inheritdoc/>
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       throw new NotImplementedException();

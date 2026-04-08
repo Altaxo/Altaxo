@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Science.Thermorheology
   /// </summary>
   public partial class MasterCurveTableOutputOptionsControl : UserControl, IMasterCurveTableOutputOptionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MasterCurveTableOutputOptionsControl"/> class.
+    /// </summary>
     public MasterCurveTableOutputOptionsControl()
     {
       InitializeComponent();

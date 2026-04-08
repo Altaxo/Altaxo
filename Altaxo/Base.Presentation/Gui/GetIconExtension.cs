@@ -34,13 +34,21 @@ namespace Altaxo.Gui
   [MarkupExtensionReturnType(typeof(Image))]
   public class GetIconExtension : MarkupExtension
   {
+    /// <summary>
+    /// The resource key.
+    /// </summary>
     protected string _key;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GetIconExtension"/> class.
+    /// </summary>
+    /// <param name="key">The icon resource key.</param>
     public GetIconExtension(string key)
     {
       _key = key;
     }
 
+    /// <inheritdoc/>
     public override object ProvideValue(IServiceProvider serviceProvider)
     {
       if (PresentationResourceService.InstanceAvailable)

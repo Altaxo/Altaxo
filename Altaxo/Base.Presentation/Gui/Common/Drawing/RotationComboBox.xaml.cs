@@ -34,6 +34,9 @@ using Altaxo.Units.Angle;
 
 namespace Altaxo.Gui.Common.Drawing
 {
+  /// <summary>
+  /// Combo box for selecting a rotation angle.
+  /// </summary>
   public partial class RotationComboBox : DimensionfulQuantityImageComboBox
   {
     private static Dictionary<double, ImageSource> _cachedImages = new Dictionary<double, ImageSource>();
@@ -46,6 +49,9 @@ namespace Altaxo.Gui.Common.Drawing
       SelectedQuantityProperty.OverrideMetadata(typeof(RotationComboBox), new FrameworkPropertyMetadata(new DimensionfulQuantity(0, Degree.Instance)));
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RotationComboBox"/> class.
+    /// </summary>
     public RotationComboBox()
     {
       InitializeComponent();
@@ -56,6 +62,9 @@ namespace Altaxo.Gui.Common.Drawing
       _img.Source = GetImage(SelectedQuantityAsValueInDegrees);
     }
 
+    /// <summary>
+    /// Gets or sets the selected rotation in degrees.
+    /// </summary>
     public double SelectedQuantityAsValueInDegrees
     {
       get { return SelectedQuantity.AsValueIn(Degree.Instance); }
@@ -68,6 +77,7 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <inheritdoc/>
     protected override void OnSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
       base.OnSelectedQuantityChanged(obj, args);
@@ -79,6 +89,7 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <inheritdoc/>
     public override ImageSource GetItemImage(object item)
     {
       double val = ((DimensionfulQuantity)item).AsValueIn(Degree.Instance);
@@ -87,11 +98,17 @@ namespace Altaxo.Gui.Common.Drawing
       return result;
     }
 
+    /// <inheritdoc/>
     public override string GetItemText(object item)
     {
       return (string)_converter.Convert(item, typeof(string), null, System.Globalization.CultureInfo.CurrentUICulture);
     }
 
+    /// <summary>
+    /// Creates the preview image for the specified rotation angle.
+    /// </summary>
+    /// <param name="angle">The angle in degrees.</param>
+    /// <returns>The generated preview image.</returns>
     public static ImageSource GetImage(double angle)
     {
       double AngleRad = (angle / 180) * Math.PI;

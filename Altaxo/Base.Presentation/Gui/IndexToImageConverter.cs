@@ -30,10 +30,17 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui
 {
+  /// <summary>
+  /// Converts an integer index to an image source from a predefined image list.
+  /// </summary>
   public class IndexToImageConverter : IValueConverter
   {
     private List<ImageSource> _imageList;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IndexToImageConverter"/> class.
+    /// </summary>
+    /// <param name="imageResourceNames">The resource names of the images to load.</param>
     public IndexToImageConverter(IEnumerable<string> imageResourceNames)
     {
       _imageList = new List<ImageSource>();
@@ -47,6 +54,7 @@ namespace Altaxo.Gui
       }
     }
 
+    /// <inheritdoc/>
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       if (value is int)
@@ -61,6 +69,7 @@ namespace Altaxo.Gui
         return null;
     }
 
+    /// <inheritdoc/>
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       throw new NotImplementedException();

@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Calc.FitFunctions.Chemistry
   /// </summary>
   public partial class MassBasedFloryDistributionControl : UserControl, IMassBasedFloryDistributionView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MassBasedFloryDistributionControl"/> class.
+    /// </summary>
     public MassBasedFloryDistributionControl()
     {
       InitializeComponent();

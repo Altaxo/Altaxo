@@ -34,6 +34,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
   public partial class SingleColumnControl : Grid
   {
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SingleColumnControl"/> class.
+    /// </summary>
     public SingleColumnControl()
     {
       InitializeComponent();

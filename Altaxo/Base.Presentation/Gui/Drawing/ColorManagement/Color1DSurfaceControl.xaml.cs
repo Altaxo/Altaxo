@@ -52,6 +52,9 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     private Point? _initialMousePosition = null;
 
     /// <summary>Property that describes where the selection rectangle is currently located in y-direction (0: top, 1: bottom)</summary>
+    /// <summary>
+    /// Identifies the <see cref="SelectionRectangleRelativePosition"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty SelectionRectangleRelativePositionProperty;
 
     /// <summary>
@@ -64,6 +67,9 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       SelectionRectangleRelativePositionProperty = DependencyProperty.Register(nameof(SelectionRectangleRelativePosition), typeof(double), typeof(Color1DSurfaceControl), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, EhSelectionRectangleRelativePositionChanged, EhSelectionRectangleRelativePositionCoerce));
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Color1DSurfaceControl"/> class.
+    /// </summary>
     public Color1DSurfaceControl()
     {
       InitializeComponent();
@@ -77,18 +83,28 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       SetRectanglesLeftBottomOnCanvas();
     }
 
+    /// <summary>
+    /// Sets the image shown on the one-dimensional color surface.
+    /// </summary>
+    /// <param name="imageSource">The image source to display.</param>
     public void Set1DColorImage(ImageSource imageSource)
     {
       _guiImage.Source = imageSource;
     }
 
-    /// <summary>Gets/sets where the selection rectangle is currently located in y-direction (0: bottom, 1: top)</summary>
+    /// <summary>
+    /// Gets or sets where the selection rectangle is currently located in the y-direction.
+    /// </summary>
     public double SelectionRectangleRelativePosition
     {
       get { return (double)GetValue(SelectionRectangleRelativePositionProperty); }
       set { SetValue(SelectionRectangleRelativePositionProperty, value); }
     }
 
+    /// <summary>
+    /// Raises the <see cref="SelectionRectangleRelativePositionChanged"/> event.
+    /// </summary>
+    /// <param name="relPosition">The new relative position.</param>
     protected virtual void OnSelectionRectangleRelativePositionChanged(double relPosition)
     {
       SelectionRectangleRelativePositionChanged?.Invoke(relPosition);

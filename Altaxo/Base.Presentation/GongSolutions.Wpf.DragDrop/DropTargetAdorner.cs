@@ -22,8 +22,15 @@ using System.Windows.Documents;
 
 namespace GongSolutions.Wpf.DragDrop
 {
+  /// <summary>
+  /// Provides a base class for visual adorners that indicate the current drop target.
+  /// </summary>
   public abstract class DropTargetAdorner : Adorner
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DropTargetAdorner"/> class.
+    /// </summary>
+    /// <param name="adornedElement">The element to adorn.</param>
     public DropTargetAdorner(UIElement adornedElement)
       : base(adornedElement)
     {
@@ -32,11 +39,17 @@ namespace GongSolutions.Wpf.DragDrop
       IsHitTestVisible = false;
     }
 
+    /// <summary>
+    /// Removes this adorner from its adorner layer.
+    /// </summary>
     public void Detatch()
     {
       m_AdornerLayer.Remove(this);
     }
 
+    /// <summary>
+    /// Gets or sets the drop information displayed by this adorner.
+    /// </summary>
     public DropInfo DropInfo { get; set; }
 
     internal static DropTargetAdorner Create(Type type, UIElement adornedElement)

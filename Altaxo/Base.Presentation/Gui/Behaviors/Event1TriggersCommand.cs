@@ -34,21 +34,33 @@ using System.Windows.Markup;
 
 namespace Altaxo.Gui.Behaviors
 {
+  /// <summary>
+  /// Attached behavior that executes a command when a routed event is raised.
+  /// </summary>
   public class Event1TriggersCommand
   {
     #region IsHandled property
 
+    /// <summary>
+    /// Identifies the attached property that controls whether the routed event is marked as handled.
+    /// </summary>
     public static readonly DependencyProperty IsHandledProperty = DependencyProperty.RegisterAttached(
         "IsHandled",
         typeof(bool),
         typeof(Event1TriggersCommand),
         new FrameworkPropertyMetadata(true));
 
+    /// <summary>
+    /// Gets a value indicating whether the routed event is handled for the specified framework element.
+    /// </summary>
     public static bool GetIsHandled(FrameworkElement frameworkElement)
     {
       return (bool)frameworkElement.GetValue(IsHandledProperty);
     }
 
+    /// <summary>
+    /// Sets a value indicating whether the routed event is handled for the specified framework element.
+    /// </summary>
     public static void SetIsHandled(FrameworkElement frameworkElement, bool observe)
     {
       frameworkElement.SetValue(IsHandledProperty, observe);
@@ -58,6 +70,9 @@ namespace Altaxo.Gui.Behaviors
 
     #region RoutedEvent property (used to attach behaviour)
 
+    /// <summary>
+    /// Identifies the attached property that specifies the routed event to observe.
+    /// </summary>
     public static readonly DependencyProperty RoutedEventProperty = DependencyProperty.RegisterAttached(
         "RoutedEvent",
         typeof(RoutedEvent),
@@ -78,11 +93,17 @@ namespace Altaxo.Gui.Behaviors
       }
     }
 
+    /// <summary>
+    /// Gets the routed event observed for the specified framework element.
+    /// </summary>
     public static RoutedEvent GetRoutedEvent(FrameworkElement frameworkElement)
     {
       return (RoutedEvent)frameworkElement.GetValue(RoutedEventProperty);
     }
 
+    /// <summary>
+    /// Sets the routed event observed for the specified framework element.
+    /// </summary>
     public static void SetRoutedEvent(FrameworkElement frameworkElement, RoutedEvent value)
     {
       frameworkElement.SetValue(RoutedEventProperty, value);
@@ -92,17 +113,26 @@ namespace Altaxo.Gui.Behaviors
 
     #region Command
 
+    /// <summary>
+    /// Identifies the attached property that stores the command to execute.
+    /// </summary>
     public static readonly DependencyProperty CommandProperty = DependencyProperty.RegisterAttached(
     "Command",
     typeof(ICommand),
     typeof(Event1TriggersCommand)
     );
 
+    /// <summary>
+    /// Gets the command associated with the specified framework element.
+    /// </summary>
     public static ICommand GetCommand(FrameworkElement frameworkElement)
     {
       return (ICommand)frameworkElement.GetValue(CommandProperty);
     }
 
+    /// <summary>
+    /// Sets the command associated with the specified framework element.
+    /// </summary>
     public static void SetCommand(FrameworkElement frameworkElement, ICommand value)
     {
       frameworkElement.SetValue(CommandProperty, value);
@@ -112,17 +142,26 @@ namespace Altaxo.Gui.Behaviors
 
     #region Command parameter
 
+    /// <summary>
+    /// Identifies the attached property that stores the command parameter.
+    /// </summary>
     public static readonly DependencyProperty CommandParameterProperty = DependencyProperty.RegisterAttached(
     "CommandParameter",
     typeof(object),
     typeof(Event1TriggersCommand)
     );
 
+    /// <summary>
+    /// Gets the command parameter associated with the specified framework element.
+    /// </summary>
     public static object GetCommandParameter(FrameworkElement frameworkElement)
     {
       return frameworkElement.GetValue(CommandParameterProperty);
     }
 
+    /// <summary>
+    /// Sets the command parameter associated with the specified framework element.
+    /// </summary>
     public static void SetCommandParameter(FrameworkElement frameworkElement, object value)
     {
       frameworkElement.SetValue(CommandParameterProperty, value);

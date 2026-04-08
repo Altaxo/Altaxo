@@ -35,6 +35,9 @@ namespace Altaxo.Gui.Graph
   /// </summary>
   public partial class PrintingControl : UserControl, IPrintingView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PrintingControl"/> class.
+    /// </summary>
     public PrintingControl()
     {
       InitializeComponent();
@@ -91,6 +94,10 @@ namespace Altaxo.Gui.Graph
       }
     }
 
+    /// <summary>
+    /// Shows the printer-properties dialog for the specified printer settings.
+    /// </summary>
+    /// <param name="psSettings">The printer settings to edit.</param>
     public void ShowPrinterPropertiesDialog(PrinterSettings psSettings)
     {
       IntPtr handle = Current.Gui.MainWindowHandle;

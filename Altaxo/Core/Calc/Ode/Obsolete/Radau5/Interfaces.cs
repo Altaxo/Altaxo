@@ -20,24 +20,84 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
 {
   #region Interface
 
+  /// <summary>
+  /// Defines the right-hand side callback used by the obsolete RADAU5 wrapper.
+  /// </summary>
   public interface IFVPOL
   {
+    /// <summary>
+    /// Evaluates the right-hand side of the differential equation system.
+    /// </summary>
+    /// <param name="N">The number of equations.</param>
+    /// <param name="X">The current value of the independent variable.</param>
+    /// <param name="Y">The current solution vector.</param>
+    /// <param name="offset_y">The offset into <paramref name="Y"/>.</param>
+    /// <param name="F">Receives the evaluated function values.</param>
+    /// <param name="offset_f">The offset into <paramref name="F"/>.</param>
+    /// <param name="RPAR">A user-supplied real parameter.</param>
+    /// <param name="IPAR">A user-supplied integer parameter.</param>
     void Run(int N, double X, double[] Y, int offset_y, ref double[] F, int offset_f, double RPAR, int IPAR);
   }
 
+  /// <summary>
+  /// Defines the Jacobian callback used by the obsolete RADAU5 wrapper.
+  /// </summary>
   public interface IJVPOL
   {
+    /// <summary>
+    /// Evaluates the Jacobian matrix.
+    /// </summary>
+    /// <param name="N">The number of equations.</param>
+    /// <param name="X">The current value of the independent variable.</param>
+    /// <param name="Y">The current solution vector.</param>
+    /// <param name="offset_y">The offset into <paramref name="Y"/>.</param>
+    /// <param name="DFY">Receives the Jacobian entries.</param>
+    /// <param name="offset_dfy">The offset into <paramref name="DFY"/>.</param>
+    /// <param name="LDFY">The leading dimension of <paramref name="DFY"/>.</param>
+    /// <param name="RPAR">A user-supplied real parameter.</param>
+    /// <param name="IPAR">A user-supplied integer parameter.</param>
     void Run(int N, double X, double[] Y, int offset_y, ref double[] DFY, int offset_dfy, int LDFY, double RPAR
              , int IPAR);
   }
 
+  /// <summary>
+  /// Defines the mass-matrix callback used by the obsolete RADAU5 wrapper.
+  /// </summary>
   public interface IBBAMPL
   {
+    /// <summary>
+    /// Fills the banded mass matrix.
+    /// </summary>
+    /// <param name="N">The number of equations.</param>
+    /// <param name="B">Receives the matrix entries.</param>
+    /// <param name="offset_b">The offset into <paramref name="B"/>.</param>
+    /// <param name="LB">The leading dimension or bandwidth.</param>
+    /// <param name="RPAR">User-supplied real parameters.</param>
+    /// <param name="offset_rpar">The offset into <paramref name="RPAR"/>.</param>
+    /// <param name="IPAR">A user-supplied integer parameter.</param>
     void Run(int N, ref double[] B, int offset_b, int LB, double[] RPAR, int offset_rpar, int IPAR);
   }
 
+  /// <summary>
+  /// Defines the dense-output callback used by the obsolete RADAU5 wrapper.
+  /// </summary>
   public interface ISOLOUTR
   {
+    /// <summary>
+    /// Handles intermediate output during integration.
+    /// </summary>
+    /// <param name="NR">The current step number.</param>
+    /// <param name="XOLD">The previous grid point.</param>
+    /// <param name="X">The current grid point.</param>
+    /// <param name="Y">The current solution vector.</param>
+    /// <param name="offset_y">The offset into <paramref name="Y"/>.</param>
+    /// <param name="CONT">The continuous output coefficients.</param>
+    /// <param name="offset_cont">The offset into <paramref name="CONT"/>.</param>
+    /// <param name="LRC">The length of the continuous output array.</param>
+    /// <param name="N">The number of equations.</param>
+    /// <param name="RPAR">A user-supplied real parameter.</param>
+    /// <param name="IPAR">A user-supplied integer parameter.</param>
+    /// <param name="IRTRN">A return flag that can be used to influence integration.</param>
     void Run(int NR, double XOLD, double X, double[] Y, int offset_y, double[] CONT, int offset_cont, int LRC
              , int N, double RPAR, int IPAR, int IRTRN);
   }
@@ -180,6 +240,7 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
 
     #endregion Constructor
 
+    /// <inheritdoc/>
     public void Run(int N, double X, double[] Y, int o_y, ref double[] F, int o_f, double RPAR, int IPAR)
     {
       #region Array Index Correction
@@ -238,6 +299,7 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
       MeJac = new double[NEq, NEq];
     }
 
+    /// <inheritdoc/>
     public void Run(int N, double X, double[] Y, int o_y, ref double[] DFY, int o_dfy, int LDFY, double RPAR
                        , int IPAR)
     {
@@ -304,6 +366,7 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
     {
     }
 
+    /// <inheritdoc/>
     public void Run(int N, ref double[] B, int o_b, int LB, double[] RPAR, int o_rpar, int IPAR)
     {
       #region Array Index Correction

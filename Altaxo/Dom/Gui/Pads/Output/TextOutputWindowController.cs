@@ -29,10 +29,20 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Pads.Output
 {
+  /// <summary>
+  /// Defines the view for the text output window.
+  /// </summary>
   public interface ITextOutputWindowView
   {
+    /// <summary>
+    /// Gets or sets the complete text currently displayed by the view.
+    /// </summary>
     string Text { get; set; }
 
+    /// <summary>
+    /// Appends text to the view.
+    /// </summary>
+    /// <param name="text">The text to append.</param>
     void AppendText(string text);
   }
 
@@ -49,12 +59,13 @@ namespace Altaxo.Gui.Pads.Output
 
     private string _initialText;
 
+    /// <inheritdoc/>
     public event Action<InfoWarningErrorTextMessageItem> MessageAdded { add { } remove { } }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TextOutputWindowController"/> class.
-    /// Since this constructor is usually called during creation of the pads, it is not registed as a service with the normal
-    /// service registration codons. Thus we register it as a service here is this constructor.
+    /// Since this constructor is usually called during creation of the pads, it is not registered as a service with the normal
+    /// service registration codons. Thus, it is registered as a service in this constructor.
     /// </summary>
     public TextOutputWindowController()
     {
@@ -93,6 +104,7 @@ namespace Altaxo.Gui.Pads.Output
     {
     }
 
+    /// <inheritdoc/>
     public override object ViewObject
     {
       get
@@ -117,6 +129,7 @@ namespace Altaxo.Gui.Pads.Output
       }
     }
 
+    /// <inheritdoc/>
     public override object ModelObject
     {
       get
@@ -151,6 +164,7 @@ namespace Altaxo.Gui.Pads.Output
       }
     }
 
+    /// <inheritdoc/>
     public void Write(string text)
     {
       if (Current.Dispatcher.InvokeRequired)
@@ -159,46 +173,55 @@ namespace Altaxo.Gui.Pads.Output
         Write_GuiThreadOnly(text);
     }
 
+    /// <inheritdoc/>
     public void WriteLine()
     {
       Write(System.Environment.NewLine);
     }
 
+    /// <inheritdoc/>
     public void WriteLine(string text)
     {
       Write(text + System.Environment.NewLine);
     }
 
+    /// <inheritdoc/>
     public void WriteLine(string format, params object[] args)
     {
       Write(string.Format(format, args) + System.Environment.NewLine);
     }
 
+    /// <inheritdoc/>
     public void WriteLine(System.IFormatProvider provider, string format, params object[] args)
     {
       Write(string.Format(provider, format, args) + System.Environment.NewLine);
     }
 
+    /// <inheritdoc/>
     public void Write(string format, params object[] args)
     {
       Write(string.Format(format, args));
     }
 
+    /// <inheritdoc/>
     public void Write(System.IFormatProvider provider, string format, params object[] args)
     {
       Write(string.Format(provider, format, args));
     }
 
+    /// <inheritdoc/>
     public void WriteLine(MessageLevel messageLevel, string source, string message)
     {
       Write(string.Format("{0} (source: {1}) : {2}{3}", messageLevel, source, message, System.Environment.NewLine));
     }
 
+    /// <inheritdoc/>
     public void WriteLine(MessageLevel messageLevel, string source, string format, params object[] args)
     {
       WriteLine(messageLevel, source, string.Format(format, args));
     }
 
+    /// <inheritdoc/>
     public void WriteLine(MessageLevel messageLevel, string source, IFormatProvider provider, string format, params object[] args)
     {
       WriteLine(messageLevel, source, string.Format(provider, format, args));

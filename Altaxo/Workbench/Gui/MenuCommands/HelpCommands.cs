@@ -26,10 +26,12 @@ using Altaxo.Gui.Workbench;
 
 namespace Altaxo.Gui.MenuCommands
 {
-
-
+  /// <summary>
+  /// Loads the Aero docking theme.
+  /// </summary>
   public class LoadAeroTheme : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object? parameter)
     {
       var wb = Current.GetRequiredService<AltaxoWorkbench>();
@@ -37,8 +39,12 @@ namespace Altaxo.Gui.MenuCommands
     }
   }
 
+  /// <summary>
+  /// Loads the Expression Dark docking theme.
+  /// </summary>
   public class LoadExpressionDarkTheme : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object? parameter)
     {
       var wb = Current.GetRequiredService<AltaxoWorkbench>();
@@ -46,8 +52,12 @@ namespace Altaxo.Gui.MenuCommands
     }
   }
 
+  /// <summary>
+  /// Loads the Expression Light docking theme.
+  /// </summary>
   public class LoadExpressionLightTheme : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object? parameter)
     {
       var wb = Current.GetRequiredService<AltaxoWorkbench>();
@@ -55,8 +65,12 @@ namespace Altaxo.Gui.MenuCommands
     }
   }
 
+  /// <summary>
+  /// Loads the Metro docking theme.
+  /// </summary>
   public class LoadMetroTheme : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object? parameter)
     {
       var wb = Current.GetRequiredService<AltaxoWorkbench>();
@@ -64,8 +78,12 @@ namespace Altaxo.Gui.MenuCommands
     }
   }
 
+  /// <summary>
+  /// Loads the Visual Studio 2010 docking theme.
+  /// </summary>
   public class LoadVS2010Theme : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object? parameter)
     {
       var wb = Current.GetRequiredService<AltaxoWorkbench>();
@@ -73,8 +91,12 @@ namespace Altaxo.Gui.MenuCommands
     }
   }
 
+  /// <summary>
+  /// Loads the Visual Studio 2013 Blue docking theme.
+  /// </summary>
   public class LoadVS2013BlueTheme : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object? parameter)
     {
       var wb = Current.GetRequiredService<AltaxoWorkbench>();
@@ -82,8 +104,12 @@ namespace Altaxo.Gui.MenuCommands
     }
   }
 
+  /// <summary>
+  /// Loads the Visual Studio 2013 Dark docking theme.
+  /// </summary>
   public class LoadVS2013DarkTheme : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object? parameter)
     {
       var wb = Current.GetRequiredService<AltaxoWorkbench>();
@@ -91,8 +117,12 @@ namespace Altaxo.Gui.MenuCommands
     }
   }
 
+  /// <summary>
+  /// Loads the Visual Studio 2013 Light docking theme.
+  /// </summary>
   public class LoadVS2013LightTheme : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object? parameter)
     {
       var wb = Current.GetRequiredService<AltaxoWorkbench>();

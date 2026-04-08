@@ -43,17 +43,26 @@ namespace Altaxo.Gui.Graph.Graph3D.Lighting
   /// </summary>
   public partial class HemisphericAmbientLightControl : UserControl
   {
+    /// <summary>
+    /// Occurs when the selected value changes.
+    /// </summary>
     public event EventHandler? ValueChanged;
 
     private double _lightAmplitude;
 
     private GuiChangeLocker _lock;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HemisphericAmbientLightControl"/> class.
+    /// </summary>
     public HemisphericAmbientLightControl()
     {
       InitializeComponent();
     }
 
+    /// <summary>
+    /// Raises the <see cref="ValueChanged"/> event.
+    /// </summary>
     protected virtual void OnSelectedValueChanged()
     {
       if (_lock.IsNotLocked)
@@ -65,6 +74,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Lighting
       OnSelectedValueChanged();
     }
 
+    /// <summary>
+    /// Gets or sets the selected hemispheric ambient light.
+    /// </summary>
     public Altaxo.Graph.Graph3D.Lighting.HemisphericAmbientLight SelectedValue
     {
       get

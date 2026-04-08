@@ -31,8 +31,17 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
   /// </summary>
   public record EnsembleMeanScale : IEnsemblePreprocessor
   {
+    /// <summary>
+    /// Gets the name of the auxiliary data compound produced by this preprocessor.
+    /// </summary>
     public const string AuxiliaryDataName = "EnsembleMeanScale";
+    /// <summary>
+    /// Gets the name of the auxiliary data vector that stores the ensemble mean.
+    /// </summary>
     public const string AuxiliaryDataMeanName = "EnsembleMean";
+    /// <summary>
+    /// Gets the name of the auxiliary data vector that stores the scaling factors.
+    /// </summary>
     public const string AuxiliaryDataScaleName = "EnsembleScale";
 
     /// <summary>
@@ -43,10 +52,10 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
     #region Serialization
 
     /// <summary>
-    /// XML serialization surrogate (version 0).
+    /// Serializes and deserializes <see cref="EnsembleMeanScale"/> instances.
     /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(EnsembleMeanScale), 0)]
-    public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)

@@ -24,6 +24,10 @@
 
 namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 {
+  /// <summary>
+  /// This class provides an implementation of the Non-Negative Discriminative Component Analysis (NNDSVD) algorithm,
+  /// inheriting from the base NNDSVD class. It is used for factory initialization in Non-negative Matrix Factorization (NMF).
+  /// </summary>
   public record NNDSVDa : NNDSVD
   {
     #region Serialization

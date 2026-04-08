@@ -13,6 +13,9 @@ using System.Text;
 
 namespace Altaxo.Calc.Ode.Obsolete
 {
+  /// <summary>
+  /// Provides helper functions that emulate selected Fortran intrinsic string operations.
+  /// </summary>
   public class FortranLib
   {
     /// <summary>
@@ -55,6 +58,11 @@ namespace Altaxo.Calc.Ode.Obsolete
       return lentrim;
     }
 
+    /// <summary>
+    /// Returns the length of the character sequence without trailing blanks.
+    /// </summary>
+    /// <param name="chars">The character sequence to examine.</param>
+    /// <returns>The trimmed length.</returns>
     public static int LEN_TRIM(Characters chars)
     {
       return chars.LenTrim();
@@ -285,16 +293,35 @@ namespace Altaxo.Calc.Ode.Obsolete
       return index;
     }
 
+    /// <summary>
+    /// Scans a string from left to right for any character contained in a given set.
+    /// </summary>
+    /// <param name="s">The string to scan.</param>
+    /// <param name="set">The set of characters to search for.</param>
+    /// <returns>The one-based position of the first match, or zero if none exists.</returns>
     public static int SCAN(string s, string set)
     {
       return SCAN(s, set, false);
     }
 
+    /// <summary>
+    /// Scans a <see cref="Characters"/> instance for any character contained in a given set.
+    /// </summary>
+    /// <param name="charArray">The character sequence to scan.</param>
+    /// <param name="set">The set of characters to search for.</param>
+    /// <param name="back"><c>true</c> to scan from right to left; otherwise from left to right.</param>
+    /// <returns>The one-based position of the matching character, or zero if none exists.</returns>
     public static int SCAN(Characters charArray, string set, bool back)
     {
       return FortranLib.SCAN(charArray.ToString(), set, back);
     }
 
+    /// <summary>
+    /// Scans a <see cref="Characters"/> instance from left to right for any character contained in a given set.
+    /// </summary>
+    /// <param name="charArray">The character sequence to scan.</param>
+    /// <param name="set">The set of characters to search for.</param>
+    /// <returns>The one-based position of the first match, or zero if none exists.</returns>
     public static int SCAN(Characters charArray, string set)
     {
       return FortranLib.SCAN(charArray.ToString(), set);
@@ -356,26 +383,58 @@ namespace Altaxo.Calc.Ode.Obsolete
       return index;
     }
 
+    /// <summary>
+    /// Returns the one-based position of the first occurrence of a substring in a string.
+    /// </summary>
+    /// <param name="s">The string to search.</param>
+    /// <param name="value">The substring to find.</param>
+    /// <returns>The one-based position of the first occurrence, or zero if none exists.</returns>
     public static int INDEX(string s, string value)
     {
       return INDEX(s, value, false);
     }
 
+    /// <summary>
+    /// Returns the one-based position of a substring in a <see cref="Characters"/> instance.
+    /// </summary>
+    /// <param name="chars">The character sequence to search.</param>
+    /// <param name="value">The substring to find.</param>
+    /// <param name="back"><c>true</c> to search from the end; otherwise from the beginning.</param>
+    /// <returns>The one-based position of the match, or zero if none exists.</returns>
     public static int INDEX(Characters chars, string value, bool back)
     {
       return FortranLib.INDEX(chars.ToString(), value, back);
     }
 
+    /// <summary>
+    /// Returns the one-based position of the first occurrence of a substring in a <see cref="Characters"/> instance.
+    /// </summary>
+    /// <param name="chars">The character sequence to search.</param>
+    /// <param name="value">The substring to find.</param>
+    /// <returns>The one-based position of the first occurrence, or zero if none exists.</returns>
     public static int INDEX(Characters chars, string value)
     {
       return FortranLib.INDEX(chars.ToString(), value, false);
     }
 
+    /// <summary>
+    /// Returns the one-based position of a <see cref="Characters"/> substring in another <see cref="Characters"/> instance.
+    /// </summary>
+    /// <param name="chars">The character sequence to search.</param>
+    /// <param name="value">The substring to find.</param>
+    /// <param name="back"><c>true</c> to search from the end; otherwise from the beginning.</param>
+    /// <returns>The one-based position of the match, or zero if none exists.</returns>
     public static int INDEX(Characters chars, Characters value, bool back)
     {
       return FortranLib.INDEX(chars.ToString(), value.ToString(), back);
     }
 
+    /// <summary>
+    /// Returns the one-based position of the first occurrence of a <see cref="Characters"/> substring in another <see cref="Characters"/> instance.
+    /// </summary>
+    /// <param name="chars">The character sequence to search.</param>
+    /// <param name="value">The substring to find.</param>
+    /// <returns>The one-based position of the first occurrence, or zero if none exists.</returns>
     public static int INDEX(Characters chars, Characters value)
     {
       return FortranLib.INDEX(chars.ToString(), value.ToString());
@@ -451,6 +510,13 @@ namespace Altaxo.Calc.Ode.Obsolete
 
     #region Strings
 
+    /// <summary>
+    /// Returns a substring using one-based inclusive indices.
+    /// </summary>
+    /// <param name="s">The source string.</param>
+    /// <param name="startIndex">The one-based start index.</param>
+    /// <param name="lastIndex">The one-based inclusive end index.</param>
+    /// <returns>The requested substring.</returns>
     public static string Substring(string s, int startIndex, int lastIndex)
     {
       startIndex--;
@@ -460,11 +526,24 @@ namespace Altaxo.Calc.Ode.Obsolete
       return s.Substring(startIndex, length);
     }
 
+    /// <summary>
+    /// Returns a substring from the specified one-based start index to the end of the string.
+    /// </summary>
+    /// <param name="s">The source string.</param>
+    /// <param name="startIndex">The one-based start index.</param>
+    /// <returns>The requested substring.</returns>
     public static string Substring(string s, int startIndex)
     {
       return FortranLib.Substring(s, startIndex, s.Length);
     }
 
+    /// <summary>
+    /// Copies a string into a destination string using one-based inclusive indices.
+    /// </summary>
+    /// <param name="destinationString">The destination string that will be updated.</param>
+    /// <param name="startIndex">The one-based start index in the destination.</param>
+    /// <param name="lastIndex">The one-based inclusive end index in the destination.</param>
+    /// <param name="sourceString">The source string to copy.</param>
     public static void Copy(ref string destinationString, int startIndex, int lastIndex, string sourceString)
     {
       char[] destinationArray = destinationString.ToCharArray();
@@ -472,6 +551,13 @@ namespace Altaxo.Calc.Ode.Obsolete
       destinationString = new string(destinationArray);
     }
 
+    /// <summary>
+    /// Copies a single character into a destination string using one-based inclusive indices.
+    /// </summary>
+    /// <param name="destinationString">The destination string that will be updated.</param>
+    /// <param name="startIndex">The one-based start index in the destination.</param>
+    /// <param name="lastIndex">The one-based inclusive end index in the destination.</param>
+    /// <param name="source">The character to copy.</param>
     public static void Copy(ref string destinationString, int startIndex, int lastIndex, char source)
     {
       if (startIndex != lastIndex)
@@ -482,12 +568,23 @@ namespace Altaxo.Calc.Ode.Obsolete
       FortranLib.Copy(ref destinationString, startIndex, lastIndex, source.ToString());
     }
 
+    /// <summary>
+    /// Copies a string into a destination string starting at the specified one-based index.
+    /// </summary>
+    /// <param name="destinationString">The destination string that will be updated.</param>
+    /// <param name="startIndex">The one-based start index in the destination.</param>
+    /// <param name="sourceString">The source string to copy.</param>
     public static void Copy(ref string destinationString, int startIndex, string sourceString)
     {
       int lastIndex = Math.Min(destinationString.Length, sourceString.Length);
       FortranLib.Copy(ref destinationString, startIndex, lastIndex, sourceString);
     }
 
+    /// <summary>
+    /// Copies a string into a destination string starting at position one.
+    /// </summary>
+    /// <param name="destinationString">The destination string that will be updated.</param>
+    /// <param name="sourceString">The source string to copy.</param>
     public static void Copy(ref string destinationString, string sourceString)
     {
       FortranLib.Copy(ref destinationString, 1, sourceString);
@@ -527,6 +624,13 @@ namespace Altaxo.Calc.Ode.Obsolete
       return FortranLib.Substring(s, startIndex, s.Length);
     }
 
+    /// <summary>
+    /// Copies characters into a destination array using one-based inclusive indices.
+    /// </summary>
+    /// <param name="destinationArray">The destination array.</param>
+    /// <param name="startIndex">The one-based start index in the destination.</param>
+    /// <param name="lastIndex">The one-based inclusive end index in the destination.</param>
+    /// <param name="sourceArray">The source character array.</param>
     public static void Copy(char[] destinationArray, int startIndex, int lastIndex, char[] sourceArray)
     {
       startIndex--; // C# index
@@ -539,36 +643,78 @@ namespace Altaxo.Calc.Ode.Obsolete
       }
     }
 
+    /// <summary>
+    /// Copies characters into a destination array starting at the specified one-based index.
+    /// </summary>
+    /// <param name="destinationArray">The destination array.</param>
+    /// <param name="startIndex">The one-based start index in the destination.</param>
+    /// <param name="sourceArray">The source character array.</param>
     public static void Copy(char[] destinationArray, int startIndex, char[] sourceArray)
     {
       FortranLib.Copy(destinationArray, startIndex, destinationArray.Length, sourceArray);
     }
 
+    /// <summary>
+    /// Copies one <see cref="Characters"/> value into another using one-based inclusive indices.
+    /// </summary>
+    /// <param name="destination">The destination character sequence.</param>
+    /// <param name="startIndex">The one-based start index in the destination.</param>
+    /// <param name="lastIndex">The one-based inclusive end index in the destination.</param>
+    /// <param name="source">The source character sequence.</param>
     public static void Copy(Characters destination, int startIndex, int lastIndex, Characters source)
     {
       FortranLib.Copy(destination.CharArray, startIndex, lastIndex, source.CharArray);
     }
 
+    /// <summary>
+    /// Copies one <see cref="Characters"/> value into another starting at the specified one-based index.
+    /// </summary>
+    /// <param name="destination">The destination character sequence.</param>
+    /// <param name="startIndex">The one-based start index in the destination.</param>
+    /// <param name="source">The source character sequence.</param>
     public static void Copy(Characters destination, int startIndex, Characters source)
     {
       FortranLib.Copy(destination.CharArray, startIndex, source.CharArray);
     }
 
+    /// <summary>
+    /// Copies one <see cref="Characters"/> value into another starting at position one.
+    /// </summary>
+    /// <param name="destination">The destination character sequence.</param>
+    /// <param name="source">The source character sequence.</param>
     public static void Copy(Characters destination, Characters source)
     {
       FortranLib.Copy(destination.CharArray, 1, source.CharArray);
     }
 
+    /// <summary>
+    /// Copies a string into a <see cref="Characters"/> value using one-based inclusive indices.
+    /// </summary>
+    /// <param name="destination">The destination character sequence.</param>
+    /// <param name="startIndex">The one-based start index in the destination.</param>
+    /// <param name="lastIndex">The one-based inclusive end index in the destination.</param>
+    /// <param name="source">The source string.</param>
     public static void Copy(Characters destination, int startIndex, int lastIndex, string source)
     {
       FortranLib.Copy(destination.CharArray, startIndex, lastIndex, source.ToCharArray());
     }
 
+    /// <summary>
+    /// Copies a string into a <see cref="Characters"/> value starting at the specified one-based index.
+    /// </summary>
+    /// <param name="destination">The destination character sequence.</param>
+    /// <param name="startIndex">The one-based start index in the destination.</param>
+    /// <param name="source">The source string.</param>
     public static void Copy(Characters destination, int startIndex, string source)
     {
       FortranLib.Copy(destination.CharArray, startIndex, source.ToCharArray());
     }
 
+    /// <summary>
+    /// Copies a string into a <see cref="Characters"/> value starting at position one.
+    /// </summary>
+    /// <param name="destination">The destination character sequence.</param>
+    /// <param name="source">The source string.</param>
     public static void Copy(Characters destination, string source)
     {
       FortranLib.Copy(destination.CharArray, 1, source.ToCharArray());

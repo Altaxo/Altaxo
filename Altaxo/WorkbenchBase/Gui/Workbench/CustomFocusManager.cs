@@ -30,6 +30,9 @@ namespace Altaxo.Gui.Workbench
   public static class CustomFocusManager
   {
     // DP for attached behavior, toggles remembering on or off
+    /// <summary>
+    /// Identifies the attached property that controls whether the focused child is remembered.
+    /// </summary>
     public static readonly DependencyProperty RememberFocusedChildProperty =
       DependencyProperty.RegisterAttached("RememberFocusedChild", typeof(bool), typeof(CustomFocusManager),
                                           new FrameworkPropertyMetadata(false, OnRememberFocusedChildChanged));
@@ -40,6 +43,11 @@ namespace Altaxo.Gui.Workbench
     private static readonly DependencyProperty FocusedChildProperty =
       DependencyProperty.RegisterAttached("FocusedChild", typeof(WeakReference), typeof(CustomFocusManager));
 
+    /// <summary>
+    /// Gets whether the specified element remembers its focused child.
+    /// </summary>
+    /// <param name="element">The element.</param>
+    /// <returns><see langword="true"/> if the element remembers its focused child; otherwise, <see langword="false"/>.</returns>
     public static bool GetRememberFocusedChild(UIElement element)
     {
       if (element is null)
@@ -47,6 +55,11 @@ namespace Altaxo.Gui.Workbench
       return (bool)element.GetValue(RememberFocusedChildProperty);
     }
 
+    /// <summary>
+    /// Sets whether the specified element remembers its focused child.
+    /// </summary>
+    /// <param name="element">The element.</param>
+    /// <param name="value"><see langword="true"/> to remember the focused child; otherwise, <see langword="false"/>.</param>
     public static void SetRememberFocusedChild(UIElement element, bool value)
     {
       if (element is null)
@@ -54,6 +67,11 @@ namespace Altaxo.Gui.Workbench
       element.SetValue(RememberFocusedChildProperty, value);
     }
 
+    /// <summary>
+    /// Gets the remembered focused child of the specified element.
+    /// </summary>
+    /// <param name="element">The element.</param>
+    /// <returns>The remembered focused child, or <see langword="null"/> if none is stored.</returns>
     public static IInputElement? GetFocusedChild(UIElement element)
     {
       if (element is null)
@@ -65,6 +83,10 @@ namespace Altaxo.Gui.Workbench
         return null;
     }
 
+    /// <summary>
+    /// Restores the focus to the remembered child of the specified element.
+    /// </summary>
+    /// <param name="element">The element.</param>
     public static void SetFocusToRememberedChild(UIElement element)
     {
       var focusedChild = GetFocusedChild(element);

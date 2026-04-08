@@ -36,6 +36,9 @@ namespace Altaxo.Gui.Common.Drawing
   using Altaxo.Units;
   using Altaxo.Units.Dimensionless;
 
+  /// <summary>
+  /// Combo box for selecting a shear factor.
+  /// </summary>
   public partial class ShearComboBox : DimensionfulQuantityImageComboBox
   {
     private static Dictionary<double, ImageSource> _cachedImages = new Dictionary<double, ImageSource>();
@@ -48,6 +51,9 @@ namespace Altaxo.Gui.Common.Drawing
       SelectedQuantityProperty.OverrideMetadata(typeof(ShearComboBox), new FrameworkPropertyMetadata(new Altaxo.Units.DimensionfulQuantity(0, Unity.Instance)));
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ShearComboBox"/> class.
+    /// </summary>
     public ShearComboBox()
     {
       _converter.ValidationAfterSuccessfulConversion = EhValidateQuantity;
@@ -72,6 +78,7 @@ namespace Altaxo.Gui.Common.Drawing
       return error is null ? ValidationResult.ValidResult : new ValidationResult(false, error);
     }
 
+    /// <inheritdoc/>
     protected override void OnSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
       base.OnSelectedQuantityChanged(obj, args);
@@ -83,6 +90,7 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <inheritdoc/>
     public override ImageSource GetItemImage(object item)
     {
       double val = ((DimensionfulQuantity)item).AsValueInSIUnits;
@@ -91,11 +99,17 @@ namespace Altaxo.Gui.Common.Drawing
       return result;
     }
 
+    /// <inheritdoc/>
     public override string GetItemText(object item)
     {
       return (string)_converter.Convert(item, typeof(string), null, System.Globalization.CultureInfo.CurrentUICulture);
     }
 
+    /// <summary>
+    /// Creates the preview image for the specified shear factor.
+    /// </summary>
+    /// <param name="shear">The shear factor.</param>
+    /// <returns>The generated preview image.</returns>
     public static ImageSource GetImage(double shear)
     {
       const double height = 1;

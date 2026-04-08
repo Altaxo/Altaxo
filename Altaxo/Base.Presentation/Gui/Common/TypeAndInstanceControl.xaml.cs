@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public partial class TypeAndInstanceControl : UserControl, ITypeAndInstanceView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TypeAndInstanceControl"/> class.
+    /// </summary>
     public TypeAndInstanceControl()
     {
       InitializeComponent();

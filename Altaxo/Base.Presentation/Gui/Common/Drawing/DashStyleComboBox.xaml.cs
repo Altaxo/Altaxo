@@ -143,6 +143,9 @@ namespace Altaxo.Gui.Common.Drawing
         _knownStylesDict.Add(e.ToString(), e);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DashStyleComboBox"/> class.
+    /// </summary>
     public DashStyleComboBox()
     {
       InitializeComponent();
@@ -167,12 +170,18 @@ namespace Altaxo.Gui.Common.Drawing
 
     private const string _nameOfValueProp = "SelectedDashStyle";
 
+    /// <summary>
+    /// Gets or sets the selected dash style.
+    /// </summary>
     public DashStyleEx SelectedDashStyle
     {
       get { return (DashStyleEx)GetValue(SelectedDashStyleProperty); }
       set { SetValue(SelectedDashStyleProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="SelectedDashStyle"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty SelectedDashStyleProperty =
         DependencyProperty.Register(_nameOfValueProp, typeof(DashStyleEx), typeof(DashStyleComboBox),
         new FrameworkPropertyMetadata(DashStyleEx.Solid, OnSelectedDashStyleChanged));
@@ -184,6 +193,11 @@ namespace Altaxo.Gui.Common.Drawing
 
     #endregion Dependency property
 
+    /// <summary>
+    /// Updates the preview image when the selected dash style changes.
+    /// </summary>
+    /// <param name="obj">The dependency object whose selection changed.</param>
+    /// <param name="args">The event arguments.</param>
     protected virtual void EhSelectedDashStyleChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
       if (_img is not null)
@@ -193,6 +207,7 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <inheritdoc/>
     public override ImageSource GetItemImage(object item)
     {
       var val = (DashStyleEx)item;
@@ -201,11 +216,17 @@ namespace Altaxo.Gui.Common.Drawing
       return result;
     }
 
+    /// <inheritdoc/>
     public override string GetItemText(object item)
     {
       return (string)_valueConverter.Convert(item, typeof(string), null, System.Globalization.CultureInfo.CurrentUICulture);
     }
 
+    /// <summary>
+    /// Creates an image that represents the specified <see cref="DashStyleEx"/>.
+    /// </summary>
+    /// <param name="val">The dash style to visualize.</param>
+    /// <returns>An image representing <paramref name="val"/>.</returns>
     public static ImageSource GetImage(DashStyleEx val)
     {
       const double height = 1;

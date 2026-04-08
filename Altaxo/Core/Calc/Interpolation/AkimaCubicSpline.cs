@@ -67,8 +67,19 @@ namespace Altaxo.Calc.Interpolation
   /// </remarks>
   public class AkimaCubicSpline : CurveBase, IInterpolationFunction
   {
+    /// <summary>
+    /// Stores the first derivative coefficients of the spline segments.
+    /// </summary>
     protected Vector<double> y1 = CreateVector.Dense<double>(0);
+
+    /// <summary>
+    /// Stores the second derivative coefficients of the spline segments.
+    /// </summary>
     protected Vector<double> y2 = CreateVector.Dense<double>(0);
+
+    /// <summary>
+    /// Stores the third derivative coefficients of the spline segments.
+    /// </summary>
     protected Vector<double> y3 = CreateVector.Dense<double>(0);
 
     private double m(int i)

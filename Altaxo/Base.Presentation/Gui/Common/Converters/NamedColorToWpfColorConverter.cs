@@ -37,6 +37,9 @@ namespace Altaxo.Gui.Common.Converters
   /// <seealso cref="System.Windows.Data.IValueConverter" />
   public class NamedColorToWpfColorConverter : IValueConverter
   {
+    /// <summary>
+    /// Gets the shared converter instance.
+    /// </summary>
     public static NamedColorToWpfColorConverter Instance { get; private set; } = new();
 
     /// <inheritdoc/>

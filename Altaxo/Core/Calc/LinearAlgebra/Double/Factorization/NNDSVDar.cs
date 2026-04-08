@@ -26,6 +26,9 @@ using System;
 
 namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 {
+  /// <summary>
+  /// Class for performing Non-negative Double Singular Value Decomposition (NNDSVD) with rank-deficiency adjustment.
+  /// </summary>
   public record NNDSVDar : NNDSVD
   {
     #region Serialization

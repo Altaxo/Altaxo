@@ -54,6 +54,13 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
     /// <summary>Indicating whether U and VT matrices have been computed during SVD factorization.</summary>
     protected readonly bool VectorsComputed;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Svd{T}"/> class.
+    /// </summary>
+    /// <param name="s">The singular values.</param>
+    /// <param name="u">The left singular vectors.</param>
+    /// <param name="vt">The transposed right singular vectors.</param>
+    /// <param name="vectorsComputed">Whether the singular vectors were computed.</param>
     protected Svd(Vector<T> s, Matrix<T> u, Matrix<T> vt, bool vectorsComputed)
     {
       S = s;

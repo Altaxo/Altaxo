@@ -88,6 +88,14 @@
 
 
 
+    /// <summary>
+    /// Updates a CRC-32 checksum with the specified range of bytes.
+    /// </summary>
+    /// <param name="checksum">The initial checksum value.</param>
+    /// <param name="buffer">The buffer that contains the data.</param>
+    /// <param name="offset">The zero-based offset at which to start reading from <paramref name="buffer"/>.</param>
+    /// <param name="count">The number of bytes to include in the checksum update.</param>
+    /// <returns>The updated CRC-32 checksum.</returns>
     public static UInt32 Update(UInt32 checksum, byte[] buffer, int offset, int count)
     {
       checksum ^= 0xFFFFFFFF;

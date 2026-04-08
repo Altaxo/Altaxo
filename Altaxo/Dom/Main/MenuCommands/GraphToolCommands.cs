@@ -30,7 +30,7 @@ using Altaxo.Gui.Graph.Gdi.Viewing;
 namespace Altaxo.Graph.Commands
 {
   /// <summary>
-  /// This class is intented to be used for commands into the graph tools toolbar. Commands derived
+  /// This class is intended to be used for commands in the graph tools toolbar. Commands derived
   /// from it will update the toolbar whenever its state changed.
   /// </summary>
   public abstract class AbstractGraphToolsCommand : AbstractCheckableGraphControllerCommand
@@ -38,6 +38,10 @@ namespace Altaxo.Graph.Commands
     private GraphController myCurrentGraphController;
     private GraphToolType _graphToolType;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AbstractGraphToolsCommand"/> class.
+    /// </summary>
+    /// <param name="toolType">The graph tool type represented by the command.</param>
     protected AbstractGraphToolsCommand(GraphToolType toolType)
     {
       _graphToolType = toolType;
@@ -48,6 +52,11 @@ namespace Altaxo.Graph.Commands
       }
     }
 
+    /// <summary>
+    /// Handles changes of the active workbench content.
+    /// </summary>
+    /// <param name="o">The event sender.</param>
+    /// <param name="e">The event arguments.</param>
     protected void EhWorkbenchContentChanged(object o, PropertyChangedEventArgs e)
     {
       if (e.PropertyName != nameof(Current.Workbench.ActiveViewContent))
@@ -75,11 +84,17 @@ namespace Altaxo.Graph.Commands
       }
     }
 
+    /// <summary>
+    /// Handles changes of the currently selected graph tool.
+    /// </summary>
+    /// <param name="o">The event sender.</param>
+    /// <param name="e">The event arguments.</param>
     protected void EhGraphToolChanged(object o, EventArgs e)
     {
       OnPropertyChanged(nameof(IsChecked));
     }
 
+    /// <inheritdoc/>
     public override bool IsChecked
     {
       get
@@ -98,10 +113,13 @@ namespace Altaxo.Graph.Commands
   }
 
   /// <summary>
-  /// Test class for a selected item
+  /// Selects the object pointer tool.
   /// </summary>
   public class SelectPointerTool : AbstractGraphToolsCommand
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SelectPointerTool"/> class.
+    /// </summary>
     public SelectPointerTool()
       : base(GraphToolType.ObjectPointer)
     {
@@ -109,10 +127,13 @@ namespace Altaxo.Graph.Commands
   }
 
   /// <summary>
-  /// Test class for a selected item
+  /// Selects the text drawing tool.
   /// </summary>
   public class SelectTextTool : AbstractGraphToolsCommand
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SelectTextTool"/> class.
+    /// </summary>
     public SelectTextTool()
       : base(GraphToolType.TextDrawing)
     {
@@ -124,6 +145,9 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class ReadPlotItemDataTool : AbstractGraphToolsCommand
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ReadPlotItemDataTool"/> class.
+    /// </summary>
     public ReadPlotItemDataTool()
       : base(GraphToolType.ReadPlotItemData)
     {
@@ -133,6 +157,9 @@ namespace Altaxo.Graph.Commands
   /// <summary>Edits the grid of the current layer, or if it has no childs, the grid of the parent layer.</summary>
   public class EditGridTool : AbstractGraphToolsCommand
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EditGridTool"/> class.
+    /// </summary>
     public EditGridTool()
       : base(GraphToolType.EditGrid)
     {
@@ -144,6 +171,9 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class ReadXYCoordinatesTool : AbstractGraphToolsCommand
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ReadXYCoordinatesTool"/> class.
+    /// </summary>
     public ReadXYCoordinatesTool()
       : base(GraphToolType.ReadXYCoordinates)
     {
@@ -151,10 +181,13 @@ namespace Altaxo.Graph.Commands
   }
 
   /// <summary>
-  /// Tool for reading the x-y coordinate values of a layer.
+  /// Tool for evaluating two points on a curve.
   /// </summary>
   public class TwoPointsOnCurveTool : AbstractGraphToolsCommand
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TwoPointsOnCurveTool"/> class.
+    /// </summary>
     public TwoPointsOnCurveTool()
       : base(GraphToolType.TwoPointsOnCurve)
     {
@@ -162,10 +195,13 @@ namespace Altaxo.Graph.Commands
   }
 
   /// <summary>
-  /// Tool for reading the x-y coordinate values of a layer.
+  /// Tool for evaluating four points on a curve.
   /// </summary>
   public class FourPointsOnCurveTool : AbstractGraphToolsCommand
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FourPointsOnCurveTool"/> class.
+    /// </summary>
     public FourPointsOnCurveTool()
       : base(GraphToolType.FourPointsOnCurve)
     {
@@ -173,10 +209,13 @@ namespace Altaxo.Graph.Commands
   }
 
   /// <summary>
-  /// Tool for reading the x-y coordinate values of a layer.
+  /// Tool for evaluating a step by four selected points on a curve.
   /// </summary>
   public class FourPointStepEvaluationTool : AbstractGraphToolsCommand
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FourPointStepEvaluationTool"/> class.
+    /// </summary>
     public FourPointStepEvaluationTool()
       : base(GraphToolType.FourPointStepEvaluation)
     {
@@ -184,10 +223,13 @@ namespace Altaxo.Graph.Commands
   }
 
   /// <summary>
-  /// Tool for reading the x-y coordinate values of a layer.
+  /// Tool for evaluating a peak by four selected points on a curve.
   /// </summary>
   public class FourPointPeakEvaluationTool : AbstractGraphToolsCommand
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FourPointPeakEvaluationTool"/> class.
+    /// </summary>
     public FourPointPeakEvaluationTool()
       : base(GraphToolType.FourPointPeakEvaluation)
     {
@@ -199,6 +241,9 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class SingleLineDrawingTool : AbstractGraphToolsCommand
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SingleLineDrawingTool"/> class.
+    /// </summary>
     public SingleLineDrawingTool()
       : base(GraphToolType.SingleLineDrawing)
     {
@@ -206,10 +251,13 @@ namespace Altaxo.Graph.Commands
   }
 
   /// <summary>
-  /// Drawing a simple line with two points.
+  /// Draws an arrow line with two points.
   /// </summary>
   public class ArrowLineDrawingTool : AbstractGraphToolsCommand
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ArrowLineDrawingTool"/> class.
+    /// </summary>
     public ArrowLineDrawingTool()
       : base(GraphToolType.ArrowLineDrawing)
     {
@@ -221,6 +269,9 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class RectangleDrawingTool : AbstractGraphToolsCommand
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RectangleDrawingTool"/> class.
+    /// </summary>
     public RectangleDrawingTool()
       : base(GraphToolType.RectangleDrawing)
     {
@@ -228,10 +279,13 @@ namespace Altaxo.Graph.Commands
   }
 
   /// <summary>
-  /// Drawing a rectangle on the graph.
+  /// Draws a curly brace on the graph.
   /// </summary>
   public class CurlyBraceDrawingTool : AbstractGraphToolsCommand
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CurlyBraceDrawingTool"/> class.
+    /// </summary>
     public CurlyBraceDrawingTool()
       : base(GraphToolType.CurlyBraceDrawing)
     {
@@ -243,6 +297,9 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class EllipseDrawingTool : AbstractGraphToolsCommand
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EllipseDrawingTool"/> class.
+    /// </summary>
     public EllipseDrawingTool()
       : base(GraphToolType.EllipseDrawing)
     {
@@ -250,10 +307,13 @@ namespace Altaxo.Graph.Commands
   }
 
   /// <summary>
-  /// Drawing an ellipse on the graph.
+  /// Draws a regular polygon on the graph.
   /// </summary>
   public class RegularPolygonDrawingTool : AbstractGraphToolsCommand
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RegularPolygonDrawingTool"/> class.
+    /// </summary>
     public RegularPolygonDrawingTool()
       : base(GraphToolType.RegularPolygonDrawing)
     {
@@ -261,10 +321,13 @@ namespace Altaxo.Graph.Commands
   }
 
   /// <summary>
-  /// Drawing of an open cardinal spline on a graph.
+  /// Draws an open cardinal spline on the graph.
   /// </summary>
   public class OpenCardinalSplineDrawingTool : AbstractGraphToolsCommand
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OpenCardinalSplineDrawingTool"/> class.
+    /// </summary>
     public OpenCardinalSplineDrawingTool()
       : base(GraphToolType.OpenCardinalSplineDrawing)
     {
@@ -272,10 +335,13 @@ namespace Altaxo.Graph.Commands
   }
 
   /// <summary>
-  /// Drawing of an closed cardinal spline on a graph.
+  /// Draws a closed cardinal spline on the graph.
   /// </summary>
   public class ClosedCardinalSplineDrawingTool : AbstractGraphToolsCommand
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ClosedCardinalSplineDrawingTool"/> class.
+    /// </summary>
     public ClosedCardinalSplineDrawingTool()
       : base(GraphToolType.ClosedCardinalSplineDrawing)
     {
@@ -287,6 +353,9 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class ZoomAxesTool : AbstractGraphToolsCommand
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ZoomAxesTool"/> class.
+    /// </summary>
     public ZoomAxesTool()
       : base(GraphToolType.ZoomAxes)
     {

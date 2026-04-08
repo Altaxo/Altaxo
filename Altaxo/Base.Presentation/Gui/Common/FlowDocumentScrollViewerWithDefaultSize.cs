@@ -29,8 +29,14 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// Flow document viewer that provides fallback layout dimensions before it is loaded.
+  /// </summary>
   public class FlowDocumentScrollViewerWithDefaultSize : FlowDocumentScrollViewer
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FlowDocumentScrollViewerWithDefaultSize"/> class.
+    /// </summary>
     public FlowDocumentScrollViewerWithDefaultSize()
     {
       DependencyPropertyDescriptor.FromProperty(DocumentProperty, typeof(FlowDocumentScrollViewerWithDefaultSize)).AddValueChanged(this, EhDocumentChanged);
@@ -46,12 +52,18 @@ namespace Altaxo.Gui.Common
 
     #region Dependency property
 
+    /// <summary>
+    /// Gets or sets the default width used before the control is loaded.
+    /// </summary>
     public double DefaultWidth
     {
       get { return (double)GetValue(DefaultWidthProperty); }
       set { SetValue(DefaultWidthProperty, value); }
     }
 
+    /// <summary>
+    /// Gets or sets the default height used before the control is loaded.
+    /// </summary>
     public double DefaultHeigth
     {
       get { return (double)GetValue(DefaultHeightProperty); }
@@ -60,16 +72,23 @@ namespace Altaxo.Gui.Common
 
 
 
+    /// <summary>
+    /// Identifies the <see cref="DefaultWidth"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty DefaultWidthProperty =
         DependencyProperty.Register("DefaultWidth", typeof(double), typeof(FlowDocumentScrollViewerWithDefaultSize),
         new FrameworkPropertyMetadata(100.0d));
 
+    /// <summary>
+    /// Identifies the <see cref="DefaultHeigth"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty DefaultHeightProperty =
         DependencyProperty.Register("DefaultHeight", typeof(double), typeof(FlowDocumentScrollViewerWithDefaultSize),
         new FrameworkPropertyMetadata(100.0d));
 
     #endregion Dependency property
 
+    /// <inheritdoc/>
     protected override Size MeasureOverride(Size constraint)
     {
       double w = constraint.Width;
@@ -81,6 +100,7 @@ namespace Altaxo.Gui.Common
         return new Size(Math.Min(ActualWidth, constraint.Width), Math.Min(ActualHeight, constraint.Height));
     }
 
+    /// <inheritdoc/>
     protected override Size ArrangeOverride(Size arrangeBounds)
     {
       var result = base.ArrangeOverride(arrangeBounds);

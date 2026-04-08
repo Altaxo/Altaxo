@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public partial class EquallySpacedIntervalControl : UserControl, IEquallySpacedIntervalView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EquallySpacedIntervalControl"/> class.
+    /// </summary>
     public EquallySpacedIntervalControl()
     {
       InitializeComponent();

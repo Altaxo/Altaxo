@@ -34,6 +34,9 @@ using Altaxo.Calc.LinearAlgebra.Storage;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
+  /// <summary>
+  /// Provides convenience factory methods for creating vectors.
+  /// </summary>
   public static class CreateVector
   {
     /// <summary>

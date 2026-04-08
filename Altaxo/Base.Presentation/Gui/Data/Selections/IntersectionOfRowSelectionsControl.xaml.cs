@@ -43,6 +43,9 @@ namespace Altaxo.Gui.Data.Selections
   /// </summary>
   public partial class IntersectionOfRowSelectionsControl : UserControl, IIntersectionOfRowSelectionView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IntersectionOfRowSelectionsControl"/> class.
+    /// </summary>
     public IntersectionOfRowSelectionsControl()
     {
       InitializeComponent();

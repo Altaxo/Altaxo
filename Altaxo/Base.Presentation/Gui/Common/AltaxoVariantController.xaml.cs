@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public partial class AltaxoVariantController : UserControl, IAltaxoVariantView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AltaxoVariantController"/> class.
+    /// </summary>
     public AltaxoVariantController()
     {
       InitializeComponent();

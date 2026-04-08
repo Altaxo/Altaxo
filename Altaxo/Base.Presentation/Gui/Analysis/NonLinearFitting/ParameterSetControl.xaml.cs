@@ -32,6 +32,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
   /// </summary>
   public partial class ParameterSetControl : UserControl, IParameterSetView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ParameterSetControl"/> class.
+    /// </summary>
     public ParameterSetControl()
     {
       InitializeComponent();

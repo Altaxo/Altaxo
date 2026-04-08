@@ -35,6 +35,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="ConstantVarianceScaling"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.Regression.Nonlinear.ConstantVarianceScaling", 0)]
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ConstantVarianceScaling), 1)]
     public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate

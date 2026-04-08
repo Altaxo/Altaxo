@@ -31,14 +31,44 @@ using System;
 
 namespace Altaxo.Calc.Optimization
 {
+  /// <summary>
+  /// Minimizes a scalar objective function using the golden-section search method.
+  /// </summary>
   public class GoldenSectionMinimizer
   {
+    /// <summary>
+    /// Gets or sets the tolerance for the interval width in x-direction.
+    /// </summary>
     public double XTolerance { get; set; }
+
+    /// <summary>
+    /// Gets or sets the maximum number of golden-section iterations.
+    /// </summary>
     public int MaximumIterations { get; set; }
+
+    /// <summary>
+    /// Gets or sets the maximum number of interval expansion steps used to bracket a minimum.
+    /// </summary>
     public int MaximumExpansionSteps { get; set; }
+
+    /// <summary>
+    /// Gets or sets the factor used when expanding the lower bound.
+    /// </summary>
     public double LowerExpansionFactor { get; set; }
+
+    /// <summary>
+    /// Gets or sets the factor used when expanding the upper bound.
+    /// </summary>
     public double UpperExpansionFactor { get; set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GoldenSectionMinimizer"/> class.
+    /// </summary>
+    /// <param name="xTolerance">The tolerance for the x-interval width.</param>
+    /// <param name="maxIterations">The maximum number of search iterations.</param>
+    /// <param name="maxExpansionSteps">The maximum number of bracketing expansion steps.</param>
+    /// <param name="lowerExpansionFactor">The factor used to expand the lower bound.</param>
+    /// <param name="upperExpansionFactor">The factor used to expand the upper bound.</param>
     public GoldenSectionMinimizer(double xTolerance = 1e-5, int maxIterations = 1000, int maxExpansionSteps = 10, double lowerExpansionFactor = 2.0, double upperExpansionFactor = 2.0)
     {
       XTolerance = xTolerance;
@@ -48,11 +78,30 @@ namespace Altaxo.Calc.Optimization
       UpperExpansionFactor = upperExpansionFactor;
     }
 
+    /// <summary>
+    /// Finds a minimum of the specified objective function inside the provided interval.
+    /// </summary>
+    /// <param name="objective">The objective function to minimize.</param>
+    /// <param name="lowerBound">The lower search bound.</param>
+    /// <param name="upperBound">The upper search bound.</param>
+    /// <returns>The minimization result.</returns>
     public ScalarMinimizationResult FindMinimum(IScalarObjectiveFunction objective, double lowerBound, double upperBound)
     {
       return Minimum(objective, lowerBound, upperBound, XTolerance, MaximumIterations, MaximumExpansionSteps, LowerExpansionFactor, UpperExpansionFactor);
     }
 
+    /// <summary>
+    /// Finds a minimum of the specified objective function inside the provided interval.
+    /// </summary>
+    /// <param name="objective">The objective function to minimize.</param>
+    /// <param name="lowerBound">The lower search bound.</param>
+    /// <param name="upperBound">The upper search bound.</param>
+    /// <param name="xTolerance">The tolerance for the x-interval width.</param>
+    /// <param name="maxIterations">The maximum number of search iterations.</param>
+    /// <param name="maxExpansionSteps">The maximum number of bracketing expansion steps.</param>
+    /// <param name="lowerExpansionFactor">The factor used to expand the lower bound.</param>
+    /// <param name="upperExpansionFactor">The factor used to expand the upper bound.</param>
+    /// <returns>The minimization result.</returns>
     public static ScalarMinimizationResult Minimum(IScalarObjectiveFunction objective, double lowerBound, double upperBound, double xTolerance = 1e-5, int maxIterations = 1000, int maxExpansionSteps = 10, double lowerExpansionFactor = 2.0, double upperExpansionFactor = 2.0)
     {
       if (upperBound <= lowerBound)

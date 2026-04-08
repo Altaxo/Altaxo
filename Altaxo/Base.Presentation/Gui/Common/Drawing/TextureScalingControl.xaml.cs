@@ -40,6 +40,9 @@ namespace Altaxo.Gui.Common.Drawing
   /// </summary>
   public partial class TextureScalingControl : UserControl, ITextureScalingView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextureScalingControl"/> class.
+    /// </summary>
     public TextureScalingControl()
     {
       InitializeComponent();

@@ -33,6 +33,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
   /// </summary>
   public partial class ScatterSymbolListControl : UserControl, IScatterSymbolListView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScatterSymbolListControl"/> class.
+    /// </summary>
     public ScatterSymbolListControl()
     {
       InitializeComponent();

@@ -35,10 +35,21 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Gui.Pads.FileBrowser
 {
+  /// <summary>
+  /// Defines the view for the file list pane of the file browser.
+  /// </summary>
   public interface IFileListView
   {
+    /// <summary>
+    /// Initializes the column headers of the file list.
+    /// </summary>
+    /// <param name="names">The column header captions.</param>
     void Initialize_FileListColumnNames(ICollection<string> names);
 
+    /// <summary>
+    /// Initializes the file list items.
+    /// </summary>
+    /// <param name="files">The list of files to display.</param>
     void Initialize_FileList(SelectableListNodeList files);
 
     /// <summary>
@@ -47,6 +58,9 @@ namespace Altaxo.Gui.Pads.FileBrowser
     event Action SelectedItemsActivated;
   }
 
+  /// <summary>
+  /// Controls the file list shown by the file browser pad.
+  /// </summary>
   public class FileListController
   {
     #region FileItem
@@ -133,6 +147,9 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
     private SelectableListNodeList _fileList = new SelectableListNodeList();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileListController"/> class.
+    /// </summary>
     public FileListController()
     {
       Initialize(true);
@@ -243,6 +260,9 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
     #region User handlers
 
+    /// <summary>
+    /// Opens the currently selected items in the file list.
+    /// </summary>
     public void EhView_ActivateSelectedItems()
     {
       var importers = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Serialization.IDataFileImporter))
@@ -310,6 +330,10 @@ namespace Altaxo.Gui.Pads.FileBrowser
       }
     }
 
+    /// <summary>
+    /// Displays the files contained in the specified directory.
+    /// </summary>
+    /// <param name="path">The directory whose files should be shown.</param>
     public void ShowFilesInPath(string path)
     {
       string[] files;
@@ -345,6 +369,9 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
     #endregion User handlers
 
+    /// <summary>
+    /// Gets or sets the view object used by this controller.
+    /// </summary>
     public object? ViewObject
     {
       get

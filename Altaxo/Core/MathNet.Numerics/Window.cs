@@ -31,12 +31,17 @@ using System;
 
 namespace Altaxo.Calc
 {
+  /// <summary>
+  /// Provides common spectral window functions.
+  /// </summary>
   public static class Window
   {
     /// <summary>
     /// Hamming window. Named after Richard Hamming.
     /// Symmetric version, useful e.g. for filter design purposes.
     /// </summary>
+    /// <param name="width">The window width.</param>
+    /// <returns>The generated window values.</returns>
     public static double[] Hamming(int width)
     {
       const double a = 0.53836;
@@ -56,6 +61,8 @@ namespace Altaxo.Calc
     /// Hamming window. Named after Richard Hamming.
     /// Periodic version, useful e.g. for FFT purposes.
     /// </summary>
+    /// <param name="width">The window width.</param>
+    /// <returns>The generated window values.</returns>
     public static double[] HammingPeriodic(int width)
     {
       const double a = 0.53836;
@@ -75,6 +82,8 @@ namespace Altaxo.Calc
     /// Hann window. Named after Julius von Hann.
     /// Symmetric version, useful e.g. for filter design purposes.
     /// </summary>
+    /// <param name="width">The window width.</param>
+    /// <returns>The generated window values.</returns>
     public static double[] Hann(int width)
     {
       double phaseStep = (2.0 * Math.PI) / (width - 1.0);
@@ -91,6 +100,8 @@ namespace Altaxo.Calc
     /// Hann window. Named after Julius von Hann.
     /// Periodic version, useful e.g. for FFT purposes.
     /// </summary>
+    /// <param name="width">The window width.</param>
+    /// <returns>The generated window values.</returns>
     public static double[] HannPeriodic(int width)
     {
       double phaseStep = (2.0 * Math.PI) / width;
@@ -107,6 +118,8 @@ namespace Altaxo.Calc
     /// Cosine window.
     /// Symmetric version, useful e.g. for filter design purposes.
     /// </summary>
+    /// <param name="width">The window width.</param>
+    /// <returns>The generated window values.</returns>
     public static double[] Cosine(int width)
     {
       double phaseStep = Math.PI / (width - 1.0);
@@ -123,6 +136,8 @@ namespace Altaxo.Calc
     /// Cosine window.
     /// Periodic version, useful e.g. for FFT purposes.
     /// </summary>
+    /// <param name="width">The window width.</param>
+    /// <returns>The generated window values.</returns>
     public static double[] CosinePeriodic(int width)
     {
       double phaseStep = Math.PI / width;
@@ -139,6 +154,8 @@ namespace Altaxo.Calc
     /// Lanczos window.
     /// Symmetric version, useful e.g. for filter design purposes.
     /// </summary>
+    /// <param name="width">The window width.</param>
+    /// <returns>The generated window values.</returns>
     public static double[] Lanczos(int width)
     {
       double phaseStep = 2.0 / (width - 1.0);
@@ -155,6 +172,8 @@ namespace Altaxo.Calc
     /// Lanczos window.
     /// Periodic version, useful e.g. for FFT purposes.
     /// </summary>
+    /// <param name="width">The window width.</param>
+    /// <returns>The generated window values.</returns>
     public static double[] LanczosPeriodic(int width)
     {
       double phaseStep = 2.0 / width;
@@ -170,6 +189,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Gauss window.
     /// </summary>
+    /// <param name="width">The window width.</param>
+    /// <param name="sigma">The Gaussian width parameter.</param>
+    /// <returns>The generated window values.</returns>
     public static double[] Gauss(int width, double sigma)
     {
       double a = (width - 1) / 2.0;
@@ -186,6 +208,8 @@ namespace Altaxo.Calc
     /// <summary>
     /// Blackman window.
     /// </summary>
+    /// <param name="width">The window width.</param>
+    /// <returns>The generated window values.</returns>
     public static double[] Blackman(int width)
     {
       const double alpha = 0.16;
@@ -209,6 +233,8 @@ namespace Altaxo.Calc
     /// <summary>
     /// Blackman-Harris window.
     /// </summary>
+    /// <param name="width">The window width.</param>
+    /// <returns>The generated window values.</returns>
     public static double[] BlackmanHarris(int width)
     {
       const double a = 0.35875;
@@ -235,6 +261,8 @@ namespace Altaxo.Calc
     /// <summary>
     /// Blackman-Nuttall window.
     /// </summary>
+    /// <param name="width">The window width.</param>
+    /// <returns>The generated window values.</returns>
     public static double[] BlackmanNuttall(int width)
     {
       const double a = 0.3635819;
@@ -261,6 +289,8 @@ namespace Altaxo.Calc
     /// <summary>
     /// Bartlett window.
     /// </summary>
+    /// <param name="width">The window width.</param>
+    /// <returns>The generated window values.</returns>
     public static double[] Bartlett(int width)
     {
       int last = width - 1;
@@ -278,6 +308,8 @@ namespace Altaxo.Calc
     /// <summary>
     /// Bartlett-Hann window.
     /// </summary>
+    /// <param name="width">The window width.</param>
+    /// <returns>The generated window values.</returns>
     public static double[] BartlettHann(int width)
     {
       const double a = 0.62;
@@ -301,6 +333,8 @@ namespace Altaxo.Calc
     /// <summary>
     /// Nuttall window.
     /// </summary>
+    /// <param name="width">The window width.</param>
+    /// <returns>The generated window values.</returns>
     public static double[] Nuttall(int width)
     {
       const double a = 0.355768;
@@ -327,6 +361,8 @@ namespace Altaxo.Calc
     /// <summary>
     /// Flat top window.
     /// </summary>
+    /// <param name="width">The window width.</param>
+    /// <returns>The generated window values.</returns>
     public static double[] FlatTop(int width)
     {
       const double a = 1.0;
@@ -356,6 +392,8 @@ namespace Altaxo.Calc
     /// <summary>
     /// Uniform rectangular (Dirichlet) window.
     /// </summary>
+    /// <param name="width">The window width.</param>
+    /// <returns>The generated window values.</returns>
     public static double[] Dirichlet(int width)
     {
       var w = new double[width];
@@ -369,6 +407,8 @@ namespace Altaxo.Calc
     /// <summary>
     /// Triangular window.
     /// </summary>
+    /// <param name="width">The window width.</param>
+    /// <returns>The generated window values.</returns>
     public static double[] Triangular(int width)
     {
       double a = 2.0 / width;
@@ -387,8 +427,9 @@ namespace Altaxo.Calc
     /// Tukey tapering window. A rectangular window bounded
     /// by half a cosine window on each side.
     /// </summary>
-    /// <param name="width">Width of the window</param>
-    /// <param name="r">Fraction of the window occupied by the cosine parts</param>
+    /// <param name="width">The window width.</param>
+    /// <param name="r">The fraction of the window occupied by the cosine regions.</param>
+    /// <returns>The generated window values.</returns>
     public static double[] Tukey(int width, double r = 0.5)
     {
 

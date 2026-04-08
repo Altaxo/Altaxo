@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
   /// </summary>
   public partial class XYPlotStyleCollectionControl : UserControl, IXYPlotStyleCollectionView, Altaxo.Gui.Graph.Graph3D.Plot.Styles.IXYZPlotStyleCollectionView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYPlotStyleCollectionControl"/> class.
+    /// </summary>
     public XYPlotStyleCollectionControl()
     {
       InitializeComponent();

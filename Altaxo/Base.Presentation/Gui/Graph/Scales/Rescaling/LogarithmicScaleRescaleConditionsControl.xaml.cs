@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
   /// </summary>
   public partial class LogarithmicScaleRescaleConditionsControl : UserControl, ILogarithmicScaleRescaleConditionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LogarithmicScaleRescaleConditionsControl"/> class.
+    /// </summary>
     public LogarithmicScaleRescaleConditionsControl()
     {
       InitializeComponent();

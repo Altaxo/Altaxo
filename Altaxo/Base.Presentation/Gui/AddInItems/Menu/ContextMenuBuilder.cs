@@ -27,8 +27,12 @@ using Altaxo.Gui.AddInItems;
 
 namespace Altaxo.Gui.AddInItems
 {
+  /// <summary>
+  /// Builds a context menu from the values supplied by a multi-binding.
+  /// </summary>
   public class ContextMenuBuilder : IMultiValueConverter
   {
+    /// <inheritdoc/>
     public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {
       if (values.Length == 2 && values[0] is string)
@@ -38,6 +42,7 @@ namespace Altaxo.Gui.AddInItems
       throw new NotSupportedException();
     }
 
+    /// <inheritdoc/>
     public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
     {
       throw new NotSupportedException();

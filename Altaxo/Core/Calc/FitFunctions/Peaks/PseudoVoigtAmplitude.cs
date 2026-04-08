@@ -108,7 +108,10 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       return $"{this.GetType().Name} NumberOfTerms={NumberOfTerms} OrderOfBaseline={OrderOfBaselinePolynomial}";
     }
 
-
+    /// <summary>
+    /// Creates a fit function with one pseudo-Voigt peak and no baseline.
+    /// </summary>
+    /// <returns>The fit function.</returns>
     [FitFunctionCreator("PseudoVoigtAmplitude", "Peaks", 1, 1, NumberOfParametersPerPeak)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Peaks.PseudoVoigtAmplitude}")]
     public static IFitFunction Create_1_M1()

@@ -18,15 +18,31 @@ namespace Clipper2ZLib
 namespace Clipper2Lib
 #endif
 {
+  /// <summary>
+  /// Defines a point in 2D space using 64-bit integer coordinates.
+  /// </summary>
   public struct Point64
   {
+    /// <summary>
+    /// The X coordinate of the point.
+    /// </summary>
     public long X;
+    /// <summary>
+    /// The Y coordinate of the point.
+    /// </summary>
     public long Y;
 
 #if USINGZ
+    /// <summary>
+    /// The Z coordinate of the point (optional, using if USINGZ defined).
+    /// </summary>
     public long Z;
 #endif
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Point64"/> struct.
+    /// </summary>
+    /// <param name="pt">The point to copy.</param>
     public Point64(Point64 pt)
     {
       X = pt.X;
@@ -36,20 +52,34 @@ namespace Clipper2Lib
 #endif
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Point64"/> struct.
+    /// </summary>
+    /// <param name="pt">The point to copy.</param>
+    /// <param name="scale">The scale factor for the coordinates.</param>
     public Point64(Point64 pt, double scale)
     {
-      X = (long) Math.Round(pt.X * scale, MidpointRounding.AwayFromZero);
-      Y = (long) Math.Round(pt.Y * scale, MidpointRounding.AwayFromZero);
+      X = (long)Math.Round(pt.X * scale, MidpointRounding.AwayFromZero);
+      Y = (long)Math.Round(pt.Y * scale, MidpointRounding.AwayFromZero);
 #if USINGZ
       Z = (long) Math.Round(pt.Z * scale, MidpointRounding.AwayFromZero);
 #endif
     }
-    
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Point64"/> struct.
+    /// </summary>
+    /// <param name="x">The X coordinate.</param>
+    /// <param name="y">The Y coordinate.</param>
+#if USINGZ
+    /// <param name="z">The Z coordinate (optional, default is 0).</param>
+#endif
     public Point64(long x, long y
 #if USINGZ
       , long z = 0
 #endif
-    ) {
+    )
+    {
       X = x;
       Y = y;
 #if USINGZ
@@ -57,46 +87,82 @@ namespace Clipper2Lib
 #endif
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Point64"/> struct.
+    /// </summary>
+    /// <param name="x">The X coordinate.</param>
+    /// <param name="y">The Y coordinate.</param>
+#if USINGZ
+   /// <param name="z">The Z coordinate (optional, default is 0.0).</param>
+#endif
     public Point64(double x, double y
 #if USINGZ
       , double z = 0.0
 #endif
-    ) {
-      X = (long) Math.Round(x, MidpointRounding.AwayFromZero);
-      Y = (long) Math.Round(y, MidpointRounding.AwayFromZero);
+    )
+    {
+      X = (long)Math.Round(x, MidpointRounding.AwayFromZero);
+      Y = (long)Math.Round(y, MidpointRounding.AwayFromZero);
 #if USINGZ
       Z = (long) Math.Round(z, MidpointRounding.AwayFromZero);
 #endif
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Point64"/> struct from a <see cref="PointD"/> instance.
+    /// </summary>
+    /// <param name="pt">The <see cref="PointD"/> instance to copy.</param>
     public Point64(PointD pt)
     {
-      X = (long) Math.Round(pt.x, MidpointRounding.AwayFromZero);
-      Y = (long) Math.Round(pt.y, MidpointRounding.AwayFromZero);
+      X = (long)Math.Round(pt.x, MidpointRounding.AwayFromZero);
+      Y = (long)Math.Round(pt.y, MidpointRounding.AwayFromZero);
 #if USINGZ
       Z = pt.z;
 #endif
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Point64"/> struct from a <see cref="PointD"/> instance, applying a scale.
+    /// </summary>
+    /// <param name="pt">The <see cref="PointD"/> instance to copy.</param>
+    /// <param name="scale">The scale factor for the coordinates.</param>
     public Point64(PointD pt, double scale)
     {
-      X = (long) Math.Round(pt.x * scale, MidpointRounding.AwayFromZero);
-      Y = (long) Math.Round(pt.y * scale, MidpointRounding.AwayFromZero);
+      X = (long)Math.Round(pt.x * scale, MidpointRounding.AwayFromZero);
+      Y = (long)Math.Round(pt.y * scale, MidpointRounding.AwayFromZero);
 #if USINGZ
       Z = pt.z;
 #endif
     }
 
+    /// <summary>
+    /// Determines if two <see cref="Point64"/> instances are equal.
+    /// </summary>
+    /// <param name="lhs">The first point.</param>
+    /// <param name="rhs">The second point.</param>
+    /// <returns><see langword="true"/> if the points are equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator ==(Point64 lhs, Point64 rhs)
     {
       return lhs.X == rhs.X && lhs.Y == rhs.Y;
     }
 
+    /// <summary>
+    /// Determines if two <see cref="Point64"/> instances are not equal.
+    /// </summary>
+    /// <param name="lhs">The first point.</param>
+    /// <param name="rhs">The second point.</param>
+    /// <returns><see langword="true"/> if the points are not equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator !=(Point64 lhs, Point64 rhs)
     {
       return lhs.X != rhs.X || lhs.Y != rhs.Y;
     }
 
+    /// <summary>
+    /// Adds two <see cref="Point64"/> instances.
+    /// </summary>
+    /// <param name="lhs">The first point.</param>
+    /// <param name="rhs">The second point.</param>
+    /// <returns>The sum of the points.</returns>
     public static Point64 operator +(Point64 lhs, Point64 rhs)
     {
       return new Point64(lhs.X + rhs.X, lhs.Y + rhs.Y
@@ -106,6 +172,12 @@ namespace Clipper2Lib
       );
     }
 
+    /// <summary>
+    /// Subtracts one <see cref="Point64"/> instance from another.
+    /// </summary>
+    /// <param name="lhs">The point to subtract from.</param>
+    /// <param name="rhs">The point to subtract.</param>
+    /// <returns>The difference of the points.</returns>
     public static Point64 operator -(Point64 lhs, Point64 rhs)
     {
       return new Point64(lhs.X - rhs.X, lhs.Y - rhs.Y
@@ -115,6 +187,10 @@ namespace Clipper2Lib
       );
     }
 
+    /// <summary>
+    /// Returns a string representation of the point.
+    /// </summary>
+    /// <returns>A string in the format "X,Y[,(Z)]", where (Z) is optional.</returns>
     public readonly override string ToString()
     {
       // nb: trailing space
@@ -126,6 +202,11 @@ namespace Clipper2Lib
 
     }
 
+    /// <summary>
+    /// Determines if the specified object is equal to the current <see cref="Point64"/>.
+    /// </summary>
+    /// <param name="obj">The object to compare with the current point.</param>
+    /// <returns><see langword="true"/> if the object is a <see cref="Point64"/> and is equal to the current point; otherwise, <see langword="false"/>.</returns>
     public readonly override bool Equals(object? obj)
     {
       if (obj != null && obj is Point64 p)
@@ -133,6 +214,10 @@ namespace Clipper2Lib
       return false;
     }
 
+    /// <summary>
+    /// Returns the hash code for the current <see cref="Point64"/>.
+    /// </summary>
+    /// <returns>A hash code for the current <see cref="Point64"/>.</returns>
     public readonly override int GetHashCode()
     {
       return HashCode.Combine(X, Y); //#599
@@ -140,15 +225,31 @@ namespace Clipper2Lib
 
   }
 
+  /// <summary>
+  /// Defines a point in 2D space using double-precision floating-point coordinates.
+  /// </summary>
   public struct PointD
   {
+    /// <summary>
+    /// The X coordinate of the point.
+    /// </summary>
     public double x;
+    /// <summary>
+    /// The Y coordinate of the point.
+    /// </summary>
     public double y;
 
 #if USINGZ
+    /// <summary>
+    /// The Z coordinate of the point (optional, using if USINGZ defined).
+    /// </summary>
     public long z;
 #endif
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PointD"/> struct.
+    /// </summary>
+    /// <param name="pt">The point to copy.</param>
     public PointD(PointD pt)
     {
       x = pt.x;
@@ -158,6 +259,10 @@ namespace Clipper2Lib
 #endif
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PointD"/> struct from a <see cref="Point64"/> instance.
+    /// </summary>
+    /// <param name="pt">The <see cref="Point64"/> instance to copy.</param>
     public PointD(Point64 pt)
     {
       x = pt.X;
@@ -167,6 +272,11 @@ namespace Clipper2Lib
 #endif
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PointD"/> struct from a <see cref="Point64"/> instance, applying a scale.
+    /// </summary>
+    /// <param name="pt">The <see cref="Point64"/> instance to copy.</param>
+    /// <param name="scale">The scale factor for the coordinates.</param>
     public PointD(Point64 pt, double scale)
     {
       x = pt.X * scale;
@@ -176,6 +286,11 @@ namespace Clipper2Lib
 #endif
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PointD"/> class from another <see cref="PointD"/> instance, applying a scale.
+    /// </summary>
+    /// <param name="pt">The <see cref="PointD"/> instance to copy.</param>
+    /// <param name="scale">The scale factor for the coordinates.</param>
     public PointD(PointD pt, double scale)
     {
       x = pt.x * scale;
@@ -185,11 +300,20 @@ namespace Clipper2Lib
 #endif
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PointD"/> struct.
+    /// </summary>
+    /// <param name="x">The X coordinate.</param>
+    /// <param name="y">The Y coordinate.</param>
+#if USINGZ
+   /// <param name="z">The Z coordinate (optional, default is 0).</param>
+#endif
     public PointD(long x, long y
 #if USINGZ
       , long z = 0
 #endif
-    ) {
+    )
+    {
       this.x = x;
       this.y = y;
 #if USINGZ
@@ -197,11 +321,20 @@ namespace Clipper2Lib
 #endif
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PointD"/> struct.
+    /// </summary>
+    /// <param name="x">The X coordinate.</param>
+    /// <param name="y">The Y coordinate.</param>
+#if USINGZ
+   /// <param name="z">The Z coordinate (optional, default is 0.0).</param>
+#endif
     public PointD(double x, double y
 #if USINGZ
       , long z = 0
 #endif
-    ) {
+    )
+    {
       this.x = x;
       this.y = y;
 #if USINGZ
@@ -209,27 +342,63 @@ namespace Clipper2Lib
 #endif
     }
 
+    /// <summary>
+    /// Returns a string representation of the point with the specified precision.
+    /// </summary>
+    /// <param name="precision">The number of decimal places.</param>
+    /// <returns>A string representation of the point.</returns>
     public readonly string ToString(int precision = 2)
     {
 #if USINGZ
       return string.Format($"{{0:F{precision}}},{{1:F{precision}}},{{2:D}}", x,y,z);
 #else
-      return string.Format($"{{0:F{precision}}},{{1:F{precision}}}", x,y);
+      return string.Format($"{{0:F{precision}}},{{1:F{precision}}}", x, y);
 #endif
     }
 
+    /// <summary>
+    /// Determines if two <see cref="PointD"/> instances are equal.
+    /// </summary>
+    /// <param name="lhs">The first point.</param>
+    /// <param name="rhs">The second point.</param>
+    /// <returns><see langword="true"/> if the points are equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator ==(PointD lhs, PointD rhs)
     {
-      return InternalClipper.IsAlmostZero(lhs.x - rhs.x) && 
+      return InternalClipper.IsAlmostZero(lhs.x - rhs.x) &&
         InternalClipper.IsAlmostZero(lhs.y - rhs.y);
     }
 
+    /// <summary>
+    /// Determines if two <see cref="PointD"/> instances are not equal.
+    /// </summary>
+    /// <param name="lhs">The first point.</param>
+    /// <param name="rhs">The second point.</param>
+    /// <returns><see langword="true"/> if the points are not equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator !=(PointD lhs, PointD rhs)
     {
-      return !InternalClipper.IsAlmostZero(lhs.x - rhs.x) || 
+      return !InternalClipper.IsAlmostZero(lhs.x - rhs.x) ||
         !InternalClipper.IsAlmostZero(lhs.y - rhs.y);
     }
 
+    /// <summary>
+    /// Negates the coordinates of the point.
+    /// </summary>
+    public void Negate() { x = -x; y = -y; }
+
+    /// <summary>
+    /// Returns a string representation of the point.
+    /// </summary>
+    /// <returns>A string in the format "X,Y", with no trailing comma.</returns>
+    public override string ToString()
+    {
+      return $"{x},{y}";
+    }
+
+    /// <summary>
+    /// Determines if the specified object is equal to the current <see cref="PointD"/>.
+    /// </summary>
+    /// <param name="obj">The object to compare with the current point.</param>
+    /// <returns><see langword="true"/> if the object is a <see cref="PointD"/> and is equal to the current point; otherwise, <see langword="false"/>.</returns>
     public readonly override bool Equals(object? obj)
     {
       if (obj != null && obj is PointD p)
@@ -237,8 +406,10 @@ namespace Clipper2Lib
       return false;
     }
 
-    public void Negate() { x = -x; y = -y; }
-
+    /// <summary>
+    /// Returns the hash code for the current <see cref="PointD"/>.
+    /// </summary>
+    /// <returns>A hash code for the current <see cref="PointD"/>.</returns>
     public readonly override int GetHashCode()
     {
       return HashCode.Combine(x, y); //#599
@@ -246,13 +417,35 @@ namespace Clipper2Lib
 
   }
 
+  /// <summary>
+  /// Defines a rectangular area in 2D space using 64-bit integer coordinates.
+  /// </summary>
   public struct Rect64
   {
+    /// <summary>
+    /// The X coordinate of the left side of the rectangle.
+    /// </summary>
     public long left;
+    /// <summary>
+    /// The Y coordinate of the top side of the rectangle.
+    /// </summary>
     public long top;
+    /// <summary>
+    /// The X coordinate of the right side of the rectangle.
+    /// </summary>
     public long right;
+    /// <summary>
+    /// The Y coordinate of the bottom side of the rectangle.
+    /// </summary>
     public long bottom;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Rect64"/> struct.
+    /// </summary>
+    /// <param name="l">The X coordinate of the left side.</param>
+    /// <param name="t">The Y coordinate of the top side.</param>
+    /// <param name="r">The X coordinate of the right side.</param>
+    /// <param name="b">The Y coordinate of the bottom side.</param>
     public Rect64(long l, long t, long r, long b)
     {
       left = l;
@@ -261,6 +454,10 @@ namespace Clipper2Lib
       bottom = b;
     }
 
+    /// <summary>
+    /// Initializes a new invalid or empty instance of the <see cref="Rect64"/> struct.
+    /// </summary>
+    /// <param name="isValid"><see langword="true"/> to create a valid rectangle with zero size; <see langword="false"/> to create an invalid rectangle.</param>
     public Rect64(bool isValid)
     {
       if (isValid)
@@ -269,11 +466,15 @@ namespace Clipper2Lib
       }
       else
       {
-        left = long.MaxValue; top = long.MaxValue; 
+        left = long.MaxValue; top = long.MaxValue;
         right = long.MinValue; bottom = long.MinValue;
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Rect64"/> struct from another rectangle.
+    /// </summary>
+    /// <param name="rec">The rectangle to copy.</param>
     public Rect64(Rect64 rec)
     {
       left = rec.left;
@@ -282,49 +483,88 @@ namespace Clipper2Lib
       bottom = rec.bottom;
     }
 
+    /// <summary>
+    /// Gets or sets the width of the rectangle.
+    /// </summary>
     public long Width
-    { readonly get => right - left;
+    {
+      readonly get => right - left;
       set => right = left + value;
     }
 
+    /// <summary>
+    /// Gets or sets the height of the rectangle.
+    /// </summary>
     public long Height
-    { readonly get => bottom - top;
+    {
+      readonly get => bottom - top;
       set => bottom = top + value;
     }
 
+    /// <summary>
+    /// Determines if the rectangle is empty (has no area).
+    /// </summary>
+    /// <returns><see langword="true"/> if the rectangle is empty; otherwise, <see langword="false"/>.</returns>
     public readonly bool IsEmpty()
     {
       return bottom <= top || right <= left;
     }
 
+    /// <summary>
+    /// Determines if the rectangle is valid (not equal to <see cref="long.MaxValue"/>).
+    /// </summary>
+    /// <returns><see langword="true"/> if the rectangle is valid; otherwise, <see langword="false"/>.</returns>
     public readonly bool IsValid()
     {
       return left < long.MaxValue;
     }
 
+    /// <summary>
+    /// Calculates the midpoint of the rectangle.
+    /// </summary>
+    /// <returns>A <see cref="Point64"/> representing the midpoint of the rectangle.</returns>
     public readonly Point64 MidPoint()
     {
-      return new Point64((left + right) /2, (top + bottom)/2);
+      return new Point64((left + right) / 2, (top + bottom) / 2);
     }
 
+    /// <summary>
+    /// Determines if a point is inside the rectangle.
+    /// </summary>
+    /// <param name="pt">The point to check.</param>
+    /// <returns><see langword="true"/> if the point is inside the rectangle; otherwise, <see langword="false"/>.</returns>
     public readonly bool Contains(Point64 pt)
     {
       return pt.X > left && pt.X < right &&
         pt.Y > top && pt.Y < bottom;
     }
 
+    /// <summary>
+    /// Determines if another rectangle is completely contained within this rectangle.
+    /// </summary>
+    /// <param name="rec">The rectangle to check.</param>
+    /// <returns><see langword="true"/> if the other rectangle is contained; otherwise, <see langword="false"/>.</returns>
     public readonly bool Contains(Rect64 rec)
     {
       return rec.left >= left && rec.right <= right &&
         rec.top >= top && rec.bottom <= bottom;
     }
 
+    /// <summary>
+    /// Determines if another rectangle intersects with this rectangle.
+    /// </summary>
+    /// <param name="rec">The rectangle to check.</param>
+    /// <returns><see langword="true"/> if the rectangles intersect; otherwise, <see langword="false"/>.</returns>
     public readonly bool Intersects(Rect64 rec)
     {
       return (Math.Max(left, rec.left) <= Math.Min(right, rec.right)) &&
         (Math.Max(top, rec.top) <= Math.Min(bottom, rec.bottom));
     }
 
+    /// <summary>
+    /// Converts the rectangle to a <see cref="Path64"/> representation.
+    /// </summary>
+    /// <returns>A <see cref="Path64"/> representing the outline of the rectangle.</returns>
     public readonly Path64 AsPath()
     {
       Path64 result = new Path64(4)
@@ -339,13 +579,35 @@ namespace Clipper2Lib
 
   }
 
+  /// <summary>
+  /// Defines a rectangular area in 2D space using double-precision floating-point coordinates.
+  /// </summary>
   public struct RectD
   {
+    /// <summary>
+    /// The X coordinate of the left side of the rectangle.
+    /// </summary>
     public double left;
+    /// <summary>
+    /// The Y coordinate of the top side of the rectangle.
+    /// </summary>
     public double top;
+    /// <summary>
+    /// The X coordinate of the right side of the rectangle.
+    /// </summary>
     public double right;
+    /// <summary>
+    /// The Y coordinate of the bottom side of the rectangle.
+    /// </summary>
     public double bottom;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RectD"/> struct.
+    /// </summary>
+    /// <param name="l">The X coordinate of the left side.</param>
+    /// <param name="t">The Y coordinate of the top side.</param>
+    /// <param name="r">The X coordinate of the right side.</param>
+    /// <param name="b">The Y coordinate of the bottom side.</param>
     public RectD(double l, double t, double r, double b)
     {
       left = l;
@@ -354,6 +616,10 @@ namespace Clipper2Lib
       bottom = b;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RectD"/> struct from another rectangle.
+    /// </summary>
+    /// <param name="rec">The rectangle to copy.</param>
     public RectD(RectD rec)
     {
       left = rec.left;
@@ -362,6 +628,10 @@ namespace Clipper2Lib
       bottom = rec.bottom;
     }
 
+    /// <summary>
+    /// Initializes a new invalid or empty instance of the <see cref="RectD"/> struct.
+    /// </summary>
+    /// <param name="isValid"><see langword="true"/> to create a valid rectangle with zero size; <see langword="false"/> to create an invalid rectangle.</param>
     public RectD(bool isValid)
     {
       if (isValid)
@@ -374,44 +644,79 @@ namespace Clipper2Lib
         right = -double.MaxValue; bottom = -double.MaxValue;
       }
     }
+    /// <summary>
+    /// Gets or sets the width of the rectangle.
+    /// </summary>
     public double Width
-    { readonly get => right - left;
+    {
+      readonly get => right - left;
       set => right = left + value;
     }
 
+    /// <summary>
+    /// Gets or sets the height of the rectangle.
+    /// </summary>
     public double Height
-    { readonly get => bottom - top;
+    {
+      readonly get => bottom - top;
       set => bottom = top + value;
     }
 
+    /// <summary>
+    /// Determines if the rectangle is empty (has no area).
+    /// </summary>
+    /// <returns><see langword="true"/> if the rectangle is empty; otherwise, <see langword="false"/>.</returns>
     public readonly bool IsEmpty()
     {
       return bottom <= top || right <= left;
     }
 
+    /// <summary>
+    /// Calculates the midpoint of the rectangle.
+    /// </summary>
+    /// <returns>A <see cref="PointD"/> representing the midpoint of the rectangle.</returns>
     public readonly PointD MidPoint()
     {
       return new PointD((left + right) / 2, (top + bottom) / 2);
     }
 
+    /// <summary>
+    /// Determines if a point is inside the rectangle.
+    /// </summary>
+    /// <param name="pt">The point to check.</param>
+    /// <returns><see langword="true"/> if the point is inside the rectangle; otherwise, <see langword="false"/>.</returns>
     public readonly bool Contains(PointD pt)
     {
       return pt.x > left && pt.x < right &&
         pt.y > top && pt.y < bottom;
     }
 
+    /// <summary>
+    /// Determines if another rectangle is completely contained within this rectangle.
+    /// </summary>
+    /// <param name="rec">The rectangle to check.</param>
+    /// <returns><see langword="true"/> if the other rectangle is contained; otherwise, <see langword="false"/>.</returns>
     public readonly bool Contains(RectD rec)
     {
       return rec.left >= left && rec.right <= right &&
         rec.top >= top && rec.bottom <= bottom;
     }
 
+    /// <summary>
+    /// Determines if another rectangle intersects with this rectangle.
+    /// </summary>
+    /// <param name="rec">The rectangle to check.</param>
+    /// <returns><see langword="true"/> if the rectangles intersect; otherwise, <see langword="false"/>.</returns>
     public readonly bool Intersects(RectD rec)
     {
       return (Math.Max(left, rec.left) < Math.Min(right, rec.right)) &&
         (Math.Max(top, rec.top) < Math.Min(bottom, rec.bottom));
     }
 
+    /// <summary>
+    /// Converts the rectangle to a <see cref="PathD"/> representation.
+    /// </summary>
+    /// <returns>A <see cref="PathD"/> representing the outline of the rectangle.</returns>
     public readonly PathD AsPath()
     {
       PathD result = new PathD(4)
@@ -426,11 +731,29 @@ namespace Clipper2Lib
 
   }
 
-  public class Path64 : List<Point64> 
+  /// <summary>
+  /// Represents a series of points forming a path in 2D space using 64-bit integer coordinates.
+  /// </summary>
+  public class Path64 : List<Point64>
   {
+    /// <summary>
+    /// Initializes a new, empty instance of the <see cref="Path64"/> class.
+    /// </summary>
     public Path64() : base() { }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Path64"/> class with a specified capacity.
+    /// </summary>
+    /// <param name="capacity">The initial capacity of the list.</param>
     public Path64(int capacity = 0) : base(capacity) { }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Path64"/> class from an existing collection of points.
+    /// </summary>
+    /// <param name="path">The collection of points to copy.</param>
     public Path64(IEnumerable<Point64> path) : base(path) { }
+    /// <summary>
+    /// Returns a string representation of the path.
+    /// </summary>
+    /// <returns>A string listing the points in the path.</returns>
     public override string ToString()
     {
       string s = "";
@@ -441,11 +764,29 @@ namespace Clipper2Lib
     }
   }
 
+  /// <summary>
+  /// Represents a series of paths, each formed by a series of points in 2D space using 64-bit integer coordinates.
+  /// </summary>
   public class Paths64 : List<Path64>
   {
+    /// <summary>
+    /// Initializes a new, empty instance of the <see cref="Paths64"/> class.
+    /// </summary>
     public Paths64() : base() { }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Paths64"/> class with a specified capacity.
+    /// </summary>
+    /// <param name="capacity">The initial capacity of the list.</param>
     public Paths64(int capacity = 0) : base(capacity) { }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Paths64"/> class from an existing collection of paths.
+    /// </summary>
+    /// <param name="paths">The collection of paths to copy.</param>
     public Paths64(IEnumerable<Path64> paths) : base(paths) { }
+    /// <summary>
+    /// Returns a string representation of the collection of paths.
+    /// </summary>
+    /// <returns>A string listing each path in the collection.</returns>
     public override string ToString()
     {
       string s = "";
@@ -455,11 +796,30 @@ namespace Clipper2Lib
     }
   }
 
+  /// <summary>
+  /// Represents a series of points forming a path in 2D space using double-precision floating-point coordinates.
+  /// </summary>
   public class PathD : List<PointD>
   {
+    /// <summary>
+    /// Initializes a new, empty instance of the <see cref="PathD"/> class.
+    /// </summary>
     public PathD() : base() { }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PathD"/> class with a specified capacity.
+    /// </summary>
+    /// <param name="capacity">The initial capacity of the list.</param>
     public PathD(int capacity = 0) : base(capacity) { }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PathD"/> class from an existing collection of points.
+    /// </summary>
+    /// <param name="path">The collection of points to copy.</param>
     public PathD(IEnumerable<PointD> path) : base(path) { }
+    /// <summary>
+    /// Returns a string representation of the path with the specified precision.
+    /// </summary>
+    /// <param name="precision">The number of decimal places.</param>
+    /// <returns>A string representation of the path.</returns>
     public string ToString(int precision = 2)
     {
       string s = "";
@@ -470,11 +830,30 @@ namespace Clipper2Lib
     }
   }
 
+  /// <summary>
+  /// Represents a series of paths, each formed by a series of points in 2D space using double-precision floating-point coordinates.
+  /// </summary>
   public class PathsD : List<PathD>
   {
+    /// <summary>
+    /// Initializes a new, empty instance of the <see cref="PathsD"/> class.
+    /// </summary>
     public PathsD() : base() { }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PathsD"/> class with a specified capacity.
+    /// </summary>
+    /// <param name="capacity">The initial capacity of the list.</param>
     public PathsD(int capacity = 0) : base(capacity) { }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PathsD"/> class from an existing collection of paths.
+    /// </summary>
+    /// <param name="paths">The collection of paths to copy.</param>
     public PathsD(IEnumerable<PathD> paths) : base(paths) { }
+    /// <summary>
+    /// Returns a string representation of the collection of paths with the specified precision.
+    /// </summary>
+    /// <param name="precision">The number of decimal places.</param>
+    /// <returns>A string listing each path in the collection.</returns>
     public string ToString(int precision = 2)
     {
       string s = "";
@@ -485,40 +864,96 @@ namespace Clipper2Lib
   }
 
   // Note: all clipping operations except for Difference are commutative.
+  /// <summary>
+  /// Specifies the type of clipping operation to perform.
+  /// </summary>
   public enum ClipType
   {
+    /// <summary>
+    /// No clipping.
+    /// </summary>
     NoClip,
+    /// <summary>
+    /// Intersection clipping (common area).
+    /// </summary>
     Intersection,
+    /// <summary>
+    /// Union clipping (combined area).
+    /// </summary>
     Union,
+    /// <summary>
+    /// Difference clipping (subtracting second shape from first).
+    /// </summary>
     Difference,
+    /// <summary>
+    /// Xor clipping (exclusive or, areas not overlapping).
+    /// </summary>
     Xor
   }
 
+  /// <summary>
+  /// Specifies the type of path (subject or clip).
+  /// </summary>
   public enum PathType
   {
+    /// <summary>
+    /// The path is a subject path.
+    /// </summary>
     Subject,
+    /// <summary>
+    /// The path is a clipping path.
+    /// </summary>
     Clip
   }
 
   // By far the most widely used filling rules for polygons are EvenOdd
   // and NonZero, sometimes called Alternate and Winding respectively.
   // https://en.wikipedia.org/wiki/Nonzero-rule
+  /// <summary>
+  /// Specifies the filling rule for polygons.
+  /// </summary>
   public enum FillRule
   {
+    /// <summary>
+    /// Even-odd filling rule.
+    /// </summary>
     EvenOdd,
+    /// <summary>
+    /// Non-zero winding filling rule.
+    /// </summary>
     NonZero,
+    /// <summary>
+    /// Positive winding number rule.
+    /// </summary>
     Positive,
+    /// <summary>
+    /// Negative winding number rule.
+    /// </summary>
     Negative
   }
 
-  // PointInPolygon
+  /// <summary>
+  /// Results of the PointInPolygon function.
+  /// </summary>
   internal enum PipResult
   {
+    /// <summary>
+    /// The point is inside the polygon.
+    /// </summary>
     Inside,
+    /// <summary>
+    /// The point is outside the polygon.
+    /// </summary>
     Outside,
+    /// <summary>
+    /// The point is on the edge of the polygon.
+    /// </summary>
     OnEdge
   }
 
+  /// <summary>
+  /// Provides internal clipping functions and constants.
+  /// </summary>
   public static class InternalClipper
   {
     internal const long MaxInt64 = 9223372036854775807;
@@ -533,21 +968,35 @@ namespace Clipper2Lib
     private static readonly string
       precision_range_error = "Error: Precision is out of range.";
 
+    /// <summary>
+    /// Calculates the cross product of three points.
+    /// </summary>
+    /// <param name="pt1">The first point.</param>
+    /// <param name="pt2">The second point.</param>
+    /// <param name="pt3">The third point.</param>
+    /// <returns>The cross product value.</returns>
     public static double CrossProduct(Point64 pt1, Point64 pt2, Point64 pt3)
     {
       // typecast to double to avoid potential int overflow
-      return ((double) (pt2.X - pt1.X) * (pt3.Y - pt2.Y) -
-              (double) (pt2.Y - pt1.Y) * (pt3.X - pt2.X));
+      return ((double)(pt2.X - pt1.X) * (pt3.Y - pt2.Y) -
+              (double)(pt2.Y - pt1.Y) * (pt3.X - pt2.X));
     }
 
+    /// <summary>
+    /// Determines the sign of the cross product of two vectors.
+    /// </summary>
+    /// <param name="pt1">The base point of the first vector.</param>
+    /// <param name="pt2">The endpoint of the first vector and base point of the second vector.</param>
+    /// <param name="pt3">The endpoint of the second vector.</param>
+    /// <returns>-1, 0, or 1 indicating the sign of the cross product.</returns>
     public static int CrossProductSign(Point64 pt1, Point64 pt2, Point64 pt3)
     {
       long a = pt2.X - pt1.X;
       long b = pt3.Y - pt2.Y;
       long c = pt2.Y - pt1.Y;
       long d = pt3.X - pt2.X;
-      UInt128Struct ab = MultiplyUInt64((ulong) Math.Abs(a), (ulong) Math.Abs(b));
-      UInt128Struct cd = MultiplyUInt64((ulong) Math.Abs(c), (ulong) Math.Abs(d));
+      UInt128Struct ab = MultiplyUInt64((ulong)Math.Abs(a), (ulong)Math.Abs(b));
+      UInt128Struct cd = MultiplyUInt64((ulong)Math.Abs(c), (ulong)Math.Abs(d));
       var signAB = TriSign(a) * TriSign(b);
       var signCD = TriSign(c) * TriSign(d);
 
@@ -566,6 +1015,12 @@ namespace Clipper2Lib
     }
 
 #if USINGZ
+    /// <summary>
+    /// Sets the Z coordinate for each point in a path.
+    /// </summary>
+    /// <param name="path">The path whose points will have their Z coordinate set.</param>
+    /// <param name="Z">The Z coordinate value.</param>
+    /// <returns>A new <see cref="Path64"/> with the Z coordinate set for each point.</returns>
     public static Path64 SetZ(Path64 path, long Z)
     {
       Path64 result = new Path64(path.Count);
@@ -593,19 +1048,34 @@ namespace Clipper2Lib
       return (x < 0) ? -1 : (x > 0) ? 1 : 0;
     }
 
+    /// <summary>
+    /// A structure representing a 128-bit unsigned integer as two 64-bit parts.
+    /// </summary>
     public struct UInt128Struct
     {
+      /// <summary>
+      /// The low 64 bits of the 128-bit integer.
+      /// </summary>
       public ulong lo64;
+      /// <summary>
+      /// The high 64 bits of the 128-bit integer.
+      /// </summary>
       public ulong hi64;
     }
 
+    /// <summary>
+    /// Multiplies two 64-bit unsigned integers and returns the 128-bit result as two 64-bit parts.
+    /// </summary>
+    /// <param name="a">The first multiplicand.</param>
+    /// <param name="b">The second multiplicand.</param>
+    /// <returns>The <see cref="UInt128Struct"/> representing the 128-bit product.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static UInt128Struct MultiplyUInt64(ulong a, ulong b) // #834,#835
     {
       ulong x1 = (a & 0xFFFFFFFF) * (b & 0xFFFFFFFF);
       ulong x2 = (a >> 32) * (b & 0xFFFFFFFF) + (x1 >> 32);
       ulong x3 = (a & 0xFFFFFFFF) * (b >> 32) + (x2 & 0xFFFFFFFF);
-      UInt128Struct result; 
+      UInt128Struct result;
       result.lo64 = (x3 & 0xFFFFFFFF) << 32 | (x1 & 0xFFFFFFFF);
       result.hi64 = (a >> 32) * (b >> 32) + (x2 >> 32) + (x3 >> 32);
       return result;
@@ -615,10 +1085,10 @@ namespace Clipper2Lib
     internal static bool ProductsAreEqual(long a, long b, long c, long d)
     {
       // nb: unsigned values will be needed for CalcOverflowCarry()
-      ulong absA = (ulong) Math.Abs(a);
-      ulong absB = (ulong) Math.Abs(b);
-      ulong absC = (ulong) Math.Abs(c);
-      ulong absD = (ulong) Math.Abs(d);
+      ulong absA = (ulong)Math.Abs(a);
+      ulong absB = (ulong)Math.Abs(b);
+      ulong absC = (ulong)Math.Abs(c);
+      ulong absD = (ulong)Math.Abs(d);
 
       UInt128Struct mul_ab = MultiplyUInt64(absA, absB);
       UInt128Struct mul_cd = MultiplyUInt64(absC, absD);
@@ -646,8 +1116,8 @@ namespace Clipper2Lib
     internal static double DotProduct(Point64 pt1, Point64 pt2, Point64 pt3)
     {
       // typecast to double to avoid potential int overflow
-      return ((double) (pt2.X - pt1.X) * (pt3.X - pt2.X) +
-              (double) (pt2.Y - pt1.Y) * (pt3.Y - pt2.Y));
+      return ((double)(pt2.X - pt1.X) * (pt3.X - pt2.X) +
+              (double)(pt2.Y - pt1.Y) * (pt3.Y - pt2.Y));
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -673,6 +1143,15 @@ namespace Clipper2Lib
     // be constrained to seg1. However, it's possible that 'ip' won't be inside
     // seg2, even when 'ip' hasn't been constrained (ie 'ip' is inside seg1).
 
+    /// <summary>
+    /// Calculates the intersection point of two lines defined by pairs of points.
+    /// </summary>
+    /// <param name="ln1a">The start point of the first line.</param>
+    /// <param name="ln1b">The end point of the first line.</param>
+    /// <param name="ln2a">The start point of the second line.</param>
+    /// <param name="ln2b">The end point of the second line.</param>
+    /// <param name="ip">The intersection point, if found.</param>
+    /// <returns><see langword="true"/> if the lines intersect; otherwise, <see langword="false"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool GetLineIntersectPt(Point64 ln1a,
       Point64 ln1b, Point64 ln2a, Point64 ln2b, out Point64 ip)
@@ -694,8 +1173,8 @@ namespace Clipper2Lib
       else
       {
         // avoid using constructor (and rounding too) as they affect performance //664
-        ip.X = (long) (ln1a.X + t * dx1);
-        ip.Y = (long) (ln1a.Y + t * dy1);
+        ip.X = (long)(ln1a.X + t * dx1);
+        ip.Y = (long)(ln1a.Y + t * dy1);
 #if USINGZ
         ip.Z = 0;
 #endif
@@ -703,6 +1182,15 @@ namespace Clipper2Lib
       return true;
     }
 
+    /// <summary>
+    /// Calculates the intersection point of two lines defined by pairs of points.
+    /// </summary>
+    /// <param name="ln1a">The start point of the first line.</param>
+    /// <param name="ln1b">The end point of the first line.</param>
+    /// <param name="ln2a">The start point of the second line.</param>
+    /// <param name="ln2b">The end point of the second line.</param>
+    /// <param name="ip">The intersection point, if found.</param>
+    /// <returns><see langword="true"/> if the lines intersect; otherwise, <see langword="false"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool GetLineIntersectPt(PointD ln1a,
       PointD ln1b, PointD ln2a, PointD ln2b, out PointD ip)
@@ -733,7 +1221,7 @@ namespace Clipper2Lib
       return true;
     }
 
-    internal static bool SegsIntersect(Point64 seg1a, 
+    internal static bool SegsIntersect(Point64 seg1a,
       Point64 seg1b, Point64 seg2a, Point64 seg2b, bool inclusive = false)
     {
       double dy1 = (seg1b.Y - seg1a.Y);
@@ -777,6 +1265,11 @@ namespace Clipper2Lib
       }
     }
 
+    /// <summary>
+    /// Gets the bounding rectangle of a path.
+    /// </summary>
+    /// <param name="path">The path whose bounding rectangle is to be calculated.</param>
+    /// <returns>A <see cref="Rect64"/> representing the bounding rectangle of the path.</returns>
     public static Rect64 GetBounds(Path64 path)
     {
       if (path.Count == 0) return new Rect64();
@@ -791,6 +1284,13 @@ namespace Clipper2Lib
       return result;
     }
 
+    /// <summary>
+    /// Gets the closest point on a segment to a given point.
+    /// </summary>
+    /// <param name="offPt">The point from which the closest point is to be determined.</param>
+    /// <param name="seg1">The start point of the segment.</param>
+    /// <param name="seg2">The end point of the segment.</param>
+    /// <returns>The closest point on the segment to the given point.</returns>
     public static Point64 GetClosestPtOnSegment(Point64 offPt,
     Point64 seg1, Point64 seg2)
     {
@@ -798,7 +1298,7 @@ namespace Clipper2Lib
       double dx = (seg2.X - seg1.X);
       double dy = (seg2.Y - seg1.Y);
       double q = ((offPt.X - seg1.X) * dx +
-        (offPt.Y - seg1.Y) * dy) / ((dx*dx) + (dy*dy));
+        (offPt.Y - seg1.Y) * dy) / ((dx * dx) + (dy * dy));
       if (q < 0) q = 0; else if (q > 1) q = 1;
       return new Point64(
         // use MidpointRounding.ToEven in order to explicitly match the nearbyint behaviour on the C++ side
@@ -807,6 +1307,12 @@ namespace Clipper2Lib
       );
     }
 
+    /// <summary>
+    /// Determines the position of a point relative to a polygon.
+    /// </summary>
+    /// <param name="pt">The point to check.</param>
+    /// <param name="polygon">The polygon to check against.</param>
+    /// <returns>The <see cref="PointInPolygonResult"/> indicating the position of the point.</returns>
     public static PointInPolygonResult PointInPolygon(Point64 pt, Path64 polygon)
     {
       int len = polygon.Count, start = 0;
@@ -821,11 +1327,11 @@ namespace Clipper2Lib
       {
         if (i == end)
         {
-          if (end == 0 || start == 0) break;  
+          if (end == 0 || start == 0) break;
           end = start;
           i = 0;
         }
-        
+
         if (isAbove)
         {
           while (i < end && polygon[i].Y < pt.Y) i++;
@@ -880,6 +1386,12 @@ namespace Clipper2Lib
       return val == 0 ? PointInPolygonResult.IsOutside : PointInPolygonResult.IsInside;
     }
 
+    /// <summary>
+    /// Determines if one path is completely contained within another.
+    /// </summary>
+    /// <param name="path1">The outer path.</param>
+    /// <param name="path2">The inner path.</param>
+    /// <returns><see langword="true"/> if path1 contains path2; otherwise, <see langword="false"/>.</returns>
     public static bool Path2ContainsPath1(Path64 path1, Path64 path2)
     {
       // we need to make some accommodation for rounding errors

@@ -50,9 +50,20 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
     private readonly Lazy<Matrix<T>> _lazyU;
     private readonly Lazy<Permutation> _lazyP;
 
+    /// <summary>
+    /// Gets the combined LU factor matrix.
+    /// </summary>
     protected readonly Matrix<T> Factors;
+    /// <summary>
+    /// Gets the pivot indices.
+    /// </summary>
     protected readonly int[] Pivots;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LU{T}"/> class.
+    /// </summary>
+    /// <param name="factors">The combined LU factor matrix.</param>
+    /// <param name="pivots">The pivot indices.</param>
     protected LU(Matrix<T> factors, int[] pivots)
     {
       Factors = factors;

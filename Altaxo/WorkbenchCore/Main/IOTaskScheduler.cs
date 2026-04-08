@@ -32,11 +32,17 @@ namespace Altaxo.Main
 
     private static readonly TaskFactory factory = new TaskFactory(scheduler);
 
+    /// <summary>
+    /// Gets the task scheduler used for I/O-intensive work.
+    /// </summary>
     public static TaskScheduler Scheduler
     {
       get { return scheduler; }
     }
 
+    /// <summary>
+    /// Gets the task factory bound to <see cref="Scheduler"/>.
+    /// </summary>
     public static TaskFactory Factory
     {
       get { return factory; }

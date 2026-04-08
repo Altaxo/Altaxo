@@ -44,29 +44,35 @@ namespace Altaxo.Units
     private IUnit _denominatorUnit;
 
     #region Serialization
-  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(UnitRatioComposite), 0)]
-  public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-  {
-    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+
+    /// <summary>
+    /// XML serialization surrogate for <see cref="UnitRatioComposite"/>.
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(UnitRatioComposite), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      var s = (UnitRatioComposite)obj;
+      /// <inheritdoc/>
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (UnitRatioComposite)obj;
 
-      info.AddValue("NominatorPrefix", s.NominatorPrefix);
-      info.AddValue("NominatorUnit", s.NominatorUnit);
-      info.AddValue("DenominatorPrefix", s.DenominatorPrefix);
-      info.AddValue("DenominatorUnit", s.DenominatorUnit);
+        info.AddValue("NominatorPrefix", s.NominatorPrefix);
+        info.AddValue("NominatorUnit", s.NominatorUnit);
+        info.AddValue("DenominatorPrefix", s.DenominatorPrefix);
+        info.AddValue("DenominatorUnit", s.DenominatorUnit);
+      }
+
+      /// <inheritdoc/>
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var nomPrefix = (SIPrefix)info.GetValue("NominatorPrefix", null);
+        var nomUnit = (IUnit)info.GetValue("NominatorUnit", null);
+        var denomPrefix = (SIPrefix)info.GetValue("DenominatorPrefix", null);
+        var denomUnit = (IUnit)info.GetValue("DenominatorUnit", null);
+
+        return new UnitRatioComposite(nomPrefix, nomUnit, denomPrefix, denomUnit);
+      }
     }
-
-    public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
-    {
-      var nomPrefix = (SIPrefix)info.GetValue("NominatorPrefix", null);
-      var nomUnit = (IUnit)info.GetValue("NominatorUnit", null);
-      var denomPrefix = (SIPrefix)info.GetValue("DenominatorPrefix", null);
-      var denomUnit = (IUnit)info.GetValue("DenominatorUnit", null);
-
-      return new UnitRatioComposite(nomPrefix, nomUnit, denomPrefix, denomUnit);
-    }
-  }
 
     #endregion
 

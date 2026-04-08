@@ -30,9 +30,13 @@ using Altaxo.Serialization.HDF5.Nexus;
 
 namespace Altaxo.Gui.Serialization.HDF5.Nexus
 {
+  /// <summary>
+  /// Controls editing of a <see cref="NexusImportDataSource"/>.
+  /// </summary>
   [UserControllerForObject(typeof(NexusImportDataSource))]
   public class NexusImportDataSourceController : DataSourceControllerBase<NexusImportDataSource>
   {
+    /// <inheritdoc/>
     protected override IMVCANController GetProcessDataController()
     {
       var processDataController = new MultipleFilesController();
@@ -42,7 +46,9 @@ namespace Altaxo.Gui.Serialization.HDF5.Nexus
       return processDataController;
     }
 
+    /// <inheritdoc/>
     protected override bool IsProcessDataInitiallyExpanded() => true;
+    /// <inheritdoc/>
     protected override bool IsProcessOptionsInitiallyExpanded() => false;
   }
 }

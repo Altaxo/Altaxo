@@ -39,6 +39,9 @@ namespace Altaxo.Gui.Common.Drawing
   {
     private PenControlsGlue _glue;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PenSimpleConditionalControl"/> class.
+    /// </summary>
     public PenSimpleConditionalControl()
     {
       InitializeComponent();
@@ -51,6 +54,9 @@ namespace Altaxo.Gui.Common.Drawing
       };
     }
 
+    /// <summary>
+    /// Gets or sets the selected pen.
+    /// </summary>
     public PenX SelectedPen
     {
       get

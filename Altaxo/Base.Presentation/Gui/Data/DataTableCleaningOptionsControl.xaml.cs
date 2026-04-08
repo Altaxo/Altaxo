@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Data
   /// </summary>
   public partial class DataTableCleaningOptionsControl : UserControl, IDataTableCleaningOptionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DataTableCleaningOptionsControl"/> class.
+    /// </summary>
     public DataTableCleaningOptionsControl()
     {
       InitializeComponent();

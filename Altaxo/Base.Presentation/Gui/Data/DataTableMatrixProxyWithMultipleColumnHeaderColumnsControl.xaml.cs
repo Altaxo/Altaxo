@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Data
   /// </summary>
   public partial class DataTableMatrixProxyWithMultipleColumnHeaderColumnsControl : UserControl, IDataTableMatrixProxyWithMultipleColumnHeaderColumnsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DataTableMatrixProxyWithMultipleColumnHeaderColumnsControl"/> class.
+    /// </summary>
     public DataTableMatrixProxyWithMultipleColumnHeaderColumnsControl()
     {
       InitializeComponent();

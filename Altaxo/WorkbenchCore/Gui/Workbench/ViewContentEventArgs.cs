@@ -21,10 +21,16 @@ using System.Collections.Generic;
 
 namespace Altaxo.Gui.Workbench
 {
+  /// <summary>
+  /// Provides event data for <see cref="IViewContent"/> instances.
+  /// </summary>
   public class ViewContentEventArgs : EventArgs
   {
     private IViewContent content;
 
+    /// <summary>
+    /// Gets the view content associated with the event.
+    /// </summary>
     public IViewContent Content
     {
       get
@@ -33,6 +39,10 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ViewContentEventArgs"/> class.
+    /// </summary>
+    /// <param name="content">The associated view content.</param>
     public ViewContentEventArgs(IViewContent content)
     {
       if (content is null)

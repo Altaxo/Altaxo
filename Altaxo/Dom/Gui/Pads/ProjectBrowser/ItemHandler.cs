@@ -35,10 +35,19 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
   /// </summary>
   public abstract class AbstractItemHandler
   {
+    /// <summary>
+    /// The list currently managed by the handler.
+    /// </summary>
     protected SelectableListNodeList _list;
 
+    /// <summary>
+    /// Event raised when the list content changes.
+    /// </summary>
     protected event Action<SelectableListNodeList> _listChange;
 
+    /// <summary>
+    /// Maps project item types to project browser images.
+    /// </summary>
     protected static Dictionary<Type, ProjectBrowseItemImage> _projectItemTypesToImage;
 
     static AbstractItemHandler()
@@ -101,6 +110,12 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// </summary>
     public abstract void EndTracking();
 
+    /// <summary>
+    /// Creates a browser list item for the specified project item.
+    /// </summary>
+    /// <param name="t">The project item.</param>
+    /// <param name="showFullName"><see langword="true"/> to show the full item name; otherwise, <see langword="false"/>.</param>
+    /// <returns>The created browser list item.</returns>
     public static BrowserListItem GetBrowserListItem(IProjectItem t, bool showFullName)
     {
       var name = showFullName ? t.Name : ProjectFolder.GetNamePart(t.Name);
@@ -115,11 +130,22 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       return new BrowserListItem(name, showFullName, t, false) { Image = image, CreationDate = t.CreationTimeUtc, ChangeDate = t.LastChangeTimeUtc };
     }
 
+    /// <summary>
+    /// Creates a browser list item for the specified project folder.
+    /// </summary>
+    /// <param name="folder">The folder name.</param>
+    /// <returns>The created browser list item.</returns>
     public static BrowserListItem GetBrowserListItem(string folder)
     {
       return new BrowserListItem(ProjectFolder.ConvertFolderNameToDisplayFolderLastPart(folder), false, new ProjectFolder(folder), false) { Image = ProjectBrowseItemImage.OpenFolder };
     }
 
+    /// <summary>
+    /// Creates a browser list item from the specified object.
+    /// </summary>
+    /// <param name="t">The source object.</param>
+    /// <param name="showFullName"><see langword="true"/> to show the full item name; otherwise, <see langword="false"/>.</param>
+    /// <returns>The created browser list item.</returns>
     public static BrowserListItem GetBrowserListItemFromObject(object t, bool showFullName)
     {
       if (t is IProjectItem projectItem)
@@ -233,6 +259,10 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
   /// </summary>
   public class AllGraphHandler : AbstractItemHandler
   {
+    /// <summary>
+    /// Fills the list with all graphs in the project.
+    /// </summary>
+    /// <returns>List of all graphs.</returns>
     public override SelectableListNodeList GetItemList()
     {
       _list = new SelectableListNodeList();
@@ -276,6 +306,10 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
   /// </summary>
   public class AllTextsHandler : AbstractItemHandler
   {
+    /// <summary>
+    /// Fills the list with all text documents in the project.
+    /// </summary>
+    /// <returns>List of all text documents.</returns>
     public override SelectableListNodeList GetItemList()
     {
       _list = new SelectableListNodeList();
@@ -287,7 +321,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     }
 
     /// <summary>
-    /// Starts monitoring of the graph collection.
+    /// Starts monitoring of the text document collection.
     /// </summary>
     public override void BeginTracking()
     {
@@ -297,7 +331,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     }
 
     /// <summary>
-    /// Ends monitoring of the graph collection.
+    /// Ends monitoring of the text document collection.
     /// </summary>
     public override void EndTracking()
     {

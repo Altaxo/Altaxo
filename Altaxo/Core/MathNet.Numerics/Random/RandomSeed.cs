@@ -2,6 +2,9 @@
 
 namespace Altaxo.Calc.Random
 {
+  /// <summary>
+  /// Provides helper methods for generating integer seeds for pseudo-random number generators.
+  /// </summary>
   public static class RandomSeed
   {
     private static readonly object Lock = new object();

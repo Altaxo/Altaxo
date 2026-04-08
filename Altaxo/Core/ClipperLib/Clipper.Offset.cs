@@ -17,23 +17,66 @@ namespace Clipper2ZLib
 namespace Clipper2Lib
 #endif
 {
+  /// <summary>
+  /// Specifies how adjacent offset segments are joined.
+  /// </summary>
   public enum JoinType
   {
+    /// <summary>
+    /// Use a miter join.
+    /// </summary>
     Miter,
+
+    /// <summary>
+    /// Use a square join.
+    /// </summary>
     Square,
+
+    /// <summary>
+    /// Use a bevel join.
+    /// </summary>
     Bevel,
+
+    /// <summary>
+    /// Use a round join.
+    /// </summary>
     Round
   }
 
+  /// <summary>
+  /// Specifies how open paths or polygons are terminated during offsetting.
+  /// </summary>
   public enum EndType
   {
+    /// <summary>
+    /// Treat the path as a closed polygon.
+    /// </summary>
     Polygon,
+
+    /// <summary>
+    /// Treat the path as an open path with joined ends.
+    /// </summary>
     Joined,
+
+    /// <summary>
+    /// Use butt end caps.
+    /// </summary>
     Butt,
+
+    /// <summary>
+    /// Use square end caps.
+    /// </summary>
     Square,
+
+    /// <summary>
+    /// Use round end caps.
+    /// </summary>
     Round
   }
 
+  /// <summary>
+  /// Offsets closed and open paths by a specified delta.
+  /// </summary>
   public class ClipperOffset
   {
 
@@ -102,14 +145,45 @@ namespace Clipper2Lib
     private double _stepCos;
     private JoinType _joinType;
     private EndType _endType;
+    /// <summary>
+    /// Gets or sets the arc tolerance used when approximating round joins and end caps.
+    /// </summary>
     public double ArcTolerance { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether path groups should be merged before producing the final solution.
+    /// </summary>
     public bool MergeGroups { get; set; }
+
+    /// <summary>
+    /// Gets or sets the miter limit.
+    /// </summary>
     public double MiterLimit { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether collinear edges should be preserved.
+    /// </summary>
     public bool PreserveCollinear { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the solution orientation should be reversed.
+    /// </summary>
     public bool ReverseSolution { get; set; }
 
+    /// <summary>
+    /// Represents a callback that can provide a custom delta per vertex.
+    /// </summary>
+    /// <param name="path">The source path.</param>
+    /// <param name="path_norms">The unit normals of the path.</param>
+    /// <param name="currPt">The current vertex index.</param>
+    /// <param name="prevPt">The previous vertex index.</param>
+    /// <returns>The delta to use at the specified vertex.</returns>
     public delegate double DeltaCallback64(Path64 path,
       PathD path_norms, int currPt, int prevPt);
+
+    /// <summary>
+    /// Gets or sets the callback that provides a custom delta per vertex.
+    /// </summary>
     public DeltaCallback64? DeltaCallback { get; set; }
 
 #if USINGZ
@@ -124,6 +198,13 @@ namespace Clipper2Lib
     }
     public ClipperBase.ZCallback64? ZCallback { get; set; }
 #endif
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ClipperOffset"/> class.
+    /// </summary>
+    /// <param name="miterLimit">The miter limit.</param>
+    /// <param name="arcTolerance">The arc tolerance.</param>
+    /// <param name="preserveCollinear">If set to <see langword="true"/>, preserves collinear edges.</param>
+    /// <param name="reverseSolution">If set to <see langword="true"/>, reverses the output orientation.</param>
     public ClipperOffset(double miterLimit = 2.0,
       double arcTolerance = 0.0, bool
       preserveCollinear = false, bool reverseSolution = false)
@@ -137,11 +218,20 @@ namespace Clipper2Lib
       ZCallback = null;
 #endif
     }
+    /// <summary>
+    /// Removes all previously added input paths.
+    /// </summary>
     public void Clear()
     {
       _groupList.Clear();
     }
 
+    /// <summary>
+    /// Adds a single path to be offset.
+    /// </summary>
+    /// <param name="path">The path to offset.</param>
+    /// <param name="joinType">The join type to use.</param>
+    /// <param name="endType">The end type to use.</param>
     public void AddPath(Path64 path, JoinType joinType, EndType endType)
     {
       int cnt = path.Count;
@@ -150,6 +240,12 @@ namespace Clipper2Lib
       AddPaths(pp, joinType, endType);
     }
 
+    /// <summary>
+    /// Adds multiple paths to be offset.
+    /// </summary>
+    /// <param name="paths">The paths to offset.</param>
+    /// <param name="joinType">The join type to use.</param>
+    /// <param name="endType">The end type to use.</param>
     public void AddPaths(Paths64 paths, JoinType joinType, EndType endType)
     {
       int cnt = paths.Count;
@@ -218,6 +314,11 @@ namespace Clipper2Lib
 
     }
 
+    /// <summary>
+    /// Executes the offset operation and writes the result to a path collection.
+    /// </summary>
+    /// <param name="delta">The offset distance.</param>
+    /// <param name="solution">Receives the offset result.</param>
     public void Execute(double delta, Paths64 solution)
     {
       solution.Clear();
@@ -225,6 +326,11 @@ namespace Clipper2Lib
       ExecuteInternal(delta);
     }
 
+    /// <summary>
+    /// Executes the offset operation and writes the result to a polygon tree.
+    /// </summary>
+    /// <param name="delta">The offset distance.</param>
+    /// <param name="solutionTree">Receives the offset result as a polygon tree.</param>
     public void Execute(double delta, PolyTree64 solutionTree)
     {
       solutionTree.Clear();
@@ -248,6 +354,11 @@ namespace Clipper2Lib
       return new PointD(dy, -dx);
     }
 
+    /// <summary>
+    /// Executes the offset operation using a custom per-vertex delta callback.
+    /// </summary>
+    /// <param name="deltaCallback">The callback that provides the delta for each vertex.</param>
+    /// <param name="solution">Receives the offset result.</param>
     public void Execute(DeltaCallback64 deltaCallback, Paths64 solution)
     {
       DeltaCallback = deltaCallback;

@@ -34,12 +34,15 @@ using System.Windows.Data;
 namespace Altaxo.Gui.Common.Converters
 {
   /// <summary>
-  /// Converter that converts a boolean to a visibility. True is translated to <see cref="Visibility.Collapsed"/>, False is translated to <see cref="Visibility.Visibility"/>.
+  /// Converter that converts a boolean to a visibility. True is translated to <see cref="Visibility.Collapsed"/>, false is translated to <see cref="Visibility.Visible"/>.
   /// </summary>
   /// <seealso cref="System.Windows.Data.IValueConverter" />
   [ValueConversion(typeof(bool), typeof(Visibility))]
   public class TrueToVisibilityCollapsedConverter : IValueConverter
   {
+    /// <summary>
+    /// Gets the shared converter instance.
+    /// </summary>
     public static TrueToVisibilityCollapsedConverter Instance { get; private set; } = new TrueToVisibilityCollapsedConverter();
 
     /// <inheritdoc/>

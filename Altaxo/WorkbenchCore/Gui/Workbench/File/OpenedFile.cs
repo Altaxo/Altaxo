@@ -30,6 +30,9 @@ namespace Altaxo.Gui.Workbench
   /// </summary>
   public abstract class OpenedFile : ICanBeDirty
   {
+    /// <summary>
+    /// Holds the view that is currently editing this file.
+    /// </summary>
     protected IFileViewContent? _currentView;
     private bool _inLoadOperation;
     private bool _inSaveOperation;
@@ -44,6 +47,9 @@ namespace Altaxo.Gui.Workbench
 
     private bool _isDirty;
 
+    /// <summary>
+    /// Occurs when <see cref="IsDirty"/> changes.
+    /// </summary>
     public event EventHandler? IsDirtyChanged;
 
     /// <summary>
@@ -107,6 +113,10 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Changes the file name backing this opened file.
+    /// </summary>
+    /// <param name="newValue">The new file name.</param>
     protected virtual void ChangeFileName(FileName newValue)
     {
       Altaxo.Current.Dispatcher.VerifyAccess();
@@ -121,6 +131,9 @@ namespace Altaxo.Gui.Workbench
     /// </summary>
     public event EventHandler? FileNameChanged;
 
+    /// <summary>
+    /// Occurs when the file is closed.
+    /// </summary>
     public abstract event EventHandler? FileClosed;
 
     /// <summary>
@@ -133,10 +146,21 @@ namespace Altaxo.Gui.Workbench
       SaveToDisk();
     }
 
+    /// <summary>
+    /// Registers a view for this file.
+    /// </summary>
+    /// <param name="view">The view to register.</param>
     public abstract void RegisterView(IFileViewContent view);
 
+    /// <summary>
+    /// Unregisters a view from this file.
+    /// </summary>
+    /// <param name="view">The view to unregister.</param>
     public abstract void UnregisterView(IFileViewContent view);
 
+    /// <summary>
+    /// Closes the file when no registered views remain.
+    /// </summary>
     public virtual void CloseIfAllViewsClosed()
     {
     }
@@ -323,6 +347,9 @@ namespace Altaxo.Gui.Workbench
       //				SavedCurrentView(this, EventArgs.Empty);
     }
 
+    /// <summary>
+    /// Saves the current view into the in-memory file buffer.
+    /// </summary>
     protected void SaveCurrentView()
     {
       using (var memoryStream = new MemoryStream())
@@ -332,6 +359,10 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Switches this file to the specified view.
+    /// </summary>
+    /// <param name="newView">The view to activate.</param>
     public void SwitchedToView(IFileViewContent newView)
     {
       if (newView is null)
@@ -388,6 +419,9 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Reloads the file content from disk.
+    /// </summary>
     public virtual void ReloadFromDisk()
     {
       if (FileName is null)

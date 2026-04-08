@@ -43,6 +43,9 @@ namespace Altaxo.Gui.Data.Selections
   /// </summary>
   public partial class AllRowsControl : UserControl, IAllRowsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AllRowsControl"/> class.
+    /// </summary>
     public AllRowsControl()
     {
       InitializeComponent();

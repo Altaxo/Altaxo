@@ -32,6 +32,9 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
+  /// <summary>
+  /// Converts project browser image indices to image sources.
+  /// </summary>
   public class IndexToImageConverter : IValueConverter
   {
     private static List<ImageSource> _imageList;
@@ -50,6 +53,14 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       };
     }
 
+    /// <summary>
+    /// Converts an image index to the corresponding project browser image source.
+    /// </summary>
+    /// <param name="value">The image index.</param>
+    /// <param name="targetType">The target type.</param>
+    /// <param name="parameter">An optional converter parameter.</param>
+    /// <param name="culture">The culture to use in the converter.</param>
+    /// <returns>The matching image source, or <see langword="null"/> if the value is invalid.</returns>
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       if (_imageList is null)
@@ -67,6 +78,14 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
         return null;
     }
 
+    /// <summary>
+    /// Converts an image source back to an image index.
+    /// </summary>
+    /// <param name="value">The value produced by the binding target.</param>
+    /// <param name="targetType">The target type.</param>
+    /// <param name="parameter">An optional converter parameter.</param>
+    /// <param name="culture">The culture to use in the converter.</param>
+    /// <returns>This method does not return a value because reverse conversion is not supported.</returns>
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       throw new NotImplementedException();

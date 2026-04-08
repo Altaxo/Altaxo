@@ -23,23 +23,17 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 using System.Windows.Data;
-using System.Windows;
 using Altaxo.Drawing;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Shapes;
-using System.Drawing;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
   /// <summary>
-  /// Converts a <see cref="TextGraphic"/> instance to an image that visualize that object (intended for the TextGraphic preview panel).
+  /// Converts a <see cref="TextGraphic"/> instance to an image that visualizes that object for the preview panel.
   /// </summary>
   /// <seealso cref="System.Windows.Data.IValueConverter" />
   public class TextGraphicToImageConverter : IMultiValueConverter, IDisposable
@@ -52,7 +46,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     /// [1] the width of the preview image, and
     /// [2] the height of the preview image.
     /// </summary>
-    /// <param name="value">The value produced by the binding source.</param>
+    /// <param name="values">The values produced by the binding source.</param>
     /// <param name="targetType">The type of the binding target property.</param>
     /// <param name="parameter">The converter parameter to use.</param>
     /// <param name="culture">The culture to use in the converter.</param>
@@ -61,9 +55,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     /// </returns>
     public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {
-      if(values is not null && values.Length>=3 && values[0] is TextGraphic textGraphic && values[1] is double dwidth && values[2] is double dheight)
+      if (values is not null && values.Length >= 3 && values[0] is TextGraphic textGraphic && values[1] is double dwidth && values[2] is double dheight)
       {
-        
+
         int height = (int)dheight;
         int width = (int)dwidth;
         if (height <= 0)
@@ -104,11 +98,22 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       }
     }
 
+    /// <summary>
+    /// Converts back to the original values. Not implemented.
+    /// </summary>
+    /// <param name="value">The value to convert back.</param>
+    /// <param name="targetTypes">The target types for the conversion.</param>
+    /// <param name="parameter">The converter parameter to use.</param>
+    /// <param name="culture">The culture to use in the converter.</param>
+    /// <returns>
+    /// Always throws a <see cref="NotImplementedException"/>.
+    /// </returns>
     public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
       _previewBitmap?.Dispose();

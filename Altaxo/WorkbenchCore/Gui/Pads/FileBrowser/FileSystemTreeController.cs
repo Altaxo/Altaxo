@@ -34,15 +34,28 @@ namespace Altaxo.Gui.Pads.FileBrowser
 {
   #region Interfaces
 
+  /// <summary>
+  /// Defines the tree view used by <see cref="FileSystemTreeController"/>.
+  /// </summary>
   public interface IFileTreeView
   {
+    /// <summary>
+    /// Initializes the folder tree nodes.
+    /// </summary>
+    /// <param name="nodes">The root node collection.</param>
     void Initialize_FolderTree(NGTreeNodeCollection nodes);
 
+    /// <summary>
+    /// Occurs when a folder tree node is selected.
+    /// </summary>
     event Action<NGTreeNode> FolderTreeNodeSelected;
   }
 
   #endregion Interfaces
 
+  /// <summary>
+  /// Controls the folder tree shown in the file browser pad.
+  /// </summary>
   public class FileSystemTreeController
   {
     #region TreeNode
@@ -165,8 +178,14 @@ namespace Altaxo.Gui.Pads.FileBrowser
     private NGTreeNode _rootNode;
     private NGTreeNodeCollection Nodes;
 
+    /// <summary>
+    /// Occurs when the selected path changes.
+    /// </summary>
     public event Action<string>? SelectedPathChanged;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileSystemTreeController"/> class.
+    /// </summary>
     public FileSystemTreeController()
     {
       // Sorted = true;
@@ -298,6 +317,9 @@ namespace Altaxo.Gui.Pads.FileBrowser
       }
     }
 
+    /// <summary>
+    /// Gets or sets the attached tree view.
+    /// </summary>
     public object? ViewObject
     {
       get

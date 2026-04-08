@@ -1238,6 +1238,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
       }
     }
 
+    /// <inheritdoc/>
     public override void KroneckerProduct(Matrix<Complex> other, Matrix<Complex> result)
     {
       if (other == null)
@@ -1556,6 +1557,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
       return (SparseMatrix)leftSide.Remainder(rightSide);
     }
 
+    /// <inheritdoc/>
     public override string ToTypeString()
     {
       return FormattableString.Invariant($"SparseMatrix {RowCount}x{ColumnCount}-Complex {NonZerosCount / (RowCount * (double)ColumnCount):P2} Filled");

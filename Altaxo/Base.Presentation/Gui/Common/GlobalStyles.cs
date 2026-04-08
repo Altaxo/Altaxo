@@ -17,8 +17,8 @@
 // DEALINGS IN THE SOFTWARE.
 
 #nullable disable warnings
-using System;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace Altaxo.Gui.Common
 {
@@ -36,6 +36,9 @@ namespace Altaxo.Gui.Common
         return (Style)Application.Current.FindResource(key);
     }
 
+    /// <summary>
+    /// Gets the global window style.
+    /// </summary>
     public static Style WindowStyle
     {
       get { return FindResource(windowStyleKey); }
@@ -43,11 +46,17 @@ namespace Altaxo.Gui.Common
 
     private static readonly ResourceKey windowStyleKey = new ComponentResourceKey(typeof(GlobalStyles), "WindowStyle");
 
+    /// <summary>
+    /// Gets the resource key for the global window style.
+    /// </summary>
     public static ResourceKey WindowStyleKey
     {
       get { return windowStyleKey; }
     }
 
+    /// <summary>
+    /// Gets the global dialog window style.
+    /// </summary>
     public static Style DialogWindowStyle
     {
       get { return FindResource(dialogWindowStyleKey); }
@@ -55,11 +64,17 @@ namespace Altaxo.Gui.Common
 
     private static readonly ResourceKey dialogWindowStyleKey = new ComponentResourceKey(typeof(GlobalStyles), "DialogWindowStyle");
 
+    /// <summary>
+    /// Gets the resource key for the global dialog window style.
+    /// </summary>
     public static ResourceKey DialogWindowStyleKey
     {
       get { return dialogWindowStyleKey; }
     }
 
+    /// <summary>
+    /// Gets the global button style.
+    /// </summary>
     public static Style ButtonStyle
     {
       get { return FindResource(buttonStyleKey); }
@@ -67,11 +82,17 @@ namespace Altaxo.Gui.Common
 
     private static readonly ResourceKey buttonStyleKey = new ComponentResourceKey(typeof(GlobalStyles), "ButtonStyle");
 
+    /// <summary>
+    /// Gets the resource key for the global button style.
+    /// </summary>
     public static ResourceKey ButtonStyleKey
     {
       get { return buttonStyleKey; }
     }
 
+    /// <summary>
+    /// Gets the global word-wrap checkbox style.
+    /// </summary>
     public static Style WordWrapCheckBoxStyle
     {
       get { return FindResource(wordWrapCheckBoxStyleKey); }
@@ -79,6 +100,9 @@ namespace Altaxo.Gui.Common
 
     private static readonly ResourceKey wordWrapCheckBoxStyleKey = new ComponentResourceKey(typeof(GlobalStyles), "WordWrapCheckBoxStyle");
 
+    /// <summary>
+    /// Gets the resource key for the global word-wrap checkbox style.
+    /// </summary>
     public static ResourceKey WordWrapCheckBoxStyleKey
     {
       get { return wordWrapCheckBoxStyleKey; }
@@ -86,6 +110,9 @@ namespace Altaxo.Gui.Common
 
     private static readonly ResourceKey flowDirectionKey = new ComponentResourceKey(typeof(GlobalStyles), "FlowDirectionKey");
 
+    /// <summary>
+    /// Gets the resource key for the global flow-direction setting.
+    /// </summary>
     public static ResourceKey FlowDirectionKey
     {
       get { return flowDirectionKey; }
@@ -93,11 +120,17 @@ namespace Altaxo.Gui.Common
 
     private static readonly ResourceKey listViewItemFocusHighlightStyleKey = new ComponentResourceKey(typeof(GlobalStyles), "ListViewItemFocusHighlightStyle");
 
+    /// <summary>
+    /// Gets the resource key for the focused <see cref="ListViewItem"/> highlight style.
+    /// </summary>
     public static ResourceKey ListViewItemFocusHighlightStyleKey
     {
       get { return listViewItemFocusHighlightStyleKey; }
     }
 
+    /// <summary>
+    /// Gets the focused <see cref="ListViewItem"/> highlight style.
+    /// </summary>
     public static Style ListViewItemFocusHighlightStyle
     {
       get { return FindResource(listViewItemFocusHighlightStyleKey); }
@@ -105,11 +138,17 @@ namespace Altaxo.Gui.Common
 
     private static readonly ResourceKey listBoxItemFocusHighlightStyleKey = new ComponentResourceKey(typeof(GlobalStyles), "ListBoxItemFocusHighlightStyle");
 
+    /// <summary>
+    /// Gets the resource key for the focused <see cref="ListBoxItem"/> highlight style.
+    /// </summary>
     public static ResourceKey ListBoxItemFocusHighlightStyleKey
     {
       get { return listBoxItemFocusHighlightStyleKey; }
     }
 
+    /// <summary>
+    /// Gets the focused <see cref="ListBoxItem"/> highlight style.
+    /// </summary>
     public static Style ListBoxItemFocusHighlightStyle
     {
       get { return FindResource(listBoxItemFocusHighlightStyleKey); }

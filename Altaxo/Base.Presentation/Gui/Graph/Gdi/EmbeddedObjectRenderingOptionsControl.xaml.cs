@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Gdi
   /// </summary>
   public partial class EmbeddedObjectRenderingOptionsControl : UserControl, IEmbeddedObjectRenderingOptionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EmbeddedObjectRenderingOptionsControl"/> class.
+    /// </summary>
     public EmbeddedObjectRenderingOptionsControl()
     {
       InitializeComponent();

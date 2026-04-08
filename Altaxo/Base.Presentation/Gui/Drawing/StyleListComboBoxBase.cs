@@ -75,7 +75,7 @@ namespace Altaxo.Gui.Drawing
     }
 
     /// <summary>
-    /// Selects the data template for the TreeView: either for a <see cref="TItem" />, for a <see cref="TList"/> or for another node.
+    /// Selects the data template for the TreeView: either for an item, for a list, or for another node.
     /// </summary>
     public class TreeViewDataTemplateSelector : DataTemplateSelector
     {
@@ -84,11 +84,16 @@ namespace Altaxo.Gui.Drawing
       private DataTemplate _TListTemplate;
       private DataTemplate _treeOtherTemplate;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="TreeViewDataTemplateSelector"/> class.
+      /// </summary>
+      /// <param name="ele">The parent element used for resource lookup.</param>
       public TreeViewDataTemplateSelector(FrameworkElement ele)
       {
         _parent = ele;
       }
 
+      /// <inheritdoc/>
       public override DataTemplate SelectTemplate(object item, DependencyObject container)
       {
         var node = item as NGTreeNode;
@@ -126,6 +131,9 @@ namespace Altaxo.Gui.Drawing
     /// <summary>Maximum number of items shown under "last used items".</summary>
     protected const int MaxNumberOfLastLocalUsedItems = 5;
 
+    /// <summary>
+    /// Identifies the <see cref="SelectedItem"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty SelectedItemProperty;
 
     /// <summary>Gets access to the tree view, which shows the style lists.</summary>
@@ -142,10 +150,19 @@ namespace Altaxo.Gui.Drawing
     /// </value>
     protected virtual TItem InternalSelectedItem { get { return SelectedItem; } set { SelectedItem = value; } }
 
+    /// <summary>
+    /// Stores the locally used items.
+    /// </summary>
     protected List<TItem> _lastLocalUsedItems = new List<TItem>();
 
+    /// <summary>
+    /// Occurs when the selected item changes.
+    /// </summary>
     public event DependencyPropertyChangedEventHandler? SelectedItemChanged;
 
+    /// <summary>
+    /// Optional callback invoked when the selected item changes.
+    /// </summary>
     protected Action? _viewEvent_SelectedItemChanged;
 
     /// <summary>
@@ -175,6 +192,10 @@ namespace Altaxo.Gui.Drawing
       IsTreeDropDownOpenProperty = DependencyProperty.Register(nameof(IsTreeDropDownOpen), typeof(bool), typeof(StyleListComboBoxBase<TManager, TList, TItem>), new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, new PropertyChangedCallback(EhIsTreeDropDownOpenChanged)));
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StyleListComboBoxBase{TManager, TList, TItem}"/> class.
+    /// </summary>
+    /// <param name="manager">The style-list manager.</param>
     protected StyleListComboBoxBase(TManager manager)
     {
       _styleListManager = manager;
@@ -185,6 +206,11 @@ namespace Altaxo.Gui.Drawing
 
     #region Helpers
 
+    /// <summary>
+    /// Gets the display name for the specified item.
+    /// </summary>
+    /// <param name="item">The item.</param>
+    /// <returns>The display name.</returns>
     public virtual string GetDisplayName(TItem item)
     {
       return item.ToString();
@@ -194,6 +220,9 @@ namespace Altaxo.Gui.Drawing
 
     #region Dependency property SelectedItem
 
+    /// <summary>
+    /// Gets or sets the selected item.
+    /// </summary>
     public TItem SelectedItem
     {
       get { return (TItem)GetValue(SelectedItemProperty); }
@@ -211,6 +240,9 @@ namespace Altaxo.Gui.Drawing
       return thiss.InternalSelectedItemCoerce((TItem)coerceValue);
     }
 
+    /// <summary>
+    /// Handles a change of the selected item.
+    /// </summary>
     protected virtual void OnSelectedItemChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
       var oldItem = (TItem)args.OldValue;
@@ -469,6 +501,10 @@ namespace Altaxo.Gui.Drawing
 
     #region ComboBox data handling
 
+    /// <summary>
+    /// Updates the combo-box selection for the specified item.
+    /// </summary>
+    /// <param name="item">The item to select.</param>
     protected void UpdateComboBoxSourceSelection(TItem item)
     {
       if (item is not null && object.ReferenceEquals(item, GuiComboBoxSelectedValue))
@@ -553,6 +589,9 @@ namespace Altaxo.Gui.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets the items whose display names start with the specified filter string.
+    /// </summary>
     protected List<object> GetFilteredList(IReadOnlyList<TItem> originalList, string filterString)
     {
       var result = new List<object>();
@@ -569,6 +608,9 @@ namespace Altaxo.Gui.Drawing
 
     #region ComboBox event handling
 
+    /// <summary>
+    /// Handles the closing of the combo-box drop-down.
+    /// </summary>
     protected void EhComboBox_DropDownClosed(object sender, EventArgs e)
     {
       if (_filterString.Length > 0)
@@ -640,6 +682,9 @@ namespace Altaxo.Gui.Drawing
         _listOfLocalLastUsedItems.RemoveAt(i);
     }
 
+    /// <summary>
+    /// Shows the style-list manager dialog.
+    /// </summary>
     protected virtual void EhShowStyleListManagerDialog(object sender, RoutedEventArgs e)
     {
       var itemList = _styleListManager.GetParentList(SelectedItem);
@@ -663,12 +708,16 @@ namespace Altaxo.Gui.Drawing
 
     #region Code to close the TreeView popup
 
+    /// <summary>
+    /// Handles the opening of the combo-box drop-down.
+    /// </summary>
     protected virtual void EhComboBox_DropDownOpened(object sender, EventArgs e)
     {
       if (IsTreeDropDownOpen)
         IsTreeDropDownOpen = false;
     }
 
+    /// <inheritdoc/>
     protected override void OnContextMenuClosing(ContextMenuEventArgs e)
     {
       base.OnContextMenuClosing(e);

@@ -41,6 +41,13 @@ namespace Altaxo.Calc.Optimization
   /// </summary>
   public class BfgsBMinimizer : BfgsMinimizerBase
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BfgsBMinimizer"/> class.
+    /// </summary>
+    /// <param name="gradientTolerance">The stopping threshold for the gradient norm.</param>
+    /// <param name="parameterTolerance">The stopping threshold for parameter changes.</param>
+    /// <param name="functionProgressTolerance">The stopping threshold for function progress.</param>
+    /// <param name="maximumIterations">The maximum number of iterations.</param>
     public BfgsBMinimizer(double gradientTolerance, double parameterTolerance, double functionProgressTolerance, int maximumIterations = 1000)
         : base(gradientTolerance, parameterTolerance, functionProgressTolerance, maximumIterations)
     {
@@ -161,6 +168,7 @@ namespace Altaxo.Calc.Optimization
       return new MinimizationWithLineSearchResult(candidatePoint, iterations, currentExitCondition, totalLineSearchSteps, iterationsWithNontrivialLineSearch);
     }
 
+    /// <inheritdoc/>
     protected override Vector<double> CalculateSearchDirection(ref Matrix<double> pseudoHessian,
         out double maxLineSearchStep,
         out double startingStepSize,
@@ -288,6 +296,7 @@ namespace Altaxo.Calc.Optimization
       }
     }
 
+    /// <inheritdoc/>
     protected override double GetProjectedGradient(IObjectiveFunctionEvaluation candidatePoint, int ii)
     {
       double projectedGradient;

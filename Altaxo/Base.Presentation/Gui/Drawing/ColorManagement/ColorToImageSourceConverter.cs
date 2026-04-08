@@ -40,8 +40,12 @@ namespace Altaxo.Gui.Drawing.ColorManagement
   /// <seealso cref="System.Windows.Data.IValueConverter" />
   public class ColorToImageSourceConverter : IValueConverter
   {
+    /// <summary>
+    /// Gets or sets the symbol size.
+    /// </summary>
     public double SymbolSize { get; set; } = 16;
 
+    /// <inheritdoc/>
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       AxoColor color;
@@ -72,6 +76,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       return geometryImage;
     }
 
+    /// <inheritdoc/>
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       throw new NotImplementedException();

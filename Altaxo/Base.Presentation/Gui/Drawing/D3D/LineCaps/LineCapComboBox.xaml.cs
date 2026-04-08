@@ -79,6 +79,9 @@ namespace Altaxo.Gui.Drawing.D3D.LineCaps
 
     private bool _isForEndCap;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LineCapComboBox"/> class.
+    /// </summary>
     public LineCapComboBox()
     {
       InitializeComponent();
@@ -93,6 +96,9 @@ namespace Altaxo.Gui.Drawing.D3D.LineCaps
       SetBinding(ComboBox.SelectedItemProperty, binding);
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether this control is used for end caps.
+    /// </summary>
     public bool IsForEndCap
     {
       get { return _isForEndCap; }
@@ -122,12 +128,18 @@ namespace Altaxo.Gui.Drawing.D3D.LineCaps
 
     private const string _nameOfValueProp = "SelectedLineCap";
 
+    /// <summary>
+    /// Gets or sets the selected line cap.
+    /// </summary>
     public ILineCap SelectedLineCap
     {
       get { return (ILineCap)GetValue(SelectedLineCapProperty); }
       set { SetValue(SelectedLineCapProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="SelectedLineCap"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty SelectedLineCapProperty =
         DependencyProperty.Register(_nameOfValueProp, typeof(ILineCap), typeof(LineCapComboBox),
         new FrameworkPropertyMetadata(Altaxo.Drawing.D3D.LineCaps.Flat.Instance, OnSelectedLineCapChanged));
@@ -138,12 +150,14 @@ namespace Altaxo.Gui.Drawing.D3D.LineCaps
 
     #endregion Dependency property
 
+    /// <inheritdoc/>
     public override string GetItemText(object item)
     {
       var value = (ILineCap)item;
       return value.GetType().Name;
     }
 
+    /// <inheritdoc/>
     public override ImageSource GetItemImage(object item)
     {
       var val = (ILineCap)item;
@@ -161,6 +175,12 @@ namespace Altaxo.Gui.Drawing.D3D.LineCaps
       return result;
     }
 
+    /// <summary>
+    /// Creates an image for a line cap.
+    /// </summary>
+    /// <param name="join">The line cap.</param>
+    /// <param name="isForEndCap">Whether the image is for an end cap.</param>
+    /// <returns>The generated image.</returns>
     public static ImageSource GetImage(ILineCap join, bool isForEndCap)
     {
       const int bmpHeight = 24;

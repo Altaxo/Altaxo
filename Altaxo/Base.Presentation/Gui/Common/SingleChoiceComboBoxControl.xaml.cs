@@ -37,6 +37,9 @@ namespace Altaxo.Gui.Common
   [UserControlForController(typeof(ISingleChoiceViewEventSink))]
   public partial class SingleChoiceComboBoxControl : UserControl, ISingleChoiceView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SingleChoiceComboBoxControl"/> class.
+    /// </summary>
     public SingleChoiceComboBoxControl()
     {
       InitializeComponent();
@@ -52,16 +55,19 @@ namespace Altaxo.Gui.Common
 
     private ISingleChoiceViewEventSink _controller;
 
+    /// <inheritdoc/>
     public ISingleChoiceViewEventSink Controller
     {
       set { _controller = value; }
     }
 
+    /// <inheritdoc/>
     public void InitializeDescription(string value)
     {
       _label.Content = value;
     }
 
+    /// <inheritdoc/>
     public void InitializeChoice(string[] values, int initialchoice)
     {
       _comboBox.ItemsSource = values;

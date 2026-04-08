@@ -49,6 +49,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// </summary>
     protected GraphController _grac;
 
+    /// <summary>
+    /// The movement increment used by the keyboard.
+    /// </summary>
     protected double _MovementIncrement = 4;
 
     /// <summary>
@@ -56,6 +59,10 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// </summary>
     protected bool _showRootLayerPrintCoordinates;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ReadXYCoordinatesMouseHandler"/> class.
+    /// </summary>
+    /// <param name="grac">The graph controller.</param>
     public ReadXYCoordinatesMouseHandler(GraphController grac)
     {
       _grac = grac;
@@ -64,6 +71,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
         _grac.SetPanelCursor(Cursors.Cross);
     }
 
+    /// <inheritdoc/>
     public override GraphToolType GraphToolType
     {
       get { return GraphToolType.ReadXYCoordinates; }
@@ -74,6 +82,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// </summary>
     /// <param name="position">Mouse position.</param>
     /// <param name="e">The mouse event args</param>
+    /// <inheritdoc/>
     public override void OnMouseDown(PointD2D position, MouseButtonEventArgs e)
     {
       base.OnMouseDown(position, e);
@@ -198,6 +207,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       _grac.RenderOverlay(); // no refresh necessary, only invalidate to show the cross
     }
 
+    /// <inheritdoc/>
     public override void AfterPaint(Graphics g)
     {
       base.AfterPaint(g);
@@ -223,6 +233,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// </summary>
     /// <param name="e">Key event arguments.</param>
     /// <returns></returns>
+    /// <inheritdoc/>
     public override bool ProcessCmdKey(KeyEventArgs e)
     {
       var keyData = e.Key;

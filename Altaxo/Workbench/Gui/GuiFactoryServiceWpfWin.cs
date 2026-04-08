@@ -33,10 +33,16 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Gui
 {
+  /// <summary>
+  /// Provides the WPF-based GUI factory service for the workbench.
+  /// </summary>
   public class GuiFactoryServiceWpfWin : Altaxo.Main.Services.GUIFactoryService
   {
     private Stack<System.Windows.Window> _modalWindows = new Stack<System.Windows.Window>();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GuiFactoryServiceWpfWin"/> class.
+    /// </summary>
     public GuiFactoryServiceWpfWin()
     {
       RegisteredGuiTechnologies.Add(typeof(System.Windows.FrameworkElement));
@@ -66,6 +72,7 @@ namespace Altaxo.Gui
 
     #region Still dependent on Windows Forms
 
+    /// <inheritdoc/>
     public override IntPtr MainWindowHandle
     {
       get
@@ -79,8 +86,10 @@ namespace Altaxo.Gui
       }
     }
 
+    /// <inheritdoc/>
     public override object MainWindowObject => Current.Workbench.ViewObject;
 
+    /// <inheritdoc/>
     public override RectangleD2D GetScreenInformation(double virtual_x, double virtual_y)
     {
       var wa = System.Windows.Forms.Screen.GetWorkingArea(new System.Drawing.Point((int)virtual_x, (int)virtual_y));
@@ -90,6 +99,9 @@ namespace Altaxo.Gui
 
     #endregion Still dependent on Windows Forms
 
+    /// <summary>
+    /// Gets the main workbench window as a WPF window.
+    /// </summary>
     public System.Windows.Window MainWindowWpf
     {
       get
@@ -267,6 +279,7 @@ return System.Windows.Forms.DialogResult.OK == dlgview.ShowDialog(MainWindow);
       var result = System.Windows.MessageBox.Show(errortext, title, button, image);
     }
 
+    /// <inheritdoc/>
     public override void InfoMessageBox(string infotxt, string title)
     {
       Current.Dispatcher.InvokeIfRequired(() => MessageBox_GuiContextOnly(infotxt, title ?? "Information", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information));
@@ -326,6 +339,7 @@ return System.Windows.Forms.DialogResult.OK == dlgview.ShowDialog(MainWindow);
       return stb.ToString();
     }
 
+    /// <inheritdoc/>
     public override bool ShowOpenFileDialog(OpenFileOptions options)
     {
       return Current.Dispatcher.InvokeIfRequired(InternalShowOpenFileDialog, options);
@@ -355,6 +369,7 @@ return System.Windows.Forms.DialogResult.OK == dlgview.ShowDialog(MainWindow);
         return false;
     }
 
+    /// <inheritdoc/>
     public override bool ShowSaveFileDialog(SaveFileOptions options)
     {
       return Current.Dispatcher.InvokeIfRequired(InternalShowSaveFileDialog, options);
@@ -392,6 +407,7 @@ return System.Windows.Forms.DialogResult.OK == dlgview.ShowDialog(MainWindow);
       }
     }
 
+    /// <inheritdoc/>
     public override bool ShowFolderDialog(FolderChoiceOptions options)
     {
       return Current.Dispatcher.InvokeIfRequired(InternalShowFolderDialog, options);
@@ -628,6 +644,13 @@ private class ClipGetDataWrapper : IClipboardGetDataObject
         }
       }
     }
+
+    /// <summary>
+    /// Saves an image to a memory stream using the specified format.
+    /// </summary>
+    /// <param name="image">The image to save.</param>
+    /// <param name="format">The image format.</param>
+    /// <returns>A memory stream positioned at the beginning.</returns>
     public static System.IO.MemoryStream ImageToStream(System.Drawing.Image image, System.Drawing.Imaging.ImageFormat format)
     {
       var str = new System.IO.MemoryStream();
@@ -637,11 +660,13 @@ private class ClipGetDataWrapper : IClipboardGetDataObject
       return str;
     }
 
+    /// <inheritdoc/>
     public override IClipboardSetDataObject GetNewClipboardDataObject()
     {
       return new WpfClipSetDataWrapper();
     }
 
+    /// <inheritdoc/>
     public override IClipboardGetDataObject OpenClipboardDataObject()
     {
       //var dao = System.Windows.Forms.Clipboard.GetDataObject() as System.Windows.Forms.DataObject;
@@ -651,6 +676,7 @@ private class ClipGetDataWrapper : IClipboardGetDataObject
       return new WpfClipGetDataWrapper(dao);
     }
 
+    /// <inheritdoc/>
     public override void SetClipboardDataObject(IClipboardSetDataObject dataObject, bool copy)
     {
       //System.Windows.Forms.Clipboard.SetDataObject(dataObject, copy);
@@ -661,6 +687,7 @@ private class ClipGetDataWrapper : IClipboardGetDataObject
 
     #region Context menu
 
+    /// <inheritdoc/>
     public override void InvalidateRequerySuggested()
     {
       CommandManager.InvalidateRequerySuggested();
@@ -687,6 +714,7 @@ private class ClipGetDataWrapper : IClipboardGetDataObject
       }
     }
 
+    /// <inheritdoc/>
     public override bool ShowBackgroundCancelDialog(int millisecondsDelay, Thread thread, IExternalDrivenBackgroundMonitor monitor)
     {
       if (Current.Dispatcher.InvokeRequired)
@@ -708,6 +736,7 @@ private class ClipGetDataWrapper : IClipboardGetDataObject
       return false;
     }
 
+    /// <inheritdoc/>
     public override Exception? ExecuteAsUserCancellable(int millisecondsDelay, Action<IProgressReporter> action)
     {
       var (monitor, reporter) = ExternalDrivenBackgroundMonitor.NewMonitorAndReporter();
@@ -770,11 +799,13 @@ private class ClipGetDataWrapper : IClipboardGetDataObject
 
     #region Commands
 
+    /// <inheritdoc/>
     public override void RegisterRequerySuggestedHandler(EventHandler handler)
     {
       CommandManager.RequerySuggested += handler;
     }
 
+    /// <inheritdoc/>
     public override void UnregisterRequerySuggestedHandler(EventHandler handler)
     {
       CommandManager.RequerySuggested -= handler;

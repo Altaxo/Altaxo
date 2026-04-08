@@ -65,6 +65,9 @@ namespace Altaxo.Gui.Common.Drawing
 
     private Dictionary<sdd.LineJoin, ImageComboBoxItem> _cachedItems = new Dictionary<sdd.LineJoin, ImageComboBoxItem>();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LineJoinComboBox"/> class.
+    /// </summary>
     public LineJoinComboBox()
     {
       InitializeComponent();
@@ -91,12 +94,18 @@ namespace Altaxo.Gui.Common.Drawing
 
     private const string _nameOfValueProp = "SelectedLineJoin";
 
+    /// <summary>
+    /// Gets or sets the selected line join.
+    /// </summary>
     public sdd.LineJoin SelectedLineJoin
     {
       get { var result = (sdd.LineJoin)GetValue(SelectedLineJoinProperty); return result; }
       set { SetValue(SelectedLineJoinProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="SelectedLineJoin"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty SelectedLineJoinProperty =
         DependencyProperty.Register(_nameOfValueProp, typeof(sdd.LineJoin), typeof(LineJoinComboBox),
         new FrameworkPropertyMetadata(OnSelectedLineJoinChanged));
@@ -108,16 +117,23 @@ namespace Altaxo.Gui.Common.Drawing
 
     #endregion Dependency property
 
+    /// <summary>
+    /// Handles changes of the selected line join.
+    /// </summary>
+    /// <param name="obj">The dependency object whose line join changed.</param>
+    /// <param name="args">The event arguments.</param>
     protected virtual void EhSelectedLineJoinChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
     }
 
+    /// <inheritdoc/>
     public override string GetItemText(object item)
     {
       var val = (sdd.LineJoin)item;
       return val.ToString();
     }
 
+    /// <inheritdoc/>
     public override ImageSource GetItemImage(object item)
     {
       var val = (sdd.LineJoin)item;
@@ -126,6 +142,11 @@ namespace Altaxo.Gui.Common.Drawing
       return result;
     }
 
+    /// <summary>
+    /// Creates an image that represents the specified <see cref="sdd.LineJoin"/>.
+    /// </summary>
+    /// <param name="join">The line join to visualize.</param>
+    /// <returns>An image representing <paramref name="join"/>.</returns>
     public static DrawingImage GetImage(System.Drawing.Drawing2D.LineJoin join)
     {
       const double height = 1;

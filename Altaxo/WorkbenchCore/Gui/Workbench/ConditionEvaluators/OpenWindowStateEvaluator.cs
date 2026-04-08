@@ -87,6 +87,7 @@ namespace Altaxo.Gui.Workbench
         return file.IsUntitled;
     }
 
+    /// <inheritdoc/>
     public bool IsValid(object? caller, Condition condition)
     {
       var workbench = Altaxo.Current.GetService<Workbench.IWorkbenchEx>();

@@ -32,13 +32,16 @@ using System.Collections.Generic;
 
 namespace Altaxo.Calc
 {
+  /// <summary>
+  /// Provides numerically stable series summation helpers.
+  /// </summary>
   public static class Series
   {
     /// <summary>
     /// Numerically stable series summation (stops automatically).
     /// </summary>
-    /// <param name="nextSummand">provides the summands sequentially</param>
-    /// <returns>Sum</returns>
+    /// <param name="nextSummand">Provides the summands sequentially.</param>
+    /// <returns>The computed sum.</returns>
     public static double Evaluate(Func<double> nextSummand)
     {
       double compensation = 0.0;
@@ -66,8 +69,8 @@ namespace Altaxo.Calc
     /// <summary>
     /// Numerically stable series summation (stops automatically).
     /// </summary>
-    /// <param name="infiniteSummands">provides the summands sequentially</param>
-    /// <returns>Sum</returns>
+    /// <param name="infiniteSummands">Provides the summands sequentially.</param>
+    /// <returns>The computed sum.</returns>
     public static double Evaluate(IEnumerable<double> infiniteSummands)
     {
       double compensation = 0.0;

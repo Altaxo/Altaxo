@@ -40,14 +40,21 @@ namespace Altaxo.Gui.DataConnection
   /// </summary>
   public partial class OleDbDataQueryControl : UserControl, IOleDbDataQueryView
   {
+    /// <inheritdoc/>
     public event Action? SelectedTabChanged;
 
+    /// <inheritdoc/>
     public event Action? CmdChooseConnectionStringFromDialog;
 
+    /// <inheritdoc/>
     public event Action? ConnectionStringSelectedFromList;
 
+    /// <inheritdoc/>
     public event Action<string>? ConnectionStringChangedByUser;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OleDbDataQueryControl"/> class.
+    /// </summary>
     public OleDbDataQueryControl()
     {
       InitializeComponent();
@@ -60,6 +67,9 @@ namespace Altaxo.Gui.DataConnection
     [IconResource] const string IconResource_Procedure = "Icons.16x16.DataConnection.Procedure";
     [IconResource] const string IconResource_Column = "Icons.16x16.DataConnection.Column";
 
+    /// <summary>
+    /// Gets an image converter for schema tree nodes.
+    /// </summary>
     public static IValueConverter TreeImageConverter
     {
       get
@@ -78,6 +88,7 @@ namespace Altaxo.Gui.DataConnection
       }
     }
 
+    /// <inheritdoc/>
     public void SetConnectionListSource(SelectableListNodeList list, string currentItem)
     {
       GuiHelper.Initialize(_cmbConnString, list);
@@ -107,11 +118,13 @@ namespace Altaxo.Gui.DataConnection
       }
     }
 
+    /// <inheritdoc/>
     public void ShowTableTabItem()
     {
       _tab.SelectedIndex = 0;
     }
 
+    /// <inheritdoc/>
     public void ShowSqlTextTabItem()
     {
       _tab.SelectedIndex = 1;
@@ -134,21 +147,25 @@ namespace Altaxo.Gui.DataConnection
         ev();
     }
 
+    /// <inheritdoc/>
     public void SetWaitCursor()
     {
       Cursor = Cursors.Wait;
     }
 
+    /// <inheritdoc/>
     public void SetNormalCursor()
     {
       Cursor = Cursors.Arrow;
     }
 
+    /// <inheritdoc/>
     public void SetTabItemsSource(SelectableListNodeList tabItems)
     {
       GuiHelper.Initialize(_tab, tabItems);
     }
 
+    /// <inheritdoc/>
     public void SetConnectionStatus(bool isValidConnectionSource)
     {
       _guiConnectionInvalid.Visibility = isValidConnectionSource ? Visibility.Collapsed : System.Windows.Visibility.Visible;

@@ -35,15 +35,23 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 {
   public partial class ProjectBrowseControl : UserControl, IProjectBrowseView
   {
+    /// <summary>
+    /// Handles drop operations for the project browser tree view.
+    /// </summary>
     public class TreeView_DropHandler : IDropTarget
     {
       private ProjectBrowseControl _projectBrowseControl;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="TreeView_DropHandler"/> class.
+      /// </summary>
+      /// <param name="ctrl">The owning project browser control.</param>
       public TreeView_DropHandler(ProjectBrowseControl ctrl)
       {
         _projectBrowseControl = ctrl;
       }
 
+      /// <inheritdoc/>
       public void DragOver(IDropInfo dropInfo)
       {
         if (CanAcceptData(dropInfo, out var resultingEffect))
@@ -53,6 +61,12 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
         }
       }
 
+      /// <summary>
+      /// Determines whether the specified drop data can be accepted.
+      /// </summary>
+      /// <param name="dropInfo">The drop information to evaluate.</param>
+      /// <param name="resultingEffect">The resulting drag-and-drop effect.</param>
+      /// <returns><c>true</c> if the data can be accepted; otherwise, <c>false</c>.</returns>
       protected bool CanAcceptData(IDropInfo dropInfo, out System.Windows.DragDropEffects resultingEffect)
       {
         _projectBrowseControl._controller.FolderTree_DropCanAcceptData(
@@ -67,6 +81,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
         return canCopy | canMove;
       }
 
+      /// <inheritdoc/>
       public void Drop(IDropInfo dropInfo)
       {
         _projectBrowseControl._controller.FolderTree_Drop(

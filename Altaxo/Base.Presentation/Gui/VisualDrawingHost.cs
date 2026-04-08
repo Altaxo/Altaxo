@@ -35,6 +35,9 @@ namespace Altaxo.Gui
 {
   // Create a host visual derived from the FrameworkElement class.
   // This class provides layout, event handling, and container support for one drawing.
+  /// <summary>
+  /// Hosts a single drawing visual inside a <see cref="FrameworkElement"/>.
+  /// </summary>
   public class VisualHost : FrameworkElement
   {
     // Create a collection of child visual objects.
@@ -42,17 +45,28 @@ namespace Altaxo.Gui
 
     private Action<DrawingContext> _renderMethod;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="VisualHost"/> class.
+    /// </summary>
     public VisualHost()
       : this(null)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="VisualHost"/> class.
+    /// </summary>
+    /// <param name="renderMethod">The delegate used to render the drawing.</param>
     public VisualHost(Action<DrawingContext> renderMethod)
     {
       _child = new DrawingVisual();
       _renderMethod = renderMethod;
     }
 
+    /// <summary>
+    /// Opens the drawing context for the hosted visual.
+    /// </summary>
+    /// <returns>The drawing context for the hosted visual.</returns>
     public DrawingContext OpenDrawingContext()
     {
       return _child.RenderOpen();
@@ -70,12 +84,14 @@ namespace Altaxo.Gui
     }
 
     // Provide a required override for the VisualChildrenCount property.
+    /// <inheritdoc/>
     protected override int VisualChildrenCount
     {
       get { return 1; }
     }
 
     // Provide a required override for the GetVisualChild method.
+    /// <inheritdoc/>
     protected override Visual GetVisualChild(int index)
     {
       if (index != 0)
@@ -86,6 +102,7 @@ namespace Altaxo.Gui
       return _child;
     }
 
+    /// <inheritdoc/>
     protected override void OnRender(DrawingContext drawingContext)
     {
       if (_renderMethod is not null)

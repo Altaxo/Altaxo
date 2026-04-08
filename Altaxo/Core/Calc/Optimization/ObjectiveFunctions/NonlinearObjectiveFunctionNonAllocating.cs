@@ -283,7 +283,14 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
 
     #endregion Private Methods
 
+    /// <summary>
+    /// Stores the observed independent-variable values in matrix form.
+    /// </summary>
     protected IROMatrix<double> _observedXAsMatrix;
+
+    /// <summary>
+    /// Stores the observed independent-variable values in vector form.
+    /// </summary>
     protected IReadOnlyList<double> _observedXAsVector;
 
     /// <summary>

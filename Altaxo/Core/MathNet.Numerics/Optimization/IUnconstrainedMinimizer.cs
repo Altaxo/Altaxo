@@ -31,8 +31,17 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization
 {
+  /// <summary>
+  /// Defines a minimizer for unconstrained optimization problems.
+  /// </summary>
   public interface IUnconstrainedMinimizer
   {
+    /// <summary>
+    /// Finds a minimum of the objective function.
+    /// </summary>
+    /// <param name="objective">The objective function.</param>
+    /// <param name="initialGuess">The initial parameter guess.</param>
+    /// <returns>The minimization result.</returns>
     public MinimizationResult FindMinimum(IObjectiveFunction objective, Vector<double> initialGuess);
   }
 }

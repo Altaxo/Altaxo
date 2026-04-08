@@ -36,18 +36,21 @@ using Altaxo.Main;
 namespace Altaxo.Gui.Autostart
 {
   /// <summary>
-  /// Responsible for building the textures given in the Addin file(s).
+  /// Builds the textures declared in the add-in files.
   /// </summary>
   /// <seealso cref="System.Windows.Input.ICommand" />
   public class StartTextureManager : ICommand
   {
+    /// <inheritdoc/>
     public event EventHandler CanExecuteChanged { add { } remove { } }
 
+    /// <inheritdoc/>
     public bool CanExecute(object parameter)
     {
       return true;
     }
 
+    /// <inheritdoc/>
     public void Execute(object parameter)
     {
       AddInTree.GetTreeNode("/Altaxo/BuiltinTextures").BuildChildItems<object>(this);

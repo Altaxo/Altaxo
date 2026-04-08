@@ -32,6 +32,9 @@ namespace Altaxo.Gui.Common
   {
     private static readonly ComponentResourceKey headerTemplateKey = new ComponentResourceKey(typeof(SortableGridViewColumn), "ColumnHeaderTemplate");
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SortableGridViewColumn"/> class.
+    /// </summary>
     public SortableGridViewColumn()
     {
       this.SetValueToExtension(HeaderTemplateProperty, new DynamicResourceExtension(headerTemplateKey));
@@ -39,6 +42,9 @@ namespace Altaxo.Gui.Common
 
     private string sortBy;
 
+    /// <summary>
+    /// Gets or sets the property name that should be used for sorting.
+    /// </summary>
     public string SortBy
     {
       get { return sortBy; }
@@ -54,21 +60,37 @@ namespace Altaxo.Gui.Common
 
     #region SortDirection property
 
+    /// <summary>
+    /// Identifies the <see cref="SortDirection"/> attached dependency property.
+    /// </summary>
     public static readonly DependencyProperty SortDirectionProperty =
       DependencyProperty.RegisterAttached("SortDirection", typeof(ColumnSortDirection), typeof(SortableGridViewColumn),
                                           new FrameworkPropertyMetadata(ColumnSortDirection.None, OnSortDirectionChanged));
 
+    /// <summary>
+    /// Gets or sets the sort direction.
+    /// </summary>
     public ColumnSortDirection SortDirection
     {
       get { return (ColumnSortDirection)GetValue(SortDirectionProperty); }
       set { SetValue(SortDirectionProperty, value); }
     }
 
+    /// <summary>
+    /// Gets the sort direction attached to the specified list view.
+    /// </summary>
+    /// <param name="listView">The list view.</param>
+    /// <returns>The current sort direction.</returns>
     public static ColumnSortDirection GetSortDirection(ListView listView)
     {
       return (ColumnSortDirection)listView.GetValue(SortDirectionProperty);
     }
 
+    /// <summary>
+    /// Sets the sort direction attached to the specified list view.
+    /// </summary>
+    /// <param name="listView">The list view.</param>
+    /// <param name="value">The sort direction to apply.</param>
     public static void SetSortDirection(ListView listView, ColumnSortDirection value)
     {
       listView.SetValue(SortDirectionProperty, value);
@@ -90,15 +112,28 @@ namespace Altaxo.Gui.Common
 
     #region CurrentSortColumn property
 
+    /// <summary>
+    /// Identifies the current sort column attached dependency property.
+    /// </summary>
     public static readonly DependencyProperty CurrentSortColumnProperty =
       DependencyProperty.RegisterAttached("CurrentSortColumn", typeof(SortableGridViewColumn), typeof(SortableGridViewColumn),
                                           new FrameworkPropertyMetadata(OnCurrentSortColumnChanged));
 
+    /// <summary>
+    /// Gets the current sort column for the specified list view.
+    /// </summary>
+    /// <param name="listView">The list view.</param>
+    /// <returns>The current sort column.</returns>
     public static SortableGridViewColumn GetCurrentSortColumn(ListView listView)
     {
       return (SortableGridViewColumn)listView.GetValue(CurrentSortColumnProperty);
     }
 
+    /// <summary>
+    /// Sets the current sort column for the specified list view.
+    /// </summary>
+    /// <param name="listView">The list view.</param>
+    /// <param name="value">The current sort column.</param>
     public static void SetCurrentSortColumn(ListView listView, SortableGridViewColumn value)
     {
       listView.SetValue(CurrentSortColumnProperty, value);
@@ -125,15 +160,28 @@ namespace Altaxo.Gui.Common
 
     #region SortMode property
 
+    /// <summary>
+    /// Identifies the sort mode attached dependency property.
+    /// </summary>
     public static readonly DependencyProperty SortModeProperty =
       DependencyProperty.RegisterAttached("SortMode", typeof(ListViewSortMode), typeof(SortableGridViewColumn),
                                           new FrameworkPropertyMetadata(ListViewSortMode.None, OnSortModeChanged));
 
+    /// <summary>
+    /// Gets the sort mode attached to the specified list view.
+    /// </summary>
+    /// <param name="listView">The list view.</param>
+    /// <returns>The current sort mode.</returns>
     public static ListViewSortMode GetSortMode(ListView listView)
     {
       return (ListViewSortMode)listView.GetValue(SortModeProperty);
     }
 
+    /// <summary>
+    /// Sets the sort mode attached to the specified list view.
+    /// </summary>
+    /// <param name="listView">The list view.</param>
+    /// <param name="value">The sort mode to apply.</param>
     public static void SetSortMode(ListView listView, ListViewSortMode value)
     {
       listView.SetValue(SortModeProperty, value);
@@ -207,13 +255,28 @@ namespace Altaxo.Gui.Common
     }
   }
 
+  /// <summary>
+  /// Specifies the direction of a column sort operation.
+  /// </summary>
   public enum ColumnSortDirection
   {
+    /// <summary>
+    /// No sorting is applied.
+    /// </summary>
     None,
+    /// <summary>
+    /// Sort in ascending order.
+    /// </summary>
     Ascending,
+    /// <summary>
+    /// Sort in descending order.
+    /// </summary>
     Descending
   }
 
+  /// <summary>
+  /// Specifies how sorting is handled for a list view.
+  /// </summary>
   public enum ListViewSortMode
   {
     /// <summary>

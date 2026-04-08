@@ -102,11 +102,22 @@ namespace Altaxo.Calc
     {
     }
 
+    /// <summary>
+    /// Gets the zero polynomial.
+    /// </summary>
     public static Polynomial Zero => new Polynomial();
 
     /// <summary>
     /// Least-Squares fitting the points (x,y) to a k-order polynomial y : x -> p0 + p1*x + p2*x^2 + ... + pk*x^k
     /// </summary>
+    /// <summary>
+    /// Fits a polynomial of the specified order to the provided sample points.
+    /// </summary>
+    /// <param name="x">The x-values of the sample points.</param>
+    /// <param name="y">The y-values of the sample points.</param>
+    /// <param name="order">The polynomial order.</param>
+    /// <param name="method">The direct regression method.</param>
+    /// <returns>The fitted polynomial.</returns>
     public static Polynomial Fit(double[] x, double[] y, int order, DirectRegressionMethod method = DirectRegressionMethod.QR)
     {
       var coefficients = Calc.Fit.Polynomial(x, y, order, method);
@@ -285,6 +296,10 @@ namespace Altaxo.Calc
 
     #region Calculus
 
+    /// <summary>
+    /// Differentiates the polynomial.
+    /// </summary>
+    /// <returns>The derivative polynomial.</returns>
     public Polynomial Differentiate()
     {
       int n = Degree;
@@ -308,6 +323,10 @@ namespace Altaxo.Calc
       return new Polynomial(c);
     }
 
+    /// <summary>
+    /// Integrates the polynomial with a zero constant term.
+    /// </summary>
+    /// <returns>The integral polynomial.</returns>
     public Polynomial Integrate()
     {
       int n = Degree;
@@ -1068,6 +1087,11 @@ namespace Altaxo.Calc
 
     #region Equality
 
+    /// <summary>
+    /// Determines whether the specified polynomial is equal to the current instance.
+    /// </summary>
+    /// <param name="other">The polynomial to compare with the current instance.</param>
+    /// <returns><see langword="true"/> if the specified polynomial is equal to the current instance; otherwise, <see langword="false"/>.</returns>
     public bool Equals(Polynomial other)
     {
       if (ReferenceEquals(null, other)) return false;
@@ -1090,6 +1114,11 @@ namespace Altaxo.Calc
       return true;
     }
 
+    /// <summary>
+    /// Determines whether the specified object is equal to the current instance.
+    /// </summary>
+    /// <param name="obj">The object to compare with the current instance.</param>
+    /// <returns><see langword="true"/> if the specified object is equal to the current instance; otherwise, <see langword="false"/>.</returns>
     public override bool Equals(object obj)
     {
       if (ReferenceEquals(null, obj)) return false;
@@ -1098,6 +1127,10 @@ namespace Altaxo.Calc
       return Equals((Polynomial)obj);
     }
 
+    /// <summary>
+    /// Serves as the default hash function.
+    /// </summary>
+    /// <returns>A hash code for the current instance.</returns>
     public override int GetHashCode()
     {
       var hashNum = Math.Min(Degree + 1, 25);
@@ -1117,6 +1150,10 @@ namespace Altaxo.Calc
 
     #region Clone
 
+    /// <summary>
+    /// Creates a copy of the polynomial.
+    /// </summary>
+    /// <returns>A cloned polynomial.</returns>
     public Polynomial Clone()
     {
       int degree = EvaluateDegree(Coefficients);

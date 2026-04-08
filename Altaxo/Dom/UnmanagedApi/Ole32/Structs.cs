@@ -30,16 +30,27 @@ using System.Text;
 
 namespace Altaxo.UnmanagedApi.Ole32
 {
+  /// <summary>
+  /// Represents an OLE object descriptor.
+  /// </summary>
   [StructLayout(LayoutKind.Sequential)]
   public struct OBJECTDESCRIPTOR
   {
+    /// <summary>The size of this structure.</summary>
     public int cbSize;
+    /// <summary>The class identifier of the object.</summary>
     public Guid clsid;
+    /// <summary>The drawing aspect.</summary>
     public DVASPECT dwDrawAspect;
+    /// <summary>The width in HIMETRIC units.</summary>
     public int sizelcx, sizelcy;
+    /// <summary>The source point in HIMETRIC units.</summary>
     public int pointlx, pointly;
+    /// <summary>The status flags.</summary>
     public int dwStatus;
+    /// <summary>The offset of the full user type name.</summary>
     public int dwFullUserTypeName;
+    /// <summary>The offset of the source-of-copy string.</summary>
     public int dwSrcOfCopy;
     /* variable sized string data may appear here */
   }

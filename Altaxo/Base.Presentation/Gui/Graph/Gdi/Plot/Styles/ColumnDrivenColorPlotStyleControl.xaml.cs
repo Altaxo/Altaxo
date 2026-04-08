@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
   /// </summary>
   public partial class ColumnDrivenColorPlotStyleControl : UserControl, IColumnDrivenColorPlotStyleView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColumnDrivenColorPlotStyleControl"/> class.
+    /// </summary>
     public ColumnDrivenColorPlotStyleControl()
     {
       InitializeComponent();

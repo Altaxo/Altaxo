@@ -41,10 +41,18 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Gui
 {
+  /// <summary>
+  /// Provides helper methods for initializing and synchronizing common WPF controls.
+  /// </summary>
   public static partial class GuiHelper
   {
     #region Combobox
 
+    /// <summary>
+    /// Initializes a combo box with selectable nodes.
+    /// </summary>
+    /// <param name="view">The combo box to initialize.</param>
+    /// <param name="data">The selectable data.</param>
     public static void Initialize(ComboBox view, SelectableListNodeList data)
     {
       int idx = data.FirstSelectedNodeIndex; // Note: the selected index must be determined _before_ the data are bound to the box (otherwise when a binding is in place, it can happen that the selection is resetted)
@@ -81,6 +89,10 @@ namespace Altaxo.Gui
         view.SelectedItem = null;
     }
 
+    /// <summary>
+    /// Synchronizes the selected item of a combo box back to the underlying model.
+    /// </summary>
+    /// <param name="view">The combo box whose selection should be synchronized.</param>
     public static void SynchronizeSelectionFromGui(ComboBox view)
     {
       foreach (ISelectableItem it in view.ItemsSource)
@@ -94,6 +106,11 @@ namespace Altaxo.Gui
 
     #region ListBox
 
+    /// <summary>
+    /// Initializes a list box with selectable nodes.
+    /// </summary>
+    /// <param name="view">The list box to initialize.</param>
+    /// <param name="data">The selectable data.</param>
     public static void Initialize(ListBox view, SelectableListNodeList data)
     {
       view.ItemsSource = null;
@@ -121,6 +138,10 @@ namespace Altaxo.Gui
       view.ItemsSource = data;
     }
 
+    /// <summary>
+    /// Synchronizes the selected items of a list box back to the underlying model.
+    /// </summary>
+    /// <param name="view">The list box whose selection should be synchronized.</param>
     public static void SynchronizeSelectionFromGui(ListBox view)
     {
       if (view.ItemsSource is not null)
@@ -137,6 +158,11 @@ namespace Altaxo.Gui
 
     #region ListView
 
+    /// <summary>
+    /// Initializes a list view with selectable nodes.
+    /// </summary>
+    /// <param name="view">The list view to initialize.</param>
+    /// <param name="data">The selectable data.</param>
     public static void Initialize(ListView view, SelectableListNodeList data)
     {
       view.ItemsSource = null;
@@ -157,6 +183,10 @@ namespace Altaxo.Gui
       }
     }
 
+    /// <summary>
+    /// Refreshes the items source of a list view.
+    /// </summary>
+    /// <param name="view">The list view to refresh.</param>
     public static void Refresh(ListView view)
     {
       var h = view.ItemsSource;
@@ -164,6 +194,10 @@ namespace Altaxo.Gui
       view.ItemsSource = h;
     }
 
+    /// <summary>
+    /// Synchronizes the selected items of a list view back to the underlying model.
+    /// </summary>
+    /// <param name="listView">The list view whose selection should be synchronized.</param>
     public static void SynchronizeSelectionFromGui(ListView listView)
     {
       if (listView.ItemsSource is not null)
@@ -176,6 +210,11 @@ namespace Altaxo.Gui
         it.IsSelected = true;
     }
 
+    /// <summary>
+    /// Gets the current widths of all columns in a list view.
+    /// </summary>
+    /// <param name="listView">The list view.</param>
+    /// <returns>The column widths.</returns>
     public static double[] GetColumnWidths(ListView listView)
     {
       var gv = (GridView)listView.View;
@@ -186,6 +225,11 @@ namespace Altaxo.Gui
       return ret;
     }
 
+    /// <summary>
+    /// Sets the widths of the columns in a list view.
+    /// </summary>
+    /// <param name="listView">The list view.</param>
+    /// <param name="widths">The widths to apply.</param>
     public static void SetColumnWidths(ListView listView, double[] widths)
     {
       var gv = (GridView)listView.View;
@@ -226,6 +270,11 @@ namespace Altaxo.Gui
 
     #region TabControl
 
+    /// <summary>
+    /// Initializes a tab control with selectable nodes.
+    /// </summary>
+    /// <param name="view">The tab control to initialize.</param>
+    /// <param name="data">The selectable data.</param>
     public static void Initialize(TabControl view, SelectableListNodeList data)
     {
       int idx = data.FirstSelectedNodeIndex; // Note: the selected index must be determined _before_ the data are bound to the box (otherwise when a binding is in place, it can happen that the selection is resetted)
@@ -240,6 +289,10 @@ namespace Altaxo.Gui
         view.SelectedItem = data[idx];
     }
 
+    /// <summary>
+    /// Synchronizes the selected tab back to the underlying model.
+    /// </summary>
+    /// <param name="view">The tab control whose selection should be synchronized.</param>
     public static void SynchronizeSelectionFromGui(TabControl view)
     {
       foreach (ISelectableItem it in view.ItemsSource)
@@ -335,6 +388,11 @@ namespace Altaxo.Gui
 
     #region Mouse
 
+    /// <summary>
+    /// Gets the pressed mouse buttons for the specified mouse device.
+    /// </summary>
+    /// <param name="mouse">The mouse device.</param>
+    /// <returns>The pressed mouse buttons.</returns>
     public static Altaxo.Gui.AltaxoMouseButtons GetMouseState(MouseDevice mouse)
     {
       var result = Altaxo.Gui.AltaxoMouseButtons.None;
@@ -352,6 +410,11 @@ namespace Altaxo.Gui
       return result;
     }
 
+    /// <summary>
+    /// Gets the pressed mouse buttons for the specified mouse event.
+    /// </summary>
+    /// <param name="mouse">The mouse event arguments.</param>
+    /// <returns>The pressed mouse buttons.</returns>
     public static Altaxo.Gui.AltaxoMouseButtons GetMouseState(MouseEventArgs mouse)
     {
       var result = Altaxo.Gui.AltaxoMouseButtons.None;
@@ -369,6 +432,11 @@ namespace Altaxo.Gui
       return result;
     }
 
+    /// <summary>
+    /// Converts a WPF mouse button to the corresponding Altaxo mouse button.
+    /// </summary>
+    /// <param name="mouseButton">The WPF mouse button.</param>
+    /// <returns>The converted Altaxo mouse button.</returns>
     public static Altaxo.Gui.AltaxoMouseButtons ToAltaxo(MouseButton mouseButton)
     {
       switch (mouseButton)
@@ -393,6 +461,12 @@ namespace Altaxo.Gui
       }
     }
 
+    /// <summary>
+    /// Converts WPF mouse-button event arguments to Altaxo mouse event arguments.
+    /// </summary>
+    /// <param name="e">The WPF mouse-button event arguments.</param>
+    /// <param name="positionReference">The element that defines the coordinate origin.</param>
+    /// <returns>The converted Altaxo mouse event arguments.</returns>
     public static Altaxo.Gui.AltaxoMouseEventArgs ToAltaxo(MouseButtonEventArgs e, IInputElement positionReference)
     {
       var pos = e.GetPosition(positionReference);
@@ -409,6 +483,12 @@ namespace Altaxo.Gui
       return result;
     }
 
+    /// <summary>
+    /// Converts WPF mouse-wheel event arguments to Altaxo mouse event arguments.
+    /// </summary>
+    /// <param name="e">The WPF mouse-wheel event arguments.</param>
+    /// <param name="positionReference">The element that defines the coordinate origin.</param>
+    /// <returns>The converted Altaxo mouse event arguments.</returns>
     public static Altaxo.Gui.AltaxoMouseEventArgs ToAltaxo(MouseWheelEventArgs e, IInputElement positionReference)
     {
       var pos = e.GetPosition(positionReference);
@@ -450,6 +530,11 @@ namespace Altaxo.Gui
 
     #region Keyboard
 
+    /// <summary>
+    /// Converts a WPF key to the corresponding Altaxo keyboard key.
+    /// </summary>
+    /// <param name="key">The WPF key.</param>
+    /// <returns>The converted Altaxo keyboard key.</returns>
     public static AltaxoKeyboardKey ToAltaxo(System.Windows.Input.Key key)
     {
       switch (key)
@@ -805,6 +890,11 @@ namespace Altaxo.Gui
       };
     }
 
+    /// <summary>
+    /// Converts WPF modifier keys to the corresponding Altaxo modifier keys.
+    /// </summary>
+    /// <param name="mk">The WPF modifier keys.</param>
+    /// <returns>The converted Altaxo modifier keys.</returns>
     public static Altaxo.Gui.AltaxoKeyboardModifierKeys ToAltaxo(ModifierKeys mk)
     {
       var result = Altaxo.Gui.AltaxoKeyboardModifierKeys.None;

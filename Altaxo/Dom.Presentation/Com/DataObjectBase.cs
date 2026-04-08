@@ -39,6 +39,10 @@ namespace Altaxo.Com
   /// </summary>
   public abstract class DataObjectBase : ReferenceCountedObjectBase
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DataObjectBase"/> class.
+    /// </summary>
+    /// <param name="comManager">The COM manager.</param>
     public DataObjectBase(ComManager comManager)
       : base(comManager)
     {
@@ -85,6 +89,9 @@ namespace Altaxo.Com
 
     #region Advise function
 
+    /// <summary>
+    /// Sends a data-changed notification to the registered advise sinks.
+    /// </summary>
     public virtual void SendAdvise_DataChanged()
     {
       if (DataAdviseHolder is not null)
@@ -98,6 +105,14 @@ namespace Altaxo.Com
 
     #region Implementation of IDataObject
 
+    /// <summary>
+    /// Registers an advise sink for the data object.
+    /// </summary>
+    /// <param name="pFormatetc">The requested data format.</param>
+    /// <param name="advf">The advise flags.</param>
+    /// <param name="adviseSink">The advise sink.</param>
+    /// <param name="connection">The returned connection cookie.</param>
+    /// <returns>A COM status code.</returns>
     public int DAdvise(ref FORMATETC pFormatetc, ADVF advf, IAdviseSink adviseSink, out int connection)
     {
       if (DataAdviseHolder is null)
@@ -134,6 +149,10 @@ namespace Altaxo.Com
       }
     }
 
+    /// <summary>
+    /// Removes a previously registered advise connection.
+    /// </summary>
+    /// <param name="connection">The advise connection cookie.</param>
     public void DUnadvise(int connection)
     {
       if (DataAdviseHolder is null)
@@ -156,6 +175,11 @@ namespace Altaxo.Com
       }
     }
 
+    /// <summary>
+    /// Enumerates the registered advise connections.
+    /// </summary>
+    /// <param name="enumAdvise">Receives the advise enumerator.</param>
+    /// <returns>A COM status code.</returns>
     public int EnumDAdvise(out IEnumSTATDATA enumAdvise)
     {
       if (DataAdviseHolder is null)
@@ -172,6 +196,11 @@ namespace Altaxo.Com
       }
     }
 
+    /// <summary>
+    /// Enumerates the supported data formats.
+    /// </summary>
+    /// <param name="direction">The data flow direction.</param>
+    /// <returns>An enumerator for the supported formats.</returns>
     public IEnumFORMATETC EnumFormatEtc(DATADIR direction)
     {
       ComDebug.ReportInfo("{0}.IDataObject.EnumFormatEtc", GetType().Name);
@@ -190,6 +219,12 @@ namespace Altaxo.Com
       throw new NotImplementedException("Can not use registry here because a return value is not supported");
     }
 
+    /// <summary>
+    /// Retrieves the canonical format equivalent for a requested format.
+    /// </summary>
+    /// <param name="formatIn">The input format.</param>
+    /// <param name="formatOut">The canonical output format.</param>
+    /// <returns>A COM status code.</returns>
     public int GetCanonicalFormatEtc(ref FORMATETC formatIn, out FORMATETC formatOut)
     {
       ComDebug.ReportInfo("{0}.IDataObject.GetCanonicalFormatEtc {1}", GetType().Name, DataObjectHelper.FormatEtcToString(formatIn));
@@ -199,6 +234,11 @@ namespace Altaxo.Com
       return ComReturnValue.DATA_S_SAMEFORMATETC;
     }
 
+    /// <summary>
+    /// Gets data for the specified format.
+    /// </summary>
+    /// <param name="format">The requested format.</param>
+    /// <param name="medium">Receives the storage medium containing the data.</param>
     public void GetData(ref FORMATETC format, out STGMEDIUM medium)
     {
       ComDebug.ReportInfo("{0}.IDataObject.GetData({1})", GetType().Name, DataObjectHelper.FormatEtcToString(format));
@@ -239,6 +279,11 @@ namespace Altaxo.Com
       // Marshal.ThrowExceptionForHR(ComReturnValue.DV_E_FORMATETC);
     }
 
+    /// <summary>
+    /// Writes data into a caller-supplied storage medium.
+    /// </summary>
+    /// <param name="format">The requested format.</param>
+    /// <param name="medium">The caller-supplied storage medium.</param>
     public void GetDataHere(ref System.Runtime.InteropServices.ComTypes.FORMATETC format, ref System.Runtime.InteropServices.ComTypes.STGMEDIUM medium)
     {
       ComDebug.ReportInfo("{0}.IDataObject.GetDataHere({1})", GetType().Name, DataObjectHelper.ClipboardFormatName(format.cfFormat));
@@ -256,6 +301,11 @@ namespace Altaxo.Com
       Marshal.ThrowExceptionForHR(ComReturnValue.DATA_E_FORMATETC);
     }
 
+    /// <summary>
+    /// Determines whether the requested data format is supported.
+    /// </summary>
+    /// <param name="format">The requested format.</param>
+    /// <returns>A COM status code.</returns>
     public int QueryGetData(ref FORMATETC format)
     {
       ComDebug.ReportInfo("{0}.IDataObject.QueryGetData, tymed={1}, aspect={2}", GetType().Name, format.tymed, format.dwAspect);
@@ -301,6 +351,12 @@ namespace Altaxo.Com
       return ret;
     }
 
+    /// <summary>
+    /// Sets data in the data object.
+    /// </summary>
+    /// <param name="formatIn">The format of the supplied data.</param>
+    /// <param name="medium">The supplied storage medium.</param>
+    /// <param name="release">If set to <c>true</c>, ownership of the storage medium is transferred.</param>
     public void SetData(ref FORMATETC formatIn, ref STGMEDIUM medium, bool release)
     {
       ComDebug.ReportError("{0}.IDataObject.SetData - NOT SUPPORTED!", GetType().Name);

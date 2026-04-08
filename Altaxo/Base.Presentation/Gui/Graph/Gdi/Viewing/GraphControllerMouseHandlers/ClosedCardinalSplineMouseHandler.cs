@@ -41,17 +41,36 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
   {
     #region Member variables
 
+    /// <summary>
+    /// The graph controller.
+    /// </summary>
     protected GraphController _grac;
 
+    /// <summary>
+    /// The tool to activate after drawing is finished.
+    /// </summary>
     protected GraphToolType NextMouseHandlerType = GraphToolType.ObjectPointer;
 
+    /// <summary>
+    /// The spline tension.
+    /// </summary>
     protected double _tension;
 
+    /// <summary>
+    /// The points collected for the spline.
+    /// </summary>
     protected List<POINT> _Points = new List<POINT>();
+    /// <summary>
+    /// The number of points currently collected.
+    /// </summary>
     protected int _currentPoint;
 
     #endregion Member variables
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ClosedCardinalSplineMouseHandler"/> class.
+    /// </summary>
+    /// <param name="grac">The graph controller.</param>
     public ClosedCardinalSplineMouseHandler(GraphController grac)
     {
       _grac = grac;
@@ -62,6 +81,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       _tension = OpenCardinalSpline.DefaultTension;
     }
 
+    /// <inheritdoc/>
     public override GraphToolType GraphToolType
     {
       get { return GraphToolType.ClosedCardinalSplineDrawing; }
@@ -73,6 +93,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// <param name="position">Mouse position.</param>
     /// <param name="e">EventArgs.</param>
     /// <returns>The mouse state handler for handling the next mouse events.</returns>
+    /// <inheritdoc/>
     public override void OnClick(PointD2D position, MouseButtonEventArgs e)
     {
       base.OnClick(position, e);
@@ -100,6 +121,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       }
     }
 
+    /// <inheritdoc/>
     public override void OnMouseMove(PointD2D position, MouseEventArgs e)
     {
       base.OnMouseMove(position, e);
@@ -111,6 +133,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       _grac.RenderOverlay();
     }
 
+    /// <inheritdoc/>
     public override void OnMouseDown(PointD2D position, MouseButtonEventArgs e)
     {
       base.OnMouseDown(position, e);
@@ -118,6 +141,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
         FinishDrawing();
     }
 
+    /// <inheritdoc/>
     public override bool ProcessCmdKey(KeyEventArgs e)
     {
       switch (e.Key)
@@ -142,6 +166,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       return false;
     }
 
+    /// <summary>
+    /// Modifies the current mouse position according to keyboard modifiers.
+    /// </summary>
     protected virtual void ModifyCurrentMousePrintAreaCoordinate()
     {
       if (_currentPoint > 0)
@@ -176,6 +203,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// Draws the temporary line(s) from the first point to the mouse.
     /// </summary>
     /// <param name="g"></param>
+    /// <inheritdoc/>
     public override void AfterPaint(Graphics g)
     {
       base.AfterPaint(g);
@@ -191,6 +219,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
         g.DrawCurve(Pens.Blue, pts, (float)_tension);
     }
 
+    /// <summary>
+    /// Finalizes the spline drawing.
+    /// </summary>
     protected virtual void FinishDrawing()
     {
       _currentPoint = 0;

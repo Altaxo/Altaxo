@@ -37,8 +37,7 @@ namespace Altaxo.Main
   public class GraphExportBindingDoozer : IDoozer
   {
     /// <summary>
-    /// Gets if the doozer handles codon conditions on its own.
-    /// If this property return false, the item is excluded when the condition is not met.
+    /// <inheritdoc/>
     /// </summary>
     public bool HandleConditions
     {
@@ -48,10 +47,7 @@ namespace Altaxo.Main
       }
     }
 
-    /// <summary>
-    /// Creates an item with the specified sub items. And the current
-    /// Condition status for this item.
-    /// </summary>
+    /// <inheritdoc/>
     public object BuildItem(BuildItemArgs args)
     {
       string docTypeString = args.Codon.Properties["ProjectItemClass"];
@@ -71,18 +67,35 @@ namespace Altaxo.Main
       return new Graph3DExportBindingDescriptor(args.Codon, docType, exporterType);
     }
 
+    /// <summary>
+    /// Describes a graph export binding.
+    /// </summary>
     private class Graph3DExportBindingDescriptor : IProjectItemExportBindingDescriptor
     {
       private Type _projectItemType;
       private Type _graphicalExporterType;
+      /// <inheritdoc/>
       public Type ProjectItemType { get { return _projectItemType; } }
+      /// <inheritdoc/>
       public Type GraphicalExporterType { get { return _graphicalExporterType; } }
 
       private Codon _codon;
 
+      /// <summary>
+      /// Gets or sets the binding identifier.
+      /// </summary>
       public string Id { get; set; }
+      /// <summary>
+      /// Gets or sets the display title.
+      /// </summary>
       public string Title { get; set; }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="Graph3DExportBindingDescriptor"/> class.
+      /// </summary>
+      /// <param name="codon">The add-in codon.</param>
+      /// <param name="projectItemType">The project item type.</param>
+      /// <param name="graphicalExporterType">The graphical exporter type.</param>
       public Graph3DExportBindingDescriptor(Codon codon, Type projectItemType, Type graphicalExporterType)
       {
         if (codon is null)
@@ -104,6 +117,7 @@ namespace Altaxo.Main
         _graphicalExporterType = graphicalExporterType;
       }
 
+      /// <inheritdoc/>
       public override string ToString()
       {
         return string.Format("[GraphExportBindingDescriptor ProjectItemClass={0} ExporterClass={1}]", _projectItemType, _graphicalExporterType);

@@ -56,8 +56,19 @@ namespace Altaxo.Calc.Probability
   /// </code></remarks>
   public class BinomialDistribution : DiscreteDistribution
   {
+    /// <summary>
+    /// Stores the distribution parameters and helper values used during random number generation.
+    /// </summary>
     protected double scale, scalepi, p, pc, plog, pclog, np, npexp, en, en1, gamen1, sq;
+
+    /// <summary>
+    /// Stores the number of trials.
+    /// </summary>
     protected int n;
+
+    /// <summary>
+    /// Stores whether the symmetry transformation <c>p ↔ 1 - p</c> is being used.
+    /// </summary>
     protected bool sym;
 
     /// <summary>

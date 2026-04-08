@@ -40,17 +40,30 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Gui
 {
+  /// <summary>
+  /// Provides helper methods for converting Altaxo geometry types to and from WPF types.
+  /// </summary>
   public static partial class GuiHelper
   {
     #region Graphics primitives
 
     #region Point
 
+    /// <summary>
+    /// Converts an Altaxo point to a WPF point.
+    /// </summary>
+    /// <param name="pt">The Altaxo point.</param>
+    /// <returns>The converted WPF point.</returns>
     public static Point ToWpf(this Altaxo.Geometry.PointD2D pt)
     {
       return new Point(pt.X, pt.Y);
     }
 
+    /// <summary>
+    /// Converts a WPF point to an Altaxo point.
+    /// </summary>
+    /// <param name="pt">The WPF point.</param>
+    /// <returns>The converted Altaxo point.</returns>
     public static PointD2D ToAltaxo(this Point pt)
     {
       return new PointD2D(pt.X, pt.Y);
@@ -60,16 +73,31 @@ namespace Altaxo.Gui
 
     #region Rectangle
 
+    /// <summary>
+    /// Converts an Altaxo rectangle to a WPF rectangle.
+    /// </summary>
+    /// <param name="rect">The Altaxo rectangle.</param>
+    /// <returns>The converted WPF rectangle.</returns>
     public static Rect ToWpf(this RectangleD2D rect)
     {
       return new Rect(rect.X, rect.Y, rect.Width, rect.Height);
     }
 
+    /// <summary>
+    /// Converts a WPF rectangle to an Altaxo rectangle.
+    /// </summary>
+    /// <param name="rect">The WPF rectangle.</param>
+    /// <returns>The converted Altaxo rectangle.</returns>
     public static RectangleD2D ToAltaxo(this Rect rect)
     {
       return new RectangleD2D(rect.X, rect.Y, rect.Width, rect.Height);
     }
 
+    /// <summary>
+    /// Converts an Altaxo rectangle to a <see cref="System.Drawing.RectangleF"/>.
+    /// </summary>
+    /// <param name="rect">The Altaxo rectangle.</param>
+    /// <returns>The converted drawing rectangle.</returns>
     public static System.Drawing.RectangleF ToSysDraw(this RectangleD2D rect)
     {
       return new System.Drawing.RectangleF((float)rect.X, (float)rect.Y, (float)rect.Width, (float)rect.Height);

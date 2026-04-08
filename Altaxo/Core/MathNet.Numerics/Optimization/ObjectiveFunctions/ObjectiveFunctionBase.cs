@@ -31,16 +31,26 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization.ObjectiveFunctions
 {
+  /// <summary>
+  /// Provides a base class for eagerly evaluated objective functions.
+  /// </summary>
   public abstract class ObjectiveFunctionBase : IObjectiveFunction
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ObjectiveFunctionBase"/> class.
+    /// </summary>
+    /// <param name="isGradientSupported">Whether gradients are supported.</param>
+    /// <param name="isHessianSupported">Whether Hessians are supported.</param>
     protected ObjectiveFunctionBase(bool isGradientSupported, bool isHessianSupported)
     {
       IsGradientSupported = isGradientSupported;
       IsHessianSupported = isHessianSupported;
     }
 
+    /// <inheritdoc/>
     public abstract IObjectiveFunction CreateNew();
 
+    /// <inheritdoc/>
     public virtual IObjectiveFunction Fork()
     {
       // we need to deep-clone values since they may be updated inplace on evaluation
@@ -52,20 +62,30 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       return objective;
     }
 
+    /// <inheritdoc/>
     public bool IsGradientSupported { get; }
+    /// <inheritdoc/>
     public bool IsHessianSupported { get; }
 
+    /// <inheritdoc/>
     public void EvaluateAt(Vector<double> point)
     {
       Point = point;
       Evaluate();
     }
 
+    /// <summary>
+    /// Evaluates the objective function and derivative information.
+    /// </summary>
     protected abstract void Evaluate();
 
+    /// <inheritdoc/>
     public Vector<double> Point { get; private set; }
+    /// <inheritdoc/>
     public double Value { get; protected set; }
+    /// <inheritdoc/>
     public Vector<double> Gradient { get; protected set; }
+    /// <inheritdoc/>
     public Matrix<double> Hessian { get; protected set; }
   }
 }

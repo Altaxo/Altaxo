@@ -74,9 +74,24 @@ namespace Altaxo.Calc.Interpolation
 
   public class ExponentialSpline : CurveBase, IInterpolationFunction
   {
+    /// <summary>
+    /// Stores the boundary condition mode used for interpolation.
+    /// </summary>
     protected BoundaryConditions boundary;
+
+    /// <summary>
+    /// Stores the spline smoothing parameter and auxiliary boundary values.
+    /// </summary>
     protected double sigma, r1, r2;
+
+    /// <summary>
+    /// Stores the first derivative values of the spline.
+    /// </summary>
     protected Vector<double> y1 = CreateVector.Dense<double>(0);
+
+    /// <summary>
+    /// Stores temporary working values used during interpolation.
+    /// </summary>
     protected Vector<double> tmp = CreateVector.Dense<double>(0);
 
     /// <summary>

@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
   /// </summary>
   public partial class XYGridStyleControl : UserControl, IXYGridStyleView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYGridStyleControl"/> class.
+    /// </summary>
     public XYGridStyleControl()
     {
       InitializeComponent();

@@ -76,6 +76,9 @@ namespace Altaxo.Gui.Common.Drawing
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BrushTypeComboBox"/> class.
+    /// </summary>
     public BrushTypeComboBox()
     {
       InitializeComponent();
@@ -115,12 +118,18 @@ namespace Altaxo.Gui.Common.Drawing
 
     private const string _nameOfValueProp = "BrushType";
 
+    /// <summary>
+    /// Gets or sets the selected brush type.
+    /// </summary>
     public BrushType BrushType
     {
       get { return (BrushType)GetValue(BrushTypeProperty); }
       set { SetValue(BrushTypeProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="BrushType"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty BrushTypeProperty =
         DependencyProperty.Register(_nameOfValueProp, typeof(BrushType), typeof(BrushTypeComboBox),
         new FrameworkPropertyMetadata(OnBrushTypeChanged));
@@ -132,23 +141,35 @@ namespace Altaxo.Gui.Common.Drawing
 
     #endregion Dependency property
 
+    /// <summary>
+    /// Raises the <see cref="SelectedBrushTypeChanged"/> event.
+    /// </summary>
+    /// <param name="obj">The dependency object whose brush type changed.</param>
+    /// <param name="args">The event arguments.</param>
     protected virtual void EhBrushTypeChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
       ((BrushTypeComboBox)obj).OnSelectedBrushTypeChanged(obj, args);
     }
 
+    /// <summary>
+    /// Raises the <see cref="SelectedBrushTypeChanged"/> event.
+    /// </summary>
+    /// <param name="obj">The dependency object whose brush type changed.</param>
+    /// <param name="args">The event arguments.</param>
     protected virtual void OnSelectedBrushTypeChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
       if (SelectedBrushTypeChanged is not null)
         SelectedBrushTypeChanged(obj, args);
     }
 
+    /// <inheritdoc/>
     public override string GetItemText(object item)
     {
       var val = (BrushType)item;
       return val.ToString();
     }
 
+    /// <inheritdoc/>
     public override ImageSource GetItemImage(object item)
     {
       var val = (BrushType)item;
@@ -157,6 +178,11 @@ namespace Altaxo.Gui.Common.Drawing
       return result;
     }
 
+    /// <summary>
+    /// Creates an image that represents the specified <see cref="BrushType"/>.
+    /// </summary>
+    /// <param name="val">The brush type to visualize.</param>
+    /// <returns>An image representing <paramref name="val"/>.</returns>
     public static DrawingImage GetImage(BrushType val)
     {
       double height = 1;

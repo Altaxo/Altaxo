@@ -34,6 +34,11 @@ namespace Altaxo.Serialization.AutoUpdates
   /// </summary>
   public class NetCoreVersionDetermination
   {
+    /// <summary>
+    /// Determines whether the specified .NET Core version is installed.
+    /// </summary>
+    /// <param name="versionString">The version string to parse.</param>
+    /// <returns><c>true</c> if the specified version is installed; otherwise, <c>false</c>.</returns>
     public static bool IsVersionInstalled(string versionString)
     {
       if (Version.TryParse(versionString, out var version))

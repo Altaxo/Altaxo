@@ -38,6 +38,9 @@ namespace Altaxo.Gui.Data
   /// </summary>
   public partial class DataTableXYColumnProxyControl : UserControl, IDataTableXYColumnProxyView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DataTableXYColumnProxyControl"/> class.
+    /// </summary>
     public DataTableXYColumnProxyControl()
     {
       InitializeComponent();

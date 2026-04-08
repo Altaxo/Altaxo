@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
   /// </summary>
   public partial class XYZMeshedColumnPlotDataControl : UserControl, IXYZMeshedColumnPlotDataView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYZMeshedColumnPlotDataControl"/> class.
+    /// </summary>
     public XYZMeshedColumnPlotDataControl()
     {
       InitializeComponent();

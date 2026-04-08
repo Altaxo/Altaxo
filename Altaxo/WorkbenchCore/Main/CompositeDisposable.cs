@@ -27,6 +27,10 @@ namespace Altaxo.Main
   {
     private IDisposable[] disposables;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CompositeDisposable"/> class.
+    /// </summary>
+    /// <param name="disposables">The disposables to dispose together.</param>
     public CompositeDisposable(params IDisposable[] disposables)
     {
       if (disposables is null)
@@ -34,6 +38,7 @@ namespace Altaxo.Main
       this.disposables = disposables;
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
       foreach (var disposable in disposables)

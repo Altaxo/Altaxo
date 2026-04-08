@@ -39,6 +39,11 @@ namespace Altaxo.Com
   {
     private IList<IAdviseSink> _advises = new List<IAdviseSink>();
 
+    /// <summary>
+    /// Registers an advise sink.
+    /// </summary>
+    /// <param name="pAdvise">The advise sink.</param>
+    /// <param name="pdwConnection">The returned connection cookie.</param>
     public void Advise(IAdviseSink pAdvise, out int pdwConnection)
     {
       pdwConnection = _advises.Count + 1; // this is the cookie: Attention: cookies with a value of 0 will not be accepted, so we increment count by 1 to have always a cookie > 0
@@ -46,6 +51,10 @@ namespace Altaxo.Com
       ComDebug.ReportInfo("{0}.Advise giving out cookie={1}", GetType().Name, pdwConnection);
     }
 
+    /// <summary>
+    /// Unregisters an advise sink.
+    /// </summary>
+    /// <param name="dwConnection">The connection cookie.</param>
     public void Unadvise(int dwConnection)
     {
       ComDebug.ReportInfo("{0}.Unadvise cookie={1}", GetType().Name, dwConnection);
@@ -56,12 +65,20 @@ namespace Altaxo.Com
       _advises[idx] = null;
     }
 
+    /// <summary>
+    /// Enumerates the registered advise sinks.
+    /// </summary>
+    /// <returns>An enumerator over the registered advise sinks.</returns>
     public IEnumSTATDATA EnumAdvise()
     {
       ComDebug.ReportInfo("{0}.EnumAdvise", GetType().Name);
       return new EnumSTATDATA(_advises);
     }
 
+    /// <summary>
+    /// Sends a rename notification to all registered advise sinks.
+    /// </summary>
+    /// <param name="pmk">The new moniker.</param>
     public void SendOnRename(IMoniker pmk)
     {
       ComDebug.ReportInfo("{0}.SendOnRename calling (for all sinks) IAdviseSink.OnRename(Moniker)", GetType().Name);
@@ -69,6 +86,9 @@ namespace Altaxo.Com
         sink.OnRename(pmk);
     }
 
+    /// <summary>
+    /// Sends a save notification to all registered advise sinks.
+    /// </summary>
     public void SendOnSave()
     {
       ComDebug.ReportInfo("{0}.SendOnSave calling (for all sinks) IAdviseSink.OnSave()", GetType().Name);
@@ -77,6 +97,9 @@ namespace Altaxo.Com
         sink.OnSave();
     }
 
+    /// <summary>
+    /// Sends a close notification to all registered advise sinks.
+    /// </summary>
     public void SendOnClose()
     {
       ComDebug.ReportInfo("{0}.SendOnClose calling (for all sinks) IAdviseSink.OnClose()", GetType().Name);

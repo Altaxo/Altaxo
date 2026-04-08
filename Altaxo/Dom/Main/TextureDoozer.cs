@@ -45,10 +45,7 @@ namespace Altaxo.Main
   /// </returns>
   public class TextureDoozer : IDoozer
   {
-    /// <summary>
-    /// Gets if the doozer handles codon conditions on its own.
-    /// If this property return false, the item is excluded when the condition is not met.
-    /// </summary>
+    /// <inheritdoc/>
     public bool HandleConditions
     {
       get
@@ -57,6 +54,7 @@ namespace Altaxo.Main
       }
     }
 
+    /// <inheritdoc/>
     public object BuildItem(BuildItemArgs args)
     {
       string id = args.Codon.Id;

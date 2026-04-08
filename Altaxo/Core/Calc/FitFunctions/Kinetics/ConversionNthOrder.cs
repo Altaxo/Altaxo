@@ -162,6 +162,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     {
       Y[0] = P[1] * EvaluateConversion(X[0], P[0], P[2], P[3]);
     }
+    /// <inheritdoc/>
     public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;

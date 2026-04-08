@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Gdi
   /// </summary>
   public partial class ItemLocationByGridControl : UserControl, IItemLocationByGridView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ItemLocationByGridControl"/> class.
+    /// </summary>
     public ItemLocationByGridControl()
     {
       InitializeComponent();

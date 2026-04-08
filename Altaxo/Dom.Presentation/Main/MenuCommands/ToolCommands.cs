@@ -28,24 +28,36 @@ using Altaxo.Gui;
 namespace Altaxo.Main.Commands
 {
 
+  /// <summary>
+  /// Registers the application for COM access.
+  /// </summary>
   public class RegisterApplicationForCom : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       Current.ComManager.RegisterApplicationForCom();
     }
   }
 
+  /// <summary>
+  /// Unregisters the application from COM access.
+  /// </summary>
   public class UnregisterApplicationForCom : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       Current.ComManager.UnregisterApplicationForCom();
     }
   }
 
+  /// <summary>
+  /// Copies the active document as a COM object to the clipboard.
+  /// </summary>
   public class CopyDocumentAsComObjectToClipboard : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       {

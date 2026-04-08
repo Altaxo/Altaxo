@@ -34,6 +34,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
   /// </summary>
   public partial class ColorProviderControl : UserControl, IColorProviderView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColorProviderControl"/> class.
+    /// </summary>
     public ColorProviderControl()
     {
       InitializeComponent();

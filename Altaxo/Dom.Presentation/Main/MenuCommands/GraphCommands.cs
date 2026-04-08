@@ -31,12 +31,22 @@ using Altaxo.Gui.AddInItems;
 
 namespace Altaxo.Graph.Commands
 {
+  /// <summary>
+  /// Provides a toolbar combo box for selecting font sizes.
+  /// </summary>
   public class FontSizeChooser : ToolBarComboBox
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FontSizeChooser"/> class.
+    /// </summary>
+    /// <param name="codon">The codon that defines the add-in item.</param>
+    /// <param name="caller">The caller that creates the add-in item.</param>
+    /// <param name="conditions">The conditions that control the visibility and state of the add-in item.</param>
     public FontSizeChooser(Codon codon, object caller, IEnumerable<ICondition> conditions) : base(codon, caller, conditions)
     {
     }
 
+    /// <inheritdoc/>
     public override void InitializeContent()
     {
       IsEditable = true;
@@ -46,6 +56,7 @@ namespace Altaxo.Graph.Commands
       Items.Add("24 pt");
     }
 
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       if (string.IsNullOrEmpty(Text))
@@ -74,12 +85,22 @@ namespace Altaxo.Graph.Commands
     }
   }
 
+  /// <summary>
+  /// Provides a toolbar combo box for selecting stroke widths.
+  /// </summary>
   public class StrokeWidthChooser : ToolBarComboBox
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StrokeWidthChooser"/> class.
+    /// </summary>
+    /// <param name="codon">The codon that defines the add-in item.</param>
+    /// <param name="caller">The caller that creates the add-in item.</param>
+    /// <param name="conditions">The conditions that control the visibility and state of the add-in item.</param>
     public StrokeWidthChooser(Codon codon, object caller, IEnumerable<ICondition> conditions) : base(codon, caller, conditions)
     {
     }
 
+    /// <inheritdoc/>
     public override void InitializeContent()
     {
       IsEditable = true;
@@ -90,6 +111,7 @@ namespace Altaxo.Graph.Commands
       Items.Add("24 pt");
     }
 
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       if (string.IsNullOrEmpty(Text))
@@ -118,12 +140,22 @@ namespace Altaxo.Graph.Commands
     }
   }
 
+  /// <summary>
+  /// Provides a toolbar combo box for selecting font families.
+  /// </summary>
   public class FontFamilyChooser : ToolBarComboBox
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FontFamilyChooser"/> class.
+    /// </summary>
+    /// <param name="codon">The codon that defines the add-in item.</param>
+    /// <param name="caller">The caller that creates the add-in item.</param>
+    /// <param name="conditions">The conditions that control the visibility and state of the add-in item.</param>
     public FontFamilyChooser(Codon codon, object caller, IEnumerable<ICondition> conditions) : base(codon, caller, conditions)
     {
     }
 
+    /// <inheritdoc/>
     public override void InitializeContent()
     {
       // Fill with all available font families
@@ -131,6 +163,7 @@ namespace Altaxo.Graph.Commands
         Items.Add(famName);
     }
 
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       if (string.IsNullOrEmpty(Text))

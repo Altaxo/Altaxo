@@ -31,32 +31,48 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// Rich text box that reports a configurable default size before it is loaded.
+  /// </summary>
   public class RichTextBoxWithDefaultSize : RichTextBox
   {
     #region Dependency property
 
+    /// <summary>
+    /// Gets or sets the default width used before the control is loaded.
+    /// </summary>
     public double DefaultWidth
     {
       get { return (double)GetValue(DefaultWidthProperty); }
       set { SetValue(DefaultWidthProperty, value); }
     }
 
+    /// <summary>
+    /// Gets or sets the default height used before the control is loaded.
+    /// </summary>
     public double DefaultHeigth
     {
       get { return (double)GetValue(DefaultHeightProperty); }
       set { SetValue(DefaultHeightProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="DefaultWidth"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty DefaultWidthProperty =
         DependencyProperty.Register("DefaultWidth", typeof(double), typeof(RichTextBoxWithDefaultSize),
         new FrameworkPropertyMetadata(100.0d));
 
+    /// <summary>
+    /// Identifies the <see cref="DefaultHeigth"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty DefaultHeightProperty =
         DependencyProperty.Register("DefaultHeight", typeof(double), typeof(RichTextBoxWithDefaultSize),
         new FrameworkPropertyMetadata(100.0d));
 
     #endregion Dependency property
 
+    /// <inheritdoc/>
     protected override Size MeasureOverride(Size constraint)
     {
       double w = constraint.Width;

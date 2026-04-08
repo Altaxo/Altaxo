@@ -42,6 +42,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
   /// </summary>
   public partial class CardinalSplinePointsControl : UserControl, ICardinalSplinePointsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CardinalSplinePointsControl"/> class.
+    /// </summary>
     public CardinalSplinePointsControl()
     {
       InitializeComponent();

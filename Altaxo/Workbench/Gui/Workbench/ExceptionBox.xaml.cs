@@ -34,13 +34,16 @@ using Altaxo.Main.Services.ExceptionHandling;
 namespace Altaxo.Gui.Workbench
 {
   /// <summary>
-  /// Interaction logic for SaveErrorChooseDialog.xaml
+  /// Interaction logic for <c>ExceptionBox.xaml</c>.
   /// </summary>
   public partial class ExceptionBox : Window
   {
     private Exception? _exceptionThrown;
     private string _message = string.Empty;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ExceptionBox"/> class.
+    /// </summary>
     public ExceptionBox()
     {
       InitializeComponent();
@@ -75,22 +78,31 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Provides handlers for otherwise unhandled exceptions.
+    /// </summary>
     public class UnhandledHandler : IUnhandledExceptionHandler
     {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="UnhandledHandler"/> class.
+      /// </summary>
       public UnhandledHandler()
       {
       }
 
+      /// <inheritdoc/>
       public void EhCurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
       {
         ExceptionBox.EhCurrentDomain_UnhandledException(sender, e);
       }
 
+      /// <inheritdoc/>
       public void EhWindowsFormsApplication_ThreadException(object sender, ThreadExceptionEventArgs e)
       {
         ExceptionBox.EhFormsApplication_ThreadException(sender, e);
       }
 
+      /// <inheritdoc/>
       public void EhWpfDispatcher_UnhandledException(object sender, object dispatcher, Exception exception)
       {
         ExceptionBox.EhDispatcher_UnhandledException(sender, dispatcher, exception);
@@ -172,6 +184,9 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Initializes the localized UI text.
+    /// </summary>
     public void InitializeText()
     {
       Title = StringParser.Parse("${res:Altaxo.Gui.ExceptionBox.Title}");

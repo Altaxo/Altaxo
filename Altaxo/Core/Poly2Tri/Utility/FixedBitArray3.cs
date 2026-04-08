@@ -35,10 +35,30 @@ using System.Collections.Generic;
 
 namespace Poly2Tri
 {
+  /// <summary>
+  /// Represents a fixed-size bit array containing three Boolean values.
+  /// </summary>
   public struct FixedBitArray3 : IEnumerable<bool>
   {
-    public bool _0, _1, _2;
+    /// <summary>
+    /// Gets or sets the first bit.
+    /// </summary>
+    public bool _0;
 
+    /// <summary>
+    /// Gets or sets the second bit.
+    /// </summary>
+    public bool _1;
+
+    /// <summary>
+    /// Gets or sets the third bit.
+    /// </summary>
+    public bool _2;
+
+    /// <summary>
+    /// Gets or sets the bit at the specified index.
+    /// </summary>
+    /// <param name="index">The zero-based bit index.</param>
     public bool this[int index]
     {
       get
@@ -74,6 +94,11 @@ namespace Poly2Tri
       }
     }
 
+    /// <summary>
+    /// Determines whether the array contains the specified value.
+    /// </summary>
+    /// <param name="value">The value to search for.</param>
+    /// <returns><see langword="true"/> if the value exists; otherwise, <see langword="false"/>.</returns>
     public bool Contains(bool value)
     {
       for (int i = 0; i < 3; ++i)
@@ -82,6 +107,11 @@ namespace Poly2Tri
       return false;
     }
 
+    /// <summary>
+    /// Returns the index of the first occurrence of the specified value.
+    /// </summary>
+    /// <param name="value">The value to search for.</param>
+    /// <returns>The zero-based index of the first occurrence, or <c>-1</c> if not found.</returns>
     public int IndexOf(bool value)
     {
       for (int i = 0; i < 3; ++i)
@@ -90,11 +120,18 @@ namespace Poly2Tri
       return -1;
     }
 
+    /// <summary>
+    /// Clears all bits.
+    /// </summary>
     public void Clear()
     {
       _0 = _1 = _2 = false;
     }
 
+    /// <summary>
+    /// Clears all bits matching the specified value.
+    /// </summary>
+    /// <param name="value">The bit value to clear.</param>
     public void Clear(bool value)
     {
       for (int i = 0; i < 3; ++i)
@@ -108,11 +145,13 @@ namespace Poly2Tri
         yield return this[i];
     }
 
+    /// <inheritdoc/>
     public IEnumerator<bool> GetEnumerator()
     {
       return Enumerate().GetEnumerator();
     }
 
+    /// <inheritdoc/>
     IEnumerator IEnumerable.GetEnumerator()
     {
       return GetEnumerator();

@@ -144,6 +144,13 @@ namespace Altaxo.Science.Spectroscopy
       }
     }
 
+    /// <summary>
+    /// Executes the preprocessing pipeline for an ensemble of spectra.
+    /// </summary>
+    /// <param name="x">The shared x-values.</param>
+    /// <param name="y">The matrix containing one spectrum per column.</param>
+    /// <param name="regions">Optional region identifiers for the x-values.</param>
+    /// <returns>The processed x-values, processed spectra, processed regions, and auxiliary data produced by ensemble preprocessors.</returns>
     public (double[] x, Matrix<double> y, int[]? regions, IEnsembleProcessingAuxiliaryData auxiliaryData) Execute(double[] x, Matrix<double> y, int[]? regions)
     {
       var xNew = x;
@@ -181,6 +188,14 @@ namespace Altaxo.Science.Spectroscopy
       return (x, y, regions, totalAuxiliaryData);
     }
 
+    /// <summary>
+    /// Executes the preprocessing pipeline for prediction using previously captured auxiliary data.
+    /// </summary>
+    /// <param name="x">The shared x-values.</param>
+    /// <param name="y">The matrix containing one spectrum per column.</param>
+    /// <param name="regions">Optional region identifiers for the x-values.</param>
+    /// <param name="auxiliaryData">The auxiliary data captured during training.</param>
+    /// <returns>The processed x-values, processed spectra, and processed regions.</returns>
     public (double[] x, Matrix<double> y, int[]? regions) ExecuteForPrediction(double[] x, Matrix<double> y, int[]? regions, IEnsembleProcessingAuxiliaryData auxiliaryData)
     {
       var auxiliaryDataCompound = auxiliaryData as EnsembleAuxiliaryDataCompound;

@@ -41,6 +41,7 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public class NamedColorToWpfBrushConverter : IValueConverter
   {
+    /// <inheritdoc/>
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       if (value is NamedColor)
@@ -57,14 +58,21 @@ namespace Altaxo.Gui.Common
         return System.Windows.Media.Brushes.Black;
     }
 
+    /// <inheritdoc/>
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       throw new NotImplementedException();
     }
   }
 
+  /// <summary>
+  /// Converts a <see cref="NamedColor"/> to the name of its parent color set.
+  /// </summary>
   public class NamedColorToColorSetNameConverter : IValueConverter
   {
+    /// <summary>
+    /// Gets a short label for the specified item-definition level.
+    /// </summary>
     public string GetLevelString(Altaxo.Main.ItemDefinitionLevel level)
     {
       switch (level)
@@ -86,6 +94,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       if (value is NamedColor)
@@ -102,29 +111,40 @@ namespace Altaxo.Gui.Common
         return string.Empty;
     }
 
+    /// <inheritdoc/>
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       throw new NotImplementedException();
     }
   }
 
+  /// <summary>
+  /// Converts <see cref="BrushX"/> values to preview images.
+  /// </summary>
   public class BrushXToImageSourceConverter : IValueConverter
   {
     private int _width = 16;
     private int _height = 16;
 
+    /// <summary>
+    /// Gets or sets the preview image width.
+    /// </summary>
     public int Width
     {
       get { return _width; }
       set { _width = value; }
     }
 
+    /// <summary>
+    /// Gets or sets the preview image height.
+    /// </summary>
     public int Height
     {
       get { return _height; }
       set { _height = value; }
     }
 
+    /// <inheritdoc/>
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       if (value is BrushX)
@@ -137,11 +157,15 @@ namespace Altaxo.Gui.Common
         return null;
     }
 
+    /// <inheritdoc/>
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Creates an image source for the specified Altaxo color.
+    /// </summary>
     public static ImageSource GetImageSourceFromAxoColor(AxoColor axoColor, int width, int height)
     {
       var innerRect = new Rect(0, 0, width, height);
@@ -152,6 +176,9 @@ namespace Altaxo.Gui.Common
       return geometryImage;
     }
 
+    /// <summary>
+    /// Creates an image source for the specified brush.
+    /// </summary>
     public static ImageSource GetImageSourceFromBrushX(BrushX val, int width, int height)
     {
       //
@@ -194,6 +221,9 @@ namespace Altaxo.Gui.Common
         return null;
     }
 
+    /// <summary>
+    /// Gets a display name for the specified brush.
+    /// </summary>
     public static string GetNameForBrushX(BrushX brush)
     {
       string name;
@@ -246,6 +276,7 @@ namespace Altaxo.Gui.Common
       return name;
     }
 
+    /// <inheritdoc/>
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       throw new NotImplementedException();

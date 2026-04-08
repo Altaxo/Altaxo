@@ -42,6 +42,9 @@ namespace Altaxo.Com
 
     private IInvokeableThread _dataAdviseThread;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ManagedDataAdviseHolder"/> class.
+    /// </summary>
     public ManagedDataAdviseHolder()
     {
       _dataAdviseThread = new InvokeableThread("DataAdviseThread", Current.Dispatcher);
@@ -62,6 +65,14 @@ namespace Altaxo.Com
       _dataAdviseThread.Invoke(invoker);
     }
 
+    /// <summary>
+    /// Registers an advise sink.
+    /// </summary>
+    /// <param name="dataObject">The data object.</param>
+    /// <param name="fetc">The requested format.</param>
+    /// <param name="advf">The advise flags.</param>
+    /// <param name="advise">The advise sink.</param>
+    /// <param name="pdwConnection">The resulting connection cookie.</param>
     public void Advise(System.Runtime.InteropServices.ComTypes.IDataObject dataObject, ref System.Runtime.InteropServices.ComTypes.FORMATETC fetc, System.Runtime.InteropServices.ComTypes.ADVF advf, System.Runtime.InteropServices.ComTypes.IAdviseSink advise, out int pdwConnection)
     {
       int con = -1;
@@ -75,11 +86,19 @@ namespace Altaxo.Com
       pdwConnection = con;
     }
 
+    /// <summary>
+    /// Unregisters an advise sink.
+    /// </summary>
+    /// <param name="dwConnection">The connection cookie.</param>
     public void Unadvise(int dwConnection)
     {
       Invoke("Unadvise", () => _dataAdviseHolder.Unadvise(dwConnection));
     }
 
+    /// <summary>
+    /// Enumerates the registered advise sinks.
+    /// </summary>
+    /// <returns>An enumerator over the registered advise sinks.</returns>
     public System.Runtime.InteropServices.ComTypes.IEnumSTATDATA EnumAdvise()
     {
       System.Runtime.InteropServices.ComTypes.IEnumSTATDATA result = null;
@@ -87,11 +106,18 @@ namespace Altaxo.Com
       return result;
     }
 
+    /// <summary>
+    /// Sends a data-change notification to the registered advise sinks.
+    /// </summary>
+    /// <param name="dataObject">The data object.</param>
+    /// <param name="dwReserved">Reserved flags.</param>
+    /// <param name="advf">The advise flags.</param>
     public void SendOnDataChange(System.Runtime.InteropServices.ComTypes.IDataObject dataObject, int dwReserved, System.Runtime.InteropServices.ComTypes.ADVF advf)
     {
       Invoke("SendOnDataChange", () => _dataAdviseHolder.SendOnDataChange(dataObject, dwReserved, advf));
     }
 
+    /// <inheritdoc cref="IDisposable.Dispose"/>
     public void Dispose()
     {
       _dataAdviseThread.Dispose();

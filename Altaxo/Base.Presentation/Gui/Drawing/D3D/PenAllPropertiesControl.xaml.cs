@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Drawing.D3D
   /// </summary>
   public partial class PenAllPropertiesControl : UserControl, IPenAllPropertiesView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PenAllPropertiesControl"/> class.
+    /// </summary>
     public PenAllPropertiesControl()
     {
       InitializeComponent();

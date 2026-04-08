@@ -39,24 +39,33 @@ namespace Altaxo.Gui.Scripting
   /// </summary>
   public partial class ScriptControl : UserControl, IScriptView
   {
+    /// <inheritdoc/>
     public event Action<string>? CompilerMessageClicked;
 
     private IPureScriptView _scriptView;
 
+    /// <inheritdoc/>
     public string ScriptText
     {
       get { return _scriptView?.ScriptText; }
       set { if (_scriptView is not null) _scriptView.ScriptText = value; }
     }
 
+    /// <inheritdoc/>
     public int ScriptCursorLocation { set { if (_scriptView is not null) _scriptView.ScriptCursorLocation = value; } }
+
+    /// <inheritdoc/>
     public int InitialScriptCursorLocation { set { if (_scriptView is not null) _scriptView.InitialScriptCursorLocation = value; } }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScriptControl"/> class.
+    /// </summary>
     public ScriptControl()
     {
       InitializeComponent();
     }
 
+    /// <inheritdoc/>
     public void AddPureScriptView(IPureScriptView scriptView)
     {
       if (object.Equals(_scriptView, scriptView))
@@ -76,11 +85,13 @@ namespace Altaxo.Gui.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public IScriptCompilerResult Compile()
     {
       return null; // we are unable to compile here; compilation must be handled by the controller.
     }
 
+    /// <inheritdoc/>
     public void SetCompilerErrors(IEnumerable<ICompilerDiagnostic> errors)
     {
       if (errors is not null)
@@ -95,12 +106,14 @@ namespace Altaxo.Gui.Scripting
       CompilerMessageClicked?.Invoke(msg);
     }
 
+    /// <inheritdoc/>
     public void SetScriptCursorLocation(int line, int column)
     {
       if (_scriptView is not null)
         _scriptView.SetScriptCursorLocation(line, column);
     }
 
+    /// <inheritdoc/>
     public void MarkText(int pos1, int pos2)
     {
       if (_scriptView is not null)

@@ -32,16 +32,22 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
   /// </summary>
   public class RegularPolygonDrawingMouseHandler : AbstractRectangularToolMouseHandler
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RegularPolygonDrawingMouseHandler"/> class.
+    /// </summary>
+    /// <param name="grac">The graph controller.</param>
     public RegularPolygonDrawingMouseHandler(GraphController grac)
       : base(grac)
     {
     }
 
+    /// <inheritdoc/>
     public override GraphToolType GraphToolType
     {
       get { return GraphToolType.RegularPolygonDrawing; }
     }
 
+    /// <inheritdoc/>
     protected override void FinishDrawing()
     {
       var rect = GetNormalRectangle(_Points[0].LayerCoordinates, _Points[1].LayerCoordinates);

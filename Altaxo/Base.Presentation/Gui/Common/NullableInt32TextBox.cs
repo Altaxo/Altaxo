@@ -28,8 +28,14 @@ using System.Windows.Data;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// Text box for editing nullable <see cref="int"/> values.
+  /// </summary>
   public class NullableInt32TextBox : TextBox
   {
+    /// <summary>
+    /// Occurs when <see cref="SelectedValue"/> changes.
+    /// </summary>
     public event DependencyPropertyChangedEventHandler? SelectedValueChanged;
 
     private NullableInt32Converter _converter;
@@ -60,16 +66,34 @@ namespace Altaxo.Gui.Common
       SetBinding(TextBox.TextProperty, binding);
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether negative values are rejected.
+    /// </summary>
     public bool DisallowNegativeValues { get { return _converter.DisallowNegativeValues; } set { _converter.DisallowNegativeValues = value; } }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether zero is rejected.
+    /// </summary>
     public bool DisallowZeroValues { get { return _converter.DisallowZeroValues; } set { _converter.DisallowZeroValues = value; } }
 
+    /// <summary>
+    /// Gets or sets the minimum allowed value.
+    /// </summary>
     public int MinValue { get { return _converter.MinValue; } set { _converter.MinValue = value; } }
 
+    /// <summary>
+    /// Gets or sets the maximum allowed value.
+    /// </summary>
     public int MaxValue { get { return _converter.MaxValue; } set { _converter.MaxValue = value; } }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the minimum value is inclusive.
+    /// </summary>
     public bool IsMinValueInclusive { get { return _converter.IsMinValueInclusive; } set { _converter.IsMinValueInclusive = value; } }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the maximum value is inclusive.
+    /// </summary>
     public bool IsMaxValueInclusive { get { return _converter.IsMaxValueInclusive; } set { _converter.IsMaxValueInclusive = value; } }
 
     #region Change selection behaviour
@@ -78,18 +102,21 @@ namespace Altaxo.Gui.Common
     // 'How to SelectAll in TextBox when TextBox gets focus by mouse click?'
     // (http://social.msdn.microsoft.com/Forums/en-US/wpf/thread/564b5731-af8a-49bf-b297-6d179615819f/)
 
+    /// <inheritdoc/>
     protected override void OnGotKeyboardFocus(System.Windows.Input.KeyboardFocusChangedEventArgs e)
     {
       SelectAll();
       base.OnGotKeyboardFocus(e);
     }
 
+    /// <inheritdoc/>
     protected override void OnMouseDoubleClick(System.Windows.Input.MouseButtonEventArgs e)
     {
       SelectAll();
       base.OnMouseDoubleClick(e);
     }
 
+    /// <inheritdoc/>
     protected override void OnPreviewMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs e)
     {
       if (!IsKeyboardFocusWithin)
@@ -108,7 +135,7 @@ namespace Altaxo.Gui.Common
     #region Dependency property
 
     /// <summary>
-    /// Gets/sets the quantity. The quantity consist of a numeric value together with a unit.
+    /// Gets or sets the selected nullable value.
     /// </summary>
     public int? SelectedValue
     {
@@ -116,6 +143,9 @@ namespace Altaxo.Gui.Common
       set { SetValue(SelectedValueProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="SelectedValue"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty SelectedValueProperty =
         DependencyProperty.Register("SelectedValue", typeof(int?), typeof(NullableInt32TextBox),
         new FrameworkPropertyMetadata(EhSelectedValueChanged) { BindsTwoWayByDefault = true });

@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Analysis.Statistics
   /// </summary>
   public partial class LinearBinningControl : UserControl, ILinearBinningView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinearBinningControl"/> class.
+    /// </summary>
     public LinearBinningControl()
     {
       InitializeComponent();

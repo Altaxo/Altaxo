@@ -35,6 +35,9 @@ using Altaxo.Calc.Statistics;
 
 namespace Altaxo.Calc.Distributions
 {
+  /// <summary>
+  /// Continuous univariate inverse Gaussian distribution.
+  /// </summary>
   public class InverseGaussian : IContinuousDistribution
   {
     private System.Random _random;

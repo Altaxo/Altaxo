@@ -136,6 +136,11 @@ namespace Altaxo.Calc.LinearAlgebra
 
       #region IVector Members
 
+      /// <summary>
+      /// Indexer for the vector interface.
+      /// </summary>
+      /// <param name="i">The index.</param>
+      /// <returns>The value of the scalar.</returns>
       public T this[int i]
       {
         get
@@ -152,6 +157,9 @@ namespace Altaxo.Calc.LinearAlgebra
 
       #region IROVector Members
 
+      /// <summary>
+      /// Always returns 1, since the scalar is considered to have exactly one element.
+      /// </summary>
       public int Count
       {
         get
@@ -171,15 +179,28 @@ namespace Altaxo.Calc.LinearAlgebra
     {
       private IReadOnlyList<T> _wrapped;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="VectorToROMatrixWithOneColumnWrapper{T}"/> class.
+      /// </summary>
+      /// <param name="wrapped">The vector to expose as a matrix with one column.</param>
       public VectorToROMatrixWithOneColumnWrapper(IReadOnlyList<T> wrapped)
       {
         _wrapped = wrapped;
       }
 
+      /// <summary>
+      /// Indexer for the matrix interface, that is implemented by this wrapper.
+      /// </summary>
       public T this[int row, int col] => _wrapped[row];
 
+      /// <summary>
+      /// Number of rows of the matrix. Always corresponds to the number of elements of the wrapped vector.
+      /// </summary>
       public int RowCount => _wrapped.Count;
 
+      /// <summary>
+      /// Number of columns of the matrix. Always 1 (one).
+      /// </summary>
       public int ColumnCount => 1;
     }
 
@@ -203,15 +224,28 @@ namespace Altaxo.Calc.LinearAlgebra
     {
       private IReadOnlyList<T> _wrapped;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="VectorToROMatrixWithOneRowWrapper{T}"/> class.
+      /// </summary>
+      /// <param name="wrapped">The vector to expose as a matrix with one row.</param>
       public VectorToROMatrixWithOneRowWrapper(IReadOnlyList<T> wrapped)
       {
         _wrapped = wrapped;
       }
 
+      /// <summary>
+      /// Indexer for the matrix interface, that is implemented by this wrapper.
+      /// </summary>
       public T this[int row, int col] => _wrapped[col];
 
+      /// <summary>
+      /// Number of rows of the matrix. Always 1 (one).
+      /// </summary>
       public int RowCount => 1;
 
+      /// <summary>
+      /// Number of columns of the matrix. Always corresponds to the number of elements of the wrapped vector.
+      /// </summary>
       public int ColumnCount => _wrapped.Count;
     }
 
@@ -683,10 +717,11 @@ namespace Altaxo.Calc.LinearAlgebra
         _column = column;
       }
 
-      #region IROVector Members
-
-      /// <summary>Gets the value at index i with 0 &lt;= i &lt;=Length-1.</summary>
-      /// <value>The element at index i.</value>
+      /// <summary>
+      /// Indexer for the vector interface.
+      /// </summary>
+      /// <param name="i">The index.</param>
+      /// <returns>The value of the matrix element in the specified column.</returns>
       public T this[int i]
       {
         get
@@ -694,6 +729,8 @@ namespace Altaxo.Calc.LinearAlgebra
           return _matrix[i, _column];
         }
       }
+
+      #region IROVector Members
 
       /// <summary>The number of elements of this vector.</summary>
       public int Count
@@ -1004,8 +1041,19 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     public class ROMatrixFromColumnMajorLinearArray<T> : IROMatrix<T> where T : struct
     {
+      /// <summary>
+      /// The wrapped one-dimensional array in column-major order.
+      /// </summary>
       protected T[] _array;
+
+      /// <summary>
+      /// The number of rows in the wrapped matrix.
+      /// </summary>
       protected int _rows;
+
+      /// <summary>
+      /// The number of columns in the wrapped matrix.
+      /// </summary>
       protected int _columns;
 
       #region IROMatrix Members
@@ -1116,8 +1164,19 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     public class ROMatrixFromRowMajorLinearArray<T> : IROMatrix<T> where T : struct
     {
+      /// <summary>
+      /// The wrapped one-dimensional array in row-major order.
+      /// </summary>
       protected T[] _array;
+
+      /// <summary>
+      /// The number of rows in the wrapped matrix.
+      /// </summary>
       protected int _rows;
+
+      /// <summary>
+      /// The number of columns in the wrapped matrix.
+      /// </summary>
       protected int _columns;
 
       #region IROMatrix Members
@@ -1227,6 +1286,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     public class ROMatrixFrom2DArray<T> : IROMatrix<T> where T : struct
     {
+      /// <summary>
+      /// The wrapped two-dimensional array.
+      /// </summary>
       protected T[,] _array;
       private int _rows;
       private int _columns;
@@ -1275,6 +1337,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     public class RWMatrixFrom2DArray<T> : IMatrix<T> where T : struct
     {
+      /// <summary>
+      /// The wrapped two-dimensional array.
+      /// </summary>
       protected T[,] _array;
       private int _rows;
       private int _columns;
@@ -1322,11 +1387,23 @@ namespace Altaxo.Calc.LinearAlgebra
       #endregion IROMatrix Members
     }
 
+    /// <summary>
+    /// Converts a 2D array of type T[,] to a read-only matrix of type IROMatrix{T}.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements in the 2D array.</typeparam>
+    /// <param name="array">The 2D array to convert.</param>
+    /// <returns>A read-only matrix that wraps the 2D array.</returns>
     public static IROMatrix<T> ToROMatrix<T>(this T[,] array) where T : struct
     {
       return new ROMatrixFrom2DArray<T>(array);
     }
 
+    /// <summary>
+    /// Converts a 2D array of type T[,] to a read-write matrix of type IMatrix{T}.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements in the 2D array.</typeparam>
+    /// <param name="array">The 2D array to convert.</param>
+    /// <returns>A read-write matrix that wraps the 2D array.</returns>
     public static IMatrix<T> ToMatrix<T>(this T[,] array) where T : struct
     {
       return new RWMatrixFrom2DArray<T>(array);
@@ -1384,11 +1461,15 @@ namespace Altaxo.Calc.LinearAlgebra
         _columns = wrapper.ColumnCount;
       }
 
+      /// <summary>
+      /// Clears the matrix, i.e. resets its dimensions to (0,0).
+      /// </summary>
       public void Clear()
       {
         SetDimension(0, 0);
       }
 
+      /// <inheritdoc/>
       public override string ToString()
       {
         return MatrixMath.MatrixToString(null, this);
@@ -1560,11 +1641,15 @@ namespace Altaxo.Calc.LinearAlgebra
         _columns = wrapper.ColumnCount;
       }
 
+      /// <summary>
+      /// Clears the matrix, i.e. resets its dimensions to (0,0).
+      /// </summary>
       public void Clear()
       {
         SetDimension(0, 0);
       }
 
+      /// <inheritdoc/>
       public override string ToString()
       {
         return MatrixMath.MatrixToString(null, this);

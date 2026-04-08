@@ -66,7 +66,7 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Creates a new instance of this distribution with given parameters (alpha, beta) and the default random number generator.
+    /// Creates a new instance of this distribution with the given parameters and the default random number generator.
     /// </summary>
     /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
     /// <param name="gamma">Distribution parameter gamma (skew).</param>
@@ -76,7 +76,7 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Creates a new instance of this distribution with given parameters (alpha, beta, abe) and the default random number generator.
+    /// Creates a new instance of this distribution with the given parameters and the default random number generator.
     /// </summary>
     /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
     /// <param name="gamma">Distribution parameter gamma (skew).</param>
@@ -87,7 +87,7 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Creates a new instance of this distribution with given parameters (alpha, beta, scale, location) and the default random number generator.
+    /// Creates a new instance of this distribution with the given parameters and the default random number generator.
     /// </summary>
     /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
     /// <param name="gamma">Distribution parameter gamma (skew).</param>
@@ -99,7 +99,7 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Creates a new instance of this distribution with given parameters (alpha, beta, scale, location) and the provided random number generator.
+    /// Creates a new instance of this distribution with the given parameters and the provided random number generator.
     /// </summary>
     /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
     /// <param name="gamma">Distribution parameter gamma (skew).</param>
@@ -112,7 +112,7 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Creates a new instance of this distribution with given parameters (alpha, beta, abe, scale, location) and the default random number generator.
+    /// Creates a new instance of this distribution with the given parameters and the default random number generator.
     /// </summary>
     /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
     /// <param name="gamma">Distribution parameter gamma (skew).</param>
@@ -125,7 +125,7 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Creates a new instance of this distribution with given parameters (alpha, beta, abe, scale, location) and the provided random number generator.
+    /// Creates a new instance of this distribution with the given parameters and the provided random number generator.
     /// </summary>
     /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
     /// <param name="gamma">Distribution parameter gamma (skew).</param>
@@ -316,6 +316,13 @@ namespace Altaxo.Calc.Probability
 
     #region PDF dispatcher
 
+    /// <summary>
+    /// Calculates the probability density for the specified arguments.
+    /// </summary>
+    /// <param name="x">The argument.</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <returns>The probability density value.</returns>
     public static double PDF(double x, double alpha, double gamma)
     {
       object? store = null;
@@ -335,37 +342,49 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Calculates the probability density using either series expansion for small or big arguments, or a integration
+    /// Calculates the probability density using either series expansion for small or large arguments, or an integration
     /// in the intermediate range.
     /// </summary>
     /// <param name="x">The argument.</param>
     /// <param name="alpha">First parameter of the distribution (<see cref="StableDistributionFeller"/>).</param>
     /// <param name="gamma">Second parameter of the distribution (<see cref="StableDistributionFeller"/>).</param>
-    /// <param name="tempStorage"></param>
+    /// <param name="tempStorage">Temporary storage reused between calls.</param>
     /// <param name="precision">Relative precision goal for the calculation.</param>
-    /// <returns></returns>
+    /// <returns>The probability density value.</returns>
     public static double PDF(double x, double alpha, double gamma, ref object? tempStorage, double precision)
     {
       double aga = GetAgaFromAlphaGamma(alpha, gamma);
       return PDF(x, alpha, gamma, aga, ref tempStorage, precision);
     }
 
+    /// <summary>
+    /// Calculates the probability density for the specified arguments, scale, and location.
+    /// </summary>
+    /// <param name="x">The argument.</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <param name="aga">Alternative gamma parameter to improve precision.</param>
+    /// <param name="scale">The scale parameter.</param>
+    /// <param name="pos">The location parameter.</param>
+    /// <param name="tempStorage">Temporary storage reused between calls.</param>
+    /// <param name="precision">Relative precision goal.</param>
+    /// <returns>The probability density value.</returns>
     public static double PDF(double x, double alpha, double gamma, double aga, double scale, double pos, ref object? tempStorage, double precision)
     {
       return PDF((x - pos) / scale, alpha, gamma, aga, ref tempStorage, precision) / scale;
     }
 
     /// <summary>
-    /// Calculates the probability density using either series expansion for small or big arguments, or a integration
+    /// Calculates the probability density using either series expansion for small or large arguments, or an integration
     /// in the intermediate range.
     /// </summary>
     /// <param name="x">The argument.</param>
-    /// <param name="alpha"></param>
-    /// <param name="gamma"></param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
     /// <param name="aga">For alpha &lt;=1: This is either (alpha-gamma)/alpha for gamma &gt;=0, or (alpha+gamma)/alpha for gamma &lt; 1.</param>
-    /// <param name="tempStorage"></param>
-    /// <param name="precision"></param>
-    /// <returns></returns>
+    /// <param name="tempStorage">Temporary storage reused between calls.</param>
+    /// <param name="precision">Relative precision goal.</param>
+    /// <returns>The probability density value.</returns>
     public static double PDF(double x, double alpha, double gamma, double aga, ref object? tempStorage, double precision)
     {
       if (x == 0)
@@ -403,6 +422,13 @@ namespace Altaxo.Calc.Probability
 
     #region CDF dispatcher
 
+    /// <summary>
+    /// Computes the cumulative distribution function for the specified arguments.
+    /// </summary>
+    /// <param name="x">The argument.</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <returns>The cumulative probability.</returns>
     public static double CDF(double x, double alpha, double gamma)
     {
       object? tempStorage = null;
@@ -422,6 +448,15 @@ namespace Altaxo.Calc.Probability
       return CDF(x, alpha, gamma, aga, ref temp, DefaultPrecision);
     }
 
+    /// <summary>
+    /// Computes the cumulative distribution function for the specified arguments.
+    /// </summary>
+    /// <param name="x">The argument.</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <param name="tempStorage">Temporary storage reused between calls.</param>
+    /// <param name="precision">Relative precision goal.</param>
+    /// <returns>The cumulative probability.</returns>
     public static double CDF(double x, double alpha, double gamma, ref object? tempStorage, double precision)
     {
       double aga = GetAgaFromAlphaGamma(alpha, gamma);
@@ -464,6 +499,16 @@ namespace Altaxo.Calc.Probability
       return result;
     }
 
+    /// <summary>
+    /// Computes the cumulative distribution function for the specified arguments with an explicit transformed gamma parameter.
+    /// </summary>
+    /// <param name="x">The argument.</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <param name="aga">Alternative gamma parameter to improve precision.</param>
+    /// <param name="tempStorage">Temporary storage reused between calls.</param>
+    /// <param name="precision">Relative precision goal.</param>
+    /// <returns>The cumulative probability.</returns>
     public static double CDF(double x, double alpha, double gamma, double aga, ref object? tempStorage, double precision)
     {
       // test input parameter
@@ -909,6 +954,17 @@ namespace Altaxo.Calc.Probability
       return result;
     }
 
+    /// <summary>
+    /// Calculates the inverted stable-distribution parameters used by reciprocity relations.
+    /// </summary>
+    /// <param name="x">The original argument.</param>
+    /// <param name="alpha">The original characteristic exponent.</param>
+    /// <param name="gamma">The original gamma parameter.</param>
+    /// <param name="aga">The original alternative gamma helper value.</param>
+    /// <param name="alphainv">On return, the inverted alpha parameter.</param>
+    /// <param name="xinv">On return, the inverted argument.</param>
+    /// <param name="gammainv">On return, the inverted gamma parameter.</param>
+    /// <param name="againv">On return, the inverted alternative gamma helper value.</param>
     public static void GetInvertedAlphaGammaAga(double x, double alpha, double gamma, double aga, out double alphainv, out double xinv, out double gammainv, out double againv)
     {
       alphainv = 1 / alpha;
@@ -952,17 +1008,17 @@ namespace Altaxo.Calc.Probability
     #region PDF calculations for different alpha ranges
 
     /// <summary>
-    /// Calculates the probability density using either series expansion for small or big arguments, or a integration
+    /// Calculates the probability density using either series expansion for small or large arguments, or an integration
     /// in the intermediate range.
     /// </summary>
     /// <param name="x">The argument.</param>
-    /// <param name="alpha"></param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
     /// <param name="gamma">The gamma value.</param>
     /// <param name="aga">For alpha &lt;=1: This is either (alpha-gamma)/alpha for gamma &gt;=0, or (alpha+gamma)/alpha for gamma &lt; 1.
     /// For alpha &gt;1, this is either (alpha-gamma) for gamma &gt; (alpha-1), or (2-alpha+gamma) for gamma &lt; (alpha-1).</param>
     /// <param name="tempStorage">Object that can be used to speed up subsequent calculations of the function. At first use, provide an object initialized with <see langword="null"/> and then provide this object in subsequent calls of this function.</param>
     /// <param name="precision">Relative precision goal.</param>
-    /// <returns></returns>
+    /// <returns>The probability density value for a positive argument.</returns>
     public static double PDFforPositiveX(double x, double alpha, double gamma, double aga, ref object? tempStorage, double precision)
     {
       const double OneMinus2Eps = 1 - 4 * DoubleConstants.DBL_EPSILON;
@@ -1015,8 +1071,45 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    protected enum PdfEvaluationMethod { XZero, SeriesSmallX, SeriesBigX, Integration, IntegrationA1, AlphaEqualOne };
+    /// <summary>
+    /// Describes the strategy used to evaluate the probability density function.
+    /// </summary>
+    protected enum PdfEvaluationMethod
+    {
+      /// <summary>
+      /// Evaluate at zero.
+      /// </summary>
+      XZero,
+      /// <summary>
+      /// Use the small-x series expansion.
+      /// </summary>
+      SeriesSmallX,
+      /// <summary>
+      /// Use the large-x series expansion.
+      /// </summary>
+      SeriesBigX,
+      /// <summary>
+      /// Use numerical integration.
+      /// </summary>
+      Integration,
+      /// <summary>
+      /// Use the dedicated alpha-equals-one integration.
+      /// </summary>
+      IntegrationA1,
+      /// <summary>
+      /// Use the dedicated alpha-equals-one evaluation path.
+      /// </summary>
+      AlphaEqualOne
+    };
 
+    /// <summary>
+    /// Determines the evaluation strategy for the probability density function.
+    /// </summary>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="x">The evaluation point.</param>
+    /// <param name="isGammaAtBoundary">Whether gamma lies on its boundary.</param>
+    /// <param name="isGammaPositive">Whether gamma is positive.</param>
+    /// <returns>The selected evaluation method.</returns>
     protected static PdfEvaluationMethod GetEvaluationMethod(double alpha, double x, bool isGammaAtBoundary, bool isGammaPositive)
     {
       if (x == 0)
@@ -1237,13 +1330,13 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Calculation of the PDF if alpha is inbetween 1.01 and 1.99999.
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="alpha"></param>
-    /// <param name="gamma"></param>
-    /// <param name="aga"></param>
-    /// <param name="precision"></param>
-    /// <param name="tempStorage"></param>
-    /// <returns></returns>
+    /// <param name="x">The argument.</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <param name="aga">Alternative gamma parameter to improve precision.</param>
+    /// <param name="tempStorage">Temporary storage reused between calls.</param>
+    /// <param name="precision">Relative precision goal.</param>
+    /// <returns>The probability density value.</returns>
     public static double PDFAlphaBetween101And199999(double x, double alpha, double gamma, double aga, ref object? tempStorage, double precision)
     {
       if (x <= 1E-2)
@@ -1258,13 +1351,13 @@ namespace Altaxo.Calc.Probability
     /// Calculation of the PDF if alpha is inbetween 1.99999 and 2. For small x ( max 7), the asymptotic expansion is used.
     /// For big x, the maximum value resulting from direct integration and series expansion w.r.t. alpha is used.
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="alpha"></param>
-    /// <param name="gamma"></param>
-    /// <param name="aga"></param>
-    /// <param name="precision"></param>
-    /// <param name="tempStorage"></param>
-    /// <returns></returns>
+    /// <param name="x">The argument.</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <param name="aga">Alternative gamma parameter to improve precision.</param>
+    /// <param name="tempStorage">Temporary storage reused between calls.</param>
+    /// <param name="precision">Relative precision goal.</param>
+    /// <returns>The probability density value.</returns>
     public static double PDFAlphaBetween199999And2(double x, double alpha, double gamma, double aga, ref object? tempStorage, double precision)
     {
       if (alpha == 2)
@@ -1284,9 +1377,9 @@ namespace Altaxo.Calc.Probability
     /// Imaginary part of the Fourier transformed derivative of the Kohlrausch function for low frequencies.
     /// </summary>
     /// <param name="z">Circular frequency.</param>
-    /// <param name="alpha">Beta parameter.</param>
-    /// <param name="gamma"></param>
-    /// <param name="aga"></param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <param name="aga">Alternative gamma parameter to improve precision.</param>
     /// <returns>Imaginary part of the Fourier transformed derivative of the Kohlrausch function for high frequencies, or double.NaN if the series not converges.</returns>
     /// <remarks>This is the imaginary part of the Fourier transform (in Mathematica notation): Im[Integrate[D[Exp[-t^beta],t]*Exp[-I w t],{t, 0, Infinity}]]. The sign of
     /// the return value here is positive!.</remarks>
@@ -1372,11 +1465,11 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Series expansion for big x, Feller parametrization. x should be &gt; 0.
     /// </summary>
-    /// <param name="z"></param>
-    /// <param name="alpha"></param>
-    /// <param name="gamma"></param>
-    /// <param name="aga"></param>
-    /// <returns></returns>
+    /// <param name="z">The positive argument.</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <param name="aga">Alternative gamma parameter to improve precision.</param>
+    /// <returns>The probability density value computed by the large-x series expansion.</returns>
     public static double PDFSeriesBigXFeller(double z, double alpha, double gamma, double aga)
     {
       int k = 1;
@@ -1447,6 +1540,14 @@ namespace Altaxo.Calc.Probability
 
     #region Taylor series around alpha=1
 
+    /// <summary>
+    /// Calculates the probability density for the special case alpha == 1.
+    /// </summary>
+    /// <param name="x">The argument.</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <param name="aga">Alternative gamma parameter to improve precision.</param>
+    /// <returns>The probability density value.</returns>
     public static double PDFAlphaEqualOne(double x, double alpha, double gamma, double aga)
     {
       Complex64T expIgPi2;
@@ -1468,6 +1569,14 @@ namespace Altaxo.Calc.Probability
       return term0.Real / Math.PI;
     }
 
+    /// <summary>
+    /// Calculates the probability density using a Taylor expansion around alpha == 1.
+    /// </summary>
+    /// <param name="x">The argument.</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <param name="aga">Alternative gamma parameter to improve precision.</param>
+    /// <returns>The probability density value.</returns>
     public static double PDFTaylorExpansionAroundAlphaOne(double x, double alpha, double gamma, double aga)
     {
       const double EulerGamma = 0.57721566490153286060651209008240243;
@@ -1513,6 +1622,16 @@ namespace Altaxo.Calc.Probability
 
     #region Integration
 
+    /// <summary>
+    /// Calculates the probability density by numerical integration.
+    /// </summary>
+    /// <param name="x">The argument.</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <param name="aga">Alternative gamma parameter to improve precision.</param>
+    /// <param name="temp">Temporary storage reused between calls.</param>
+    /// <param name="precision">Relative precision goal.</param>
+    /// <returns>The probability density value.</returns>
     public static double PDFIntegral(double x, double alpha, double gamma, double aga, ref object? temp, double precision)
     {
       if (alpha < 1)
@@ -1531,13 +1650,13 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Special version of the PDF-Integral for 0.99&gt;=alpha&lt;1.
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="alpha"></param>
-    /// <param name="gamma"></param>
-    /// <param name="aga"></param>
-    /// <param name="temp"></param>
-    /// <param name="precision"></param>
-    /// <returns></returns>
+    /// <param name="x">The argument.</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <param name="aga">Alternative gamma parameter to improve precision.</param>
+    /// <param name="temp">Temporary storage reused between calls.</param>
+    /// <param name="precision">Relative precision goal.</param>
+    /// <returns>The probability density value.</returns>
     public static double PDFIntegralA1(double x, double alpha, double gamma, double aga, ref object? temp, double precision)
     {
       if (gamma < 0)
@@ -1574,6 +1693,17 @@ namespace Altaxo.Calc.Probability
 
     #region Integral Alt1Gn
 
+    /// <summary>
+    /// Calculates integration parameters for the alpha &lt; 1, gamma &lt; 0 branch.
+    /// </summary>
+    /// <param name="x">The argument.</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <param name="aga">Alternative gamma parameter to improve precision.</param>
+    /// <param name="factorp">Receives the powered factor used by the integrand.</param>
+    /// <param name="facdiv">Receives the divisor factor used by the integrand.</param>
+    /// <param name="dev">Receives the integration limit parameter.</param>
+    /// <param name="logPdfPrefactor">Receives the logarithmic prefactor of the density.</param>
     public static void GetAlt1GnParameterByGamma(double x, double alpha, double gamma, double aga,
       out double factorp, out double facdiv, out double dev, out double logPdfPrefactor)
     {
@@ -1600,13 +1730,13 @@ namespace Altaxo.Calc.Probability
     /// Special case for alpha &lt; 1 and gamma near to -alpha (i.e. gamma at the negative border).
     /// Here gamma was set to -alpha*(1-dev*2/Pi).
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="alpha"></param>
-    /// <param name="gamma"></param>
-    /// <param name="aga"></param>
-    /// <param name="temp"></param>
-    /// <param name="precision"></param>
-    /// <returns></returns>
+    /// <param name="x">The argument.</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <param name="aga">Alternative gamma parameter to improve precision.</param>
+    /// <param name="temp">Temporary storage reused between calls.</param>
+    /// <param name="precision">Relative precision goal.</param>
+    /// <returns>The probability density value.</returns>
     public static double PDFIntegralAlt1Gn(double x, double alpha, double gamma, double aga, ref object? temp, double precision)
     {
       GetAlt1GnParameterByGamma(x, alpha, gamma, aga, out var factorp, out var facdiv, out var dev, out var prefactor);
@@ -1633,13 +1763,13 @@ namespace Altaxo.Calc.Probability
     /// Special case for alpha &lt; 1 and gamma near to -alpha (i.e. gamma at the negative border).
     /// Here gamma was set to -alpha*(1-dev*2/Pi).
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="alpha"></param>
-    /// <param name="gamma"></param>
-    /// <param name="aga"></param>
-    /// <param name="temp"></param>
-    /// <param name="precision"></param>
-    /// <returns></returns>
+    /// <param name="x">The argument.</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <param name="aga">Alternative gamma parameter to improve precision.</param>
+    /// <param name="temp">Temporary storage reused between calls.</param>
+    /// <param name="precision">Relative precision goal.</param>
+    /// <returns>The probability density value.</returns>
     public static double PDFIntegralAlt1GnI(double x, double alpha, double gamma, double aga, ref object? temp, double precision)
     {
       GetAlt1GnParameterByGamma(x, alpha, gamma, aga, out var factorp, out var facdiv, out var dev, out var prefactor);
@@ -1653,13 +1783,13 @@ namespace Altaxo.Calc.Probability
     /// Special case for alpha &lt; 1 and gamma near to -alpha (i.e. gamma at the negative border).
     /// Here gamma was set to -alpha*(1-dev*2/Pi). The core function is decreasing.
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="alpha"></param>
-    /// <param name="gamma"></param>
-    /// <param name="aga"></param>
-    /// <param name="temp"></param>
-    /// <param name="precision"></param>
-    /// <returns></returns>
+    /// <param name="x">The argument.</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <param name="aga">Alternative gamma parameter to improve precision.</param>
+    /// <param name="temp">Temporary storage reused between calls.</param>
+    /// <param name="precision">Relative precision goal.</param>
+    /// <returns>The probability density value.</returns>
     public static double PDFIntegralAlt1GnD(double x, double alpha, double gamma, double aga, ref object? temp, double precision)
     {
       GetAlt1GnParameterByGamma(x, alpha, gamma, aga, out var factorp, out var facdiv, out var dev, out var prefactor);
@@ -1672,6 +1802,17 @@ namespace Altaxo.Calc.Probability
 
     #region Integral Alt1Gp
 
+    /// <summary>
+    /// Calculates integration parameters for the alpha &lt; 1, gamma &gt;= 0 branch.
+    /// </summary>
+    /// <param name="x">The argument.</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <param name="aga">Alternative gamma parameter to improve precision.</param>
+    /// <param name="factorp">Receives the powered factor used by the integrand.</param>
+    /// <param name="facdiv">Receives the divisor factor used by the integrand.</param>
+    /// <param name="dev">Receives the integration limit parameter.</param>
+    /// <param name="logPdfPrefactor">Receives the logarithmic prefactor of the density.</param>
     public static void GetAlt1GpParameterByGamma(double x, double alpha, double gamma, double aga,
     out double factorp, out double facdiv, out double dev, out double logPdfPrefactor)
     {
@@ -1698,13 +1839,13 @@ namespace Altaxo.Calc.Probability
     /// Special case for alpha &lt; 1 and gamma near to +alpha (i.e. gamma at the positive border).
     /// Here gamma was set to alpha*(1-dev*2/Pi).
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="alpha"></param>
-    /// <param name="gamma"></param>
-    /// <param name="aga"></param>
-    /// <param name="temp"></param>
-    /// <param name="precision"></param>
-    /// <returns></returns>
+    /// <param name="x">The argument.</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <param name="aga">Alternative gamma parameter to improve precision.</param>
+    /// <param name="temp">Temporary storage reused between calls.</param>
+    /// <param name="precision">Relative precision goal.</param>
+    /// <returns>The probability density value.</returns>
     public static double PDFIntegralAlt1Gp(double x, double alpha, double gamma, double aga, ref object? temp, double precision)
     {
       GetAlt1GpParameterByGamma(x, alpha, gamma, aga, out var factorp, out var facdiv, out var dev, out var prefactor);
@@ -1723,13 +1864,13 @@ namespace Altaxo.Calc.Probability
     /// Special case for alpha &lt; 1 and gamma near to +alpha (i.e. gamma at the positive border).
     /// Here gamma was set to alpha*(1-dev*2/Pi).
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="alpha"></param>
-    /// <param name="gamma"></param>
-    /// <param name="aga"></param>
-    /// <param name="temp"></param>
-    /// <param name="precision"></param>
-    /// <returns></returns>
+    /// <param name="x">The argument.</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <param name="aga">Alternative gamma parameter to improve precision.</param>
+    /// <param name="temp">Temporary storage reused between calls.</param>
+    /// <param name="precision">Relative precision goal.</param>
+    /// <returns>The probability density value.</returns>
     public static double PDFIntegralAlt1GpI(double x, double alpha, double gamma, double aga, ref object? temp, double precision)
     {
       GetAlt1GpParameterByGamma(x, alpha, gamma, aga, out var factorp, out var facdiv, out var dev, out var prefactor);
@@ -1743,13 +1884,13 @@ namespace Altaxo.Calc.Probability
     /// Special case for alpha &lt; 1 and gamma near to +alpha (i.e. gamma at the positive border).
     /// Here gamma was set to alpha*(1-dev*2/Pi).
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="alpha"></param>
-    /// <param name="gamma"></param>
-    /// <param name="aga"></param>
-    /// <param name="temp"></param>
-    /// <param name="precision"></param>
-    /// <returns></returns>
+    /// <param name="x">The argument.</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <param name="aga">Alternative gamma parameter to improve precision.</param>
+    /// <param name="temp">Temporary storage reused between calls.</param>
+    /// <param name="precision">Relative precision goal.</param>
+    /// <returns>The probability density value.</returns>
     public static double PDFIntegralAlt1GpD(double x, double alpha, double gamma, double aga, ref object? temp, double precision)
     {
       GetAlt1GpParameterByGamma(x, alpha, gamma, aga, out var factorp, out var facdiv, out var dev, out var prefactor);
@@ -1763,6 +1904,17 @@ namespace Altaxo.Calc.Probability
 
     #region Integral Agt1Gn
 
+    /// <summary>
+    /// Calculates integration parameters for the alpha &gt; 1 branch.
+    /// </summary>
+    /// <param name="x">The argument.</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <param name="aga">Alternative gamma parameter to improve precision.</param>
+    /// <param name="factorp">Receives the powered factor used by the integrand.</param>
+    /// <param name="factorw">Receives the factor used in the weight function.</param>
+    /// <param name="dev">Receives the integration limit parameter.</param>
+    /// <param name="logPrefactor">Receives the logarithmic prefactor of the density.</param>
     public static void GetAgt1GnParameterByGamma(double x, double alpha, double gamma, double aga,
    out double factorp, out double factorw, out double dev, out double logPrefactor)
     {
@@ -1788,13 +1940,13 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Special case for alpha>1 and gamma near to alpha-2 (i.e. gamma at the negative border).
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="alpha"></param>
-    /// <param name="gamma"></param>
-    /// <param name="aga"></param>
-    /// <param name="temp"></param>
-    /// <param name="precision"></param>
-    /// <returns></returns>
+    /// <param name="x">The argument.</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <param name="aga">Alternative gamma parameter to improve precision.</param>
+    /// <param name="temp">Temporary storage reused between calls.</param>
+    /// <param name="precision">Relative precision goal.</param>
+    /// <returns>The probability density value.</returns>
     public static double PDFIntegralAgt1Gn(double x, double alpha, double gamma, double aga, ref object? temp, double precision)
     {
       GetAgt1GnParameterByGamma(x, alpha, gamma, aga, out var factorp, out var factorw, out var dev, out var prefactor);
@@ -1812,13 +1964,13 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Special case for alpha>1 and gamma near to alpha-2 (i.e. gamma at the negative border).
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="alpha"></param>
-    /// <param name="gamma"></param>
-    /// <param name="aga"></param>
-    /// <param name="temp"></param>
-    /// <param name="precision"></param>
-    /// <returns></returns>
+    /// <param name="x">The argument.</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <param name="aga">Alternative gamma parameter to improve precision.</param>
+    /// <param name="temp">Temporary storage reused between calls.</param>
+    /// <param name="precision">Relative precision goal.</param>
+    /// <returns>The probability density value.</returns>
     public static double PDFIntegralAgt1GnD(double x, double alpha, double gamma, double aga, ref object? temp, double precision)
     {
       GetAgt1GnParameterByGamma(x, alpha, gamma, aga, out var factorp, out var factorw, out var dev, out var prefactor);
@@ -1831,13 +1983,13 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Special case for alpha>1 and gamma near to alpha-2 (i.e. gamma at the negative border).
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="alpha"></param>
-    /// <param name="gamma"></param>
-    /// <param name="aga"></param>
-    /// <param name="temp"></param>
-    /// <param name="precision"></param>
-    /// <returns></returns>
+    /// <param name="x">The argument.</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <param name="aga">Alternative gamma parameter to improve precision.</param>
+    /// <param name="temp">Temporary storage reused between calls.</param>
+    /// <param name="precision">Relative precision goal.</param>
+    /// <returns>The probability density value.</returns>
     public static double PDFIntegralAgt1GnI(double x, double alpha, double gamma, double aga, ref object? temp, double precision)
     {
       GetAgt1GnParameterByGamma(x, alpha, gamma, aga, out var factorp, out var factorw, out var dev, out var prefactor);

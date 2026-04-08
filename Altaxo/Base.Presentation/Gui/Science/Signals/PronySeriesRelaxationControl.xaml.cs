@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Science.Signals
   /// </summary>
   public partial class PronySeriesRelaxationControl : UserControl, IPronySeriesRelaxationView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PronySeriesRelaxationControl"/> class.
+    /// </summary>
     public PronySeriesRelaxationControl()
     {
       InitializeComponent();

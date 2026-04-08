@@ -43,6 +43,10 @@ namespace System.IO.Compression
     private Stream _zipArchiveStream;
     private Stream _deflateStream;
     private UInt32 _crc;
+
+    /// <summary>
+    /// Gets a value indicating whether this instance has been closed or disposed.
+    /// </summary>
     public bool IsClosedDisposed { get; private set; }
 
 
@@ -73,40 +77,50 @@ namespace System.IO.Compression
       _localFileHeader = localFileHeader;
     }
 
+    /// <inheritdoc/>
     public override bool CanRead => false;
 
+    /// <inheritdoc/>
     public override bool CanSeek => false;
 
+    /// <inheritdoc/>
     public override bool CanWrite => _deflateStream.CanWrite;
 
+    /// <inheritdoc/>
     public override long Length => _deflateStream.Length;
 
+    /// <inheritdoc/>
     public override long Position
     {
       get => _bytesWritten;
       set => throw new NotSupportedException();
     }
 
+    /// <inheritdoc/>
     public override void Flush()
     {
       _deflateStream.Flush();
     }
 
+    /// <inheritdoc/>
     public override int Read(byte[] buffer, int offset, int count)
     {
       throw new NotSupportedException();
     }
 
+    /// <inheritdoc/>
     public override long Seek(long offset, SeekOrigin origin)
     {
       throw new NotSupportedException();
     }
 
+    /// <inheritdoc/>
     public override void SetLength(long value)
     {
       throw new NotSupportedException();
     }
 
+    /// <inheritdoc/>
     public override void Write(byte[] buffer, int offset, int count)
     {
       if (IsClosedDisposed)
@@ -117,6 +131,7 @@ namespace System.IO.Compression
       _bytesWritten += count;
     }
 
+    /// <inheritdoc/>
     public override void Close()
     {
       if (IsClosedDisposed)
@@ -128,6 +143,7 @@ namespace System.IO.Compression
       _zipArchiveStream = Stream.Null;
     }
 
+    /// <inheritdoc/>
     protected override void Dispose(bool disposing)
     {
       Close();

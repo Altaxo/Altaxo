@@ -30,6 +30,12 @@ namespace Altaxo.Main
   {
     #region ObserveOnUIThread
 
+    /// <summary>
+    /// Marshals observable notifications onto the UI thread.
+    /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <param name="source">The source observable.</param>
+    /// <returns>An observable that publishes notifications on the UI thread.</returns>
     public static IObservable<T> ObserveOnUIThread<T>(this IObservable<T> source)
     {
       return new UIThreadObservable<T>(source, Altaxo.Current.Dispatcher.SynchronizationContext);
@@ -146,11 +152,17 @@ namespace Altaxo.Main
 
     #region First/Single/Last
 
+    /// <summary>
+    /// Returns the first element of the observable sequence.
+    /// </summary>
     public static Task<T> FirstAsync<T>(this IObservable<T> source, CancellationToken cancellationToken = default(CancellationToken))
     {
       return FirstInternalAsync(source, cancellationToken, true);
     }
 
+    /// <summary>
+    /// Returns the first element of the observable sequence, or the default value when the sequence is empty.
+    /// </summary>
     public static Task<T> FirstOrDefaultAsync<T>(this IObservable<T> source, CancellationToken cancellationToken = default(CancellationToken))
     {
       return FirstInternalAsync(source, cancellationToken, false);
@@ -175,11 +187,17 @@ namespace Altaxo.Main
       }
     }
 
+    /// <summary>
+    /// Returns the single element of the observable sequence.
+    /// </summary>
     public static Task<T> SingleAsync<T>(this IObservable<T> source, CancellationToken cancellationToken = default(CancellationToken))
     {
       return SingleInternalAsync(source, cancellationToken, true);
     }
 
+    /// <summary>
+    /// Returns the single element of the observable sequence, or the default value when the sequence is empty.
+    /// </summary>
     public static Task<T> SingleOrDefaultAsync<T>(this IObservable<T> source, CancellationToken cancellationToken = default(CancellationToken))
     {
       return SingleInternalAsync(source, cancellationToken, false);
@@ -224,11 +242,17 @@ namespace Altaxo.Main
       return value!;
     }
 
+    /// <summary>
+    /// Returns the last element of the observable sequence.
+    /// </summary>
     public static Task<T> LastAsync<T>(this IObservable<T> source, CancellationToken cancellationToken = default(CancellationToken))
     {
       return LastInternalAsync(source, cancellationToken, true);
     }
 
+    /// <summary>
+    /// Returns the last element of the observable sequence, or the default value when the sequence is empty.
+    /// </summary>
     public static Task<T> LastOrDefaultAsync<T>(this IObservable<T> source, CancellationToken cancellationToken = default(CancellationToken))
     {
       return LastInternalAsync(source, cancellationToken, false);
@@ -319,6 +343,15 @@ namespace Altaxo.Main
 
     #region AnonymousObserver
 
+    /// <summary>
+    /// Subscribes using delegates for next, error, and completion notifications.
+    /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <param name="source">The source observable.</param>
+    /// <param name="onNext">The action to invoke for each element.</param>
+    /// <param name="onError">The action to invoke for errors.</param>
+    /// <param name="onCompleted">The action to invoke on completion.</param>
+    /// <returns>The subscription.</returns>
     public static IDisposable Subscribe<T>(this IObservable<T> source, Action<T> onNext, Action<Exception> onError, Action onCompleted)
     {
       return source.Subscribe(new AnonymousObserver<T>(onNext, onError, onCompleted));

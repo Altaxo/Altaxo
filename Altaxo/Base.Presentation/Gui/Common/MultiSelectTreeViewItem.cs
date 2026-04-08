@@ -33,8 +33,14 @@ using System.Windows.Input;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// Tree view item with support for multi-selection behavior.
+  /// </summary>
   public class MultiSelectTreeViewItem : TreeViewItem
   {
+    /// <summary>
+    /// Gets or sets a value indicating whether all child items are selected.
+    /// </summary>
     public bool AreAllChildsSelected
     {
       get { return (bool)GetValue(AreAllChildsSelectedProperty); }
@@ -42,6 +48,9 @@ namespace Altaxo.Gui.Common
     }
 
     // Using a DependencyProperty as the backing store for AreAllChildsSelected.  This enables animation, styling, binding, etc...
+    /// <summary>
+    /// Identifies the <see cref="AreAllChildsSelected"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty AreAllChildsSelectedProperty =
         DependencyProperty.Register("AreAllChildsSelected", typeof(bool), typeof(MultiSelectTreeViewItem), new UIPropertyMetadata(false));
 
@@ -104,16 +113,19 @@ namespace Altaxo.Gui.Common
 
     #region Overrides
 
+    /// <inheritdoc/>
     protected override DependencyObject GetContainerForItemOverride()
     {
       return new MultiSelectTreeViewItem();
     }
 
+    /// <inheritdoc/>
     protected override bool IsItemItsOwnContainerOverride(object item)
     {
       return item is MultiSelectTreeViewItem;
     }
 
+    /// <inheritdoc/>
     protected override void OnMouseDown(MouseButtonEventArgs e)
     {
       base.OnMouseDown(e);
@@ -129,6 +141,7 @@ namespace Altaxo.Gui.Common
 
     private int _timeStampLastMouseUp;
 
+    /// <inheritdoc/>
     protected override void OnMouseUp(MouseButtonEventArgs e)
     {
       base.OnMouseUp(e);
@@ -152,6 +165,7 @@ namespace Altaxo.Gui.Common
       Keyboard.Focus(this); // neccessary because the element needs the keyboard focus in order to position the selection with the keyboard
     }
 
+    /// <inheritdoc/>
     protected override void OnKeyDown(KeyEventArgs e)
     {
       try
@@ -227,6 +241,7 @@ namespace Altaxo.Gui.Common
       catch (Exception) { /* Silently ignore */ }
     }
 
+    /// <inheritdoc/>
     protected override void OnSelected(RoutedEventArgs e)
     {
       var parent = ParentMultiSelectTreeView;
@@ -236,6 +251,7 @@ namespace Altaxo.Gui.Common
       base.OnSelected(e);
     }
 
+    /// <inheritdoc/>
     protected override void OnUnselected(RoutedEventArgs e)
     {
       var parent = ParentMultiSelectTreeView;
@@ -333,11 +349,21 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <summary>
+    /// Selects all child nodes from the specified index to the end.
+    /// </summary>
+    /// <param name="parent">The parent whose child nodes are selected.</param>
+    /// <param name="idx">The start index.</param>
     public static void SelectAllChildNodesBetweenIndexAndEnd(ItemsControl parent, int idx)
     {
       SelectAllChildNodesBetweenIndices(parent, idx, parent.Items.Count - 1);
     }
 
+    /// <summary>
+    /// Selects all child nodes from the beginning to the specified index.
+    /// </summary>
+    /// <param name="parent">The parent whose child nodes are selected.</param>
+    /// <param name="idx">The end index.</param>
     public static void SelectAllChildNodesBetweenStartAndIndex(ItemsControl parent, int idx)
     {
       SelectAllChildNodesBetweenIndices(parent, 0, idx);

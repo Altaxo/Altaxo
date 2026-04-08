@@ -34,8 +34,14 @@ using Altaxo.Gui.Common.Drawing;
 
 namespace Altaxo.Gui.Graph.Gdi.Background
 {
+  /// <summary>
+  /// Connects background-style controls to an <see cref="IBackgroundStyle"/> instance.
+  /// </summary>
   public class BackgroundControlsGlue : FrameworkElement
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BackgroundControlsGlue"/> class.
+    /// </summary>
     public BackgroundControlsGlue()
     {
     }
@@ -44,6 +50,9 @@ namespace Altaxo.Gui.Graph.Gdi.Background
 
     private IBackgroundStyle _doc;
 
+    /// <summary>
+    /// Gets or sets the background style.
+    /// </summary>
     public IBackgroundStyle BackgroundStyle
     {
       get
@@ -64,6 +73,9 @@ namespace Altaxo.Gui.Graph.Gdi.Background
     /// </summary>
     public event EventHandler? BackgroundStyleChanged;
 
+    /// <summary>
+    /// Raises the <see cref="BackgroundStyleChanged"/> event.
+    /// </summary>
     protected virtual void OnBackgroundStyleChanged()
     {
       if (BackgroundStyleChanged is not null)
@@ -77,6 +89,9 @@ namespace Altaxo.Gui.Graph.Gdi.Background
     private System.Type[] _backgroundStyles = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IBackgroundStyle));
     private ComboBox _cbStyle;
 
+    /// <summary>
+    /// Gets or sets the background-style selector.
+    /// </summary>
     public ComboBox CbStyle
     {
       get { return _cbStyle; }
@@ -131,6 +146,9 @@ namespace Altaxo.Gui.Graph.Gdi.Background
     /// </summary>
     public event EventHandler? BackgroundBrushChanged;
 
+    /// <summary>
+    /// Raises the <see cref="BackgroundBrushChanged"/> event.
+    /// </summary>
     protected virtual void OnBackgroundBrushChanged()
     {
       if (BackgroundBrushChanged is not null)
@@ -139,6 +157,9 @@ namespace Altaxo.Gui.Graph.Gdi.Background
 
     private BrushComboBox _cbBrush;
 
+    /// <summary>
+    /// Gets or sets the brush selector.
+    /// </summary>
     public BrushComboBox CbBrush
     {
       get { return _cbBrush; }
@@ -176,6 +197,9 @@ namespace Altaxo.Gui.Graph.Gdi.Background
 
     private Control _lblBrush;
 
+    /// <summary>
+    /// Gets or sets the label associated with the brush selector.
+    /// </summary>
     public Control LabelBrush
     {
       get
@@ -205,6 +229,9 @@ namespace Altaxo.Gui.Graph.Gdi.Background
 
     private bool _showPlotColorsOnly;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether only plot colors are shown.
+    /// </summary>
     public bool ShowPlotColorsOnly
     {
       get { return _showPlotColorsOnly; }

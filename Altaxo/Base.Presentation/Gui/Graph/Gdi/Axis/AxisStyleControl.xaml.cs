@@ -36,6 +36,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
   /// </summary>
   public partial class AxisStyleControl : UserControl, IAxisStyleView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AxisStyleControl"/> class.
+    /// </summary>
     public AxisStyleControl()
     {
       InitializeComponent();

@@ -33,6 +33,9 @@ using System.Linq;
 // ReSharper disable once CheckNamespace
 namespace Altaxo.Calc
 {
+  /// <summary>
+  /// Provides common optimization and benchmarking test functions.
+  /// </summary>
   public static class TestFunctions
   {
     /// <summary>
@@ -44,6 +47,9 @@ namespace Altaxo.Calc
     /// https://en.wikipedia.org/wiki/Rosenbrock_function
     /// http://www.sfu.ca/~ssurjano/rosen.html
     /// </remarks>
+    /// <param name="x">The first coordinate.</param>
+    /// <param name="y">The second coordinate.</param>
+    /// <returns>The Rosenbrock function value.</returns>
     public static double Rosenbrock(double x, double y)
     {
       double a = 1.0 - x;
@@ -59,6 +65,8 @@ namespace Altaxo.Calc
     /// https://en.wikipedia.org/wiki/Rosenbrock_function
     /// http://www.sfu.ca/~ssurjano/rosen.html
     /// </remarks>
+    /// <param name="x">The coordinates.</param>
+    /// <returns>The Rosenbrock function value.</returns>
     public static double Rosenbrock(params double[] x)
     {
       double sum = 0;
@@ -79,6 +87,9 @@ namespace Altaxo.Calc
     /// <remarks>
     /// https://en.wikipedia.org/wiki/Himmelblau%27s_function
     /// </remarks>
+    /// <param name="x">The first coordinate.</param>
+    /// <param name="y">The second coordinate.</param>
+    /// <returns>The Himmelblau function value.</returns>
     public static double Himmelblau(double x, double y)
     {
       double a = x * x + y - 11.0;
@@ -95,6 +106,8 @@ namespace Altaxo.Calc
     /// https://en.wikipedia.org/wiki/Rastrigin_function
     /// http://www.sfu.ca/~ssurjano/rastr.html
     /// </remarks>
+    /// <param name="x">The coordinates.</param>
+    /// <returns>The Rastrigin function value.</returns>
     public static double Rastrigin(params double[] x)
     {
       return x.Sum(xi => xi * xi - 10.0 * Math.Cos(Constants.Pi2 * xi)) + 10.0 * x.Length;
@@ -108,6 +121,9 @@ namespace Altaxo.Calc
     /// <remarks>
     /// http://www.sfu.ca/~ssurjano/drop.html
     /// </remarks>
+    /// <param name="x">The first coordinate.</param>
+    /// <param name="y">The second coordinate.</param>
+    /// <returns>The Drop-Wave function value.</returns>
     public static double DropWave(double x, double y)
     {
       double t = x * x + y * y;
@@ -122,6 +138,8 @@ namespace Altaxo.Calc
     /// <remarks>
     /// http://www.sfu.ca/~ssurjano/ackley.html
     /// </remarks>
+    /// <param name="x">The coordinates.</param>
+    /// <returns>The Ackley function value.</returns>
     public static double Ackley(params double[] x)
     {
       double u = x.Sum(xi => xi * xi) / x.Length;
@@ -137,6 +155,9 @@ namespace Altaxo.Calc
     /// <remarks>
     /// http://www.sfu.ca/~ssurjano/boha.html
     /// </remarks>
+    /// <param name="x">The first coordinate.</param>
+    /// <param name="y">The second coordinate.</param>
+    /// <returns>The first Bohachevsky function value.</returns>
     public static double Bohachevsky1(double x, double y)
     {
       return x * x + 2 * y * y - 0.3 * Math.Cos(3 * Math.PI * x) - 0.4 * Math.Cos(4 * Math.PI * y);
@@ -150,6 +171,9 @@ namespace Altaxo.Calc
     /// <remarks>
     /// http://www.sfu.ca/~ssurjano/matya.html
     /// </remarks>
+    /// <param name="x">The first coordinate.</param>
+    /// <param name="y">The second coordinate.</param>
+    /// <returns>The Matyas function value.</returns>
     public static double Matyas(double x, double y)
     {
       return 0.26 * (x * x + y * y) - 0.48 * x * y;
@@ -163,6 +187,9 @@ namespace Altaxo.Calc
     /// <remarks>
     /// http://www.sfu.ca/~ssurjano/camel6.html
     /// </remarks>
+    /// <param name="x">The first coordinate.</param>
+    /// <param name="y">The second coordinate.</param>
+    /// <returns>The six-hump camel function value.</returns>
     public static double SixHumpCamel(double x, double y)
     {
       double x2 = x * x;

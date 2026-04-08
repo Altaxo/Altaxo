@@ -39,6 +39,7 @@ namespace Altaxo.Gui.Common.Converters
   /// <seealso cref="System.Windows.Data.IValueConverter" />
   public class StringParserConverter : IValueConverter
   {
+    /// <inheritdoc/>
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
       if (value is string resourceIdentifier)
@@ -49,6 +50,7 @@ namespace Altaxo.Gui.Common.Converters
       return value;
     }
 
+    /// <inheritdoc/>
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
       return value;

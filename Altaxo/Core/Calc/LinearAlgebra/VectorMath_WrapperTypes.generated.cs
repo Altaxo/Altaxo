@@ -71,6 +71,12 @@ namespace Altaxo.Calc.LinearAlgebra
 				get { return _value; }
 			}
 
+      /// <summary>
+      /// Returns an enumerator that iterates through the collection.
+      /// </summary>
+      /// <returns>
+      /// An enumerator that can be used to iterate through the collection.
+      /// </returns>
       public IEnumerator<System.Double> GetEnumerator()
       {
         for (int i = 0; i < _length; ++i)
@@ -926,6 +932,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 
+      /// <inheritdoc/>
       public IEnumerator<System.Double> GetEnumerator()
       {
 				yield return _amendedValueAtStart;
@@ -1238,6 +1245,12 @@ namespace Altaxo.Calc.LinearAlgebra
 				get { return _value; }
 			}
 
+      /// <summary>
+      /// Returns an enumerator that iterates through the collection.
+      /// </summary>
+      /// <returns>
+      /// An enumerator that can be used to iterate through the collection.
+      /// </returns>
       public IEnumerator<System.Single> GetEnumerator()
       {
         for (int i = 0; i < _length; ++i)
@@ -2093,6 +2106,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 
+      /// <inheritdoc/>
       public IEnumerator<System.Single> GetEnumerator()
       {
 				yield return _amendedValueAtStart;
@@ -2405,6 +2419,12 @@ namespace Altaxo.Calc.LinearAlgebra
 				get { return _value; }
 			}
 
+      /// <summary>
+      /// Returns an enumerator that iterates through the collection.
+      /// </summary>
+      /// <returns>
+      /// An enumerator that can be used to iterate through the collection.
+      /// </returns>
       public IEnumerator<System.Int32> GetEnumerator()
       {
         for (int i = 0; i < _length; ++i)
@@ -3260,6 +3280,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 
+      /// <inheritdoc/>
       public IEnumerator<System.Int32> GetEnumerator()
       {
 				yield return _amendedValueAtStart;
@@ -3572,6 +3593,12 @@ namespace Altaxo.Calc.LinearAlgebra
 				get { return _value; }
 			}
 
+      /// <summary>
+      /// Returns an enumerator that iterates through the collection.
+      /// </summary>
+      /// <returns>
+      /// An enumerator that can be used to iterate through the collection.
+      /// </returns>
       public IEnumerator<System.Int16> GetEnumerator()
       {
         for (int i = 0; i < _length; ++i)
@@ -4427,6 +4454,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 
+      /// <inheritdoc/>
       public IEnumerator<System.Int16> GetEnumerator()
       {
 				yield return _amendedValueAtStart;
@@ -4739,6 +4767,12 @@ namespace Altaxo.Calc.LinearAlgebra
 				get { return _value; }
 			}
 
+      /// <summary>
+      /// Returns an enumerator that iterates through the collection.
+      /// </summary>
+      /// <returns>
+      /// An enumerator that can be used to iterate through the collection.
+      /// </returns>
       public IEnumerator<System.SByte> GetEnumerator()
       {
         for (int i = 0; i < _length; ++i)
@@ -5594,6 +5628,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 
+      /// <inheritdoc/>
       public IEnumerator<System.SByte> GetEnumerator()
       {
 				yield return _amendedValueAtStart;

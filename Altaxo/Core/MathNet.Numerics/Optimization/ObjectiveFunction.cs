@@ -33,6 +33,9 @@ using Altaxo.Calc.Optimization.ObjectiveFunctions;
 
 namespace Altaxo.Calc.Optimization
 {
+  /// <summary>
+  /// Provides factory methods for objective functions and models.
+  /// </summary>
   public static class ObjectiveFunction
   {
     /// <summary>
@@ -118,6 +121,15 @@ namespace Altaxo.Calc.Optimization
     /// <summary>
     /// objective model with a user supplied jacobian for non-linear least squares regression.
     /// </summary>
+    /// <summary>
+    /// Creates a nonlinear least-squares objective model with a user-supplied Jacobian.
+    /// </summary>
+    /// <param name="function">The model function.</param>
+    /// <param name="derivatives">The Jacobian function.</param>
+    /// <param name="observedX">The observed x-values.</param>
+    /// <param name="observedY">The observed y-values.</param>
+    /// <param name="weight">Optional weights.</param>
+    /// <returns>The objective model.</returns>
     public static IObjectiveModel NonlinearModel(Func<Vector<double>, Vector<double>, Vector<double>> function,
         Func<Vector<double>, Vector<double>, Matrix<double>> derivatives,
         Vector<double> observedX, Vector<double> observedY, Vector<double> weight = null)
@@ -130,6 +142,15 @@ namespace Altaxo.Calc.Optimization
     /// <summary>
     /// Objective model for non-linear least squares regression.
     /// </summary>
+    /// <summary>
+    /// Creates a nonlinear least-squares objective model using a numerical Jacobian.
+    /// </summary>
+    /// <param name="function">The model function.</param>
+    /// <param name="observedX">The observed x-values.</param>
+    /// <param name="observedY">The observed y-values.</param>
+    /// <param name="weight">Optional weights.</param>
+    /// <param name="accuracyOrder">The numerical differentiation accuracy order.</param>
+    /// <returns>The objective model.</returns>
     public static IObjectiveModel NonlinearModel(Func<Vector<double>, Vector<double>, Vector<double>> function,
         Vector<double> observedX, Vector<double> observedY, Vector<double> weight = null,
         int accuracyOrder = 2)
@@ -142,6 +163,15 @@ namespace Altaxo.Calc.Optimization
     /// <summary>
     /// Objective model with a user supplied jacobian for non-linear least squares regression.
     /// </summary>
+    /// <summary>
+    /// Creates a nonlinear least-squares objective model for scalar x-values with a user-supplied Jacobian.
+    /// </summary>
+    /// <param name="function">The model function.</param>
+    /// <param name="derivatives">The Jacobian function.</param>
+    /// <param name="observedX">The observed x-values.</param>
+    /// <param name="observedY">The observed y-values.</param>
+    /// <param name="weight">Optional weights.</param>
+    /// <returns>The objective model.</returns>
     public static IObjectiveModel NonlinearModel(Func<Vector<double>, double, double> function,
         Func<Vector<double>, double, Vector<double>> derivatives,
         Vector<double> observedX, Vector<double> observedY, Vector<double> weight = null)
@@ -176,6 +206,15 @@ namespace Altaxo.Calc.Optimization
     /// <summary>
     /// Objective model for non-linear least squares regression.
     /// </summary>
+    /// <summary>
+    /// Creates a nonlinear least-squares objective model for scalar x-values using a numerical Jacobian.
+    /// </summary>
+    /// <param name="function">The model function.</param>
+    /// <param name="observedX">The observed x-values.</param>
+    /// <param name="observedY">The observed y-values.</param>
+    /// <param name="weight">Optional weights.</param>
+    /// <param name="accuracyOrder">The numerical differentiation accuracy order.</param>
+    /// <returns>The objective model.</returns>
     public static IObjectiveModel NonlinearModel(Func<Vector<double>, double, double> function,
         Vector<double> observedX, Vector<double> observedY, Vector<double> weight = null,
         int accuracyOrder = 2)

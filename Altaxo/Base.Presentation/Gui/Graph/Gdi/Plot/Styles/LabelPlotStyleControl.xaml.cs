@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
   /// </summary>
   public partial class LabelPlotStyleControl : UserControl, ILabelPlotStyleView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LabelPlotStyleControl"/> class.
+    /// </summary>
     public LabelPlotStyleControl()
     {
       InitializeComponent();

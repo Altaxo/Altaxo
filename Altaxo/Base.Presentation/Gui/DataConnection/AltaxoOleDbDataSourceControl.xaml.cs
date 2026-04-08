@@ -36,16 +36,21 @@ namespace Altaxo.Gui.DataConnection
   /// </summary>
   public partial class AltaxoOleDbDataSourceControl : UserControl, IAltaxoOleDbDataSourceView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AltaxoOleDbDataSourceControl"/> class.
+    /// </summary>
     public AltaxoOleDbDataSourceControl()
     {
       InitializeComponent();
     }
 
+    /// <inheritdoc/>
     public void SetQueryView(object viewObject)
     {
       _guiDataQueryHost.Child = viewObject as UIElement;
     }
 
+    /// <inheritdoc/>
     public void SetImportOptionsView(object viewObject)
     {
       _guiImportOptionsHost.Child = viewObject as UIElement;

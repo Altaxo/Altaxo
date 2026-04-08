@@ -5,6 +5,9 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization
 {
+  /// <summary>
+  /// Minimizes nonlinear least-squares objectives with the Levenberg-Marquardt method.
+  /// </summary>
   public class LevenbergMarquardtMinimizer : NonlinearMinimizerBase
   {
     /// <summary>
@@ -12,18 +15,46 @@ namespace Altaxo.Calc.Optimization
     /// </summary>
     public double InitialMu { get; set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LevenbergMarquardtMinimizer"/> class.
+    /// </summary>
+    /// <param name="initialMu">The initial damping factor.</param>
+    /// <param name="gradientTolerance">The stopping threshold for the gradient norm.</param>
+    /// <param name="stepTolerance">The stopping threshold for the parameter step norm.</param>
+    /// <param name="functionTolerance">The stopping threshold for the objective function change.</param>
+    /// <param name="maximumIterations">The maximum number of iterations.</param>
     public LevenbergMarquardtMinimizer(double initialMu = 1E-3, double gradientTolerance = 1E-15, double stepTolerance = 1E-15, double functionTolerance = 1E-15, int maximumIterations = -1)
         : base(gradientTolerance, stepTolerance, functionTolerance, maximumIterations)
     {
       InitialMu = initialMu;
     }
 
+    /// <summary>
+    /// Finds a minimum using vector-based parameter inputs.
+    /// </summary>
+    /// <param name="objective">The objective model.</param>
+    /// <param name="initialGuess">The initial parameter guess.</param>
+    /// <param name="lowerBound">Optional lower parameter bounds.</param>
+    /// <param name="upperBound">Optional upper parameter bounds.</param>
+    /// <param name="scales">Optional parameter scaling factors.</param>
+    /// <param name="isFixed">Optional flags indicating fixed parameters.</param>
+    /// <returns>The nonlinear minimization result.</returns>
     public NonlinearMinimizationResult FindMinimum(IObjectiveModel objective, Vector<double> initialGuess,
         Vector<double> lowerBound = null, Vector<double> upperBound = null, Vector<double> scales = null, List<bool> isFixed = null)
     {
       return Minimum(objective, initialGuess, lowerBound, upperBound, scales, isFixed, InitialMu, GradientTolerance, StepTolerance, FunctionTolerance, MaximumIterations);
     }
 
+    /// <summary>
+    /// Finds a minimum using array-based parameter inputs.
+    /// </summary>
+    /// <param name="objective">The objective model.</param>
+    /// <param name="initialGuess">The initial parameter guess.</param>
+    /// <param name="lowerBound">Optional lower parameter bounds.</param>
+    /// <param name="upperBound">Optional upper parameter bounds.</param>
+    /// <param name="scales">Optional parameter scaling factors.</param>
+    /// <param name="isFixed">Optional flags indicating fixed parameters.</param>
+    /// <returns>The nonlinear minimization result.</returns>
     public NonlinearMinimizationResult FindMinimum(IObjectiveModel objective, double[] initialGuess,
         double[] lowerBound = null, double[] upperBound = null, double[] scales = null, bool[] isFixed = null)
     {

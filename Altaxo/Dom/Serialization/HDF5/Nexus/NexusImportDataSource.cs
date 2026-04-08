@@ -30,6 +30,9 @@ using Altaxo.Data;
 
 namespace Altaxo.Serialization.HDF5.Nexus
 {
+  /// <summary>
+  /// Represents a table data source for importing NeXus files.
+  /// </summary>
   public class NexusImportDataSource : Altaxo.Serialization.FileImportTableDataSourceBase<NexusImportOptions>
   {
     private NexusImportOptions _processOptions;
@@ -44,6 +47,7 @@ namespace Altaxo.Serialization.HDF5.Nexus
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NexusImportDataSource), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (NexusImportDataSource)obj;
@@ -53,6 +57,7 @@ namespace Altaxo.Serialization.HDF5.Nexus
         info.AddArray("ProcessData", s._files.ToArray(), s._files.Count);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (o is NexusImportDataSource s)
@@ -80,8 +85,10 @@ namespace Altaxo.Serialization.HDF5.Nexus
     #endregion Version 0
 
     /// <summary>
-    /// Deserialization constructor
+    /// Initializes a new instance of the <see cref="NexusImportDataSource"/> class during deserialization.
     /// </summary>
+    /// <param name="info">The deserialization info.</param>
+    /// <param name="version">The serialization version.</param>
     protected NexusImportDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     {
       switch (version)
@@ -98,26 +105,42 @@ namespace Altaxo.Serialization.HDF5.Nexus
 
     #region Construction
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NexusImportDataSource"/> class.
+    /// </summary>
+    /// <param name="fileName">The file name to import.</param>
+    /// <param name="options">The import options.</param>
     public NexusImportDataSource(string fileName, NexusImportOptions options)
       : this(new string[] { fileName }, options)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NexusImportDataSource"/> class.
+    /// </summary>
+    /// <param name="fileNames">The file names to import.</param>
+    /// <param name="options">The import options.</param>
     public NexusImportDataSource(IEnumerable<string> fileNames, NexusImportOptions options)
       : base(fileNames)
     {
       _processOptions = options;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NexusImportDataSource"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public NexusImportDataSource(NexusImportDataSource from)
     {
       CopyFrom(from);
     }
 
+    /// <inheritdoc/>
     public override object Clone() => new NexusImportDataSource(this);
 
     #endregion Construction
 
+    /// <inheritdoc/>
     protected override void ImportFromFiles(string[] validFileNames, DataTable destinationTable, IProgressReporter reporter)
     {
       new NexusImporter().Import(validFileNames, destinationTable, _processOptions, attachDataSource: false);
@@ -125,6 +148,9 @@ namespace Altaxo.Serialization.HDF5.Nexus
 
     #region Properties
 
+    /// <summary>
+    /// Gets or sets the processing options.
+    /// </summary>
     public NexusImportOptions ProcessOptions
     {
       get
@@ -139,6 +165,7 @@ namespace Altaxo.Serialization.HDF5.Nexus
 
     #endregion Properties
 
+    /// <inheritdoc/>
     public override (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
       => new NexusImporter().GetFileExtensions();
   }

@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
   /// </summary>
   public partial class SNIP_BaseControl : UserControl, ISNIP_BaseView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SNIP_BaseControl"/> class.
+    /// </summary>
     public SNIP_BaseControl()
     {
       InitializeComponent();

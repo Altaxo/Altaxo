@@ -42,16 +42,60 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
   {
     #region Private Variables
 
-    protected readonly int _accuracyOrder; // the desired accuracy order to evaluate the jacobian by numerical approximaiton.
+    /// <summary>
+    /// The desired accuracy order to evaluate the jacobian by numerical approximaiton.
+    /// </summary>
+    protected readonly int _accuracyOrder;
+
+    /// <summary>
+    /// Coefficients for the model.
+    /// </summary>
     protected Vector<double> _coefficients;
+
+    /// <summary>
+    /// Indicates if the function value has been computed.
+    /// </summary>
     protected bool _hasFunctionValue;
-    protected double _functionValue; // the residual sum of squares, residuals * residuals.
-    protected Vector<double> _residuals; // the weighted error values
+
+    /// <summary>
+    /// The residual sum of squares, residuals * residuals.
+    /// </summary>
+    protected double _functionValue;
+
+    /// <summary>
+    /// The weighted error values.
+    /// </summary>
+    protected Vector<double> _residuals;
+
+    /// <summary>
+    /// Indicates if the jacobian has been computed.
+    /// </summary>
     protected bool _hasJacobianValue;
-    protected Matrix<double> _jacobianValue; // the Jacobian matrix.
-    protected Matrix<double> _jacobianValueTransposed; // the Jacobian matrix, transposed.
-    protected Vector<double> _negativeGradientValue; // the Gradient vector.
-    protected Matrix<double> _hessianValue; // the Hessian matrix.
+
+    /// <summary>
+    /// The Jacobian matrix.
+    /// </summary>
+    protected Matrix<double> _jacobianValue;
+
+    /// <summary>
+    /// The Jacobian matrix, transposed.
+    /// </summary>
+    protected Matrix<double> _jacobianValueTransposed;
+
+    /// <summary>
+    /// The Gradient vector.
+    /// </summary>
+    protected Vector<double> _negativeGradientValue;
+
+    /// <summary>
+    /// The Hessian matrix.
+    /// </summary>
+    protected Matrix<double> _hessianValue;
+
+    // Auxiliary vectors for internal computations
+    /// <summary>
+    /// Temporary function-evaluation vectors used for numerical differentiation.
+    /// </summary>
     protected Vector<double> _f1, _f2, _f3, _f4, _f5, _f6;
 
     #endregion Private Variables
@@ -63,7 +107,10 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
     /// </summary>
     public Matrix<double>? Weights { get; protected set; }
 
-    protected Vector<double>? L; // Weights = LL'
+    /// <summary>
+    /// Gets or sets the Cholesky factorization of the weights = LL'.
+    /// </summary>
+    protected Vector<double>? L;
 
     /// <summary>
     /// Gets whether parameters are fixed or free (by the user).

@@ -18,13 +18,39 @@
 
 namespace Altaxo.Gui.Workbench
 {
+  /// <summary>
+  /// Specifies how scrolling is synchronized between views.
+  /// </summary>
   public enum ScrollSyncOption
   {
+    /// <summary>
+    /// Synchronize vertical scrolling.
+    /// </summary>
     Vertical,
+
+    /// <summary>
+    /// Synchronize horizontal scrolling.
+    /// </summary>
     Horizontal,
+
+    /// <summary>
+    /// Synchronize vertical scrolling to horizontal scrolling.
+    /// </summary>
     VerticalToHorizontal,
+
+    /// <summary>
+    /// Synchronize horizontal scrolling to vertical scrolling.
+    /// </summary>
     HorizontalToVertical,
+
+    /// <summary>
+    /// Synchronize both vertical and horizontal scrolling.
+    /// </summary>
     Both,
+
+    /// <summary>
+    /// Synchronize both directions with axes interchanged.
+    /// </summary>
     BothInterchanged
   }
 }

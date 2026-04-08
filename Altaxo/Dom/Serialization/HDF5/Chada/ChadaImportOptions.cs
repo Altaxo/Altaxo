@@ -25,7 +25,7 @@
 namespace Altaxo.Serialization.HDF5.Chada
 {
   /// <summary>
-  /// Import options for importing Bruker opus files.
+  /// Import options for importing CHADA files.
   /// </summary>
   public record ChadaImportOptions : Main.IImmutable
   {
@@ -36,7 +36,7 @@ namespace Altaxo.Serialization.HDF5.Chada
     public bool UseNeutralColumnName { get; init; } = true;
 
     /// <summary>
-    /// Gets the neutral column name (base). The name is at request extended, e.g. by a number at the end.
+    /// Gets the neutral column name base. The name is extended on request, for example by a number at the end.
     /// </summary>
     public string NeutralColumnName { get; init; } = "Y";
 
@@ -53,6 +53,7 @@ namespace Altaxo.Serialization.HDF5.Chada
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ChadaImportOptions), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ChadaImportOptions)obj;
@@ -61,6 +62,7 @@ namespace Altaxo.Serialization.HDF5.Chada
         info.AddValue("IncludeFilePathAsProperty", s.IncludeFilePathAsProperty);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var useNeutralColumnName = info.GetBoolean("UseNeutralColumnName");

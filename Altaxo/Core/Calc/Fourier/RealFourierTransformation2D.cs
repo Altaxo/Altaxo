@@ -35,14 +35,29 @@ namespace Altaxo.Calc.Fourier
   /// </summary>
   public class RealFourierTransformation2D
   {
+    /// <summary>
+    /// Stores the real part of the source matrix and, after execution, of the transformed result.
+    /// </summary>
     protected IMatrix<double> _realMatrix;
 
+    /// <summary>
+    /// Stores the imaginary part of the transformed result.
+    /// </summary>
     protected IMatrix<double>? _imagMatrix;
 
+    /// <summary>
+    /// Stores the pretreatment actions that are executed immediately before the Fourier transform.
+    /// </summary>
     protected Action<IMatrix<double>>? _pretreatment;
 
+    /// <summary>
+    /// Stores the spacing between source values in column direction, if specified.
+    /// </summary>
     protected double? _columnSpacing;
 
+    /// <summary>
+    /// Stores the spacing between source values in row direction, if specified.
+    /// </summary>
     protected double? _rowSpacing;
 
     // Working members
@@ -146,6 +161,9 @@ namespace Altaxo.Calc.Fourier
 
     #region Output properties
 
+    /// <summary>
+    /// Gets the number of rows in the source matrix.
+    /// </summary>
     public int NumberOfRows
     {
       get
@@ -154,6 +172,9 @@ namespace Altaxo.Calc.Fourier
       }
     }
 
+    /// <summary>
+    /// Gets the number of columns in the source matrix.
+    /// </summary>
     public int NumberOfColumns
     {
       get
@@ -750,6 +771,12 @@ namespace Altaxo.Calc.Fourier
         _numberOfRows = lists[0].Count;
       }
 
+      /// <summary>
+      /// Gets the matrix value at the specified row and column.
+      /// </summary>
+      /// <param name="row">The row index.</param>
+      /// <param name="col">The column index.</param>
+      /// <returns>The value at the specified position.</returns>
       public double this[int row, int col]
       {
         get
@@ -761,11 +788,17 @@ namespace Altaxo.Calc.Fourier
         }
       }
 
+      /// <summary>
+      /// Gets the number of rows.
+      /// </summary>
       public int RowCount
       {
         get { return _numberOfRows; }
       }
 
+      /// <summary>
+      /// Gets the number of columns.
+      /// </summary>
       public int ColumnCount
       {
         get { return _numberOfColumns; }

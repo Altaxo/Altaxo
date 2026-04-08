@@ -58,6 +58,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GeneralizedLogisticDecreasing), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (GeneralizedLogisticDecreasing)obj;
@@ -65,6 +66,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
         info.AddValue("OrderOfBackgroundPolynomial", s._orderOfBackgroundPolynomial);
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var numberOfTerms = info.GetInt32("NumberOfTerms");
@@ -263,6 +265,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       }
     }
 
+    /// <inheritdoc/>
     public IVarianceScaling? DefaultVarianceScaling(int i)
     {
       return null;

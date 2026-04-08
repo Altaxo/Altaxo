@@ -39,9 +39,19 @@
 #nullable disable
 namespace Poly2Tri
 {
+  /// <summary>
+  /// Represents a constraint that forces a triangle edge between two points.
+  /// </summary>
   public class TriangulationConstraint
   {
+    /// <summary>
+    /// The first constrained point.
+    /// </summary>
     public TriangulationPoint P;
+
+    /// <summary>
+    /// The second constrained point.
+    /// </summary>
     public TriangulationPoint Q;
   }
 }

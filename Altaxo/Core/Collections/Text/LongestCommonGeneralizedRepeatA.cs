@@ -173,8 +173,14 @@ namespace Altaxo.Collections.Text
     #endregion internal types
 
     // intermediate data neccessary for the algorithm
+    /// <summary>
+    /// Stores the linked list used by the algorithm.
+    /// </summary>
     protected LinkedObjectList _ddlList;
 
+    /// <summary>
+    /// Stores the last longest-common-prefix values.
+    /// </summary>
     protected int[]? _lastLcp;
 
     // intermediate data neccessary for the algorithm
@@ -449,7 +455,7 @@ namespace Altaxo.Collections.Text
     /// <summary>To understand the principles of this algorithm see the paper by Michael Arnold and Enno Ohlebusch given in the remarks of the class description (<see cref="LongestCommonGeneralizedRepeatA"/>).</summary>
     /// <param name="lcp_i">The lcp_i.</param>
     /// <param name="index">The index.</param>
-    /// <param name="clean"></param>
+    /// <param name="clean">If set to <see langword="true"/>, only clean intervals are merged while updating.</param>
     private void lcp_update(int lcp_i, int index, bool clean)
     {
       var L = _ddlList.L;

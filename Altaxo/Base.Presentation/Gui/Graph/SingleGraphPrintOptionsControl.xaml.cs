@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph
   /// </summary>
   public partial class SingleGraphPrintOptionsControl : UserControl, ISingleGraphPrintOptionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SingleGraphPrintOptionsControl"/> class.
+    /// </summary>
     public SingleGraphPrintOptionsControl()
     {
       InitializeComponent();

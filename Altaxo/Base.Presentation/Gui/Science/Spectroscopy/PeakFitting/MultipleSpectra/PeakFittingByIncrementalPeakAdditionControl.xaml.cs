@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting.MultipleSpectra
   /// </summary>
   public partial class PeakFittingOfMultipleSpectraByIncrementalPeakAdditionControl : UserControl, IPeakFittingOfMultipleSpectraByIncrementalPeakAdditionView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PeakFittingOfMultipleSpectraByIncrementalPeakAdditionControl"/> class.
+    /// </summary>
     public PeakFittingOfMultipleSpectraByIncrementalPeakAdditionControl()
     {
       InitializeComponent();

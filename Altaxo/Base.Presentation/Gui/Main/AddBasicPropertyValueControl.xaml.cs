@@ -44,11 +44,17 @@ namespace Altaxo.Gui.Main
   /// </summary>
   public partial class AddBasicPropertyValueControl : UserControl, IAddBasicPropertyValueView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AddBasicPropertyValueControl"/> class.
+    /// </summary>
     public AddBasicPropertyValueControl()
     {
       InitializeComponent();
     }
 
+    /// <summary>
+    /// Gets or sets the property name.
+    /// </summary>
     public string PropertyName
     {
       get
@@ -62,6 +68,9 @@ namespace Altaxo.Gui.Main
       }
     }
 
+    /// <summary>
+    /// Gets or sets the available property types.
+    /// </summary>
     public SelectableListNodeList PropertyTypes
     {
       set
@@ -78,6 +87,9 @@ namespace Altaxo.Gui.Main
       _guiPropertyValueAsDateTime.Visibility = Visibility.Collapsed;
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the date-time editor is shown.
+    /// </summary>
     public bool ShowValueAsDateTime
     {
       set
@@ -90,6 +102,9 @@ namespace Altaxo.Gui.Main
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the floating-point editor is shown.
+    /// </summary>
     public bool ShowValueAsDouble
     {
       set
@@ -102,6 +117,9 @@ namespace Altaxo.Gui.Main
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the integer editor is shown.
+    /// </summary>
     public bool ShowValueAsInt
     {
       set
@@ -114,6 +132,9 @@ namespace Altaxo.Gui.Main
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the string editor is shown.
+    /// </summary>
     public bool ShowValueAsString
     {
       set
@@ -126,6 +147,9 @@ namespace Altaxo.Gui.Main
       }
     }
 
+    /// <summary>
+    /// Gets or sets the date-time value.
+    /// </summary>
     public DateTime ValueAsDateTime
     {
       get
@@ -139,6 +163,9 @@ namespace Altaxo.Gui.Main
       }
     }
 
+    /// <summary>
+    /// Gets or sets the floating-point value.
+    /// </summary>
     public double ValueAsDouble
     {
       get
@@ -152,6 +179,9 @@ namespace Altaxo.Gui.Main
       }
     }
 
+    /// <summary>
+    /// Gets or sets the integer value.
+    /// </summary>
     public int ValueAsInt
     {
       get
@@ -165,6 +195,9 @@ namespace Altaxo.Gui.Main
       }
     }
 
+    /// <summary>
+    /// Gets or sets the string value.
+    /// </summary>
     public string ValueAsString
     {
       get
@@ -178,6 +211,9 @@ namespace Altaxo.Gui.Main
       }
     }
 
+    /// <summary>
+    /// Occurs when the selected property type changes.
+    /// </summary>
     public event Action? PropertyTypeChanged;
 
     private void EhPropertyTypeChanged(object sender, SelectionChangedEventArgs e)

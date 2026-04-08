@@ -31,74 +31,113 @@ using Altaxo.Data;
 
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
+  /// <summary>
+  /// Shows the selected project browser list item.
+  /// </summary>
   public class CmdListItemShow : ProjectBrowseControllerCommand
   {
+    /// <inheritdoc/>
     protected override void Run(ProjectBrowseController ctrl)
     {
       ctrl.ShowSelectedListItem();
     }
   }
 
+  /// <summary>
+  /// Hides the selected project browser list items.
+  /// </summary>
   public class CmdListItemHide : ProjectBrowseControllerCommand
   {
+    /// <inheritdoc/>
     protected override void Run(ProjectBrowseController ctrl)
     {
       ctrl.HideSelectedListItems();
     }
   }
 
+  /// <summary>
+  /// Deletes the selected project browser list items.
+  /// </summary>
   public class CmdListItemDelete : ProjectBrowseControllerCommand
   {
+    /// <inheritdoc/>
     protected override void Run(ProjectBrowseController ctrl)
     {
       ctrl.DeleteSelectedListItems();
     }
   }
 
+  /// <summary>
+  /// Moves the selected project browser list items.
+  /// </summary>
   public class CmdListItemMoveTo : ProjectBrowseControllerCommand
   {
+    /// <inheritdoc/>
     protected override void Run(ProjectBrowseController ctrl)
     {
       ctrl.MoveSelectedListItems();
     }
   }
 
+  /// <summary>
+  /// Copies the selected project browser list items to another folder.
+  /// </summary>
   public class CmdListItemCopyTo : ProjectBrowseControllerCommand
   {
+    /// <inheritdoc/>
     protected override void Run(ProjectBrowseController ctrl)
     {
       ctrl.CopySelectedListItemsToFolder();
     }
   }
 
+  /// <summary>
+  /// Copies the selected project browser list items to multiple folders.
+  /// </summary>
   public class CmdListItemCopyToMultipleFolders : ProjectBrowseControllerCommand
   {
+    /// <inheritdoc/>
     protected override void Run(ProjectBrowseController ctrl)
     {
       ctrl.CopySelectedListItemsToMultipleFolders();
     }
   }
 
+  /// <summary>
+  /// Copies the selected project browser list items to the clipboard.
+  /// </summary>
   public class CmdListItemClipboardCopy : ProjectBrowseControllerCommand
   {
+    /// <inheritdoc/>
     protected override void Run(ProjectBrowseController ctrl)
     {
       ctrl.CopySelectedListItemsToClipboard();
     }
   }
 
+  /// <summary>
+  /// Renames the selected project browser list item.
+  /// </summary>
   public class CmdListItemRename : ProjectBrowseControllerCommand
   {
+    /// <inheritdoc/>
     protected override void Run(ProjectBrowseController ctrl)
     {
       ctrl.RenameSelectedListItem();
     }
   }
 
+  /// <summary>
+  /// Disables the action executed when selecting a list item.
+  /// </summary>
   public class CmdViewOnSelectListNodeOff : ProjectBrowseControllerCommand, ICheckableMenuCommand
   {
+    /// <summary>
+    /// Occurs when the checked state changes.
+    /// </summary>
     public event EventHandler IsCheckedChanged;
 
+    /// <inheritdoc/>
     protected override void Run(ProjectBrowseController ctrl)
     {
       ctrl.ViewOnSelectListNodeOn = false;
@@ -108,6 +147,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     #region ICheckableMenuCommand Members
 
+    /// <inheritdoc/>
     public bool IsChecked(object parameter)
     {
       return ((ProjectBrowseController)parameter).ViewOnSelectListNodeOn;
@@ -117,6 +157,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     #region IMenuCommand Members
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the command is enabled.
+    /// </summary>
     public bool IsEnabled
     {
       get
@@ -133,10 +176,17 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     #endregion IMenuCommand Members
   }
 
+  /// <summary>
+  /// Enables the action executed when selecting a list item.
+  /// </summary>
   public class CmdViewOnSelectListNodeOn : ProjectBrowseControllerCommand, ICheckableMenuCommand
   {
+    /// <summary>
+    /// Occurs when the checked state changes.
+    /// </summary>
     public event EventHandler IsCheckedChanged;
 
+    /// <inheritdoc/>
     protected override void Run(ProjectBrowseController ctrl)
     {
       ctrl.ViewOnSelectListNodeOn = true;
@@ -146,6 +196,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     #region ICheckableMenuCommand Members
 
+    /// <inheritdoc/>
     public bool IsChecked(object parameter)
     {
       return ((ProjectBrowseController)parameter).ViewOnSelectListNodeOn;
@@ -155,6 +206,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     #region IMenuCommand Members
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the command is enabled.
+    /// </summary>
     public bool IsEnabled
     {
       get
@@ -171,80 +225,120 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     #endregion IMenuCommand Members
   }
 
+  /// <summary>
+  /// Creates a new empty worksheet.
+  /// </summary>
   public class CmdNewEmptyWorksheet : ProjectBrowseControllerCommand
   {
+    /// <inheritdoc/>
     protected override void Run(ProjectBrowseController ctrl)
     {
       ctrl.CreateNewEmptyWorksheet();
     }
   }
 
+  /// <summary>
+  /// Creates a new standard worksheet.
+  /// </summary>
   public class CmdNewStandardWorksheet : ProjectBrowseControllerCommand
   {
+    /// <inheritdoc/>
     protected override void Run(ProjectBrowseController ctrl)
     {
       ctrl.CreateNewStandardWorksheet();
     }
   }
 
+  /// <summary>
+  /// Creates a new graph.
+  /// </summary>
   public class CmdNewGraph : ProjectBrowseControllerCommand
   {
+    /// <inheritdoc/>
     protected override void Run(ProjectBrowseController ctrl)
     {
       ctrl.CreateNewGraph();
     }
   }
 
+  /// <summary>
+  /// Creates a new property bag.
+  /// </summary>
   public class CmdNewPropertyBag : ProjectBrowseControllerCommand
   {
+    /// <inheritdoc/>
     protected override void Run(ProjectBrowseController ctrl)
     {
       ctrl.CreateNewPropertyBag();
     }
   }
 
+  /// <summary>
+  /// Creates a new text document.
+  /// </summary>
   public class CmdNewTextDocument : ProjectBrowseControllerCommand
   {
+    /// <inheritdoc/>
     protected override void Run(ProjectBrowseController ctrl)
     {
       ctrl.CreateNewTextDocument();
     }
   }
 
+  /// <summary>
+  /// Creates a new folder text document.
+  /// </summary>
   public class CmdNewFolderTextDocument : ProjectBrowseControllerCommand
   {
+    /// <inheritdoc/>
     protected override void Run(ProjectBrowseController ctrl)
     {
       ctrl.CreateNewFolderTextDocument();
     }
   }
 
+  /// <summary>
+  /// Plots common columns of the selected tables.
+  /// </summary>
   public class CmdPlotCommonColumns : ProjectBrowseControllerCommand
   {
+    /// <inheritdoc/>
     protected override void Run(ProjectBrowseController ctrl)
     {
       ctrl.PlotCommonColumns();
     }
   }
 
+  /// <summary>
+  /// Extracts common columns of the selected tables.
+  /// </summary>
   public class CmdExtractCommonColumns : ProjectBrowseControllerCommand
   {
+    /// <inheritdoc/>
     protected override void Run(ProjectBrowseController ctrl)
     {
       ctrl.ExtractCommonColumns();
     }
   }
 
+  /// <summary>
+  /// Executes all data sources of the selected tables.
+  /// </summary>
   public class CmdExecuteAllDataSources : ProjectBrowseControllerCommand
   {
+    /// <inheritdoc/>
     protected override void Run(ProjectBrowseController ctrl)
     {
       Current.Gui.ExecuteAsUserCancellable(1000, ctrl.ExecuteAllDataSources);
     }
   }
 
+  /// <summary>
+  /// Opens the dialog for clearing selected data tables.
+  /// </summary>
   public class CmdClearDataTablesShowDialog : ProjectBrowseControllerCommand
   {
+    /// <inheritdoc/>
     protected override void Run(ProjectBrowseController ctrl)
     {
       object optionsO = new DataTableCleaningOptions();
@@ -260,8 +354,12 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     }
   }
 
+  /// <summary>
+  /// Opens the multi-rename dialog for the selected items.
+  /// </summary>
   public class CmdMultiRenameItems : ProjectBrowseControllerCommand
   {
+    /// <inheritdoc/>
     protected override void Run(ProjectBrowseController ctrl)
     {
       var list = ctrl.GetSelectedListItems();
@@ -269,8 +367,12 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     }
   }
 
+  /// <summary>
+  /// Exports the selected graphs.
+  /// </summary>
   public class CmdMultiExportGraphs : ProjectBrowseControllerCommand
   {
+    /// <inheritdoc/>
     protected override void Run(ProjectBrowseController ctrl)
     {
       var list = ctrl.GetSelectedListItems().OfType<Altaxo.Graph.GraphDocumentBase>();
@@ -285,8 +387,12 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     }
   }
 
+  /// <summary>
+  /// Exports the selected graphs as mini projects.
+  /// </summary>
   public class CmdMultiExportGraphsAsMiniProject : ProjectBrowseControllerCommand
   {
+    /// <inheritdoc/>
     protected override void Run(ProjectBrowseController ctrl)
     {
       var list = ctrl.GetSelectedListItems().OfType<Altaxo.Graph.GraphDocumentBase>();
@@ -301,8 +407,12 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     }
   }
 
+  /// <summary>
+  /// Imports data into the selected tables.
+  /// </summary>
   public class CmdMultiImportTables : ProjectBrowseControllerCommand
   {
+    /// <inheritdoc/>
     protected override void Run(ProjectBrowseController ctrl)
     {
       var list = ctrl.GetSelectedListItems().OfType<Altaxo.Data.DataTable>();
@@ -315,11 +425,12 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     }
   }
 
-  /// 	/// <summary>
+  /// <summary>
   /// This command will rescale all axes in all layers of all selected graph documents.
   /// </summary>
   public class CmdMultiRescaleGraphs : ProjectBrowseControllerCommand
   {
+    /// <inheritdoc/>
     protected override void Run(ProjectBrowseController ctrl)
     {
       var list = ctrl.GetSelectedListItems().OfType<Altaxo.Graph.GraphDocumentBase>();
@@ -361,11 +472,12 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     }
   }
 
-  /// 	/// <summary>
+  /// <summary>
   /// This command will rescale all axes in all layers of all selected graph documents.
   /// </summary>
   public class CmdMultiResizeGraphs : ProjectBrowseControllerCommand
   {
+    /// <inheritdoc/>
     protected override void Run(ProjectBrowseController ctrl)
     {
       var list = ctrl.GetSelectedListItems().OfType<Altaxo.Graph.Gdi.GraphDocument>();
@@ -384,8 +496,12 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     }
   }
 
+  /// <summary>
+  /// Exchanges tables of plot items in the selected graphs.
+  /// </summary>
   public class CmdExchangeTablesForPlotItems : ProjectBrowseControllerCommand
   {
+    /// <inheritdoc/>
     protected override void Run(ProjectBrowseController ctrl)
     {
       var list = ctrl.GetSelectedListItems().OfType<Altaxo.Graph.Gdi.GraphDocument>();

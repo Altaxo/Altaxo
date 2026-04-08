@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph
   /// </summary>
   public partial class GridPartitioningControl : UserControl, IGridPartitioningView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GridPartitioningControl"/> class.
+    /// </summary>
     public GridPartitioningControl()
     {
       InitializeComponent();

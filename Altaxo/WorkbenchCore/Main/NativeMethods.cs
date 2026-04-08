@@ -33,25 +33,50 @@ namespace Altaxo.Main
     private static readonly IntPtr FALSE = new IntPtr(0);
     private static readonly IntPtr TRUE = new IntPtr(1);
 
+    /// <summary>
+    /// Windows message that enables or disables redrawing.
+    /// </summary>
     public const int WM_SETREDRAW = 0x00B;
+
+    /// <summary>
+    /// Base value for user-defined Windows messages.
+    /// </summary>
     public const int WM_USER = 0x400;
 
+    /// <summary>
+    /// Sends a message to the specified window.
+    /// </summary>
     [DllImport("user32.dll")]
     public static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
 
+    /// <summary>
+    /// Brings the specified window to the foreground.
+    /// </summary>
     [DllImport("user32.dll")]
     public static extern IntPtr SetForegroundWindow(IntPtr hWnd);
 
+    /// <summary>
+    /// Closes an open object handle.
+    /// </summary>
     [DllImport("kernel32", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static extern bool CloseHandle(IntPtr hObject);
 
+    /// <summary>
+    /// Gets a pseudo handle for the current process.
+    /// </summary>
     [DllImport("kernel32.dll")]
     public static extern IntPtr GetCurrentProcess();
 
+    /// <summary>
+    /// Duplicates an object handle.
+    /// </summary>
     [DllImport("kernel32.dll", BestFitMapping = false, CharSet = CharSet.Ansi)]
     public static extern bool DuplicateHandle(HandleRef hSourceProcessHandle, SafeHandle hSourceHandle, HandleRef hTargetProcess, out SafeWaitHandle targetHandle, int dwDesiredAccess, bool bInheritHandle, int dwOptions);
 
+    /// <summary>
+    /// Flag indicating that the duplicated handle keeps the same access rights.
+    /// </summary>
     public const int DUPLICATE_SAME_ACCESS = 2;
 
     #region SHFileOperation
@@ -112,6 +137,10 @@ namespace Altaxo.Main
     [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
     private static extern int SHFileOperation([In] ref SHFILEOPSTRUCT lpFileOp);
 
+    /// <summary>
+    /// Moves the specified file or directory to the recycle bin.
+    /// </summary>
+    /// <param name="fileName">The file or directory to delete.</param>
     public static void DeleteToRecycleBin(string fileName)
     {
       if (!File.Exists(fileName) && !Directory.Exists(fileName))
@@ -175,6 +204,9 @@ namespace Altaxo.Main
     [DllImport("kernel32.dll")]
     private static extern int GetOEMCP();
 
+    /// <summary>
+    /// Gets the OEM encoding reported by Windows.
+    /// </summary>
     public static Encoding OemEncoding
     {
       get

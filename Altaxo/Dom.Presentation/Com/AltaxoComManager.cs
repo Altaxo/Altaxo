@@ -36,6 +36,9 @@ namespace Altaxo.Com
   /// <seealso cref="Altaxo.Com.ComManager" />
   public class AltaxoComManager : ComManager
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AltaxoComManager"/> class.
+    /// </summary>
     public AltaxoComManager()
       : base(new Altaxo.Com.AltaxoComApplicationAdapter())
     {

@@ -68,6 +68,9 @@ namespace Altaxo.Gui.Common.Drawing
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinearGradientShapeComboBox"/> class.
+    /// </summary>
     public LinearGradientShapeComboBox()
     {
       InitializeComponent();
@@ -91,12 +94,18 @@ namespace Altaxo.Gui.Common.Drawing
 
     private const string _nameOfValueProp = "LinearGradientShape";
 
+    /// <summary>
+    /// Gets or sets the selected linear gradient shape.
+    /// </summary>
     public LinearGradientShape LinearGradientShape
     {
       get { return (LinearGradientShape)GetValue(LinearGradientShapeProperty); }
       set { SetValue(LinearGradientShapeProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="LinearGradientShape"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty LinearGradientShapeProperty =
         DependencyProperty.Register(_nameOfValueProp, typeof(LinearGradientShape), typeof(LinearGradientShapeComboBox),
         new FrameworkPropertyMetadata(LinearGradientShape.Linear, OnLinearGradientShapeChanged));
@@ -108,16 +117,23 @@ namespace Altaxo.Gui.Common.Drawing
 
     #endregion Dependency property
 
+    /// <summary>
+    /// Handles changes of the selected gradient shape.
+    /// </summary>
+    /// <param name="obj">The dependency object whose gradient shape changed.</param>
+    /// <param name="args">The event arguments.</param>
     protected virtual void EhLinearGradientShapeChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
     }
 
+    /// <inheritdoc/>
     public override string GetItemText(object item)
     {
       var val = (LinearGradientShape)item;
       return val.ToString();
     }
 
+    /// <inheritdoc/>
     public override ImageSource GetItemImage(object item)
     {
       var val = (LinearGradientShape)item;
@@ -126,6 +142,11 @@ namespace Altaxo.Gui.Common.Drawing
       return result;
     }
 
+    /// <summary>
+    /// Creates an image that represents the specified <see cref="LinearGradientShape"/>.
+    /// </summary>
+    /// <param name="val">The gradient shape to visualize.</param>
+    /// <returns>An image representing <paramref name="val"/>.</returns>
     public static DrawingImage GetImage(LinearGradientShape val)
     {
       double height = 1;

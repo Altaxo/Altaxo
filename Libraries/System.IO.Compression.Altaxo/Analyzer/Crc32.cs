@@ -99,6 +99,14 @@ namespace System.IO.Compression
             0x2D02EF8D
         };
 
+    /// <summary>
+    /// Updates a CRC-32 checksum with the specified range of bytes.
+    /// </summary>
+    /// <param name="checksum">The initial checksum value.</param>
+    /// <param name="buffer">The buffer that contains the data.</param>
+    /// <param name="offset">The zero-based offset at which to start reading from <paramref name="buffer"/>.</param>
+    /// <param name="count">The number of bytes to include in the checksum update.</param>
+    /// <returns>The updated CRC-32 checksum.</returns>
     public static UInt32 UpdateChecksum(UInt32 checksum, byte[] buffer, int offset, int count)
     {
       checksum ^= 0xFFFFFFFF;
@@ -110,6 +118,12 @@ namespace System.IO.Compression
       return checksum ^ 0xFFFFFFFF;
     }
 
+    /// <summary>
+    /// Updates a CRC-32 checksum with a single byte.
+    /// </summary>
+    /// <param name="checksum">The initial checksum value.</param>
+    /// <param name="item">The byte to include in the checksum update.</param>
+    /// <returns>The updated CRC-32 checksum.</returns>
     public static UInt32 UpdateChecksum(UInt32 checksum, byte item)
     {
       checksum ^= 0xFFFFFFFF;
@@ -117,6 +131,12 @@ namespace System.IO.Compression
       return checksum ^ 0xFFFFFFFF;
     }
 
+    /// <summary>
+    /// Updates an inverse CRC-32 checksum with a single byte.
+    /// </summary>
+    /// <param name="inverseChecksum">The initial inverse checksum value.</param>
+    /// <param name="item">The byte to include in the inverse checksum update.</param>
+    /// <returns>The updated inverse CRC-32 checksum.</returns>
     public static UInt32 UpdateInverseChecksum(UInt32 inverseChecksum, byte item)
     {
       return (crcTable[(inverseChecksum ^ item) & 0xFF] ^ (inverseChecksum >> 8));

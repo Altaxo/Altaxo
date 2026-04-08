@@ -155,11 +155,25 @@ namespace Altaxo.Main
         list.Add(o);
     }
 
+    /// <summary>
+    /// Wraps the list in a read-only collection.
+    /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <param name="arr">The list to wrap.</param>
+    /// <returns>A read-only view of <paramref name="arr"/>.</returns>
     public static ReadOnlyCollection<T> AsReadOnly<T>(this IList<T> arr)
     {
       return new ReadOnlyCollection<T>(arr);
     }
 
+    /// <summary>
+    /// Gets the value for the specified key or the default value when the key is absent.
+    /// </summary>
+    /// <typeparam name="K">The key type.</typeparam>
+    /// <typeparam name="V">The value type.</typeparam>
+    /// <param name="dict">The dictionary to query.</param>
+    /// <param name="key">The key to look up.</param>
+    /// <returns>The stored value, or the default value of <typeparamref name="V"/> when the key is missing.</returns>
     [return: MaybeNull]
     public static V GetOrDefault<K, V>(this IReadOnlyDictionary<K, V> dict, K key) where K : notnull
     {
@@ -277,6 +291,14 @@ namespace Altaxo.Main
       return result;
     }
 
+    /// <summary>
+    /// Returns distinct elements by comparing a projected key.
+    /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <typeparam name="K">The key type.</typeparam>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="keySelector">The key selector.</param>
+    /// <returns>A sequence containing only the first element for each key.</returns>
     public static IEnumerable<T> DistinctBy<T, K>(this IEnumerable<T> source, Func<T, K> keySelector) where K : IEquatable<K>
     {
       // Don't just use .Distinct(KeyComparer.Create(keySelector)) - that would evaluate the keySelector multiple times.
@@ -411,6 +433,12 @@ namespace Altaxo.Main
         list.Add(itemToAdd);
     }
 
+    /// <summary>
+    /// Removes all items that match the specified predicate.
+    /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <param name="list">The list to modify.</param>
+    /// <param name="condition">The predicate used to decide which items to remove.</param>
     public static void RemoveAll<T>(this IList<T> list, Predicate<T> condition)
     {
       if (list is null)
@@ -535,6 +563,14 @@ namespace Altaxo.Main
       return b.ToString();
     }
 
+    /// <summary>
+    /// Replaces all occurrences of a pattern using the specified string comparison.
+    /// </summary>
+    /// <param name="original">The source string.</param>
+    /// <param name="pattern">The pattern to replace.</param>
+    /// <param name="replacement">The replacement text.</param>
+    /// <param name="comparisonType">The comparison type to use.</param>
+    /// <returns>The resulting string.</returns>
     public static string Replace(this string original, string pattern, string replacement, StringComparison comparisonType)
     {
       if (original is null)
@@ -564,6 +600,12 @@ namespace Altaxo.Main
       return result.ToString();
     }
 
+    /// <summary>
+    /// Encodes the specified text and prefixes it with the encoding preamble when present.
+    /// </summary>
+    /// <param name="encoding">The encoding to use.</param>
+    /// <param name="text">The text to encode.</param>
+    /// <returns>The encoded bytes, including the preamble when available.</returns>
     public static byte[] GetBytesWithPreamble(this Encoding encoding, string text)
     {
       byte[] encodedText = encoding.GetBytes(text);
@@ -581,6 +623,14 @@ namespace Altaxo.Main
       }
     }
 
+    /// <summary>
+    /// Finds the earliest occurrence of any candidate string.
+    /// </summary>
+    /// <param name="haystack">The string to search.</param>
+    /// <param name="needles">The candidate strings.</param>
+    /// <param name="startIndex">The start index for the search.</param>
+    /// <param name="matchLength">Receives the length of the matched string.</param>
+    /// <returns>The index of the first match, or <c>-1</c> when no match exists.</returns>
     public static int IndexOfAny(this string haystack, IEnumerable<string> needles, int startIndex, out int matchLength)
     {
       if (haystack is null)
@@ -601,6 +651,14 @@ namespace Altaxo.Main
       return index;
     }
 
+    /// <summary>
+    /// Determines whether the string contains any of the candidate strings.
+    /// </summary>
+    /// <param name="haystack">The string to search.</param>
+    /// <param name="needles">The candidate strings.</param>
+    /// <param name="startIndex">The start index for the search.</param>
+    /// <param name="match">Receives the matching string.</param>
+    /// <returns><see langword="true"/> if a match was found; otherwise, <see langword="false"/>.</returns>
     public static bool ContainsAny(this string haystack, IEnumerable<string> needles, int startIndex, [MaybeNullWhen(false)] out string match)
     {
       if (haystack is null)
@@ -641,6 +699,12 @@ namespace Altaxo.Main
       }
     }
 
+    /// <summary>
+    /// Asynchronously copies all text from a reader to a writer.
+    /// </summary>
+    /// <param name="reader">The source reader.</param>
+    /// <param name="writer">The target writer.</param>
+    /// <returns>A task that completes when the copy operation finishes.</returns>
     public static async Task CopyToAsync(this TextReader reader, TextWriter writer)
     {
       char[] buffer = new char[2048];

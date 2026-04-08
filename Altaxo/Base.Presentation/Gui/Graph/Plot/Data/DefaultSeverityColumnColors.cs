@@ -30,14 +30,31 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Graph.Plot.Data
 {
+  /// <summary>
+  /// Provides default colors for different severity levels.
+  /// </summary>
   public static class DefaultSeverityColumnColors
   {
+    /// <summary>
+    /// Gets or sets the brush used for normal severity.
+    /// </summary>
     public static Brush NormalColor { get; set; } = Brushes.White;
 
+    /// <summary>
+    /// Gets or sets the brush used for warning severity.
+    /// </summary>
     public static Brush WarningColor { get; set; } = Brushes.Yellow;
 
+    /// <summary>
+    /// Gets or sets the brush used for error severity.
+    /// </summary>
     public static Brush ErrorColor { get; set; } = Brushes.LightPink;
 
+    /// <summary>
+    /// Gets the brush for the specified severity.
+    /// </summary>
+    /// <param name="severity">The severity level.</param>
+    /// <returns>The corresponding brush.</returns>
     public static Brush GetSeverityColor(int severity)
     {
       switch (severity)

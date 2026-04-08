@@ -43,6 +43,10 @@ namespace Altaxo.Gui
   [MarkupExtensionReturnType(typeof(string))]
   public sealed class LocalizeExtension : LanguageDependentExtension
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LocalizeExtension"/> class.
+    /// </summary>
+    /// <param name="key">The localization key.</param>
     public LocalizeExtension(string key)
     {
       this.key = key;
@@ -50,6 +54,9 @@ namespace Altaxo.Gui
       UpdateOnLanguageChange = true;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LocalizeExtension"/> class.
+    /// </summary>
     public LocalizeExtension()
     {
       UsesAccessors = true;
@@ -58,6 +65,9 @@ namespace Altaxo.Gui
 
     private string key;
 
+    /// <summary>
+    /// Gets or sets the localization key.
+    /// </summary>
     public string Key
     {
       get { return key; }
@@ -70,6 +80,7 @@ namespace Altaxo.Gui
     /// </summary>
     public bool UsesAccessors { get; set; }
 
+    /// <inheritdoc/>
     public override string Value
     {
       get

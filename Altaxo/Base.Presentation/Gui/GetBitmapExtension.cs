@@ -34,13 +34,21 @@ namespace Altaxo.Gui
   [MarkupExtensionReturnType(typeof(BitmapSource))]
   public class GetBitmapExtension : MarkupExtension
   {
+    /// <summary>
+    /// The resource key.
+    /// </summary>
     protected string _key;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GetBitmapExtension"/> class.
+    /// </summary>
+    /// <param name="key">The bitmap resource key.</param>
     public GetBitmapExtension(string key)
     {
       _key = key;
     }
 
+    /// <inheritdoc/>
     public override object ProvideValue(IServiceProvider serviceProvider)
     {
       if (PresentationResourceService.InstanceAvailable)

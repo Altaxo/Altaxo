@@ -54,6 +54,22 @@ namespace Altaxo.Calc.Integration
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+    /// <summary>
+    /// Applies a Gauss-Kronrod quadrature rule on the interval <c>[a, b]</c>.
+    /// </summary>
+    /// <param name="n">The number of Kronrod abscissae.</param>
+    /// <param name="xgk">The Kronrod abscissae.</param>
+    /// <param name="wg">The Gauss weights.</param>
+    /// <param name="wgk">The Kronrod weights.</param>
+    /// <param name="fv1">Temporary storage for left function values.</param>
+    /// <param name="fv2">Temporary storage for right function values.</param>
+    /// <param name="f">The function to integrate.</param>
+    /// <param name="a">The lower integration bound.</param>
+    /// <param name="b">The upper integration bound.</param>
+    /// <param name="result">The integral estimate.</param>
+    /// <param name="abserr">The estimated absolute error.</param>
+    /// <param name="resabs">The approximation to the absolute integral.</param>
+    /// <param name="resasc">The approximation to the integral of the absolute deviation.</param>
     protected static void
     gsl_integration_qk(int n,
                         double[] xgk, double[] wg, double[] wgk,
@@ -212,6 +228,9 @@ namespace Altaxo.Calc.Integration
  weights as evaluated with 80 decimal digit arithmetic by
  L. W. Fullerton, Bell Labs, Nov. 1981. */
 
+  /// <summary>
+  /// Implements the 15-point Gauss-Kronrod integration rule.
+  /// </summary>
   public class QK15 : QK
   {
     private static readonly double[] xgk =    /* abscissae of the 15-point kronrod rule */
@@ -253,12 +272,18 @@ namespace Altaxo.Calc.Integration
     private double[] _fv1;
     private double[] _fv2;
 
+    /// <summary>
+    /// Initializes a reusable 15-point Gauss-Kronrod integrator.
+    /// </summary>
     public QK15()
     {
       _fv1 = new double[_fvlength];
       _fv2 = new double[_fvlength];
     }
 
+    /// <summary>
+    /// Integrates a function using the 15-point Gauss-Kronrod rule.
+    /// </summary>
     public void Integrate(Func<double, double> f, double a, double b,
                 out double result, out double abserr,
                 out double resabs, out double resasc)
@@ -266,6 +291,9 @@ namespace Altaxo.Calc.Integration
       gsl_integration_qk(_fvlength, xgk, wg, wgk, _fv1, _fv2, f, a, b, out result, out abserr, out resabs, out resasc);
     }
 
+    /// <summary>
+    /// Integrates a function using the 15-point Gauss-Kronrod rule without creating an instance.
+    /// </summary>
     public static void Integration(Func<double, double> f, double a, double b,
                  out double result, out double abserr,
                  out double resabs, out double resasc)
@@ -280,6 +308,9 @@ namespace Altaxo.Calc.Integration
 
   #region QK21
 
+  /// <summary>
+  /// Implements the 21-point Gauss-Kronrod integration rule.
+  /// </summary>
   public class QK21 : QK
   {
     /* integration/qk21.c
@@ -351,12 +382,18 @@ namespace Altaxo.Calc.Integration
     private double[] _fv1;
     private double[] _fv2;
 
+    /// <summary>
+    /// Initializes a reusable 21-point Gauss-Kronrod integrator.
+    /// </summary>
     public QK21()
     {
       _fv1 = new double[_fvlength];
       _fv2 = new double[_fvlength];
     }
 
+    /// <summary>
+    /// Integrates a function using the 21-point Gauss-Kronrod rule.
+    /// </summary>
     public void Integrate(Func<double, double> f, double a, double b,
                 out double result, out double abserr,
                 out double resabs, out double resasc)
@@ -364,6 +401,9 @@ namespace Altaxo.Calc.Integration
       gsl_integration_qk(_fvlength, xgk, wg, wgk, _fv1, _fv2, f, a, b, out result, out abserr, out resabs, out resasc);
     }
 
+    /// <summary>
+    /// Integrates a function using the 21-point Gauss-Kronrod rule without creating an instance.
+    /// </summary>
     public static void Integration(Func<double, double> f, double a, double b,
                  out double result, out double abserr,
                  out double resabs, out double resasc)
@@ -378,6 +418,9 @@ namespace Altaxo.Calc.Integration
 
   #region QK31
 
+  /// <summary>
+  /// Implements the 31-point Gauss-Kronrod integration rule.
+  /// </summary>
   public class QK31 : QK
   {
     /* integration/qk31.c
@@ -462,12 +505,18 @@ namespace Altaxo.Calc.Integration
     private double[] _fv1;
     private double[] _fv2;
 
+    /// <summary>
+    /// Initializes a reusable 31-point Gauss-Kronrod integrator.
+    /// </summary>
     public QK31()
     {
       _fv1 = new double[_fvlength];
       _fv2 = new double[_fvlength];
     }
 
+    /// <summary>
+    /// Integrates a function using the 31-point Gauss-Kronrod rule.
+    /// </summary>
     public void Integrate(Func<double, double> f, double a, double b,
                 out double result, out double abserr,
                 out double resabs, out double resasc)
@@ -475,6 +524,9 @@ namespace Altaxo.Calc.Integration
       gsl_integration_qk(_fvlength, xgk, wg, wgk, _fv1, _fv2, f, a, b, out result, out abserr, out resabs, out resasc);
     }
 
+    /// <summary>
+    /// Integrates a function using the 31-point Gauss-Kronrod rule without creating an instance.
+    /// </summary>
     public static void Integration(Func<double, double> f, double a, double b,
                  out double result, out double abserr,
                  out double resabs, out double resasc)
@@ -489,6 +541,9 @@ namespace Altaxo.Calc.Integration
 
   #region QK41
 
+  /// <summary>
+  /// Implements the 41-point Gauss-Kronrod integration rule.
+  /// </summary>
   public class QK41 : QK
   {
     /* integration/qk41.c
@@ -585,12 +640,18 @@ namespace Altaxo.Calc.Integration
     private double[] _fv1;
     private double[] _fv2;
 
+    /// <summary>
+    /// Initializes a reusable 41-point Gauss-Kronrod integrator.
+    /// </summary>
     public QK41()
     {
       _fv1 = new double[_fvlength];
       _fv2 = new double[_fvlength];
     }
 
+    /// <summary>
+    /// Integrates a function using the 41-point Gauss-Kronrod rule.
+    /// </summary>
     public void Integrate(Func<double, double> f, double a, double b,
                 out double result, out double abserr,
                 out double resabs, out double resasc)
@@ -598,6 +659,9 @@ namespace Altaxo.Calc.Integration
       gsl_integration_qk(_fvlength, xgk, wg, wgk, _fv1, _fv2, f, a, b, out result, out abserr, out resabs, out resasc);
     }
 
+    /// <summary>
+    /// Integrates a function using the 41-point Gauss-Kronrod rule without creating an instance.
+    /// </summary>
     public static void Integration(Func<double, double> f, double a, double b,
                  out double result, out double abserr,
                  out double resabs, out double resasc)
@@ -612,6 +676,9 @@ namespace Altaxo.Calc.Integration
 
   #region QK51
 
+  /// <summary>
+  /// Implements the 51-point Gauss-Kronrod integration rule.
+  /// </summary>
   public class QK51 : QK
   {
     /* integration/qk51.c
@@ -723,12 +790,18 @@ namespace Altaxo.Calc.Integration
     private double[] _fv1;
     private double[] _fv2;
 
+    /// <summary>
+    /// Initializes a reusable 51-point Gauss-Kronrod integrator.
+    /// </summary>
     public QK51()
     {
       _fv1 = new double[_fvlength];
       _fv2 = new double[_fvlength];
     }
 
+    /// <summary>
+    /// Integrates a function using the 51-point Gauss-Kronrod rule.
+    /// </summary>
     public void Integrate(Func<double, double> f, double a, double b,
                 out double result, out double abserr,
                 out double resabs, out double resasc)
@@ -736,6 +809,9 @@ namespace Altaxo.Calc.Integration
       gsl_integration_qk(_fvlength, xgk, wg, wgk, _fv1, _fv2, f, a, b, out result, out abserr, out resabs, out resasc);
     }
 
+    /// <summary>
+    /// Integrates a function using the 51-point Gauss-Kronrod rule without creating an instance.
+    /// </summary>
     public static void Integration(Func<double, double> f, double a, double b,
                  out double result, out double abserr,
                  out double resabs, out double resasc)
@@ -750,6 +826,9 @@ namespace Altaxo.Calc.Integration
 
   #region QK61
 
+  /// <summary>
+  /// Implements the 61-point Gauss-Kronrod integration rule.
+  /// </summary>
   public class QK61 : QK
   {
     /* integration/qk61.c
@@ -871,12 +950,18 @@ namespace Altaxo.Calc.Integration
     private double[] _fv1;
     private double[] _fv2;
 
+    /// <summary>
+    /// Initializes a reusable 61-point Gauss-Kronrod integrator.
+    /// </summary>
     public QK61()
     {
       _fv1 = new double[_fvlength];
       _fv2 = new double[_fvlength];
     }
 
+    /// <summary>
+    /// Integrates a function using the 61-point Gauss-Kronrod rule.
+    /// </summary>
     public void Integrate(Func<double, double> f, double a, double b,
                 out double result, out double abserr,
                 out double resabs, out double resasc)
@@ -884,6 +969,9 @@ namespace Altaxo.Calc.Integration
       gsl_integration_qk(_fvlength, xgk, wg, wgk, _fv1, _fv2, f, a, b, out result, out abserr, out resabs, out resasc);
     }
 
+    /// <summary>
+    /// Integrates a function using the 61-point Gauss-Kronrod rule without creating an instance.
+    /// </summary>
     public static void Integration(Func<double, double> f, double a, double b,
                  out double result, out double abserr,
                  out double resabs, out double resasc)

@@ -30,10 +30,19 @@ using Altaxo.Graph.Graph3D.Lighting;
 
 namespace Altaxo.Gui.Graph.Graph3D.Lighting
 {
+  /// <summary>
+  /// Defines the contract for controls that edit a discrete light.
+  /// </summary>
   public interface IDiscreteLightControl
   {
+    /// <summary>
+    /// Gets the selected discrete light.
+    /// </summary>
     IDiscreteLight SelectedValueAsIDiscreteLight { get; }
 
+    /// <summary>
+    /// Occurs when the selected value changes.
+    /// </summary>
     event EventHandler SelectedValueChanged;
   }
 }

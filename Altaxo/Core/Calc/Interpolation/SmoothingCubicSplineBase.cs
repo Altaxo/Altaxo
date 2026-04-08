@@ -113,37 +113,105 @@ namespace Altaxo.Calc.Interpolation
     /// If true, standard error estimates are calculated and provided in <see cref="ErrorEstimate"/>.
     /// </summary>
     public bool CalculateStandardErrorEstimates { get; set; } = true;
-
-
-
+    /// <summary>
+    /// Stores the standard deviation parameter used for smoothing or cross-validation.
+    /// </summary>
     protected double _standardDeviation;
     private bool _interpolationSuccessfullyExecuted;
     private bool _standardErrorEstimatesCalculated;
 
     // Vector wrappers. Attention: these wrappers may have less length than the underlying arrays!
+    /// <summary>
+    /// Wraps the x-values used for interpolation.
+    /// </summary>
     protected IReadOnlyList<double>? _xVec;
+
+    /// <summary>
+    /// Wraps the y-values used for interpolation.
+    /// </summary>
     protected IReadOnlyList<double>? _fVec;
+
+    /// <summary>
+    /// Wraps the spline coefficients of order zero.
+    /// </summary>
     protected IReadOnlyList<double>? _c0Vec;
+
+    /// <summary>
+    /// Wraps the spline coefficients of order one.
+    /// </summary>
     protected IReadOnlyList<double>? _c1Vec;
+
+    /// <summary>
+    /// Wraps the spline coefficients of order two.
+    /// </summary>
     protected IReadOnlyList<double>? _c2Vec;
+
+    /// <summary>
+    /// Wraps the spline coefficients of order three.
+    /// </summary>
     protected IReadOnlyList<double>? _c3Vec;
+
+    /// <summary>
+    /// Wraps the estimated standard errors.
+    /// </summary>
     protected IReadOnlyList<double>? _seVec;
 
 
+    /// <summary>
+    /// Stores the abscissa values.
+    /// </summary>
     protected double[]? _x; // Abscissa values
+
+    /// <summary>
+    /// Stores the ordinate values.
+    /// </summary>
     protected double[]? _f; // Ordinate values
+
+    /// <summary>
+    /// Stores the known deviations of the ordinate values.
+    /// </summary>
     protected double[]? _df; // Stores the known deviations of the ordinate values _f
+
+    /// <summary>
+    /// Stores the calculated spline ordinate values at <c>x[i]</c>.
+    /// </summary>
     protected double[]? _y0; // the calculated spline ordinate values at x[i], i.e. the spline coefficients of order 0
+
+    /// <summary>
+    /// Stores the estimated standard errors of the points.
+    /// </summary>
     protected double[]? _se; // the estimated standard error of the points (only valid if doing cross-validation!)
+
+    /// <summary>
+    /// Stores the spline coefficients of orders one to three.
+    /// </summary>
     protected double[][]? _c; // the coefficients of order 1 to 3
 
     // Work-arrays
+    /// <summary>
+    /// Stores internal work arrays used during interpolation.
+    /// </summary>
     protected double[][]? _wkr;
+
+    /// <summary>
+    /// Stores internal transpose-related work arrays used during interpolation.
+    /// </summary>
     protected double[][]? _wkt;
+
+    /// <summary>
+    /// Stores an internal one-dimensional work vector.
+    /// </summary>
     protected double[]? _wku;
+
+    /// <summary>
+    /// Stores an internal auxiliary work vector.
+    /// </summary>
     protected double[]? _wkv;
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SmoothingCubicSplineBase"/> class.
+    /// </summary>
     public SmoothingCubicSplineBase()
     {
       _standardDeviation = -1.0; // unknown standard deviation
@@ -431,6 +499,10 @@ namespace Altaxo.Calc.Interpolation
 
     #region Fit results
 
+    /// <summary>
+    /// Creates the exception that is thrown when interpolation results are requested before execution.
+    /// </summary>
+    /// <returns>An exception indicating that interpolation has not been executed successfully.</returns>
     protected Exception NotExecutedException()
     {
       return new InvalidOperationException("Interpolation was not yet successfully executed.");
@@ -656,7 +728,7 @@ namespace Altaxo.Calc.Interpolation
     /// </param>
     /// <param name="var">Input/Output:
     /// ERROR VARIANCE. (INPUT/OUTPUT)
-    /// IF VAR IS NEGATIVE(I.E.UNKNOWN) THEN
+    /// IF VAR IS NEGATIVE(I.EUNKNOWN) THEN
     ///                           THE SMOOTHING PARAMETER IS DETERMINED
     ///                           BY MINIMIZING THE GENERALIZED CROSS VALIDATION
     /// AND AN ESTIMATE OF THE ERROR VARIANCE IS
@@ -1235,16 +1307,31 @@ namespace Altaxo.Calc.Interpolation
 
     #endregion Low level functions
 
+    /// <summary>
+    /// Gets the x value of the parameter u.
+    /// </summary>
+    /// <param name="u">The parameter u.</param>
+    /// <returns>The corresponding x value.</returns>
     public override double GetXOfU(double u)
     {
       return u;
     }
 
+    /// <summary>
+    /// Gets the y value for the specified x value.
+    /// </summary>
+    /// <param name="x">The x value.</param>
+    /// <returns>The corresponding y value.</returns>
     public double GetYOfX(double x)
     {
       return GetYOfU(x);
     }
 
+    /// <summary>
+    /// Gets the first derivative of the y value for the specified x value.
+    /// </summary>
+    /// <param name="xx">The x value.</param>
+    /// <returns>The corresponding first derivative of the y value.</returns>
     public double GetY1stDerivativeOfX(double xx)
     {
       if (_interpolationSuccessfullyExecuted)
@@ -1253,6 +1340,11 @@ namespace Altaxo.Calc.Interpolation
         throw NotExecutedException();
     }
 
+    /// <summary>
+    /// Gets the y value of the parameter u.
+    /// </summary>
+    /// <param name="u">The parameter u.</param>
+    /// <returns>The corresponding y value.</returns>
     public override double GetYOfU(double u)
     {
       if (_interpolationSuccessfullyExecuted)

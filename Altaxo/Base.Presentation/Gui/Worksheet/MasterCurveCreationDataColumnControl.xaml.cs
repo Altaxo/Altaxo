@@ -35,11 +35,17 @@ namespace Altaxo.Gui.Worksheet
   /// </summary>
   public partial class MasterCurveCreationDataColumnControl : UserControl
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MasterCurveCreationDataColumnControl"/> class.
+    /// </summary>
     public MasterCurveCreationDataColumnControl()
     {
       InitializeComponent();
     }
 
+    /// <summary>
+    /// Gets the list box that displays the selectable items for the column.
+    /// </summary>
     public ListBox ItemList
     {
       get
@@ -48,6 +54,10 @@ namespace Altaxo.Gui.Worksheet
       }
     }
 
+    /// <summary>
+    /// Sets the header text of the column.
+    /// </summary>
+    /// <param name="title">The title to display.</param>
     public void SetTitle(string title)
     {
       _headerLabel.Content = title;

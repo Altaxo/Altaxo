@@ -38,6 +38,9 @@ namespace Altaxo.Calc.LinearAlgebra
   public class GenericVector<T> : ICloneable, IFormattable, IVector<T> where T : IEquatable<T>
   {
     private static readonly T[] _emptyArray = new T[0];
+    /// <summary>
+    /// The underlying array used to store the elements of the vector.
+    /// </summary>
     protected T[] _array;
 
     #region Constructors
@@ -156,6 +159,11 @@ namespace Altaxo.Calc.LinearAlgebra
 
     #endregion Constructors
 
+    /// <summary>
+    /// Gets or sets the <typeparamref name="T"/> at the specified index.
+    /// </summary>
+    /// <param name="i">The index of the element to get or set.</param>
+    /// <returns>The <typeparamref name="T"/> at the specified index.</returns>
     public T this[int i]
     {
       get
@@ -168,6 +176,11 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
+    /// <summary>
+    /// Gets the <typeparamref name="T"/> at the specified index. This member is an explicit interface member implementation.
+    /// </summary>
+    /// <param name="index">The zero-based index of the element to get.</param>
+    /// <returns>The <typeparamref name="T"/> at the specified index.</returns>
     T IReadOnlyList<T>.this[int index]
     {
       get
@@ -176,6 +189,11 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
+    /// <summary>
+    /// Gets the subarray at the specified indices.
+    /// </summary>
+    /// <param name="indices">The indices of the elements to get.</param>
+    /// <returns>The subarray at the specified indices.</returns>
     public T[] this[int[] indices]
     {
       get
@@ -184,6 +202,11 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
+    /// <summary>
+    /// Gets the subarray that satisfies the specified conditions.
+    /// </summary>
+    /// <param name="condition">The conditions that the elements must satisfy.</param>
+    /// <returns>The subarray that satisfies the specified conditions.</returns>
     public T[] this[bool[] condition]
     {
       get
@@ -203,6 +226,9 @@ namespace Altaxo.Calc.LinearAlgebra
 #pragma warning restore CS8601 // Possible null reference assignment.
     }
 
+    /// <summary>
+    /// Gets the number of elements contained in the vector.
+    /// </summary>
     public int Count { get { return _array.Length; } }
 
     /// <summary>
@@ -220,6 +246,10 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
+    /// <summary>
+    /// Enumerates the elements of the vector.
+    /// </summary>
+    /// <returns>An enumerator that iterates through the vector.</returns>
     public IEnumerator<T> GetEnumerator()
     {
       var len = Count;

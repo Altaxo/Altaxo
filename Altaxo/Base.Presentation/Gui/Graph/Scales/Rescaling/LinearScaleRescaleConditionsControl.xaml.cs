@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
   /// </summary>
   public partial class LinearScaleRescaleConditionsControl : UserControl, ILinearScaleRescaleConditionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinearScaleRescaleConditionsControl"/> class.
+    /// </summary>
     public LinearScaleRescaleConditionsControl()
     {
       InitializeComponent();

@@ -43,16 +43,22 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
   {
     #region events to controller
 
+    /// <inheritdoc/>
     public event Action<int>? ChooseErrorFunction;
 
+    /// <inheritdoc/>
     public event Action? ChooseFitFunction;
 
+    /// <inheritdoc/>
     public event Action<int>? ChooseExternalParameter;
 
+    /// <inheritdoc/>
     public event Action? SetupVariablesAndRange;
 
+    /// <inheritdoc/>
     public event Action? EditFitFunction;
 
+    /// <inheritdoc/>
     public event Action? DeleteThisFitElement;
 
     #endregion events to controller
@@ -91,6 +97,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     private int NumberOfParameter => _cachedNumberOfParameter = _fitElement?.NumberOfParameters ?? _cachedNumberOfParameter;
     private int _totalSlots => Math.Max(NumberOfParameter, NumberOfX + NumberOfY + 4);
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FitElementControl"/> class.
+    /// </summary>
     public FitElementControl()
     {
       InitializeComponent();
@@ -433,6 +442,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     #region IFitElementView
 
+    /// <inheritdoc/>
     public void Initialize(Altaxo.Calc.Regression.Nonlinear.FitElement fitElement)
     {
       _fitElement = fitElement;
@@ -444,11 +454,13 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       SetupElements();
     }
 
+    /// <inheritdoc/>
     public void Refresh()
     {
       SetupElements();
     }
 
+    /// <inheritdoc/>
     public bool FitFunctionSelected
     {
       set

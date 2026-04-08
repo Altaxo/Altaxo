@@ -18,8 +18,12 @@ using GongSolutions.Wpf.DragDrop.Utilities;
 
 namespace GongSolutions.Wpf.DragDrop
 {
+  /// <summary>
+  /// Provides the default implementation for starting and completing drag operations.
+  /// </summary>
   public class DefaultDragHandler : IDragSource
   {
+    /// <inheritdoc/>
     public virtual void StartDrag(IDragInfo dragInfo)
     {
       var itemCount = dragInfo.SourceItems.Cast<object>().Count();
@@ -38,15 +42,18 @@ namespace GongSolutions.Wpf.DragDrop
                            DragDropEffects.None;
     }
 
+    /// <inheritdoc/>
     public bool CanStartDrag(IDragInfo dragInfo)
     {
       return true;
     }
 
+    /// <inheritdoc/>
     public virtual void Dropped(IDropInfo dropInfo, DragDropEffects effects) // ModifiedByLellid
     {
     }
 
+    /// <inheritdoc/>
     public virtual void DragCancelled()
     {
     }

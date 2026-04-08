@@ -30,6 +30,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakEnhancement;
 /// </summary>
 public partial class PeakEnhancementSNIPControl : UserControl, IPeakEnhancementSNIPView
 {
+  /// <summary>
+  /// Initializes a new instance of the <see cref="PeakEnhancementSNIPControl"/> class.
+  /// </summary>
   public PeakEnhancementSNIPControl()
   {
     InitializeComponent();

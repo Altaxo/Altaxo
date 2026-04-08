@@ -34,6 +34,9 @@ using Altaxo.Worksheet.Commands;
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
 
+  /// <summary>
+  /// Provides extension methods for project browser commands.
+  /// </summary>
   public static class ProjectBrowserExtensions
   {
     #region List item commands
@@ -150,6 +153,10 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       Current.Project.Folders.CopyItemsToFolder(list, newFolderName, relocateOptions is not null ? relocateOptions.Visit : (DocNodeProxyReporter)null, false);
     }
 
+    /// <summary>
+    /// Renames the selected list item.
+    /// </summary>
+    /// <param name="ctrl">The project browse controller.</param>
     public static void RenameSelectedListItem(this ProjectBrowseController ctrl)
     {
       var list = ctrl.GetSelectedListItems();
@@ -256,6 +263,10 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
         command.Execute();
     }
 
+    /// <summary>
+    /// Extracts common columns from selected tables into a new destination table.
+    /// </summary>
+    /// <param name="ctrl">The project browse controller.</param>
     public static void ExtractCommonColumns(this ProjectBrowseController ctrl)
     {
       var dataTables = ctrl.GetSelectedListItems().OfType<DataTable>().ToList();
@@ -336,11 +347,20 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       Altaxo.Main.Commands.ProjectItemCommands.CopyItemsToClipboard(list, folderName);
     }
 
+    /// <summary>
+    /// Determines whether items can be pasted from the clipboard.
+    /// </summary>
+    /// <param name="ctrl">The project browse controller.</param>
+    /// <returns><see langword="true"/> if items can be pasted; otherwise, <see langword="false"/>.</returns>
     public static bool CanPasteItemsFromClipboard(this ProjectBrowseController ctrl)
     {
       return Altaxo.Main.Commands.ProjectItemCommands.CanPasteItemsFromClipboard();
     }
 
+    /// <summary>
+    /// Pastes items from the clipboard into the selected folder.
+    /// </summary>
+    /// <param name="ctrl">The project browse controller.</param>
     public static void PasteItemsFromClipboard(this ProjectBrowseController ctrl)
     {
       if (!ctrl.IsProjectFolderSelected(out var folderName))

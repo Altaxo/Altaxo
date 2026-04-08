@@ -4,10 +4,13 @@ using System.Numerics;
 namespace Altaxo.Calc.Providers.SparseSolver
 {
   /// <summary>
-  /// The managed sparse solver provider
+  /// The managed sparse solver provider.
   /// </summary>
   public sealed class ManagedSparseSolverProvider : ISparseSolverProvider
   {
+    /// <summary>
+    /// Gets the singleton instance of the managed sparse solver provider.
+    /// </summary>
     public static ManagedSparseSolverProvider Instance { get; } = new ManagedSparseSolverProvider();
 
     /// <summary>
@@ -34,11 +37,13 @@ namespace Altaxo.Calc.Providers.SparseSolver
     {
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return "Managed";
     }
 
+    /// <inheritdoc/>
     public DssStatus Solve(DssMatrixStructure matrixStructure, DssMatrixType matrixType, DssSystemType systemType,
         int rowCount, int columnCount, int nonZerosCount, int[] rowPointers, int[] columnIndices, float[] values,
         int nRhs, float[] rhs, float[] solution)
@@ -46,6 +51,7 @@ namespace Altaxo.Calc.Providers.SparseSolver
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public DssStatus Solve(DssMatrixStructure matrixStructure, DssMatrixType matrixType, DssSystemType systemType,
         int rowCount, int columnCount, int nonZerosCount, int[] rowPointers, int[] columnIndices, double[] values,
         int nRhs, double[] rhs, double[] solution)
@@ -53,6 +59,7 @@ namespace Altaxo.Calc.Providers.SparseSolver
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public DssStatus Solve(DssMatrixStructure matrixStructure, DssMatrixType matrixType, DssSystemType systemType,
         int rowCount, int columnCount, int nonZerosCount, int[] rowPointers, int[] columnIndices, Complex32[] values,
         int nRhs, Complex32[] rhs, Complex32[] solution)
@@ -60,6 +67,7 @@ namespace Altaxo.Calc.Providers.SparseSolver
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public DssStatus Solve(DssMatrixStructure matrixStructure, DssMatrixType matrixType, DssSystemType systemType,
         int rowCount, int columnCount, int nonZerosCount, int[] rowPointers, int[] columnIndices, Complex[] values,
         int nRhs, Complex[] rhs, Complex[] solution)

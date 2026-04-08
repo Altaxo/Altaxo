@@ -32,6 +32,9 @@ namespace Altaxo.Gui.Serialization.PrincetonInstruments
   public partial class PrincetonInstrumentsSPEImportOptionsControl : UserControl,
     IPrincetonInstrumentsSPEImportOptionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PrincetonInstrumentsSPEImportOptionsControl"/> class.
+    /// </summary>
     public PrincetonInstrumentsSPEImportOptionsControl()
     {
       InitializeComponent();

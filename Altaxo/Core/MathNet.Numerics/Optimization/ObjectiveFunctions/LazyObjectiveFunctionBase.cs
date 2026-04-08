@@ -31,27 +31,55 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization.ObjectiveFunctions
 {
+  /// <summary>
+  /// Provides a base class for objective functions with lazy evaluation.
+  /// </summary>
   public abstract class LazyObjectiveFunctionBase : IObjectiveFunction
   {
     private Vector<double> _point;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the function value is available.
+    /// </summary>
     protected bool HasFunctionValue { get; set; }
+    /// <summary>
+    /// Gets or sets the cached function value.
+    /// </summary>
     protected double FunctionValue { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the gradient is available.
+    /// </summary>
     protected bool HasGradientValue { get; set; }
+    /// <summary>
+    /// Gets or sets the cached gradient.
+    /// </summary>
     protected Vector<double> GradientValue { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the Hessian is available.
+    /// </summary>
     protected bool HasHessianValue { get; set; }
+    /// <summary>
+    /// Gets or sets the cached Hessian.
+    /// </summary>
     protected Matrix<double> HessianValue { get; set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LazyObjectiveFunctionBase"/> class.
+    /// </summary>
+    /// <param name="gradientSupported">Whether gradients are supported.</param>
+    /// <param name="hessianSupported">Whether Hessians are supported.</param>
     protected LazyObjectiveFunctionBase(bool gradientSupported, bool hessianSupported)
     {
       IsGradientSupported = gradientSupported;
       IsHessianSupported = hessianSupported;
     }
 
+    /// <inheritdoc/>
     public abstract IObjectiveFunction CreateNew();
 
+    /// <inheritdoc/>
     public virtual IObjectiveFunction Fork()
     {
       // we need to deep-clone values since they may be updated inplace on evaluation
@@ -66,9 +94,12 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       return fork;
     }
 
+    /// <inheritdoc/>
     public bool IsGradientSupported { get; }
+    /// <inheritdoc/>
     public bool IsHessianSupported { get; }
 
+    /// <inheritdoc/>
     public void EvaluateAt(Vector<double> point)
     {
       _point = point;
@@ -77,20 +108,31 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       HasHessianValue = false;
     }
 
+    /// <summary>
+    /// Evaluates the function value.
+    /// </summary>
     protected abstract void EvaluateValue();
 
+    /// <summary>
+    /// Evaluates the gradient.
+    /// </summary>
     protected virtual void EvaluateGradient()
     {
       Gradient = null;
     }
 
+    /// <summary>
+    /// Evaluates the Hessian.
+    /// </summary>
     protected virtual void EvaluateHessian()
     {
       Hessian = null;
     }
 
+    /// <inheritdoc/>
     public Vector<double> Point => _point;
 
+    /// <inheritdoc/>
     public double Value
     {
       get
@@ -108,6 +150,7 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       }
     }
 
+    /// <inheritdoc/>
     public Vector<double> Gradient
     {
       get
@@ -125,6 +168,7 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       }
     }
 
+    /// <inheritdoc/>
     public Matrix<double> Hessian
     {
       get

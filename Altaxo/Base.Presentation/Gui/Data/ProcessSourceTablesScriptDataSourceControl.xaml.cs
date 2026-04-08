@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Data
   /// </summary>
   public partial class ProcessSourceTablesScriptDataSourceControl : UserControl, IProcessSourceTablesScriptDataSourceView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ProcessSourceTablesScriptDataSourceControl"/> class.
+    /// </summary>
     public ProcessSourceTablesScriptDataSourceControl()
     {
       InitializeComponent();

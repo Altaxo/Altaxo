@@ -51,10 +51,7 @@ namespace Altaxo.Main
   /// </returns>
   public class ColorSetDoozer : IDoozer
   {
-    /// <summary>
-    /// Gets if the doozer handles codon conditions on its own.
-    /// If this property return false, the item is excluded when the condition is not met.
-    /// </summary>
+    /// <inheritdoc/>
     public bool HandleConditions
     {
       get
@@ -63,10 +60,7 @@ namespace Altaxo.Main
       }
     }
 
-    /// <summary>
-    /// Creates an item with the specified sub items. And the current
-    /// Condition status for this item.
-    /// </summary>
+    /// <inheritdoc/>
     public object BuildItem(BuildItemArgs args)
     {
       string label = args.Codon["label"];

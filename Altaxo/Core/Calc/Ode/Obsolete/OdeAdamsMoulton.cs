@@ -1,9 +1,4 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
-using Altaxo.Calc.Ode.Obsolete.DVode;
+﻿using Altaxo.Calc.Ode.Obsolete.DVode;
 
 namespace Altaxo.Calc.Ode.Obsolete
 {

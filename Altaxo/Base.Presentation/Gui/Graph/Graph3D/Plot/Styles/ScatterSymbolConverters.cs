@@ -33,34 +33,48 @@ using Altaxo.Graph.Graph3D.Plot.Styles;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 {
+  /// <summary>
+  /// Converts a scatter symbol to an image source.
+  /// </summary>
   public class ScatterSymbolToImageSourceConverter : IValueConverter
   {
+    /// <inheritdoc/>
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       return null;
     }
 
+    /// <inheritdoc/>
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       throw new NotImplementedException();
     }
   }
 
+  /// <summary>
+  /// Converts a scatter symbol to its display name.
+  /// </summary>
   public class ScatterSymbolToItemNameConverter : IValueConverter
   {
+    /// <inheritdoc/>
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       return value?.ToString();
     }
 
+    /// <inheritdoc/>
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       throw new NotImplementedException();
     }
   }
 
+  /// <summary>
+  /// Converts a scatter symbol to the name of its parent list.
+  /// </summary>
   public class ScatterSymbolToListNameConverter : IValueConverter
   {
+    /// <inheritdoc/>
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       var listName = ScatterSymbolListManager.Instance.GetParentList(value as IScatterSymbol)?.Name;
@@ -76,6 +90,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       }
     }
 
+    /// <inheritdoc/>
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       throw new NotImplementedException();

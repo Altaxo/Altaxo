@@ -49,9 +49,21 @@ namespace Altaxo.Com
     IOleObject,
     IPersistStorage
   {
+    /// <summary>
+    /// The CLSID of the embedded graph document COM object.
+    /// </summary>
     public const string GUID_STRING = "0915F010-2A4C-43F5-B230-A89340CF862C";
+    /// <summary>
+    /// The ProgID of the embedded graph document COM object.
+    /// </summary>
     public const string USER_TYPE = "Altaxo.Graph.0";
+    /// <summary>
+    /// The user-friendly name of the embedded graph document COM object.
+    /// </summary>
     public const string USER_TYPE_LONG = "Altaxo Graph-Document";
+    /// <summary>
+    /// Conversion factor from points to HIMETRIC units.
+    /// </summary>
     public const double PointsToHimetric = 2540 / 72.0;
 
     private ManagedDataAdviseHolder _dataAdviseHolder;
@@ -60,6 +72,10 @@ namespace Altaxo.Com
 
     private GraphDocumentBase _document;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GraphDocumentEmbeddedComObject"/> class.
+    /// </summary>
+    /// <param name="comManager">The COM manager.</param>
     public GraphDocumentEmbeddedComObject(ComManager comManager)
       : base(comManager)
     {
@@ -69,6 +85,9 @@ namespace Altaxo.Com
       _oleAdviseHolder = new ManagedOleAdviseHolderFM();
     }
 
+    /// <summary>
+    /// Releases the embedded COM object and notifies the container about the shutdown sequence.
+    /// </summary>
     public void Dispose()
     {
       if (_isDocumentDirty)
@@ -102,6 +121,9 @@ namespace Altaxo.Com
 
     #region Document management
 
+    /// <summary>
+    /// Gets the graph document represented by this embedded COM object.
+    /// </summary>
     public GraphDocumentBase Document
     {
       get
@@ -143,6 +165,10 @@ namespace Altaxo.Com
     /// <summary>
     /// Called by the ComManager when  document of this instance was renamed.
     /// </summary>
+    /// <summary>
+    /// Handles a document rename notification.
+    /// </summary>
+    /// <param name="fileMoniker">The file moniker.</param>
     public void EhDocumentRenamed(IMoniker fileMoniker)
     {
       // Trick to create a new document moniker, and send the advise
@@ -153,6 +179,7 @@ namespace Altaxo.Com
 
     #region IDataObject members
 
+    /// <inheritdoc/>
     protected override IList<Rendering> Renderings
     {
       get
@@ -241,11 +268,13 @@ namespace Altaxo.Com
       return EmbeddedGraphDocumentRenderingHelper.RenderAsDIBBitmap_TYMED_HGLOBAL(tymed, _document);
     }
 
+    /// <inheritdoc/>
     protected override ManagedDataAdviseHolder DataAdviseHolder
     {
       get { return _dataAdviseHolder; }
     }
 
+    /// <inheritdoc/>
     protected override bool InternalGetDataHere(ref System.Runtime.InteropServices.ComTypes.FORMATETC format, ref System.Runtime.InteropServices.ComTypes.STGMEDIUM medium)
     {
       if (format.cfFormat == DataObjectHelper.CF_EMBEDSOURCE && (format.tymed & TYMED.TYMED_ISTORAGE) != 0)
@@ -265,6 +294,7 @@ namespace Altaxo.Com
 
     #region IOleObject members
 
+    /// <inheritdoc cref="IOleObject.Close(tagOLECLOSE)"/>
     public int Close(tagOLECLOSE dwSaveOption)
     {
       ComDebug.ReportInfo("{0}.IOleObject.Close {1}", GetType().Name, dwSaveOption);
@@ -332,6 +362,7 @@ namespace Altaxo.Com
       // }
     }
 
+    /// <inheritdoc cref="IOleObject.DoVerb(int, nint, IOleClientSite, int, nint, COMRECT)"/>
     public int DoVerb(int iVerb, IntPtr lpmsg, IOleClientSite pActiveSite, int lindex, IntPtr hwndParent, COMRECT lprcPosRect)
     {
       ComDebug.ReportInfo("{0}.IOleObject.DoVerb {1}", GetType().Name, iVerb);
@@ -388,6 +419,7 @@ namespace Altaxo.Com
       }
     }
 
+    /// <inheritdoc cref="IOleObject.SetExtent(int, tagSIZEL)"/>
     public int SetExtent(int dwDrawAspect, tagSIZEL pSizel)
     {
       ComDebug.ReportInfo("{0}.IOleObject.SetExtent({1}x{2}) -> not supported.", GetType().Name, pSizel.cx, pSizel.cy);
@@ -409,6 +441,7 @@ namespace Altaxo.Com
       return ComReturnValue.E_FAIL;
     }
 
+    /// <inheritdoc cref="IOleObject.GetExtent(int, tagSIZEL)"/>
     public int GetExtent(int dwDrawAspect, tagSIZEL pSizel)
     {
       ComDebug.ReportInfo("{0}.IOleObject.GetExtent", GetType().Name);
@@ -424,6 +457,7 @@ namespace Altaxo.Com
       return ComReturnValue.NOERROR;
     }
 
+    /// <inheritdoc cref="IOleObject.GetMiscStatus(int, out int)"/>
     public int GetMiscStatus(int dwAspect, out int misc)
     {
       misc = GraphDocumentDataObject.MiscStatus(dwAspect);
@@ -437,12 +471,14 @@ namespace Altaxo.Com
 
     #region IPersistStorage mebers
 
+    /// <inheritdoc/>
     public void GetClassID(out Guid pClassID)
     {
       ComDebug.ReportInfo("{0}.IPersistStorage.GetClassID", GetType().Name);
       pClassID = GetType().GUID;
     }
 
+    /// <inheritdoc cref="IPersistStorage.IsDirty()"/>
     public int IsDirty()
     {
       ComDebug.ReportInfo("{0}.IPersistStorage.IsDirty returning {1}", GetType().Name, _isDocumentDirty);
@@ -453,6 +489,7 @@ namespace Altaxo.Com
         return ComReturnValue.S_FALSE;
     }
 
+    /// <inheritdoc cref="IPersistStorage.InitNew(IStorage)"/>
     public void InitNew(IStorage pstg)
     {
       ComDebug.ReportInfo("{0}.IPersistStorage.InitNew", GetType().Name);
@@ -463,6 +500,7 @@ namespace Altaxo.Com
       _isDocumentDirty = true; // but we set the document dirty flag thus it is saved
     }
 
+    /// <inheritdoc cref="IPersistStorage.Load(IStorage)"/>
     public int Load(IStorage pstg)
     {
       if (_document is not null)
@@ -585,6 +623,7 @@ namespace Altaxo.Com
       return ComReturnValue.S_OK;
     }
 
+    /// <inheritdoc cref="IPersistStorage.Save(IStorage, bool)"/>
     public void Save(IStorage pStgSave, bool fSameAsLoad)
     {
       ComDebug.ReportInfo("{0}.IPersistStorage.Save fSameAsLoad={1}", GetType().Name, fSameAsLoad);
@@ -649,6 +688,7 @@ namespace Altaxo.Com
       }
     }
 
+    /// <inheritdoc cref="IPersistStorage.SaveCompleted(IStorage)"/>
     public void SaveCompleted(IStorage pStgNew)
     {
       ComDebug.ReportInfo("{0}.IPersistStorage.SaveCompleted", GetType().Name);
@@ -656,6 +696,7 @@ namespace Altaxo.Com
       SendAdvise_Saved();
     }
 
+    /// <inheritdoc cref="IPersistStorage.HandsOffStorage()"/>
     public int HandsOffStorage()
     {
       ComDebug.ReportInfo("{0}.IPersistStorage.HandsOffStorage", GetType().Name);

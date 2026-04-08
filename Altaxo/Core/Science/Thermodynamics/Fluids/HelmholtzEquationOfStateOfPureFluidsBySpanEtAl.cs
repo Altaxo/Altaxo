@@ -103,6 +103,9 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// <summary>The term with the factor tau*ln(tau) in the equation of the ideal part of the reduced Helmholtz energy.</summary>
     protected double _alpha0_n_taulntau;
 
+    /// <summary>
+    /// Stores polynomial coefficients for the ideal part of the reduced Helmholtz energy.
+    /// </summary>
     protected (double ni, double thetai)[] _alpha0_Poly = _emptyDoubleDoubleArray;
 
     // Exponential terms
@@ -314,12 +317,18 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
     #region 3rd sum term
 
+    /// <summary>
+    /// Stores Gaussian-term coefficients for the residual part of the reduced Helmholtz energy.
+    /// </summary>
     protected (double ni, double ti, int di, double alpha, double beta, double gamma, double epsilon)[] _alphaR_Gauss;
 
     #endregion 3rd sum term
 
     #region 4th sum term
 
+    /// <summary>
+    /// Stores non-analytical-term coefficients for the residual part of the reduced Helmholtz energy.
+    /// </summary>
     protected (double ni, double b, double beta, double A, double C, double D, double B, double a)[] _alphaR_Nonanalytical;
 
     #endregion 4th sum term
@@ -759,8 +768,14 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
     #region Helper functions
 
+    /// <summary>
+    /// Provides a shared empty array of <see cref="double"/> values.
+    /// </summary>
     protected static readonly double[] _emptyDoubleArray = new double[0];
 
+    /// <summary>
+    /// Provides a shared empty array of coefficient pairs.
+    /// </summary>
     protected static readonly (double, double)[] _emptyDoubleDoubleArray = new (double, double)[] { };
 
     private static double Coth(double x)
@@ -778,6 +793,12 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       return 2 / (Math.Exp(x) - Math.Exp(-x));
     }
 
+    /// <summary>
+    /// Raises a value to an integer power using repeated squaring.
+    /// </summary>
+    /// <param name="x">The base value.</param>
+    /// <param name="n">The integer exponent.</param>
+    /// <returns><paramref name="x"/> raised to the power <paramref name="n"/>.</returns>
     protected static double Pow(double x, int n)
     {
       double value = 1.0;
@@ -810,9 +831,21 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
     #region Functions to calculate the saturated vapor and liquid density
 
+    /// <summary>
+    /// Stores coefficients for the saturated vapor density correlation.
+    /// </summary>
     protected (double factor, double exponent)[] _saturatedVaporDensity_Coefficients = _emptyDoubleDoubleArray;
+    /// <summary>
+    /// Stores the saturated vapor density correlation type identifier.
+    /// </summary>
     protected int _saturatedVaporDensity_Type;
+    /// <summary>
+    /// Stores coefficients for the saturated liquid density correlation.
+    /// </summary>
     protected (double factor, double exponent)[] _saturatedLiquidDensity_Coefficients = _emptyDoubleDoubleArray;
+    /// <summary>
+    /// Stores the saturated liquid density correlation type identifier.
+    /// </summary>
     protected int _saturatedLiquidDensity_Type;
 
     /// <summary>
@@ -893,6 +926,12 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       }
     }
 
+    /// <summary>
+    /// Evaluates saturated mole density correlation type 1.
+    /// </summary>
+    /// <param name="temperature">The temperature in Kelvin.</param>
+    /// <param name="coefficients">The correlation coefficients.</param>
+    /// <returns>The estimated saturated mole density.</returns>
     protected double SaturatedMoleDensity_Type1(double temperature, (double factor, double exponent)[] coefficients)
     {
       double TR = 1 - temperature / CriticalPointTemperature;
@@ -907,6 +946,12 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       return CriticalPointMoleDensity * (sum + 1);
     }
 
+    /// <summary>
+    /// Evaluates saturated mole density correlation type 2.
+    /// </summary>
+    /// <param name="temperature">The temperature in Kelvin.</param>
+    /// <param name="coefficients">The correlation coefficients.</param>
+    /// <returns>The estimated saturated mole density.</returns>
     protected double SaturatedMoleDensity_Type2(double temperature, (double factor, double exponent)[] coefficients)
     {
       double TR = Math.Pow(1 - temperature / CriticalPointTemperature, 1 / 3.0);
@@ -919,6 +964,12 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       return CriticalPointMoleDensity * (sum + 1);
     }
 
+    /// <summary>
+    /// Evaluates saturated mole density correlation type 3.
+    /// </summary>
+    /// <param name="temperature">The temperature in Kelvin.</param>
+    /// <param name="coefficients">The correlation coefficients.</param>
+    /// <returns>The estimated saturated mole density.</returns>
     protected double SaturatedMoleDensity_Type3(double temperature, (double factor, double exponent)[] coefficients)
     {
       double TR = 1 - temperature / CriticalPointTemperature;
@@ -933,6 +984,12 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       return CriticalPointMoleDensity * Math.Exp(sum);
     }
 
+    /// <summary>
+    /// Evaluates saturated mole density correlation type 4.
+    /// </summary>
+    /// <param name="temperature">The temperature in Kelvin.</param>
+    /// <param name="coefficients">The correlation coefficients.</param>
+    /// <returns>The estimated saturated mole density.</returns>
     protected double SaturatedMoleDensity_Type4(double temperature, (double factor, double exponent)[] coefficients)
     {
       double TR = Math.Pow(1 - temperature / CriticalPointTemperature, 1 / 3.0);
@@ -945,6 +1002,12 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       return CriticalPointMoleDensity * Math.Exp(sum);
     }
 
+    /// <summary>
+    /// Evaluates saturated mole density correlation type 5.
+    /// </summary>
+    /// <param name="temperature">The temperature in Kelvin.</param>
+    /// <param name="coefficients">The correlation coefficients.</param>
+    /// <returns>The estimated saturated mole density.</returns>
     protected double SaturatedMoleDensity_Type5(double temperature, (double factor, double exponent)[] coefficients)
     {
       double TR = 1 - temperature / CriticalPointTemperature;
@@ -959,6 +1022,12 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       return CriticalPointMoleDensity * Math.Exp(sum * CriticalPointTemperature / temperature);
     }
 
+    /// <summary>
+    /// Evaluates saturated mole density correlation type 6.
+    /// </summary>
+    /// <param name="temperature">The temperature in Kelvin.</param>
+    /// <param name="coefficients">The correlation coefficients.</param>
+    /// <returns>The estimated saturated mole density.</returns>
     protected double SaturatedMoleDensity_Type6(double temperature, (double factor, double exponent)[] coefficients)
     {
       double TR = Math.Pow(1 - temperature / CriticalPointTemperature, 1 / 3.0);
@@ -975,7 +1044,13 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
     #region Functions to calculate the saturated vapor pressure
 
+    /// <summary>
+    /// Stores coefficients for the saturated vapor pressure correlation.
+    /// </summary>
     protected (double factor, double exponent)[] _saturatedVaporPressure_Coefficients;
+    /// <summary>
+    /// Stores the saturated vapor pressure correlation type identifier.
+    /// </summary>
     protected int _saturatedVaporPressure_Type;
 
     /// <summary>
@@ -1056,6 +1131,12 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       }
     }
 
+    /// <summary>
+    /// Evaluates saturated vapor pressure correlation type 1.
+    /// </summary>
+    /// <param name="temperature">The temperature in Kelvin.</param>
+    /// <param name="coefficients">The correlation coefficients.</param>
+    /// <returns>The estimated pressure and its temperature derivative.</returns>
     protected (double pressure, double dpdT) SaturatedVaporPressure_Type1(double temperature, (double factor, double exponent)[] coefficients)
     {
       double TR = 1 - temperature / CriticalPointTemperature;
@@ -1074,6 +1155,12 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       return (pressure, dpdT);
     }
 
+    /// <summary>
+    /// Evaluates saturated vapor pressure correlation type 2.
+    /// </summary>
+    /// <param name="temperature">The temperature in Kelvin.</param>
+    /// <param name="coefficients">The correlation coefficients.</param>
+    /// <returns>The estimated pressure and its temperature derivative.</returns>
     protected (double pressure, double dpdT) SaturatedVaporPressure_Type2(double temperature, (double factor, double exponent)[] coefficients)
     {
       double TR = Math.Sqrt(1 - temperature / CriticalPointTemperature);
@@ -1091,6 +1178,12 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       return (pressure, dpdT);
     }
 
+    /// <summary>
+    /// Evaluates saturated vapor pressure correlation type 3.
+    /// </summary>
+    /// <param name="temperature">The temperature in Kelvin.</param>
+    /// <param name="coefficients">The correlation coefficients.</param>
+    /// <returns>The estimated pressure and its temperature derivative.</returns>
     protected (double pressure, double dpdT) SaturatedVaporPressure_Type3(double temperature, (double factor, double exponent)[] coefficients)
     {
       double TR = 1 - temperature / CriticalPointTemperature;
@@ -1108,6 +1201,12 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       return (pressure, -pressure * sum_dT / CriticalPointTemperature);
     }
 
+    /// <summary>
+    /// Evaluates saturated vapor pressure correlation type 4.
+    /// </summary>
+    /// <param name="temperature">The temperature in Kelvin.</param>
+    /// <param name="coefficients">The correlation coefficients.</param>
+    /// <returns>The estimated pressure and its temperature derivative.</returns>
     protected (double pressure, double dpdT) SaturatedVaporPressure_Type4(double temperature, (double factor, double exponent)[] coefficients)
     {
       double TR = Math.Sqrt(1 - temperature / CriticalPointTemperature);
@@ -1123,6 +1222,12 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       return (pressure, -pressure * 0.5 * sum_dT / CriticalPointTemperature);
     }
 
+    /// <summary>
+    /// Evaluates saturated vapor pressure correlation type 5.
+    /// </summary>
+    /// <param name="temperature">The temperature in Kelvin.</param>
+    /// <param name="coefficients">The correlation coefficients.</param>
+    /// <returns>The estimated pressure and its temperature derivative.</returns>
     protected (double pressure, double dpdT) SaturatedVaporPressure_Type5(double temperature, (double factor, double exponent)[] coefficients)
     {
       double TR = 1 - temperature / CriticalPointTemperature;
@@ -1141,6 +1246,12 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       return (pressure, dpdT);
     }
 
+    /// <summary>
+    /// Evaluates saturated vapor pressure correlation type 6.
+    /// </summary>
+    /// <param name="temperature">The temperature in Kelvin.</param>
+    /// <param name="coefficients">The correlation coefficients.</param>
+    /// <returns>The estimated pressure and its temperature derivative.</returns>
     protected (double pressure, double dpdT) SaturatedVaporPressure_Type6(double temperature, (double factor, double exponent)[] coefficients)
     {
       double TR = Math.Sqrt(1 - temperature / CriticalPointTemperature);
@@ -1161,16 +1272,46 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
     #region Functions to calculate sublimation pressure
 
+    /// <summary>
+    /// Identifies the sublimation-pressure equation variant used by this fluid model.
+    /// </summary>
     protected int _sublimationPressure_Type;
+
+    /// <summary>
+    /// Stores the reducing temperature used by the sublimation-pressure equation.
+    /// </summary>
     protected double _sublimationPressure_ReducingTemperature;
+
+    /// <summary>
+    /// Stores the reducing pressure used by the sublimation-pressure equation.
+    /// </summary>
     protected double _sublimationPressure_ReducingPressure;
 
+    /// <summary>
+    /// Stores the first coefficient set used by the sublimation-pressure equation.
+    /// </summary>
     protected (double factor, double exponent)[] _sublimationPressure_PolynomialCoefficients1 = _emptyDoubleDoubleArray;
+
+    /// <summary>
+    /// Stores the second coefficient set used by the sublimation-pressure equation.
+    /// </summary>
     protected (double factor, double exponent)[] _sublimationPressure_PolynomialCoefficients2 = _emptyDoubleDoubleArray;
+
+    /// <summary>
+    /// Stores the third coefficient set used by the sublimation-pressure equation.
+    /// </summary>
     protected (double factor, double exponent)[] _sublimationPressure_PolynomialCoefficients3 = _emptyDoubleDoubleArray;
 
+    /// <summary>
+    /// Gets a value indicating whether a sublimation-pressure curve is implemented for this fluid.
+    /// </summary>
     public bool IsSublimationPressureCurveImplemented { get { return _sublimationPressure_Type != 0; } }
 
+    /// <summary>
+    /// Gets an estimate of the sublimation pressure for the specified temperature.
+    /// </summary>
+    /// <param name="temperature">The temperature in K.</param>
+    /// <returns>The estimated sublimation pressure in Pa.</returns>
     public double SublimationPressureEstimate_FromTemperature(double temperature)
     {
       if (temperature > TriplePointTemperature)
@@ -1194,6 +1335,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       }
     }
 
+    /// <summary>
+    /// Gets an estimate of the sublimation pressure and its temperature derivative for the specified temperature.
+    /// </summary>
+    /// <param name="temperature">The temperature in K.</param>
+    /// <returns>The estimated sublimation pressure in Pa and the derivative <c>dp/dT</c> in Pa/K.</returns>
     public (double pressure, double dpdT) SublimationPressureEstimateAndDerivativeWrtTemperature_FromTemperature(double temperature)
 
     {
@@ -1273,6 +1419,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       return double.NaN; // not converged
     }
 
+    /// <summary>
+    /// Evaluates the sublimation-pressure equation of type 1.
+    /// </summary>
+    /// <param name="temperature">The temperature in K.</param>
+    /// <returns>The sublimation pressure in Pa and its derivative with respect to temperature.</returns>
     protected (double pressure, double dpdT) SublimationPressure_Type1(double temperature)
     {
       var coefficientsP = _sublimationPressure_PolynomialCoefficients1;
@@ -1311,6 +1462,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       return (pressure, dpdT);
     }
 
+    /// <summary>
+    /// Evaluates the sublimation-pressure equation of type 2.
+    /// </summary>
+    /// <param name="temperature">The temperature in K.</param>
+    /// <returns>The sublimation pressure in Pa and its derivative with respect to temperature.</returns>
     protected (double pressure, double dpdT) SublimationPressure_Type2(double temperature)
     {
       var coefficientsP = _sublimationPressure_PolynomialCoefficients1;
@@ -1349,6 +1505,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       return (pressure, dpdT);
     }
 
+    /// <summary>
+    /// Evaluates the sublimation-pressure equation of type 3.
+    /// </summary>
+    /// <param name="temperature">The temperature in K.</param>
+    /// <returns>The sublimation pressure in Pa and its derivative with respect to temperature.</returns>
     protected (double pressure, double dpdT) SublimationPressure_Type3(double temperature)
     {
       var coefficientsP = _sublimationPressure_PolynomialCoefficients1;
@@ -1393,13 +1554,36 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
     #region Functions to calculate melting pressure
 
+    /// <summary>
+    /// Identifies the melting-pressure equation variant used by this fluid model.
+    /// </summary>
     protected char _meltingPressure_Type;
+
+    /// <summary>
+    /// Stores the reducing temperature used by the melting-pressure equation.
+    /// </summary>
     protected double _meltingPressure_ReducingTemperature;
+
+    /// <summary>
+    /// Stores the reducing pressure used by the melting-pressure equation.
+    /// </summary>
     protected double _meltingPressure_ReducingPressure;
+
+    /// <summary>
+    /// Stores the coefficient sets used by the melting-pressure equation.
+    /// </summary>
     protected (double factor, double exponent)[][] _meltingPressure_Coefficients = Enumerable.Repeat(new (double, double)[0], 3).ToArray();
 
+    /// <summary>
+    /// Gets a value indicating whether a melting-pressure curve is implemented for this fluid.
+    /// </summary>
     public bool IsMeltingPressureCurveImplemented { get { return _meltingPressure_Type != '\0'; } }
 
+    /// <summary>
+    /// Gets an estimate of the melting pressure for the specified temperature.
+    /// </summary>
+    /// <param name="temperature">The temperature in K.</param>
+    /// <returns>The estimated melting pressure in Pa.</returns>
     public double MeltingPressureEstimate_FromTemperature(double temperature)
     {
       switch (_meltingPressure_Type)
@@ -1559,6 +1743,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       return double.NaN; // not converged
     }
 
+    /// <summary>
+    /// Evaluates the melting-pressure equation of type 1.
+    /// </summary>
+    /// <param name="temperature">The temperature in K.</param>
+    /// <returns>The melting pressure in Pa and its derivative with respect to temperature.</returns>
     protected (double pressure, double dpdT) MeltingPressure_Type1(double temperature)
     {
       if (!(temperature >= TriplePointTemperature))
@@ -1600,6 +1789,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       return (pressure, dpdT);
     }
 
+    /// <summary>
+    /// Evaluates the melting-pressure equation of type 2.
+    /// </summary>
+    /// <param name="temperature">The temperature in K.</param>
+    /// <returns>The melting pressure in Pa and its derivative with respect to temperature.</returns>
     protected (double pressure, double dpdT) MeltingPressure_Type2(double temperature)
     {
       if (!(temperature >= TriplePointTemperature))

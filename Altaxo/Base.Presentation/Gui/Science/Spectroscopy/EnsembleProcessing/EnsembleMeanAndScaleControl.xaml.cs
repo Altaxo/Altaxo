@@ -7,6 +7,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.EnsembleProcessing
   /// </summary>
   public partial class EnsembleMeanAndScaleControl : UserControl, IEnsembleMeanAndScaleView, IMultiplicativeScatterCorrectionView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EnsembleMeanAndScaleControl"/> class.
+    /// </summary>
     public EnsembleMeanAndScaleControl()
     {
       InitializeComponent();

@@ -42,9 +42,16 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
   /// <seealso cref="System.Windows.Data.IValueConverter" />
   public class ScatterSymbolToImageSourceConverter : IValueConverter
   {
+    /// <summary>
+    /// Gets or sets the plot color used for the preview image.
+    /// </summary>
     public NamedColor PlotColor { get; set; } = NamedColors.Black;
+    /// <summary>
+    /// Gets or sets the symbol size used for the preview image.
+    /// </summary>
     public double SymbolSize { get; set; } = 16;
 
+    /// <inheritdoc/>
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       var symbol = value as IScatterSymbol;
@@ -158,6 +165,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <inheritdoc/>
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       throw new NotImplementedException();
@@ -172,12 +180,16 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
   {
     private ScatterSymbolToImageSourceConverter _innerConverter = new ScatterSymbolToImageSourceConverter();
 
+    /// <summary>
+    /// Gets or sets the symbol size used for the preview image.
+    /// </summary>
     public double SymbolSize
     {
       get { return _innerConverter.SymbolSize; }
       set { _innerConverter.SymbolSize = value; }
     }
 
+    /// <inheritdoc/>
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       var symbolType = value as Type;
@@ -190,27 +202,37 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       return _innerConverter.Convert(symbol, targetType, parameter, culture);
     }
 
+    /// <inheritdoc/>
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
       throw new NotImplementedException();
     }
   }
 
+  /// <summary>
+  /// Converts scatter symbols to display names.
+  /// </summary>
   public class ScatterSymbolToItemNameConverter : IValueConverter
   {
+    /// <inheritdoc/>
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       return value?.GetType().Name;
     }
 
+    /// <inheritdoc/>
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       throw new NotImplementedException();
     }
   }
 
+  /// <summary>
+  /// Converts scatter symbols to the names of their parent lists.
+  /// </summary>
   public class ScatterSymbolToListNameConverter : IValueConverter
   {
+    /// <inheritdoc/>
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       var listName = ScatterSymbolListManager.Instance.GetParentList(value as IScatterSymbol)?.Name;
@@ -226,6 +248,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
     }
 
+    /// <inheritdoc/>
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       throw new NotImplementedException();

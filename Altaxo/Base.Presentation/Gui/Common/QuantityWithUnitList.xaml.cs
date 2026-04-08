@@ -35,6 +35,9 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public partial class QuantityWithUnitList : UserControl
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="QuantityWithUnitList"/> class.
+    /// </summary>
     public QuantityWithUnitList()
     {
       InitializeComponent();
@@ -54,6 +57,9 @@ namespace Altaxo.Gui.Common
     }
 
     // Using a DependencyProperty as the backing store for Environment.  This enables animation, styling, binding, etc...
+    /// <summary>
+    /// Identifies the <see cref="Environment"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty EnvironmentProperty =
         DependencyProperty.Register(nameof(Environment),
           typeof(QuantityWithUnitGuiEnvironment),
@@ -81,6 +87,9 @@ namespace Altaxo.Gui.Common
     }
 
     // Using a DependencyProperty as the backing store for DefaultQuantity.  This enables animation, styling, binding, etc...
+    /// <summary>
+    /// Identifies the <see cref="DefaultQuantity"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty DefaultQuantityProperty =
         DependencyProperty.Register(nameof(DefaultQuantity),
           typeof(DimensionfulQuantity),
@@ -108,6 +117,9 @@ namespace Altaxo.Gui.Common
     }
 
     // Using a DependencyProperty as the backing store for ItemsSource.  This enables animation, styling, binding, etc...
+    /// <summary>
+    /// Identifies the <see cref="ItemsSource"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty ItemsSourceProperty =
         DependencyProperty.Register(nameof(ItemsSource),
           typeof(ObservableCollection<DimensionfulQuantity>),

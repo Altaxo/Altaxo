@@ -20,6 +20,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
   /// </summary>
   public partial class GridPlaneView : UserControl, IGridPlanView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GridPlaneView"/> class.
+    /// </summary>
     public GridPlaneView()
     {
       InitializeComponent();

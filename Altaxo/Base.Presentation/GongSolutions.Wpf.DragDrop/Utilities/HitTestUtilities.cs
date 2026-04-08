@@ -29,8 +29,18 @@ using System.Windows.Controls.Primitives;
 
 namespace GongSolutions.Wpf.DragDrop.Utilities
 {
+  /// <summary>
+  /// Provides helper methods for hit-testing drag and drop targets.
+  /// </summary>
   public static class HitTestUtilities
   {
+    /// <summary>
+    /// Determines whether the hit-tested element is of the specified type and visible.
+    /// </summary>
+    /// <typeparam name="T">The expected UI element type.</typeparam>
+    /// <param name="sender">The visual to test.</param>
+    /// <param name="elementPosition">The hit-test position.</param>
+    /// <returns><see langword="true"/> if a visible element of the specified type is hit; otherwise, <see langword="false"/>.</returns>
     public static bool HitTest4Type<T>(object sender, Point elementPosition) where T : UIElement
     {
       var uiElement = GetHitTestElement4Type<T>(sender, elementPosition);
@@ -53,6 +63,12 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
       return uiElement;
     }
 
+    /// <summary>
+    /// Determines whether the hit-test position is over a grid view column header.
+    /// </summary>
+    /// <param name="sender">The visual to test.</param>
+    /// <param name="elementPosition">The hit-test position.</param>
+    /// <returns><see langword="true"/> if the position is over a visible grid view column header; otherwise, <see langword="false"/>.</returns>
     public static bool HitTest4GridViewColumnHeader(object sender, Point elementPosition)
     {
       if (sender is ListView)
@@ -67,6 +83,12 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
       return false;
     }
 
+    /// <summary>
+    /// Determines whether the hit-test position is over a data grid element that should suppress drag and drop.
+    /// </summary>
+    /// <param name="sender">The visual to test.</param>
+    /// <param name="elementPosition">The hit-test position.</param>
+    /// <returns><see langword="true"/> if drag and drop should be suppressed; otherwise, <see langword="false"/>.</returns>
     public static bool HitTest4DataGridTypes(object sender, Point elementPosition)
     {
       if (sender is DataGrid)
@@ -90,6 +112,12 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
       return false;
     }
 
+    /// <summary>
+    /// Determines whether the hit-test position is over a data grid element that should suppress drag-over handling.
+    /// </summary>
+    /// <param name="sender">The visual to test.</param>
+    /// <param name="elementPosition">The hit-test position.</param>
+    /// <returns><see langword="true"/> if drag-over handling should be suppressed; otherwise, <see langword="false"/>.</returns>
     public static bool HitTest4DataGridTypesOnDragOver(object sender, Point elementPosition)
     {
       if (sender is DataGrid)

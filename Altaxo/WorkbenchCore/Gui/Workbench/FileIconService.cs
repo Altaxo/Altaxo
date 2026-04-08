@@ -61,6 +61,9 @@ namespace Altaxo.Gui.Workbench
       return bmp ?? GetDefaultBitmap();
     }
 
+    /// <summary>
+    /// Gets the fallback bitmap used when no file image can be loaded.
+    /// </summary>
     public static Bitmap GetDefaultBitmap()
     {
       if (_defaultBitmap is { } defBmp)
@@ -80,6 +83,11 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Determines whether the specified resource name refers to a file-based image.
+    /// </summary>
+    /// <param name="name">The resource name to inspect.</param>
+    /// <returns><see langword="true"/> if the resource name starts with the file image prefix; otherwise, <see langword="false"/>.</returns>
     public static bool IsFileImage(string name)
     {
       return name.StartsWith("file:", StringComparison.OrdinalIgnoreCase);

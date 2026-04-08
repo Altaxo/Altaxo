@@ -29,12 +29,19 @@ using Altaxo.Gui;
 
 namespace Altaxo.Main.Commands
 {
+  /// <summary>
+  /// Provides helper methods and comparers for opening and sorting worksheet and graph windows.
+  /// </summary>
   public static class WindowCommands
   {
+    /// <summary>
+    /// Compares worksheets and graphs by creation time.
+    /// </summary>
     public class GraphTableCreationDateComparer : IComparer
     {
       #region IComparer Members
 
+      /// <inheritdoc/>
       public int Compare(object x, object y)
       {
         DateTime dx, dy;
@@ -58,10 +65,14 @@ namespace Altaxo.Main.Commands
       #endregion IComparer Members
     }
 
+    /// <summary>
+    /// Compares worksheets and graphs by name.
+    /// </summary>
     public class GraphTableNameComparer : IComparer
     {
       #region IComparer Members
 
+      /// <inheritdoc/>
       public int Compare(object x, object y)
       {
         string dx, dy;
@@ -85,10 +96,14 @@ namespace Altaxo.Main.Commands
       #endregion IComparer Members
     }
 
+    /// <summary>
+    /// Compares worksheets and graphs by type.
+    /// </summary>
     public class GraphTableTypeComparer : IComparer
     {
       #region IComparer Members
 
+      /// <inheritdoc/>
       public int Compare(object x, object y)
       {
         string dx, dy;
@@ -112,10 +127,18 @@ namespace Altaxo.Main.Commands
       #endregion IComparer Members
     }
 
+    /// <summary>
+    /// Combines two comparers into a multi-stage comparer.
+    /// </summary>
     public class GraphTableMultiComparer : IComparer
     {
       private IComparer _c1, _c2;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="GraphTableMultiComparer"/> class.
+      /// </summary>
+      /// <param name="c1">The primary comparer.</param>
+      /// <param name="c2">The secondary comparer.</param>
       public GraphTableMultiComparer(IComparer c1, IComparer c2)
       {
         _c1 = c1;
@@ -124,6 +147,7 @@ namespace Altaxo.Main.Commands
 
       #region IComparer Members
 
+      /// <inheritdoc/>
       public int Compare(object x, object y)
       {
         int result = _c1.Compare(x, y);
@@ -135,12 +159,20 @@ namespace Altaxo.Main.Commands
       #endregion IComparer Members
     }
 
+    /// <summary>
+    /// Adds all tables in the current project to the specified collection.
+    /// </summary>
+    /// <param name="arr">The collection to fill.</param>
     public static void GetAllTables(ArrayList arr)
     {
       foreach (Data.DataTable table in Current.Project.DataTableCollection)
         arr.Add(table);
     }
 
+    /// <summary>
+    /// Adds all tables without an open view to the specified collection.
+    /// </summary>
+    /// <param name="arr">The collection to fill.</param>
     public static void GetNonOpenTables(ArrayList arr)
     {
       foreach (Data.DataTable table in Current.Project.DataTableCollection)
@@ -148,12 +180,20 @@ namespace Altaxo.Main.Commands
           arr.Add(table);
     }
 
+    /// <summary>
+    /// Adds all graph documents in the current project to the specified collection.
+    /// </summary>
+    /// <param name="arr">The collection to fill.</param>
     public static void GetAllGraphDocuments(ArrayList arr)
     {
       foreach (Graph.Gdi.GraphDocument graph in Current.Project.GraphDocumentCollection)
         arr.Add(graph);
     }
 
+    /// <summary>
+    /// Adds all graph documents without an open view to the specified collection.
+    /// </summary>
+    /// <param name="arr">The collection to fill.</param>
     public static void GetNonOpenGraphDocuments(ArrayList arr)
     {
       foreach (Graph.Gdi.GraphDocument graph in Current.Project.GraphDocumentCollection)
@@ -161,6 +201,12 @@ namespace Altaxo.Main.Commands
           arr.Add(graph);
     }
 
+    /// <summary>
+    /// Opens non-open graphs and tables and sorts them using the specified comparer.
+    /// </summary>
+    /// <param name="bGraphs"><see langword="true"/> to include graphs.</param>
+    /// <param name="bTables"><see langword="true"/> to include tables.</param>
+    /// <param name="comparer">The comparer used for sorting.</param>
     public static void OpenNonOpenGraphsAndTables(bool bGraphs, bool bTables, IComparer comparer)
     {
       var arr = new ArrayList();
@@ -179,14 +225,21 @@ namespace Altaxo.Main.Commands
       }
     }
 
+    /// <summary>
+    /// Closes all open graph and worksheet views.
+    /// </summary>
     public static void CloseAllGraphsAndTables()
     {
       Current.Workbench.CloseAllViews();
     }
   }
 
+  /// <summary>
+  /// Opens all worksheets.
+  /// </summary>
   public class OpenAllWorksheets : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       WindowCommands.OpenNonOpenGraphsAndTables(false, true,
@@ -194,8 +247,12 @@ namespace Altaxo.Main.Commands
     }
   }
 
+  /// <summary>
+  /// Opens all graphs.
+  /// </summary>
   public class OpenAllGraphs : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       WindowCommands.OpenNonOpenGraphsAndTables(true, false,
@@ -203,8 +260,12 @@ namespace Altaxo.Main.Commands
     }
   }
 
+  /// <summary>
+  /// Opens all worksheets and graphs.
+  /// </summary>
   public class OpenAllWorksheetsAndGraphs : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       WindowCommands.OpenNonOpenGraphsAndTables(true, true,
@@ -212,8 +273,12 @@ namespace Altaxo.Main.Commands
     }
   }
 
+  /// <summary>
+  /// Reopens worksheets and graphs sorted by type and name.
+  /// </summary>
   public class SortGraphTablesByTypeAndName : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       WindowCommands.CloseAllGraphsAndTables();
@@ -225,8 +290,12 @@ namespace Altaxo.Main.Commands
     }
   }
 
+  /// <summary>
+  /// Reopens worksheets and graphs sorted by type and creation time.
+  /// </summary>
   public class SortGraphTablesByTypeAndCreationTime : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       WindowCommands.CloseAllGraphsAndTables();
@@ -238,8 +307,12 @@ namespace Altaxo.Main.Commands
     }
   }
 
+  /// <summary>
+  /// Reopens worksheets and graphs sorted by creation time.
+  /// </summary>
   public class SortGraphTablesByCreationTime : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       WindowCommands.CloseAllGraphsAndTables();
@@ -248,8 +321,12 @@ namespace Altaxo.Main.Commands
     }
   }
 
+  /// <summary>
+  /// Reopens worksheets and graphs sorted by name.
+  /// </summary>
   public class SortGraphTablesByName : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       WindowCommands.CloseAllGraphsAndTables();
@@ -258,8 +335,12 @@ namespace Altaxo.Main.Commands
     }
   }
 
+  /// <summary>
+  /// Toggles the main window between fullscreen and normal mode.
+  /// </summary>
   public class ToggleFullscreenCommand : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       Current.Workbench.FullScreen = !Current.Workbench.FullScreen;

@@ -42,6 +42,11 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
   public abstract class GramSchmidt<T> : QR<T>
     where T : struct, IEquatable<T>, IFormattable
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GramSchmidt{T}"/> class.
+    /// </summary>
+    /// <param name="q">The orthogonal factor.</param>
+    /// <param name="rFull">The upper-triangular factor.</param>
     protected GramSchmidt(Matrix<T> q, Matrix<T> rFull)
         : base(q, rFull, QRMethod.Full)
     {

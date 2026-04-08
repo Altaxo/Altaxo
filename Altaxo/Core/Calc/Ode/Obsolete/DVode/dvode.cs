@@ -19,6 +19,9 @@ namespace Altaxo.Calc.Ode.Obsolete.DVode
   #region The Class: DVODE
 
   // *DECK DVODE
+  /// <summary>
+  /// Solves stiff and nonstiff systems of first-order ordinary differential equations using the obsolete DVODE algorithm.
+  /// </summary>
   public class DVODE
   {
     #region Dependencies
@@ -135,6 +138,21 @@ namespace Altaxo.Calc.Ode.Obsolete.DVode
 
     #endregion Variables
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DVODE"/> class with explicit solver dependencies and common blocks.
+    /// </summary>
+    /// <param name="dvnlsd">The nonlinear system solver dependency.</param>
+    /// <param name="dumach">The machine precision helper.</param>
+    /// <param name="dvnorm">The weighted norm helper.</param>
+    /// <param name="dcopy">The vector copy helper.</param>
+    /// <param name="dewset">The error weight setup helper.</param>
+    /// <param name="dvhin">The initial step-size estimator.</param>
+    /// <param name="dscal">The vector scaling helper.</param>
+    /// <param name="dvindy">The interpolation helper.</param>
+    /// <param name="xerrwd">The error reporting helper.</param>
+    /// <param name="dvstep">The core integration step helper.</param>
+    /// <param name="DVOD01">The first DVODE common block.</param>
+    /// <param name="DVOD02">The second DVODE common block.</param>
     public DVODE(DVNLSD dvnlsd, DUMACH dumach, DVNORM dvnorm, DCOPY dcopy, DEWSET dewset, DVHIN dvhin, DSCAL dscal, DVINDY dvindy, XERRWD xerrwd, DVSTEP dvstep
                  , CommonBlock DVOD01, CommonBlock DVOD02)
     {
@@ -266,6 +284,9 @@ namespace Altaxo.Calc.Ode.Obsolete.DVode
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DVODE"/> class with default dependencies and common blocks.
+    /// </summary>
     public DVODE()
     {
       #region Initialization Common Blocks
@@ -433,6 +454,9 @@ namespace Altaxo.Calc.Ode.Obsolete.DVode
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Advances the solution of the differential equation system according to the DVODE driver interface.
+    /// </summary>
     /// <param name="F">
     /// = The name of the user-supplied subroutine defining the
     /// ODE system.  The system must be put in the first-order
@@ -801,13 +825,13 @@ namespace Altaxo.Calc.Ode.Obsolete.DVode
     /// to user-supplied subroutines.  The comments on dimensioning
     /// RPAR apply to IPAR.
     ///</param>
-    ///<param name="offset_atol"></param>
-    ///<param name="offset_ipar"></param>
-    ///<param name="offset_iwork"></param>
-    ///<param name="offset_rpar"></param>
-    ///<param name="offset_rtol"></param>
-    ///<param name="offset_rwork"></param>
-    ///<param name="offset_y"></param>
+    /// <param name="offset_y">The starting offset in <paramref name="Y"/>.</param>
+    /// <param name="offset_rtol">The starting offset in <paramref name="RTOL"/>.</param>
+    /// <param name="offset_atol">The starting offset in <paramref name="ATOL"/>.</param>
+    /// <param name="offset_rwork">The starting offset in <paramref name="RWORK"/>.</param>
+    /// <param name="offset_iwork">The starting offset in <paramref name="IWORK"/>.</param>
+    /// <param name="offset_rpar">The starting offset in <paramref name="RPAR"/>.</param>
+    /// <param name="offset_ipar">The starting offset in <paramref name="IPAR"/>.</param>
     public void Run(IFEX F, int NEQ, ref double[] Y, int offset_y, ref double T, double TOUT, int ITOL
                      , double[] RTOL, int offset_rtol, double[] ATOL, int offset_atol, int ITASK, ref int ISTATE, int IOPT, ref double[] RWORK, int offset_rwork
                      , int LRW, ref int[] IWORK, int offset_iwork, int LIW, IJEX JAC, int MF, double[] RPAR, int offset_rpar
@@ -2732,6 +2756,9 @@ LABEL800:
   #region The Class: DVHIN
 
   // *DECK DVHIN
+  /// <summary>
+  /// Estimates an initial step size for the translated DVODE solver.
+  /// </summary>
   public class DVHIN
   {
     #region Dependencies
@@ -2749,6 +2776,10 @@ LABEL800:
 
     #endregion Variables
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DVHIN"/> class.
+    /// </summary>
+    /// <param name="dvnorm">The weighted norm helper.</param>
     public DVHIN(DVNORM dvnorm)
     {
       #region Set Dependencies
@@ -2771,6 +2802,9 @@ LABEL800:
       #endregion Data Initialization
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DVHIN"/> class.
+    /// </summary>
     public DVHIN()
     {
       #region Dependencies (Initialization)
@@ -3044,6 +3078,9 @@ LABEL100:
   #region The Class: DVINDY
 
   // *DECK DVINDY
+  /// <summary>
+  /// Evaluates the DVODE interpolating polynomial for the translated solver state.
+  /// </summary>
   public class DVINDY
   {
     #region Dependencies
@@ -3141,6 +3178,13 @@ LABEL100:
 
     #endregion Variables
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DVINDY"/> class.
+    /// </summary>
+    /// <param name="dscal">The scaling helper.</param>
+    /// <param name="xerrwd">The error-reporting helper.</param>
+    /// <param name="DVOD01">The primary DVODE common block.</param>
+    /// <param name="DVOD02">The secondary DVODE common block.</param>
     public DVINDY(DSCAL dscal, XERRWD xerrwd, CommonBlock DVOD01, CommonBlock DVOD02)
     {
       #region Set Dependencies
@@ -3247,6 +3291,9 @@ LABEL100:
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DVINDY"/> class.
+    /// </summary>
     public DVINDY()
     {
       #region Initialization Common Blocks
@@ -3541,6 +3588,9 @@ LABEL90:
   #region The Class: DVSTEP
 
   // *DECK DVSTEP
+  /// <summary>
+  /// Advances the translated DVODE solution by one internal integration step.
+  /// </summary>
   public class DVSTEP
   {
     #region Dependencies
@@ -3659,6 +3709,17 @@ LABEL90:
 
     #endregion Variables
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DVSTEP"/> class.
+    /// </summary>
+    /// <param name="dvnorm">The weighted norm helper.</param>
+    /// <param name="dvjust">The history-adjustment helper.</param>
+    /// <param name="dscal">The scaling helper.</param>
+    /// <param name="dvset">The coefficient-setup helper.</param>
+    /// <param name="daxpy">The BLAS axpy helper.</param>
+    /// <param name="dcopy">The BLAS copy helper.</param>
+    /// <param name="DVOD01">The primary DVODE common block.</param>
+    /// <param name="DVOD02">The secondary DVODE common block.</param>
     public DVSTEP(DVNORM dvnorm, DVJUST dvjust, DSCAL dscal, DVSET dvset, DAXPY daxpy, DCOPY dcopy, CommonBlock DVOD01, CommonBlock DVOD02)
     {
       #region Set Dependencies
@@ -3799,6 +3860,9 @@ LABEL90:
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DVSTEP"/> class.
+    /// </summary>
     public DVSTEP()
     {
       #region Initialization Common Blocks
@@ -4558,6 +4622,9 @@ LABEL720:
   #region The Class: DVSET
 
   // *DECK DVSET
+  /// <summary>
+  /// Precomputes coefficients and step-size control values for the translated DVODE solver.
+  /// </summary>
   public class DVSET
   {
     #region Common variables
@@ -4637,6 +4704,10 @@ LABEL720:
 
     #endregion Variables
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DVSET"/> class.
+    /// </summary>
+    /// <param name="DVOD01">The primary DVODE common block.</param>
     public DVSET(CommonBlock DVOD01)
     {
       #region Data Initialization
@@ -4727,6 +4798,9 @@ LABEL720:
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DVSET"/> class.
+    /// </summary>
     public DVSET()
     {
       #region Initialization Common Blocks
@@ -4823,6 +4897,9 @@ LABEL720:
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Updates method coefficients and step-size control data for the current DVODE state.
+    /// </summary>
     public void Run()
     {
       #region Variables
@@ -5086,6 +5163,9 @@ LABEL300:
   #region The Class: DVJUST
 
   // *DECK DVJUST
+  /// <summary>
+  /// Adjusts the translated DVODE history array after method-order changes.
+  /// </summary>
   public class DVJUST
   {
     #region Dependencies
@@ -5167,6 +5247,11 @@ LABEL300:
 
     #endregion Variables
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DVJUST"/> class.
+    /// </summary>
+    /// <param name="daxpy">The BLAS axpy helper.</param>
+    /// <param name="DVOD01">The primary DVODE common block.</param>
     public DVJUST(DAXPY daxpy, CommonBlock DVOD01)
     {
       #region Set Dependencies
@@ -5257,6 +5342,9 @@ LABEL300:
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DVJUST"/> class.
+    /// </summary>
     public DVJUST()
     {
       #region Initialization Common Blocks
@@ -5588,6 +5676,9 @@ LABEL340:
   #region The Class: DVNLSD
 
   // *DECK DVNLSD
+  /// <summary>
+  /// Solves the nonlinear correction system for the translated DVODE solver.
+  /// </summary>
   public class DVNLSD : IDVNLSD
   {
     #region Dependencies
@@ -5695,6 +5786,17 @@ LABEL340:
 
     #endregion Variables
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DVNLSD"/> class.
+    /// </summary>
+    /// <param name="dvnorm">The weighted norm helper.</param>
+    /// <param name="dcopy">The BLAS copy helper.</param>
+    /// <param name="dvjac">The Jacobian-setup helper.</param>
+    /// <param name="dvsol">The linear-system solver helper.</param>
+    /// <param name="dscal">The scaling helper.</param>
+    /// <param name="daxpy">The BLAS axpy helper.</param>
+    /// <param name="DVOD01">The primary DVODE common block.</param>
+    /// <param name="DVOD02">The secondary DVODE common block.</param>
     public DVNLSD(DVNORM dvnorm, DCOPY dcopy, DVJAC dvjac, DVSOL dvsol, DSCAL dscal, DAXPY daxpy, CommonBlock DVOD01, CommonBlock DVOD02)
     {
       #region Set Dependencies
@@ -5817,6 +5919,9 @@ LABEL340:
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DVNLSD"/> class.
+    /// </summary>
     public DVNLSD()
     {
       #region Initialization Common Blocks
@@ -6306,6 +6411,9 @@ LABEL450:
   #region The Class: DVJAC
 
   // *DECK DVJAC
+  /// <summary>
+  /// Forms and factorizes Jacobian data for the translated DVODE solver.
+  /// </summary>
   public class DVJAC
   {
     #region Dependencies
@@ -6409,6 +6517,17 @@ LABEL450:
 
     #endregion Variables
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DVJAC"/> class.
+    /// </summary>
+    /// <param name="dvnorm">The weighted norm helper.</param>
+    /// <param name="dcopy">The BLAS copy helper.</param>
+    /// <param name="dscal">The scaling helper.</param>
+    /// <param name="dgefa">The dense factorization helper.</param>
+    /// <param name="dacopy">The dense-array copy helper.</param>
+    /// <param name="dgbfa">The band factorization helper.</param>
+    /// <param name="DVOD01">The primary DVODE common block.</param>
+    /// <param name="DVOD02">The secondary DVODE common block.</param>
     public DVJAC(DVNORM dvnorm, DCOPY dcopy, DSCAL dscal, DGEFA dgefa, DACOPY dacopy, DGBFA dgbfa, CommonBlock DVOD01, CommonBlock DVOD02)
     {
       #region Set Dependencies
@@ -6523,6 +6642,9 @@ LABEL450:
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DVJAC"/> class.
+    /// </summary>
     public DVJAC()
     {
       #region Initialization Common Blocks
@@ -7077,6 +7199,9 @@ LABEL330:
   #region The Class: DACOPY
 
   // *DECK DACOPY
+  /// <summary>
+  /// Copies dense rectangular work arrays for the translated DVODE solver.
+  /// </summary>
   public class DACOPY
   {
     #region Dependencies
@@ -7085,6 +7210,10 @@ LABEL330:
 
     #endregion Dependencies
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DACOPY"/> class.
+    /// </summary>
+    /// <param name="dcopy">The BLAS copy helper.</param>
     public DACOPY(DCOPY dcopy)
     {
       #region Set Dependencies
@@ -7094,6 +7223,9 @@ LABEL330:
       #endregion Set Dependencies
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DACOPY"/> class.
+    /// </summary>
     public DACOPY()
     {
       #region Dependencies (Initialization)
@@ -7109,6 +7241,9 @@ LABEL330:
       #endregion Set Dependencies
     }
 
+    /// <summary>
+    /// Copies a rectangular array into another array with a possibly different row dimension.
+    /// </summary>
     public void Run(int NROW, int NCOL, double[] A, int offset_a, int NROWA, ref double[] B, int offset_b, int NROWB)
     {
       #region Variables
@@ -7157,6 +7292,9 @@ LABEL330:
   #region The Class: DVSOL
 
   // *DECK DVSOL
+  /// <summary>
+  /// Solves the linear systems generated by the translated DVODE solver.
+  /// </summary>
   public class DVSOL
   {
     #region Dependencies
@@ -7239,6 +7377,12 @@ LABEL330:
 
     #endregion Variables
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DVSOL"/> class.
+    /// </summary>
+    /// <param name="dgesl">The dense linear-system solver.</param>
+    /// <param name="dgbsl">The banded linear-system solver.</param>
+    /// <param name="DVOD01">The primary DVODE common block.</param>
     public DVSOL(DGESL dgesl, DGBSL dgbsl, CommonBlock DVOD01)
     {
       #region Set Dependencies
@@ -7330,6 +7474,9 @@ LABEL330:
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DVSOL"/> class.
+    /// </summary>
     public DVSOL()
     {
       #region Initialization Common Blocks
@@ -7594,6 +7741,9 @@ LABEL400:
   #region The Class: DVSRCO
 
   // *DECK DVSRCO
+  /// <summary>
+  /// Saves and restores translated DVODE common-block state.
+  /// </summary>
   public class DVSRCO
   {
     #region Common variables
@@ -7629,6 +7779,11 @@ LABEL400:
 
     #endregion Variables
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DVSRCO"/> class.
+    /// </summary>
+    /// <param name="DVOD01">The primary DVODE common block.</param>
+    /// <param name="DVOD02">The secondary DVODE common block.</param>
     public DVSRCO(CommonBlock DVOD01, CommonBlock DVOD02)
     {
       #region Data Initialization
@@ -7677,6 +7832,9 @@ LABEL400:
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DVSRCO"/> class.
+    /// </summary>
     public DVSRCO()
     {
       #region Initialization Common Blocks
@@ -7870,6 +8028,9 @@ LABEL100:
   ///</summary>
   public class DEWSET
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DEWSET"/> class.
+    /// </summary>
     public DEWSET()
     {
     }
@@ -8019,6 +8180,9 @@ LABEL40:
   ///</summary>
   public class DVNORM
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DVNORM"/> class.
+    /// </summary>
     public DVNORM()
     {
     }
@@ -8174,6 +8338,10 @@ LABEL40:
 
     #endregion Dependencies
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XERRWD"/> class.
+    /// </summary>
+    /// <param name="ixsav">The error-state persistence helper.</param>
     public XERRWD(IXSAV ixsav)
     {
       #region Set Dependencies
@@ -8183,6 +8351,9 @@ LABEL40:
       #endregion Set Dependencies
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XERRWD"/> class.
+    /// </summary>
     public XERRWD()
     {
       #region Dependencies (Initialization)
@@ -8439,6 +8610,10 @@ LABEL100:
 
     #endregion Dependencies
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XSETF"/> class.
+    /// </summary>
+    /// <param name="ixsav">The error-state persistence helper.</param>
     public XSETF(IXSAV ixsav)
     {
       #region Set Dependencies
@@ -8448,6 +8623,9 @@ LABEL100:
       #endregion Set Dependencies
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XSETF"/> class.
+    /// </summary>
     public XSETF()
     {
       #region Dependencies (Initialization)
@@ -8581,6 +8759,10 @@ LABEL100:
 
     #endregion Dependencies
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XSETUN"/> class.
+    /// </summary>
+    /// <param name="ixsav">The error-state persistence helper.</param>
     public XSETUN(IXSAV ixsav)
     {
       #region Set Dependencies
@@ -8590,6 +8772,9 @@ LABEL100:
       #endregion Set Dependencies
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XSETUN"/> class.
+    /// </summary>
     public XSETUN()
     {
       #region Dependencies (Initialization)
@@ -8751,6 +8936,10 @@ LABEL100:
 
     #endregion Variables
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IXSAV"/> class.
+    /// </summary>
+    /// <param name="iumach">The machine-output helper.</param>
     public IXSAV(IUMACH iumach)
     {
       #region Set Dependencies
@@ -8769,6 +8958,9 @@ LABEL100:
       #endregion Data Initialization
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IXSAV"/> class.
+    /// </summary>
     public IXSAV()
     {
       #region Dependencies (Initialization)
@@ -8973,6 +9165,9 @@ LABEL100:
   ///</summary>
   public class IUMACH
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IUMACH"/> class.
+    /// </summary>
     public IUMACH()
     {
     }
@@ -9088,6 +9283,10 @@ LABEL100:
 
     #endregion Dependencies
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DUMACH"/> class.
+    /// </summary>
+    /// <param name="dumsum">The summation helper used to force storage.</param>
     public DUMACH(DUMSUM dumsum)
     {
       #region Set Dependencies
@@ -9097,6 +9296,9 @@ LABEL100:
       #endregion Set Dependencies
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DUMACH"/> class.
+    /// </summary>
     public DUMACH()
     {
       #region Dependencies (Initialization)
@@ -9201,12 +9403,21 @@ LABEL10:
 
   #region The Class: DUMSUM
 
+  /// <summary>
+  /// Forces storage of a floating-point sum for the translated machine-precision helper.
+  /// </summary>
   public class DUMSUM
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DUMSUM"/> class.
+    /// </summary>
     public DUMSUM()
     {
     }
 
+    /// <summary>
+    /// Stores the sum of two floating-point values in the supplied result variable.
+    /// </summary>
     public void Run(double A, double B, ref double C)
     {
       // C     Routine to force normal storing of A + B, for DUMACH.
@@ -9288,6 +9499,12 @@ LABEL10:
 
     #endregion Dependencies
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DGEFA"/> class.
+    /// </summary>
+    /// <param name="idamax">The index-of-maximum helper.</param>
+    /// <param name="dscal">The scaling helper.</param>
+    /// <param name="daxpy">The BLAS axpy helper.</param>
     public DGEFA(IDAMAX idamax, DSCAL dscal, DAXPY daxpy)
     {
       #region Set Dependencies
@@ -9299,6 +9516,9 @@ LABEL10:
       #endregion Set Dependencies
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DGEFA"/> class.
+    /// </summary>
     public DGEFA()
     {
       #region Dependencies (Initialization)
@@ -9641,6 +9861,11 @@ LABEL70:
 
     #endregion Dependencies
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DGESL"/> class.
+    /// </summary>
+    /// <param name="ddot">The BLAS dot-product helper.</param>
+    /// <param name="daxpy">The BLAS axpy helper.</param>
     public DGESL(DDOT ddot, DAXPY daxpy)
     {
       #region Set Dependencies
@@ -9651,6 +9876,9 @@ LABEL70:
       #endregion Set Dependencies
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DGESL"/> class.
+    /// </summary>
     public DGESL()
     {
       #region Dependencies (Initialization)
@@ -10047,6 +10275,12 @@ LABEL100:
 
     #endregion Dependencies
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DGBFA"/> class.
+    /// </summary>
+    /// <param name="idamax">The index-of-maximum helper.</param>
+    /// <param name="dscal">The scaling helper.</param>
+    /// <param name="daxpy">The BLAS axpy helper.</param>
     public DGBFA(IDAMAX idamax, DSCAL dscal, DAXPY daxpy)
     {
       #region Set Dependencies
@@ -10058,6 +10292,9 @@ LABEL100:
       #endregion Set Dependencies
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DGBFA"/> class.
+    /// </summary>
     public DGBFA()
     {
       #region Dependencies (Initialization)
@@ -10557,6 +10794,11 @@ LABEL130:
 
     #endregion Dependencies
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DGBSL"/> class.
+    /// </summary>
+    /// <param name="ddot">The BLAS dot-product helper.</param>
+    /// <param name="daxpy">The BLAS axpy helper.</param>
     public DGBSL(DDOT ddot, DAXPY daxpy)
     {
       #region Set Dependencies
@@ -10567,6 +10809,9 @@ LABEL130:
       #endregion Set Dependencies
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DGBSL"/> class.
+    /// </summary>
     public DGBSL()
     {
       #region Dependencies (Initialization)
@@ -10947,6 +11192,9 @@ LABEL100:
   ///</summary>
   public class DAXPY
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DAXPY"/> class.
+    /// </summary>
     public DAXPY()
     {
     }
@@ -11212,6 +11460,9 @@ LABEL60:
   ///</summary>
   public class DCOPY
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DCOPY"/> class.
+    /// </summary>
     public DCOPY()
     {
     }
@@ -11473,6 +11724,9 @@ LABEL60:
   ///</summary>
   public class DDOT
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DDOT"/> class.
+    /// </summary>
     public DDOT()
     {
     }
@@ -11771,6 +12025,9 @@ LABEL60:
 
     #endregion Variables
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DNRM2"/> class.
+    /// </summary>
     public DNRM2()
     {
       #region Data Initialization
@@ -12144,6 +12401,9 @@ LABEL300:
   ///</summary>
   public class DSCAL
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DSCAL"/> class.
+    /// </summary>
     public DSCAL()
     {
     }
@@ -12367,6 +12627,9 @@ LABEL40:
   ///</summary>
   public class IDAMAX
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IDAMAX"/> class.
+    /// </summary>
     public IDAMAX()
     {
     }

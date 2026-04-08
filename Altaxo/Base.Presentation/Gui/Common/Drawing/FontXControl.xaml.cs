@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Common.Drawing
   /// </summary>
   public partial class FontXControl : UserControl, IFontXView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FontXControl"/> class.
+    /// </summary>
     public FontXControl()
     {
       InitializeComponent();

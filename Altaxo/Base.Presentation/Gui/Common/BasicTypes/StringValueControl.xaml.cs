@@ -44,6 +44,9 @@ namespace Altaxo.Gui.Common.BasicTypes
   /// </summary>
   public partial class StringValueControl : UserControl, IStringValueView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StringValueControl"/> class.
+    /// </summary>
     public StringValueControl()
     {
       InitializeComponent();

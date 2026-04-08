@@ -50,23 +50,39 @@ namespace Altaxo.Gui.Workbench
   /// </remarks>
   public static class DockingLayoutStringObserver
   {
+    /// <summary>
+    /// Identifies the attached property that enables observation.
+    /// </summary>
     public static readonly DependencyProperty ObserveProperty = DependencyProperty.RegisterAttached(
         "Observe",
         typeof(bool),
         typeof(DockingLayoutStringObserver),
         new FrameworkPropertyMetadata(OnObserveChanged));
 
+    /// <summary>
+    /// Identifies the attached property that stores the serialized docking layout.
+    /// </summary>
     public static readonly DependencyProperty DockingLayoutStringProperty = DependencyProperty.RegisterAttached(
         "DockingLayoutString",
         typeof(string),
         typeof(DockingLayoutStringObserver),
         new PropertyMetadata(null, OnDockingLayoutStringChanged));
 
+    /// <summary>
+    /// Gets whether observation is enabled.
+    /// </summary>
+    /// <param name="frameworkElement">The associated element.</param>
+    /// <returns><see langword="true"/> if observation is enabled; otherwise, <see langword="false"/>.</returns>
     public static bool GetObserve(UIElement frameworkElement)
     {
       return (bool)frameworkElement.GetValue(ObserveProperty);
     }
 
+    /// <summary>
+    /// Sets whether observation is enabled.
+    /// </summary>
+    /// <param name="frameworkElement">The associated element.</param>
+    /// <param name="observe"><see langword="true"/> to enable observation; otherwise, <see langword="false"/>.</param>
     public static void SetObserve(UIElement frameworkElement, bool observe)
     {
       frameworkElement.SetValue(ObserveProperty, observe);
@@ -76,11 +92,21 @@ namespace Altaxo.Gui.Workbench
     {
     }
 
+    /// <summary>
+    /// Gets the serialized docking layout.
+    /// </summary>
+    /// <param name="frameworkElement">The docking manager.</param>
+    /// <returns>The serialized layout string.</returns>
     public static string GetDockingLayoutString(DockingManager frameworkElement)
     {
       return (string)frameworkElement.GetValue(DockingLayoutStringProperty);
     }
 
+    /// <summary>
+    /// Sets the serialized docking layout.
+    /// </summary>
+    /// <param name="frameworkElement">The docking manager.</param>
+    /// <param name="observedValue">The serialized layout string.</param>
     public static void SetDockingLayoutString(DockingManager frameworkElement, string observedValue)
     {
       frameworkElement.SetValue(DockingLayoutStringProperty, observedValue);
@@ -109,6 +135,11 @@ namespace Altaxo.Gui.Workbench
       dockManager.SetValue(ObserveProperty, orgObserve);
     }
 
+    /// <summary>
+    /// Serializes the docking layout to a string.
+    /// </summary>
+    /// <param name="dockManager">The docking manager.</param>
+    /// <returns>The serialized layout string.</returns>
     public static string GetLayoutAsString(DockingManager dockManager)
     {
       using (var fs = new StringWriter())
@@ -121,6 +152,12 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Attempts to load the docking layout from a serialized string.
+    /// </summary>
+    /// <param name="dockManager">The docking manager.</param>
+    /// <param name="layout">The serialized layout string.</param>
+    /// <returns><see langword="true"/> if loading succeeded; otherwise, <see langword="false"/>.</returns>
     public static bool TryLoadLayoutAsString(DockingManager dockManager, string layout)
     {
       if (string.IsNullOrEmpty(layout))

@@ -38,15 +38,31 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
   {
     #region Member variables
 
+    /// <summary>
+    /// The graph controller.
+    /// </summary>
     protected GraphController _grac;
 
+    /// <summary>
+    /// The tool to activate after drawing is finished.
+    /// </summary>
     protected GraphToolType NextMouseHandlerType = GraphToolType.ObjectPointer;
 
+    /// <summary>
+    /// The line endpoints.
+    /// </summary>
     protected POINT[] _Points = new POINT[2];
+    /// <summary>
+    /// The number of points currently collected.
+    /// </summary>
     protected int _currentPoint;
 
     #endregion Member variables
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SingleLineDrawingMouseHandler"/> class.
+    /// </summary>
+    /// <param name="view">The graph controller.</param>
     public SingleLineDrawingMouseHandler(GraphController view)
     {
       _grac = view;
@@ -55,6 +71,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
         _grac.SetPanelCursor(Cursors.Pen);
     }
 
+    /// <inheritdoc/>
     public override GraphToolType GraphToolType
     {
       get { return GraphToolType.SingleLineDrawing; }
@@ -66,6 +83,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// <param name="position">Mouse position.</param>
     /// <param name="e">EventArgs.</param>
     /// <returns>The mouse state handler for handling the next mouse events.</returns>
+    /// <inheritdoc/>
     public override void OnClick(PointD2D position, MouseButtonEventArgs e)
     {
       base.OnClick(position, e);
@@ -94,6 +112,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       }
     }
 
+    /// <inheritdoc/>
     public override void OnMouseMove(PointD2D position, MouseEventArgs e)
     {
       base.OnMouseMove(position, e);
@@ -105,6 +124,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       _grac.RenderOverlay();
     }
 
+    /// <summary>
+    /// Modifies the current mouse position according to keyboard modifiers.
+    /// </summary>
     protected virtual void ModifyCurrentMousePrintAreaCoordinate()
     {
       if (_currentPoint > 0)
@@ -139,6 +161,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// Draws the temporary line(s) from the first point to the mouse.
     /// </summary>
     /// <param name="g"></param>
+    /// <inheritdoc/>
     public override void AfterPaint(Graphics g)
     {
       base.AfterPaint(g);
@@ -150,6 +173,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
         g.DrawLine(Pens.Blue, _Points[_currentPoint - 1].RootLayerCoordinates.ToGdi(), _positionCurrentMouseInRootLayerCoordinates.ToGdi());
     }
 
+    /// <summary>
+    /// Finalizes the line drawing.
+    /// </summary>
     protected virtual void FinishDrawing()
     {
       var go = new LineShape(_Points[0].LayerCoordinates, _Points[1].LayerCoordinates, _grac.Doc.GetPropertyContext());

@@ -83,6 +83,10 @@ namespace Altaxo.Units
     private static SIPrefix _prefix_quetta;
 
     #region Serialization
+
+    /// <summary>
+    /// XML serialization surrogate for <see cref="SIPrefix"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SIPrefix), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {

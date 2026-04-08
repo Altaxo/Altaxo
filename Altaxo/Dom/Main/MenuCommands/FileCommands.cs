@@ -33,16 +33,24 @@ namespace Altaxo.Main.Commands
   using Altaxo.Main.Services;
   using Altaxo.Scripting;
 
+  /// <summary>
+  /// Creates a new worksheet.
+  /// </summary>
   public class CreateNewWorksheet : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       Current.ProjectService.CreateNewWorksheet();
     }
   }
 
+  /// <summary>
+  /// Creates a new worksheet and adds the standard columns.
+  /// </summary>
   public class CreateNewStandardWorksheet : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       var controller = Current.ProjectService.CreateNewWorksheet();
@@ -50,16 +58,24 @@ namespace Altaxo.Main.Commands
     }
   }
 
+  /// <summary>
+  /// Creates a new graph document.
+  /// </summary>
   public class CreateNewGraph : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       Current.ProjectService.CreateNewGraph();
     }
   }
 
+  /// <summary>
+  /// Creates a new text document.
+  /// </summary>
   public class CreateNewText : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       var doc = Current.ProjectService.CreateDocument<Altaxo.Text.TextDocument>(Altaxo.Main.ProjectFolder.RootFolderName);
@@ -67,8 +83,12 @@ namespace Altaxo.Main.Commands
     }
   }
 
+  /// <summary>
+  /// Opens worksheet or graph files and imports them into the current project.
+  /// </summary>
   public class CreateNewWorksheetOrGraphFromFile : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       var dlg = new OpenFileOptions();
@@ -103,8 +123,12 @@ namespace Altaxo.Main.Commands
     }
   }
 
+  /// <summary>
+  /// Opens an existing Altaxo project file.
+  /// </summary>
   public class FileOpen : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       if (Current.Project.IsDirty)
@@ -138,16 +162,24 @@ namespace Altaxo.Main.Commands
     }
   }
 
+  /// <summary>
+  /// Saves the current project under a new file name.
+  /// </summary>
   public class FileSaveAs : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       Current.IProjectService.SaveProjectAs();
     }
   }
 
+  /// <summary>
+  /// Saves the current project.
+  /// </summary>
   public class FileSave : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       if (Current.IProjectService.CurrentProjectFileName is not null)
@@ -163,6 +195,7 @@ namespace Altaxo.Main.Commands
   /// </summary>
   public class FileSaveCopyAs : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       Current.IProjectService.SaveProjectCopyAs();
@@ -176,6 +209,7 @@ namespace Altaxo.Main.Commands
   /// <seealso cref="Altaxo.Gui.SimpleCommand" />
   public class FileOpenFromDirectory : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       if (Current.Project.IsDirty)
@@ -208,8 +242,12 @@ namespace Altaxo.Main.Commands
     }
   }
 
+  /// <summary>
+  /// Saves the current project to a directory.
+  /// </summary>
   public class FileSaveAsToDirectory : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       var dlg = new Altaxo.Gui.FolderChoiceOptions
@@ -227,8 +265,12 @@ namespace Altaxo.Main.Commands
   }
 
 
+  /// <summary>
+  /// Imports ASCII data into the active worksheet or a new worksheet.
+  /// </summary>
   public class FileImportAscii : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       if (Current.Workbench.ActiveViewContent is Altaxo.Gui.Worksheet.Viewing.WorksheetController controller)
@@ -242,8 +284,12 @@ namespace Altaxo.Main.Commands
     }
   }
 
+  /// <summary>
+  /// Imports ASCII data with options into the active worksheet or a new worksheet.
+  /// </summary>
   public class FileImportAsciiWithOptions : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       if (Current.Workbench.ActiveViewContent is Altaxo.Gui.Worksheet.Viewing.WorksheetController controller)
@@ -257,8 +303,12 @@ namespace Altaxo.Main.Commands
     }
   }
 
+  /// <summary>
+  /// Closes the current project.
+  /// </summary>
   public class CloseProject : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       Current.IProjectService.CloseProject(false);
@@ -267,8 +317,12 @@ namespace Altaxo.Main.Commands
 
 
 
+  /// <summary>
+  /// Duplicates the active project item.
+  /// </summary>
   public class Duplicate : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       if (!(parameter is Gui.Workbench.IViewContent viewContent))
@@ -304,8 +358,12 @@ namespace Altaxo.Main.Commands
     }
   }
 
+  /// <summary>
+  /// Prompts for a new document identifier.
+  /// </summary>
   public class NewDocumentIdentifier : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       object oldId = Current.Project.DocumentIdentifier;
@@ -322,8 +380,12 @@ namespace Altaxo.Main.Commands
     }
   }
 
+  /// <summary>
+  /// Creates, edits, executes, and saves a program instance script.
+  /// </summary>
   public class NewInstanceScript : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       Altaxo.Scripting.IScriptText script = null; // or load it from somewhere
@@ -371,6 +433,12 @@ namespace Altaxo.Main.Commands
       }
     }
 
+    /// <summary>
+    /// Executes the edited script.
+    /// </summary>
+    /// <param name="script">The script to execute.</param>
+    /// <param name="reporter">The progress reporter.</param>
+    /// <returns><see langword="true"/> if the script executed successfully; otherwise, <see langword="false"/>.</returns>
     public bool EhScriptExecution(Altaxo.Scripting.IScriptText script, IProgressReporter reporter)
     {
       return ((Altaxo.Scripting.ProgramInstanceScript)script).Execute(reporter);
@@ -424,6 +492,7 @@ namespace Altaxo.Main.Commands
   /// </summary>
   public class SaveProjectWithoutWorksheetScripts : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       if (Current.Project.IsDirty)

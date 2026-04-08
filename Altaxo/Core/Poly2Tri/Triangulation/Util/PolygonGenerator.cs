@@ -33,12 +33,21 @@ using System;
 
 namespace Poly2Tri
 {
+  /// <summary>
+  /// Provides helper methods for generating sample polygons.
+  /// </summary>
   public class PolygonGenerator
   {
     private static readonly Random RNG = new Random();
 
     private static double PI_2 = 2.0 * Math.PI;
 
+    /// <summary>
+    /// Generates a polygon by sweeping around a circle with randomized radius changes.
+    /// </summary>
+    /// <param name="scale">The overall scale of the polygon.</param>
+    /// <param name="vertexCount">The number of vertices to generate.</param>
+    /// <returns>The generated polygon.</returns>
     public static Polygon RandomCircleSweep(double scale, int vertexCount)
     {
       PolygonPoint point;
@@ -72,6 +81,12 @@ namespace Poly2Tri
       return new Polygon(points);
     }
 
+    /// <summary>
+    /// Generates a polygon by sweeping around a circle with smaller randomized radius changes.
+    /// </summary>
+    /// <param name="scale">The overall scale of the polygon.</param>
+    /// <param name="vertexCount">The number of vertices to generate.</param>
+    /// <returns>The generated polygon.</returns>
     public static Polygon RandomCircleSweep2(double scale, int vertexCount)
     {
       PolygonPoint point;

@@ -48,6 +48,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiModulusRelaxation", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (HavriliakNegamiModulusRelaxation)obj;
@@ -56,6 +57,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         info.AddValue("LogarithmizeResults", s._logarithmizeResults);
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (HavriliakNegamiModulusRelaxation?)o ?? new HavriliakNegamiModulusRelaxation();
@@ -75,6 +77,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(HavriliakNegamiModulusRelaxation), 2)]
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (HavriliakNegamiModulusRelaxation)obj;
@@ -84,6 +87,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         info.AddValue("LogarithmizeResults", s._logarithmizeResults);
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (HavriliakNegamiModulusRelaxation?)o ?? new HavriliakNegamiModulusRelaxation();
@@ -98,12 +102,22 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HavriliakNegamiModulusRelaxation"/> class.
+    /// </summary>
     public HavriliakNegamiModulusRelaxation()
     {
     }
 
     #region Properties
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HavriliakNegamiModulusRelaxation"/> class.
+    /// </summary>
+    /// <param name="useFrequencyInsteadOfOmega">If set to <c>true</c>, the independent variable is interpreted as frequency instead of angular frequency.</param>
+    /// <param name="useFlowTerm">If set to <c>true</c>, a flow term is included.</param>
+    /// <param name="invertViscosity">If set to <c>true</c>, the flow parameter is interpreted as fluidity instead of viscosity.</param>
+    /// <param name="logarithmizeResult">If set to <c>true</c>, the real and imaginary parts are returned as decadic logarithms.</param>
     public HavriliakNegamiModulusRelaxation(bool useFrequencyInsteadOfOmega, bool useFlowTerm, bool invertViscosity, bool logarithmizeResult)
     {
       _useFrequencyInsteadOmega = useFrequencyInsteadOfOmega;
@@ -120,6 +134,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     ///   <c>true</c> if the independent variable is the frequency; false if the independent variable is the circular frequency.
     /// </value>
     public bool UseFrequencyInsteadOfOmega => _useFrequencyInsteadOmega;
+
+    /// <summary>
+    /// Returns a copy of this instance with the selected frequency interpretation.
+    /// </summary>
+    /// <param name="value"><c>true</c> to use frequency; <c>false</c> to use angular frequency.</param>
+    /// <returns>A fit function instance with the requested setting.</returns>
     public HavriliakNegamiModulusRelaxation WithUseFrequencyInsteadOfOmega(bool value)
     {
       if (!(_useFrequencyInsteadOmega == value))
@@ -218,6 +238,10 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     #endregion
 
 
+    /// <summary>
+    /// Returns a textual representation of this fit function.
+    /// </summary>
+    /// <returns>A description of the configured function variant.</returns>
     public override string ToString()
     {
       if (_logarithmizeResults)
@@ -226,6 +250,10 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         return "HavriliakNegami Complex " + (_useFrequencyInsteadOmega ? "(Frequency)" : "(Omega)");
     }
 
+    /// <summary>
+    /// Creates the modulus fit function variant that uses angular frequency.
+    /// </summary>
+    /// <returns>A configured fit function instance.</returns>
     [FitFunctionCreator("HavriliakNegami Complex (Omega)", "Relaxation/Modulus", 1, 2, 6)]
     [Description("${res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.HavriliakNegamiModulusRelaxationOmega}")]
     public static IFitFunction CreateModulusOfOmega()
@@ -241,6 +269,10 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return result;
     }
 
+    /// <summary>
+    /// Creates the logarithmic modulus fit function variant that uses angular frequency.
+    /// </summary>
+    /// <returns>A configured fit function instance.</returns>
     [FitFunctionCreator("Lg10 HavriliakNegami Complex (Omega)", "Relaxation/Modulus", 1, 2, 6)]
     [Description("${res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.Lg10HavriliakNegamiModulusRelaxationOmega}")]
     public static IFitFunction CreateLg10ModulusOfOmega()
@@ -256,6 +288,10 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return result;
     }
 
+    /// <summary>
+    /// Creates the modulus fit function variant that uses frequency.
+    /// </summary>
+    /// <returns>A configured fit function instance.</returns>
     [FitFunctionCreator("HavriliakNegami Complex (Frequency)", "Relaxation/Modulus", 1, 2, 6)]
     [Description("${res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.HavriliakNegamiModulusRelaxationFrequency}")]
     public static IFitFunction CreateModulusOfFrequency()
@@ -271,6 +307,10 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return result;
     }
 
+    /// <summary>
+    /// Creates the logarithmic modulus fit function variant that uses frequency.
+    /// </summary>
+    /// <returns>A configured fit function instance.</returns>
     [FitFunctionCreator("Lg10 HavriliakNegami Complex (Frequency)", "Relaxation/Modulus", 1, 2, 6)]
     [Description("${res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.Lg10HavriliakNegamiModulusRelaxationFrequency}")]
     public static IFitFunction CreateLg10ModulusOfFrequency()
@@ -384,18 +424,14 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     public event EventHandler? Changed { add { } remove { } }
 
 
-    /// <summary>
-    ///
-    /// </summary>
-    /// <param name="X"></param>
-    /// <param name="P"></param>
-    /// <param name="Y"></param>
+    /// <inheritdoc/>
     /// <remarks>
+    /// Parameters are interpreted as follows:
     /// P[0]: M_0,
-    /// P[1]: M_infinity
-    /// P[2]: tau_relax
-    /// P[3]: beta
-    /// P[4]: invviscosity
+    /// P[1]: M_infinity,
+    /// P[2]: tau_relax,
+    /// P[3]: beta,
+    /// P[4]: invviscosity.
     /// </remarks>
     public void Evaluate(double[] X, double[] P, double[] Y)
     {
@@ -426,6 +462,8 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         Y[1] = result.Imaginary;
       }
     }
+
+    /// <inheritdoc/>
     public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;

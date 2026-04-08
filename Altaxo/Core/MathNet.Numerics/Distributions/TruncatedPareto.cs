@@ -33,6 +33,9 @@ using Altaxo.Calc.Random;
 
 namespace Altaxo.Calc.Distributions
 {
+  /// <summary>
+  /// Continuous univariate truncated Pareto distribution.
+  /// </summary>
   public class TruncatedPareto : IContinuousDistribution
   {
     private System.Random _random;

@@ -144,20 +144,25 @@ namespace Altaxo.Gui.Workbench
     /// </summary>
     private string _dockManagerTheme = string.Empty;
 
+    /// <inheritdoc/>
     public event EventHandler? ActiveViewContentChanged;
 
+    /// <inheritdoc/>
     public event EventHandler? ActiveContentChanged;
 
+    /// <inheritdoc/>
     public event PropertyChangedEventHandler? PropertyChanged;
 
     #region "Serialization"
 
+    /// <inheritdoc/>
     public object CreateMemento()
     {
       IsLayoutSerializationRequired = true;
       return new WorkbenchLayoutMemento(CurrentLayoutConfiguration);
     }
 
+    /// <inheritdoc/>
     public void SetMemento(object obj)
     {
       if (obj is WorkbenchLayoutMemento memento && !string.IsNullOrEmpty(memento.LayoutAsString))
@@ -226,6 +231,7 @@ namespace Altaxo.Gui.Workbench
 
     #endregion "Serialization"
 
+    /// <inheritdoc/>
     public IList<IPadContent> PadContentCollection
     {
       get
@@ -234,6 +240,9 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AltaxoWorkbench"/> class.
+    /// </summary>
     public AltaxoWorkbench()
     {
       _padContentCollection = new ObservableCollection<IPadContent>();
@@ -253,6 +262,10 @@ namespace Altaxo.Gui.Workbench
       Initialize(null!); // dummy call merely to see in nullability analysis if all variables are initialized
     }
 
+    /// <summary>
+    /// Initializes the workbench with the specified main window.
+    /// </summary>
+    /// <param name="mainWindow">The main window object.</param>
     [MemberNotNull(nameof(_mainWindow), nameof(_mainWindowTitle), nameof(_mainWindowIconResource), nameof(_mainMenuItemsSource),
       nameof(_toolBarTrayItemsSource), nameof(_documentContextMenuItemsSource))]
     public void Initialize(object mainWindow)
@@ -299,16 +312,24 @@ namespace Altaxo.Gui.Workbench
       WorkbenchServices.StatusBar.SetMessage("${res:MainWindow.StatusBar.ReadyMessage}");
     }
 
+    /// <inheritdoc/>
     public void Initialize()
     {
       throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Raises the <see cref="PropertyChanged"/> event.
+    /// </summary>
+    /// <param name="nameOfProperty">The name of the changed property.</param>
     protected virtual void OnPropertyChanged(string nameOfProperty)
     {
       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameOfProperty));
     }
 
+    /// <summary>
+    /// Gets the main window object.
+    /// </summary>
     public object MainWindow
     {
       get
@@ -317,6 +338,7 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <inheritdoc/>
     public object ViewObject
     {
       get
@@ -365,6 +387,9 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether layout serialization is required.
+    /// </summary>
     public bool IsLayoutSerializationRequired
     {
       get
@@ -419,6 +444,9 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Gets or sets the main window title.
+    /// </summary>
     public string Title
     {
       get
@@ -436,6 +464,9 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Gets or sets the main window icon resource.
+    /// </summary>
     public string IconSource
     {
       get
@@ -499,11 +530,17 @@ new Altaxo.Main.Properties.PropertyKey<string>(
    "App\\WorkbenchDockingTheme",
    Altaxo.Main.Properties.PropertyLevel.Application);
 
+    /// <summary>
+    /// Stores the workbench docking theme in the property service.
+    /// </summary>
     public void StoreWorkbenchDockingThemeInPropertyService()
     {
       Current.PropertyService.SetValue(PropertyKeyWorkbenchDockingTheme, DockManagerTheme);
     }
 
+    /// <summary>
+    /// Restores the workbench docking theme from the property service.
+    /// </summary>
     public void RestoreWorkbenchDockingThemeFromPropertyService()
     {
       var restored = Current.PropertyService.GetValueOrNull(PropertyKeyWorkbenchDockingTheme, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin);
@@ -511,6 +548,9 @@ new Altaxo.Main.Properties.PropertyKey<string>(
         DockManagerTheme = restored;
     }
 
+    /// <summary>
+    /// Gets or sets the docking manager theme identifier.
+    /// </summary>
     public string DockManagerTheme
     {
       get
@@ -560,11 +600,17 @@ new Altaxo.Main.Properties.PropertyKey<string>(
      "App\\WorkbenchDockingLayout",
      Altaxo.Main.Properties.PropertyLevel.Application);
 
+    /// <summary>
+    /// Stores the workbench docking layout in the property service.
+    /// </summary>
     public void StoreWorkbenchDockingLayoutInPropertyService()
     {
       Current.PropertyService.SetValue(PropertyKeyWorkbenchDockingLayout, CurrentLayoutConfiguration);
     }
 
+    /// <summary>
+    /// Restores the workbench docking layout from the property service.
+    /// </summary>
     public void RestoreWorkbenchDockingLayoutFromPropertyService()
     {
       var restored = Current.PropertyService.GetValueOrNull(PropertyKeyWorkbenchDockingLayout, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin);
@@ -574,6 +620,7 @@ new Altaxo.Main.Properties.PropertyKey<string>(
 
     #endregion Layout configuration
 
+    /// <inheritdoc/>
     public bool FullScreen
     {
       get { return _isInFullScreenMode; }
@@ -588,6 +635,7 @@ new Altaxo.Main.Properties.PropertyKey<string>(
       }
     }
 
+    /// <inheritdoc/>
     public void SaveCompleteWorkbenchStateAndLayoutInPropertyService()
     {
       StoreWorkbenchStateInPropertyService();
@@ -624,12 +672,18 @@ new Altaxo.Main.Properties.PropertyKey<string>(
       "App\\WorkbenchState",
       Altaxo.Main.Properties.PropertyLevel.Application);
 
+    /// <summary>
+    /// Stores the workbench state in the property service.
+    /// </summary>
     public void StoreWorkbenchStateInPropertyService()
     {
       if (WorkbenchState is not null)
         Current.PropertyService.SetValue(PropertyKeyWorkbenchState, WorkbenchState);
     }
 
+    /// <summary>
+    /// Restores the workbench state from the property service.
+    /// </summary>
     public void RestoreWorkbenchStateFromPropertyService()
     {
       var restored = Current.PropertyService.GetValueOrNull(PropertyKeyWorkbenchState, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin);
@@ -639,6 +693,7 @@ new Altaxo.Main.Properties.PropertyKey<string>(
 
     #endregion WorkbenchState
 
+    /// <inheritdoc/>
     public IList<IViewContent> ViewContentCollection
     {
       get
@@ -647,6 +702,7 @@ new Altaxo.Main.Properties.PropertyKey<string>(
       }
     }
 
+    /// <inheritdoc/>
     public ICollection<IViewContent> PrimaryViewContents
     {
       get
@@ -781,6 +837,7 @@ new Altaxo.Main.Properties.PropertyKey<string>(
       }
     }
 
+    /// <inheritdoc/>
     public bool CloseAllSolutionViews(bool force)
     {
       bool result = true;
@@ -795,6 +852,7 @@ new Altaxo.Main.Properties.PropertyKey<string>(
       return result;
     }
 
+    /// <inheritdoc/>
     public void CloseAllViews()
     {
       var documents = _documentCollection.ToArray();
@@ -850,6 +908,7 @@ new Altaxo.Main.Properties.PropertyKey<string>(
       }
     }
 
+    /// <inheritdoc/>
     public void EhProjectChanged(object? sender, ProjectEventArgs e)
     {
       switch (e.ProjectEventKind)
@@ -868,6 +927,7 @@ new Altaxo.Main.Properties.PropertyKey<string>(
 
     #region Document handling
 
+    /// <inheritdoc/>
     public void ShowPad(IPadContent content, bool switchToPad)
     {
       if (content is null)
@@ -908,11 +968,13 @@ new Altaxo.Main.Properties.PropertyKey<string>(
       }
     }
 
+    /// <inheritdoc/>
     public void ShowView(IViewContent content)
     {
       ShowView(content, true);
     }
 
+    /// <inheritdoc/>
     public void ShowView(IViewContent content, bool switchToOpenedView)
     {
       if (!_documentCollection.Contains(content))
@@ -932,6 +994,7 @@ new Altaxo.Main.Properties.PropertyKey<string>(
       }
     }
 
+    /// <inheritdoc/>
     public void ShowView(object content, bool selectView)
     {
       if (content is IViewContent viewContent)
@@ -946,6 +1009,7 @@ new Altaxo.Main.Properties.PropertyKey<string>(
       }
     }
 
+    /// <inheritdoc/>
     public void CloseContent(IViewContent viewcontent)
     {
       if (_documentCollection.Remove(viewcontent))
@@ -1022,6 +1086,7 @@ new Altaxo.Main.Properties.PropertyKey<string>(
 
     #region Close
 
+    /// <inheritdoc/>
     public void Close()
     {
       App.Current.MainWindow.Close();

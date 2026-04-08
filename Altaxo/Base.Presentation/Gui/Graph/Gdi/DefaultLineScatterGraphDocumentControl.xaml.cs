@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Gdi
   /// </summary>
   public partial class DefaultLineScatterGraphDocumentControl : UserControl, IDefaultLineScatterGraphDocumentView, Altaxo.Gui.Graph.Graph3D.Templates.IDefaultCartesicPlotTemplateView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DefaultLineScatterGraphDocumentControl"/> class.
+    /// </summary>
     public DefaultLineScatterGraphDocumentControl()
     {
       InitializeComponent();

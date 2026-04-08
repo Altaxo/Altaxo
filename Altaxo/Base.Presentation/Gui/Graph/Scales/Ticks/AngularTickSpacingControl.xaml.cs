@@ -35,6 +35,9 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
   /// </summary>
   public partial class AngularTickSpacingControl : UserControl, IAngularTickSpacingView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AngularTickSpacingControl"/> class.
+    /// </summary>
     public AngularTickSpacingControl()
     {
       InitializeComponent();

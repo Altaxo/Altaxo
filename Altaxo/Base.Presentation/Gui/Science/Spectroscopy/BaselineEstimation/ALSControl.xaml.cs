@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
   /// </summary>
   public partial class ALSControl : UserControl, IALSView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ALSControl"/> class.
+    /// </summary>
     public ALSControl()
     {
       InitializeComponent();

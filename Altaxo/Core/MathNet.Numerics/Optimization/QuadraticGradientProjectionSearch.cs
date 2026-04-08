@@ -33,8 +33,20 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization
 {
+  /// <summary>
+  /// Provides a quadratic gradient projection search for box-constrained subproblems.
+  /// </summary>
   public static class QuadraticGradientProjectionSearch
   {
+    /// <summary>
+    /// Searches for the Cauchy point of the quadratic model under bound constraints.
+    /// </summary>
+    /// <param name="x0">The starting point.</param>
+    /// <param name="gradient">The gradient at the starting point.</param>
+    /// <param name="hessian">The Hessian approximation.</param>
+    /// <param name="lowerBound">The lower bounds.</param>
+    /// <param name="upperBound">The upper bounds.</param>
+    /// <returns>The gradient projection result.</returns>
     public static GradientProjectionResult Search(Vector<double> x0, Vector<double> gradient, Matrix<double> hessian, Vector<double> lowerBound, Vector<double> upperBound)
     {
       List<bool> isFixed = new List<bool>(x0.Count);
@@ -112,16 +124,34 @@ namespace Altaxo.Calc.Optimization
       }
     }
 
+    /// <summary>
+    /// Represents the result of a gradient projection search.
+    /// </summary>
     public readonly struct GradientProjectionResult
     {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="GradientProjectionResult"/> struct.
+      /// </summary>
+      /// <param name="cauchyPoint">The computed Cauchy point.</param>
+      /// <param name="fixedCount">The number of fixed variables.</param>
+      /// <param name="isFixed">Flags indicating fixed variables.</param>
       public GradientProjectionResult(Vector<double> cauchyPoint, int fixedCount, List<bool> isFixed)
       {
         CauchyPoint = cauchyPoint;
         FixedCount = fixedCount;
         IsFixed = isFixed;
       }
+      /// <summary>
+      /// Gets the computed Cauchy point.
+      /// </summary>
       public Vector<double> CauchyPoint { get; }
+      /// <summary>
+      /// Gets the number of fixed variables.
+      /// </summary>
       public int FixedCount { get; }
+      /// <summary>
+      /// Gets flags indicating which variables are fixed.
+      /// </summary>
       public List<bool> IsFixed { get; }
     }
   }

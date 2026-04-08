@@ -32,6 +32,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
   /// </summary>
   public partial class TextGraphicControl : UserControl, ITextGraphicView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextGraphicControl"/> class.
+    /// </summary>
     public TextGraphicControl()
     {
       InitializeComponent();

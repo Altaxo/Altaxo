@@ -33,8 +33,15 @@ namespace Altaxo.Com
   [ComVisible(false)]
   public class ReferenceCountedObjectBase
   {
+    /// <summary>
+    /// The COM manager that tracks object lifetime.
+    /// </summary>
     protected ComManager _comManager;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ReferenceCountedObjectBase"/> class.
+    /// </summary>
+    /// <param name="comManager">The COM manager.</param>
     public ReferenceCountedObjectBase(ComManager comManager)
     {
       _comManager = comManager;
@@ -43,6 +50,9 @@ namespace Altaxo.Com
       ComDebug.ReportInfo("{0}.Constructor, NumberOfObjectsInUse={1}", GetType().Name, _comManager.ObjectsCount);
     }
 
+    /// <summary>
+    /// Finalizes an instance of the <see cref="ReferenceCountedObjectBase"/> class.
+    /// </summary>
     ~ReferenceCountedObjectBase()
     {
       _comManager.InterlockedDecrementObjectsCount();

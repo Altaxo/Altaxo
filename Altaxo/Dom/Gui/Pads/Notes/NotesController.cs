@@ -30,6 +30,9 @@ using Altaxo.Main;
 
 namespace Altaxo.Gui.Pads.Notes
 {
+  /// <summary>
+  /// Defines the view for the notes pad.
+  /// </summary>
   public interface INotesView : IDataContextAwareView
   {
   }
@@ -44,7 +47,9 @@ namespace Altaxo.Gui.Pads.Notes
     private WeakReference _currentlyActiveNotes;
     WeakPropertyChangedEventHandler _notesPropertyChangedHandler;
 
-
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NotesController"/> class.
+    /// </summary>
     public NotesController()
     {
       Current.Workbench.ActiveViewContentChanged += new WeakEventHandler(EhWorkbenchViewContentChanged, Current.Workbench, nameof(Current.Workbench.ActiveViewContentChanged));
@@ -52,7 +57,9 @@ namespace Altaxo.Gui.Pads.Notes
 
     #region Bindings
 
-
+    /// <summary>
+    /// Gets or sets the notes object belonging to the currently active document.
+    /// </summary>
     public ITextBackedConsole CurrentlyActiveNotes
     {
       get
@@ -85,6 +92,9 @@ namespace Altaxo.Gui.Pads.Notes
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the notes pad is enabled.
+    /// </summary>
     public bool IsEnabled
     {
       get
@@ -93,6 +103,9 @@ namespace Altaxo.Gui.Pads.Notes
       }
     }
 
+    /// <summary>
+    /// Gets or sets the text of the currently active notes.
+    /// </summary>
     public string Text
     {
       get
@@ -183,6 +196,7 @@ namespace Altaxo.Gui.Pads.Notes
       }
     }
 
+    /// <inheritdoc/>
     public override object ViewObject
     {
       get
@@ -207,6 +221,7 @@ namespace Altaxo.Gui.Pads.Notes
       }
     }
 
+    /// <inheritdoc/>
     public override object ModelObject => null;
 
     #endregion IPadContent Members

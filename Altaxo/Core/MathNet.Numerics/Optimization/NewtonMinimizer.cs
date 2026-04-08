@@ -33,12 +33,30 @@ using Altaxo.Calc.Optimization.LineSearch;
 
 namespace Altaxo.Calc.Optimization
 {
+  /// <summary>
+  /// Minimizes unconstrained objective functions with Newton's method.
+  /// </summary>
   public sealed class NewtonMinimizer : IUnconstrainedMinimizer
   {
+    /// <summary>
+    /// Gets or sets the stopping threshold for the gradient norm.
+    /// </summary>
     public double GradientTolerance { get; set; }
+    /// <summary>
+    /// Gets or sets the maximum number of iterations.
+    /// </summary>
     public int MaximumIterations { get; set; }
+    /// <summary>
+    /// Gets or sets a value indicating whether a line search is used.
+    /// </summary>
     public bool UseLineSearch { get; set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NewtonMinimizer"/> class.
+    /// </summary>
+    /// <param name="gradientTolerance">The stopping threshold for the gradient norm.</param>
+    /// <param name="maximumIterations">The maximum number of iterations.</param>
+    /// <param name="useLineSearch">If set to <see langword="true"/>, use a line search.</param>
     public NewtonMinimizer(double gradientTolerance, int maximumIterations, bool useLineSearch = false)
     {
       GradientTolerance = gradientTolerance;
@@ -46,11 +64,21 @@ namespace Altaxo.Calc.Optimization
       UseLineSearch = useLineSearch;
     }
 
+    /// <inheritdoc/>
     public MinimizationResult FindMinimum(IObjectiveFunction objective, Vector<double> initialGuess)
     {
       return Minimum(objective, initialGuess, GradientTolerance, MaximumIterations, UseLineSearch);
     }
 
+    /// <summary>
+    /// Minimizes the objective function with Newton's method.
+    /// </summary>
+    /// <param name="objective">The objective function.</param>
+    /// <param name="initialGuess">The initial parameter guess.</param>
+    /// <param name="gradientTolerance">The stopping threshold for the gradient norm.</param>
+    /// <param name="maxIterations">The maximum number of iterations.</param>
+    /// <param name="useLineSearch">If set to <see langword="true"/>, use a line search.</param>
+    /// <returns>The minimization result.</returns>
     public static MinimizationResult Minimum(IObjectiveFunction objective, Vector<double> initialGuess, double gradientTolerance = 1e-8, int maxIterations = 1000, bool useLineSearch = false)
     {
       if (!objective.IsGradientSupported)

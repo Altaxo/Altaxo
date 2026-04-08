@@ -29,6 +29,9 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// Text box that reflects an externally supplied validation error message.
+  /// </summary>
   public class ValidatingTextBoxN : TextBox
   {
     /// <summary>
@@ -39,6 +42,9 @@ namespace Altaxo.Gui.Common
       DefaultStyleKeyProperty.OverrideMetadata(typeof(ValidatingTextBoxN), new FrameworkPropertyMetadata(typeof(ValidatingTextBoxN)));
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ValidatingTextBoxN"/> class.
+    /// </summary>
     public ValidatingTextBoxN()
     {
     }
@@ -49,18 +55,21 @@ namespace Altaxo.Gui.Common
     // 'How to SelectAll in TextBox when TextBox gets focus by mouse click?'
     // (http://social.msdn.microsoft.com/Forums/en-US/wpf/thread/564b5731-af8a-49bf-b297-6d179615819f/)
 
+    /// <inheritdoc/>
     protected override void OnGotKeyboardFocus(System.Windows.Input.KeyboardFocusChangedEventArgs e)
     {
       SelectAll();
       base.OnGotKeyboardFocus(e);
     }
 
+    /// <inheritdoc/>
     protected override void OnMouseDoubleClick(System.Windows.Input.MouseButtonEventArgs e)
     {
       SelectAll();
       base.OnMouseDoubleClick(e);
     }
 
+    /// <inheritdoc/>
     protected override void OnPreviewMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs e)
     {
       if (!IsKeyboardFocusWithin)
@@ -76,13 +85,18 @@ namespace Altaxo.Gui.Common
 
     #endregion Change selection behaviour
 
+    /// <summary>
+    /// Gets or sets the current validation error text.
+    /// </summary>
     public string ValidationError
     {
       get { return (string)GetValue(ValidationErrorProperty); }
       set { SetValue(ValidationErrorProperty, value); }
     }
 
-    // Using a DependencyProperty as the backing store for ValidationError.  This enables animation, styling, binding, etc...
+    /// <summary>
+    /// Identifies the <see cref="ValidationError"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty ValidationErrorProperty =
         DependencyProperty.Register(nameof(ValidationError), typeof(string), typeof(ValidatingTextBoxN), new PropertyMetadata(null, EhValidationErrorChanged));
 

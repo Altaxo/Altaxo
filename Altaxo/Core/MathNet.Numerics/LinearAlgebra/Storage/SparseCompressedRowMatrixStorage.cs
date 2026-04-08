@@ -34,6 +34,9 @@ using System.Runtime.Serialization;
 
 namespace Altaxo.Calc.LinearAlgebra.Storage
 {
+  /// <summary>
+  /// Stores a sparse matrix in compressed-row format.
+  /// </summary>
   [Serializable]
   [DataContract(Namespace = "urn:MathNet/Numerics/LinearAlgebra")]
   public class SparseCompressedRowMatrixStorage<T> : MatrixStorage<T>
@@ -270,12 +273,18 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return delta;
     }
 
+    /// <summary>
+    /// Normalizes the storage ordering and removes explicit zero entries.
+    /// </summary>
     public void Normalize()
     {
       NormalizeOrdering();
       NormalizeZeros();
     }
 
+    /// <summary>
+    /// Sorts the column indices within each row.
+    /// </summary>
     public void NormalizeOrdering()
     {
       for (int i = 0; i < RowCount; i++)
@@ -289,6 +298,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       }
     }
 
+    /// <summary>
+    /// Removes explicit zero entries from the sparse storage.
+    /// </summary>
     public void NormalizeZeros()
     {
       MapInplace(x => x, Zeros.AllowSkip);
@@ -421,6 +433,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // CLEARING
 
+    /// <inheritdoc/>
     public override void Clear()
     {
       Array.Clear(RowPointers, 0, RowPointers.Length);
@@ -502,6 +515,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // INITIALIZATION
 
+    /// <summary>
+    /// Creates a sparse compressed-row matrix storage from another matrix storage.
+    /// </summary>
     public static SparseCompressedRowMatrixStorage<T> OfMatrix(MatrixStorage<T> matrix)
     {
       var storage = new SparseCompressedRowMatrixStorage<T>(matrix.RowCount, matrix.ColumnCount);
@@ -509,6 +525,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return storage;
     }
 
+    /// <summary>
+    /// Creates a sparse compressed-row matrix storage initialized with a constant value.
+    /// </summary>
     public static SparseCompressedRowMatrixStorage<T> OfValue(int rows, int columns, T value)
     {
       if (Zero.Equals(value))
@@ -547,6 +566,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
     }
 
 
+    /// <summary>
+    /// Creates a sparse compressed-row matrix storage initialized by an index-based initializer.
+    /// </summary>
     public static SparseCompressedRowMatrixStorage<T> OfInit(int rows, int columns, Func<int, int, T> init)
     {
       var storage = new SparseCompressedRowMatrixStorage<T>(rows, columns);
@@ -574,6 +596,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return storage;
     }
 
+    /// <summary>
+    /// Creates a sparse compressed-row matrix storage with initialized diagonal entries.
+    /// </summary>
     public static SparseCompressedRowMatrixStorage<T> OfDiagonalInit(int rows, int columns, Func<int, T> init)
     {
       int diagonalLength = Math.Min(rows, columns);
@@ -599,6 +624,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return storage;
     }
 
+    /// <summary>
+    /// Creates a sparse compressed-row matrix storage from a two-dimensional array.
+    /// </summary>
     public static SparseCompressedRowMatrixStorage<T> OfArray(T[,] array)
     {
       var storage = new SparseCompressedRowMatrixStorage<T>(array.GetLength(0), array.GetLength(1));
@@ -625,6 +653,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return storage;
     }
 
+    /// <summary>
+    /// Creates a sparse compressed-row matrix storage from row arrays.
+    /// </summary>
     public static SparseCompressedRowMatrixStorage<T> OfRowArrays(T[][] data)
     {
       if (data.Length <= 0)
@@ -657,6 +688,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return storage;
     }
 
+    /// <summary>
+    /// Creates a sparse compressed-row matrix storage from column arrays.
+    /// </summary>
     public static SparseCompressedRowMatrixStorage<T> OfColumnArrays(T[][] data)
     {
       if (data.Length <= 0)
@@ -689,6 +723,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return storage;
     }
 
+    /// <summary>
+    /// Creates a sparse compressed-row matrix storage from row vectors.
+    /// </summary>
     public static SparseCompressedRowMatrixStorage<T> OfRowVectors(VectorStorage<T>[] data)
     {
       if (data.Length <= 0)
@@ -723,6 +760,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return storage;
     }
 
+    /// <summary>
+    /// Creates a sparse compressed-row matrix storage from column vectors.
+    /// </summary>
     public static SparseCompressedRowMatrixStorage<T> OfColumnVectors(VectorStorage<T>[] data)
     {
       if (data.Length <= 0)
@@ -756,6 +796,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return storage;
     }
 
+    /// <summary>
+    /// Creates a sparse compressed-row matrix storage from indexed values.
+    /// </summary>
     public static SparseCompressedRowMatrixStorage<T> OfIndexedEnumerable(int rows, int columns, IEnumerable<Tuple<int, int, T>> data)
     {
       var trows = new List<Tuple<int, T>>[rows];
@@ -796,6 +839,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return storage;
     }
 
+    /// <summary>
+    /// Creates a sparse compressed-row matrix storage from indexed tuple values.
+    /// </summary>
     public static SparseCompressedRowMatrixStorage<T> OfIndexedEnumerable(int rows, int columns, IEnumerable<(int, int, T)> data)
     {
       var trows = new List<Tuple<int, T>>[rows];
@@ -836,6 +882,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return storage;
     }
 
+    /// <summary>
+    /// Creates a sparse compressed-row matrix storage from row enumerables.
+    /// </summary>
     public static SparseCompressedRowMatrixStorage<T> OfRowEnumerables(int rows, int columns, IEnumerable<IEnumerable<T>> data)
     {
       var storage = new SparseCompressedRowMatrixStorage<T>(rows, columns);
@@ -872,6 +921,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return storage;
     }
 
+    /// <summary>
+    /// Creates a sparse compressed-row matrix storage from column enumerables.
+    /// </summary>
     public static SparseCompressedRowMatrixStorage<T> OfColumnEnumerables(int rows, int columns, IEnumerable<IEnumerable<T>> data)
     {
       var trows = new List<Tuple<int, T>>[rows];
@@ -923,6 +975,13 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return storage;
     }
 
+    /// <summary>
+    /// Creates a sparse compressed-row matrix storage from row-major data.
+    /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="data">The row-major source data.</param>
+    /// <returns>The initialized matrix storage.</returns>
     public static SparseCompressedRowMatrixStorage<T> OfRowMajorEnumerable(int rows, int columns, IEnumerable<T> data)
     {
       var storage = new SparseCompressedRowMatrixStorage<T>(rows, columns);
@@ -953,6 +1012,13 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return storage;
     }
 
+    /// <summary>
+    /// Creates a sparse compressed-row matrix storage from column-major data.
+    /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="data">The column-major source data.</param>
+    /// <returns>The initialized matrix storage.</returns>
     public static SparseCompressedRowMatrixStorage<T> OfColumnMajorList(int rows, int columns, IList<T> data)
     {
       if (rows * columns != data.Count)
@@ -1573,6 +1639,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // EXTRACT
 
+    /// <inheritdoc/>
     public override T[] ToRowMajorArray()
     {
       var ret = new T[RowCount * ColumnCount];
@@ -1592,6 +1659,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return ret;
     }
 
+    /// <inheritdoc/>
     public override T[] ToColumnMajorArray()
     {
       var ret = new T[RowCount * ColumnCount];
@@ -1610,6 +1678,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return ret;
     }
 
+    /// <inheritdoc/>
     public override T[][] ToRowArrays()
     {
       var ret = new T[RowCount][];
@@ -1630,6 +1699,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return ret;
     }
 
+    /// <inheritdoc/>
     public override T[][] ToColumnArrays()
     {
       var ret = new T[ColumnCount][];
@@ -1652,6 +1722,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return ret;
     }
 
+    /// <inheritdoc/>
     public override T[,] ToArray()
     {
       var ret = new T[RowCount, ColumnCount];
@@ -1672,6 +1743,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // ENUMERATION
 
+    /// <inheritdoc/>
     public override IEnumerable<T> Enumerate()
     {
       int k = 0;
@@ -1686,6 +1758,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       }
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<(int, int, T)> EnumerateIndexed()
     {
       int k = 0;
@@ -1698,11 +1771,13 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       }
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<T> EnumerateNonZero()
     {
       return Values.Take(ValueCount).Where(x => !Zero.Equals(x));
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<(int, int, T)> EnumerateNonZeroIndexed()
     {
       for (int row = 0; row < RowCount; row++)
@@ -1721,6 +1796,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // FIND
 
+    /// <inheritdoc/>
     public override Tuple<int, int, T> Find(Func<T, bool> predicate, Zeros zeros)
     {
       for (int row = 0; row < RowCount; row++)
@@ -1903,6 +1979,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // FUNCTIONAL COMBINATORS: MAP
 
+    /// <inheritdoc/>
     public override void MapInplace(Func<T, T> f, Zeros zeros)
     {
       if (zeros == Zeros.Include || !Zero.Equals(f(Zero)))
@@ -1956,6 +2033,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       }
     }
 
+    /// <inheritdoc/>
     public override void MapIndexedInplace(Func<int, int, T, T> f, Zeros zeros)
     {
       if (zeros == Zeros.Include || !Zero.Equals(f(0, 1, Zero)))

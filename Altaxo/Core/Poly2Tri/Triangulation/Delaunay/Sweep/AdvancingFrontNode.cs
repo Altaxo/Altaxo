@@ -37,21 +37,54 @@
 
 namespace Poly2Tri
 {
+  /// <summary>
+  /// Represents a node in the advancing front.
+  /// </summary>
   public class AdvancingFrontNode
   {
+    /// <summary>
+    /// The next node in the advancing front.
+    /// </summary>
     public AdvancingFrontNode? Next;
+
+    /// <summary>
+    /// The previous node in the advancing front.
+    /// </summary>
     public AdvancingFrontNode? Prev;
+
+    /// <summary>
+    /// The x-coordinate value used for front searches.
+    /// </summary>
     public double Value;
+
+    /// <summary>
+    /// The point represented by this node.
+    /// </summary>
     public TriangulationPoint Point;
+
+    /// <summary>
+    /// The triangle currently associated with this node.
+    /// </summary>
     public DelaunayTriangle? Triangle;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AdvancingFrontNode"/> class.
+    /// </summary>
+    /// <param name="point">The point represented by the node.</param>
     public AdvancingFrontNode(TriangulationPoint point)
     {
       Point = point;
       Value = point.X;
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this node has a next node.
+    /// </summary>
     public bool HasNext { get { return Next is not null; } }
+
+    /// <summary>
+    /// Gets a value indicating whether this node has a previous node.
+    /// </summary>
     public bool HasPrev { get { return Prev is not null; } }
   }
 }

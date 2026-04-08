@@ -20,6 +20,9 @@ namespace Altaxo.Gui.Data
   /// </summary>
   public partial class ExtractCommonColumnsToTableOptionsControl : UserControl, IExtractCommonColumnsToTableOptionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ExtractCommonColumnsToTableOptionsControl"/> class.
+    /// </summary>
     public ExtractCommonColumnsToTableOptionsControl()
     {
       InitializeComponent();

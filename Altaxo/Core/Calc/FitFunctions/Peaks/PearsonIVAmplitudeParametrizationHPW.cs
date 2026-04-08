@@ -112,6 +112,10 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       return $"{this.GetType().Name} NumberOfTerms={NumberOfTerms} OrderOfBaseline={OrderOfBaselinePolynomial}";
     }
 
+    /// <summary>
+    /// Creates a fit function with one Pearson IV peak and no baseline.
+    /// </summary>
+    /// <returns>The fit function.</returns>
     [FitFunctionCreator("PearsonIVAmplitude (Parametrization HPW)", "Peaks", 1, 1, NumberOfParametersPerPeak)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Peaks.PearsonIVAmplitudeParametrizationHPW}")]
     public static IFitFunction Create_1_M1()
@@ -447,6 +451,16 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <inheritdoc/>
     public string[] ParameterNamesForOnePeak => new string[] { ParameterBaseName0, ParameterBaseName1, ParameterBaseName2, ParameterBaseName3, ParameterBaseName4 };
 
+    /// <summary>
+    /// Gets the value of one Pearson IV peak term.
+    /// </summary>
+    /// <param name="x">The x coordinate.</param>
+    /// <param name="amplitude">The peak amplitude.</param>
+    /// <param name="pos">The peak position.</param>
+    /// <param name="w">The width parameter.</param>
+    /// <param name="m">The Pearson IV shape parameter <c>m</c>.</param>
+    /// <param name="v">The Pearson IV skewness parameter <c>v</c>.</param>
+    /// <returns>The function value.</returns>
     public static double GetYOfOneTerm(double x, double amplitude, double pos, double w, double m, double v)
     {
       double arg = Math.Sqrt((Math.Pow(2, 1 / m) - 1) * (1 + v * v)) * (x - pos) / w - v;
@@ -463,6 +477,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
     private static double SafeSqrt(double x) => Math.Sqrt(Math.Max(0, x));
 
+    /// <inheritdoc/>
     public (double Position, double PositionStdDev, double Area, double AreaStdDev, double Height, double HeightStdDev, double FWHM, double FWHMStdDev)
       GetPositionAreaHeightFWHMFromSinglePeakParameters(IReadOnlyList<double> parameters, IROMatrix<double>? cv)
     {

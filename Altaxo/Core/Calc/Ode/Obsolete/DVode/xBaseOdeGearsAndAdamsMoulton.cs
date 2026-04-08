@@ -98,11 +98,11 @@ namespace Altaxo.Calc.Ode.Obsolete.DVode
     }
 
     /// <summary>
-    /// Inicialize the ODE solver with a Jacobiano
+    /// Initializes the ODE solver with a user-supplied Jacobian.
     /// </summary>
-    /// <param name="Func">The function that define the ODEs.</param>
-    /// <param name="Jac">The Ode type (stiff, nonstiff).</param>
-    /// <param name="numEquations">The number of equatins.</param>
+    /// <param name="Func">The function that defines the ODE system.</param>
+    /// <param name="Jac">The Jacobian function.</param>
+    /// <param name="numEquations">The number of equations.</param>
     protected internal void InitializationWithJacobian(OdeFunction Func, OdeJacobian Jac, int numEquations)
     {
       //dvode = new DVODE();
@@ -277,15 +277,7 @@ namespace Altaxo.Calc.Ode.Obsolete.DVode
       }
     }
 
-    /// <summary>
-    /// Sets the initial values for the differential equations.
-    /// </summary>
-    /// <param name="t0">The initial value for the independent variable.</param>
-    /// <param name="y0">A vector of size N containing the initial conditions. N is the number of differential equations.</param>
-    /// <remarks>
-    /// This method should be invoked before to start the integration.
-    /// When this method is invoked, the ODE solver is restarted.
-    /// </remarks>
+    /// <inheritdoc/>
     public override void SetInitialValues(double t0, double[] y0)
     {
       base.SetInitialValues(t0, y0);
@@ -401,19 +393,65 @@ namespace Altaxo.Calc.Ode.Obsolete.DVode
 
   #region Interface
 
+  /// <summary>
+  /// Defines the right-hand side function callback used by the DVODE solver.
+  /// </summary>
+  /// <summary>
+  /// Defines the function callback used by the obsolete DVODE wrappers.
+  /// </summary>
   public interface IFEX
   {
+    /// <summary>
+    /// Evaluates the system derivatives.
+    /// </summary>
+    /// <param name="NEQ">The number of equations.</param>
+    /// <param name="T">The current value of the independent variable.</param>
+    /// <param name="Y">The current solution vector.</param>
+    /// <param name="offset_y">The offset into <paramref name="Y"/>.</param>
+    /// <param name="YDOT">Receives the derivative values.</param>
+    /// <param name="offset_ydot">The offset into <paramref name="YDOT"/>.</param>
+    /// <param name="RPAR">A user-supplied real parameter.</param>
+    /// <param name="IPAR">A user-supplied integer parameter.</param>
     void Run(int NEQ, double T, double[] Y, int offset_y, ref double[] YDOT, int offset_ydot, double RPAR, int IPAR);
   }
 
+  /// <summary>
+  /// Defines the Jacobian callback used by the DVODE solver.
+  /// </summary>
+  /// <summary>
+  /// Defines the Jacobian callback used by the obsolete DVODE wrappers.
+  /// </summary>
   public interface IJEX
   {
+    /// <summary>
+    /// Evaluates the Jacobian matrix.
+    /// </summary>
+    /// <param name="NEQ">The number of equations.</param>
+    /// <param name="T">The current value of the independent variable.</param>
+    /// <param name="Y">The current solution vector.</param>
+    /// <param name="offset_y">The offset into <paramref name="Y"/>.</param>
+    /// <param name="ML">The lower bandwidth.</param>
+    /// <param name="MU">The upper bandwidth.</param>
+    /// <param name="PD">Receives the Jacobian data.</param>
+    /// <param name="offset_pd">The offset into <paramref name="PD"/>.</param>
+    /// <param name="NRPD">The leading dimension of <paramref name="PD"/>.</param>
+    /// <param name="RPAR">A user-supplied real parameter.</param>
+    /// <param name="IPAR">A user-supplied integer parameter.</param>
     void Run(int NEQ, double T, double[] Y, int offset_y, int ML, int MU, ref double[] PD, int offset_pd
              , int NRPD, double RPAR, int IPAR);
   }
 
+  /// <summary>
+  /// Defines the nonlinear system solver callback used internally by DVODE.
+  /// </summary>
+  /// <summary>
+  /// Defines the nonlinear solver callback used by the obsolete DVODE wrappers.
+  /// </summary>
   public interface IDVNLSD
   {
+    /// <summary>
+    /// Solves the nonlinear system for one DVODE step.
+    /// </summary>
     void Run(ref double[] Y, int offset_y, double[] YH, int offset_yh, int LDYH, double[] VSAV, int offset_vsav, ref double[] SAVF, int offset_savf, double[] EWT, int offset_ewt
              , ref double[] ACOR, int offset_acor, ref int[] IWM, int offset_iwm, ref double[] WM, int offset_wm, IFEX F, IJEX JAC, IFEX PDUM
              , ref int NFLAG, double[] RPAR, int offset_rpar, int[] IPAR, int offset_ipar);
@@ -458,6 +496,7 @@ namespace Altaxo.Calc.Ode.Obsolete.DVode
 
     #endregion Constructor
 
+    /// <inheritdoc/>
     public void Run(int NEQ, double T, double[] Y, int o_y, ref double[] YDOT, int o_ydot, double RPAR, int IPAR)
     {
       #region Array Index Correction
@@ -511,6 +550,7 @@ namespace Altaxo.Calc.Ode.Obsolete.DVode
       MeJac = new double[NEq, NEq];
     }
 
+    /// <inheritdoc/>
     public void Run(int NEQ, double T, double[] Y, int o_y, int ML, int MU, ref double[] PD, int o_pd
                      , int NRPD, double RPAR, int IPAR)
     {

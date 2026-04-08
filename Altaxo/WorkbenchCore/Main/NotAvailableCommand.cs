@@ -26,15 +26,21 @@ namespace Altaxo.Main
   /// </summary>
   public class NotAvailableCommand : ICommand
   {
+    /// <summary>
+    /// Gets the singleton instance of the unavailable command.
+    /// </summary>
     public static readonly ICommand Instance = new NotAvailableCommand();
 
+    /// <inheritdoc/>
     public event EventHandler? CanExecuteChanged { add { } remove { } }
 
+    /// <inheritdoc/>
     public bool CanExecute(object? parameter)
     {
       return false;
     }
 
+    /// <inheritdoc/>
     public void Execute(object? parameter)
     {
       throw new NotSupportedException();

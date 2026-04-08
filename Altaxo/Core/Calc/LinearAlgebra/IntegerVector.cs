@@ -32,8 +32,19 @@ namespace Altaxo.Calc.LinearAlgebra
   /// </summary>
   public class IntegerVector
   {
+    /// <summary>
+    /// Shared empty array used for zero-length vectors.
+    /// </summary>
     protected static readonly int[] _emptyIntArray = new int[0];
+
+    /// <summary>
+    /// Stores the vector elements.
+    /// </summary>
     protected int[] x = _emptyIntArray;
+
+    /// <summary>
+    /// Stores the logical length of the vector.
+    /// </summary>
     protected int len = 0;
 
     /// <summary>

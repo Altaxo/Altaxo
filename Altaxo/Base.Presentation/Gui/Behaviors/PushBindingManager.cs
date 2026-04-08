@@ -3,14 +3,7 @@
 *  see https://meleak.wordpress.com/2011/08/28/onewaytosource-binding-for-readonly-dependency-property/
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
-using System.Windows.Markup;
-using System.ComponentModel;
-using System.Collections;
 
 namespace Altaxo.Gui.Behaviors
 {
@@ -18,23 +11,29 @@ namespace Altaxo.Gui.Behaviors
   /// Used to bind read-only dependence properties one way to source. This is not possible in WPF by design. 
   /// </summary>
   /// <example>
-  /// <code>
+  /// <code><![CDATA[
   /// <TextBlock Name="myTextBlock">
   ///   <axogb:PushBindingManager.PushBindings>
   ///      <axogb:PushBinding TargetProperty = "ActualHeight" Path="Height"/>
   ///      <axogb:PushBinding TargetProperty = "ActualWidth" Path="Width"/>
   ///   </axogb:PushBindingManager.PushBindings>
   /// </TextBlock>
-  /// </code>
+  /// ]]></code>
   /// </example>
   public class PushBindingManager
   {
+    /// <summary>
+    /// Identifies the attached property that stores push bindings directly on an element.
+    /// </summary>
     public static DependencyProperty PushBindingsProperty =
         DependencyProperty.RegisterAttached("PushBindingsInternal",
                                             typeof(PushBindingCollection),
                                             typeof(PushBindingManager),
                                             new UIPropertyMetadata(null));
 
+    /// <summary>
+    /// Gets the push bindings for the specified object.
+    /// </summary>
     public static PushBindingCollection GetPushBindings(DependencyObject obj)
     {
       if (obj.GetValue(PushBindingsProperty) == null)
@@ -43,27 +42,44 @@ namespace Altaxo.Gui.Behaviors
       }
       return (PushBindingCollection)obj.GetValue(PushBindingsProperty);
     }
+
+    /// <summary>
+    /// Sets the push bindings for the specified object.
+    /// </summary>
     public static void SetPushBindings(DependencyObject obj, PushBindingCollection value)
     {
       obj.SetValue(PushBindingsProperty, value);
     }
 
 
+    /// <summary>
+    /// Identifies the attached property that stores push bindings supplied through styles.
+    /// </summary>
     public static DependencyProperty StylePushBindingsProperty =
         DependencyProperty.RegisterAttached("StylePushBindings",
                                             typeof(PushBindingCollection),
                                             typeof(PushBindingManager),
                                             new UIPropertyMetadata(null, StylePushBindingsChanged));
 
+    /// <summary>
+    /// Gets the style-defined push bindings for the specified object.
+    /// </summary>
     public static PushBindingCollection GetStylePushBindings(DependencyObject obj)
     {
       return (PushBindingCollection)obj.GetValue(StylePushBindingsProperty);
     }
+
+    /// <summary>
+    /// Sets the style-defined push bindings for the specified object.
+    /// </summary>
     public static void SetStylePushBindings(DependencyObject obj, PushBindingCollection value)
     {
       obj.SetValue(StylePushBindingsProperty, value);
     }
 
+    /// <summary>
+    /// Applies style-defined push bindings to the target object.
+    /// </summary>
     public static void StylePushBindingsChanged(DependencyObject target, DependencyPropertyChangedEventArgs e)
     {
       if (target != null)

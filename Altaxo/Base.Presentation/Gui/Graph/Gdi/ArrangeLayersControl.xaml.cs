@@ -38,6 +38,9 @@ namespace Altaxo.Gui.Graph.Gdi
   /// </summary>
   public partial class ArrangeLayersControl : UserControl, IArrangeLayersView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ArrangeLayersControl"/> class.
+    /// </summary>
     public ArrangeLayersControl()
     {
       InitializeComponent();

@@ -32,19 +32,14 @@ using Altaxo.AddInItems;
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
   /// <summary>
-  /// This helps in conditions where the number of selected data columns and the type of the item cares.
-  /// Two attributes are used: selcount and itemtype. The value of selcount is one of the comparer chars: (&lt; = &gt;)
-  /// and an integer number, for instance: =1. The value of itemtype, if set, is the class name of the items, that should
-  /// be selected.
+  /// Evaluates conditions based on the number and type of selected project browser list items.
+  /// Two attributes are used: <c>selcount</c> and <c>itemtype</c>. The value of <c>selcount</c> starts with one of
+  /// the comparison characters (<c>&lt;</c>, <c>=</c>, <c>&gt;</c>) followed by an integer, for example <c>=1</c>.
+  /// The value of <c>itemtype</c>, if set, is the class name of the items that should be selected.
   /// </summary>
   public class ListItemSelectionEvaluator : IConditionEvaluator
   {
-    /// <summary>
-    /// Evaluates if the chosen condition is true.
-    /// </summary>
-    /// <param name="caller"></param>
-    /// <param name="condition"></param>
-    /// <returns>True if the condition is valid.</returns>
+    /// <inheritdoc/>
     public bool IsValid(object caller, Condition condition)
     {
       bool result;

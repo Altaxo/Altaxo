@@ -36,11 +36,15 @@ namespace Altaxo.Gui.Serialization.Ascii
   /// </summary>
   public partial class AsciiDocumentAnalysisOptionsControl : UserControl, IAsciiDocumentAnalysisOptionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AsciiDocumentAnalysisOptionsControl"/> class.
+    /// </summary>
     public AsciiDocumentAnalysisOptionsControl()
     {
       InitializeComponent();
     }
 
+    /// <inheritdoc/>
     public int NumberOfLinesToAnalyze
     {
       get
@@ -53,6 +57,7 @@ namespace Altaxo.Gui.Serialization.Ascii
       }
     }
 
+    /// <inheritdoc/>
     public void SetNumberFormatsToAnalyze(SelectableListNodeList availableFormats, System.Collections.ObjectModel.ObservableCollection<Boxed<SelectableListNode>> currentlySelectedItems)
     {
       _guiNumberFormatsForAnalysisColumn.ItemsSource = null;
@@ -61,6 +66,7 @@ namespace Altaxo.Gui.Serialization.Ascii
       _guiNumberFormatsForAnalysis.ItemsSource = currentlySelectedItems;
     }
 
+    /// <inheritdoc/>
     public void SetDateTimeFormatsToAnalyze(SelectableListNodeList availableFormats, System.Collections.ObjectModel.ObservableCollection<Boxed<SelectableListNode>> currentlySelectedItems)
     {
       _guiDateTimeFormatsForAnalysis.ItemsSource = null;

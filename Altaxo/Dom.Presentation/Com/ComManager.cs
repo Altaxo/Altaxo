@@ -39,8 +39,14 @@ namespace Altaxo.Com
   using Graph;
   using UnmanagedApi.Ole32;
 
+  /// <summary>
+  /// Manages the COM lifetime and object registration for Altaxo documents.
+  /// </summary>
   public class ComManager : Altaxo.Main.IComManager
   {
+    /// <summary>
+    /// Gets a value indicating whether the COM server is currently active.
+    /// </summary>
     public bool IsActive { get; private set; }
 
     /// <summary>The total number of objects in use.</summary>
@@ -61,6 +67,9 @@ namespace Altaxo.Com
 
     private ProjectFileComObject _fileComObject;
 
+    /// <summary>
+    /// Holds the last COM data object used for clipboard conversion.
+    /// </summary>
     protected WeakReference _lastUsedDataObject;
 
     /// <summary>
@@ -69,18 +78,29 @@ namespace Altaxo.Com
     /// </summary>
     public bool IsInEmbeddedObjectMode { get; private set; }
 
+    /// <inheritdoc/>
     public string ContainerApplicationName { get; private set; }
 
+    /// <inheritdoc/>
     public string ContainerDocumentName { get; private set; }
 
+    /// <inheritdoc/>
     public object EmbeddedObject { get { return _embeddedComObject?.Document; } }
 
+    /// <inheritdoc/>
     public bool ApplicationWasStartedWithEmbeddingArg { get; private set; }
 
+    /// <summary>
+    /// Gets the application adapter used to marshal operations to the Altaxo UI.
+    /// </summary>
     public AltaxoComApplicationAdapter ApplicationAdapter { get; private set; }
 
     private GuiThreadStack _guiThreadStack;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ComManager"/> class.
+    /// </summary>
+    /// <param name="appAdapter">The application adapter used for GUI interaction.</param>
     public ComManager(AltaxoComApplicationAdapter appAdapter)
     {
       ApplicationAdapter = appAdapter;
@@ -88,6 +108,10 @@ namespace Altaxo.Com
       _fileComObject = new ProjectFileComObject(this);
     }
 
+    /// <summary>
+    /// Creates a new COM object for an embedded graph document.
+    /// </summary>
+    /// <returns>A new embedded graph document COM object.</returns>
     public GraphDocumentEmbeddedComObject GetNewEmbeddedGraphDocumentComObject()
     {
       if (_embeddedComObject is not null)
@@ -96,6 +120,11 @@ namespace Altaxo.Com
       return new GraphDocumentEmbeddedComObject(this);
     }
 
+    /// <summary>
+    /// Gets the linked COM object for the specified graph document.
+    /// </summary>
+    /// <param name="doc">The graph document.</param>
+    /// <returns>The linked COM object for the graph document.</returns>
     public GraphDocumentLinkedComObject GetDocumentsComObjectForGraphDocument(GraphDocument doc)
     {
       if (doc is null)
@@ -112,6 +141,11 @@ namespace Altaxo.Com
       return newComObject;
     }
 
+    /// <summary>
+    /// Creates a data object for the specified graph document.
+    /// </summary>
+    /// <param name="doc">The graph document.</param>
+    /// <returns>A data object for the graph document.</returns>
     public GraphDocumentDataObject GetDocumentsDataObjectForGraphDocument(GraphDocumentBase doc)
     {
       var newComObject = new GraphDocumentDataObject(doc, _fileComObject, this);
@@ -119,6 +153,7 @@ namespace Altaxo.Com
       return newComObject;
     }
 
+    /// <inheritdoc/>
     public System.Runtime.InteropServices.ComTypes.IDataObject GetDocumentsComObjectForDocument(object obj)
     {
       if (obj is GraphDocument doc)
@@ -129,6 +164,7 @@ namespace Altaxo.Com
       return null;
     }
 
+    /// <inheritdoc/>
     public System.Runtime.InteropServices.ComTypes.IDataObject GetDocumentsDataObjectForDocument(object obj)
     {
       if (obj is GraphDocumentBase doc)
@@ -139,6 +175,12 @@ namespace Altaxo.Com
       return null;
     }
 
+    /// <summary>
+    /// Notifies the manager that the embedded document COM object now represents a new document.
+    /// </summary>
+    /// <param name="documentComObject">The embedded document COM object.</param>
+    /// <param name="oldDocument">The previous document.</param>
+    /// <param name="newDocument">The new document.</param>
     public void NotifyDocumentOfDocumentsComObjectChanged(GraphDocumentEmbeddedComObject documentComObject, GraphDocumentBase oldDocument, GraphDocumentBase newDocument)
     {
       if (oldDocument is not null)
@@ -150,6 +192,9 @@ namespace Altaxo.Com
       EnterEmbeddedObjectMode();
     }
 
+    /// <summary>
+    /// Gets the currently registered linked graph document COM objects.
+    /// </summary>
     public IEnumerable<GraphDocumentLinkedComObject> GraphDocumentLinkedComObjects
     {
       get
@@ -158,6 +203,10 @@ namespace Altaxo.Com
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether invoking the GUI thread is required for the current call.
+    /// </summary>
+    /// <returns><c>true</c> if the current call must be marshalled to the GUI thread; otherwise, <c>false</c>.</returns>
     public bool IsInvokeRequiredForGuiThread()
     {
       return ApplicationAdapter.IsInvokeRequiredForGuiThread();
@@ -184,6 +233,7 @@ namespace Altaxo.Com
       _guiThreadStack.FromGuiThreadExecute(action);
     }
 
+    /// <inheritdoc/>
     public bool IsInEmbeddedMode
     {
       get { return IsInEmbeddedObjectMode; }
@@ -193,6 +243,11 @@ namespace Altaxo.Com
       }
     }
 
+    /// <summary>
+    /// Sets the host application and document names for embedded mode.
+    /// </summary>
+    /// <param name="containerApplicationName">The name of the container application.</param>
+    /// <param name="containerFileName">The name of the container document.</param>
     public void SetHostNames(string containerApplicationName, string containerFileName)
     {
       // see Brockschmidt, Inside Ole 2nd ed. page 992
@@ -205,6 +260,9 @@ namespace Altaxo.Com
       ApplicationAdapter.SetHostNames(containerApplicationName, containerFileName, EmbeddedObject);
     }
 
+    /// <summary>
+    /// Gets the project file COM object.
+    /// </summary>
     public ProjectFileComObject FileComObject
     {
       get
@@ -214,6 +272,10 @@ namespace Altaxo.Com
     }
 
     // This method performs a thread-safe incrementation of the objects count.
+    /// <summary>
+    /// Atomically increments the number of active COM objects.
+    /// </summary>
+    /// <returns>The incremented number of active COM objects.</returns>
     public int InterlockedIncrementObjectsCount()
     {
       // Increment the global count of objects.
@@ -221,6 +283,10 @@ namespace Altaxo.Com
     }
 
     // This method performs a thread-safe decrementation the objects count.
+    /// <summary>
+    /// Atomically decrements the number of active COM objects.
+    /// </summary>
+    /// <returns>The decremented number of active COM objects.</returns>
     public int InterlockedDecrementObjectsCount()
     {
       // Decrement the global count of objects.
@@ -228,6 +294,9 @@ namespace Altaxo.Com
     }
 
     // Returns the total number of objects alive currently.
+    /// <summary>
+    /// Gets the current number of active COM objects.
+    /// </summary>
     public int ObjectsCount
     {
       get
@@ -238,6 +307,10 @@ namespace Altaxo.Com
 
     // This method performs a thread-safe incrementation the
     // server lock count.
+    /// <summary>
+    /// Atomically increments the server lock count.
+    /// </summary>
+    /// <returns>The incremented server lock count.</returns>
     public int InterlockedIncrementServerLockCount()
     {
       // Increment the global lock count of this server.
@@ -246,6 +319,10 @@ namespace Altaxo.Com
 
     // This method performs a thread-safe decrementation the
     // server lock count.
+    /// <summary>
+    /// Atomically decrements the server lock count.
+    /// </summary>
+    /// <returns>The decremented server lock count.</returns>
     public int InterlockedDecrementServerLockCount()
     {
       // Decrement the global lock count of this server.
@@ -253,6 +330,9 @@ namespace Altaxo.Com
     }
 
     // Returns the current server lock count.
+    /// <summary>
+    /// Gets the current server lock count.
+    /// </summary>
     public int ServerLockCount
     {
       get
@@ -267,6 +347,9 @@ namespace Altaxo.Com
     // If so, we post a WM_QUIT message to the main thread's
     // message loop. This will cause the message loop to
     // exit and hence the termination of this application.
+    /// <summary>
+    /// Attempts to terminate the COM server when no objects and no server locks remain.
+    /// </summary>
     public void AttemptToTerminateServer()
     {
       lock (this)
@@ -298,6 +381,7 @@ namespace Altaxo.Com
       }
     }
 
+    /// <inheritdoc/>
     public void RegisterApplicationForCom()
     {
       var applicationFileNameKind = RegistryValueKind.String; // if Altaxo is in an arbitrary path, use a simple string for the path, otherwise, use ExpandString (see below)
@@ -385,6 +469,7 @@ namespace Altaxo.Com
       }
     }
 
+    /// <inheritdoc/>
     public void UnregisterApplicationForCom()
     {
       try
@@ -437,6 +522,13 @@ namespace Altaxo.Com
         keySW.Close();
     }
 
+    /// <summary>
+    /// Registers the Altaxo project COM object.
+    /// </summary>
+    /// <param name="rootKey">The registry root key.</param>
+    /// <param name="wowMode">The registry view to use.</param>
+    /// <param name="applicationFileName">The application file name.</param>
+    /// <param name="applicationFileNameKind">The registry value kind for the application path.</param>
     public void RegisterProject(RegistryKey rootKey, WOW_Mode wowMode, string applicationFileName, RegistryValueKind applicationFileNameKind)
     {
       RegistryKey keySW = null, keyCR = null, keyCLSID = null, key1 = null, key2 = null, key3 = null, key4 = null;
@@ -493,6 +585,13 @@ namespace Altaxo.Com
       }
     }
 
+    /// <summary>
+    /// Registers the Altaxo graph class.
+    /// </summary>
+    /// <param name="rootKey">The registry root key.</param>
+    /// <param name="wowMode">The registry view to use.</param>
+    /// <param name="applicationFileName">The application file name.</param>
+    /// <param name="applicationFileNameKind">The registry value kind for the application path.</param>
     public void RegisterGraphClass(RegistryKey rootKey, WOW_Mode wowMode, string applicationFileName, RegistryValueKind applicationFileNameKind)
     {
       RegistryKey keySW = null, keyCR = null, key1 = null, key2 = null, key3 = null, key4 = null, key5 = null;
@@ -548,6 +647,13 @@ namespace Altaxo.Com
     }
 
 
+    /// <summary>
+    /// Registers the CLSID information for the Altaxo graph class.
+    /// </summary>
+    /// <param name="rootKey">The registry root key.</param>
+    /// <param name="wowMode">The registry view to use.</param>
+    /// <param name="applicationFileName">The application file name.</param>
+    /// <param name="applicationFileNameKind">The registry value kind for the application path.</param>
     public void RegisterGraphClassID(RegistryKey rootKey, WOW_Mode wowMode, string applicationFileName, RegistryValueKind applicationFileNameKind)
     {
       RegistryKey keySW = null, keyCR = null, keyCLSID = null, key1 = null, key2 = null, key3 = null, key4 = null;
@@ -657,6 +763,7 @@ namespace Altaxo.Com
     // on and start this application.
     // If the return value is false, we terminate
     // this application immediately.
+    /// <inheritdoc/>
     public bool ProcessStartupArguments(params string[] args)
     {
       bool bRet = true;
@@ -690,6 +797,7 @@ namespace Altaxo.Com
       return bRet;
     }
 
+    /// <inheritdoc/>
     public void StartLocalServer()
     {
       IsActive = true;
@@ -773,6 +881,9 @@ namespace Altaxo.Com
       }
     }
 
+    /// <summary>
+    /// Notifies the manager that it is entering embedded object mode.
+    /// </summary>
     public void EnterEmbeddedObjectMode()
     {
       if (_classFactoryOfFileComObject is not null)
@@ -783,6 +894,7 @@ namespace Altaxo.Com
       }
     }
 
+    /// <inheritdoc/>
     public void StopLocalServer()
     {
       // First of all, if a Com data object is still on the clipboard,

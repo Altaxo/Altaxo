@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
   /// </summary>
   public partial class RegularPolygonControl : UserControl, IRegularPolygonView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RegularPolygonControl"/> class.
+    /// </summary>
     public RegularPolygonControl()
     {
       InitializeComponent();

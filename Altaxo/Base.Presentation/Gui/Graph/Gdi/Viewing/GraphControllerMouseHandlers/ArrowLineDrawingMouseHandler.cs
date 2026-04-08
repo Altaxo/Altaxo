@@ -33,6 +33,10 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
   /// </summary>
   public class ArrowLineDrawingMouseHandler : SingleLineDrawingMouseHandler
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ArrowLineDrawingMouseHandler"/> class.
+    /// </summary>
+    /// <param name="grac">The graph controller.</param>
     public ArrowLineDrawingMouseHandler(GraphController grac)
       : base(grac)
     {
@@ -40,11 +44,13 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
         _grac.SetPanelCursor(Cursors.Pen);
     }
 
+    /// <inheritdoc/>
     public override GraphToolType GraphToolType
     {
       get { return GraphToolType.ArrowLineDrawing; }
     }
 
+    /// <inheritdoc/>
     protected override void FinishDrawing()
     {
       var context = _grac.Doc.GetPropertyContext();

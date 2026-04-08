@@ -22,38 +22,50 @@ using Altaxo.Workbench;
 
 namespace Altaxo.Gui.Workbench.Commands
 {
+  /// <summary>
+  /// Represents the command that navigates backward in the navigation history.
+  /// </summary>
   public class NavigateBack : ICommand
   {
+    /// <inheritdoc/>
     public event EventHandler? CanExecuteChanged
     {
       add { CommandManager.RequerySuggested += value; }
       remove { CommandManager.RequerySuggested -= value; }
     }
 
+    /// <inheritdoc/>
     public bool CanExecute(object? parameter)
     {
       return NavigationService.CanNavigateBack;
     }
 
+    /// <inheritdoc/>
     public void Execute(object? parameter)
     {
       NavigationService.Go(-1);
     }
   }
 
+  /// <summary>
+  /// Represents the command that navigates forward in the navigation history.
+  /// </summary>
   public class NavigateForward : ICommand
   {
+    /// <inheritdoc/>
     public event EventHandler? CanExecuteChanged
     {
       add { CommandManager.RequerySuggested += value; }
       remove { CommandManager.RequerySuggested -= value; }
     }
 
+    /// <inheritdoc/>
     public bool CanExecute(object? parameter)
     {
       return NavigationService.CanNavigateForwards;
     }
 
+    /// <inheritdoc/>
     public void Execute(object? parameter)
     {
       NavigationService.Go(+1);

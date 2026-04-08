@@ -40,13 +40,18 @@ namespace Altaxo.Gui.DataConnection
   /// </summary>
   public partial class EntireTableQueryControl : UserControl, IEntireTableQueryView
   {
+    /// <inheritdoc/>
     public event Action? ViewResults;
 
     /// <summary>
     /// Occurs when the selected tree node of the schema tree changed.
     /// </summary>
+    /// <inheritdoc/>
     public event Action? SelectedSchemaNodeChanged;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EntireTableQueryControl"/> class.
+    /// </summary>
     public EntireTableQueryControl()
     {
       InitializeComponent();
@@ -89,6 +94,9 @@ namespace Altaxo.Gui.DataConnection
     [IconResource] private const string IconResource_Procedure = "Icons.16x16.DataConnection.Procedure";
     [IconResource] private const string IconResource_Column = "Icons.16x16.DataConnection.Column";
 
+    /// <summary>
+    /// Gets an image converter for schema tree nodes.
+    /// </summary>
     public static IValueConverter TreeImageConverter
     {
       get
@@ -108,6 +116,7 @@ namespace Altaxo.Gui.DataConnection
       }
     }
 
+    /// <inheritdoc/>
     public void SetTreeSource(NGTreeNode rootNode)
     {
       _treeTables.ItemsSource = rootNode.Nodes;

@@ -31,22 +31,42 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Common.Drawing
 {
+  /// <summary>
+  /// Represents an item displayed by an <see cref="ImageComboBox"/>.
+  /// </summary>
   public class ImageComboBoxItem
   {
+    /// <summary>
+    /// Gets or sets the parent combo box.
+    /// </summary>
     public ImageComboBox Parent { get; set; }
 
+    /// <summary>
+    /// Gets or sets the value represented by the item.
+    /// </summary>
     public object Value { get; set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ImageComboBoxItem"/> class.
+    /// </summary>
     public ImageComboBoxItem()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ImageComboBoxItem"/> class.
+    /// </summary>
+    /// <param name="parent">The parent combo box.</param>
+    /// <param name="item">The represented item value.</param>
     public ImageComboBoxItem(ImageComboBox parent, object item)
     {
       Parent = parent;
       Value = item;
     }
 
+    /// <summary>
+    /// Gets the text representation of the current item.
+    /// </summary>
     public virtual string Text
     {
       get
@@ -55,11 +75,15 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return Text;
     }
 
+    /// <summary>
+    /// Gets the image representation of the current item.
+    /// </summary>
     public virtual ImageSource Image
     {
       get

@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
   /// </summary>
   public partial class DataMeshPlotStyleControl : UserControl, IDataMeshPlotStyleView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DataMeshPlotStyleControl"/> class.
+    /// </summary>
     public DataMeshPlotStyleControl()
     {
       InitializeComponent();

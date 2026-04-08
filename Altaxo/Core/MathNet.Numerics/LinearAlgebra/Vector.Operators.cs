@@ -242,30 +242,60 @@ namespace Altaxo.Calc.LinearAlgebra
       return dividend.PointwiseRemainder(divisor);
     }
 
+    /// <summary>
+    /// Pointwise multiplies two vectors.
+    /// </summary>
+    /// <param name="x">The left vector.</param>
+    /// <param name="y">The right vector.</param>
+    /// <returns>A vector containing the pointwise products.</returns>
     [SpecialName]
     public static Vector<T> op_DotMultiply(Vector<T> x, Vector<T> y)
     {
       return x.PointwiseMultiply(y);
     }
 
+    /// <summary>
+    /// Pointwise divides one vector by another vector.
+    /// </summary>
+    /// <param name="dividend">The dividend vector.</param>
+    /// <param name="divisor">The divisor vector.</param>
+    /// <returns>A vector containing the pointwise quotients.</returns>
     [SpecialName]
     public static Vector<T> op_DotDivide(Vector<T> dividend, Vector<T> divisor)
     {
       return dividend.PointwiseDivide(divisor);
     }
 
+    /// <summary>
+    /// Pointwise computes the remainder of one vector divided by another vector.
+    /// </summary>
+    /// <param name="dividend">The dividend vector.</param>
+    /// <param name="divisor">The divisor vector.</param>
+    /// <returns>A vector containing the pointwise remainders.</returns>
     [SpecialName]
     public static Vector<T> op_DotPercent(Vector<T> dividend, Vector<T> divisor)
     {
       return dividend.PointwiseRemainder(divisor);
     }
 
+    /// <summary>
+    /// Pointwise raises a vector to the powers provided by another vector.
+    /// </summary>
+    /// <param name="vector">The base vector.</param>
+    /// <param name="exponent">The exponent vector.</param>
+    /// <returns>A vector containing the pointwise powers.</returns>
     [SpecialName]
     public static Vector<T> op_DotHat(Vector<T> vector, Vector<T> exponent)
     {
       return vector.PointwisePower(exponent);
     }
 
+    /// <summary>
+    /// Pointwise raises a vector to a scalar power.
+    /// </summary>
+    /// <param name="vector">The base vector.</param>
+    /// <param name="exponent">The scalar exponent.</param>
+    /// <returns>A vector containing the pointwise powers.</returns>
     [SpecialName]
     public static Vector<T> op_DotHat(Vector<T> vector, T exponent)
     {
@@ -276,7 +306,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes the sqrt of a vector pointwise
     /// </summary>
     /// <param name="x">The input vector</param>
-    /// <returns></returns>
+    /// <returns>A vector containing the pointwise square root of <paramref name="x"/>.</returns>
     public static Vector<T> Sqrt(Vector<T> x)
     {
       return x.PointwiseSqrt();
@@ -286,7 +316,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes the exponential of a vector pointwise
     /// </summary>
     /// <param name="x">The input vector</param>
-    /// <returns></returns>
+    /// <returns>A vector containing the pointwise exponential of <paramref name="x"/>.</returns>
     public static Vector<T> Exp(Vector<T> x)
     {
       return x.PointwiseUnary(x.DoPointwiseExp);
@@ -296,7 +326,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes the log of a vector pointwise
     /// </summary>
     /// <param name="x">The input vector</param>
-    /// <returns></returns>
+    /// <returns>A vector containing the pointwise natural logarithm of <paramref name="x"/>.</returns>
     public static Vector<T> Log(Vector<T> x)
     {
       return x.PointwiseUnary(x.PointwiseLog);
@@ -305,7 +335,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes the log10 of a vector pointwise
     /// </summary>
     /// <param name="x">The input vector</param>
-    /// <returns></returns>
+    /// <returns>A vector containing the pointwise base-10 logarithm of <paramref name="x"/>.</returns>
     public static Vector<T> Log10(Vector<T> x)
     {
       return x.PointwiseLog10();
@@ -315,7 +345,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes the sin of a vector pointwise
     /// </summary>
     /// <param name="x">The input vector</param>
-    /// <returns></returns>
+    /// <returns>A vector containing the pointwise sine of <paramref name="x"/>.</returns>
     public static Vector<T> Sin(Vector<T> x)
     {
       return x.PointwiseSin();
@@ -325,7 +355,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes the cos of a vector pointwise
     /// </summary>
     /// <param name="x">The input vector</param>
-    /// <returns></returns>
+    /// <returns>A vector containing the pointwise cosine of <paramref name="x"/>.</returns>
     public static Vector<T> Cos(Vector<T> x)
     {
       return x.PointwiseCos();
@@ -335,7 +365,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes the tan of a vector pointwise
     /// </summary>
     /// <param name="x">The input vector</param>
-    /// <returns></returns>
+    /// <returns>A vector containing the pointwise tangent of <paramref name="x"/>.</returns>
     public static Vector<T> Tan(Vector<T> x)
     {
       return x.PointwiseTan();
@@ -345,7 +375,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes the asin of a vector pointwise
     /// </summary>
     /// <param name="x">The input vector</param>
-    /// <returns></returns>
+    /// <returns>A vector containing the pointwise arcsine of <paramref name="x"/>.</returns>
     public static Vector<T> Asin(Vector<T> x)
     {
       return x.PointwiseAsin();
@@ -355,7 +385,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes the acos of a vector pointwise
     /// </summary>
     /// <param name="x">The input vector</param>
-    /// <returns></returns>
+    /// <returns>A vector containing the pointwise arccosine of <paramref name="x"/>.</returns>
     public static Vector<T> Acos(Vector<T> x)
     {
       return x.PointwiseAcos();
@@ -365,7 +395,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes the atan of a vector pointwise
     /// </summary>
     /// <param name="x">The input vector</param>
-    /// <returns></returns>
+    /// <returns>A vector containing the pointwise arctangent of <paramref name="x"/>.</returns>
     public static Vector<T> Atan(Vector<T> x)
     {
       return x.PointwiseAtan();
@@ -375,7 +405,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes the sinh of a vector pointwise
     /// </summary>
     /// <param name="x">The input vector</param>
-    /// <returns></returns>
+    /// <returns>A vector containing the pointwise hyperbolic sine of <paramref name="x"/>.</returns>
     public static Vector<T> Sinh(Vector<T> x)
     {
       return x.PointwiseSinh();
@@ -385,7 +415,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes the cosh of a vector pointwise
     /// </summary>
     /// <param name="x">The input vector</param>
-    /// <returns></returns>
+    /// <returns>A vector containing the pointwise hyperbolic cosine of <paramref name="x"/>.</returns>
     public static Vector<T> Cosh(Vector<T> x)
     {
       return x.PointwiseCosh();
@@ -395,7 +425,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes the tanh of a vector pointwise
     /// </summary>
     /// <param name="x">The input vector</param>
-    /// <returns></returns>
+    /// <returns>A vector containing the pointwise hyperbolic tangent of <paramref name="x"/>.</returns>
     public static Vector<T> Tanh(Vector<T> x)
     {
       return x.PointwiseTanh();
@@ -405,7 +435,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes the absolute value of a vector pointwise
     /// </summary>
     /// <param name="x">The input vector</param>
-    /// <returns></returns>
+    /// <returns>A vector containing the pointwise absolute value of <paramref name="x"/>.</returns>
     public static Vector<T> Abs(Vector<T> x)
     {
       return x.PointwiseAbs();
@@ -415,7 +445,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes the floor of a vector pointwise
     /// </summary>
     /// <param name="x">The input vector</param>
-    /// <returns></returns>
+    /// <returns>A vector containing the pointwise floor of <paramref name="x"/>.</returns>
     public static Vector<T> Floor(Vector<T> x)
     {
       return x.PointwiseFloor();
@@ -425,7 +455,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes the ceiling of a vector pointwise
     /// </summary>
     /// <param name="x">The input vector</param>
-    /// <returns></returns>
+    /// <returns>A vector containing the pointwise ceiling of <paramref name="x"/>.</returns>
     public static Vector<T> Ceiling(Vector<T> x)
     {
       return x.PointwiseCeiling();
@@ -435,7 +465,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes the rounded value of a vector pointwise
     /// </summary>
     /// <param name="x">The input vector</param>
-    /// <returns></returns>
+    /// <returns>A vector containing the pointwise rounded values of <paramref name="x"/>.</returns>
     public static Vector<T> Round(Vector<T> x)
     {
       return x.PointwiseRound();

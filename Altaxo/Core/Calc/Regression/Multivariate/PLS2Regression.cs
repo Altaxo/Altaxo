@@ -36,6 +36,9 @@ namespace Altaxo.Calc.Regression.Multivariate
 #nullable disable
     private PLS2CalibrationModel _calib;
 
+    /// <summary>
+    /// Stores the predicted residual error sum of squares (PRESS) values.
+    /// </summary>
     protected IExtensibleVector<double> _PRESS;
 #nullable enable
 

@@ -33,6 +33,9 @@ using Altaxo.Calc.Optimization.LineSearch;
 
 namespace Altaxo.Calc.Optimization
 {
+  /// <summary>
+  /// Provides shared functionality for BFGS-based minimizers.
+  /// </summary>
   public abstract class BfgsMinimizerBase : MinimizerBase
   {
     /// <inheritdoc />
@@ -44,6 +47,20 @@ namespace Altaxo.Calc.Optimization
     }
 
 
+    /// <summary>
+    /// Executes the repeated BFGS update loop.
+    /// </summary>
+    /// <param name="currentExitCondition">The current exit condition.</param>
+    /// <param name="lineSearcher">The line search algorithm.</param>
+    /// <param name="inversePseudoHessian">The current inverse pseudo-Hessian estimate.</param>
+    /// <param name="lineSearchDirection">The current line search direction.</param>
+    /// <param name="previousPoint">The previously accepted point.</param>
+    /// <param name="lineSearchResult">The latest line search result.</param>
+    /// <param name="candidate">The current candidate point.</param>
+    /// <param name="step">The current step vector.</param>
+    /// <param name="totalLineSearchSteps">The accumulated number of line search steps.</param>
+    /// <param name="iterationsWithNontrivialLineSearch">The count of iterations with a nontrivial line search.</param>
+    /// <returns>The number of performed iterations.</returns>
     protected int DoBfgsUpdate(ref ExitCondition currentExitCondition, WolfeLineSearch lineSearcher, ref Matrix<double> inversePseudoHessian, ref Vector<double> lineSearchDirection, ref IObjectiveFunction previousPoint, ref LineSearchResult lineSearchResult, ref IObjectiveFunction candidate, ref Vector<double> step, ref int totalLineSearchSteps, ref int iterationsWithNontrivialLineSearch)
     {
       int iterations;
@@ -75,6 +92,16 @@ namespace Altaxo.Calc.Optimization
       return iterations;
     }
 
+    /// <summary>
+    /// Calculates the next search direction.
+    /// </summary>
+    /// <param name="inversePseudoHessian">The current inverse pseudo-Hessian estimate.</param>
+    /// <param name="maxLineSearchStep">Receives the maximum line search step.</param>
+    /// <param name="startingStepSize">Receives the initial step size for the line search.</param>
+    /// <param name="previousPoint">The previously accepted point.</param>
+    /// <param name="candidate">The current candidate point.</param>
+    /// <param name="step">The previous step vector.</param>
+    /// <returns>The next search direction.</returns>
     protected abstract Vector<double> CalculateSearchDirection(ref Matrix<double> inversePseudoHessian,
         out double maxLineSearchStep,
         out double startingStepSize,

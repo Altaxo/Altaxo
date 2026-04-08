@@ -36,16 +36,21 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public partial class MultiChoiceControl : UserControl, IMultiChoiceView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MultiChoiceControl"/> class.
+    /// </summary>
     public MultiChoiceControl()
     {
       InitializeComponent();
     }
 
+    /// <inheritdoc/>
     public void InitializeDescription(string value)
     {
       _edDescription.Text = value;
     }
 
+    /// <inheritdoc/>
     public void InitializeColumnNames(string[] colNames)
     {
       if (_lvItems.View is null)
@@ -67,6 +72,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     public void InitializeList(Collections.SelectableListNodeList list)
     {
       _lvItems.ItemsSource = list;

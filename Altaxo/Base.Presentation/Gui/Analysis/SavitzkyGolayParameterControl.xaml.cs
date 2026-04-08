@@ -32,6 +32,9 @@ namespace Altaxo.Gui.Worksheet
   /// </summary>
   public partial class SavitzkyGolayParameterControl : UserControl, ISavitzkyGolayParameterView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SavitzkyGolayParameterControl"/> class.
+    /// </summary>
     public SavitzkyGolayParameterControl()
     {
       InitializeComponent();

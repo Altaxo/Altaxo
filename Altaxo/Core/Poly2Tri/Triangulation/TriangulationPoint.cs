@@ -34,26 +34,56 @@ using System.Collections.Generic;
 
 namespace Poly2Tri
 {
+  /// <summary>
+  /// Represents a point used in triangulation.
+  /// </summary>
   public class TriangulationPoint
   {
     // List of edges this point constitutes an upper ending point (CDT)
+    /// <summary>
+    /// Gets the constrained edges for which this point is the upper endpoint.
+    /// </summary>
     public List<DTSweepConstraint> Edges { get; private set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TriangulationPoint"/> class.
+    /// </summary>
+    /// <param name="x">The x-coordinate.</param>
+    /// <param name="y">The y-coordinate.</param>
     public TriangulationPoint(double x, double y)
     {
       X = x;
       Y = y;
     }
 
+    /// <summary>
+    /// Returns a string representation of this point.
+    /// </summary>
+    /// <returns>A string representation of this point.</returns>
     public override string ToString()
     {
       return "[" + X + "," + Y + "]";
     }
 
+    /// <summary>
+    /// The x- and y-coordinates of the point.
+    /// </summary>
     public double X, Y;
+
+    /// <summary>
+    /// Gets or sets the x-coordinate as a <see cref="float"/>.
+    /// </summary>
     public float Xf { get { return (float)X; } set { X = value; } }
+
+    /// <summary>
+    /// Gets or sets the y-coordinate as a <see cref="float"/>.
+    /// </summary>
     public float Yf { get { return (float)Y; } set { Y = value; } }
 
+    /// <summary>
+    /// Adds a constrained edge to this point.
+    /// </summary>
+    /// <param name="e">The constrained edge to add.</param>
     public void AddEdge(DTSweepConstraint e)
     {
       if (Edges is null)
@@ -61,6 +91,9 @@ namespace Poly2Tri
       Edges.Add(e);
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this point is associated with constrained edges.
+    /// </summary>
     public bool HasEdges { get { return Edges is not null; } }
   }
 }

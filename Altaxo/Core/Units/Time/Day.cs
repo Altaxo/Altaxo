@@ -31,9 +31,15 @@ using System.Text;
 
 namespace Altaxo.Units.Time
 {
+  /// <summary>
+  /// Represents the day unit of time.
+  /// </summary>
   [UnitDescription("Time", 0, 0, 1, 0, 0, 0, 0)]
   public class Day : UnitBase, IUnit
   {
+    /// <summary>
+    /// The number of seconds in one day.
+    /// </summary>
     public const double OneDayInSeconds = 24 * 3600;
 
     private static readonly Day _instance = new Day();
@@ -45,13 +51,18 @@ namespace Altaxo.Units.Time
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="Day"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Day), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return Day.Instance;
@@ -60,6 +71,9 @@ namespace Altaxo.Units.Time
     #endregion
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Day"/> class.
+    /// </summary>
     protected Day()
     {
     }

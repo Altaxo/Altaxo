@@ -31,8 +31,14 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Pads.DataDisplay
 {
+  /// <summary>
+  /// Displays textual data output.
+  /// </summary>
   public class DataDisplayView : TextBox, IDataDisplayView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DataDisplayView"/> class.
+    /// </summary>
     public DataDisplayView()
     {
       TextWrapping = System.Windows.TextWrapping.NoWrap;

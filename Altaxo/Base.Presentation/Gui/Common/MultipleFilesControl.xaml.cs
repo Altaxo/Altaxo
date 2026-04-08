@@ -37,25 +37,36 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public partial class MultipleFilesControl : UserControl, IMultipleFilesView
   {
+    /// <inheritdoc/>
     public event Action? BrowseSelectedFileName;
 
+    /// <inheritdoc/>
     public event Action? DeleteSelectedFileName;
 
+    /// <inheritdoc/>
     public event Action? MoveUpSelectedFileName;
 
+    /// <inheritdoc/>
     public event Action? MoveDownSelectedFileName;
 
+    /// <inheritdoc/>
     public event Action? AddNewFileName;
 
+    /// <inheritdoc/>
     public event Action? NewFileNameExclusively;
 
+    /// <inheritdoc/>
     public event Action? SortFileNamesAscending;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MultipleFilesControl"/> class.
+    /// </summary>
     public MultipleFilesControl()
     {
       InitializeComponent();
     }
 
+    /// <inheritdoc/>
     public Collections.SelectableListNodeList FileNames
     {
       set { GuiHelper.Initialize(_guiFileNames, value); }

@@ -36,6 +36,9 @@ namespace Altaxo.Gui.Settings
   /// </summary>
   public partial class AutoUpdateSettingsControl : UserControl, IAutoUpdateSettingsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AutoUpdateSettingsControl"/> class.
+    /// </summary>
     public AutoUpdateSettingsControl()
     {
       InitializeComponent();
@@ -48,6 +51,7 @@ namespace Altaxo.Gui.Settings
         content.IsEnabled = true == _guiEnableAutoUpdates.IsChecked;
     }
 
+    /// <inheritdoc/>
     public bool EnableAutoUpdates
     {
       get
@@ -60,6 +64,7 @@ namespace Altaxo.Gui.Settings
       }
     }
 
+    /// <inheritdoc/>
     public bool DownloadUnstableVersion
     {
       get
@@ -75,6 +80,7 @@ namespace Altaxo.Gui.Settings
       }
     }
 
+    /// <inheritdoc/>
     public bool ShowDownloadWindow
     {
       get
@@ -87,6 +93,7 @@ namespace Altaxo.Gui.Settings
       }
     }
 
+    /// <inheritdoc/>
     public int DownloadInterval
     {
       get
@@ -109,6 +116,7 @@ namespace Altaxo.Gui.Settings
       }
     }
 
+    /// <inheritdoc/>
     public int InstallAt
     {
       get
@@ -139,6 +147,7 @@ namespace Altaxo.Gui.Settings
       }
     }
 
+    /// <inheritdoc/>
     public bool ShowInstallationWindow
     {
       get
@@ -151,6 +160,7 @@ namespace Altaxo.Gui.Settings
       }
     }
 
+    /// <inheritdoc/>
     public bool ConfirmInstallation
     {
       get
@@ -163,6 +173,7 @@ namespace Altaxo.Gui.Settings
       }
     }
 
+    /// <inheritdoc/>
     public int InstallationWindowClosingTime
     {
       get

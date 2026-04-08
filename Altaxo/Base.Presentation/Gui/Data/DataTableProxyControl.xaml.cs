@@ -44,11 +44,15 @@ namespace Altaxo.Gui.Data
   /// </summary>
   public partial class DataTableProxyControl : UserControl, IDataTableProxyView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DataTableProxyControl"/> class.
+    /// </summary>
     public DataTableProxyControl()
     {
       InitializeComponent();
     }
 
+    /// <inheritdoc/>
     public void InitializeTables(SelectableListNodeList tables)
     {
       GuiHelper.Initialize(_guiDataTables, tables);

@@ -31,6 +31,9 @@ using System;
 
 namespace Altaxo.Calc.Providers.SparseSolver
 {
+  /// <summary>
+  /// Controls selection and lifetime of the active sparse solver provider.
+  /// </summary>
   public static class SparseSolverControl
   {
     private const string EnvVarSSProvider = "AltaxoCoreSSProvider";
@@ -77,9 +80,19 @@ namespace Altaxo.Calc.Providers.SparseSolver
       }
     }
 
+    /// <summary>
+    /// Switches to the managed sparse solver provider.
+    /// </summary>
     public static void UseManaged() => Provider = ManagedSparseSolverProvider.Instance;
 
+    /// <summary>
+    /// Switches to the native MKL sparse solver provider.
+    /// </summary>
     public static void UseNativeMKL() => Provider = MklProbe.Create();
+    /// <summary>
+    /// Attempts to switch to the native MKL sparse solver provider.
+    /// </summary>
+    /// <returns><see langword="true"/> if the provider was selected; otherwise, <see langword="false"/>.</returns>
     public static bool TryUseNativeMKL() => TryUse(MklProbe.TryCreate());
 
     /// <summary>
@@ -95,6 +108,11 @@ namespace Altaxo.Calc.Providers.SparseSolver
       return TryUseNativeMKL();
     }
 
+    /// <summary>
+    /// Attempts to switch to the specified sparse solver provider.
+    /// </summary>
+    /// <param name="provider">The provider to use.</param>
+    /// <returns><see langword="true"/> if the provider was selected; otherwise, <see langword="false"/>.</returns>
     public static bool TryUse(ISparseSolverProvider provider)
     {
       try
@@ -158,6 +176,9 @@ namespace Altaxo.Calc.Providers.SparseSolver
       }
     }
 
+    /// <summary>
+    /// Frees resources held by the active sparse solver provider.
+    /// </summary>
     public static void FreeResources() => Provider.FreeResources();
   }
 }

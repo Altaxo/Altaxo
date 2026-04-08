@@ -44,6 +44,12 @@ namespace Altaxo.Gui.AddInItems
     private readonly object caller;
     private readonly IEnumerable<ICondition> conditions;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ToolBarComboBox"/> class.
+    /// </summary>
+    /// <param name="codon">The codon that defines the toolbar item.</param>
+    /// <param name="caller">The caller passed to the add-in item.</param>
+    /// <param name="conditions">The conditions that control the item state.</param>
     public ToolBarComboBox(Codon codon, object caller, IEnumerable<ICondition> conditions)
     {
       ToolTipService.SetShowOnDisabled(this, true);
@@ -60,6 +66,7 @@ namespace Altaxo.Gui.AddInItems
       UpdateText();
     }
 
+    /// <inheritdoc/>
     public void UpdateText()
     {
       if (codon.Properties.Contains("tooltip"))
@@ -68,6 +75,7 @@ namespace Altaxo.Gui.AddInItems
       }
     }
 
+    /// <inheritdoc/>
     public void UpdateStatus()
     {
       if (Altaxo.AddInItems.Condition.GetFailedAction(conditions, caller) == ConditionFailedAction.Exclude)
@@ -76,6 +84,7 @@ namespace Altaxo.Gui.AddInItems
         Visibility = Visibility.Visible;
     }
 
+    /// <inheritdoc/>
     protected override void OnKeyDown(KeyEventArgs e)
     {
       if (e.Key == System.Windows.Input.Key.Enter)
@@ -88,15 +97,27 @@ namespace Altaxo.Gui.AddInItems
       base.OnKeyDown(e);
     }
 
+    /// <summary>
+    /// Initializes the content of the combo box.
+    /// </summary>
     public virtual void InitializeContent()
     {
     }
 
+    /// <summary>
+    /// Determines whether the combo box command can execute.
+    /// </summary>
+    /// <param name="parameter">The command parameter.</param>
+    /// <returns><see langword="true"/> if the command can execute; otherwise, <see langword="false"/>.</returns>
     public virtual bool CanExecute(object parameter)
     {
       return true;
     }
 
+    /// <summary>
+    /// Executes the combo box command.
+    /// </summary>
+    /// <param name="parameter">The command parameter.</param>
     public virtual void Execute(object parameter)
     {
     }

@@ -30,26 +30,33 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// Provides attached helper properties for <see cref="TextBlock"/> controls.
+  /// </summary>
   public class TextBlockUtilities
   {
     /// <summary>
-    /// Gets the value of the AutoTooltipProperty dependency property
+    /// Gets the value of the attached <see cref="AutoTooltipProperty"/>.
     /// </summary>
+    /// <param name="obj">The target dependency object.</param>
+    /// <returns>The current auto-tooltip setting.</returns>
     public static bool GetAutoTooltip(DependencyObject obj)
     {
       return (bool)obj.GetValue(AutoTooltipProperty);
     }
 
     /// <summary>
-    /// Sets the value of the AutoTooltipProperty dependency property
+    /// Sets the value of the attached <see cref="AutoTooltipProperty"/>.
     /// </summary>
+    /// <param name="obj">The target dependency object.</param>
+    /// <param name="value">The new auto-tooltip setting.</param>
     public static void SetAutoTooltip(DependencyObject obj, bool value)
     {
       obj.SetValue(AutoTooltipProperty, value);
     }
 
     /// <summary>
-    /// Identified the attached AutoTooltip property. When true, this will set the TextBlock TextTrimming
+    /// Identifies the attached auto-tooltip property. When true, this sets the <see cref="TextBlock.TextTrimming"/>
     /// property to WordEllipsis, and display a tooltip with the full text whenever the text is trimmed.
     /// </summary>
     public static readonly DependencyProperty AutoTooltipProperty = DependencyProperty.RegisterAttached("AutoTooltip",

@@ -34,9 +34,19 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Common.Drawing
 {
+  /// <summary>
+  /// Image combo box that supports text editing.
+  /// </summary>
   public class EditableImageComboBox : ImageComboBox
   {
+    /// <summary>
+    /// Image used to display the current value.
+    /// </summary>
     protected Image _img;
+
+    /// <summary>
+    /// Column definition reserved for the image when required by the template.
+    /// </summary>
     protected ColumnDefinition _imgColumnDefinition;
 
     /// <summary>
@@ -48,6 +58,7 @@ namespace Altaxo.Gui.Common.Drawing
     /// Get around the bug that the context menu of the editable part is not bound to the combobox
     /// (<see href="http://www.wpfmentor.com/2008/12/setting-context-menu-on-editable.html"/>)
     /// </summary>
+    /// <inheritdoc/>
     public override void OnApplyTemplate()
     {
       base.OnApplyTemplate();
@@ -65,6 +76,9 @@ namespace Altaxo.Gui.Common.Drawing
       BindingOperations.SetBinding(_editBox, FrameworkElement.ContextMenuProperty, binding);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EditableImageComboBox"/> class.
+    /// </summary>
     public EditableImageComboBox()
     {
       _img = new Image();
@@ -73,11 +87,17 @@ namespace Altaxo.Gui.Common.Drawing
       dpd.AddValueChanged(this, EhTextChanged);
     }
 
+    /// <summary>
+    /// Handles changes of the editable text and refreshes the image.
+    /// </summary>
+    /// <param name="sender">The source of the change.</param>
+    /// <param name="e">The event arguments.</param>
     protected virtual void EhTextChanged(object? sender, EventArgs e)
     {
       SetImageFromContent();
     }
 
+    /// <inheritdoc/>
     protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
     {
       base.OnRenderSizeChanged(sizeInfo);
@@ -89,6 +109,11 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <summary>
+    /// Inserts the image element into the editable template.
+    /// </summary>
+    /// <param name="width">The target image width.</param>
+    /// <param name="height">The target image height.</param>
     protected virtual void ImplantImage(double width, double height)
     {
       _img.Height = _editBox.ActualHeight;
@@ -219,6 +244,9 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <summary>
+    /// Updates the image according to the current control content.
+    /// </summary>
     protected virtual void SetImageFromContent()
     {
     }

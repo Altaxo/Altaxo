@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Data.Sorting
   /// </summary>
   public partial class SortingDataColumnsControl : UserControl, ISortingDataColumnsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SortingDataColumnsControl"/> class.
+    /// </summary>
     public SortingDataColumnsControl()
     {
       InitializeComponent();

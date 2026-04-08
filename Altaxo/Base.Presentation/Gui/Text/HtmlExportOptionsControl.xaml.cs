@@ -44,6 +44,9 @@ namespace Altaxo.Gui.Text
   /// </summary>
   public partial class HtmlExportOptionsControl : UserControl, IHtmlExportOptionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HtmlExportOptionsControl"/> class.
+    /// </summary>
     public HtmlExportOptionsControl()
     {
       InitializeComponent();

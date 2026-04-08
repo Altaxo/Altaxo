@@ -18,11 +18,17 @@ using System.Xml;
 
 namespace Altaxo.Gui.Behaviors
 {
+  /// <summary>
+  /// Wraps a <see cref="Binding"/> in a <see cref="Freezable"/> to support scenarios such as one-way-to-source bindings for read-only dependency properties.
+  /// </summary>
   public class FreezableBinding : Freezable
   {
     #region Properties
 
     private Binding _binding;
+    /// <summary>
+    /// Gets the underlying binding instance.
+    /// </summary>
     protected Binding Binding
     {
       get
@@ -35,6 +41,9 @@ namespace Altaxo.Gui.Behaviors
       }
     }
 
+    /// <summary>
+    /// Gets or sets the asynchronous state passed to the binding engine.
+    /// </summary>
     [DefaultValue(null)]
     public object AsyncState
     {
@@ -42,6 +51,9 @@ namespace Altaxo.Gui.Behaviors
       set { Binding.AsyncState = value; }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the binding evaluates the source path relative to the data item.
+    /// </summary>
     [DefaultValue(false)]
     public bool BindsDirectlyToSource
     {
@@ -49,6 +61,9 @@ namespace Altaxo.Gui.Behaviors
       set { Binding.BindsDirectlyToSource = value; }
     }
 
+    /// <summary>
+    /// Gets or sets the value converter.
+    /// </summary>
     [DefaultValue(null)]
     public IValueConverter Converter
     {
@@ -56,6 +71,9 @@ namespace Altaxo.Gui.Behaviors
       set { Binding.Converter = value; }
     }
 
+    /// <summary>
+    /// Gets or sets the culture used by the converter.
+    /// </summary>
     [TypeConverter(typeof(CultureInfoIetfLanguageTagConverter)), DefaultValue(null)]
     public CultureInfo ConverterCulture
     {
@@ -63,14 +81,19 @@ namespace Altaxo.Gui.Behaviors
       set { Binding.ConverterCulture = value; }
     }
 
+    /// <summary>
+    /// Gets or sets the converter parameter.
+    /// </summary>
     [DefaultValue(null)]
-
     public object ConverterParameter
     {
       get { return Binding.ConverterParameter; }
       set { Binding.ConverterParameter = value; }
     }
 
+    /// <summary>
+    /// Gets or sets the source element name.
+    /// </summary>
     [DefaultValue(null)]
     public string ElementName
     {
@@ -78,6 +101,9 @@ namespace Altaxo.Gui.Behaviors
       set { Binding.ElementName = value; }
     }
 
+    /// <summary>
+    /// Gets or sets the fallback value.
+    /// </summary>
     [DefaultValue(null)]
     public object FallbackValue
     {
@@ -85,6 +111,9 @@ namespace Altaxo.Gui.Behaviors
       set { Binding.FallbackValue = value; }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the binding updates asynchronously.
+    /// </summary>
     [DefaultValue(false)]
     public bool IsAsync
     {
@@ -92,6 +121,9 @@ namespace Altaxo.Gui.Behaviors
       set { Binding.IsAsync = value; }
     }
 
+    /// <summary>
+    /// Gets or sets the binding mode.
+    /// </summary>
     [DefaultValue(BindingMode.Default)]
     public BindingMode Mode
     {
@@ -99,6 +131,9 @@ namespace Altaxo.Gui.Behaviors
       set { Binding.Mode = value; }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the binding raises source-updated notifications.
+    /// </summary>
     [DefaultValue(false)]
     public bool NotifyOnSourceUpdated
     {
@@ -106,6 +141,9 @@ namespace Altaxo.Gui.Behaviors
       set { Binding.NotifyOnSourceUpdated = value; }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the binding raises target-updated notifications.
+    /// </summary>
     [DefaultValue(false)]
     public bool NotifyOnTargetUpdated
     {
@@ -113,6 +151,9 @@ namespace Altaxo.Gui.Behaviors
       set { Binding.NotifyOnTargetUpdated = value; }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the binding raises validation-error notifications.
+    /// </summary>
     [DefaultValue(false)]
     public bool NotifyOnValidationError
     {
@@ -120,6 +161,9 @@ namespace Altaxo.Gui.Behaviors
       set { Binding.NotifyOnValidationError = value; }
     }
 
+    /// <summary>
+    /// Gets or sets the binding path.
+    /// </summary>
     [DefaultValue(null)]
     public PropertyPath Path
     {
@@ -127,6 +171,9 @@ namespace Altaxo.Gui.Behaviors
       set { Binding.Path = value; }
     }
 
+    /// <summary>
+    /// Gets or sets the relative source.
+    /// </summary>
     [DefaultValue(null)]
     public RelativeSource RelativeSource
     {
@@ -134,6 +181,9 @@ namespace Altaxo.Gui.Behaviors
       set { Binding.RelativeSource = value; }
     }
 
+    /// <summary>
+    /// Gets or sets the explicit binding source.
+    /// </summary>
     [DefaultValue(null)]
     public object Source
     {
@@ -141,6 +191,9 @@ namespace Altaxo.Gui.Behaviors
       set { Binding.Source = value; }
     }
 
+    /// <summary>
+    /// Gets or sets the callback that handles update-source exceptions.
+    /// </summary>
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public UpdateSourceExceptionFilterCallback UpdateSourceExceptionFilter
     {
@@ -148,6 +201,9 @@ namespace Altaxo.Gui.Behaviors
       set { Binding.UpdateSourceExceptionFilter = value; }
     }
 
+    /// <summary>
+    /// Gets or sets the trigger that updates the binding source.
+    /// </summary>
     [DefaultValue(UpdateSourceTrigger.PropertyChanged)]
     public UpdateSourceTrigger UpdateSourceTrigger
     {
@@ -155,6 +211,9 @@ namespace Altaxo.Gui.Behaviors
       set { Binding.UpdateSourceTrigger = value; }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether data errors are validated.
+    /// </summary>
     [DefaultValue(false)]
     public bool ValidatesOnDataErrors
     {
@@ -162,6 +221,9 @@ namespace Altaxo.Gui.Behaviors
       set { Binding.ValidatesOnDataErrors = value; }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether exceptions are validated.
+    /// </summary>
     [DefaultValue(false)]
     public bool ValidatesOnExceptions
     {
@@ -169,6 +231,9 @@ namespace Altaxo.Gui.Behaviors
       set { Binding.ValidatesOnExceptions = value; }
     }
 
+    /// <summary>
+    /// Gets or sets the XPath expression.
+    /// </summary>
     [DefaultValue(null)]
     public string XPath
     {
@@ -176,6 +241,9 @@ namespace Altaxo.Gui.Behaviors
       set { Binding.XPath = value; }
     }
 
+    /// <summary>
+    /// Gets the validation rules collection.
+    /// </summary>
     [DefaultValue(null)]
     public Collection<ValidationRule> ValidationRules
     {
@@ -186,6 +254,7 @@ namespace Altaxo.Gui.Behaviors
 
     #region Freezable overrides
 
+    /// <inheritdoc/>
     protected override void CloneCore(Freezable sourceFreezable)
     {
       FreezableBinding freezableBindingClone = sourceFreezable as FreezableBinding;
@@ -225,6 +294,7 @@ namespace Altaxo.Gui.Behaviors
       base.CloneCore(sourceFreezable);
     }
 
+    /// <inheritdoc/>
     protected override Freezable CreateInstanceCore()
     {
       return new FreezableBinding();

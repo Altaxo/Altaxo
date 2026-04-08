@@ -49,12 +49,16 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Initializes a new instance of the Vector class.
     /// </summary>
+    /// <param name="storage">The underlying vector storage.</param>
     protected Vector(VectorStorage<T> storage)
     {
       Storage = storage;
       Count = storage.Length;
     }
 
+    /// <summary>
+    /// Gets the builder used to create vectors of this element type.
+    /// </summary>
     public static readonly VectorBuilder<T> Build = BuilderInstance<T>.Vector;
 
     /// <summary>
@@ -114,6 +118,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Sets all values of a subvector to zero.
     /// </summary>
+    /// <param name="index">The start index of the subvector.</param>
+    /// <param name="count">The number of elements to clear.</param>
     public void ClearSubVector(int index, int count)
     {
       if (count < 1)
@@ -132,11 +138,13 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Set all values whose absolute value is smaller than the threshold to zero, in-place.
     /// </summary>
+    /// <param name="threshold">The threshold below which values are coerced to zero.</param>
     public abstract void CoerceZero(double threshold);
 
     /// <summary>
     /// Set all values that meet the predicate to zero, in-place.
     /// </summary>
+    /// <param name="zeroPredicate">The predicate identifying values to replace with zero.</param>
     public void CoerceZero(Func<T, bool> zeroPredicate)
     {
       MapInplace(x => zeroPredicate(x) ? Zero : x, Zeros.AllowSkip);
@@ -250,6 +258,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Otherwise returns null. Changes to the returned array and the vector will affect each other.
     /// Use ToArray instead if you always need an independent array.
     /// </summary>
+    /// <returns>The backing array, or <see langword="null"/> if the vector is not array-backed.</returns>
     public T[] AsArray()
     {
       return Storage.AsArray();
@@ -287,6 +296,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <remarks>
     /// The enumerator will include all values, even if they are zero.
     /// </remarks>
+    /// <returns>An enumerable sequence of vector values.</returns>
     public IEnumerable<T> Enumerate()
     {
       return Storage.Enumerate();
@@ -298,6 +308,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <remarks>
     /// The enumerator will include all values, even if they are zero.
     /// </remarks>
+    /// <param name="zeros">Specifies whether zero values may be skipped.</param>
+    /// <returns>An enumerable sequence of vector values.</returns>
     public IEnumerable<T> Enumerate(Zeros zeros)
     {
       switch (zeros)
@@ -317,6 +329,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// and the second value being the value of the element at that index.
     /// The enumerator will include all values, even if they are zero.
     /// </remarks>
+    /// <returns>An enumerable sequence of index-value pairs.</returns>
     public IEnumerable<(int, T)> EnumerateIndexed()
     {
       return Storage.EnumerateIndexed();
@@ -330,6 +343,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// and the second value being the value of the element at that index.
     /// The enumerator will include all values, even if they are zero.
     /// </remarks>
+    /// <param name="zeros">Specifies whether zero values may be skipped.</param>
+    /// <returns>An enumerable sequence of index-value pairs.</returns>
     public IEnumerable<(int, T)> EnumerateIndexed(Zeros zeros)
     {
       switch (zeros)
@@ -346,6 +361,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// If forceMapZero is not set to true, zero values may or may not be skipped depending
     /// on the actual data storage implementation (relevant mostly for sparse vectors).
     /// </summary>
+    /// <param name="f">The mapping function.</param>
+    /// <param name="zeros">Specifies whether zero values may be skipped.</param>
     public void MapInplace(Func<T, T> f, Zeros zeros = Zeros.AllowSkip)
     {
       Storage.MapInplace(f, zeros);
@@ -357,6 +374,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// If forceMapZero is not set to true, zero values may or may not be skipped depending
     /// on the actual data storage implementation (relevant mostly for sparse vectors).
     /// </summary>
+    /// <param name="f">The indexed mapping function.</param>
+    /// <param name="zeros">Specifies whether zero values may be skipped.</param>
     public void MapIndexedInplace(Func<int, T, T> f, Zeros zeros = Zeros.AllowSkip)
     {
       Storage.MapIndexedInplace(f, zeros);
@@ -367,6 +386,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// If forceMapZero is not set to true, zero values may or may not be skipped depending
     /// on the actual data storage implementation (relevant mostly for sparse vectors).
     /// </summary>
+    /// <param name="f">The mapping function.</param>
+    /// <param name="result">The destination vector.</param>
+    /// <param name="zeros">Specifies whether zero values may be skipped.</param>
     public void Map(Func<T, T> f, Vector<T> result, Zeros zeros = Zeros.AllowSkip)
     {
       if (ReferenceEquals(this, result))
@@ -385,6 +407,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// If forceMapZero is not set to true, zero values may or may not be skipped depending
     /// on the actual data storage implementation (relevant mostly for sparse vectors).
     /// </summary>
+    /// <param name="f">The indexed mapping function.</param>
+    /// <param name="result">The destination vector.</param>
+    /// <param name="zeros">Specifies whether zero values may be skipped.</param>
     public void MapIndexed(Func<int, T, T> f, Vector<T> result, Zeros zeros = Zeros.AllowSkip)
     {
       if (ReferenceEquals(this, result))
@@ -402,6 +427,10 @@ namespace Altaxo.Calc.LinearAlgebra
     /// If forceMapZero is not set to true, zero values may or may not be skipped depending
     /// on the actual data storage implementation (relevant mostly for sparse vectors).
     /// </summary>
+    /// <typeparam name="TU">The target element type.</typeparam>
+    /// <param name="f">The conversion function.</param>
+    /// <param name="result">The destination vector.</param>
+    /// <param name="zeros">Specifies whether zero values may be skipped.</param>
     public void MapConvert<TU>(Func<T, TU> f, Vector<TU> result, Zeros zeros = Zeros.AllowSkip)
         where TU : struct, IEquatable<TU>, IFormattable
     {
@@ -414,6 +443,10 @@ namespace Altaxo.Calc.LinearAlgebra
     /// If forceMapZero is not set to true, zero values may or may not be skipped depending
     /// on the actual data storage implementation (relevant mostly for sparse vectors).
     /// </summary>
+    /// <typeparam name="TU">The target element type.</typeparam>
+    /// <param name="f">The indexed conversion function.</param>
+    /// <param name="result">The destination vector.</param>
+    /// <param name="zeros">Specifies whether zero values may be skipped.</param>
     public void MapIndexedConvert<TU>(Func<int, T, TU> f, Vector<TU> result, Zeros zeros = Zeros.AllowSkip)
         where TU : struct, IEquatable<TU>, IFormattable
     {
@@ -425,6 +458,10 @@ namespace Altaxo.Calc.LinearAlgebra
     /// If forceMapZero is not set to true, zero values may or may not be skipped depending
     /// on the actual data storage implementation (relevant mostly for sparse vectors).
     /// </summary>
+    /// <typeparam name="TU">The target element type.</typeparam>
+    /// <param name="f">The conversion function.</param>
+    /// <param name="zeros">Specifies whether zero values may be skipped.</param>
+    /// <returns>A new vector containing the mapped values.</returns>
     public Vector<TU> Map<TU>(Func<T, TU> f, Zeros zeros = Zeros.AllowSkip)
         where TU : struct, IEquatable<TU>, IFormattable
     {
@@ -439,6 +476,10 @@ namespace Altaxo.Calc.LinearAlgebra
     /// If forceMapZero is not set to true, zero values may or may not be skipped depending
     /// on the actual data storage implementation (relevant mostly for sparse vectors).
     /// </summary>
+    /// <typeparam name="TU">The target element type.</typeparam>
+    /// <param name="f">The indexed conversion function.</param>
+    /// <param name="zeros">Specifies whether zero values may be skipped.</param>
+    /// <returns>A new vector containing the mapped values.</returns>
     public Vector<TU> MapIndexed<TU>(Func<int, T, TU> f, Zeros zeros = Zeros.AllowSkip)
         where TU : struct, IEquatable<TU>, IFormattable
     {
@@ -450,6 +491,10 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Applies a function to each value pair of two vectors and replaces the value in the result vector.
     /// </summary>
+    /// <param name="f">The mapping function.</param>
+    /// <param name="other">The other vector.</param>
+    /// <param name="result">The destination vector.</param>
+    /// <param name="zeros">Specifies whether zero values may be skipped.</param>
     public void Map2(Func<T, T, T> f, Vector<T> other, Vector<T> result, Zeros zeros = Zeros.AllowSkip)
     {
       Storage.Map2To(result.Storage, other.Storage, f, zeros, ExistingData.Clear);
@@ -458,6 +503,10 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Applies a function to each value pair of two vectors and returns the results as a new vector.
     /// </summary>
+    /// <param name="f">The mapping function.</param>
+    /// <param name="other">The other vector.</param>
+    /// <param name="zeros">Specifies whether zero values may be skipped.</param>
+    /// <returns>A new vector containing the mapped values.</returns>
     public Vector<T> Map2(Func<T, T, T> f, Vector<T> other, Zeros zeros = Zeros.AllowSkip)
     {
       var result = Build.SameAs(this);
@@ -468,6 +517,13 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Applies a function to update the status with each value pair of two vectors and returns the resulting status.
     /// </summary>
+    /// <typeparam name="TOther">The element type of the other vector.</typeparam>
+    /// <typeparam name="TState">The accumulator state type.</typeparam>
+    /// <param name="f">The folding function.</param>
+    /// <param name="state">The initial state.</param>
+    /// <param name="other">The other vector.</param>
+    /// <param name="zeros">Specifies whether zero values may be skipped.</param>
+    /// <returns>The final accumulated state.</returns>
     public TState Fold2<TOther, TState>(Func<TState, T, TOther, TState> f, TState state, Vector<TOther> other, Zeros zeros = Zeros.AllowSkip)
         where TOther : struct, IEquatable<TOther>, IFormattable
     {
@@ -478,6 +534,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Returns a tuple with the index and value of the first element satisfying a predicate, or null if none is found.
     /// Zero elements may be skipped on sparse data structures if allowed (default).
     /// </summary>
+    /// <param name="predicate">The predicate to test elements.</param>
+    /// <param name="zeros">Specifies whether zero values may be skipped.</param>
+    /// <returns>The first matching index-value pair, or <see langword="null"/> if none matches.</returns>
     public Tuple<int, T> Find(Func<T, bool> predicate, Zeros zeros = Zeros.AllowSkip)
     {
       return Storage.Find(predicate, zeros);
@@ -487,6 +546,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Returns a tuple with the index and values of the first element pair of two vectors of the same size satisfying a predicate, or null if none is found.
     /// Zero elements may be skipped on sparse data structures if allowed (default).
     /// </summary>
+    /// <typeparam name="TOther">The element type of the other vector.</typeparam>
+    /// <param name="predicate">The predicate to test element pairs.</param>
+    /// <param name="other">The other vector.</param>
+    /// <param name="zeros">Specifies whether zero values may be skipped.</param>
+    /// <returns>The first matching index-value tuple, or <see langword="null"/> if none matches.</returns>
     public Tuple<int, T, TOther> Find2<TOther>(Func<T, TOther, bool> predicate, Vector<TOther> other, Zeros zeros = Zeros.AllowSkip)
         where TOther : struct, IEquatable<TOther>, IFormattable
     {
@@ -497,6 +561,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Returns true if at least one element satisfies a predicate.
     /// Zero elements may be skipped on sparse data structures if allowed (default).
     /// </summary>
+    /// <param name="predicate">The predicate to test elements.</param>
+    /// <param name="zeros">Specifies whether zero values may be skipped.</param>
+    /// <returns><see langword="true"/> if at least one element matches; otherwise, <see langword="false"/>.</returns>
     public bool Exists(Func<T, bool> predicate, Zeros zeros = Zeros.AllowSkip)
     {
       return Storage.Find(predicate, zeros) != null;
@@ -506,6 +573,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Returns true if at least one element pairs of two vectors of the same size satisfies a predicate.
     /// Zero elements may be skipped on sparse data structures if allowed (default).
     /// </summary>
+    /// <typeparam name="TOther">The element type of the other vector.</typeparam>
+    /// <param name="predicate">The predicate to test element pairs.</param>
+    /// <param name="other">The other vector.</param>
+    /// <param name="zeros">Specifies whether zero values may be skipped.</param>
+    /// <returns><see langword="true"/> if at least one pair matches; otherwise, <see langword="false"/>.</returns>
     public bool Exists2<TOther>(Func<T, TOther, bool> predicate, Vector<TOther> other, Zeros zeros = Zeros.AllowSkip)
         where TOther : struct, IEquatable<TOther>, IFormattable
     {
@@ -516,6 +588,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Returns true if all elements satisfy a predicate.
     /// Zero elements may be skipped on sparse data structures if allowed (default).
     /// </summary>
+    /// <param name="predicate">The predicate to test elements.</param>
+    /// <param name="zeros">Specifies whether zero values may be skipped.</param>
+    /// <returns><see langword="true"/> if all elements match; otherwise, <see langword="false"/>.</returns>
     public bool ForAll(Func<T, bool> predicate, Zeros zeros = Zeros.AllowSkip)
     {
       return Storage.Find(x => !predicate(x), zeros) == null;
@@ -525,6 +600,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Returns true if all element pairs of two vectors of the same size satisfy a predicate.
     /// Zero elements may be skipped on sparse data structures if allowed (default).
     /// </summary>
+    /// <typeparam name="TOther">The element type of the other vector.</typeparam>
+    /// <param name="predicate">The predicate to test element pairs.</param>
+    /// <param name="other">The other vector.</param>
+    /// <param name="zeros">Specifies whether zero values may be skipped.</param>
+    /// <returns><see langword="true"/> if all pairs match; otherwise, <see langword="false"/>.</returns>
     public bool ForAll2<TOther>(Func<T, TOther, bool> predicate, Vector<TOther> other, Zeros zeros = Zeros.AllowSkip)
         where TOther : struct, IEquatable<TOther>, IFormattable
     {
@@ -532,16 +612,26 @@ namespace Altaxo.Calc.LinearAlgebra
     }
   }
 
+  /// <summary>
+  /// Provides debugger visualization support for vectors.
+  /// </summary>
   internal class VectorDebuggingView<T>
       where T : struct, IEquatable<T>, IFormattable
   {
     private readonly Vector<T> _vector;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="VectorDebuggingView{T}"/> class.
+    /// </summary>
+    /// <param name="vector">The vector to visualize.</param>
     public VectorDebuggingView(Vector<T> vector)
     {
       _vector = vector;
     }
 
+    /// <summary>
+    /// Gets the vector items for debugger display.
+    /// </summary>
     [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
     public T[] Items => _vector.ToArray();
   }

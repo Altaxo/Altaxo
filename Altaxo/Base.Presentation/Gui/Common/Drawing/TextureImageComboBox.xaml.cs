@@ -100,14 +100,23 @@ namespace Altaxo.Gui.Common.Drawing
     private ObservableCollection<ImageComboBoxItem> _syntheticItems = new ObservableCollection<ImageComboBoxItem>();
     private ObservableCollection<ImageComboBoxItem> _currentItemsSource;
 
+    /// <summary>
+    /// Occurs when the selected texture image changes.
+    /// </summary>
     public event DependencyPropertyChangedEventHandler? TextureImageChanged;
 
+    /// <summary>
+    /// Occurs when the selected texture image type changes.
+    /// </summary>
     public event DependencyPropertyChangedEventHandler? TextureImageTypeChanged;
 
     static TextureImageComboBox()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextureImageComboBox"/> class.
+    /// </summary>
     public TextureImageComboBox()
     {
       InitializeComponent();
@@ -218,12 +227,18 @@ namespace Altaxo.Gui.Common.Drawing
 
     private const string _nameOfValueProp = "TextureImage";
 
+    /// <summary>
+    /// Gets or sets the selected texture image.
+    /// </summary>
     public ImageProxy TextureImage
     {
       get { return (ImageProxy)GetValue(TextureImageProperty); }
       set { SetValue(TextureImageProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="TextureImage"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty TextureImageProperty =
         DependencyProperty.Register(_nameOfValueProp, typeof(ImageProxy), typeof(TextureImageComboBox),
         new FrameworkPropertyMetadata(EhTextureImageChanged));
@@ -237,12 +252,18 @@ namespace Altaxo.Gui.Common.Drawing
 
     #region Dependency property TextureImageType
 
+    /// <summary>
+    /// Gets or sets the selected texture image type.
+    /// </summary>
     public BrushType TextureImageType
     {
       get { return (BrushType)GetValue(TextureImageTypeProperty); }
       set { SetValue(TextureImageTypeProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="TextureImageType"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty TextureImageTypeProperty =
         DependencyProperty.Register("TextureImageType", typeof(BrushType), typeof(TextureImageComboBox),
         new FrameworkPropertyMetadata(BrushType.HatchBrush, EhTextureImageTypeChanged));
@@ -254,12 +275,22 @@ namespace Altaxo.Gui.Common.Drawing
 
     #endregion Dependency property TextureImageType
 
+    /// <summary>
+    /// Raises the <see cref="TextureImageChanged"/> event.
+    /// </summary>
+    /// <param name="obj">The dependency object whose property changed.</param>
+    /// <param name="args">The event arguments.</param>
     protected virtual void OnTextureImageChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
       if (TextureImageChanged is not null)
         TextureImageChanged(this, args);
     }
 
+    /// <summary>
+    /// Updates the item source and raises the <see cref="TextureImageTypeChanged"/> event.
+    /// </summary>
+    /// <param name="obj">The dependency object whose property changed.</param>
+    /// <param name="args">The event arguments.</param>
     protected virtual void OnTextureImageTypeChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
       SetItemsSourceInDependenceOnTextureType();
@@ -312,12 +343,14 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <inheritdoc/>
     public override string GetItemText(object item)
     {
       var val = (KeyValuePair<string, ImageProxy>)item;
       return val.Key;
     }
 
+    /// <inheritdoc/>
     public override ImageSource GetItemImage(object item)
     {
       var val = (KeyValuePair<string, ImageProxy>)item;
@@ -326,6 +359,11 @@ namespace Altaxo.Gui.Common.Drawing
       return result;
     }
 
+    /// <summary>
+    /// Creates the preview image for the specified texture.
+    /// </summary>
+    /// <param name="val">The texture to visualize.</param>
+    /// <returns>The generated preview image.</returns>
     public static ImageSource GetImage(ImageProxy val)
     {
       return GuiHelper.ToWpf(val);

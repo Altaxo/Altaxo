@@ -31,8 +31,14 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Pads.Output
 {
+  /// <summary>
+  /// Displays the output window text.
+  /// </summary>
   public class OutputWindowControl : TextBox, ITextOutputWindowView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OutputWindowControl"/> class.
+    /// </summary>
     public OutputWindowControl()
     {
       TextWrapping = System.Windows.TextWrapping.NoWrap;

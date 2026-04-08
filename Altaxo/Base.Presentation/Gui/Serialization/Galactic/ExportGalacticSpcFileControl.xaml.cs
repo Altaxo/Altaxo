@@ -36,11 +36,15 @@ namespace Altaxo.Gui.Serialization.Galactic
   /// </summary>
   public partial class ExportGalacticSpcFileControl : UserControl, IExportGalacticSpcFileView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ExportGalacticSpcFileControl"/> class.
+    /// </summary>
     public ExportGalacticSpcFileControl()
     {
       InitializeComponent();
     }
 
+    /// <inheritdoc/>
     public bool CreateSpectrumFromRow
     {
       get
@@ -53,11 +57,13 @@ namespace Altaxo.Gui.Serialization.Galactic
       }
     }
 
+    /// <inheritdoc/>
     public bool CreateSpectrumFromColumn
     {
       get { return true == m_rbCreateSpectrum_FromColumn.IsChecked; }
     }
 
+    /// <inheritdoc/>
     public bool XValuesContinuousNumber
     {
       get
@@ -70,11 +76,13 @@ namespace Altaxo.Gui.Serialization.Galactic
       }
     }
 
+    /// <inheritdoc/>
     public bool XValuesFromColumn
     {
       get { return true == m_rbXValues_FromColumn.IsChecked; }
     }
 
+    /// <inheritdoc/>
     public bool ExtendFileName_ContinuousNumber
     {
       get
@@ -87,11 +95,13 @@ namespace Altaxo.Gui.Serialization.Galactic
       }
     }
 
+    /// <inheritdoc/>
     public bool ExtendFileName_ByColumn
     {
       get { return true == m_rbFileName_FromColumn.IsChecked; }
     }
 
+    /// <inheritdoc/>
     public string BasicFileName
     {
       get
@@ -104,16 +114,19 @@ namespace Altaxo.Gui.Serialization.Galactic
       }
     }
 
+    /// <inheritdoc/>
     public void FillXValuesColumnBox(Collections.SelectableListNodeList list)
     {
       GuiHelper.Initialize(m_cbXValues_Column, list);
     }
 
+    /// <inheritdoc/>
     public bool EnableXValuesColumnBox
     {
       set { m_cbXValues_Column.IsEnabled = value; }
     }
 
+    /// <inheritdoc/>
     public string XValuesColumnName
     {
       get
@@ -123,16 +136,19 @@ namespace Altaxo.Gui.Serialization.Galactic
       }
     }
 
+    /// <inheritdoc/>
     public void FillExtFileNameColumnBox(Collections.SelectableListNodeList list)
     {
       GuiHelper.Initialize(m_cbExtFileName_Column, list);
     }
 
+    /// <inheritdoc/>
     public bool EnableExtFileNameColumnBox
     {
       set { m_cbExtFileName_Column.IsEnabled = value; }
     }
 
+    /// <inheritdoc/>
     public string ExtFileNameColumnName
     {
       get
@@ -142,12 +158,16 @@ namespace Altaxo.Gui.Serialization.Galactic
       }
     }
 
+    /// <inheritdoc/>
     public event Action? BasicFileNameAndPathChoose;
 
+    /// <inheritdoc/>
     public event Action? Change_CreateSpectrumFrom;
 
+    /// <inheritdoc/>
     public event Action? Change__XValuesFromOption;
 
+    /// <inheritdoc/>
     public event Action? Change_ExtendFileNameOptions;
 
     private void EhCreateSpectrumFrom_Changed(object sender, RoutedEventArgs e)

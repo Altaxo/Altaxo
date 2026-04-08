@@ -339,6 +339,14 @@ namespace Altaxo.Calc.Ode.Obsolete
       InitializeExceptionMessages();
     }
 
+    /// <summary>
+    /// Checks the time array for validity.
+    /// </summary>
+    /// <param name="tspan">The array of time values to check.</param>
+    /// <remarks>
+    /// This method ensures that the time span array is not null, has at least two elements,
+    /// and that the differences between consecutive elements are either all positive or all negative.
+    /// </remarks>
     protected void CheckTArray(double[] tspan)
     {
       if (tspan is null)
@@ -369,6 +377,19 @@ namespace Altaxo.Calc.Ode.Obsolete
       }
     }
 
+    /// <summary>
+    /// Checks the validity of the initial and final time and time step arguments.
+    /// </summary>
+    /// <param name="t0">The initial time.</param>
+    /// <param name="deltaT">The time step.</param>
+    /// <param name="tf">The final time.</param>
+    /// <remarks>
+    /// This method ensures that the final time is not equal to the initial time,
+    /// and that the time step is not zero. It also checks that the relationship
+    /// between the initial time, final time, and time step is consistent (i.e., if
+    /// the final time is less than the initial time, the time step must be negative,
+    /// and vice versa).
+    /// </remarks>
     protected void CheckArguments(double t0, double deltaT, double tf)
     {
       if (tf == t0)
@@ -389,6 +410,15 @@ namespace Altaxo.Calc.Ode.Obsolete
       }
     }
 
+    /// <summary>
+    /// Checks the initialization status of the ODE solver.
+    /// </summary>
+    /// <remarks>
+    /// This method verifies that the ODE system has been specified and that the initial
+    /// values have been set before starting the integration. It should be called
+    /// before attempting to perform any integration to ensure that the solver is
+    /// properly initialized.
+    /// </remarks>
     protected internal void CheckInitialization()
     {
       if (_InvokeInitializeODEs == true)

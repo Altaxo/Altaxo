@@ -35,42 +35,74 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
   #region Interfaces
 
   /// <summary>
-  ///
+  /// Defines the view for the project browser pad.
   /// </summary>
   /// <remarks>The image indices for the browser tree nodes and list nodes are set as following:
-  /// 0: Project, 1: closed folder, 2: open folder, 3: worksheet, 4: graph.</remarks>
+  /// 0: project, 1: closed folder, 2: open folder, 3: worksheet, 4: graph.</remarks>
   public interface IProjectBrowseView
   {
+    /// <summary>
+    /// Gets or sets the controller associated with the view.
+    /// </summary>
     public ProjectBrowseController Controller { get; set; }
 
     /// <summary>Sets the browser root node.</summary>
     /// <param name="root">The root node of the project browser.</param>
     public void InitializeTree(Altaxo.Collections.NGTreeNode root);
 
+    /// <summary>
+    /// Selects the specified tree node without triggering selection handlers.
+    /// </summary>
+    /// <param name="node">The node to select.</param>
     public void SilentSelectTreeNode(Altaxo.Collections.NGTreeNode node);
 
+    /// <summary>
+    /// Gets the context menu used for tree nodes.
+    /// </summary>
     public object TreeNodeContextMenu { get; }
 
+    /// <summary>
+    /// Initializes the item list.
+    /// </summary>
+    /// <param name="list">The list to display.</param>
     public void InitializeList(SelectableListNodeList list);
 
     /// <summary>Sets the display in what folder we are currently in.</summary>
     /// <param name="currentFolder">Name of the current folder.</param>
-    /// <param name="isFullNameFolder">True if the full name is shown, instead of only the short name</param>
+    /// <param name="isFullNameFolder"><see langword="true"/> if the full name is shown instead of only the short name.</param>
     public void InitializeCurrentFolder(string currentFolder, bool isFullNameFolder);
 
+    /// <summary>
+    /// Sets the sort indicator for the name column.
+    /// </summary>
     public void SetSortIndicator_NameColumn(bool isSorted, bool isDescendingSort, bool isSecondaryAdorner);
 
+    /// <summary>
+    /// Sets the sort indicator for the creation date column.
+    /// </summary>
     public void SetSortIndicator_CreationDateColumn(bool isSorted, bool isDescendingSort, bool isSecondaryAdorner);
 
+    /// <summary>
+    /// Sets the sort indicator for the change date column.
+    /// </summary>
     public void SetSortIndicator_ChangeDateColumn(bool isSorted, bool isDescendingSort, bool isSecondaryAdorner);
 
+    /// <summary>
+    /// Sets the sort indicator for the reverse-name column.
+    /// </summary>
     public void SetSortIndicator_NameRevColumn(bool isSorted, bool isDescendingSort, bool isSecondaryAdorner);
 
+    /// <summary>
+    /// Synchronizes the selection state of the list view.
+    /// </summary>
     public void SynchronizeListSelection();
   }
 
   #endregion Interfaces
 
+  /// <summary>
+  /// Controls the project browser pad.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IProjectBrowseView))]
   public class ProjectBrowseController : AbstractPadContent
   {
@@ -432,7 +464,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// <summary>
     /// Get a list of selected items (tables, graphs and project folders).
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The selected items.</returns>
     public List<object> GetSelectedListItems()
     {
       var result = new List<object>();
@@ -536,6 +568,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     #region Navigation
 
+    /// <summary>
+    /// Navigates backward in the project browser history.
+    /// </summary>
     public void EhNavigateBackward()
     {
       if (_navigationPoints.TryNavigateBackward(out var p, IsNavigationPointValid, true))
@@ -544,6 +579,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       }
     }
 
+    /// <summary>
+    /// Navigates forward in the project browser history.
+    /// </summary>
     public void EhNavigateForward()
     {
       if (_navigationPoints.TryNavigateForward(out var p, IsNavigationPointValid, true))
@@ -665,21 +703,33 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     private BrowserListItem.SortKind _secondaryListSortKind;
     private bool _secondaryListSortDescending;
 
+    /// <summary>
+    /// Toggles sorting by the name column.
+    /// </summary>
     public void EhToggleListSort_Name()
     {
       EhToggleListSort(BrowserListItem.SortKind.Name);
     }
 
+    /// <summary>
+    /// Toggles sorting by the creation-date column.
+    /// </summary>
     public void EhToggleListSort_CreationDate()
     {
       EhToggleListSort(BrowserListItem.SortKind.CreationDate);
     }
 
+    /// <summary>
+    /// Toggles sorting by the change-date column.
+    /// </summary>
     public void EhToggleListSort_ChangeDate()
     {
       EhToggleListSort(BrowserListItem.SortKind.ChangeDate);
     }
 
+    /// <summary>
+    /// Toggles sorting by the reverse-name column.
+    /// </summary>
     public void EhToggleListSort_NameRev()
     {
       EhToggleListSort(BrowserListItem.SortKind.NameRev);
@@ -833,6 +883,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       _view.Controller = null;
     }
 
+    /// <inheritdoc/>
     public override object ViewObject
     {
       get
@@ -857,11 +908,13 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       }
     }
 
+    /// <inheritdoc/>
     public override object ModelObject
     {
       get { return _doc; }
     }
 
+    /// <inheritdoc/>
     public override void Dispose()
     {
       ViewObject = null;
@@ -872,10 +925,10 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     #region List commands
 
     /// <summary>
-    /// Determines if a project folder is selected in the tree view.
+    /// Determines whether a project folder is selected in the tree view.
     /// </summary>
     /// <param name="folderName">If a project folder is selected, returns the name of the folder.</param>
-    /// <returns>True if a project folder is selected in the tree view.</returns>
+    /// <returns><see langword="true"/> if a project folder is selected in the tree view; otherwise, <see langword="false"/>.</returns>
     public bool IsProjectFolderSelected(out string folderName)
     {
       if (_currentSelectedTreeNode.Tag is string)
@@ -891,7 +944,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     }
 
     /// <summary>
-    /// Gets/sets the action when selecting a list item. If true, when selection the list item, it is shown in the document area.
+    /// Gets or sets a value indicating whether the selected list item is shown in the document area.
     /// </summary>
     public bool ViewOnSelectListNodeOn
     {
@@ -900,7 +953,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     }
 
     /// <summary>
-    /// Gets/sets the action when selecting a tree node.
+    /// Gets or sets the action that is executed when selecting a tree node.
     /// </summary>
     public ViewOnSelect ViewOnSelectTreeNode
     {
@@ -917,16 +970,16 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// <summary>
     /// Indicates that a drag operation from the items list can be started.
     /// </summary>
-    /// <returns><c>True</c> if a drag operation from the items list can be started; otherwise <c>false</c>.</returns>
+    /// <returns><see langword="true"/> if a drag operation from the items list can be started; otherwise, <see langword="false"/>.</returns>
     public bool ItemList_CanStartDrag()
     {
       return GetSelectedListItems().Count > 0;
     }
 
     /// <summary>
-    /// Indicates that a drag operation from the items list can be started.
+    /// Indicates that a drag operation from the folder tree can be started.
     /// </summary>
-    /// <returns><c>True</c> if a drag operation from the items list can be started; otherwise <c>false</c>.</returns>
+    /// <returns><see langword="true"/> if a drag operation from the folder tree can be started; otherwise, <see langword="false"/>.</returns>
     public bool FolderTree_CanStartDrag()
     {
       if (_currentSelectedTreeNode is null)
@@ -948,7 +1001,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     }
 
     /// <summary>
-    /// Starts a drag operation from the items list.
+    /// Starts a drag operation from the folder tree.
     /// </summary>
     /// <param name="dao">On return, this contains the data object used during the drag operation.</param>
     /// <param name="canCopy">On return, this variable indicates if the drag operation allows a copy operation.</param>
@@ -1030,7 +1083,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     }
 
     /// <summary>
-    /// Called when the drag is cancelled (i.e. it was not successfull).
+    /// Called when the list drag operation is cancelled.
     /// </summary>
     public void ItemList_DragCancelled()
     {
@@ -1038,7 +1091,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     }
 
     /// <summary>
-    /// Called when the drag is cancelled (i.e. it was not successfull).
+    /// Called when the folder-tree drag operation is cancelled.
     /// </summary>
     public void FolderTree_DragCancelled()
     {
@@ -1112,7 +1165,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     #region DropCanAcceptData
 
     /// <summary>
-    /// Tests if the item list can accept data to be dropped here.
+    /// Tests if the folder tree can accept data to be dropped here.
     /// </summary>
     /// <param name="data">The data used during the drag-drop operation.</param>
     /// <param name="isCtrlPressed">Indicates whether the Ctrl-key is pressed.</param>
@@ -1129,7 +1182,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     }
 
     /// <summary>
-    /// Tests if the item list can accept data to be dropped here.
+    /// Tests if the folder tree or item list can accept data to be dropped into the target folder.
     /// </summary>
     /// <param name="data">The data used during the drag-drop operation.</param>
     /// <param name="targetItem">The tree node that is currently selected in the folder tree (or is the target of this drop).</param>
@@ -1202,7 +1255,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     #region Drop
 
     /// <summary>
-    /// Executes a drop operation into the item list.
+    /// Executes a drop operation into the folder tree.
     /// </summary>
     /// <param name="data">The data used during drag-drop.</param>
     /// <param name="isCtrlPressed">Indicates whether the Ctrl-key is pressed.</param>
@@ -1218,7 +1271,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     }
 
     /// <summary>
-    /// Executes a drop operation into the item list.
+    /// Executes a drop operation into the item list or folder tree.
     /// </summary>
     /// <param name="data">The data used during drag-drop.</param>
     /// <param name="targetItem">The tree node that is currently selected in the folder tree (or is the target of this drop).</param>

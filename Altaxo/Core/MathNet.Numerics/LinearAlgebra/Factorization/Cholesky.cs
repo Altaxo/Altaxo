@@ -44,6 +44,10 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
   public abstract class Cholesky<T> : ISolver<T>
         where T : struct, IEquatable<T>, IFormattable
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Cholesky{T}"/> class.
+    /// </summary>
+    /// <param name="factor">The lower-triangular factor matrix.</param>
     protected Cholesky(Matrix<T> factor)
     {
       Factor = factor;

@@ -27,6 +27,9 @@ using System.Windows.Shell;
 
 namespace Altaxo.Gui.Workbench
 {
+  /// <summary>
+  /// Provides the standard workbench status bar implementation.
+  /// </summary>
   public class StatusBarStandard : System.Windows.Controls.Primitives.StatusBar, IStatusBarView
   {
     // Panels from left to right
@@ -48,13 +51,20 @@ namespace Altaxo.Gui.Workbench
 
     #region IStatusBarView
 
+    /// <inheritdoc/>
     public bool IsStatusBarVisible { set { Visibility = value ? Visibility.Visible : Visibility.Collapsed; } }
+    /// <inheritdoc/>
     public object CursorStatusBarPanelContent { set { _cursorStatusBarPanel.Content = value; } }
+    /// <inheritdoc/>
     public object SelectionStatusBarPanelContent { set { _selectionStatusBarPanel.Content = value; } }
+    /// <inheritdoc/>
     public object ModeStatusBarPanelContent { set { _modeStatusBarPanel.Content = value; } }
 
     #endregion IStatusBarView
 
+    /// <summary>
+    /// Gets the status bar panel that displays cursor information.
+    /// </summary>
     public StatusBarItem CursorStatusBarPanel
     {
       get
@@ -63,6 +73,9 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Gets the status bar panel that displays selection information.
+    /// </summary>
     public StatusBarItem SelectionStatusBarPanel
     {
       get
@@ -71,6 +84,9 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Gets the status bar panel that displays mode information.
+    /// </summary>
     public StatusBarItem ModeStatusBarPanel
     {
       get
@@ -79,6 +95,9 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StatusBarStandard"/> class.
+    /// </summary>
     public StatusBarStandard()
     {
       // from left to right
@@ -108,6 +127,7 @@ namespace Altaxo.Gui.Workbench
       Items.Add(_txtStatusBarPanel);
     }
 
+    /// <inheritdoc/>
     public void SetMessage(string message, bool highlighted, object icon = null)
     {
       Action setMessageAction = delegate
@@ -134,6 +154,7 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <inheritdoc/>
     public void DisplayProgress(string taskName, double workDone, OperationStatus status)
     {
       //			Current.Log.Debug("DisplayProgress(\"" + taskName + "\", " + workDone + ", " + status + ")");
@@ -204,6 +225,7 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <inheritdoc/>
     public void HideProgress()
     {
       //			Current.Log.Debug("HideProgress()");

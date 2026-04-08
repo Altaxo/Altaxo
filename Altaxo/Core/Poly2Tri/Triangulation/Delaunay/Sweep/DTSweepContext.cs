@@ -45,20 +45,42 @@ namespace Poly2Tri
     // PointSet width to both left and right.
     private readonly float ALPHA = 0.3f;
 
+    /// <summary>
+    /// The advancing front used during the sweep.
+    /// </summary>
     public AdvancingFront Front;
+
+    /// <summary>
+    /// Gets or sets the artificial head point used to seed the front.
+    /// </summary>
     public TriangulationPoint Head { get; set; }
+
+    /// <summary>
+    /// Gets or sets the artificial tail point used to seed the front.
+    /// </summary>
     public TriangulationPoint Tail { get; set; }
 
+    /// <summary>
+    /// Stores temporary basin information during filling.
+    /// </summary>
     public DTSweepBasin Basin = new DTSweepBasin();
+
+    /// <summary>
+    /// Stores the active edge-event state.
+    /// </summary>
     public DTSweepEdgeEvent EdgeEvent = new DTSweepEdgeEvent();
 
     private DTSweepPointComparator _comparator = new DTSweepPointComparator();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DTSweepContext"/> class.
+    /// </summary>
     public DTSweepContext()
     {
       Clear();
     }
 
+    /// <inheritdoc/>
     public override bool IsDebugEnabled
     {
       get
@@ -73,6 +95,10 @@ namespace Poly2Tri
       }
     }
 
+    /// <summary>
+    /// Removes the specified triangle from the working triangle list.
+    /// </summary>
+    /// <param name="triangle">The triangle to remove.</param>
     public void RemoveFromList(DelaunayTriangle triangle)
     {
       Triangles.Remove(triangle);
@@ -87,6 +113,10 @@ namespace Poly2Tri
       //        triangle.clearNeighbors();
     }
 
+    /// <summary>
+    /// Marks all reachable interior triangles starting from the specified triangle.
+    /// </summary>
+    /// <param name="triangle">The triangle from which to start cleaning.</param>
     public void MeshClean(DelaunayTriangle triangle)
     {
       MeshCleanReq(triangle);
@@ -107,12 +137,17 @@ namespace Poly2Tri
       }
     }
 
+    /// <inheritdoc/>
     public override void Clear()
     {
       base.Clear();
       Triangles.Clear();
     }
 
+    /// <summary>
+    /// Adds the specified node to the advancing front.
+    /// </summary>
+    /// <param name="node">The node to add.</param>
     public void AddNode(AdvancingFrontNode node)
     {
       //        Console.WriteLine( "add:" + node.key + ":" + System.identityHashCode(node.key));
@@ -120,6 +155,10 @@ namespace Poly2Tri
       Front.AddNode(node);
     }
 
+    /// <summary>
+    /// Removes the specified node from the advancing front.
+    /// </summary>
+    /// <param name="node">The node to remove.</param>
     public void RemoveNode(AdvancingFrontNode node)
     {
       //        Console.WriteLine( "remove:" + node.key + ":" + System.identityHashCode(node.key));
@@ -127,11 +166,19 @@ namespace Poly2Tri
       Front.RemoveNode(node);
     }
 
+    /// <summary>
+    /// Locates the advancing-front node associated with the specified point.
+    /// </summary>
+    /// <param name="point">The point to locate.</param>
+    /// <returns>The located node.</returns>
     public AdvancingFrontNode LocateNode(TriangulationPoint point)
     {
       return Front.LocateNode(point);
     }
 
+    /// <summary>
+    /// Creates the initial advancing front.
+    /// </summary>
     public void CreateAdvancingFront()
     {
       AdvancingFrontNode head, tail, middle;
@@ -164,6 +211,7 @@ namespace Poly2Tri
     /// Try to map a node to all sides of this triangle that don't have
     /// a neighbor.
     /// </summary>
+    /// <param name="t">The triangle to map to front nodes.</param>
     public void MapTriangleToNodes(DelaunayTriangle t)
     {
       for (int i = 0; i < 3; i++)
@@ -175,6 +223,7 @@ namespace Poly2Tri
         }
     }
 
+    /// <inheritdoc/>
     public override void PrepareTriangulation(Triangulatable t)
     {
       base.PrepareTriangulation(t);
@@ -212,17 +261,22 @@ namespace Poly2Tri
       //        logger.info( "Triangulation setup [{}ms]", ( System.nanoTime() - time ) / 1e6 );
     }
 
+    /// <summary>
+    /// Finalizes the triangulation by transferring the working triangles to the triangulatable target.
+    /// </summary>
     public void FinalizeTriangulation()
     {
       Triangulatable.AddTriangles(Triangles);
       Triangles.Clear();
     }
 
+    /// <inheritdoc/>
     public override TriangulationConstraint NewConstraint(TriangulationPoint a, TriangulationPoint b)
     {
       return new DTSweepConstraint(a, b);
     }
 
+    /// <inheritdoc/>
     public override TriangulationAlgorithm Algorithm { get { return TriangulationAlgorithm.DTSweep; } }
   }
 }

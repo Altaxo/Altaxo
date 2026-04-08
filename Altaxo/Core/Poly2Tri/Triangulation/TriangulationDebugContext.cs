@@ -31,15 +31,28 @@
 
 namespace Poly2Tri
 {
+  /// <summary>
+  /// Provides a base class for triangulation debug contexts.
+  /// </summary>
   public abstract class TriangulationDebugContext
   {
+    /// <summary>
+    /// The owning triangulation context.
+    /// </summary>
     protected TriangulationContext _tcx;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TriangulationDebugContext"/> class.
+    /// </summary>
+    /// <param name="tcx">The owning triangulation context.</param>
     public TriangulationDebugContext(TriangulationContext tcx)
     {
       _tcx = tcx;
     }
 
+    /// <summary>
+    /// Clears the debug state.
+    /// </summary>
     public abstract void Clear();
   }
 }

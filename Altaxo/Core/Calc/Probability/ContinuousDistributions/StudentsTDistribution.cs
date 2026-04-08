@@ -88,6 +88,10 @@ namespace Altaxo.Calc.Probability
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StudentsTDistribution"/> class with the specified degrees of freedom.
+    /// </summary>
+    /// <param name="nu">The degrees of freedom.</param>
     public StudentsTDistribution(double nu)
       : this(nu, DefaultGenerator)
     {

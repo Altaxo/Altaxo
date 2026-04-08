@@ -43,6 +43,11 @@ namespace Altaxo.Calc.Interpolation
     private readonly IInterpolation _interpolation;
     private readonly Func<double, double> _transform;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TransformedInterpolation"/> class.
+    /// </summary>
+    /// <param name="interpolation">The underlying interpolation.</param>
+    /// <param name="transform">The transformation applied to interpolated values.</param>
     public TransformedInterpolation(IInterpolation interpolation, Func<double, double> transform)
     {
       _interpolation = interpolation;

@@ -56,6 +56,9 @@ namespace Altaxo.Calc
       ConfigureAuto();
     }
 
+    /// <summary>
+    /// Configures library defaults automatically.
+    /// </summary>
     public static void ConfigureAuto()
     {
       // Random Numbers & Distributions
@@ -69,6 +72,9 @@ namespace Altaxo.Calc
       TaskScheduler = TaskScheduler.Default;
     }
 
+    /// <summary>
+    /// Forces the use of managed providers only.
+    /// </summary>
     public static void UseManaged()
     {
       LinearAlgebraControl.UseManaged();
@@ -200,6 +206,9 @@ namespace Altaxo.Calc
       return linearAlgebra || fourierTransform || directSparseSolver;
     }
 
+    /// <summary>
+    /// Frees resources held by the active providers.
+    /// </summary>
     public static void FreeResources()
     {
       LinearAlgebraControl.FreeResources();
@@ -207,6 +216,9 @@ namespace Altaxo.Calc
       SparseSolverControl.FreeResources();
     }
 
+    /// <summary>
+    /// Configures the library to use a single worker thread.
+    /// </summary>
     public static void UseSingleThread()
     {
       _maxDegreeOfParallelism = 1;
@@ -217,6 +229,9 @@ namespace Altaxo.Calc
       SparseSolverControl.Provider.InitializeVerify();
     }
 
+    /// <summary>
+    /// Configures the library to use multi-threading based on the available processors.
+    /// </summary>
     public static void UseMultiThreading()
     {
       _maxDegreeOfParallelism = Environment.ProcessorCount;
@@ -304,6 +319,10 @@ namespace Altaxo.Calc
       set => _parallelizeElements = Math.Max(3, value);
     }
 
+    /// <summary>
+    /// Describes the current Math.NET Numerics configuration.
+    /// </summary>
+    /// <returns>A textual description of the current configuration and active providers.</returns>
     public static string Describe()
     {
       var versionAttribute = typeof(Control).GetTypeInfo().Assembly.GetCustomAttribute(typeof(AssemblyInformationalVersionAttribute)) as AssemblyInformationalVersionAttribute;

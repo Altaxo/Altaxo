@@ -31,13 +31,34 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization
 {
+  /// <summary>
+  /// Represents the outcome of a minimization run.
+  /// </summary>
   public class MinimizationResult
   {
+    /// <summary>
+    /// Gets the minimizing point.
+    /// </summary>
     public Vector<double> MinimizingPoint => FunctionInfoAtMinimum.Point;
+    /// <summary>
+    /// Gets the objective function state at the minimum.
+    /// </summary>
     public IObjectiveFunction FunctionInfoAtMinimum { get; }
+    /// <summary>
+    /// Gets the number of performed iterations.
+    /// </summary>
     public int Iterations { get; }
+    /// <summary>
+    /// Gets the reason the minimization terminated.
+    /// </summary>
     public ExitCondition ReasonForExit { get; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MinimizationResult"/> class.
+    /// </summary>
+    /// <param name="functionInfo">The objective function state at the minimum.</param>
+    /// <param name="iterations">The number of performed iterations.</param>
+    /// <param name="reasonForExit">The termination reason.</param>
     public MinimizationResult(IObjectiveFunction functionInfo, int iterations, ExitCondition reasonForExit)
     {
       FunctionInfoAtMinimum = functionInfo;

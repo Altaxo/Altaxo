@@ -37,31 +37,58 @@ namespace Altaxo.Gui.Main
   /// </summary>
   public partial class PropertyHierarchyControl : UserControl, IPropertyHierarchyView
   {
+    /// <summary>
+    /// Occurs when the selected item should be edited.
+    /// </summary>
     public event Action? ItemEditing;
 
+    /// <summary>
+    /// Occurs when the selected item should be removed.
+    /// </summary>
     public event Action? ItemRemoving;
 
+    /// <summary>
+    /// Occurs when a new property should be created.
+    /// </summary>
     public event Action? PropertyCreation;
 
+    /// <summary>
+    /// Occurs when a new basic property should be added.
+    /// </summary>
     public event Action? AddNewBasicProperty;
 
+    /// <summary>
+    /// Occurs when the show-all-properties setting changes.
+    /// </summary>
     public event Action<bool>? ShowAllPropertiesChanged;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PropertyHierarchyControl"/> class.
+    /// </summary>
     public PropertyHierarchyControl()
     {
       InitializeComponent();
     }
 
+    /// <summary>
+    /// Gets or sets the list of property values.
+    /// </summary>
     public Collections.SelectableListNodeList PropertyValueList
     {
       set { GuiHelper.Initialize(_guiPropertyList, value); }
     }
 
+    /// <summary>
+    /// Gets or sets the list of available property keys.
+    /// </summary>
     public Collections.SelectableListNodeList AvailablePropertyKeyList
     {
       set { GuiHelper.Initialize(_guiAvailablePropertyKeyList, value); }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether all properties are shown.
+    /// </summary>
     public bool ShowAllProperties
     {
       set

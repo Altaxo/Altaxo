@@ -85,14 +85,49 @@ namespace Altaxo.Calc.Regression
 
     private class WorkArrays
     {
+      /// <summary>
+      /// Stores the current residual vector.
+      /// </summary>
       public double[] e;
+
+      /// <summary>
+      /// Stores the current model values.
+      /// </summary>
       public double[] hx;
+
+      /// <summary>
+      /// Stores the product of the transposed Jacobian and the residual vector.
+      /// </summary>
       public double[] jacTe;
+
+      /// <summary>
+      /// Stores the Jacobian matrix in row-major order.
+      /// </summary>
       public double[] jac;
+
+      /// <summary>
+      /// Stores the product of the transposed Jacobian and the Jacobian matrix.
+      /// </summary>
       public double[] jacTjac;
+
+      /// <summary>
+      /// Stores the current parameter increment.
+      /// </summary>
       public double[] Dp;
+
+      /// <summary>
+      /// Stores the diagonal of <see cref="jacTjac"/>.
+      /// </summary>
       public double[] diag_jacTjac;
+
+      /// <summary>
+      /// Stores the tentative updated parameter vector.
+      /// </summary>
       public double[] pDp;
+
+      /// <summary>
+      /// Stores an auxiliary work array.
+      /// </summary>
       public double[] wrk;
 
       /// <summary>
@@ -130,6 +165,21 @@ namespace Altaxo.Calc.Regression
  * tutorial at http://www.imm.dtu.dk/courses/02611/nllsq.pdf
  */
 
+    /// <summary>
+    /// Performs Levenberg-Marquardt minimization using an analytic Jacobian.
+    /// </summary>
+    /// <param name="func">Functional relation describing the measurements.</param>
+    /// <param name="jacf">Function used to evaluate the Jacobian.</param>
+    /// <param name="p">On input, the initial parameter estimates; on output, the estimated solution.</param>
+    /// <param name="x">Measurement vector.</param>
+    /// <param name="weights">Optional weights used to scale the fit differences.</param>
+    /// <param name="itmax">Maximum number of iterations.</param>
+    /// <param name="opts">Minimization options <c>[μ, ε1, ε2, ε3]</c>, or <see langword="null"/> to use defaults.</param>
+    /// <param name="info">Optional information array that receives details about the minimization process.</param>
+    /// <param name="workingmemory">Working memory object that is reused between calls.</param>
+    /// <param name="covar">Optional covariance matrix corresponding to the least-squares solution.</param>
+    /// <param name="adata">Optional additional data passed through to <paramref name="func"/> and <paramref name="jacf"/>.</param>
+    /// <returns>The number of iterations if the minimization succeeds; otherwise, -1.</returns>
     public static int LEVMAR_DER(
       FitFunction func, /* functional relation describing measurements. A p \in R^m yields a \hat{x} \in  R^n */
       JacobianFunction jacf,  /* function to evaluate the jacobian \part x / \part p */

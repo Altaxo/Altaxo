@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
   /// </summary>
   public partial class SiliconCalibrationOptionsControl : UserControl, ISiliconCalibrationOptionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SiliconCalibrationOptionsControl"/> class.
+    /// </summary>
     public SiliconCalibrationOptionsControl()
     {
       InitializeComponent();

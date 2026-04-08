@@ -32,6 +32,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
   /// </summary>
   public partial class FitFunctionSelectionControl : UserControl, IFitFunctionSelectionView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FitFunctionSelectionControl"/> class.
+    /// </summary>
     public FitFunctionSelectionControl()
     {
       InitializeComponent();

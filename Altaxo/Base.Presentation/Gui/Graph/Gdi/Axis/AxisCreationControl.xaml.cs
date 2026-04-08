@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
   /// </summary>
   public partial class AxisCreationControl : UserControl, IAxisCreationView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AxisCreationControl"/> class.
+    /// </summary>
     public AxisCreationControl()
     {
       InitializeComponent();

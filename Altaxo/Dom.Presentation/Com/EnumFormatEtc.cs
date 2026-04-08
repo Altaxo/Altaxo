@@ -48,6 +48,12 @@ namespace Altaxo.Com
     /// <summary>The rendering procedure.</summary>
     public RenderDataProcedure renderer;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Rendering"/> struct.
+    /// </summary>
+    /// <param name="format">The clipboard format.</param>
+    /// <param name="tymed">The storage medium.</param>
+    /// <param name="renderer">The rendering procedure.</param>
     public Rendering(short format, TYMED tymed, RenderDataProcedure renderer)
     {
       this.format = new FORMATETC()
@@ -68,16 +74,25 @@ namespace Altaxo.Com
   [ComVisible(true)]
   public class EnumFormatEtc : ManagedEnumBase<FORMATETC>, IEnumFORMATETC
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EnumFormatEtc"/> class.
+    /// </summary>
+    /// <param name="formats">The formats to enumerate.</param>
     public EnumFormatEtc(IEnumerable<FORMATETC> formats)
       : base(formats)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EnumFormatEtc"/> class by copying another enumerator.
+    /// </summary>
+    /// <param name="from">The enumerator to copy.</param>
     public EnumFormatEtc(EnumFormatEtc from)
       : base(from)
     {
     }
 
+    /// <inheritdoc/>
     public void Clone(out IEnumFORMATETC newEnum)
     {
       newEnum = new EnumFormatEtc(this);

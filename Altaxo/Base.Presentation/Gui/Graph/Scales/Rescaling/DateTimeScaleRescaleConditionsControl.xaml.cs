@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
   /// </summary>
   public partial class DateTimeScaleRescaleConditionsControl : UserControl, IDateTimeScaleRescaleConditionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DateTimeScaleRescaleConditionsControl"/> class.
+    /// </summary>
     public DateTimeScaleRescaleConditionsControl()
     {
       InitializeComponent();

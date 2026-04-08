@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Analysis.Fourier
   /// </summary>
   public partial class RealFourierTransformation2DControl : UserControl, IRealFourierTransformation2DView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RealFourierTransformation2DControl"/> class.
+    /// </summary>
     public RealFourierTransformation2DControl()
     {
       InitializeComponent();

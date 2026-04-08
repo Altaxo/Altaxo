@@ -31,16 +31,28 @@ using System;
 
 namespace Altaxo.Calc.Optimization.LineSearch
 {
+  /// <summary>
+  /// Implements a line search that enforces the strong Wolfe conditions.
+  /// </summary>
   public class StrongWolfeLineSearch : WolfeLineSearch
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StrongWolfeLineSearch"/> class.
+    /// </summary>
+    /// <param name="c1">The Armijo condition constant.</param>
+    /// <param name="c2">The curvature condition constant.</param>
+    /// <param name="parameterTolerance">The stopping tolerance for the step parameter.</param>
+    /// <param name="maxIterations">The maximum number of iterations.</param>
     public StrongWolfeLineSearch(double c1, double c2, double parameterTolerance, int maxIterations = 10)
         : base(c1, c2, parameterTolerance, maxIterations)
     {
       // Argument validation in base class
     }
 
+    /// <inheritdoc/>
     protected override ExitCondition WolfeExitCondition => ExitCondition.StrongWolfeCriteria;
 
+    /// <inheritdoc/>
     protected override bool WolfeCondition(double stepDd, double initialDd)
     {
       return Math.Abs(stepDd) > C2 * Math.Abs(initialDd);

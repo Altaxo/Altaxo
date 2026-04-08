@@ -33,19 +33,47 @@ using System.Collections.Generic;
 
 namespace Poly2Tri
 {
+  /// <summary>
+  /// Defines a type that can participate in triangulation.
+  /// </summary>
   public interface Triangulatable
   {
+    /// <summary>
+    /// Prepares this instance for triangulation using the specified context.
+    /// </summary>
+    /// <param name="tcx">The triangulation context.</param>
     void Prepare(TriangulationContext tcx);
 
+    /// <summary>
+    /// Gets the points that will be triangulated.
+    /// </summary>
     IList<TriangulationPoint> Points { get; } // MM: Neither of these are used via interface (yet?)
+
+    /// <summary>
+    /// Gets the triangles produced by triangulation.
+    /// </summary>
     IList<DelaunayTriangle> Triangles { get; }
 
+    /// <summary>
+    /// Adds a triangle to the triangulation result.
+    /// </summary>
+    /// <param name="t">The triangle to add.</param>
     void AddTriangle(DelaunayTriangle t);
 
+    /// <summary>
+    /// Adds multiple triangles to the triangulation result.
+    /// </summary>
+    /// <param name="list">The triangles to add.</param>
     void AddTriangles(IEnumerable<DelaunayTriangle> list);
 
+    /// <summary>
+    /// Clears the currently stored triangulation result.
+    /// </summary>
     void ClearTriangles();
 
+    /// <summary>
+    /// Gets the triangulation mode used for this instance.
+    /// </summary>
     TriangulationMode TriangulationMode { get; }
   }
 }

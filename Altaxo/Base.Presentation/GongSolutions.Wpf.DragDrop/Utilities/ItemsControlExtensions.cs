@@ -31,6 +31,9 @@ using Microsoft.Windows.Controls.Primitives;
 
 namespace GongSolutions.Wpf.DragDrop.Utilities
 {
+  /// <summary>
+  /// Provides helper methods for drag-and-drop interaction with <see cref="ItemsControl"/> instances.
+  /// </summary>
   public static class ItemsControlExtensions
   {
     /// <summary>
@@ -269,6 +272,12 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
         );
     }
 
+    /// <summary>
+    /// Finds the collection view group at the specified position.
+    /// </summary>
+    /// <param name="itemsControl">The items control to inspect.</param>
+    /// <param name="position">The position to test.</param>
+    /// <returns>The matching collection view group, or <see langword="null"/> if no group was found.</returns>
     public static CollectionViewGroup FindGroup(this ItemsControl itemsControl, Point position)
     {
       var element = itemsControl.InputHitTest(position) as DependencyObject;
@@ -286,6 +295,11 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
       return null;
     }
 
+    /// <summary>
+    /// Determines whether the items control supports selecting multiple items.
+    /// </summary>
+    /// <param name="itemsControl">The items control to inspect.</param>
+    /// <returns><see langword="true"/> if multiple items can be selected; otherwise, <see langword="false"/>.</returns>
     public static bool CanSelectMultipleItems(this ItemsControl itemsControl)
     {
       var info = FindItemsControlInformation(itemsControl);
@@ -311,6 +325,12 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
       }
     }
 
+    /// <summary>
+    /// Gets the item container that contains the specified child element.
+    /// </summary>
+    /// <param name="itemsControl">The owning items control.</param>
+    /// <param name="child">The child element.</param>
+    /// <returns>The matching item container, or <see langword="null"/> if none was found.</returns>
     public static UIElement GetItemContainer(this ItemsControl itemsControl, UIElement child)
     {
       var itemType = GetItemContainerType(itemsControl, out var isItemContainer);
@@ -325,6 +345,12 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
       return null;
     }
 
+    /// <summary>
+    /// Gets the item container at the specified position.
+    /// </summary>
+    /// <param name="itemsControl">The items control to inspect.</param>
+    /// <param name="position">The position to test.</param>
+    /// <returns>The matching item container, or <see langword="null"/> if none was found.</returns>
     public static UIElement GetItemContainerAt(this ItemsControl itemsControl, Point position)
     {
       var inputElement = itemsControl.InputHitTest(position);
@@ -338,6 +364,13 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
       return null;
     }
 
+    /// <summary>
+    /// Gets the closest item container along the specified search direction.
+    /// </summary>
+    /// <param name="itemsControl">The items control to inspect.</param>
+    /// <param name="position">The position to test.</param>
+    /// <param name="searchDirection">The direction used for the search.</param>
+    /// <returns>The closest matching item container, or <see langword="null"/> if none was found.</returns>
     public static UIElement GetItemContainerAt(this ItemsControl itemsControl, Point position,
                                                Orientation searchDirection)
     {
@@ -385,6 +418,12 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
       return GetClosest(itemsControl, hits, position, searchDirection);
     }
 
+    /// <summary>
+    /// Gets the type of item container used by the specified items control.
+    /// </summary>
+    /// <param name="itemsControl">The items control to inspect.</param>
+    /// <param name="isItemContainer">Set to <see langword="true"/> when the returned type is itself part of the current visual tree.</param>
+    /// <returns>The item container type, or <see langword="null"/> if it cannot be determined.</returns>
     public static Type GetItemContainerType(this ItemsControl itemsControl, out bool isItemContainer)
     {
       ItemsControlInformation info = FindItemsControlInformation(itemsControl);
@@ -448,6 +487,11 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
       return null;
     }
 
+    /// <summary>
+    /// Gets the orientation of the items panel for the specified items control.
+    /// </summary>
+    /// <param name="itemsControl">The items control to inspect.</param>
+    /// <returns>The detected orientation.</returns>
     public static Orientation GetItemsPanelOrientation(this ItemsControl itemsControl)
     {
       var itemsPresenter = itemsControl.GetVisualDescendent<ItemsPresenter>();
@@ -467,6 +511,11 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
       return Orientation.Vertical;
     }
 
+    /// <summary>
+    /// Gets the flow direction of the items panel for the specified items control.
+    /// </summary>
+    /// <param name="itemsControl">The items control to inspect.</param>
+    /// <returns>The detected flow direction.</returns>
     public static FlowDirection GetItemsPanelFlowDirection(this ItemsControl itemsControl)
     {
       var itemsPresenter = itemsControl.GetVisualDescendent<ItemsPresenter>();
@@ -486,6 +535,11 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
       return FlowDirection.LeftToRight;
     }
 
+    /// <summary>
+    /// Selects the specified item in the items control.
+    /// </summary>
+    /// <param name="itemsControl">The items control to update.</param>
+    /// <param name="item">The item to select.</param>
     public static void SetSelectedItem(this ItemsControl itemsControl, object item)
     {
       if (itemsControl is MultiSelector)
@@ -510,6 +564,11 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
       }
     }
 
+    /// <summary>
+    /// Gets the currently selected items from the items control.
+    /// </summary>
+    /// <param name="itemsControl">The items control to inspect.</param>
+    /// <returns>The selected items.</returns>
     public static IEnumerable GetSelectedItems(this ItemsControl itemsControl)
     {
       ItemsControlInformation info = FindItemsControlInformation(itemsControl);
@@ -553,6 +612,12 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
       }
     }
 
+    /// <summary>
+    /// Determines whether the specified item is selected in the items control.
+    /// </summary>
+    /// <param name="itemsControl">The items control to inspect.</param>
+    /// <param name="item">The item to test.</param>
+    /// <returns><see langword="true"/> if the item is selected; otherwise, <see langword="false"/>.</returns>
     public static bool GetItemSelected(this ItemsControl itemsControl, object item)
     {
       ItemsControlInformation info = FindItemsControlInformation(itemsControl);
@@ -583,6 +648,12 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
       }
     }
 
+    /// <summary>
+    /// Sets the selection state of the specified item.
+    /// </summary>
+    /// <param name="itemsControl">The items control to update.</param>
+    /// <param name="item">The item to update.</param>
+    /// <param name="value"><see langword="true"/> to select the item; otherwise, <see langword="false"/>.</param>
     public static void SetItemSelected(this ItemsControl itemsControl, object item, bool value)
     {
       var info = FindItemsControlInformation(itemsControl);

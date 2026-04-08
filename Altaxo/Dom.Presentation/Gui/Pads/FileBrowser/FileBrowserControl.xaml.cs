@@ -45,11 +45,17 @@ namespace Altaxo.Gui.Pads.FileBrowser
     /// </summary>
     public event Action SelectedItemsActivated;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileBrowserControl"/> class.
+    /// </summary>
     public FileBrowserControl()
     {
       InitializeComponent();
     }
 
+    /// <summary>
+    /// Gets or sets the controller.
+    /// </summary>
     public FileBrowserController Controller
     {
       get
@@ -67,6 +73,9 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
     #region Focus
 
+    /// <summary>
+    /// Gets the control that should initially receive the focus.
+    /// </summary>
     public object InitiallyFocusedControl
     {
       get { return _treeView; }
@@ -76,17 +85,28 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
     #region IFileTreeView
 
+    /// <summary>
+    /// Initializes the folder tree.
+    /// </summary>
+    /// <param name="nodes">The tree nodes.</param>
     public void Initialize_FolderTree(Collections.NGTreeNodeCollection nodes)
     {
       _treeView.ItemsSource = nodes;
     }
 
+    /// <summary>
+    /// Occurs when a folder tree node is selected.
+    /// </summary>
     public event Action<Collections.NGTreeNode> FolderTreeNodeSelected;
 
     #endregion IFileTreeView
 
     #region IFileListView
 
+    /// <summary>
+    /// Initializes the file list column names.
+    /// </summary>
+    /// <param name="names">The column names.</param>
     public void Initialize_FileListColumnNames(ICollection<string> names)
     {
       int i = 0;
@@ -102,6 +122,10 @@ namespace Altaxo.Gui.Pads.FileBrowser
       }
     }
 
+    /// <summary>
+    /// Initializes the file list.
+    /// </summary>
+    /// <param name="files">The files to display.</param>
     public void Initialize_FileList(Collections.SelectableListNodeList files)
     {
       _listView.ItemsSource = files;

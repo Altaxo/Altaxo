@@ -38,9 +38,18 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
   {
     #region inner classes
 
+    /// <summary>
+    /// Represents a grid line by its start and end points.
+    /// </summary>
     protected struct LINE
     {
+      /// <summary>
+      /// Gets or sets the start point of the line.
+      /// </summary>
       public POINT Org;
+      /// <summary>
+      /// Gets or sets the end point of the line.
+      /// </summary>
       public POINT End;
     }
 
@@ -48,6 +57,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
     #region Member variables
 
+    /// <summary>
+    /// The tool to activate after editing is finished.
+    /// </summary>
     protected GraphToolType NextMouseHandlerType = GraphToolType.ObjectPointer;
 
     /// <summary>The catch distance in points (1/72 inch) on the screen. (Distance in which the mouse catches the grid line to move).</summary>
@@ -56,6 +68,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// <summary>The line width of the grid lines in points (1/72 inch) on the screen.</summary>
     private const double GridLineWidth_InPoints = 1;
 
+    /// <summary>
+    /// The graph controller.
+    /// </summary>
     protected GraphController _grac;
 
     /// <summary>The catch distance in root layer units. (Distance in which the mouse catches the grid line to move).</summary>
@@ -78,6 +93,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
     #endregion Member variables
 
+    /// <inheritdoc/>
     public override GraphToolType GraphToolType
     {
       get { return GraphToolType.EditGrid; }
@@ -129,6 +145,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       UpdateCachedGridLinePositions();
     }
 
+    /// <inheritdoc/>
     public override void OnMouseDown(PointD2D position, MouseButtonEventArgs e)
     {
       base.OnMouseDown(position, e);
@@ -147,6 +164,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       }
     }
 
+    /// <inheritdoc/>
     public override void OnMouseUp(PointD2D position, MouseButtonEventArgs e)
     {
       base.OnMouseUp(position, e);
@@ -154,6 +172,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       _grac.SetPanelCursor(Cursors.Arrow);
     }
 
+    /// <inheritdoc/>
     public override void OnMouseMove(PointD2D position, MouseEventArgs e)
     {
       base.OnMouseMove(position, e);
@@ -197,6 +216,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// Draws the temporary line(s) from the first point to the mouse.
     /// </summary>
     /// <param name="g"></param>
+    /// <inheritdoc/>
     public override void AfterPaint(Graphics g)
     {
       base.AfterPaint(g);
@@ -219,6 +239,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       }
     }
 
+    /// <summary>
+    /// Finishes editing the grid.
+    /// </summary>
     protected virtual void FinishDrawing()
     {
       _layerToEdit.Grid.XPartitioning.NormalizeRelativeValues();

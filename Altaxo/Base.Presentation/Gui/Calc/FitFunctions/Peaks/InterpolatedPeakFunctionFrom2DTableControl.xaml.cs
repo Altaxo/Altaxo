@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Calc.FitFunctions.Peaks
   /// </summary>
   public partial class InterpolatedPeakFunctionFrom2DTableControl : UserControl, IInterpolatedPeakFunctionFrom2DTableView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="InterpolatedPeakFunctionFrom2DTableControl"/> class.
+    /// </summary>
     public InterpolatedPeakFunctionFrom2DTableControl()
     {
       InitializeComponent();

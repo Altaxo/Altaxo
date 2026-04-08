@@ -32,6 +32,9 @@ namespace Altaxo.Gui.Common.Drawing
   /// </summary>
   public partial class BrushAllPropertiesControl : UserControl, IBrushViewAdvanced
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BrushAllPropertiesControl"/> class.
+    /// </summary>
     public BrushAllPropertiesControl()
     {
       InitializeComponent();

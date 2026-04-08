@@ -35,15 +35,21 @@ using Altaxo.Main;
 
 namespace Altaxo.Gui.Autostart
 {
+  /// <summary>
+  /// Initializes and registers application color sets during startup.
+  /// </summary>
   public class StartColorSetManager : ICommand
   {
+    /// <inheritdoc/>
     public event EventHandler CanExecuteChanged { add { } remove { } }
 
+    /// <inheritdoc/>
     public bool CanExecute(object parameter)
     {
       return true;
     }
 
+    /// <inheritdoc/>
     public void Execute(object parameter)
     {
       var colorSets = AddInTree.GetTreeNode("/Altaxo/ApplicationColorSets").BuildChildItems<Tuple<IColorSet, bool>>(this);

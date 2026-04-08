@@ -247,7 +247,7 @@ namespace Altaxo.Gui.Markdown
     /// <param name="bitmapHeightPixels">The height of the render bitmap in pixels.</param>
     /// <param name="relativeResolution">The relative resolution as defined as resolution in dpi divided by 96 dpi.</param>
     /// <param name="renderOffsetY">The render offset in 1/96th inch. Should be positive (not tested).
-    /// Designates the distance between the top of the image and the top of the formula.
+    /// Designates the distance between the top of the image and the top of the formula.</param>
     /// <returns>The bitmap souce that represents the formula.</returns>
     public static (BitmapSource bitmapSource, int width96thInch, int heigth96thInch) RenderToBitmap(
       TexFormula formula,

@@ -38,10 +38,16 @@ namespace Altaxo.Gui.Drawing.D3D
   using Altaxo.Drawing.D3D;
   using Altaxo.Graph.Graph3D;
 
+  /// <summary>
+  /// Extends font glue with a configurable three-dimensional font depth.
+  /// </summary>
   public class FontX3DGlue : Altaxo.Gui.Graph.GdiFontGlue
   {
     private double _fontDepth = 1;
 
+    /// <summary>
+    /// Gets or sets the font depth.
+    /// </summary>
     public double FontDepth
     {
       get { return _fontDepth; }
@@ -54,6 +60,9 @@ namespace Altaxo.Gui.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets the selected 3D font.
+    /// </summary>
     public new FontX3D SelectedFont
     {
       get
@@ -69,6 +78,9 @@ namespace Altaxo.Gui.Drawing.D3D
 
     private FontSizeComboBox _guiFontDepth;
 
+    /// <summary>
+    /// Gets or sets the font-depth selector control.
+    /// </summary>
     public FontSizeComboBox GuiFontDepth
     {
       get { return _guiFontDepth; }

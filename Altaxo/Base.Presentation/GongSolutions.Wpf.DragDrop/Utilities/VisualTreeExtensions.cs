@@ -23,6 +23,9 @@ using System.Windows.Media.Media3D;
 
 namespace GongSolutions.Wpf.DragDrop.Utilities
 {
+  /// <summary>
+  /// Provides helper methods for navigating the WPF visual tree.
+  /// </summary>
   public static class VisualTreeExtensions
   {
     internal static DependencyObject FindVisualTreeRoot(this DependencyObject d)
@@ -49,6 +52,12 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
       return result;
     }
 
+    /// <summary>
+    /// Gets the first visual ancestor of the specified type.
+    /// </summary>
+    /// <typeparam name="T">The ancestor type.</typeparam>
+    /// <param name="d">The starting dependency object.</param>
+    /// <returns>The matching ancestor, or <see langword="null"/> if none was found.</returns>
     public static T GetVisualAncestor<T>(this DependencyObject d) where T : class
     {
       var item = VisualTreeHelper.GetParent(d.FindVisualTreeRoot());
@@ -66,6 +75,12 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
       return null;
     }
 
+    /// <summary>
+    /// Gets the first visual ancestor that matches the specified runtime type.
+    /// </summary>
+    /// <param name="d">The starting dependency object.</param>
+    /// <param name="type">The ancestor type to match.</param>
+    /// <returns>The matching ancestor, or <see langword="null"/> if none was found.</returns>
     public static DependencyObject GetVisualAncestor(this DependencyObject d, Type type)
     {
       var item = VisualTreeHelper.GetParent(d.FindVisualTreeRoot());
@@ -106,11 +121,23 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
       return lastFoundItemByType;
     }
 
+    /// <summary>
+    /// Gets the first visual descendent of the specified type.
+    /// </summary>
+    /// <typeparam name="T">The descendent type.</typeparam>
+    /// <param name="d">The starting dependency object.</param>
+    /// <returns>The matching descendent, or <see langword="null"/> if none was found.</returns>
     public static T GetVisualDescendent<T>(this DependencyObject d) where T : DependencyObject
     {
       return d.GetVisualDescendents<T>().FirstOrDefault();
     }
 
+    /// <summary>
+    /// Enumerates all visual descendents of the specified type.
+    /// </summary>
+    /// <typeparam name="T">The descendent type.</typeparam>
+    /// <param name="d">The starting dependency object.</param>
+    /// <returns>An enumeration of matching descendents.</returns>
     public static IEnumerable<T> GetVisualDescendents<T>(this DependencyObject d) where T : DependencyObject
     {
       var childCount = VisualTreeHelper.GetChildrenCount(d);

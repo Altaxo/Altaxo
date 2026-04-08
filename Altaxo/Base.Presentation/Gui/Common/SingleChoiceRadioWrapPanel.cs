@@ -33,12 +33,21 @@ using Altaxo.Collections;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// Wrap panel that displays a single selectable list as radio buttons.
+  /// </summary>
   public class SingleChoiceRadioWrapPanel : WrapPanel
   {
+    /// <summary>
+    /// Occurs when the selected item changes.
+    /// </summary>
     public event EventHandler? SelectionChanged;
 
     #region Dependency properties
 
+    /// <summary>
+    /// Identifies the <see cref="ItemsSource"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty ItemsSourceProperty =
     DependencyProperty.Register(
       nameof(ItemsSource),
@@ -47,7 +56,7 @@ namespace Altaxo.Gui.Common
       new FrameworkPropertyMetadata(EhItemsSourceChanged));
 
     /// <summary>
-    /// Gets/sets the quantity. The quantity consist of a numeric value together with a unit.
+    /// Gets or sets the selectable items.
     /// </summary>
     public SelectableListNodeList? ItemsSource
     {
@@ -61,7 +70,7 @@ namespace Altaxo.Gui.Common
     }
 
     /// <summary>
-    /// Triggers the <see cref="SelectedQuantityChanged"/> event.
+    /// Updates the control when the items source changes.
     /// </summary>
     /// <param name="obj">Dependency object (here: the control).</param>
     /// <param name="args">Property changed event arguments.</param>
@@ -79,6 +88,9 @@ namespace Altaxo.Gui.Common
     }
 
 
+    /// <summary>
+    /// Identifies the <see cref="SelectedItem"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty SelectedItemProperty =
       DependencyProperty.Register(
         nameof(SelectedItem),
@@ -87,7 +99,7 @@ namespace Altaxo.Gui.Common
         new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, EhSelectedItemChanged));
 
     /// <summary>
-    /// Gets/sets the quantity. The quantity consist of a numeric value together with a unit.
+    /// Gets or sets the selected item.
     /// </summary>
     public SelectableListNode? SelectedItem
     {
@@ -101,7 +113,7 @@ namespace Altaxo.Gui.Common
     }
 
     /// <summary>
-    /// Triggers the <see cref="SelectedQuantityChanged"/> event.
+    /// Raises the selection changed notification after the selected item changes.
     /// </summary>
     /// <param name="obj">Dependency object (here: the control).</param>
     /// <param name="args">Property changed event arguments.</param>
@@ -118,6 +130,10 @@ namespace Altaxo.Gui.Common
 
 
 
+    /// <summary>
+    /// Initializes the control with the specified choices.
+    /// </summary>
+    /// <param name="choices">The selectable items to display.</param>
     public void Initialize(SelectableListNodeList choices)
     {
       _choices = choices;

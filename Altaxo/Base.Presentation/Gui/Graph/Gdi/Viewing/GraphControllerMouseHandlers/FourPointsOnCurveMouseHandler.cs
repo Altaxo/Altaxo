@@ -80,13 +80,31 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       public RectangleF HandleBounds;
     }
 
+    /// <summary>
+    /// Stores the transient state while a handle is being dragged.
+    /// </summary>
     protected class HandleDragState
     {
+      /// <summary>
+      /// Gets or sets the index of the dragged handle.
+      /// </summary>
       public int IndexOfHandle;
+      /// <summary>
+      /// Gets or sets the mouse coordinates at the start of the drag operation.
+      /// </summary>
       public PointD2D MouseStartCoordinates;
 
+      /// <summary>
+      /// Gets or sets the plot index.
+      /// </summary>
       public double PlotIndex;
+      /// <summary>
+      /// Gets or sets the row index.
+      /// </summary>
       public double RowIndex;
+      /// <summary>
+      /// Gets or sets the current handle position.
+      /// </summary>
       public PointD2D Position;
     }
 
@@ -111,14 +129,48 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// </summary>
     public XYColumnPlotItem? PlotItem { get; protected set; }
 
+    /// <summary>
+    /// The handles used by the tool.
+    /// </summary>
     protected Handle[] _handle = new Handle[4];
     private HandleDragState? _handleDragState;
 
 
+    /// <summary>
+    /// The graph controller.
+    /// </summary>
     protected GraphController _grac;
 
-    protected enum State { NoPoint, OnePoint, TwoPoints, ThreePoints, FourPoints };
+    /// <summary>
+    /// Represents the interaction state of the handler.
+    /// </summary>
+    protected enum State
+    {
+      /// <summary>
+      /// No point has been selected yet.
+      /// </summary>
+      NoPoint,
+      /// <summary>
+      /// One point has been selected.
+      /// </summary>
+      OnePoint,
+      /// <summary>
+      /// Two points have been selected.
+      /// </summary>
+      TwoPoints,
+      /// <summary>
+      /// Three points have been selected.
+      /// </summary>
+      ThreePoints,
+      /// <summary>
+      /// Four points have been selected.
+      /// </summary>
+      FourPoints
+    };
 
+    /// <summary>
+    /// The current interaction state.
+    /// </summary>
     protected State _state;
 
     /// <summary>Gets the state that is considered as final state, i.e. the end of the initialization stage.</summary>
@@ -129,10 +181,19 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// </summary>
     private CatchLine? _catchLine;
 
+    /// <summary>
+    /// Gets the leftmost handle.
+    /// </summary>
     public Handle LeftHandle => _handle[0];
 
+    /// <summary>
+    /// Gets the rightmost handle.
+    /// </summary>
     public Handle RightHandle => _handle[^1];
 
+    /// <summary>
+    /// The name of the destination table, if one was selected.
+    /// </summary>
     protected string? _destinationTableName;
 
     /// <summary>
@@ -169,6 +230,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       UpdateDataDisplay();
     }
 
+    /// <inheritdoc/>
     public override GraphToolType GraphToolType => GraphToolType.FourPointsOnCurve;
 
     (double PlotIndex, double RowIndex) IToolFourPointsOnCurve.InnerLeftPoint => _handle.Length == 4 ? ((_handle[1].PlotIndex, _handle[1].RowIndex)) : (-1, -1);
@@ -417,6 +479,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       }
     }
 
+    /// <inheritdoc/>
     public override void OnMouseMove(PointD2D position, MouseEventArgs e)
     {
       base.OnMouseMove(position, e);
@@ -471,6 +534,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       return true;
     }
 
+    /// <inheritdoc/>
     public override void OnMouseUp(PointD2D position, MouseButtonEventArgs e)
     {
       base.OnMouseUp(position, e);
@@ -674,6 +738,10 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       _grac.RenderOverlay();
     }
 
+    /// <summary>
+    /// Updates the data display while a handle is being dragged.
+    /// </summary>
+    /// <param name="scatterPoint">The current scatter point under the cursor.</param>
     protected virtual void UpdateDataDisplayDuringDrag(XYScatterPointInformation scatterPoint)
     {
       if (PlotItem?.XYColumnPlotData?.XColumn is { } xcol &&

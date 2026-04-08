@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
   /// </summary>
   public partial class XCalibrationByDataSourceControl : UserControl, IXCalibrationByDataSourceView, IYCalibrationByDataSourceView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XCalibrationByDataSourceControl"/> class.
+    /// </summary>
     public XCalibrationByDataSourceControl()
     {
       InitializeComponent();

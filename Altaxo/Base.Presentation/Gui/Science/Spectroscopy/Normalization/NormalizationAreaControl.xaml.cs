@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Normalization
   /// </summary>
   public partial class NormalizationAreaControl : UserControl, INormalizationAreaView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NormalizationAreaControl"/> class.
+    /// </summary>
     public NormalizationAreaControl()
     {
       InitializeComponent();

@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Scales
   /// </summary>
   public partial class DensityScaleControl : UserControl, IDensityScaleView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DensityScaleControl"/> class.
+    /// </summary>
     public DensityScaleControl()
     {
       InitializeComponent();

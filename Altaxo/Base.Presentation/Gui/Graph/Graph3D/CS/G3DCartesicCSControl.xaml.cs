@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Graph3D.CS
   /// </summary>
   public partial class G3DCartesicCSControl : UserControl, IG3DCartesicCSView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="G3DCartesicCSControl"/> class.
+    /// </summary>
     public G3DCartesicCSControl()
     {
       InitializeComponent();

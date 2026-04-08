@@ -52,6 +52,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (KohlrauschSusceptibility)obj;
@@ -60,6 +61,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         info.AddValue("IsDielectric", s._isDielectricData);
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (KohlrauschSusceptibility?)o ?? new KohlrauschSusceptibility();
@@ -73,6 +75,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility", 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (KohlrauschSusceptibility)obj;
@@ -83,6 +86,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         info.AddValue("NumberOfRelaxations", s._numberOfTerms);
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (KohlrauschSusceptibility?)o ?? new KohlrauschSusceptibility();
@@ -103,6 +107,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(KohlrauschSusceptibility), 3)]
     private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (KohlrauschSusceptibility)obj;
@@ -115,6 +120,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         info.AddValue("LogarithmizeResults", s._logarithmizeResults);
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (KohlrauschSusceptibility?)o ?? new KohlrauschSusceptibility();
@@ -139,6 +145,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     ///   <c>true</c> if the independent variable is the frequency; false if the independent variable is the circular frequency.
     /// </value>
     public bool UseFrequencyInsteadOfOmega => _useFrequencyInsteadOmega;
+
+    /// <summary>
+    /// Returns a new instance with the <see cref="UseFrequencyInsteadOfOmega"/> property set to the specified value.
+    /// </summary>
+    /// <param name="value"><c>true</c> to interpret the independent variable as frequency; otherwise as omega.</param>
+    /// <returns>New instance with the parameter set accordingly.</returns>
     public KohlrauschSusceptibility WithUseFrequencyInsteadOfOmega(bool value)
     {
       if (!(_useFrequencyInsteadOmega == value))
@@ -180,7 +192,16 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the function models the relative dielectric permittivity instead of a general susceptibility.
+    /// </summary>
     public bool IsRelativeDielectricPermittivity => _isDielectricData;
+
+    /// <summary>
+    /// Returns a new instance with the <see cref="IsRelativeDielectricPermittivity"/> property set to the specified value.
+    /// </summary>
+    /// <param name="value"><c>true</c> to model relative dielectric permittivity; otherwise, <c>false</c>.</param>
+    /// <returns>New instance with the parameter set accordingly.</returns>
     public KohlrauschSusceptibility WithIsRelativeDielectricPermittivity(bool value)
     {
       if (!(IsRelativeDielectricPermittivity == value))
@@ -222,7 +243,16 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <summary>
+    /// Gets the number of Kohlrausch terms used by the model.
+    /// </summary>
     public int NumberOfTerms => _numberOfTerms;
+
+    /// <summary>
+    /// Returns a new instance with the <see cref="NumberOfTerms"/> property set to the specified value.
+    /// </summary>
+    /// <param name="value">The number of terms to use. Must be greater than or equal to 1.</param>
+    /// <returns>New instance with the parameter set accordingly.</returns>
     public KohlrauschSusceptibility WithNumberOfTerms(int value)
     {
       if (value < 1)
@@ -247,6 +277,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     /// <c>true</c> if the result is inverted; otherwise, <c>false</c>.
     /// </value>
     public bool InvertResult => _invertResult;
+
+    /// <summary>
+    /// Returns a new instance with the <see cref="InvertResult"/> property set to the specified value.
+    /// </summary>
+    /// <param name="value"><c>true</c> to invert the complex result; otherwise, <c>false</c>.</param>
+    /// <returns>New instance with the parameter set accordingly.</returns>
     public KohlrauschSusceptibility WithInvertResult(bool value)
     {
       if (!(InvertResult == value))
@@ -288,10 +324,14 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="KohlrauschSusceptibility"/> class.
+    /// </summary>
     public KohlrauschSusceptibility()
     {
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       if (_isDielectricData)
@@ -300,6 +340,10 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         return "Kohlrausch Susceptibility " + (_useFrequencyInsteadOmega ? "(Frequency)" : "(Omega)");
     }
 
+    /// <summary>
+    /// Creates a general Kohlrausch susceptibility fit function that uses omega as the independent variable.
+    /// </summary>
+    /// <returns>A configured general fit function instance.</returns>
     [FitFunctionCreator("Kohlrausch Complex (Omega)", "Retardation/General", 1, 2, 5)]
     [Description("${res:Altaxo.Calc.FitFunctions.Retardation.General.KohlrauschComplexOmega}")]
     public static IFitFunction CreateGeneralFunctionOfOmega()
@@ -314,6 +358,10 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return result;
     }
 
+    /// <summary>
+    /// Creates a general Kohlrausch susceptibility fit function that uses frequency as the independent variable.
+    /// </summary>
+    /// <returns>A configured general fit function instance.</returns>
     [FitFunctionCreator("Kohlrausch Complex (Frequency)", "Retardation/General", 1, 2, 5)]
     [Description("${res:Altaxo.Calc.FitFunctions.Retardation.General.KohlrauschComplexFrequency}")]
     public static IFitFunction CreateGeneralFunctionOfFrequency()
@@ -328,9 +376,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return result;
     }
 
+    /// <summary>
+    /// Creates a dielectric Kohlrausch susceptibility fit function that uses omega as the independent variable.
+    /// </summary>
+    /// <returns>A configured dielectric fit function instance.</returns>
     [FitFunctionCreator("Kohlrausch Complex (Omega)", "Retardation/Dielectrics", 1, 2, 5)]
     [Description("${res:Altaxo.Calc.FitFunctions.Retardation.Dielectrics.KohlrauschComplexOmega}")]
-
     public static IFitFunction CreateDielectricFunctionOfOmega()
     {
       var result = new KohlrauschSusceptibility
@@ -343,9 +394,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return result;
     }
 
+    /// <summary>
+    /// Creates a dielectric Kohlrausch susceptibility fit function that uses frequency as the independent variable.
+    /// </summary>
+    /// <returns>A configured dielectric fit function instance.</returns>
     [FitFunctionCreator("Kohlrausch Complex (Frequency)", "Retardation/Dielectrics", 1, 2, 5)]
     [Description("${res:Altaxo.Calc.FitFunctions.Retardation.Dielectrics.KohlrauschComplexFrequency}")]
-
     public static IFitFunction CreateDielectricFunctionOfFrequency()
     {
       var result = new KohlrauschSusceptibility

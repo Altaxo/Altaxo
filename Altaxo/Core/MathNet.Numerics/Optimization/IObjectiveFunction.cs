@@ -36,16 +36,40 @@ namespace Altaxo.Calc.Optimization
   /// </summary>
   public interface IObjectiveFunctionEvaluation
   {
-    /// <summary>Create a new unevaluated and independent copy of this objective function</summary>
+    /// <summary>
+    /// Creates a new unevaluated and independent copy of this objective function.
+    /// </summary>
+    /// <returns>A new independent objective function instance.</returns>
     public IObjectiveFunction CreateNew();
 
+    /// <summary>
+    /// Gets the point at which the objective function is currently evaluated.
+    /// </summary>
     public Vector<double> Point { get; }
+
+    /// <summary>
+    /// Gets the objective function value at <see cref="Point"/>.
+    /// </summary>
     public double Value { get; }
 
+    /// <summary>
+    /// Gets a value indicating whether gradient information is available.
+    /// </summary>
     public bool IsGradientSupported { get; }
+
+    /// <summary>
+    /// Gets the gradient at <see cref="Point"/>.
+    /// </summary>
     public Vector<double> Gradient { get; }
 
+    /// <summary>
+    /// Gets a value indicating whether Hessian information is available.
+    /// </summary>
     public bool IsHessianSupported { get; }
+
+    /// <summary>
+    /// Gets the Hessian matrix at <see cref="Point"/>.
+    /// </summary>
     public Matrix<double> Hessian { get; }
   }
 
@@ -54,24 +78,65 @@ namespace Altaxo.Calc.Optimization
   /// </summary>
   public interface IObjectiveFunction : IObjectiveFunctionEvaluation
   {
+    /// <summary>
+    /// Evaluates the objective function at the specified point.
+    /// </summary>
+    /// <param name="point">The point at which to evaluate the objective function.</param>
     public void EvaluateAt(Vector<double> point);
 
-    /// <summary>Create a new independent copy of this objective function, evaluated at the same point.</summary>
+    /// <summary>
+    /// Creates a new independent copy of this objective function, evaluated at the same point.
+    /// </summary>
+    /// <returns>A new independent objective function instance evaluated at the current point.</returns>
     public IObjectiveFunction Fork();
   }
 
+  /// <summary>
+  /// Represents the evaluation of a scalar objective function at a single point.
+  /// </summary>
   public interface IScalarObjectiveFunctionEvaluation
   {
+    /// <summary>
+    /// Gets the point at which the function is evaluated.
+    /// </summary>
     public double Point { get; }
+
+    /// <summary>
+    /// Gets the function value at <see cref="Point"/>.
+    /// </summary>
     public double Value { get; }
+
+    /// <summary>
+    /// Gets the first derivative at <see cref="Point"/>.
+    /// </summary>
     public double Derivative { get; }
+
+    /// <summary>
+    /// Gets the second derivative at <see cref="Point"/>.
+    /// </summary>
     public double SecondDerivative { get; }
   }
 
+  /// <summary>
+  /// Represents a scalar objective function that can be evaluated at scalar points.
+  /// </summary>
   public interface IScalarObjectiveFunction
   {
+    /// <summary>
+    /// Gets a value indicating whether the first derivative is supported.
+    /// </summary>
     public bool IsDerivativeSupported { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether the second derivative is supported.
+    /// </summary>
     public bool IsSecondDerivativeSupported { get; }
+
+    /// <summary>
+    /// Evaluates the scalar objective function at the specified point.
+    /// </summary>
+    /// <param name="point">The point at which to evaluate the function.</param>
+    /// <returns>The evaluation result at the specified point.</returns>
     public IScalarObjectiveFunctionEvaluation Evaluate(double point);
   }
 }

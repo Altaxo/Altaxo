@@ -109,6 +109,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
       };
     }
 
+    /// <inheritdoc/>
     public string DependentVariableName(int i)
     {
       return i switch
@@ -196,7 +197,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     /// <inheritdoc/>
     public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesSoftLimit()
     {
-      return (new double?[] { 0, null, null }, null);
+      return ([0, null, null], null);
     }
   }
 }

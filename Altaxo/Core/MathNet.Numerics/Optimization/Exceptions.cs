@@ -31,31 +31,67 @@ using System;
 
 namespace Altaxo.Calc.Optimization
 {
+  /// <summary>
+  /// Represents an optimization-specific exception.
+  /// </summary>
   public class OptimizationException : Exception
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OptimizationException"/> class with a specified error message.
+    /// </summary>
+    /// <param name="message">The message that describes the error.</param>
     public OptimizationException(string message)
         : base(message) { }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OptimizationException"/> class with a specified error message and inner exception.
+    /// </summary>
+    /// <param name="message">The message that describes the error.</param>
+    /// <param name="innerException">The exception that caused the current exception.</param>
     public OptimizationException(string message, Exception innerException)
         : base(message, innerException) { }
   }
 
+  /// <summary>
+  /// Represents an optimization failure caused by exceeding the maximum number of iterations.
+  /// </summary>
   public class MaximumIterationsException : OptimizationException
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MaximumIterationsException"/> class with a specified error message.
+    /// </summary>
+    /// <param name="message">The message that describes the error.</param>
     public MaximumIterationsException(string message)
         : base(message) { }
   }
 
+  /// <summary>
+  /// Represents an optimization failure caused by an error while evaluating the objective function.
+  /// </summary>
   public class EvaluationException : OptimizationException
   {
+    /// <summary>
+    /// Gets the objective function evaluation associated with the exception.
+    /// </summary>
     public IObjectiveFunctionEvaluation ObjectiveFunction { get; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EvaluationException"/> class with a specified error message and evaluation.
+    /// </summary>
+    /// <param name="message">The message that describes the error.</param>
+    /// <param name="eval">The objective function evaluation associated with the error.</param>
     public EvaluationException(string message, IObjectiveFunctionEvaluation eval)
         : base(message)
     {
       ObjectiveFunction = eval;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EvaluationException"/> class with a specified error message, evaluation, and inner exception.
+    /// </summary>
+    /// <param name="message">The message that describes the error.</param>
+    /// <param name="eval">The objective function evaluation associated with the error.</param>
+    /// <param name="innerException">The exception that caused the current exception.</param>
     public EvaluationException(string message, IObjectiveFunctionEvaluation eval, Exception innerException)
         : base(message, innerException)
     {
@@ -64,17 +100,36 @@ namespace Altaxo.Calc.Optimization
 
   }
 
+  /// <summary>
+  /// Represents an optimization failure originating from an inner optimization step.
+  /// </summary>
   public class InnerOptimizationException : OptimizationException
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="InnerOptimizationException"/> class with a specified error message.
+    /// </summary>
+    /// <param name="message">The message that describes the error.</param>
     public InnerOptimizationException(string message)
         : base(message) { }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="InnerOptimizationException"/> class with a specified error message and inner exception.
+    /// </summary>
+    /// <param name="message">The message that describes the error.</param>
+    /// <param name="innerException">The exception that caused the current exception.</param>
     public InnerOptimizationException(string message, Exception innerException)
         : base(message, innerException) { }
   }
 
+  /// <summary>
+  /// Represents an optimization failure caused by an objective function incompatible with the algorithm.
+  /// </summary>
   public class IncompatibleObjectiveException : OptimizationException
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IncompatibleObjectiveException"/> class with a specified error message.
+    /// </summary>
+    /// <param name="message">The message that describes the error.</param>
     public IncompatibleObjectiveException(string message)
         : base(message) { }
   }

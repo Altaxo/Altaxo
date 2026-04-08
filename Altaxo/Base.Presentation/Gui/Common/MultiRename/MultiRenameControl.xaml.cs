@@ -36,6 +36,9 @@ namespace Altaxo.Gui.Common.MultiRename
   /// </summary>
   public partial class MultiRenameControl : UserControl, IMultiRenameView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MultiRenameControl"/> class.
+    /// </summary>
     public MultiRenameControl()
     {
       InitializeComponent();

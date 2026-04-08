@@ -43,10 +43,19 @@ using Altaxo.Science.Signals;
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 {
+  /// <summary>
+  /// Evaluates a step transition using four points on a curve.
+  /// </summary>
   public class FourPointStepEvaluationToolMouseHandler : FourPointsOnCurveMouseHandler
   {
+    /// <summary>
+    /// Gets the property key used to store the default options.
+    /// </summary>
     public static PropertyKey<FourPointStepEvaluationToolMouseHandlerOptions> DefaultOptionsKey = new PropertyKey<FourPointStepEvaluationToolMouseHandlerOptions>("F83DAFE6-E522-4930-BA8B-6DC1742DD85C", "Graph\\StepEvaluationToolOptions", PropertyLevel.Application, null, () => new FourPointStepEvaluationToolMouseHandlerOptions());
 
+    /// <summary>
+    /// The current evaluation options.
+    /// </summary>
     protected FourPointStepEvaluationToolMouseHandlerOptions _options;
 
     private double[] _xleft = new double[100];
@@ -148,8 +157,10 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       }
     }
 
+    /// <inheritdoc/>
     public override GraphToolType GraphToolType => GraphToolType.FourPointStepEvaluation;
 
+    /// <inheritdoc/>
     protected override void OnPlotItemSet(XYColumnPlotItem plotItem)
     {
       const string NameOfNewTableEntry = "New evaluation table";
@@ -199,6 +210,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       }
     }
 
+    /// <inheritdoc/>
     protected override void OnPlotItemSet(XYColumnPlotItem plotItem, DataTable existingDestinationTable)
     {
       base.OnPlotItemSet(plotItem, existingDestinationTable);
@@ -220,6 +232,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       OnHandlesUpdated();
     }
 
+    /// <inheritdoc/>
     public override void OnLeaveTool(MouseStateHandler newTool)
     {
       base.OnLeaveTool(newTool);
@@ -231,6 +244,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       }
     }
 
+    /// <inheritdoc/>
     protected override void OnHandlesUpdated()
     {
       CalculateLines();
@@ -238,6 +252,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       _grac.RenderOverlay();
     }
 
+    /// <inheritdoc/>
     public override void AfterPaint(Graphics g)
     {
       using (var pen = new Pen(new SolidBrush(_options.LinePen.Color), (float)(2 / _grac.ZoomFactor)))
@@ -419,6 +434,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       _errorMessage = $"XM = {xmiddle}; YM = {ymiddle}";
     }
 
+    /// <inheritdoc/>
     protected override void UpdateDataDisplay()
     {
       Current.DataDisplay.WriteThreeLines(
@@ -428,6 +444,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
           );
     }
 
+    /// <inheritdoc/>
     public override bool ProcessCmdKey(KeyEventArgs e)
     {
       if (base.ProcessCmdKey(e))
@@ -485,6 +502,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       return result;
     }
 
+    /// <summary>
+    /// Saves the current evaluation to a destination table and adds the corresponding plots.
+    /// </summary>
     public virtual void MakeEvaluationPermanent()
     {
       if (_showMiddleCross == false)

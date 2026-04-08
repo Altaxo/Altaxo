@@ -31,14 +31,20 @@
 
 namespace Poly2Tri
 {
-  /**
-     * @author Thomas Åhlén, thahlen@gmail.com
-     */
-
+  /// <summary>
+  /// Provides helper methods for geometric triangulation operations.
+  /// </summary>
+  /// <remarks>Author Thomas Åhlén, thahlen@gmail.com</remarks>
   public class TriangulationUtil
   {
+    /// <summary>
+    /// The epsilon used for orientation and geometric tests.
+    /// </summary>
     public static double EPSILON = 1e-12;
 
+    /// <summary>
+    /// Determines whether <paramref name="pd"/> lies inside the circumcircle of the triangle defined by <paramref name="pa"/>, <paramref name="pb"/>, and <paramref name="pc"/>.
+    /// </summary>
     /// <summary>
     ///   Requirements:
     /// 1. a,b and c form a triangle.
@@ -101,6 +107,14 @@ namespace Poly2Tri
       return det > 0;
     }
 
+    /// <summary>
+    /// Determines whether <paramref name="pd"/> lies within the scan area defined by the other three points.
+    /// </summary>
+    /// <param name="pa">The first triangle point.</param>
+    /// <param name="pb">The second triangle point.</param>
+    /// <param name="pc">The third triangle point.</param>
+    /// <param name="pd">The point to test.</param>
+    /// <returns><see langword="true"/> if <paramref name="pd"/> is inside the scan area; otherwise, <see langword="false"/>.</returns>
     public static bool InScanArea(TriangulationPoint pa, TriangulationPoint pb, TriangulationPoint pc, TriangulationPoint pd)
     {
       double pdx = pd.X;
@@ -133,12 +147,21 @@ namespace Poly2Tri
       return true;
     }
 
-    /// Forumla to calculate signed area
-    /// Positive if CCW
-    /// Negative if CW
-    /// 0 if collinear
+    /// <summary>
+    /// Determines the orientation of three points.
+    /// </summary>
+    /// <param name="pa">The first point.</param>
+    /// <param name="pb">The second point.</param>
+    /// <param name="pc">The third point.</param>
+    /// <returns>The orientation of the three points.</returns>
+    /// <remarks>
+    /// Formula to calculate signed area:
+    /// Positive if CCW,
+    /// negative if CW,
+    /// 0 if collinear.
     /// A[P1,P2,P3]  =  (x1*y2 - y1*x2) + (x2*y3 - y2*x3) + (x3*y1 - y3*x1)
     ///              =  (x1-x3)*(y2-y3) - (y1-y3)*(x2-x3)
+    /// </remarks>
     public static Orientation Orient2d(TriangulationPoint pa, TriangulationPoint pb, TriangulationPoint pc)
     {
       double detleft = (pa.X - pc.X) * (pb.Y - pc.Y);

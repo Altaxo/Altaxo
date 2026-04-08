@@ -111,6 +111,7 @@ namespace Altaxo.Calc.Optimization
       return new MinimizationWithLineSearchResult(candidate, iterations, ExitCondition.AbsoluteGradient, totalLineSearchSteps, iterationsWithNontrivialLineSearch);
     }
 
+    /// <inheritdoc/>
     protected override Vector<double> CalculateSearchDirection(ref Matrix<double> inversePseudoHessian,
         out double maxLineSearchStep,
         out double startingStepSize,

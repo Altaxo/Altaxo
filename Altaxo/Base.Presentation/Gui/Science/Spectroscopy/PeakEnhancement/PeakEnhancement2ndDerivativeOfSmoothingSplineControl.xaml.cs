@@ -30,6 +30,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakEnhancement;
 /// </summary>
 public partial class PeakEnhancement2ndDerivativeOfSmoothingSplineControl : UserControl, IPeakEnhancement2ndDerivativeOfSmoothingSplineView
 {
+  /// <summary>
+  /// Initializes a new instance of the <see cref="PeakEnhancement2ndDerivativeOfSmoothingSplineControl"/> class.
+  /// </summary>
   public PeakEnhancement2ndDerivativeOfSmoothingSplineControl()
   {
     InitializeComponent();

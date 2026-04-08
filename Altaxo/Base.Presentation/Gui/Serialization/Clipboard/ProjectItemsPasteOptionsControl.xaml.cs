@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Serialization.Clipboard
   /// </summary>
   public partial class ProjectItemsPasteOptionsControl : UserControl, IProjectItemsPasteOptionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ProjectItemsPasteOptionsControl"/> class.
+    /// </summary>
     public ProjectItemsPasteOptionsControl()
     {
       InitializeComponent();

@@ -249,74 +249,92 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
       Map(Complex32.Log, result, Zeros.Include);
     }
 
+    /// <inheritdoc/>
     protected override void DoPointwiseAbs(Vector<Complex32> result)
     {
       Map(x => (Complex32)Complex32.Abs(x), result, Zeros.AllowSkip);
     }
+    /// <inheritdoc/>
     protected override void DoPointwiseAcos(Vector<Complex32> result)
     {
       Map(Complex32.Acos, result, Zeros.Include);
     }
+    /// <inheritdoc/>
     protected override void DoPointwiseAsin(Vector<Complex32> result)
     {
       Map(Complex32.Asin, result, Zeros.AllowSkip);
     }
+    /// <inheritdoc/>
     protected override void DoPointwiseAtan(Vector<Complex32> result)
     {
       Map(Complex32.Atan, result, Zeros.AllowSkip);
     }
+    /// <inheritdoc/>
     protected override void DoPointwiseAtan2(Vector<Complex32> other, Vector<Complex32> result)
     {
       throw new NotSupportedException();
     }
+    /// <inheritdoc/>
     protected override void DoPointwiseAtan2(Complex32 scalar, Vector<Complex32> result)
     {
       throw new NotSupportedException();
     }
+    /// <inheritdoc/>
     protected override void DoPointwiseCeiling(Vector<Complex32> result)
     {
       throw new NotSupportedException();
     }
+    /// <inheritdoc/>
     protected override void DoPointwiseCos(Vector<Complex32> result)
     {
       Map(Complex32.Cos, result, Zeros.Include);
     }
+    /// <inheritdoc/>
     protected override void DoPointwiseCosh(Vector<Complex32> result)
     {
       Map(Complex32.Cosh, result, Zeros.Include);
     }
+    /// <inheritdoc/>
     protected override void DoPointwiseFloor(Vector<Complex32> result)
     {
       throw new NotSupportedException();
     }
+    /// <inheritdoc/>
     protected override void DoPointwiseLog10(Vector<Complex32> result)
     {
       Map(Complex32.Log10, result, Zeros.Include);
     }
+    /// <inheritdoc/>
     protected override void DoPointwiseRound(Vector<Complex32> result)
     {
       throw new NotSupportedException();
     }
+    /// <inheritdoc/>
     protected override void DoPointwiseSign(Vector<Complex32> result)
     {
       throw new NotSupportedException();
     }
+    /// <inheritdoc/>
     protected override void DoPointwiseSin(Vector<Complex32> result)
     {
       Map(Complex32.Sin, result, Zeros.AllowSkip);
     }
+    /// <inheritdoc/>
     protected override void DoPointwiseSinh(Vector<Complex32> result)
     {
       Map(Complex32.Sinh, result, Zeros.AllowSkip);
     }
+    /// <inheritdoc/>
     protected override void DoPointwiseSqrt(Vector<Complex32> result)
     {
       Map(Complex32.Sqrt, result, Zeros.AllowSkip);
     }
+    /// <inheritdoc/>
     protected override void DoPointwiseTan(Vector<Complex32> result)
     {
       Map(Complex32.Tan, result, Zeros.AllowSkip);
     }
+    /// <inheritdoc/>
     protected override void DoPointwiseTanh(Vector<Complex32> result)
     {
       Map(Complex32.Tanh, result, Zeros.AllowSkip);
@@ -396,43 +414,51 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
       throw new NotSupportedException();
     }
 
+    /// <inheritdoc/>
     protected override void DoPointwiseMinimum(Complex32 scalar, Vector<Complex32> result)
     {
       throw new NotSupportedException();
     }
 
+    /// <inheritdoc/>
     protected override void DoPointwiseMaximum(Complex32 scalar, Vector<Complex32> result)
     {
       throw new NotSupportedException();
     }
 
+    /// <inheritdoc/>
     protected override void DoPointwiseAbsoluteMinimum(Complex32 scalar, Vector<Complex32> result)
     {
       float absolute = scalar.Magnitude;
       Map(x => Math.Min(absolute, x.Magnitude), result, Zeros.AllowSkip);
     }
 
+    /// <inheritdoc/>
     protected override void DoPointwiseAbsoluteMaximum(Complex32 scalar, Vector<Complex32> result)
     {
       float absolute = scalar.Magnitude;
       Map(x => Math.Max(absolute, x.Magnitude), result, Zeros.Include);
     }
 
+    /// <inheritdoc/>
     protected override void DoPointwiseMinimum(Vector<Complex32> other, Vector<Complex32> result)
     {
       throw new NotSupportedException();
     }
 
+    /// <inheritdoc/>
     protected override void DoPointwiseMaximum(Vector<Complex32> other, Vector<Complex32> result)
     {
       throw new NotSupportedException();
     }
 
+    /// <inheritdoc/>
     protected override void DoPointwiseAbsoluteMinimum(Vector<Complex32> other, Vector<Complex32> result)
     {
       Map2((x, y) => Math.Min(x.Magnitude, y.Magnitude), other, result, Zeros.AllowSkip);
     }
 
+    /// <inheritdoc/>
     protected override void DoPointwiseAbsoluteMaximum(Vector<Complex32> other, Vector<Complex32> result)
     {
       Map2((x, y) => Math.Max(x.Magnitude, y.Magnitude), other, result, Zeros.AllowSkip);

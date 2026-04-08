@@ -41,6 +41,9 @@ namespace Altaxo.Gui.Settings
     /// <summary>Occurs when the current topic view was entered.</summary>
     public event Action? CurrentTopicViewMadeDirty;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SettingsControl"/> class.
+    /// </summary>
     public SettingsControl()
     {
       InitializeComponent();
@@ -59,19 +62,23 @@ namespace Altaxo.Gui.Settings
         TopicSelectionChanged((Collections.NGTreeNode)e.NewValue);
     }
 
+    /// <inheritdoc/>
     public event Action<Collections.NGTreeNode>? TopicSelectionChanged;
 
+    /// <inheritdoc/>
     public void InitializeTopics(Collections.NGTreeNodeCollection topics)
     {
       _guiTopics.ItemsSource = topics;
     }
 
+    /// <inheritdoc/>
     public void InitializeTopicView(string title, object guiTopicObject)
     {
       _guiTopicLabel.Content = title;
       _guiControlHost.Content = guiTopicObject as UIElement;
     }
 
+    /// <inheritdoc/>
     public void InitializeTopicViewDirtyIndicator(int dirtyIndicator)
     {
       switch (dirtyIndicator)
@@ -90,6 +97,7 @@ namespace Altaxo.Gui.Settings
       }
     }
 
+    /// <inheritdoc/>
     public void SetSelectedNode(Collections.NGTreeNode node)
     {
       var item = _guiTopics.ItemContainerGenerator.ContainerFromItem(node) as TreeViewItem;

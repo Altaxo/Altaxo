@@ -41,6 +41,9 @@ namespace Altaxo.Gui.Common.Drawing
   {
     private List<NamedColor> _lastLocalUsedItems = new List<NamedColor>();
 
+    /// <summary>
+    /// Occurs when <see cref="SelectedColor"/> changes.
+    /// </summary>
     public event DependencyPropertyChangedEventHandler? SelectedColorChanged;
 
     #region Constructors
@@ -50,6 +53,9 @@ namespace Altaxo.Gui.Common.Drawing
       SelectedColorProperty = DependencyProperty.Register("SelectedColor", typeof(NamedColor), typeof(ColorComboBox), new FrameworkPropertyMetadata(NamedColors.Black, EhSelectedColorChanged, EhSelectedColorCoerce) { BindsTwoWayByDefault=true});
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColorComboBox"/> class.
+    /// </summary>
     public ColorComboBox()
     {
       UpdateTreeViewTreeNodes();
@@ -64,22 +70,31 @@ namespace Altaxo.Gui.Common.Drawing
 
     #region Implementation of abstract base class members
 
+    /// <inheritdoc/>
     protected override TreeView GuiTreeView { get { return _treeView; } }
 
+    /// <inheritdoc/>
     protected override ComboBox GuiComboBox { get { return _guiComboBox; } }
 
+    /// <inheritdoc/>
     protected override NamedColor InternalSelectedColor { get { return SelectedColor; } set { SelectedColor = value; } }
 
     #endregion Implementation of abstract base class members
 
     #region Dependency property
 
+    /// <summary>
+    /// Gets or sets the selected color.
+    /// </summary>
     public NamedColor SelectedColor
     {
       get { return (NamedColor)GetValue(SelectedColorProperty); }
       set { SetValue(SelectedColorProperty, value); }
     }
 
+    /// <summary>
+    /// Gets or sets the selected color as a WPF color.
+    /// </summary>
     public Color SelectedWpfColor
     {
       get { return GuiHelper.ToWpf(((NamedColor)GetValue(SelectedColorProperty)).Color); }
@@ -90,6 +105,9 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets or sets the selected color as a GDI color.
+    /// </summary>
     public System.Drawing.Color SelectedGdiColor
     {
       get { return GuiHelper.ToGdi(((NamedColor)GetValue(SelectedColorProperty)).Color); }
@@ -100,6 +118,9 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="SelectedColor"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty SelectedColorProperty;
 
     private static void EhSelectedColorChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
@@ -113,6 +134,11 @@ namespace Altaxo.Gui.Common.Drawing
       return thiss.InternalSelectedColorCoerce((NamedColor)coerceValue);
     }
 
+    /// <summary>
+    /// Raises the <see cref="SelectedColorChanged"/> event.
+    /// </summary>
+    /// <param name="obj">The dependency object whose selected color changed.</param>
+    /// <param name="args">The event arguments.</param>
     protected virtual void OnSelectedColorChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
       var oldColor = (NamedColor)args.OldValue;
@@ -149,6 +175,7 @@ namespace Altaxo.Gui.Common.Drawing
       _guiComboBox.SelectedValue = color;
     }
 
+    /// <inheritdoc/>
     protected override IColorSet GetColorSetForComboBox()
     {
       NamedColor selColor = SelectedColor;
@@ -161,6 +188,7 @@ namespace Altaxo.Gui.Common.Drawing
     private List<object> _comboBoxSeparator1 = new List<object> { new Separator() { Name = "ThisIsASeparatorForTheComboBox", Tag = "Last used colors" } };
     private List<object> _comboBoxSeparator2 = new List<object> { new Separator() { Name = "ThisIsASeparatorForTheComboBox", Tag = "Color set" } };
 
+    /// <inheritdoc/>
     protected override bool FillComboBoxWithFilteredItems(string filterString, bool onlyIfItemsRemaining)
     {
       List<object> lastUsed;
@@ -195,6 +223,13 @@ namespace Altaxo.Gui.Common.Drawing
       return false;
     }
 
+    /// <summary>
+    /// Filters the specified colors by name.
+    /// </summary>
+    /// <param name="originalList">The original color list.</param>
+    /// <param name="filterString">The filter prefix.</param>
+    /// <param name="showPlotColorsOnly">If set to <c>true</c>, only plot colors are returned.</param>
+    /// <returns>The filtered list of colors.</returns>
     protected static List<object> GetFilteredList(IReadOnlyList<NamedColor> originalList, string filterString, bool showPlotColorsOnly)
     {
       var result = new List<object>();
@@ -213,6 +248,11 @@ namespace Altaxo.Gui.Common.Drawing
 
     #region ComboBox event handling
 
+    /// <summary>
+    /// Synchronizes the selected color when the ComboBox drop-down closes.
+    /// </summary>
+    /// <param name="sender">The ComboBox that raised the event.</param>
+    /// <param name="e">The event arguments.</param>
     protected void EhComboBox_DropDownClosed(object sender, EventArgs e)
     {
       if (_filterString.Length > 0)
@@ -235,6 +275,11 @@ namespace Altaxo.Gui.Common.Drawing
 
     #region Context menus
 
+    /// <summary>
+    /// Opens the custom color dialog.
+    /// </summary>
+    /// <param name="sender">The menu item that raised the event.</param>
+    /// <param name="e">The event arguments.</param>
     protected void EhShowCustomColorDialog(object sender, RoutedEventArgs e)
     {
       if (base.InternalShowCustomColorDialog(sender, out var newColor))
@@ -243,6 +288,11 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <summary>
+    /// Applies an opacity selected from the context menu.
+    /// </summary>
+    /// <param name="sender">The menu item that raised the event.</param>
+    /// <param name="e">The event arguments.</param>
     protected void EhChooseOpacityFromContextMenu(object sender, RoutedEventArgs e)
     {
       if (base.InternalChooseOpacityFromContextMenu(sender, out var newColor))

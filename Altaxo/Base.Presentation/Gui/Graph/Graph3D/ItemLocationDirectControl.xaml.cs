@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Graph3D
   /// </summary>
   public partial class ItemLocationDirectControl : UserControl, IItemLocationDirectView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ItemLocationDirectControl"/> class.
+    /// </summary>
     public ItemLocationDirectControl()
     {
       InitializeComponent();

@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Common.Drawing.D3D
   /// </summary>
   public partial class FontX3DControl : UserControl, IFontX3DView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FontX3DControl"/> class.
+    /// </summary>
     public FontX3DControl()
     {
       InitializeComponent();

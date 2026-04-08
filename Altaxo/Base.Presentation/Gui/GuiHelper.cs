@@ -36,10 +36,18 @@ using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui
 {
+  /// <summary>
+  /// Provides helper methods for GUI conversions and initialization.
+  /// </summary>
   public static partial class GuiHelper
   {
     #region Brush and Pen
 
+    /// <summary>
+    /// Converts an <see cref="BrushX"/> to a WPF brush.
+    /// </summary>
+    /// <param name="brushx">The brush to convert.</param>
+    /// <returns>The converted WPF brush.</returns>
     public static System.Windows.Media.Brush ToWpf(this BrushX brushx)
     {
       System.Windows.Media.Color c = ToWpf(brushx.Color);
@@ -47,6 +55,11 @@ namespace Altaxo.Gui
       return result;
     }
 
+    /// <summary>
+    /// Converts a <see cref="PenX"/> to a WPF pen.
+    /// </summary>
+    /// <param name="penx">The pen to convert.</param>
+    /// <returns>The converted WPF pen.</returns>
     public static System.Windows.Media.Pen ToWpf(this PenX penx)
     {
       System.Windows.Media.Color c = ToWpf(penx.Color);
@@ -54,16 +67,31 @@ namespace Altaxo.Gui
       return result;
     }
 
+    /// <summary>
+    /// Converts a GDI color to an Altaxo color.
+    /// </summary>
+    /// <param name="c">The GDI color.</param>
+    /// <returns>The converted Altaxo color.</returns>
     public static Altaxo.Drawing.AxoColor ToAxo(this System.Drawing.Color c)
     {
       return Altaxo.Drawing.AxoColor.FromArgb(c.A, c.R, c.G, c.B);
     }
 
+    /// <summary>
+    /// Converts an Altaxo color to a GDI color.
+    /// </summary>
+    /// <param name="c">The Altaxo color.</param>
+    /// <returns>The converted GDI color.</returns>
     public static System.Drawing.Color ToGdi(this Altaxo.Drawing.AxoColor c)
     {
       return System.Drawing.Color.FromArgb(c.A, c.R, c.G, c.B);
     }
 
+    /// <summary>
+    /// Converts an Altaxo color to a WPF color.
+    /// </summary>
+    /// <param name="c">The Altaxo color.</param>
+    /// <returns>The converted WPF color.</returns>
     public static System.Windows.Media.Color ToWpf(this Altaxo.Drawing.AxoColor c)
     {
       if (c.IsFromArgb)
@@ -72,11 +100,21 @@ namespace Altaxo.Gui
         return Color.FromScRgb(c.ScA, c.ScR, c.ScG, c.ScB);
     }
 
+    /// <summary>
+    /// Converts a named color to a WPF color.
+    /// </summary>
+    /// <param name="c">The named color.</param>
+    /// <returns>The converted WPF color.</returns>
     public static System.Windows.Media.Color ToWpf(this Altaxo.Drawing.NamedColor c)
     {
       return ToWpf(c.Color);
     }
 
+    /// <summary>
+    /// Converts a WPF color to an Altaxo color.
+    /// </summary>
+    /// <param name="c">The WPF color.</param>
+    /// <returns>The converted Altaxo color.</returns>
     public static Altaxo.Drawing.AxoColor ToAxo(this System.Windows.Media.Color c)
     {
       return Altaxo.Drawing.AxoColor.FromScRgb(c.ScA, c.ScR, c.ScG, c.ScB);
@@ -86,6 +124,12 @@ namespace Altaxo.Gui
 
     #region Panel Helpers
 
+    /// <summary>
+    /// Initializes a choice panel with toggle buttons for the specified choices.
+    /// </summary>
+    /// <typeparam name="TChoiceGuiElement">The toggle-button type to create.</typeparam>
+    /// <param name="panel">The panel to initialize.</param>
+    /// <param name="choices">The selectable choices.</param>
     public static void InitializeChoicePanel<TChoiceGuiElement>(Panel panel, SelectableListNodeList choices) where TChoiceGuiElement : ToggleButton, new()
     {
       panel.Tag = choices;

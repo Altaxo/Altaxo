@@ -36,6 +36,9 @@ namespace Altaxo.Com
   using Altaxo.Main.Services;
   using UnmanagedApi.Ole32;
 
+  /// <summary>
+  /// Represents the COM object for an Altaxo project file.
+  /// </summary>
   [Guid("072CDB1D-745E-4213-9124-53667725B839"),
   ClassInterface(ClassInterfaceType.None)  // Specify that no additional interface is generated
   ]
@@ -66,8 +69,15 @@ namespace Altaxo.Com
     /// </summary>
     private int _fileWithWildCardItemMonikerRotCookie;
 
+    /// <summary>
+    /// Occurs when the file moniker changes.
+    /// </summary>
     public event Action<IMoniker> FileMonikerChanged;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ProjectFileComObject"/> class.
+    /// </summary>
+    /// <param name="comManager">The COM manager.</param>
     public ProjectFileComObject(ComManager comManager)
       : base(comManager)
     {
@@ -77,6 +87,9 @@ namespace Altaxo.Com
       EhCurrentProjectInstanceChanged(null, null);
     }
 
+    /// <summary>
+    /// Releases the project file COM object.
+    /// </summary>
     public void Dispose()
     {
       ComDebug.ReportInfo("{0}.Dispose", GetType().Name);
@@ -89,6 +102,9 @@ namespace Altaxo.Com
       Current.IProjectService.ProjectChanged -= EhCurrentProjectInstanceChanged;
     }
 
+    /// <summary>
+    /// Gets the current file moniker.
+    /// </summary>
     public IMoniker FileMoniker { get { return _fileMoniker; } }
 
     private void EhCurrentProjectInstanceChanged(object sender, Altaxo.Main.ProjectEventArgs e)
@@ -169,6 +185,7 @@ namespace Altaxo.Com
 
     #region Interface IPersistFile
 
+    /// <inheritdoc/>
     public void GetClassID(out Guid pClassID)
     {
       ComDebug.ReportInfo("{0}.GetClassID", GetType().Name);
@@ -176,6 +193,7 @@ namespace Altaxo.Com
       pClassID = GetType().GUID;
     }
 
+    /// <inheritdoc/>
     public void GetCurFile(out string ppszFileName)
     {
       ppszFileName = Current.IProjectService.CurrentProjectFileName;
@@ -183,12 +201,14 @@ namespace Altaxo.Com
       ComDebug.ReportInfo("{0}.GetCurFile -> {1}", GetType().Name, ppszFileName);
     }
 
+    /// <inheritdoc/>
     public int IsDirty()
     {
       ComDebug.ReportInfo("{0}.IsDirty -> FALSE", GetType().Name);
       return ComReturnValue.S_FALSE;
     }
 
+    /// <inheritdoc/>
     public void Load(string pszFileName, int dwMode)
     {
       ComDebug.ReportInfo("{0}.Load filename: {1}", GetType().Name, pszFileName);
@@ -196,6 +216,7 @@ namespace Altaxo.Com
       Current.IProjectService.OpenProject(new FileName(pszFileName), showUserInteraction: true);
     }
 
+    /// <inheritdoc/>
     public void Save(string pszFileName, bool fRemember)
     {
       ComDebug.ReportInfo("{0}.Save filename: {1}", GetType().Name, pszFileName);
@@ -203,6 +224,7 @@ namespace Altaxo.Com
       Current.IProjectService.SaveProject(new FileName(pszFileName));
     }
 
+    /// <inheritdoc/>
     public void SaveCompleted(string pszFileName)
     {
       ComDebug.ReportInfo("{0}.SaveCompleted filename: {1}", GetType().Name, pszFileName);
@@ -213,18 +235,21 @@ namespace Altaxo.Com
 
     #region Interface IOleItemContainer
 
+    /// <inheritdoc/>
     public int ParseDisplayName(IBindCtx pbc, string pszDisplayName, out int pchEaten, out IMoniker ppmkOut)
     {
       ComDebug.ReportError("{0}.ParseDisplayName -> not implemented!", GetType().Name);
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public int EnumObjects(int grfFlags, out IEnumUnknown ppenum)
     {
       ComDebug.ReportInfo("{0}.EnumObjects", GetType().Name);
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public int LockContainer(bool fLock)
     {
       ComDebug.ReportWarning("{0}.LockContainer({1}) -> not implemented", GetType().Name, fLock);
@@ -232,6 +257,7 @@ namespace Altaxo.Com
       return ComReturnValue.NOERROR;
     }
 
+    /// <inheritdoc/>
     public IntPtr GetObject(string pszItem, int dwSpeedNeeded, IBindCtx pbc, ref Guid riid)
     {
       // Brockschmidt, Inside Ole 2nd ed. page 1003
@@ -267,12 +293,14 @@ namespace Altaxo.Com
       }
     }
 
+    /// <inheritdoc/>
     public object GetObjectStorage(string pszItem, IBindCtx pbc, ref Guid riid)
     {
       ComDebug.ReportInfo("{0}.GetObjectStorage -> not implemented!", GetType().Name);
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public int IsRunning(string pszItem)
     {
       bool isRunning = _currentProject.GraphDocumentCollection.TryGetValue(pszItem, out var doc);

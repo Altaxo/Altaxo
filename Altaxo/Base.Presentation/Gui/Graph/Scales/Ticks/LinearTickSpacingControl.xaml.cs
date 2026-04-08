@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
   /// </summary>
   public partial class LinearTickSpacingControl : UserControl, ILinearTickSpacingView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinearTickSpacingControl"/> class.
+    /// </summary>
     public LinearTickSpacingControl()
     {
       InitializeComponent();

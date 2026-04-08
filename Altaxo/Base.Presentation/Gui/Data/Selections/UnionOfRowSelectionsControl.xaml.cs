@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Data.Selections
   /// </summary>
   public partial class UnionOfRowSelectionsControl : UserControl, IUnionOfRowSelectionView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="UnionOfRowSelectionsControl"/> class.
+    /// </summary>
     public UnionOfRowSelectionsControl()
     {
       InitializeComponent();

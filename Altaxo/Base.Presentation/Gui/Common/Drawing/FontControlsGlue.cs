@@ -35,8 +35,14 @@ using Altaxo.Gui.Common.Drawing;
 
 namespace Altaxo.Gui.Drawing
 {
+  /// <summary>
+  /// Synchronizes font-related controls with a <see cref="FontX"/> instance.
+  /// </summary>
   public class FontXControlsGlue : FrameworkElement
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FontXControlsGlue"/> class.
+    /// </summary>
     public FontXControlsGlue()
     {
     }
@@ -45,6 +51,9 @@ namespace Altaxo.Gui.Drawing
 
     private FontX _fontX;
 
+    /// <summary>
+    /// Gets or sets the current font model.
+    /// </summary>
     protected virtual FontX FontX
     {
       get
@@ -57,6 +66,9 @@ namespace Altaxo.Gui.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets or sets the selected font.
+    /// </summary>
     public FontX SelectedFont
     {
       get
@@ -76,8 +88,14 @@ namespace Altaxo.Gui.Drawing
       }
     }
 
+    /// <summary>
+    /// Occurs when <see cref="SelectedFont"/> changes.
+    /// </summary>
     public event EventHandler? SelectedFontChanged;
 
+    /// <summary>
+    /// Raises the <see cref="SelectedFontChanged"/> event.
+    /// </summary>
     protected virtual void OnSelectedFontChanged()
     {
       if (SelectedFontChanged is not null)
@@ -90,6 +108,9 @@ namespace Altaxo.Gui.Drawing
 
     private FontFamilyComboBox _cbFontFamily;
 
+    /// <summary>
+    /// Gets or sets the font family ComboBox.
+    /// </summary>
     public FontFamilyComboBox CbFontFamily
     {
       get { return _cbFontFamily; }
@@ -126,6 +147,9 @@ namespace Altaxo.Gui.Drawing
 
     private FontStyleComboBox _cbFontStyle;
 
+    /// <summary>
+    /// Gets or sets the font style ComboBox.
+    /// </summary>
     public FontStyleComboBox CbFontStyle
     {
       get { return _cbFontStyle; }
@@ -164,6 +188,9 @@ namespace Altaxo.Gui.Drawing
 
     private FontSizeComboBox _cbFontSize;
 
+    /// <summary>
+    /// Gets or sets the font size ComboBox.
+    /// </summary>
     public FontSizeComboBox CbFontSize
     {
       get { return _cbFontSize; }
@@ -197,10 +224,14 @@ namespace Altaxo.Gui.Drawing
     #endregion Size
   }
 
+  /// <summary>
+  /// Synchronizes font-related controls with a <see cref="Altaxo.Drawing.D3D.FontX3D"/> instance.
+  /// </summary>
   public class FontX3DControlsGlue : FontXControlsGlue
   {
     private Altaxo.Drawing.D3D.FontX3D _fontX3D;
 
+    /// <inheritdoc/>
     protected override FontX FontX
     {
       get
@@ -213,6 +244,9 @@ namespace Altaxo.Gui.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets or sets the current 3D font model.
+    /// </summary>
     protected virtual Altaxo.Drawing.D3D.FontX3D FontX3D
     {
       get
@@ -225,6 +259,9 @@ namespace Altaxo.Gui.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets or sets the selected 3D font.
+    /// </summary>
     public new Altaxo.Drawing.D3D.FontX3D SelectedFont
     {
       get
@@ -250,6 +287,9 @@ namespace Altaxo.Gui.Drawing
 
     private FontSizeComboBox _cbFontDepth;
 
+    /// <summary>
+    /// Gets or sets the font depth ComboBox.
+    /// </summary>
     public FontSizeComboBox CbFontDepth
     {
       get { return _cbFontDepth; }

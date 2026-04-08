@@ -41,6 +41,9 @@ namespace Altaxo.Gui.Common
     private int _Value;
     private int _StartValue;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MinMaxIntegerControl"/> class.
+    /// </summary>
     public MinMaxIntegerControl()
       : this(0, int.MaxValue, 0)
     {
@@ -74,7 +77,7 @@ namespace Altaxo.Gui.Common
     }
 
     /// <summary>
-    /// Get/sets the value that the user entered.
+    /// Gets or sets the value entered by the user.
     /// </summary>
     public int Value
     {
@@ -97,7 +100,7 @@ namespace Altaxo.Gui.Common
     }
 
     /// <summary>
-    /// Get/sets the minimum value allowed.
+    /// Gets or sets the minimum value allowed.
     /// </summary>
     public int Minimum
     {
@@ -111,7 +114,7 @@ namespace Altaxo.Gui.Common
     }
 
     /// <summary>
-    /// Get/sets the maximum value allowed.
+    /// Gets or sets the maximum value allowed.
     /// </summary>
     public int Maximum
     {

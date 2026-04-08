@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Gdi
   /// </summary>
   public partial class GraphExportOptionsControl : UserControl, IGraphExportOptionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GraphExportOptionsControl"/> class.
+    /// </summary>
     public GraphExportOptionsControl()
     {
       InitializeComponent();

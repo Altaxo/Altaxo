@@ -45,6 +45,9 @@ namespace Altaxo.Gui.Common.BasicTypes
   /// </summary>
   public partial class DecimalValueControl : UserControl, IDecimalValueView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DecimalValueControl"/> class.
+    /// </summary>
     public DecimalValueControl()
     {
       InitializeComponent();

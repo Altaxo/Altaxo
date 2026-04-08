@@ -40,6 +40,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
   /// </summary>
   public partial class XYPlotLayerContentsControl : UserControl, IXYPlotLayerContentsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYPlotLayerContentsControl"/> class.
+    /// </summary>
     public XYPlotLayerContentsControl()
     {
       InitializeComponent();

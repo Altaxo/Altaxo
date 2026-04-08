@@ -46,9 +46,20 @@ namespace Altaxo.Calc.Optimization
   {
     private static readonly double JITTER = 1e-10d;           // a small value used to protect against floating point noise
 
+    /// <summary>
+    /// Gets or sets the convergence tolerance.
+    /// </summary>
     public double ConvergenceTolerance { get; set; }
+    /// <summary>
+    /// Gets or sets the maximum number of iterations.
+    /// </summary>
     public int MaximumIterations { get; set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NelderMeadSimplex"/> class.
+    /// </summary>
+    /// <param name="convergenceTolerance">The convergence tolerance.</param>
+    /// <param name="maximumIterations">The maximum number of iterations.</param>
     public NelderMeadSimplex(double convergenceTolerance, int maximumIterations)
     {
       ConvergenceTolerance = convergenceTolerance;
@@ -63,6 +74,7 @@ namespace Altaxo.Calc.Optimization
     /// <param name="objectiveFunction">The objective function, no gradient or hessian needed</param>
     /// <param name="initialGuess">The initial guess</param>
     /// <returns>The minimum point</returns>
+    /// <inheritdoc/>
     public MinimizationResult FindMinimum(IObjectiveFunction objectiveFunction, Vector<double> initialGuess)
     {
       return Minimum(objectiveFunction, initialGuess, default, default, ConvergenceTolerance, MaximumIterations);
@@ -241,9 +253,9 @@ namespace Altaxo.Calc.Optimization
     /// Evaluate the objective function at each vertex to create a corresponding
     /// list of error values for each vertex
     /// </summary>
-    /// <param name="vertices"></param>
-    /// <param name="objectiveFunction"></param>
-    /// <returns></returns>
+    /// <param name="vertices">The simplex vertices.</param>
+    /// <param name="objectiveFunction">The objective function to evaluate.</param>
+    /// <returns>An array containing the objective-function values at each vertex.</returns>
     private static double[] InitializeErrorValues(Vector<double>[] vertices, IObjectiveFunction objectiveFunction)
     {
       double[] errorValues = new double[vertices.Length];
@@ -259,10 +271,10 @@ namespace Altaxo.Calc.Optimization
     /// Check whether the points in the error profile have so little range that we
     /// consider ourselves to have converged
     /// </summary>
-    /// <param name="convergenceTolerance"></param>
-    /// <param name="errorProfile"></param>
-    /// <param name="errorValues"></param>
-    /// <returns></returns>
+    /// <param name="convergenceTolerance">The relative convergence tolerance.</param>
+    /// <param name="errorProfile">The current error profile of the simplex.</param>
+    /// <param name="errorValues">The objective-function values at the simplex vertices.</param>
+    /// <returns><see langword="true"/> if the simplex has converged; otherwise, <see langword="false"/>.</returns>
     private static bool HasConverged(double convergenceTolerance, ErrorProfile errorProfile, double[] errorValues)
     {
       double range = 2 * Math.Abs(errorValues[errorProfile.HighestIndex] - errorValues[errorProfile.LowestIndex]) /
@@ -274,8 +286,8 @@ namespace Altaxo.Calc.Optimization
     /// <summary>
     /// Examine all error values to determine the ErrorProfile
     /// </summary>
-    /// <param name="errorValues"></param>
-    /// <returns></returns>
+    /// <param name="errorValues">The objective-function values at the simplex vertices.</param>
+    /// <returns>The error profile describing the lowest and highest error indices.</returns>
     private static ErrorProfile EvaluateSimplex(double[] errorValues)
     {
       ErrorProfile errorProfile = new ErrorProfile();
@@ -315,8 +327,8 @@ namespace Altaxo.Calc.Optimization
     /// Construct an initial simplex, given starting guesses for the constants, and
     /// initial step sizes for each dimension
     /// </summary>
-    /// <param name="simplexConstants"></param>
-    /// <returns></returns>
+    /// <param name="simplexConstants">The simplex constants defining the starting point and perturbations.</param>
+    /// <returns>The initialized simplex vertices.</returns>
     private static Vector<double>[] InitializeVertices(SimplexConstant[] simplexConstants)
     {
       int numDimensions = simplexConstants.Length;
@@ -345,12 +357,12 @@ namespace Altaxo.Calc.Optimization
     /// <summary>
     /// Test a scaling operation of the high point, and replace it if it is an improvement
     /// </summary>
-    /// <param name="scaleFactor"></param>
-    /// <param name="errorProfile"></param>
-    /// <param name="vertices"></param>
-    /// <param name="errorValues"></param>
-    /// <param name="objectiveFunction"></param>
-    /// <returns></returns>
+    /// <param name="scaleFactor">The factor used to scale the simplex away from the centroid.</param>
+    /// <param name="errorProfile">The current error profile of the simplex.</param>
+    /// <param name="vertices">The simplex vertices.</param>
+    /// <param name="errorValues">The objective-function values at the simplex vertices.</param>
+    /// <param name="objectiveFunction">The objective function to evaluate.</param>
+    /// <returns>The error value of the scaled trial point.</returns>
     private static double TryToScaleSimplex(double scaleFactor, ref ErrorProfile errorProfile, Vector<double>[] vertices,
                                       double[] errorValues, IObjectiveFunction objectiveFunction)
     {
@@ -380,10 +392,10 @@ namespace Altaxo.Calc.Optimization
     /// <summary>
     /// Contract the simplex uniformly around the lowest point
     /// </summary>
-    /// <param name="errorProfile"></param>
-    /// <param name="vertices"></param>
-    /// <param name="errorValues"></param>
-    /// <param name="objectiveFunction"></param>
+    /// <param name="errorProfile">The current error profile of the simplex.</param>
+    /// <param name="vertices">The simplex vertices.</param>
+    /// <param name="errorValues">The objective-function values at the simplex vertices.</param>
+    /// <param name="objectiveFunction">The objective function to evaluate.</param>
     private static void ShrinkSimplex(ErrorProfile errorProfile, Vector<double>[] vertices, double[] errorValues,
                                   IObjectiveFunction objectiveFunction)
     {
@@ -402,9 +414,9 @@ namespace Altaxo.Calc.Optimization
     /// <summary>
     /// Compute the centroid of all points except the worst
     /// </summary>
-    /// <param name="vertices"></param>
-    /// <param name="errorProfile"></param>
-    /// <returns></returns>
+    /// <param name="vertices">The simplex vertices.</param>
+    /// <param name="errorProfile">The current error profile of the simplex.</param>
+    /// <returns>The centroid of all simplex vertices except the worst one.</returns>
     private static Vector<double> ComputeCentroid(Vector<double>[] vertices, ErrorProfile errorProfile)
     {
       int numVertices = vertices.Length;

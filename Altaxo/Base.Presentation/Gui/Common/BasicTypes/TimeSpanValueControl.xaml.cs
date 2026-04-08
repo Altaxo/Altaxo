@@ -44,6 +44,9 @@ namespace Altaxo.Gui.Common.BasicTypes
   /// </summary>
   public partial class TimeSpanValueControl : UserControl, ITimeSpanValueView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TimeSpanValueControl"/> class.
+    /// </summary>
     public TimeSpanValueControl()
     {
       InitializeComponent();

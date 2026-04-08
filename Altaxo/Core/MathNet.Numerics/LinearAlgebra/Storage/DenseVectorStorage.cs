@@ -35,6 +35,9 @@ using Altaxo.Calc.Threading;
 
 namespace Altaxo.Calc.LinearAlgebra.Storage
 {
+  /// <summary>
+  /// Stores a dense vector in contiguous memory.
+  /// </summary>
   [Serializable]
   [DataContract(Namespace = "urn:MathNet/Numerics/LinearAlgebra")]
   public class DenseVectorStorage<T> : VectorStorage<T>
@@ -42,6 +45,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
   {
     // [ruegg] public fields are OK here
 
+    /// <summary>
+    /// Gets the backing array for the vector values.
+    /// </summary>
     [DataMember(Order = 1)]
     public readonly T[] Data;
 
@@ -90,11 +96,13 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // CLEARING
 
+    /// <inheritdoc/>
     public override void Clear()
     {
       Array.Clear(Data, 0, Data.Length);
     }
 
+    /// <inheritdoc/>
     public override void Clear(int index, int count)
     {
       Array.Clear(Data, index, count);
@@ -102,6 +110,11 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // INITIALIZATION
 
+    /// <summary>
+    /// Creates a dense vector storage from another vector storage.
+    /// </summary>
+    /// <param name="vector">The source vector storage.</param>
+    /// <returns>A dense vector storage containing the copied values.</returns>
     public static DenseVectorStorage<T> OfVector(VectorStorage<T> vector)
     {
       var storage = new DenseVectorStorage<T>(vector.Length);
@@ -109,6 +122,12 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return storage;
     }
 
+    /// <summary>
+    /// Creates a dense vector storage initialized with a constant value.
+    /// </summary>
+    /// <param name="length">The vector length.</param>
+    /// <param name="value">The value assigned to each element.</param>
+    /// <returns>The initialized dense vector storage.</returns>
     public static DenseVectorStorage<T> OfValue(int length, T value)
     {
       if (length < 0)
@@ -127,6 +146,12 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return new DenseVectorStorage<T>(length, data);
     }
 
+    /// <summary>
+    /// Creates a dense vector storage initialized by an index-based initializer.
+    /// </summary>
+    /// <param name="length">The vector length.</param>
+    /// <param name="init">The initializer function.</param>
+    /// <returns>The initialized dense vector storage.</returns>
     public static DenseVectorStorage<T> OfInit(int length, Func<int, T> init)
     {
       if (length < 0)
@@ -145,6 +170,11 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return new DenseVectorStorage<T>(length, data);
     }
 
+    /// <summary>
+    /// Creates a dense vector storage from an enumerable sequence.
+    /// </summary>
+    /// <param name="data">The source data.</param>
+    /// <returns>The initialized dense vector storage.</returns>
     public static DenseVectorStorage<T> OfEnumerable(IEnumerable<T> data)
     {
       if (data == null)
@@ -163,6 +193,12 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return new DenseVectorStorage<T>(array.Length, array);
     }
 
+    /// <summary>
+    /// Creates a dense vector storage from indexed values.
+    /// </summary>
+    /// <param name="length">The vector length.</param>
+    /// <param name="data">The indexed source data.</param>
+    /// <returns>The initialized dense vector storage.</returns>
     public static DenseVectorStorage<T> OfIndexedEnumerable(int length, IEnumerable<Tuple<int, T>> data)
     {
       if (data == null)
@@ -178,6 +214,12 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return new DenseVectorStorage<T>(array.Length, array);
     }
 
+    /// <summary>
+    /// Creates a dense vector storage from indexed tuple values.
+    /// </summary>
+    /// <param name="length">The vector length.</param>
+    /// <param name="data">The indexed source data.</param>
+    /// <returns>The initialized dense vector storage.</returns>
     public static DenseVectorStorage<T> OfIndexedEnumerable(int length, IEnumerable<(int, T)> data)
     {
       if (data == null)
@@ -346,6 +388,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // EXTRACT
 
+    /// <inheritdoc/>
     public override T[] ToArray()
     {
       var ret = new T[Data.Length];
@@ -353,6 +396,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return ret;
     }
 
+    /// <inheritdoc/>
     public override T[] AsArray()
     {
       return Data;
@@ -360,21 +404,25 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // ENUMERATION
 
+    /// <inheritdoc/>
     public override IEnumerable<T> Enumerate()
     {
       return Data;
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<(int, T)> EnumerateIndexed()
     {
       return Data.Select((t, i) => (i, t));
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<T> EnumerateNonZero()
     {
       return Data.Where(x => !Zero.Equals(x));
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<(int, T)> EnumerateNonZeroIndexed()
     {
       var data = Data;
@@ -389,6 +437,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // FIND
 
+    /// <inheritdoc/>
     public override Tuple<int, T> Find(Func<T, bool> predicate, Zeros zeros)
     {
       var data = Data;
@@ -455,6 +504,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // FUNCTIONAL COMBINATORS: MAP
 
+    /// <inheritdoc/>
     public override void MapInplace(Func<T, T> f, Zeros zeros)
     {
       CommonParallel.For(0, Data.Length, 4096, (a, b) =>
@@ -467,6 +517,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       });
     }
 
+    /// <inheritdoc/>
     public override void MapIndexedInplace(Func<int, T, T> f, Zeros zeros)
     {
       CommonParallel.For(0, Data.Length, 4096, (a, b) =>

@@ -50,6 +50,9 @@ namespace Altaxo.Gui.Common
   {
     private string fullPropertyName;
 
+    /// <summary>
+    /// Gets or sets the fully qualified option property name.
+    /// </summary>
     public string FullPropertyName
     {
       get { return fullPropertyName; }
@@ -62,8 +65,19 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <summary>
+    /// Gets or sets the converter used for the binding.
+    /// </summary>
     public IValueConverter Converter { get; set; }
+
+    /// <summary>
+    /// Gets or sets the converter parameter.
+    /// </summary>
     public object ConverterParameter { get; set; }
+
+    /// <summary>
+    /// Gets or sets the converter culture.
+    /// </summary>
     public CultureInfo ConverterCulture { get; set; }
 
     private static readonly Regex regex = new Regex("^.+\\:.+\\..+$", RegexOptions.Compiled);
@@ -76,6 +90,10 @@ namespace Altaxo.Gui.Common
 
     private MemberInfo propertyInfo;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OptionBinding"/> class.
+    /// </summary>
+    /// <param name="propertyName">The fully qualified option property name.</param>
     public OptionBinding(string propertyName)
     {
       if (!regex.IsMatch(propertyName))
@@ -84,12 +102,18 @@ namespace Altaxo.Gui.Common
       FullPropertyName = propertyName;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OptionBinding"/> class.
+    /// </summary>
+    /// <param name="container">The declaring type that contains the option member.</param>
+    /// <param name="propertyName">The name of the option member.</param>
     public OptionBinding(Type container, string propertyName)
     {
       propertyDeclaringType = container;
       this.propertyName = propertyName;
     }
 
+    /// <inheritdoc/>
     public override object ProvideValue(IServiceProvider provider)
     {
       var service = (IProvideValueTarget)provider.GetService(typeof(IProvideValueTarget));
@@ -212,6 +236,10 @@ namespace Altaxo.Gui.Common
       return start as IOptionBindingContainer;
     }
 
+    /// <summary>
+    /// Saves the current bound value back to the option member.
+    /// </summary>
+    /// <returns><see langword="true"/> if the value was saved; otherwise, <see langword="false"/>.</returns>
     public bool Save()
     {
       object value = target.GetValue(dp);

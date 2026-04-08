@@ -32,24 +32,54 @@
 #nullable disable
 namespace Poly2Tri
 {
+  /// <summary>
+  /// Provides sweep-specific debug state for visualizing triangulation progress.
+  /// </summary>
   public class DTSweepDebugContext : TriangulationDebugContext
   {
     /*
          * Fields used for visual representation of current triangulation
          */
 
+    /// <summary>
+    /// Gets or sets the primary triangle currently highlighted for debugging.
+    /// </summary>
     public DelaunayTriangle PrimaryTriangle { get { return _primaryTriangle; } set { _primaryTriangle = value; _tcx.Update("set PrimaryTriangle"); } }
+
+    /// <summary>
+    /// Gets or sets the secondary triangle currently highlighted for debugging.
+    /// </summary>
     public DelaunayTriangle SecondaryTriangle { get { return _secondaryTriangle; } set { _secondaryTriangle = value; _tcx.Update("set SecondaryTriangle"); } }
+
+    /// <summary>
+    /// Gets or sets the active point currently being processed.
+    /// </summary>
     public TriangulationPoint ActivePoint { get { return _activePoint; } set { _activePoint = value; _tcx.Update("set ActivePoint"); } }
+
+    /// <summary>
+    /// Gets or sets the active front node currently being processed.
+    /// </summary>
     public AdvancingFrontNode ActiveNode { get { return _activeNode; } set { _activeNode = value; _tcx.Update("set ActiveNode"); } }
+
+    /// <summary>
+    /// Gets or sets the active constrained edge currently being processed.
+    /// </summary>
     public DTSweepConstraint ActiveConstraint { get { return _activeConstraint; } set { _activeConstraint = value; _tcx.Update("set ActiveConstraint"); } }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DTSweepDebugContext"/> class.
+    /// </summary>
+    /// <param name="tcx">The owning sweep context.</param>
     public DTSweepDebugContext(DTSweepContext tcx) : base(tcx)
     {
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this is a sweep debug context.
+    /// </summary>
     public bool IsDebugContext { get { return true; } }
 
+    /// <inheritdoc/>
     public override void Clear()
     {
       PrimaryTriangle = null;

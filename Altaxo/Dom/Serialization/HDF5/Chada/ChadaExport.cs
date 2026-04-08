@@ -29,17 +29,17 @@ using PureHDF;
 namespace Altaxo.Serialization.HDF5.Chada
 {
   /// <summary>
-  /// Export a Chada file. Chada files are very simply structured HDF5 files, with only one or two datasets, consisting of two columns.
+  /// Exports CHADA files. CHADA files are simple HDF5 files with one or two datasets consisting of two columns.
   /// </summary>
   public class ChadaExport
   {
 
     /// <summary>
-    /// Exports a table to RamanChada.
+    /// Exports a table to Raman CHADA.
     /// </summary>
     /// <param name="dataTable">The data table. Must consist of exactly two data columns.</param>
-    /// <param name="fileName">Name of the file to write to.</param>
-    /// <returns></returns>
+    /// <param name="fileName">The file name to write to.</param>
+    /// <returns><see langword="null"/> on success; otherwise, an error message.</returns>
     public static string? ExportRamanChada(DataTable dataTable, string fileName)
     {
       var col = dataTable.DataColumns;
@@ -86,9 +86,9 @@ namespace Altaxo.Serialization.HDF5.Chada
     }
 
     /// <summary>
-    /// Shows the CHADA file export dialog, and imports the files to the table if the user clicked on "OK".
+    /// Shows the CHADA file export dialog and exports the table if the user clicks <c>OK</c>.
     /// </summary>
-    /// <param name="dataTable">The table to export the Chada files to.</param>
+    /// <param name="dataTable">The table to export.</param>
     public static void ShowExportRamanChadaDialog(DataTable dataTable)
     {
       var options = new Altaxo.Gui.SaveFileOptions();

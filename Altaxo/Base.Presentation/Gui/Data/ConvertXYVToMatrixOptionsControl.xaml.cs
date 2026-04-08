@@ -37,6 +37,9 @@ namespace Altaxo.Gui.Data
   /// </summary>
   public partial class ConvertXYVToMatrixOptionsControl : UserControl, IConvertXYVToMatrixOptionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConvertXYVToMatrixOptionsControl"/> class.
+    /// </summary>
     public ConvertXYVToMatrixOptionsControl()
     {
       InitializeComponent();

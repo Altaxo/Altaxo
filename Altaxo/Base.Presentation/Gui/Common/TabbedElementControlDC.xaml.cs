@@ -20,6 +20,9 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public partial class TabbedElementControlDC : UserControl, ITabbedElementViewDC
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TabbedElementControlDC"/> class.
+    /// </summary>
     public TabbedElementControlDC()
     {
       InitializeComponent();

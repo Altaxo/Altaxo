@@ -37,27 +37,45 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public partial class CheckableGroupBox : GroupBox
   {
+    /// <summary>
+    /// Identifies the <see cref="IsChecked"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty IsCheckedProperty = DependencyProperty.Register(
   "IsChecked",
   typeof(bool?),
   typeof(CheckableGroupBox), new PropertyMetadata(false)
   );
 
+    /// <summary>
+    /// Identifies the <see cref="EnableContentWithCheck"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty EnableContentWithCheckProperty = DependencyProperty.Register(
   "EnableContentWithCheck",
   typeof(bool),
   typeof(CheckableGroupBox)
   );
 
+    /// <summary>
+    /// Occurs when the check box is checked.
+    /// </summary>
     public event RoutedEventHandler? Checked;
 
+    /// <summary>
+    /// Occurs when the check box is unchecked.
+    /// </summary>
     public event RoutedEventHandler? Unchecked;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CheckableGroupBox"/> class.
+    /// </summary>
     public CheckableGroupBox()
     {
       InitializeComponent();
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the group box is checked.
+    /// </summary>
     public bool? IsChecked
     {
       get
@@ -103,6 +121,7 @@ namespace Altaxo.Gui.Common
         Unchecked(this, e);
     }
 
+    /// <inheritdoc/>
     protected override void OnContentChanged(object oldContent, object newContent)
     {
       base.OnContentChanged(oldContent, newContent);

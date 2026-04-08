@@ -33,6 +33,9 @@ using Altaxo.Calc.Statistics;
 
 namespace Altaxo.Calc
 {
+  /// <summary>
+  /// Provides measures for assessing goodness of fit between observed and modeled values.
+  /// </summary>
   public static class GoodnessOfFit
   {
     /// <summary>

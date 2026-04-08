@@ -50,6 +50,9 @@ namespace Clipper2Lib
     - xxHash source repository : https://github.com/Cyan4973/xxHash
   */
 
+  /// <summary>
+  /// Provides helper methods for combining hash codes.
+  /// </summary>
   public struct HashCode
   {
     private static readonly uint s_seed = GenerateGlobalSeed();
@@ -68,6 +71,14 @@ namespace Clipper2Lib
       return BitConverter.ToUInt32(data, 0);
     }
 
+    /// <summary>
+    /// Combines the hash codes of two values.
+    /// </summary>
+    /// <typeparam name="T1">The type of the first value.</typeparam>
+    /// <typeparam name="T2">The type of the second value.</typeparam>
+    /// <param name="value1">The first value.</param>
+    /// <param name="value2">The second value.</param>
+    /// <returns>The combined hash code.</returns>
     public static int Combine<T1, T2>(T1 value1, T2 value2)
     {
       uint hc1 = (uint) (value1?.GetHashCode() ?? 0);
@@ -105,6 +116,12 @@ namespace Clipper2Lib
       return hash;
     }
 
+    /// <summary>
+    /// Rotates a 32-bit unsigned integer to the left.
+    /// </summary>
+    /// <param name="value">The value to rotate.</param>
+    /// <param name="offset">The number of bit positions to rotate.</param>
+    /// <returns>The rotated value.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static uint RotateLeft(uint value, int offset)
     {
@@ -112,6 +129,7 @@ namespace Clipper2Lib
     }
 
 #pragma warning disable CS0809 // Obsolete member overrides non-obsolete member
+    /// <inheritdoc/>
     [Obsolete("HashCode is a mutable struct and should not be compared with other HashCodes. Use ToHashCode to retrieve the computed hash code.", error: true)]
     [EditorBrowsable(EditorBrowsableState.Never)]
     public override int GetHashCode()
@@ -119,6 +137,7 @@ namespace Clipper2Lib
       throw new NotSupportedException($"{nameof(HashCode)}.{nameof(GetHashCode)}() is not supported");
     }
 
+    /// <inheritdoc/>
     [Obsolete("HashCode is a mutable struct and should not be compared with other HashCodes.", error: true)]
     [EditorBrowsable(EditorBrowsableState.Never)]
     public override bool Equals(object? obj)

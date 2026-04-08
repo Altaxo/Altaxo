@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Calc.Interpolation
   /// </summary>
   public partial class NonlinearFitAsInterpolationControl : UserControl, INonlinearFitAsInterpolationView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NonlinearFitAsInterpolationControl"/> class.
+    /// </summary>
     public NonlinearFitAsInterpolationControl()
     {
       InitializeComponent();

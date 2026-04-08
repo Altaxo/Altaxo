@@ -68,11 +68,29 @@ namespace Altaxo.Calc.Fourier
 
     private enum ROW_ORDER { def_row_order = 1 };  // set to true for the C convention
 
+    /// <summary>
+    /// Stores the leading dimension, the configured number of dimensions, and the size of the trigonometric lookup table.
+    /// </summary>
     protected int id, ndim, trisize;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the transformed data is stored in row-major order.
+    /// </summary>
     protected bool row_order = true;
+
+    /// <summary>
+    /// Stores the configured transform dimensions.
+    /// </summary>
     protected int[] dim = new int[3];
+
+    /// <summary>
+    /// Stores the starting indices of the trigonometric tables for each dimension.
+    /// </summary>
     protected int[] trindex = new int[3];
 
+    /// <summary>
+    /// Stores the precomputed trigonometric lookup values used by the transform.
+    /// </summary>
     protected double[] trigs;
 
     /// <summary>
@@ -456,15 +474,12 @@ int FFT (complex<FLOAT> c[], int isign)
 */
 
     /// <summary>
-    /// Complex forward/backward FFT for 1/2/3 dimensions
-    /// Interface with separate FLOAT vectors for real and imaginary part
+    /// Performs an in-place complex forward or inverse FFT using separate real and imaginary arrays.
     /// </summary>
-    /// <param name="re">Input/Output vector of real part.</param>
-    /// <param name="im">Input/Output vector of imaginary part.</param>
-    /// <param name="isign">Forward (-1) or reverse (1) transform. </param>
+    /// <param name="re">The array containing the real parts.</param>
+    /// <param name="im">The array containing the imaginary parts.</param>
+    /// <param name="isign">The transform direction.</param>
     /// <returns>Currently undefined, not used.</returns>
-    //-----------------------------------------------------------------------------//
-
     public int FFT(double[] re, double[] im, FourierDirection isign)
     {
       if (ndim == 0)
@@ -541,15 +556,12 @@ int FFT (complex<FLOAT> c[], int isign)
     }
 
     /// <summary>
-    /// Performs two FFTs of the two real values arrays and store the result
-    /// in the arrays.
+    /// Performs two one-dimensional real FFTs by packing them into a single complex transform.
     /// </summary>
-    /// <param name="real1">Input/Output vector of first real array.</param>
-    /// <param name="real2">Input/Output vector of second real array.</param>
-    /// <param name="isign">Forward (-1) or reverse (1) transform. </param>
+    /// <param name="real1">The first real-valued data array.</param>
+    /// <param name="real2">The second real-valued data array.</param>
+    /// <param name="isign">The transform direction.</param>
     /// <returns>Currently undefined, not used.</returns>
-    //-----------------------------------------------------------------------------//
-
     public int RealFFT(double[] real1, double[] real2, FourierDirection isign)
     {
       if (ndim == 0)

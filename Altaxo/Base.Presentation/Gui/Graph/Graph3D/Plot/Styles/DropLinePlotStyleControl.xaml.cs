@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
   /// </summary>
   public partial class DropLinePlotStyleControl : UserControl, IDropLinePlotStyleView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DropLinePlotStyleControl"/> class.
+    /// </summary>
     public DropLinePlotStyleControl()
     {
       InitializeComponent();

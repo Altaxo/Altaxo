@@ -193,6 +193,9 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// It is initialized internally and cannot be set from outside the class.</remarks>
     protected IInterpolationFunction AreaSpline { get; private set; }
 
+    /// <summary>
+    /// Gets a value indicating whether the additional peak property represents the peak width.
+    /// </summary>
     public bool PropertyIsPeakWidth { get; init; }
 
 

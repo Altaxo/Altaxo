@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Data
   /// </summary>
   public partial class DataSourceImportOptionsControl : UserControl, IDataSourceImportOptionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DataSourceImportOptionsControl"/> class.
+    /// </summary>
     public DataSourceImportOptionsControl()
     {
       InitializeComponent();

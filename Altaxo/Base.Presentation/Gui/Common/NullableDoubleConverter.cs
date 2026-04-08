@@ -28,14 +28,29 @@ using System.Windows.Data;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// Converts nullable <see cref="double"/> values to and from their string representation and validates the entered text.
+  /// </summary>
   public class NullableDoubleConverter : ValidationRule, IValueConverter
   {
+    /// <summary>
+    /// Gets or sets a value indicating whether infinite values are accepted.
+    /// </summary>
     public bool AllowInfiniteValues { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether NaN values are accepted.
+    /// </summary>
     public bool AllowNaNValues { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether zero is rejected.
+    /// </summary>
     public bool DisallowZeroValues { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether negative values are rejected.
+    /// </summary>
     public bool DisallowNegativeValues
     {
       get
@@ -52,16 +67,34 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <summary>
+    /// Stores the configured minimum value.
+    /// </summary>
     public double _minValue = double.NegativeInfinity;
 
+    /// <summary>
+    /// Gets or sets the minimum allowed value.
+    /// </summary>
     public double MinValue { get { return _minValue; } set { _minValue = value; } }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the minimum value is inclusive.
+    /// </summary>
     public bool IsMinValueInclusive { get; set; }
 
+    /// <summary>
+    /// Stores the configured maximum value.
+    /// </summary>
     public double _maxValue = double.PositiveInfinity;
 
+    /// <summary>
+    /// Gets or sets the maximum allowed value.
+    /// </summary>
     public double MaxValue { get { return _maxValue; } set { _maxValue = value; } }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the maximum value is inclusive.
+    /// </summary>
     public bool IsMaxValueInclusive { get; set; }
 
     private System.Globalization.CultureInfo _conversionCulture = Altaxo.Settings.GuiCulture.Instance;
@@ -69,10 +102,14 @@ namespace Altaxo.Gui.Common
     private string? _lastConvertedString;
     private double? _lastConvertedValue;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NullableDoubleConverter"/> class.
+    /// </summary>
     public NullableDoubleConverter()
     {
     }
 
+    /// <inheritdoc/>
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo cultureDontUseIsBuggy)
     {
       var val = (double?)value;
@@ -87,6 +124,7 @@ namespace Altaxo.Gui.Common
       return _lastConvertedString;
     }
 
+    /// <inheritdoc/>
     public object? ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo cultureDontUseIsBuggy)
     {
       var validationResult = ConvertAndValidate(value, out var result);
@@ -98,6 +136,7 @@ namespace Altaxo.Gui.Common
       return result;
     }
 
+    /// <inheritdoc/>
     public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureDontUseIsBuggy)
     {
       var validationResult = ConvertAndValidate(value, out var result);

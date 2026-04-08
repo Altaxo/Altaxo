@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Serialization.Ascii
   /// </summary>
   public partial class AsciiExportOptionsControl : UserControl, IAsciiExportOptionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AsciiExportOptionsControl"/> class.
+    /// </summary>
     public AsciiExportOptionsControl()
     {
       InitializeComponent();

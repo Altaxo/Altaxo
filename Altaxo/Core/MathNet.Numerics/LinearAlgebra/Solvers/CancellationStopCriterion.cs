@@ -86,6 +86,9 @@ namespace Altaxo.Calc.LinearAlgebra.Solvers
       get => _currentTcs.Token.IsCancellationRequested ? IterationStatus.Cancelled : IterationStatus.Continue;
     }
 
+    /// <summary>
+    /// Cancels the current iteration process.
+    /// </summary>
     public void Cancel()
     {
       _currentTcs.Cancel();

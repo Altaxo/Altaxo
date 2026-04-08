@@ -45,10 +45,19 @@ namespace Altaxo.Gui.Drawing.D3D
   /// </summary>
   public partial class MaterialComboBox : ColorComboBoxBase
   {
+    /// <summary>
+    /// Identifies the <see cref="SelectedMaterial"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty SelectedMaterialProperty;
 
+    /// <summary>
+    /// Identifies the <see cref="IsNoMaterialAllowed"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty IsNoMaterialAllowedProperty;
 
+    /// <summary>
+    /// Occurs when the selected material changes.
+    /// </summary>
     public event DependencyPropertyChangedEventHandler? SelectedMaterialChanged;
 
     private List<IMaterial> _lastLocalUsedItems = new List<IMaterial>();
@@ -75,6 +84,9 @@ namespace Altaxo.Gui.Drawing.D3D
         new FrameworkPropertyMetadata((false), EhIsNoMaterialAllowedChanged));
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MaterialComboBox"/> class.
+    /// </summary>
     public MaterialComboBox()
     {
       UpdateTreeViewTreeNodes();
@@ -90,10 +102,13 @@ namespace Altaxo.Gui.Drawing.D3D
 
     #region Implementation of abstract base class members
 
+    /// <inheritdoc/>
     protected override TreeView GuiTreeView { get { return _treeView; } }
 
+    /// <inheritdoc/>
     protected override ComboBox GuiComboBox { get { return _guiComboBox; } }
 
+    /// <inheritdoc/>
     protected override NamedColor InternalSelectedColor
     {
       get
@@ -112,6 +127,9 @@ namespace Altaxo.Gui.Drawing.D3D
 
     #region IsNoMaterialAllowed
 
+    /// <summary>
+    /// Gets or sets a value indicating whether selecting no material is allowed.
+    /// </summary>
     public bool IsNoMaterialAllowed
     {
       get
@@ -129,6 +147,11 @@ namespace Altaxo.Gui.Drawing.D3D
       ((MaterialComboBox)obj).OnIsNoMaterialAllowedChanged(obj, args);
     }
 
+    /// <summary>
+    /// Handles a change of the <see cref="IsNoMaterialAllowed"/> property.
+    /// </summary>
+    /// <param name="obj">The dependency object.</param>
+    /// <param name="args">The property change arguments.</param>
     protected virtual void OnIsNoMaterialAllowedChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
       UpdateComboBoxSourceSelection(SelectedMaterial);
@@ -140,6 +163,9 @@ namespace Altaxo.Gui.Drawing.D3D
 
     /// <summary>
     /// Gets/sets the selected material.
+    /// </summary>
+    /// <summary>
+    /// Gets or sets the selected material.
     /// </summary>
     public IMaterial SelectedMaterial
     {
@@ -182,6 +208,12 @@ namespace Altaxo.Gui.Drawing.D3D
       return thiss.InternalSelectedMaterialCoerce(obj, (IMaterial)coerceValue);
     }
 
+    /// <summary>
+    /// Coerces the internal selected material.
+    /// </summary>
+    /// <param name="obj">The dependency object.</param>
+    /// <param name="material">The candidate material.</param>
+    /// <returns>The coerced material.</returns>
     protected virtual IMaterial InternalSelectedMaterialCoerce(DependencyObject obj, IMaterial material)
     {
       if (material is null)
@@ -205,6 +237,11 @@ namespace Altaxo.Gui.Drawing.D3D
       ((MaterialComboBox)obj).OnSelectedMaterialChanged(obj, args);
     }
 
+    /// <summary>
+    /// Handles a change of the selected material.
+    /// </summary>
+    /// <param name="obj">The dependency object.</param>
+    /// <param name="args">The property change arguments.</param>
     protected virtual void OnSelectedMaterialChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
       var oldMaterial = (IMaterial)args.OldValue;
@@ -233,6 +270,9 @@ namespace Altaxo.Gui.Drawing.D3D
         SelectedMaterialChanged(obj, args);
     }
 
+    /// <summary>
+    /// Identifies the <see cref="CustomPenCommand"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty CustomPenCommandProperty =
       DependencyProperty.RegisterAttached(
         nameof(CustomPenCommand),
@@ -241,6 +281,9 @@ namespace Altaxo.Gui.Drawing.D3D
         new FrameworkPropertyMetadata(OnCustomPenCommandChanged)
         );
 
+    /// <summary>
+    /// Gets or sets the custom-pen command.
+    /// </summary>
     public ICommand CustomPenCommand
     {
       get
@@ -253,6 +296,11 @@ namespace Altaxo.Gui.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Handles changes of the <see cref="CustomPenCommand"/> property.
+    /// </summary>
+    /// <param name="obj">The dependency object.</param>
+    /// <param name="args">The property change arguments.</param>
     protected static void OnCustomPenCommandChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
       var thiss = (MaterialComboBox)obj;
@@ -286,6 +334,12 @@ namespace Altaxo.Gui.Drawing.D3D
     private List<object> _comboBoxSeparator1 = new List<object> { new Separator() { Name = "ThisIsASeparatorForTheComboBox", Tag = "Last used materials" } };
     private List<object> _comboBoxSeparator2 = new List<object> { new Separator() { Name = "ThisIsASeparatorForTheComboBox", Tag = "Color set" } };
 
+    /// <summary>
+    /// Fills the combo box with items matching the current filter.
+    /// </summary>
+    /// <param name="filterString">The filter string.</param>
+    /// <param name="onlyIfItemsRemaining">If set to <c>true</c>, updates only when items remain after filtering.</param>
+    /// <returns><c>true</c> if the combo box was updated; otherwise, <c>false</c>.</returns>
     protected override bool FillComboBoxWithFilteredItems(string filterString, bool onlyIfItemsRemaining)
     {
       List<object> lastUsed;
@@ -321,6 +375,13 @@ namespace Altaxo.Gui.Drawing.D3D
       return false;
     }
 
+    /// <summary>
+    /// Creates a filtered list of materials from the specified named colors.
+    /// </summary>
+    /// <param name="originalList">The source colors.</param>
+    /// <param name="materialTemplate">The template material used to create the filtered materials.</param>
+    /// <param name="filterString">The prefix used to filter the color names.</param>
+    /// <returns>The filtered list of materials.</returns>
     protected static List<object> GetFilteredList(IReadOnlyList<NamedColor> originalList, MaterialWithUniformColor materialTemplate, string filterString)
     {
       var result = new List<object>();
@@ -334,6 +395,13 @@ namespace Altaxo.Gui.Drawing.D3D
       return result;
     }
 
+    /// <summary>
+    /// Creates a filtered list of materials from the specified source collection.
+    /// </summary>
+    /// <param name="originalList">The source materials.</param>
+    /// <param name="filterString">The prefix used to filter the material names.</param>
+    /// <param name="showPlotColorsOnly">If set to <see langword="true"/>, only plot colors are included.</param>
+    /// <returns>The filtered list of materials.</returns>
     protected static List<object> GetFilteredList(IReadOnlyList<IMaterial> originalList, string filterString, bool showPlotColorsOnly)
     {
       var result = new List<object>();
@@ -362,6 +430,11 @@ namespace Altaxo.Gui.Drawing.D3D
     {
     }
 
+    /// <summary>
+    /// Handles closing of the combo-box drop-down.
+    /// </summary>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The event arguments.</param>
     protected void EhComboBox_DropDownClosed(object sender, EventArgs e)
     {
       if (_filterString.Length > 0)
@@ -404,6 +477,11 @@ namespace Altaxo.Gui.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Shows the custom-color dialog.
+    /// </summary>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The event arguments.</param>
     protected void EhShowCustomColorDialog(object sender, RoutedEventArgs e)
     {
       if (base.InternalShowCustomColorDialog(sender, out var newColor))
@@ -413,6 +491,11 @@ namespace Altaxo.Gui.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Chooses the opacity from the context menu.
+    /// </summary>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The event arguments.</param>
     protected void EhChooseOpacityFromContextMenu(object sender, RoutedEventArgs e)
     {
       if (base.InternalChooseOpacityFromContextMenu(sender, out var newColor))

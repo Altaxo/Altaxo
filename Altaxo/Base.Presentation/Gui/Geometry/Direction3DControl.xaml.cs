@@ -49,13 +49,22 @@ namespace Altaxo.Gui.Geometry
 
     private GuiChangeLocker _lock;
 
+    /// <summary>
+    /// Occurs when <see cref="SelectedValue"/> changes.
+    /// </summary>
     public event EventHandler? SelectedValueChanged;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Direction3DControl"/> class.
+    /// </summary>
     public Direction3DControl()
     {
       InitializeComponent();
     }
 
+    /// <summary>
+    /// Gets or sets the selected direction.
+    /// </summary>
     public VectorD3D SelectedValue
     {
       get

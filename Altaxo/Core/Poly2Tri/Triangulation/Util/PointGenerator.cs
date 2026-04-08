@@ -34,10 +34,19 @@ using System.Collections.Generic;
 
 namespace Poly2Tri
 {
+  /// <summary>
+  /// Provides helper methods for generating point sets for triangulation.
+  /// </summary>
   public class PointGenerator
   {
     private static readonly Random RNG = new Random();
 
+    /// <summary>
+    /// Generates points with a uniform random distribution inside a square centered at the origin.
+    /// </summary>
+    /// <param name="n">The number of points to generate.</param>
+    /// <param name="scale">The width and height of the square.</param>
+    /// <returns>The generated points.</returns>
     public static List<TriangulationPoint> UniformDistribution(int n, double scale)
     {
       var points = new List<TriangulationPoint>();
@@ -46,6 +55,12 @@ namespace Poly2Tri
       return points;
     }
 
+    /// <summary>
+    /// Generates a uniform grid of points inside a square centered at the origin.
+    /// </summary>
+    /// <param name="n">The number of grid divisions per axis.</param>
+    /// <param name="scale">The width and height of the square.</param>
+    /// <returns>The generated grid points.</returns>
     public static List<TriangulationPoint> UniformGrid(int n, double scale)
     {
       double x = 0;

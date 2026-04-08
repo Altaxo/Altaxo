@@ -34,6 +34,9 @@ using Altaxo.Calc.Statistics;
 
 namespace Altaxo.Calc.Financial
 {
+  /// <summary>
+  /// Provides absolute risk measures for sequences of financial returns.
+  /// </summary>
   public static class AbsoluteRiskMeasures
   {
     // Note: The following statistics would be considered an absolute risk statistic in the finance realm as well.
@@ -47,6 +50,8 @@ namespace Altaxo.Calc.Financial
     /// and measures the variation of only the gain periods around the gain mean. Measures the volatility of upside performance.
     /// © Copyright 1996, 1999 Gary L.Gastineau. First Edition. © 1992 Swiss Bank Corporation.
     /// </summary>
+    /// <param name="data">The sequence of periodic returns.</param>
+    /// <returns>The standard deviation of all non-negative returns.</returns>
     public static double GainStandardDeviation(this IEnumerable<double> data)
     {
       if (data == null)
@@ -62,6 +67,8 @@ namespace Altaxo.Calc.Financial
     /// measures the variation of only the losing periods around this loss mean. This statistic measures the volatility of downside performance.
     /// </summary>
     /// <remarks>http://www.offshore-library.com/kb/statistics.php</remarks>
+    /// <param name="data">The sequence of periodic returns.</param>
+    /// <returns>The standard deviation of all negative returns.</returns>
     public static double LossStandardDeviation(this IEnumerable<double> data)
     {
       if (data == null)
@@ -79,6 +86,9 @@ namespace Altaxo.Calc.Financial
     /// 7%. (The loss standard deviation, on the other hand, would take only losing periods, calculate an average return for
     /// the losing periods, and then measure the variation between each losing return and the losing return average).
     /// </summary>
+    /// <param name="data">The sequence of periodic returns.</param>
+    /// <param name="minimalAcceptableReturn">The minimum acceptable return threshold.</param>
+    /// <returns>The standard deviation of returns below <paramref name="minimalAcceptableReturn"/>.</returns>
     public static double DownsideDeviation(this IEnumerable<double> data, double minimalAcceptableReturn)
     {
       if (data == null)
@@ -93,6 +103,8 @@ namespace Altaxo.Calc.Financial
     /// A measure of volatility in returns below the mean. It's similar to standard deviation, but it only
     /// looks at periods where the investment return was less than average return.
     /// </summary>
+    /// <param name="data">The sequence of periodic returns.</param>
+    /// <returns>The standard deviation of returns below the sample mean.</returns>
     public static double SemiDeviation(this IEnumerable<double> data)
     {
       if (data == null)
@@ -109,6 +121,8 @@ namespace Altaxo.Calc.Financial
     /// Measures a fund’s average gain in a gain period divided by the fund’s average loss in a losing
     /// period. Periods can be monthly or quarterly depending on the data frequency.
     /// </summary>
+    /// <param name="data">The sequence of periodic returns.</param>
+    /// <returns>The absolute ratio of mean gains to mean losses.</returns>
     public static double GainLossRatio(this IEnumerable<double> data)
     {
       if (data == null)

@@ -57,6 +57,12 @@ namespace Altaxo.Com
       _output = new System.IO.StreamWriter(_fullFileName);
     }
 
+    /// <summary>
+    /// Reports a log entry with the specified severity level.
+    /// </summary>
+    /// <param name="level">The severity level.</param>
+    /// <param name="format">The composite format string.</param>
+    /// <param name="args">The format arguments.</param>
     [Conditional("COMLOGGING")]
     public static void Report(string level, string format, params object[] args)
     {

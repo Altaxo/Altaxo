@@ -36,6 +36,9 @@ namespace Altaxo.Units
   {
     private string _name;
     private string _shortCut;
+    /// <summary>
+    /// Stores the divisor used to convert between relative and absolute values.
+    /// </summary>
     protected double _divider;
     private DimensionfulQuantity _referenceQuantity;
 

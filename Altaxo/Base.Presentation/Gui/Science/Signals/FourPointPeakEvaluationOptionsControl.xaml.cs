@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Science.Signals
   /// </summary>
   public partial class FourPointPeakEvaluationOptionsControl : UserControl, IFourPointPeakEvaluationOptionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FourPointPeakEvaluationOptionsControl"/> class.
+    /// </summary>
     public FourPointPeakEvaluationOptionsControl()
     {
       InitializeComponent();

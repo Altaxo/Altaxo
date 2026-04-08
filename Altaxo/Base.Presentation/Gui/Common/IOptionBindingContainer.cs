@@ -25,6 +25,10 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public interface IOptionBindingContainer
   {
+    /// <summary>
+    /// Adds the specified option binding to the container.
+    /// </summary>
+    /// <param name="binding">The binding to add.</param>
     void AddBinding(OptionBinding binding);
   }
 }

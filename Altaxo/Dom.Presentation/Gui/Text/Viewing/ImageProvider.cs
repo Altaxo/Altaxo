@@ -39,11 +39,20 @@ using Markdig.Renderers;
 
 namespace Altaxo.Gui.Text.Viewing
 {
+  /// <summary>
+  /// Provides inline images for the markdown text viewer.
+  /// </summary>
   public class ImageProvider : Markdig.Renderers.WpfImageProviderBase
   {
+    /// <summary>
+    /// The default target resolution used for rendered images.
+    /// </summary>
     public const double DefaultTargetResolution = 96;
     private double _targetResolution = DefaultTargetResolution;
 
+    /// <summary>
+    /// Gets or sets the target resolution used for rendered images.
+    /// </summary>
     public double TargetResolution
     {
       get
@@ -72,6 +81,11 @@ namespace Altaxo.Gui.Text.Viewing
     /// </summary>
     public IReadOnlyDictionary<string, MemoryStreamImageProxy> LocalImages { get; protected set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ImageProvider"/> class.
+    /// </summary>
+    /// <param name="folder">The Altaxo folder used as the base for relative image paths.</param>
+    /// <param name="localImages">The local image collection available to the document.</param>
     public ImageProvider(string folder, IReadOnlyDictionary<string, MemoryStreamImageProxy> localImages)
     {
       if (!Altaxo.Main.ProjectFolder.IsValidFolderName(folder))
@@ -80,6 +94,7 @@ namespace Altaxo.Gui.Text.Viewing
       LocalImages = localImages;
     }
 
+    /// <inheritdoc/>
     public override Inline GetInlineItem(string url, out bool inlineItemIsErrorMessage)
     {
       // There are two peculiarities when it comes to creating images from a stream (especially: from a MemoryStream)
@@ -279,13 +294,18 @@ namespace Altaxo.Gui.Text.Viewing
     private long _lastUsn;
     private UrlCollector _lastCollectedUrls;
 
+    /// <summary>
+    /// Occurs when the set of referenced image URLs changes.
+    /// </summary>
     public Action<ICollection<(string url, int spanStart, int spanEnd)>> ReferencedImageUrlsChanged;
 
+    /// <inheritdoc/>
     public override IUrlCollector CreateUrlCollector()
     {
       return new UrlCollector();
     }
 
+    /// <inheritdoc/>
     public override void UpdateUrlCollector(IUrlCollector collector, long updateSequenceNumber)
     {
       bool wasUpdated = false;

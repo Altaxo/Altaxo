@@ -65,9 +65,24 @@ namespace Altaxo.Calc.Probability
   /// </code></remarks>
   public class GammaDistribution : ContinuousDistribution // , public ExponentialDistribution
   {
+    /// <summary>
+    /// Stores the normal distribution used by the gamma random-number generator.
+    /// </summary>
     protected NormalDistribution normalDistribution;
+
+    /// <summary>
+    /// Stores the exponential distribution used by the gamma random-number generator.
+    /// </summary>
     protected ExponentialDistribution exponentialDistribution;
+
+    /// <summary>
+    /// Stores the distribution parameters and helper values used during random number generation.
+    /// </summary>
     protected double alpha, theta, _invTheta, s, s2, d, r, q0, b, si, c, scale;
+
+    /// <summary>
+    /// Stores whether algorithm GD is used for the current parameter set.
+    /// </summary>
     protected bool algorithmGD;
 
     /// <summary>

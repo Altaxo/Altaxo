@@ -44,6 +44,9 @@ namespace Altaxo.Gui.Common.BasicTypes
   /// </summary>
   public partial class IntegerValueControl : UserControl, IIntegerValueView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IntegerValueControl"/> class.
+    /// </summary>
     public IntegerValueControl()
     {
       InitializeComponent();

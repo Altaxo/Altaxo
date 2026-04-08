@@ -29,13 +29,11 @@ using Altaxo.AddInItems;
 namespace Altaxo.Main.Commands
 {
   /// <summary>
-  /// This helps in conditions where the number of selected data columns cares.
-  /// Valid values are all (all columns must be selected, none (no column must be selected),
-  /// one (exactly one column must be selected), any (one or more columns must be selected),
-  /// or the number of columns.
+  /// Evaluates conditions based on the formats currently available on the clipboard.
   /// </summary>
   public class ClipboardContentConditionEvaluator : IConditionEvaluator
   {
+    /// <inheritdoc/>
     public bool IsValid(object caller, Condition condition)
     {
       string expectedcontent = condition.Properties["content"].ToLower();

@@ -57,6 +57,9 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <summary>The order of the polynomial with negative exponents.</summary>
     private readonly int _numberOfTerms;
 
+    /// <summary>
+    /// The number of parameters used for one peak term.
+    /// </summary>
     public const int NumberOfParametersPerPeak = 4;
     private const string ParameterBaseName0 = "a";
     private const string ParameterBaseName1 = "xc";
@@ -120,6 +123,10 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     }
 
 
+    /// <summary>
+    /// Creates a fit function with one shifted log-normal peak and no baseline.
+    /// </summary>
+    /// <returns>The fit function.</returns>
     [FitFunctionCreator("Shifted Log-Normal (NIST)", "Peaks", 1, 1, 4)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Peaks.ShiftedLogNormalParametrizationNIST}")]
     public static IFitFunction Create_1_M1()
@@ -319,6 +326,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     }
 
 
+    /// <inheritdoc/>
     public IVarianceScaling? DefaultVarianceScaling(int i)
     {
       return null;

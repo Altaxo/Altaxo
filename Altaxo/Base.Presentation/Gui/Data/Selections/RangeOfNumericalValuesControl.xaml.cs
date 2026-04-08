@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Data.Selections
   /// </summary>
   public partial class RangeOfNumericalValuesControl : UserControl, IRangeOfNumericalValuesView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RangeOfNumericalValuesControl"/> class.
+    /// </summary>
     public RangeOfNumericalValuesControl()
     {
       InitializeComponent();

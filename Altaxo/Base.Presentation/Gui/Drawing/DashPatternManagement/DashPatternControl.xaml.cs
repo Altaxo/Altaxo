@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
   /// </summary>
   public partial class DashPatternControl : UserControl, IDashPatternView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DashPatternControl"/> class.
+    /// </summary>
     public DashPatternControl()
     {
       InitializeComponent();

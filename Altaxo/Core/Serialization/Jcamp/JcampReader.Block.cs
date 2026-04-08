@@ -40,11 +40,34 @@ namespace Altaxo.Serialization.Jcamp
     /// </summary>
     public class Block
     {
+      /// <summary>
+      /// Stores the first X value parsed from the block header.
+      /// </summary>
       protected double _xFirst = double.NaN;
+
+      /// <summary>
+      /// Stores the last X value parsed from the block header.
+      /// </summary>
       protected double _xLast = double.NaN;
+
+      /// <summary>
+      /// Stores the X increment parsed from the block header.
+      /// </summary>
       protected double _xInc = double.NaN;
+
+      /// <summary>
+      /// Stores the X scale factor parsed from the block header.
+      /// </summary>
       protected double _xScale = double.NaN;
+
+      /// <summary>
+      /// Stores the Y scale factor parsed from the block header.
+      /// </summary>
       protected double _yScale = double.NaN;
+
+      /// <summary>
+      /// Stores the number of points parsed from the block header.
+      /// </summary>
       public int? _numberOfPoints = null;
 
 

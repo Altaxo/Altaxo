@@ -35,11 +35,15 @@ namespace Altaxo.Gui.Data
   /// </summary>
   public partial class DataTableTransposeOptionsControl : UserControl, IDataTableTransposeOptionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DataTableTransposeOptionsControl"/> class.
+    /// </summary>
     public DataTableTransposeOptionsControl()
     {
       InitializeComponent();
     }
 
+    /// <inheritdoc/>
     public string ColumnNamingPreString
     {
       get
@@ -53,9 +57,7 @@ namespace Altaxo.Gui.Data
       }
     }
 
-    /// <summary>
-    /// Get/sets the number of data columns that are moved to the property columns before transposing the data columns.
-    /// </summary>
+    /// <inheritdoc/>
     public int DataColumnsMoveToPropertyColumns
     {
       get { return _ctrlNumMovedDataCols.Value; }
@@ -65,9 +67,7 @@ namespace Altaxo.Gui.Data
       }
     }
 
-    /// <summary>
-    /// Get/sets the number of property columns that are moved after transposing the data columns to the data columns collection.
-    /// </summary>
+    /// <inheritdoc/>
     public int PropertyColumnsMoveToDataColumns
     {
       get { return _ctrlNumMovedPropCols.Value; }
@@ -77,6 +77,7 @@ namespace Altaxo.Gui.Data
       }
     }
 
+    /// <inheritdoc/>
     public bool StoreDataColumnNamesInFirstDataColumn
     {
       get
@@ -90,6 +91,7 @@ namespace Altaxo.Gui.Data
       }
     }
 
+    /// <inheritdoc/>
     public bool UseFirstDataColumnForColumnNaming
     {
       get

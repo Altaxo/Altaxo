@@ -33,15 +33,28 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Common.Drawing
 {
+  /// <summary>
+  /// ComboBox base class that provides image support for its items.
+  /// </summary>
   public class ImageComboBox : ComboBox
   {
     private static double _standardHeight;
+
+    /// <summary>
+    /// Relative width factor used for images rendered in the control.
+    /// </summary>
     protected double _relativeImageWidth = 1;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ImageComboBox"/> class.
+    /// </summary>
     public ImageComboBox()
     {
     }
 
+    /// <summary>
+    /// Gets the standard item height used for image rendering.
+    /// </summary>
     public static double StandardHeight
     {
       get
@@ -50,6 +63,9 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <summary>
+    /// Gets or sets the relative width of the rendered image.
+    /// </summary>
     public double RelativeImageWidth
     {
       get
@@ -62,6 +78,7 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <inheritdoc/>
     protected override Size MeasureOverride(Size constraint)
     {
       var result = base.MeasureOverride(constraint);
@@ -69,6 +86,7 @@ namespace Altaxo.Gui.Common.Drawing
       return result;
     }
 
+    /// <inheritdoc/>
     protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
     {
       if (_standardHeight == 0)
@@ -77,11 +95,21 @@ namespace Altaxo.Gui.Common.Drawing
       base.OnRenderSizeChanged(sizeInfo);
     }
 
+    /// <summary>
+    /// Gets the image representation for the specified item.
+    /// </summary>
+    /// <param name="item">The item to visualize.</param>
+    /// <returns>The image representation, or <see langword="null"/> if no image is available.</returns>
     public virtual ImageSource GetItemImage(object item)
     {
       return null;
     }
 
+    /// <summary>
+    /// Gets the text representation for the specified item.
+    /// </summary>
+    /// <param name="item">The item to describe.</param>
+    /// <returns>The text representation.</returns>
     public virtual string GetItemText(object item)
     {
       return string.Empty;

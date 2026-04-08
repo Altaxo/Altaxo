@@ -40,15 +40,25 @@ namespace Altaxo.Gui.Worksheet.Viewing
   {
     private WorksheetController _guiController;
 
+    /// <summary>
+    /// Hosts the worksheet drawing visual.
+    /// </summary>
     protected VisualHost _visualHost;
+
+    /// <summary>
+    /// Hosts the in-place cell editor.
+    /// </summary>
     protected TextBox _cellEditControl;
 
     #region Cell edit
 
+    /// <inheritdoc/>
     public event Action? CellEdit_LostFocus;
 
+    /// <inheritdoc/>
     public event Action<AltaxoKeyboardKey, HandledEventArgs>? CellEdit_PreviewKeyPressed;
 
+    /// <inheritdoc/>
     public event Action? CellEdit_TextChanged;
 
 #pragma warning disable CS0414 // Remove unread private members
@@ -77,6 +87,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
       Canvas.Children.Add(_cellEditControl);
     }
 
+    /// <inheritdoc/>
     public int CellEdit_SelectionStart
     {
       get
@@ -89,6 +100,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
       }
     }
 
+    /// <inheritdoc/>
     public int CellEdit_SelectionLength
     {
       get
@@ -101,26 +113,31 @@ namespace Altaxo.Gui.Worksheet.Viewing
       }
     }
 
+    /// <inheritdoc/>
     public void CellEdit_Cut()
     {
       _cellEditControl.Cut();
     }
 
+    /// <inheritdoc/>
     public void CellEdit_Copy()
     {
       _cellEditControl.Copy();
     }
 
+    /// <inheritdoc/>
     public void CellEdit_Paste()
     {
       _cellEditControl.Paste();
     }
 
+    /// <inheritdoc/>
     public void CellEdit_Clear()
     {
       _cellEditControl.Clear();
     }
 
+    /// <inheritdoc/>
     public string CellEdit_Text
     {
       get
@@ -133,6 +150,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
       }
     }
 
+    /// <inheritdoc/>
     public void CellEdit_Hide()
     {
       _cellEditControl.Visibility = Visibility.Hidden;
@@ -140,6 +158,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
       Canvas.Focus();
     }
 
+    /// <inheritdoc/>
     public void CellEdit_Show()
     {
       if (!Canvas.Children.Contains(_cellEditControl))
@@ -149,12 +168,14 @@ namespace Altaxo.Gui.Worksheet.Viewing
       _cellEdit_IsArmed = true;
     }
 
+    /// <inheritdoc/>
     public void CellEdit_SetTextAlignmentAndSelectAll(bool textAlignmentRight)
     {
       _cellEditControl.TextAlignment = textAlignmentRight ? TextAlignment.Right : TextAlignment.Left;
       _cellEditControl.SelectAll();
     }
 
+    /// <inheritdoc/>
     public RectangleD2D CellEdit_Location
     {
       set
@@ -170,11 +191,13 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     #region Cursor
 
+    /// <inheritdoc/>
     public void Cursor_SetToArrow()
     {
       TableAreaCursor = Cursors.Arrow;
     }
 
+    /// <inheritdoc/>
     public void Cursor_SetToResizeWestEast()
     {
       TableAreaCursor = Cursors.SizeWE;
@@ -182,6 +205,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     #endregion Cursor
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WorksheetViewWpf"/> class.
+    /// </summary>
     public WorksheetViewWpf()
     {
       InitializeComponent();
@@ -189,6 +215,10 @@ namespace Altaxo.Gui.Worksheet.Viewing
       InitializeCellEditControl();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WorksheetViewWpf"/> class.
+    /// </summary>
+    /// <param name="createController">A factory that can create the worksheet controller.</param>
     public WorksheetViewWpf(Func<Altaxo.Gui.Worksheet.Viewing.IWorksheetController, WorksheetViewWpf, WorksheetController> createController)
     {
       if (createController is null)
@@ -201,6 +231,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     #region Altaxo.Gui.Worksheet.Viewing.IWorksheetView
 
+    /// <inheritdoc/>
     public IWorksheetController Controller
     {
       set
@@ -221,16 +252,23 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     #region Functions called from GuiController
 
+    /// <summary>
+    /// Gets the main worksheet canvas.
+    /// </summary>
     public Canvas Canvas
     {
       get { return _worksheetPanel; }
     }
 
+    /// <summary>
+    /// Gets the lower worksheet canvas.
+    /// </summary>
     public Canvas LowerCanvas
     {
       get { return _lowerPanel; }
     }
 
+    /// <inheritdoc/>
     public PointD2D TableArea_Size
     {
       get
@@ -239,6 +277,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
       }
     }
 
+    /// <summary>
+    /// Gets or sets the horizontal scroll value of the table view.
+    /// </summary>
     public double TableViewHorzScrollValue
     {
       get
@@ -251,6 +292,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
       }
     }
 
+    /// <inheritdoc/>
     public double TableViewHorzViewPortSize
     {
       set
@@ -259,6 +301,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
       }
     }
 
+    /// <summary>
+    /// Gets or sets the vertical scroll value of the table view.
+    /// </summary>
     public double TableViewVertScrollValue
     {
       get
@@ -271,6 +316,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
       }
     }
 
+    /// <inheritdoc/>
     public double TableViewVertViewPortSize
     {
       set
@@ -279,6 +325,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
       }
     }
 
+    /// <summary>
+    /// Gets or sets the maximum horizontal scroll value of the table view.
+    /// </summary>
     public double TableViewHorzScrollMaximum
     {
       get
@@ -294,6 +343,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
       }
     }
 
+    /// <summary>
+    /// Gets or sets the maximum vertical scroll value of the table view.
+    /// </summary>
     public double TableViewVertScrollMaximum
     {
       get
@@ -309,6 +361,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
       }
     }
 
+    /// <inheritdoc/>
     public bool TableArea_IsCaptured
     {
       get { return _worksheetPanel.IsMouseCaptured; }
@@ -324,6 +377,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
       }
     }
 
+    /// <summary>
+    /// Gets or sets the cursor used for the worksheet table area.
+    /// </summary>
     public Cursor TableAreaCursor
     {
       get { return _worksheetPanel.Cursor; }
@@ -343,11 +399,16 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     #region Event handlers
 
+    /// <inheritdoc/>
     public void TableArea_TriggerRedrawing()
     {
       _visualHost.InvalidateDrawing();
     }
 
+    /// <summary>
+    /// Repaints the worksheet table area.
+    /// </summary>
+    /// <param name="unused">The drawing context argument supplied by the visual host.</param>
     public void EhView_TableAreaPaint(DrawingContext unused)
     {
       if (Canvas is null || _guiController is null || _guiController.DataTable is null)

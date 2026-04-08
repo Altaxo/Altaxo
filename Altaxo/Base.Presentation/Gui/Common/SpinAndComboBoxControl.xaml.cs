@@ -36,6 +36,9 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public partial class SpinAndComboBoxControl : UserControl, IIntegerAndComboBoxView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SpinAndComboBoxControl"/> class.
+    /// </summary>
     public SpinAndComboBoxControl()
     {
       InitializeComponent();
@@ -55,10 +58,13 @@ namespace Altaxo.Gui.Common
 
     #region IIntegerAndComboBoxView
 
+    /// <inheritdoc/>
     public event Action<Collections.SelectableListNode>? ComboBoxSelectionChanged;
 
+    /// <inheritdoc/>
     public event Action<int>? IntegerSelectionChanged;
 
+    /// <inheritdoc/>
     public void ComboBox_Initialize(Collections.SelectableListNodeList items, Collections.SelectableListNode defaultItem)
     {
       _cbComboBox.ItemsSource = null;
@@ -66,11 +72,13 @@ namespace Altaxo.Gui.Common
       _cbComboBox.SelectedItem = defaultItem;
     }
 
+    /// <inheritdoc/>
     public void ComboBoxLabel_Initialize(string text)
     {
       _lblComboBoxLabel.Content = text;
     }
 
+    /// <inheritdoc/>
     public void IntegerEdit_Initialize(int min, int max, int val)
     {
       _edIntegerUpDown.Minimum = min;
@@ -78,6 +86,7 @@ namespace Altaxo.Gui.Common
       _edIntegerUpDown.Value = val;
     }
 
+    /// <inheritdoc/>
     public void IntegerLabel_Initialize(string text)
     {
       _lblIntegerLabel.Content = text;

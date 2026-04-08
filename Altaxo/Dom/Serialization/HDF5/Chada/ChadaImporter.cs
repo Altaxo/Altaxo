@@ -33,6 +33,9 @@ using PureHDF.VOL.Native;
 
 namespace Altaxo.Serialization.HDF5.Chada
 {
+  /// <summary>
+  /// Imports CHADA files.
+  /// </summary>
   public record ChadaImporter : DataFileImporterBase
   {
     /// <inheritdoc/>
@@ -84,9 +87,7 @@ namespace Altaxo.Serialization.HDF5.Chada
 
 
 
-    /// <summary>
-    /// Import a Chada file. Chada files are very simply structured HDF5 files, with only one or two datasets, consisting of two columns.
-    /// </summary>
+    /// <inheritdoc/>
     public override string? Import(IReadOnlyList<string> fileNames, DataTable dataTable, object importOptionsObj, bool attachDataSource = true)
     {
       var stb = new StringBuilder();
@@ -103,7 +104,7 @@ namespace Altaxo.Serialization.HDF5.Chada
     }
 
     /// <summary>
-    /// Imports a single RamanChada file.
+    /// Imports a single Raman CHADA file.
     /// </summary>
     /// <param name="fileName">Name of the file.</param>
     /// <param name="dataTable">The data table to write the data to.</param>
@@ -118,15 +119,15 @@ namespace Altaxo.Serialization.HDF5.Chada
 
 
     /// <summary>
-    /// Imports a RamanChada file (aware of importing multiple files in one table).
+    /// Imports a Raman CHADA file while supporting import of multiple files into one table.
     /// </summary>
     /// <param name="fileName">Name of the file to read from.</param>
     /// <param name="dataTable">The data table to write the data to.</param>
     /// <param name="totalNumberOfFiles">The total number of files in this import.</param>
     /// <param name="lastXColumn">The last x column. Can be null. At the first call to this function, the value should be null. Subsequent calls should provide the value returned from the previous call.</param>
     /// <param name="lastGroupNumber">The last group number. At the first call to this function, the value should be -1.  Subsequent calls should provide the value returned from the previous call.</param>
-    /// <param name="lastNumberOfY">The last number of the y-column. At the first call to this function, the value should be -1.  Subsequent calls should provide the value returned from the previous call.</param>
-    /// <returns>Null if successful; otherwise the error message.</returns>
+    /// <param name="lastNumberOfY">The last number of the Y column. At the first call to this function, the value should be -1. Subsequent calls should provide the value returned from the previous call.</param>
+    /// <returns><see langword="null"/> if successful; otherwise, the error message.</returns>
     protected static string? ImportRamanCHADA(string fileName, DataTable dataTable, int totalNumberOfFiles, ref DataColumn? lastXColumn, ref int lastGroupNumber, ref int lastNumberOfY)
     {
       var file = H5File.OpenRead(fileName);

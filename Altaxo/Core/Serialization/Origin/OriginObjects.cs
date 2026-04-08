@@ -90,15 +90,34 @@ namespace Altaxo.Serialization.Origin
   /// <summary>Type of value contained in a column or axis.</summary>
   public enum ValueType
   {
+    /// <summary>Numeric values.</summary>
     Numeric = 0,
+
+    /// <summary>Text values.</summary>
     Text = 1,
+
+    /// <summary>Time values.</summary>
     Time = 2,
+
+    /// <summary>Date values.</summary>
     Date = 3,
+
+    /// <summary>Month values.</summary>
     Month = 4,
+
+    /// <summary>Day values.</summary>
     Day = 5,
+
+    /// <summary>Column heading values.</summary>
     ColumnHeading = 6,
+
+    /// <summary>Tick labels indexed by a data set.</summary>
     TickIndexedDataset = 7,
+
+    /// <summary>Values containing both text and numeric content.</summary>
     TextNumeric = 9,
+
+    /// <summary>Categorical values.</summary>
     Categorical = 10
   };
 
@@ -124,22 +143,44 @@ namespace Altaxo.Serialization.Origin
 
     // Text format
 
+    /// <summary>Default text formatting.</summary>
     Text_Default = 0x0100,
 
     // Time Format:
     // hh:mm | hh | hh:mm:ss | hh:mm:ss.zz | hh ap | hh:mm ap | mm:ss
     // mm:ss.zz | hhmm | hhmmss | hh:mm:ss.zzz
 
+    /// <summary>Time format <c>hh:mm</c>.</summary>
     Time_HH_MM = 0x0200,
+
+    /// <summary>Time format <c>hh</c>.</summary>
     Time_HH = 0x0201,
+
+    /// <summary>Time format <c>hh:mm:ss</c>.</summary>
     Time_HH_MM_SS = 0x0202,
+
+    /// <summary>Time format <c>hh:mm:ss.zz</c>.</summary>
     Time_HH_MM_SS_ZZ = 0x0203,
+
+    /// <summary>Time format <c>hh ap</c>.</summary>
     Time_HH_AP = 0x0204,
+
+    /// <summary>Time format <c>hh:mm ap</c>.</summary>
     Time_HH_MM_AP = 0x0205,
+
+    /// <summary>Time format <c>mm:ss</c>.</summary>
     Time_MM_SS = 0x0206,
+
+    /// <summary>Time format <c>mm:ss.zz</c>.</summary>
     Time_MM_SS_ZZ = 0x0207,
+
+    /// <summary>Time format <c>hhmm</c>.</summary>
     Time_HHMM = 0x0208,
+
+    /// <summary>Time format <c>hhmmss</c>.</summary>
     Time_HHMMSS = 0x0209,
+
+    /// <summary>Time format <c>hh:mm:ss.zzz</c>.</summary>
     Time_HH_MM_SS_ZZZ = 0x020A,
 
 
@@ -149,151 +190,327 @@ namespace Altaxo.Serialization.Origin
     // yyMMdd | yyMMdd hh:mm | yyMMdd hh:mm:ss | yyMMdd hhmm | yyMMdd hhmmss | MMM
     // First letter of month | Quartal | M-d-yyyy (Custom1) | hh:mm:ss.zzzz (Custom2)
 
+    /// <summary>Date format <c>dd/MM/yyyy</c>.</summary>
     Date_DD_MM_YYYY = 0x0300,
+
+    /// <summary>Date format <c>MM/dd/yyyy HH:mm</c>.</summary>
     Date_MM_DD_YYYY_HH_MM = 0x0309,
+
+    /// <summary>Date format <c>dd/MM/yyyy HH:mm:ss</c>.</summary>
     Date_DD_MM_YYYY_HH_MM_SS = 0x030A,
+
+    /// <summary>Date format <c>dd.MM.yyyy</c>.</summary>
     Date_DDMMYYYY = 0x0380,
+
+    /// <summary>Year abbreviation format.</summary>
     Date_Y = 0x0381,
+
+    /// <summary>Date format <c>MMM d</c>.</summary>
     Date_MMM_D = 0x0382,
+
+    /// <summary>Date format <c>M/d</c>.</summary>
     Date_M_D = 0x0383,
+
+    /// <summary>Day-of-month format.</summary>
     Date_D = 0x0384,
+
+    /// <summary>Abbreviated day-of-week format.</summary>
     Date_DDD = 0x0385,
+
+    /// <summary>Single-letter day-of-week format.</summary>
     Date_DAY_LETTER = 0x0386,
+
+    /// <summary>Four-digit year format.</summary>
     Date_YYYY = 0x0387,
+
+    /// <summary>Two-digit year format.</summary>
     Date_YY = 0x0388,
+
+    /// <summary>Date format <c>dd.MM.yyyy hh:mm</c>.</summary>
     Date_DDMMYYYY_HH_MM = 0x0389,
+
+    /// <summary>Date format <c>dd.MM.yyyy hh:mm:ss</c>.</summary>
     Date_DDMMYYYY_HH_MM_SS = 0x038A,
+
+    /// <summary>Date format <c>yyMMdd</c>.</summary>
     Date_YYMMDD = 0x038B,
+
+    /// <summary>Date format <c>yyMMdd hh:mm</c>.</summary>
     Date_YYMMDD_HH_MM = 0x038C,
+
+    /// <summary>Date format <c>yyMMdd hh:mm:ss</c>.</summary>
     Date_YYMMDD_HH_MM_SS = 0x038D,
+
+    /// <summary>Date format <c>yyMMdd hhmm</c>.</summary>
     Date_YYMMDD_HHMM = 0x038E,
+
+    /// <summary>Date format <c>yyMMdd hhmmss</c>.</summary>
     Date_YYMMDD_HHMMSS = 0x038F,
+
+    /// <summary>Abbreviated month format.</summary>
     Date_MMM = 0x0390,
+
+    /// <summary>Single-letter month format.</summary>
     Date_MONTH_LETTER = 0x0391,
+
+    /// <summary>Quarter format.</summary>
     Date_Q = 0x0392,
+
+    /// <summary>Date format <c>M-d-yyyy</c>.</summary>
     Date_M_D_YYYY = 0x0393,
+
+    /// <summary>Time format <c>hh:mm:ss.zzzz</c>.</summary>
     Date_HH_MM_SS_ZZZZ = 0x0394,
 
     // Month Format:
     //  MMM | MMMM | First letter of month
 
+    /// <summary>Month format <c>MMM</c>.</summary>
     Month_MMM = 0x0400,
+
+    /// <summary>Month format <c>MMMM</c>.</summary>
     Month_MMMM = 0x0401,
+
+    /// <summary>Single-letter month format.</summary>
     Month_LETTER = 0x0402,
 
     // ddd | dddd | First letter of day
 
+    /// <summary>Day format <c>ddd</c>.</summary>
     Day_DDD = 0x0500,
+
+    /// <summary>Day format <c>dddd</c>.</summary>
     Day_DDDD = 0x0501,
+
+    /// <summary>Single-letter day format.</summary>
     Day_LETTER = 0x0502,
   }
 
   /// <summary>How to display numeric values.</summary>
   public enum NumericDisplayType
   {
+    /// <summary>Use the default number of decimal digits.</summary>
     DefaultDecimalDigits = 0,
+
+    /// <summary>Display a fixed number of decimal places.</summary>
     DecimalPlaces = 1,
+
+    /// <summary>Display a fixed number of significant digits.</summary>
     SignificantDigits = 2
   };
 
   /// <summary>Attachment target for objects (frame, page, scale).</summary>
   public enum Attach
   {
+    /// <summary>Attach to the frame.</summary>
     Frame = 0,
+
+    /// <summary>Attach to the page.</summary>
     Page = 1,
+
+    /// <summary>Attach to the scale.</summary>
     Scale = 2,
+
+    /// <summary>Sentinel end value.</summary>
     End_
   };
 
   /// <summary>Type of border to draw around an object.</summary>
   public enum BorderType
   {
+    /// <summary>A simple black line border.</summary>
     BlackLine = 0,
+
+    /// <summary>A shadow border.</summary>
     Shadow = 1,
+
+    /// <summary>A dark marble border.</summary>
     DarkMarble = 2,
+
+    /// <summary>A white-out border.</summary>
     WhiteOut = 3,
+
+    /// <summary>A black-out border.</summary>
     BlackOut = 4,
+
+    /// <summary>No border.</summary>
     None = -1
   };
 
   /// <summary>Fill pattern for shape fill areas.</summary>
   public enum FillPattern : byte
   {
+    /// <summary>No fill pattern.</summary>
     NoFill = 0,
+
+    /// <summary>Dense backward diagonal pattern.</summary>
     BDiagDense = 1,
+
+    /// <summary>Medium backward diagonal pattern.</summary>
     BDiagMedium = 2,
+
+    /// <summary>Sparse backward diagonal pattern.</summary>
     BDiagSparse = 3,
+
+    /// <summary>Dense forward diagonal pattern.</summary>
     FDiagDense = 4,
+
+    /// <summary>Medium forward diagonal pattern.</summary>
     FDiagMedium = 5,
+
+    /// <summary>Sparse forward diagonal pattern.</summary>
     FDiagSparse = 6,
+
+    /// <summary>Dense diagonal cross pattern.</summary>
     DiagCrossDense = 7,
+
+    /// <summary>Medium diagonal cross pattern.</summary>
     DiagCrossMedium = 8,
+
+    /// <summary>Sparse diagonal cross pattern.</summary>
     DiagCrossSparse = 9,
+
+    /// <summary>Dense horizontal pattern.</summary>
     HorizontalDense = 10,
+
+    /// <summary>Medium horizontal pattern.</summary>
     HorizontalMedium = 11,
+
+    /// <summary>Sparse horizontal pattern.</summary>
     HorizontalSparse = 12,
+
+    /// <summary>Dense vertical pattern.</summary>
     VerticalDense = 13,
+
+    /// <summary>Medium vertical pattern.</summary>
     VerticalMedium = 14,
+
+    /// <summary>Sparse vertical pattern.</summary>
     VerticalSparse = 15,
+
+    /// <summary>Dense cross pattern.</summary>
     CrossDense = 16,
+
+    /// <summary>Medium cross pattern.</summary>
     CrossMedium = 17,
+
+    /// <summary>Sparse cross pattern.</summary>
     CrossSparse = 18
   };
   /// <summary>Direction of a color gradient.</summary>
   public enum ColorGradientDirection
   {
+    /// <summary>No gradient.</summary>
     NoGradient = 0,
+
+    /// <summary>Gradient toward the top-left corner.</summary>
     TopLeft = 1,
+
+    /// <summary>Gradient toward the left.</summary>
     Left = 2,
+
+    /// <summary>Gradient toward the bottom-left corner.</summary>
     BottomLeft = 3,
+
+    /// <summary>Gradient toward the top.</summary>
     Top = 4,
+
+    /// <summary>Gradient toward the center.</summary>
     Center = 5,
+
+    /// <summary>Gradient toward the bottom.</summary>
     Bottom = 6,
+
+    /// <summary>Gradient toward the top-right corner.</summary>
     TopRight = 7,
+
+    /// <summary>Gradient toward the right.</summary>
     Right = 8,
+
+    /// <summary>Gradient toward the bottom-right corner.</summary>
     BottomRight = 9
   };
 
   /// <summary>Type of color specification.</summary>
   public enum ColorType : byte
   {
+    /// <summary>No color specified.</summary>
     None = 0,
+
+    /// <summary>Automatically determined color.</summary>
     Automatic = 1,
+
+    /// <summary>Regular predefined color.</summary>
     Regular = 2,
+
+    /// <summary>Custom color.</summary>
     Custom = 3,
+
+    /// <summary>Incremented color.</summary>
     Increment = 4,
+
+    /// <summary>Indexed color.</summary>
     Indexing = 5,
+
+    /// <summary>RGB color.</summary>
     RGB = 6,
+
+    /// <summary>Mapped color.</summary>
     Mapping = 7
   };
 
   /// <summary>Predefined regular colors used in Origin objects.</summary>
   public enum RegularColor : byte
   {
+    /// <summary>Black.</summary>
     Black = 0,
+    /// <summary>Red.</summary>
     Red = 1,
+    /// <summary>Green.</summary>
     Green = 2,
+    /// <summary>Blue.</summary>
     Blue = 3,
+    /// <summary>Cyan.</summary>
     Cyan = 4,
+    /// <summary>Magenta.</summary>
     Magenta = 5,
+    /// <summary>Yellow.</summary>
     Yellow = 6,
+    /// <summary>Dark yellow.</summary>
     DarkYellow = 7,
+    /// <summary>Navy.</summary>
     Navy = 8,
+    /// <summary>Purple.</summary>
     Purple = 9,
+    /// <summary>Wine.</summary>
     Wine = 10,
+    /// <summary>Olive.</summary>
     Olive = 11,
+    /// <summary>Dark cyan.</summary>
     DarkCyan = 12,
+    /// <summary>Royal blue.</summary>
     Royal = 13,
+    /// <summary>Orange.</summary>
     Orange = 14,
+    /// <summary>Violet.</summary>
     Violet = 15,
+    /// <summary>Pink.</summary>
     Pink = 16,
+    /// <summary>White.</summary>
     White = 17,
+    /// <summary>Light gray.</summary>
     LightGray = 18,
+    /// <summary>Gray.</summary>
     Gray = 19,
+    /// <summary>Light yellow.</summary>
     LTYellow = 20,
+    /// <summary>Light cyan.</summary>
     LTCyan = 21,
+    /// <summary>Light magenta.</summary>
     LTMagenta = 22,
+    /// <summary>Dark gray.</summary>
     DarkGray = 23,
+    /// <summary>Special Origin 7 axis color.</summary>
     SpecialV7Axis = 0xF7
     /*, Custom = 255*/
   };
@@ -301,11 +518,16 @@ namespace Altaxo.Serialization.Origin
   /// <summary>Represents a color used by Origin objects. The ordering of fields is significant.</summary>
   public struct Color
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Color"/> struct.
+    /// </summary>
     public Color()
     {
     }
 
     /// <summary>Initialize a color with a color type and a regular color index.</summary>
+    /// <param name="ctype">The color representation type.</param>
+    /// <param name="cregular">The regular color value.</param>
     public Color(ColorType ctype, RegularColor cregular)
     {
       ColorType = ctype;
@@ -333,11 +555,23 @@ namespace Altaxo.Serialization.Origin
   /// <summary>Simple rectangle defined by left, top, right and bottom coordinates.</summary>
   public struct Rect
   {
+    /// <summary>The left coordinate of the rectangle.</summary>
     public short Left;
+
+    /// <summary>The top coordinate of the rectangle.</summary>
     public short Top;
+
+    /// <summary>The right coordinate of the rectangle.</summary>
     public short Right;
+
+    /// <summary>The bottom coordinate of the rectangle.</summary>
     public short Bottom;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Rect"/> struct with the specified width and height.
+    /// </summary>
+    /// <param name="width">The initial right coordinate.</param>
+    /// <param name="height">The initial bottom coordinate.</param>
     public Rect(short width = 0, short height = 0)
     {
       Right = width;
@@ -345,18 +579,21 @@ namespace Altaxo.Serialization.Origin
     }
 
     /// <summary>Returns the height of the rectangle (Bottom - Top).</summary>
+    /// <returns>The rectangle height.</returns>
     public int Height()
     {
       return Bottom - Top;
     }
 
     /// <summary>Returns the width of the rectangle (Right - Left).</summary>
+    /// <returns>The rectangle width.</returns>
     public int Width()
     {
       return Right - Left;
     }
 
     /// <summary>Returns true if the rectangle has positive width and height.</summary>
+    /// <returns><see langword="true"/> if the rectangle is valid; otherwise, <see langword="false"/>.</returns>
     public bool IsValid()
     {
       return Height() > 0 && Width() > 0;
@@ -406,15 +643,25 @@ namespace Altaxo.Serialization.Origin
   /// <summary>State of a window.</summary>
   public enum WindowState
   {
+    /// <summary>The window is in its normal state.</summary>
     Normal,
+
+    /// <summary>The window is minimized.</summary>
     Minimized,
+
+    /// <summary>The window is maximized.</summary>
     Maximized
   };
   /// <summary>Which title is shown for a window.</summary>
   public enum WindowTitle
   {
+    /// <summary>Show the name only.</summary>
     Name,
+
+    /// <summary>Show the label only.</summary>
     Label,
+
+    /// <summary>Show both name and label.</summary>
     Both
   };
 
@@ -487,10 +734,18 @@ namespace Altaxo.Serialization.Origin
     private double _double;
     private string? _string;
 
+    /// <summary>
+    /// Identifies the value type currently stored in a <see cref="Variant"/>.
+    /// </summary>
     public enum VType
     {
+      /// <summary>No value is stored.</summary>
       V_Empty,
+
+      /// <summary>A <see cref="double"/> value is stored.</summary>
       V_DOUBLE,
+
+      /// <summary>A <see cref="string"/> value is stored.</summary>
       V_STRING
     };
 
@@ -500,6 +755,9 @@ namespace Altaxo.Serialization.Origin
       return _type;
     }
 
+    /// <summary>
+    /// Initializes a new empty <see cref="Variant"/> value.
+    /// </summary>
     public Variant()
     {
     }
@@ -666,14 +924,31 @@ namespace Altaxo.Serialization.Origin
   /// <summary>Types of columns used in spreadsheets.</summary>
   public enum SpreadColumnType
   {
+    /// <summary>X data column.</summary>
     X,
+
+    /// <summary>Y data column.</summary>
     Y,
+
+    /// <summary>Z data column.</summary>
     Z,
+
+    /// <summary>X error column.</summary>
     XErr,
+
+    /// <summary>Y error column.</summary>
     YErr,
+
+    /// <summary>Label column.</summary>
     Label,
+
+    /// <summary>Ignored column.</summary>
     Ignore,
+
+    /// <summary>Grouping column.</summary>
     Group,
+
+    /// <summary>Subject column.</summary>
     Subject,
   };
 
@@ -793,6 +1068,7 @@ namespace Altaxo.Serialization.Origin
     public List<SpreadColumn> Columns;
 
     /// <summary>Initialize a new <see cref="SpreadSheet"/> with an optional name.</summary>
+    /// <param name="name">The spreadsheet name.</param>
     public SpreadSheet(string name = "")
         : base(name)
     {
@@ -816,6 +1092,11 @@ namespace Altaxo.Serialization.Origin
     public List<SpreadSheet> Sheets = [];
 
     /// <summary>Initialize a new <see cref="Excel"/> instance.</summary>
+    /// <param name="name">The workbook name.</param>
+    /// <param name="label">The workbook label.</param>
+    /// <param name="maxRows">The maximum number of rows.</param>
+    /// <param name="hidden">If <see langword="true"/>, the workbook window is hidden.</param>
+    /// <param name="loose">If <see langword="true"/>, loose storage semantics are used.</param>
     public Excel(string name = "", string label = "", int maxRows = 0, bool hidden = false, bool loose = true)
         : base(name, label, hidden)
     {
@@ -827,7 +1108,17 @@ namespace Altaxo.Serialization.Origin
   /// <summary>Represents a single sheet inside a matrix object.</summary>
   public class MatrixSheet
   {
-    public enum ViewType { DataView, ImageView };
+    /// <summary>
+    /// Defines the supported display modes of a matrix sheet.
+    /// </summary>
+    public enum ViewType
+    {
+      /// <summary>Display matrix values as data.</summary>
+      DataView,
+
+      /// <summary>Display matrix values as an image.</summary>
+      ImageView
+    };
 
     /// <summary>Name of the matrix sheet.</summary>
     public string Name;
@@ -884,6 +1175,8 @@ namespace Altaxo.Serialization.Origin
     public double Y2 { get; set; }
 
     /// <summary>Initializes a new instance of <see cref="MatrixSheet"/>.</summary>
+    /// <param name="name">The sheet name.</param>
+    /// <param name="index">The sheet index.</param>
     public MatrixSheet(string name = "", int index = 0)
     {
       Name = name;
@@ -928,9 +1221,15 @@ namespace Altaxo.Serialization.Origin
   /// <summary>Represents a matrix window containing one or more sheets.</summary>
   public class Matrix : Window
   {
+    /// <summary>
+    /// Defines the supported header display modes for a matrix.
+    /// </summary>
     public enum HeaderViewType
     {
+      /// <summary>Show column and row headers.</summary>
       ColumnRow,
+
+      /// <summary>Show X and Y headers.</summary>
       XY
     };
 
@@ -944,6 +1243,7 @@ namespace Altaxo.Serialization.Origin
     public List<MatrixSheet> Sheets = [];
 
     /// <summary>Initializes a new instance of <see cref="Matrix"/>.</summary>
+    /// <param name="name">The matrix name.</param>
     public Matrix(string name = "")
         : base(name)
     {
@@ -955,9 +1255,15 @@ namespace Altaxo.Serialization.Origin
   /// <summary>Represents a function (formula-based dataset).</summary>
   public class Function
   {
+    /// <summary>
+    /// Defines the supported function representations.
+    /// </summary>
     public enum FunctionType
     {
+      /// <summary>A standard Cartesian function.</summary>
       Normal,
+
+      /// <summary>A polar function.</summary>
       Polar
     };
 
@@ -983,6 +1289,8 @@ namespace Altaxo.Serialization.Origin
     public int Index;
 
     /// <summary>Initializes a new instance of <see cref="Function"/>.</summary>
+    /// <param name="name">The function name.</param>
+    /// <param name="index">The function index.</param>
     public Function(string name = "", int index = 0)
     {
       Name = name;
@@ -1025,6 +1333,7 @@ namespace Altaxo.Serialization.Origin
     public bool IsShown;
 
     /// <summary>Creates a new text box with default appearance.</summary>
+    /// <param name="text">The text content.</param>
     public TextBox(string text = "")
     {
       Text = text;
@@ -1038,6 +1347,15 @@ namespace Altaxo.Serialization.Origin
     }
 
     /// <summary>Creates a new text box with explicit properties.</summary>
+    /// <param name="text">The text content.</param>
+    /// <param name="clientRect">The client rectangle.</param>
+    /// <param name="color">The text color.</param>
+    /// <param name="fontSize">The font size.</param>
+    /// <param name="rotation">The text rotation angle.</param>
+    /// <param name="tab">The tab width.</param>
+    /// <param name="borderType">The border type.</param>
+    /// <param name="attach">The attachment target.</param>
+    /// <param name="isShown">If <see langword="true"/>, the text box is shown.</param>
     public TextBox(string text, Rect clientRect, Color color, short fontSize, int rotation, int tab, BorderType borderType, Attach attach, bool isShown = true)
     {
       Text = text;
@@ -1121,10 +1439,18 @@ namespace Altaxo.Serialization.Origin
   /// <summary>Properties used by vector plots.</summary>
   public class VectorProperties
   {
+    /// <summary>
+    /// Defines where the vector is positioned relative to its anchor point.
+    /// </summary>
     public enum VectorPosition
     {
+      /// <summary>Position the vector by its tail.</summary>
       Tail,
+
+      /// <summary>Position the vector by its midpoint.</summary>
       Midpoint,
+
+      /// <summary>Position the vector by its head.</summary>
       Head
     };
 
@@ -1185,10 +1511,18 @@ namespace Altaxo.Serialization.Origin
   /// <summary>Properties that control text appearance.</summary>
   public class TextProperties
   {
+    /// <summary>
+    /// Defines the horizontal justification of text.
+    /// </summary>
     public enum TextJustify
     {
+      /// <summary>Left-justified text.</summary>
       Left,
+
+      /// <summary>Centered text.</summary>
       Center,
+
+      /// <summary>Right-justified text.</summary>
       Right
     };
 
@@ -1226,18 +1560,32 @@ namespace Altaxo.Serialization.Origin
   /// <summary>Types of surface rendering.</summary>
   public enum SurfaceType
   {
+    /// <summary>3D color map surface.</summary>
     ColorMap3D,
+
+    /// <summary>Color-filled surface.</summary>
     ColorFill,
+
+    /// <summary>Wireframe surface.</summary>
     WireFrame,
+
+    /// <summary>Bar-style surface.</summary>
     Bars
   };
 
   /// <summary>Grid types for surface plots.</summary>
   public enum SurfaceGrids
   {
+    /// <summary>No surface grid lines.</summary>
     None,
+
+    /// <summary>Grid lines along the X direction.</summary>
     X,
+
+    /// <summary>Grid lines along the Y direction.</summary>
     Y,
+
+    /// <summary>Grid lines along both X and Y directions.</summary>
     XY
   };
 
@@ -1385,29 +1733,65 @@ namespace Altaxo.Serialization.Origin
   /// <summary>Line styles for plotting.</summary>
   public enum LineStyle
   {
+    /// <summary>Solid line.</summary>
     Solid = 0,
+
+    /// <summary>Dashed line.</summary>
     Dash = 1,
+
+    /// <summary>Dotted line.</summary>
     Dot = 2,
+
+    /// <summary>Dash-dot line.</summary>
     DashDot = 3,
+
+    /// <summary>Dash-dot-dot line.</summary>
     DashDotDot = 4,
+
+    /// <summary>Short dashed line.</summary>
     ShortDash = 5,
+
+    /// <summary>Short dotted line.</summary>
     ShortDot = 6,
+
+    /// <summary>Short dash-dot line.</summary>
     ShortDashDot = 7
   }
 
   /// <summary>How line segments are connected between data points.</summary>
   public enum LineConnect
   {
+    /// <summary>Do not connect points with lines.</summary>
     NoLine = 0,
+
+    /// <summary>Connect points with straight segments.</summary>
     Straight = 1,
+
+    /// <summary>Use two-point segments.</summary>
     TwoPointSegment = 2,
+
+    /// <summary>Use three-point segments.</summary>
     ThreePointSegment = 3,
+
+    /// <summary>Use a B-spline connection.</summary>
     BSpline = 8,
+
+    /// <summary>Use a spline connection.</summary>
     Spline = 9,
+
+    /// <summary>Use horizontal step segments.</summary>
     StepHorizontal = 11,
+
+    /// <summary>Use vertical step segments.</summary>
     StepVertical = 12,
+
+    /// <summary>Use centered horizontal step segments.</summary>
     StepHCenter = 13,
+
+    /// <summary>Use centered vertical step segments.</summary>
     StepVCenter = 14,
+
+    /// <summary>Use a Bézier connection.</summary>
     Bezier = 15
   }
 
@@ -1417,53 +1801,148 @@ namespace Altaxo.Serialization.Origin
     /// <summary>Plot types supported by a graph curve.</summary>
     public enum Plot
     {
+      /// <summary>3D scatter plot.</summary>
       Scatter3D = 101,
+
+      /// <summary>3D surface plot.</summary>
       Surface3D = 103,
+
+      /// <summary>3D vector plot.</summary>
       Vector3D = 183,
+
+      /// <summary>3D scatter plot with error bars.</summary>
       ScatterAndErrorBar3D = 184,
+
+      /// <summary>Ternary contour plot.</summary>
       TernaryContour = 185,
+
+      /// <summary>Polar plot with X as radius and Y as angle.</summary>
       PolarXrYTheta = 186,
+
+      /// <summary>Smith chart plot.</summary>
       SmithChart = 191,
+
+      /// <summary>Polar plot.</summary>
       Polar = 192,
+
+      /// <summary>Bubble plot with indexed sizes or colors.</summary>
       BubbleIndexed = 193,
+
+      /// <summary>Bubble plot with color mapping.</summary>
       BubbleColorMapped = 194,
+
+      /// <summary>Line plot.</summary>
       Line = 200,
+
+      /// <summary>Scatter plot.</summary>
       Scatter = 201,
+
+      /// <summary>Line and symbol plot.</summary>
       LineSymbol = 202,
+
+      /// <summary>Column plot.</summary>
       Column = 203,
+
+      /// <summary>Area plot.</summary>
       Area = 204,
+
+      /// <summary>High-low-close plot.</summary>
       HiLoClose = 205,
+
+      /// <summary>Box plot.</summary>
       Box = 206,
+
+      /// <summary>Floating column plot.</summary>
       ColumnFloat = 207,
+
+      /// <summary>Vector plot.</summary>
       Vector = 208,
+
+      /// <summary>Dot plot.</summary>
       PlotDot = 209,
+
+      /// <summary>3D wall plot.</summary>
       Wall3D = 210,
+
+      /// <summary>3D ribbon plot.</summary>
       Ribbon3D = 211,
+
+      /// <summary>3D bar plot.</summary>
       Bar3D = 212,
+
+      /// <summary>Stacked column plot.</summary>
       ColumnStack = 213,
+
+      /// <summary>Stacked area plot.</summary>
       AreaStack = 214,
+
+      /// <summary>Bar plot.</summary>
       Bar = 215,
+
+      /// <summary>Stacked bar plot.</summary>
       BarStack = 216,
+
+      /// <summary>Flow vector plot.</summary>
       FlowVector = 218,
+
+      /// <summary>Histogram plot.</summary>
       Histogram = 219,
+
+      /// <summary>Matrix image plot.</summary>
       MatrixImage = 220,
+
+      /// <summary>Pie chart.</summary>
       Pie = 225,
+
+      /// <summary>Contour plot.</summary>
       Contour = 226,
+
+      /// <summary>Unknown plot type.</summary>
       Unknown = 230,
+
+      /// <summary>Error bar plot.</summary>
       ErrorBar = 231,
+
+      /// <summary>Text plot.</summary>
       TextPlot = 232,
+
+      /// <summary>X error bar plot.</summary>
       XErrorBar = 233,
+
+      /// <summary>Surface plot with color mapping.</summary>
       SurfaceColorMap = 236,
+
+      /// <summary>Surface plot with color fill.</summary>
       SurfaceColorFill = 237,
+
+      /// <summary>Wireframe surface plot.</summary>
       SurfaceWireframe = 238,
+
+      /// <summary>Surface bar plot.</summary>
       SurfaceBars = 239,
+
+      /// <summary>3D line plot.</summary>
       Line3D = 240,
+
+      /// <summary>3D text plot.</summary>
       Text3D = 241,
+
+      /// <summary>3D mesh plot.</summary>
       Mesh3D = 242,
+
+      /// <summary>XYZ contour plot.</summary>
       XYZContour = 243,
+
+      /// <summary>XYZ triangular surface plot.</summary>
       XYZTriangular = 245,
+
+      /// <summary>Line series plot.</summary>
       LineSeries = 246,
+
+      /// <summary>Y error bar plot.</summary>
       YErrorBar = 254,
+
+      /// <summary>XY error bar plot.</summary>
       XYErrorBar = 255
     }
 
@@ -1746,25 +2225,60 @@ namespace Altaxo.Serialization.Origin
   /// <summary>Represents an axis with scaling, grid and tick configuration.</summary>
   public class GraphAxis
   {
+    /// <summary>
+    /// Defines the position of an axis within a graph.
+    /// </summary>
     public enum AxisPosition
     {
+      /// <summary>Left axis.</summary>
       Left = 0,
+
+      /// <summary>Bottom axis.</summary>
       Bottom,
+
+      /// <summary>Right axis.</summary>
       Right,
+
+      /// <summary>Top axis.</summary>
       Top,
+
+      /// <summary>Front axis.</summary>
       Front,
+
+      /// <summary>Back axis.</summary>
       Back
     }
+
+    /// <summary>
+    /// Defines the supported axis scaling modes.
+    /// </summary>
     public enum AxisScale
     {
+      /// <summary>Linear scale.</summary>
       Linear = 0,
+
+      /// <summary>Base-10 logarithmic scale.</summary>
       Log10 = 1,
+
+      /// <summary>Probability scale.</summary>
       Probability = 2,
+
+      /// <summary>Probit scale.</summary>
       Probit = 3,
+
+      /// <summary>Reciprocal scale.</summary>
       Reciprocal = 4,
+
+      /// <summary>Offset reciprocal scale.</summary>
       OffsetReciprocal = 5,
+
+      /// <summary>Natural logarithmic scale.</summary>
       Logit = 6,
+
+      /// <summary>Natural logarithm scale.</summary>
       Ln = 7,
+
+      /// <summary>Base-2 logarithmic scale.</summary>
       Log2 = 8
     }
 
@@ -1824,7 +2338,10 @@ namespace Altaxo.Serialization.Origin
   /// <summary>Shapes that may be used as annotation figures.</summary>
   public enum FigureType
   {
+    /// <summary>Rectangle figure.</summary>
     Rectangle,
+
+    /// <summary>Circle figure.</summary>
     Circle
   }
 
@@ -1956,6 +2473,7 @@ namespace Altaxo.Serialization.Origin
     public byte[] Data;
 
     /// <summary>Creates an empty bitmap with an optional window name.</summary>
+    /// <param name="name">The associated window name.</param>
     public Bitmap(string name = "")
     {
       Attach = Attach.Frame;
@@ -2215,6 +2733,9 @@ namespace Altaxo.Serialization.Origin
     public double Step;
 
     /// <summary>Initializes a new instance of <see cref="GraphLayerRange"/>.</summary>
+    /// <param name="_min">The minimum value.</param>
+    /// <param name="_max">The maximum value.</param>
+    /// <param name="_step">The step value.</param>
     public GraphLayerRange(double _min = 0.0, double _max = 0.0, double _step = 0.0)
     {
       Min = _min;
@@ -2248,6 +2769,7 @@ namespace Altaxo.Serialization.Origin
     public string TemplateName;
 
     /// <summary>Initializes a new <see cref="Graph"/> instance with defaults.</summary>
+    /// <param name="name">The graph name.</param>
     public Graph(string name = "")
       : base(name)
     {
@@ -2267,6 +2789,7 @@ namespace Altaxo.Serialization.Origin
     public string Text;
 
     /// <summary>Initializes a new <see cref="Note"/> instance.</summary>
+    /// <param name="name">The note name.</param>
     public Note(string name = "")
         : base(name)
     {
@@ -2276,12 +2799,25 @@ namespace Altaxo.Serialization.Origin
   /// <summary>Node types used in the project tree.</summary>
   public enum ProjectNodeType
   {
+    /// <summary>Spreadsheet node.</summary>
     SpreadSheet,
+
+    /// <summary>Matrix node.</summary>
     Matrix,
+
+    /// <summary>Excel workbook node.</summary>
     Excel,
+
+    /// <summary>Graph node.</summary>
     Graph,
+
+    /// <summary>3D graph node.</summary>
     Graph3D,
+
+    /// <summary>Note node.</summary>
     Note,
+
+    /// <summary>Folder node.</summary>
     Folder
   };
 
@@ -2290,6 +2826,8 @@ namespace Altaxo.Serialization.Origin
   {
     /// <inheritdoc/>
     public ProjectNode? ParentNode { get; set; }
+
+    /// <summary>The project-node type represented by this node.</summary>
     public ProjectNodeType NodeType;
 
     /// <summary>Name of the project node.</summary>
@@ -2304,6 +2842,8 @@ namespace Altaxo.Serialization.Origin
     /// <summary>True when this node is active.</summary>
     public bool IsActive;
     private List<ProjectNode>? _children = null;
+
+    /// <summary>The object associated with this project node.</summary>
     public object? ValueAsObject;
 
     /// <inheritdoc/>
@@ -2319,6 +2859,7 @@ namespace Altaxo.Serialization.Origin
     }
 
     /// <summary>Creates a new <see cref="ProjectNode"/> with the specified name.</summary>
+    /// <param name="name">The node name.</param>
     public ProjectNode(string name)
   : this(name, ProjectNodeType.Folder)
     {
@@ -2326,6 +2867,8 @@ namespace Altaxo.Serialization.Origin
 
 
     /// <summary>Creates a new <see cref="ProjectNode"/> with the specified name and type.</summary>
+    /// <param name="name">The node name.</param>
+    /// <param name="type">The node type.</param>
     public ProjectNode(string name, ProjectNodeType type)
       : this(name, type, DateTimeOffset.Now)
     {
@@ -2333,6 +2876,9 @@ namespace Altaxo.Serialization.Origin
 
 
     /// <summary>Creates a new <see cref="ProjectNode"/> with creation date.</summary>
+    /// <param name="name">The node name.</param>
+    /// <param name="nodeType">The node type.</param>
+    /// <param name="creationDate">The creation timestamp.</param>
     public ProjectNode(string name, ProjectNodeType nodeType, DateTimeOffset creationDate)
       : this(name, nodeType, creationDate, DateTimeOffset.Now)
     {
@@ -2340,6 +2886,11 @@ namespace Altaxo.Serialization.Origin
 
 
     /// <summary>Creates a new <see cref="ProjectNode"/> with full metadata.</summary>
+    /// <param name="name">The node name.</param>
+    /// <param name="type">The node type.</param>
+    /// <param name="creationDate">The creation timestamp.</param>
+    /// <param name="modificationDate">The modification timestamp.</param>
+    /// <param name="active">If <see langword="true"/>, the node is active.</param>
     public ProjectNode(string name, ProjectNodeType type, DateTimeOffset creationDate, DateTimeOffset modificationDate, bool active = false)
     {
       NodeType = type;

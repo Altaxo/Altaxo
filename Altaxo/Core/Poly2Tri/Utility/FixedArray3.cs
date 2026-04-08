@@ -36,10 +36,29 @@ using System.Collections.Generic;
 
 namespace Poly2Tri
 {
+  /// <summary>
+  /// Represents a fixed-size array with three reference-type elements.
+  /// </summary>
   public struct FixedArray3<T> : IEnumerable<T> where T : class
   {
-    public T _0, _1, _2;
+    /// <summary>
+    /// Gets or sets the first element.
+    /// </summary>
+    public T _0;
+    /// <summary>
+    /// Gets or sets the second element.
+    /// </summary>
+    public T _1;
+    /// <summary>
+    /// Gets or sets the third element.
+    /// </summary>
+    public T _2;
 
+    /// <summary>
+    /// Gets or sets the element at the specified zero-based index.
+    /// </summary>
+    /// <param name="index">The element index in the range 0 to 2.</param>
+    /// <returns>The element stored at <paramref name="index"/>.</returns>
     public T this[int index]
     {
       get
@@ -71,6 +90,11 @@ namespace Poly2Tri
       }
     }
 
+    /// <summary>
+    /// Determines whether the specified value is contained in the array.
+    /// </summary>
+    /// <param name="value">The value to locate.</param>
+    /// <returns><see langword="true"/> if the value is contained in the array; otherwise, <see langword="false"/>.</returns>
     public bool Contains(T value)
     {
       for (int i = 0; i < 3; ++i)
@@ -79,6 +103,11 @@ namespace Poly2Tri
       return false;
     }
 
+    /// <summary>
+    /// Gets the index of the specified value.
+    /// </summary>
+    /// <param name="value">The value to locate.</param>
+    /// <returns>The zero-based index of the value, or <c>-1</c> if it is not found.</returns>
     public int IndexOf(T value)
     {
       for (int i = 0; i < 3; ++i)
@@ -87,11 +116,18 @@ namespace Poly2Tri
       return -1;
     }
 
+    /// <summary>
+    /// Clears all elements by setting them to <see langword="null"/>.
+    /// </summary>
     public void Clear()
     {
       _0 = _1 = _2 = null;
     }
 
+    /// <summary>
+    /// Clears all elements equal to the specified value.
+    /// </summary>
+    /// <param name="value">The value to clear.</param>
     public void Clear(T value)
     {
       for (int i = 0; i < 3; ++i)
@@ -105,6 +141,10 @@ namespace Poly2Tri
         yield return this[i];
     }
 
+    /// <summary>
+    /// Returns an enumerator that iterates over the three elements.
+    /// </summary>
+    /// <returns>An enumerator for the elements of the array.</returns>
     public IEnumerator<T> GetEnumerator()
     {
       return Enumerate().GetEnumerator();

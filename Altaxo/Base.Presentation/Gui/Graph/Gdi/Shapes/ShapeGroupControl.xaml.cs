@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
   /// </summary>
   public partial class ShapeGroupControl : UserControl, IShapeGroupView, Graph3D.Shapes.IShapeGroupView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ShapeGroupControl"/> class.
+    /// </summary>
     public ShapeGroupControl()
     {
       InitializeComponent();

@@ -32,12 +32,20 @@ using Altaxo.Collections;
 
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
+  /// <summary>
+  /// Provides a base class for commands operating on a <see cref="ProjectBrowseController"/>.
+  /// </summary>
   public abstract class ProjectBrowseControllerCommand : SimpleCommand
   {
     private ProjectBrowseController _controller;
 
+    /// <summary>
+    /// Executes the command for the specified controller.
+    /// </summary>
+    /// <param name="ctrl">The controller.</param>
     protected abstract void Run(ProjectBrowseController ctrl);
 
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       _controller = parameter as ProjectBrowseController;
@@ -45,12 +53,16 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       Run((ProjectBrowseController)parameter);
     }
 
+    /// <inheritdoc/>
     public override bool CanExecute(object parameter)
     {
       _controller = parameter as ProjectBrowseController;
       return base.CanExecute(parameter);
     }
 
+    /// <summary>
+    /// Gets the controller currently associated with the command.
+    /// </summary>
     protected ProjectBrowseController Ctrl
     {
       get

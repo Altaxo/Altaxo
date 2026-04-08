@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
   /// </summary>
   public partial class CumulativeProbabilityScaleRescaleConditionsControl : UserControl, ICumulativeProbabilityScaleRescaleConditionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CumulativeProbabilityScaleRescaleConditionsControl"/> class.
+    /// </summary>
     public CumulativeProbabilityScaleRescaleConditionsControl()
     {
       InitializeComponent();

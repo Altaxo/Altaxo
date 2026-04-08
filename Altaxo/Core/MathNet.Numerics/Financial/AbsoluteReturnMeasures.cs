@@ -34,11 +34,16 @@ using Altaxo.Calc.Statistics;
 
 namespace Altaxo.Calc.Financial
 {
+  /// <summary>
+  /// Provides absolute return measures for sequences of financial returns.
+  /// </summary>
   public static class AbsoluteReturnMeasures
   {
     /// <summary>
-    /// Compound Monthly Return or Geometric Return or Annualized Return
+    /// Compound monthly return, geometric return, or annualized return.
     /// </summary>
+    /// <param name="data">The sequence of periodic returns.</param>
+    /// <returns>The compound return of the sequence.</returns>
     public static double CompoundReturn(this IEnumerable<double> data)
     {
       if (data == null)
@@ -58,11 +63,13 @@ namespace Altaxo.Calc.Financial
     }
 
     /// <summary>
-    /// Average Gain or Gain Mean
-    /// This is a simple average (arithmetic mean) of the periods with a gain. It is calculated by summing the returns for gain periods (return 0)
+    /// Average gain, or gain mean.
+    /// This is a simple average (arithmetic mean) of the periods with a gain. It is calculated by summing the returns for gain periods (return &gt;= 0)
     /// and then dividing the total by the number of gain periods.
     /// </summary>
     /// <remarks>http://www.offshore-library.com/kb/statistics.php</remarks>
+    /// <param name="data">The sequence of periodic returns.</param>
+    /// <returns>The arithmetic mean of all non-negative returns.</returns>
     public static double GainMean(this IEnumerable<double> data)
     {
       if (data == null)
@@ -74,11 +81,13 @@ namespace Altaxo.Calc.Financial
     }
 
     /// <summary>
-    /// Average Loss or LossMean
+    /// Average loss, or loss mean.
     /// This is a simple average (arithmetic mean) of the periods with a loss. It is calculated by summing the returns for loss periods (return &lt; 0)
     /// and then dividing the total by the number of loss periods.
     /// </summary>
     /// <remarks>http://www.offshore-library.com/kb/statistics.php</remarks>
+    /// <param name="data">The sequence of periodic returns.</param>
+    /// <returns>The arithmetic mean of all negative returns.</returns>
     public static double LossMean(this IEnumerable<double> data)
     {
       if (data == null)

@@ -32,6 +32,7 @@ namespace Altaxo.Worksheet.Commands
   /// </summary>
   public class PLSModelConditionEvaluator : IConditionEvaluator
   {
+    /// <inheritdoc/>
     public bool IsValid(object caller, Condition condition)
     {
       var selectedData = condition.Properties["ContainsPLSModelData"];

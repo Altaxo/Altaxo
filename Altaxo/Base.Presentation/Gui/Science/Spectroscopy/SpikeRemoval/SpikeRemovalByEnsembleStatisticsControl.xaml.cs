@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.SpikeRemoval
   /// </summary>
   public partial class SpikeRemovalByEnsembleStatisticsControl : UserControl, ISpikeRemovalByEnsembleStatisticsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SpikeRemovalByEnsembleStatisticsControl"/> class.
+    /// </summary>
     public SpikeRemovalByEnsembleStatisticsControl()
     {
       InitializeComponent();

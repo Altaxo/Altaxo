@@ -34,12 +34,18 @@ using System.Windows.Data;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// Combo box that validates its text input.
+  /// </summary>
   public class ValidatingComboBox : ComboBox
   {
     private NotifyChangedValue<string> _validatedText = new NotifyChangedValue<string>();
     private bool _isInitialTextModified;
     private bool _isValidatedSuccessfully = true;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ValidatingComboBox"/> class.
+    /// </summary>
     public ValidatingComboBox()
     {
       var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(TextBox.TextProperty, GetType());
@@ -56,12 +62,18 @@ namespace Altaxo.Gui.Common
 
     #region Dependency property
 
+    /// <summary>
+    /// Gets or sets the validated text.
+    /// </summary>
     public string ValidatedText
     {
       get { var result = (string)GetValue(ValidatedTextProperty); return result; }
       set { SetValue(ValidatedTextProperty, value); _isValidatedSuccessfully = true; }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="ValidatedText"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty ValidatedTextProperty =
         DependencyProperty.Register("ValidatedText", typeof(string), typeof(ValidatingComboBox),
         new FrameworkPropertyMetadata(OnValidatedTextChanged));
@@ -72,6 +84,9 @@ namespace Altaxo.Gui.Common
 
     #endregion Dependency property
 
+    /// <summary>
+    /// Sets the initial text shown by the combo box.
+    /// </summary>
     public string InitialText
     {
       set
@@ -82,6 +97,9 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the initial text has been modified.
+    /// </summary>
     public bool IsInitialTextModified
     {
       get
@@ -90,6 +108,9 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the current text validates successfully.
+    /// </summary>
     public bool IsValidatedSuccessfully
     {
       get
@@ -98,6 +119,11 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <summary>
+    /// Handles changes to the text shown by the combo box.
+    /// </summary>
+    /// <param name="sender">The event source.</param>
+    /// <param name="e">The event arguments.</param>
     protected virtual void EhTextChanged(object? sender, EventArgs e)
     {
       _isInitialTextModified = true;
@@ -108,6 +134,12 @@ namespace Altaxo.Gui.Common
     /// </summary>
     public event ValidatingStringEventHandler? Validating;
 
+    /// <summary>
+    /// Validates the current text.
+    /// </summary>
+    /// <param name="obj">The value being validated.</param>
+    /// <param name="info">The culture used for validation.</param>
+    /// <returns>An error string, or <see langword="null"/> if validation succeeded.</returns>
     public string EhValidateText(object obj, System.Globalization.CultureInfo info)
     {
       var evt = Validating;

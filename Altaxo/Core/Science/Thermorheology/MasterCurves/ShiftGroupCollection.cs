@@ -109,6 +109,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// </summary>
     public ShiftOrder.IShiftOrder ShiftOrder { get; init; } = new ShiftOrder.FirstToLast();
 
+    /// <summary>
+    /// Stores the configured number of fitting iterations.
+    /// </summary>
     protected int _numberOfIterations = 20;
 
     /// <summary>
@@ -132,6 +135,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       }
     }
 
+    /// <summary>
+    /// Stores the required relative overlap between curve segments.
+    /// </summary>
     protected double _requiredRelativeOverlap = 0;
 
     /// <summary>
@@ -668,7 +674,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// Reinitializes the result (see <see cref="ReInitializeResult"/>) 
     /// and then iterate anew with <see cref="Iterate(IReadOnlyList{int}, CancellationToken, IProgress{double}?)"/>.
     /// </summary>
-    /// <param name="previousMasterCurve">A <see cref="ShiftGroupCollection"/> for which the master curve creation was successfully. The results, particularly the shifts,
+    /// <param name="previousMasterCurve">A <see cref="ShiftGroupCollection"/> for which the master curve was created successfully. The results, particularly the shifts,
     /// are used from that previous master curve.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <param name="progress">Progress reporter.</param>

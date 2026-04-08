@@ -36,11 +36,17 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public partial class HelpAboutControl : Window
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HelpAboutControl"/> class.
+    /// </summary>
     public HelpAboutControl()
     {
       InitializeComponent();
     }
 
+    /// <summary>
+    /// Gets the version string for the current application.
+    /// </summary>
     public string VersionString
     {
       get
@@ -60,6 +66,9 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <summary>
+    /// Gets the revision string embedded in the application configuration attribute.
+    /// </summary>
     public string RevisionString
     {
       get
@@ -83,8 +92,14 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <summary>
+    /// Gets the operating system description.
+    /// </summary>
     public string OSDescription => RuntimeInformation.OSDescription;
 
+    /// <summary>
+    /// Gets the runtime framework description.
+    /// </summary>
     public string FrameworkDescription
     {
       get

@@ -19,6 +19,9 @@ namespace Altaxo.Calc.Ode.Obsolete.Dopri
   #region The Class: CONTD5
 
   // C
+  /// <summary>
+  /// Provides dense output interpolation for the DOPRI5 solver.
+  /// </summary>
   public class CONTD5
   {
     #region Common variables
@@ -32,6 +35,10 @@ namespace Altaxo.Calc.Ode.Obsolete.Dopri
 
     #endregion Common variables
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CONTD5"/> class using the supplied common block.
+    /// </summary>
+    /// <param name="CONDO5">The common block that stores interpolation state.</param>
     public CONTD5(CommonBlock CONDO5)
     {
       #region Common varaible Initialization
@@ -47,6 +54,9 @@ namespace Altaxo.Calc.Ode.Obsolete.Dopri
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CONTD5"/> class with a new common block.
+    /// </summary>
     public CONTD5()
     {
       #region Initialization Common Blocks
@@ -68,6 +78,17 @@ namespace Altaxo.Calc.Ode.Obsolete.Dopri
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Evaluates the dense output polynomial for one solution component.
+    /// </summary>
+    /// <param name="II">The component number to evaluate.</param>
+    /// <param name="X">The x-value at which the solution should be interpolated.</param>
+    /// <param name="CON">The dense output coefficient array.</param>
+    /// <param name="offset_con">The offset into <paramref name="CON"/>.</param>
+    /// <param name="ICOMP">The list of components for which dense output is available.</param>
+    /// <param name="offset_icomp">The offset into <paramref name="ICOMP"/>.</param>
+    /// <param name="ND">The number of dense output components.</param>
+    /// <returns>The interpolated solution value for the requested component.</returns>
     public double Run(int II, double X, double[] CON, int offset_con, int[] ICOMP, int offset_icomp, int ND)
     {
       double contd5 = 0;

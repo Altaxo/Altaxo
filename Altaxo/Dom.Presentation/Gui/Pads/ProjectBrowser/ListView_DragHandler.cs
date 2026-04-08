@@ -34,20 +34,36 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 {
   public partial class ProjectBrowseControl : UserControl, IProjectBrowseView
   {
+    /// <summary>
+    /// Gets a service of the specified type.
+    /// </summary>
+    /// <param name="serviceType">The type of service to retrieve.</param>
+    /// <returns>The requested service instance.</returns>
     public object GetService(Type serviceType)
     {
       throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Handles drag operations for the project browser list view.
+    /// </summary>
     public class ListView_DragHandler : IDragSource
     {
       private ProjectBrowseControl _projectBrowseControl;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ListView_DragHandler"/> class.
+      /// </summary>
+      /// <param name="ctrl">The owning project browser control.</param>
       public ListView_DragHandler(ProjectBrowseControl ctrl)
       {
         _projectBrowseControl = ctrl;
       }
 
+      /// <summary>
+      /// Starts a drag operation from the project browser list view.
+      /// </summary>
+      /// <param name="dragInfo">Information about the drag operation.</param>
       public void StartDrag(IDragInfo dragInfo)
       {
         _projectBrowseControl._controller.ItemList_StartDrag(out var dao, out var canCopy, out var canMove);
@@ -58,11 +74,21 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
           dragInfo.DataObject = GuiHelper.ToWpf(dao);
       }
 
+      /// <summary>
+      /// Determines whether a drag operation can start from the list view.
+      /// </summary>
+      /// <param name="dragInfo">Information about the drag operation.</param>
+      /// <returns><c>true</c> if dragging can start; otherwise, <c>false</c>.</returns>
       public bool CanStartDrag(IDragInfo dragInfo)
       {
         return _projectBrowseControl._controller.ItemList_CanStartDrag();
       }
 
+      /// <summary>
+      /// Completes a drag operation from the list view.
+      /// </summary>
+      /// <param name="dropInfo">Information about the drop target.</param>
+      /// <param name="effects">The resulting drag-and-drop effects.</param>
       public void Dropped(IDropInfo dropInfo, DragDropEffects effects)
       {
         GuiHelper.ConvertDragDropEffectToCopyMove(effects, out var isCopy, out var isMove);
@@ -70,6 +96,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
         _projectBrowseControl._controller.ItemList_DragEnded(isCopy, isMove);
       }
 
+      /// <summary>
+      /// Cancels the current drag operation.
+      /// </summary>
       public void DragCancelled()
       {
         _projectBrowseControl._controller.ItemList_DragCancelled();

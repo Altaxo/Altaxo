@@ -394,9 +394,9 @@ namespace Altaxo.Collections
     /// <summary>
     /// Tries to retrieve the element with minimum key.
     /// </summary>
-    /// <param name="key">On successfull return, contains the minimum key.</param>
-    /// <param name="value">On successfull return, contains the value associated with the minimum key.</param>
-    /// <param name="token">On successfull return, contains the token associated with the minimum key.</param>
+    /// <param name="key">On successful return, contains the minimum key.</param>
+    /// <param name="value">On successful return, contains the value associated with the minimum key.</param>
+    /// <param name="token">On successful return, contains the token associated with the minimum key.</param>
     /// <returns><c>True</c> if the queue contained at least one element that could be Peek'd; otherwise <c>false</c>.</returns>
     public bool TryPeek([MaybeNullWhen(false)] out TKey key, [MaybeNullWhen(false)] out TValue value, [MaybeNullWhen(false)] out TToken token)
     {
@@ -426,8 +426,8 @@ namespace Altaxo.Collections
     /// <summary>
     /// Tries to retrieve the element with minimum key.
     /// </summary>
-    /// <param name="key">On successfull return, contains the minimum key.</param>
-    /// <param name="value">On successfull return, contains the value associated with the minimum key.</param>
+    /// <param name="key">On successful return, contains the minimum key.</param>
+    /// <param name="value">On successful return, contains the value associated with the minimum key.</param>
     /// <returns><c>True</c> if the queue contained at least one element that could be Peek'd; otherwise <c>false</c>.</returns>
     public bool TryPeek([MaybeNullWhen(false)] out TKey key, [MaybeNullWhen(false)] out TValue value)
     {
@@ -437,13 +437,18 @@ namespace Altaxo.Collections
     /// <summary>
     /// Tries to retrieve the element with minimum key.
     /// </summary>
-    /// <param name="key">On successfull return, contains the minimum key.</param>
+    /// <param name="key">On successful return, contains the minimum key.</param>
     /// <returns><c>True</c> if the queue contained at least one element that could be Peek'd; otherwise <c>false</c>.</returns>
     public bool TryPeek([MaybeNullWhen(false)] out TKey key)
     {
       return TryPeek(out key, out _, out _);
     }
 
+    /// <summary>
+    /// Tries to retrieve the minimum key.
+    /// </summary>
+    /// <param name="key">On successful return, contains the minimum key.</param>
+    /// <returns><c>true</c> if the queue contained at least one element that could be peeked; otherwise <c>false</c>.</returns>
     public bool TryPeekKey([MaybeNullWhen(false)] out TKey key)
     {
       return TryPeek(out key, out _);
@@ -474,10 +479,10 @@ namespace Altaxo.Collections
     /// <summary>
     /// Tries to dequeue the item with minimum key.
     /// </summary>
-    /// <param name="key">On sucessfull return, contains the minimum key value.</param>
-    /// <param name="value">On sucessfull return, contains value belonging to the minimum key value.</param>
-    /// <param name="token">On successfull return, contains the token associated with the key/value pair with minimum key.</param>
-    /// <returns><c>True if an item could be successfully retrieved from the queue; <c>false</c> if the queue contains no items.</c></returns>
+    /// <param name="key">On successful return, contains the minimum key value.</param>
+    /// <param name="value">On successful return, contains the value belonging to the minimum key value.</param>
+    /// <param name="token">On successful return, contains the token associated with the key/value pair with the minimum key.</param>
+    /// <returns><c>true</c> if an item could be successfully retrieved from the queue; otherwise, <c>false</c>.</returns>
     public bool TryDequeue([MaybeNullWhen(false)] out TKey key, [MaybeNullWhen(false)] out TValue value, [MaybeNullWhen(false)] out TToken token)
     {
       _syncLock.EnterUpgradeableReadLock();
@@ -540,8 +545,8 @@ namespace Altaxo.Collections
     /// Tries to get the key/value pair that is associated with the provided <paramref name="token"/>.
     /// </summary>
     /// <param name="token">The token.</param>
-    /// <param name="key">On sucessfull return, contains the key of the key/value pair associated with the token.</param>
-    /// <param name="value">On sucessfull return, contains the value of the key/value pair associated with the token.</param>
+    /// <param name="key">On successful return, contains the key of the key/value pair associated with the token.</param>
+    /// <param name="value">On successful return, contains the value of the key/value pair associated with the token.</param>
     /// <returns><c>True</c> if the key/value pair associated with the token existed in the queue. <c>False</c> if the a key/value pair associated with the provided token is not in the queue.</returns>
     public bool TryGet(TToken token, [MaybeNullWhen(false)] out TKey key, [MaybeNullWhen(false)] out TValue value)
     {
@@ -569,7 +574,7 @@ namespace Altaxo.Collections
     /// Tries to get the key/value pair that is associated with the provided <paramref name="token"/>.
     /// </summary>
     /// <param name="token">The token.</param>
-    /// <param name="key">On sucessfull return, contains the key of the key/value pair associated with the token.</param>
+    /// <param name="key">On successful return, contains the key of the key/value pair associated with the token.</param>
     /// <returns><c>True</c> if the key/value pair associated with the token existed in the queue. <c>False</c> if the a key/value pair associated with the provided token is not in the queue.</returns>
     public bool TryGet(TToken token, [MaybeNullWhen(false)] out TKey key)
     {
@@ -696,8 +701,8 @@ namespace Altaxo.Collections
     /// Tries to remove the key/value pair associated with the provided <paramref name="token"/> from the queue (independently on the current position of the key/value pair in the queue).
     /// </summary>
     /// <param name="token">The token associated with the key/value pair to remove.</param>
-    /// <param name="key">On successfull return, contains the key of the removed key/value pair.</param>
-    /// <param name="value">On successfull return, contains the value of the removed key/value pair.</param>
+    /// <param name="key">On successful return, contains the key of the removed key/value pair.</param>
+    /// <param name="value">On successful return, contains the value of the removed key/value pair.</param>
     /// <returns><c>True</c> if the item still existed in the queue and could be successfully removed; otherwise <c>false</c>.</returns>
     public bool TryRemove(TToken token, [MaybeNullWhen(false)] out TKey key, [MaybeNullWhen(false)] out TValue value)
     {
@@ -740,7 +745,7 @@ namespace Altaxo.Collections
     /// Tries to remove the key/value pair associated with the provided <paramref name="token"/> from the queue (independently on the current position of the key/value pair in the queue).
     /// </summary>
     /// <param name="token">The token associated with the key/value pair to remove.</param>
-    /// <param name="key">On successfull return, contains the key of the removed key/value pair.</param>
+    /// <param name="key">On successful return, contains the key of the removed key/value pair.</param>
     /// <returns><c>True</c> if the item still existed in the queue and could be successfully removed; otherwise <c>false</c>.</returns>
     public bool TryRemove(TToken token, [MaybeNullWhen(false)] out TKey key)
     {
@@ -831,7 +836,7 @@ namespace Altaxo.Collections
     /// </summary>
     /// <param name="i">Index i.</param>
     /// <param name="j">Index j.</param>
-    /// <returns></returns>
+    /// <returns><see langword="true"/> if the key at index <paramref name="i"/> is greater than the key at index <paramref name="j"/>; otherwise, <see langword="false"/>.</returns>
     private bool Greater(int i, int j)
     {
       return _tokenToItem[_heap[i]].Key.CompareTo(_tokenToItem[_heap[j]].Key) > 0;

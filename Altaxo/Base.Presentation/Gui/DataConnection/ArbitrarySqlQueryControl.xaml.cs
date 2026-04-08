@@ -36,14 +36,21 @@ namespace Altaxo.Gui.DataConnection
   /// </summary>
   public partial class ArbitrarySqlQueryControl : UserControl, IArbitrarySqlQueryView
   {
+    /// <inheritdoc/>
     public event Action? CheckSql;
 
+    /// <inheritdoc/>
     public event Action? ViewResults;
 
+    /// <inheritdoc/>
     public event Action? ClearQuery;
 
+    /// <inheritdoc/>
     public event Action? SqlTextChanged;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ArbitrarySqlQueryControl"/> class.
+    /// </summary>
     public ArbitrarySqlQueryControl()
     {
       InitializeComponent();
@@ -76,6 +83,7 @@ namespace Altaxo.Gui.DataConnection
       }
     }
 
+    /// <inheritdoc/>
     public string SqlText
     {
       get
@@ -88,6 +96,7 @@ namespace Altaxo.Gui.DataConnection
       }
     }
 
+    /// <inheritdoc/>
     public void UpdateStatus(bool isConnectionStringEmpty, bool isSelectionStatementEmpty)
     {
       _guiCheckSql.IsEnabled = !isConnectionStringEmpty && !isSelectionStatementEmpty;

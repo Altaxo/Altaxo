@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
   /// </summary>
   public partial class FloatingScaleControl : UserControl, IFloatingScaleView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FloatingScaleControl"/> class.
+    /// </summary>
     public FloatingScaleControl()
     {
       InitializeComponent();

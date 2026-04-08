@@ -43,6 +43,9 @@ namespace Altaxo.Collections.Text
   public class LongestCommonSubstringA : LongestCommonSubstringBaseA
   {
     // intermediate data neccessary for the algorithm
+    /// <summary>
+    /// Stores intermediate suffix-array items used by the algorithm.
+    /// </summary>
     protected int[]? _items;
 
     /// <summary>Initializes a new instance of the problem solver for the longest common substring problem.</summary>

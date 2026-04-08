@@ -37,11 +37,15 @@ namespace Altaxo.Gui.Worksheet
   /// </summary>
   public partial class PlotCommonColumnsControl : UserControl, IPlotCommonColumnsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PlotCommonColumnsControl"/> class.
+    /// </summary>
     public PlotCommonColumnsControl()
     {
       InitializeComponent();
     }
 
+    /// <inheritdoc/>
     public bool UseCurrentXColumn
     {
       get
@@ -56,11 +60,13 @@ namespace Altaxo.Gui.Worksheet
       }
     }
 
+    /// <inheritdoc/>
     public void InitializeXCommonColumns(SelectableListNodeList list)
     {
       GuiHelper.Initialize(_guiCommonXColumn, list);
     }
 
+    /// <inheritdoc/>
     public void InitializeYCommonColumns(SelectableListNodeList list)
     {
       GuiHelper.Initialize(_guiCommonYColumns, list);

@@ -29,10 +29,24 @@
 
 namespace Altaxo.Calc.LinearRegression
 {
+  /// <summary>
+  /// Specifies the direct method used to solve a linear regression problem.
+  /// </summary>
   public enum DirectRegressionMethod
   {
+    /// <summary>
+    /// Solve the regression problem using the normal equations.
+    /// </summary>
     NormalEquations = 0,
+
+    /// <summary>
+    /// Solve the regression problem using a QR factorization.
+    /// </summary>
     QR,
+
+    /// <summary>
+    /// Solve the regression problem using a singular value decomposition.
+    /// </summary>
     Svd
   }
 }

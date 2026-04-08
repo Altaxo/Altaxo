@@ -47,15 +47,24 @@ namespace Altaxo.Gui.Graph.Graph3D.Lighting
   {
     private IDiscreteLightControl _control;
 
+    /// <summary>
+    /// Occurs when the selected value changes.
+    /// </summary>
     public event EventHandler? SelectedValueChanged;
 
     private GuiChangeLocker _lock;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DiscreteLightControl"/> class.
+    /// </summary>
     public DiscreteLightControl()
     {
       InitializeComponent();
     }
 
+    /// <summary>
+    /// Gets or sets the selected discrete light.
+    /// </summary>
     public IDiscreteLight SelectedValue
     {
       get

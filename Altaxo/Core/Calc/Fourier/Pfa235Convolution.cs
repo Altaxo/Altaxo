@@ -768,6 +768,15 @@ ErrorExit:
         throw new NotImplementedException("Sorry, correlation for dimensions > 1 is not implemented yet! Will you do it?");
     }
 
+    /// <summary>
+    /// Computes the cyclic correlation of two one-dimensional real-valued signals.
+    /// </summary>
+    /// <param name="data">The input data signal.</param>
+    /// <param name="response">The response signal.</param>
+    /// <param name="result">The array that receives the correlation result.</param>
+    /// <param name="nn">The number of samples.</param>
+    /// <param name="scratch">Temporary storage used during the computation.</param>
+    /// <returns><c>true</c> if the correlation completed.</returns>
     public bool CyclicCorrelation(double[] data, double[] response, double[] result, int nn, double[] scratch)
     {
       // return status
@@ -839,12 +848,21 @@ ErrorExit:
       return true;
     }
 
+    /// <summary>
+    /// Sets all elements of the specified array to zero.
+    /// </summary>
+    /// <param name="array">The array to clear.</param>
     protected static void FillZero(double[] array)
     {
       for (int i = 0; i < array.Length; i++)
         array[i] = 0;
     }
 
+    /// <summary>
+    /// Returns the square of the specified value.
+    /// </summary>
+    /// <param name="x">The value to square.</param>
+    /// <returns><paramref name="x"/> multiplied by itself.</returns>
     protected static double Square(double x)
     {
       return x * x;

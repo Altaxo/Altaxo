@@ -30,8 +30,12 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Main.Commands
 {
+  /// <summary>
+  /// Opens the general Altaxo program help.
+  /// </summary>
   public class ShowAltaxoProgramHelp : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       string fileName = FileUtility.ApplicationRootPath +
@@ -49,8 +53,12 @@ namespace Altaxo.Main.Commands
     }
   }
 
+  /// <summary>
+  /// Opens the Altaxo class reference help.
+  /// </summary>
   public class ShowAltaxoClassHelp : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       string fileName = FileUtility.ApplicationRootPath +

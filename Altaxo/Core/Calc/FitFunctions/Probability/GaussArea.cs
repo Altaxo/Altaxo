@@ -48,6 +48,9 @@ namespace Altaxo.Calc.FitFunctions.Probability
     /// <summary>The order of the polynomial with negative exponents.</summary>
     private readonly int _numberOfTerms;
 
+    /// <summary>
+    /// The number of parameters used for one peak term.
+    /// </summary>
     public const int NumberOfParametersPerPeak = 3;
     private const string ParameterBaseName0 = "A";
     private const string ParameterBaseName1 = "xc";
@@ -80,12 +83,20 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance with one Gaussian term and no baseline.
+    /// </summary>
     public GaussArea()
     {
       _numberOfTerms = 1;
       _orderOfBaselinePolynomial = -1;
     }
 
+    /// <summary>
+    /// Initializes a new instance with the specified number of Gaussian terms and baseline order.
+    /// </summary>
+    /// <param name="numberOfGaussianTerms">The number of Gaussian terms.</param>
+    /// <param name="orderOfBackgroundPolynomial">The order of the background polynomial.</param>
     public GaussArea(int numberOfGaussianTerms, int orderOfBackgroundPolynomial)
     {
       _numberOfTerms = numberOfGaussianTerms;
@@ -104,6 +115,10 @@ namespace Altaxo.Calc.FitFunctions.Probability
     }
 
 
+    /// <summary>
+    /// Creates a Gaussian-area fit function with one peak and a constant baseline.
+    /// </summary>
+    /// <returns>The fit function.</returns>
     [FitFunctionCreator("GaussArea", "General", 1, 1, 4)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.GaussArea}")]
     public static IFitFunction Create_1_0()
@@ -111,6 +126,10 @@ namespace Altaxo.Calc.FitFunctions.Probability
       return new GaussArea(1, 0);
     }
 
+    /// <summary>
+    /// Creates a Gaussian-area fit function with one peak and no baseline.
+    /// </summary>
+    /// <returns>The fit function.</returns>
     [FitFunctionCreator("GaussArea", "Probability", 1, 1, 3)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.GaussArea}")]
     public static IFitFunction Create_1_M1()

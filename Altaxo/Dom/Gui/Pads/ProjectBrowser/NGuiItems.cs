@@ -29,31 +29,53 @@ using Altaxo.Collections;
 
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
+  /// <summary>
+  /// Represents a tree node used by the project browser.
+  /// </summary>
   public class NGBrowserTreeNode : NGTreeNode
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NGBrowserTreeNode"/> class.
+    /// </summary>
     public NGBrowserTreeNode()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NGBrowserTreeNode"/> class.
+    /// </summary>
+    /// <param name="txt">The node text.</param>
     public NGBrowserTreeNode(string txt)
       : base(txt)
     {
     }
 
+    /// <summary>
+    /// The image assigned to the node.
+    /// </summary>
     public new ProjectBrowseItemImage Image;
 
+    /// <inheritdoc/>
     public override int ImageIndex
     {
       get { return (int)Image; }
     }
 
+    /// <inheritdoc/>
     public override int SelectedImageIndex
     {
       get { return (int)Image; }
     }
 
+    /// <summary>
+    /// Gets or sets the context menu associated with this node.
+    /// </summary>
     public object ContextMenu { get; set; }
 
+    /// <summary>
+    /// Applies the specified context menu to this node and all descendant nodes.
+    /// </summary>
+    /// <param name="contextMenu">The context menu to assign.</param>
     public void SetContextMenuRecursively(object contextMenu)
     {
       ContextMenu = contextMenu;
@@ -61,6 +83,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
         node.SetContextMenuRecursively(contextMenu);
     }
 
+    /// <summary>
+    /// Gets a value indicating whether renaming is enabled for this node.
+    /// </summary>
     public virtual bool IsRenamingEnabled { get { return false; } }
 
     /// <summary>
@@ -77,19 +102,33 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       }
     }
 
+    /// <summary>
+    /// Validates a proposed new node name.
+    /// </summary>
+    /// <param name="obj">The proposed name.</param>
+    /// <param name="info">The culture information.</param>
+    /// <returns>An error message if renaming is invalid; otherwise, <see langword="null"/>.</returns>
     protected virtual string ValidateRenaming(object obj, System.Globalization.CultureInfo info)
     {
       return "Item renaming not supported!";
     }
   }
 
+  /// <summary>
+  /// Represents a project folder node in the project browser.
+  /// </summary>
   public class NGProjectFolderTreeNode : NGBrowserTreeNode
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NGProjectFolderTreeNode"/> class.
+    /// </summary>
+    /// <param name="txt">The folder node text.</param>
     public NGProjectFolderTreeNode(string txt)
       : base(txt)
     {
     }
 
+    /// <inheritdoc/>
     public override string Text
     {
       get
@@ -105,8 +144,10 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     #region Renaming
 
+    /// <inheritdoc/>
     public override bool IsRenamingEnabled { get { return true; } }
 
+    /// <inheritdoc/>
     protected override string ValidateRenaming(object obj, System.Globalization.CultureInfo info)
     {
       string newShortName = (string)obj;
@@ -147,8 +188,14 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     #endregion Renaming
   }
 
+  /// <summary>
+  /// Represents an item in the project browser list.
+  /// </summary>
   public class BrowserListItem : SelectableListNode
   {
+    /// <summary>
+    /// The image assigned to the list item.
+    /// </summary>
     public new ProjectBrowseItemImage Image;
     private DateTime _creationDate;
     private DateTime _changeDate;
@@ -157,12 +204,20 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// </summary>
     private bool _nameIsFullName;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BrowserListItem"/> class.
+    /// </summary>
+    /// <param name="name">The displayed item name.</param>
+    /// <param name="nameIsFullName"><see langword="true"/> if <paramref name="name"/> is the full item name; otherwise, <see langword="false"/>.</param>
+    /// <param name="item">The underlying item.</param>
+    /// <param name="sel"><see langword="true"/> to mark the item as selected.</param>
     public BrowserListItem(string name, bool nameIsFullName, object item, bool sel)
       : base(name, item, sel)
     {
       _nameIsFullName = nameIsFullName;
     }
 
+    /// <inheritdoc/>
     public override int ImageIndex
     {
       get
@@ -173,6 +228,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     //public System.Windows.Media.ImageSource ImageSource { get { return WpfBrowserTreeNode.Images[ImageIndex]; } }
 
+    /// <summary>
+    /// Gets or sets the creation date shown for the item.
+    /// </summary>
     public DateTime CreationDate
     {
       get { return _creationDate; }
@@ -188,6 +246,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       }
     }
 
+    /// <summary>
+    /// Gets or sets the last change date shown for the item.
+    /// </summary>
     public DateTime ChangeDate
     {
       get { return _changeDate; }
@@ -203,6 +264,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       }
     }
 
+    /// <inheritdoc/>
     public override string Text
     {
       get
@@ -216,6 +278,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       }
     }
 
+    /// <inheritdoc/>
     public override string Text1
     {
       get
@@ -227,6 +290,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       }
     }
 
+    /// <inheritdoc/>
     public override string Text2
     {
       get
@@ -238,6 +302,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       }
     }
 
+    /// <inheritdoc/>
     public override string Text3
     {
       get
@@ -255,22 +320,53 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       }
     }
 
-    public enum SortKind { None, Name, CreationDate, ChangeDate, NameRev }
+    /// <summary>
+    /// Defines the sort modes supported for project browser list items.
+    /// </summary>
+    public enum SortKind
+    {
+      /// <summary>No sorting.</summary>
+      None,
+      /// <summary>Sort by name.</summary>
+      Name,
+      /// <summary>Sort by creation date.</summary>
+      CreationDate,
+      /// <summary>Sort by change date.</summary>
+      ChangeDate,
+      /// <summary>Sort by the reversed name.</summary>
+      NameRev
+    }
 
+    /// <summary>
+    /// Compares <see cref="SelectableListNode"/> instances using one or two sort criteria.
+    /// </summary>
     public class Comparer : IComparer<SelectableListNode>
     {
       private Tuple<SortKind, bool>[] _sort;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="Comparer"/> class using a single sort criterion.
+      /// </summary>
+      /// <param name="sort">The primary sort criterion.</param>
+      /// <param name="descending"><see langword="true"/> to sort in descending order.</param>
       public Comparer(SortKind sort, bool descending)
       {
         _sort = new Tuple<SortKind, bool>[] { new Tuple<SortKind, bool>(sort, descending) };
       }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="Comparer"/> class using two sort criteria.
+      /// </summary>
+      /// <param name="sort1">The primary sort criterion.</param>
+      /// <param name="descending1"><see langword="true"/> to sort the primary criterion in descending order.</param>
+      /// <param name="sort2">The secondary sort criterion.</param>
+      /// <param name="descending2"><see langword="true"/> to sort the secondary criterion in descending order.</param>
       public Comparer(SortKind sort1, bool descending1, SortKind sort2, bool descending2)
       {
         _sort = new Tuple<SortKind, bool>[] { new Tuple<SortKind, bool>(sort1, descending1), new Tuple<SortKind, bool>(sort2, descending2) };
       }
 
+      /// <inheritdoc/>
       public int Compare(SelectableListNode x, SelectableListNode y)
       {
         var xx = (BrowserListItem)x;
@@ -322,6 +418,11 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       }
     }
 
+    /// <summary>
+    /// Sorts the specified list using the provided comparer.
+    /// </summary>
+    /// <param name="list">The list to sort.</param>
+    /// <param name="comparer">The comparer to apply.</param>
     public static void Sort(SelectableListNodeList list, IComparer<SelectableListNode> comparer)
     {
       var sset = new SortedSet<SelectableListNode>(list, comparer);
@@ -470,30 +571,60 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     #endregion Renaming
   }
 
+  /// <summary>
+  /// Defines the images used for project browser items.
+  /// </summary>
   public enum ProjectBrowseItemImage
   {
+    /// <summary>The project image.</summary>
     Project = 0,
+    /// <summary>The closed folder image.</summary>
     ClosedFolder = 1,
+    /// <summary>The open folder image.</summary>
     OpenFolder = 2,
+    /// <summary>The worksheet image.</summary>
     Worksheet = 3,
+    /// <summary>The graph image.</summary>
     Graph = 4,
+    /// <summary>The property bag image.</summary>
     PropertyBag = 5,
+    /// <summary>The text document image.</summary>
     TextDocument = 6,
   }
 
+  /// <summary>
+  /// Defines how items are shown when a folder is selected.
+  /// </summary>
   public enum ViewOnSelect
   {
+    /// <summary>No automatic item view is shown.</summary>
     Off,
+    /// <summary>Shows items in the selected folder.</summary>
     ItemsInFolder,
+    /// <summary>Shows items in the selected folder and all subfolders.</summary>
     ItemsInFolderAndSubfolders
   }
 
+  /// <summary>
+  /// Defines callbacks for GUI-aware browser tree nodes.
+  /// </summary>
   public interface IGuiBrowserTreeNode
   {
+    /// <summary>
+    /// Notifies that a node was added.
+    /// </summary>
+    /// <param name="node">The added node.</param>
     void OnNodeAdded(NGBrowserTreeNode node);
 
+    /// <summary>
+    /// Notifies that a node was removed.
+    /// </summary>
+    /// <param name="node">The removed node.</param>
     void OnNodeRemoved(NGBrowserTreeNode node);
 
+    /// <summary>
+    /// Notifies that multiple node changes occurred.
+    /// </summary>
     void OnNodeMultipleChanges();
   }
 }

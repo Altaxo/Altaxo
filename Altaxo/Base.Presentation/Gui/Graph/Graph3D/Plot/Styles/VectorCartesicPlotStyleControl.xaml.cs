@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
   /// </summary>
   public partial class VectorCartesicPlotStyleControl : UserControl, IVectorCartesicPlotStyleView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="VectorCartesicPlotStyleControl"/> class.
+    /// </summary>
     public VectorCartesicPlotStyleControl()
     {
       InitializeComponent();

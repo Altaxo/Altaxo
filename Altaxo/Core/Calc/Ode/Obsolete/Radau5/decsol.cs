@@ -18,8 +18,14 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
 {
   #region The Class: DEC
 
+  /// <summary>
+  /// Provides Gaussian elimination for dense matrices used by the translated RADAU5 solver.
+  /// </summary>
   public class DEC
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DEC"/> class.
+    /// </summary>
     public DEC()
     {
     }
@@ -156,8 +162,14 @@ LABEL80:
 
   // C
   // C
+  /// <summary>
+  /// Solves dense linear systems using factors produced by <see cref="DEC"/>.
+  /// </summary>
   public class SOL
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SOL"/> class.
+    /// </summary>
     public SOL()
     {
     }
@@ -264,8 +276,14 @@ LABEL50:
 
   // c
   // c
+  /// <summary>
+  /// Provides Gaussian elimination for Hessenberg matrices used by the translated RADAU5 solver.
+  /// </summary>
   public class DECH
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DECH"/> class.
+    /// </summary>
     public DECH()
     {
     }
@@ -410,8 +428,14 @@ LABEL80:
 
   // C
   // C
+  /// <summary>
+  /// Solves Hessenberg linear systems using factors produced by <see cref="DECH"/>.
+  /// </summary>
   public class SOLH
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SOLH"/> class.
+    /// </summary>
     public SOLH()
     {
     }
@@ -523,8 +547,14 @@ LABEL50:
   #region The Class: DECC
 
   // C
+  /// <summary>
+  /// Provides Gaussian elimination for complex dense matrices used by the translated RADAU5 solver.
+  /// </summary>
   public class DECC
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DECC"/> class.
+    /// </summary>
     public DECC()
     {
     }
@@ -729,8 +759,14 @@ LABEL80:
 
   // C
   // C
+  /// <summary>
+  /// Solves complex dense linear systems using factors produced by <see cref="DECC"/>.
+  /// </summary>
   public class SOLC
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SOLC"/> class.
+    /// </summary>
     public SOLC()
     {
     }
@@ -874,8 +910,14 @@ LABEL50:
 
   // C
   // C
+  /// <summary>
+  /// Provides Gaussian elimination for complex Hessenberg matrices used by the translated RADAU5 solver.
+  /// </summary>
   public class DECHC
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DECHC"/> class.
+    /// </summary>
     public DECHC()
     {
     }
@@ -1089,8 +1131,14 @@ LABEL80:
 
   // C
   // C
+  /// <summary>
+  /// Solves complex Hessenberg linear systems using factors produced by <see cref="DECHC"/>.
+  /// </summary>
   public class SOLHC
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SOLHC"/> class.
+    /// </summary>
     public SOLHC()
     {
     }
@@ -1241,8 +1289,14 @@ LABEL50:
   #region The Class: DECB
 
   // C
+  /// <summary>
+  /// Provides Gaussian elimination for band matrices used by the translated RADAU5 solver.
+  /// </summary>
   public class DECB
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DECB"/> class.
+    /// </summary>
     public DECB()
     {
     }
@@ -1439,8 +1493,14 @@ LABEL80:
 
   // C
   // C
+  /// <summary>
+  /// Solves banded linear systems using factors produced by <see cref="DECB"/>.
+  /// </summary>
   public class SOLB
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SOLB"/> class.
+    /// </summary>
     public SOLB()
     {
     }
@@ -1574,8 +1634,14 @@ LABEL50:
   #region The Class: DECBC
 
   // C
+  /// <summary>
+  /// Provides Gaussian elimination for complex band matrices used by the translated RADAU5 solver.
+  /// </summary>
   public class DECBC
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DECBC"/> class.
+    /// </summary>
     public DECBC()
     {
     }
@@ -1822,8 +1888,14 @@ LABEL80:
 
   // C
   // C
+  /// <summary>
+  /// Solves complex banded linear systems using factors produced by <see cref="DECBC"/>.
+  /// </summary>
   public class SOLBC
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SOLBC"/> class.
+    /// </summary>
     public SOLBC()
     {
     }
@@ -1985,8 +2057,14 @@ LABEL50:
 
   // c
   // C
+  /// <summary>
+  /// Reduces matrices to upper Hessenberg form for the translated RADAU5 solver.
+  /// </summary>
   public class ELMHES
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ELMHES"/> class.
+    /// </summary>
     public ELMHES()
     {
     }

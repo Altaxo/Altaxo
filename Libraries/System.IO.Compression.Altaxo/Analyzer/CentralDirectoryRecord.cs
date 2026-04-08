@@ -33,50 +33,143 @@ using System.Threading.Tasks;
 
 namespace System.IO.Compression
 {
+  /// <summary>
+  /// Represents a central directory record in a ZIP archive.
+  /// </summary>
   public struct CentralDirectoryRecord
 
   {
+    /// <summary>
+    /// Gets the minimum size, in bytes, of the central directory record.
+    /// </summary>
     public const int MinimumSizeOfStructure = 46;
+
+    /// <summary>
+    /// Gets the maximum size, in bytes, of the central directory record including variable-length fields.
+    /// </summary>
     public const int MaximumSizeOfStructure = MinimumSizeOfStructure + 65535 + 65535 + 65535;
 
+    /// <summary>
+    /// Gets the ZIP64 extra field signature.
+    /// </summary>
     public const int Zip64ExtraFieldSignature = 0x0001; // 0x0001 is signature
 
+    /// <summary>
+    /// Gets the central directory entry signature.
+    /// </summary>
     public const int CentralDirectoryEntrySignature = 0x02014b50; // Position 0
+
+    /// <summary>
+    /// Gets the version that created the entry.
+    /// </summary>
     public int VersionMadeBy { get; private set; } // Position 4
+
+    /// <summary>
+    /// Gets the version needed to extract the entry.
+    /// </summary>
     public int VersionNeeded { get; private set; } // Position 6
+
+    /// <summary>
+    /// Gets the general purpose bit flag.
+    /// </summary>
     public int GeneralPurposeFlag { get; private set; } // Position 8
+
+    /// <summary>
+    /// Gets the compression method.
+    /// </summary>
     public int CompressionMethod { get; private set; } // Position 10
+
+    /// <summary>
+    /// Gets the file last modification time.
+    /// </summary>
     public UInt32 FileLastModificationTime { get; private set; } // Position 12
+
+    /// <summary>
+    /// Gets the CRC-32 checksum.
+    /// </summary>
     public UInt32 Crc { get; private set; } // Position 16
 
+    /// <summary>
+    /// Gets the compressed size.
+    /// </summary>
     public long CompressedSize { get; private set; } // Position 20
+
+    /// <summary>
+    /// Gets the uncompressed size.
+    /// </summary>
     public long UncompressedSize { get; private set; } // Position 24
+
+    /// <summary>
+    /// Gets the file name length.
+    /// </summary>
     public int FileNameLength { get; private set; } // Position 28
+
+    /// <summary>
+    /// Gets the extra field length.
+    /// </summary>
     public int ExtraFieldLength { get; private set; } // Position 30
+
+    /// <summary>
+    /// Gets the file comment length.
+    /// </summary>
     public int FileCommentLength { get; private set; } // Position 32
 
+    /// <summary>
+    /// Gets the disk number on which the file starts.
+    /// </summary>
     public int DiskNumberWhereFileStarts { get; private set; } // Position 34
+
+    /// <summary>
+    /// Gets the internal file attributes.
+    /// </summary>
     public int InternalFileAttributes { get; private set; } // Position 36
+
+    /// <summary>
+    /// Gets the external file attributes.
+    /// </summary>
     public int ExternalFileAttributes { get; private set; } // Position 38
 
+    /// <summary>
+    /// Gets the relative offset to the local file header.
+    /// </summary>
     public long RelativeOffsetToLocalFileHeader { get; private set; } // Position 42
 
     private string _fileName; // Position46
 
     // public byte[] ExtraField { get; private set; } // Position 46 + FileNameLength
 
+    /// <summary>
+    /// Gets the file comment.
+    /// </summary>
     public string? FileComment { get; private set; } // Position 46 + FileNameLength + ExtraFieldLength
 
     // Data not part of the structure on disk
 
+    /// <summary>
+    /// Gets or sets the file name.
+    /// </summary>
     public string FileName { get => _fileName ?? string.Empty; set => _fileName = value; }
 
+    /// <summary>
+    /// Gets the original stream position of the record.
+    /// </summary>
     public long OriginalStreamPosition { get; private set; } // Position 20
 
+    /// <summary>
+    /// Gets the position immediately after this record in the stream.
+    /// </summary>
     public long NextStreamPosition => OriginalStreamPosition + MinimumSizeOfStructure + FileNameLength + ExtraFieldLength + FileCommentLength;
 
+    /// <summary>
+    /// Gets the total size of the record including variable-length fields.
+    /// </summary>
     public int TotalSize => MinimumSizeOfStructure + FileNameLength + ExtraFieldLength + FileCommentLength;
 
+    /// <summary>
+    /// Creates a central directory record from a local file header.
+    /// </summary>
+    /// <param name="lfh">The local file header.</param>
+    /// <returns>The created central directory record.</returns>
     public static CentralDirectoryRecord FromLocalFileHeader(LocalFileHeader lfh)
     {
       var cde = new CentralDirectoryRecord();
@@ -101,6 +194,13 @@ namespace System.IO.Compression
 
     private static ThreadLocal<byte[]> _nameBuffer = new ThreadLocal<byte[]>();
 
+    /// <summary>
+    /// Creates a central directory record from the specified stream.
+    /// </summary>
+    /// <param name="str">The stream positioned immediately after the signature.</param>
+    /// <param name="readFileName">If set to <c>true</c>, reads the file name.</param>
+    /// <param name="readFileComment">If set to <c>true</c>, reads the file comment.</param>
+    /// <returns>The created central directory record.</returns>
     public static CentralDirectoryRecord Create(Stream str, bool readFileName = false, bool readFileComment = false)
     {
       var buffer = new byte[MinimumSizeOfStructure];
@@ -252,6 +352,10 @@ namespace System.IO.Compression
       return result;
     }
 
+    /// <summary>
+    /// Writes the central directory record to the specified ZIP archive stream.
+    /// </summary>
+    /// <param name="zipArchiveStream">The ZIP archive stream to write to.</param>
     public void Write(Stream zipArchiveStream)
     {
       var fileName = FileName;

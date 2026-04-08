@@ -35,11 +35,15 @@ namespace Altaxo.Gui.Common.Tools
   /// </summary>
   public partial class TestAllProjectsInFolderControl : UserControl, ITestAllProjectsInFolderView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TestAllProjectsInFolderControl"/> class.
+    /// </summary>
     public TestAllProjectsInFolderControl()
     {
       InitializeComponent();
     }
 
+    /// <inheritdoc/>
     public string FolderPaths
     {
       get
@@ -52,6 +56,7 @@ namespace Altaxo.Gui.Common.Tools
       }
     }
 
+    /// <inheritdoc/>
     public string ProtocolFileName
     {
       get
@@ -64,6 +69,7 @@ namespace Altaxo.Gui.Common.Tools
       }
     }
 
+    /// <inheritdoc/>
     public bool TestSavingAndReopening
     {
       get

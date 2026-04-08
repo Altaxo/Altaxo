@@ -38,10 +38,16 @@ namespace Altaxo.Gui.Common.Drawing
   /// </summary>
   public partial class FontStyleComboBox : UserControl
   {
+    /// <summary>
+    /// Occurs when <see cref="SelectedFontStyle"/> changes.
+    /// </summary>
     public event DependencyPropertyChangedEventHandler? SelectedFontStyleChanged;
 
     private Altaxo.Main.TemporaryDisabler _eventDisabler = new Altaxo.Main.TemporaryDisabler(EhEventsReenabled);
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FontStyleComboBox"/> class.
+    /// </summary>
     public FontStyleComboBox()
     {
       InitializeComponent();
@@ -51,12 +57,18 @@ namespace Altaxo.Gui.Common.Drawing
 
     private const string _nameOfValueProp = "SelectedFontStyle";
 
+    /// <summary>
+    /// Gets or sets the selected font style.
+    /// </summary>
     public FontXStyle SelectedFontStyle
     {
       get { return (FontXStyle)GetValue(SelectedFontStyleProperty); }
       set { SetValue(SelectedFontStyleProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="SelectedFontStyle"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty SelectedFontStyleProperty =
         DependencyProperty.Register(_nameOfValueProp, typeof(FontXStyle), typeof(FontStyleComboBox),
         new FrameworkPropertyMetadata(FontXStyle.Regular, EhSelectedFontStyleChanged) { BindsTwoWayByDefault=true});
@@ -66,6 +78,11 @@ namespace Altaxo.Gui.Common.Drawing
       ((FontStyleComboBox)obj).OnSelectedFontStyleChanged(obj, args);
     }
 
+    /// <summary>
+    /// Raises the <see cref="SelectedFontStyleChanged"/> event.
+    /// </summary>
+    /// <param name="obj">The dependency object whose font style changed.</param>
+    /// <param name="args">The event arguments.</param>
     protected virtual void OnSelectedFontStyleChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
       if (SelectedFontStyleChanged is not null)

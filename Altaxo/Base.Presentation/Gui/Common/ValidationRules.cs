@@ -36,17 +36,28 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public class ValidationByForwarding : ValidationRule
   {
+    /// <summary>
+    /// Gets or sets the validation function to invoke.
+    /// </summary>
     public Func<object, System.Globalization.CultureInfo, ValidationResult> ValidationFunction { get; set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ValidationByForwarding"/> class.
+    /// </summary>
     public ValidationByForwarding()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ValidationByForwarding"/> class.
+    /// </summary>
+    /// <param name="validationFunction">The validation function to invoke.</param>
     public ValidationByForwarding(Func<object, System.Globalization.CultureInfo, ValidationResult> validationFunction)
     {
       ValidationFunction = validationFunction;
     }
 
+    /// <inheritdoc/>
     public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
     {
       if (ValidationFunction is not null)
@@ -63,17 +74,28 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public class ValidationWithErrorString : ValidationRule
   {
+    /// <summary>
+    /// Gets or sets the validation function to invoke.
+    /// </summary>
     public Func<object, System.Globalization.CultureInfo, string> ValidationFunction { get; set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ValidationWithErrorString"/> class.
+    /// </summary>
     public ValidationWithErrorString()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ValidationWithErrorString"/> class.
+    /// </summary>
+    /// <param name="validationFunction">The validation function to invoke.</param>
     public ValidationWithErrorString(Func<object, System.Globalization.CultureInfo, string> validationFunction)
     {
       ValidationFunction = validationFunction;
     }
 
+    /// <inheritdoc/>
     public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
     {
       if (ValidationFunction is not null)
@@ -94,17 +116,28 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public class ValidationWithCancelEventArgs : ValidationRule
   {
+    /// <summary>
+    /// Gets or sets the validation function to invoke.
+    /// </summary>
     public Action<object, System.Globalization.CultureInfo, System.ComponentModel.CancelEventArgs> ValidationFunction { get; set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ValidationWithCancelEventArgs"/> class.
+    /// </summary>
     public ValidationWithCancelEventArgs()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ValidationWithCancelEventArgs"/> class.
+    /// </summary>
+    /// <param name="validationFunction">The validation function to invoke.</param>
     public ValidationWithCancelEventArgs(Action<object, System.Globalization.CultureInfo, System.ComponentModel.CancelEventArgs> validationFunction)
     {
       ValidationFunction = validationFunction;
     }
 
+    /// <inheritdoc/>
     public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
     {
       if (ValidationFunction is not null)

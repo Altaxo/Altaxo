@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
   /// </summary>
   public partial class SpanTickSpacingControl : UserControl, ISpanTickSpacingView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SpanTickSpacingControl"/> class.
+    /// </summary>
     public SpanTickSpacingControl()
     {
       InitializeComponent();

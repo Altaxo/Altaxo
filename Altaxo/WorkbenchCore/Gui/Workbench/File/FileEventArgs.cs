@@ -20,11 +20,17 @@ using System;
 
 namespace Altaxo.Gui.Workbench
 {
+  /// <summary>
+  /// Provides file-related event data.
+  /// </summary>
   public class FileEventArgs : EventArgs
   {
     private string _fileName;
     private bool _isDirectory;
 
+    /// <summary>
+    /// Gets the affected file or directory name.
+    /// </summary>
     public string FileName
     {
       get
@@ -33,6 +39,9 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the path refers to a directory.
+    /// </summary>
     public bool IsDirectory
     {
       get
@@ -41,6 +50,11 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileEventArgs"/> class.
+    /// </summary>
+    /// <param name="fileName">The affected file or directory name.</param>
+    /// <param name="isDirectory">Set to <see langword="true"/> if the path is a directory.</param>
     public FileEventArgs(string fileName, bool isDirectory)
     {
       this._fileName = fileName;
@@ -48,10 +62,16 @@ namespace Altaxo.Gui.Workbench
     }
   }
 
+  /// <summary>
+  /// Provides cancelable file-related event data.
+  /// </summary>
   public class FileCancelEventArgs : FileEventArgs
   {
     private bool _cancel;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the operation should be canceled.
+    /// </summary>
     public bool Cancel
     {
       get
@@ -66,6 +86,9 @@ namespace Altaxo.Gui.Workbench
 
     private bool _operationAlreadyDone;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the operation has already been completed.
+    /// </summary>
     public bool OperationAlreadyDone
     {
       get
@@ -78,6 +101,11 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileCancelEventArgs"/> class.
+    /// </summary>
+    /// <param name="fileName">The affected file or directory name.</param>
+    /// <param name="isDirectory">Set to <see langword="true"/> if the path is a directory.</param>
     public FileCancelEventArgs(string fileName, bool isDirectory) : base(fileName, isDirectory)
     {
     }

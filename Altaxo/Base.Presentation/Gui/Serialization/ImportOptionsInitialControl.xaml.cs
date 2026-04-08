@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Serialization
   /// </summary>
   public partial class ImportOptionsInitialControl : UserControl, IImportOptionsInitialView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ImportOptionsInitialControl"/> class.
+    /// </summary>
     public ImportOptionsInitialControl()
     {
       InitializeComponent();

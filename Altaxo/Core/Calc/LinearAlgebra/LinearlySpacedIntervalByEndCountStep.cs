@@ -29,6 +29,9 @@ using Altaxo.Main;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
+  /// <summary>
+  /// Represents an immutable interval with evenly spaced values.
+  /// </summary>
   public interface ISpacedInterval : IReadOnlyList<double>, IImmutable
   {
     /// <summary>
@@ -46,9 +49,24 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     double Step { get; }
 
+    /// <summary>
+    /// Gets a value indicating whether the start value can be edited.
+    /// </summary>
     bool IsStartEditable { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether the end value can be edited.
+    /// </summary>
     bool IsEndEditable { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether the step size can be edited.
+    /// </summary>
     bool IsStepEditable { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether the element count can be edited.
+    /// </summary>
     bool IsCountEditable { get; }
 
 
@@ -79,9 +97,13 @@ namespace Altaxo.Calc.LinearAlgebra
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="LinearlySpacedIntervalByEndCountStep"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinearlySpacedIntervalByEndCountStep), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (LinearlySpacedIntervalByEndCountStep)obj;
@@ -90,6 +112,7 @@ namespace Altaxo.Calc.LinearAlgebra
         info.AddValue("Step", s.Step);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var end = info.GetDouble("End");
@@ -153,9 +176,16 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
+    /// <inheritdoc/>
     public bool IsStartEditable => false;
+
+    /// <inheritdoc/>
     public bool IsEndEditable => true;
+
+    /// <inheritdoc/>
     public bool IsStepEditable => true;
+
+    /// <inheritdoc/>
     public bool IsCountEditable => true;
   }
 }

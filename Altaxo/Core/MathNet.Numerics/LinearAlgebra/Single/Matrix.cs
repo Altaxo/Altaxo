@@ -423,70 +423,87 @@ namespace Altaxo.Calc.LinearAlgebra.Single
       Map(x => (float)Math.Log(x), result, Zeros.Include);
     }
 
+    /// <inheritdoc/>
     protected override void DoPointwiseAbs(Matrix<float> result)
     {
       Map(x => Math.Abs(x), result, Zeros.AllowSkip);
     }
+    /// <inheritdoc/>
     protected override void DoPointwiseAcos(Matrix<float> result)
     {
       Map(x => (float)Math.Acos(x), result, Zeros.Include);
     }
+    /// <inheritdoc/>
     protected override void DoPointwiseAsin(Matrix<float> result)
     {
       Map(x => (float)Math.Asin(x), result, Zeros.AllowSkip);
     }
+    /// <inheritdoc/>
     protected override void DoPointwiseAtan(Matrix<float> result)
     {
       Map(x => (float)Math.Atan(x), result, Zeros.AllowSkip);
     }
+    /// <inheritdoc/>
     protected override void DoPointwiseAtan2(Matrix<float> other, Matrix<float> result)
     {
       Map2((x, y) => (float)Math.Atan2(x, y), other, result, Zeros.Include);
     }
+    /// <inheritdoc/>
     protected override void DoPointwiseCeiling(Matrix<float> result)
     {
       Map(x => (float)Math.Ceiling(x), result, Zeros.AllowSkip);
     }
+    /// <inheritdoc/>
     protected override void DoPointwiseCos(Matrix<float> result)
     {
       Map(x => (float)Math.Cos(x), result, Zeros.Include);
     }
+    /// <inheritdoc/>
     protected override void DoPointwiseCosh(Matrix<float> result)
     {
       Map(x => (float)Math.Cosh(x), result, Zeros.Include);
     }
+    /// <inheritdoc/>
     protected override void DoPointwiseFloor(Matrix<float> result)
     {
       Map(x => (float)Math.Floor(x), result, Zeros.AllowSkip);
     }
+    /// <inheritdoc/>
     protected override void DoPointwiseLog10(Matrix<float> result)
     {
       Map(x => (float)Math.Log10(x), result, Zeros.Include);
     }
+    /// <inheritdoc/>
     protected override void DoPointwiseRound(Matrix<float> result)
     {
       Map(x => (float)Math.Round(x), result, Zeros.AllowSkip);
     }
+    /// <inheritdoc/>
     protected override void DoPointwiseSign(Matrix<float> result)
     {
       Map(x => Math.Sign(x), result, Zeros.AllowSkip);
     }
+    /// <inheritdoc/>
     protected override void DoPointwiseSin(Matrix<float> result)
     {
       Map(x => (float)Math.Sin(x), result, Zeros.AllowSkip);
     }
+    /// <inheritdoc/>
     protected override void DoPointwiseSinh(Matrix<float> result)
     {
       Map(x => (float)Math.Sinh(x), result, Zeros.AllowSkip);
     }
+    /// <inheritdoc/>
     protected override void DoPointwiseSqrt(Matrix<float> result)
     {
       Map(x => (float)Math.Sqrt(x), result, Zeros.AllowSkip);
     }
+    /// <inheritdoc/>
     protected override void DoPointwiseTan(Matrix<float> result)
     {
       Map(x => (float)Math.Tan(x), result, Zeros.AllowSkip);
     }
+    /// <inheritdoc/>
     protected override void DoPointwiseTanh(Matrix<float> result)
     {
       Map(x => (float)Math.Tanh(x), result, Zeros.AllowSkip);
@@ -533,43 +550,51 @@ namespace Altaxo.Calc.LinearAlgebra.Single
       return sum;
     }
 
+    /// <inheritdoc/>
     protected override void DoPointwiseMinimum(float scalar, Matrix<float> result)
     {
       Map(x => Math.Min(scalar, x), result, scalar >= 0d ? Zeros.AllowSkip : Zeros.Include);
     }
 
+    /// <inheritdoc/>
     protected override void DoPointwiseMaximum(float scalar, Matrix<float> result)
     {
       Map(x => Math.Max(scalar, x), result, scalar <= 0d ? Zeros.AllowSkip : Zeros.Include);
     }
 
+    /// <inheritdoc/>
     protected override void DoPointwiseAbsoluteMinimum(float scalar, Matrix<float> result)
     {
       float absolute = Math.Abs(scalar);
       Map(x => Math.Min(absolute, Math.Abs(x)), result, Zeros.AllowSkip);
     }
 
+    /// <inheritdoc/>
     protected override void DoPointwiseAbsoluteMaximum(float scalar, Matrix<float> result)
     {
       float absolute = Math.Abs(scalar);
       Map(x => Math.Max(absolute, Math.Abs(x)), result, Zeros.Include);
     }
 
+    /// <inheritdoc/>
     protected override void DoPointwiseMinimum(Matrix<float> other, Matrix<float> result)
     {
       Map2(Math.Min, other, result, Zeros.AllowSkip);
     }
 
+    /// <inheritdoc/>
     protected override void DoPointwiseMaximum(Matrix<float> other, Matrix<float> result)
     {
       Map2(Math.Max, other, result, Zeros.AllowSkip);
     }
 
+    /// <inheritdoc/>
     protected override void DoPointwiseAbsoluteMinimum(Matrix<float> other, Matrix<float> result)
     {
       Map2((x, y) => Math.Min(Math.Abs(x), Math.Abs(y)), other, result, Zeros.AllowSkip);
     }
 
+    /// <inheritdoc/>
     protected override void DoPointwiseAbsoluteMaximum(Matrix<float> other, Matrix<float> result)
     {
       Map2((x, y) => Math.Max(Math.Abs(x), Math.Abs(y)), other, result, Zeros.AllowSkip);
@@ -769,31 +794,37 @@ namespace Altaxo.Calc.LinearAlgebra.Single
       return IsSymmetric();
     }
 
+    /// <inheritdoc/>
     public override Cholesky<float> Cholesky()
     {
       return UserCholesky.Create(this);
     }
 
+    /// <inheritdoc/>
     public override LU<float> LU()
     {
       return UserLU.Create(this);
     }
 
+    /// <inheritdoc/>
     public override QR<float> QR(QRMethod method = QRMethod.Thin)
     {
       return UserQR.Create(this, method);
     }
 
+    /// <inheritdoc/>
     public override GramSchmidt<float> GramSchmidt()
     {
       return UserGramSchmidt.Create(this);
     }
 
+    /// <inheritdoc/>
     public override Svd<float> Svd(bool computeVectors = true)
     {
       return UserSvd.Create(this, computeVectors);
     }
 
+    /// <inheritdoc/>
     public override Evd<float> Evd(Symmetricity symmetricity = Symmetricity.Unknown)
     {
       return UserEvd.Create(this, symmetricity);

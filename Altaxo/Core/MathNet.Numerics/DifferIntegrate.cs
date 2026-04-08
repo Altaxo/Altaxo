@@ -2,6 +2,9 @@
 
 namespace Altaxo.Calc
 {
+  /// <summary>
+  /// Provides numerical methods for fractional differentiation and integration.
+  /// </summary>
   public static class DifferIntegrate
   {
     /// <summary>
@@ -23,7 +26,7 @@ namespace Altaxo.Calc
     {
       // The Riemann–Liouville fractional derivative of f(x) of order n is defined as
       //    \,_{x_0}{\mathbb{D}}^n_xf(x) = \frac{1}{\Gamma(m-n)} \frac{d^m}{dx^m} \int_{x_0}^{x} (x-t)^{m-n-1} f(t) dt
-      //    where m is the smallest interger greater than n.
+      //    where m is the smallest integer greater than n.
       // see https://en.wikipedia.org/wiki/Differintegral
 
       if (Math.Abs(order) < double.Epsilon)
@@ -65,7 +68,7 @@ namespace Altaxo.Calc
     {
       // The Riemann–Liouville fractional derivative of f(x) of order n is defined as
       //    \,_{x_0}{\mathbb{D}}^n_xf(x) = \frac{1}{\Gamma(m-n)} \frac{d^m}{dx^m} \int_{x_0}^{x} (x-t)^{m-n-1} f(t) dt
-      //    where m is the smallest interger greater than n.
+      //    where m is the smallest integer greater than n.
       // see https://en.wikipedia.org/wiki/Differintegral
 
       if (Math.Abs(order) < double.Epsilon)
@@ -108,7 +111,7 @@ namespace Altaxo.Calc
     {
       // The Riemann–Liouville fractional derivative of f(x) of order n is defined as
       //    \,_{x_0}{\mathbb{D}}^n_xf(x) = \frac{1}{\Gamma(m-n)} \frac{d^m}{dx^m} \int_{x_0}^{x} (x-t)^{m-n-1} f(t) dt
-      //    where m is the smallest interger greater than n.
+      //    where m is the smallest integer greater than n.
       // see https://en.wikipedia.org/wiki/Differintegral
 
       if (Math.Abs(order) < double.Epsilon)

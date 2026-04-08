@@ -32,8 +32,14 @@ namespace Altaxo.Gui.Graph.Graph2D
   /// </summary>
   public partial class ResizeGraphControl : UserControl, IResizeGraphView
   {
+    /// <summary>
+    /// Occurs when the font settings change.
+    /// </summary>
     public event Action? FontChanged;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ResizeGraphControl"/> class.
+    /// </summary>
     public ResizeGraphControl()
     {
       InitializeComponent();

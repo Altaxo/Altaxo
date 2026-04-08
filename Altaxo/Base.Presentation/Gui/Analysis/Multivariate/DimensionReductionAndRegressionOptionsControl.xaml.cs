@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Analysis.Multivariate
   /// </summary>
   public partial class DimensionReductionAndRegressionOptionsControl : UserControl, IDimensionReductionAndRegressionOptionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DimensionReductionAndRegressionOptionsControl"/> class.
+    /// </summary>
     public DimensionReductionAndRegressionOptionsControl()
     {
       InitializeComponent();

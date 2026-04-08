@@ -27,6 +27,9 @@ using ComplexT = System.Numerics.Complex;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
+  /// <summary>
+  /// Represents a read-only indexed sequence of complex double-precision values.
+  /// </summary>
   public interface IComplexDoubleSequence
   {
     /// <summary>Gets the element of the sequence at index i.</summary>

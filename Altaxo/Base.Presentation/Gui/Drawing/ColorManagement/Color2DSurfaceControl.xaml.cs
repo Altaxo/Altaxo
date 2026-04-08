@@ -53,6 +53,9 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     private Point? _initialMousePosition = null;
 
     /// <summary>Property that describes where the selection rectangle is currently located in x-direction (0: right (!), 1: left)</summary>
+    /// <summary>
+    /// Identifies the <see cref="SelectionRectangleRelativePosition"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty SelectionRectangleRelativePositionProperty;
 
     /// <summary>
@@ -65,6 +68,9 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       SelectionRectangleRelativePositionProperty = DependencyProperty.Register(nameof(SelectionRectangleRelativePosition), typeof(PointD2D), typeof(Color2DSurfaceControl), new FrameworkPropertyMetadata(PointD2D.Empty, FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, EhSelectionRectangleRelativePositionChanged, EhSelectionRectangleRelativePositionCoerce));
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Color2DSurfaceControl"/> class.
+    /// </summary>
     public Color2DSurfaceControl()
     {
       InitializeComponent();
@@ -78,14 +84,18 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       SetRectanglesLeftBottomOnCanvas();
     }
 
+    /// <summary>
+    /// Sets the image shown on the two-dimensional color surface.
+    /// </summary>
+    /// <param name="imageSource">The image source to display.</param>
     public void Set2DColorImage(ImageSource imageSource)
     {
       _guiImage.Source = imageSource;
     }
 
-    /// <summary>Gets/sets where the selection rectangle is currently located
-    /// in x-direction (0: left, 1: right) and
-    /// in y-direction (0: bottom, 1: top).</summary>
+    /// <summary>
+    /// Gets or sets where the selection rectangle is currently located.
+    /// </summary>
     public PointD2D SelectionRectangleRelativePosition
     {
       get { return (PointD2D)GetValue(SelectionRectangleRelativePositionProperty); }
@@ -108,6 +118,10 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       return new PointD2D(Altaxo.Calc.RMath.ClampToInterval(val.X, 0, 1), Altaxo.Calc.RMath.ClampToInterval(val.Y, 0, 1));
     }
 
+    /// <summary>
+    /// Raises the <see cref="SelectionRectangleRelativePositionChanged"/> event.
+    /// </summary>
+    /// <param name="relPosition">The new relative position.</param>
     protected virtual void OnSelectionRectangleRelativePositionChanged(PointD2D relPosition)
     {
       SelectionRectangleRelativePositionChanged?.Invoke(relPosition);

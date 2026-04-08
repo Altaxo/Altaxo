@@ -20,10 +20,19 @@ using System;
 
 namespace Altaxo.Gui
 {
+  /// <summary>
+  /// Defines methods for updating status-related UI text and state.
+  /// </summary>
   public interface IStatusUpdate
   {
+    /// <summary>
+    /// Updates the displayed text.
+    /// </summary>
     void UpdateText();
 
+    /// <summary>
+    /// Updates the status state.
+    /// </summary>
     void UpdateStatus();
   }
 }

@@ -25,11 +25,19 @@ using System.Windows.Threading;
 
 namespace Altaxo.Main.Services
 {
+  /// <summary>
+  /// Provides an <see cref="IDispatcherMessageLoopWpf"/> implementation based on a WPF dispatcher.
+  /// </summary>
   public sealed class DispatcherMessageLoop : IDispatcherMessageLoopWpf
   {
     private readonly Dispatcher _dispatcher;
     private readonly SynchronizationContext _synchronizationContext;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DispatcherMessageLoop"/> class.
+    /// </summary>
+    /// <param name="dispatcher">The dispatcher to use for marshaling calls.</param>
+    /// <param name="synchronizationContext">The synchronization context associated with the dispatcher.</param>
     public DispatcherMessageLoop(Dispatcher dispatcher, SynchronizationContext synchronizationContext)
     {
       _dispatcher = dispatcher;

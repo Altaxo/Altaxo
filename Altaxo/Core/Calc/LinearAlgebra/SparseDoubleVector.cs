@@ -14,6 +14,9 @@ using System.Collections.Generic;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
+  /// <summary>
+  /// Represents a sparse vector of double-precision values.
+  /// </summary>
   public class SparseDoubleVector : IReadOnlyList<double>
   {
     private const int IncrementSize = 16; // Size of chunk for array increments
@@ -55,23 +58,31 @@ namespace Altaxo.Calc.LinearAlgebra
       this.n = n;
     }
 
-    /// <summary>Length of the sparse vector</summary>
+    /// <summary>
+    /// Gets the logical length of the sparse vector.
+    /// </summary>
     public int Count
     {
       get { return n; }
     }
 
+    /// <summary>
+    /// Creates a copy of this sparse vector.
+    /// </summary>
+    /// <returns>A cloned sparse vector.</returns>
     public SparseDoubleVector Clone()
     {
       return n == 0 ? new SparseDoubleVector(0) : new SparseDoubleVector((double[])items.Clone(), (int[])indices.Clone(), n);
     }
 
+    /// <inheritdoc/>
     public IEnumerator<double> GetEnumerator()
     {
       for (int i = 0; i < Count; ++i)
         yield return this[i];
     }
 
+    /// <inheritdoc/>
     IEnumerator IEnumerable.GetEnumerator()
     {
       for (int i = 0; i < Count; ++i)

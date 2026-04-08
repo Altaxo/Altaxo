@@ -43,12 +43,18 @@ namespace Altaxo.Gui.Graph.Graph3D.Lighting
   /// </summary>
   public partial class DirectionalLightControl : UserControl, IDiscreteLightControl
   {
+    /// <summary>
+    /// Occurs when the selected value changes.
+    /// </summary>
     public event EventHandler? SelectedValueChanged;
 
     private double _lightAmplitude;
 
     private GuiChangeLocker _lock;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DirectionalLightControl"/> class.
+    /// </summary>
     public DirectionalLightControl()
     {
       InitializeComponent();
@@ -59,6 +65,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Lighting
       SelectedValueChanged?.Invoke(this, EventArgs.Empty);
     }
 
+    /// <summary>
+    /// Gets or sets the selected directional light.
+    /// </summary>
     public Altaxo.Graph.Graph3D.Lighting.DirectionalLight SelectedValue
     {
       get
@@ -89,6 +98,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Lighting
       }
     }
 
+    /// <inheritdoc/>
     public Altaxo.Graph.Graph3D.Lighting.IDiscreteLight SelectedValueAsIDiscreteLight
     {
       get
@@ -97,6 +107,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Lighting
       }
     }
 
+    /// <summary>
+    /// Raises the <see cref="SelectedValueChanged"/> event.
+    /// </summary>
     protected void OnSelectedValueChanged()
     {
       if (_lock.IsNotLocked)

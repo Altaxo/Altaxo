@@ -28,6 +28,9 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Gui
 {
+  /// <summary>
+  /// Provides extension methods for retrieving GUI resources.
+  /// </summary>
   public static class GuiResourceServiceExtensions
   {
     #region Resource Service Extensions
@@ -35,6 +38,9 @@ namespace Altaxo.Gui
     /// <summary>
     /// Gets an <see cref="IImage"/> from a resource.
     /// </summary>
+    /// <param name="resourceService">The resource service.</param>
+    /// <param name="resourceName">The name of the resource.</param>
+    /// <returns>The image wrapper for the specified resource.</returns>
     /// <exception cref="ResourceNotFoundException">The resource with the specified name does not exist</exception>
     public static IImage GetImage(this IResourceService resourceService, string resourceName)
     {
@@ -48,6 +54,9 @@ namespace Altaxo.Gui
     /// <summary>
     /// Gets an image source from a resource.
     /// </summary>
+    /// <param name="resourceService">The resource service.</param>
+    /// <param name="resourceName">The name of the resource.</param>
+    /// <returns>The image source for the specified resource.</returns>
     /// <exception cref="ResourceNotFoundException">The resource with the specified name does not exist</exception>
     public static ImageSource GetImageSource(this IResourceService resourceService, string resourceName)
     {
@@ -61,6 +70,8 @@ namespace Altaxo.Gui
     /// <summary>
     /// Creates a new image for the image source.
     /// </summary>
+    /// <param name="image">The image wrapper.</param>
+    /// <returns>A WPF image control using the image source.</returns>
     public static Image CreateImage(this IImage image)
     {
       if (image is null)

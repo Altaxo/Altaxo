@@ -24,12 +24,16 @@ using Altaxo.Gui.Settings;
 
 namespace Altaxo.Gui.Workbench
 {
+  /// <summary>
+  /// Provides a default implementation of <see cref="IOptionPanelDescriptor"/>.
+  /// </summary>
   public class DefaultOptionPanelDescriptor : IOptionPanelDescriptor
   {
     private string _id = string.Empty;
     private List<IOptionPanelDescriptor>? _optionPanelDescriptors = null;
     private IOptionPanel? _optionPanel = null;
 
+    /// <inheritdoc/>
     public string ID
     {
       get
@@ -38,8 +42,10 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <inheritdoc/>
     public string Label { get; set; }
 
+    /// <inheritdoc/>
     public IEnumerable<IOptionPanelDescriptor>? ChildOptionPanelDescriptors
     {
       get
@@ -52,6 +58,7 @@ namespace Altaxo.Gui.Workbench
     private object? _owner;
     private string? _optionPanelPath;
 
+    /// <inheritdoc/>
     public IOptionPanel? OptionPanel
     {
       get
@@ -73,6 +80,7 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <inheritdoc/>
     public bool HasOptionPanel
     {
       get
@@ -81,18 +89,37 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DefaultOptionPanelDescriptor"/> class.
+    /// </summary>
+    /// <param name="id">The descriptor identifier.</param>
+    /// <param name="label">The display label.</param>
     public DefaultOptionPanelDescriptor(string id, string label)
     {
       this._id = id;
       Label = label;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DefaultOptionPanelDescriptor"/> class with child descriptors.
+    /// </summary>
+    /// <param name="id">The descriptor identifier.</param>
+    /// <param name="label">The display label.</param>
+    /// <param name="dialogPanelDescriptors">The child option panel descriptors.</param>
     public DefaultOptionPanelDescriptor(string id, string label, List<IOptionPanelDescriptor> dialogPanelDescriptors)
       : this(id, label)
     {
       _optionPanelDescriptors = dialogPanelDescriptors;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DefaultOptionPanelDescriptor"/> class backed by an add-in option panel.
+    /// </summary>
+    /// <param name="id">The descriptor identifier.</param>
+    /// <param name="label">The display label.</param>
+    /// <param name="addin">The owning add-in.</param>
+    /// <param name="owner">The owner passed to the option panel.</param>
+    /// <param name="optionPanelPath">The add-in path for the option panel.</param>
     public DefaultOptionPanelDescriptor(string id, string label, AddIn addin, object? owner, string optionPanelPath)
       : this(id, label)
     {

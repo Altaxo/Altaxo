@@ -982,6 +982,7 @@ namespace Altaxo.Calc.LinearAlgebra.Single
 
     #endregion
 
+    /// <inheritdoc/>
     public override string ToTypeString()
     {
       return FormattableString.Invariant($"SparseVector {Count}-Single {NonZerosCount / (double)Count:P2} Filled");

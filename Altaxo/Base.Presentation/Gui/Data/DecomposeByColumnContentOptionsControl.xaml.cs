@@ -37,16 +37,21 @@ namespace Altaxo.Gui.Data
   /// </summary>
   public partial class DecomposeByColumnContentOptionsControl : UserControl, IDecomposeByColumnContentOptionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DecomposeByColumnContentOptionsControl"/> class.
+    /// </summary>
     public DecomposeByColumnContentOptionsControl()
     {
       InitializeComponent();
     }
 
+    /// <inheritdoc/>
     public void InitializeDestinationOutputFormat(SelectableListNodeList list)
     {
       _chDestinationOutput.Initialize(list);
     }
 
+    /// <inheritdoc/>
     public void InitializeDestinationColumnSorting(SelectableListNodeList list)
     {
       _chDestinationColSort.Initialize(list);

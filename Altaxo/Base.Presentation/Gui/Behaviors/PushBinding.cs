@@ -21,10 +21,16 @@ namespace Altaxo.Gui.Behaviors
   {
     #region Dependency Properties
 
+    /// <summary>
+    /// Identifies the dependency property used to mirror the target value back into the binding.
+    /// </summary>
     public static DependencyProperty TargetPropertyMirrorProperty =
         DependencyProperty.Register("TargetPropertyMirror",
                                     typeof(object),
                                     typeof(PushBinding));
+    /// <summary>
+    /// Identifies the dependency property used to listen for target value changes.
+    /// </summary>
     public static DependencyProperty TargetPropertyListenerProperty =
         DependencyProperty.Register("TargetPropertyListener",
                                     typeof(object),
@@ -41,6 +47,9 @@ namespace Altaxo.Gui.Behaviors
 
     #region Constructor
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PushBinding"/> class.
+    /// </summary>
     public PushBinding()
     {
       Mode = BindingMode.OneWayToSource;
@@ -50,17 +59,26 @@ namespace Altaxo.Gui.Behaviors
 
     #region Properties
 
+    /// <summary>
+    /// Gets or sets the mirrored target property value.
+    /// </summary>
     public object TargetPropertyMirror
     {
       get { return GetValue(TargetPropertyMirrorProperty); }
       set { SetValue(TargetPropertyMirrorProperty, value); }
     }
+    /// <summary>
+    /// Gets or sets the listener value that tracks target property changes.
+    /// </summary>
     public object TargetPropertyListener
     {
       get { return GetValue(TargetPropertyListenerProperty); }
       set { SetValue(TargetPropertyListenerProperty, value); }
     }
 
+    /// <summary>
+    /// Gets or sets the target property name.
+    /// </summary>
     [DefaultValue(null)]
     public string TargetProperty
     {
@@ -68,6 +86,9 @@ namespace Altaxo.Gui.Behaviors
       set;
     }
 
+    /// <summary>
+    /// Gets or sets the target dependency property.
+    /// </summary>
     [DefaultValue(null)]
     public DependencyProperty TargetDependencyProperty
     {
@@ -79,6 +100,9 @@ namespace Altaxo.Gui.Behaviors
 
     #region Public Methods
 
+    /// <summary>
+    /// Configures the binding against the specified target object.
+    /// </summary>
     public void SetupTargetBinding(DependencyObject targetObject)
     {
       if (targetObject == null)
@@ -138,6 +162,7 @@ namespace Altaxo.Gui.Behaviors
 
     #region Freezable overrides
 
+    /// <inheritdoc/>
     protected override void CloneCore(Freezable sourceFreezable)
     {
       PushBinding pushBinding = sourceFreezable as PushBinding;
@@ -146,6 +171,7 @@ namespace Altaxo.Gui.Behaviors
       base.CloneCore(sourceFreezable);
     }
 
+    /// <inheritdoc/>
     protected override Freezable CreateInstanceCore()
     {
       return new PushBinding();

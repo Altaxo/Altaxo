@@ -20,6 +20,9 @@ using System.Linq;
 
 namespace GongSolutions.Wpf.DragDrop.Utilities
 {
+  /// <summary>
+  /// Provides helper methods for working with runtime types used during drag and drop.
+  /// </summary>
   public static class TypeUtilities
   {
 #if NET35
@@ -48,6 +51,11 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
     }
 #endif
 
+    /// <summary>
+    /// Creates a generic list whose element type is the common base type of the provided source elements.
+    /// </summary>
+    /// <param name="source">The source elements.</param>
+    /// <returns>A dynamically typed list containing the source elements.</returns>
     public static IEnumerable CreateDynamicallyTypedList(IEnumerable source)
     {
       var type = GetCommonBaseClass(source);
@@ -63,12 +71,22 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
       return (IEnumerable)list;
     }
 
+    /// <summary>
+    /// Gets the common base type of all elements in the specified sequence.
+    /// </summary>
+    /// <param name="e">The sequence to inspect.</param>
+    /// <returns>The common base type.</returns>
     public static Type GetCommonBaseClass(IEnumerable e)
     {
       var types = e.Cast<object>().Select(o => o.GetType()).ToArray<Type>();
       return GetCommonBaseClass(types);
     }
 
+    /// <summary>
+    /// Gets the common base type of the specified types.
+    /// </summary>
+    /// <param name="types">The types to inspect.</param>
+    /// <returns>The common base type.</returns>
     public static Type GetCommonBaseClass(Type[] types)
     {
       if (types.Length == 0)

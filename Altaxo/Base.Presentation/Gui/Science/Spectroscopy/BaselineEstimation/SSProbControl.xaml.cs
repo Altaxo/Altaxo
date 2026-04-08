@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
   /// </summary>
   public partial class SSProbControl : UserControl, ISSProbView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SSProbControl"/> class.
+    /// </summary>
     public SSProbControl()
     {
       InitializeComponent();

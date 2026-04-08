@@ -33,6 +33,9 @@ using Complex = System.Numerics.Complex;
 
 namespace Altaxo.Calc
 {
+  /// <summary>
+  /// Provides convenience methods for numerical root finding.
+  /// </summary>
   public static class FindRoots
   {
     /// <summary>Find a solution of the equation f(x)=0.</summary>

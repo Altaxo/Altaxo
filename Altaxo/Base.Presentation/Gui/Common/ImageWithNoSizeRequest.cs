@@ -31,8 +31,12 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// Image control that reports no desired size during layout.
+  /// </summary>
   public class ImageWithNoSizeRequest : Image
   {
+    /// <inheritdoc/>
     protected override Size MeasureOverride(Size constraint)
     {
       return new Size(0, 0);

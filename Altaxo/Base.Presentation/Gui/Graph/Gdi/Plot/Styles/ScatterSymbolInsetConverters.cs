@@ -43,6 +43,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
   {
     private ScatterSymbolToImageSourceConverter _innerConverter = new ScatterSymbolToImageSourceConverter();
 
+    /// <summary>
+    /// Gets or sets the symbol size used for the preview image.
+    /// </summary>
     public double SymbolSize
     {
       get { return _innerConverter.SymbolSize; }
@@ -51,6 +54,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private IScatterSymbol _referenceSymbol = new Circle(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame()).WithPlotColorInfluence(PlotColorInfluence.FrameColorFull | PlotColorInfluence.InsetColorFull);
 
+    /// <inheritdoc/>
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       var insetType = value as Type;
@@ -80,19 +84,25 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       return new PathGeometry(polygon.Where(p => p is not null && p.Count > 2).Select(p => GetPathFigure(p, symbolSize)));
     }
 
+    /// <inheritdoc/>
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       throw new NotImplementedException();
     }
   }
 
+  /// <summary>
+  /// Converts scatter-symbol insets to display names.
+  /// </summary>
   public class ScatterSymbolInsetToItemNameConverter : IValueConverter
   {
+    /// <inheritdoc/>
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       return value?.GetType().Name;
     }
 
+    /// <inheritdoc/>
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       throw new NotImplementedException();

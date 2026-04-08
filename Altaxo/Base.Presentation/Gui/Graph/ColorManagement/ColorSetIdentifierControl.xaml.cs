@@ -48,11 +48,16 @@ namespace Altaxo.Gui.Graph.ColorManagement
       private DataTemplate _colorSetTemplate;
       private DataTemplate _treeOtherTemplate;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="TreeViewDataTemplateSelector"/> class.
+      /// </summary>
+      /// <param name="ele">The owning framework element.</param>
       public TreeViewDataTemplateSelector(FrameworkElement ele)
       {
         _parent = ele;
       }
 
+      /// <inheritdoc/>
       public override DataTemplate SelectTemplate(object item, DependencyObject container)
       {
         var node = item as NGTreeNode;
@@ -87,6 +92,9 @@ namespace Altaxo.Gui.Graph.ColorManagement
 
     #endregion Inner classes
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColorSetIdentifierControl"/> class.
+    /// </summary>
     public ColorSetIdentifierControl()
     {
       InitializeComponent();

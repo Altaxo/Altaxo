@@ -43,20 +43,36 @@ namespace Altaxo.Gui.ProjectBrowser
   /// </summary>
   public partial class CopyItemsToMultipleFolderControl : UserControl, ICopyItemsToMultipleFolderView
   {
+    /// <summary>
+    /// Occurs when the selected folder names should be copied.
+    /// </summary>
     public event Action? CopySelectedFolderNames;
 
+    /// <summary>
+    /// Occurs when all selected folders should be unselected.
+    /// </summary>
     public event Action? UnselectAllFolders;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CopyItemsToMultipleFolderControl"/> class.
+    /// </summary>
     public CopyItemsToMultipleFolderControl()
     {
       InitializeComponent();
     }
 
+    /// <summary>
+    /// Initializes the folder tree.
+    /// </summary>
+    /// <param name="rootNode">The root node of the folder tree.</param>
     public void InitializeFolderTree(Collections.NGTreeNode rootNode)
     {
       _guiProjectFolders.ItemsSource = new Altaxo.Collections.NGTreeNode("", new[] { rootNode }).Nodes;
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether references should be relocated.
+    /// </summary>
     public bool RelocateReferences
     {
       get
@@ -69,6 +85,9 @@ namespace Altaxo.Gui.ProjectBrowser
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether existing items should be overwritten.
+    /// </summary>
     public bool OverwriteExistingItems
     {
       get
@@ -81,6 +100,9 @@ namespace Altaxo.Gui.ProjectBrowser
       }
     }
 
+    /// <summary>
+    /// Gets the additional folders entered line by line.
+    /// </summary>
     public string AdditionalFoldersLineByLine
     {
       get { return _guiAdditionalFolders.Text; }

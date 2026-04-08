@@ -35,6 +35,7 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class EditActiveLayer : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.EnsureValidityOfCurrentLayerNumber();
@@ -47,6 +48,7 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class CopyActiveLayer : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.EnsureValidityOfCurrentLayerNumber();
@@ -59,6 +61,7 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class PasteAsNewLayer : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.Doc.PasteFromClipboardAsNewLayer();
@@ -70,6 +73,7 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class PasteAsNewLayerBefore : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.EnsureValidityOfCurrentLayerNumber();
@@ -90,6 +94,7 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class PasteAsNewLayerAfter : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.EnsureValidityOfCurrentLayerNumber();
@@ -110,6 +115,7 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class PasteNewLayerAsChild : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.EnsureValidityOfCurrentLayerNumber();
@@ -122,6 +128,7 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class PasteInActiveLayer : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.EnsureValidityOfCurrentLayerNumber();
@@ -134,6 +141,7 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class DeleteActiveLayer : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.EnsureValidityOfCurrentLayerNumber();
@@ -142,10 +150,11 @@ namespace Altaxo.Graph.Commands
   }
 
   /// <summary>
-  /// Moves the active layer to a user choosen position.
+  /// Moves the active layer to a user-chosen position.
   /// </summary>
   public class MoveActiveLayer : AbstractGraphControllerCommand
   {
+    /// <inheritdoc/>
     public override void Run(GraphController ctrl)
     {
       ctrl.EnsureValidityOfCurrentLayerNumber();
@@ -183,6 +192,9 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public abstract class PasteLayerContentsBase : AbstractGraphControllerCommand
   {
+    /// <summary>
+    /// Gets a value indicating whether the existing plot items are removed before pasting.
+    /// </summary>
     public abstract bool PasteExclusively { get; }
 
     /// <inheritdoc />
@@ -203,10 +215,10 @@ namespace Altaxo.Graph.Commands
             plotLayer.PlotItems.ClearPlotItems();
           }
 
-          foreach (IGPlotItem item in coll) // it is neccessary to add the items to the doc first, because otherwise they don't have names
+          foreach (IGPlotItem item in coll) // it is necessary to add the items to the doc first, because otherwise they don't have names
           {
             var clonedItem = (IGPlotItem)item.Clone();
-            plotLayer.PlotItems.Add(clonedItem); // cloning neccessary because coll will be disposed afterwards, which would destroy all items
+            plotLayer.PlotItems.Add(clonedItem); // cloning is necessary because coll will be disposed afterwards, which would destroy all items
           }
         }
       }
@@ -222,6 +234,7 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class PasteLayerContentsExclusively : PasteLayerContentsBase
   {
+    /// <inheritdoc/>
     public override bool PasteExclusively => true;
   }
 
@@ -231,6 +244,7 @@ namespace Altaxo.Graph.Commands
   /// </summary>
   public class PasteLayerContentsAdditionally : PasteLayerContentsBase
   {
+    /// <inheritdoc/>
     public override bool PasteExclusively => false;
   }
 

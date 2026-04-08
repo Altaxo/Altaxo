@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
   /// </summary>
   public partial class G2DPlotItemControl : UserControl, IG2DPlotItemView, Graph3D.Plot.IG3DPlotItemView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="G2DPlotItemControl"/> class.
+    /// </summary>
     public G2DPlotItemControl()
     {
       InitializeComponent();

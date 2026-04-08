@@ -41,6 +41,11 @@ namespace Altaxo.Workbench
     private bool _showingDialog;
     private bool _rootMonitorIsDisposed;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ProgressCollector"/> class.
+    /// </summary>
+    /// <param name="eventThread">The thread dispatcher used for events.</param>
+    /// <param name="cancellationToken">The cancellation token for the root monitor.</param>
     public ProgressCollector(ISynchronizeInvoke eventThread, CancellationToken cancellationToken)
     {
       if (eventThread is null)
@@ -49,8 +54,14 @@ namespace Altaxo.Workbench
       _root = new MonitorImpl(this, null, 1, cancellationToken);
     }
 
+    /// <summary>
+    /// Occurs when the root progress monitor is disposed.
+    /// </summary>
     public event EventHandler? ProgressMonitorDisposed;
 
+    /// <summary>
+    /// Occurs when a public property changes.
+    /// </summary>
     public event PropertyChangedEventHandler? PropertyChanged;
 
     private void OnPropertyChanged(string propertyName)
@@ -61,6 +72,9 @@ namespace Altaxo.Workbench
       }
     }
 
+    /// <summary>
+    /// Gets the current progress value.
+    /// </summary>
     public double Progress
     {
       get { return _progress; }
@@ -80,6 +94,9 @@ namespace Altaxo.Workbench
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether a modal dialog is currently shown.
+    /// </summary>
     public bool ShowingDialog
     {
       get { return _showingDialog; }
@@ -95,6 +112,9 @@ namespace Altaxo.Workbench
       }
     }
 
+    /// <summary>
+    /// Gets the current task name.
+    /// </summary>
     public string? TaskName
     {
       get { return _taskName; }
@@ -110,6 +130,9 @@ namespace Altaxo.Workbench
       }
     }
 
+    /// <summary>
+    /// Gets the current operation status.
+    /// </summary>
     public OperationStatus Status
     {
       get { return _status; }
@@ -125,6 +148,9 @@ namespace Altaxo.Workbench
       }
     }
 
+    /// <summary>
+    /// Gets the root progress monitor.
+    /// </summary>
     public IProgressMonitor ProgressMonitor
     {
       get { return _root; }

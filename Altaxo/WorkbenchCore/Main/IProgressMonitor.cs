@@ -94,21 +94,28 @@ namespace Altaxo.Main
   /// </summary>
   public sealed class DummyProgressMonitor : IProgressMonitor
   {
+    /// <inheritdoc/>
     public string? TaskName { get; set; } = string.Empty;
 
+    /// <inheritdoc/>
     public bool ShowingDialog { get; set; }
 
+    /// <inheritdoc/>
     public OperationStatus Status { get; set; }
 
+    /// <inheritdoc/>
     public CancellationToken CancellationToken { get; set; }
 
+    /// <inheritdoc/>
     public double Progress { get; set; }
 
+    /// <inheritdoc/>
     public IProgressMonitor CreateSubTask(double workAmount)
     {
       return new DummyProgressMonitor() { CancellationToken = CancellationToken };
     }
 
+    /// <inheritdoc/>
     public IProgressMonitor CreateSubTask(double workAmount, CancellationToken cancellationToken)
     {
       return new DummyProgressMonitor() { CancellationToken = cancellationToken };
@@ -119,6 +126,7 @@ namespace Altaxo.Main
       Progress = value;
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
     }

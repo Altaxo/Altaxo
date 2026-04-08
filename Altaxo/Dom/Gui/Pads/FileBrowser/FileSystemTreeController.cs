@@ -35,15 +35,28 @@ namespace Altaxo.Gui.Pads.FileBrowser
 {
   #region Interfaces
 
+  /// <summary>
+  /// Defines the view for the folder tree pane of the file browser.
+  /// </summary>
   public interface IFileTreeView
   {
+    /// <summary>
+    /// Initializes the folder tree.
+    /// </summary>
+    /// <param name="nodes">The root node collection to display.</param>
     void Initialize_FolderTree(NGTreeNodeCollection nodes);
 
+    /// <summary>
+    /// Occurs when a folder tree node is selected.
+    /// </summary>
     event Action<NGTreeNode> FolderTreeNodeSelected;
   }
 
   #endregion Interfaces
 
+  /// <summary>
+  /// Controls the file system tree shown by the file browser pad.
+  /// </summary>
   public class FileSystemTreeController
   {
     #region TreeNode
@@ -71,6 +84,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
         set { _selectedImageIndex = value; }
       }
 
+      /// <inheritdoc/>
       protected override void OnPropertyChanged(string name)
       {
         base.OnPropertyChanged(name);
@@ -96,10 +110,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
         }
       }
 
-      /// <summary>
-      /// Invoked when the child items need to be loaded on demand.
-      /// Subclasses can override this to populate the Children collection.
-      /// </summary>
+      /// <inheritdoc/>
       protected override void LoadChildren()
       {
         if (_tag is DriveInfo)
@@ -165,8 +176,14 @@ namespace Altaxo.Gui.Pads.FileBrowser
     private NGTreeNode _rootNode;
     private NGTreeNodeCollection Nodes;
 
+    /// <summary>
+    /// Occurs when the selected file system path changes.
+    /// </summary>
     public event Action<string> SelectedPathChanged;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileSystemTreeController"/> class.
+    /// </summary>
     public FileSystemTreeController()
     {
       // Sorted = true;
@@ -298,6 +315,9 @@ namespace Altaxo.Gui.Pads.FileBrowser
       }
     }
 
+    /// <summary>
+    /// Gets or sets the view object used by this controller.
+    /// </summary>
     public object ViewObject
     {
       get

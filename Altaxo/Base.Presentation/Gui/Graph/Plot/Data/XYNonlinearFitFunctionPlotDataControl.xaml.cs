@@ -36,6 +36,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
   /// </summary>
   public partial class XYNonlinearFitFunctionPlotDataControl : UserControl, IXYNonlinearFitFunctionPlotDataView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYNonlinearFitFunctionPlotDataControl"/> class.
+    /// </summary>
     public XYNonlinearFitFunctionPlotDataControl()
     {
       InitializeComponent();
@@ -49,8 +52,10 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     #region IFunctionPlotDataView Members
 
+    /// <inheritdoc/>
     public event EventHandler? EditText;
 
+    /// <inheritdoc/>
     public void InitializeFunctionText(string text, bool editable)
     {
       _edText.Text = text;

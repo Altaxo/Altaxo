@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
   /// </summary>
   public partial class ScalarFunctionControl : UserControl, IScalarFunctionView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScalarFunctionControl"/> class.
+    /// </summary>
     public ScalarFunctionControl()
     {
       InitializeComponent();

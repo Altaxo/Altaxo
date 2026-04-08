@@ -35,8 +35,12 @@ namespace Altaxo.Gui.Common.Converters
   [ValueConversion(typeof(bool?), typeof(bool?))]
   public class InverseBooleanConverter : IValueConverter
   {
+    /// <summary>
+    /// Gets the shared converter instance.
+    /// </summary>
     public static InverseBooleanConverter Instance { get; } = new InverseBooleanConverter();
 
+    /// <inheritdoc/>
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       if (value is bool b)
@@ -58,6 +62,7 @@ namespace Altaxo.Gui.Common.Converters
         return true;
     }
 
+    /// <inheritdoc/>
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       return Convert(value, targetType, parameter, culture);

@@ -41,15 +41,33 @@ namespace Altaxo.Gui.Common
     private string displayMessage;
     private Exception exceptionGot;
 
+    /// <summary>
+    /// Gets the detailed dialog result.
+    /// </summary>
     public SaveErrorChooseDialogResult DetailedDialogResult { get; private set; }
 
+    /// <summary>
+    /// Represents the detailed outcome of the dialog.
+    /// </summary>
     public enum SaveErrorChooseDialogResult
     {
+      /// <summary>
+      /// Retry saving.
+      /// </summary>
       Retry,
+      /// <summary>
+      /// Ignore the error.
+      /// </summary>
       Ignore,
+      /// <summary>
+      /// Choose a new location.
+      /// </summary>
       ChooseLocation
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SaveErrorChooseDialog"/> class.
+    /// </summary>
     public SaveErrorChooseDialog()
     {
       InitializeComponent();
@@ -61,6 +79,14 @@ namespace Altaxo.Gui.Common
       chooseLocationButton.Content = Current.ResourceService.GetString("Global.ChooseLocationButtonText");
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SaveErrorChooseDialog"/> class.
+    /// </summary>
+    /// <param name="fileName">The file name.</param>
+    /// <param name="message">The message template.</param>
+    /// <param name="dialogName">The dialog title.</param>
+    /// <param name="exceptionGot">The exception that occurred.</param>
+    /// <param name="chooseLocationEnabled">If set to <c>true</c>, the choose-location option is enabled.</param>
     public SaveErrorChooseDialog(string fileName, string message, string dialogName, Exception exceptionGot, bool chooseLocationEnabled)
     {
       InitializeComponent();

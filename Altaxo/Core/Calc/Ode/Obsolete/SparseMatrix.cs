@@ -35,6 +35,12 @@ namespace Altaxo.Calc.Ode.Obsolete
       count = new int[m];
     }
 
+    /// <summary>Constructor for SparseMatrix class with matrix items, indices and count</summary>
+    /// <param name="m">Number of rows</param>
+    /// <param name="n">Number of columns</param>
+    /// <param name="matrixItems">The matrix's items</param>
+    /// <param name="matrixIndices">The matrix's indices</param>
+    /// <param name="_count">The matrix's count</param>
     public SparseMatrix(int m, int n, double[][] matrixItems, int[][] matrixIndices, int[] _count)
     {
       this.m = m;
@@ -44,6 +50,7 @@ namespace Altaxo.Calc.Ode.Obsolete
       count = _count;
     }
 
+    /// <summary>Gets the count of non-zero elements in each row.</summary>
     public int[] Count
     {
       get { return count; }
@@ -63,6 +70,8 @@ namespace Altaxo.Calc.Ode.Obsolete
       get { return n; }
     }
 
+    /// <summary>Creates a copy of the current sparse matrix.</summary>
+    /// <returns>A new SparseMatrix that is a copy of the current instance.</returns>
     public SparseMatrix Copy()
     {
       var A = new SparseMatrix(m, n);
@@ -317,6 +326,10 @@ namespace Altaxo.Calc.Ode.Obsolete
       return C;
     }
 
+    /// <summary>Matrix multiplication operator for sparse matrices</summary>
+    /// <param name="A">The first matrix</param>
+    /// <param name="B">The second matrix</param>
+    /// <returns>The product of the two matrices</returns>
     public static SparseMatrix operator *(SparseMatrix A, SparseMatrix B)
     {
       if (A is null)

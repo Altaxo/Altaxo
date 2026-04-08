@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
   /// </summary>
   public partial class AxisLineStyleControl : UserControl, IAxisLineStyleView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AxisLineStyleControl"/> class.
+    /// </summary>
     public AxisLineStyleControl()
     {
       InitializeComponent();

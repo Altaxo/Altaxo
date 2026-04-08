@@ -36,9 +36,18 @@ namespace Altaxo.Gui.Common.Converters
   /// <seealso cref="System.Windows.Data.IValueConverter" />
   public class BooleanToBrushConverter : IValueConverter
   {
+    /// <summary>
+    /// Gets or sets the brush returned for <see langword="true"/> values.
+    /// </summary>
     public Brush BrushForTrue { get; set; } = Brushes.Red;
+    /// <summary>
+    /// Gets or sets the brush returned for <see langword="false"/> values.
+    /// </summary>
     public Brush BrushForFalse { get; set; } = Brushes.Black;
 
+    /// <summary>
+    /// Gets the shared converter instance.
+    /// </summary>
     public static BooleanToBrushConverter Instance { get; private set; } = new BooleanToBrushConverter();
 
     /// <inheritdoc/>

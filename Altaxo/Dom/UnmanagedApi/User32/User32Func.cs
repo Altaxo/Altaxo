@@ -29,15 +29,26 @@ using System.Text;
 
 namespace Altaxo.UnmanagedApi.User32
 {
+  /// <summary>
+  /// Provides unmanaged User32 function imports.
+  /// </summary>
   public static class User32Func
   {
-    // 'short' to agree with FORMATETC.cfFormat
+    /// <summary>
+    /// Registers a clipboard format.
+    /// </summary>
     [DllImport("user32.dll", SetLastError = true)]
     public static extern short RegisterClipboardFormat(string lpszFormat);
 
+    /// <summary>
+    /// Releases a device context.
+    /// </summary>
     [DllImport("user32.dll")]
     public static extern int ReleaseDC(IntPtr hWnd, IntPtr hDC);
 
+    /// <summary>
+    /// Retrieves the name of a registered clipboard format.
+    /// </summary>
     [DllImport("user32.dll")]
     public static extern int GetClipboardFormatName(uint format, [Out] StringBuilder
        lpszFormatName, int cchMaxCount);

@@ -34,6 +34,7 @@ namespace Altaxo.Gui.Common
   /// <seealso cref="System.Windows.Controls.TextBox" />
   public class TextBoxWithNoRequiredWidth : TextBox
   {
+    /// <inheritdoc/>
     protected override Size MeasureOverride(Size constraint)
     {
       var wouldHaveThisSize = base.MeasureOverride(constraint);

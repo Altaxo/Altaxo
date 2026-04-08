@@ -26,6 +26,9 @@
 
 namespace Altaxo.Units.Speed
 {
+  /// <summary>
+  /// Represents the meter-per-second SI unit of speed.
+  /// </summary>
   [UnitDescription("Speed", 1, 0, -1, 0, 0, 0, 0)]
   public class MeterPerSecond : SIUnit
   {
@@ -38,13 +41,18 @@ namespace Altaxo.Units.Speed
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="MeterPerSecond"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MeterPerSecond), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return MeterPerSecond.Instance;
@@ -52,6 +60,9 @@ namespace Altaxo.Units.Speed
     }
     #endregion
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MeterPerSecond"/> class.
+    /// </summary>
     private MeterPerSecond()
         : base(1, 0, -1, 0, 0, 0, 0)
     {

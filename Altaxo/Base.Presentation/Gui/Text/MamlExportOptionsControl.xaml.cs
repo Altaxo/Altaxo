@@ -44,6 +44,9 @@ namespace Altaxo.Gui.Text
   /// </summary>
   public partial class MamlExportOptionsControl : UserControl, IMamlExportOptionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MamlExportOptionsControl"/> class.
+    /// </summary>
     public MamlExportOptionsControl()
     {
       InitializeComponent();

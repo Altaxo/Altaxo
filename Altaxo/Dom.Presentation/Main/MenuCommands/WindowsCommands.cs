@@ -2,8 +2,16 @@
 
 namespace Altaxo.Main.Commands
 {
+  /// <summary>
+  /// Provides shared logic for resizing the main application window.
+  /// </summary>
   public abstract class ResizeBaseClass : SimpleCommand
   {
+    /// <summary>
+    /// Resizes the main application window to the specified client dimensions.
+    /// </summary>
+    /// <param name="width">The target width in pixels.</param>
+    /// <param name="height">The target height in pixels.</param>
     public void Execute(int width, int height)
     {
       var mainWindow = System.Windows.Application.Current.MainWindow;
@@ -42,24 +50,36 @@ namespace Altaxo.Main.Commands
     }
   }
 
+  /// <summary>
+  /// Resizes the main window to 1920 by 1080 pixels.
+  /// </summary>
   public class ResizeMainWindowTo1920x1080 : ResizeBaseClass
   {
+    /// <inheritdoc/>
     public override void Execute(object? parameter)
     {
       Execute(1920, 1080);
     }
   }
 
+  /// <summary>
+  /// Resizes the main window to 1024 by 768 pixels.
+  /// </summary>
   public class ResizeMainWindowTo1024x768 : ResizeBaseClass
   {
+    /// <inheritdoc/>
     public override void Execute(object? parameter)
     {
       Execute(1024, 768);
     }
   }
 
+  /// <summary>
+  /// Resizes the main window to 800 by 600 pixels.
+  /// </summary>
   public class ResizeMainWindowTo800x600 : ResizeBaseClass
   {
+    /// <inheritdoc/>
     public override void Execute(object? parameter)
     {
       Execute(800, 600);

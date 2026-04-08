@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
   /// </summary>
   public partial class BaselineEstimationControl : UserControl, IBaselineEstimationView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BaselineEstimationControl"/> class.
+    /// </summary>
     public BaselineEstimationControl()
     {
       InitializeComponent();

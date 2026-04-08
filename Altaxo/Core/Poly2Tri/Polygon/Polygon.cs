@@ -45,12 +45,30 @@ using System.Linq;
 
 namespace Poly2Tri
 {
+  /// <summary>
+  /// Represents a polygon that can be triangulated, including optional holes and Steiner points.
+  /// </summary>
   public class Polygon : Triangulatable
   {
+    /// <summary>
+    /// Stores the polygon boundary points.
+    /// </summary>
     protected List<TriangulationPoint> _points = new List<TriangulationPoint>();
+    /// <summary>
+    /// Stores optional Steiner points inside the polygon.
+    /// </summary>
     protected List<TriangulationPoint> _steinerPoints;
+    /// <summary>
+    /// Stores holes contained in the polygon.
+    /// </summary>
     protected List<Polygon> _holes;
+    /// <summary>
+    /// Stores triangles generated during triangulation.
+    /// </summary>
     protected List<DelaunayTriangle> _triangles;
+    /// <summary>
+    /// Stores the last polygon point processed while building the contour.
+    /// </summary>
     protected PolygonPoint _last;
 
     /// <summary>
@@ -82,8 +100,13 @@ namespace Poly2Tri
     /// <param name="points">A list of unique points.</param>
     public Polygon(params PolygonPoint[] points) : this((IList<PolygonPoint>)points) { }
 
+    /// <inheritdoc/>
     public TriangulationMode TriangulationMode { get { return TriangulationMode.Polygon; } }
 
+    /// <summary>
+    /// Adds a Steiner point to the polygon.
+    /// </summary>
+    /// <param name="point">The Steiner point to add.</param>
     public void AddSteinerPoint(TriangulationPoint point)
     {
       if (_steinerPoints is null)
@@ -91,6 +114,10 @@ namespace Poly2Tri
       _steinerPoints.Add(point);
     }
 
+    /// <summary>
+    /// Adds multiple Steiner points to the polygon.
+    /// </summary>
+    /// <param name="points">The Steiner points to add.</param>
     public void AddSteinerPoints(List<TriangulationPoint> points)
     {
       if (_steinerPoints is null)
@@ -98,6 +125,9 @@ namespace Poly2Tri
       _steinerPoints.AddRange(points);
     }
 
+    /// <summary>
+    /// Removes all Steiner points from the polygon.
+    /// </summary>
     public void ClearSteinerPoints()
     {
       if (_steinerPoints is not null)
@@ -138,7 +168,7 @@ namespace Poly2Tri
     /// <summary>
     /// Inserts list (after last point in polygon?)
     /// </summary>
-    /// <param name="list"></param>
+    /// <param name="list">The points to add.</param>
     public void AddPoints(IEnumerable<PolygonPoint> list)
     {
       PolygonPoint first;
@@ -173,7 +203,7 @@ namespace Poly2Tri
     /// <summary>
     /// Removes a point from the polygon.
     /// </summary>
-    /// <param name="p"></param>
+    /// <param name="p">The point to remove.</param>
     public void RemovePoint(PolygonPoint p)
     {
       PolygonPoint next, prev;
@@ -185,30 +215,37 @@ namespace Poly2Tri
       _points.Remove(p);
     }
 
+    /// <inheritdoc/>
     public IList<TriangulationPoint> Points { get { return _points; } }
+
+    /// <inheritdoc/>
     public IList<DelaunayTriangle> Triangles { get { return _triangles; } }
+
+    /// <summary>
+    /// Gets the holes contained in this polygon.
+    /// </summary>
     public IList<Polygon> Holes { get { return _holes; } }
 
+    /// <inheritdoc/>
     public void AddTriangle(DelaunayTriangle t)
     {
       _triangles.Add(t);
     }
 
+    /// <inheritdoc/>
     public void AddTriangles(IEnumerable<DelaunayTriangle> list)
     {
       _triangles.AddRange(list);
     }
 
+    /// <inheritdoc/>
     public void ClearTriangles()
     {
       if (_triangles is not null)
         _triangles.Clear();
     }
 
-    /// <summary>
-    /// Creates constraints and populates the context with points
-    /// </summary>
-    /// <param name="tcx">The context</param>
+    /// <inheritdoc/>
     public void Prepare(TriangulationContext tcx)
     {
       if (_triangles is null)

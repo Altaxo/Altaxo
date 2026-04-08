@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
   /// </summary>
   public partial class ErrorBarPlotStyleControl : UserControl, IErrorBarPlotStyleView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ErrorBarPlotStyleControl"/> class.
+    /// </summary>
     public ErrorBarPlotStyleControl()
     {
       InitializeComponent();

@@ -36,28 +36,48 @@ using Altaxo.Text.GuiModels;
 
 namespace Altaxo.Gui.Text.Viewing
 {
+  /// <summary>
+  /// Controls the view of a text document.
+  /// </summary>
   [UserControllerForObject(typeof(TextDocument))]
   [UserControllerForObject(typeof(Altaxo.Text.GuiModels.TextDocumentViewOptions))]
   [ExpectedTypeOfView(typeof(ITextDocumentView))]
   public class TextDocumentController : AbstractViewContent, IDisposable, IMVCANController, ITextDocumentController
   {
+    /// <summary>
+    /// The view associated with this controller.
+    /// </summary>
     protected ITextDocumentView _view;
 
     private Altaxo.Text.GuiModels.TextDocumentViewOptions _options;
 
+    /// <summary>
+    /// Weak event handler for tunneled document events.
+    /// </summary>
     protected WeakActionHandler<object, object, TunnelingEventArgs> _weakEventHandlerForDoc_TunneledEvent;
 
+    /// <summary>
+    /// Gets the text document managed by this controller.
+    /// </summary>
     public TextDocument TextDocument { get { return _options?.Document; } }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextDocumentController"/> class.
+    /// </summary>
     public TextDocumentController()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextDocumentController"/> class.
+    /// </summary>
+    /// <param name="doc">The document to control.</param>
     public TextDocumentController(TextDocument doc)
     {
       InitializeDocument(doc);
     }
 
+    /// <inheritdoc/>
     public bool InitializeDocument(params object[] args)
     {
       if (args is null || args.Length == 0)
@@ -90,16 +110,24 @@ namespace Altaxo.Gui.Text.Viewing
       return true;
     }
 
+    /// <summary>
+    /// Shows the print dialog for the current document.
+    /// </summary>
     public void PrintShowDialog()
     {
       _view?.PrintShowDialog();
     }
 
+    /// <inheritdoc/>
     public UseDocument UseDocumentCopy
     {
       set { }
     }
 
+    /// <summary>
+    /// Initializes the controller with the provided view options.
+    /// </summary>
+    /// <param name="options">The view options.</param>
     protected void InternalInitializeDocument(TextDocumentViewOptions options)
     {
       if (options?.Document is null)
@@ -139,6 +167,10 @@ namespace Altaxo.Gui.Text.Viewing
         return doc.Name + "FolderNotes";
     }
 
+    /// <summary>
+    /// Initializes the view state.
+    /// </summary>
+    /// <param name="initData"><see langword="true"/> to initialize data; otherwise, <see langword="false"/>.</param>
     protected void Initialize(bool initData)
     {
       if (initData)
@@ -191,6 +223,9 @@ namespace Altaxo.Gui.Text.Viewing
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the outline is visible.
+    /// </summary>
     public bool IsOutlineVisible
     {
       get
@@ -204,32 +239,33 @@ namespace Altaxo.Gui.Text.Viewing
       }
     }
 
+    /// <inheritdoc/>
     public bool Apply(bool disposeController)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public bool Revert(bool disposeController)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public string InsertImageInDocumentAndGetUrl(string fileName)
     {
       var imageProxy = MemoryStreamImageProxy.FromFile(fileName);
       return TextDocument.AddImage(imageProxy);
     }
 
+    /// <inheritdoc/>
     public string InsertImageInDocumentAndGetUrl(System.IO.Stream memoryStream, string fileExtension)
     {
       var imageProxy = MemoryStreamImageProxy.FromStream(memoryStream, fileExtension);
       return TextDocument.AddImage(imageProxy);
     }
 
-    /// <summary>
-    /// Inserts the provided markdown source text at the current caret position.
-    /// </summary>
-    /// <param name="text">The text to insert.</param>
+    /// <inheritdoc/>
     public void InsertSourceTextAtCaretPosition(string text)
     {
       if (_view is not null)
@@ -242,6 +278,7 @@ namespace Altaxo.Gui.Text.Viewing
       }
     }
 
+    /// <inheritdoc/>
     public bool CanAcceptImageFileName(string fileName)
     {
       var extension = System.IO.Path.GetExtension(fileName).ToLowerInvariant();
@@ -259,30 +296,31 @@ namespace Altaxo.Gui.Text.Viewing
       }
     }
 
+    /// <inheritdoc/>
     public void EhIsViewerSelectedChanged(bool isViewerSelected)
     {
       _options.IsViewerSelected = isViewerSelected;
     }
 
+    /// <inheritdoc/>
     public void EhViewerConfigurationChanged(ViewerConfiguration windowConfiguration)
     {
       _options.WindowConfiguration = windowConfiguration;
     }
 
+    /// <inheritdoc/>
     public void EhFractionOfEditorWindowChanged(double fractionOfEditor)
     {
       _options.FractionOfSourceEditorWindowVisible = fractionOfEditor;
     }
 
+    /// <inheritdoc/>
     public void EhReferencedImageUrlsChanged(IEnumerable<(string Url, int urlSpanStart, int urlSpanEnd)> referencedImageUrls)
     {
       TextDocument.ReferencedImageUrls = referencedImageUrls;
     }
 
-    /// <summary>
-    /// This event was fired by the markdown edit control before a complete rendering takes place.
-    /// Here we update all properties that may influence the rendering (language, spell checking, hyphenation etc.)
-    /// </summary>
+    /// <inheritdoc/>
     public void EhBeforeCompleteRendering()
     {
       _view.IsLineNumberingEnabled = _options.IsLineNumberingEnabled ?? _options.Document.GetPropertyValue(TextDocumentViewOptions.PropertyKeyIsLineNumberingEnabled, () => true);
@@ -294,14 +332,7 @@ namespace Altaxo.Gui.Text.Viewing
       _view.HighlightingStyle = _options.HighlightingStyle ?? _options.Document.GetPropertyValue(TextDocumentViewOptions.PropertyKeyHighlightingStyle, () => "default");
     }
 
-    /// <summary>
-    /// Determines whether this controller is able to accept data from the clipboard to be pasted into the text.
-    /// Here we catch special cases like pasting of images.
-    /// Thus, a return value of false does not mean that the data can not be pasted, it only mean that pasting should be delegated to the source text view.
-    /// </summary>
-    /// <returns>
-    ///   <c>true</c> if data from the clipboard can be accepted to be pasted into the text; otherwise, <c>false</c>.
-    /// </returns>
+    /// <inheritdoc/>
     public bool CanPaste()
     {
       var dao = Current.Gui.OpenClipboardDataObject();
@@ -328,6 +359,7 @@ namespace Altaxo.Gui.Text.Viewing
       return false;
     }
 
+    /// <inheritdoc/>
     public bool Paste()
     {
       var dao = Current.Gui.OpenClipboardDataObject();
@@ -383,6 +415,9 @@ namespace Altaxo.Gui.Text.Viewing
     /// <summary>
     /// Copies the text with the local images to the clipboard.
     /// </summary>
+    /// <summary>
+    /// Copies the text together with local images to the clipboard.
+    /// </summary>
     public void CopyTextWithImages()
     {
       var dao = Current.Gui.GetNewClipboardDataObject();
@@ -394,6 +429,9 @@ namespace Altaxo.Gui.Text.Viewing
     /// <summary>
     /// Expands the current text document and stores it into a new text document in the same project folder.
     /// </summary>
+    /// <summary>
+    /// Expands the current text document into a new document in the same project folder.
+    /// </summary>
     public void ExpandTextDocumentIntoNewDocument()
     {
       var newTextDocument = ChildDocumentExpander.ExpandDocumentToNewDocument(TextDocument, TextDocument.Folder);
@@ -401,7 +439,7 @@ namespace Altaxo.Gui.Text.Viewing
     }
 
     /// <summary>
-    /// Expands the current text document and stores it into a new text document in the same project folder.
+    /// Renumerates the figures in the current text document.
     /// </summary>
     public void RenumerateFigures()
     {
@@ -411,6 +449,7 @@ namespace Altaxo.Gui.Text.Viewing
         _view.SourceText = newSource;
     }
 
+    /// <inheritdoc/>
     public override object ViewObject
     {
       get
@@ -434,6 +473,7 @@ namespace Altaxo.Gui.Text.Viewing
       }
     }
 
+    /// <inheritdoc/>
     public override void Dispose()
     {
       ViewObject = null;
@@ -443,6 +483,7 @@ namespace Altaxo.Gui.Text.Viewing
       base.Dispose();
     }
 
+    /// <inheritdoc/>
     public override object ModelObject
     {
       get

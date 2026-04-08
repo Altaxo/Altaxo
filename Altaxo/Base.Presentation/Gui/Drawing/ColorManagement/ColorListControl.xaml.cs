@@ -47,6 +47,9 @@ namespace Altaxo.Gui.Drawing.ColorManagement
   /// </summary>
   public partial class ColorListControl : UserControl, IColorListView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColorListControl"/> class.
+    /// </summary>
     public ColorListControl()
     {
       InitializeComponent();

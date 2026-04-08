@@ -172,6 +172,9 @@ namespace Altaxo.Collections.Text
 
     #endregion internal types
 
+    /// <summary>
+    /// Error message used when results are requested before the algorithm has been executed.
+    /// </summary>
     protected const string ERROR_NO_RESULTS_YET = "There are no results available yet - please execute the algorithm first!";
 
     // copy-paste from the generalized suffix array

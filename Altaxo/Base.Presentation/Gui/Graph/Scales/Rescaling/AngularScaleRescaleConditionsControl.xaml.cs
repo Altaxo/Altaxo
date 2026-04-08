@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
   /// </summary>
   public partial class AngularScaleRescaleConditionsControl : UserControl, IAngularScaleRescaleConditionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AngularScaleRescaleConditionsControl"/> class.
+    /// </summary>
     public AngularScaleRescaleConditionsControl()
     {
       InitializeComponent();

@@ -40,11 +40,18 @@ namespace Altaxo.Gui.Scripting
 
     TaskCancelController _taskCancelController;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScriptExecutionDialog"/> class.
+    /// </summary>
     public ScriptExecutionDialog()
     {
       InitializeComponent();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScriptExecutionDialog"/> class.
+    /// </summary>
+    /// <param name="controller">The script controller that drives the dialog.</param>
     public ScriptExecutionDialog(IScriptController controller)
     {
       _controller = controller;

@@ -31,9 +31,15 @@ using System.Text;
 
 namespace Altaxo.Units.Time
 {
+  /// <summary>
+  /// Represents the week unit of time.
+  /// </summary>
   [UnitDescription("Time", 0, 0, 1, 0, 0, 0, 0)]
   public class Week : UnitBase, IUnit
   {
+    /// <summary>
+    /// The number of seconds in one week.
+    /// </summary>
     public const double OneWeekInSeconds = 7 * 24 * 3600;
 
     private static readonly Week _instance = new Week();
@@ -45,13 +51,18 @@ namespace Altaxo.Units.Time
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="Week"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Week), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return Week.Instance;
@@ -60,6 +71,9 @@ namespace Altaxo.Units.Time
     #endregion
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Week"/> class.
+    /// </summary>
     protected Week()
     {
     }

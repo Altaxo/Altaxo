@@ -36,13 +36,28 @@
 
 namespace Poly2Tri
 {
+  /// <summary>
+  /// Represents a polygon vertex with links to the adjacent polygon vertices.
+  /// </summary>
   public class PolygonPoint : TriangulationPoint
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PolygonPoint"/> class.
+    /// </summary>
+    /// <param name="x">The x-coordinate.</param>
+    /// <param name="y">The y-coordinate.</param>
     public PolygonPoint(double x, double y) : base(x, y)
     {
     }
 
+    /// <summary>
+    /// Gets or sets the next point in the polygon ring.
+    /// </summary>
     public PolygonPoint? Next { get; set; }
+
+    /// <summary>
+    /// Gets or sets the previous point in the polygon ring.
+    /// </summary>
     public PolygonPoint? Previous { get; set; }
   }
 }

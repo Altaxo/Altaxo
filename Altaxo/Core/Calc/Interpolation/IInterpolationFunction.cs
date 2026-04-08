@@ -47,6 +47,9 @@ namespace Altaxo.Calc.Interpolation
     public double GetYOfX(double x);
   }
 
+  /// <summary>
+  /// Defines a bivariate interpolation function that returns one interpolated value for a given <c>(x, y)</c> coordinate pair.
+  /// </summary>
   public interface IBivariateInterpolationFunction
   {
     /// <summary>

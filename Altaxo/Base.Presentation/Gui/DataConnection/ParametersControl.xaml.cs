@@ -44,11 +44,15 @@ namespace Altaxo.Gui.DataConnection
     private NumberStyles _numberStyle = NumberStyles.Any;
     private Control _focus;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ParametersControl"/> class.
+    /// </summary>
     public ParametersControl()
     {
       InitializeComponent();
     }
 
+    /// <inheritdoc/>
     public void SetParametersSource(List<System.Data.OleDb.OleDbParameter> parms)
     {
       int nRow = -1;
@@ -78,6 +82,7 @@ namespace Altaxo.Gui.DataConnection
       }
     }
 
+    /// <inheritdoc/>
     public void ReadParameter()
     {
       foreach (Control ctl in _grid.Children)

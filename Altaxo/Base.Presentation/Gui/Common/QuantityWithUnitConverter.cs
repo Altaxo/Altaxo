@@ -57,6 +57,9 @@ namespace Altaxo.Gui.Common
 
     private bool _disallowNegativeValues;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether negative values are rejected.
+    /// </summary>
     public bool DisallowNegativeValues
     {
       get { return _disallowNegativeValues; }
@@ -65,6 +68,9 @@ namespace Altaxo.Gui.Common
 
     private bool _disallowZeroValue;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether zero is rejected.
+    /// </summary>
     public bool DisallowZeroValues
     {
       get { return _disallowZeroValue; }
@@ -73,6 +79,9 @@ namespace Altaxo.Gui.Common
 
     private bool _allowInfinity = true;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether infinite values are accepted.
+    /// </summary>
     public bool AllowInfiniteValues
     {
       get { return _allowInfinity; }
@@ -81,6 +90,9 @@ namespace Altaxo.Gui.Common
 
     private bool _allowNaN;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether NaN values are accepted.
+    /// </summary>
     public bool AllowNaNValues
     {
       get { return _allowNaN; }
@@ -89,6 +101,9 @@ namespace Altaxo.Gui.Common
 
     private string _representationOfNaN;
 
+    /// <summary>
+    /// Gets or sets the string representation used for NaN values.
+    /// </summary>
     public string RepresentationOfNaN
     {
       get { return _representationOfNaN; }
@@ -116,8 +131,8 @@ namespace Altaxo.Gui.Common
     /// Can be called if the context menu of the gui element is about to be opened. Extends the context menu by additional menu items
     /// for unit conversion, and for the setting of the number of decimal places.
     /// </summary>
-    /// <param name="parent"></param>
-    /// <param name="quantityGetSetProperty"></param>
+    /// <param name="parent">The element whose context menu is extended.</param>
+    /// <param name="quantityGetSetProperty">The dependency property that stores the edited quantity.</param>
     public QuantityWithUnitConverter(FrameworkElement parent, DependencyProperty quantityGetSetProperty)
     {
       try
@@ -197,6 +212,9 @@ namespace Altaxo.Gui.Common
       EhNumberOfDisplayedDigitsChanged();
     }
 
+    /// <summary>
+    /// Clears cached conversion results.
+    /// </summary>
     public void ClearIntermediateConversionResults()
     {
       _lastConvertedQuantity = null;

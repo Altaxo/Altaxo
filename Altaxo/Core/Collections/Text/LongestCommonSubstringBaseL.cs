@@ -183,8 +183,14 @@ namespace Altaxo.Collections.Text
     #endregion internal types
 
     // intermediate data neccessary for the algorithm
+    /// <summary>
+    /// Stores the linked list used by the algorithm.
+    /// </summary>
     protected LinkedList? _ddlList;
 
+    /// <summary>
+    /// Stores the last longest-common-prefix elements.
+    /// </summary>
     protected LLElement[]? _lastLcp;
 
     /// <summary>Initializes a new instance of the problem solver for the longest common substring problem.</summary>

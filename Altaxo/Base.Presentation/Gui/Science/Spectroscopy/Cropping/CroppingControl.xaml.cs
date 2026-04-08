@@ -33,6 +33,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Cropping
   /// </summary>
   public partial class CroppingControl : UserControl, ICroppingView, IResamplingView, ISanitizingView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CroppingControl"/> class.
+    /// </summary>
     public CroppingControl()
     {
       InitializeComponent();

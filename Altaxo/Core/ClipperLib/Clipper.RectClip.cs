@@ -18,33 +18,109 @@ namespace Clipper2ZLib
 namespace Clipper2Lib
 #endif
 {
+  /// <summary>
+  /// Represents a node in an output path used during rectangular clipping.
+  /// </summary>
   public class OutPt2
   {
+    /// <summary>
+    /// Gets or sets the next node in the linked path.
+    /// </summary>
     public OutPt2? next;
+
+    /// <summary>
+    /// Gets or sets the previous node in the linked path.
+    /// </summary>
     public OutPt2? prev;
 
+    /// <summary>
+    /// Gets or sets the point stored in this node.
+    /// </summary>
     public Point64 pt;
+
+    /// <summary>
+    /// Gets or sets the owning result-path index.
+    /// </summary>
     public int ownerIdx;
+
+    /// <summary>
+    /// Gets or sets the edge list associated with this node.
+    /// </summary>
     public List<OutPt2?>? edge;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OutPt2"/> class.
+    /// </summary>
+    /// <param name="pt">The point stored in the node.</param>
     public OutPt2(Point64 pt) 
     {
       this.pt = pt;
     }
   }
 
+  /// <summary>
+  /// Clips closed integer paths against a rectangular region.
+  /// </summary>
   public class RectClip64
   {
+    /// <summary>
+    /// Identifies the location of a point relative to the clipping rectangle.
+    /// </summary>
     protected enum Location
     {
-      left, top, right, bottom, inside
+      /// <summary>
+      /// The point lies on or beyond the left side of the rectangle.
+      /// </summary>
+      left,
+      /// <summary>
+      /// The point lies on or beyond the top side of the rectangle.
+      /// </summary>
+      top,
+      /// <summary>
+      /// The point lies on or beyond the right side of the rectangle.
+      /// </summary>
+      right,
+      /// <summary>
+      /// The point lies on or beyond the bottom side of the rectangle.
+      /// </summary>
+      bottom,
+      /// <summary>
+      /// The point lies inside the rectangle.
+      /// </summary>
+      inside
     }
 
+    /// <summary>
+    /// Stores the clipping rectangle.
+    /// </summary>
     readonly protected Rect64 rect_;
+    /// <summary>
+    /// Stores the midpoint of the clipping rectangle.
+    /// </summary>
     readonly protected Point64 mp_;
+    /// <summary>
+    /// Stores the clipping rectangle as a path.
+    /// </summary>
     readonly protected Path64 rectPath_;
+
+    /// <summary>
+    /// Stores the bounds of the path currently being clipped.
+    /// </summary>
     protected Rect64 pathBounds_;
+
+    /// <summary>
+    /// Stores the intermediate clipping results.
+    /// </summary>
     protected List<OutPt2?> results_;
+
+    /// <summary>
+    /// Stores edge buckets used while reconnecting clipped output paths.
+    /// </summary>
     protected List<OutPt2?>[] edges_;
+
+    /// <summary>
+    /// Stores the index of the current result path.
+    /// </summary>
     protected int currIdx_;
     internal RectClip64(Rect64 rect)
     {
@@ -247,6 +323,13 @@ namespace Clipper2Lib
       }
     }
 
+    /// <summary>
+    /// Determines the location of a point relative to the clipping rectangle.
+    /// </summary>
+    /// <param name="rec">The clipping rectangle.</param>
+    /// <param name="pt">The point to classify.</param>
+    /// <param name="loc">Receives the computed location.</param>
+    /// <returns><see langword="true"/> if the point lies strictly outside or inside the rectangle; otherwise, <see langword="false"/> when it lies on the border.</returns>
     static protected bool GetLocation(Rect64 rec, Point64 pt, out Location loc) 
     {
       if (pt.X == rec.left && pt.Y >= rec.top && pt.Y <= rec.bottom)
@@ -334,6 +417,15 @@ namespace Clipper2Lib
     }
   
 
+    /// <summary>
+    /// Gets the intersection between a segment and the clipping rectangle edge nearest to the segment start.
+    /// </summary>
+    /// <param name="rectPath">The clipping rectangle path.</param>
+    /// <param name="p">The segment start point.</param>
+    /// <param name="p2">The segment end point.</param>
+    /// <param name="loc">The current location classification of <paramref name="p"/>.</param>
+    /// <param name="ip">Receives the intersection point when one is found.</param>
+    /// <returns><see langword="true"/> if an intersection point was found; otherwise, <see langword="false"/>.</returns>
     static protected bool GetIntersection(Path64 rectPath, Point64 p, Point64 p2, ref Location loc, out Point64 ip)
     {
       // gets the pt of intersection between rectPath and segment(p, p2) that's closest to 'p'
@@ -416,6 +508,13 @@ namespace Clipper2Lib
       }
     }
 
+    /// <summary>
+    /// Advances to the next location state for the specified path.
+    /// </summary>
+    /// <param name="path">The path being processed.</param>
+    /// <param name="loc">On entry, the current location; on exit, the next location.</param>
+    /// <param name="i">On entry, the current point index; on exit, the next index to process.</param>
+    /// <param name="highI">The highest valid point index.</param>
     protected void GetNextLocation(Path64 path,
       ref Location loc, ref int i, int highI)
     {
@@ -654,6 +753,11 @@ namespace Clipper2Lib
       }
     }
 
+    /// <summary>
+    /// Clips the specified closed paths against the rectangle.
+    /// </summary>
+    /// <param name="paths">The paths to clip.</param>
+    /// <returns>The clipped paths.</returns>
     public Paths64 Execute(Paths64 paths)
     {
       Paths64 result = new Paths64();
@@ -958,10 +1062,18 @@ namespace Clipper2Lib
 
   } // RectClip class
 
+  /// <summary>
+  /// Clips open integer paths against a rectangular region.
+  /// </summary>
   public class RectClipLines64 : RectClip64
   {
     internal RectClipLines64(Rect64 rect) : base(rect) { }
 
+    /// <summary>
+    /// Clips the specified open paths against the rectangle.
+    /// </summary>
+    /// <param name="paths">The paths to clip.</param>
+    /// <returns>The clipped paths.</returns>
     public new Paths64 Execute(Paths64 paths)
     {
       Paths64 result = new Paths64();

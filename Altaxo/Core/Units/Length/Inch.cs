@@ -31,6 +31,9 @@ using System.Text;
 
 namespace Altaxo.Units.Length
 {
+  /// <summary>
+  /// Represents the inch unit of length.
+  /// </summary>
   [UnitDescription("Length", 1, 0, 0, 0, 0, 0, 0)]
   public class Inch : UnitBase, IUnit
   {
@@ -43,13 +46,18 @@ namespace Altaxo.Units.Length
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="Inch"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Inch), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return Inch.Instance;
@@ -58,6 +66,9 @@ namespace Altaxo.Units.Length
     #endregion
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Inch"/> class.
+    /// </summary>
     protected Inch()
     {
     }

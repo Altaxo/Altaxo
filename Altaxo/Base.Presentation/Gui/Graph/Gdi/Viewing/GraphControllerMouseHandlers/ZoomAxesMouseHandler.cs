@@ -36,6 +36,10 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
   /// </summary>
   public class ZoomAxesMouseHandler : AbstractRectangularToolMouseHandler
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ZoomAxesMouseHandler"/> class.
+    /// </summary>
+    /// <param name="grac">The graph controller.</param>
     public ZoomAxesMouseHandler(GraphController grac)
       : base(grac)
     {
@@ -45,6 +49,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
         _grac.SetPanelCursor(Cursors.SizeAll);
     }
 
+    /// <inheritdoc/>
     public override GraphToolType GraphToolType
     {
       get { return GraphToolType.ZoomAxes; }
@@ -57,6 +62,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       b = h;
     }
 
+    /// <inheritdoc/>
     protected override void FinishDrawing()
     {
       var layer = _grac.ActiveLayer as XYPlotLayer;

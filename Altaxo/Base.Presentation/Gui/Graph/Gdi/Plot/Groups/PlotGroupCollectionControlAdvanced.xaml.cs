@@ -36,6 +36,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
   /// </summary>
   public partial class PlotGroupCollectionControlAdvanced : UserControl, IPlotGroupCollectionViewAdvanced, Altaxo.Gui.Graph.Graph3D.Plot.Groups.IPlotGroupCollectionViewAdvanced
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PlotGroupCollectionControlAdvanced"/> class.
+    /// </summary>
     public PlotGroupCollectionControlAdvanced()
     {
       InitializeComponent();

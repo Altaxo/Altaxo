@@ -7,6 +7,9 @@ namespace Altaxo.Gui.Data
   /// </summary>
   public partial class DataTablesAggregationDataControl : UserControl, IDataTablesAggregationDataView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DataTablesAggregationDataControl"/> class.
+    /// </summary>
     public DataTablesAggregationDataControl()
     {
       InitializeComponent();

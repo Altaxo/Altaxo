@@ -32,9 +32,19 @@ namespace Altaxo.Gui.Workbench
   {
     #region Options
 
+    /// <summary>
+    /// Gets the recent file list service.
+    /// </summary>
     IRecentOpen RecentOpen { get; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether deleted files are moved to the recycle bin.
+    /// </summary>
     bool DeleteToRecycleBin { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether files are saved by using a temporary file first.
+    /// </summary>
     bool SaveUsingTemporaryFile { get; set; }
 
     /// <summary>
@@ -43,8 +53,14 @@ namespace Altaxo.Gui.Workbench
     /// </summary>
     Encoding DefaultFileEncoding { get; }
 
+    /// <summary>
+    /// Gets or sets the default file encoding information.
+    /// </summary>
     EncodingInfo DefaultFileEncodingInfo { get; set; }
 
+    /// <summary>
+    /// Gets the list of available encodings.
+    /// </summary>
     IReadOnlyList<EncodingInfo> AllEncodings { get; }
 
     #endregion Options
@@ -202,16 +218,34 @@ namespace Altaxo.Gui.Workbench
     /// </summary>
     bool CopyFile(string oldName, string newName, bool isDirectory, bool overwrite);
 
+    /// <summary>
+    /// Occurs before a file or directory is renamed.
+    /// </summary>
     event EventHandler<FileRenamingEventArgs> FileRenaming;
 
+    /// <summary>
+    /// Occurs after a file or directory was renamed.
+    /// </summary>
     event EventHandler<FileRenameEventArgs> FileRenamed;
 
+    /// <summary>
+    /// Occurs before a file or directory is copied.
+    /// </summary>
     event EventHandler<FileRenamingEventArgs> FileCopying;
 
+    /// <summary>
+    /// Occurs after a file or directory was copied.
+    /// </summary>
     event EventHandler<FileRenameEventArgs> FileCopied;
 
+    /// <summary>
+    /// Occurs before a file or directory is removed.
+    /// </summary>
     event EventHandler<FileCancelEventArgs> FileRemoving;
 
+    /// <summary>
+    /// Occurs after a file or directory was removed.
+    /// </summary>
     event EventHandler<FileEventArgs> FileRemoved;
 
     #endregion Remove/Rename/Copy
@@ -240,10 +274,19 @@ namespace Altaxo.Gui.Workbench
     /// <param name="isDirectory">Set to true if this is a directory</param>
     void FireFileCreated(string fileName, bool isDirectory);
 
+    /// <summary>
+    /// Occurs after a file or directory was created.
+    /// </summary>
     event EventHandler<FileEventArgs> FileCreated;
 
+    /// <summary>
+    /// Occurs before a file or directory is replaced.
+    /// </summary>
     event EventHandler<FileCancelEventArgs> FileReplacing;
 
+    /// <summary>
+    /// Occurs after a file or directory was replaced.
+    /// </summary>
     event EventHandler<FileEventArgs> FileReplaced;
 
     #endregion FileCreated/Replaced

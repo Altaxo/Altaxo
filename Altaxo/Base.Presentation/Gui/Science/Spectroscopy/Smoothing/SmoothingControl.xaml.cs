@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Smoothing
   /// </summary>
   public partial class SmoothingControl : UserControl, ISmoothingView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SmoothingControl"/> class.
+    /// </summary>
     public SmoothingControl()
     {
       InitializeComponent();

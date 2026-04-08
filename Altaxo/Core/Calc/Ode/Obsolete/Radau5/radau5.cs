@@ -18,6 +18,9 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
 {
   #region The Class: RADAU5
 
+  /// <summary>
+  /// Provides the translated entry point for the obsolete RADAU5 ODE solver.
+  /// </summary>
   public class RADAU5
   {
     #region Dependencies
@@ -26,6 +29,10 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
 
     #endregion Dependencies
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RADAU5"/> class.
+    /// </summary>
+    /// <param name="radcor">The core RADAU5 implementation.</param>
     public RADAU5(RADCOR radcor)
     {
       #region Set Dependencies
@@ -35,6 +42,9 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
       #endregion Set Dependencies
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RADAU5"/> class.
+    /// </summary>
     public RADAU5()
     {
       #region Initialization Common Blocks
@@ -1124,6 +1134,9 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
   // C
   // C ***********************************************************
   // C
+  /// <summary>
+  /// Contains the translated core iteration routine for the obsolete RADAU5 solver.
+  /// </summary>
   public class RADCOR
   {
     #region Dependencies
@@ -1151,6 +1164,15 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
 
     #endregion Common variables
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RADCOR"/> class.
+    /// </summary>
+    /// <param name="decomr">The real-valued decomposition helper.</param>
+    /// <param name="decomc">The complex-valued decomposition helper.</param>
+    /// <param name="slvrad">The linear-system solver helper.</param>
+    /// <param name="estrad">The error-estimation helper.</param>
+    /// <param name="CONRA5">The translated common block for RADAU5 state.</param>
+    /// <param name="LINAL">The translated common block for linear algebra state.</param>
     public RADCOR(DECOMR decomr, DECOMC decomc, SLVRAD slvrad, ESTRAD estrad, CommonBlock CONRA5, CommonBlock LINAL)
     {
       #region Set Dependencies
@@ -1194,6 +1216,9 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RADCOR"/> class.
+    /// </summary>
     public RADCOR()
     {
       #region Initialization Common Blocks
@@ -1266,6 +1291,9 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Executes the translated RADAU5 core integration routine.
+    /// </summary>
     public void Run(int N, IFVPOL FCN, ref double X, ref double[] Y, int offset_y, double XEND, double HMAX
                      , ref double H, double[] RTOL, int offset_rtol, double[] ATOL, int offset_atol, int ITOL, IJVPOL JAC, int IJAC
                      , int MLJAC, int MUJAC, IBBAMPL MAS, int MLMAS, int MUMAS, ISOLOUTR SOLOUT
@@ -1981,6 +2009,9 @@ LABEL179:
   // C
   // C ***********************************************************
   // C
+  /// <summary>
+  /// Evaluates the dense output polynomial produced by the translated RADAU5 solver.
+  /// </summary>
   public class CONTR5
   {
     #region Common variables
@@ -1995,6 +2026,10 @@ LABEL179:
 
     #endregion Common variables
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CONTR5"/> class.
+    /// </summary>
+    /// <param name="CONRA5">The translated common block for RADAU5 state.</param>
     public CONTR5(CommonBlock CONRA5)
     {
       #region Common varaible Initialization
@@ -2016,6 +2051,9 @@ LABEL179:
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CONTR5"/> class.
+    /// </summary>
     public CONTR5()
     {
       #region Initialization Common Blocks
@@ -2043,6 +2081,9 @@ LABEL179:
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Evaluates the translated dense output polynomial for one component.
+    /// </summary>
     public double Run(int I, double X, double[] CONT, int offset_cont, int LRC)
     {
       double contr5 = 0;

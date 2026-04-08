@@ -36,9 +36,24 @@ namespace Altaxo.Serialization.Xml
   [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
   public class XmlSerializationSurrogateForAttribute : Attribute
   {
+    /// <summary>
+    /// Stores the supported version.
+    /// </summary>
     protected int _version;
+
+    /// <summary>
+    /// Stores the target serialization type when it is directly available.
+    /// </summary>
     protected System.Type? _serializationType;
+
+    /// <summary>
+    /// Stores the assembly name for deprecated target types.
+    /// </summary>
     protected string? _assemblyName;
+
+    /// <summary>
+    /// Stores the type name for deprecated target types.
+    /// </summary>
     protected string? _typeName;
 
     /// <summary>

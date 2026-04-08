@@ -32,16 +32,21 @@ using AvalonDock.Layout;
 namespace Altaxo.Gui.Workbench
 {
   /// <summary>
-  /// Helper class to ensure that tool panes are initially docked to their default positions
+  /// Helper class to ensure that tool panes are initially docked to their default positions.
   /// </summary>
   public class LayoutUpdateStrategy : ILayoutUpdateStrategy
   {
+    /// <summary>
+    /// Gets the shared layout update strategy instance.
+    /// </summary>
     public static LayoutUpdateStrategy Instance { get; private set; } = new LayoutUpdateStrategy();
 
+    /// <inheritdoc/>
     public void AfterInsertAnchorable(LayoutRoot layout, LayoutAnchorable anchorableShown)
     {
     }
 
+    /// <inheritdoc/>
     public void AfterInsertDocument(LayoutRoot layout, LayoutDocument anchorableShown)
     {
     }
@@ -53,6 +58,7 @@ namespace Altaxo.Gui.Workbench
     /// <param name="anchorableToShow">The anchorable to show.</param>
     /// <param name="destinationContainer">The destination container.</param>
     /// <returns></returns>
+    /// <inheritdoc/>
     public bool BeforeInsertAnchorable(LayoutRoot layout, LayoutAnchorable anchorableToShow, ILayoutContainer destinationContainer)
     {
       if (anchorableToShow.Content is IPadContent padContent)
@@ -106,6 +112,7 @@ namespace Altaxo.Gui.Workbench
       return result;
     }
 
+    /// <inheritdoc/>
     public bool BeforeInsertDocument(LayoutRoot layout, LayoutDocument anchorableToShow, ILayoutContainer destinationContainer)
     {
       return false; // no special strategy here

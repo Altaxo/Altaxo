@@ -38,24 +38,70 @@ namespace System.IO.Compression
   /// </summary>
   public class EndOfCentralDirectoryRecord
   {
+    /// <summary>
+    /// Gets the minimum size, in bytes, of the end of central directory record.
+    /// </summary>
     public const int MinimumSizeOfStructure = 22;
 
+    /// <summary>
+    /// Gets the signature of the end of central directory record.
+    /// </summary>
     public const int EndOfCentralDirectorySignature = 0x06054b50; // Position 0
+
+    /// <summary>
+    /// Gets the number of this disk.
+    /// </summary>
     public int NumberOfThisDisk { get; private set; } // Position 4
+
+    /// <summary>
+    /// Gets the disk number on which the central directory starts.
+    /// </summary>
     public int DiskWhereCentralDirectoryStarts { get; private set; } // Position 6
+
+    /// <summary>
+    /// Gets the number of central directory records on this disk.
+    /// </summary>
     public int NumberOfCentralDirectoryRecordsOnThisDisk { get; private set; } // Position 8
+
+    /// <summary>
+    /// Gets the total number of central directory records.
+    /// </summary>
     public int TotalNumberOfCentralDirectoryRecords { get; private set; } // Position 10
+
+    /// <summary>
+    /// Gets the size, in bytes, of the central directory.
+    /// </summary>
     public UInt32 SizeOfCentralDirectoryInBytes { get; private set; } // Position 12
+
+    /// <summary>
+    /// Gets the position of the central directory in the archive.
+    /// </summary>
     public long PositionOfCentralDirectory { get; private set; } // Position 16
+
+    /// <summary>
+    /// Gets the ZIP file comment length.
+    /// </summary>
     public int CommentLength { get; private set; } // Position 20
 
 
     // Data not part of the structure on disk
+
+    /// <summary>
+    /// Gets the original stream position of the record.
+    /// </summary>
     public long OriginalStreamPosition { get; private set; }
 
+    /// <summary>
+    /// Gets the position immediately after this record in the stream.
+    /// </summary>
     public long NextStreamPosition => OriginalStreamPosition + MinimumSizeOfStructure + CommentLength;
 
 
+    /// <summary>
+    /// Creates an end of central directory record from the specified stream.
+    /// </summary>
+    /// <param name="str">The stream positioned immediately after the signature.</param>
+    /// <returns>The created end of central directory record.</returns>
     public static EndOfCentralDirectoryRecord Create(Stream str)
     {
       var buffer = new byte[MinimumSizeOfStructure];
@@ -80,6 +126,13 @@ namespace System.IO.Compression
       return result;
     }
 
+    /// <summary>
+    /// Creates an end of central directory record for writing.
+    /// </summary>
+    /// <param name="numberOfRecords">The number of central directory records.</param>
+    /// <param name="positionOfCentralDirectory">The position of the central directory.</param>
+    /// <param name="sizeOfCentralDirectory">The size, in bytes, of the central directory.</param>
+    /// <returns>The created end of central directory record.</returns>
     public static EndOfCentralDirectoryRecord Create(int numberOfRecords, long positionOfCentralDirectory, long sizeOfCentralDirectory)
     {
       var r = new EndOfCentralDirectoryRecord();
@@ -90,6 +143,10 @@ namespace System.IO.Compression
       return r;
     }
 
+    /// <summary>
+    /// Writes the end of central directory record to the specified ZIP archive stream.
+    /// </summary>
+    /// <param name="zipArchiveStream">The ZIP archive stream to write to.</param>
     public void Write(Stream zipArchiveStream)
     {
       OriginalStreamPosition = zipArchiveStream.Position;
@@ -109,6 +166,12 @@ namespace System.IO.Compression
       zipArchiveStream.Write(buffer, 0, MinimumSizeOfStructure);
     }
 
+    /// <summary>
+    /// Tries to locate the end of central directory record in the specified stream.
+    /// </summary>
+    /// <param name="str">The ZIP archive stream.</param>
+    /// <param name="endOfCentralDirectory">When this method returns <c>true</c>, contains the located record; otherwise, <see langword="null"/>.</param>
+    /// <returns><c>true</c> if the record was found; otherwise, <c>false</c>.</returns>
     public static bool TryGetEndOfCentralDirectory(Stream str, [MaybeNullWhen(false)] out EndOfCentralDirectoryRecord endOfCentralDirectory)
     {
       var length = str.Length;

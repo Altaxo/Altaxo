@@ -35,6 +35,9 @@ using System.Windows.Data;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// Numeric up-down control for editing <see cref="BigInteger"/> values.
+  /// </summary>
   public partial class BigIntegerUpDown : NumericUpDownBase
   {
     private  BigInteger DefaultMinValue = 0;
@@ -44,11 +47,15 @@ namespace Altaxo.Gui.Common
 
     #region Converter
 
+    /// <inheritdoc/>
     protected override object GetNewValidationRuleAndConverter()
     {
       return new BigIntegerConverter();
     }
 
+    /// <summary>
+    /// Gets the converter used by the control.
+    /// </summary>
     protected BigIntegerConverter Converter => (BigIntegerConverter)_validationRuleAndConverter;
 
     #endregion Converter
@@ -57,12 +64,18 @@ namespace Altaxo.Gui.Common
 
     #region Value
 
+    /// <summary>
+    /// Gets or sets the current value.
+    /// </summary>
     public BigInteger Value
     {
       get { return (BigInteger)GetValue(ValueProperty); }
       set { SetValue(ValueProperty, value); }
     }
 
+    /// <summary>
+    /// Gets or sets the current value as <see cref="double"/>.
+    /// </summary>
     public double ValueAsDouble
     {
       get { return (double)(BigInteger)GetValue(ValueProperty); }
@@ -130,6 +143,9 @@ namespace Altaxo.Gui.Common
 
     #region ValueIfTextIsEmpty
 
+    /// <summary>
+    /// Gets or sets the value used when the text box is empty.
+    /// </summary>
     public BigInteger? ValueIfTextIsEmpty
     {
       get { return (BigInteger?)GetValue(ValueIfTextIsEmptyProperty); }
@@ -153,7 +169,7 @@ namespace Altaxo.Gui.Common
     }
 
     /// <summary>
-    /// Triggers the <see cref="SelectedValueChanged"/> event.
+    /// Updates the fallback value used when the text box is empty.
     /// </summary>
     /// <param name="obj">Dependency object (here: the control).</param>
     /// <param name="args">Property changed event arguments.</param>
@@ -166,6 +182,9 @@ namespace Altaxo.Gui.Common
 
     #region ValueString
 
+    /// <summary>
+    /// Gets the textual representation of the current value.
+    /// </summary>
     public string ValueString
     {
       get
@@ -177,18 +196,27 @@ namespace Altaxo.Gui.Common
     private static readonly DependencyPropertyKey ValueStringPropertyKey =
         DependencyProperty.RegisterAttachedReadOnly("ValueString", typeof(string), typeof(BigIntegerUpDown), new PropertyMetadata());
 
+    /// <summary>
+    /// Identifies the <see cref="ValueString"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty ValueStringProperty = ValueStringPropertyKey.DependencyProperty;
 
     #endregion ValueString
 
     #region Minimum
 
+    /// <summary>
+    /// Gets or sets the minimum allowed value.
+    /// </summary>
     public BigInteger? Minimum
     {
       get { return (BigInteger?)GetValue(MinimumProperty); }
       set { SetValue(MinimumProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="Minimum"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty MinimumProperty =
         DependencyProperty.Register(
             "Minimum", typeof(BigInteger?), typeof(BigIntegerUpDown),
@@ -217,12 +245,18 @@ namespace Altaxo.Gui.Common
 
     #region Maximum
 
+    /// <summary>
+    /// Gets or sets the maximum allowed value.
+    /// </summary>
     public BigInteger? Maximum
     {
       get { return (BigInteger?)GetValue(MaximumProperty); }
       set { SetValue(MaximumProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="Maximum"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty MaximumProperty =
         DependencyProperty.Register(
             "Maximum", typeof(BigInteger?), typeof(BigIntegerUpDown),
@@ -255,12 +289,18 @@ namespace Altaxo.Gui.Common
 
     #region Change
 
+    /// <summary>
+    /// Gets or sets the increment used by the control.
+    /// </summary>
     public BigInteger Change
     {
       get { return (BigInteger)GetValue(ChangeProperty); }
       set { SetValue(ChangeProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="Change"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty ChangeProperty =
         DependencyProperty.Register(
             "Change", typeof(BigInteger), typeof(BigIntegerUpDown),
@@ -316,6 +356,7 @@ namespace Altaxo.Gui.Common
 
     #region Commands
 
+    /// <inheritdoc/>
     protected override void OnIncrease()
     {
       if (Maximum.HasValue && (Value + 1) > Maximum.Value)
@@ -324,6 +365,7 @@ namespace Altaxo.Gui.Common
         Value = Value + 1;
     }
 
+    /// <inheritdoc/>
     protected override void OnDecrease()
     {
       if (Minimum.HasValue && (Value - 1) < Minimum.Value)
@@ -332,6 +374,7 @@ namespace Altaxo.Gui.Common
         Value = Value - 1;
     }
 
+    /// <inheritdoc/>
     protected override void OnGotoMinimum()
     {
       if (Minimum.HasValue)
@@ -340,6 +383,7 @@ namespace Altaxo.Gui.Common
         Value = 0;
     }
 
+    /// <inheritdoc/>
     protected override void OnGotoMaximum()
     {
       if(Maximum.HasValue)
@@ -350,6 +394,7 @@ namespace Altaxo.Gui.Common
 
     #region Automation
 
+    /// <inheritdoc/>
     protected override AutomationPeer OnCreateAutomationPeer()
     {
       return new BigIntegerUpDownAutomationPeer(this);
@@ -358,23 +403,32 @@ namespace Altaxo.Gui.Common
     #endregion Automation
   }
 
+  /// <summary>
+  /// Automation peer for <see cref="BigIntegerUpDown"/>.
+  /// </summary>
   public class BigIntegerUpDownAutomationPeer : FrameworkElementAutomationPeer, IRangeValueProvider
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BigIntegerUpDownAutomationPeer"/> class.
+    /// </summary>
     public BigIntegerUpDownAutomationPeer(BigIntegerUpDown control)
       : base(control)
     {
     }
 
+    /// <inheritdoc/>
     protected override string GetClassNameCore()
     {
       return "BigIntegerUpDown";
     }
 
+    /// <inheritdoc/>
     protected override AutomationControlType GetAutomationControlTypeCore()
     {
       return AutomationControlType.Spinner;
     }
 
+    /// <inheritdoc/>
     public override object GetPattern(PatternInterface patternInterface)
     {
       if (patternInterface == PatternInterface.RangeValue)

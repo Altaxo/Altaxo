@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
   /// </summary>
   public partial class FreeLabelFormattingControl : UserControl, IFreeLabelFormattingView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FreeLabelFormattingControl"/> class.
+    /// </summary>
     public FreeLabelFormattingControl()
     {
       InitializeComponent();

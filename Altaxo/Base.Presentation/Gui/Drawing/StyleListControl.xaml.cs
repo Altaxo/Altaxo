@@ -46,6 +46,9 @@ namespace Altaxo.Gui.Drawing
   /// </summary>
   public partial class StyleListControl : UserControl, IStyleListView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StyleListControl"/> class.
+    /// </summary>
     public StyleListControl()
     {
       InitializeComponent();

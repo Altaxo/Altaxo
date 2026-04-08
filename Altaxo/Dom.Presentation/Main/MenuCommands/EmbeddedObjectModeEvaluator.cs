@@ -30,10 +30,11 @@ namespace Altaxo.Main.Commands
 {
   /// <summary>
   /// Evaluates to <c>true</c> if we are in embedded object mode, i.e. Altaxo was started with
-  /// -embedding object args and has loaded an embedded document.
+  /// the <c>-embedding</c> object arguments and has loaded an embedded document.
   /// </summary>
   public class EmbeddedObjectModeEvaluator : IConditionEvaluator
   {
+    /// <inheritdoc/>
     public bool IsValid(object caller, Condition condition)
     {
       string expectedValueS = condition.Properties["value"].ToLowerInvariant();

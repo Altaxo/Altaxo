@@ -29,6 +29,9 @@ using System.Text;
 
 namespace Altaxo.UnmanagedApi.GdiPlus
 {
+  /// <summary>
+  /// Provides unmanaged GDI+ function imports.
+  /// </summary>
   public static class GdiPlusFunc
   {
     /// <summary>
@@ -50,6 +53,7 @@ namespace Altaxo.UnmanagedApi.GdiPlus
     /// <param name="flags">
     /// Flags used to specify the format of the Windows Metafile returned
     /// </param>
+    /// <returns>The number of bytes written or required.</returns>
     [DllImport("gdiplus.dll", SetLastError = true)]
     public static extern uint GdipEmfToWmfBits(IntPtr hEmf, uint uBufferSize, byte[] bBuffer, int iMappingMode, EmfToWmfBitsFlags flags);
   }

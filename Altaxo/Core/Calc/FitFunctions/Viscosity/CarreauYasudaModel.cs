@@ -27,11 +27,13 @@ namespace Altaxo.Calc.FitFunctions.Viscosity
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CarreauYasudaModel), 0)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (CarreauYasudaModel)obj;
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new CarreauYasudaModel();
@@ -40,6 +42,10 @@ namespace Altaxo.Calc.FitFunctions.Viscosity
 
     #endregion Serialization
 
+    /// <summary>
+    /// Creates a Carreau-Yasuda viscosity model fit function.
+    /// </summary>
+    /// <returns>A new <see cref="CarreauYasudaModel"/> instance.</returns>
     [FitFunctionCreator("Carreau-Yasuda model", "Viscosity", 1, 1, 5)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Viscosity.CarreauYasudaModel}")]
     public static IFitFunction Create()

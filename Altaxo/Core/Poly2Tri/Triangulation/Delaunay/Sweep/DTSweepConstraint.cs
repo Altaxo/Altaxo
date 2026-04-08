@@ -31,12 +31,19 @@
 
 namespace Poly2Tri
 {
+  /// <summary>
+  /// Represents a constrained edge used by the sweep triangulation algorithm.
+  /// </summary>
   public class DTSweepConstraint : TriangulationConstraint
   {
     /// <summary>
-    /// Give two points in any order. Will always be ordered so
-    /// that q.y > p.y and q.x > p.x if same y value
+    /// Initializes a new instance of the <see cref="DTSweepConstraint"/> class.
     /// </summary>
+    /// <param name="p1">One endpoint of the constrained edge.</param>
+    /// <param name="p2">The other endpoint of the constrained edge.</param>
+    /// <remarks>
+    /// The endpoints are reordered internally so that <c>Q.Y &gt; P.Y</c>, or if both y-values are equal, so that <c>Q.X &gt; P.X</c>.
+    /// </remarks>
     public DTSweepConstraint(TriangulationPoint p1, TriangulationPoint p2)
     {
       P = p1;

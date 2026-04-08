@@ -46,6 +46,9 @@ namespace Altaxo.Com
     private int _invokeCount;
     private string _previousActionName;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ManagedOleAdviseHolderUO"/> class.
+    /// </summary>
     public ManagedOleAdviseHolderUO()
     {
       _invokeableThread = new InvokeableThread("OleAdviseThread", Current.Dispatcher);
@@ -78,6 +81,11 @@ namespace Altaxo.Com
       }
     }
 
+    /// <summary>
+    /// Registers an advise sink.
+    /// </summary>
+    /// <param name="pAdvise">The advise sink.</param>
+    /// <param name="pdwConnection">The returned connection cookie.</param>
     public void Advise(IAdviseSink pAdvise, out int pdwConnection)
     {
       int conn = -1;
@@ -95,6 +103,10 @@ namespace Altaxo.Com
       pdwConnection = conn;
     }
 
+    /// <summary>
+    /// Unregisters an advise sink.
+    /// </summary>
+    /// <param name="dwConnection">The connection cookie.</param>
     public void Unadvise(int dwConnection)
     {
       Invoke("Unadvise", () =>
@@ -105,6 +117,10 @@ namespace Altaxo.Com
       );
     }
 
+    /// <summary>
+    /// Enumerates the registered advise sinks.
+    /// </summary>
+    /// <returns>An enumerator over the registered advise sinks.</returns>
     public IEnumSTATDATA EnumAdvise()
     {
       IEnumSTATDATA returnValue = null;
@@ -117,6 +133,10 @@ namespace Altaxo.Com
       return returnValue;
     }
 
+    /// <summary>
+    /// Sends a rename notification to all registered advise sinks.
+    /// </summary>
+    /// <param name="pmk">The new moniker.</param>
     public void SendOnRename(IMoniker pmk)
     {
       Invoke("SendOnRename()", () =>
@@ -127,6 +147,9 @@ namespace Altaxo.Com
         );
     }
 
+    /// <summary>
+    /// Sends a save notification to all registered advise sinks.
+    /// </summary>
     public void SendOnSave()
     {
       Invoke("SendOnSave", () =>
@@ -137,6 +160,9 @@ namespace Altaxo.Com
       );
     }
 
+    /// <summary>
+    /// Sends a close notification to all registered advise sinks.
+    /// </summary>
     public void SendOnClose()
     {
       Invoke("SendOnClose", () =>

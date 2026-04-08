@@ -40,6 +40,9 @@ namespace Altaxo.Gui.Serialization.Galactic
     IOmnicSPAImportOptionsView,
     IBrukerOpusImportOptionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GalacticSPCImportOptionsControl"/> class.
+    /// </summary>
     public GalacticSPCImportOptionsControl()
     {
       InitializeComponent();

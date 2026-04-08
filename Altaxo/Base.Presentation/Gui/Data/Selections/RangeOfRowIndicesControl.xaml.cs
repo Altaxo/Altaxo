@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Data.Selections
   /// </summary>
   public partial class RangeOfRowIndicesControl : UserControl, IRangeOfRowIndicesView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RangeOfRowIndicesControl"/> class.
+    /// </summary>
     public RangeOfRowIndicesControl()
     {
       InitializeComponent();

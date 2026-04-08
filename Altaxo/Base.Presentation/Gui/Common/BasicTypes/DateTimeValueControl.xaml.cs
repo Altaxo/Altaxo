@@ -44,6 +44,9 @@ namespace Altaxo.Gui.Common.BasicTypes
   /// </summary>
   public partial class DateTimeValueControl : UserControl, IDateTimeValueView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DateTimeValueControl"/> class.
+    /// </summary>
     public DateTimeValueControl()
     {
       InitializeComponent();

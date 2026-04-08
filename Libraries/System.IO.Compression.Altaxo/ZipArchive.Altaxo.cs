@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace System.IO.Compression
 {
+  /// <summary>
+  /// Represents a ZIP archive with Altaxo-specific helper functionality.
+  /// </summary>
   public partial class ZipArchiveAxo
   {
     /// <summary>

@@ -51,6 +51,9 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DashPatternComboBox"/> class.
+    /// </summary>
     public DashPatternComboBox()
       : base(DashPatternListManager.Instance)
     {
@@ -77,10 +80,13 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
 
     #region Implementation of abstract base class members
 
+    /// <inheritdoc/>
     protected override TreeView GuiTreeView { get { return _guiTreeView; } }
 
+    /// <inheritdoc/>
     protected override ComboBox GuiComboBox { get { return _guiComboBox; } }
 
+    /// <inheritdoc/>
     protected override IDashPattern GuiComboBoxSelectedValue
     {
       get
@@ -110,6 +116,7 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
       }
     }
 
+    /// <inheritdoc/>
     public override string GetDisplayName(IDashPattern item)
     {
       return (string)_itemToItemNameConverter.Convert(item, typeof(string), null, System.Globalization.CultureInfo.InvariantCulture);

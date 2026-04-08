@@ -56,6 +56,9 @@ namespace Altaxo.Calc.Regression.Multivariate
   {
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="CrossValidationGroupingStrategyNone"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CrossValidationGroupingStrategyNone), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
@@ -87,6 +90,9 @@ namespace Altaxo.Calc.Regression.Multivariate
   {
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="CrossValidationGroupingStrategyExcludeGroupsOfSimilarMeasurements"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CrossValidationGroupingStrategyExcludeGroupsOfSimilarMeasurements), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
@@ -164,6 +170,9 @@ namespace Altaxo.Calc.Regression.Multivariate
   {
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="CrossValidationGroupingStrategyExcludeHalfObservations"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CrossValidationGroupingStrategyExcludeHalfObservations), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
@@ -213,6 +222,9 @@ namespace Altaxo.Calc.Regression.Multivariate
   {
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="CrossValidationGroupingStrategyExcludeSingleMeasurements"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CrossValidationGroupingStrategyExcludeSingleMeasurements), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {

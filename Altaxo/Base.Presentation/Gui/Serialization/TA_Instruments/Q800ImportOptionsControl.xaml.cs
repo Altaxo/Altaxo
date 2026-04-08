@@ -32,6 +32,9 @@ namespace Altaxo.Gui.Serialization.TA_Instruments
   public partial class Q800ImportOptionsControl : UserControl,
     IQ800ImportOptionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Q800ImportOptionsControl"/> class.
+    /// </summary>
     public Q800ImportOptionsControl()
     {
       InitializeComponent();

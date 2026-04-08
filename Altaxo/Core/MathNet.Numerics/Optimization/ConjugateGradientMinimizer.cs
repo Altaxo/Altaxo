@@ -33,22 +33,45 @@ using Altaxo.Calc.Optimization.LineSearch;
 
 namespace Altaxo.Calc.Optimization
 {
+  /// <summary>
+  /// Minimizes unconstrained objective functions with the conjugate gradient method.
+  /// </summary>
   public class ConjugateGradientMinimizer : IUnconstrainedMinimizer
   {
+    /// <summary>
+    /// Gets or sets the stopping threshold for the gradient norm.
+    /// </summary>
     public double GradientTolerance { get; set; }
+    /// <summary>
+    /// Gets or sets the maximum number of iterations.
+    /// </summary>
     public int MaximumIterations { get; set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConjugateGradientMinimizer"/> class.
+    /// </summary>
+    /// <param name="gradientTolerance">The stopping threshold for the gradient norm.</param>
+    /// <param name="maximumIterations">The maximum number of iterations.</param>
     public ConjugateGradientMinimizer(double gradientTolerance, int maximumIterations)
     {
       GradientTolerance = gradientTolerance;
       MaximumIterations = maximumIterations;
     }
 
+    /// <inheritdoc/>
     public MinimizationResult FindMinimum(IObjectiveFunction objective, Vector<double> initialGuess)
     {
       return Minimum(objective, initialGuess, GradientTolerance, MaximumIterations);
     }
 
+    /// <summary>
+    /// Minimizes the objective function with the conjugate gradient method.
+    /// </summary>
+    /// <param name="objective">The objective function.</param>
+    /// <param name="initialGuess">The initial parameter guess.</param>
+    /// <param name="gradientTolerance">The stopping threshold for the gradient norm.</param>
+    /// <param name="maxIterations">The maximum number of iterations.</param>
+    /// <returns>The minimization result.</returns>
     public static MinimizationResult Minimum(IObjectiveFunction objective, Vector<double> initialGuess, double gradientTolerance = 1e-8, int maxIterations = 1000)
     {
       if (!objective.IsGradientSupported)

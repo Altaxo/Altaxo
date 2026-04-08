@@ -29,10 +29,23 @@
 
 namespace Altaxo.Calc.Optimization.LineSearch
 {
+  /// <summary>
+  /// Represents the result of a line search iteration.
+  /// </summary>
   public class LineSearchResult : MinimizationResult
   {
+    /// <summary>
+    /// Gets the final accepted line search step size.
+    /// </summary>
     public double FinalStep { get; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LineSearchResult"/> class.
+    /// </summary>
+    /// <param name="functionInfo">The objective function state at the accepted point.</param>
+    /// <param name="iterations">The number of line search iterations.</param>
+    /// <param name="finalStep">The accepted step size.</param>
+    /// <param name="reasonForExit">The reason the line search terminated.</param>
     public LineSearchResult(IObjectiveFunction functionInfo, int iterations, double finalStep, ExitCondition reasonForExit)
         : base(functionInfo, iterations, reasonForExit)
     {

@@ -39,6 +39,7 @@ namespace Altaxo.Gui.Workbench
   /// </example>
   public class WindowOpenConditionEvaluator : IConditionEvaluator
   {
+    /// <inheritdoc/>
     public bool IsValid(object? caller, Condition condition)
     {
       var workbench = Altaxo.Current.GetRequiredService<Workbench.IWorkbenchEx>();

@@ -80,6 +80,11 @@ namespace Altaxo.Gui
       };
     }
 
+    /// <summary>
+    /// Converts an icon to a bitmap source.
+    /// </summary>
+    /// <param name="icon">The icon to convert.</param>
+    /// <returns>The resulting bitmap source.</returns>
     public static BitmapSource IconToBitmapSource(System.Drawing.Icon icon)
     {
       using (var stream = new System.IO.MemoryStream())

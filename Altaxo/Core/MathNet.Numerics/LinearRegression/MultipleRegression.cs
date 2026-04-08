@@ -33,6 +33,9 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.LinearRegression
 {
+  /// <summary>
+  /// Provides multiple linear regression routines.
+  /// </summary>
   public static class MultipleRegression
   {
     /// <summary>

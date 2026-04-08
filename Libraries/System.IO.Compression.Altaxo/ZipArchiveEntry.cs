@@ -148,6 +148,9 @@ namespace System.IO.Compression
     /// </summary>
     public ZipArchiveAxo Archive => _archive;
 
+    /// <summary>
+    /// Gets the CRC-32 checksum of the entry data.
+    /// </summary>
     public uint Crc32 => _crc32;
 
     /// <summary>
@@ -164,6 +167,9 @@ namespace System.IO.Compression
       }
     }
 
+    /// <summary>
+    /// Gets or sets the external file attributes stored for the entry.
+    /// </summary>
     public int ExternalAttributes
     {
       get

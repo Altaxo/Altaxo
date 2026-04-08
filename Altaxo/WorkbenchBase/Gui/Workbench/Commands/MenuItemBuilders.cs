@@ -29,6 +29,9 @@ using Altaxo.Workbench;
 
 namespace Altaxo.Gui.Workbench.Commands
 {
+  /// <summary>
+  /// Builds the navigation history submenu.
+  /// </summary>
   public class NavigationHistoryMenuBuilder : IMenuItemBuilder
   {
     // TODO: refactor BuildSubmenu to add a choice between flat and perfile, eventually per class/method sorting of the list
@@ -122,6 +125,7 @@ namespace Altaxo.Gui.Workbench.Commands
       return items;
     }
 
+    /// <inheritdoc/>
     public IEnumerable<object> BuildItems(Codon codon, object owner)
     {
       if (NavigationService.CanNavigateBack || NavigationService.CanNavigateForwards)
@@ -150,6 +154,11 @@ namespace Altaxo.Gui.Workbench.Commands
       return System.Linq.Enumerable.Empty<object>();
     }
 
+    /// <summary>
+    /// Navigates to the selected history entry.
+    /// </summary>
+    /// <param name="sender">The menu item that contains the navigation point.</param>
+    /// <param name="e">The event data.</param>
     public void NavigateTo(object sender, EventArgs e)
     {
       var item = (MenuItem)sender;
@@ -157,8 +166,12 @@ namespace Altaxo.Gui.Workbench.Commands
     }
   }
 
+  /// <summary>
+  /// Builds menu items for the currently open view contents.
+  /// </summary>
   public class OpenContentsMenuBuilder : IMenuItemBuilder
   {
+    /// <inheritdoc/>
     public IEnumerable<object> BuildItems(Codon codon, object owner)
     {
       var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
@@ -284,8 +297,12 @@ namespace Altaxo.Gui.Workbench.Commands
   //		}
   //	}
 
+  /// <summary>
+  /// Builds the view menu for tool pads.
+  /// </summary>
   public class ToolsViewMenuBuilder : ViewMenuBuilder
   {
+    /// <inheritdoc/>
     protected override string Category
     {
       get
@@ -295,8 +312,12 @@ namespace Altaxo.Gui.Workbench.Commands
     }
   }
 
+  /// <summary>
+  /// Builds the view menu for main pads.
+  /// </summary>
   public class MainViewMenuBuilder : ViewMenuBuilder
   {
+    /// <inheritdoc/>
     protected override string Category
     {
       get
@@ -334,11 +355,15 @@ namespace Altaxo.Gui.Workbench.Commands
       }
     }
 
+    /// <summary>
+    /// Gets the category of pads shown by this menu builder.
+    /// </summary>
     protected abstract string Category
     {
       get;
     }
 
+    /// <inheritdoc/>
     public IEnumerable<object> BuildItems(Codon codon, object owner)
     {
       var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();

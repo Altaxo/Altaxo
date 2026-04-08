@@ -31,8 +31,24 @@
 
 namespace Poly2Tri
 {
+  /// <summary>
+  /// Specifies the triangulation mode.
+  /// </summary>
   public enum TriangulationMode
   {
-    Unconstrained, Constrained, Polygon
+    /// <summary>
+    /// Unconstrained triangulation.
+    /// </summary>
+    Unconstrained,
+
+    /// <summary>
+    /// Constrained triangulation.
+    /// </summary>
+    Constrained,
+
+    /// <summary>
+    /// Polygon triangulation.
+    /// </summary>
+    Polygon
   }
 }

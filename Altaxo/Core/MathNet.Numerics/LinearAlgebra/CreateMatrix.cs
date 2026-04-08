@@ -34,6 +34,9 @@ using Altaxo.Calc.LinearAlgebra.Storage;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
+  /// <summary>
+  /// Provides convenience factory methods for creating matrices.
+  /// </summary>
   public static class CreateMatrix
   {
     /// <summary>

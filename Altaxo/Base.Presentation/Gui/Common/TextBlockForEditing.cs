@@ -620,6 +620,12 @@ namespace Altaxo.Gui.Common
       return parent;
     }
 
+    /// <summary>
+    /// Finds the first parent of the specified type in the visual tree.
+    /// </summary>
+    /// <typeparam name="T">The parent type to look for.</typeparam>
+    /// <param name="from">The element from which the parent search starts.</param>
+    /// <returns>The first matching parent, or <see langword="null"/> if none was found.</returns>
     public static T FindParent<T>(DependencyObject from) where T : class
     {
       T result = null;

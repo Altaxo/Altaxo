@@ -28,13 +28,14 @@ using Altaxo.AddInItems;
 namespace Altaxo.Worksheet.Commands
 {
   /// <summary>
-  /// This helps in conditions where the number of selected data columns cares.
-  /// Valid values are all (all columns must be selected, none (no column must be selected),
-  /// one (exactly one column must be selected), any (one or more columns must be selected),
-  /// or the number of columns.
+  /// Evaluates conditions that depend on the number of selected data columns.
+  /// Valid values are <c>all</c> (all columns must be selected), <c>none</c> (no column must be selected),
+  /// <c>one</c> (exactly one column must be selected), <c>any</c> (one or more columns must be selected),
+  /// or a numeric column count.
   /// </summary>
   public class SelectedDataConditionEvaluator : IConditionEvaluator
   {
+    /// <inheritdoc/>
     public bool IsValid(object caller, Condition condition)
     {
       string selectedData = condition.Properties["selected"].ToLower();
@@ -85,13 +86,14 @@ namespace Altaxo.Worksheet.Commands
   }
 
   /// <summary>
-  /// This helps in conditions where the number of selected property columns cares.
-  /// Valid values are all (all columns must be selected, none (no column must be selected),
-  /// one (exactly one column must be selected), any (one or more columns must be selected),
-  /// or the number of columns.
+  /// Evaluates conditions that depend on the number of selected property columns.
+  /// Valid values are <c>all</c> (all columns must be selected), <c>none</c> (no column must be selected),
+  /// <c>one</c> (exactly one column must be selected), <c>any</c> (one or more columns must be selected),
+  /// or a numeric column count.
   /// </summary>
   public class SelectedPropertyConditionEvaluator : IConditionEvaluator
   {
+    /// <inheritdoc/>
     public bool IsValid(object caller, Condition condition)
     {
       string selectedData = condition.Properties["selected"].ToLower();

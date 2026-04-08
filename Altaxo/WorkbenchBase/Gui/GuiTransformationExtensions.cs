@@ -28,40 +28,79 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Gui
 {
+  /// <summary>
+  /// Provides extension methods for transforming WPF geometry values between logical and device coordinates.
+  /// </summary>
   public static class GuiTransformationExtensions
   {
     #region DPI independence
 
+    /// <summary>
+    /// Transforms a rectangle from logical coordinates to device coordinates.
+    /// </summary>
+    /// <param name="rect">The rectangle to transform.</param>
+    /// <param name="visual">The visual that provides the transformation.</param>
+    /// <returns>The transformed rectangle.</returns>
     public static Rect TransformToDevice(this Rect rect, Visual visual)
     {
       Matrix matrix = PresentationSource.FromVisual(visual).CompositionTarget.TransformToDevice;
       return Rect.Transform(rect, matrix);
     }
 
+    /// <summary>
+    /// Transforms a rectangle from device coordinates to logical coordinates.
+    /// </summary>
+    /// <param name="rect">The rectangle to transform.</param>
+    /// <param name="visual">The visual that provides the transformation.</param>
+    /// <returns>The transformed rectangle.</returns>
     public static Rect TransformFromDevice(this Rect rect, Visual visual)
     {
       Matrix matrix = PresentationSource.FromVisual(visual).CompositionTarget.TransformFromDevice;
       return Rect.Transform(rect, matrix);
     }
 
+    /// <summary>
+    /// Transforms a size from logical coordinates to device coordinates.
+    /// </summary>
+    /// <param name="size">The size to transform.</param>
+    /// <param name="visual">The visual that provides the transformation.</param>
+    /// <returns>The transformed size.</returns>
     public static Size TransformToDevice(this Size size, Visual visual)
     {
       Matrix matrix = PresentationSource.FromVisual(visual).CompositionTarget.TransformToDevice;
       return new Size(size.Width * matrix.M11, size.Height * matrix.M22);
     }
 
+    /// <summary>
+    /// Transforms a size from device coordinates to logical coordinates.
+    /// </summary>
+    /// <param name="size">The size to transform.</param>
+    /// <param name="visual">The visual that provides the transformation.</param>
+    /// <returns>The transformed size.</returns>
     public static Size TransformFromDevice(this Size size, Visual visual)
     {
       Matrix matrix = PresentationSource.FromVisual(visual).CompositionTarget.TransformFromDevice;
       return new Size(size.Width * matrix.M11, size.Height * matrix.M22);
     }
 
+    /// <summary>
+    /// Transforms a point from logical coordinates to device coordinates.
+    /// </summary>
+    /// <param name="point">The point to transform.</param>
+    /// <param name="visual">The visual that provides the transformation.</param>
+    /// <returns>The transformed point.</returns>
     public static Point TransformToDevice(this Point point, Visual visual)
     {
       Matrix matrix = PresentationSource.FromVisual(visual).CompositionTarget.TransformToDevice;
       return matrix.Transform(point);
     }
 
+    /// <summary>
+    /// Transforms a point from device coordinates to logical coordinates.
+    /// </summary>
+    /// <param name="point">The point to transform.</param>
+    /// <param name="visual">The visual that provides the transformation.</param>
+    /// <returns>The transformed point.</returns>
     public static Point TransformFromDevice(this Point point, Visual visual)
     {
       Matrix matrix = PresentationSource.FromVisual(visual).CompositionTarget.TransformFromDevice;

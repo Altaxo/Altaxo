@@ -30,11 +30,17 @@ using System.Text;
 
 namespace Altaxo.UnmanagedApi.Advapi32
 {
+  /// <summary>
+  /// Represents Windows security attributes.
+  /// </summary>
   [StructLayout(LayoutKind.Sequential)]
   public struct SECURITY_ATTRIBUTES
   {
+    /// <summary>The size of this structure, in bytes.</summary>
     public int nLength;
+    /// <summary>A pointer to a security descriptor.</summary>
     public IntPtr lpSecurityDescriptor;
+    /// <summary>Indicates whether the handle is inheritable.</summary>
     public int bInheritHandle;
   }
 }

@@ -36,21 +36,27 @@ namespace Altaxo.Main
 
     private BlockingCollection<Task> _queue = new BlockingCollection<Task>();
 
+    /// <inheritdoc/>
     protected override bool TryExecuteTaskInline(Task task, bool taskWasPreviouslyQueued)
     {
       return _activeScheduler == this && base.TryExecuteTask(task);
     }
 
+    /// <inheritdoc/>
     protected override void QueueTask(Task task)
     {
       _queue.Add(task);
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<Task> GetScheduledTasks()
     {
       return _queue;
     }
 
+    /// <summary>
+    /// Gets the number of scheduled tasks.
+    /// </summary>
     protected int ScheduledTaskCount
     {
       get { return _queue.Count; }
@@ -68,6 +74,10 @@ namespace Altaxo.Main
       RunTask(task);
     }
 
+    /// <summary>
+    /// Tries to run the next queued task.
+    /// </summary>
+    /// <returns><see langword="true"/> if a task was executed; otherwise, <see langword="false"/>.</returns>
     public bool TryRunNextTask()
     {
       if (_queue.TryTake(out var task))
@@ -95,6 +105,7 @@ namespace Altaxo.Main
       }
     }
 
+    /// <inheritdoc/>
     public virtual void Dispose()
     {
       _queue.Dispose();

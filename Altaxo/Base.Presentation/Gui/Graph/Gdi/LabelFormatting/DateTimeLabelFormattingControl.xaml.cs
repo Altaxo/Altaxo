@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
   /// </summary>
   public partial class DateTimeLabelFormattingControl : UserControl, IDateTimeLabelFormattingView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DateTimeLabelFormattingControl"/> class.
+    /// </summary>
     public DateTimeLabelFormattingControl()
     {
       InitializeComponent();

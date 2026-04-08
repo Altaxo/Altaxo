@@ -48,9 +48,21 @@ namespace Altaxo.Com
     System.Runtime.InteropServices.ComTypes.IDataObject,
     IOleObject
   {
+    /// <summary>
+    /// The CLSID of the linked graph document COM object.
+    /// </summary>
     public const string GUID_STRING = "070BA50F-5F5E-40F8-9A24-1565B6CA9B66";
+    /// <summary>
+    /// The ProgID of the linked graph document COM object.
+    /// </summary>
     public const string USER_TYPE = "Altaxo.Graph(linked)";
+    /// <summary>
+    /// The user-friendly name of the linked graph document COM object.
+    /// </summary>
     public const string USER_TYPE_LONG = "Altaxo Graph-Document";
+    /// <summary>
+    /// Conversion factor from points to HIMETRIC units.
+    /// </summary>
     public const double PointsToHimetric = 2540 / 72.0;
 
     private ManagedDataAdviseHolder _dataAdviseHolder;
@@ -59,6 +71,12 @@ namespace Altaxo.Com
 
     private GraphDocument _document;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GraphDocumentLinkedComObject"/> class.
+    /// </summary>
+    /// <param name="graphDocument">The graph document.</param>
+    /// <param name="fileComObject">The project file COM object.</param>
+    /// <param name="comManager">The COM manager.</param>
     public GraphDocumentLinkedComObject(GraphDocument graphDocument, ProjectFileComObject fileComObject, ComManager comManager)
       : base(comManager)
     {
@@ -76,6 +94,9 @@ namespace Altaxo.Com
       }
     }
 
+    /// <summary>
+    /// Releases the linked COM object and unregisters its monikers.
+    /// </summary>
     public void Dispose()
     {
       if (_isDocumentDirty)
@@ -114,6 +135,9 @@ namespace Altaxo.Com
 
     #region Document management
 
+    /// <summary>
+    /// Gets the graph document represented by this linked COM object.
+    /// </summary>
     public GraphDocument Document
     {
       get
@@ -153,6 +177,10 @@ namespace Altaxo.Com
     /// <summary>
     /// Called by the ComManager when  document of this instance was renamed.
     /// </summary>
+    /// <summary>
+    /// Handles a document rename notification.
+    /// </summary>
+    /// <param name="fileMoniker">The file moniker.</param>
     public void EhDocumentRenamed(IMoniker fileMoniker)
     {
       // Trick to create a new document moniker, and send the advise
@@ -192,6 +220,11 @@ namespace Altaxo.Com
       SendAdvise_Renamed();
     }
 
+    /// <summary>
+    /// Renders the current moniker as a COM stream.
+    /// </summary>
+    /// <param name="tymed">The storage medium to use.</param>
+    /// <returns>A pointer to the rendered stream.</returns>
     public IntPtr RenderLink(TYMED tymed)
     {
       return DataObjectHelper.RenderMonikerToNewStream(tymed, Moniker);
@@ -201,6 +234,9 @@ namespace Altaxo.Com
 
     #region Properties
 
+    /// <summary>
+    /// Gets the current document moniker.
+    /// </summary>
     public IMoniker Moniker
     {
       get
@@ -213,6 +249,7 @@ namespace Altaxo.Com
 
     #region IDataObject members
 
+    /// <inheritdoc/>
     protected override IList<Rendering> Renderings
     {
       get
@@ -289,11 +326,13 @@ namespace Altaxo.Com
       return EmbeddedGraphDocumentRenderingHelper.RenderAsDIBBitmap_TYMED_HGLOBAL(tymed, _document);
     }
 
+    /// <inheritdoc/>
     protected override ManagedDataAdviseHolder DataAdviseHolder
     {
       get { return _dataAdviseHolder; }
     }
 
+    /// <inheritdoc/>
     protected override bool InternalGetDataHere(ref System.Runtime.InteropServices.ComTypes.FORMATETC format, ref System.Runtime.InteropServices.ComTypes.STGMEDIUM medium)
     {
       if (format.cfFormat == DataObjectHelper.CF_LINKSOURCE && (format.tymed & TYMED.TYMED_ISTREAM) != 0)
@@ -315,6 +354,7 @@ namespace Altaxo.Com
 
     #region IOleObject members
 
+    /// <inheritdoc cref="IOleObject.Close(tagOLECLOSE)"/>
     public int Close(tagOLECLOSE dwSaveOption)
     {
       ComDebug.ReportInfo("{0}.IOleObject.Close {1}", GetType().Name, dwSaveOption);
@@ -383,6 +423,7 @@ namespace Altaxo.Com
       // }
     }
 
+    /// <inheritdoc cref="IOleObject.DoVerb(int, nint, IOleClientSite, int, nint, COMRECT)"/>
     public int DoVerb(int iVerb, IntPtr lpmsg, IOleClientSite pActiveSite, int lindex, IntPtr hwndParent, COMRECT lprcPosRect)
     {
       ComDebug.ReportInfo("{0}.IOleObject.DoVerb {1}", GetType().Name, iVerb);
@@ -449,6 +490,7 @@ namespace Altaxo.Com
       }
     }
 
+    /// <inheritdoc cref="IOleObject.SetExtent(int, tagSIZEL)"/>
     public int SetExtent(int dwDrawAspect, tagSIZEL pSizel)
     {
       ComDebug.ReportInfo("{0}.IOleObject.SetExtent({1}x{2}) -> not supported.", GetType().Name, pSizel.cx, pSizel.cy);
@@ -456,6 +498,7 @@ namespace Altaxo.Com
       return ComReturnValue.E_FAIL;
     }
 
+    /// <inheritdoc cref="IOleObject.GetExtent(int, tagSIZEL)"/>
     public int GetExtent(int dwDrawAspect, tagSIZEL pSizel)
     {
       ComDebug.ReportInfo("{0}.IOleObject.GetExtent", GetType().Name);
@@ -469,6 +512,7 @@ namespace Altaxo.Com
       return ComReturnValue.NOERROR;
     }
 
+    /// <inheritdoc cref="IOleObject.GetMiscStatus(int, out int)"/>
     public int GetMiscStatus(int dwAspect, out int misc)
     {
       misc = GraphDocumentDataObject.MiscStatus(dwAspect);

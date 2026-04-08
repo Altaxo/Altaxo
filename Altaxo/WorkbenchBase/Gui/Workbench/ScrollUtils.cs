@@ -32,6 +32,7 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Searches VisualTree of given object for a ScrollViewer.
     /// </summary>
+    /// <param name="o">The dependency object whose visual tree is searched.</param>
     /// <returns>The ScrollViewer of the object if found; otherwise, null.</returns>
     public static ScrollViewer? GetScrollViewer(this DependencyObject o)
     {
@@ -76,11 +77,20 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Scrolls ScrollViewer by given vertical offset.
     /// </summary>
+    /// <param name="scrollViewer">The scroll viewer that is scrolled.</param>
+    /// <param name="offset">The vertical offset.</param>
     public static void ScrollByVerticalOffset(this ScrollViewer scrollViewer, double offset)
     {
       scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset + offset);
     }
 
+    /// <summary>
+    /// Synchronizes the scroll position of the target with the source.
+    /// </summary>
+    /// <param name="target">The target scroll viewer.</param>
+    /// <param name="source">The source scroll viewer.</param>
+    /// <param name="option">The synchronization mode.</param>
+    /// <param name="proportional"><see langword="true"/> to synchronize proportionally; otherwise, use the raw offset.</param>
     public static void SynchronizeScroll(this ScrollViewer target, ScrollViewer source, ScrollSyncOption option, bool proportional = true)
     {
       if (source is null)

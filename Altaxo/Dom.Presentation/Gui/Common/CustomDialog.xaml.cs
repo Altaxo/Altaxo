@@ -36,10 +36,13 @@ using Altaxo.Main.Services;
 namespace Altaxo.Gui.Common
 {
   /// <summary>
-  /// Interaction logic for SaveErrorChooseDialog.xaml
+  /// Interaction logic for a customizable dialog.
   /// </summary>
   public partial class CustomDialog : Window
   {
+    /// <summary>
+    /// Gets the selected result index.
+    /// </summary>
     public int Result { get; private set; } = -1;
 
     private int cancelButton;
@@ -49,11 +52,22 @@ namespace Altaxo.Gui.Common
 
     private Button CancelButton;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CustomDialog"/> class.
+    /// </summary>
     public CustomDialog()
     {
       InitializeComponent();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CustomDialog"/> class.
+    /// </summary>
+    /// <param name="caption">The dialog caption.</param>
+    /// <param name="message">The dialog message.</param>
+    /// <param name="acceptButton">The index of the accept button.</param>
+    /// <param name="cancelButton">The index of the cancel button.</param>
+    /// <param name="buttonLabels">The button labels.</param>
     public CustomDialog(string caption, string message, int acceptButton, int cancelButton, string[] buttonLabels)
     {
       InitializeComponent();
@@ -96,6 +110,7 @@ namespace Altaxo.Gui.Common
       label.Content = message;
     }
 
+    /// <inheritdoc/>
     protected override void OnKeyDown(KeyEventArgs e)
     {
       if (cancelButton == -1 && e.Key == Key.Escape)

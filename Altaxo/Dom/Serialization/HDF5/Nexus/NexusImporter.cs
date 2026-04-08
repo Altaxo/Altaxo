@@ -33,7 +33,7 @@ using PureHDF;
 namespace Altaxo.Serialization.HDF5.Nexus
 {
   /// <summary>
-  /// Imports Nexus files (HDF5 files with Nexus convention, see <see href="https://www.nexusformat.org/"/>).
+  /// Imports NeXus files (HDF5 files following the NeXus convention, see <see href="https://www.nexusformat.org/"/>).
   /// </summary>
   public record NexusImporter : DataFileImporterBase
   {
@@ -304,11 +304,11 @@ namespace Altaxo.Serialization.HDF5.Nexus
     }
 
     /// <summary>
-    /// Sets the column properties of one data column.
+    /// Sets the properties of a data column.
     /// </summary>
     /// <param name="table">The table.</param>
     /// <param name="column">The data column.</param>
-    /// <param name="importOptions">The import options that determines which columns to set.</param>
+    /// <param name="importOptions">The import options that determine which properties to set.</param>
     /// <param name="fileName">Name of the file.</param>
     /// <param name="nxEntryName">Name of the NXentry.</param>
     /// <param name="nxEntryIndex">Index of the NXentry.</param>
@@ -344,6 +344,7 @@ namespace Altaxo.Serialization.HDF5.Nexus
       }
     }
 
+    /// <inheritdoc/>
     /// <inheritdoc/>
     public override string? Import(IReadOnlyList<string> fileNames, ImportOptionsInitial initialOptions)
     {
@@ -428,7 +429,7 @@ namespace Altaxo.Serialization.HDF5.Nexus
     /// <param name="groupNumber">The group number.</param>
     /// <param name="table">The table.</param>
     /// <param name="columnNameDictionary">The column name dictionary.</param>
-    /// <returns>The created data column and the postfix that was used. The postfix number can be used for instance to create an error column with a correspondending name.</returns>
+    /// <returns>The created data column and the postfix that was used. The postfix number can be used, for instance, to create an error column with a corresponding name.</returns>
     public static (DoubleColumn column, int? numberPostfix) CreateDoubleDataColumn(string columnName, ColumnKind kind, int groupNumber, DataTable table, Dictionary<string, int> columnNameDictionary)
     {
       DoubleColumn result;

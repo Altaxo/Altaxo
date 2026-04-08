@@ -32,6 +32,9 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Pads.FileBrowser
 {
+  /// <summary>
+  /// Converts predefined file browser indices to image sources.
+  /// </summary>
   public class IndexToImageConverter : IValueConverter
   {
     private static List<ImageSource>? _imageList;
@@ -53,6 +56,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
       };
     }
 
+    /// <inheritdoc/>
     public object? Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       if (_imageList is null)
@@ -70,6 +74,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
         return null;
     }
 
+    /// <inheritdoc/>
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       throw new NotImplementedException();

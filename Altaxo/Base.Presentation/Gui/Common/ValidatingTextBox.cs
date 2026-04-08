@@ -34,6 +34,9 @@ using System.Windows.Data;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// Text box that validates its text through a callback and exposes validation state.
+  /// </summary>
   public class ValidatingTextBox : TextBox
   {
     private NotifyChangedValue<string> _validatedText = new NotifyChangedValue<string>();
@@ -49,6 +52,9 @@ namespace Altaxo.Gui.Common
       DefaultStyleKeyProperty.OverrideMetadata(typeof(ValidatingTextBox), new FrameworkPropertyMetadata(typeof(ValidatingTextBox)));
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ValidatingTextBox"/> class.
+    /// </summary>
     public ValidatingTextBox()
     {
       var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(TextBox.TextProperty, GetType());
@@ -72,18 +78,21 @@ namespace Altaxo.Gui.Common
     // 'How to SelectAll in TextBox when TextBox gets focus by mouse click?'
     // (http://social.msdn.microsoft.com/Forums/en-US/wpf/thread/564b5731-af8a-49bf-b297-6d179615819f/)
 
+    /// <inheritdoc/>
     protected override void OnGotKeyboardFocus(System.Windows.Input.KeyboardFocusChangedEventArgs e)
     {
       SelectAll();
       base.OnGotKeyboardFocus(e);
     }
 
+    /// <inheritdoc/>
     protected override void OnMouseDoubleClick(System.Windows.Input.MouseButtonEventArgs e)
     {
       SelectAll();
       base.OnMouseDoubleClick(e);
     }
 
+    /// <inheritdoc/>
     protected override void OnPreviewMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs e)
     {
       if (!IsKeyboardFocusWithin)
@@ -101,12 +110,18 @@ namespace Altaxo.Gui.Common
 
     #region Dependency property
 
+    /// <summary>
+    /// Gets or sets the validated text.
+    /// </summary>
     public string ValidatedText
     {
       get { var result = (string)GetValue(ValidatedTextProperty); return result; }
       set { SetValue(ValidatedTextProperty, value); _isValidatedSuccessfully = true; }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="ValidatedText"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty ValidatedTextProperty =
         DependencyProperty.Register("ValidatedText", typeof(string), typeof(ValidatingTextBox),
         new FrameworkPropertyMetadata(OnValidatedTextChanged));
@@ -125,6 +140,9 @@ namespace Altaxo.Gui.Common
     /// </value>
     public bool IsValidatingOnEveryTextChange { get; set; }
 
+    /// <summary>
+    /// Gets or sets the initial text without marking it as modified.
+    /// </summary>
     public string InitialText
     {
       set
@@ -135,6 +153,9 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the initial text has been modified.
+    /// </summary>
     public bool IsInitialTextModified
     {
       get
@@ -143,6 +164,9 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the last validation succeeded.
+    /// </summary>
     public bool IsValidatedSuccessfully
     {
       get
@@ -151,6 +175,11 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <summary>
+    /// Handles text changes and optionally triggers validation.
+    /// </summary>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The event arguments.</param>
     protected virtual void EhTextChanged(object? sender, EventArgs e)
     {
       _isInitialTextModified = true;
@@ -164,6 +193,12 @@ namespace Altaxo.Gui.Common
     /// </summary>
     public event ValidatingStringEventHandler? Validating;
 
+    /// <summary>
+    /// Validates the current text and returns an error string.
+    /// </summary>
+    /// <param name="obj">The value to validate.</param>
+    /// <param name="info">The culture to use during validation.</param>
+    /// <returns>The validation error text, or <see langword="null"/> if the value is valid.</returns>
     public string EhValidateText(object obj, System.Globalization.CultureInfo info)
     {
       var evt = Validating;

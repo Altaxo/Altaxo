@@ -34,34 +34,49 @@ using System.Collections.Generic;
 
 namespace Poly2Tri
 {
+  /// <summary>
+  /// Represents an unconstrained set of points that can be triangulated.
+  /// </summary>
   public class PointSet : Triangulatable
   {
+    /// <inheritdoc/>
     public IList<TriangulationPoint> Points { get; private set; }
+
+    /// <inheritdoc/>
     public IList<DelaunayTriangle> Triangles { get; private set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PointSet"/> class.
+    /// </summary>
+    /// <param name="points">The points to triangulate.</param>
     public PointSet(List<TriangulationPoint> points)
     {
       Points = new List<TriangulationPoint>(points);
     }
 
+    /// <inheritdoc/>
     public virtual TriangulationMode TriangulationMode { get { return TriangulationMode.Unconstrained; } }
 
+    /// <inheritdoc/>
     public void AddTriangle(DelaunayTriangle t)
     {
       Triangles.Add(t);
     }
 
+    /// <inheritdoc/>
     public void AddTriangles(IEnumerable<DelaunayTriangle> list)
     {
       foreach (var tri in list)
         Triangles.Add(tri);
     }
 
+    /// <inheritdoc/>
     public void ClearTriangles()
     {
       Triangles.Clear();
     }
 
+    /// <inheritdoc/>
     public virtual void Prepare(TriangulationContext tcx)
     {
       if (Triangles is null)

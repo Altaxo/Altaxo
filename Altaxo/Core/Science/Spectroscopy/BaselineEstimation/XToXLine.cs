@@ -31,7 +31,14 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
   /// </summary>
   public abstract record XToXLineBase : Main.IImmutable
   {
+    /// <summary>
+    /// Stores the first x-axis anchor point.
+    /// </summary>
     protected double _x0;
+
+    /// <summary>
+    /// Stores the second x-axis anchor point.
+    /// </summary>
     protected double _x1;
 
     /// <summary>

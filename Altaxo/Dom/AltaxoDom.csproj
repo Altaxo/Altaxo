@@ -6,14 +6,13 @@
     <RootNamespace>Altaxo</RootNamespace>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <NoWarn>1591</NoWarn>
     <CoreCompileDependsOn>GenAssInfo</CoreCompileDependsOn>
   </PropertyGroup>
 
   <!-- Enforce XML documentation and treat specific warnings as errors    -->
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <WarningsAsErrors>CS1571;CS1572;CS1573;CS1574;CS1580;CS1584;CS1587</WarningsAsErrors>
+    <WarningsAsErrors>CS1571;CS1572;CS1573;CS1574;CS1580;CS1584;CS1587;CS1591</WarningsAsErrors>
   </PropertyGroup>
   
   <ItemGroup>

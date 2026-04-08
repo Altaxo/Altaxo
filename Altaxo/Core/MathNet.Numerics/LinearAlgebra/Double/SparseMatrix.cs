@@ -1244,6 +1244,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double
       }
     }
 
+    /// <inheritdoc/>
     public override void KroneckerProduct(Matrix<double> other, Matrix<double> result)
     {
       if (other == null)
@@ -1583,6 +1584,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double
       return (SparseMatrix)leftSide.Remainder(rightSide);
     }
 
+    /// <inheritdoc/>
     public override string ToTypeString()
     {
       return FormattableString.Invariant($"SparseMatrix {RowCount}x{ColumnCount}-Double {NonZerosCount / (RowCount * (double)ColumnCount):P2} Filled");

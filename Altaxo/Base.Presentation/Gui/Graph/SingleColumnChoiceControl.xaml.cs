@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph
   /// </summary>
   public partial class SingleColumnChoiceControl : UserControl, ISingleColumnChoiceView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SingleColumnChoiceControl"/> class.
+    /// </summary>
     public SingleColumnChoiceControl()
     {
       InitializeComponent();

@@ -35,11 +35,15 @@ namespace Altaxo.Gui.DataConnection
   /// </summary>
   public partial class DataPreviewControl : UserControl, IDataPreviewView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DataPreviewControl"/> class.
+    /// </summary>
     public DataPreviewControl()
     {
       InitializeComponent();
     }
 
+    /// <inheritdoc/>
     public void SetTableSource(System.Data.DataTable table)
     {
       _grid.ItemsSource = System.Data.DataTableExtensions.AsDataView(table);

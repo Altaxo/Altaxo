@@ -36,6 +36,9 @@ using Altaxo.Calc.Threading;
 
 namespace Altaxo.Calc.LinearAlgebra.Storage
 {
+  /// <summary>
+  /// Stores a sparse vector by index and value arrays.
+  /// </summary>
   [Serializable]
   [DataContract(Namespace = "urn:MathNet/Numerics/LinearAlgebra")]
   public class SparseVectorStorage<T> : VectorStorage<T>
@@ -183,6 +186,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return delta;
     }
 
+    /// <inheritdoc/>
     public override bool Equals(VectorStorage<T> other)
     {
       // Reject equality when the argument is null or has a different shape.
@@ -263,11 +267,13 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // CLEARING
 
+    /// <inheritdoc/>
     public override void Clear()
     {
       ValueCount = 0;
     }
 
+    /// <inheritdoc/>
     public override void Clear(int index, int count)
     {
       if (index == 0 && count == Length)
@@ -301,6 +307,11 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // INITIALIZATION
 
+    /// <summary>
+    /// Creates a sparse vector storage from another vector storage.
+    /// </summary>
+    /// <param name="vector">The source vector storage.</param>
+    /// <returns>A sparse vector storage containing the copied values.</returns>
     public static SparseVectorStorage<T> OfVector(VectorStorage<T> vector)
     {
       var storage = new SparseVectorStorage<T>(vector.Length);
@@ -308,6 +319,12 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return storage;
     }
 
+    /// <summary>
+    /// Creates a sparse vector storage initialized with a constant value.
+    /// </summary>
+    /// <param name="length">The vector length.</param>
+    /// <param name="value">The value assigned to each element.</param>
+    /// <returns>The initialized sparse vector storage.</returns>
     public static SparseVectorStorage<T> OfValue(int length, T value)
     {
       if (Zero.Equals(value))
@@ -336,6 +353,12 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       };
     }
 
+    /// <summary>
+    /// Creates a sparse vector storage initialized by an index-based initializer.
+    /// </summary>
+    /// <param name="length">The vector length.</param>
+    /// <param name="init">The initializer function.</param>
+    /// <returns>The initialized sparse vector storage.</returns>
     public static SparseVectorStorage<T> OfInit(int length, Func<int, T> init)
     {
       if (length < 0)
@@ -362,6 +385,11 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       };
     }
 
+    /// <summary>
+    /// Creates a sparse vector storage from an enumerable sequence.
+    /// </summary>
+    /// <param name="data">The source data.</param>
+    /// <returns>The initialized sparse vector storage.</returns>
     public static SparseVectorStorage<T> OfEnumerable(IEnumerable<T> data)
     {
       if (data == null)
@@ -391,6 +419,12 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       };
     }
 
+    /// <summary>
+    /// Creates a sparse vector storage from indexed values.
+    /// </summary>
+    /// <param name="length">The vector length.</param>
+    /// <param name="data">The indexed source data.</param>
+    /// <returns>The initialized sparse vector storage.</returns>
     public static SparseVectorStorage<T> OfIndexedEnumerable(int length, IEnumerable<Tuple<int, T>> data)
     {
       if (data == null)
@@ -421,6 +455,12 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       };
     }
 
+    /// <summary>
+    /// Creates a sparse vector storage from indexed tuple values.
+    /// </summary>
+    /// <param name="length">The vector length.</param>
+    /// <param name="data">The indexed source data.</param>
+    /// <returns>The initialized sparse vector storage.</returns>
     public static SparseVectorStorage<T> OfIndexedEnumerable(int length, IEnumerable<(int, T)> data)
     {
       if (data == null)
@@ -641,6 +681,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // EXTRACT
 
+    /// <inheritdoc/>
     public override T[] ToArray()
     {
       var ret = new T[Length];
@@ -653,6 +694,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // ENUMERATION
 
+    /// <inheritdoc/>
     public override IEnumerable<T> Enumerate()
     {
       int k = 0;
@@ -664,6 +706,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       }
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<(int, T)> EnumerateIndexed()
     {
       int k = 0;
@@ -673,11 +716,13 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       }
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<T> EnumerateNonZero()
     {
       return Values.Take(ValueCount).Where(x => !Zero.Equals(x));
     }
 
+    /// <inheritdoc/>
     public override IEnumerable<(int, T)> EnumerateNonZeroIndexed()
     {
       for (var i = 0; i < ValueCount; i++)
@@ -691,6 +736,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // FIND
 
+    /// <inheritdoc/>
     public override Tuple<int, T> Find(Func<T, bool> predicate, Zeros zeros)
     {
       for (int i = 0; i < ValueCount; i++)
@@ -800,6 +846,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // FUNCTIONAL COMBINATORS: MAP
 
+    /// <inheritdoc/>
     public override void MapInplace(Func<T, T> f, Zeros zeros)
     {
       var indices = new List<int>();
@@ -834,6 +881,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       ValueCount = values.Count;
     }
 
+    /// <inheritdoc/>
     public override void MapIndexedInplace(Func<int, T, T> f, Zeros zeros)
     {
       var indices = new List<int>();

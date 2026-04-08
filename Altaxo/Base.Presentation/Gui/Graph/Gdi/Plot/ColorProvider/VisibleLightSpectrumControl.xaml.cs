@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
   /// </summary>
   public partial class VisibleLightSpectrumControl : UserControl, IVisibleLightSpectrumView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="VisibleLightSpectrumControl"/> class.
+    /// </summary>
     public VisibleLightSpectrumControl()
     {
       InitializeComponent();

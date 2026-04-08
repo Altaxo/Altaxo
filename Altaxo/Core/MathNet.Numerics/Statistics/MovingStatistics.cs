@@ -50,6 +50,10 @@ namespace Altaxo.Calc.Statistics
     private double _max = double.NegativeInfinity;
     private double _min = double.PositiveInfinity;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MovingStatistics"/> class.
+    /// </summary>
+    /// <param name="windowSize">The number of values retained in the moving window.</param>
     public MovingStatistics(int windowSize)
     {
       if (windowSize < 1)
@@ -60,12 +64,20 @@ namespace Altaxo.Calc.Statistics
       _oldValues = new double[_windowSize];
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MovingStatistics"/> class and populates it with initial values.
+    /// </summary>
+    /// <param name="windowSize">The number of values retained in the moving window.</param>
+    /// <param name="values">The initial values to push into the moving window.</param>
     public MovingStatistics(int windowSize, IEnumerable<double> values)
         : this(windowSize)
     {
       PushRange(values);
     }
 
+    /// <summary>
+    /// Gets the window size.
+    /// </summary>
     public int WindowSize => _windowSize;
 
     /// <summary>
@@ -239,6 +251,7 @@ namespace Altaxo.Calc.Statistics
     /// <summary>
     /// Update the running statistics by adding another observed sample (in-place).
     /// </summary>
+    /// <param name="value">The sample value to add.</param>
     public void Push(double value)
     {
       DecrementTimeToLive();
@@ -309,8 +322,9 @@ namespace Altaxo.Calc.Statistics
     }
 
     /// <summary>
-    /// Update the running statistics by adding a sequence of observed sample (in-place).
+    /// Update the running statistics by adding a sequence of observed samples (in-place).
     /// </summary>
+    /// <param name="values">The sample values to add.</param>
     public void PushRange(IEnumerable<double> values)
     {
       foreach (var value in values)

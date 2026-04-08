@@ -39,6 +39,9 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
   /// <seealso cref="Altaxo.Calc.Regression.Nonlinear.IFitFunctionWithDerivative" />
   public partial class FitFunctionMultipleSpectraSeparatePeakHeightsSeparateBaseline : IFitFunction, IFitFunctionWithDerivative
   {
+    /// <summary>
+    /// The wrapped fit function for a single spectrum.
+    /// </summary>
     public IFitFunctionPeak _underlyingFitFunction;
     private int _numberOfSpectra;
     private int _numberOfParametersPerPeakLocal;

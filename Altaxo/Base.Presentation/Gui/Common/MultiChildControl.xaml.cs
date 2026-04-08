@@ -36,35 +36,43 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public partial class MultiChildControl : UserControl, IMultiChildView
   {
-    /// <summary>Event fired when one of the child controls is entered.</summary>
+    /// <inheritdoc/>
     public event EventHandler? ChildControlEntered;
 
-    /// <summary>Event fired when one of the child controls is validated.</summary>
+    /// <inheritdoc/>
     public event EventHandler? ChildControlValidated;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MultiChildControl"/> class.
+    /// </summary>
     public MultiChildControl()
     {
       InitializeComponent();
     }
 
+    /// <inheritdoc/>
     public void InitializeBegin()
     {
     }
 
+    /// <inheritdoc/>
     public void InitializeEnd()
     {
     }
 
+    /// <inheritdoc/>
     public void InitializeLayout(bool horizontalLayout)
     {
       _stackPanel.Orientation = horizontalLayout ? Orientation.Horizontal : Orientation.Vertical;
     }
 
+    /// <inheritdoc/>
     public void InitializeDescription(string value)
     {
       _lblDescription.Content = value;
     }
 
+    /// <inheritdoc/>
     public void InitializeChilds(ViewDescriptionElement[] childs, int initialFocusedChild)
     {
       foreach (UIElement uiEle in _stackPanel.Children)

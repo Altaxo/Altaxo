@@ -31,10 +31,17 @@
 
 namespace Poly2Tri
 {
+  /// <summary>
+  /// Provides entry points for running Poly2Tri triangulation algorithms.
+  /// </summary>
   public static class P2T
   {
     private static TriangulationAlgorithm _defaultAlgorithm = TriangulationAlgorithm.DTSweep;
 
+    /// <summary>
+    /// Triangulates all polygons in the specified polygon set.
+    /// </summary>
+    /// <param name="ps">The polygon set to triangulate.</param>
     public static void Triangulate(PolygonSet ps)
     {
       TriangulationContext tcx = CreateContext(_defaultAlgorithm);
@@ -46,21 +53,38 @@ namespace Poly2Tri
       }
     }
 
+    /// <summary>
+    /// Triangulates the specified polygon using the default algorithm.
+    /// </summary>
+    /// <param name="p">The polygon to triangulate.</param>
     public static void Triangulate(Polygon p)
     {
       Triangulate(_defaultAlgorithm, p);
     }
 
+    /// <summary>
+    /// Triangulates the specified constrained point set using the default algorithm.
+    /// </summary>
+    /// <param name="cps">The constrained point set to triangulate.</param>
     public static void Triangulate(ConstrainedPointSet cps)
     {
       Triangulate(_defaultAlgorithm, cps);
     }
 
+    /// <summary>
+    /// Triangulates the specified point set using the default algorithm.
+    /// </summary>
+    /// <param name="ps">The point set to triangulate.</param>
     public static void Triangulate(PointSet ps)
     {
       Triangulate(_defaultAlgorithm, ps);
     }
 
+    /// <summary>
+    /// Creates a triangulation context for the specified algorithm.
+    /// </summary>
+    /// <param name="algorithm">The algorithm for which to create a context.</param>
+    /// <returns>A triangulation context for the specified algorithm.</returns>
     public static TriangulationContext CreateContext(TriangulationAlgorithm algorithm)
     {
       switch (algorithm)
@@ -71,6 +95,11 @@ namespace Poly2Tri
       }
     }
 
+    /// <summary>
+    /// Triangulates the specified triangulatable object using the given algorithm.
+    /// </summary>
+    /// <param name="algorithm">The triangulation algorithm to use.</param>
+    /// <param name="t">The object to triangulate.</param>
     public static void Triangulate(TriangulationAlgorithm algorithm, Triangulatable t)
     {
       TriangulationContext tcx;
@@ -82,6 +111,10 @@ namespace Poly2Tri
       //        logger.info( "Triangulation of {} points [{}ms]", tcx.getPoints().size(), ( System.nanoTime() - time ) / 1e6 );
     }
 
+    /// <summary>
+    /// Triangulates using the specified triangulation context.
+    /// </summary>
+    /// <param name="tcx">The triangulation context.</param>
     public static void Triangulate(TriangulationContext tcx)
     {
       switch (tcx.Algorithm)

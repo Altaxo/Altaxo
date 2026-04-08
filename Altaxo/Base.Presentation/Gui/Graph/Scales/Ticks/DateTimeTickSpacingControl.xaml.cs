@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
   /// </summary>
   public partial class DateTimeTickSpacingControl : UserControl, IDateTimeTickSpacingView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DateTimeTickSpacingControl"/> class.
+    /// </summary>
     public DateTimeTickSpacingControl()
     {
       InitializeComponent();

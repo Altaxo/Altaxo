@@ -34,6 +34,9 @@ using System.Windows.Data;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// Numeric up-down control for editing <see cref="double"/> values.
+  /// </summary>
   public class DoubleUpDown : NumericUpDownBase
   {
     private const double DefaultMinValue = 0;
@@ -43,25 +46,37 @@ namespace Altaxo.Gui.Common
 
     #region Converter
 
+    /// <inheritdoc/>
     protected override object GetNewValidationRuleAndConverter()
     {
       return new DoubleUpDownConverter(this);
     }
 
+    /// <summary>
+    /// Validation rule and converter used by <see cref="DoubleUpDown"/>.
+    /// </summary>
     protected class DoubleUpDownConverter : ValidationRule, IValueConverter
     {
       private DoubleUpDown _parent;
       private System.Globalization.CultureInfo _conversionCulture = Altaxo.Settings.GuiCulture.Instance;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="DoubleUpDownConverter"/> class.
+      /// </summary>
       public DoubleUpDownConverter()
       {
       }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="DoubleUpDownConverter"/> class.
+      /// </summary>
+      /// <param name="parent">The owning control.</param>
       public DoubleUpDownConverter(DoubleUpDown parent)
       {
         _parent = parent;
       }
 
+      /// <inheritdoc/>
       public object Convert(object obj, Type targetType, object parameter, CultureInfo culture)
       {
         var val = (double)obj;
@@ -77,17 +92,28 @@ namespace Altaxo.Gui.Common
         return val.ToString(_conversionCulture);
       }
 
+      /// <inheritdoc/>
       public object ConvertBack(object obj, Type targetType, object parameter, CultureInfo culture)
       {
         return ConvertBack(obj, targetType, parameter, culture, out var validationResult);
       }
 
+      /// <inheritdoc/>
       public override ValidationResult Validate(object obj, CultureInfo cultureInfo)
       {
         ConvertBack(obj, null, null, cultureInfo, out var validationResult);
         return validationResult;
       }
 
+      /// <summary>
+      /// Converts the specified text back to a double value and reports validation details.
+      /// </summary>
+      /// <param name="obj">The text to convert.</param>
+      /// <param name="targetType">The requested target type.</param>
+      /// <param name="parameter">An optional converter parameter.</param>
+      /// <param name="culture">The culture used for conversion.</param>
+      /// <param name="validationResult">Receives the validation result.</param>
+      /// <returns>The converted value or <see cref="Binding.DoNothing"/> if conversion fails.</returns>
       public object ConvertBack(object obj, Type targetType, object parameter, CultureInfo culture, out ValidationResult validationResult)
       {
         validationResult = ValidationResult.ValidResult;
@@ -125,6 +151,9 @@ namespace Altaxo.Gui.Common
 
     #region Value
 
+    /// <summary>
+    /// Gets or sets the current value.
+    /// </summary>
     public double Value
     {
       get { return (double)GetValue(ValueProperty); }
@@ -188,6 +217,9 @@ namespace Altaxo.Gui.Common
 
     #region ValueIfTextIsEmpty
 
+    /// <summary>
+    /// Gets or sets the value used when the text box is empty.
+    /// </summary>
     public double? ValueIfTextIsEmpty
     {
       get { return (double?)GetValue(ValueIfTextIsEmptyProperty); }
@@ -195,7 +227,7 @@ namespace Altaxo.Gui.Common
     }
 
     /// <summary>
-    /// Identifies the Value dependency property.
+    /// Identifies the <see cref="ValueIfTextIsEmpty"/> dependency property.
     /// </summary>
     public static readonly DependencyProperty ValueIfTextIsEmptyProperty =
         DependencyProperty.Register(
@@ -206,6 +238,9 @@ namespace Altaxo.Gui.Common
 
     #region ValueString
 
+    /// <summary>
+    /// Gets the current text representation of the value.
+    /// </summary>
     public string ValueString
     {
       get
@@ -217,6 +252,9 @@ namespace Altaxo.Gui.Common
     private static readonly DependencyPropertyKey ValueStringPropertyKey =
         DependencyProperty.RegisterAttachedReadOnly("ValueString", typeof(string), typeof(DoubleUpDown), new PropertyMetadata());
 
+    /// <summary>
+    /// Identifies the <see cref="ValueString"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty ValueStringProperty = ValueStringPropertyKey.DependencyProperty;
 
     private NumberFormatInfo _numberFormatInfo = new NumberFormatInfo();
@@ -225,12 +263,18 @@ namespace Altaxo.Gui.Common
 
     #region Minimum
 
+    /// <summary>
+    /// Gets or sets the minimum allowed value.
+    /// </summary>
     public double Minimum
     {
       get { return (double)GetValue(MinimumProperty); }
       set { SetValue(MinimumProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="Minimum"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty MinimumProperty =
         DependencyProperty.Register(
             "Minimum", typeof(double), typeof(DoubleUpDown),
@@ -256,12 +300,18 @@ namespace Altaxo.Gui.Common
 
     #region Maximum
 
+    /// <summary>
+    /// Gets or sets the maximum allowed value.
+    /// </summary>
     public double Maximum
     {
       get { return (double)GetValue(MaximumProperty); }
       set { SetValue(MaximumProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="Maximum"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty MaximumProperty =
         DependencyProperty.Register(
             "Maximum", typeof(double), typeof(DoubleUpDown),
@@ -287,12 +337,18 @@ namespace Altaxo.Gui.Common
 
     #region Change
 
+    /// <summary>
+    /// Gets or sets the increment and decrement step.
+    /// </summary>
     public double Change
     {
       get { return (double)GetValue(ChangeProperty); }
       set { SetValue(ChangeProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="Change"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty ChangeProperty =
         DependencyProperty.Register(
             "Change", typeof(double), typeof(DoubleUpDown),
@@ -344,6 +400,7 @@ namespace Altaxo.Gui.Common
 
     #region Commands
 
+    /// <inheritdoc/>
     protected override void OnIncrease()
     {
       // avoid an overflow before coerce of the value
@@ -354,6 +411,7 @@ namespace Altaxo.Gui.Common
         Value = double.MaxValue;
     }
 
+    /// <inheritdoc/>
     protected override void OnDecrease()
     {
       // avoid an underflow before coerce of the value
@@ -363,11 +421,13 @@ namespace Altaxo.Gui.Common
         Value = double.MinValue;
     }
 
+    /// <inheritdoc/>
     protected override void OnGotoMinimum()
     {
       Value = Minimum;
     }
 
+    /// <inheritdoc/>
     protected override void OnGotoMaximum()
     {
       Value = Maximum;
@@ -377,6 +437,7 @@ namespace Altaxo.Gui.Common
 
     #region Automation
 
+    /// <inheritdoc/>
     protected override AutomationPeer OnCreateAutomationPeer()
     {
       return new DoubleUpDownAutomationPeer(this);
@@ -385,23 +446,33 @@ namespace Altaxo.Gui.Common
     #endregion Automation
   }
 
+  /// <summary>
+  /// Automation peer for <see cref="DoubleUpDown"/>.
+  /// </summary>
   public class DoubleUpDownAutomationPeer : FrameworkElementAutomationPeer, IRangeValueProvider
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DoubleUpDownAutomationPeer"/> class.
+    /// </summary>
+    /// <param name="control">The associated control.</param>
     public DoubleUpDownAutomationPeer(DoubleUpDown control)
       : base(control)
     {
     }
 
+    /// <inheritdoc/>
     protected override string GetClassNameCore()
     {
       return "DoubleUpDown";
     }
 
+    /// <inheritdoc/>
     protected override AutomationControlType GetAutomationControlTypeCore()
     {
       return AutomationControlType.Spinner;
     }
 
+    /// <inheritdoc/>
     public override object GetPattern(PatternInterface patternInterface)
     {
       if (patternInterface == PatternInterface.RangeValue)

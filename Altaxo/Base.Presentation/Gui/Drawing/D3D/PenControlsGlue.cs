@@ -44,6 +44,9 @@ using Altaxo.Gui.Graph.Graph3D.Plot.Styles;
 
 namespace Altaxo.Gui.Drawing.D3D
 {
+  /// <summary>
+  /// Connects a <see cref="PenX3D"/> with the various UI controls used to edit it.
+  /// </summary>
   public class PenControlsGlue : FrameworkElement
   {
     private bool _userChangedAbsLineStartCapSize;
@@ -60,11 +63,18 @@ namespace Altaxo.Gui.Drawing.D3D
 
     private bool _isAllPropertiesGlue;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PenControlsGlue"/> class.
+    /// </summary>
     public PenControlsGlue()
       : this(false)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PenControlsGlue"/> class.
+    /// </summary>
+    /// <param name="isAllPropertiesGlue">Whether all pen properties are handled.</param>
     public PenControlsGlue(bool isAllPropertiesGlue)
     {
       InternalSelectedPen = new PenX3D(ColorSetManager.Instance.BuiltinDarkPlotColors[0], 1);
@@ -82,6 +92,9 @@ namespace Altaxo.Gui.Drawing.D3D
     /// <value>
     /// The pen.
     /// </value>
+    /// <summary>
+    /// Gets or sets the pen.
+    /// </summary>
     public PenX3D Pen
     {
       get
@@ -174,8 +187,14 @@ namespace Altaxo.Gui.Drawing.D3D
       _userChangedRelLineEndCapSize = false;
     }
 
+    /// <summary>
+    /// Occurs when the pen changes.
+    /// </summary>
     public event EventHandler? PenChanged;
 
+    /// <summary>
+    /// Raises the <see cref="PenChanged"/> event.
+    /// </summary>
     protected virtual void OnPenChanged()
     {
       if (PenChanged is not null)
@@ -198,6 +217,9 @@ namespace Altaxo.Gui.Drawing.D3D
     private bool _showPlotColorsOnly;
     private MaterialComboBox _cbBrush;
 
+    /// <summary>
+    /// Gets or sets the material selector.
+    /// </summary>
     public MaterialComboBox CbBrush
     {
       get { return _cbBrush; }
@@ -231,6 +253,9 @@ namespace Altaxo.Gui.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether only plot colors are shown.
+    /// </summary>
     public bool ShowPlotColorsOnly
     {
       get
@@ -263,6 +288,9 @@ namespace Altaxo.Gui.Drawing.D3D
     private ComboBox _cbCrossSection;
     private SelectableListNodeList _crossSectionChoices;
 
+    /// <summary>
+    /// Gets or sets the cross-section selector.
+    /// </summary>
     public ComboBox CbCrossSection
     {
       get { return _cbCrossSection; }
@@ -282,6 +310,9 @@ namespace Altaxo.Gui.Drawing.D3D
       }
     }
 
+    /// <summary>
+    /// Initializes the cross-section combo box.
+    /// </summary>
     public void InitializeCrossSectionCombobox()
     {
       _crossSectionChoices = new SelectableListNodeList();
@@ -319,6 +350,9 @@ namespace Altaxo.Gui.Drawing.D3D
 
     private DashPatternComboBox _cbDashPattern;
 
+    /// <summary>
+    /// Gets or sets the dash-pattern selector.
+    /// </summary>
     public DashPatternComboBox CbDashPattern
     {
       get { return _cbDashPattern; }
@@ -391,6 +425,9 @@ namespace Altaxo.Gui.Drawing.D3D
 
     private Common.Drawing.LineThicknessComboBox _cbThickness1;
 
+    /// <summary>
+    /// Gets or sets the primary line-thickness selector.
+    /// </summary>
     public Common.Drawing.LineThicknessComboBox CbLineThickness1
     {
       get { return _cbThickness1; }
@@ -430,6 +467,9 @@ namespace Altaxo.Gui.Drawing.D3D
 
     private Common.Drawing.LineThicknessComboBox _cbThickness2;
 
+    /// <summary>
+    /// Gets or sets the secondary line-thickness selector.
+    /// </summary>
     public Common.Drawing.LineThicknessComboBox CbLineThickness2
     {
       get { return _cbThickness2; }
@@ -465,6 +505,9 @@ namespace Altaxo.Gui.Drawing.D3D
 
     private LineCapComboBox _cbLineStartCap;
 
+    /// <summary>
+    /// Gets or sets the line-start-cap selector.
+    /// </summary>
     public LineCapComboBox CbLineStartCap
     {
       get { return _cbLineStartCap; }
@@ -517,6 +560,9 @@ namespace Altaxo.Gui.Drawing.D3D
 
     private Common.Drawing.LineCapSizeComboBox _cbLineStartCapAbsSize;
 
+    /// <summary>
+    /// Gets or sets the absolute start-cap size selector for the line start.
+    /// </summary>
     public Common.Drawing.LineCapSizeComboBox CbLineStartCapAbsSize
     {
       get { return _cbLineStartCapAbsSize; }
@@ -555,6 +601,9 @@ namespace Altaxo.Gui.Drawing.D3D
 
     private QuantityWithUnitTextBox _cbLineStartCapRelSize;
 
+    /// <summary>
+    /// Gets or sets the relative start-cap size selector for the line start.
+    /// </summary>
     public QuantityWithUnitTextBox CbLineStartCapRelSize
     {
       get { return _cbLineStartCapRelSize; }
@@ -595,6 +644,9 @@ namespace Altaxo.Gui.Drawing.D3D
 
     private LineCapComboBox _cbLineEndCap;
 
+    /// <summary>
+    /// Gets or sets the line-end-cap selector.
+    /// </summary>
     public LineCapComboBox CbLineEndCap
     {
       get { return _cbLineEndCap; }
@@ -645,6 +697,9 @@ namespace Altaxo.Gui.Drawing.D3D
 
     private Common.Drawing.LineCapSizeComboBox _cbLineEndCapAbsSize;
 
+    /// <summary>
+    /// Gets or sets the absolute end-cap size selector for the line end.
+    /// </summary>
     public Common.Drawing.LineCapSizeComboBox CbLineEndCapAbsSize
     {
       get { return _cbLineEndCapAbsSize; }
@@ -681,6 +736,9 @@ namespace Altaxo.Gui.Drawing.D3D
 
     private QuantityWithUnitTextBox _cbLineEndCapRelSize;
 
+    /// <summary>
+    /// Gets or sets the relative end-cap size selector for the line end.
+    /// </summary>
     public QuantityWithUnitTextBox CbLineEndCapRelSize
     {
       get { return _cbLineEndCapRelSize; }
@@ -721,6 +779,9 @@ namespace Altaxo.Gui.Drawing.D3D
 
     private LineCapComboBox _cbDashStartCap;
 
+    /// <summary>
+    /// Gets or sets the dash-start-cap selector.
+    /// </summary>
     public LineCapComboBox CbDashStartCap
     {
       get { return _cbDashStartCap; }
@@ -773,6 +834,9 @@ namespace Altaxo.Gui.Drawing.D3D
 
     private Common.Drawing.LineCapSizeComboBox _cbDashStartCapAbsSize;
 
+    /// <summary>
+    /// Gets or sets the absolute size selector for the dash start cap.
+    /// </summary>
     public Common.Drawing.LineCapSizeComboBox CbDashStartCapAbsSize
     {
       get { return _cbDashStartCapAbsSize; }
@@ -811,6 +875,9 @@ namespace Altaxo.Gui.Drawing.D3D
 
     private QuantityWithUnitTextBox _cbDashStartCapRelSize;
 
+    /// <summary>
+    /// Gets or sets the relative size selector for the dash start cap.
+    /// </summary>
     public QuantityWithUnitTextBox CbDashStartCapRelSize
     {
       get { return _cbDashStartCapRelSize; }
@@ -851,6 +918,9 @@ namespace Altaxo.Gui.Drawing.D3D
 
     private LineCapComboBox _cbDashEndCap;
 
+    /// <summary>
+    /// Gets or sets the dash-end-cap selector.
+    /// </summary>
     public LineCapComboBox CbDashEndCap
     {
       get { return _cbDashEndCap; }
@@ -901,6 +971,9 @@ namespace Altaxo.Gui.Drawing.D3D
 
     private Common.Drawing.LineCapSizeComboBox _cbDashEndCapAbsSize;
 
+    /// <summary>
+    /// Gets or sets the absolute size selector for the dash end cap.
+    /// </summary>
     public Common.Drawing.LineCapSizeComboBox CbDashEndCapAbsSize
     {
       get { return _cbDashEndCapAbsSize; }
@@ -937,6 +1010,9 @@ namespace Altaxo.Gui.Drawing.D3D
 
     private QuantityWithUnitTextBox _cbDashEndCapRelSize;
 
+    /// <summary>
+    /// Gets or sets the relative size selector for the dash end cap.
+    /// </summary>
     public QuantityWithUnitTextBox CbDashEndCapRelSize
     {
       get { return _cbDashEndCapRelSize; }
@@ -977,6 +1053,9 @@ namespace Altaxo.Gui.Drawing.D3D
 
     private LineJoinComboBox _cbLineJoin;
 
+    /// <summary>
+    /// Gets or sets the line-join selector.
+    /// </summary>
     public LineJoinComboBox CbLineJoin
     {
       get { return _cbLineJoin; }
@@ -1012,6 +1091,9 @@ namespace Altaxo.Gui.Drawing.D3D
 
     private Common.Drawing.MiterLimitComboBox _cbMiterLimit;
 
+    /// <summary>
+    /// Gets or sets the miter-limit selector.
+    /// </summary>
     public Common.Drawing.MiterLimitComboBox CbMiterLimit
     {
       get { return _cbMiterLimit; }
@@ -1062,6 +1144,9 @@ namespace Altaxo.Gui.Drawing.D3D
 
     private Image _previewPanel;
 
+    /// <summary>
+    /// Gets or sets the preview image control.
+    /// </summary>
     public Image PreviewPanel
     {
       get

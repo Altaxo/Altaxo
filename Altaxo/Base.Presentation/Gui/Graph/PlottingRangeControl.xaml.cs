@@ -32,8 +32,14 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph
 {
+  /// <summary>
+  /// Interaction logic for <c>PlottingRangeControl.xaml</c>.
+  /// </summary>
   public partial class PlottingRangeControl : UserControl, IPlottingRangeView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PlottingRangeControl"/> class.
+    /// </summary>
     public PlottingRangeControl()
     {
       InitializeComponent();

@@ -34,8 +34,12 @@ using System.Collections.Generic;
 
 namespace Poly2Tri
 {
+  /// <summary>
+  /// Compares triangulation points by y-coordinate and then by x-coordinate.
+  /// </summary>
   public class DTSweepPointComparator : IComparer<TriangulationPoint>
   {
+    /// <inheritdoc/>
     public int Compare(TriangulationPoint p1, TriangulationPoint p2)
     {
       if (p1.Y < p2.Y)

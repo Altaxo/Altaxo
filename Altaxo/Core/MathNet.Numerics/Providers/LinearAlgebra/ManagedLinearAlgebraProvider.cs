@@ -36,6 +36,9 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
   /// </summary>
   public sealed partial class ManagedLinearAlgebraProvider : ILinearAlgebraProvider
   {
+    /// <summary>
+    /// Gets the singleton instance of the managed linear algebra provider.
+    /// </summary>
     public static ManagedLinearAlgebraProvider Instance { get; } = new ManagedLinearAlgebraProvider();
 
     /// <summary>
@@ -62,6 +65,7 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
     {
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return "Managed";

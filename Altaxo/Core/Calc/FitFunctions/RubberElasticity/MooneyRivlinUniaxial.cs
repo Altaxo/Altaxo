@@ -112,6 +112,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
       };
     }
 
+    /// <inheritdoc/>
     public string DependentVariableName(int i)
     {
       return i switch

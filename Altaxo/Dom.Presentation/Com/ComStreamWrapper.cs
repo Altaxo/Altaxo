@@ -136,6 +136,7 @@ namespace Altaxo.Com
       _istream.Stat(out _streamStatus, STATFLAG.NONAME);
     }
 
+    /// <inheritdoc/>
     public override bool CanSeek
     {
       get
@@ -146,6 +147,7 @@ namespace Altaxo.Com
       }
     }
 
+    /// <inheritdoc/>
     public override bool CanRead
     {
       get
@@ -156,6 +158,7 @@ namespace Altaxo.Com
       }
     }
 
+    /// <inheritdoc/>
     public override bool CanWrite
     {
       get
@@ -166,6 +169,7 @@ namespace Altaxo.Com
       }
     }
 
+    /// <inheritdoc/>
     public override long Length
     {
       get
@@ -178,6 +182,7 @@ namespace Altaxo.Com
       }
     }
 
+    /// <inheritdoc/>
     public override long Position
     {
       get
@@ -194,12 +199,14 @@ namespace Altaxo.Com
       }
     }
 
+    /// <inheritdoc/>
     public override void SetLength(long value)
     {
       ReportDebugStream("StreamWrapper.SetLength: {0}\r\n", value);
       _istream.SetSize(value);
     }
 
+    /// <inheritdoc/>
     public override long Seek(long offset, System.IO.SeekOrigin origin)
     {
       ReportDebugStream("StreamWrapper.Seek, offset={0}, origin={1}", offset, origin);
@@ -230,6 +237,7 @@ namespace Altaxo.Com
       return result;
     }
 
+    /// <inheritdoc/>
     public override int Read(byte[] buffer, int offset, int count)
     {
       ReportDebugStream("StreamWrapper.Read, bufferlength={0}, offset={1}, count={2}", buffer.Length, offset, count);
@@ -251,6 +259,7 @@ namespace Altaxo.Com
       return result;
     }
 
+    /// <inheritdoc/>
     public override void Write(byte[] buffer, int offset, int count)
     {
       ReportDebugStream("StreamWrapper.Write, bufferlength={0}, offset={1}, count={2}\r\n", buffer.Length, offset, count);
@@ -266,11 +275,13 @@ namespace Altaxo.Com
       }
     }
 
+    /// <inheritdoc/>
     public override void Flush()
     {
       ReportDebugStream("StreamWrapper.Flush\r\n");
     }
 
+    /// <inheritdoc/>
     public override void Close()
     {
       if (_istream is not null)

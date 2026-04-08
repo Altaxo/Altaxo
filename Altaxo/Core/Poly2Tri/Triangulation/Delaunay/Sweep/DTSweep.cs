@@ -53,6 +53,9 @@ using System.Linq;
 
 namespace Poly2Tri
 {
+  /// <summary>
+  /// Implements the sweep-line constrained Delaunay triangulation algorithm.
+  /// </summary>
   public static class DTSweep
   {
     private const double PI_div2 = Math.PI / 2;
@@ -576,8 +579,8 @@ namespace Poly2Tri
     /// the union of both those sides. We then have to split the constraint into two so we get
     /// one constraint for each triangle.
     /// </summary>
-    /// <param name="ep"></param>
-    /// <param name="eq"></param>
+    /// <param name="ep">One endpoint of the constrained edge.</param>
+    /// <param name="eq">The other endpoint of the constrained edge.</param>
     /// <param name="p">point on the edge between ep->eq</param>
     private static void SplitEdge(TriangulationPoint ep, TriangulationPoint eq, TriangulationPoint p)
     {
@@ -679,7 +682,7 @@ namespace Poly2Tri
     /// After a flip we have two triangles and know that only one will still be
     /// intersecting the edge. So decide which to contiune with and legalize the other
     /// </summary>
-    /// <param name="tcx"></param>
+    /// <param name="tcx">The triangulation context.</param>
     /// <param name="o">should be the result of an TriangulationUtil.orient2d( eq, op, ep )</param>
     /// <param name="t">triangle 1</param>
     /// <param name="ot">triangle 2</param>
@@ -712,12 +715,12 @@ namespace Poly2Tri
     /// point that is inside the flip triangle scan area. When found
     /// we generate a new flipEdgeEvent
     /// </summary>
-    /// <param name="tcx"></param>
+    /// <param name="tcx">The triangulation context.</param>
     /// <param name="ep">last point on the edge we are traversing</param>
     /// <param name="eq">first point on the edge we are traversing</param>
     /// <param name="flipTriangle">the current triangle sharing the point eq with edge</param>
-    /// <param name="t"></param>
-    /// <param name="p"></param>
+    /// <param name="t">The triangle currently being scanned.</param>
+    /// <param name="p">The point opposite the shared edge in <paramref name="t"/>.</param>
     private static void FlipScanEdgeEvent(DTSweepContext tcx, TriangulationPoint ep, TriangulationPoint eq, DelaunayTriangle flipTriangle, DelaunayTriangle t, TriangulationPoint p)
     {
       DelaunayTriangle ot;
@@ -806,7 +809,7 @@ namespace Poly2Tri
     /// First we decide a left,bottom and right node that forms the
     /// boundaries of the basin. Then we do a reqursive fill.
     /// </summary>
-    /// <param name="tcx"></param>
+    /// <param name="tcx">The triangulation context.</param>
     /// <param name="node">starting node, this or next node will be left node</param>
     private static void FillBasin(DTSweepContext tcx, AdvancingFrontNode node)
     {
@@ -903,7 +906,7 @@ namespace Poly2Tri
     }
 
     /// <summary>
-    /// ???
+    /// Calculates the signed angle at the specified front node.
     /// </summary>
     /// <param name="node">middle node</param>
     /// <returns>the angle between 3 front nodes</returns>
@@ -941,7 +944,7 @@ namespace Poly2Tri
     /// <summary>
     /// Adds a triangle to the advancing front to fill a hole.
     /// </summary>
-    /// <param name="tcx"></param>
+    /// <param name="tcx">The triangulation context.</param>
     /// <param name="node">middle node, that is the bottom of the hole</param>
     private static void Fill(DTSweepContext tcx, AdvancingFrontNode node)
     {

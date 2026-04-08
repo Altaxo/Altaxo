@@ -38,12 +38,14 @@ namespace Altaxo.Gui.Common.Converters
   [ValueConversion(typeof(bool?), typeof(Visibility))]
   public class FalseOrNullToVisibleHiddenConverter : IValueConverter
   {
+    /// <inheritdoc/>
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       var val = (bool?)value;
       return true == val ? Visibility.Visible : Visibility.Hidden;
     }
 
+    /// <inheritdoc/>
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       var val = (Visibility)value;

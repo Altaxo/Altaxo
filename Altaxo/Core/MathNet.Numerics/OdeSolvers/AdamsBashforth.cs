@@ -30,17 +30,20 @@ using System;
 
 namespace Altaxo.Calc.OdeSolvers
 {
+  /// <summary>
+  /// Provides Adams-Bashforth explicit multistep ODE solvers of various orders.
+  /// </summary>
   public static class AdamsBashforth
   {
     /// <summary>
-    /// First Order AB method(same as Forward Euler)
+    /// First-order Adams-Bashforth method, equivalent to forward Euler.
     /// </summary>
-    /// <param name="y0">Initial value</param>
-    /// <param name="start">Start Time</param>
-    /// <param name="end">End Time</param>
-    /// <param name="N">Size of output array(the larger, the finer)</param>
-    /// <param name="f">ode model</param>
-    /// <returns>approximation with size N</returns>
+    /// <param name="y0">The initial value.</param>
+    /// <param name="start">The start time.</param>
+    /// <param name="end">The end time.</param>
+    /// <param name="N">The size of the output array. The larger the value, the finer the discretization.</param>
+    /// <param name="f">The ODE model.</param>
+    /// <returns>An approximation array of length <paramref name="N"/>.</returns>
     public static double[] FirstOrder(double y0, double start, double end, int N, Func<double, double, double> f)
     {
       double dt = (end - start) / (N - 1);
@@ -57,14 +60,14 @@ namespace Altaxo.Calc.OdeSolvers
     }
 
     /// <summary>
-    /// Second Order AB Method
+    /// Second-order Adams-Bashforth method.
     /// </summary>
-    /// <param name="y0">Initial value 1</param>
-    /// <param name="start">Start Time</param>
-    /// <param name="end">End Time</param>
-    /// <param name="N">Size of output array(the larger, the finer)</param>
-    /// <param name="f">ode model</param>
-    /// <returns>approximation with size N</returns>
+    /// <param name="y0">The initial value.</param>
+    /// <param name="start">The start time.</param>
+    /// <param name="end">The end time.</param>
+    /// <param name="N">The size of the output array. The larger the value, the finer the discretization.</param>
+    /// <param name="f">The ODE model.</param>
+    /// <returns>An approximation array of length <paramref name="N"/>.</returns>
     public static double[] SecondOrder(double y0, double start, double end, int N, Func<double, double, double> f)
     {
       double dt = (end - start) / (N - 1);
@@ -88,14 +91,14 @@ namespace Altaxo.Calc.OdeSolvers
     }
 
     /// <summary>
-    /// Third Order AB Method
+    /// Third-order Adams-Bashforth method.
     /// </summary>
-    /// <param name="y0">Initial value 1</param>
-    /// <param name="start">Start Time</param>
-    /// <param name="end">End Time</param>
-    /// <param name="N">Size of output array(the larger, the finer)</param>
-    /// <param name="f">ode model</param>
-    /// <returns>approximation with size N</returns>
+    /// <param name="y0">The initial value.</param>
+    /// <param name="start">The start time.</param>
+    /// <param name="end">The end time.</param>
+    /// <param name="N">The size of the output array. The larger the value, the finer the discretization.</param>
+    /// <param name="f">The ODE model.</param>
+    /// <returns>An approximation array of length <paramref name="N"/>.</returns>
     public static double[] ThirdOrder(double y0, double start, double end, int N, Func<double, double, double> f)
     {
       double dt = (end - start) / (N - 1);
@@ -126,14 +129,14 @@ namespace Altaxo.Calc.OdeSolvers
     }
 
     /// <summary>
-    /// Fourth Order AB Method
+    /// Fourth-order Adams-Bashforth method.
     /// </summary>
-    /// <param name="y0">Initial value 1</param>
-    /// <param name="start">Start Time</param>
-    /// <param name="end">End Time</param>
-    /// <param name="N">Size of output array(the larger, the finer)</param>
-    /// <param name="f">ode model</param>
-    /// <returns>approximation with size N</returns>
+    /// <param name="y0">The initial value.</param>
+    /// <param name="start">The start time.</param>
+    /// <param name="end">The end time.</param>
+    /// <param name="N">The size of the output array. The larger the value, the finer the discretization.</param>
+    /// <param name="f">The ODE model.</param>
+    /// <returns>An approximation array of length <paramref name="N"/>.</returns>
     public static double[] FourthOrder(double y0, double start, double end, int N, Func<double, double, double> f)
     {
       double dt = (end - start) / (N - 1);

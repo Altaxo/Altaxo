@@ -68,6 +68,9 @@ namespace Altaxo.Gui.Common.Drawing
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinearGradientModeComboBox"/> class.
+    /// </summary>
     public LinearGradientModeComboBox()
     {
       InitializeComponent();
@@ -91,12 +94,18 @@ namespace Altaxo.Gui.Common.Drawing
 
     private const string _nameOfValueProp = "LinearGradientMode";
 
+    /// <summary>
+    /// Gets or sets the selected linear gradient mode.
+    /// </summary>
     public LinearGradientMode LinearGradientMode
     {
       get { return (LinearGradientMode)GetValue(LinearGradientModeProperty); }
       set { SetValue(LinearGradientModeProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="LinearGradientMode"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty LinearGradientModeProperty =
         DependencyProperty.Register(_nameOfValueProp, typeof(LinearGradientMode), typeof(LinearGradientModeComboBox),
         new FrameworkPropertyMetadata(LinearGradientMode.Horizontal, OnLinearGradientModeChanged));
@@ -108,16 +117,23 @@ namespace Altaxo.Gui.Common.Drawing
 
     #endregion Dependency property
 
+    /// <summary>
+    /// Handles changes of the selected gradient mode.
+    /// </summary>
+    /// <param name="obj">The dependency object whose gradient mode changed.</param>
+    /// <param name="args">The event arguments.</param>
     protected virtual void EhLinearGradientModeChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
     }
 
+    /// <inheritdoc/>
     public override string GetItemText(object item)
     {
       var val = (LinearGradientMode)item;
       return val.ToString();
     }
 
+    /// <inheritdoc/>
     public override ImageSource GetItemImage(object item)
     {
       var val = (LinearGradientMode)item;
@@ -126,6 +142,11 @@ namespace Altaxo.Gui.Common.Drawing
       return result;
     }
 
+    /// <summary>
+    /// Creates an image that represents the specified <see cref="LinearGradientMode"/>.
+    /// </summary>
+    /// <param name="val">The gradient mode to visualize.</param>
+    /// <returns>An image representing <paramref name="val"/>.</returns>
     public static DrawingImage GetImage(LinearGradientMode val)
     {
       double height = 1;

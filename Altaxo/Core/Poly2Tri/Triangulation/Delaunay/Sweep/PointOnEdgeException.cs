@@ -33,10 +33,23 @@ using System;
 
 namespace Poly2Tri
 {
+  /// <summary>
+  /// The exception that is thrown when a point lies on a constrained edge in a situation that is not supported.
+  /// </summary>
   public class PointOnEdgeException : NotImplementedException
   {
+    /// <summary>
+    /// The first point involved in the edge relation.
+    /// </summary>
     public readonly TriangulationPoint A, B, C;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PointOnEdgeException"/> class.
+    /// </summary>
+    /// <param name="message">The exception message.</param>
+    /// <param name="a">The first point involved in the relation.</param>
+    /// <param name="b">The second point involved in the relation.</param>
+    /// <param name="c">The third point involved in the relation.</param>
     public PointOnEdgeException(string message, TriangulationPoint a, TriangulationPoint b, TriangulationPoint c)
       : base(message)
     {

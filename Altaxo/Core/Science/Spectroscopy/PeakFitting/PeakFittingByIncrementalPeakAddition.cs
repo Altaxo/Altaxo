@@ -37,9 +37,18 @@ using Altaxo.Science.Spectroscopy.PeakSearching;
 
 namespace Altaxo.Science.Spectroscopy.PeakFitting
 {
+  /// <summary>
+  /// Stores the fitted peak descriptions together with diagnostic values collected during incremental fitting.
+  /// </summary>
   public class PeakFittingByIncrementalPeakAdditionResult : List<PeakDescription>
   {
+    /// <summary>
+    /// Gets the chi-square values for each tested number of peaks.
+    /// </summary>
     public IReadOnlyList<double> ChiSquareWrtToNumberOfPeaks { get; init; } = [];
+    /// <summary>
+    /// Gets the estimated residual variances for each tested number of peaks.
+    /// </summary>
     public IReadOnlyList<double> SigmaSquareWrtToNumberOfPeaks { get; init; } = [];
   }
 
@@ -220,9 +229,8 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     #region Version 0
 
     /// <summary>
-    /// XML serialization surrogate (version 0).
+    /// Serializes and deserializes <see cref="PeakFittingByIncrementalPeakAddition"/> instances.
     /// </summary>
-    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakFittingByIncrementalPeakAddition), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {

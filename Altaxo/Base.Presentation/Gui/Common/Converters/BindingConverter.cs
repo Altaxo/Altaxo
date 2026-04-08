@@ -33,8 +33,12 @@ using System.Windows.Markup;
 
 namespace Altaxo.Gui.Common.Converters
 {
+  /// <summary>
+  /// Converts binding expressions back to their underlying markup extensions.
+  /// </summary>
   public class BindingConverter : ExpressionConverter
   {
+    /// <inheritdoc/>
     public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
     {
       if (destinationType == typeof(MarkupExtension))
@@ -43,6 +47,7 @@ namespace Altaxo.Gui.Common.Converters
         return false;
     }
 
+    /// <inheritdoc/>
     public override object ConvertTo(ITypeDescriptorContext context,
                                      System.Globalization.CultureInfo culture,
                                      object value, Type destinationType)

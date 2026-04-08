@@ -41,6 +41,7 @@ namespace Altaxo.Gui.Common.Converters
     private static MarkdownPipeline DefaultPipeline => new MarkdownPipelineBuilder().UseSupportedExtensions().Build();
     private MarkdownPipeline? Pipeline { get; set; }
 
+    /// <inheritdoc/>
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       var result = value is string text ?
@@ -49,6 +50,7 @@ namespace Altaxo.Gui.Common.Converters
       return result;
     }
 
+    /// <inheritdoc/>
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       throw new NotImplementedException();
@@ -58,8 +60,9 @@ namespace Altaxo.Gui.Common.Converters
     /// <summary>
     /// Renders the document.
     /// </summary>
-    /// only those parts that were changed in the source text are rendered anew.
-    /// Note that setting this parameter to <c>true</c> does not force a new rendering of the images; for that, call <see cref="IWpfImageProvider.ClearCache"/> of the <see cref="ImageProvider"/> member before rendering.</param>
+    /// <param name="sourceText">The Markdown source text.</param>
+    /// <param name="documentCulture">The culture used for the generated document.</param>
+    /// <returns>The rendered flow document.</returns>
     private FlowDocument RenderDocument(string sourceText, System.Globalization.CultureInfo documentCulture)
     {
       var pipeline = Pipeline ?? DefaultPipeline;

@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
   /// </summary>
   public partial class OpenPathShapeControl : UserControl, IOpenPathShapeView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OpenPathShapeControl"/> class.
+    /// </summary>
     public OpenPathShapeControl()
     {
       InitializeComponent();

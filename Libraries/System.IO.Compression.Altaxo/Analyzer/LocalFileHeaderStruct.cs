@@ -38,9 +38,24 @@ namespace System.IO.Compression
   /// </summary>
   public struct LocalFileHeaderStruct
   {
+    /// <summary>
+    /// Gets the minimum size, in bytes, of the local file header structure.
+    /// </summary>
     public const int MinimumSizeOfStructure = 30;
+
+    /// <summary>
+    /// Gets the maximum size, in bytes, of the local file header structure including file name and extra field.
+    /// </summary>
     public const int MaximumSizeOfStructure = MinimumSizeOfStructure + 65535 + 65535;
+
+    /// <summary>
+    /// Gets the ZIP64 extra field signature.
+    /// </summary>
     public const int Zip64ExtraFieldSignature = 0x0001; // 0x0001 is signature
+
+    /// <summary>
+    /// Gets the local file header signature.
+    /// </summary>
     public const int LocalFileHeaderSignature = 0x04034b50; // Position 0
 
     private UInt16 _versionNeeded; // Position 4
@@ -68,28 +83,73 @@ namespace System.IO.Compression
 
     // Data that are not part of the local file header structure
 
+    /// <summary>
+    /// Gets the version needed to extract the entry.
+    /// </summary>
     public int VersionNeeded { get => _versionNeeded; } // Position 4
+
+    /// <summary>
+    /// Gets the general purpose bit flag.
+    /// </summary>
     public int GeneralPurposeFlag { get => _generalPurposeFlag; } // Position 6
+
+    /// <summary>
+    /// Gets the compression method.
+    /// </summary>
     public int CompressionMethod { get => _compressionMethod; } // Position 8
+
+    /// <summary>
+    /// Gets the CRC-32 checksum.
+    /// </summary>
     public UInt32 Crc { get => _crc; } // Position 14
 
+    /// <summary>
+    /// Gets the compressed size.
+    /// </summary>
     public long CompressedSize => _compressedSize;  // Position 18
+
+    /// <summary>
+    /// Gets the uncompressed size.
+    /// </summary>
     public long UncompressedSize => _uncompressedSize; // Position 22
+
+    /// <summary>
+    /// Gets the file name length.
+    /// </summary>
     public int FileNameLength => _fileNameLength; // Position 26
+
+    /// <summary>
+    /// Gets the extra field length.
+    /// </summary>
     public int ExtraFieldLength => _extraFieldLength; // Position 28
 
+    /// <summary>
+    /// Gets the total size of the local file header including file name and extra field.
+    /// </summary>
     public int SizeOfLocalFileHeader => MinimumSizeOfStructure + FileNameLength + ExtraFieldLength;
 
 
     #region Properties
 
+    /// <summary>
+    /// Gets or sets the file last modification time.
+    /// </summary>
     public UInt32 FileLastModificationTime { get => _fileLastModificationTime; set => _fileLastModificationTime = value; }
 
+    /// <summary>
+    /// Gets or sets the file name.
+    /// </summary>
     public string FileName { get => _fileName ?? string.Empty; set => _fileName = value; }
 
 
     #endregion
 
+    /// <summary>
+    /// Creates a local file header structure from the specified buffer and central directory record.
+    /// </summary>
+    /// <param name="buffer">The buffer containing the local file header bytes.</param>
+    /// <param name="cde">The corresponding central directory record.</param>
+    /// <returns>The created local file header structure.</returns>
     public static LocalFileHeaderStruct Create(byte[] buffer, CentralDirectoryRecord cde)
     {
       var originalStreamPosition = cde.RelativeOffsetToLocalFileHeader;
@@ -138,6 +198,10 @@ namespace System.IO.Compression
       return result;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LocalFileHeaderStruct"/> struct.
+    /// </summary>
+    /// <param name="fileName">The file name stored in the local file header.</param>
     public LocalFileHeaderStruct(string fileName)
     {
       _versionNeeded = 0x14;
@@ -169,6 +233,10 @@ namespace System.IO.Compression
       zipArchiveStream.Position = currentPosition;
     }
 
+    /// <summary>
+    /// Writes the local file header to the specified ZIP archive stream.
+    /// </summary>
+    /// <param name="zipArchiveStream">The ZIP archive stream to write to.</param>
     public void Write(Stream zipArchiveStream)
     {
       if (string.IsNullOrEmpty(FileName))

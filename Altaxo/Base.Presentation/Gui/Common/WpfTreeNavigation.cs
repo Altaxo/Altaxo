@@ -23,6 +23,9 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// Provides helper methods for navigating the WPF visual and logical trees.
+  /// </summary>
   public static class WpfTreeNavigation
   {
     /// <summary>

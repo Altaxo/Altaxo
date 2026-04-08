@@ -29,11 +29,28 @@
 
 namespace Altaxo.Calc.Optimization
 {
+  /// <summary>
+  /// Represents the outcome of a minimization run that uses line search.
+  /// </summary>
   public class MinimizationWithLineSearchResult : MinimizationResult
   {
+    /// <summary>
+    /// Gets the total number of line search iterations.
+    /// </summary>
     public int TotalLineSearchIterations { get; }
+    /// <summary>
+    /// Gets the number of minimizer iterations that required a nontrivial line search.
+    /// </summary>
     public int IterationsWithNonTrivialLineSearch { get; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MinimizationWithLineSearchResult"/> class.
+    /// </summary>
+    /// <param name="functionInfo">The objective function state at the minimum.</param>
+    /// <param name="iterations">The number of performed minimizer iterations.</param>
+    /// <param name="reasonForExit">The termination reason.</param>
+    /// <param name="totalLineSearchIterations">The total number of line search iterations.</param>
+    /// <param name="iterationsWithNonTrivialLineSearch">The number of iterations with a nontrivial line search.</param>
     public MinimizationWithLineSearchResult(IObjectiveFunction functionInfo, int iterations, ExitCondition reasonForExit, int totalLineSearchIterations, int iterationsWithNonTrivialLineSearch)
         : base(functionInfo, iterations, reasonForExit)
     {

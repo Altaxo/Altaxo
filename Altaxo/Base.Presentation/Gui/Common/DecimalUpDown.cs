@@ -34,6 +34,9 @@ using System.Windows.Data;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// Numeric up-down control for editing <see cref="decimal"/> values.
+  /// </summary>
   public class DecimalUpDown : NumericUpDownBase
   {
     private const decimal DefaultMinValue = 0;
@@ -44,25 +47,37 @@ namespace Altaxo.Gui.Common
 
     #region Converter
 
+    /// <inheritdoc/>
     protected override object GetNewValidationRuleAndConverter()
     {
       return new DecimalUpDownConverter(this);
     }
 
+    /// <summary>
+    /// Validation rule and converter used by <see cref="DecimalUpDown"/>.
+    /// </summary>
     protected class DecimalUpDownConverter : ValidationRule, IValueConverter
     {
       private DecimalUpDown _parent;
       private System.Globalization.CultureInfo _conversionCulture = Altaxo.Settings.GuiCulture.Instance;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="DecimalUpDownConverter"/> class.
+      /// </summary>
       public DecimalUpDownConverter()
       {
       }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="DecimalUpDownConverter"/> class.
+      /// </summary>
+      /// <param name="parent">The owning control.</param>
       public DecimalUpDownConverter(DecimalUpDown parent)
       {
         _parent = parent;
       }
 
+      /// <inheritdoc/>
       public object Convert(object obj, Type targetType, object parameter, CultureInfo cultureBuggyDontUse)
       {
         decimal val = (decimal)obj;
@@ -78,17 +93,27 @@ namespace Altaxo.Gui.Common
         return val.ToString(_conversionCulture);
       }
 
+      /// <inheritdoc/>
       public object ConvertBack(object obj, Type targetType, object parameter, CultureInfo cultureBuggyDontUse)
       {
         return ConvertBack(obj, targetType, parameter, out var validationResult);
       }
 
+      /// <inheritdoc/>
       public override ValidationResult Validate(object obj, CultureInfo cultureInfoBuggyDontUse)
       {
         ConvertBack(obj, null, null, out var validationResult);
         return validationResult;
       }
 
+      /// <summary>
+      /// Converts the specified text back to a decimal value and reports validation details.
+      /// </summary>
+      /// <param name="obj">The text to convert.</param>
+      /// <param name="targetType">The requested target type.</param>
+      /// <param name="parameter">An optional converter parameter.</param>
+      /// <param name="validationResult">Receives the validation result.</param>
+      /// <returns>The converted value or <see cref="Binding.DoNothing"/> if conversion fails.</returns>
       public object ConvertBack(object obj, Type targetType, object parameter, out ValidationResult validationResult)
       {
         validationResult = ValidationResult.ValidResult;
@@ -124,12 +149,18 @@ namespace Altaxo.Gui.Common
 
     #region Value
 
+    /// <summary>
+    /// Gets or sets the current value.
+    /// </summary>
     public decimal Value
     {
       get { return (decimal)GetValue(ValueProperty); }
       set { SetValue(ValueProperty, value); }
     }
 
+    /// <summary>
+    /// Gets or sets the current value as a <see cref="double"/>.
+    /// </summary>
     public double ValueAsDouble
     {
       get { return (double)(decimal)GetValue(ValueProperty); }
@@ -196,6 +227,9 @@ namespace Altaxo.Gui.Common
 
     #region ValueIfTextIsEmpty
 
+    /// <summary>
+    /// Gets or sets the value used when the text box is empty.
+    /// </summary>
     public decimal? ValueIfTextIsEmpty
     {
       get { return (decimal?)GetValue(ValueIfTextIsEmptyProperty); }
@@ -203,7 +237,7 @@ namespace Altaxo.Gui.Common
     }
 
     /// <summary>
-    /// Identifies the Value dependency property.
+    /// Identifies the <see cref="ValueIfTextIsEmpty"/> dependency property.
     /// </summary>
     public static readonly DependencyProperty ValueIfTextIsEmptyProperty =
         DependencyProperty.Register(
@@ -214,6 +248,9 @@ namespace Altaxo.Gui.Common
 
     #region ValueString
 
+    /// <summary>
+    /// Gets the current text representation of the value.
+    /// </summary>
     public string ValueString
     {
       get
@@ -225,18 +262,27 @@ namespace Altaxo.Gui.Common
     private static readonly DependencyPropertyKey ValueStringPropertyKey =
         DependencyProperty.RegisterAttachedReadOnly("ValueString", typeof(string), typeof(DecimalUpDown), new PropertyMetadata());
 
+    /// <summary>
+    /// Identifies the <see cref="ValueString"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty ValueStringProperty = ValueStringPropertyKey.DependencyProperty;
 
     #endregion ValueString
 
     #region Minimum
 
+    /// <summary>
+    /// Gets or sets the minimum allowed value.
+    /// </summary>
     public decimal Minimum
     {
       get { return (decimal)GetValue(MinimumProperty); }
       set { SetValue(MinimumProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="Minimum"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty MinimumProperty =
         DependencyProperty.Register(
             "Minimum", typeof(decimal), typeof(DecimalUpDown),
@@ -262,12 +308,18 @@ namespace Altaxo.Gui.Common
 
     #region Maximum
 
+    /// <summary>
+    /// Gets or sets the maximum allowed value.
+    /// </summary>
     public decimal Maximum
     {
       get { return (decimal)GetValue(MaximumProperty); }
       set { SetValue(MaximumProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="Maximum"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty MaximumProperty =
         DependencyProperty.Register(
             "Maximum", typeof(decimal), typeof(DecimalUpDown),
@@ -293,12 +345,18 @@ namespace Altaxo.Gui.Common
 
     #region Change
 
+    /// <summary>
+    /// Gets or sets the increment and decrement step.
+    /// </summary>
     public decimal Change
     {
       get { return (decimal)GetValue(ChangeProperty); }
       set { SetValue(ChangeProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="Change"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty ChangeProperty =
         DependencyProperty.Register(
             "Change", typeof(decimal), typeof(DecimalUpDown),
@@ -355,12 +413,18 @@ namespace Altaxo.Gui.Common
 
     #region DecimalPlaces
 
+    /// <summary>
+    /// Gets or sets the number of decimal places shown by the control.
+    /// </summary>
     public int DecimalPlaces
     {
       get { return (int)GetValue(DecimalPlacesProperty); }
       set { SetValue(DecimalPlacesProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="DecimalPlaces"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty DecimalPlacesProperty =
         DependencyProperty.Register(
             "DecimalPlaces", typeof(int), typeof(DecimalUpDown),
@@ -410,6 +474,7 @@ namespace Altaxo.Gui.Common
 
     #region Commands
 
+    /// <inheritdoc/>
     protected override void OnIncrease()
     {
       // avoid an overflow before coerce of the value
@@ -420,6 +485,7 @@ namespace Altaxo.Gui.Common
         Value = decimal.MaxValue;
     }
 
+    /// <inheritdoc/>
     protected override void OnDecrease()
     {
       // avoid an underflow before coerce of the value
@@ -429,11 +495,13 @@ namespace Altaxo.Gui.Common
         Value = decimal.MinValue;
     }
 
+    /// <inheritdoc/>
     protected override void OnGotoMinimum()
     {
       Value = Minimum;
     }
 
+    /// <inheritdoc/>
     protected override void OnGotoMaximum()
     {
       Value = Maximum;
@@ -443,6 +511,7 @@ namespace Altaxo.Gui.Common
 
     #region Automation
 
+    /// <inheritdoc/>
     protected override AutomationPeer OnCreateAutomationPeer()
     {
       return new DecimalUpDownAutomationPeer(this);
@@ -451,23 +520,33 @@ namespace Altaxo.Gui.Common
     #endregion Automation
   }
 
+  /// <summary>
+  /// Automation peer for <see cref="DecimalUpDown"/>.
+  /// </summary>
   public class DecimalUpDownAutomationPeer : FrameworkElementAutomationPeer, IRangeValueProvider
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DecimalUpDownAutomationPeer"/> class.
+    /// </summary>
+    /// <param name="control">The associated control.</param>
     public DecimalUpDownAutomationPeer(DecimalUpDown control)
       : base(control)
     {
     }
 
+    /// <inheritdoc/>
     protected override string GetClassNameCore()
     {
       return "DecimalUpDown";
     }
 
+    /// <inheritdoc/>
     protected override AutomationControlType GetAutomationControlTypeCore()
     {
       return AutomationControlType.Spinner;
     }
 
+    /// <inheritdoc/>
     public override object GetPattern(PatternInterface patternInterface)
     {
       if (patternInterface == PatternInterface.RangeValue)

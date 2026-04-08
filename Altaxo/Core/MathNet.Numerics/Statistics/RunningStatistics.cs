@@ -70,10 +70,17 @@ namespace Altaxo.Calc.Statistics
     [DataMember(Order = 7)]
     private double _m4;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RunningStatistics"/> class.
+    /// </summary>
     public RunningStatistics()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RunningStatistics"/> class as a copy of another instance.
+    /// </summary>
+    /// <param name="runningStatistics">The instance to copy.</param>
     public RunningStatistics(RunningStatistics runningStatistics)
     {
       _n = runningStatistics._n;
@@ -85,6 +92,10 @@ namespace Altaxo.Calc.Statistics
       _m4 = runningStatistics._m4;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RunningStatistics"/> class and populates it with a sequence of values.
+    /// </summary>
+    /// <param name="values">The values used to initialize the running statistics.</param>
     public RunningStatistics(IEnumerable<double> values)
     {
       PushRange(values);
@@ -172,6 +183,7 @@ namespace Altaxo.Calc.Statistics
     /// <summary>
     /// Update the running statistics by adding another observed sample (in-place).
     /// </summary>
+    /// <param name="value">The sample value to add.</param>
     public void Push(double value)
     {
       _n++;
@@ -197,8 +209,9 @@ namespace Altaxo.Calc.Statistics
     }
 
     /// <summary>
-    /// Update the running statistics by adding a sequence of observed sample (in-place).
+    /// Update the running statistics by adding a sequence of observed samples (in-place).
     /// </summary>
+    /// <param name="values">The sample values to add.</param>
     public void PushRange(IEnumerable<double> values)
     {
       foreach (double value in values)
@@ -210,6 +223,9 @@ namespace Altaxo.Calc.Statistics
     /// <summary>
     /// Create a new running statistics over the combined samples of two existing running statistics.
     /// </summary>
+    /// <param name="a">The first running statistics instance.</param>
+    /// <param name="b">The second running statistics instance.</param>
+    /// <returns>A new instance representing the combined statistics.</returns>
     public static RunningStatistics Combine(RunningStatistics a, RunningStatistics b)
     {
       if (a._n == 0)
@@ -240,6 +256,12 @@ namespace Altaxo.Calc.Statistics
       return new RunningStatistics { _n = n, _m1 = m1, _m2 = m2, _m3 = m3, _m4 = m4, _min = min, _max = max };
     }
 
+    /// <summary>
+    /// Combines two running statistics instances.
+    /// </summary>
+    /// <param name="a">The first running statistics instance.</param>
+    /// <param name="b">The second running statistics instance.</param>
+    /// <returns>A new instance representing the combined statistics.</returns>
     public static RunningStatistics operator +(RunningStatistics a, RunningStatistics b)
     {
       return Combine(a, b);

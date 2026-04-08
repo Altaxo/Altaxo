@@ -772,6 +772,9 @@ namespace Altaxo.Calc.Clustering
   /// </summary>
   public class KMeans_Double1D : KMeans<double, double>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="KMeans_Double1D"/> class.
+    /// </summary>
     public KMeans_Double1D()
       :
       base(

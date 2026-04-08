@@ -32,16 +32,22 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
   /// </summary>
   public class CurlyBraceDrawingMouseHandler : AbstractRectangularToolMouseHandler
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CurlyBraceDrawingMouseHandler"/> class.
+    /// </summary>
+    /// <param name="grac">The graph controller.</param>
     public CurlyBraceDrawingMouseHandler(GraphController grac)
       : base(grac)
     {
     }
 
+    /// <inheritdoc/>
     public override GraphToolType GraphToolType
     {
       get { return GraphToolType.CurlyBraceDrawing; }
     }
 
+    /// <inheritdoc/>
     protected override void FinishDrawing()
     {
       var rect = GetNormalRectangle(_Points[0].LayerCoordinates, _Points[1].LayerCoordinates);

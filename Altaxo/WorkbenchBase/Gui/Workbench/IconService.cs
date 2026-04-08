@@ -27,6 +27,9 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Workbench
 {
+  /// <summary>
+  /// Provides access to icons and images used by the workbench.
+  /// </summary>
   public static class IconService
   {
     private static Dictionary<string, string> extensionHashtable = new Dictionary<string, string>();
@@ -45,11 +48,21 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Gets a ghosted bitmap for the specified image name.
+    /// </summary>
+    /// <param name="name">The image name.</param>
+    /// <returns>The ghosted bitmap.</returns>
     public static Bitmap GetGhostBitmap(string name)
     {
       return GetGhostBitmap(GetBitmap(name));
     }
 
+    /// <summary>
+    /// Gets a ghosted bitmap for the specified bitmap.
+    /// </summary>
+    /// <param name="bitmap">The bitmap.</param>
+    /// <returns>The ghosted bitmap.</returns>
     public static Bitmap GetGhostBitmap(Bitmap bitmap)
     {
       var clrMatrix = new ColorMatrix(new float[][] {
@@ -76,6 +89,11 @@ namespace Altaxo.Gui.Workbench
       return ghostBitmap;
     }
 
+    /// <summary>
+    /// Gets the bitmap for the specified image name.
+    /// </summary>
+    /// <param name="name">The image name.</param>
+    /// <returns>The bitmap.</returns>
     public static Bitmap GetBitmap(string name)
     {
       Bitmap? bmp = null;
@@ -103,6 +121,11 @@ namespace Altaxo.Gui.Workbench
     }
 
     private static Bitmap? _defaultBitmap;
+
+    /// <summary>
+    /// Gets the default bitmap that is used when no image can be resolved.
+    /// </summary>
+    /// <returns>The default bitmap.</returns>
     public static Bitmap GetDefaultBitmap()
     {
       if (_defaultBitmap is { } defBmp)
@@ -122,6 +145,11 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Gets the image source for the specified image name.
+    /// </summary>
+    /// <param name="name">The image name.</param>
+    /// <returns>The image source.</returns>
     public static System.Windows.Media.ImageSource GetImageSource(string name)
     {
       System.Windows.Media.ImageSource? img;
@@ -142,6 +170,11 @@ namespace Altaxo.Gui.Workbench
       return Altaxo.Current.ResourceService.GetImageSource("Icons.16x16.MiscFiles");
     }
 
+    /// <summary>
+    /// Gets the image resource name for the specified project type.
+    /// </summary>
+    /// <param name="projectType">The project type.</param>
+    /// <returns>The image resource name.</returns>
     public static string GetImageForProjectType(string projectType)
     {
       if (projectFileHashtable.ContainsKey(projectType))
@@ -151,6 +184,11 @@ namespace Altaxo.Gui.Workbench
       return "Icons.16x16.SolutionIcon";
     }
 
+    /// <summary>
+    /// Gets the image resource name for the specified file.
+    /// </summary>
+    /// <param name="fileName">The file name.</param>
+    /// <returns>The image resource name.</returns>
     public static string GetImageForFile(string fileName)
     {
       string extension = Path.GetExtension(fileName).ToUpperInvariant();
@@ -163,6 +201,11 @@ namespace Altaxo.Gui.Workbench
       return "Icons.16x16.MiscFiles";
     }
 
+    /// <summary>
+    /// Determines whether an image is registered for the specified file.
+    /// </summary>
+    /// <param name="fileName">The file name.</param>
+    /// <returns><see langword="true"/> if an image is registered; otherwise, <see langword="false"/>.</returns>
     public static bool HasImageForFile(string fileName)
     {
       string extension = Path.GetExtension(fileName).ToUpperInvariant();

@@ -43,18 +43,31 @@ namespace Poly2Tri
      * @author Thomas Åhlén, thahlen@gmail.com
      */
 
+  /// <summary>
+  /// Represents a point set with explicit constrained edges.
+  /// </summary>
   public class ConstrainedPointSet : PointSet
   {
+    /// <summary>
+    /// Gets the edge index pairs that define the constrained edges.
+    /// </summary>
     public int[] EdgeIndex { get; private set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConstrainedPointSet"/> class.
+    /// </summary>
+    /// <param name="points">The points in the set.</param>
+    /// <param name="index">Pairs of point indices defining constrained edges.</param>
     public ConstrainedPointSet(List<TriangulationPoint> points, int[] index)
       : base(points)
     {
       EdgeIndex = index;
     }
 
+    /// <inheritdoc/>
     public override TriangulationMode TriangulationMode { get { return TriangulationMode.Constrained; } }
 
+    /// <inheritdoc/>
     public override void Prepare(TriangulationContext tcx)
     {
       base.Prepare(tcx);

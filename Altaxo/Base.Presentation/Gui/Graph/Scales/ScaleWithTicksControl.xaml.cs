@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Scales
   /// </summary>
   public partial class ScaleWithTicksControl : UserControl, IScaleWithTicksView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScaleWithTicksControl"/> class.
+    /// </summary>
     public ScaleWithTicksControl()
     {
       InitializeComponent();

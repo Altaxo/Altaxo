@@ -32,6 +32,9 @@ namespace Altaxo.Gui.Graph.Gdi
   /// </summary>
   public partial class XYPlotLayerControl : UserControl, IXYPlotLayerView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYPlotLayerControl"/> class.
+    /// </summary>
     public XYPlotLayerControl()
     {
       InitializeComponent();

@@ -38,6 +38,9 @@ namespace Altaxo.Gui.Graph
   using Altaxo.Units;
   using AUL = Altaxo.Units.Length;
 
+  /// <summary>
+  /// Connects position, size, and transformation controls to graph object values.
+  /// </summary>
   public class ObjectPositionAndSizeGlue : FrameworkElement
   {
     #region Input/Output
@@ -70,6 +73,9 @@ namespace Altaxo.Gui.Graph
     private double _positionX;
 
     //[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    /// <summary>
+    /// Gets or sets the X position in point units.
+    /// </summary>
     public double PositionX
     {
       get
@@ -90,6 +96,9 @@ namespace Altaxo.Gui.Graph
     private double _positionY;
 
     //[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    /// <summary>
+    /// Gets or sets the Y position in point units.
+    /// </summary>
     public double PositionY
     {
       get
@@ -108,6 +117,9 @@ namespace Altaxo.Gui.Graph
     }
 
     //[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    /// <summary>
+    /// Gets or sets the position in point units.
+    /// </summary>
     public PointD2D Position
     {
       get
@@ -123,6 +135,9 @@ namespace Altaxo.Gui.Graph
 
     private Altaxo.Gui.Common.QuantityWithUnitTextBox _edPositionX;
 
+    /// <summary>
+    /// Gets or sets the editor for the X position.
+    /// </summary>
     public Altaxo.Gui.Common.QuantityWithUnitTextBox EdPositionX
     {
       get { return _edPositionX; }
@@ -140,6 +155,9 @@ namespace Altaxo.Gui.Graph
 
     private Altaxo.Gui.Common.QuantityWithUnitTextBox _edPositionY;
 
+    /// <summary>
+    /// Gets or sets the editor for the Y position.
+    /// </summary>
     public Altaxo.Gui.Common.QuantityWithUnitTextBox EdPositionY
     {
       get { return _edPositionY; }
@@ -163,6 +181,9 @@ namespace Altaxo.Gui.Graph
     private double _sizeX;
 
     /// <summary>Gets/sets the size in point units.</summary>
+    /// <summary>
+    /// Gets or sets the X size in point units.
+    /// </summary>
     public double SizeX
     {
       get
@@ -182,6 +203,9 @@ namespace Altaxo.Gui.Graph
 
     private double _sizeY;
 
+    /// <summary>
+    /// Gets or sets the Y size in point units.
+    /// </summary>
     public double SizeY
     {
       get
@@ -199,6 +223,9 @@ namespace Altaxo.Gui.Graph
       }
     }
 
+    /// <summary>
+    /// Gets or sets the size in point units.
+    /// </summary>
     public PointD2D Size
     {
       get
@@ -215,6 +242,9 @@ namespace Altaxo.Gui.Graph
     private Altaxo.Gui.Common.QuantityWithUnitTextBox _edSizeX;
     private Altaxo.Gui.Common.QuantityWithUnitTextBox _edSizeY;
 
+    /// <summary>
+    /// Gets or sets the editor for the X size.
+    /// </summary>
     public Altaxo.Gui.Common.QuantityWithUnitTextBox EdSizeX
     {
       get { return _edSizeX; }
@@ -230,6 +260,9 @@ namespace Altaxo.Gui.Graph
       }
     }
 
+    /// <summary>
+    /// Gets or sets the editor for the Y size.
+    /// </summary>
     public Altaxo.Gui.Common.QuantityWithUnitTextBox EdSizeY
     {
       get { return _edSizeY; }
@@ -251,6 +284,9 @@ namespace Altaxo.Gui.Graph
 
     private double _rotation;
 
+    /// <summary>
+    /// Gets or sets the rotation angle in degrees.
+    /// </summary>
     public double Rotation
     {
       get
@@ -270,6 +306,9 @@ namespace Altaxo.Gui.Graph
 
     private Altaxo.Gui.Common.Drawing.RotationComboBox _cbRotation;
 
+    /// <summary>
+    /// Gets or sets the rotation editor.
+    /// </summary>
     public Altaxo.Gui.Common.Drawing.RotationComboBox CbRotation
     {
       get { return _cbRotation; }
@@ -289,6 +328,9 @@ namespace Altaxo.Gui.Graph
 
     private double _shear;
 
+    /// <summary>
+    /// Gets or sets the shear value.
+    /// </summary>
     public double Shear
     {
       get
@@ -308,6 +350,9 @@ namespace Altaxo.Gui.Graph
 
     private Altaxo.Gui.Common.Drawing.ShearComboBox _edShear;
 
+    /// <summary>
+    /// Gets or sets the shear editor.
+    /// </summary>
     public Altaxo.Gui.Common.Drawing.ShearComboBox GuiShear
     {
       get { return _edShear; }
@@ -327,6 +372,9 @@ namespace Altaxo.Gui.Graph
     #region Scale
 
     //[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    /// <summary>
+    /// Gets or sets the scale factors.
+    /// </summary>
     public PointD2D Scale
     {
       get
@@ -346,6 +394,9 @@ namespace Altaxo.Gui.Graph
 
     private double _scaleX = 1;
 
+    /// <summary>
+    /// Gets or sets the X scale factor.
+    /// </summary>
     public double ScaleX
     {
       get
@@ -365,6 +416,9 @@ namespace Altaxo.Gui.Graph
 
     private Altaxo.Gui.Common.Drawing.ScaleComboBox _edScaleX;
 
+    /// <summary>
+    /// Gets or sets the X-scale editor.
+    /// </summary>
     public Altaxo.Gui.Common.Drawing.ScaleComboBox GuiScaleX
     {
       get { return _edScaleX; }
@@ -385,6 +439,9 @@ namespace Altaxo.Gui.Graph
 
     private double _scaleY = 1;
 
+    /// <summary>
+    /// Gets or sets the Y scale factor.
+    /// </summary>
     public double ScaleY
     {
       get
@@ -404,6 +461,9 @@ namespace Altaxo.Gui.Graph
 
     private Altaxo.Gui.Common.Drawing.ScaleComboBox _edScaleY;
 
+    /// <summary>
+    /// Gets or sets the Y-scale editor.
+    /// </summary>
     public Altaxo.Gui.Common.Drawing.ScaleComboBox GuiScaleY
     {
       get { return _edScaleY; }

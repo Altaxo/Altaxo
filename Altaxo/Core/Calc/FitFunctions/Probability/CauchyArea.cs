@@ -81,12 +81,20 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance with one term and a constant baseline.
+    /// </summary>
     public CauchyArea()
     {
       _numberOfTerms = 1;
       _orderOfBaselinePolynomial = 0;
     }
 
+    /// <summary>
+    /// Initializes a new instance with the specified number of terms and baseline order.
+    /// </summary>
+    /// <param name="numberOfTerms">The number of peak terms.</param>
+    /// <param name="orderOfBackgroundPolynomial">The order of the background polynomial.</param>
     public CauchyArea(int numberOfTerms, int orderOfBackgroundPolynomial)
     {
       _numberOfTerms = numberOfTerms;
@@ -104,7 +112,10 @@ namespace Altaxo.Calc.FitFunctions.Probability
       return $"{this.GetType().Name} NumberOfTerms={NumberOfTerms} OrderOfBaseline={OrderOfBaselinePolynomial}";
     }
 
-
+    /// <summary>
+    /// Creates a Lorentzian-area fit function with one peak and a constant baseline.
+    /// </summary>
+    /// <returns>The fit function.</returns>
     [FitFunctionCreator("LorentzianArea", "Peaks", 1, 1, 4)]
     [FitFunctionCreator("LorentzianArea", "General", 1, 1, 4)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.CauchyArea}")]
@@ -113,6 +124,10 @@ namespace Altaxo.Calc.FitFunctions.Probability
       return new CauchyArea(1, 0);
     }
 
+    /// <summary>
+    /// Creates a Cauchy-area fit function with one peak and no baseline.
+    /// </summary>
+    /// <returns>The fit function.</returns>
     [FitFunctionCreator("CauchyArea", "Probability", 1, 1, 3)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.CauchyArea}")]
     public static IFitFunction Create_1_M1()

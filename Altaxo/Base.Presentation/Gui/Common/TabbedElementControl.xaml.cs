@@ -36,11 +36,15 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public partial class TabbedElementControl : UserControl, ITabbedElementView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TabbedElementControl"/> class.
+    /// </summary>
     public TabbedElementControl()
     {
       InitializeComponent();
     }
 
+    /// <inheritdoc/>
     public void ClearTabs()
     {
       foreach (TabItem item in _tabControl.Items)
@@ -53,6 +57,7 @@ namespace Altaxo.Gui.Common
       _tabControl.Items.Clear();
     }
 
+    /// <inheritdoc/>
     public void AddTab(string title, object view)
     {
       var item = new TabItem
@@ -80,6 +85,7 @@ namespace Altaxo.Gui.Common
         ChildControl_Validated(sender, EventArgs.Empty);
     }
 
+    /// <inheritdoc/>
     public void BringTabToFront(int index)
     {
       _tabControl.SelectedIndex = index;
@@ -88,8 +94,10 @@ namespace Altaxo.Gui.Common
         selItem.Focus();
     }
 
+    /// <inheritdoc/>
     public event EventHandler? ChildControl_Entered;
 
+    /// <inheritdoc/>
     public event EventHandler? ChildControl_Validated;
   }
 }

@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Common.Drawing
   /// </summary>
   public partial class BrushSimpleConditionalControlDC : UserControl
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BrushSimpleConditionalControlDC"/> class.
+    /// </summary>
     public BrushSimpleConditionalControlDC()
     {
       InitializeComponent();

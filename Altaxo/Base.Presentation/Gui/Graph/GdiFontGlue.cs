@@ -36,12 +36,18 @@ using sd = System.Drawing;
 
 namespace Altaxo.Gui.Graph
 {
+  /// <summary>
+  /// Connects GDI font settings to the corresponding WPF controls.
+  /// </summary>
   public class GdiFontGlue
   {
     private double _fontSize = 12;
     private string _fontFamilyName = GdiFontManager.GenericSansSerifFontFamilyName;
     private FontXStyle _fontStyle = FontXStyle.Regular;
 
+    /// <summary>
+    /// Gets or sets the font size in points.
+    /// </summary>
     public double FontSize
     {
       get { return _fontSize; }
@@ -54,6 +60,9 @@ namespace Altaxo.Gui.Graph
       }
     }
 
+    /// <summary>
+    /// Gets or sets the font family name.
+    /// </summary>
     public string FontFamilyName
     {
       get { return _fontFamilyName; }
@@ -66,6 +75,9 @@ namespace Altaxo.Gui.Graph
       }
     }
 
+    /// <summary>
+    /// Gets or sets the font style.
+    /// </summary>
     public FontXStyle FontStyle
     {
       get { return _fontStyle; }
@@ -78,8 +90,14 @@ namespace Altaxo.Gui.Graph
       }
     }
 
+    /// <summary>
+    /// Occurs when the selected font changes.
+    /// </summary>
     public event EventHandler? SelectedFontChanged;
 
+    /// <summary>
+    /// Gets or sets the selected font.
+    /// </summary>
     public FontX SelectedFont
     {
       get
@@ -96,6 +114,9 @@ namespace Altaxo.Gui.Graph
 
     private FontSizeComboBox _guiFontSize;
 
+    /// <summary>
+    /// Gets or sets the font-size combo box.
+    /// </summary>
     public FontSizeComboBox GuiFontSize
     {
       get { return _guiFontSize; }
@@ -114,6 +135,9 @@ namespace Altaxo.Gui.Graph
 
     private FontFamilyComboBox _guiFontFamily;
 
+    /// <summary>
+    /// Gets or sets the font-family combo box.
+    /// </summary>
     public FontFamilyComboBox GuiFontFamily
     {
       get { return _guiFontFamily; }
@@ -132,6 +156,9 @@ namespace Altaxo.Gui.Graph
 
     private FontStyleComboBox _guiFontStyle;
 
+    /// <summary>
+    /// Gets or sets the font-style combo box.
+    /// </summary>
     public FontStyleComboBox GuiFontStyle
     {
       get { return _guiFontStyle; }
@@ -173,6 +200,9 @@ namespace Altaxo.Gui.Graph
         OnFontChanged();
     }
 
+    /// <summary>
+    /// Raises the <see cref="SelectedFontChanged"/> event.
+    /// </summary>
     protected virtual void OnFontChanged()
     {
       if (SelectedFontChanged is not null)

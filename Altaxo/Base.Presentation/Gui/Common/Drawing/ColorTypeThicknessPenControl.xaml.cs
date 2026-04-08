@@ -37,6 +37,9 @@ namespace Altaxo.Gui.Common.Drawing
   /// </summary>
   public partial class ColorTypeThicknessPenControl : UserControl, IColorTypeThicknessPenView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColorTypeThicknessPenControl"/> class.
+    /// </summary>
     public ColorTypeThicknessPenControl()
     {
       InitializeComponent();

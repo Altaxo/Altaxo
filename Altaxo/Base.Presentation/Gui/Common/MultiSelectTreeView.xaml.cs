@@ -38,6 +38,9 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public partial class MultiSelectTreeView : System.Windows.Controls.ItemsControl
   {
+    /// <summary>
+    /// Represents the collection of selected tree view items.
+    /// </summary>
     public class SelectedItemsCollection : ObservableCollection<MultiSelectTreeViewItem> { }
 
     private SelectedItemsCollection _selectedTreeViewItems = new SelectedItemsCollection();
@@ -56,10 +59,16 @@ namespace Altaxo.Gui.Common
       set { SetValue(ItemMouseDoubleClickCommandProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="ItemMouseDoubleClickCommand"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty ItemMouseDoubleClickCommandProperty =
         DependencyProperty.Register(nameof(ItemMouseDoubleClickCommand), typeof(ICommand), typeof(MultiSelectTreeView));
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MultiSelectTreeView"/> class.
+    /// </summary>
     public MultiSelectTreeView()
     {
       InitializeComponent();
@@ -68,10 +77,22 @@ namespace Altaxo.Gui.Common
       InputBindings.Add(ib);
     }
 
+    /// <summary>
+    /// Defines the available selection behaviors for the tree view.
+    /// </summary>
     public enum SelectionModalities
     {
+      /// <summary>
+      /// Allows only a single selected item.
+      /// </summary>
       SingleSelectionOnly,
+      /// <summary>
+      /// Allows multiple selected items without keyboard modifiers.
+      /// </summary>
       MultipleSelectionOnly,
+      /// <summary>
+      /// Uses keyboard modifiers to switch between selection behaviors.
+      /// </summary>
       KeyboardModifiersMode
     }
 
@@ -79,20 +100,32 @@ namespace Altaxo.Gui.Common
 
     private MultiSelectTreeViewItem _lastClickedItem = null;
 
+    /// <summary>
+    /// Gets or sets the selection behavior.
+    /// </summary>
     public SelectionModalities SelectionMode
     {
       get { return (SelectionModalities)GetValue(SelectionModeProperty); }
       set { SetValue(SelectionModeProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="SelectionMode"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty SelectionModeProperty =
         DependencyProperty.Register("SelectionMode", typeof(SelectionModalities), typeof(MultiSelectTreeView), new UIPropertyMetadata(SelectionModalities.KeyboardModifiersMode));
 
+    /// <summary>
+    /// Gets the selected tree view items.
+    /// </summary>
     public SelectedItemsCollection SelectedTreeViewItems
     {
       get { return _selectedTreeViewItems; }
     }
 
+    /// <summary>
+    /// Gets the selected data items.
+    /// </summary>
     public System.Collections.Generic.ICollection<object> SelectedItems
     {
       get
@@ -131,16 +164,19 @@ namespace Altaxo.Gui.Common
 
     #endregion Constructors
 
+    /// <inheritdoc/>
     protected override DependencyObject GetContainerForItemOverride()
     {
       return new MultiSelectTreeViewItem();
     }
 
+    /// <inheritdoc/>
     protected override bool IsItemItsOwnContainerOverride(object item)
     {
       return item is MultiSelectTreeViewItem;
     }
 
+    /// <inheritdoc/>
     protected override void OnItemsSourceChanged(System.Collections.IEnumerable oldValue, System.Collections.IEnumerable newValue)
     {
       _selectedTreeViewItems.Clear();
@@ -156,6 +192,7 @@ namespace Altaxo.Gui.Common
         RemoveItemFromSelection(viewItem);
     }
 
+    /// <inheritdoc/>
     protected override void OnPreviewKeyDown(KeyEventArgs e)
     {
       if (e.Key == Key.C && (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
@@ -168,6 +205,7 @@ namespace Altaxo.Gui.Common
     private bool _wasShiftPressedOnLastItemMouseDown = false;
     private bool _wasCtrlPressedOnLastItemMouseDown = false;
 
+    /// <inheritdoc/>
     protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
     {
       base.OnPreviewMouseDown(e);
@@ -239,6 +277,10 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <summary>
+    /// Handles a double-click on an item.
+    /// </summary>
+    /// <param name="item">The clicked item.</param>
     protected internal void OnItemDoubleClicked(MultiSelectTreeViewItem item)
     {
       if (item is not null)
@@ -250,6 +292,9 @@ namespace Altaxo.Gui.Common
 
     #region Methods
 
+    /// <summary>
+    /// Unselects all currently selected items.
+    /// </summary>
     public void UnselectAll()
     {
       var selItemsCopy = _selectedTreeViewItems.ToArray(); // use a copy of the collection since IsSelected=false causes the removal of the item from the collection
@@ -260,6 +305,9 @@ namespace Altaxo.Gui.Common
       _lastClickedItem = null;
     }
 
+    /// <summary>
+    /// Selects all items in the tree view.
+    /// </summary>
     public void SelectAll()
     {
       foreach (MultiSelectTreeViewItem item in Items)

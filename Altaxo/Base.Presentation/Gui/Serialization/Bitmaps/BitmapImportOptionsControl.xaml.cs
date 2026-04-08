@@ -32,6 +32,9 @@ namespace Altaxo.Gui.Serialization.Bitmaps
   public partial class BitmapImportOptionsControl : UserControl,
     IBitmapImportOptionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BitmapImportOptionsControl"/> class.
+    /// </summary>
     public BitmapImportOptionsControl()
     {
       InitializeComponent();

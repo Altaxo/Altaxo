@@ -49,6 +49,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.FitFunctions.Relaxation.KohlrauschModulusRetardation", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (KohlrauschModulusRetardation)obj;
@@ -57,6 +58,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         //info.AddValue("IsDielectric", s._isDielectricData);
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         KohlrauschModulusRetardation s = o is not null ? (KohlrauschModulusRetardation)o : new KohlrauschModulusRetardation();
@@ -70,6 +72,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.FitFunctions.Relaxation.KohlrauschModulusRetardation", 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (KohlrauschModulusRetardation)obj;
@@ -79,6 +82,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         //info.AddValue("IsDielectric", s._isDielectricData);
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         KohlrauschModulusRetardation s = o is not null ? (KohlrauschModulusRetardation)o : new KohlrauschModulusRetardation();
@@ -99,6 +103,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(KohlrauschModulusRetardation), 3)]
     private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (KohlrauschModulusRetardation)obj;
@@ -108,6 +113,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         info.AddValue("InvertViscosity", s._invertViscosity);
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         KohlrauschModulusRetardation s = o is not null ? (KohlrauschModulusRetardation)o : new KohlrauschModulusRetardation();
@@ -247,6 +253,10 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
 
 
+    /// <summary>
+    /// Creates a Kohlrausch modulus retardation fit function that uses omega as the independent variable.
+    /// </summary>
+    /// <returns>A configured modulus retardation fit function instance.</returns>
     [FitFunctionCreator("Kohlrausch Complex (Omega)", "Retardation/Modulus", 1, 2, 5)]
     [Description("${res:Altaxo.Calc.FitFunctions.Retardation.Modulus.KohlrauschComplexOmega}")]
     public static IFitFunction CreateModulusOfOmega()
@@ -262,9 +272,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return result;
     }
 
+    /// <summary>
+    /// Creates a Kohlrausch modulus retardation fit function that uses omega and returns logarithmized results.
+    /// </summary>
+    /// <returns>A configured modulus retardation fit function instance.</returns>
     [FitFunctionCreator("Lg10 Kohlrausch Complex (Omega)", "Retardation/Modulus", 1, 2, 5)]
     [Description("${res:Altaxo.Calc.FitFunctions.Retardation.Modulus.Lg10KohlrauschComplexOmega}")]
-
     public static IFitFunction CreateLg10ModulusOfOmega()
     {
       var result = new KohlrauschModulusRetardation
@@ -278,6 +291,10 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return result;
     }
 
+    /// <summary>
+    /// Creates a Kohlrausch modulus retardation fit function that uses frequency as the independent variable.
+    /// </summary>
+    /// <returns>A configured modulus retardation fit function instance.</returns>
     [FitFunctionCreator("Kohlrausch Complex (Frequency)", "Retardation/Modulus", 1, 2, 5)]
     [Description("${res:Altaxo.Calc.FitFunctions.Retardation.Modulus.KohlrauschComplexFrequency}")]
     public static IFitFunction CreateModulusOfFrequency()
@@ -293,6 +310,10 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return result;
     }
 
+    /// <summary>
+    /// Creates a Kohlrausch modulus retardation fit function that uses frequency and returns logarithmized results.
+    /// </summary>
+    /// <returns>A configured modulus retardation fit function instance.</returns>
     [FitFunctionCreator("Lg10 Kohlrausch Complex (Frequency)", "Retardation/Modulus", 1, 2, 5)]
     [Description("${res:Altaxo.Calc.FitFunctions.Retardation.Modulus.Lg10KohlrauschComplexFrequency}")]
     public static IFitFunction CreateLg10ModulusOfFrequency()

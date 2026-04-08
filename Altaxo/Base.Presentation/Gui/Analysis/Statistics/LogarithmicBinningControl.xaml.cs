@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Analysis.Statistics
   /// </summary>
   public partial class LogarithmicBinningControl : UserControl, ILogarithmicBinningView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LogarithmicBinningControl"/> class.
+    /// </summary>
     public LogarithmicBinningControl()
     {
       InitializeComponent();

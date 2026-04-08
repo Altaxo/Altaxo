@@ -20,8 +20,12 @@ using Altaxo.Main;
 
 namespace Altaxo.Gui.Workbench.Commands
 {
+  /// <summary>
+  /// Selects the next open window.
+  /// </summary>
   public class SelectNextWindow : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object? parameter)
     {
       var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
@@ -35,8 +39,12 @@ namespace Altaxo.Gui.Workbench.Commands
     }
   }
 
+  /// <summary>
+  /// Selects the previous open window.
+  /// </summary>
   public class SelectPrevWindow : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object? parameter)
     {
       var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
@@ -49,8 +57,12 @@ namespace Altaxo.Gui.Workbench.Commands
     }
   }
 
+  /// <summary>
+  /// Closes all open windows.
+  /// </summary>
   public class CloseAllWindows : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object? _)
     {
       var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
@@ -58,8 +70,12 @@ namespace Altaxo.Gui.Workbench.Commands
     }
   }
 
+  /// <summary>
+  /// Closes the current file tab.
+  /// </summary>
   public class CloseFileTab : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object? parameter)
     {
       var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
@@ -71,8 +87,12 @@ namespace Altaxo.Gui.Workbench.Commands
     }
   }
 
+  /// <summary>
+  /// Closes all file tabs except the current one.
+  /// </summary>
   public class CloseAllButThisFileTab : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object? parameter)
     {
       var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
@@ -91,8 +111,12 @@ namespace Altaxo.Gui.Workbench.Commands
     }
   }
 
+  /// <summary>
+  /// Deletes the document associated with the current file tab.
+  /// </summary>
   public class DeleteThisFileTab : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object? parameter)
     {
       var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();

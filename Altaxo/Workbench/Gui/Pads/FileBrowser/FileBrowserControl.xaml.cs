@@ -33,7 +33,7 @@ using System.Windows.Input;
 namespace Altaxo.Gui.Pads.FileBrowser
 {
   /// <summary>
-  /// Interaction logic for FileScoutControl.xaml
+  /// Interaction logic for <c>FileBrowserControl.xaml</c>.
   /// </summary>
   public partial class FileBrowserControl : UserControl, IFileBrowserView
   {
@@ -42,13 +42,20 @@ namespace Altaxo.Gui.Pads.FileBrowser
     /// <summary>
     /// Occurs when the user activates the selected items (either by double-clicking on it, or by pressing Enter).
     /// </summary>
+    /// <inheritdoc/>
     public event Action? SelectedItemsActivated;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileBrowserControl"/> class.
+    /// </summary>
     public FileBrowserControl()
     {
       InitializeComponent();
     }
 
+    /// <summary>
+    /// Gets or sets the controller associated with this view.
+    /// </summary>
     public FileBrowserController? Controller
     {
       get
@@ -66,6 +73,9 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
     #region Focus
 
+    /// <summary>
+    /// Gets the control that should receive the initial focus.
+    /// </summary>
     public object InitiallyFocusedControl
     {
       get { return _treeView; }
@@ -75,17 +85,20 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
     #region IFileTreeView
 
+    /// <inheritdoc/>
     public void Initialize_FolderTree(Collections.NGTreeNodeCollection nodes)
     {
       _treeView.ItemsSource = nodes;
     }
 
+    /// <inheritdoc/>
     public event Action<Collections.NGTreeNode>? FolderTreeNodeSelected;
 
     #endregion IFileTreeView
 
     #region IFileListView
 
+    /// <inheritdoc/>
     public void Initialize_FileListColumnNames(ICollection<string> names)
     {
       int i = 0;
@@ -101,6 +114,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
       }
     }
 
+    /// <inheritdoc/>
     public void Initialize_FileList(Collections.SelectableListNodeList files)
     {
       _listView.ItemsSource = files;

@@ -29,12 +29,19 @@ using System.Text;
 
 namespace Altaxo.UnmanagedApi.GdiPlus
 {
+  /// <summary>
+  /// Defines flags for converting EMF to WMF bits.
+  /// </summary>
   [Flags]
   public enum EmfToWmfBitsFlags
   {
+    /// <summary>Uses default conversion behavior.</summary>
     EmfToWmfBitsFlagsDefault = 0x00000000,
+    /// <summary>Embeds the original EMF data.</summary>
     EmfToWmfBitsFlagsEmbedEmf = 0x00000001,
+    /// <summary>Includes a placeable WMF header.</summary>
     EmfToWmfBitsFlagsIncludePlaceable = 0x00000002,
+    /// <summary>Disables XOR clipping.</summary>
     EmfToWmfBitsFlagsNoXORClip = 0x00000004
   }
 }

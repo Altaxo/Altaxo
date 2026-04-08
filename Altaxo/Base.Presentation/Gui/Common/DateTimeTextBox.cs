@@ -32,8 +32,14 @@ using System.Windows.Data;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// Text box for editing <see cref="DateTime"/> values.
+  /// </summary>
   public class DateTimeTextBox : TextBox
   {
+    /// <summary>
+    /// Occurs when <see cref="SelectedValue"/> changes.
+    /// </summary>
     public event DependencyPropertyChangedEventHandler? SelectedValueChanged;
 
     private DateTimeConverter _converter;
@@ -70,18 +76,21 @@ namespace Altaxo.Gui.Common
     // 'How to SelectAll in TextBox when TextBox gets focus by mouse click?'
     // (http://social.msdn.microsoft.com/Forums/en-US/wpf/thread/564b5731-af8a-49bf-b297-6d179615819f/)
 
+    /// <inheritdoc/>
     protected override void OnGotKeyboardFocus(System.Windows.Input.KeyboardFocusChangedEventArgs e)
     {
       SelectAll();
       base.OnGotKeyboardFocus(e);
     }
 
+    /// <inheritdoc/>
     protected override void OnMouseDoubleClick(System.Windows.Input.MouseButtonEventArgs e)
     {
       SelectAll();
       base.OnMouseDoubleClick(e);
     }
 
+    /// <inheritdoc/>
     protected override void OnPreviewMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs e)
     {
       if (!IsKeyboardFocusWithin)
@@ -100,7 +109,7 @@ namespace Altaxo.Gui.Common
     #region Dependency property
 
     /// <summary>
-    /// Gets/sets the quantity. The quantity consist of a numeric value together with a unit.
+    /// Gets or sets the selected date and time value.
     /// </summary>
     public DateTime SelectedValue
     {
@@ -108,6 +117,9 @@ namespace Altaxo.Gui.Common
       set { SetValue(SelectedValueProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="SelectedValue"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty SelectedValueProperty =
         DependencyProperty.Register("SelectedValue", typeof(DateTime), typeof(DateTimeTextBox),
         new FrameworkPropertyMetadata(EhSelectedValueChanged) { BindsTwoWayByDefault=true});

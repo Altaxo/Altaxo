@@ -34,6 +34,9 @@ using System.Windows.Data;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// Updown control for integer values in a continuous range.
+  /// </summary>
   public class Int32UpDown : NumericUpDownBase
   {
     private const int DefaultMinValue = int.MinValue;
@@ -43,25 +46,44 @@ namespace Altaxo.Gui.Common
 
     #region Converter
 
+    /// <inheritdoc/>
     protected override object GetNewValidationRuleAndConverter()
     {
       return new IntegerUpDownConverter(this);
     }
 
+    /// <summary>
+    /// Converts between integer values and their textual representation for <see cref="Int32UpDown"/>.
+    /// </summary>
     protected class IntegerUpDownConverter : ValidationRule, IValueConverter
     {
       private Int32UpDown _parent;
       private System.Globalization.CultureInfo _conversionCulture = Altaxo.Settings.GuiCulture.Instance;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="IntegerUpDownConverter"/> class.
+      /// </summary>
       public IntegerUpDownConverter()
       {
       }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="IntegerUpDownConverter"/> class.
+      /// </summary>
+      /// <param name="parent">The owning control.</param>
       public IntegerUpDownConverter(Int32UpDown parent)
       {
         _parent = parent;
       }
 
+      /// <summary>
+      /// Converts an integer value to its display text.
+      /// </summary>
+      /// <param name="obj">The source value.</param>
+      /// <param name="targetType">The target type.</param>
+      /// <param name="parameter">The converter parameter.</param>
+      /// <param name="cultureBuggyDontUse">The culture supplied by the binding engine.</param>
+      /// <returns>The converted display value.</returns>
       public object Convert(object obj, Type targetType, object parameter, CultureInfo cultureBuggyDontUse)
       {
         int val = (int)obj;
@@ -77,17 +99,34 @@ namespace Altaxo.Gui.Common
         return val.ToString(_conversionCulture);
       }
 
+      /// <summary>
+      /// Converts a display value back to an integer value.
+      /// </summary>
+      /// <param name="obj">The display value.</param>
+      /// <param name="targetType">The target type.</param>
+      /// <param name="parameter">The converter parameter.</param>
+      /// <param name="cultureBuggyDontUse">The culture supplied by the binding engine.</param>
+      /// <returns>The converted integer value.</returns>
       public object ConvertBack(object obj, Type targetType, object parameter, CultureInfo cultureBuggyDontUse)
       {
         return ConvertBack(obj, targetType, parameter, out var validationResult);
       }
 
+      /// <inheritdoc/>
       public override ValidationResult Validate(object obj, CultureInfo cultureInfoBuggyDontUse)
       {
         ConvertBack(obj, null, null, out var validationResult);
         return validationResult;
       }
 
+      /// <summary>
+      /// Converts a display value back to an integer value and returns validation information.
+      /// </summary>
+      /// <param name="obj">The display value.</param>
+      /// <param name="targetType">The target type.</param>
+      /// <param name="parameter">The converter parameter.</param>
+      /// <param name="validationResult">Receives the validation result.</param>
+      /// <returns>The converted integer value or <see cref="Binding.DoNothing"/>.</returns>
       public object ConvertBack(object obj, Type targetType, object parameter, out ValidationResult validationResult)
       {
         validationResult = ValidationResult.ValidResult;
@@ -125,6 +164,9 @@ namespace Altaxo.Gui.Common
 
     #region Value
 
+    /// <summary>
+    /// Gets or sets the selected value.
+    /// </summary>
     public int Value
     {
       get { return (int)GetValue(ValueProperty); }
@@ -190,6 +232,9 @@ namespace Altaxo.Gui.Common
 
     #region ValueIfTextIsEmpty
 
+    /// <summary>
+    /// Gets or sets the value that is used when the text box is empty.
+    /// </summary>
     public int? ValueIfTextIsEmpty
     {
       get { return (int?)GetValue(ValueIfTextIsEmptyProperty); }
@@ -208,6 +253,9 @@ namespace Altaxo.Gui.Common
 
     #region ValueString
 
+    /// <summary>
+    /// Gets the current text representation of the value.
+    /// </summary>
     public string ValueString
     {
       get
@@ -219,6 +267,9 @@ namespace Altaxo.Gui.Common
     private static readonly DependencyPropertyKey ValueStringPropertyKey =
         DependencyProperty.RegisterAttachedReadOnly("ValueString", typeof(string), typeof(Int32UpDown), new PropertyMetadata());
 
+    /// <summary>
+    /// Identifies the <see cref="ValueString"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty ValueStringProperty = ValueStringPropertyKey.DependencyProperty;
 
     private NumberFormatInfo _numberFormatInfo = new NumberFormatInfo();
@@ -227,12 +278,18 @@ namespace Altaxo.Gui.Common
 
     #region Minimum
 
+    /// <summary>
+    /// Gets or sets the minimum allowed value.
+    /// </summary>
     public int Minimum
     {
       get { return (int)GetValue(MinimumProperty); }
       set { SetValue(MinimumProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="Minimum"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty MinimumProperty =
         DependencyProperty.Register(
             "Minimum", typeof(int), typeof(Int32UpDown),
@@ -257,12 +314,18 @@ namespace Altaxo.Gui.Common
 
     #region Maximum
 
+    /// <summary>
+    /// Gets or sets the maximum allowed value.
+    /// </summary>
     public int Maximum
     {
       get { return (int)GetValue(MaximumProperty); }
       set { SetValue(MaximumProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="Maximum"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty MaximumProperty =
         DependencyProperty.Register(
             "Maximum", typeof(int), typeof(Int32UpDown),
@@ -288,12 +351,18 @@ namespace Altaxo.Gui.Common
 
     #region Change
 
+    /// <summary>
+    /// Gets or sets the increment or decrement applied by the spinner commands.
+    /// </summary>
     public int Change
     {
       get { return (int)GetValue(ChangeProperty); }
       set { SetValue(ChangeProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="Change"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty ChangeProperty =
         DependencyProperty.Register(
             "Change", typeof(int), typeof(Int32UpDown),
@@ -345,6 +414,7 @@ namespace Altaxo.Gui.Common
 
     #region Commands
 
+    /// <inheritdoc/>
     protected override void OnIncrease()
     {
       // avoid an overflow before coerce of the value
@@ -355,11 +425,13 @@ namespace Altaxo.Gui.Common
         Value = int.MaxValue;
     }
 
+    /// <inheritdoc/>
     protected override bool OnIncreaseCanExecute()
     {
       return Value < Maximum;
     }
 
+    /// <inheritdoc/>
     protected override void OnDecrease()
     {
       // avoid an underflow before coerce of the value
@@ -369,16 +441,19 @@ namespace Altaxo.Gui.Common
         Value = int.MinValue;
     }
 
+    /// <inheritdoc/>
     protected override bool OnDecreaseCanExecute()
     {
       return Value > Minimum;
     }
 
+    /// <inheritdoc/>
     protected override void OnGotoMinimum()
     {
       Value = Minimum;
     }
 
+    /// <inheritdoc/>
     protected override void OnGotoMaximum()
     {
       Value = Maximum;
@@ -388,6 +463,7 @@ namespace Altaxo.Gui.Common
 
     #region Automation
 
+    /// <inheritdoc/>
     protected override AutomationPeer OnCreateAutomationPeer()
     {
       return new IntegerUpDownAutomationPeer(this);
@@ -396,23 +472,33 @@ namespace Altaxo.Gui.Common
     #endregion Automation
   }
 
+  /// <summary>
+  /// Automation peer for <see cref="Int32UpDown"/>.
+  /// </summary>
   public class IntegerUpDownAutomationPeer : FrameworkElementAutomationPeer, IRangeValueProvider
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IntegerUpDownAutomationPeer"/> class.
+    /// </summary>
+    /// <param name="control">The owning control.</param>
     public IntegerUpDownAutomationPeer(Int32UpDown control)
       : base(control)
     {
     }
 
+    /// <inheritdoc/>
     protected override string GetClassNameCore()
     {
       return "Int32UpDown";
     }
 
+    /// <inheritdoc/>
     protected override AutomationControlType GetAutomationControlTypeCore()
     {
       return AutomationControlType.Spinner;
     }
 
+    /// <inheritdoc/>
     public override object GetPattern(PatternInterface patternInterface)
     {
       if (patternInterface == PatternInterface.RangeValue)

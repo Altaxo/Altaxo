@@ -53,9 +53,17 @@ namespace Altaxo.Calc.LinearAlgebra
 
     #region Serialization
 
+    /// <summary>
+    /// Serialization surrogate for <see cref="LinearlySpacedIntervalByStartCountStep"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinearlySpacedIntervalByStartCountStep), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <summary>
+      /// Serializes the <see cref="LinearlySpacedIntervalByStartCountStep"/> object.
+      /// </summary>
+      /// <param name="obj">The object to serialize.</param>
+      /// <param name="info">The serialization info.</param>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (LinearlySpacedIntervalByStartCountStep)obj;
@@ -64,6 +72,15 @@ namespace Altaxo.Calc.LinearAlgebra
         info.AddValue("Step", s.Step);
       }
 
+      /// <summary>
+      /// Deserializes the <see cref="LinearlySpacedIntervalByStartCountStep"/> object.
+      /// </summary>
+      /// <param name="o">The object to deserialize into.</param>
+      /// <param name="info">The deserialization info.</param>
+      /// <param name="parent">The parent object.</param>
+      /// <returns>
+      /// The deserialized <see cref="LinearlySpacedIntervalByStartCountStep"/> object.
+      /// </returns>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var start = info.GetDouble("Start");
@@ -127,9 +144,24 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the start of the interval is editable.
+    /// </summary>
     public bool IsStartEditable => true;
+
+    /// <summary>
+    /// Gets a value indicating whether the end of the interval is editable.
+    /// </summary>
     public bool IsEndEditable => false;
+
+    /// <summary>
+    /// Gets a value indicating whether the step size is editable.
+    /// </summary>
     public bool IsStepEditable => true;
+
+    /// <summary>
+    /// Gets a value indicating whether the count of elements is editable.
+    /// </summary>
     public bool IsCountEditable => true;
   }
 }

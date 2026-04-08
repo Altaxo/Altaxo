@@ -127,10 +127,22 @@ namespace Altaxo.Calc.Distributions
     }
 
 
+    /// <summary>
+    /// Gets the number of Bernoulli trials.
+    /// </summary>
     public int N => _n;
+
+    /// <summary>
+    /// Gets the alpha shape parameter of the beta distribution.
+    /// </summary>
     public double A => _a;
+
+    /// <summary>
+    /// Gets the beta shape parameter of the beta distribution.
+    /// </summary>
     public double B => _b;
 
+    /// <inheritdoc/>
     public System.Random RandomSource
     {
       get => _random;

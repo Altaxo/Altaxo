@@ -33,6 +33,9 @@ using Altaxo.Calc.Optimization;
 
 namespace Altaxo.Calc
 {
+  /// <summary>
+  /// Provides convenience methods for numerical minimization.
+  /// </summary>
   public static class FindMinimum
   {
     /// <summary>

@@ -31,9 +31,15 @@ using System.Text;
 
 namespace Altaxo.Units.Time
 {
+  /// <summary>
+  /// Represents the minute unit of time.
+  /// </summary>
   [UnitDescription("Time", 0, 0, 1, 0, 0, 0, 0)]
   public class Minute : UnitBase, IUnit
   {
+    /// <summary>
+    /// The number of seconds in one minute.
+    /// </summary>
     public const double OneMinuteInSeconds = 60;
 
     private static readonly Minute _instance = new Minute();
@@ -45,13 +51,18 @@ namespace Altaxo.Units.Time
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="Minute"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Minute), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return Minute.Instance;
@@ -60,6 +71,9 @@ namespace Altaxo.Units.Time
     #endregion
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Minute"/> class.
+    /// </summary>
     protected Minute()
     {
     }

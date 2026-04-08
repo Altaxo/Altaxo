@@ -56,30 +56,45 @@ namespace Altaxo.Calc
       return System.AppContext.TryGetSwitch(switchName, out bool isEnabled) && isEnabled;
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether probing for native providers is disabled.
+    /// </summary>
     public static bool DisableNativeProviderProbing
     {
       get => IsEnabled(AppSwitchDisableNativeProviderProbing);
       set => SetSwitch(AppSwitchDisableNativeProviderProbing, value);
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether all native providers are disabled.
+    /// </summary>
     public static bool DisableNativeProviders
     {
       get => IsEnabled(AppSwitchDisableNativeProviders);
       set => SetSwitch(AppSwitchDisableNativeProviders, value);
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the MKL native provider is disabled.
+    /// </summary>
     public static bool DisableMklNativeProvider
     {
       get => IsEnabled(AppSwitchDisableMklNativeProvider);
       set => SetSwitch(AppSwitchDisableMklNativeProvider, value);
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the CUDA native provider is disabled.
+    /// </summary>
     public static bool DisableCudaNativeProvider
     {
       get => IsEnabled(AppSwitchDisableCudaNativeProvider);
       set => SetSwitch(AppSwitchDisableCudaNativeProvider, value);
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the OpenBLAS native provider is disabled.
+    /// </summary>
     public static bool DisableOpenBlasNativeProvider
     {
       get => IsEnabled(AppSwitchDisableOpenBlasNativeProvider);

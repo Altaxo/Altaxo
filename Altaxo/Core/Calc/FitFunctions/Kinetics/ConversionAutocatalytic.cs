@@ -164,7 +164,15 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
 
     private Altaxo.Calc.Ode.DOP853? _ode = null;
     private double _x_previous_step = double.NaN;
+
+    /// <summary>
+    /// Stores the initial state for the ODE solver.
+    /// </summary>
     protected double[] _y0 = new double[1];
+
+    /// <summary>
+    /// Evaluates the autocatalytic rate equation for the current parameter set.
+    /// </summary>
     protected Evaluator _evaluator = new Evaluator();
     private IEnumerator<(double x, double[] y)> _solution;
 
@@ -176,6 +184,8 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
       Y[0] *= P[1];
     }
 
+    /// <inheritdoc/>
+    /// <inheritdoc/>
     public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       IEnumerable<double> GetXPoints()

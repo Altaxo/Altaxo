@@ -29,6 +29,11 @@ namespace Altaxo.Gui.Workbench
   /// </summary>
   public interface IDisplayBinding
   {
+    /// <summary>
+    /// Determines whether this binding should be preferred for the specified file.
+    /// </summary>
+    /// <param name="fileName">The file name to evaluate.</param>
+    /// <returns><see langword="true"/> if this binding is preferred; otherwise, <see langword="false"/>.</returns>
     bool IsPreferredBindingForFile(FileName fileName);
 
     /// <remarks>
@@ -42,6 +47,13 @@ namespace Altaxo.Gui.Workbench
     /// </returns>
     bool CanCreateContentForFile(FileName fileName);
 
+    /// <summary>
+    /// Detects how likely the specified content can be handled by this binding.
+    /// </summary>
+    /// <param name="fileName">The file name to inspect.</param>
+    /// <param name="fileContent">The file content stream.</param>
+    /// <param name="detectedMimeType">The MIME type detected for the file.</param>
+    /// <returns>A score indicating how well the content matches this binding.</returns>
     double AutoDetectFileContent(FileName fileName, Stream fileContent, string detectedMimeType);
 
     /// <remarks>

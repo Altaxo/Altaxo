@@ -6,7 +6,6 @@
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
     <RootNamespace>Altaxo</RootNamespace>
-    <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <OutputPath>..\..\rtNet\bin</OutputPath>
@@ -15,6 +14,13 @@
     <NoWarn>CA1416</NoWarn>
     <CoreCompileDependsOn>GenAssInfo</CoreCompileDependsOn>
   </PropertyGroup>
+
+  <!-- Enforce XML documentation and treat specific warnings as errors    -->
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <WarningsAsErrors>CS1570;CS1571;CS1572;CS1573;CS1574;CS1580;CS1581;CS1584;CS1587;CS1589;CS1590;CS1591;CS1592;CS1598;CS1599</WarningsAsErrors>
+  </PropertyGroup>
+  
   <ItemGroup>
     <Compile Remove="Properties\AssemblyInfo.cs" Visible="true" />
   </ItemGroup>

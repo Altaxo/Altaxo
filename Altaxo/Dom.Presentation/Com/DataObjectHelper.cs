@@ -66,10 +66,25 @@ namespace Altaxo.Com
   /// </remarks>
   public static class DataObjectHelper
   {
+    /// <summary>
+    /// Clipboard format identifier for embedded objects.
+    /// </summary>
     public static short CF_EMBEDDEDOBJECT = User32Func.RegisterClipboardFormat(CFSTR.CFSTR_EMBEDDEDOBJECT);
+    /// <summary>
+    /// Clipboard format identifier for embedded sources.
+    /// </summary>
     public static short CF_EMBEDSOURCE = User32Func.RegisterClipboardFormat(CFSTR.CFSTR_EMBEDSOURCE);
+    /// <summary>
+    /// Clipboard format identifier for linked sources.
+    /// </summary>
     public static short CF_LINKSOURCE = User32Func.RegisterClipboardFormat(CFSTR.CFSTR_LINKSOURCE);
+    /// <summary>
+    /// Clipboard format identifier for object descriptors.
+    /// </summary>
     public static short CF_OBJECTDESCRIPTOR = User32Func.RegisterClipboardFormat(CFSTR.CFSTR_OBJECTDESCRIPTOR);
+    /// <summary>
+    /// Clipboard format identifier for link source descriptors.
+    /// </summary>
     public static short CF_LINKSRCDESCRIPTOR = User32Func.RegisterClipboardFormat(CFSTR.CFSTR_LINKSRCDESCRIPTOR);
 
     /// <summary>
@@ -91,6 +106,12 @@ namespace Altaxo.Com
       return Marshal.GetIUnknownForObject(strm);  // Increments the reference count
     }
 
+    /// <summary>
+    /// Creates a new COM stream and renders data into it by using a managed stream wrapper.
+    /// </summary>
+    /// <param name="tymed">The target storage medium.</param>
+    /// <param name="RenderToStreamProcedure">The procedure that writes to the managed stream.</param>
+    /// <returns>A pointer to the created stream.</returns>
     public static IntPtr RenderToNewStream(TYMED tymed, Action<System.IO.Stream> RenderToStreamProcedure)
     {
       if (!(tymed == TYMED.TYMED_ISTREAM))
@@ -124,6 +145,11 @@ namespace Altaxo.Com
       return Marshal.GetIUnknownForObject(strm);  // Increments the reference count
     }
 
+    /// <summary>
+    /// Saves a moniker to the specified stream.
+    /// </summary>
+    /// <param name="moniker">The moniker to save.</param>
+    /// <param name="strm">The destination stream.</param>
     public static void SaveMonikerToStream(IMoniker moniker, IStream strm)
     {
       ComDebug.ReportInfo("SaveMonikerToStream:{0}", GetDisplayName(moniker));
@@ -132,6 +158,11 @@ namespace Altaxo.Com
         throw new InvalidOperationException("The COM operation was not successful");
     }
 
+    /// <summary>
+    /// Gets the display name of a moniker.
+    /// </summary>
+    /// <param name="m">The moniker.</param>
+    /// <returns>The display name.</returns>
     public static string GetDisplayName(IMoniker m)
     {
       IBindCtx bc = CreateBindCtx();
@@ -140,6 +171,10 @@ namespace Altaxo.Com
       return s;
     }
 
+    /// <summary>
+    /// Creates a binding context.
+    /// </summary>
+    /// <returns>A new binding context.</returns>
     public static IBindCtx CreateBindCtx()
     {
       int rc = Ole32Func.CreateBindCtx(0, out var bc);
@@ -148,6 +183,11 @@ namespace Altaxo.Com
       return bc;
     }
 
+    /// <summary>
+    /// Escapes a normal string so it can be used inside a moniker item name.
+    /// </summary>
+    /// <param name="rawString">The raw string.</param>
+    /// <returns>The escaped moniker item name string.</returns>
     public static string NormalStringToMonikerNameString(string rawString)
     {
       var stb = new StringBuilder(rawString.Length + 20);
@@ -172,6 +212,11 @@ namespace Altaxo.Com
       return stb.ToString();
     }
 
+    /// <summary>
+    /// Converts an escaped moniker item name string back to its normal representation.
+    /// </summary>
+    /// <param name="rawString">The escaped moniker item name string.</param>
+    /// <returns>The unescaped string.</returns>
     public static string MonikerNameStringToNormalString(string rawString)
     {
       var stb = new StringBuilder(rawString.Length);
@@ -222,6 +267,11 @@ namespace Altaxo.Com
       return stb.ToString();
     }
 
+    /// <summary>
+    /// Converts a format structure to a readable string.
+    /// </summary>
+    /// <param name="format">The format structure.</param>
+    /// <returns>A readable description of the format.</returns>
     public static string FormatEtcToString(FORMATETC format)
     {
       return string.Format("({0}, {1}, {2})",
@@ -230,6 +280,11 @@ namespace Altaxo.Com
                            format.tymed);
     }
 
+    /// <summary>
+    /// Gets the clipboard format name for the specified numeric format identifier.
+    /// </summary>
+    /// <param name="format">The clipboard format identifier.</param>
+    /// <returns>The clipboard format name.</returns>
     public static string ClipboardFormatName(short format)
     {
       switch (format)

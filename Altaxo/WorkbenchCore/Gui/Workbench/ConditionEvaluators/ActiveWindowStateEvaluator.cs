@@ -22,12 +22,30 @@ using Altaxo.AddInItems;
 
 namespace Altaxo.Gui.Workbench
 {
+  /// <summary>
+  /// Specifies state flags for a workbench window.
+  /// </summary>
   [Flags]
   public enum WindowState
   {
+    /// <summary>
+    /// No state flag is specified.
+    /// </summary>
     None = 0,
+
+    /// <summary>
+    /// The window represents an untitled file.
+    /// </summary>
     Untitled = 1,
+
+    /// <summary>
+    /// The window contains unsaved changes.
+    /// </summary>
     Dirty = 2,
+
+    /// <summary>
+    /// The window is view-only.
+    /// </summary>
     ViewOnly = 4
   }
 
@@ -36,6 +54,7 @@ namespace Altaxo.Gui.Workbench
   /// </summary>
   public class ActiveWindowStateConditionEvaluator : IConditionEvaluator
   {
+    /// <inheritdoc/>
     public bool IsValid(object? caller, Condition condition)
     {
       var workbench = Altaxo.Current.GetRequiredService<Workbench.IWorkbenchEx>();

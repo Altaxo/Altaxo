@@ -91,11 +91,20 @@ namespace Altaxo.Calc.Probability
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RayleighDistribution"/> class with the specified scale parameter.
+    /// </summary>
+    /// <param name="sigma">The scale parameter.</param>
     public RayleighDistribution(double sigma)
       : this(sigma, DefaultGenerator)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RayleighDistribution"/> class with the specified scale parameter and generator.
+    /// </summary>
+    /// <param name="sigma">The scale parameter.</param>
+    /// <param name="generator">A <see cref="Generator"/> object.</param>
     public RayleighDistribution(double sigma, Generator generator)
       : base(generator)
     {

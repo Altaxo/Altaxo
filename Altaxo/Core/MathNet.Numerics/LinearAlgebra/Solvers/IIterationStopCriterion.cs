@@ -65,6 +65,10 @@ namespace Altaxo.Calc.LinearAlgebra.Solvers
     /// calculation.</remarks>
     public void Reset();
 
+    /// <summary>
+    /// Creates a copy of the stop criterion.
+    /// </summary>
+    /// <returns>A cloned stop criterion.</returns>
     public IIterationStopCriterion<T> Clone();
   }
 }

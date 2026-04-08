@@ -35,15 +35,28 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public class GridViewColumnAutoSize
   {
+    /// <summary>
+    /// Identifies the attached property that configures automatic column widths.
+    /// </summary>
     public static readonly DependencyProperty AutoWidthProperty =
       DependencyProperty.RegisterAttached("AutoWidth", typeof(string), typeof(GridViewColumnAutoSize),
                                           new FrameworkPropertyMetadata(null, AutoWidthPropertyChanged));
 
+    /// <summary>
+    /// Gets the automatic width definition for the specified object.
+    /// </summary>
+    /// <param name="obj">The object from which to read the property.</param>
+    /// <returns>The automatic width definition.</returns>
     public static string GetAutoWidth(DependencyObject obj)
     {
       return (string)obj.GetValue(AutoWidthProperty);
     }
 
+    /// <summary>
+    /// Sets the automatic width definition for the specified object.
+    /// </summary>
+    /// <param name="obj">The object on which to set the property.</param>
+    /// <param name="value">The automatic width definition.</param>
     public static void SetAutoWidth(DependencyObject obj, string value)
     {
       obj.SetValue(AutoWidthProperty, value);

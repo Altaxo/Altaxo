@@ -28,6 +28,9 @@ using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Calc.FitFunctions.Peaks
 {
+  /// <summary>
+  /// Defines additional members for fit functions that represent one or more peak terms.
+  /// </summary>
   public interface IFitFunctionPeak : IFitFunction
   {
     /// <summary>

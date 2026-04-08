@@ -10,6 +10,9 @@ namespace Altaxo.Gui.Behaviors
   /// Use <see cref="TriggerProperty"/> to bind the value back to the viewmodel.</remarks>
   public class BindingTriggersBinding
   {
+    /// <summary>
+    /// Identifies the attached property that triggers the feedback update.
+    /// </summary>
     public static readonly DependencyProperty TriggerProperty = DependencyProperty.RegisterAttached(
         "Trigger",
         typeof(object),
@@ -18,11 +21,17 @@ namespace Altaxo.Gui.Behaviors
 
 
 
+    /// <summary>
+    /// Gets the trigger value for the specified framework element.
+    /// </summary>
     public static object GetTrigger(FrameworkElement frameworkElement)
     {
       return frameworkElement.GetValue(TriggerProperty);
     }
 
+    /// <summary>
+    /// Sets the trigger value for the specified framework element.
+    /// </summary>
     public static void SetTrigger(FrameworkElement frameworkElement, object value)
     {
       frameworkElement.SetValue(TriggerProperty, value);
@@ -44,11 +53,17 @@ namespace Altaxo.Gui.Behaviors
     typeof(BindingTriggersBinding)
     );
 
+    /// <summary>
+    /// Gets the feedback counter for the specified framework element.
+    /// </summary>
     public static long GetFeedback(FrameworkElement frameworkElement)
     {
       return (long)frameworkElement.GetValue(FeedbackProperty);
     }
 
+    /// <summary>
+    /// Sets the feedback counter for the specified framework element.
+    /// </summary>
     public static void SetFeedback(FrameworkElement frameworkElement, long value)
     {
       frameworkElement.SetValue(FeedbackProperty, value);

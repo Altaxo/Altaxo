@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
   /// </summary>
   public partial class BarGraphPlotStyleControl : UserControl, IBarGraphPlotStyleView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BarGraphPlotStyleControl"/> class.
+    /// </summary>
     public BarGraphPlotStyleControl()
     {
       InitializeComponent();

@@ -34,6 +34,10 @@ namespace Altaxo.Gui
   {
     private string text;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StringParseExtension"/> class.
+    /// </summary>
+    /// <param name="text">The text to parse.</param>
     public StringParseExtension(string text)
     {
       this.text = text;
@@ -46,6 +50,7 @@ namespace Altaxo.Gui
     /// </summary>
     public bool UsesAccessors { get; set; }
 
+    /// <inheritdoc/>
     public override string Value
     {
       get

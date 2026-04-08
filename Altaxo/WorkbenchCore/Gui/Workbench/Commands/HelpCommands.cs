@@ -23,13 +23,20 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Workbench.Commands
 {
+  /// <summary>
+  /// Provides a development test command.
+  /// </summary>
   public class DevelopmentTest : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object? parameter)
     {
       Run6();
     }
 
+    /// <summary>
+    /// Executes the current development test routine.
+    /// </summary>
     public void Run6()
     {
       GC.Collect();
@@ -46,11 +53,16 @@ namespace Altaxo.Gui.Workbench.Commands
   {
     private string site;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinkCommand"/> class.
+    /// </summary>
+    /// <param name="site">The site or application-relative link to open.</param>
     public LinkCommand(string site)
     {
       this.site = site;
     }
 
+    /// <inheritdoc/>
     public override void Execute(object? parameter)
     {
       if (site.StartsWith("home://"))

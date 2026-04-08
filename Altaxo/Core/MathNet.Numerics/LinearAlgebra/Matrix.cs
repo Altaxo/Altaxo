@@ -57,6 +57,9 @@ namespace Altaxo.Calc.LinearAlgebra
       ColumnCount = storage.ColumnCount;
     }
 
+    /// <summary>
+    /// Gets the generic matrix builder for the current element type.
+    /// </summary>
     public static readonly MatrixBuilder<T> Build = BuilderInstance<T>.Matrix;
 
     /// <summary>

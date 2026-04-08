@@ -45,6 +45,9 @@ namespace Altaxo.Gui.Data.Selections
   /// </summary>
   public partial class IncludeSingleTextValueControl : UserControl, IIncludeSingleTextValueView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IncludeSingleTextValueControl"/> class.
+    /// </summary>
     public IncludeSingleTextValueControl()
     {
       InitializeComponent();

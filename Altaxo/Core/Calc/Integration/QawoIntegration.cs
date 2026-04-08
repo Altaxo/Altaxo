@@ -31,7 +31,13 @@ namespace Altaxo.Calc.Integration
   /// <summary>
   /// Specifies the oscillatory term type used in weighted Fourier/quadrature integrations.
   /// </summary>
-  public enum OscillatoryTerm { Cosine, Sine };
+  public enum OscillatoryTerm
+  {
+    /// <summary>Use a cosine weighting term.</summary>
+    Cosine,
+    /// <summary>Use a sine weighting term.</summary>
+    Sine
+  };
 
   /// <summary>
   /// QAWO adaptive integration for oscillatory functions
@@ -63,9 +69,24 @@ namespace Altaxo.Calc.Integration
   {
     #region offical C# interface
 
+    /// <summary>
+    /// Default number of levels used in the oscillatory moment table.
+    /// </summary>
     protected const int _defaultOscTableLength = 20;
+
+    /// <summary>
+    /// Stores the debug flag that controls error handling behavior.
+    /// </summary>
     protected bool _debug;
+
+    /// <summary>
+    /// Stores the reusable workspace for adaptive integration.
+    /// </summary>
     protected gsl_integration_workspace? _workSpace;
+
+    /// <summary>
+    /// Stores the reusable QAWO moment table.
+    /// </summary>
     protected gsl_integration_qawo_table? _qawoTable;
 
     /// <summary>
@@ -182,18 +203,50 @@ namespace Altaxo.Calc.Integration
 
     #endregion offical C# interface
 
-    protected enum gsl_integration_qawo_enum { GSL_INTEG_COSINE, GSL_INTEG_SINE };
+    /// <summary>
+    /// Identifies the trigonometric weighting used by the internal QAWO table.
+    /// </summary>
+    protected enum gsl_integration_qawo_enum
+    {
+      /// <summary>Use cosine weighting.</summary>
+      GSL_INTEG_COSINE,
+      /// <summary>Use sine weighting.</summary>
+      GSL_INTEG_SINE
+    };
 
     /// <summary>
     /// Table of precomputed Chebyshev moments and parameters used by the QAWO algorithm.
     /// </summary>
     protected class gsl_integration_qawo_table
     {
+      /// <summary>
+      /// Gets the number of scale levels stored in the table.
+      /// </summary>
       public int n;
+
+      /// <summary>
+      /// Gets the angular frequency.
+      /// </summary>
       public double omega;
+
+      /// <summary>
+      /// Gets the interval length.
+      /// </summary>
       public double L;
+
+      /// <summary>
+      /// Gets the scaled frequency-length product.
+      /// </summary>
       public double par;
+
+      /// <summary>
+      /// Gets the selected trigonometric weighting.
+      /// </summary>
       public gsl_integration_qawo_enum sine;
+
+      /// <summary>
+      /// Gets the precomputed Chebyshev moments.
+      /// </summary>
       public double[] chebmo;
 
       /// <summary>

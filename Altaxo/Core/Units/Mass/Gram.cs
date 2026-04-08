@@ -32,6 +32,9 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Units.Mass
 {
+  /// <summary>
+  /// Represents the gram unit of mass.
+  /// </summary>
   [UnitDescription("Mass", 0, 1, 0, 0, 0, 0, 0)]
   public class Gram : UnitBase, IUnit
   {
@@ -44,13 +47,18 @@ namespace Altaxo.Units.Mass
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="Gram"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Gram), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return Gram.Instance;
@@ -58,6 +66,9 @@ namespace Altaxo.Units.Mass
     }
     #endregion
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Gram"/> class.
+    /// </summary>
     private Gram()
     {
     }

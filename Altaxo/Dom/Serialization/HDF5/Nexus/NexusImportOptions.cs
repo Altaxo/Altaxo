@@ -39,7 +39,7 @@ namespace Altaxo.Serialization.HDF5.Nexus
     public bool UseNeutralColumnName { get; init; } = true;
 
     /// <summary>
-    /// Gets the neutral column name (base). The name is at request extended, e.g. by a number at the end.
+    /// Gets the neutral column name base. The name is extended on request, for example by a number at the end.
     /// </summary>
     public string NeutralColumnName { get; init; } = "Y";
 
@@ -64,7 +64,7 @@ namespace Altaxo.Serialization.HDF5.Nexus
     public bool IncludeTitleAsProperty { get; init; } = true;
 
     /// <summary>
-    /// If true, the title is included as a column property.
+    /// If true, the long name and unit are included as column properties.
     /// </summary>
     public bool IncludeLongNameAndUnitAsProperty { get; init; } = true;
 
@@ -75,8 +75,8 @@ namespace Altaxo.Serialization.HDF5.Nexus
     public bool IncludeMetaDataAsProperties { get; init; } = true;
 
     /// <summary>
-    /// Gets the indices of imported frames.
-    /// If the collection is empty, all frames are imported.
+    /// Gets the indices of imported entries.
+    /// If the collection is empty, all entries are imported.
     /// </summary>
     public IReadOnlyList<int> IndicesOfImportedEntries { get; init; } = [];
 
@@ -89,6 +89,7 @@ namespace Altaxo.Serialization.HDF5.Nexus
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NexusImportOptions), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (NexusImportOptions)obj;
@@ -103,6 +104,7 @@ namespace Altaxo.Serialization.HDF5.Nexus
         info.AddArray("IndicesOfImportedEntries", s.IndicesOfImportedEntries, s.IndicesOfImportedEntries.Count);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var useNeutralColumnName = info.GetBoolean("UseNeutralColumnName");

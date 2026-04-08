@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
   /// </summary>
   public partial class ScatterPlotStyleControl : UserControl, IScatterPlotStyleView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScatterPlotStyleControl"/> class.
+    /// </summary>
     public ScatterPlotStyleControl()
     {
       InitializeComponent();

@@ -30,12 +30,19 @@ using Altaxo.Serialization.HDF5.Nexus;
 
 namespace Altaxo.Gui.Serialization.HDF5.Nexus
 {
+  /// <summary>
+  /// Defines the view for editing NeXus import options.
+  /// </summary>
   public interface INexusImportOptionsView : IDataContextAwareView { }
 
+  /// <summary>
+  /// Controls the editing of <see cref="NexusImportOptions"/> instances.
+  /// </summary>
   [ExpectedTypeOfView(typeof(INexusImportOptionsView))]
   [UserControllerForObject(typeof(NexusImportOptions))]
   public class NexusImportOptionsController : MVCANControllerEditImmutableDocBase<NexusImportOptions, INexusImportOptionsView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -45,6 +52,9 @@ namespace Altaxo.Gui.Serialization.HDF5.Nexus
 
     private bool _useNeutralColumnName;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether a neutral column name should be used.
+    /// </summary>
     public bool UseNeutralColumnName
     {
       get => _useNeutralColumnName;
@@ -60,6 +70,9 @@ namespace Altaxo.Gui.Serialization.HDF5.Nexus
 
     private string _neutralColumnName;
 
+    /// <summary>
+    /// Gets or sets the neutral column name.
+    /// </summary>
     public string NeutralColumnName
     {
       get => _neutralColumnName;
@@ -75,6 +88,9 @@ namespace Altaxo.Gui.Serialization.HDF5.Nexus
 
     private bool _includeFilePathAsProperty;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the file path should be stored as a property.
+    /// </summary>
     public bool IncludeFilePathAsProperty
     {
       get => _includeFilePathAsProperty;
@@ -90,6 +106,9 @@ namespace Altaxo.Gui.Serialization.HDF5.Nexus
 
     private bool _includeNXentryNameAsProperty;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the <c>NXentry</c> name should be stored as a property.
+    /// </summary>
     public bool IncludeNXentryNameAsProperty
     {
       get => _includeNXentryNameAsProperty;
@@ -104,6 +123,9 @@ namespace Altaxo.Gui.Serialization.HDF5.Nexus
     }
     private bool _includeNXentryIndexAsProperty;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the <c>NXentry</c> index should be stored as a property.
+    /// </summary>
     public bool IncludeNXentryIndexAsProperty
     {
       get => _includeNXentryIndexAsProperty;
@@ -119,6 +141,9 @@ namespace Altaxo.Gui.Serialization.HDF5.Nexus
 
     private bool _includeTitleAsProperty;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the entry title should be stored as a property.
+    /// </summary>
     public bool IncludeTitleAsProperty
     {
       get => _includeTitleAsProperty;
@@ -134,6 +159,9 @@ namespace Altaxo.Gui.Serialization.HDF5.Nexus
 
     private bool _includeLongNameAndUnitAsProperty;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the long name and unit should be stored as properties.
+    /// </summary>
     public bool IncludeLongNameAndUnitAsProperty
     {
       get => _includeLongNameAndUnitAsProperty;
@@ -149,6 +177,9 @@ namespace Altaxo.Gui.Serialization.HDF5.Nexus
 
     private bool _includeMetaDataAsProperties;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether metadata should be imported as properties.
+    /// </summary>
     public bool IncludeMetaDataAsProperties
     {
       get => _includeMetaDataAsProperties;
@@ -161,18 +192,22 @@ namespace Altaxo.Gui.Serialization.HDF5.Nexus
         }
       }
     }
-
-
-
+    /// <summary>
+    /// Represents an index entry shown in the UI.
+    /// </summary>
     public class IndexClass
     {
+      /// <summary>
+      /// Gets or sets the entry index.
+      /// </summary>
       public int Index { get; set; }
-
-
     }
 
     private ObservableCollection<IndexClass> _indicesOfGraphs;
 
+    /// <summary>
+    /// Gets or sets the indices of the entries to import.
+    /// </summary>
     public ObservableCollection<IndexClass> IndicesOfEntries
     {
       get => _indicesOfGraphs;
@@ -191,6 +226,7 @@ namespace Altaxo.Gui.Serialization.HDF5.Nexus
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -209,6 +245,7 @@ namespace Altaxo.Gui.Serialization.HDF5.Nexus
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = _doc with
@@ -227,6 +264,5 @@ namespace Altaxo.Gui.Serialization.HDF5.Nexus
 
       return ApplyEnd(true, disposeController);
     }
-
   }
 }

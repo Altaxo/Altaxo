@@ -36,12 +36,18 @@ namespace Altaxo.Gui.DataConnection
   /// </summary>
   public partial class FilterEditControl : UserControl, IFilterEditView
   {
+    /// <inheritdoc/>
     public event Action? SimpleUpdated;
 
+    /// <inheritdoc/>
     public event Action? IntervalUpdated;
 
+    /// <inheritdoc/>
     public event Action? ClearAll;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FilterEditControl"/> class.
+    /// </summary>
     public FilterEditControl()
     {
       InitializeComponent();
@@ -84,11 +90,13 @@ namespace Altaxo.Gui.DataConnection
       }
     }
 
+    /// <inheritdoc/>
     public void SetValueText(string txt)
     {
       _value.Content = txt;
     }
 
+    /// <inheritdoc/>
     public string SingleValueText
     {
       get
@@ -101,6 +109,7 @@ namespace Altaxo.Gui.DataConnection
       }
     }
 
+    /// <inheritdoc/>
     public string IntervalFromText
     {
       get
@@ -113,6 +122,7 @@ namespace Altaxo.Gui.DataConnection
       }
     }
 
+    /// <inheritdoc/>
     public string intervalToText
     {
       get
@@ -125,6 +135,7 @@ namespace Altaxo.Gui.DataConnection
       }
     }
 
+    /// <inheritdoc/>
     public void SetOperatorChoices(Collections.SelectableListNodeList list)
     {
       GuiHelper.Initialize(_cmbOperator, list);

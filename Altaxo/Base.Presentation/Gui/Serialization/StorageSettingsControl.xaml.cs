@@ -45,6 +45,9 @@ namespace Altaxo.Gui.Serialization
   /// </summary>
   public partial class StorageSettingsControl : UserControl, IStorageSettingsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StorageSettingsControl"/> class.
+    /// </summary>
     public StorageSettingsControl()
     {
       InitializeComponent();

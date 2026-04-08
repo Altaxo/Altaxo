@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Common.Converters
     /// Converts a <see cref="BrushX"/> value. 
     /// It is expected that the argument <paramref name="values"/> contains [0] the brush, [1] the width of the preview image, and [2] the height of the preview image.
     /// </summary>
-    /// <param name="value">The value produced by the binding source.</param>
+    /// <param name="values">The values produced by the binding source.</param>
     /// <param name="targetType">The type of the binding target property.</param>
     /// <param name="parameter">The converter parameter to use.</param>
     /// <param name="culture">The culture to use in the converter.</param>
@@ -97,11 +97,13 @@ namespace Altaxo.Gui.Common.Converters
       }
     }
 
+    /// <inheritdoc/>
     public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
       _previewBitmap?.Dispose();

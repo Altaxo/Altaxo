@@ -36,12 +36,16 @@ namespace Altaxo.Gui.DataConnection
   /// </summary>
   public partial class QueryPropertiesControl : UserControl, IQueryPropertiesView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="QueryPropertiesControl"/> class.
+    /// </summary>
     public QueryPropertiesControl()
     {
       InitializeComponent();
     }
 
     // copy QueryBuilder values to form
+    /// <inheritdoc/>
     public void UpdateDialogValues(bool isDistinct, int topN, SelectableListNodeList groupBy)
     {
       _chkDistinct.IsChecked = isDistinct;
@@ -60,11 +64,13 @@ namespace Altaxo.Gui.DataConnection
     }
 
     // copy form values to QueryBuilder
+    /// <inheritdoc/>
     public int GetTopN()
     {
       return _numTopN.Value;
     }
 
+    /// <inheritdoc/>
     public bool GetDistinct()
     {
       return true == _chkDistinct.IsChecked;

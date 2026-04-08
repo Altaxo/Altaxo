@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Drawing.D3D.Material
   /// </summary>
   public partial class MaterialWithUniformColorControl : UserControl, IMaterialWithUniformColorView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MaterialWithUniformColorControl"/> class.
+    /// </summary>
     public MaterialWithUniformColorControl()
     {
       InitializeComponent();

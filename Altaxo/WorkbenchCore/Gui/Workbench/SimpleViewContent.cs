@@ -27,6 +27,9 @@ namespace Altaxo.Gui.Workbench
   {
     private object? _view;
 
+    /// <summary>
+    /// Gets or sets the view object hosted by this content.
+    /// </summary>
     public override object? ViewObject
     {
       get
@@ -40,6 +43,10 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SimpleViewContent"/> class.
+    /// </summary>
+    /// <param name="view">The view object to host.</param>
     public SimpleViewContent(object view)
     {
       _view = view ?? throw new ArgumentNullException(nameof(view));
@@ -52,6 +59,9 @@ namespace Altaxo.Gui.Workbench
       base.SetLocalizedTitle(text);
     }
 
+    /// <summary>
+    /// Gets or sets the title shown for this view content.
+    /// </summary>
     public string TitleName
     {
       get { return base.Title; }

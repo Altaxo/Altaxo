@@ -38,6 +38,9 @@ namespace Altaxo.Gui.Common.Converters
   /// <seealso cref="System.Windows.Data.IValueConverter" />
   public class ResourceImageConverter : IValueConverter
   {
+    /// <summary>
+    /// Gets the shared converter instance.
+    /// </summary>
     public static ResourceImageConverter Instance { get; private set; } = new ResourceImageConverter();
 
     /// <summary>
@@ -60,6 +63,7 @@ namespace Altaxo.Gui.Common.Converters
       return Binding.DoNothing;
     }
 
+    /// <inheritdoc/>
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
       return Binding.DoNothing;

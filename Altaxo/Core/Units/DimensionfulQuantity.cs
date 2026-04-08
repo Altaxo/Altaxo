@@ -133,7 +133,7 @@ namespace Altaxo.Units
 
     /// <summary>Creates a quantity with the provided value in the given prefixed unit.</summary>
     /// <param name="value">The value of the created quantity.</param>
-    /// <param name="prefixedUnit">The prefixed unit of the created quanity.</param>
+    /// <param name="prefixedUnit">The prefixed unit of the created quantity.</param>
     public DimensionfulQuantity(double value, IPrefixedUnit prefixedUnit)
     {
       if (prefixedUnit is null)
@@ -144,7 +144,7 @@ namespace Altaxo.Units
       _unit = prefixedUnit.Unit;
     }
 
-    /// <summary>Determines whether this instance is equal to another quanity in all three components (value, prefix and unit). This is <b>not</b> a comparison for the physical equality of the quantities.</summary>
+    /// <summary>Determines whether this instance is equal to another quantity in all three components (value, prefix and unit). This is <b>not</b> a comparison for the physical equality of the quantities.</summary>
     /// <param name="a">Quantity to compare.</param>
     /// <returns>Returns <c>true</c> if <paramref name="a"/> is equal in all three components(value, prefix, unit) to this quantity; otherwise, <c>false</c>.</returns>
     public bool IsEqualInValuePrefixUnit(DimensionfulQuantity a)
@@ -318,7 +318,7 @@ namespace Altaxo.Units
       return AsQuantityIn(prefixedUnit.Prefix, prefixedUnit.Unit);
     }
 
-    /// <summary>Compares this quanitity to another quantity.</summary>
+    /// <summary>Compares this quantity to another quantity.</summary>
     /// <param name="other">The other quantity to compare with.</param>
     /// <returns>The value is 1, if this quantity is greater than the other quantity; 0 if both quantities are equal, and -1 if this quantity is less than the other quantity.</returns>
     /// <inheritdoc/>
@@ -340,7 +340,7 @@ namespace Altaxo.Units
       if (value is DimensionfulQuantity other)
         return CompareTo(other);
       else
-        throw new ArgumentException($"Parameter must be of type {typeof(DimensionfulQuantity)}, but acutally is {value?.GetType()}");
+        throw new ArgumentException($"Parameter must be of type {typeof(DimensionfulQuantity)}, but actually is {value?.GetType()}");
     }
 
     /// <inheritdoc/>
@@ -393,20 +393,44 @@ namespace Altaxo.Units
       return !(a == b);
     }
 
+    /// <summary>
+    /// Determines whether one quantity is less than another quantity.
+    /// </summary>
+    /// <param name="a">The left operand.</param>
+    /// <param name="b">The right operand.</param>
+    /// <returns><see langword="true"/> if <paramref name="a"/> is less than <paramref name="b"/>; otherwise, <see langword="false"/>.</returns>
     public static bool operator <(DimensionfulQuantity a, DimensionfulQuantity b)
     {
       return !double.IsNaN(a._value) && a.CompareTo(b) < 0;
     }
+    /// <summary>
+    /// Determines whether one quantity is greater than another quantity.
+    /// </summary>
+    /// <param name="a">The left operand.</param>
+    /// <param name="b">The right operand.</param>
+    /// <returns><see langword="true"/> if <paramref name="a"/> is greater than <paramref name="b"/>; otherwise, <see langword="false"/>.</returns>
     public static bool operator >(DimensionfulQuantity a, DimensionfulQuantity b)
     {
       return !double.IsNaN(b._value) && a.CompareTo(b) > 0;
     }
 
+    /// <summary>
+    /// Determines whether one quantity is less than or equal to another quantity.
+    /// </summary>
+    /// <param name="a">The left operand.</param>
+    /// <param name="b">The right operand.</param>
+    /// <returns><see langword="true"/> if <paramref name="a"/> is less than or equal to <paramref name="b"/>; otherwise, <see langword="false"/>.</returns>
     public static bool operator <=(DimensionfulQuantity a, DimensionfulQuantity b)
     {
       return !double.IsNaN(a._value) && a.CompareTo(b) <= 0;
     }
 
+    /// <summary>
+    /// Determines whether one quantity is greater than or equal to another quantity.
+    /// </summary>
+    /// <param name="a">The left operand.</param>
+    /// <param name="b">The right operand.</param>
+    /// <returns><see langword="true"/> if <paramref name="a"/> is greater than or equal to <paramref name="b"/>; otherwise, <see langword="false"/>.</returns>
     public static bool operator >=(DimensionfulQuantity a, DimensionfulQuantity b)
     {
       return !double.IsNaN(b._value) && a.CompareTo(b) >= 0;
@@ -463,6 +487,12 @@ namespace Altaxo.Units
       }
     }
 
+    /// <summary>
+    /// Adds two quantities.
+    /// </summary>
+    /// <param name="a">The left operand.</param>
+    /// <param name="b">The right operand.</param>
+    /// <returns>The sum of the two quantities.</returns>
     public static DimensionfulQuantity operator +(DimensionfulQuantity a, DimensionfulQuantity b)
     {
       if (a.IsEmpty || b.IsEmpty)
@@ -535,6 +565,12 @@ namespace Altaxo.Units
       }
     }
 
+    /// <summary>
+    /// Multiplies two quantities.
+    /// </summary>
+    /// <param name="a">The left operand.</param>
+    /// <param name="b">The right operand.</param>
+    /// <returns>The product of the two quantities.</returns>
     public static DimensionfulQuantity operator *(DimensionfulQuantity a, DimensionfulQuantity b)
     {
       if (a.IsEmpty || b.IsEmpty)
@@ -546,6 +582,12 @@ namespace Altaxo.Units
           a.Unit.SIUnit * b.Unit.SIUnit);
     }
 
+    /// <summary>
+    /// Divides one quantity by another quantity.
+    /// </summary>
+    /// <param name="a">The dividend.</param>
+    /// <param name="b">The divisor.</param>
+    /// <returns>The quotient of the two quantities.</returns>
     public static DimensionfulQuantity operator /(DimensionfulQuantity a, DimensionfulQuantity b)
     {
       if (a.IsEmpty || b.IsEmpty)
@@ -560,6 +602,12 @@ namespace Altaxo.Units
           a.Unit.SIUnit / b.Unit.SIUnit);
     }
 
+    /// <summary>
+    /// Multiplies a quantity by a scalar.
+    /// </summary>
+    /// <param name="a">The quantity.</param>
+    /// <param name="b">The scalar factor.</param>
+    /// <returns>The scaled quantity.</returns>
     public static DimensionfulQuantity operator *(DimensionfulQuantity a, double b)
     {
       if (a.IsEmpty)
@@ -573,6 +621,12 @@ namespace Altaxo.Units
           a.Unit);
     }
 
+    /// <summary>
+    /// Divides a quantity by a scalar.
+    /// </summary>
+    /// <param name="a">The quantity.</param>
+    /// <param name="b">The scalar divisor.</param>
+    /// <returns>The scaled quantity.</returns>
     public static DimensionfulQuantity operator /(DimensionfulQuantity a, double b)
     {
       if (a.IsEmpty)
@@ -586,6 +640,12 @@ namespace Altaxo.Units
           a.Unit);
     }
 
+    /// <summary>
+    /// Multiplies a scalar by a quantity.
+    /// </summary>
+    /// <param name="a">The scalar factor.</param>
+    /// <param name="b">The quantity.</param>
+    /// <returns>The scaled quantity.</returns>
     public static DimensionfulQuantity operator *(double a, DimensionfulQuantity b)
     {
       if (b.IsEmpty)
@@ -600,6 +660,12 @@ namespace Altaxo.Units
           b.Unit);
     }
 
+    /// <summary>
+    /// Divides a scalar by a quantity.
+    /// </summary>
+    /// <param name="a">The scalar dividend.</param>
+    /// <param name="b">The quantity divisor.</param>
+    /// <returns>The resulting quantity.</returns>
     public static DimensionfulQuantity operator /(double a, DimensionfulQuantity b)
     {
       if (b.IsEmpty)
@@ -615,6 +681,11 @@ namespace Altaxo.Units
           Dimensionless.Unity.Instance / b.Unit.SIUnit);
     }
 
+    /// <summary>
+    /// Negates a quantity.
+    /// </summary>
+    /// <param name="a">The quantity.</param>
+    /// <returns>The negated quantity.</returns>
     public static DimensionfulQuantity operator -(DimensionfulQuantity a)
     {
       if (a.IsEmpty)
@@ -626,6 +697,11 @@ namespace Altaxo.Units
       return new DimensionfulQuantity(-a.Value, a.Prefix, a.Unit);
     }
 
+    /// <summary>
+    /// Gets the absolute value of the specified quantity.
+    /// </summary>
+    /// <param name="a">The quantity.</param>
+    /// <returns>The absolute value of <paramref name="a"/>.</returns>
     public static DimensionfulQuantity Abs(DimensionfulQuantity a)
     {
       if (a.IsEmpty)
@@ -647,6 +723,12 @@ namespace Altaxo.Units
       return s * y;
     }
 
+    /// <summary>
+    /// Rounds a quantity to the nearest multiple of another quantity.
+    /// </summary>
+    /// <param name="a">The quantity to round.</param>
+    /// <param name="b">The quantity defining the rounding step.</param>
+    /// <returns>The rounded quantity.</returns>
     public static DimensionfulQuantity RoundUpOrDown(DimensionfulQuantity a, DimensionfulQuantity b)
     {
       if (a.IsEmpty || b.IsEmpty)
@@ -659,6 +741,12 @@ namespace Altaxo.Units
       return new DimensionfulQuantity(c, a.Prefix, a.Unit);
     }
 
+    /// <summary>
+    /// Returns the larger of two quantities.
+    /// </summary>
+    /// <param name="a">The first quantity.</param>
+    /// <param name="b">The second quantity.</param>
+    /// <returns>The larger quantity.</returns>
     public static DimensionfulQuantity Max(DimensionfulQuantity a, DimensionfulQuantity b)
     {
       if (a.IsEmpty || b.IsEmpty)
@@ -668,6 +756,12 @@ namespace Altaxo.Units
       return new DimensionfulQuantity(Math.Max(a.Value, c), a.Prefix, a.Unit);
     }
 
+    /// <summary>
+    /// Returns the smaller of two quantities.
+    /// </summary>
+    /// <param name="a">The first quantity.</param>
+    /// <param name="b">The second quantity.</param>
+    /// <returns>The smaller quantity.</returns>
     public static DimensionfulQuantity Min(DimensionfulQuantity a, DimensionfulQuantity b)
     {
       if (a.IsEmpty || b.IsEmpty)

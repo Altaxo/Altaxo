@@ -32,10 +32,17 @@ using Altaxo.Collections;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// List view that synchronizes its selection with a <see cref="SelectableListNodeList"/>.
+  /// </summary>
   public class MultipleChoiceListView : ListView
   {
     private SelectableListNodeList _choices;
 
+    /// <summary>
+    /// Initializes the control with the specified selectable choices.
+    /// </summary>
+    /// <param name="choices">The list of selectable choices.</param>
     public void Initialize(SelectableListNodeList choices)
     {
       SelectionChanged -= EhSelectionChanged; // prevent firing event here

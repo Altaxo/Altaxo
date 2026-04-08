@@ -37,26 +37,33 @@ namespace Altaxo.Gui.Data
   /// </summary>
   public partial class ExpandCyclingVariableOptionsControl : UserControl, IExpandCyclingVariableOptionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ExpandCyclingVariableOptionsControl"/> class.
+    /// </summary>
     public ExpandCyclingVariableOptionsControl()
     {
       InitializeComponent();
     }
 
+    /// <inheritdoc/>
     public void InitializeDestinationOutputFormat(SelectableListNodeList list)
     {
       _chDestinationOutput.Initialize(list);
     }
 
+    /// <inheritdoc/>
     public void InitializeDestinationX(SelectableListNodeList list)
     {
       _chDestinationX.Initialize(list);
     }
 
+    /// <inheritdoc/>
     public void InitializeDestinationColumnSorting(SelectableListNodeList list)
     {
       _chDestinationColSort.Initialize(list);
     }
 
+    /// <inheritdoc/>
     public void InitializeDestinationRowSorting(SelectableListNodeList list)
     {
       _chDestinationRowSort.Initialize(list);

@@ -28,12 +28,19 @@ using Altaxo.AddInItems;
 
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
+  /// <summary>
+  /// Disables automatic showing of items when selecting a tree node.
+  /// </summary>
   public class CmdViewOnSelectOff : ProjectBrowseControllerCommand, ICheckableMenuCommand
   {
+    /// <summary>
+    /// Occurs when the checked state changes.
+    /// </summary>
     public event EventHandler IsCheckedChanged;
 
     private ViewOnSelect _lastKnownValue;
 
+    /// <inheritdoc/>
     protected override void Run(ProjectBrowseController ctrl)
     {
       _lastKnownValue = ViewOnSelect.Off;
@@ -44,6 +51,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     #region ICheckableMenuCommand Members
 
+    /// <inheritdoc/>
     public bool IsChecked(object parameter)
     {
       return ((ProjectBrowseController)parameter).ViewOnSelectTreeNode == ViewOnSelect.Off;
@@ -53,6 +61,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     #region IMenuCommand Members
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the command is enabled.
+    /// </summary>
     public bool IsEnabled
     {
       get
@@ -73,12 +84,19 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     #endregion IMenuCommand Members
   }
 
+  /// <summary>
+  /// Shows items in the selected folder when a tree node is selected.
+  /// </summary>
   public class CmdViewOnSelectFolderItems : ProjectBrowseControllerCommand, ICheckableMenuCommand
   {
+    /// <summary>
+    /// Occurs when the checked state changes.
+    /// </summary>
     public event EventHandler IsCheckedChanged;
 
     private ViewOnSelect _lastKnownValue;
 
+    /// <inheritdoc/>
     protected override void Run(ProjectBrowseController ctrl)
     {
       _lastKnownValue = ViewOnSelect.ItemsInFolder;
@@ -88,6 +106,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     #region ICheckableMenuCommand Members
 
+    /// <inheritdoc/>
     public bool IsChecked(object parameter)
     {
       return ((ProjectBrowseController)parameter).ViewOnSelectTreeNode == ViewOnSelect.ItemsInFolder;
@@ -97,6 +116,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     #region IMenuCommand Members
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the command is enabled.
+    /// </summary>
     public bool IsEnabled
     {
       get
@@ -117,12 +139,19 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     #endregion IMenuCommand Members
   }
 
+  /// <summary>
+  /// Shows items in the selected folder and subfolders when a tree node is selected.
+  /// </summary>
   public class CmdViewOnSelectFolderAndSubfolderItems : ProjectBrowseControllerCommand, ICheckableMenuCommand
   {
+    /// <summary>
+    /// Occurs when the checked state changes.
+    /// </summary>
     public event EventHandler IsCheckedChanged;
 
     private ViewOnSelect _lastKnownValue;
 
+    /// <inheritdoc/>
     protected override void Run(ProjectBrowseController ctrl)
     {
       _lastKnownValue = ViewOnSelect.ItemsInFolderAndSubfolders;
@@ -132,6 +161,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     #region ICheckableMenuCommand Members
 
+    /// <inheritdoc/>
     public bool IsChecked(object parameter)
     {
       return ((ProjectBrowseController)parameter).ViewOnSelectTreeNode == ViewOnSelect.ItemsInFolderAndSubfolders;
@@ -141,6 +171,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     #region IMenuCommand Members
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the command is enabled.
+    /// </summary>
     public bool IsEnabled
     {
       get
@@ -161,8 +194,12 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     #endregion IMenuCommand Members
   }
 
+  /// <summary>
+  /// Deletes the selected folder and its documents.
+  /// </summary>
   public class CmdTreeNodeFolderDelete : ProjectBrowseControllerCommand
   {
+    /// <inheritdoc/>
     protected override void Run(ProjectBrowseController ctrl)
     {
       var items = Current.Project.Folders.GetExpandedProjectItemSet(ctrl.GetAllListItems());
@@ -170,32 +207,48 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     }
   }
 
+  /// <summary>
+  /// Renames the selected folder tree node.
+  /// </summary>
   public class CmdTreeNodeFolderRename : ProjectBrowseControllerCommand
   {
+    /// <inheritdoc/>
     protected override void Run(ProjectBrowseController ctrl)
     {
       ctrl.RenameTreeNode();
     }
   }
 
+  /// <summary>
+  /// Shows all documents in the selected tree node.
+  /// </summary>
   public class CmdTreeNodeShowWindows : ProjectBrowseControllerCommand
   {
+    /// <inheritdoc/>
     protected override void Run(ProjectBrowseController ctrl)
     {
       ProjectBrowserExtensions.ShowDocumentsExclusively(ctrl.GetAllListItems());
     }
   }
 
+  /// <summary>
+  /// Shows all documents in the selected tree node recursively.
+  /// </summary>
   public class CmdTreeNodeShowWindowsRecursively : ProjectBrowseControllerCommand
   {
+    /// <inheritdoc/>
     protected override void Run(ProjectBrowseController ctrl)
     {
       ProjectBrowserExtensions.ShowDocumentsExclusively(Current.Project.Folders.GetExpandedProjectItemSet(ctrl.GetAllListItems()));
     }
   }
 
+  /// <summary>
+  /// Hides all documents in the selected tree node.
+  /// </summary>
   public class CmdTreeNodeHideWindows : ProjectBrowseControllerCommand
   {
+    /// <inheritdoc/>
     protected override void Run(ProjectBrowseController ctrl)
     {
       var list = ctrl.GetAllListItems();
@@ -204,8 +257,12 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     }
   }
 
+  /// <summary>
+  /// Hides all documents in the selected tree node recursively.
+  /// </summary>
   public class CmdTreeNodeHideWindowsRecursively : ProjectBrowseControllerCommand
   {
+    /// <inheritdoc/>
     protected override void Run(ProjectBrowseController ctrl)
     {
       var list = Current.Project.Folders.GetExpandedProjectItemSet(ctrl.GetAllListItems());

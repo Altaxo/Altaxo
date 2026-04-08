@@ -24,13 +24,19 @@ using System.Windows.Interop;
 namespace Altaxo.Gui.Workbench
 {
   /// <summary>
-  ///
+  /// Window base class that supports toggling full-screen mode.
   /// </summary>
   public class FullScreenEnabledWindow : Window
   {
+    /// <summary>
+    /// Identifies the dependency property that controls full-screen mode.
+    /// </summary>
     public static readonly DependencyProperty FullScreenProperty =
         DependencyProperty.Register("FullScreen", typeof(bool), typeof(FullScreenEnabledWindow));
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the window is shown in full-screen mode.
+    /// </summary>
     public bool FullScreen
     {
       get { return (bool)GetValue(FullScreenProperty); }
@@ -40,6 +46,7 @@ namespace Altaxo.Gui.Workbench
     private System.Windows.WindowState previousWindowState = System.Windows.WindowState.Maximized;
     private double oldLeft, oldTop, oldWidth, oldHeight;
 
+    /// <inheritdoc/>
     protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
     {
       base.OnPropertyChanged(e);

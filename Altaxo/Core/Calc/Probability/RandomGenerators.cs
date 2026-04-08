@@ -101,7 +101,7 @@ namespace Altaxo.Calc.Probability.Old
     private static readonly System.Security.Cryptography.RandomNumberGenerator _seedGenerator =
       new System.Security.Cryptography.RNGCryptoServiceProvider();
 
-    /// <summary>This is the default state of the art random genenerator to produce random numbers.</summary>
+    /// <summary>This is the default state-of-the-art random generator used to produce random numbers.</summary>
     protected static readonly ThreadLocal<RandomGenerator> defaultRandomGenerator =
       new ThreadLocal<RandomGenerator>(() => new Ran002(UniqueSeed()));
 
@@ -135,7 +135,7 @@ namespace Altaxo.Calc.Probability.Old
 
 
     /// <summary>
-    /// Generate an unique seed using the default seed generator, which is currently
+    /// Generate a unique seed using the default seed generator, which is currently
     /// <see cref="System.Security.Cryptography.RNGCryptoServiceProvider"/>
     /// </summary>
     /// <returns>A seed value in the range [0, 2^31-1].</returns>
@@ -153,7 +153,7 @@ namespace Altaxo.Calc.Probability.Old
 
         result = 0x7FFFFFFFU & System.BitConverter.ToUInt32(bytes, 0);
 
-      } while (result == 0); // extremly seldom
+      } while (result == 0); // extremely seldom
 
       return result;
     }
@@ -214,11 +214,11 @@ namespace Altaxo.Calc.Probability.Old
   /// <summary>
   /// <para>Ran000: minimal congruential</para>
   /// <para>Returns integer random numbers uniformly distributed within [0,2147483646].</para>
-  /// <para>NOT RECOMENDED FOR SERIOUS APPLICATIONS.</para>
+  /// <para>NOT RECOMMENDED FOR SERIOUS APPLICATIONS.</para>
   /// </summary>
   /// <remarks>
   /// <code>
-  /// Notes: - NOT RECOMENDED FOR SERIOUS APPLICATIONS.
+  /// Notes: - NOT RECOMMENDED FOR SERIOUS APPLICATIONS.
   ///     Just use it for comparison purposes, etc.
   ///
   ///        - This generator is fast
@@ -240,7 +240,7 @@ namespace Altaxo.Calc.Probability.Old
   ///           o Algorithm from CACM 31 no. 10, pp. 1192-1201, October 1988.
   ///           o Algorithm "ran0" from "Portable Random Number Generators",
   ///             William H. Press and Saul A Teukolsky
-  ///             Computers in Phyics, Vol. 6, No. 5, Sep/Oct 1992
+  ///             Computers in Physics, Vol. 6, No. 5, Sep/Oct 1992
   ///           o According to a posting by Ed Taft on comp.lang.postscript,
   ///             Level 2 (Adobe) PostScript interpreters use this algorithm too.
   ///
@@ -258,14 +258,17 @@ namespace Altaxo.Calc.Probability.Old
 
     private int idum;
 
+    /// <summary>Initializes a new instance of the <see cref="Ran000"/> class.</summary>
     public Ran000()
       : this(0)
     {
     }
+    /// <summary>Initializes a new instance of the <see cref="Ran000"/> class with a specified seed.</summary>
+    /// <param name="the_seed">The seed value.</param>
     public Ran000(uint the_seed)
       : base(the_seed)
     {
-      // make shure that seed is not the MASK (otherwise zero is returned always)
+      // make sure that seed is not the MASK (otherwise zero is returned always)
       if (seed == (uint)MASK)
         throw new ArgumentException(string.Format("You selected the only illegal seed value ({0})", MASK));
 
@@ -276,6 +279,7 @@ namespace Altaxo.Calc.Probability.Old
                                   // and other simple bit patterns for idum.
     }
 
+    /// <inheritdoc/>
     public override uint Long()
     {
       int k = idum / IQ;    // Compute idum=mod(IA*idum,IM)
@@ -305,7 +309,7 @@ namespace Altaxo.Calc.Probability.Old
   ///        - The period is 2^31-2 = 2.1*10^9. If your application needs
   ///     more numbers in sequence than 1% of the random generators period,
   ///     i.e. 10^7, then use a more elaborate random generator.
-  ///          There are no statistical tests known that it fails to pass, execpt
+  ///          There are no statistical tests known that it fails to pass, except
   ///          when the number of calls starts to become on the order of the period.
   ///     When you need longer random sequences you should use
   ///          another random generator, for example Ran002 or Ran013.
@@ -313,7 +317,7 @@ namespace Altaxo.Calc.Probability.Old
   ///        - Reference:
   ///          Algorithm "ran1" published in "Portable Random Number Generators",
   ///          William H. Press and Saul A. Teukolsky
-  ///          Computers in Phyics, Vol. 6, No. 5, Sep/Oct 1992
+  ///          Computers in Physics, Vol. 6, No. 5, Sep/Oct 1992
   ///
   ///        - At least 32 bit long int is required, but works with any larger
   ///     word lengths
@@ -332,7 +336,10 @@ namespace Altaxo.Calc.Probability.Old
     private int idum, iy;
     private int[] iv = new int[32];
 
+    /// <summary>Initializes a new instance of the <see cref="Ran001"/> class.</summary>
     public Ran001() : this(0) { }
+    /// <summary>Initializes a new instance of the <see cref="Ran001"/> class with a specified seed.</summary>
+    /// <param name="the_seed">The seed value.</param>
     public Ran001(uint the_seed)
       : base(the_seed)
     {
@@ -353,6 +360,7 @@ namespace Altaxo.Calc.Probability.Old
       }
       iy = iv[0];
     }
+    /// <inheritdoc/>
     public override uint Long()
     {
       long j, k;
@@ -388,7 +396,7 @@ namespace Altaxo.Calc.Probability.Old
   ///      and "added safeguards" as proposed by
   ///  (2) William H. Press and Saul A. Teukolsky,
   ///      "Portable Random Number Generators",
-  ///      Computers in Phyics, Vol. 6, No. 5, Sep/Oct 1992, Algorithm "ran2"
+  ///      Computers in Physics, Vol. 6, No. 5, Sep/Oct 1992, Algorithm "ran2"
   ///  (3) This generator has been validated also by
   ///      G. Marsaglia and A. Zaman,
   ///      "Some portable very-long-period random number generators",
@@ -417,7 +425,10 @@ namespace Altaxo.Calc.Probability.Old
 
     private int idum, idum2, iy;
     private int[] iv = new int[32];
+    /// <summary>Initializes a new instance of the <see cref="Ran002"/> class.</summary>
     public Ran002() : this(0) { }
+    /// <summary>Initializes a new instance of the <see cref="Ran002"/> class with a specified seed.</summary>
+    /// <param name="the_seed">The seed value.</param>
     public Ran002(uint the_seed)
       : base(the_seed)
     {
@@ -440,6 +451,7 @@ namespace Altaxo.Calc.Probability.Old
       iy = iv[0];
     }
 
+    /// <inheritdoc/>
     public override uint Long()
     {
       long j, k;
@@ -472,7 +484,7 @@ namespace Altaxo.Calc.Probability.Old
 
 
   /// <summary>
-  /// Ran004: W.H. Press/S.A. Teukolsky: Numerical recipies pseudo-DES ran4.
+  /// Ran004: W.H. Press/S.A. Teukolsky: Numerical Recipes pseudo-DES ran4.
   /// Returns an integer random number uniformly distributed within [0,4294967295].
   /// </summary>
   /// <remarks><code>
@@ -486,9 +498,9 @@ namespace Altaxo.Calc.Probability.Old
   ///    word lengths. That means different random sequences are obtained for
   ///    32-bit long integers and 64-bit long integers.
   ///    This version is made portable by using bit-masks. The run time penalty
-  ///    is neglegible.
+  ///    is negligible.
   /// b) The random sequence for one seed has only a period of maximally 2^32.
-  ///    This is definitly to short for nowadays MC simulations. In this version
+  ///    This is definitely too short for modern MC simulations. In this version
   ///    the seed is automatically incremented to jump to the next segment
   ///    when one segment is exhausted.
   /// c) Also the extremely inconvenient interface of the original
@@ -496,14 +508,17 @@ namespace Altaxo.Calc.Probability.Old
   ///
   /// Reference:
   ///   (1) W.H. Press, S.A. Teukolsky, Vetterling, Teukolsky,
-  ///       Numerical Recipies in C, 2nd edition, 1992.
+  ///       Numerical Recipes in C, 2nd edition, 1992.
   ///   (2) Major modifications a) to c) and inclusion into Matpack
   ///       by B. M. Gammel, Apr 1, 1997 (no joke!)
   /// </code></remarks>
   public class Ran004 : RandomGenerator
   { // Press's pseudo-DES "ran4"
     private uint idums, idum;
+    /// <summary>Initializes a new instance of the <see cref="Ran004"/> class.</summary>
     public Ran004() : this(0) { }
+    /// <summary>Initializes a new instance of the <see cref="Ran004"/> class with a specified seed.</summary>
+    /// <param name="the_seed">The seed value.</param>
     public Ran004(uint the_seed)
       : base(the_seed)
     {
@@ -519,6 +534,7 @@ namespace Altaxo.Calc.Probability.Old
     //----------------------------------------------------------------------------//
     // deliver next pseudorandom number
     //----------------------------------------------------------------------------//
+    /// <inheritdoc/>
     public override uint Long()
     {
       uint irword, lword;
@@ -544,6 +560,12 @@ namespace Altaxo.Calc.Probability.Old
     //----------------------------------------------------------------------------//
     // reset the sequence to the n-th deviate for the given seed and return number
     //----------------------------------------------------------------------------//
+    /// <summary>
+    /// Resets the sequence to a specified seed and position and returns that deviate.
+    /// </summary>
+    /// <param name="new_seed">The seed that identifies the sequence.</param>
+    /// <param name="nth">The one-based position within the sequence.</param>
+    /// <returns>The pseudorandom value at the requested sequence position.</returns>
     public virtual uint Long(uint new_seed, uint nth)
     {
       uint irword, lword;
@@ -609,7 +631,7 @@ namespace Altaxo.Calc.Probability.Old
   /// <summary>
   /// Ran005: congruential with shuffle.
   /// Returns an integer random number uniformly distributed within [0,714024].
-  /// <para>Notes: - NOT RECOMENDED FOR SERIOUS APPLICATIONS.</para>
+  /// <para>Notes: - NOT RECOMMENDED FOR SERIOUS APPLICATIONS.</para>
   /// </summary>
   /// <remarks><code>
   ///     Just use it for comparison purposes, etc.
@@ -624,7 +646,7 @@ namespace Altaxo.Calc.Probability.Old
   ///
   ///        - Corresponds to generator "ran2" of
   ///          W. H. Press, B. P. Flannery, S. A. Teukolsky, W. T. Vetterling,
-  ///          Numerical Recipies in C, Cambridge Univ. Press, 1988.
+  ///          Numerical Recipes in C, Cambridge Univ. Press, 1988.
   ///
   ///        - The generator is based upon
   ///          D. H. Knuth: The Art of Computer Programming, Vol.2, 2nd ed., 1981.
@@ -638,7 +660,10 @@ namespace Altaxo.Calc.Probability.Old
 
     private int[] r = new int[98];
     private int x, y;
+    /// <summary>Initializes a new instance of the <see cref="Ran005"/> class.</summary>
     public Ran005() : this(0) { }
+    /// <summary>Initializes a new instance of the <see cref="Ran005"/> class with a specified seed.</summary>
+    /// <param name="the_seed">The seed value.</param>
     public Ran005(uint the_seed)
       : base(the_seed)
     {
@@ -655,6 +680,7 @@ namespace Altaxo.Calc.Probability.Old
     }
 
 
+    /// <inheritdoc/>
     public override uint Long()
     {
       int k = 1 + (97 * y) / M;
@@ -709,7 +735,10 @@ namespace Altaxo.Calc.Probability.Old
   { // Marsaglia's combined congruential
     private uint x, y, z, n;
     private uint c;
+    /// <summary>Initializes a new instance of the <see cref="Ran013"/> class.</summary>
     public Ran013() : this(0) { }
+    /// <summary>Initializes a new instance of the <see cref="Ran013"/> class with a specified seed.</summary>
+    /// <param name="the_seed">The seed value.</param>
     public Ran013(uint the_seed)
       : base(the_seed)
     {
@@ -724,10 +753,11 @@ namespace Altaxo.Calc.Probability.Old
       c = y > z ? 1U : 0U; // test this, the original code here was:  c = y > z;
     }
 
+    /// <inheritdoc/>
     public override uint Long()
     {
-      // The mask 0xffffffff is neccessary in some places to assure that arithmetics
-      // is performed modulo 2^32 to make the generater portable to any word length
+      // The mask 0xffffffff is necessary in some places to assure that arithmetic
+      // is performed modulo 2^32 to make the generator portable to any word length
       // larger than 2^32.
 
       uint s;
@@ -738,7 +768,7 @@ namespace Altaxo.Calc.Probability.Old
       }
       else
       {
-        s = (y - (x + c) - 18) & 0xffffffff; // mask is neccessary here
+        s = (y - (x + c) - 18) & 0xffffffff; // mask is necessary here
         c = 1;
       }
       x = y;
@@ -766,7 +796,7 @@ namespace Altaxo.Calc.Probability.Old
   ///        - This is a lagged Fibonacci generator:
   ///            x(n) =  ( x(n-55) - x(n-24) ) mod 2^31
   ///        - Reference:
-  ///          A version of this pseudrandom number generator is described in
+  ///          A version of this pseudorandom number generator is described in
   ///          J. Bentley's column, "The Software Exploratorium", Unix Review 1991.
   ///          It is based on Algorithm A in D. E. Knuth, The Art of Computer-
   ///          Programming, Vol 2, Section 3.2.2, pp. 172
@@ -780,9 +810,11 @@ namespace Altaxo.Calc.Probability.Old
 
     private uint[] s55 = new uint[55];
     private int j55, k55;
-
+    /// <summary>Initializes a new instance of the <see cref="Ran055"/> class.</summary>
     public Ran055() : this(0) { }
 
+    /// <summary>Initializes a new instance of the <see cref="Ran055"/> class with a specified seed.</summary>
+    /// <param name="the_seed">The seed value.</param>
     public Ran055(uint the_seed)
       : base(the_seed)
     {
@@ -812,6 +844,7 @@ namespace Altaxo.Calc.Probability.Old
 
       for (i = 0; i < 165; i++) Long();  // warm up table three times
     }
+    /// <inheritdoc/>
     public override uint Long()
     {
       // The mask 0x7fffffff assures that the result
@@ -853,7 +886,10 @@ namespace Altaxo.Calc.Probability.Old
 
     private uint[] s55 = new uint[55];
     private int j55, k55;
+    /// <summary>Initializes a new instance of the <see cref="Ran056"/> class.</summary>
     public Ran056() : this(0) { }
+    /// <summary>Initializes a new instance of the <see cref="Ran056"/> class with a specified seed.</summary>
+    /// <param name="the_seed">The seed value.</param>
     public Ran056(uint the_seed)
       : base(the_seed)
     {
@@ -881,6 +917,7 @@ namespace Altaxo.Calc.Probability.Old
 
       for (i = 0; i < 55; i++) Long(); // warm up table three times
     }
+    /// <inheritdoc/>
     public override uint Long()
     {
       // The mask 0x7fffffff assures that the result
@@ -926,7 +963,10 @@ namespace Altaxo.Calc.Probability.Old
   public class Ran088 : RandomGenerator
   { // L'Ecuyer's 1996 Tausworthe "taus88"
     private uint s1, s2, s3;
+    /// <summary>Initializes a new instance of the <see cref="Ran088"/> class.</summary>
     public Ran088() : this(0) { }
+    /// <summary>Initializes a new instance of the <see cref="Ran088"/> class with a specified seed.</summary>
+    /// <param name="the_seed">The seed value.</param>
     public Ran088(uint the_seed)
       : base(the_seed)
     {
@@ -936,11 +976,12 @@ namespace Altaxo.Calc.Probability.Old
       max_val = 4294967295U; // which is 2^32-1
 
       // initialize seeds using the given seed value taking care of
-      // the requrements. The constants below are arbitrary otherwise
+      // the requirements. The constants below are arbitrary otherwise
       s1 = 1243598713U ^ seed; if (s1 < 2) s1 = 1243598713U;
       s2 = 3093459404U ^ seed; if (s2 < 8) s2 = 3093459404U;
       s3 = 1821928721U ^ seed; if (s3 < 16) s3 = 1821928721U;
     }
+    /// <inheritdoc/>
     public override uint Long()
     {
       // use mask to make the generator portable for any word width >= 32 bit
@@ -984,7 +1025,10 @@ namespace Altaxo.Calc.Probability.Old
   { // L'Ecuyer's 1996 MRG
 
     private int x10, x11, x12, x20, x21, x22;
+    /// <summary>Initializes a new instance of the <see cref="Ran205"/> class.</summary>
     public Ran205() : this(0) { }
+    /// <summary>Initializes a new instance of the <see cref="Ran205"/> class with a specified seed.</summary>
+    /// <param name="the_seed">The seed value.</param>
     public Ran205(uint the_seed)
       : base(the_seed)
     {
@@ -1004,6 +1048,7 @@ namespace Altaxo.Calc.Probability.Old
       x21 = (int)(((1345908737 ^ seed) & mask) % smax + 1);
       x22 = (int)(((723161013 ^ seed) & mask) % smax + 1);
     }
+    /// <inheritdoc/>
     public override uint Long()
     {
       // constant numbers
@@ -1080,6 +1125,9 @@ namespace Altaxo.Calc.Probability.Old
 
     private uint[] r250_buffer = new uint[250];
     private int r250_index;
+    /// <summary>Initializes a new instance of the <see cref="Ran250"/> class.</summary>
+    /// <summary>Initializes a new instance of the <see cref="Ran250"/> class.</summary>
+    /// <param name="the_seed">The seed value.</param>
     public Ran250(uint the_seed)
       : base(the_seed)
     {
@@ -1091,7 +1139,7 @@ namespace Altaxo.Calc.Probability.Old
       int j, k;
       uint mask, msb;
 
-      // set seed for the auxilliary GGL generator
+      // set seed for the auxiliary GGL generator
       int GGL_seed = (int)seed;
 
       r250_index = 0;
@@ -1115,6 +1163,7 @@ namespace Altaxo.Calc.Probability.Old
       }
     }
 
+    /// <inheritdoc/>
     public override uint Long()
     {
       int j;
@@ -1175,7 +1224,7 @@ namespace Altaxo.Calc.Probability.Old
   ///
   /// Original notes of the authors:
   ///   A C-program for TT800 : July 8th 1996 Version
-  ///   by M. Matsumoto, email: matumoto@math.keio.ac.jp
+  ///   by M. Matsumoto, email: matangus@math.keio.ac.jp
   ///   genrand() generate one pseudorandom number with double precision
   ///   which is uniformly distributed on [0,1]-interval
   ///   for each call.  One may choose any initial 25 seeds
@@ -1207,7 +1256,10 @@ namespace Altaxo.Calc.Probability.Old
 
     // this is magic vector `a', don't change
     private readonly uint[] mag01 = { 0x0, 0x8ebfd028 };
+    /// <summary>Initializes a new instance of the <see cref="Ran800"/> class.</summary>
     public Ran800() : this(0) { }
+    /// <summary>Initializes a new instance of the <see cref="Ran800"/> class with a specified seed.</summary>
+    /// <param name="the_seed">The seed value.</param>
     public Ran800(uint the_seed)
       : base(the_seed)
     {
@@ -1223,6 +1275,7 @@ namespace Altaxo.Calc.Probability.Old
       for (int i = 0; i < N; i++) x[i] = x_data[i] ^ seed;
     }
 
+    /// <inheritdoc/>
     public override uint Long()
     {
 
@@ -1249,7 +1302,7 @@ namespace Altaxo.Calc.Probability.Old
       y &= 0xffffffff;    // you may delete this line if word size = 32
 
       // the following line was added by Makoto Matsumoto in the 1996 version
-      // to improve lower bit's corellation.
+      // to improve lower-bit correlation.
       // Delete this line to use the code published in 1994.
       y ^= (y >> 16);     // added to the 1994 version
       k++;
@@ -1330,6 +1383,9 @@ namespace Altaxo.Calc.Probability.Old
 
     private int k;
     private uint[] ptgfsr = new uint[624];
+    /// <summary>Initializes a new instance of the <see cref="Ran19937"/> class.</summary>
+    /// <summary>Initializes a new instance of the <see cref="Ran19937"/> class.</summary>
+    /// <param name="the_seed">The seed value.</param>
     public Ran19937(uint the_seed)
       : base(the_seed)
     {
@@ -1341,7 +1397,8 @@ namespace Altaxo.Calc.Probability.Old
       // setting initial seeds to ptgfsr[N] using
       // the generator Line 25 of Table 1 in
       // [KNUTH 1981, The Art of Computer Programming
-      // Vol. 2 (2nd Ed.), pp102]
+      // Vol. 2, Seminumerical
+      // Algorithms, pp. 120, 2nd edition, 1981]
 
       ptgfsr[0] = seed & 0xffffffff;
       for (int i = 1; i < N; i++)
@@ -1353,6 +1410,7 @@ namespace Altaxo.Calc.Probability.Old
 
     private static readonly uint[] mag01 = { 0x0, MATRIX_A };
 
+    /// <inheritdoc/>
     public override uint Long()
     {
 
@@ -1439,7 +1497,7 @@ namespace Altaxo.Calc.Probability.Old
     /// <summary>
     /// Generates a random value distributed according to the distribution.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The next random value drawn from the distribution.</returns>
     public abstract double NextDouble();
 
     /// <summary>Initialize the distribution by providing the random generator used
@@ -1457,6 +1515,8 @@ namespace Altaxo.Calc.Probability.Old
       get { return generator; }
     }
 
+    /// <summary>Gets the default random generator used by distributions.</summary>
+    /// <value>The default random generator.</value>
     public static RandomGenerator DefaultGenerator
     {
       get
@@ -1482,7 +1542,7 @@ namespace Altaxo.Calc.Probability.Old
     /// Gives the pth quantile of the distribution.
     /// </summary>
     /// <param name="p">The probability.</param>
-    /// <returns>The pth quantile, that is the value x for with holds: p==CDF(x)</returns>
+    /// <returns>The pth quantile, that is, the value x for which p == CDF(x).</returns>
     public abstract double Quantile(double p);
 
   }
@@ -1496,12 +1556,23 @@ namespace Altaxo.Calc.Probability.Old
   /// </summary>
   public class UniformDistribution : ProbabilityDistribution
   {
+    /// <summary>
+    /// Cached bounds and scaling factor used by the uniform distribution implementation.
+    /// </summary>
     protected double scale, low, high;
+    /// <summary>Initializes a new instance of the <see cref="UniformDistribution"/> class.</summary>
     protected UniformDistribution() { }
+    /// <summary>Initializes a new instance of the <see cref="UniformDistribution"/> class.</summary>
+    /// <param name="lo">One interval boundary.</param>
+    /// <param name="hi">The other interval boundary.</param>
     public UniformDistribution(double lo, double hi)
       : this(lo, hi, DefaultGenerator)
     {
     }
+    /// <summary>Initializes a new instance of the <see cref="UniformDistribution"/> class.</summary>
+    /// <param name="lo">One interval boundary.</param>
+    /// <param name="hi">The other interval boundary.</param>
+    /// <param name="ran">The random number generator to use.</param>
     public UniformDistribution(double lo, double hi, RandomGenerator ran)
       : base(ran)
     {
@@ -1516,21 +1587,27 @@ namespace Altaxo.Calc.Probability.Old
       scale = (high - low) / generator.Maximum;
     }
 
+    /// <inheritdoc/>
     public override double NextDouble() // we may not want a getter here, because debugging then changes the state of the generator
     {
       return (scale * generator.Long() + low);
     }
 
+    /// <summary>Gets the lower bound of the interval.</summary>
+    /// <value>The lower interval bound.</value>
     public double LowerBound
     {
       get { return low; }
     }
+    /// <summary>Gets the upper bound of the interval.</summary>
+    /// <value>The upper interval bound.</value>
     public double UpperBound
     {
       get { return high; }
     }
 
 
+    /// <inheritdoc/>
     public override double PDF(double z)
     {
       if (z < low)
@@ -1541,6 +1618,7 @@ namespace Altaxo.Calc.Probability.Old
         return 1.0 / (high - low);
     }
 
+    /// <inheritdoc/>
     public override double CDF(double z)
     {
       if (z < low)
@@ -1551,6 +1629,7 @@ namespace Altaxo.Calc.Probability.Old
         return (z - low) / (high - low);
     }
 
+    /// <inheritdoc/>
     public override double Quantile(double p)
     {
       if (p < 0 || p > 1)
@@ -1573,19 +1652,27 @@ namespace Altaxo.Calc.Probability.Old
   /// <remarks>It is included just because of speed considerations.</remarks>
   public class U01_Distribution : ProbabilityDistribution
   {
+    /// <summary>
+    /// Cached scaling factor used by the unit-interval distribution implementation.
+    /// </summary>
     protected double scale;
+    /// <summary>Initializes a new instance of the <see cref="U01_Distribution"/> class.</summary>
     public U01_Distribution() : this(DefaultGenerator) { }
+    /// <summary>Initializes a new instance of the <see cref="U01_Distribution"/> class.</summary>
+    /// <param name="ran">The random number generator to use.</param>
     public U01_Distribution(RandomGenerator ran)
       : base(ran)
     {
       scale = 1.0 / generator.Maximum;
     }
+    /// <inheritdoc/>
     public override double NextDouble()
     {
       return scale * generator.Long();
     }
 
 
+    /// <inheritdoc/>
     public override double PDF(double z)
     {
       if (z < 0)
@@ -1596,6 +1683,7 @@ namespace Altaxo.Calc.Probability.Old
         return 1;
     }
 
+    /// <inheritdoc/>
     public override double CDF(double z)
     {
       if (z < 0)
@@ -1606,6 +1694,7 @@ namespace Altaxo.Calc.Probability.Old
         return z;
     }
 
+    /// <inheritdoc/>
     public override double Quantile(double p)
     {
       if (p < 0 || p > 1)
@@ -1634,9 +1723,20 @@ namespace Altaxo.Calc.Probability.Old
   /// </code></remarks>
   public class NormalDistribution : ProbabilityDistribution
   {
+    /// <summary>
+    /// Cached parameters and coefficients used by the normal distribution implementation.
+    /// </summary>
     protected double mu, sigma, scale, cacheval;
+    /// <summary>
+    /// Cached flag indicating whether a value is available in the Box-Muller cache.
+    /// </summary>
     protected bool cached;
+    /// <summary>Initializes a new instance of the <see cref="NormalDistribution"/> class.</summary>
     protected NormalDistribution() { }
+    /// <summary>Initializes a new instance of the <see cref="NormalDistribution"/> class.</summary>
+    /// <param name="mean">The mean of the distribution.</param>
+    /// <param name="stdev">The standard deviation of the distribution.</param>
+    /// <param name="ran">The random number generator to use.</param>
     public NormalDistribution(double mean, double stdev, RandomGenerator ran)
       : base(ran)
     {
@@ -1645,13 +1745,14 @@ namespace Altaxo.Calc.Probability.Old
       sigma = stdev;
       scale = 2.0 / generator.Maximum;
     }
+    /// <inheritdoc/>
     public override double NextDouble()
     {
       // We don't have an extra deviate
       if (cached == false)
       {
 
-        // Pick two uniform numbers in the square extending from -1 tp +1
+        // Pick two uniform numbers in the square extending from -1 to +1
         // in each direction and check if they are in the unit circle
         double v1, v2, r;
         do
@@ -1678,23 +1779,30 @@ namespace Altaxo.Calc.Probability.Old
       }
     }
 
+    /// <summary>Gets the mean of the distribution.</summary>
+    /// <value>The mean of the distribution.</value>
     public virtual double Mean { get { return mu; } }
+    /// <summary>Gets the standard deviation of the distribution.</summary>
+    /// <value>The standard deviation of the distribution.</value>
     public virtual double Stdev { get { return sigma; } }
 
     private static readonly double _OneBySqrt2Pi = 1 / Math.Sqrt(2 * Math.PI);
 
     private static double Sqr(double x) { return x * x; }
+    /// <inheritdoc/>
     public override double PDF(double z)
     {
       return _OneBySqrt2Pi * Math.Exp(-0.5 * Sqr((z - mu) / sigma)) / sigma;
     }
 
     private static readonly double _OneBySqrt2 = 1 / Math.Sqrt(2);
+    /// <inheritdoc/>
     public override double CDF(double z)
     {
       return 0.5 * (1 + Altaxo.Calc.ErrorFunction.Erf(_OneBySqrt2 * (z - mu) / sigma));
     }
 
+    /// <inheritdoc/>
     public override double Quantile(double p)
     {
       return mu + sigma * ErrorFunction.QuantileOfNormalDistribution01(p);
@@ -1740,7 +1848,13 @@ namespace Altaxo.Calc.Probability.Old
   public class LogNormalDistribution
     : NormalDistribution
   {
+    /// <summary>
+    /// Cached logarithmic mean and standard deviation.
+    /// </summary>
     protected double m_log, s_log;
+    /// <summary>Initializes the parameters of the log-normal distribution.</summary>
+    /// <param name="mean">The mean of the log-normal distribution.</param>
+    /// <param name="stdev">The standard deviation of the log-normal distribution.</param>
     protected void Initialize(double mean, double stdev)
     {
       // set mean and standard deviation of the log-normal distribution
@@ -1748,7 +1862,7 @@ namespace Altaxo.Calc.Probability.Old
       s_log = stdev;
 
       // mean "m" and standard deviation "s" of the corresponding
-      // normal distribution wich is a base class of this class
+      // normal distribution, which is a base class of this class
       double m2 = m_log * m_log,
         s2 = s_log * s_log,
         sm2 = s2 + m2;
@@ -1757,27 +1871,39 @@ namespace Altaxo.Calc.Probability.Old
     }
 
 
+    /// <summary>Initializes a new instance of the <see cref="LogNormalDistribution"/> class.</summary>
     protected LogNormalDistribution() { }
+    /// <summary>Initializes a new instance of the <see cref="LogNormalDistribution"/> class.</summary>
+    /// <param name="mean">The mean of the log-normal distribution.</param>
+    /// <param name="stdev">The standard deviation of the log-normal distribution.</param>
     public LogNormalDistribution(double mean, double stdev)
       : this(mean, stdev, DefaultGenerator)
     {
     }
 
+    /// <summary>Initializes a new instance of the <see cref="LogNormalDistribution"/> class.</summary>
+    /// <param name="mean">The mean of the log-normal distribution.</param>
+    /// <param name="stdev">The standard deviation of the log-normal distribution.</param>
+    /// <param name="ran">The random number generator to use.</param>
     public LogNormalDistribution(double mean, double stdev, RandomGenerator ran)
       : base(mean, stdev, ran)
     {
       Initialize(mean, stdev);
     }
+    /// <inheritdoc/>
     public override double NextDouble()
     {
       return Math.Exp(base.NextDouble());
     }
+    /// <inheritdoc/>
     public override double Mean { get { return m_log; } }
+    /// <inheritdoc/>
     public override double Stdev { get { return s_log; } }
 
     private static double Sqr(double x) { return x * x; }
 
     private static readonly double _OneBySqrt2Pi = 1 / Math.Sqrt(2 * Math.PI);
+    /// <inheritdoc/>
     public override double PDF(double z)
     {
       if (z <= 0)
@@ -1787,11 +1913,13 @@ namespace Altaxo.Calc.Probability.Old
     }
 
     private static readonly double _OneBySqrt2 = 1 / Math.Sqrt(2);
+    /// <inheritdoc/>
     public override double CDF(double z)
     {
       return 0.5 * (1 + Altaxo.Calc.ErrorFunction.Erf(_OneBySqrt2 * (Math.Log(z) - mu) / sigma));
     }
 
+    /// <inheritdoc/>
     public override double Quantile(double p)
     {
       return Math.Exp(mu + sigma * ErrorFunction.QuantileOfNormalDistribution01(p));
@@ -1817,9 +1945,16 @@ namespace Altaxo.Calc.Probability.Old
   /// </code></remarks>
   public class ExponentialDistribution : ProbabilityDistribution
   {
+    /// <summary>
+    /// Cached mean and scaling factor used by the exponential distribution implementation.
+    /// </summary>
     protected double m, scale;
+    /// <summary>Initializes a new instance of the <see cref="ExponentialDistribution"/> class.</summary>
     protected ExponentialDistribution() { }
 
+    /// <summary>Initializes a new instance of the <see cref="ExponentialDistribution"/> class.</summary>
+    /// <param name="mean">The mean of the distribution.</param>
+    /// <param name="ran">The random number generator to use.</param>
     public ExponentialDistribution(double mean, RandomGenerator ran)
       : base(ran)
     {
@@ -1827,15 +1962,19 @@ namespace Altaxo.Calc.Probability.Old
       scale = 1.0 / generator.Maximum;
     }
 
+    /// <inheritdoc/>
     public override double NextDouble()
     {
       return (-m * Math.Log(generator.Long() * scale));
     }
 
 
+    /// <summary>Gets the mean of the distribution.</summary>
+    /// <value>The mean of the distribution.</value>
     public double Mean { get { return m; } }
 
 
+    /// <inheritdoc/>
     public override double PDF(double z)
     {
       if (z < 0)
@@ -1843,6 +1982,7 @@ namespace Altaxo.Calc.Probability.Old
       else
         return Math.Exp(-z / m) / m;
     }
+    /// <inheritdoc/>
     public override double CDF(double z)
     {
       if (z < 0)
@@ -1850,6 +1990,7 @@ namespace Altaxo.Calc.Probability.Old
       else
         return 1 - Math.Exp(-z / m);
     }
+    /// <inheritdoc/>
     public override double Quantile(double p)
     {
       return -m * Math.Log(1 - p);
@@ -1881,13 +2022,22 @@ namespace Altaxo.Calc.Probability.Old
   /// References:
   /// see references in:
   /// W. H. Press, B. P. Flannery, S. A. Teukolsky, W. T. Vetterling,
-  /// Numerical Recipies in C, Cambridge Univ. Press, 1988.
+  /// Numerical Recipes in C, Cambridge Univ. Press, 1988.
   /// </code></remarks>
 
   public class ErlangDistribution : ProbabilityDistribution
   {
+    /// <summary>
+    /// Cached Erlang order.
+    /// </summary>
     protected int A;
+    /// <summary>
+    /// Cached coefficients used by the Erlang distribution implementation.
+    /// </summary>
     protected double B, a1, sq, scale, scale2;
+    /// <summary>Sets the order and location parameters for the distribution.</summary>
+    /// <param name="order">The Erlang order.</param>
+    /// <param name="loc">The location parameter.</param>
     protected void SetOrder(int order, double loc)
     {
       if (order < 1)
@@ -1897,20 +2047,28 @@ namespace Altaxo.Calc.Probability.Old
       else
       {
         scale = 1.0 / generator.Maximum;   // scale long to [0,1]
-        scale2 = 2.0 / generator.Maximum;   // auxilliary
+        scale2 = 2.0 / generator.Maximum;   // auxiliary
         A = order;      // order of Erlang distribution
-        a1 = A - 1.0;     // auxilliary
-        sq = Math.Sqrt(2 * a1 + 1); // auxilliary
-        B = loc;      // location parmeter
+        a1 = A - 1.0;     // auxiliary
+        sq = Math.Sqrt(2 * a1 + 1); // auxiliary
+        B = loc;      // location parameter
       }
     }
 
+    /// <summary>Initializes a new instance of the <see cref="ErlangDistribution"/> class.</summary>
+    /// <param name="order">The Erlang order.</param>
+    /// <param name="loc">The location parameter.</param>
     public ErlangDistribution(int order, double loc) : this(order, loc, DefaultGenerator) { }
+    /// <summary>Initializes a new instance of the <see cref="ErlangDistribution"/> class.</summary>
+    /// <param name="order">The Erlang order.</param>
+    /// <param name="loc">The location parameter.</param>
+    /// <param name="ran">The random number generator to use.</param>
     public ErlangDistribution(int order, double loc,
       RandomGenerator ran) : base(ran)
     {
       SetOrder(order, loc);
     }
+    /// <inheritdoc/>
     public override double NextDouble()
     {
       if (A < 6)
@@ -1948,20 +2106,27 @@ namespace Altaxo.Calc.Probability.Old
 
 
 
+    /// <summary>Gets the order of the distribution.</summary>
+    /// <value>The Erlang order.</value>
     public int Order { get { return A; } }
+    /// <summary>Gets the location parameter of the distribution.</summary>
+    /// <value>The location parameter.</value>
     public double Location { get { return B; } }
 
 
+    /// <inheritdoc/>
     public override double PDF(double x)
     {
       return Math.Exp(-B * x) * Math.Pow(B * x, A - 1) * B / Calc.GammaRelated.Gamma(A);
     }
 
+    /// <inheritdoc/>
     public override double CDF(double x)
     {
       return GammaRelated.GammaRegularized(A, 0, B * x);
     }
 
+    /// <inheritdoc/>
     public override double Quantile(double p)
     {
       return GammaRelated.InverseGammaRegularized(A, 1 - p) / B;
@@ -2004,10 +2169,25 @@ namespace Altaxo.Calc.Probability.Old
 
   public class GammaDistribution : ProbabilityDistribution // , public ExponentialDistribution
   {
+    /// <summary>
+    /// Cached helper distributions used by the gamma distribution implementation.
+    /// </summary>
     protected NormalDistribution normalDistribution;
+    /// <summary>
+    /// Cached exponential helper distribution used by the gamma distribution implementation.
+    /// </summary>
     protected ExponentialDistribution exponentialDistribution;
+    /// <summary>
+    /// Cached coefficients used by the gamma distribution implementation.
+    /// </summary>
     protected double alpha, _invTheta, s, s2, d, r, q0, b, si, c, scale;
+    /// <summary>
+    /// Cached flag indicating whether algorithm GD is used.
+    /// </summary>
     protected bool algorithmGD;
+    /// <summary>Initializes the parameters for the gamma distribution.</summary>
+    /// <param name="order">The shape parameter.</param>
+    /// <param name="loc">The inverse scale parameter.</param>
     protected void Initialize(double order, double loc)
     {
       // check parameters
@@ -2080,7 +2260,14 @@ namespace Altaxo.Calc.Probability.Old
       }
     }
 
+    /// <summary>Initializes a new instance of the <see cref="GammaDistribution"/> class.</summary>
+    /// <param name="order">The shape parameter.</param>
+    /// <param name="loc">The inverse scale parameter.</param>
     public GammaDistribution(double order, double loc) : this(order, loc, DefaultGenerator) { }
+    /// <summary>Initializes a new instance of the <see cref="GammaDistribution"/> class.</summary>
+    /// <param name="order">The shape parameter.</param>
+    /// <param name="loc">The inverse scale parameter.</param>
+    /// <param name="ran">The random number generator to use.</param>
     public GammaDistribution(double order, double loc,
       RandomGenerator ran)
     // original: NormalDistribution(0.0,1.0,ran), // std. normal
@@ -2091,6 +2278,7 @@ namespace Altaxo.Calc.Probability.Old
       Initialize(order, loc);
     }
 
+    /// <inheritdoc/>
     public override double NextDouble()
     {
       // algorithm GD for A >= 1
@@ -2209,21 +2397,28 @@ loop:
     }
 
 
+    /// <summary>Gets the shape parameter of the distribution.</summary>
+    /// <value>The shape parameter.</value>
     public double Order { get { return alpha; } }
+    /// <summary>Gets the inverse scale parameter of the distribution.</summary>
+    /// <value>The inverse scale parameter.</value>
     public double Location { get { return _invTheta; } }
 
 
 
+    /// <inheritdoc/>
     public override double PDF(double x)
     {
       return Math.Exp(-_invTheta * x) * Math.Pow(_invTheta * x, alpha - 1) * _invTheta / Calc.GammaRelated.Gamma(alpha);
     }
 
+    /// <inheritdoc/>
     public override double CDF(double x)
     {
       return GammaRelated.GammaRegularized(alpha, 0, _invTheta * x);
     }
 
+    /// <inheritdoc/>
     public override double Quantile(double p)
     {
       return GammaRelated.InverseGammaRegularized(alpha, 1 - p) / _invTheta;
@@ -2252,16 +2447,28 @@ loop:
   ///
   /// References:
   ///
-  /// R. C. H. Cheng, Generating Beta Variatew with Non-integral Shape
+  /// R. C. H. Cheng, Generating Beta Variates with Non-integral Shape
   /// Parameters, Comm. ACM, 21, 317-322 (1978). (Algorithms BB and BC).
   ///
   /// </code></remarks>
 
   public class BetaDistribution : ProbabilityDistribution
   {
+    /// <summary>
+    /// Cached shape parameters used by the beta distribution implementation.
+    /// </summary>
     protected double aa, bb;
+    /// <summary>
+    /// Cached coefficients used by the beta distribution implementation.
+    /// </summary>
     protected double scale, a, alpha, b, beta, delta, gamma, k1, k2, maxexp;
+    /// <summary>
+    /// Cached flag indicating whether algorithm BB is used.
+    /// </summary>
     protected bool algorithmBB;
+    /// <summary>Initializes the parameters for the beta distribution.</summary>
+    /// <param name="pa">The first shape parameter.</param>
+    /// <param name="pb">The second shape parameter.</param>
     protected void Initialize(double pa, double pb)
     {
       // check parameters
@@ -2304,11 +2511,19 @@ loop:
         k2 = 0.25 + (0.5 + 0.25 / delta) * b;
       }
     }
+    /// <summary>Initializes a new instance of the <see cref="BetaDistribution"/> class.</summary>
+    /// <param name="pa">The first shape parameter.</param>
+    /// <param name="pb">The second shape parameter.</param>
     public BetaDistribution(double pa, double pb) : this(pa, pb, DefaultGenerator) { }
+    /// <summary>Initializes a new instance of the <see cref="BetaDistribution"/> class.</summary>
+    /// <param name="pa">The first shape parameter.</param>
+    /// <param name="pb">The second shape parameter.</param>
+    /// <param name="ran">The random number generator to use.</param>
     public BetaDistribution(double pa, double pb,
       RandomGenerator ran)
       : base(ran)
     { Initialize(pa, pb); }
+    /// <inheritdoc/>
     public override double NextDouble()
     {
       // returned on overflow
@@ -2376,16 +2591,21 @@ fin:;
 
 
 
+    /// <summary>Gets the first shape parameter.</summary>
+    /// <value>The first shape parameter.</value>
     public double A { get { return aa; } }
+    /// <summary>Gets the second shape parameter.</summary>
+    /// <value>The second shape parameter.</value>
     public double B { get { return bb; } }
 
 
+    /// <inheritdoc/>
     public override double PDF(double x)
     {
       if (x < 0 || x > 1)
       {
         return 0;
-      }
+    }
       else
       {
         double p;
@@ -2401,10 +2621,12 @@ fin:;
     }
 
 
+    /// <inheritdoc/>
     public override double CDF(double x)
     {
       return Calc.GammaRelated.BetaRegularized(x, A, B);
     }
+    /// <inheritdoc/>
     public override double Quantile(double p)
     {
       return Calc.GammaRelated.InverseBetaRegularized(p, A, B);
@@ -2437,35 +2659,50 @@ fin:;
   ///  ChiSquare(f) = GammaDistribution(f/2,1/2)
   ///
   /// References:
-  ///    K. Behnen, G. Neuhaus, "Grundkurs Stochastik", Teubner Studienbuecher
+  ///    K. Behnen, G. Neuhaus, "Grundkurs Stochastik", Teubner Studienbücher
   ///    Mathematik, Teubner Verlag, Stuttgart, 1984.
   ///
   /// </code></remarks>
   public class ChiSquareDistribution : GammaDistribution
   {
+    /// <summary>
+    /// Cached degrees of freedom.
+    /// </summary>
     protected double F;
+    /// <summary>Initializes a new instance of the <see cref="ChiSquareDistribution"/> class.</summary>
+    /// <param name="f">The degrees of freedom.</param>
     public ChiSquareDistribution(double f) : this(f, DefaultGenerator) { }
+    /// <summary>Initializes a new instance of the <see cref="ChiSquareDistribution"/> class.</summary>
+    /// <param name="f">The degrees of freedom.</param>
+    /// <param name="ran">The random number generator to use.</param>
     public ChiSquareDistribution(double f, RandomGenerator ran)
       : base(0.5 * f, 1.0, ran)
     {
       F = f;
     }
+    /// <summary>Generates the next chi-square distributed random value.</summary>
+    /// <returns>The next chi-square distributed random value.</returns>
     public new double NextDouble()
     {
       return 2.0 * base.NextDouble();
     }
+    /// <summary>Gets the degrees of freedom.</summary>
+    /// <value>The degrees of freedom.</value>
     public double Freedom { get { return F; } }
 
+    /// <inheritdoc/>
     public override double PDF(double x)
     {
       return Math.Pow(x, -1 + 0.5 * F) / (Math.Pow(2, 0.5 * F) * Math.Exp(0.5 * x) * Calc.GammaRelated.Gamma(0.5 * F));
     }
 
+    /// <inheritdoc/>
     public override double CDF(double x)
     {
       return Calc.GammaRelated.GammaRegularized(0.5 * F, 0, 0.5 * x);
     }
 
+    /// <inheritdoc/>
     public override double Quantile(double p)
     {
       return 2 * GammaRelated.InverseGammaRegularized(0.5 * F, 1 - p);
@@ -2486,7 +2723,7 @@ fin:;
   ///   p   (x) dx =  ... dx
   ///    n,d
   ///
-  /// Both paramters n and d must be positive.
+  /// Both parameters n and d must be positive.
   ///
   /// Method: The random numbers are directly generated from ratios of
   ///         ChiSquare variates according to:
@@ -2499,8 +2736,17 @@ fin:;
     //const double DBL_MIN = double.Epsilon;
     //const double DBL_MAX = double.MaxValue;
 
+    /// <summary>
+    /// Cached numerator and denominator degrees of freedom.
+    /// </summary>
     protected double NF, DF;
+    /// <summary>
+    /// Cached chi-square distributions used to generate the numerator and denominator terms.
+    /// </summary>
     protected ChiSquareDistribution NumChi2, DenomChi2; // uninitialized !
+    /// <summary>Initializes a new instance of the <see cref="FDistribution"/> class.</summary>
+    /// <param name="numf">The numerator degrees of freedom.</param>
+    /// <param name="denomf">The denominator degrees of freedom.</param>
     public FDistribution(double numf, double denomf) : this(numf, denomf, DefaultGenerator) { }
 
     private FDistribution(double numf, double denomf, RandomGenerator ran)
@@ -2519,6 +2765,7 @@ fin:;
       DenomChi2 = new ChiSquareDistribution(DF, ran);
     }
 
+    /// <inheritdoc/>
     public override double NextDouble()
     {
       double numerator = NumChi2.NextDouble() / NF,
@@ -2528,36 +2775,28 @@ fin:;
       return (denominator <= numerator * DBL_MIN) ? DBL_MAX : numerator / denominator;
     }
 
+    /// <summary>Gets the numerator degrees of freedom.</summary>
+    /// <value>The numerator degrees of freedom.</value>
     public double NumF { get { return NF; } }
+    /// <summary>Gets the denominator degrees of freedom.</summary>
+    /// <value>The denominator degrees of freedom.</value>
     public double DenomF { get { return DF; } }
 
 
-    /// <summary>
-    /// Returns the probability density function for value x with the distribution parameters p and q.
-    /// </summary>
-    /// <param name="x">The function argument.</param>
-    /// <returns>The probability density of the distribution at value x.</returns>
+    /// <inheritdoc/>
     public override double PDF(double x)
     {
       return (Math.Pow(NF, NF / 2) * Math.Pow(DF, DF / 2) * Math.Pow(x, (-2 + NF) / 2) * Math.Pow(DF + NF * x, (-NF - DF) / 2)) / GammaRelated.Beta(NF / 2, DF / 2);
     }
 
-    /// <summary>
-    /// Returns the cumulated distribution function for value x with the distribution parameters numf and denomf.
-    /// </summary>
-    /// <param name="x">The function argument.</param>
-    /// <returns>The cumulated distribution (probability) of the distribution at value x.</returns>
+    /// <inheritdoc/>
     public override double CDF(double x)
     {
       double n1x = NF * x;
       return GammaRelated.BetaIR(n1x / (DF + n1x), 0.5 * NF, 0.5 * DF);
     }
 
-    /// <summary>
-    /// Quantile of the F-distribution.
-    /// </summary>
-    /// <param name="alpha">Probability (0..1).</param>
-    /// <returns>The quantile of the F-Distribution.</returns>
+    /// <inheritdoc/>
     public override double Quantile(double alpha)
     {
       double inverse_beta = GammaRelated.InverseBetaRegularized(1 - alpha, DF / 2, NF / 2);
@@ -2569,7 +2808,7 @@ fin:;
     /// </summary>
     /// <param name="x">The function argument.</param>
     /// <param name="numf">First parameter of the distribution.</param>
-    /// <param name="denomf">Second paramenter of the distribution.</param>
+    /// <param name="denomf">Second parameter of the distribution.</param>
     /// <returns>The cumulated distribution (probability) of the distribution at value x.</returns>
     public static double CDF(double x, double numf, double denomf)
     {
@@ -2582,7 +2821,7 @@ fin:;
     /// </summary>
     /// <param name="x">The function argument.</param>
     /// <param name="p">First parameter of the distribution.</param>
-    /// <param name="q">Second paramenter of the distribution.</param>
+    /// <param name="q">Second parameter of the distribution.</param>
     /// <returns>The probability density of the distribution at value x.</returns>
     public static double PDF(double x, double p, double q)
     {
@@ -2623,11 +2862,16 @@ fin:;
   ///
   /// References: The method follows the outlines of:
   /// W. H. Press, B. P. Flannery, S. A. Teukolsky, W. T. Vetterling,
-  /// Numerical Recipies in C, Cambridge Univ. Press, 1988.
+  /// Numerical Recipes in C, Cambridge Univ. Press, 1988.
   /// </code></remarks>
   public class PoissonDistribution : ProbabilityDistribution
   {
+    /// <summary>
+    /// Cached coefficients used by the Poisson distribution implementation.
+    /// </summary>
     protected double scale, scalepi, m, sq, alm, g;
+    /// <summary>Initializes the parameters for the Poisson distribution.</summary>
+    /// <param name="mean">The mean of the distribution.</param>
     protected void Initialize(double mean)
     {
       m = mean;
@@ -2647,13 +2891,19 @@ fin:;
       }
 
     }
+    /// <summary>Initializes a new instance of the <see cref="PoissonDistribution"/> class.</summary>
+    /// <param name="mean">The mean of the distribution.</param>
     public PoissonDistribution(double mean) : this(mean, DefaultGenerator) { }
+    /// <summary>Initializes a new instance of the <see cref="PoissonDistribution"/> class.</summary>
+    /// <param name="mean">The mean of the distribution.</param>
+    /// <param name="ran">The random number generator to use.</param>
     public PoissonDistribution(double mean,
       RandomGenerator ran)
       : base(ran)
     {
       Initialize(mean);
     }
+    /// <inheritdoc/>
     public override double NextDouble()
     {
       double em, t, y;
@@ -2692,19 +2942,33 @@ fin:;
 
 
     #region CdfPdf
+    /// <inheritdoc/>
     public override double CDF(double x)
     {
       return CDF(x, m);
     }
+    /// <summary>
+    /// Returns the cumulative distribution function for the specified value and mean.
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <param name="m">The mean of the distribution.</param>
+    /// <returns>The cumulative probability at <paramref name="x"/>.</returns>
     public static double CDF(double x, double m)
     {
       return Calc.GammaRelated.GammaRegularized(1 + Math.Floor(x), m);
     }
 
+    /// <inheritdoc/>
     public override double PDF(double x)
     {
       return PDF(x, m);
     }
+    /// <summary>
+    /// Returns the probability density function for the specified value and mean.
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <param name="m">The mean of the distribution.</param>
+    /// <returns>The probability density at <paramref name="x"/>.</returns>
     public static double PDF(double x, double m)
     {
       return Math.Exp(-m + x * Math.Log(m) - Calc.GammaRelated.LnGamma(x + 1));
@@ -2713,6 +2977,7 @@ fin:;
 
     #endregion
 
+    /// <inheritdoc/>
     public override double Quantile(double x)
     {
       throw new NotSupportedException("Sorry, Quantile is not supported here since it is a discrete distribution");
@@ -2739,13 +3004,25 @@ fin:;
   /// Algorithms, pp. 120, 2nd edition, 1981.
   ///                             //
   /// W. H. Press, B. P. Flannery, S. A. Teukolsky, W. T. Vetterling,
-  /// Numerical Recipies in C, Cambridge Univ. Press, 1988.
+  /// Numerical Recipes in C, Cambridge Univ. Press, 1988.
   /// </code></remarks>
   public class BinomialDistribution : ProbabilityDistribution
   {
+    /// <summary>
+    /// Cached floating-point parameters used by the distribution implementation.
+    /// </summary>
     protected double scale, scalepi, p, pc, plog, pclog, np, npexp, en, en1, gamen1, sq;
+    /// <summary>
+    /// Cached number of trials.
+    /// </summary>
     protected int n;
+    /// <summary>
+    /// Cached flag indicating whether the symmetric variant is used.
+    /// </summary>
     protected bool sym;
+    /// <summary>Initializes the parameters for the binomial distribution.</summary>
+    /// <param name="pp">The probability of success.</param>
+    /// <param name="nn">The number of trials.</param>
     protected void Initialize(double pp, int nn)
     {
       if (pp >= 0.0 && pp <= 1.0)
@@ -2779,7 +3056,14 @@ fin:;
       else
         throw new ArgumentException("BinomialDistribution: probability must be within [0,1]");
     }
+    /// <summary>Initializes a new instance of the <see cref="BinomialDistribution"/> class.</summary>
+    /// <param name="prob">The probability of success.</param>
+    /// <param name="num">The number of trials.</param>
     public BinomialDistribution(double prob, int num) : this(prob, num, DefaultGenerator) { }
+    /// <summary>Initializes a new instance of the <see cref="BinomialDistribution"/> class.</summary>
+    /// <param name="prob">The probability of success.</param>
+    /// <param name="num">The number of trials.</param>
+    /// <param name="ran">The random number generator to use.</param>
     public BinomialDistribution(double prob, int num,
       RandomGenerator ran)
       : base(ran)
@@ -2787,6 +3071,7 @@ fin:;
       Initialize(prob, num);
     }
 
+    /// <inheritdoc/>
     public override double NextDouble()
     {
       double bnl;
@@ -2838,23 +3123,43 @@ fin:;
       return bnl;
     }
 
+    /// <summary>Gets the probability of success.</summary>
+    /// <value>The probability of success.</value>
     public double Prob { get { return p; } }
+    /// <summary>Gets the number of trials.</summary>
+    /// <value>The number of trials.</value>
     public int Num { get { return n; } }
 
     #region CdfPdf
+    /// <inheritdoc/>
     public override double CDF(double x)
     {
       return CDF(x, sym ? 1 - p : p, n);
     }
+    /// <summary>
+    /// Returns the cumulative distribution function for the specified value, probability, and trial count.
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <param name="p">The probability of success.</param>
+    /// <param name="n">The number of trials.</param>
+    /// <returns>The cumulative probability at <paramref name="x"/>.</returns>
     public static double CDF(double x, double p, int n)
     {
       return Calc.GammaRelated.BetaRegularized(1 - p, n - Math.Floor(x), 1 + Math.Floor(x));
     }
 
+    /// <inheritdoc/>
     public override double PDF(double x)
     {
       return PDF(x, sym ? 1 - p : p, n);
     }
+    /// <summary>
+    /// Returns the probability density function for the specified value, probability, and trial count.
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <param name="p">The probability of success.</param>
+    /// <param name="n">The number of trials.</param>
+    /// <returns>The probability density at <paramref name="x"/>.</returns>
     public static double PDF(double x, double p, int n)
     {
       return Math.Pow(1 - p, n - x) * Math.Pow(p, x) * Calc.GammaRelated.Binomial(n, x);
@@ -2862,6 +3167,7 @@ fin:;
 
     #endregion
 
+    /// <inheritdoc/>
     public override double Quantile(double x)
     {
       throw new NotSupportedException("Sorry, Quantile is not supported here since it is a discrete distribution");
@@ -2879,37 +3185,62 @@ fin:;
   {
     private int n;
 
+    /// <summary>Initializes a new instance of the <see cref="StudentTDistribution"/> class.</summary>
+    /// <param name="N">The degrees of freedom.</param>
     public StudentTDistribution(int N)
     {
       this.n = N;
     }
+    /// <summary>Gets the degrees of freedom.</summary>
+    /// <value>The degrees of freedom.</value>
     public int N { get { return n; } }
 
+    /// <summary>Returns the probability density at the specified value.</summary>
+    /// <param name="x">The function argument.</param>
+    /// <returns>The probability density at <paramref name="x"/>.</returns>
     public double PDF(double x)
     {
       return PDF(x, n);
     }
 
+    /// <summary>Returns the cumulative distribution value at the specified value.</summary>
+    /// <param name="x">The function argument.</param>
+    /// <returns>The cumulative probability at <paramref name="x"/>.</returns>
     public double CDF(double x)
     {
       return CDF(x, n);
     }
 
+    /// <summary>Returns the quantile for the specified probability.</summary>
+    /// <param name="p">The probability.</param>
+    /// <returns>The quantile corresponding to <paramref name="p"/>.</returns>
     public double Quantile(double p)
     {
       return Quantile(p, n);
     }
 
+    /// <summary>Returns the probability density for the specified value and degrees of freedom.</summary>
+    /// <param name="x">The function argument.</param>
+    /// <param name="n">The degrees of freedom.</param>
+    /// <returns>The probability density at <paramref name="x"/>.</returns>
     public static double PDF(double x, int n)
     {
       return Math.Pow(n / (n + (x * x)), (1 + n) / 2.0) / (Math.Sqrt(n) * GammaRelated.Beta(n / 2.0, 0.5));
     }
 
+    /// <summary>Returns the cumulative distribution value for the specified value and degrees of freedom.</summary>
+    /// <param name="x">The function argument.</param>
+    /// <param name="n">The degrees of freedom.</param>
+    /// <returns>The cumulative probability at <paramref name="x"/>.</returns>
     public static double CDF(double x, int n)
     {
       return (1 + (1 - GammaRelated.BetaIR(n / (n + (x * x)), n * 0.5, 0.5)) * Math.Sign(x)) / 2.0;
     }
 
+    /// <summary>Returns the quantile for the specified probability and degrees of freedom.</summary>
+    /// <param name="alpha">The probability.</param>
+    /// <param name="n">The degrees of freedom.</param>
+    /// <returns>The quantile corresponding to <paramref name="alpha"/>.</returns>
     public static double Quantile(double alpha, int n)
     {
       return Math.Sqrt(n) * Math.Sqrt(-1 + 1 / GammaRelated.InverseBetaRegularized(1 - Math.Abs(1 - 2 * alpha), n * 0.5, 0.5)) * Math.Sign(-1 + 2 * alpha);
@@ -2926,10 +3257,10 @@ fin:;
   /// <summary>
   /// Universal random number generator proposed by Marsaglia, Zaman, and Tsang.
   /// It has a period of 2^144 = 2*10^43, and is completely portable.
-  /// Only 24 bits are garantueed to be completely random.
+  /// Only 24 bits are guaranteed to be completely random.
   /// </summary>
   /// <remarks><code>
-  /// Upto now this generator passes all statistical tests on randomness.
+  /// Up to now this generator has passed all statistical tests on randomness.
   /// Ranmar generates a sequence of random numbers uniformly distributed in the
   /// interval (0,1), the end points excluded.
   /// The seed value must be in the range 0 &lt;= ijkl &lt;= 900 000 000.
@@ -2946,10 +3277,13 @@ fin:;
     private double[] u = new double[97];
     private double c, cd, cm;
     private int i97, j97;
+    /// <summary>Initializes the generator with an automatically chosen seed.</summary>
     public void Seed()
     {
       Seed(0);
     }
+    /// <summary>Initializes the generator with the specified seed.</summary>
+    /// <param name="ijkl">The seed value.</param>
     public void Seed(uint ijkl)
     {
       // Initializing routine for ranmar: Called by the constructor, can be
@@ -3005,12 +3339,17 @@ fin:;
       i97 = 97;
       j97 = 33;
     }
+    /// <summary>Initializes a new instance of the <see cref="Ranmar"/> class.</summary>
     public Ranmar() : this(0) { }
 
+    /// <summary>Initializes a new instance of the <see cref="Ranmar"/> class.</summary>
+    /// <param name="seed">The seed value.</param>
     public Ranmar(uint seed)
     {
       Seed(seed);
     }
+    /// <summary>Returns the next random value.</summary>
+    /// <returns>The next random value in the interval (0, 1).</returns>
     public double val()
     {
       double uni = u[i97 - 1] - u[j97 - 1];
@@ -3097,10 +3436,16 @@ fin:;
   {
     private int k1, k2;
 
+    /// <summary>Initializes a new instance of the <see cref="RanLux"/> class.</summary>
+    /// <param name="luxury">The luxury level.</param>
+    /// <param name="seed">The seed value.</param>
     public RanLux(int luxury, uint seed)
     {
       SetState(luxury, seed);
     }
+    /// <summary>Sets the generator state.</summary>
+    /// <param name="luxury">The luxury level.</param>
+    /// <param name="seed">The seed value.</param>
     public void SetState(int luxury, uint seed)
     {
 
@@ -3114,6 +3459,8 @@ fin:;
       k1 = k2 = 0;
       rluxgo(luxury, (int)(seed), ref k1, ref k2);
     }
+    /// <summary>Returns the next random value.</summary>
+    /// <returns>The next random value in the interval (0, 1).</returns>
     public double val()
     {
       double rdum = 0;
@@ -3549,7 +3896,7 @@ L_rluxgo:
       int b = 0, c = 0, d = 0, e = 0;
       ranlux_driver(2, ref a, isdext, ref b, ref c,
         ref d, ref e, 0, 0);
-    }
+  }
 
     //-----------------------------------------------------------------------------//
 
@@ -3577,12 +3924,12 @@ L_rluxgo:
 
   }
 
-  #endregion
+    #endregion
 
   #region Ran32k3a
 
   /// <summary>
-  /// This is Pierre L'Ecuyer's pseudorandum number generator MRG32k3a.
+  /// This is Pierre L'Ecuyer's pseudorandom number generator MRG32k3a.
   /// The period length is about 2^191 (which is approximately 3*10^57).
   /// </summary>
   /// <remarks><code>
@@ -3595,7 +3942,7 @@ L_rluxgo:
   ///
   /// Initialization:
   ///    The six global variables s10,s11,s12, s20,s21,s22 constitute the seed.
-  ///    Before called the first time one must initialize s10,s11,s12 to (exact)
+  ///    Before being called the first time, one must initialize s10,s11,s12 to (exact)
   ///    non-negative integer values less than m1 (i.e. in [0...4294967086]), but
   ///    not all zero, and s20,s21,s22 to (exact) non-negative integer values
   ///    less than m2  (i.e. in [0...4294944442]), but not all zero.
@@ -3611,7 +3958,7 @@ L_rluxgo:
   ///   2. CPU time to generate and add 10^7 numbers:
   ///      6 sec for DEC Alpha Station, 21161 CPU, 400 MHz, GNU g++ 2.7.1 compiler
   ///   3. The time overhead for virtual vs. non-virtual operator () is
-  ///      about 1-2 percent and is therefore considered as neglegible.
+  ///      about 1-2 percent and is therefore considered negligible.
   /// </code></remarks>
   internal class Ran32k3a    // L'Ecuyer's 1997 MRG
   {
@@ -3620,6 +3967,13 @@ L_rluxgo:
     //----------------------------------------------------------------------------//
     // Seeding
     //----------------------------------------------------------------------------//
+    /// <summary>Sets the generator state.</summary>
+    /// <param name="u10">The first component of the first state vector.</param>
+    /// <param name="u11">The second component of the first state vector.</param>
+    /// <param name="u12">The third component of the first state vector.</param>
+    /// <param name="u20">The first component of the second state vector.</param>
+    /// <param name="u21">The second component of the second state vector.</param>
+    /// <param name="u22">The third component of the second state vector.</param>
     public void SetState(uint u10, uint u11, uint u12,
       uint u20, uint u21, uint u22)
     {
@@ -3635,7 +3989,7 @@ L_rluxgo:
       // set the new state
       s10 = u10; s11 = u11; s12 = u12;
       s20 = u20; s21 = u21; s22 = u22;
-    }
+  }
 
 
     //----------------------------------------------------------------------------//
@@ -3645,7 +3999,7 @@ L_rluxgo:
     {
       const double test1 = 9007199254740991;
       const long test2 = 9007199254740991;
-      // assure that we have at least 53 bit precission floating point arithmetic
+      // assure that we have at least 53-bit precision floating-point arithmetic
       System.Diagnostics.Debug.Assert(test1 == test2);
 
       // now set the new state
@@ -3656,6 +4010,8 @@ L_rluxgo:
     //----------------------------------------------------------------------------//
     // The generator
     //----------------------------------------------------------------------------//
+    /// <summary>Returns the next random value.</summary>
+    /// <returns>The next random value in the interval [0, 1).</returns>
     public double val()
     {
       // Implementation constants
@@ -3694,29 +4050,43 @@ L_rluxgo:
   /// </summary>
   /// <remarks><code>
   /// Uses the algorithm of Marsaglia, Ann. Math. Stat 43, 645 (1972).
-  /// On average requires 2.25 deviates per vector and a square root calculation
+  /// On average, this requires 2.25 deviates per vector and a square-root calculation.
   /// Vector of three random numbers (x,y,z) which are distributed uniformly
   /// on the unit sphere.
   ///
-  /// Uses the algorithm of Marsaglia, Ann. Math. Stat 43, 645 (1972).
-  /// On average requires 2.25 deviates per vector and a square root calculation
+  /// Uses the algorithm of Marsaglia, Ann. Math. Stat. 43, 645 (1972).
+  /// On average, this requires 2.25 deviates per vector and a square-root calculation.
   /// </code></remarks>
 
   public class UnitSphereDistribution : ProbabilityDistribution
   {
+    /// <summary>
+    /// Scaling factor used to transform generator output into the interval needed by the sphere algorithm.
+    /// </summary>
     protected double scale;
+    /// <summary>Initializes a new instance of the <see cref="UnitSphereDistribution"/> class.</summary>
     public UnitSphereDistribution() : this(DefaultGenerator) { }
+    /// <summary>Initializes a new instance of the <see cref="UnitSphereDistribution"/> class with a specified generator.</summary>
+    /// <param name="ran">The random number generator to be used.</param>
     public UnitSphereDistribution(RandomGenerator ran)
       : base(ran)
     {
       scale = 2.0 / generator.Maximum;
     }
 
+    /// <inheritdoc/>
+    /// <exception cref="NotSupportedException">Always thrown. Use <see cref="NextDouble(out double, out double, out double)"/> instead.</exception>
     public override double NextDouble()
     {
       throw new NotSupportedException("Use val(out double x, out double y, out double z) instead of this method");
     }
 
+    /// <summary>
+    /// Generates the next random vector.
+    /// </summary>
+    /// <param name="x">The x component of the random vector.</param>
+    /// <param name="y">The y component of the random vector.</param>
+    /// <param name="z">The z component of the random vector.</param>
     public void NextDouble(out double x, out double y, out double z)
     {
       for (; ; )
@@ -3736,16 +4106,19 @@ L_rluxgo:
     }
 
 
+    /// <inheritdoc/>
     public override double PDF(double x)
     {
       throw new NotSupportedException();
     }
 
+    /// <inheritdoc/>
     public override double CDF(double x)
     {
       throw new NotSupportedException();
     }
 
+    /// <inheritdoc/>
     public override double Quantile(double x)
     {
       throw new NotSupportedException();

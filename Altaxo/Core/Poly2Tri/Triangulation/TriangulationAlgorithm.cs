@@ -31,8 +31,14 @@
 
 namespace Poly2Tri
 {
+  /// <summary>
+  /// Specifies the triangulation algorithm to use.
+  /// </summary>
   public enum TriangulationAlgorithm
   {
+    /// <summary>
+    /// Delaunay triangulation sweep algorithm.
+    /// </summary>
     DTSweep
   }
 }

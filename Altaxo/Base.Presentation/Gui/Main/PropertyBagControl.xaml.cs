@@ -35,11 +35,17 @@ namespace Altaxo.Gui.Main
   /// </summary>
   public partial class PropertyBagControl : UserControl, IPropertyBagView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PropertyBagControl"/> class.
+    /// </summary>
     public PropertyBagControl()
     {
       InitializeComponent();
     }
 
+    /// <summary>
+    /// Gets or sets the property list.
+    /// </summary>
     public Collections.SelectableListNodeList PropertyList
     {
       set { GuiHelper.Initialize(_guiPropertyList, value); }

@@ -29,12 +29,24 @@ using System.Text;
 
 namespace Altaxo.UnmanagedApi.Ole32
 {
+  /// <summary>
+  /// Provides commonly used COM interface identifiers.
+  /// </summary>
   public static class InterfaceGuid
   {
+    /// <summary>
+    /// The interface identifier of <c>IUnknown</c>.
+    /// </summary>
     public static readonly Guid IID_IUnknown = new Guid("{00000000-0000-0000-C000-000000000046}");
 
+    /// <summary>
+    /// The interface identifier of <c>IDispatch</c>.
+    /// </summary>
     public static readonly Guid IID_IDispatch = new Guid("{00020400-0000-0000-C000-000000000046}");
 
+    /// <summary>
+    /// The interface identifier of <c>IOleObject</c>.
+    /// </summary>
     public static readonly Guid IID_IOleObject = new Guid("00000112-0000-0000-C000-000000000046");
   }
 }

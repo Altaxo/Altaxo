@@ -29,6 +29,9 @@ using System.Text;
 
 namespace Altaxo.UnmanagedApi.Kernel32
 {
+  /// <summary>
+  /// Defines flags for global memory allocation.
+  /// </summary>
   [Flags]
   public enum GlobalAllocFlags : uint
   {

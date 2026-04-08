@@ -34,7 +34,19 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// <summary>
     /// Enumerates the possible kinds of navigation points.
     /// </summary>
-    public enum KindOfNavigationPoint { AllProjectItems, AllTables, AllGraphs, AllTexts, ProjectFolder }
+    public enum KindOfNavigationPoint
+    {
+      /// <summary>All project items.</summary>
+      AllProjectItems,
+      /// <summary>All tables.</summary>
+      AllTables,
+      /// <summary>All graphs.</summary>
+      AllGraphs,
+      /// <summary>All text documents.</summary>
+      AllTexts,
+      /// <summary>A specific project folder.</summary>
+      ProjectFolder
+    }
 
     /// <summary>Gets or sets the kind of navigation point.</summary>
     /// <value>The kind.</value>
@@ -44,6 +56,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// <value>The folder name.</value>
     public string Folder { get; set; }
 
+    /// <inheritdoc/>
     public bool Equals(NavigationPoint other)
     {
       if (Kind != other.Kind)

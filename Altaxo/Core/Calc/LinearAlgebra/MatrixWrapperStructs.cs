@@ -108,6 +108,20 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
+    /// <summary>
+    /// Gets or sets the element at the specified row and column.
+    /// </summary>
+    /// <value>
+    /// The element at the specified row and column.
+    /// </value>
+    /// <param name="row">The row index.</param>
+    /// <param name="col">The column index.</param>
+    /// <returns>
+    /// The element at the specified row and column.
+    /// </returns>
+    /// <exception cref="IndexOutOfRangeException">
+    /// Thrown when the row or column index is out of range.
+    /// </exception>
     T IROMatrix<T>.this[int row, int col]
     {
       get
@@ -116,6 +130,20 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
+    /// <summary>
+    /// Gets or sets the element at the specified row and column.
+    /// </summary>
+    /// <value>
+    /// The element at the specified row and column.
+    /// </value>
+    /// <param name="row">The row index.</param>
+    /// <param name="col">The column index.</param>
+    /// <returns>
+    /// The element at the specified row and column.
+    /// </returns>
+    /// <exception cref="IndexOutOfRangeException">
+    /// Thrown when the row or column index is out of range.
+    /// </exception>
     public T this[int row, int col]
     {
       get
@@ -210,6 +238,20 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
+    /// <summary>
+    /// Gets or sets the element at the specified row and column.
+    /// </summary>
+    /// <value>
+    /// The element at the specified row and column.
+    /// </value>
+    /// <param name="row">The row index.</param>
+    /// <param name="col">The column index.</param>
+    /// <returns>
+    /// The element at the specified row and column.
+    /// </returns>
+    /// <exception cref="IndexOutOfRangeException">
+    /// Thrown when the row or column index is out of range.
+    /// </exception>
     T IROMatrix<T>.this[int row, int col]
     {
       get
@@ -218,6 +260,20 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
+    /// <summary>
+    /// Gets or sets the element at the specified row and column.
+    /// </summary>
+    /// <value>
+    /// The element at the specified row and column.
+    /// </value>
+    /// <param name="row">The row index.</param>
+    /// <param name="col">The column index.</param>
+    /// <returns>
+    /// The element at the specified row and column.
+    /// </returns>
+    /// <exception cref="IndexOutOfRangeException">
+    /// Thrown when the row or column index is out of range.
+    /// </exception>
     public T this[int row, int col]
     {
       get
@@ -305,6 +361,20 @@ namespace Altaxo.Calc.LinearAlgebra
       Array = new T[RowCount * ColumnCount];
     }
 
+    /// <summary>
+    /// Gets or sets the element at the specified row and column.
+    /// </summary>
+    /// <value>
+    /// The element at the specified row and column.
+    /// </value>
+    /// <param name="row">The row index.</param>
+    /// <param name="col">The column index.</param>
+    /// <returns>
+    /// The element at the specified row and column.
+    /// </returns>
+    /// <exception cref="IndexOutOfRangeException">
+    /// Thrown when the row or column index is out of range.
+    /// </exception>
     T IROMatrix<T>.this[int row, int col]
     {
       get
@@ -313,6 +383,20 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
+    /// <summary>
+    /// Gets or sets the element at the specified row and column.
+    /// </summary>
+    /// <value>
+    /// The element at the specified row and column.
+    /// </value>
+    /// <param name="row">The row index.</param>
+    /// <param name="col">The column index.</param>
+    /// <returns>
+    /// The element at the specified row and column.
+    /// </returns>
+    /// <exception cref="IndexOutOfRangeException">
+    /// Thrown when the row or column index is out of range.
+    /// </exception>
     public T this[int row, int col]
     {
       get
@@ -400,6 +484,20 @@ namespace Altaxo.Calc.LinearAlgebra
       Array = new T[RowCount * ColumnCount];
     }
 
+    /// <summary>
+    /// Gets or sets the element at the specified row and column.
+    /// </summary>
+    /// <value>
+    /// The element at the specified row and column.
+    /// </value>
+    /// <param name="row">The row index.</param>
+    /// <param name="col">The column index.</param>
+    /// <returns>
+    /// The element at the specified row and column.
+    /// </returns>
+    /// <exception cref="IndexOutOfRangeException">
+    /// Thrown when the row or column index is out of range.
+    /// </exception>
     T IROMatrix<T>.this[int row, int col]
     {
       get
@@ -408,6 +506,20 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
+    /// <summary>
+    /// Gets or sets the element at the specified row and column.
+    /// </summary>
+    /// <value>
+    /// The element at the specified row and column.
+    /// </value>
+    /// <param name="row">The row index.</param>
+    /// <param name="col">The column index.</param>
+    /// <returns>
+    /// The element at the specified row and column.
+    /// </returns>
+    /// <exception cref="IndexOutOfRangeException">
+    /// Thrown when the row or column index is out of range.
+    /// </exception>
     public T this[int row, int col]
     {
       get

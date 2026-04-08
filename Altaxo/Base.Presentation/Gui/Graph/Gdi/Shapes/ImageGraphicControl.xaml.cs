@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
   /// </summary>
   public partial class ImageGraphicControl : UserControl, IImageGraphicView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ImageGraphicControl"/> class.
+    /// </summary>
     public ImageGraphicControl()
     {
       InitializeComponent();

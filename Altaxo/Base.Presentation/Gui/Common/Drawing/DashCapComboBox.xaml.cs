@@ -69,6 +69,9 @@ namespace Altaxo.Gui.Common.Drawing
 
     private Dictionary<sdd.DashCap, ImageComboBoxItem> _cachedItems = new Dictionary<sdd.DashCap, ImageComboBoxItem>();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DashCapComboBox"/> class.
+    /// </summary>
     public DashCapComboBox()
     {
       InitializeComponent();
@@ -92,12 +95,18 @@ namespace Altaxo.Gui.Common.Drawing
 
     private const string _nameOfValueProp = "SelectedDashCap";
 
+    /// <summary>
+    /// Gets or sets the selected dash cap.
+    /// </summary>
     public sdd.DashCap SelectedDashCap
     {
       get { return (sdd.DashCap)GetValue(SelectedDashCapProperty); }
       set { SetValue(SelectedDashCapProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="SelectedDashCap"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty SelectedDashCapProperty =
         DependencyProperty.Register(_nameOfValueProp, typeof(sdd.DashCap), typeof(DashCapComboBox),
         new FrameworkPropertyMetadata(sdd.DashCap.Flat, OnSelectedDashCapChanged));
@@ -108,12 +117,14 @@ namespace Altaxo.Gui.Common.Drawing
 
     #endregion Dependency property
 
+    /// <inheritdoc/>
     public override string GetItemText(object item)
     {
       var val = (sdd.DashCap)item;
       return val.ToString();
     }
 
+    /// <inheritdoc/>
     public override ImageSource GetItemImage(object item)
     {
       var val = (sdd.DashCap)item;
@@ -122,6 +133,11 @@ namespace Altaxo.Gui.Common.Drawing
       return result;
     }
 
+    /// <summary>
+    /// Creates an image that represents the specified <see cref="sdd.DashCap"/>.
+    /// </summary>
+    /// <param name="val">The dash cap to visualize.</param>
+    /// <returns>An image representing <paramref name="val"/>.</returns>
     public static DrawingImage GetImage(sdd.DashCap val)
     {
       double height = 1;

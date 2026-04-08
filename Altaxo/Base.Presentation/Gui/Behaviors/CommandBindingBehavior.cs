@@ -41,17 +41,26 @@ namespace Altaxo.Gui.Behaviors
   {
     #region CommandsToBind
 
+    /// <summary>
+    /// Identifies the attached property that stores application commands to bind to view-model commands.
+    /// </summary>
     public static readonly DependencyProperty CommandsToBindProperty = DependencyProperty.RegisterAttached(
         "CommandsToBind",
         typeof(IEnumerable<(string CommandName, System.Windows.Input.ICommand Command)>),
         typeof(CommandBindingBehavior),
         new PropertyMetadata(EhCommandsToBindChanged));
 
+    /// <summary>
+    /// Gets the commands configured for the specified framework element.
+    /// </summary>
     public static object GetCommandsToBind(FrameworkElement frameworkElement)
     {
       return frameworkElement.GetValue(CommandsToBindProperty);
     }
 
+    /// <summary>
+    /// Sets the commands configured for the specified framework element.
+    /// </summary>
     public static void SetCommandsToBind(FrameworkElement frameworkElement, object value)
     {
       frameworkElement.SetValue(CommandsToBindProperty, value);
@@ -92,17 +101,26 @@ namespace Altaxo.Gui.Behaviors
 
     #region Copy
 
+    /// <summary>
+    /// Identifies the attached property that binds <see cref="ApplicationCommands.Copy"/>.
+    /// </summary>
     public static readonly DependencyProperty CopyProperty = DependencyProperty.RegisterAttached(
        "Copy",
        typeof(ICommand),
        typeof(CommandBindingBehavior),
        new PropertyMetadata((d,e) => EhBoundCommandChanged(ApplicationCommands.Copy, d, e)));
 
+    /// <summary>
+    /// Gets the command bound to <see cref="ApplicationCommands.Copy"/>.
+    /// </summary>
     public static object GetCopy(FrameworkElement frameworkElement)
     {
       return frameworkElement.GetValue(CopyProperty);
     }
 
+    /// <summary>
+    /// Sets the command bound to <see cref="ApplicationCommands.Copy"/>.
+    /// </summary>
     public static void SetCopy(FrameworkElement frameworkElement, object value)
     {
       frameworkElement.SetValue(CopyProperty, value);
@@ -112,17 +130,26 @@ namespace Altaxo.Gui.Behaviors
 
     #region Cut
 
+    /// <summary>
+    /// Identifies the attached property that binds <see cref="ApplicationCommands.Cut"/>.
+    /// </summary>
     public static readonly DependencyProperty CutProperty = DependencyProperty.RegisterAttached(
        "Cut",
        typeof(ICommand),
        typeof(CommandBindingBehavior),
        new PropertyMetadata((d, e) => EhBoundCommandChanged(ApplicationCommands.Cut, d, e)));
 
+    /// <summary>
+    /// Gets the command bound to <see cref="ApplicationCommands.Cut"/>.
+    /// </summary>
     public static object GetCut(FrameworkElement frameworkElement)
     {
       return frameworkElement.GetValue(CutProperty);
     }
 
+    /// <summary>
+    /// Sets the command bound to <see cref="ApplicationCommands.Cut"/>.
+    /// </summary>
     public static void SetCut(FrameworkElement frameworkElement, object value)
     {
       frameworkElement.SetValue(CutProperty, value);
@@ -132,17 +159,26 @@ namespace Altaxo.Gui.Behaviors
 
     #region Paste
 
+    /// <summary>
+    /// Identifies the attached property that binds <see cref="ApplicationCommands.Paste"/>.
+    /// </summary>
     public static readonly DependencyProperty PasteProperty = DependencyProperty.RegisterAttached(
        "Paste",
        typeof(ICommand),
        typeof(CommandBindingBehavior),
        new PropertyMetadata((d, e) => EhBoundCommandChanged(ApplicationCommands.Paste, d, e)));
 
+    /// <summary>
+    /// Gets the command bound to <see cref="ApplicationCommands.Paste"/>.
+    /// </summary>
     public static object GetPaste(FrameworkElement frameworkElement)
     {
       return frameworkElement.GetValue(PasteProperty);
     }
 
+    /// <summary>
+    /// Sets the command bound to <see cref="ApplicationCommands.Paste"/>.
+    /// </summary>
     public static void SetPaste(FrameworkElement frameworkElement, object value)
     {
       frameworkElement.SetValue(PasteProperty, value);
@@ -152,17 +188,26 @@ namespace Altaxo.Gui.Behaviors
 
     #region Delete
 
+    /// <summary>
+    /// Identifies the attached property that binds <see cref="ApplicationCommands.Delete"/>.
+    /// </summary>
     public static readonly DependencyProperty DeleteProperty = DependencyProperty.RegisterAttached(
        "Delete",
        typeof(ICommand),
        typeof(CommandBindingBehavior),
        new PropertyMetadata((d, e) => EhBoundCommandChanged(ApplicationCommands.Delete, d, e)));
 
+    /// <summary>
+    /// Gets the command bound to <see cref="ApplicationCommands.Delete"/>.
+    /// </summary>
     public static object GetDelete(FrameworkElement frameworkElement)
     {
       return frameworkElement.GetValue(DeleteProperty);
     }
 
+    /// <summary>
+    /// Sets the command bound to <see cref="ApplicationCommands.Delete"/>.
+    /// </summary>
     public static void SetDelete(FrameworkElement frameworkElement, object value)
     {
       frameworkElement.SetValue(DeleteProperty, value);

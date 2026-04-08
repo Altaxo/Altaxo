@@ -32,6 +32,9 @@ using System.Collections.Generic;
 
 namespace Altaxo.Calc.LinearRegression
 {
+  /// <summary>
+  /// Provides simple linear regression helper methods.
+  /// </summary>
   public static class SimpleRegression
   {
     /// <summary>
@@ -39,8 +42,9 @@ namespace Altaxo.Calc.LinearRegression
     /// returning its best fitting parameters as (a, b) tuple,
     /// where a is the intercept and b the slope.
     /// </summary>
-    /// <param name="x">Predictor (independent)</param>
-    /// <param name="y">Response (dependent)</param>
+    /// <param name="x">The predictor values.</param>
+    /// <param name="y">The response values.</param>
+    /// <returns>A tuple containing the intercept and slope.</returns>
     public static (double A, double B) Fit(double[] x, double[] y)
     {
       if (x.Length != y.Length)
@@ -84,7 +88,8 @@ namespace Altaxo.Calc.LinearRegression
     /// returning its best fitting parameters as (a, b) tuple,
     /// where a is the intercept and b the slope.
     /// </summary>
-    /// <param name="samples">Predictor-Response samples as tuples</param>
+    /// <param name="samples">The predictor-response samples as tuples.</param>
+    /// <returns>A tuple containing the intercept and slope.</returns>
     public static (double A, double B) Fit(IEnumerable<Tuple<double, double>> samples)
     {
       var (u, v) = samples.UnpackSinglePass();
@@ -96,7 +101,8 @@ namespace Altaxo.Calc.LinearRegression
     /// returning its best fitting parameters as (a, b) tuple,
     /// where a is the intercept and b the slope.
     /// </summary>
-    /// <param name="samples">Predictor-Response samples as tuples</param>
+    /// <param name="samples">The predictor-response samples as tuples.</param>
+    /// <returns>A tuple containing the intercept and slope.</returns>
     public static (double A, double B) Fit(IEnumerable<(double, double)> samples)
     {
       var (u, v) = samples.UnpackSinglePass();
@@ -108,8 +114,9 @@ namespace Altaxo.Calc.LinearRegression
     /// returning its best fitting parameter b,
     /// where the intercept is zero and b the slope.
     /// </summary>
-    /// <param name="x">Predictor (independent)</param>
-    /// <param name="y">Response (dependent)</param>
+    /// <param name="x">The predictor values.</param>
+    /// <param name="y">The response values.</param>
+    /// <returns>The slope of the fitted line through the origin.</returns>
     public static double FitThroughOrigin(double[] x, double[] y)
     {
       if (x.Length != y.Length)
@@ -139,7 +146,8 @@ namespace Altaxo.Calc.LinearRegression
     /// returning its best fitting parameter b,
     /// where the intercept is zero and b the slope.
     /// </summary>
-    /// <param name="samples">Predictor-Response samples as tuples</param>
+    /// <param name="samples">The predictor-response samples as tuples.</param>
+    /// <returns>The slope of the fitted line through the origin.</returns>
     public static double FitThroughOrigin(IEnumerable<Tuple<double, double>> samples)
     {
       double mxy = 0.0;

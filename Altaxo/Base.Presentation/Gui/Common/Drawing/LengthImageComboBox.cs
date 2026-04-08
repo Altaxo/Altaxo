@@ -34,6 +34,9 @@ namespace Altaxo.Gui.Common.Drawing
   using Altaxo.Units;
   using AUL = Altaxo.Units.Length;
 
+  /// <summary>
+  /// Quantity combo box specialized for length values.
+  /// </summary>
   public class LengthImageComboBox : DimensionfulQuantityImageComboBox
   {
     static LengthImageComboBox()
@@ -73,6 +76,9 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="SelectedQuantityAsValueInPoints"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty SelectedQuantityAsValueInPointsProperty =
         DependencyProperty.Register(nameof(SelectedQuantityAsValueInPoints),
           typeof(double), typeof(LengthImageComboBox),
@@ -83,6 +89,7 @@ namespace Altaxo.Gui.Common.Drawing
       ((LengthImageComboBox)obj).OnSelectedQuantityAsValueInPointsChanged(obj, args);
     }
 
+    /// <inheritdoc/>
     protected override void OnSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
       base.OnSelectedQuantityChanged(obj, args);
@@ -90,6 +97,11 @@ namespace Altaxo.Gui.Common.Drawing
       SelectedQuantityAsValueInPoints = SelectedQuantity.AsValueIn(AUL.Point.Instance);
     }
 
+    /// <summary>
+    /// Updates <see cref="DimensionfulQuantityImageComboBox.SelectedQuantity"/> when the point value changes.
+    /// </summary>
+    /// <param name="obj">The dependency object whose value changed.</param>
+    /// <param name="args">The event arguments.</param>
     protected virtual void OnSelectedQuantityAsValueInPointsChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
       var value = (double)args.NewValue;

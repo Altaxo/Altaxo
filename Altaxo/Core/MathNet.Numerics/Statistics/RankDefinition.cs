@@ -29,14 +29,21 @@
 
 namespace Altaxo.Calc.Statistics
 {
+  /// <summary>
+  /// Specifies how ties are handled when assigning ranks.
+  /// </summary>
   public enum RankDefinition
   {
     /// <summary>Replace ties with their mean (non-integer ranks). Default.</summary>
     Average = 1,
+
+    /// <summary>Default alias for <see cref="Average"/>.</summary>
     Default = 1,
 
     /// <summary>Replace ties with their minimum (typical sports ranking).</summary>
     Min = 2,
+
+    /// <summary>Sports ranking alias for <see cref="Min"/>.</summary>
     Sports = 2,
 
     /// <summary>Replace ties with their maximum.</summary>
@@ -45,6 +52,7 @@ namespace Altaxo.Calc.Statistics
     /// <summary>Permutation with increasing values at each index of ties.</summary>
     First = 4,
 
+    /// <summary>Use empirical CDF-style ranking.</summary>
     EmpiricalCDF = 5
   }
 }

@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Material
   /// </summary>
   public partial class MaterialControlSimple : UserControl, IMaterialViewSimple
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MaterialControlSimple"/> class.
+    /// </summary>
     public MaterialControlSimple()
     {
       InitializeComponent();

@@ -37,20 +37,32 @@ namespace Altaxo.Gui.Common
   /// </example>
   public class RestrictDesiredSizeWrapPanel : WrapPanel
   {
+    /// <summary>
+    /// Identifies the <see cref="RestrictWidth"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty RestrictWidthProperty =
         DependencyProperty.Register("RestrictWidth", typeof(bool), typeof(RestrictDesiredSizeWrapPanel),
                                                                 new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange));
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the desired width is restricted.
+    /// </summary>
     public bool RestrictWidth
     {
       get { return (bool)GetValue(RestrictWidthProperty); }
       set { SetValue(RestrictWidthProperty, value); }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="RestrictHeight"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty RestrictHeightProperty =
         DependencyProperty.Register("RestrictHeight", typeof(bool), typeof(RestrictDesiredSizeWrapPanel),
                                                                 new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange));
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the desired height is restricted.
+    /// </summary>
     public bool RestrictHeight
     {
       get { return (bool)GetValue(RestrictHeightProperty); }
@@ -60,6 +72,7 @@ namespace Altaxo.Gui.Common
     private Size _lastArrangeSize = new Size(double.PositiveInfinity, double.PositiveInfinity);
     private Size _lastMeasureSize = new Size(double.NaN, double.NaN);
 
+    /// <inheritdoc/>
     protected override Size MeasureOverride(Size constraint)
     {
       if (RestrictWidth && RestrictHeight)
@@ -74,6 +87,7 @@ namespace Altaxo.Gui.Common
       return new Size(RestrictWidth ? 0 : baseSize.Width, RestrictHeight ? 0 : baseSize.Height);
     }
 
+    /// <inheritdoc/>
     protected override Size ArrangeOverride(Size arrangeSize)
     {
       if (_lastMeasureSize != arrangeSize)

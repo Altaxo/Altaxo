@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.EnsembleProcessing
   /// </summary>
   public partial class EnsembleProcessingControl : UserControl, IEnsembleProcessingView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EnsembleProcessingControl"/> class.
+    /// </summary>
     public EnsembleProcessingControl()
     {
       InitializeComponent();

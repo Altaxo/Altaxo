@@ -32,16 +32,22 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
   /// </summary>
   public class RectangleDrawingMouseHandler : AbstractRectangularToolMouseHandler
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RectangleDrawingMouseHandler"/> class.
+    /// </summary>
+    /// <param name="grac">The graph controller.</param>
     public RectangleDrawingMouseHandler(GraphController grac)
       : base(grac)
     {
     }
 
+    /// <inheritdoc/>
     public override GraphToolType GraphToolType
     {
       get { return GraphToolType.RectangleDrawing; }
     }
 
+    /// <inheritdoc/>
     protected override void FinishDrawing()
     {
       var rect = GetNormalRectangle(_Points[0].LayerCoordinates, _Points[1].LayerCoordinates);

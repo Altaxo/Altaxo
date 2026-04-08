@@ -34,11 +34,34 @@ namespace Altaxo.Calc.LinearAlgebra.Solvers
   /// </summary>
   public enum IterationStatus
   {
+    /// <summary>
+    /// Continue iterating.
+    /// </summary>
     Continue = 0,
+
+    /// <summary>
+    /// The iterative process converged successfully.
+    /// </summary>
     Converged,
+
+    /// <summary>
+    /// The iterative process diverged.
+    /// </summary>
     Diverged,
+
+    /// <summary>
+    /// The iterative process stopped before convergence.
+    /// </summary>
     StoppedWithoutConvergence,
+
+    /// <summary>
+    /// The iterative process was cancelled.
+    /// </summary>
     Cancelled,
+
+    /// <summary>
+    /// The iterative process failed.
+    /// </summary>
     Failure
   }
 }

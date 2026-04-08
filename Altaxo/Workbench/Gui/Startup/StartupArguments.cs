@@ -22,15 +22,34 @@ using System.Collections.Generic;
 namespace Altaxo.Gui.Startup
 {
   /// <summary>
-  /// This class contains properties you can use to control how the applicaiton is launched.
+  /// This class contains properties you can use to control how the application is launched.
   /// </summary>
   public class StartupArguments // Important- do not derive here from another class or interface: we want to use this class in the earliest stages of startup!
   {
+    /// <summary>
+    /// Gets the application name.
+    /// </summary>
     public string ApplicationName { get; private set; }
+
+    /// <summary>
+    /// Gets the file paths requested on startup.
+    /// </summary>
     public string[] RequestedFileList { get; private set; } = new string[0];
+
+    /// <summary>
+    /// Gets the command-line parameters.
+    /// </summary>
     public string[] ParameterList { get; private set; } = new string[0];
+
+    /// <summary>
+    /// Gets the raw startup arguments.
+    /// </summary>
     public string[] StartupArgs { get; private set; } = new string[0];
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StartupArguments"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public StartupArguments(StartupArguments from)
     {
       ApplicationName = from.ApplicationName;
@@ -39,6 +58,11 @@ namespace Altaxo.Gui.Startup
       StartupArgs = from.StartupArgs;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StartupArguments"/> class.
+    /// </summary>
+    /// <param name="applicationName">The application name.</param>
+    /// <param name="args">The raw startup arguments.</param>
     public StartupArguments(string applicationName, string[] args)
     {
       if (string.IsNullOrEmpty(applicationName))

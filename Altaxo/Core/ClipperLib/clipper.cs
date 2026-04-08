@@ -26,19 +26,34 @@ namespace Clipper2Lib
   // PRE-COMPILER CONDITIONAL ...
   // USINGZ: For user defined Z-coordinates. See Clipper.SetZ
 
+  /// <summary>
+  /// Provides convenience methods for polygon clipping, offsetting, scaling, simplification, and conversion.
+  /// </summary>
   public static class Clipper
   {
     private static Rect64 invalidRect64 = new Rect64(false);
+    /// <summary>
+    /// Gets an invalid <see cref="Rect64"/> instance.
+    /// </summary>
     public static Rect64 InvalidRect64 => invalidRect64;
 
     private static RectD invalidRectD = new RectD(false);
+    /// <summary>
+    /// Gets an invalid <see cref="RectD"/> instance.
+    /// </summary>
     public static RectD InvalidRectD => invalidRectD;
 
+    /// <summary>
+    /// Returns the intersection of two integer path collections.
+    /// </summary>
     public static Paths64 Intersect(Paths64 subject, Paths64 clip, FillRule fillRule)
     {
       return BooleanOp(ClipType.Intersection, subject, clip, fillRule);
     }
 
+    /// <summary>
+    /// Returns the intersection of two floating-point path collections.
+    /// </summary>
     public static PathsD Intersect(PathsD subject, PathsD clip, 
       FillRule fillRule, int precision = 2)
     {
@@ -46,21 +61,33 @@ namespace Clipper2Lib
         subject, clip, fillRule, precision);
     }
 
+    /// <summary>
+    /// Returns the union of an integer path collection.
+    /// </summary>
     public static Paths64 Union(Paths64 subject, FillRule fillRule)
     {
       return BooleanOp(ClipType.Union, subject, null, fillRule);
     }
 
+    /// <summary>
+    /// Returns the union of two integer path collections.
+    /// </summary>
     public static Paths64 Union(Paths64 subject, Paths64 clip, FillRule fillRule)
     {
       return BooleanOp(ClipType.Union, subject, clip, fillRule);
     }
 
+    /// <summary>
+    /// Returns the union of a floating-point path collection.
+    /// </summary>
     public static PathsD Union(PathsD subject, FillRule fillRule)
     {
       return BooleanOp(ClipType.Union, subject, null, fillRule);
     }
 
+    /// <summary>
+    /// Returns the union of two floating-point path collections.
+    /// </summary>
     public static PathsD Union(PathsD subject, PathsD clip, 
       FillRule fillRule, int precision = 2)
     {
@@ -68,11 +95,17 @@ namespace Clipper2Lib
         subject, clip, fillRule, precision);
     }
 
+    /// <summary>
+    /// Returns the difference of two integer path collections.
+    /// </summary>
     public static Paths64 Difference(Paths64 subject, Paths64 clip, FillRule fillRule)
     {
       return BooleanOp(ClipType.Difference, subject, clip, fillRule);
     }
 
+    /// <summary>
+    /// Returns the difference of two floating-point path collections.
+    /// </summary>
     public static PathsD Difference(PathsD subject, PathsD clip, 
       FillRule fillRule, int precision = 2)
     {
@@ -80,11 +113,17 @@ namespace Clipper2Lib
         subject, clip, fillRule, precision);
     }
 
+    /// <summary>
+    /// Returns the exclusive-or of two integer path collections.
+    /// </summary>
     public static Paths64 Xor(Paths64 subject, Paths64 clip, FillRule fillRule)
     {
       return BooleanOp(ClipType.Xor, subject, clip, fillRule);
     }
 
+    /// <summary>
+    /// Returns the exclusive-or of two floating-point path collections.
+    /// </summary>
     public static PathsD Xor(PathsD subject, PathsD clip, 
       FillRule fillRule, int precision = 2)
     {
@@ -92,6 +131,9 @@ namespace Clipper2Lib
         subject, clip, fillRule, precision);
     }
 
+    /// <summary>
+    /// Executes a boolean operation on integer path collections.
+    /// </summary>
     public static Paths64 BooleanOp(ClipType clipType,
       Paths64? subject, Paths64? clip, FillRule fillRule)
     {
@@ -105,6 +147,9 @@ namespace Clipper2Lib
       return solution;
     }
 
+    /// <summary>
+    /// Executes a boolean operation on integer path collections and stores the result in a polytree.
+    /// </summary>
     public static void BooleanOp(ClipType clipType,
       Paths64? subject, Paths64? clip, 
       PolyTree64 polytree, FillRule fillRule)
@@ -117,6 +162,9 @@ namespace Clipper2Lib
       c.Execute(clipType, fillRule, polytree);
     }
 
+    /// <summary>
+    /// Executes a boolean operation on floating-point path collections.
+    /// </summary>
     public static PathsD BooleanOp(ClipType clipType, PathsD subject, PathsD? clip, 
       FillRule fillRule, int precision = 2)
     {
@@ -129,6 +177,9 @@ namespace Clipper2Lib
       return solution;
     }
 
+    /// <summary>
+    /// Executes a boolean operation on floating-point path collections and stores the result in a polytree.
+    /// </summary>
     public static void BooleanOp(ClipType clipType,
       PathsD? subject, PathsD? clip,
       PolyTreeD polytree, FillRule fillRule, int precision = 2)
@@ -141,6 +192,9 @@ namespace Clipper2Lib
       c.Execute(clipType, fillRule, polytree);
     }
 
+    /// <summary>
+    /// Offsets integer paths by the specified delta.
+    /// </summary>
     public static Paths64 InflatePaths(Paths64 paths, double delta, JoinType joinType,
       EndType endType, double miterLimit = 2.0, double arcTolerance = 0.0)
     {
@@ -151,6 +205,9 @@ namespace Clipper2Lib
       return solution;
     }
 
+    /// <summary>
+    /// Offsets floating-point paths by the specified delta.
+    /// </summary>
     public static PathsD InflatePaths(PathsD paths, double delta, JoinType joinType,
       EndType endType, double miterLimit = 2.0, int precision = 2, double arcTolerance = 0.0)
     {
@@ -163,6 +220,9 @@ namespace Clipper2Lib
       return ScalePathsD(tmp, 1 / scale);
     }
 
+    /// <summary>
+    /// Clips integer paths to the specified rectangle.
+    /// </summary>
     public static Paths64 RectClip(Rect64 rect, Paths64 paths)
     {
       if (rect.IsEmpty() || paths.Count == 0) return new Paths64();
@@ -170,6 +230,9 @@ namespace Clipper2Lib
       return rc.Execute(paths);
     }
 
+    /// <summary>
+    /// Clips an integer path to the specified rectangle.
+    /// </summary>
     public static Paths64 RectClip(Rect64 rect, Path64 path)
     {
       if (rect.IsEmpty() || path.Count == 0) return new Paths64();
@@ -177,6 +240,9 @@ namespace Clipper2Lib
       return RectClip(rect, tmp);
     }
     
+    /// <summary>
+    /// Clips floating-point paths to the specified rectangle.
+    /// </summary>
     public static PathsD RectClip(RectD rect, PathsD paths, int precision = 2)
     {
       InternalClipper.CheckPrecision(precision);
@@ -189,12 +255,18 @@ namespace Clipper2Lib
       return ScalePathsD(tmpPath, 1 / scale);
     }
 
+    /// <summary>
+    /// Clips a floating-point path to the specified rectangle.
+    /// </summary>
     public static PathsD RectClip(RectD rect, PathD path, int precision = 2)
     {
       if (rect.IsEmpty() || path.Count == 0) return new PathsD();
       PathsD tmp = new PathsD { path };
       return RectClip(rect, tmp, precision);
     }
+    /// <summary>
+    /// Clips integer polyline paths to the specified rectangle.
+    /// </summary>
     public static Paths64 RectClipLines(Rect64 rect, Paths64 paths)
     {
       if (rect.IsEmpty() || paths.Count == 0) return new Paths64();
@@ -202,6 +274,9 @@ namespace Clipper2Lib
       return rc.Execute(paths);
     }
 
+    /// <summary>
+    /// Clips an integer polyline path to the specified rectangle.
+    /// </summary>
     public static Paths64 RectClipLines(Rect64 rect, Path64 path)
     {
       if (rect.IsEmpty() || path.Count == 0) return new Paths64();
@@ -209,6 +284,9 @@ namespace Clipper2Lib
       return RectClipLines(rect, tmp);
     }
 
+    /// <summary>
+    /// Clips floating-point polyline paths to the specified rectangle.
+    /// </summary>
     public static PathsD RectClipLines(RectD rect, 
       PathsD paths, int precision = 2)
     {
@@ -221,32 +299,50 @@ namespace Clipper2Lib
       tmpPath = rc.Execute(tmpPath);
       return ScalePathsD(tmpPath, 1 / scale);
     }
+    /// <summary>
+    /// Clips a floating-point polyline path to the specified rectangle.
+    /// </summary>
     public static PathsD RectClipLines(RectD rect, PathD path, int precision = 2)
     {
       if (rect.IsEmpty() || path.Count == 0) return new PathsD();
       PathsD tmp = new PathsD { path };
       return RectClipLines(rect, tmp, precision);
     }
+    /// <summary>
+    /// Returns the Minkowski sum of two integer paths.
+    /// </summary>
     public static Paths64 MinkowskiSum(Path64 pattern, Path64 path, bool isClosed)
     {
       return Minkowski.Sum(pattern, path, isClosed);
     }
 
+    /// <summary>
+    /// Returns the Minkowski sum of two floating-point paths.
+    /// </summary>
     public static PathsD MinkowskiSum(PathD pattern, PathD path, bool isClosed)
     {
       return Minkowski.Sum(pattern, path, isClosed);
     }
 
+    /// <summary>
+    /// Returns the Minkowski difference of two integer paths.
+    /// </summary>
     public static Paths64 MinkowskiDiff(Path64 pattern, Path64 path, bool isClosed)
     {
       return Minkowski.Diff(pattern, path, isClosed);
     }
 
+    /// <summary>
+    /// Returns the Minkowski difference of two floating-point paths.
+    /// </summary>
     public static PathsD MinkowskiDiff(PathD pattern, PathD path, bool isClosed)
     {
       return Minkowski.Diff(pattern, path, isClosed);
     }
 
+    /// <summary>
+    /// Calculates the signed area of an integer path.
+    /// </summary>
     public static double Area(Path64 path)
     {
       // https://en.wikipedia.org/wiki/Shoelace_formula
@@ -262,6 +358,9 @@ namespace Clipper2Lib
       return a * 0.5;
     }
 
+    /// <summary>
+    /// Calculates the signed area of integer paths.
+    /// </summary>
     public static double Area(Paths64 paths)
     {
       double a = 0.0;
@@ -270,6 +369,9 @@ namespace Clipper2Lib
       return a;
     }
 
+    /// <summary>
+    /// Calculates the signed area of a floating-point path.
+    /// </summary>
     public static double Area(PathD path)
     {
       double a = 0.0;
@@ -284,6 +386,9 @@ namespace Clipper2Lib
       return a * 0.5;
     }
 
+    /// <summary>
+    /// Calculates the signed area of floating-point paths.
+    /// </summary>
     public static double Area(PathsD paths)
     {
       double a = 0.0;
@@ -292,18 +397,27 @@ namespace Clipper2Lib
       return a;
     }
 
+    /// <summary>
+    /// Determines whether an integer polygon has positive orientation.
+    /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsPositive(Path64 poly)
     {
       return Area(poly) >= 0;
     }
 
+    /// <summary>
+    /// Determines whether a floating-point polygon has positive orientation.
+    /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsPositive(PathD poly)
     {
       return Area(poly) >= 0;
     }
 
+    /// <summary>
+    /// Converts an integer path to a string.
+    /// </summary>
     public static string Path64ToString(Path64 path)
     {
       string result = "";
@@ -311,6 +425,9 @@ namespace Clipper2Lib
         result += pt.ToString();
       return result + '\n';
     }
+    /// <summary>
+    /// Converts integer paths to a string.
+    /// </summary>
     public static string Paths64ToString(Paths64 paths)
     {
       string result = "";
@@ -318,6 +435,9 @@ namespace Clipper2Lib
         result += Path64ToString(path);
       return result;
     }
+    /// <summary>
+    /// Converts a floating-point path to a string.
+    /// </summary>
     public static string PathDToString(PathD path)
     {
       string result = "";
@@ -325,6 +445,9 @@ namespace Clipper2Lib
         result += pt.ToString();
       return result + '\n';
     }
+    /// <summary>
+    /// Converts floating-point paths to a string.
+    /// </summary>
     public static string PathsDToString(PathsD paths)
     {
       string result = "";
@@ -332,6 +455,9 @@ namespace Clipper2Lib
         result += PathDToString(path);
       return result;
     }
+    /// <summary>
+    /// Offsets an integer path by the specified translation.
+    /// </summary>
     public static Path64 OffsetPath(Path64 path, long dx, long dy)
     {
       Path64 result = new Path64(path.Count);
@@ -340,6 +466,9 @@ namespace Clipper2Lib
       return result;
     }
 
+    /// <summary>
+    /// Scales an integer point and returns an integer point.
+    /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Point64 ScalePoint64(Point64 pt, double scale)
     {
@@ -354,6 +483,9 @@ namespace Clipper2Lib
       return result;
     }
 
+    /// <summary>
+    /// Scales an integer point and returns a floating-point point.
+    /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static PointD ScalePointD(Point64 pt, double scale)
     {
@@ -369,6 +501,9 @@ namespace Clipper2Lib
     }
 
 
+    /// <summary>
+    /// Scales a floating-point rectangle and returns an integer rectangle.
+    /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Rect64 ScaleRect(RectD rec, double scale)
     {
@@ -382,6 +517,9 @@ namespace Clipper2Lib
       return result;
     }
 
+    /// <summary>
+    /// Scales an integer path.
+    /// </summary>
     public static Path64 ScalePath(Path64 path, double scale)
     {
       if (InternalClipper.IsAlmostZero(scale - 1)) return path;
@@ -396,6 +534,9 @@ namespace Clipper2Lib
       return result;
     }
 
+    /// <summary>
+    /// Scales integer paths.
+    /// </summary>
     public static Paths64 ScalePaths(Paths64 paths, double scale)
     {
       if (InternalClipper.IsAlmostZero(scale - 1)) return paths;
@@ -405,6 +546,9 @@ namespace Clipper2Lib
       return result;
     }
 
+    /// <summary>
+    /// Scales a floating-point path.
+    /// </summary>
     public static PathD ScalePath(PathD path, double scale)
     {
       if (InternalClipper.IsAlmostZero(scale - 1)) return path;
@@ -414,6 +558,9 @@ namespace Clipper2Lib
       return result;
     }
 
+    /// <summary>
+    /// Scales floating-point paths.
+    /// </summary>
     public static PathsD ScalePaths(PathsD paths, double scale)
     {
       if (InternalClipper.IsAlmostZero(scale - 1)) return paths;
@@ -423,6 +570,9 @@ namespace Clipper2Lib
       return result;
     }
 
+    /// <summary>
+    /// Scales and converts a floating-point path to an integer path.
+    /// </summary>
     // Unlike ScalePath, both ScalePath64 & ScalePathD also involve type conversion
     public static Path64 ScalePath64(PathD path, double scale)
     {
@@ -433,6 +583,9 @@ namespace Clipper2Lib
       return res;
     }
 
+    /// <summary>
+    /// Scales and converts floating-point paths to integer paths.
+    /// </summary>
     public static Paths64 ScalePaths64(PathsD paths, double scale)
     {
       int cnt = paths.Count;
@@ -442,6 +595,9 @@ namespace Clipper2Lib
       return res;
     }
 
+    /// <summary>
+    /// Scales and converts an integer path to a floating-point path.
+    /// </summary>
     public static PathD ScalePathD(Path64 path, double scale)
     {
       int cnt = path.Count;
@@ -451,6 +607,9 @@ namespace Clipper2Lib
       return res;
     }
 
+    /// <summary>
+    /// Scales and converts integer paths to floating-point paths.
+    /// </summary>
     public static PathsD ScalePathsD(Paths64 paths, double scale)
     {
       int cnt = paths.Count;
@@ -460,6 +619,9 @@ namespace Clipper2Lib
       return res;
     }
 
+    /// <summary>
+    /// Converts a floating-point path to an integer path without scaling.
+    /// </summary>
     // The static functions Path64 and PathD convert path types without scaling
     public static Path64 Path64(PathD path)
     {
@@ -469,6 +631,9 @@ namespace Clipper2Lib
       return result;
     }
 
+    /// <summary>
+    /// Converts floating-point paths to integer paths without scaling.
+    /// </summary>
     public static Paths64 Paths64(PathsD paths)
     {
       Paths64 result = new Paths64(paths.Count);
@@ -477,6 +642,9 @@ namespace Clipper2Lib
       return result;
     }
 
+    /// <summary>
+    /// Converts integer paths to floating-point paths without scaling.
+    /// </summary>
     public static PathsD PathsD(Paths64 paths)
     {
       PathsD result = new PathsD(paths.Count);
@@ -485,6 +653,9 @@ namespace Clipper2Lib
       return result;
     }
 
+    /// <summary>
+    /// Converts an integer path to a floating-point path without scaling.
+    /// </summary>
     public static PathD PathD(Path64 path)
     {
       PathD result = new PathD(path.Count);
@@ -493,6 +664,9 @@ namespace Clipper2Lib
       return result;
     }
 
+    /// <summary>
+    /// Translates an integer path.
+    /// </summary>
     public static Path64 TranslatePath(Path64 path, long dx, long dy)
     {
       Path64 result = new Path64(path.Count);
@@ -501,6 +675,9 @@ namespace Clipper2Lib
       return result;
     }
 
+    /// <summary>
+    /// Translates integer paths.
+    /// </summary>
     public static Paths64 TranslatePaths(Paths64 paths, long dx, long dy)
     {
       Paths64 result = new Paths64(paths.Count);
@@ -509,6 +686,9 @@ namespace Clipper2Lib
       return result;
     }
 
+    /// <summary>
+    /// Translates a floating-point path.
+    /// </summary>
     public static PathD TranslatePath(PathD path, double dx, double dy)
     {
       PathD result = new PathD(path.Count);
@@ -517,6 +697,9 @@ namespace Clipper2Lib
       return result;
     }
 
+    /// <summary>
+    /// Translates floating-point paths.
+    /// </summary>
     public static PathsD TranslatePaths(PathsD paths, double dx, double dy)
     {
       PathsD result = new PathsD(paths.Count);
@@ -525,6 +708,9 @@ namespace Clipper2Lib
       return result;
     }
 
+    /// <summary>
+    /// Returns a reversed copy of an integer path.
+    /// </summary>
     public static Path64 ReversePath(Path64 path)
     {
       Path64 result = new Path64(path);
@@ -532,6 +718,9 @@ namespace Clipper2Lib
       return result;
     }
 
+    /// <summary>
+    /// Returns a reversed copy of a floating-point path.
+    /// </summary>
     public static PathD ReversePath(PathD path)
     {
       PathD result = new PathD(path);
@@ -539,6 +728,9 @@ namespace Clipper2Lib
       return result;
     }
 
+    /// <summary>
+    /// Returns reversed copies of integer paths.
+    /// </summary>
     public static Paths64 ReversePaths(Paths64 paths)
     {
       Paths64 result = new Paths64(paths.Count);
@@ -548,6 +740,9 @@ namespace Clipper2Lib
       return result;
     }
 
+    /// <summary>
+    /// Returns reversed copies of floating-point paths.
+    /// </summary>
     public static PathsD ReversePaths(PathsD paths)
     {
       PathsD result = new PathsD(paths.Count);
@@ -556,6 +751,9 @@ namespace Clipper2Lib
       return result;
     }
 
+    /// <summary>
+    /// Gets the bounds of an integer path.
+    /// </summary>
     public static Rect64 GetBounds(Path64 path)
     {
       Rect64 result = InvalidRect64;
@@ -569,6 +767,9 @@ namespace Clipper2Lib
       return result.left == long.MaxValue ? new Rect64() : result;
     }
 
+    /// <summary>
+    /// Gets the bounds of integer paths.
+    /// </summary>
     public static Rect64 GetBounds(Paths64 paths)
     {
       Rect64 result = InvalidRect64;
@@ -583,6 +784,9 @@ namespace Clipper2Lib
       return result.left == long.MaxValue ? new Rect64() : result;
     }
 
+    /// <summary>
+    /// Gets the bounds of a floating-point path.
+    /// </summary>
     public static RectD GetBounds(PathD path)
     {
       RectD result = InvalidRectD;
@@ -596,6 +800,9 @@ namespace Clipper2Lib
       return Math.Abs(result.left - double.MaxValue) < InternalClipper.floatingPointTolerance ? new RectD() : result;
     }
 
+    /// <summary>
+    /// Gets the bounds of floating-point paths.
+    /// </summary>
     public static RectD GetBounds(PathsD paths)
     {
       RectD result = InvalidRectD;
@@ -610,6 +817,9 @@ namespace Clipper2Lib
       return Math.Abs(result.left - double.MaxValue) < InternalClipper.floatingPointTolerance ? new RectD() : result;
     }
 
+    /// <summary>
+    /// Creates an integer path from an array of integer coordinates.
+    /// </summary>
     public static Path64 MakePath(int[] arr)
     {
       int len = arr.Length / 2;
@@ -619,6 +829,9 @@ namespace Clipper2Lib
       return p;
     }
 
+    /// <summary>
+    /// Creates an integer path from an array of long coordinates.
+    /// </summary>
     public static Path64 MakePath(long[] arr)
     {
       int len = arr.Length / 2;
@@ -628,6 +841,9 @@ namespace Clipper2Lib
       return p;
     }
 
+    /// <summary>
+    /// Creates a floating-point path from an array of coordinates.
+    /// </summary>
     public static PathD MakePath(double[] arr)
     {
       int len = arr.Length / 2;
@@ -638,6 +854,9 @@ namespace Clipper2Lib
     }
 
 #if USINGZ
+    /// <summary>
+    /// Creates a 3D integer path from an array of coordinates.
+    /// </summary>
     public static Path64 MakePathZ(long[] arr)
     {
       int len = arr.Length / 3;
@@ -646,6 +865,9 @@ namespace Clipper2Lib
         p.Add(new Point64(arr[i * 3], arr[i * 3 + 1], arr[i * 3 + 2]));
       return p;
     }
+    /// <summary>
+    /// Creates a 3D floating-point path from an array of coordinates.
+    /// </summary>
     public static PathD MakePathZ(double[] arr)
     {
       int len = arr.Length / 3;
@@ -657,36 +879,54 @@ namespace Clipper2Lib
 #endif
 
 
+    /// <summary>
+    /// Returns the square of a floating-point value.
+    /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double Sqr(double val)
     {
       return val * val;
     }
 
+    /// <summary>
+    /// Returns the square of an integer value.
+    /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double Sqr(long val)
     {
       return (double) val * (double) val;
     }
 
+    /// <summary>
+    /// Returns the squared distance between two integer points.
+    /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double DistanceSqr(Point64 pt1, Point64 pt2)
     {
       return Sqr(pt1.X - pt2.X) + Sqr(pt1.Y - pt2.Y);
     }
 
+    /// <summary>
+    /// Returns the midpoint between two integer points.
+    /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Point64 MidPoint(Point64 pt1, Point64 pt2)
     {
       return new Point64((pt1.X + pt2.X) / 2, (pt1.Y + pt2.Y) / 2);
     }
 
+    /// <summary>
+    /// Returns the midpoint between two floating-point points.
+    /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static PointD MidPoint(PointD pt1, PointD pt2)
     {
       return new PointD((pt1.x + pt2.x) / 2, (pt1.y + pt2.y) / 2);
     }
 
+    /// <summary>
+    /// Inflates an integer rectangle by the specified amounts.
+    /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void InflateRect(ref Rect64 rec, int dx, int dy)
     {
@@ -696,6 +936,9 @@ namespace Clipper2Lib
       rec.bottom += dy;
     }
 
+    /// <summary>
+    /// Inflates a floating-point rectangle by the specified amounts.
+    /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void InflateRect(ref RectD rec, double dx, double dy)
     {
@@ -705,12 +948,18 @@ namespace Clipper2Lib
       rec.bottom += dy;
     }
 
+    /// <summary>
+    /// Determines whether two floating-point points are within a squared distance threshold.
+    /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool PointsNearEqual(PointD pt1, PointD pt2, double distanceSqrd)
     {
       return Sqr(pt1.x - pt2.x) + Sqr(pt1.y - pt2.y) < distanceSqrd;
     }
 
+    /// <summary>
+    /// Removes near-duplicate points from a floating-point path.
+    /// </summary>
     public static PathD StripNearDuplicates(PathD path,
         double minEdgeLenSqrd, bool isClosedPath)
     {
@@ -734,6 +983,9 @@ namespace Clipper2Lib
       return result;
     }
 
+    /// <summary>
+    /// Removes duplicate points from an integer path.
+    /// </summary>
     public static Path64 StripDuplicates(Path64 path, bool isClosedPath)
     {
       int cnt = path.Count;
@@ -761,6 +1013,9 @@ namespace Clipper2Lib
         AddPolyNodeToPaths((PolyPath64) polyPath._childs[i], paths);
     }
 
+    /// <summary>
+    /// Flattens an integer polytree into paths.
+    /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Paths64 PolyTreeToPaths64(PolyTree64 polyTree)
     {
@@ -770,6 +1025,9 @@ namespace Clipper2Lib
       return result;
     }
 
+    /// <summary>
+    /// Adds a floating-point polypath and its descendants to a path collection.
+    /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void AddPolyNodeToPathsD(PolyPathD polyPath, PathsD paths)
     {
@@ -779,6 +1037,9 @@ namespace Clipper2Lib
         AddPolyNodeToPathsD((PolyPathD) polyPath._childs[i], paths);
     }
 
+    /// <summary>
+    /// Flattens a floating-point polytree into paths.
+    /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static PathsD PolyTreeToPathsD(PolyTreeD polyTree)
     {
@@ -793,6 +1054,9 @@ namespace Clipper2Lib
     }
 
 
+    /// <summary>
+    /// Returns the squared perpendicular distance from a floating-point point to a line.
+    /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double PerpendicDistFromLineSqrd(PointD pt, PointD line1, PointD line2)
     {
@@ -804,6 +1068,9 @@ namespace Clipper2Lib
       return Sqr(a * d - c * b) / (c * c + d * d);
     }
 
+    /// <summary>
+    /// Returns the squared perpendicular distance from an integer point to a line.
+    /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double PerpendicDistFromLineSqrd(Point64 pt, Point64 line1, Point64 line2)
     {
@@ -844,6 +1111,9 @@ namespace Clipper2Lib
       }
     }
 
+    /// <summary>
+    /// Simplifies an integer path using the Ramer-Douglas-Peucker algorithm.
+    /// </summary>
     public static Path64 RamerDouglasPeucker(Path64 path, double epsilon)
     {
       int len = path.Count;
@@ -856,6 +1126,9 @@ namespace Clipper2Lib
       return result;
     }
 
+    /// <summary>
+    /// Simplifies integer paths using the Ramer-Douglas-Peucker algorithm.
+    /// </summary>
     public static Paths64 RamerDouglasPeucker(Paths64 paths, double epsilon)
     {
       Paths64 result = new Paths64(paths.Count);
@@ -893,6 +1166,9 @@ namespace Clipper2Lib
       }
     }
 
+    /// <summary>
+    /// Simplifies a floating-point path using the Ramer-Douglas-Peucker algorithm.
+    /// </summary>
     public static PathD RamerDouglasPeucker(PathD path, double epsilon)
     {
       int len = path.Count;
@@ -905,6 +1181,9 @@ namespace Clipper2Lib
       return result;
     }
 
+    /// <summary>
+    /// Simplifies floating-point paths using the Ramer-Douglas-Peucker algorithm.
+    /// </summary>
     public static PathsD RamerDouglasPeucker(PathsD paths, double epsilon)
     {
       PathsD result = new PathsD(paths.Count);
@@ -936,7 +1215,10 @@ namespace Clipper2Lib
       return current;
     }
 
-      public static Path64 SimplifyPath(Path64 path,
+    /// <summary>
+    /// Simplifies an integer path by removing redundant vertices.
+    /// </summary>
+    public static Path64 SimplifyPath(Path64 path,
       double epsilon, bool isClosedPath = true)
     {
       int len = path.Count, high = len - 1;
@@ -1002,6 +1284,9 @@ namespace Clipper2Lib
       return result;
     }
 
+    /// <summary>
+    /// Simplifies integer paths by removing redundant vertices.
+    /// </summary>
     public static Paths64 SimplifyPaths(Paths64 paths,
       double epsilon, bool isClosedPaths = true)
     {
@@ -1011,6 +1296,9 @@ namespace Clipper2Lib
       return result;
     }
 
+    /// <summary>
+    /// Simplifies a floating-point path by removing redundant vertices.
+    /// </summary>
     public static PathD SimplifyPath(PathD path,
       double epsilon, bool isClosedPath = true)
     {
@@ -1075,6 +1363,9 @@ namespace Clipper2Lib
       return result;
     }
 
+    /// <summary>
+    /// Simplifies floating-point paths by removing redundant vertices.
+    /// </summary>
     public static PathsD SimplifyPaths(PathsD paths,
       double epsilon, bool isClosedPath = true)
     {
@@ -1084,6 +1375,9 @@ namespace Clipper2Lib
       return result;
     }
 
+    /// <summary>
+    /// Removes collinear vertices from an integer path.
+    /// </summary>
     public static Path64 TrimCollinear(Path64 path, bool isOpen = false)
     {
       int len = path.Count;
@@ -1129,6 +1423,9 @@ namespace Clipper2Lib
       return result;
     }
 
+    /// <summary>
+    /// Removes collinear vertices from a floating-point path.
+    /// </summary>
     public static PathD TrimCollinear(PathD path, int precision, bool isOpen = false)
     {
       InternalClipper.CheckPrecision(precision);
@@ -1138,11 +1435,17 @@ namespace Clipper2Lib
       return ScalePathD(p, 1 / scale);
     }
 
+    /// <summary>
+    /// Determines the position of an integer point relative to an integer polygon.
+    /// </summary>
     public static PointInPolygonResult PointInPolygon(Point64 pt, Path64 polygon)
     {
       return InternalClipper.PointInPolygon(pt, polygon);
     }
 
+    /// <summary>
+    /// Determines the position of a floating-point point relative to a floating-point polygon.
+    /// </summary>
     public static PointInPolygonResult PointInPolygon(PointD pt, 
       PathD polygon, int precision = 2)
     {
@@ -1153,6 +1456,9 @@ namespace Clipper2Lib
       return InternalClipper.PointInPolygon(p, path);
     }
 
+    /// <summary>
+    /// Creates an integer ellipse approximation.
+    /// </summary>
     public static Path64 Ellipse(Point64 center,
       double radiusX, double radiusY = 0, int steps = 0)
     {
@@ -1175,6 +1481,9 @@ namespace Clipper2Lib
       return result;
     }
 
+    /// <summary>
+    /// Creates a floating-point ellipse approximation.
+    /// </summary>
     public static PathD Ellipse(PointD center,
       double radiusX, double radiusY = 0, int steps = 0)
     {
@@ -1212,6 +1521,9 @@ namespace Clipper2Lib
       }
     }
 
+    /// <summary>
+    /// Writes the structure of an integer polytree to the console.
+    /// </summary>
     public static void ShowPolyTreeStructure(PolyTree64 polytree)
     {
       Console.WriteLine("Polytree Root");
@@ -1233,6 +1545,9 @@ namespace Clipper2Lib
       }
     }
 
+    /// <summary>
+    /// Writes the structure of a floating-point polytree to the console.
+    /// </summary>
     public static void ShowPolyTreeStructure(PolyTreeD polytree)
     {
       Console.WriteLine("Polytree Root");

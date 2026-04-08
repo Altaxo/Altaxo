@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.EnsembleProcessing
   /// </summary>
   public partial class BlockScalingCorrection2DControl : UserControl, IBlockScalingCorrection2DView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BlockScalingCorrection2DControl"/> class.
+    /// </summary>
     public BlockScalingCorrection2DControl()
     {
       InitializeComponent();

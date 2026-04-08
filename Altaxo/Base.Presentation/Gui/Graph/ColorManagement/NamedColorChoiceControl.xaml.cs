@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.ColorManagement
   /// </summary>
   public partial class NamedColorChoiceControl : UserControl, INamedColorChoiceView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NamedColorChoiceControl"/> class.
+    /// </summary>
     public NamedColorChoiceControl()
     {
       InitializeComponent();

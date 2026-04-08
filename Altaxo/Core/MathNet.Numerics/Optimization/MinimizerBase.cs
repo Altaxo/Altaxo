@@ -31,13 +31,31 @@ using System;
 
 namespace Altaxo.Calc.Optimization
 {
+  /// <summary>
+  /// Provides shared functionality for minimization algorithms.
+  /// </summary>
   public abstract class MinimizerBase
   {
+    /// <summary>
+    /// Gets or sets the stopping threshold for the gradient norm.
+    /// </summary>
     public double GradientTolerance { get; set; }
+    /// <summary>
+    /// Gets or sets the stopping threshold for parameter changes.
+    /// </summary>
     public double ParameterTolerance { get; set; }
+    /// <summary>
+    /// Gets or sets the stopping threshold for objective progress.
+    /// </summary>
     public double FunctionProgressTolerance { get; set; }
+    /// <summary>
+    /// Gets or sets the maximum number of iterations.
+    /// </summary>
     public int MaximumIterations { get; set; }
 
+    /// <summary>
+    /// Gets a very small positive constant used for numerical comparisons.
+    /// </summary>
     protected const double VerySmall = 1e-15;
 
     /// <summary>
@@ -55,6 +73,13 @@ namespace Altaxo.Calc.Optimization
       MaximumIterations = maximumIterations;
     }
 
+    /// <summary>
+    /// Evaluates whether the minimizer exit criteria are satisfied.
+    /// </summary>
+    /// <param name="candidatePoint">The current candidate point.</param>
+    /// <param name="lastPoint">The previously accepted point.</param>
+    /// <param name="iterations">The current iteration count.</param>
+    /// <returns>The exit condition, or <see cref="ExitCondition.None"/> if optimization should continue.</returns>
     protected ExitCondition ExitCriteriaSatisfied(IObjectiveFunctionEvaluation candidatePoint, IObjectiveFunctionEvaluation lastPoint, int iterations)
     {
       var candidatePointPoint = candidatePoint.Point;
@@ -96,11 +121,21 @@ namespace Altaxo.Calc.Optimization
       return ExitCondition.None;
     }
 
+    /// <summary>
+    /// Gets the projected gradient component for a parameter.
+    /// </summary>
+    /// <param name="candidatePoint">The current candidate point.</param>
+    /// <param name="ii">The parameter index.</param>
+    /// <returns>The projected gradient component.</returns>
     protected virtual double GetProjectedGradient(IObjectiveFunctionEvaluation candidatePoint, int ii)
     {
       return candidatePoint.Gradient[ii];
     }
 
+    /// <summary>
+    /// Validates the objective value and gradient for finiteness.
+    /// </summary>
+    /// <param name="eval">The evaluation to validate.</param>
     protected void ValidateGradientAndObjective(IObjectiveFunctionEvaluation eval)
     {
       foreach (var x in eval.Gradient)

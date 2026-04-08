@@ -28,8 +28,14 @@ using Altaxo.Gui.Workbench;
 
 namespace Altaxo.Gui.Pads.DataDisplay
 {
+  /// <summary>
+  /// Defines the view for the data display pad.
+  /// </summary>
   public interface IDataDisplayView
   {
+    /// <summary>
+    /// Gets or sets the text shown by the data display view.
+    /// </summary>
     string Text { get; set; }
   }
 
@@ -43,7 +49,7 @@ namespace Altaxo.Gui.Pads.DataDisplay
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DataDisplayController"/> class.
-    /// Since this is created as a pad codon, it is not created in a service codon, thus we register it as a service
+    /// Since this controller is created as a pad codon, it is not created in a service codon, so it is registered as a service
     /// in this constructor.
     /// </summary>
     public DataDisplayController()
@@ -61,6 +67,7 @@ namespace Altaxo.Gui.Pads.DataDisplay
     {
     }
 
+    /// <inheritdoc/>
     public override object ViewObject
     {
       get
@@ -82,6 +89,7 @@ namespace Altaxo.Gui.Pads.DataDisplay
       }
     }
 
+    /// <inheritdoc/>
     public override object ModelObject
     {
       get { return null; }
@@ -113,29 +121,19 @@ namespace Altaxo.Gui.Pads.DataDisplay
 
     #region IDataDisplayService Members
 
-    /// <summary>Writes a string to the output.</summary>
-    /// <param name="text">The text to write to the output.</param>
+    /// <inheritdoc/>
     public void WriteOneLine(string text)
     {
       InternalWrite(text);
     }
 
-    /// <summary>
-    /// Writes two lines to the window.
-    /// </summary>
-    /// <param name="line1">First line.</param>
-    /// <param name="line2">Second line.</param>
+    /// <inheritdoc/>
     public void WriteTwoLines(string line1, string line2)
     {
       InternalWrite(line1 + System.Environment.NewLine + line2);
     }
 
-    /// <summary>
-    /// Writes three lines to the output.
-    /// </summary>
-    /// <param name="line1">First line.</param>
-    /// <param name="line2">Second line.</param>
-    /// <param name="line3">Three line.</param>
+    /// <inheritdoc/>
     public void WriteThreeLines(string line1, string line2, string line3)
     {
       InternalWrite(line1 + System.Environment.NewLine + line2 + System.Environment.NewLine + line3);

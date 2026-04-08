@@ -47,6 +47,9 @@ namespace Altaxo.Gui.Geometry
   {
     private double[] _position = new double[3];
 
+    /// <summary>
+    /// Occurs when <see cref="SelectedValue"/> changes.
+    /// </summary>
     public event EventHandler? SelectedValueChanged;
 
     private Common.NumericDoubleTextBox[] _guiPositionBoxes;
@@ -55,6 +58,9 @@ namespace Altaxo.Gui.Geometry
 
     private GuiChangeLocker _lock;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Position3DCartesianControl"/> class.
+    /// </summary>
     public Position3DCartesianControl()
     {
       InitializeComponent();

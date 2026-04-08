@@ -33,10 +33,14 @@ namespace Altaxo.Gui.Common
   /// <seealso cref="System.Windows.Controls.TextBox" />
   public class TextBoxWithBindableSelection : TextBox
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextBoxWithBindableSelection"/> class.
+    /// </summary>
     public TextBoxWithBindableSelection()
     {
     }
 
+    /// <inheritdoc/>
     protected override void OnSelectionChanged(RoutedEventArgs e)
     {
       base.OnSelectionChanged(e);
@@ -61,6 +65,9 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <summary>
+    /// Identifies the <see cref="SelectionInfo"/> dependency property.
+    /// </summary>
     public static readonly DependencyProperty SelectionInfoProperty =
       DependencyProperty.Register(nameof(SelectionInfo), typeof((int, int)),
       typeof(TextBoxWithBindableSelection),

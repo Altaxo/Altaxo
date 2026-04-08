@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Analysis.Multivariate
   /// </summary>
   public partial class DimensionReductionByAggregationControl : UserControl, IDimensionReductionByAggregationView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DimensionReductionByAggregationControl"/> class.
+    /// </summary>
     public DimensionReductionByAggregationControl()
     {
       InitializeComponent();

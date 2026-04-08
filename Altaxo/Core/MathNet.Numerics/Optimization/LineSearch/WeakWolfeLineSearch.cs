@@ -47,19 +47,29 @@ namespace Altaxo.Calc.Optimization.LineSearch
   /// </summary>
   public class WeakWolfeLineSearch : WolfeLineSearch
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WeakWolfeLineSearch"/> class.
+    /// </summary>
+    /// <param name="c1">The sufficient decrease constant.</param>
+    /// <param name="c2">The curvature constant.</param>
+    /// <param name="parameterTolerance">The tolerance used to detect lack of progress.</param>
+    /// <param name="maxIterations">The maximum number of iterations.</param>
     public WeakWolfeLineSearch(double c1, double c2, double parameterTolerance, int maxIterations = 10)
         : base(c1, c2, parameterTolerance, maxIterations)
     {
       // Validation in base class
     }
 
+    /// <inheritdoc />
     protected override ExitCondition WolfeExitCondition => ExitCondition.WeakWolfeCriteria;
 
+    /// <inheritdoc />
     protected override bool WolfeCondition(double stepDd, double initialDd)
     {
       return stepDd < C2 * initialDd;
     }
 
+    /// <inheritdoc />
     protected override void ValidateValue(IObjectiveFunctionEvaluation eval)
     {
       if (!IsFinite(eval.Value))
@@ -68,12 +78,14 @@ namespace Altaxo.Calc.Optimization.LineSearch
       }
     }
 
+    /// <inheritdoc />
     protected override void ValidateInputArguments(IObjectiveFunctionEvaluation startingPoint, Vector<double> searchDirection, double initialStep, double upperBound)
     {
       if (!startingPoint.IsGradientSupported)
         throw new ArgumentException("objective function does not support gradient");
     }
 
+    /// <inheritdoc />
     protected override void ValidateGradient(IObjectiveFunctionEvaluation eval)
     {
       foreach (double x in eval.Gradient)

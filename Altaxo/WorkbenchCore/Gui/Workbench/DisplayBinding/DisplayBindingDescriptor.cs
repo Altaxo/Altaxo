@@ -23,6 +23,9 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Workbench
 {
+  /// <summary>
+  /// Describes a display binding defined by an add-in or by an existing binding instance.
+  /// </summary>
   public class DisplayBindingDescriptor
   {
     private object? _binding;
@@ -38,6 +41,9 @@ namespace Altaxo.Gui.Workbench
       return _binding;
     }
 
+    /// <summary>
+    /// Gets the primary display binding instance.
+    /// </summary>
     public IDisplayBinding? Binding
     {
       get
@@ -50,6 +56,9 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Gets the secondary display binding instance.
+    /// </summary>
     public ISecondaryDisplayBinding? SecondaryBinding
     {
       get
@@ -62,15 +71,31 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this descriptor refers to a secondary binding.
+    /// </summary>
     public bool IsSecondary
     {
       get { return _isSecondary; }
     }
 
+    /// <summary>
+    /// Gets or sets the binding identifier.
+    /// </summary>
     public string? Id { get; set; }
+    /// <summary>
+    /// Gets or sets the display title.
+    /// </summary>
     public string? Title { get; set; }
+    /// <summary>
+    /// Gets or sets the file name pattern used to match files.
+    /// </summary>
     public string? FileNameRegex { get; set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DisplayBindingDescriptor"/> class from an add-in codon.
+    /// </summary>
+    /// <param name="codon">The codon that describes the binding.</param>
     public DisplayBindingDescriptor(Codon codon)
     {
       if (codon is null)
@@ -92,6 +117,10 @@ namespace Altaxo.Gui.Workbench
       FileNameRegex = codon.Properties["fileNamePattern"];
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DisplayBindingDescriptor"/> class for a primary binding.
+    /// </summary>
+    /// <param name="binding">The primary display binding.</param>
     public DisplayBindingDescriptor(IDisplayBinding binding)
     {
       if (binding is null)
@@ -101,6 +130,10 @@ namespace Altaxo.Gui.Workbench
       this._binding = binding;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DisplayBindingDescriptor"/> class for a secondary binding.
+    /// </summary>
+    /// <param name="binding">The secondary display binding.</param>
     public DisplayBindingDescriptor(ISecondaryDisplayBinding binding)
     {
       if (binding is null)
@@ -131,6 +164,7 @@ namespace Altaxo.Gui.Workbench
       return Regex.IsMatch(fileName, fileNameRegex, RegexOptions.IgnoreCase);
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return string.Format("[DisplayBindingDescriptor Id={1} Binding={0}]", _binding, Id);

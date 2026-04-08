@@ -35,8 +35,16 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
+  /// <summary>
+  /// Creates bitmap previews for color models.
+  /// </summary>
   public static class ColorBitmapCreator
   {
+    /// <summary>
+    /// Creates a bitmap from a color function defined over normalized coordinates.
+    /// </summary>
+    /// <param name="colorFunction">The function returning a color for a normalized point.</param>
+    /// <returns>A bitmap containing the rendered colors.</returns>
     public static BitmapSource GetBitmap(Func<PointD2D, AxoColor> colorFunction)
     {
       const int width = 32;

@@ -31,9 +31,15 @@ using System.Text;
 
 namespace Altaxo.Units.Time
 {
+  /// <summary>
+  /// Represents the hour unit of time.
+  /// </summary>
   [UnitDescription("Time", 0, 0, 1, 0, 0, 0, 0)]
   public class Hour : UnitBase, IUnit
   {
+    /// <summary>
+    /// The number of seconds in one hour.
+    /// </summary>
     public const double OneHourInSeconds = 3600;
 
     private static readonly Hour _instance = new Hour();
@@ -45,13 +51,18 @@ namespace Altaxo.Units.Time
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="Hour"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Hour), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return Hour.Instance;
@@ -60,6 +71,9 @@ namespace Altaxo.Units.Time
     #endregion
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Hour"/> class.
+    /// </summary>
     protected Hour()
     {
     }

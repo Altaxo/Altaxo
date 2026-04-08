@@ -48,6 +48,10 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
   /// </summary>
   public abstract class DashPatternComboBoxBase : Altaxo.Gui.Drawing.StyleListComboBoxBase<DashPatternListManager, DashPatternList, IDashPattern>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DashPatternComboBoxBase"/> class.
+    /// </summary>
+    /// <param name="manager">The dash-pattern list manager.</param>
     public DashPatternComboBoxBase(DashPatternListManager manager) : base(manager)
     {
     }

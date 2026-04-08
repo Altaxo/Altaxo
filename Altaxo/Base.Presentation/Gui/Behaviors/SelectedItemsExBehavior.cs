@@ -53,17 +53,26 @@ namespace Altaxo.Gui.Behaviors
   {
     #region IsEnabled property (used to attach behaviour)
 
+    /// <summary>
+    /// Identifies the attached property that enables the behavior.
+    /// </summary>
     public static readonly DependencyProperty IsEnabledProperty = DependencyProperty.RegisterAttached(
         "IsEnabled",
         typeof(bool),
         typeof(SelectedItemsExBehavior),
         new FrameworkPropertyMetadata(OnIsEnabledChanged));
 
+    /// <summary>
+    /// Gets a value indicating whether the behavior is enabled for the specified list box.
+    /// </summary>
     public static bool GetIsEnabled(ListBox frameworkElement)
     {
       return (bool)frameworkElement.GetValue(IsEnabledProperty);
     }
 
+    /// <summary>
+    /// Sets a value indicating whether the behavior is enabled for the specified list box.
+    /// </summary>
     public static void SetIsEnabled(ListBox frameworkElement, bool observe)
     {
       frameworkElement.SetValue(IsEnabledProperty, observe);
@@ -116,17 +125,26 @@ namespace Altaxo.Gui.Behaviors
 
     #region SelectedItemsExProperty
 
+    /// <summary>
+    /// Identifies the attached property that exposes the selected items for binding.
+    /// </summary>
     public static readonly DependencyProperty SelectedItemsExProperty = DependencyProperty.RegisterAttached(
         "SelectedItemsEx",
         typeof(IList),
         typeof(SelectedItemsExBehavior),
         new PropertyMetadata(null, OnSelectedItemsExChanged));
 
+    /// <summary>
+    /// Gets the bindable selected-items collection.
+    /// </summary>
     public static IList GetSelectedItemsEx(ListBox frameworkElement)
     {
       return (IList)frameworkElement.GetValue(SelectedItemsExProperty);
     }
 
+    /// <summary>
+    /// Sets the bindable selected-items collection.
+    /// </summary>
     public static void SetSelectedItemsEx(ListBox frameworkElement, IList value)
     {
       frameworkElement.SetValue(SelectedItemsExProperty, value);
@@ -140,17 +158,26 @@ namespace Altaxo.Gui.Behaviors
 
     #region SelectedItemsExProperty
 
+    /// <summary>
+    /// Identifies the attached property that stores the command executed when the selection changes.
+    /// </summary>
     public static readonly DependencyProperty SelectionChangedCommandProperty = DependencyProperty.RegisterAttached(
         "SelectionChangedCommand",
         typeof(ICommand),
         typeof(SelectedItemsExBehavior),
         new PropertyMetadata(null));
 
+    /// <summary>
+    /// Gets the selection-changed command.
+    /// </summary>
     public static ICommand GetSelectionChangedCommand(ListBox frameworkElement)
     {
       return (ICommand)frameworkElement.GetValue(SelectionChangedCommandProperty);
     }
 
+    /// <summary>
+    /// Sets the selection-changed command.
+    /// </summary>
     public static void SetSelectionChangedCommand(ListBox frameworkElement, ICommand value)
     {
       frameworkElement.SetValue(SelectionChangedCommandProperty, value);

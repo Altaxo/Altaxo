@@ -35,9 +35,15 @@ using Microsoft.Win32.SafeHandles;
 
 namespace Altaxo.Workbench
 {
+  /// <summary>
+  /// Specifies creation flags used when starting a process.
+  /// </summary>
   [Flags]
   public enum ProcessCreationFlags
   {
+    /// <summary>
+    /// No special creation flags are used.
+    /// </summary>
     None = 0,
 
     /// <summary>
@@ -51,30 +57,94 @@ namespace Altaxo.Workbench
     CreateNoWindow = 0x08000000
   }
 
+  /// <summary>
+  /// Defines operations for starting and monitoring external processes.
+  /// </summary>
   public interface IProcessRunner : IDisposable
   {
+    /// <summary>
+    /// Runs a process and forwards its output to the specified output category.
+    /// </summary>
+    /// <param name="outputCategory">The output category that receives the process output.</param>
+    /// <param name="program">The program to start.</param>
+    /// <param name="arguments">The program arguments.</param>
+    /// <returns>A task returning the process exit code.</returns>
     Task<int> RunInOutputPadAsync(IOutputCategory outputCategory, string program, params string[] arguments);
 
+    /// <summary>
+    /// Gets or sets the process working directory.
+    /// </summary>
     string? WorkingDirectory { get; set; }
+
+    /// <summary>
+    /// Gets or sets the process creation flags.
+    /// </summary>
     ProcessCreationFlags CreationFlags { get; set; }
+
+    /// <summary>
+    /// Gets the environment variables for the process.
+    /// </summary>
     IDictionary<string, string?> EnvironmentVariables { get; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether standard output is redirected.
+    /// </summary>
     bool RedirectStandardOutput { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether standard error is redirected.
+    /// </summary>
     bool RedirectStandardError { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether standard output and standard error share one stream.
+    /// </summary>
     bool RedirectStandardOutputAndErrorToSingleStream { get; set; }
 
+    /// <summary>
+    /// Starts the specified program.
+    /// </summary>
+    /// <param name="program">The program to start.</param>
+    /// <param name="arguments">The program arguments.</param>
     void Start(string program, params string[] arguments);
 
+    /// <summary>
+    /// Starts a process from a command line string.
+    /// </summary>
+    /// <param name="commandLine">The full command line.</param>
     void StartCommandLine(string commandLine);
 
+    /// <summary>
+    /// Terminates the process.
+    /// </summary>
     void Kill();
 
+    /// <summary>
+    /// Asynchronously waits until the process exits.
+    /// </summary>
+    /// <returns>A task that completes when the process has exited.</returns>
     Task WaitForExitAsync();
 
+    /// <summary>
+    /// Gets the redirected standard output stream.
+    /// </summary>
     Stream StandardOutput { get; }
+
+    /// <summary>
+    /// Gets the redirected standard error stream.
+    /// </summary>
     Stream StandardError { get; }
 
+    /// <summary>
+    /// Opens a text reader for the redirected standard output.
+    /// </summary>
+    /// <returns>A text reader for standard output.</returns>
     StreamReader OpenStandardOutputReader();
 
+    /// <summary>
+    /// Opens a text reader for the redirected standard error.
+    /// </summary>
+    /// <returns>A text reader for standard error.</returns>
     StreamReader OpenStandardErrorReader();
   }
 
@@ -87,6 +157,9 @@ namespace Altaxo.Workbench
   /// </summary>
   public class ProcessRunner : IProcessRunner, IDisposable
   {
+    /// <summary>
+    /// Gets the OEM encoding used for redirected console streams.
+    /// </summary>
     public static Encoding OemEncoding
     {
       get
@@ -121,35 +194,107 @@ namespace Altaxo.Workbench
 
     #region Native structures
 
+    /// <summary>
+    /// Native startup information for <c>CreateProcess</c>.
+    /// </summary>
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     protected struct STARTUPINFO
     {
+      /// <summary>
+      /// Size of this structure, in bytes.
+      /// </summary>
       public uint cb;
+      /// <summary>
+      /// Reserved; must be null.
+      /// </summary>
       public string lpReserved;
+      /// <summary>
+      /// Desktop name.
+      /// </summary>
       public string lpDesktop;
+      /// <summary>
+      /// Window title.
+      /// </summary>
       public string lpTitle;
+      /// <summary>
+      /// Initial X position.
+      /// </summary>
       public uint dwX;
+      /// <summary>
+      /// Initial Y position.
+      /// </summary>
       public uint dwY;
+      /// <summary>
+      /// Initial width.
+      /// </summary>
       public uint dwXSize;
+      /// <summary>
+      /// Initial height.
+      /// </summary>
       public uint dwYSize;
+      /// <summary>
+      /// Screen buffer width in character columns.
+      /// </summary>
       public uint dwXCountChars;
+      /// <summary>
+      /// Screen buffer height in character rows.
+      /// </summary>
       public uint dwYCountChars;
+      /// <summary>
+      /// Fill attribute for the console window.
+      /// </summary>
       public uint dwFillAttribute;
+      /// <summary>
+      /// Flags controlling which members are used.
+      /// </summary>
       public uint dwFlags;
+      /// <summary>
+      /// Window show state.
+      /// </summary>
       public short wShowWindow;
+      /// <summary>
+      /// Size of the reserved data.
+      /// </summary>
       public short cbReserved2;
+      /// <summary>
+      /// Pointer to reserved data.
+      /// </summary>
       public IntPtr lpReserved2;
+      /// <summary>
+      /// Standard input handle.
+      /// </summary>
       public SafePipeHandle hStdInput;
+      /// <summary>
+      /// Standard output handle.
+      /// </summary>
       public SafePipeHandle hStdOutput;
+      /// <summary>
+      /// Standard error handle.
+      /// </summary>
       public SafePipeHandle hStdError;
     }
 
+    /// <summary>
+    /// Native process information returned by <c>CreateProcess</c>.
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     protected struct PROCESS_INFORMATION
     {
+      /// <summary>
+      /// Process handle.
+      /// </summary>
       public IntPtr hProcess;
+      /// <summary>
+      /// Primary thread handle.
+      /// </summary>
       public IntPtr hThread;
+      /// <summary>
+      /// Process identifier.
+      /// </summary>
       public int dwProcessId;
+      /// <summary>
+      /// Primary thread identifier.
+      /// </summary>
       public int dwThreadId;
     }
 
@@ -256,6 +401,7 @@ namespace Altaxo.Workbench
 
     #region RunInOutputPad
 
+    /// <inheritdoc/>
     public Task<int> RunInOutputPadAsync(IOutputCategory outputCategory, string program, params string[] arguments)
     {
       RedirectStandardOutputAndErrorToSingleStream = true;
@@ -290,6 +436,9 @@ namespace Altaxo.Workbench
 
     private ProcessCreationFlags creationFlags = ProcessCreationFlags.CreateNoWindow;
 
+    /// <summary>
+    /// Gets or sets the process creation flags.
+    /// </summary>
     public ProcessCreationFlags CreationFlags
     {
       get { return creationFlags; }
@@ -298,6 +447,9 @@ namespace Altaxo.Workbench
 
     private IDictionary<string, string?>? _environmentVariables;
 
+    /// <summary>
+    /// Gets the environment variables for the process.
+    /// </summary>
     public IDictionary<string, string?> EnvironmentVariables
     {
       get
@@ -314,9 +466,14 @@ namespace Altaxo.Workbench
       }
     }
 
+    /// <summary>
+    /// Gets the command line used to start the process.
+    /// </summary>
     public string? CommandLine { get; private set; }
 
+    /// <inheritdoc/>
     public bool RedirectStandardOutput { get; set; }
+    /// <inheritdoc/>
     public bool RedirectStandardError { get; set; }
 
     /// <summary>
@@ -331,6 +488,7 @@ namespace Altaxo.Workbench
     private bool _wasStarted;
     private SafeProcessHandle? _safeProcessHandle;
 
+    /// <inheritdoc/>
     public void Start(string program, params string[] arguments)
     {
       var commandLine = new StringBuilder();
@@ -346,6 +504,7 @@ namespace Altaxo.Workbench
       StartCommandLine(commandLine.ToString());
     }
 
+    /// <inheritdoc/>
     public void StartCommandLine(string commandLine)
     {
       lock (_lockObj)
@@ -356,6 +515,10 @@ namespace Altaxo.Workbench
       }
     }
 
+    /// <summary>
+    /// Performs the actual process startup work.
+    /// </summary>
+    /// <param name="commandLine">The command line to start.</param>
     protected virtual void DoStart(string commandLine)
     {
       CommandLine = commandLine;
@@ -463,6 +626,9 @@ namespace Altaxo.Workbench
       return b.ToString();
     }
 
+    /// <summary>
+    /// Creates the native process.
+    /// </summary>
     protected virtual void CreateProcess(
       string lpApplicationName,
       StringBuilder lpCommandLine,
@@ -483,6 +649,7 @@ namespace Altaxo.Workbench
 
     #endregion Start
 
+    /// <inheritdoc/>
     public void Dispose()
     {
       if (_safeProcessHandle is not null)
@@ -495,6 +662,9 @@ namespace Altaxo.Workbench
 
     #region HasExited / ExitCode / Kill
 
+    /// <summary>
+    /// Gets a value indicating whether the process has exited.
+    /// </summary>
     public bool HasExited
     {
       get { return WaitForExit(0); }
@@ -550,11 +720,19 @@ namespace Altaxo.Workbench
     private bool hasExited;
     private int exitCode;
 
+    /// <summary>
+    /// Waits until the process exits.
+    /// </summary>
     public void WaitForExit()
     {
       WaitForExit(Timeout.Infinite);
     }
 
+    /// <summary>
+    /// Waits until the process exits or the timeout elapses.
+    /// </summary>
+    /// <param name="millisecondsTimeout">The timeout in milliseconds.</param>
+    /// <returns><see langword="true"/> if the process has exited; otherwise, <see langword="false"/>.</returns>
     public bool WaitForExit(int millisecondsTimeout)
     {
       if (hasExited)
@@ -629,6 +807,7 @@ namespace Altaxo.Workbench
     private AnonymousPipeServerStream? _standardOutput;
     private AnonymousPipeServerStream? _standardError;
 
+    /// <inheritdoc/>
     public Stream StandardOutput
     {
       get
@@ -639,6 +818,7 @@ namespace Altaxo.Workbench
       }
     }
 
+    /// <inheritdoc/>
     public Stream StandardError
     {
       get

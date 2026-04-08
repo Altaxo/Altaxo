@@ -26,9 +26,18 @@ using System;
 
 namespace Altaxo.Main
 {
+  /// <summary>
+  /// Describes the binding between a project item type and a graphical exporter type.
+  /// </summary>
   public interface IProjectItemExportBindingDescriptor
   {
+    /// <summary>
+    /// Gets the project item type supported by the binding.
+    /// </summary>
     Type ProjectItemType { get; }
+    /// <summary>
+    /// Gets the graphical exporter type associated with the project item type.
+    /// </summary>
     Type GraphicalExporterType { get; }
   }
 }

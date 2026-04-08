@@ -20,6 +20,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
   /// </summary>
   public partial class NeonCalibrationOptionsControl : UserControl, INeonCalibrationOptionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NeonCalibrationOptionsControl"/> class.
+    /// </summary>
     public NeonCalibrationOptionsControl()
     {
       InitializeComponent();

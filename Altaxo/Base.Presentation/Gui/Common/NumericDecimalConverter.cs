@@ -32,15 +32,36 @@ using System.Windows.Data;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// Converts <see cref="decimal"/> values to and from their string representation and validates the entered text.
+  /// </summary>
   public class NumericDecimalConverter : ValidationRule, IValueConverter
   {
+    /// <summary>
+    /// Default value for <see cref="IsMinValueInclusive"/>.
+    /// </summary>
     public const bool DefaultValue_IsMinValueInclusive = true;
+    /// <summary>
+    /// Default value for <see cref="IsMaxValueInclusive"/>.
+    /// </summary>
     public const bool DefaultValue_IsMaxValueInclusive = true;
+    /// <summary>
+    /// Default value for <see cref="MinValue"/>.
+    /// </summary>
     public const decimal DefaultValue_MinValue = decimal.MinValue;
+    /// <summary>
+    /// Default value for <see cref="MaxValue"/>.
+    /// </summary>
     public const decimal DefaultValue_MaxValue = decimal.MaxValue;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether zero is rejected.
+    /// </summary>
     public bool DisallowZeroValues { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether negative values are rejected.
+    /// </summary>
     public bool DisallowNegativeValues
     {
       get
@@ -57,16 +78,34 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <summary>
+    /// Stores the configured minimum value.
+    /// </summary>
     public decimal _minValue = DefaultValue_MinValue;
 
+    /// <summary>
+    /// Gets or sets the minimum allowed value.
+    /// </summary>
     public decimal MinValue { get { return _minValue; } set { _minValue = value; } }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the minimum value is inclusive.
+    /// </summary>
     public bool IsMinValueInclusive { get; set; } = DefaultValue_IsMinValueInclusive;
 
+    /// <summary>
+    /// Stores the configured maximum value.
+    /// </summary>
     public decimal _maxValue = DefaultValue_MaxValue;
 
+    /// <summary>
+    /// Gets or sets the maximum allowed value.
+    /// </summary>
     public decimal MaxValue { get { return _maxValue; } set { _maxValue = value; } }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the maximum value is inclusive.
+    /// </summary>
     public bool IsMaxValueInclusive { get; set; } = DefaultValue_IsMaxValueInclusive;
 
     private System.Globalization.CultureInfo _conversionCulture = Altaxo.Settings.GuiCulture.Instance;
@@ -74,10 +113,14 @@ namespace Altaxo.Gui.Common
     private string _lastConvertedString;
     private decimal? _lastConvertedValue;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NumericDecimalConverter"/> class.
+    /// </summary>
     public NumericDecimalConverter()
     {
     }
 
+    /// <inheritdoc/>
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo cultureDontUseIsBuggy)
     {
       var val = (decimal)value;
@@ -92,6 +135,7 @@ namespace Altaxo.Gui.Common
       return _lastConvertedString;
     }
 
+    /// <inheritdoc/>
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo cultureDontUseIsBuggy)
     {
       var validationResult = ConvertAndValidate(value, out var result);
@@ -103,6 +147,7 @@ namespace Altaxo.Gui.Common
       return result;
     }
 
+    /// <inheritdoc/>
     public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureDontUseIsBuggy)
     {
       var validationResult = ConvertAndValidate(value, out var result);

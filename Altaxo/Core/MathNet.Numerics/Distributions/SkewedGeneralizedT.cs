@@ -43,7 +43,7 @@ namespace Altaxo.Calc.Distributions
   /// The skewed generalized t-distribution contains many different distributions within it
   /// as special cases based on the parameterization chosen.
   /// </summary>
-  /// <remarks><para>This implementation is based on the R package dsgt and corresponding viginette, see
+  /// <remarks><para>This implementation is based on the R package dsgt and corresponding vignette, see
   /// <a href="">https://cran.r-project.org/web/packages/sgt/vignettes/sgt.pdf</a>. Compared to that
   /// implementation, the options for mean adjustment and variance adjustment are always true.
   /// The location (μ) is the mean of the distribution.
@@ -190,25 +190,34 @@ namespace Altaxo.Calc.Distributions
     /// </summary>
     public double Q { get; }
 
+    /// <inheritdoc/>
     // No skew implies Median=Mode=Mean
     public double Mode => _d?.Mode ?? (Skew == 0 ? Mean : Mean - AdjustAddend(AdjustScale(Scale, Skew, P, Q), Skew, P, Q));
 
+    /// <inheritdoc/>
     public double Minimum => _d?.Minimum ?? double.NegativeInfinity;
 
+    /// <inheritdoc/>
     public double Maximum => _d?.Maximum ?? double.PositiveInfinity;
 
+    /// <inheritdoc/>
     // Mean=Location due to our adjustments made
     public double Mean => _d?.Mean ?? Location;
 
+    /// <inheritdoc/>
     // Variance=Scale*Scale due to our adjustments made
     public double Variance => _d?.Variance ?? Scale * Scale;
 
+    /// <inheritdoc/>
     public double StdDev => _d?.StdDev ?? Scale;
 
+    /// <inheritdoc/>
     public double Entropy => _d?.Entropy ?? throw new NotImplementedException();
 
+    /// <inheritdoc/>
     public double Skewness => _d?.Skewness ?? _skewness;
 
+    /// <inheritdoc/>
     // No skew implies Median=Mode=Mean
     // Else find it via the point where CDF gives 0.5
     public double Median => _d?.Median ?? (Skew == 0 ? Mean : InverseCumulativeDistribution(0.5));
@@ -441,6 +450,7 @@ namespace Altaxo.Calc.Distributions
       return res - AdjustAddend(scale, skew, p, q);
     }
 
+    /// <inheritdoc/>
     public double CumulativeDistribution(double x)
     {
       return _d?.CumulativeDistribution(x) ?? CDF(Location, Scale, Skew, P, Q, x);
@@ -470,26 +480,31 @@ namespace Altaxo.Calc.Distributions
       return InvCDF(Location, Scale, Skew, P, Q, p);
     }
 
+    /// <inheritdoc/>
     public double Density(double x)
     {
       return _d?.Density(x) ?? PDF(Location, Scale, Skew, P, Q, x);
     }
 
+    /// <inheritdoc/>
     public double DensityLn(double x)
     {
       return _d?.DensityLn(x) ?? PDFLn(Location, Scale, Skew, P, Q, x);
     }
 
+    /// <inheritdoc/>
     public double Sample()
     {
       return SampleUnchecked(_random, Location, Scale, Skew, P, Q);
     }
 
+    /// <inheritdoc/>
     public void Samples(double[] values)
     {
       SamplesUnchecked(_random, values, Location, Scale, Skew, P, Q);
     }
 
+    /// <inheritdoc/>
     public IEnumerable<double> Samples()
     {
       return SamplesUnchecked(_random, Location, Scale, Skew, P, Q);

@@ -117,6 +117,9 @@ namespace Altaxo.Calc.Random
       return int31;
     }
 
+    /// <summary>
+    /// Releases the underlying cryptographic random number generator.
+    /// </summary>
     public void Dispose()
     {
       _crypto.Dispose();

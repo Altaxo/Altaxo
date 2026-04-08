@@ -34,11 +34,23 @@ namespace Altaxo.Calc.LinearAlgebra
   /// </summary>
   public static partial class VectorMath
   {
+    /// <summary>
+    /// Fills the vector with the specified value.
+    /// </summary>
+    /// <typeparam name="T">The type of the vector elements.</typeparam>
+    /// <param name="x">The vector to be filled.</param>
+    /// <param name="value">The value to fill the vector with.</param>
     public static void FillWith<T>(this Vector<T> x, T value) where T : struct, System.IEquatable<T>, System.IFormattable
     {
       for (int i = 0; i < x.Count; ++i)
         x[i] = value;
     }
+    /// <summary>
+    /// Sets the values of the vector from the provided array.
+    /// </summary>
+    /// <typeparam name="T">The type of the vector elements.</typeparam>
+    /// <param name="x">The vector whose values are to be set.</param>
+    /// <param name="values">The array of values to set.</param>
     public static void SetValues<T>(this Vector<T> x, IReadOnlyList<T> values) where T : struct, System.IEquatable<T>, System.IFormattable
     {
       if (x.Count != values.Count)
@@ -57,6 +69,10 @@ namespace Altaxo.Calc.LinearAlgebra
       private T[] _arr;
       private int _length;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ExtensibleVector{T}"/> class.
+      /// </summary>
+      /// <param name="initiallength">The initial length of the vector.</param>
       public ExtensibleVector(int initiallength)
       {
         _arr = new T[initiallength];
@@ -65,6 +81,11 @@ namespace Altaxo.Calc.LinearAlgebra
 
       #region IVector Members
 
+      /// <summary>
+      /// Gets or sets the element at the specified index.
+      /// </summary>
+      /// <param name="i">The zero-based index of the element to get or set.</param>
+      /// <returns>The element at the specified index.</returns>
       public T this[int i]
       {
         get
@@ -81,6 +102,9 @@ namespace Altaxo.Calc.LinearAlgebra
 
       #region IROVector Members
 
+      /// <summary>
+      /// Gets the number of elements in the vector.
+      /// </summary>
       public int Count
       {
         get
@@ -93,6 +117,10 @@ namespace Altaxo.Calc.LinearAlgebra
 
       #region IExtensibleVector Members
 
+      /// <summary>
+      /// Appends a vector to the end of this vector.
+      /// </summary>
+      /// <param name="vector">The vector to append.</param>
       public void Append(IReadOnlyList<T> vector)
       {
         if (_length + vector.Count >= _arr.Length)
@@ -103,6 +131,10 @@ namespace Altaxo.Calc.LinearAlgebra
         _length += vector.Count;
       }
 
+      /// <summary>
+      /// Gets an enumerator that iterates through the vector.
+      /// </summary>
+      /// <returns>An enumerator that can be used to iterate through the vector.</returns>
       public IEnumerator<T> GetEnumerator()
       {
         for (int i = 0; i < _length; ++i)
@@ -140,25 +172,60 @@ namespace Altaxo.Calc.LinearAlgebra
 
     #endregion Extensible Vector
 
+    /// <summary>
+    /// Extracts the elements at the specified indices from the array.
+    /// </summary>
+    /// <typeparam name="T">The type of the array elements.</typeparam>
+    /// <param name="array">The source array.</param>
+    /// <param name="indices">The indices of the elements to extract.</param>
+    /// <returns>An array containing the extracted elements.</returns>
     public static T[] ElementsAt<T>(this T[] array, int[] indices)
     {
       return indices.Select(idx => array[idx]).ToArray();
     }
+    /// <summary>
+    /// Extracts the elements at the specified indices from the array.
+    /// </summary>
+    /// <typeparam name="T">The type of the array elements.</typeparam>
+    /// <param name="array">The source array.</param>
+    /// <param name="indices">The indices of the elements to extract.</param>
+    /// <returns>An array containing the extracted elements.</returns>
     public static T[] ElementsAt<T>(this IReadOnlyList<T> array, int[] indices)
     {
       return indices.Select(idx => array[idx]).ToArray();
     }
 
+    /// <summary>
+    /// Selects elements from the array where the corresponding condition element is <c>true</c>.
+    /// </summary>
+    /// <typeparam name="T">The type of the array elements.</typeparam>
+    /// <param name="array">The source array.</param>
+    /// <param name="condition">The array of boolean conditions.</param>
+    /// <returns>An array containing the selected elements.</returns>
     public static T[] ElementsWhere<T>(this T[] array, bool[] condition)
     {
       return array.Where((x, i) => condition[i]).ToArray();
     }
+    /// <summary>
+    /// Selects elements from the array where the corresponding condition element is <c>true</c>.
+    /// </summary>
+    /// <typeparam name="T">The type of the array elements.</typeparam>
+    /// <param name="array">The source array.</param>
+    /// <param name="condition">The array of boolean conditions.</param>
+    /// <returns>An array containing the selected elements.</returns>
     public static T[] ElementsWhere<T>(this IReadOnlyList<T> array, bool[] condition)
     {
       return array.Where((x, i) => condition[i]).ToArray();
     }
 
 
+    /// <summary>
+    /// Selects elements from the array where the corresponding condition element is <c>true</c>.
+    /// </summary>
+    /// <typeparam name="T">The type of the array elements.</typeparam>
+    /// <param name="array">The source array.</param>
+    /// <param name="condition">The enumerable sequence of boolean conditions.</param>
+    /// <returns>An array containing the selected elements.</returns>
     public static T[] ElementsWhere<T>(this T[] array, IEnumerable<bool> condition)
     {
       static IEnumerable<T> RFunc(T[] array, IEnumerable<bool> condition)
@@ -179,6 +246,13 @@ namespace Altaxo.Calc.LinearAlgebra
       }
       return RFunc(array, condition).ToArray();
     }
+    /// <summary>
+    /// Selects elements from the array where the corresponding condition element is <c>true</c>.
+    /// </summary>
+    /// <typeparam name="T">The type of the array elements.</typeparam>
+    /// <param name="array">The source array.</param>
+    /// <param name="condition">The enumerable sequence of boolean conditions.</param>
+    /// <returns>An array containing the selected elements.</returns>
     public static T[] ElementsWhere<T>(this IReadOnlyList<T> array, IEnumerable<bool> condition)
     {
       static IEnumerable<T> RFunc(IReadOnlyList<T> array, IEnumerable<bool> condition)
@@ -200,6 +274,15 @@ namespace Altaxo.Calc.LinearAlgebra
       return RFunc(array, condition).ToArray();
     }
 
+    /// <summary>
+    /// Copies a range of elements from the source to the destination array.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements.</typeparam>
+    /// <param name="source">The source array.</param>
+    /// <param name="sourceIndex">The zero-based index in the source array at which the copying begins.</param>
+    /// <param name="destination">The destination array.</param>
+    /// <param name="destinationStartIndex">The zero-based index in the destination array at which storing elements begins.</param>
+    /// <param name="count">The number of elements to copy.</param>
     public static void Copy<T>(IReadOnlyList<T> source, int sourceIndex, T[] destination, int destinationStartIndex, int count)
     {
       for (int i = 0, j = sourceIndex, k = destinationStartIndex; i < count; ++i, ++j, ++k)
@@ -223,12 +306,22 @@ namespace Altaxo.Calc.LinearAlgebra
       return new ROVectorWrapperOfIROVector<T>(source, offset, count);
     }
 
+    /// <summary>
+    /// Provides a read-only wrapper around an <see cref="IReadOnlyList{T}"/> to represent a subvector.
+    /// </summary>
+    /// <typeparam name="T">The type of the vector elements.</typeparam>
     protected class ROVectorWrapperOfIROVector<T> : IReadOnlyList<T>
     {
       private IReadOnlyList<T> _source;
       private int _offset;
       private int _count;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ROVectorWrapperOfIROVector{T}"/> class.
+      /// </summary>
+      /// <param name="source">The source vector.</param>
+      /// <param name="offset">The offset of the first element of the subvector.</param>
+      /// <param name="count">The number of elements of the subvector.</param>
       public ROVectorWrapperOfIROVector(IReadOnlyList<T> source, int offset, int count)
       {
         if (_source is null)
@@ -243,6 +336,11 @@ namespace Altaxo.Calc.LinearAlgebra
         _count = count;
       }
 
+      /// <summary>
+      /// Gets the element at the specified index.
+      /// </summary>
+      /// <param name="index">The zero-based index of the element to get.</param>
+      /// <returns>The element at the specified index.</returns>
       public T this[int index]
       {
         get
@@ -254,8 +352,15 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 
+      /// <summary>
+      /// Gets the number of elements in the subvector.
+      /// </summary>
       public int Count => _count;
 
+      /// <summary>
+      /// Gets an enumerator that iterates through the subvector.
+      /// </summary>
+      /// <returns>An enumerator that can be used to iterate through the subvector.</returns>
       public IEnumerator<T> GetEnumerator()
       {
         for (int i = _offset, j = 0; j < _count; ++i, ++j)
@@ -282,12 +387,22 @@ namespace Altaxo.Calc.LinearAlgebra
       return new VectorWrapperOfIVector<T>(source, offset, count);
     }
 
+    /// <summary>
+    /// Provides a read-write wrapper around an <see cref="IVector{T}"/> to represent a subvector.
+    /// </summary>
+    /// <typeparam name="T">The type of the vector elements.</typeparam>
     protected class VectorWrapperOfIVector<T> : IVector<T>
     {
       private IVector<T> _source;
       private int _offset;
       private int _count;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="VectorWrapperOfIVector{T}"/> class.
+      /// </summary>
+      /// <param name="source">The source vector.</param>
+      /// <param name="offset">The offset of the first element of the subvector.</param>
+      /// <param name="count">The number of elements of the subvector.</param>
       public VectorWrapperOfIVector(IVector<T> source, int offset, int count)
       {
         if (source is null)
@@ -302,6 +417,11 @@ namespace Altaxo.Calc.LinearAlgebra
         _count = count;
       }
 
+      /// <summary>
+      /// Gets the element at the specified index.
+      /// </summary>
+      /// <param name="index">The zero-based index of the element to get.</param>
+      /// <returns>The element at the specified index.</returns>
       public T this[int index]
       {
         get
@@ -320,8 +440,15 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 
+      /// <summary>
+      /// Gets the number of elements in the subvector.
+      /// </summary>
       public int Count => _count;
 
+      /// <summary>
+      /// Gets an enumerator that iterates through the subvector.
+      /// </summary>
+      /// <returns>An enumerator that can be used to iterate through the subvector.</returns>
       public IEnumerator<T> GetEnumerator()
       {
         for (int i = _offset, j = 0; j < _count; ++i, ++j)

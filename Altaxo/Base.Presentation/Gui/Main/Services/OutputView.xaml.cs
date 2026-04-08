@@ -43,8 +43,14 @@ namespace Altaxo.Gui.Main.Services
   /// </summary>
   public partial class OutputView : UserControl, IOutputView
   {
+    /// <summary>
+    /// Occurs when the enabled state changes.
+    /// </summary>
     public event Action? EnabledChanged;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OutputView"/> class.
+    /// </summary>
     public OutputView()
     {
       InitializeComponent();
@@ -57,6 +63,10 @@ namespace Altaxo.Gui.Main.Services
       _view.Text = text;
     }
 
+    /// <summary>
+    /// Sets the displayed text.
+    /// </summary>
+    /// <param name="text">The text to display.</param>
     public void SetText(string text)
     {
       if (Dispatcher.CheckAccess())

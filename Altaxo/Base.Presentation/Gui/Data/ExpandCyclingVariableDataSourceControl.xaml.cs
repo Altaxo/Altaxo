@@ -36,21 +36,27 @@ namespace Altaxo.Gui.Data
   /// </summary>
   public partial class ExpandCyclingVariableDataSourceControl : UserControl, ICommonDataSourceView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ExpandCyclingVariableDataSourceControl"/> class.
+    /// </summary>
     public ExpandCyclingVariableDataSourceControl()
     {
       InitializeComponent();
     }
 
+    /// <inheritdoc/>
     public void SetProcessOptionsControl(object p)
     {
       _guiProcessOptionsHost.Child = p as UIElement;
     }
 
+    /// <inheritdoc/>
     public void SetImportOptionsControl(object p)
     {
       _guiImportOptionsHost.Child = p as UIElement;
     }
 
+    /// <inheritdoc/>
     public void SetProcessDataControl(object p)
     {
       _guiProcessDataHost.Child = p as UIElement;

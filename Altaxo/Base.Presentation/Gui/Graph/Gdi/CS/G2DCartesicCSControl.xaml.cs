@@ -35,6 +35,9 @@ namespace Altaxo.Gui.Graph.Gdi.CS
   /// </summary>
   public partial class G2DCartesicCSControl : UserControl, IG2DCartesicCSView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="G2DCartesicCSControl"/> class.
+    /// </summary>
     public G2DCartesicCSControl()
     {
       InitializeComponent();

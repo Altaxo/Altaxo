@@ -34,15 +34,23 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 {
   public partial class ProjectBrowseControl : UserControl, IProjectBrowseView
   {
+    /// <summary>
+    /// Handles drag operations for the project browser tree view.
+    /// </summary>
     public class TreeView_DragHandler : IDragSource
     {
       private ProjectBrowseControl _projectBrowseControl;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="TreeView_DragHandler"/> class.
+      /// </summary>
+      /// <param name="ctrl">The owning project browser control.</param>
       public TreeView_DragHandler(ProjectBrowseControl ctrl)
       {
         _projectBrowseControl = ctrl;
       }
 
+      /// <inheritdoc/>
       public void StartDrag(IDragInfo dragInfo)
       {
         _projectBrowseControl._controller.FolderTree_StartDrag(out var dao, out var canCopy, out var canMove);
@@ -53,11 +61,13 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
           dragInfo.DataObject = GuiHelper.ToWpf(dao);
       }
 
+      /// <inheritdoc/>
       public bool CanStartDrag(IDragInfo dragInfo)
       {
         return _projectBrowseControl._controller.FolderTree_CanStartDrag();
       }
 
+      /// <inheritdoc/>
       public void Dropped(IDropInfo dropInfo, DragDropEffects effects)
       {
         GuiHelper.ConvertDragDropEffectToCopyMove(effects, out var isCopy, out var isMove);
@@ -65,6 +75,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
         _projectBrowseControl._controller.FolderTree_DragEnded(isCopy, isMove);
       }
 
+      /// <inheritdoc/>
       public void DragCancelled()
       {
         _projectBrowseControl._controller.FolderTree_DragCancelled();

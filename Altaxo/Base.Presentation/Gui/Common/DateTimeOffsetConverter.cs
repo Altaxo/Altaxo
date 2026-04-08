@@ -32,6 +32,9 @@ using System.Windows.Data;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// Converts between <see cref="DateTimeOffset"/> values and their text representation for data binding.
+  /// </summary>
   public class DateTimeOffsetConverter : ValidationRule, IValueConverter
   {
     private System.Globalization.CultureInfo _conversionCulture = Altaxo.Settings.GuiCulture.Instance;
@@ -39,10 +42,14 @@ namespace Altaxo.Gui.Common
     private string _lastConvertedString;
     private DateTimeOffset? _lastConvertedValue;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DateTimeOffsetConverter"/> class.
+    /// </summary>
     public DateTimeOffsetConverter()
     {
     }
 
+    /// <inheritdoc/>
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo cultureDontUseIsBuggy)
     {
       var val = (DateTimeOffset)value;
@@ -57,6 +64,7 @@ namespace Altaxo.Gui.Common
       return _lastConvertedString;
     }
 
+    /// <inheritdoc/>
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo cultureDontUseIsBuggy)
     {
       var validationResult = ConvertAndValidate(value, out var result);
@@ -68,6 +76,7 @@ namespace Altaxo.Gui.Common
       return result;
     }
 
+    /// <inheritdoc/>
     public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureDontUseIsBuggy)
     {
       var validationResult = ConvertAndValidate(value, out var result);

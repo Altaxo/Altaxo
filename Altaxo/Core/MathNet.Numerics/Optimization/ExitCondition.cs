@@ -29,19 +29,58 @@
 
 namespace Altaxo.Calc.Optimization
 {
+  /// <summary>
+  /// Specifies the reason why an optimization algorithm terminated.
+  /// </summary>
   public enum ExitCondition
   {
+    /// <summary>
+    /// No exit condition has been recorded.
+    /// </summary>
     None,
+    /// <summary>
+    /// Invalid values were encountered.
+    /// </summary>
     InvalidValues,
+    /// <summary>
+    /// The maximum number of iterations was exceeded.
+    /// </summary>
     ExceedIterations,
+    /// <summary>
+    /// Relative point change tolerance was reached.
+    /// </summary>
     RelativePoints,
+    /// <summary>
+    /// Relative gradient tolerance was reached.
+    /// </summary>
     RelativeGradient,
+    /// <summary>
+    /// Progress became insufficient.
+    /// </summary>
     LackOfProgress,
+    /// <summary>
+    /// Absolute gradient tolerance was reached.
+    /// </summary>
     AbsoluteGradient,
+    /// <summary>
+    /// The weak Wolfe criteria were satisfied.
+    /// </summary>
     WeakWolfeCriteria,
+    /// <summary>
+    /// The bound tolerance was reached.
+    /// </summary>
     BoundTolerance,
+    /// <summary>
+    /// The strong Wolfe criteria were satisfied.
+    /// </summary>
     StrongWolfeCriteria,
+    /// <summary>
+    /// The algorithm converged successfully.
+    /// </summary>
     Converged,
+    /// <summary>
+    /// The algorithm was stopped manually.
+    /// </summary>
     ManuallyStopped
   }
 }

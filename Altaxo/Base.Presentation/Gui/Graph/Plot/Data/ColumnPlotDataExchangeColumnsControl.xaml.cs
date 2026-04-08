@@ -32,6 +32,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
   /// </summary>
   public partial class ColumnPlotDataExchangeColumnsControl : UserControl, IColumnPlotDataExchangeColumnsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColumnPlotDataExchangeColumnsControl"/> class.
+    /// </summary>
     public ColumnPlotDataExchangeColumnsControl()
     {
       InitializeComponent();

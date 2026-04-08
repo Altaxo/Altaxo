@@ -32,6 +32,9 @@ namespace Altaxo.Gui.Common
 {
   using swm = System.Windows.Media;
 
+  /// <summary>
+  /// Draws a sort indicator for a sorted column header.
+  /// </summary>
   public class SortAdorner : Adorner
   {
     private static readonly swm.Geometry _AscGeometry =
@@ -40,10 +43,22 @@ namespace Altaxo.Gui.Common
     private static readonly swm.Geometry _DescGeometry =
         swm.Geometry.Parse("M 0,5 L 10,5 L 5,0 Z");
 
+    /// <summary>
+    /// Gets the sort direction represented by this adorner.
+    /// </summary>
     public ListSortDirection Direction { get; private set; }
 
+    /// <summary>
+    /// Gets a value indicating whether the adorner represents a secondary sort indicator.
+    /// </summary>
     public bool IsSecondaryAdorner { get; private set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SortAdorner"/> class.
+    /// </summary>
+    /// <param name="element">The adorned element.</param>
+    /// <param name="dir">The sort direction.</param>
+    /// <param name="isSecondaryAdorner">Whether the adorner is secondary.</param>
     public SortAdorner(UIElement element, ListSortDirection dir, bool isSecondaryAdorner)
       : base(element)
     {
@@ -51,6 +66,7 @@ namespace Altaxo.Gui.Common
       IsSecondaryAdorner = isSecondaryAdorner;
     }
 
+    /// <inheritdoc/>
     protected override void OnRender(DrawingContext drawingContext)
     {
       base.OnRender(drawingContext);

@@ -33,17 +33,28 @@ namespace Altaxo.Main
     private readonly T oldValue;
     private readonly T newValue;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PropertyChangedEventArgs{T}"/> class.
+    /// </summary>
+    /// <param name="oldValue">The previous value.</param>
+    /// <param name="newValue">The new value.</param>
     public PropertyChangedEventArgs(T oldValue, T newValue)
     {
       this.oldValue = oldValue;
       this.newValue = newValue;
     }
 
+    /// <summary>
+    /// Gets the previous value.
+    /// </summary>
     public T OldValue
     {
       get { return oldValue; }
     }
 
+    /// <summary>
+    /// Gets the new value.
+    /// </summary>
     public T NewValue
     {
       get { return newValue; }

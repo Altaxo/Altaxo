@@ -33,6 +33,9 @@ namespace Altaxo.Gui.Main
   /// </summary>
   public partial class InstancePropertyControlTwoColumnStyle : UserControl, IInstancePropertyView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="InstancePropertyControlTwoColumnStyle"/> class.
+    /// </summary>
     public InstancePropertyControlTwoColumnStyle()
     {
       InitializeComponent();

@@ -32,6 +32,9 @@ namespace Altaxo.Gui.Serialization.Origin
   public partial class OriginImportOptionsControl : UserControl,
     IOriginImportOptionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OriginImportOptionsControl"/> class.
+    /// </summary>
     public OriginImportOptionsControl()
     {
       InitializeComponent();

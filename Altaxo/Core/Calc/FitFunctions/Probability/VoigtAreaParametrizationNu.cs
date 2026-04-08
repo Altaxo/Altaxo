@@ -52,6 +52,9 @@ namespace Altaxo.Calc.FitFunctions.Probability
     private const double SqrtLog4 = 1.1774100225154746910115693264597;
     private const double OneBySqrtLog4 = 0.84932180028801904272150283410289;
 
+    /// <summary>
+    /// Approximation constant used in the Voigt full-width-at-half-maximum formula.
+    /// </summary>
     public const double C2_FWHM = 0.21669; // Approximation constant for FWHM of Voigt
     private static readonly double C1_FWHM = 1 - Math.Sqrt(C2_FWHM);
 
@@ -69,6 +72,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(VoigtAreaParametrizationNu), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (VoigtAreaParametrizationNu)obj;
@@ -76,6 +80,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
         info.AddValue("OrderOfBackgroundPolynomial", s._orderOfBaselinePolynomial);
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var numberOfTerms = info.GetInt32("NumberOfTerms");
@@ -86,12 +91,20 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance with one term and no baseline.
+    /// </summary>
     public VoigtAreaParametrizationNu()
     {
       _numberOfTerms = 1;
       _orderOfBaselinePolynomial = -1;
     }
 
+    /// <summary>
+    /// Initializes a new instance with the specified number of peak terms and baseline order.
+    /// </summary>
+    /// <param name="numberOfGaussianTerms">The number of peak terms.</param>
+    /// <param name="orderOfBackgroundPolynomial">The order of the background polynomial.</param>
     public VoigtAreaParametrizationNu(int numberOfGaussianTerms, int orderOfBackgroundPolynomial)
     {
       _numberOfTerms = numberOfGaussianTerms;
@@ -109,6 +122,10 @@ namespace Altaxo.Calc.FitFunctions.Probability
       return $"{this.GetType().Name} NumberOfTerms={NumberOfTerms} OrderOfBaseline={OrderOfBaselinePolynomial}";
     }
 
+    /// <summary>
+    /// Creates a Voigt-area fit function with one peak and a constant baseline.
+    /// </summary>
+    /// <returns>The fit function.</returns>
     [FitFunctionCreator("VoigtArea (Parametrization Nu)", "General", 1, 1, NumberOfParametersPerPeak + 1)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.VoigtAreaParametrizationNu}")]
     public static IFitFunction Create_1_0()
@@ -116,6 +133,10 @@ namespace Altaxo.Calc.FitFunctions.Probability
       return new VoigtAreaParametrizationNu(1, 0);
     }
 
+    /// <summary>
+    /// Creates a Voigt-area fit function with one peak and no baseline.
+    /// </summary>
+    /// <returns>The fit function.</returns>
     [FitFunctionCreator("VoigtArea (Parametrization Nu)", "Peaks", 1, 1, NumberOfParametersPerPeak)]
     [FitFunctionCreator("VoigtArea (Parametrization Nu)", "Probability", 1, 1, NumberOfParametersPerPeak)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.VoigtAreaParametrizationNu}")]
@@ -428,7 +449,11 @@ namespace Altaxo.Calc.FitFunctions.Probability
     /// <summary>
     /// Gets the parameter boundaries in order to have positive peaks only.
     /// </summary>
-    /// <returns></returns>
+    /// <param name="minimalPosition">The minimal position, if specified.</param>
+    /// <param name="maximalPosition">The maximal position, if specified.</param>
+    /// <param name="minimalFWHM">The minimal full width at half maximum, if specified.</param>
+    /// <param name="maximalFWHM">The maximal full width at half maximum, if specified.</param>
+    /// <returns>The lower and upper parameter bounds.</returns>
     public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesForPositivePeaks(double? minimalPosition = null, double? maximalPosition = null, double? minimalFWHM = null, double? maximalFWHM = null)
     {
       var lowerBounds = new double?[NumberOfParameters];

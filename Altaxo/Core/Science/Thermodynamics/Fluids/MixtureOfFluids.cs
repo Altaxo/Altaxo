@@ -48,7 +48,13 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
     private double _reducingMoleDensity;
     private double _reducingTemperature;
+    /// <summary>
+    /// Stores the molecular weight of the mixture.
+    /// </summary>
     protected double _molecularWeight;
+    /// <summary>
+    /// Stores the universal gas constant used for calculations.
+    /// </summary>
     protected double _workingUniversalGasConstant;
 
     static MixtureOfFluids()
@@ -328,6 +334,9 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       return result;
     }
 
+    /// <summary>
+    /// Calculates the reducing mole density and reducing temperature of the mixture.
+    /// </summary>
     protected void CalculateReducingDensityAndTemperature()
     {
       double sumD = 0;
@@ -365,6 +374,9 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       _reducingTemperature = sumT;
     }
 
+    /// <summary>
+    /// Calculates the molecular weight of the mixture from the component mole fractions.
+    /// </summary>
     protected void CalculateMolecularWeight()
     {
       double sum = 0;
@@ -376,6 +388,9 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       _molecularWeight = sum;
     }
 
+    /// <summary>
+    /// Calculates the working universal gas constant of the mixture.
+    /// </summary>
     protected void CalculateWorkingUniversalGasConstant()
     {
       double sum = 0;
@@ -387,6 +402,9 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       _workingUniversalGasConstant = sum;
     }
 
+    /// <summary>
+    /// Collects all binary-mixture definitions available in the calling assembly.
+    /// </summary>
     protected static void CollectAllBinaryMixDefinitions()
     {
       var ass = Assembly.GetCallingAssembly();
@@ -409,6 +427,9 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       }
     }
 
+    /// <summary>
+    /// Collects all pure-fluid definitions available in the calling assembly.
+    /// </summary>
     protected static void CollectAllFluidDefinitions()
     {
       var ass = Assembly.GetCallingAssembly();
@@ -437,8 +458,10 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// <inheritdoc/>
     public override double ReducingMoleDensity => _reducingMoleDensity;
 
+    /// <inheritdoc/>
     public override double WorkingUniversalGasConstant => _workingUniversalGasConstant;
 
+    /// <inheritdoc/>
     public override double MolecularWeight => _molecularWeight;
 
     /// <inheritdoc/>
@@ -528,6 +551,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       return sum;
     }
 
+    /// <inheritdoc/>
     public override double PhiR_delta_OfReducedVariables(double delta, double tau)
     {
       double sum = 0;
@@ -556,6 +580,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       return sum;
     }
 
+    /// <inheritdoc/>
     public override double PhiR_deltadelta_OfReducedVariables(double delta, double tau)
     {
       double sum = 0;
@@ -584,6 +609,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       return sum;
     }
 
+    /// <inheritdoc/>
     public override double PhiR_tau_OfReducedVariables(double delta, double tau)
     {
       double sum = 0;
@@ -612,6 +638,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       return sum;
     }
 
+    /// <inheritdoc/>
     public override double PhiR_tautau_OfReducedVariables(double delta, double tau)
     {
       double sum = 0;
@@ -640,6 +667,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       return sum;
     }
 
+    /// <inheritdoc/>
     public override double PhiR_deltatau_OfReducedVariables(double delta, double tau)
     {
       double sum = 0;
@@ -764,6 +792,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
     #endregion
 
+    /// <summary>
+    /// Returns the cube of the supplied value.
+    /// </summary>
+    /// <param name="x">The value.</param>
+    /// <returns>The cube of <paramref name="x"/>.</returns>
     protected static double Pow3(double x) => x * x * x;
 
 

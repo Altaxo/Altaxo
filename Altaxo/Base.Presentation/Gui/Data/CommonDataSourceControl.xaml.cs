@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Data
   /// </summary>
   public partial class CommonDataSourceControl : UserControl, ICommonDataSourceViewN
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CommonDataSourceControl"/> class.
+    /// </summary>
     public CommonDataSourceControl()
     {
       InitializeComponent();

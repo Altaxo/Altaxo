@@ -32,6 +32,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
   /// </summary>
   public partial class ColumnPlotDataControl : UserControl, IColumnPlotDataView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColumnPlotDataControl"/> class.
+    /// </summary>
     public ColumnPlotDataControl()
     {
       InitializeComponent();

@@ -111,6 +111,10 @@ namespace Altaxo.Gui.AddInItems
       }
     }
 
+    /// <summary>
+    /// Updates the text of the specified menu items.
+    /// </summary>
+    /// <param name="menuItems">The menu items to update.</param>
     public static void UpdateText(IEnumerable menuItems)
     {
       if (menuItems is null)
@@ -123,6 +127,12 @@ namespace Altaxo.Gui.AddInItems
       }
     }
 
+    /// <summary>
+    /// Creates a context menu for the specified add-in tree path.
+    /// </summary>
+    /// <param name="owner">The owner passed to the add-in tree.</param>
+    /// <param name="addInTreePath">The add-in tree path.</param>
+    /// <returns>The created context menu.</returns>
     public static ContextMenu CreateContextMenu(object owner, string addInTreePath)
     {
       return CreateContextMenu(
@@ -131,6 +141,13 @@ namespace Altaxo.Gui.AddInItems
           addInTreePath);
     }
 
+    /// <summary>
+    /// Creates a context menu for the specified add-in tree path and input binding owner.
+    /// </summary>
+    /// <param name="inputBindingOwner">The element that owns any generated input bindings.</param>
+    /// <param name="owner">The owner passed to the add-in tree.</param>
+    /// <param name="addInTreePath">The add-in tree path.</param>
+    /// <returns>The created context menu.</returns>
     public static ContextMenu CreateContextMenu(UIElement inputBindingOwner, object owner, string addInTreePath)
     {
       return CreateContextMenu(
@@ -151,6 +168,13 @@ namespace Altaxo.Gui.AddInItems
       return CreateContextMenu(items);
     }
 
+    /// <summary>
+    /// Shows a context menu for the specified add-in tree path.
+    /// </summary>
+    /// <param name="parent">The placement target for the context menu.</param>
+    /// <param name="owner">The owner passed to the add-in tree.</param>
+    /// <param name="addInTreePath">The add-in tree path.</param>
+    /// <returns>The opened context menu.</returns>
     public static ContextMenu ShowContextMenu(UIElement parent, object owner, string addInTreePath)
     {
       var menu = new ContextMenu();
@@ -174,6 +198,15 @@ namespace Altaxo.Gui.AddInItems
       return contextMenu;
     }
 
+    /// <summary>
+    /// Creates menu items for the specified add-in tree path.
+    /// </summary>
+    /// <param name="inputBindingOwner">The element that owns any generated input bindings.</param>
+    /// <param name="owner">The owner passed to the add-in tree.</param>
+    /// <param name="addInTreePath">The add-in tree path.</param>
+    /// <param name="activationMethod">The activation method for the created menu items.</param>
+    /// <param name="immediatelyExpandMenuBuildersForShortcuts">If set to <see langword="true"/>, menu builders are expanded immediately for shortcut discovery.</param>
+    /// <returns>The created menu items.</returns>
     public static IList CreateMenuItems(UIElement inputBindingOwner, object owner, string addInTreePath, string activationMethod = null, bool immediatelyExpandMenuBuildersForShortcuts = false)
     {
       var addinTreeMenuItemDescriptors = AddInTree.BuildItems<MenuItemDescriptor>(addInTreePath, owner, false);
@@ -316,6 +349,11 @@ namespace Altaxo.Gui.AddInItems
       return (KeyGesture)new KeyGestureConverter().ConvertFromInvariantString(text.Replace('|', '+'));
     }
 
+    /// <summary>
+    /// Gets a localized display string for the specified key gesture.
+    /// </summary>
+    /// <param name="kg">The key gesture.</param>
+    /// <returns>The localized display string.</returns>
     public static string GetDisplayStringForShortcut(KeyGesture kg)
     {
       string old = kg.GetDisplayStringForCulture(Thread.CurrentThread.CurrentUICulture);

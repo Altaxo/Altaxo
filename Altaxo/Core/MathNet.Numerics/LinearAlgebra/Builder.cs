@@ -1370,6 +1370,11 @@ namespace Altaxo.Calc.LinearAlgebra
       return m;
     }
 
+    /// <summary>
+    /// Creates the default iterative solver stop criteria for the specified iteration limit.
+    /// </summary>
+    /// <param name="maxIterations">The maximum number of iterations.</param>
+    /// <returns>The stop criteria used by iterative solvers.</returns>
     public abstract IIterationStopCriterion<T>[] IterativeSolverStopCriteria(int maxIterations = 1000);
   }
 

@@ -29,8 +29,12 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Workbench.Commands
 {
+  /// <summary>
+  /// Opens the current user's application settings directory.
+  /// </summary>
   public class OpenSettingsDirectory : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object? parameter)
     {
       var appName = StringParser.Parse("${AppName}");
@@ -55,8 +59,12 @@ namespace Altaxo.Gui.Workbench.Commands
     }
   }
 
+  /// <summary>
+  /// Opens the shared application settings directory.
+  /// </summary>
   public class OpenApplicationSettingsDirectory : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object? parameter)
     {
       var appName = StringParser.Parse("${AppName}");
@@ -87,8 +95,12 @@ namespace Altaxo.Gui.Workbench.Commands
     }
   }
 
+  /// <summary>
+  /// Opens the program installation directory.
+  /// </summary>
   public class OpenProgramDirectory : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object? parameter)
     {
       var entryAssemblyPath = Assembly.GetEntryAssembly()?.Location;

@@ -30,6 +30,9 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
+  /// <summary>
+  /// Represents a band matrix configuration for storing and manipulating a 2D array of double-precision floating-point numbers.
+  /// </summary>
   public class BandDoubleMatrix : IMatrix<double>, IROBandMatrix<double>, IROMatrixLevel1<double>, IMatrixLevel1<double>
   {
     private double[][] _array;
@@ -38,6 +41,13 @@ namespace Altaxo.Calc.LinearAlgebra
     private int _lowerBandwidth;
     private int _upperBandwidth;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BandDoubleMatrix"/> class with the specified dimensions and bandwidths.
+    /// </summary>
+    /// <param name="numberOfRows">The number of rows in the matrix.</param>
+    /// <param name="numberOfColumns">The number of columns in the matrix.</param>
+    /// <param name="p">The lower bandwidth of the matrix.</param>
+    /// <param name="q">The upper bandwidth of the matrix.</param>
     public BandDoubleMatrix(int numberOfRows, int numberOfColumns, int p, int q)
     {
       _rowCount = numberOfRows;
@@ -49,6 +59,9 @@ namespace Altaxo.Calc.LinearAlgebra
         _array[i] = new double[_columnCount];
     }
 
+    /// <summary>
+    /// Gets the internal data structure of the matrix.
+    /// </summary>
     public MatrixWrapperStructForLeftSpineJaggedArray<double> InternalData
     {
       get
@@ -57,6 +70,12 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
+    /// <summary>
+    /// Gets or sets the element at the specified row and column indices.
+    /// </summary>
+    /// <param name="row">The zero-based row index of the element to get or set.</param>
+    /// <param name="col">The zero-based column index of the element to get or set.</param>
+    /// <returns>The value of the element at the specified row and column indices.</returns>
     public double this[int row, int col]
     {
       get
@@ -77,13 +96,31 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
+    /// <summary>
+    /// Gets the number of rows in the matrix.
+    /// </summary>
     public int RowCount => _rowCount;
 
+    /// <summary>
+    /// Gets the number of columns in the matrix.
+    /// </summary>
     public int ColumnCount => _columnCount;
 
+    /// <summary>
+    /// Gets the lower bandwidth of the matrix.
+    /// </summary>
     public int LowerBandwidth { get { return _lowerBandwidth; } }
+    /// <summary>
+    /// Gets the upper bandwidth of the matrix.
+    /// </summary>
     public int UpperBandwidth { get { return _upperBandwidth; } }
 
+    /// <summary>
+    /// Applies the specified function to each element of the matrix, with the option to specify a result matrix and treatment of zeros.
+    /// </summary>
+    /// <param name="function">The function to apply to each element.</param>
+    /// <param name="result">The matrix to store the results in.</param>
+    /// <param name="zeros">Specifies how to treat zero elements.</param>
     public void MapIndexed(Func<int, int, double, double> function, IMatrix<double> result, Zeros zeros = Zeros.AllowSkip)
     {
       int rowCount = _rowCount;
@@ -131,6 +168,14 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
+    /// <summary>
+    /// Applies the specified function to each element of the matrix, with an additional source parameter, and with the option to specify a result matrix and treatment of zeros.
+    /// </summary>
+    /// <typeparam name="T1">The type of the additional source parameter.</typeparam>
+    /// <param name="sourceParameter1">The additional source parameter.</param>
+    /// <param name="function">The function to apply to each element.</param>
+    /// <param name="result">The matrix to store the results in.</param>
+    /// <param name="zeros">Specifies how to treat zero elements.</param>
     public void MapIndexed<T1>(T1 sourceParameter1, Func<int, int, double, T1, double> function, IMatrix<double> result, Zeros zeros = Zeros.AllowSkip)
     {
       int rowCount = _rowCount;
@@ -181,6 +226,11 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
+    /// <summary>
+    /// Returns an enumerable collection of the elements in the matrix, with their row and column indices, and with the option to specify treatment of zeros.
+    /// </summary>
+    /// <param name="zeros">Specifies how to treat zero elements.</param>
+    /// <returns>An enumerable collection of the elements in the matrix.</returns>
     public IEnumerable<(int row, int column, double value)> EnumerateElementsIndexed(Zeros zeros = Zeros.AllowSkip)
     {
       var rowCount = _rowCount;
@@ -226,6 +276,9 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
+    /// <summary>
+    /// Clears the matrix by setting all elements to zero.
+    /// </summary>
     public void Clear()
     {
       for (int i = 0; i < _array.Length; ++i)
@@ -234,6 +287,10 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
+    /// <summary>
+    /// Copies the values from another matrix to this matrix.
+    /// </summary>
+    /// <param name="from">The source matrix to copy values from.</param>
     public void CopyFrom(IROMatrix<double> from)
     {
       if (this.RowCount != from.RowCount || this.ColumnCount != from.ColumnCount)

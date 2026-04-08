@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Drawing.D3D
   /// </summary>
   public partial class MaterialControl : UserControl, IMaterialView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MaterialControl"/> class.
+    /// </summary>
     public MaterialControl()
     {
       InitializeComponent();

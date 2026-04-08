@@ -28,24 +28,36 @@ using Altaxo.Gui;
 
 namespace Altaxo.Main.Commands
 {
+  /// <summary>
+  /// Opens a dialog for adding a temporary user assembly.
+  /// </summary>
   public class AddTemporaryUserAssembly : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       Settings.Scripting.ReferencedAssembliesCommands.ShowAddTemporaryAssemblyDialog();
     }
   }
 
+  /// <summary>
+  /// Opens the dialog for testing project loading.
+  /// </summary>
   public class TestProjectLoading : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       Altaxo.Main.Commands.TestAllProjectsInFolder.ShowDialogToVerifyOpeningOfDocumentsWithoutException();
     }
   }
 
+  /// <summary>
+  /// Shows the application options dialog.
+  /// </summary>
   public class ShowOptions : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       var ctrl = new Altaxo.Gui.Settings.SettingsController();
@@ -53,8 +65,12 @@ namespace Altaxo.Main.Commands
     }
   }
 
+  /// <summary>
+  /// Shows the user settings editor.
+  /// </summary>
   public class ShowUserSettings : SimpleCommand
   {
+    /// <inheritdoc/>
     public override void Execute(object parameter)
     {
       var ph = new Altaxo.Main.Properties.PropertyHierarchy(PropertyExtensions.GetPropertyBagsStartingFromUserSettings());

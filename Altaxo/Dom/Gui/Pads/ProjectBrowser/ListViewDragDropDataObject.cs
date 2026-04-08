@@ -30,15 +30,33 @@ using System.Text;
 
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
+  /// <summary>
+  /// Provides drag-and-drop data for project browser list view items.
+  /// </summary>
   public class ListViewDragDropDataObject : Altaxo.Serialization.Clipboard.IDataObject
   {
+    /// <summary>
+    /// Clipboard format for the current application instance identifier.
+    /// </summary>
     public const string Format_ApplicationInstanceGuid = "Altaxo.Current.ApplicationInstanceGuid";
+    /// <summary>
+    /// Clipboard format for the project folder name.
+    /// </summary>
     public const string Format_ProjectFolder = "Altaxo.Gui.Pads.ProjectBrowser.FolderName";
+    /// <summary>
+    /// Clipboard format for serialized project items.
+    /// </summary>
     public const string Format_ItemList = "Altaxo.Gui.Pads.ProjectBrowser.ItemList";
+    /// <summary>
+    /// Clipboard format for serialized project item references.
+    /// </summary>
     public const string Format_ItemReferenceList = "Altaxo.Gui.Pads.ProjectBrowser.ItemReferenceList";
 
     private List<string> _availableFormats;
 
+    /// <summary>
+    /// Gets or sets the project folder name associated with the drag-and-drop operation.
+    /// </summary>
     public string FolderName { get; set; }
 
     /// <summary>
@@ -57,6 +75,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// </value>
     public bool ItemListWasRendered { get; protected set; }
 
+    /// <inheritdoc/>
     public object GetData(string format, bool autoConvert)
     {
       object result = null;
@@ -96,11 +115,13 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       return result;
     }
 
+    /// <inheritdoc/>
     public object GetData(string format)
     {
       return GetData(format, true);
     }
 
+    /// <inheritdoc/>
     public bool GetDataPresent(string format, bool autoConvert)
     {
       if (_availableFormats is null)
@@ -109,11 +130,13 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       return _availableFormats.Contains(format);
     }
 
+    /// <inheritdoc/>
     public bool GetDataPresent(string format)
     {
       return GetDataPresent(format, true);
     }
 
+    /// <inheritdoc/>
     public string[] GetFormats(bool autoConvert)
     {
       if (_availableFormats is null)
@@ -122,11 +145,15 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       return _availableFormats.ToArray();
     }
 
+    /// <inheritdoc/>
     public string[] GetFormats()
     {
       return GetFormats(true);
     }
 
+    /// <summary>
+    /// Builds the list of clipboard formats currently available from this data object.
+    /// </summary>
     public void SetFormats()
     {
       _availableFormats = new List<string>();
@@ -142,31 +169,37 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     #region Not implemented interface functions
 
+    /// <inheritdoc/>
     public object GetData(Type format)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public bool GetDataPresent(Type format)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public void SetData(string format, object data, bool autoConvert)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public void SetData(Type format, object data)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public void SetData(string format, object data)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public void SetData(object data)
     {
       throw new NotImplementedException();

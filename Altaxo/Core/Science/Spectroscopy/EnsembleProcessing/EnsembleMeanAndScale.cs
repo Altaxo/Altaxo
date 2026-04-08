@@ -18,6 +18,9 @@ namespace Altaxo.Science.Spectroscopy.EnsembleMeanScale
 
     #region Serialization
 
+    /// <summary>
+    /// Serializes <see cref="EnsembleMeanAndScaleCorrection"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(EnsembleMeanAndScaleCorrection), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {

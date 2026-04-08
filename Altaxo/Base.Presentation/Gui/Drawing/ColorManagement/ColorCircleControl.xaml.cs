@@ -47,22 +47,29 @@ namespace Altaxo.Gui.Drawing.ColorManagement
   /// </summary>
   public partial class ColorCircleControl : UserControl, IColorCircleView
   {
+    /// <inheritdoc/>
     public event Action? ColorModelSelectionChanged;
 
+    /// <inheritdoc/>
     public event Action? TextOnlyColorModelSelectionChanged;
 
+    /// <inheritdoc/>
     public event Action<AxoColor>? CurrentColorChanged;
 
+    /// <inheritdoc/>
     public event Action? ColorCircleModelChanged;
 
+    /// <inheritdoc/>
     public event Action? ColorVariationModelChanged;
 
     /// <summary>
     /// Occurs when at least one of the hue values of the color circle has changed. Argument is the list of hue values of the circle, with the first item
     /// always representing the main hue value.
     /// </summary>
+    /// <inheritdoc/>
     public event Action<IReadOnlyList<double>>? HueValuesChanged;
 
+    /// <inheritdoc/>
     public event Action<int>? NumberOfColorShadesChanged;
 
     private DecimalUpDown[] _guiComponents = new DecimalUpDown[4];
@@ -76,8 +83,12 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     private ITextOnlyColorModel _altColorModel;
     private AxoColor _currentColor;
 
+    /// <inheritdoc/>
     public AxoColor CurrentColor { get { return _currentColor; } }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColorCircleControl"/> class.
+    /// </summary>
     public ColorCircleControl()
     {
       InitializeComponent();
@@ -144,6 +155,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       ColorVariationModelChanged?.Invoke();
     }
 
+    /// <inheritdoc/>
     public void AmendAlphaComponent(ref AxoColor color)
     {
       if (_colorModel.IsUsingByteComponents)
@@ -194,6 +206,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       }
     }
 
+    /// <inheritdoc/>
     public void ChangeCurrentColor(AxoColor newColor, bool updateCircle, bool updateVariations, bool updateComponents, bool updateAltComponents)
     {
       _currentColor = newColor;
@@ -249,16 +262,19 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       _guiAlphaValue.ValueChanged += EhAlphaValueChanged;
     }
 
+    /// <inheritdoc/>
     public void InitializeAvailableColorModels(SelectableListNodeList listOfColorModels)
     {
       GuiHelper.Initialize(_guiColorModel, listOfColorModels);
     }
 
+    /// <inheritdoc/>
     public void InitializeAvailableTextOnlyColorModels(SelectableListNodeList listOfTextOnlyColorModels)
     {
       GuiHelper.Initialize(_guiAltComponentsType, listOfTextOnlyColorModels);
     }
 
+    /// <inheritdoc/>
     public void InitializeColorModel(IColorModel colorModel, bool silentSet)
     {
       _colorModel = colorModel;
@@ -322,6 +338,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       }
     }
 
+    /// <inheritdoc/>
     public void InitializeTextOnlyColorModel(ITextOnlyColorModel colorModel, bool silentSet)
     {
       _altColorModel = colorModel;
@@ -349,11 +366,13 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       }
     }
 
+    /// <inheritdoc/>
     public void InitializeAvailableColorCircleModels(SelectableListNodeList availableColorCircleModels)
     {
       GuiHelper.Initialize(_guiColorCircleModel, availableColorCircleModels);
     }
 
+    /// <inheritdoc/>
     public IReadOnlyList<double> InitializeCurrentColorCircleModel(IColorCircleModel currentColorCircleModel, bool silentSet)
     {
       _guiColorCircleSurface.ColorCircleModel = currentColorCircleModel;
@@ -365,15 +384,18 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       return _guiColorCircleSurface.HueValues;
     }
 
+    /// <inheritdoc/>
     public void InitializeAvailableColorVariationModels(SelectableListNodeList availableColorVariationModels)
     {
       GuiHelper.Initialize(_guiColorVariation, availableColorVariationModels);
     }
 
+    /// <inheritdoc/>
     public void InitializeCurrentColorVariationModel(IColorVariationModel currentColorVariationModel, bool silentSet)
     {
     }
 
+    /// <inheritdoc/>
     public void InitializeCurrentColor(AxoColor color)
     {
       _currentColor = color;
@@ -420,12 +442,14 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       );
     }
 
+    /// <inheritdoc/>
     public void InitializeNumberOfColorShades(int numberOfColorShades)
     {
       _guiNumberOfShadesSlider.Value = numberOfColorShades;
       _guiNumberOfShadesUpDown.Value = numberOfColorShades;
     }
 
+    /// <inheritdoc/>
     public void InitializeColorShades(AxoColor[][] colorShades)
     {
       const int maxJ = 20;

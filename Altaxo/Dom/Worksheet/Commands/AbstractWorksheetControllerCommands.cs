@@ -34,7 +34,7 @@ using Altaxo.Gui.Workbench;
 namespace Altaxo.Worksheet.Commands
 {
   /// <summary>
-  /// Provides a abstract class for issuing commands that apply to worksheet controllers.
+  /// Provides an abstract base class for commands that apply to worksheet controllers.
   /// </summary>
   public abstract class AbstractWorksheetControllerCommand : SimpleCommand
   {
@@ -51,7 +51,7 @@ namespace Altaxo.Worksheet.Commands
 
     /// <summary>
     /// Determines the currently active worksheet and issues the command to that worksheet by calling
-    /// Run with the worksheet as a parameter.
+    /// <see cref="Run"/> with the worksheet as a parameter.
     /// </summary>
     public override void Execute(object parameter)
     {
@@ -63,8 +63,7 @@ namespace Altaxo.Worksheet.Commands
     }
 
     /// <summary>
-    /// Override this function for adding own worksheet commands. You will get
-    /// the worksheet controller in the parameter.
+    /// Override this function to implement worksheet commands.
     /// </summary>
     /// <param name="ctrl">The worksheet controller this command is applied to.</param>
     public abstract void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl);

@@ -51,11 +51,13 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.Regression.Nonlinear.HavriliakNegamiComplex", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotImplementedException();
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = new HavriliakNegamiSusceptibility
@@ -69,6 +71,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.Regression.Nonlinear.HavriliakNegamiComplex", 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotImplementedException();
@@ -80,6 +83,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
                 */
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         HavriliakNegamiSusceptibility s = (HavriliakNegamiSusceptibility?)o ?? new HavriliakNegamiSusceptibility();
@@ -98,6 +102,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiSusceptibility", 2)]
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Trying to serialize old version");
@@ -109,6 +114,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
                 */
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         HavriliakNegamiSusceptibility s = (HavriliakNegamiSusceptibility?)o ?? new HavriliakNegamiSusceptibility();
@@ -122,6 +128,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiSusceptibility", 3)]
     private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (HavriliakNegamiSusceptibility)obj;
@@ -131,6 +138,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         info.AddValue("NumberOfTerms", s._numberOfTerms);
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (HavriliakNegamiSusceptibility?)o ?? new HavriliakNegamiSusceptibility();
@@ -150,6 +158,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(HavriliakNegamiSusceptibility), 5)]
     private class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (HavriliakNegamiSusceptibility)obj;
@@ -162,6 +171,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         info.AddValue("LogarithmizeResults", s._logarithmizeResults);
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (HavriliakNegamiSusceptibility?)o ?? new HavriliakNegamiSusceptibility();
@@ -179,6 +189,9 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HavriliakNegamiSusceptibility"/> class.
+    /// </summary>
     public HavriliakNegamiSusceptibility()
     {
     }
@@ -190,6 +203,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     ///   <c>true</c> if the independent variable is the frequency; false if the independent variable is the circular frequency.
     /// </value>
     public bool UseFrequencyInsteadOfOmega => _useFrequencyInsteadOmega;
+
+    /// <summary>
+    /// Returns a new instance with the <see cref="UseFrequencyInsteadOfOmega"/> property set to the specified value.
+    /// </summary>
+    /// <param name="value">If set to <c>true</c> the independent variable is interpreted as frequency; otherwise as omega.</param>
+    /// <returns>A new instance with the modified setting, or the same instance if the value is unchanged.</returns>
     public HavriliakNegamiSusceptibility WithUseFrequencyInsteadOfOmega(bool value)
     {
       if (!(_useFrequencyInsteadOmega == value))
@@ -212,7 +231,11 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     /// </value>
     public bool UseFlowTerm => _useFlowTerm;
 
-
+    /// <summary>
+    /// Returns a new instance with the <see cref="UseFlowTerm"/> property set to the specified value.
+    /// </summary>
+    /// <param name="value"><c>true</c> if a flow term is included; otherwise, <c>false</c>.</param>
+    /// <returns>A new instance with the modified setting, or the same instance if the value is unchanged.</returns>
     public HavriliakNegamiSusceptibility WithUseFlowTerm(bool value)
     {
       if (!(_useFlowTerm == value))
@@ -227,7 +250,16 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the function models the relative dielectric permittivity instead of a general susceptibility.
+    /// </summary>
     public bool IsRelativeDielectricPermittivity => _isDielectricData;
+
+    /// <summary>
+    /// Returns a new instance with the <see cref="IsRelativeDielectricPermittivity"/> property set to the specified value.
+    /// </summary>
+    /// <param name="value"><c>true</c> to model relative dielectric permittivity; otherwise, <c>false</c>.</param>
+    /// <returns>A new instance with the modified setting, or the same instance if the value is unchanged.</returns>
     public HavriliakNegamiSusceptibility WithIsRelativeDielectricPermittivity(bool value)
     {
       if (!(IsRelativeDielectricPermittivity == value))
@@ -242,7 +274,16 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the viscosity parameter is inverted so that a conductivity or fluidity term is used.
+    /// </summary>
     public bool InvertViscosity => _invertViscosity;
+
+    /// <summary>
+    /// Returns a new instance with the <see cref="InvertViscosity"/> property set to the specified value.
+    /// </summary>
+    /// <param name="value"><c>true</c> to use the inverted viscosity representation; otherwise, <c>false</c>.</param>
+    /// <returns>A new instance with the modified setting, or the same instance if the value is unchanged.</returns>
     public HavriliakNegamiSusceptibility WithInvertViscosity(bool value)
     {
       if (!(InvertViscosity == value))
@@ -257,7 +298,16 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <summary>
+    /// Gets the number of Havriliak-Negami terms used by the model.
+    /// </summary>
     public int NumberOfTerms => _numberOfTerms;
+
+    /// <summary>
+    /// Returns a new instance with the <see cref="NumberOfTerms"/> property set to the specified value.
+    /// </summary>
+    /// <param name="value">The number of terms to use. Must be greater than or equal to 1.</param>
+    /// <returns>A new instance with the modified setting, or the same instance if the value is unchanged.</returns>
     public HavriliakNegamiSusceptibility WithNumberOfTerms(int value)
     {
       if (value < 1)
@@ -282,6 +332,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     /// <c>true</c> if the result is inverted; otherwise, <c>false</c>.
     /// </value>
     public bool InvertResult => _invertResult;
+
+    /// <summary>
+    /// Returns a new instance with the <see cref="InvertResult"/> property set to the specified value.
+    /// </summary>
+    /// <param name="value"><c>true</c> to invert the complex result; otherwise, <c>false</c>.</param>
+    /// <returns>A new instance with the modified setting, or the same instance if the value is unchanged.</returns>
     public HavriliakNegamiSusceptibility WithInvertResult(bool value)
     {
       if (!(InvertResult == value))
@@ -303,6 +359,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     ///   <c>true</c> if the result is logarithmized; otherwise, <c>false</c>.
     /// </value>
     public bool LogarithmizeResults => _logarithmizeResults;
+
+    /// <summary>
+    /// Returns a new instance with the <see cref="LogarithmizeResults"/> property set to the specified value.
+    /// </summary>
+    /// <param name="value"><c>true</c> to return base-10 logarithms of the result parts; otherwise, <c>false</c>.</param>
+    /// <returns>A new instance with the modified setting, or the same instance if the value is unchanged.</returns>
     public HavriliakNegamiSusceptibility WithLogarithmizeResults(bool value)
     {
       if (!(LogarithmizeResults == value))
@@ -317,6 +379,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       if (_isDielectricData)
@@ -325,6 +388,10 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         return "HavriliakNegami Susceptibility " + (_useFrequencyInsteadOmega ? "(Frequency)" : "(Omega)");
     }
 
+    /// <summary>
+    /// Creates a dielectric Havriliak-Negami fit function that uses omega as the independent variable.
+    /// </summary>
+    /// <returns>A configured dielectric fit function instance.</returns>
     [FitFunctionCreator("HavriliakNegami Complex (Omega)", "Retardation/Dielectrics", 1, 2, 6)]
     [Description("${res:Altaxo.Calc.FitFunctions.Retardation.Dielectrics.HavriliakNegamiComplexOmega}")]
     public static IFitFunction CreateDielectricFunctionOfOmega()
@@ -339,6 +406,10 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return result;
     }
 
+    /// <summary>
+    /// Creates a dielectric Havriliak-Negami fit function that uses frequency as the independent variable.
+    /// </summary>
+    /// <returns>A configured dielectric fit function instance.</returns>
     [FitFunctionCreator("HavriliakNegami Complex (Frequency)", "Retardation/Dielectrics", 1, 2, 6)]
     [Description("${res:Altaxo.Calc.FitFunctions.Retardation.Dielectrics.HavriliakNegamiComplexFrequency}")]
     public static IFitFunction CreateDielectricFunctionOfFrequency()
@@ -353,6 +424,10 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return result;
     }
 
+    /// <summary>
+    /// Creates a general Havriliak-Negami susceptibility fit function that uses omega as the independent variable.
+    /// </summary>
+    /// <returns>A configured general fit function instance.</returns>
     [FitFunctionCreator("HavriliakNegami Complex64T (Omega)", "Retardation/General", 1, 2, 6)]
     [Description("${res:Altaxo.Calc.FitFunctions.Retardation.General.HavriliakNegamiComplexOmega}")]
     public static IFitFunction CreateGeneralFunctionOfOmega()
@@ -367,6 +442,10 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return result;
     }
 
+    /// <summary>
+    /// Creates a general Havriliak-Negami susceptibility fit function that uses frequency as the independent variable.
+    /// </summary>
+    /// <returns>A configured general fit function instance.</returns>
     [FitFunctionCreator("HavriliakNegami Complex (Frequency)", "Retardation/General", 1, 2, 6)]
     [Description("${res:Altaxo.Calc.FitFunctions.Retardation.General.HavriliakNegamiComplexFrequency}")]
     public static IFitFunction CreateGeneralFunctionOfFrequency()
@@ -382,6 +461,10 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     }
 
 
+    /// <summary>
+    /// Creates a multi-term Havriliak-Negami modulus fit function that uses omega as the independent variable.
+    /// </summary>
+    /// <returns>A configured modulus fit function instance.</returns>
     [FitFunctionCreator("HavriliakNegami Complex Multi (Omega)", "Retardation/Modulus", 1, 2, 10)]
     [Description("${res:Altaxo.Calc.FitFunctions.Retardation.Modulus.HavriliakNegamiMultiComplexOmega}")]
     public static IFitFunction CreateModulusFunctionOfOmega()
@@ -398,6 +481,10 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return result;
     }
 
+    /// <summary>
+    /// Creates a multi-term Havriliak-Negami modulus fit function that uses frequency as the independent variable.
+    /// </summary>
+    /// <returns>A configured modulus fit function instance.</returns>
     [FitFunctionCreator("HavriliakNegami Complex Multi (Frequency)", "Retardation/Modulus", 1, 2, 10)]
     [Description("${res:Altaxo.Calc.FitFunctions.Retardation.Modulus.HavriliakNegamiMultiComplexFrequency}")]
     public static IFitFunction CreateModulusFunctionOfFrequency()
@@ -672,6 +759,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         }
       }
     }
+    /// <inheritdoc/>
     public void EvaluateGradient(double[] X, double[] P, double[][] DY)
     {
       throw new NotImplementedException();

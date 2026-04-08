@@ -36,26 +36,25 @@ namespace Altaxo.Gui.Common.Converters
   /// </summary>
   /// <seealso cref="System.Windows.Data.IValueConverter" />
   /// <example>
-  /// <code>
+  /// <code><![CDATA[
   /// <Grid x:Name="MainGrid">
   ///   <Grid.Resources>
   ///     <local:ExpanderHeightConverter x:Key="HeightConverter"/>
   ///   </Grid.Resources>
   ///   <Grid.RowDefinitions>
-  ///       <RowDefinition Height="{Binding IsExpanded, ElementName=Expander1, Converter={StaticResource HeightConverter}}" />
-  ///       <RowDefinition Height="{Binding IsExpanded, ElementName=Expander2, Converter={StaticResource HeightConverter}}"/>
+  ///     <RowDefinition Height="{Binding IsExpanded, ElementName=Expander1, Converter={StaticResource HeightConverter}}" />
+  ///     <RowDefinition Height="{Binding IsExpanded, ElementName=Expander2, Converter={StaticResource HeightConverter}}"/>
   ///   </Grid.RowDefinitions>
   ///
   ///   <Expander x:Name="Expander1" Header="Expander 1">
-  ///       <TextBlock Text = "Content for Expander 1" />
-  ///   </ Expander >
-  ///   
-  ///   < Expander x:Name="Expander2" Header="Expander 2" Grid.Row="1">
-  ///       <TextBlock Text = "Content for Expander 2" />
-  ///   </ Expander >
-  /// </ Grid >
-
-  /// </code>
+  ///     <TextBlock Text="Content for Expander 1" />
+  ///   </Expander>
+  ///
+  ///   <Expander x:Name="Expander2" Header="Expander 2" Grid.Row="1">
+  ///     <TextBlock Text="Content for Expander 2" />
+  ///   </Expander>
+  /// </Grid>
+  /// ]]></code>
   /// </example>
   public class ExpandedToGridHeightStarConverter : IValueConverter
   {
@@ -74,6 +73,7 @@ namespace Altaxo.Gui.Common.Converters
     /// <returns>
     /// If the boolean is true, it returns a GridLength with the specified star value; otherwise, it returns GridLength.Auto.
     /// </returns>
+    /// <inheritdoc/>
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
       if (value is bool isExpanded)
@@ -91,6 +91,7 @@ namespace Altaxo.Gui.Common.Converters
       return GridLength.Auto;
     }
 
+    /// <inheritdoc/>
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
       throw new NotImplementedException(); // No need for two-way conversion

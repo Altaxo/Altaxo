@@ -39,6 +39,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
   /// </summary>
   public partial class FillToCurvePlotStyleControl : UserControl, IFillToCurvePlotStyleView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FillToCurvePlotStyleControl"/> class.
+    /// </summary>
     public FillToCurvePlotStyleControl()
     {
       InitializeComponent();

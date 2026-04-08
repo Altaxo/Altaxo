@@ -38,6 +38,7 @@ namespace Altaxo.Main.Services.ScriptCompilation
   {
     private ConcurrentScriptCompilerResultDictionary _compilerResults = new();
 
+    /// <inheritdoc/>
     public async Task<IScriptCompilerResult> Compile(string[] scriptText, CancellationToken cancellationToken)
     {
       var scriptTextsWithHash = new CodeTextsWithHash(scriptText);
@@ -65,6 +66,7 @@ namespace Altaxo.Main.Services.ScriptCompilation
       return scriptCompilerResult;
     }
 
+    /// <inheritdoc/>
     public IScriptCompilerSuccessfulResult? GetCompilerResult(Assembly ass)
     {
       if (_compilerResults.TryGetValue(ass, out var result))

@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
   /// </summary>
   public partial class DropAreaPlotStyleControl : UserControl, IDropAreaPlotStyleView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DropAreaPlotStyleControl"/> class.
+    /// </summary>
     public DropAreaPlotStyleControl()
     {
       InitializeComponent();

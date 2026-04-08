@@ -148,13 +148,44 @@ namespace Altaxo.Calc.Interpolation
   /// </remarks>
   public class RationalCubicSpline : CurveBase, IInterpolationFunction
   {
+    /// <summary>
+    /// Stores the boundary condition mode used for interpolation.
+    /// </summary>
     protected BoundaryConditions boundary;
+
+    /// <summary>
+    /// Stores the spline parameter and auxiliary boundary values.
+    /// </summary>
     protected double p, r1, r2;
+
+    /// <summary>
+    /// Stores the segment widths of the abscissa values.
+    /// </summary>
     protected Vector<double> dx = CreateVector.Dense<double>(0);
+
+    /// <summary>
+    /// Stores the segment differences of the ordinate values.
+    /// </summary>
     protected Vector<double> dy = CreateVector.Dense<double>(0);
+
+    /// <summary>
+    /// Stores the spline coefficients of the first basis component.
+    /// </summary>
     protected Vector<double> a = CreateVector.Dense<double>(0);
+
+    /// <summary>
+    /// Stores the spline coefficients of the second basis component.
+    /// </summary>
     protected Vector<double> b = CreateVector.Dense<double>(0);
+
+    /// <summary>
+    /// Stores the spline coefficients of the third basis component.
+    /// </summary>
     protected Vector<double> c = CreateVector.Dense<double>(0);
+
+    /// <summary>
+    /// Stores the spline coefficients of the fourth basis component.
+    /// </summary>
     protected Vector<double> d = CreateVector.Dense<double>(0);
 
     //-----------------------------------------------------------------------------//
@@ -656,6 +687,7 @@ namespace Altaxo.Calc.Interpolation
     //
     //----------------------------------------------------------------------------//
 
+    /// <inheritdoc/>
     public override void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
     {
       // check input parameters

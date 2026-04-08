@@ -33,10 +33,14 @@ using Altaxo.Main.Services;
 namespace Altaxo.Main.Commands
 {
   /// <summary>
-  /// Taken from Commands.MenuItemBuilders. See last line for change.
+  /// Builds menu items for the recently opened projects.
   /// </summary>
+  /// <remarks>
+  /// Taken from <c>Commands.MenuItemBuilders</c>. See the last line for the change.
+  /// </remarks>
   public class RecentProjectsMenuBuilder : IMenuItemBuilder
   {
+    /// <inheritdoc/>
     public IEnumerable<object> BuildItems(Codon codon, object owner)
     {
       var recentOpen = Current.GetRequiredService<IRecentOpen>();

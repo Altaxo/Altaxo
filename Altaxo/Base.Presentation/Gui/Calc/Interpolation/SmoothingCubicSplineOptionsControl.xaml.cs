@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Calc.Interpolation
   /// </summary>
   public partial class SmoothingCubicSplineOptionsControl : UserControl, ISmoothingCubicSplineOptionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SmoothingCubicSplineOptionsControl"/> class.
+    /// </summary>
     public SmoothingCubicSplineOptionsControl()
     {
       InitializeComponent();

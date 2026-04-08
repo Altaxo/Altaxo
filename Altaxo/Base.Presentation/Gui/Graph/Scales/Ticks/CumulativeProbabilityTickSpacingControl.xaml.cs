@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
   /// </summary>
   public partial class CumulativeProbabilityTickSpacingControl : UserControl, ICumulativeProbabilityTickSpacingView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CumulativeProbabilityTickSpacingControl"/> class.
+    /// </summary>
     public CumulativeProbabilityTickSpacingControl()
     {
       InitializeComponent();

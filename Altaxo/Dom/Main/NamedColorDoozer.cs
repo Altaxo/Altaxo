@@ -32,7 +32,7 @@ using Altaxo.Drawing;
 namespace Altaxo.Main
 {
   /// <summary>
-  /// Creates a new named color from the id and the value
+  /// Creates a named color from the codon identifier and color value.
   /// </summary>
   /// <attribute name="Value" use="required">
   /// The value of the color as string in standard format.
@@ -42,10 +42,7 @@ namespace Altaxo.Main
   /// An NamedColor object that represents the item.</returns>
   public class NamedColorDoozer : IDoozer
   {
-    /// <summary>
-    /// Gets if the doozer handles codon conditions on its own.
-    /// If this property return false, the item is excluded when the condition is not met.
-    /// </summary>
+    /// <inheritdoc/>
     public bool HandleConditions
     {
       get
@@ -54,6 +51,7 @@ namespace Altaxo.Main
       }
     }
 
+    /// <inheritdoc/>
     public object BuildItem(BuildItemArgs args)
     {
       string id = args.Codon.Id;

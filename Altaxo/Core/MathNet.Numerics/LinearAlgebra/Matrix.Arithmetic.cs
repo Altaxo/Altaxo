@@ -264,30 +264,163 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="result">The matrix to store the result.</param>
     protected abstract void DoPointwiseLog(Matrix<T> result);
 
+    /// <summary>
+    /// Pointwise applies the absolute value function to each value and stores the result in the result matrix.
+    /// </summary>
+    /// <param name="result">The matrix to store the result.</param>
     protected abstract void DoPointwiseAbs(Matrix<T> result);
+
+    /// <summary>
+    /// Pointwise applies the arccosine function to each value and stores the result in the result matrix.
+    /// </summary>
+    /// <param name="result">The matrix to store the result.</param>
     protected abstract void DoPointwiseAcos(Matrix<T> result);
+
+    /// <summary>
+    /// Pointwise applies the arcsine function to each value and stores the result in the result matrix.
+    /// </summary>
+    /// <param name="result">The matrix to store the result.</param>
     protected abstract void DoPointwiseAsin(Matrix<T> result);
+
+    /// <summary>
+    /// Pointwise applies the arctangent function to each value and stores the result in the result matrix.
+    /// </summary>
+    /// <param name="result">The matrix to store the result.</param>
     protected abstract void DoPointwiseAtan(Matrix<T> result);
+
+    /// <summary>
+    /// Pointwise applies the ceiling function to each value and stores the result in the result matrix.
+    /// </summary>
+    /// <param name="result">The matrix to store the result.</param>
     protected abstract void DoPointwiseCeiling(Matrix<T> result);
+
+    /// <summary>
+    /// Pointwise applies the cosine function to each value and stores the result in the result matrix.
+    /// </summary>
+    /// <param name="result">The matrix to store the result.</param>
     protected abstract void DoPointwiseCos(Matrix<T> result);
+
+    /// <summary>
+    /// Pointwise applies the hyperbolic cosine function to each value and stores the result in the result matrix.
+    /// </summary>
+    /// <param name="result">The matrix to store the result.</param>
     protected abstract void DoPointwiseCosh(Matrix<T> result);
+
+    /// <summary>
+    /// Pointwise applies the floor function to each value and stores the result in the result matrix.
+    /// </summary>
+    /// <param name="result">The matrix to store the result.</param>
     protected abstract void DoPointwiseFloor(Matrix<T> result);
+
+    /// <summary>
+    /// Pointwise applies the base-10 logarithm function to each value and stores the result in the result matrix.
+    /// </summary>
+    /// <param name="result">The matrix to store the result.</param>
     protected abstract void DoPointwiseLog10(Matrix<T> result);
+
+    /// <summary>
+    /// Pointwise applies the rounding function to each value and stores the result in the result matrix.
+    /// </summary>
+    /// <param name="result">The matrix to store the result.</param>
     protected abstract void DoPointwiseRound(Matrix<T> result);
+
+    /// <summary>
+    /// Pointwise applies the sign function to each value and stores the result in the result matrix.
+    /// </summary>
+    /// <param name="result">The matrix to store the result.</param>
     protected abstract void DoPointwiseSign(Matrix<T> result);
+
+    /// <summary>
+    /// Pointwise applies the sine function to each value and stores the result in the result matrix.
+    /// </summary>
+    /// <param name="result">The matrix to store the result.</param>
     protected abstract void DoPointwiseSin(Matrix<T> result);
+
+    /// <summary>
+    /// Pointwise applies the hyperbolic sine function to each value and stores the result in the result matrix.
+    /// </summary>
+    /// <param name="result">The matrix to store the result.</param>
     protected abstract void DoPointwiseSinh(Matrix<T> result);
+
+    /// <summary>
+    /// Pointwise applies the square root function to each value and stores the result in the result matrix.
+    /// </summary>
+    /// <param name="result">The matrix to store the result.</param>
     protected abstract void DoPointwiseSqrt(Matrix<T> result);
+
+    /// <summary>
+    /// Pointwise applies the tangent function to each value and stores the result in the result matrix.
+    /// </summary>
+    /// <param name="result">The matrix to store the result.</param>
     protected abstract void DoPointwiseTan(Matrix<T> result);
+
+    /// <summary>
+    /// Pointwise applies the hyperbolic tangent function to each value and stores the result in the result matrix.
+    /// </summary>
+    /// <param name="result">The matrix to store the result.</param>
     protected abstract void DoPointwiseTanh(Matrix<T> result);
+
+    /// <summary>
+    /// Pointwise applies the two-argument arctangent function using this matrix as the y-values and another matrix as the x-values.
+    /// </summary>
+    /// <param name="other">The matrix providing the x-values.</param>
+    /// <param name="result">The matrix to store the result.</param>
     protected abstract void DoPointwiseAtan2(Matrix<T> other, Matrix<T> result);
+
+    /// <summary>
+    /// Pointwise applies the minimum with a scalar to each value and stores the result in the result matrix.
+    /// </summary>
+    /// <param name="scalar">The scalar value to compare to.</param>
+    /// <param name="result">The matrix to store the result.</param>
     protected abstract void DoPointwiseMinimum(T scalar, Matrix<T> result);
+
+    /// <summary>
+    /// Pointwise applies the minimum with the values of another matrix to each value and stores the result in the result matrix.
+    /// </summary>
+    /// <param name="other">The matrix with the values to compare to.</param>
+    /// <param name="result">The matrix to store the result.</param>
     protected abstract void DoPointwiseMinimum(Matrix<T> other, Matrix<T> result);
+
+    /// <summary>
+    /// Pointwise applies the maximum with a scalar to each value and stores the result in the result matrix.
+    /// </summary>
+    /// <param name="scalar">The scalar value to compare to.</param>
+    /// <param name="result">The matrix to store the result.</param>
     protected abstract void DoPointwiseMaximum(T scalar, Matrix<T> result);
+
+    /// <summary>
+    /// Pointwise applies the maximum with the values of another matrix to each value and stores the result in the result matrix.
+    /// </summary>
+    /// <param name="other">The matrix with the values to compare to.</param>
+    /// <param name="result">The matrix to store the result.</param>
     protected abstract void DoPointwiseMaximum(Matrix<T> other, Matrix<T> result);
+
+    /// <summary>
+    /// Pointwise applies the absolute minimum with a scalar to each value and stores the result in the result matrix.
+    /// </summary>
+    /// <param name="scalar">The scalar value to compare to.</param>
+    /// <param name="result">The matrix to store the result.</param>
     protected abstract void DoPointwiseAbsoluteMinimum(T scalar, Matrix<T> result);
+
+    /// <summary>
+    /// Pointwise applies the absolute minimum with the values of another matrix to each value and stores the result in the result matrix.
+    /// </summary>
+    /// <param name="other">The matrix with the values to compare to.</param>
+    /// <param name="result">The matrix to store the result.</param>
     protected abstract void DoPointwiseAbsoluteMinimum(Matrix<T> other, Matrix<T> result);
+
+    /// <summary>
+    /// Pointwise applies the absolute maximum with a scalar to each value and stores the result in the result matrix.
+    /// </summary>
+    /// <param name="scalar">The scalar value to compare to.</param>
+    /// <param name="result">The matrix to store the result.</param>
     protected abstract void DoPointwiseAbsoluteMaximum(T scalar, Matrix<T> result);
+
+    /// <summary>
+    /// Pointwise applies the absolute maximum with the values of another matrix to each value and stores the result in the result matrix.
+    /// </summary>
+    /// <param name="other">The matrix with the values to compare to.</param>
+    /// <param name="result">The matrix to store the result.</param>
     protected abstract void DoPointwiseAbsoluteMaximum(Matrix<T> other, Matrix<T> result);
 
     /// <summary>
@@ -1708,8 +1841,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// matrix and a given other matrix being the 'x' of atan2 and the
     /// 'this' matrix being the 'y'
     /// </summary>
-    /// <param name="other"></param>
-    /// <returns></returns>
+    /// <param name="other">The matrix providing the x values for the atan2 operation.</param>
+    /// <returns>A matrix containing the pointwise atan2 results.</returns>
     public Matrix<T> PointwiseAtan2(Matrix<T> other)
     {
       return PointwiseBinary(DoPointwiseAtan2, other);
@@ -1720,9 +1853,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// matrix and a given other matrix being the 'x' of atan2 and the
     /// 'this' matrix being the 'y'
     /// </summary>
-    /// <param name="other">The other matrix 'y'</param>
-    /// <param name="result">The matrix with the result and 'x'</param>
-    /// <returns></returns>
+    /// <param name="other">The matrix providing the x values for the atan2 operation.</param>
+    /// <param name="result">The matrix that receives the pointwise atan2 results.</param>
     public void PointwiseAtan2(Matrix<T> other, Matrix<T> result)
     {
       PointwiseBinary(DoPointwiseAtan2, other, result);

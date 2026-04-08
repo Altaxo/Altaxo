@@ -32,6 +32,9 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
 
     #region Serialization
 
+    /// <summary>
+    /// Serializes <see cref="MultiplicativeScatterCorrection"/> instances.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.EnsembleMeanScale.MultiplicativeScatterCorrection", 0)]
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MultiplicativeScatterCorrection), 1)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate

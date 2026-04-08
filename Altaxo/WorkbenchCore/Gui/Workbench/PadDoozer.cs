@@ -66,6 +66,7 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <inheritdoc/>
     public object BuildItem(BuildItemArgs args)
     {
       return new PadDescriptor(args.Codon);

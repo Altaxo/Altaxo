@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
   /// </summary>
   public partial class PeakFittingInGroupsControl : UserControl, IPeakFittingInGroupsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PeakFittingInGroupsControl"/> class.
+    /// </summary>
     public PeakFittingInGroupsControl()
     {
       InitializeComponent();

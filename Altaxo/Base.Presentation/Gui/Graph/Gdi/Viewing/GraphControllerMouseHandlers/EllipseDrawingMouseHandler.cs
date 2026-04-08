@@ -33,16 +33,22 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
   /// </summary>
   public class EllipseDrawingMouseHandler : AbstractRectangularToolMouseHandler
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EllipseDrawingMouseHandler"/> class.
+    /// </summary>
+    /// <param name="grac">The graph controller.</param>
     public EllipseDrawingMouseHandler(GraphController grac)
       : base(grac)
     {
     }
 
+    /// <inheritdoc/>
     public override GraphToolType GraphToolType
     {
       get { return GraphToolType.EllipseDrawing; }
     }
 
+    /// <inheritdoc/>
     protected override void FinishDrawing()
     {
       var rect = GetNormalRectangle(_Points[0].LayerCoordinates, _Points[1].LayerCoordinates);
@@ -59,6 +65,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// Draws the ellipse
     /// </summary>
     /// <param name="g"></param>
+    /// <inheritdoc/>
     public override void AfterPaint(Graphics g)
     {
       if (_currentPoint >= 1)

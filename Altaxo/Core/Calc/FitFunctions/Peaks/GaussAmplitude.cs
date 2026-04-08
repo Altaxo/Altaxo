@@ -47,6 +47,9 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <summary>The order of the polynomial with negative exponents.</summary>
     private readonly int _numberOfTerms;
 
+    /// <summary>
+    /// The number of parameters used for one peak term.
+    /// </summary>
     public const int NumberOfParametersPerPeak = 3;
     private const string ParameterBaseName0 = "a";
     private const string ParameterBaseName1 = "xc";
@@ -112,7 +115,10 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       return $"{this.GetType().Name} NumberOfTerms={NumberOfTerms} OrderOfBaseline={OrderOfBaselinePolynomial}";
     }
 
-
+    /// <summary>
+    /// Creates a fit function with one Gaussian term and a constant baseline.
+    /// </summary>
+    /// <returns>The fit function.</returns>
     [FitFunctionCreator("GaussAmplitude", "General", 1, 1, 4)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Peaks.GaussAmplitude}")]
     public static IFitFunction Create_1_0()
@@ -120,6 +126,10 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       return new GaussAmplitude(1, 0);
     }
 
+    /// <summary>
+    /// Creates a fit function with one Gaussian term and no baseline.
+    /// </summary>
+    /// <returns>The fit function.</returns>
     [FitFunctionCreator("GaussAmplitude", "Peaks", 1, 1, 3)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Peaks.GaussAmplitude}")]
     public static IFitFunction Create_1_M1()

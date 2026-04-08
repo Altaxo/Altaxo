@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
   /// </summary>
   public partial class RamanCalibrationDataSourceControl : UserControl, IRamanCalibrationDataSourceView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RamanCalibrationDataSourceControl"/> class.
+    /// </summary>
     public RamanCalibrationDataSourceControl()
     {
       InitializeComponent();

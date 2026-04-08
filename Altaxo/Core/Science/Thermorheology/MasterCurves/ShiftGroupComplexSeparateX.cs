@@ -35,8 +35,14 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
   /// </summary>
   public class ShiftGroupComplexSeparateX : ShiftGroupBase, IShiftGroup
   {
+    /// <summary>
+    /// Stores the real-part curves.
+    /// </summary>
     protected ShiftCurve<double>?[] _curvesReal;
 
+    /// <summary>
+    /// Stores the imaginary-part curves.
+    /// </summary>
     protected ShiftCurve<double>?[] _curvesImaginary;
 
     /// <summary>

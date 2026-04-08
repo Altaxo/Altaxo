@@ -42,11 +42,18 @@ namespace Altaxo.Gui.Common
     private UIElement _hostedControl;
     private RectangleD2D _workArea;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DialogShellViewWpf"/> class.
+    /// </summary>
     public DialogShellViewWpf()
     {
       InitializeComponent();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DialogShellViewWpf"/> class with the hosted control.
+    /// </summary>
+    /// <param name="hostedControl">The control hosted by the dialog shell.</param>
     public DialogShellViewWpf(System.Windows.UIElement hostedControl)
       : this()
     {
@@ -59,15 +66,15 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Overrides the logic for determining the size of the dialog window. See remarks for details.
     /// </summary>
-    /// <param name="availableSize"></param>
-    /// <returns></returns>
+    /// <param name="availableSize">The available size that the dialog can use.</param>
+    /// <returns>The desired size of the dialog.</returns>
     /// <remarks>
-    /// There are two changes from the default behaviour:
+    /// There are two changes from the default behavior:
     /// <para>(i) when the dialog is loaded, the size is adjusted so that it is not bigger than
-    /// the available working area on the screen. If the initial position of the dialog is chosen so that the right lower corner of the dialog would be outside
+    /// the available working area on the screen. If the initial position of the dialog is chosen so that the lower-right corner of the dialog would be outside
     /// of the working area, it is adjusted so that it is inside the working area.</para>
     /// <para>
-    /// If during the dialog is showed the size of the content changed, the dialog box size is adjusted so that the lower right corner of the dialog window would
+    /// If the content changes while the dialog is shown, the dialog box size is adjusted so that the lower-right corner of the dialog window would
     /// always be inside the working area. This does not apply if the user had manually changed the size of the dialog box before.
     /// </para>
     ///
@@ -81,7 +88,7 @@ namespace Altaxo.Gui.Common
       var thisDpiWidthFactor = m.M11;
       var thisDpiHeightFactor = m.M22;
 
-      // TODO is this working for arrangments of monitors with different dpi settings, too?
+      // TODO is this working for arrangements of monitors with different dpi settings, too?
       _workArea = new RectangleD2D(_workArea.X / thisDpiWidthFactor, _workArea.Y / thisDpiHeightFactor, _workArea.Width / thisDpiWidthFactor, _workArea.Height / thisDpiHeightFactor);
 
       if (!IsLoaded) // when the dialog is initially loaded
@@ -116,7 +123,7 @@ namespace Altaxo.Gui.Common
     {
       if (!IsLoaded) // when the dialog is initially loaded
       {
-        // adjust the top and left position of the dialog if neccessary so that the dialog box fits inside the working area
+        // adjust the top and left position of the dialog if necessary so that the dialog box fits inside the working area
         if (Top + arrangeBounds.Height > _workArea.Bottom)
           Top = _workArea.Bottom - arrangeBounds.Height;
         if (Left + arrangeBounds.Width > _workArea.Right)
@@ -128,6 +135,7 @@ namespace Altaxo.Gui.Common
 
     #region IDialogShellView
 
+    /// <inheritdoc/>
     public bool ApplyVisible
     {
       set
@@ -136,10 +144,13 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <inheritdoc/>
     public event Action<System.ComponentModel.CancelEventArgs>? ButtonOKPressed;
 
+    /// <inheritdoc/>
     public event Action? ButtonCancelPressed;
 
+    /// <inheritdoc/>
     public event Action? ButtonApplyPressed;
 
     #endregion IDialogShellView

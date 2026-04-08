@@ -23,12 +23,7 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Altaxo.Gui.Startup;
 using Altaxo.Main.Services;
 
@@ -43,6 +38,9 @@ namespace Altaxo.Gui.Workbench
 
     private AltaxoWorkbench _workbench;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WorkbenchStartup"/> class.
+    /// </summary>
     public WorkbenchStartup()
     {
       _application = new App();
@@ -77,6 +75,10 @@ namespace Altaxo.Gui.Workbench
       //Project.CustomToolsService.Initialize();
     }
 
+    /// <summary>
+    /// Runs the workbench using the provided startup settings.
+    /// </summary>
+    /// <param name="startupArguments">The startup settings.</param>
     public void Run(StartupSettings startupArguments)
     {
       var mainForm = new MainWorkbenchWindow();

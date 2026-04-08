@@ -42,17 +42,29 @@ namespace Altaxo.Com
     private IEnumerable<T> _enumeration;
     private IEnumerator<T> _enumerator;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ManagedEnumBase{T}"/> class.
+    /// </summary>
+    /// <param name="enumeration">The enumeration to wrap.</param>
     public ManagedEnumBase(IEnumerable<T> enumeration)
     {
       _enumeration = enumeration;
       _enumerator = enumeration.GetEnumerator();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ManagedEnumBase{T}"/> class by copying another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public ManagedEnumBase(ManagedEnumBase<T> from)
     {
       CopyFrom(from);
     }
 
+    /// <summary>
+    /// Copies the enumeration state from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     protected virtual void CopyFrom(ManagedEnumBase<T> from)
     {
       _enumeration = from._enumeration;
@@ -132,6 +144,7 @@ namespace Altaxo.Com
       return (fetchedCount == celt) ? ComReturnValue.S_OK : ComReturnValue.S_FALSE; // S_OK : S_FALSE
     }
 
+    /// <inheritdoc cref="IDisposable.Dispose"/>
     public void Dispose()
     {
       if (_enumerator is not null)

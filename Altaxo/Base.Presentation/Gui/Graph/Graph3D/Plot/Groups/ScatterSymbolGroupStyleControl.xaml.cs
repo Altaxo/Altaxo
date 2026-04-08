@@ -30,6 +30,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
   /// </summary>
   public partial class ScatterSymbolGroupStyleControl : UserControl, IScatterSymbolGroupStyleView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScatterSymbolGroupStyleControl"/> class.
+    /// </summary>
     public ScatterSymbolGroupStyleControl()
     {
       InitializeComponent();

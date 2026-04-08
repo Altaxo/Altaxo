@@ -1239,6 +1239,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
       }
     }
 
+    /// <inheritdoc/>
     public override void KroneckerProduct(Matrix<Complex32> other, Matrix<Complex32> result)
     {
       if (other == null)
@@ -1557,6 +1558,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
       return (SparseMatrix)leftSide.Remainder(rightSide);
     }
 
+    /// <inheritdoc/>
     public override string ToTypeString()
     {
       return string.Format("SparseMatrix {0}x{1}-Complex32 {2:P2} Filled", RowCount, ColumnCount, NonZerosCount / (RowCount * (double)ColumnCount));

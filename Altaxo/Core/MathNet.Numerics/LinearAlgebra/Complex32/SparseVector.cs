@@ -956,6 +956,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     }
     #endregion
 
+    /// <inheritdoc/>
     public override string ToTypeString()
     {
       return FormattableString.Invariant($"SparseVector {Count}-Complex32 {NonZerosCount / (double)Count:P2} Filled");

@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Data.Selections
   /// </summary>
   public partial class PeriodicRowIndexSegmentsControl : UserControl, IPeriodicRowIndexSegmentsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PeriodicRowIndexSegmentsControl"/> class.
+    /// </summary>
     public PeriodicRowIndexSegmentsControl()
     {
       InitializeComponent();

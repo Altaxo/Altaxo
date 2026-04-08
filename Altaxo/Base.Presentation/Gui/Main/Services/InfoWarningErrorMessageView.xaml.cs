@@ -66,6 +66,9 @@ namespace Altaxo.Gui.Main.Services
 
     #endregion Helper class
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="InfoWarningErrorMessageView"/> class.
+    /// </summary>
     public InfoWarningErrorMessageView()
     {
       InitializeComponent();
@@ -76,6 +79,9 @@ namespace Altaxo.Gui.Main.Services
 
     #region IMessageView Members
 
+    /// <summary>
+    /// Gets or sets the column widths.
+    /// </summary>
     public double[] ColumnWidths
     {
       get
@@ -98,6 +104,9 @@ namespace Altaxo.Gui.Main.Services
     }
 
     private bool _isViewDirectionRecentIsFirst;
+    /// <summary>
+    /// Gets or sets a value indicating whether the most recent message is shown first.
+    /// </summary>
     public bool IsViewDirectionRecentIsFirst
     {
       get
@@ -130,6 +139,9 @@ namespace Altaxo.Gui.Main.Services
     }
   }
 
+  /// <summary>
+  /// Converts a <see cref="MessageLevel"/> value to a background brush.
+  /// </summary>
   [ValueConversion(typeof(MessageLevel), typeof(Brush))]
   public class MessageLevelToBrushConverter : IValueConverter
   {
@@ -137,6 +149,7 @@ namespace Altaxo.Gui.Main.Services
     private static Brush _warningBrush = new SolidColorBrush(Colors.Yellow);
     private static Brush _errorBrush = new SolidColorBrush(Colors.LightPink);
 
+    /// <inheritdoc/>
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       var c1 = (MessageLevel)value;
@@ -156,6 +169,7 @@ namespace Altaxo.Gui.Main.Services
       }
     }
 
+    /// <inheritdoc/>
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       throw new NotImplementedException();

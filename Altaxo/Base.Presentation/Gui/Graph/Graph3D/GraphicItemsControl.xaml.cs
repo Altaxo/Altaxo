@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Graph3D
   /// </summary>
   public partial class GraphicItemsControl : UserControl, IGraphicItemsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GraphicItemsControl"/> class.
+    /// </summary>
     public GraphicItemsControl()
     {
       InitializeComponent();

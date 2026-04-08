@@ -36,8 +36,15 @@ using Altaxo.Graph.Graph2D.Plot.Styles;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
+  /// <summary>
+  /// Base class for scatter-symbol combo boxes.
+  /// </summary>
   public abstract class ScatterSymbolComboBoxBase : Altaxo.Gui.Drawing.StyleListComboBoxBase<ScatterSymbolListManager, ScatterSymbolList, IScatterSymbol>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScatterSymbolComboBoxBase"/> class.
+    /// </summary>
+    /// <param name="manager">The scatter-symbol list manager.</param>
     public ScatterSymbolComboBoxBase(ScatterSymbolListManager manager) : base(manager)
     {
     }
@@ -52,6 +59,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScatterSymbolComboBox"/> class.
+    /// </summary>
     public ScatterSymbolComboBox()
       : base(ScatterSymbolListManager.Instance)
     {
@@ -67,10 +77,13 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     #region Implementation of abstract base class members
 
+    /// <inheritdoc/>
     protected override TreeView GuiTreeView { get { return _guiTreeView; } }
 
+    /// <inheritdoc/>
     protected override ComboBox GuiComboBox { get { return _guiComboBox; } }
 
+    /// <inheritdoc/>
     public override string GetDisplayName(IScatterSymbol item)
     {
       return (string)_itemToItemNameConverter.Convert(item, typeof(string), null, System.Globalization.CultureInfo.InvariantCulture);

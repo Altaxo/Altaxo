@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
   /// </summary>
   public partial class ClosedPathShapeControl : UserControl, IClosedPathShapeView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ClosedPathShapeControl"/> class.
+    /// </summary>
     public ClosedPathShapeControl()
     {
       InitializeComponent();

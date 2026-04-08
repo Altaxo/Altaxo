@@ -48,6 +48,13 @@ namespace Altaxo.Gui.AddInItems
       MenuService.UpdateStatus(toolBarItems);
     }
 
+    /// <summary>
+    /// Creates toolbar items for the specified add-in tree path.
+    /// </summary>
+    /// <param name="inputBindingOwner">The element that owns any generated input bindings.</param>
+    /// <param name="owner">The owner passed to the add-in tree.</param>
+    /// <param name="addInTreePath">The add-in tree path.</param>
+    /// <returns>The created toolbar items.</returns>
     public static IList CreateToolBarItems(UIElement inputBindingOwner, object owner, string addInTreePath)
     {
       return CreateToolBarItems(inputBindingOwner, AddInTree.BuildItems<ToolbarItemDescriptor>(addInTreePath, owner, false));
@@ -151,11 +158,25 @@ namespace Altaxo.Gui.AddInItems
       }
     }
 
+    /// <summary>
+    /// Creates a toolbar for the specified add-in tree path.
+    /// </summary>
+    /// <param name="inputBindingOwner">The element that owns any generated input bindings.</param>
+    /// <param name="owner">The owner passed to the add-in tree.</param>
+    /// <param name="addInTreePath">The add-in tree path.</param>
+    /// <returns>The created toolbar.</returns>
     public static ToolBar CreateToolBar(UIElement inputBindingOwner, object owner, string addInTreePath)
     {
       return CreateToolBar(inputBindingOwner, owner, AddInTree.GetTreeNode(addInTreePath));
     }
 
+    /// <summary>
+    /// Creates all toolbars below the specified add-in tree path.
+    /// </summary>
+    /// <param name="inputBindingOwner">The element that owns any generated input bindings.</param>
+    /// <param name="owner">The owner passed to the add-in tree.</param>
+    /// <param name="addInTreePath">The add-in tree path.</param>
+    /// <returns>The created toolbars, or <see langword="null"/> if the path does not exist.</returns>
     public static ToolBar[] CreateToolBars(UIElement inputBindingOwner, object owner, string addInTreePath)
     {
       AddInTreeNode treeNode;
@@ -175,6 +196,13 @@ namespace Altaxo.Gui.AddInItems
       return toolBars.ToArray();
     }
 
+    /// <summary>
+    /// Creates all toolbars below the specified add-in tree path.
+    /// </summary>
+    /// <param name="uiElementInputBindingOwner">The element that owns any generated input bindings.</param>
+    /// <param name="owner">The owner passed to the add-in tree.</param>
+    /// <param name="addInTreePath">The add-in tree path.</param>
+    /// <returns>The created toolbars.</returns>
     public static ToolBar[] CreateToolBars(object uiElementInputBindingOwner, object owner, string addInTreePath)
     {
       if (!(uiElementInputBindingOwner is UIElement))
@@ -241,8 +269,17 @@ namespace Altaxo.Gui.AddInItems
     }
   }
 
+  /// <summary>
+  /// Represents a custom toolbar item that can be initialized by the toolbar service.
+  /// </summary>
   public interface ICustomToolBarItem
   {
+    /// <summary>
+    /// Initializes the custom toolbar item.
+    /// </summary>
+    /// <param name="inputBindingOwner">The element that owns any generated input bindings.</param>
+    /// <param name="codon">The codon that defines the toolbar item.</param>
+    /// <param name="owner">The owner passed to the add-in item.</param>
     void Initialize(UIElement inputBindingOwner, Codon codon, object owner);
   }
 }

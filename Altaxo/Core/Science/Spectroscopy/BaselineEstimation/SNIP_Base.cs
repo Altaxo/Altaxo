@@ -32,11 +32,29 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
   /// </summary>
   public abstract record SNIP_Base
   {
+    /// <summary>
+    /// Square root of two.
+    /// </summary>
     protected const double sqrt2 = 1.41421356237;
+
+    /// <summary>
+    /// Indicates whether half-width values are rounded upward when converting to point counts.
+    /// </summary>
     protected const bool _roundUp = false;
 
+    /// <summary>
+    /// Stores the configured half-width of the averaging window.
+    /// </summary>
     protected double _halfWidth = 15;
+
+    /// <summary>
+    /// Stores whether <see cref="_halfWidth"/> is expressed in x-axis units.
+    /// </summary>
     protected bool _isHalfWidthInXUnits;
+
+    /// <summary>
+    /// Stores the configured number of regular SNIP iterations.
+    /// </summary>
     protected int _numberOfRegularStages = 40;
 
     /// <summary>

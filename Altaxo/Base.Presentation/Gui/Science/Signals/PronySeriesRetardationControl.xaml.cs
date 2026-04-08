@@ -31,6 +31,9 @@ namespace Altaxo.Gui.Science.Signals
   /// </summary>
   public partial class PronySeriesRetardationControl : UserControl, IPronySeriesRetardationView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PronySeriesRetardationControl"/> class.
+    /// </summary>
     public PronySeriesRetardationControl()
     {
       InitializeComponent();

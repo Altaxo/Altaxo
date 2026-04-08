@@ -41,6 +41,7 @@ namespace Altaxo.Gui.Common
   {
     private ValidationErrorToMessageConverter _converter;
 
+    /// <inheritdoc/>
     public override object ProvideValue(IServiceProvider serviceProvider)
     {
       if (_converter is null)
@@ -50,6 +51,7 @@ namespace Altaxo.Gui.Common
       return _converter;
     }
 
+    /// <inheritdoc/>
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
       var errors =
@@ -70,6 +72,7 @@ namespace Altaxo.Gui.Common
       return result.ToString();
     }
 
+    /// <inheritdoc/>
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
       throw new NotImplementedException();

@@ -42,6 +42,9 @@ namespace Altaxo.Gui.Scripting
     private int _suppressEvents = 0;
     private UserControl _scriptView;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FitFunctionScriptControl"/> class.
+    /// </summary>
     public FitFunctionScriptControl()
     {
       InitializeComponent();
@@ -49,6 +52,7 @@ namespace Altaxo.Gui.Scripting
       InitializeNumberOfParameters();
     }
 
+    /// <inheritdoc/>
     public void InitializeNumberOfParameters()
     {
       _suppressEvents++;
@@ -104,12 +108,14 @@ namespace Altaxo.Gui.Scripting
         Controller.EhView_NumberOfParameterChanged(_cbNumberOfParameters.SelectedIndex);
     }
 
+    /// <inheritdoc/>
     public IFitFunctionScriptViewEventSink Controller
     {
       get { return m_Controller; }
       set { m_Controller = value; }
     }
 
+    /// <inheritdoc/>
     public void Close(bool withOK)
     {
       var parentWindow = Window.GetWindow(this);
@@ -117,6 +123,7 @@ namespace Altaxo.Gui.Scripting
       // parentWindow.Close(); // close is now done by the previous statement
     }
 
+    /// <inheritdoc/>
     public void SetScriptView(object viewAsObject)
     {
       if (object.ReferenceEquals(_scriptView, viewAsObject))
@@ -138,6 +145,7 @@ namespace Altaxo.Gui.Scripting
       }
     }
 
+    /// <inheritdoc/>
     public void SetCheckUseUserDefinedParameters(bool useUserDefParameters)
     {
       _suppressEvents++;
@@ -149,6 +157,7 @@ namespace Altaxo.Gui.Scripting
       _suppressEvents--;
     }
 
+    /// <inheritdoc/>
     public void SetParameterText(string text, bool enable)
     {
       _suppressEvents++;
@@ -157,6 +166,7 @@ namespace Altaxo.Gui.Scripting
       _suppressEvents--;
     }
 
+    /// <inheritdoc/>
     public void SetIndependentVariableText(string text)
     {
       _suppressEvents++;
@@ -164,6 +174,7 @@ namespace Altaxo.Gui.Scripting
       _suppressEvents--;
     }
 
+    /// <inheritdoc/>
     public void SetDependentVariableText(string text)
     {
       _suppressEvents++;
@@ -171,6 +182,7 @@ namespace Altaxo.Gui.Scripting
       _suppressEvents--;
     }
 
+    /// <inheritdoc/>
     public void SetNumberOfParameters(int numberOfParameters, bool enable)
     {
       _suppressEvents++;
@@ -179,6 +191,7 @@ namespace Altaxo.Gui.Scripting
       _suppressEvents--;
     }
 
+    /// <inheritdoc/>
     public void EnableScriptView(object view, bool enable)
     {
       var c = view as UserControl;

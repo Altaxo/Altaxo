@@ -34,9 +34,19 @@
 
 namespace Poly2Tri
 {
+  /// <summary>
+  /// Stores the state of the currently processed constrained-edge event.
+  /// </summary>
   public class DTSweepEdgeEvent
   {
+    /// <summary>
+    /// The constrained edge currently being processed.
+    /// </summary>
     public DTSweepConstraint? ConstrainedEdge;
+
+    /// <summary>
+    /// Indicates whether the event is processed from left to right.
+    /// </summary>
     public bool Right;
   }
 }

@@ -30,6 +30,7 @@ namespace Altaxo.Main.Services
   /// </summary>
   public class RecentOpen : RecentOpenBase
   {
+    /// <inheritdoc/>
     public override void AddRecentProject(PathName name)
     {
       base.AddRecentProject(name);

@@ -252,74 +252,109 @@ namespace Altaxo.Calc.LinearAlgebra.Double
       Map(Math.Log, result, Zeros.Include);
     }
 
+    /// <inheritdoc/>
     protected override void DoPointwiseAbs(Vector<double> result)
     {
       Map(Math.Abs, result, Zeros.AllowSkip);
     }
+
+    /// <inheritdoc/>
     protected override void DoPointwiseAcos(Vector<double> result)
     {
       Map(Math.Acos, result, Zeros.Include);
     }
+
+    /// <inheritdoc/>
     protected override void DoPointwiseAsin(Vector<double> result)
     {
       Map(Math.Asin, result, Zeros.AllowSkip);
     }
+
+    /// <inheritdoc/>
     protected override void DoPointwiseAtan(Vector<double> result)
     {
       Map(Math.Atan, result, Zeros.AllowSkip);
     }
+
+    /// <inheritdoc/>
     protected override void DoPointwiseAtan2(Vector<double> other, Vector<double> result)
     {
       Map2(Math.Atan2, other, result, Zeros.Include);
     }
+
+    /// <inheritdoc/>
     protected override void DoPointwiseAtan2(double scalar, Vector<double> result)
     {
       Map(x => Math.Atan2(x, scalar), result, Zeros.Include);
     }
+
+    /// <inheritdoc/>
     protected override void DoPointwiseCeiling(Vector<double> result)
     {
       Map(Math.Ceiling, result, Zeros.AllowSkip);
     }
+
+    /// <inheritdoc/>
     protected override void DoPointwiseCos(Vector<double> result)
     {
       Map(Math.Cos, result, Zeros.Include);
     }
+
+    /// <inheritdoc/>
     protected override void DoPointwiseCosh(Vector<double> result)
     {
       Map(Math.Cosh, result, Zeros.Include);
     }
+
+    /// <inheritdoc/>
     protected override void DoPointwiseFloor(Vector<double> result)
     {
       Map(Math.Floor, result, Zeros.AllowSkip);
     }
+
+    /// <inheritdoc/>
     protected override void DoPointwiseLog10(Vector<double> result)
     {
       Map(Math.Log10, result, Zeros.Include);
     }
+
+    /// <inheritdoc/>
     protected override void DoPointwiseRound(Vector<double> result)
     {
       Map(Math.Round, result, Zeros.AllowSkip);
     }
+
+    /// <inheritdoc/>
     protected override void DoPointwiseSign(Vector<double> result)
     {
       Map(x => Math.Sign(x), result, Zeros.AllowSkip);
     }
+
+    /// <inheritdoc/>
     protected override void DoPointwiseSin(Vector<double> result)
     {
       Map(Math.Sin, result, Zeros.AllowSkip);
     }
+
+    /// <inheritdoc/>
     protected override void DoPointwiseSinh(Vector<double> result)
     {
       Map(Math.Sinh, result, Zeros.AllowSkip);
     }
+
+    /// <inheritdoc/>
     protected override void DoPointwiseSqrt(Vector<double> result)
     {
       Map(Math.Sqrt, result, Zeros.AllowSkip);
     }
+
+    /// <inheritdoc/>
     protected override void DoPointwiseTan(Vector<double> result)
     {
       Map(Math.Tan, result, Zeros.AllowSkip);
     }
+
+    /// <inheritdoc/>
     protected override void DoPointwiseTanh(Vector<double> result)
     {
       Map(Math.Tanh, result, Zeros.AllowSkip);
@@ -394,43 +429,51 @@ namespace Altaxo.Calc.LinearAlgebra.Double
       Map(x => Euclid.Remainder(dividend, x), result, Zeros.Include);
     }
 
+    /// <inheritdoc/>
     protected override void DoPointwiseMinimum(double scalar, Vector<double> result)
     {
       Map(x => Math.Min(scalar, x), result, scalar >= 0d ? Zeros.AllowSkip : Zeros.Include);
     }
 
+    /// <inheritdoc/>
     protected override void DoPointwiseMaximum(double scalar, Vector<double> result)
     {
       Map(x => Math.Max(scalar, x), result, scalar <= 0d ? Zeros.AllowSkip : Zeros.Include);
     }
 
+    /// <inheritdoc/>
     protected override void DoPointwiseAbsoluteMinimum(double scalar, Vector<double> result)
     {
       double absolute = Math.Abs(scalar);
       Map(x => Math.Min(absolute, Math.Abs(x)), result, Zeros.AllowSkip);
     }
 
+    /// <inheritdoc/>
     protected override void DoPointwiseAbsoluteMaximum(double scalar, Vector<double> result)
     {
       double absolute = Math.Abs(scalar);
       Map(x => Math.Max(absolute, Math.Abs(x)), result, Zeros.Include);
     }
 
+    /// <inheritdoc/>
     protected override void DoPointwiseMinimum(Vector<double> other, Vector<double> result)
     {
       Map2(Math.Min, other, result, Zeros.AllowSkip);
     }
 
+    /// <inheritdoc/>
     protected override void DoPointwiseMaximum(Vector<double> other, Vector<double> result)
     {
       Map2(Math.Max, other, result, Zeros.AllowSkip);
     }
 
+    /// <inheritdoc/>
     protected override void DoPointwiseAbsoluteMinimum(Vector<double> other, Vector<double> result)
     {
       Map2((x, y) => Math.Min(Math.Abs(x), Math.Abs(y)), other, result, Zeros.AllowSkip);
     }
 
+    /// <inheritdoc/>
     protected override void DoPointwiseAbsoluteMaximum(Vector<double> other, Vector<double> result)
     {
       Map2((x, y) => Math.Max(Math.Abs(x), Math.Abs(y)), other, result, Zeros.AllowSkip);
