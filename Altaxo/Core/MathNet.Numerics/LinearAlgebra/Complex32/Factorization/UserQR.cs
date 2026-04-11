@@ -48,11 +48,12 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32.Factorization
   internal sealed class UserQR : QR
   {
     /// <summary>
-    /// Initializes a new instance of the <see cref="UserQR"/> class. This object will compute the
-    /// QR factorization when the constructor is called and cache it's factorization.
+    /// Initializes a new instance of the <see cref="UserQR"/> class. This object computes the
+    /// QR factorization when the constructor is called and caches its factorization.
     /// </summary>
     /// <param name="matrix">The matrix to factor.</param>
     /// <param name="method">The QR factorization method to use.</param>
+    /// <returns>The computed QR factorization.</returns>
     /// <exception cref="ArgumentNullException">If <paramref name="matrix"/> is <c>null</c>.</exception>
     public static UserQR Create(Matrix<Complex32> matrix, QRMethod method = QRMethod.Full)
     {

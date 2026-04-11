@@ -54,6 +54,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex.Factorization
     /// <param name="matrix">The matrix to factor.</param>
     /// <param name="method">The QR factorization method to use.</param>
     /// <exception cref="ArgumentNullException">If <paramref name="matrix"/> is <c>null</c>.</exception>
+    /// <returns>The QR factorization of <paramref name="matrix"/>.</returns>
     public static UserQR Create(Matrix<Complex> matrix, QRMethod method = QRMethod.Full)
     {
       if (matrix.RowCount < matrix.ColumnCount)

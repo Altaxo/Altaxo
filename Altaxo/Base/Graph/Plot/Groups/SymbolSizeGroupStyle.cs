@@ -73,6 +73,7 @@ namespace Altaxo.Graph.Plot.Groups
     /// <summary>
     /// Initializes a new instance of the <see cref="SymbolSizeGroupStyle"/> class by copying another instance.
     /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public SymbolSizeGroupStyle(SymbolSizeGroupStyle from)
     {
       _isInitialized = from._isInitialized;
@@ -86,11 +87,13 @@ namespace Altaxo.Graph.Plot.Groups
     /// <summary>
     /// Creates a copy of this style.
     /// </summary>
+    /// <returns>A copied style instance.</returns>
     public SymbolSizeGroupStyle Clone()
     {
       return new SymbolSizeGroupStyle(this);
     }
 
+    /// <inheritdoc />
     object ICloneable.Clone()
     {
       return new SymbolSizeGroupStyle(this);
@@ -234,9 +237,7 @@ namespace Altaxo.Graph.Plot.Groups
     /// <summary>
     /// Represents a delegate that returns a symbol size.
     /// </summary>
-    /// <summary>
-    /// Represents a delegate that returns a symbol size.
-    /// </summary>
+    /// <returns>The symbol size returned by the delegate.</returns>
     public delegate double SymbolSizeGetter();
 
     /// <summary>
@@ -270,13 +271,14 @@ namespace Altaxo.Graph.Plot.Groups
     /// <summary>
     /// Represents a delegate that stores a symbol size.
     /// </summary>
+    /// <param name="c">The symbol size to store.</param>
     public delegate void SymbolSizeSetter(double c);
 
     /// <summary>
     /// Tries to apply the symbol-size group style.
     /// </summary>
-    /// <param name="externalGroups"></param>
-    /// <param name="localGroups"></param>
+    /// <param name="externalGroups">The external group-style collection.</param>
+    /// <param name="localGroups">The local group-style collection.</param>
     /// <param name="setter">The receiver of the symbol size.</param>
     /// <returns><c>true</c> if successfully applied; otherwise, <c>false</c>.</returns>
     public static bool ApplyStyle(

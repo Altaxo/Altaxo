@@ -1294,6 +1294,98 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
     /// <summary>
     /// Executes the translated RADAU5 core integration routine.
     /// </summary>
+    /// <param name="N">The system dimension.</param>
+    /// <param name="FCN">The right-hand side function.</param>
+    /// <param name="X">The current x-value, updated during integration.</param>
+    /// <param name="Y">The state vector.</param>
+    /// <param name="offset_y">The offset into <paramref name="Y"/>.</param>
+    /// <param name="XEND">The end value of x.</param>
+    /// <param name="HMAX">The maximum step size.</param>
+    /// <param name="H">The current step size.</param>
+    /// <param name="RTOL">The relative tolerances.</param>
+    /// <param name="offset_rtol">The offset into <paramref name="RTOL"/>.</param>
+    /// <param name="ATOL">The absolute tolerances.</param>
+    /// <param name="offset_atol">The offset into <paramref name="ATOL"/>.</param>
+    /// <param name="ITOL">The tolerance mode.</param>
+    /// <param name="JAC">The Jacobian callback.</param>
+    /// <param name="IJAC">Indicates whether a Jacobian is supplied.</param>
+    /// <param name="MLJAC">The lower Jacobian bandwidth.</param>
+    /// <param name="MUJAC">The upper Jacobian bandwidth.</param>
+    /// <param name="MAS">The mass-matrix callback.</param>
+    /// <param name="MLMAS">The lower mass-matrix bandwidth.</param>
+    /// <param name="MUMAS">The upper mass-matrix bandwidth.</param>
+    /// <param name="SOLOUT">The dense output callback.</param>
+    /// <param name="IOUT">Controls solution output.</param>
+    /// <param name="IDID">The solver status code.</param>
+    /// <param name="NMAX">The maximum number of steps.</param>
+    /// <param name="UROUND">The machine unit roundoff.</param>
+    /// <param name="SAFE">The safety factor for step-size control.</param>
+    /// <param name="THET">The Jacobian recomputation threshold.</param>
+    /// <param name="FNEWT">The Newton iteration tolerance factor.</param>
+    /// <param name="QUOT1">The lower quotient bound for step-size changes.</param>
+    /// <param name="QUOT2">The upper quotient bound for step-size changes.</param>
+    /// <param name="NIT">The maximum number of Newton iterations.</param>
+    /// <param name="IJOB">The solver job code.</param>
+    /// <param name="STARTN">Indicates whether to use a special starting procedure.</param>
+    /// <param name="NIND1">The number of index-1 variables.</param>
+    /// <param name="NIND2">The number of index-2 variables.</param>
+    /// <param name="NIND3">The number of index-3 variables.</param>
+    /// <param name="PRED">Indicates whether prediction is enabled.</param>
+    /// <param name="FACL">The lower step-size scaling factor.</param>
+    /// <param name="FACR">The upper step-size scaling factor.</param>
+    /// <param name="M1">The first partition size.</param>
+    /// <param name="M2">The second partition size.</param>
+    /// <param name="NM1">The complementary partition size.</param>
+    /// <param name="IMPLCT">Indicates whether the system is implicit.</param>
+    /// <param name="BANDED">Indicates whether the Jacobian is banded.</param>
+    /// <param name="LDJAC">The leading dimension of the Jacobian storage.</param>
+    /// <param name="LDE1">The leading dimension of <paramref name="E1"/>.</param>
+    /// <param name="LDMAS">The leading dimension of the mass matrix storage.</param>
+    /// <param name="Z1">The first stage vector.</param>
+    /// <param name="offset_z1">The offset into <paramref name="Z1"/>.</param>
+    /// <param name="Z2">The second stage vector.</param>
+    /// <param name="offset_z2">The offset into <paramref name="Z2"/>.</param>
+    /// <param name="Z3">The third stage vector.</param>
+    /// <param name="offset_z3">The offset into <paramref name="Z3"/>.</param>
+    /// <param name="Y0">The previous state vector.</param>
+    /// <param name="offset_y0">The offset into <paramref name="Y0"/>.</param>
+    /// <param name="SCAL">The scaling vector.</param>
+    /// <param name="offset_scal">The offset into <paramref name="SCAL"/>.</param>
+    /// <param name="F1">The first residual workspace.</param>
+    /// <param name="offset_f1">The offset into <paramref name="F1"/>.</param>
+    /// <param name="F2">The second residual workspace.</param>
+    /// <param name="offset_f2">The offset into <paramref name="F2"/>.</param>
+    /// <param name="F3">The third residual workspace.</param>
+    /// <param name="offset_f3">The offset into <paramref name="F3"/>.</param>
+    /// <param name="FJAC">The Jacobian workspace.</param>
+    /// <param name="offset_fjac">The offset into <paramref name="FJAC"/>.</param>
+    /// <param name="E1">The real factorization workspace.</param>
+    /// <param name="offset_e1">The offset into <paramref name="E1"/>.</param>
+    /// <param name="E2R">The real part of the complex factorization workspace.</param>
+    /// <param name="offset_e2r">The offset into <paramref name="E2R"/>.</param>
+    /// <param name="E2I">The imaginary part of the complex factorization workspace.</param>
+    /// <param name="offset_e2i">The offset into <paramref name="E2I"/>.</param>
+    /// <param name="FMAS">The mass-matrix workspace.</param>
+    /// <param name="offset_fmas">The offset into <paramref name="FMAS"/>.</param>
+    /// <param name="IP1">The first integer pivot workspace.</param>
+    /// <param name="offset_ip1">The offset into <paramref name="IP1"/>.</param>
+    /// <param name="IP2">The second integer pivot workspace.</param>
+    /// <param name="offset_ip2">The offset into <paramref name="IP2"/>.</param>
+    /// <param name="IPHES">The Hessenberg pivot workspace.</param>
+    /// <param name="offset_iphes">The offset into <paramref name="IPHES"/>.</param>
+    /// <param name="CONT">The dense output coefficient workspace.</param>
+    /// <param name="offset_cont">The offset into <paramref name="CONT"/>.</param>
+    /// <param name="NFCN">The number of function evaluations.</param>
+    /// <param name="NJAC">The number of Jacobian evaluations.</param>
+    /// <param name="NSTEP">The number of performed steps.</param>
+    /// <param name="NACCPT">The number of accepted steps.</param>
+    /// <param name="NREJCT">The number of rejected steps.</param>
+    /// <param name="NDEC">The number of decompositions.</param>
+    /// <param name="NSOL">The number of linear solves.</param>
+    /// <param name="RPAR">Real user parameters.</param>
+    /// <param name="offset_rpar">The offset into <paramref name="RPAR"/>.</param>
+    /// <param name="IPAR">Integer user parameters.</param>
+    /// <param name="offset_ipar">The offset into <paramref name="IPAR"/>.</param>
     public void Run(int N, IFVPOL FCN, ref double X, ref double[] Y, int offset_y, double XEND, double HMAX
                      , ref double H, double[] RTOL, int offset_rtol, double[] ATOL, int offset_atol, int ITOL, IJVPOL JAC, int IJAC
                      , int MLJAC, int MUJAC, IBBAMPL MAS, int MLMAS, int MUMAS, ISOLOUTR SOLOUT
@@ -2084,6 +2176,12 @@ LABEL179:
     /// <summary>
     /// Evaluates the translated dense output polynomial for one component.
     /// </summary>
+    /// <param name="I">The one-based component index.</param>
+    /// <param name="X">The evaluation point.</param>
+    /// <param name="CONT">The dense output coefficients.</param>
+    /// <param name="offset_cont">The offset into <paramref name="CONT"/>.</param>
+    /// <param name="LRC">The leading dimension of the dense output coefficients.</param>
+    /// <returns>The interpolated solution value for component <paramref name="I"/>.</returns>
     public double Run(int I, double X, double[] CONT, int offset_cont, int LRC)
     {
       double contr5 = 0;

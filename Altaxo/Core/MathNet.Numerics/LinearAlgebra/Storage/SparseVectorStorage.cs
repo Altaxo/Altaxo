@@ -39,6 +39,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
   /// <summary>
   /// Stores a sparse vector by index and value arrays.
   /// </summary>
+  /// <typeparam name="T">The type of the stored values.</typeparam>
   [Serializable]
   [DataContract(Namespace = "urn:MathNet/Numerics/LinearAlgebra")]
   public class SparseVectorStorage<T> : VectorStorage<T>
@@ -64,6 +65,10 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
     [DataMember(Order = 3)]
     public int ValueCount;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SparseVectorStorage{T}"/> class.
+    /// </summary>
+    /// <param name="length">The vector length.</param>
     internal SparseVectorStorage(int length)
         : base(length)
     {
@@ -80,6 +85,8 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
     /// <summary>
     /// Retrieves the requested element without range checking.
     /// </summary>
+    /// <param name="index">The index of the element to retrieve.</param>
+    /// <returns>The requested element.</returns>
     public override T At(int index)
     {
       // Search if item index exists in NonZeroIndices array in range "0 - nonzero values count"
@@ -90,6 +97,8 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
     /// <summary>
     /// Sets the element without range checking.
     /// </summary>
+    /// <param name="index">The index of the element to set.</param>
+    /// <param name="value">The value to assign.</param>
     public override void At(int index, T value)
     {
       // Search if "index" already exists in range "0 - nonzero values count"
@@ -118,6 +127,12 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       }
     }
 
+    /// <summary>
+    /// Inserts a non-zero element into the sparse storage without validation.
+    /// </summary>
+    /// <param name="itemIndex">The storage position where the element is inserted.</param>
+    /// <param name="index">The vector index of the element.</param>
+    /// <param name="value">The non-zero value to insert.</param>
     internal void InsertAtIndexUnchecked(int itemIndex, int index, T value)
     {
       // Check if the storage needs to be increased
@@ -142,6 +157,10 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       ValueCount += 1;
     }
 
+    /// <summary>
+    /// Removes a stored element from the sparse storage without validation.
+    /// </summary>
+    /// <param name="itemIndex">The storage position of the element to remove.</param>
     internal void RemoveAtIndexUnchecked(int itemIndex)
     {
       // Value is zero. Let's delete it from Values and Indices array
@@ -493,6 +512,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // VECTOR COPY
 
+    /// <inheritdoc/>
     internal override void CopyToUnchecked(VectorStorage<T> target, ExistingData existingData)
     {
       if (target is SparseVectorStorage<T> sparseTarget)
@@ -543,6 +563,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // Row COPY
 
+    /// <inheritdoc/>
     internal override void CopyToRowUnchecked(MatrixStorage<T> target, int rowIndex, ExistingData existingData)
     {
       if (existingData == ExistingData.Clear)
@@ -563,6 +584,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // COLUMN COPY
 
+    /// <inheritdoc/>
     internal override void CopyToColumnUnchecked(MatrixStorage<T> target, int columnIndex, ExistingData existingData)
     {
       if (existingData == ExistingData.Clear)
@@ -583,6 +605,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // SUB-VECTOR COPY
 
+    /// <inheritdoc/>
     internal override void CopySubVectorToUnchecked(VectorStorage<T> target,
         int sourceIndex, int targetIndex, int count, ExistingData existingData)
     {
@@ -759,6 +782,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return null;
     }
 
+    /// <inheritdoc/>
     internal override Tuple<int, T, TOther> Find2Unchecked<TOther>(VectorStorage<TOther> other, Func<T, TOther, bool> predicate, Zeros zeros)
     {
       if (other is DenseVectorStorage<TOther> denseOther)
@@ -916,6 +940,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       ValueCount = values.Count;
     }
 
+    /// <inheritdoc/>
     internal override void MapToUnchecked<TU>(VectorStorage<TU> target, Func<T, TU> f, Zeros zeros, ExistingData existingData)
     {
       if (target is SparseVectorStorage<TU> sparseTarget)
@@ -990,6 +1015,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       base.MapToUnchecked(target, f, zeros, existingData);
     }
 
+    /// <inheritdoc/>
     internal override void MapIndexedToUnchecked<TU>(VectorStorage<TU> target, Func<int, T, TU> f, Zeros zeros, ExistingData existingData)
     {
       if (target is SparseVectorStorage<TU> sparseTarget)
@@ -1064,6 +1090,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       base.MapIndexedToUnchecked(target, f, zeros, existingData);
     }
 
+    /// <inheritdoc/>
     internal override void Map2ToUnchecked(VectorStorage<T> target, VectorStorage<T> other, Func<T, T, T> f, Zeros zeros, ExistingData existingData)
     {
       var processZeros = zeros == Zeros.Include || !Zero.Equals(f(Zero, Zero));
@@ -1215,6 +1242,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // FUNCTIONAL COMBINATORS: MAP
 
+    /// <inheritdoc/>
     internal override TState Fold2Unchecked<TOther, TState>(VectorStorage<TOther> other, Func<TState, T, TOther, TState> f, TState state, Zeros zeros)
     {
       if (other is SparseVectorStorage<TOther> sparseOther)

@@ -182,6 +182,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Handles removal of a file from the recent file list.
     /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The file event arguments.</param>
     protected virtual void FileRemoved(object sender, FileEventArgs e)
     {
       for (int i = 0; i < _recentFiles.Count; ++i)
@@ -198,6 +200,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Handles renaming of a file in the recent file list.
     /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The file rename event arguments.</param>
     protected virtual void FileRenamed(object sender, FileRenameEventArgs e)
     {
       for (int i = 0; i < _recentFiles.Count; ++i)

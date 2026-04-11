@@ -32,20 +32,29 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization.ObjectiveFunctions
 {
+  /// <summary>
+  /// Represents an objective function that evaluates only the scalar value.
+  /// </summary>
   internal class ValueObjectiveFunction : IObjectiveFunction
   {
     private readonly Func<Vector<double>, double> _function;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ValueObjectiveFunction"/> class.
+    /// </summary>
+    /// <param name="function">The delegate that evaluates the objective value.</param>
     public ValueObjectiveFunction(Func<Vector<double>, double> function)
     {
       _function = function;
     }
 
+    /// <inheritdoc />
     public IObjectiveFunction CreateNew()
     {
       return new ValueObjectiveFunction(_function);
     }
 
+    /// <inheritdoc />
     public IObjectiveFunction Fork()
     {
       // no need to deep-clone values since they are replaced on evaluation
@@ -56,21 +65,31 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       };
     }
 
+    /// <inheritdoc />
     public bool IsGradientSupported => false;
 
+    /// <inheritdoc />
     public bool IsHessianSupported => false;
 
+    /// <summary>
+    /// Evaluate the objective function at the provided point and store the result.
+    /// </summary>
+    /// <param name="point">The point at which to evaluate the objective.</param>
     public void EvaluateAt(Vector<double> point)
     {
       Point = point;
       Value = _function(point);
     }
 
+    /// <inheritdoc />
     public Vector<double> Point { get; private set; }
+    /// <inheritdoc />
     public double Value { get; private set; }
 
+    /// <inheritdoc />
     public Matrix<double> Hessian => throw new NotSupportedException();
 
+    /// <inheritdoc />
     public Vector<double> Gradient => throw new NotSupportedException();
   }
 }

@@ -57,6 +57,7 @@ namespace Altaxo.Calc.LinearAlgebra.Single.Factorization
     /// </summary>
     /// <param name="matrix">The matrix to factor.</param>
     /// <param name="symmetricity">If it is known whether the matrix is symmetric or not the routine can skip checking it itself.</param>
+    /// <returns>An eigenvalue decomposition for the specified matrix.</returns>
     /// <exception cref="ArgumentNullException">If <paramref name="matrix"/> is <c>null</c>.</exception>
     /// <exception cref="ArgumentException">If EVD algorithm failed to converge with matrix <paramref name="matrix"/>.</exception>
     public static UserEvd Create(Matrix<float> matrix, Symmetricity symmetricity)

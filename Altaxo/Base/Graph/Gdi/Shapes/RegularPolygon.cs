@@ -140,6 +140,12 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Creates a regular polygon from left/top/right/bottom coordinates.
     /// </summary>
+    /// <param name="left">The left coordinate.</param>
+    /// <param name="top">The top coordinate.</param>
+    /// <param name="right">The right coordinate.</param>
+    /// <param name="bottom">The bottom coordinate.</param>
+    /// <param name="context">The property context.</param>
+    /// <returns>A regular polygon created from the specified coordinates.</returns>
     public static RegularPolygon FromLTRB(double left, double top, double right, double bottom, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       if (left > right)
@@ -232,7 +238,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Gets the path of the object in object world coordinates, relative to the left upper corner of the object.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The polygon path in object world coordinates.</returns>
     protected GraphicsPath GetPath()
     {
       // we adjust the lower edge to be parallel to the x-axis
@@ -330,6 +336,11 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Creates a polygon path around a center point.
     /// </summary>
+    /// <param name="x0">The x-coordinate of the center point.</param>
+    /// <param name="y0">The y-coordinate of the center point.</param>
+    /// <param name="radius">The polygon radius.</param>
+    /// <param name="vertices">The number of vertices.</param>
+    /// <returns>The polygon path.</returns>
     public static GraphicsPath GetPath(double x0, double y0, double radius, int vertices)
     {
       // we adjust the lower edge to be parallel to the x-axis

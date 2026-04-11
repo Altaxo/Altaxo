@@ -60,6 +60,7 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// Intended for advanced scenarios where you're working directly with
     /// storage for performance or interop reasons.
     /// </summary>
+    /// <param name="storage">The storage backing the vector.</param>
     public SparseVector(SparseVectorStorage<float> storage)
         : base(storage)
     {
@@ -70,6 +71,7 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// Create a new sparse vector with the given length.
     /// All cells of the vector will be initialized to zero.
     /// </summary>
+    /// <param name="length">The length of the vector.</param>
     /// <exception cref="ArgumentException">If length is less than one.</exception>
     public SparseVector(int length)
         : this(new SparseVectorStorage<float>(length))
@@ -81,6 +83,8 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// This new vector will be independent from the other vector.
     /// A new memory block will be allocated for storing the vector.
     /// </summary>
+    /// <param name="vector">The vector to copy.</param>
+    /// <returns>A new sparse vector containing the copied values.</returns>
     public static SparseVector OfVector(Vector<float> vector)
     {
       return new SparseVector(SparseVectorStorage<float>.OfVector(vector.Storage));
@@ -91,6 +95,8 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// This new vector will be independent from the enumerable.
     /// A new memory block will be allocated for storing the vector.
     /// </summary>
+    /// <param name="enumerable">The sequence of values to copy.</param>
+    /// <returns>A new sparse vector containing the copied values.</returns>
     public static SparseVector OfEnumerable(IEnumerable<float> enumerable)
     {
       return new SparseVector(SparseVectorStorage<float>.OfEnumerable(enumerable));
@@ -102,6 +108,9 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// This new vector will be independent from the enumerable.
     /// A new memory block will be allocated for storing the vector.
     /// </summary>
+    /// <param name="length">The length of the vector.</param>
+    /// <param name="enumerable">The indexed values to copy.</param>
+    /// <returns>A new sparse vector containing the copied values.</returns>
     public static SparseVector OfIndexedEnumerable(int length, IEnumerable<Tuple<int, float>> enumerable)
     {
       return new SparseVector(SparseVectorStorage<float>.OfIndexedEnumerable(length, enumerable));
@@ -113,6 +122,9 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// This new vector will be independent from the enumerable.
     /// A new memory block will be allocated for storing the vector.
     /// </summary>
+    /// <param name="length">The length of the vector.</param>
+    /// <param name="enumerable">The indexed values to copy.</param>
+    /// <returns>A new sparse vector containing the copied values.</returns>
     public static SparseVector OfIndexedEnumerable(int length, IEnumerable<(int, float)> enumerable)
     {
       return new SparseVector(SparseVectorStorage<float>.OfIndexedEnumerable(length, enumerable));
@@ -121,6 +133,9 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// <summary>
     /// Create a new sparse vector and initialize each value using the provided value.
     /// </summary>
+    /// <param name="length">The length of the vector.</param>
+    /// <param name="value">The value assigned to each entry.</param>
+    /// <returns>A new sparse vector with each entry set to the specified value.</returns>
     public static SparseVector Create(int length, float value)
     {
       return new SparseVector(SparseVectorStorage<float>.OfValue(length, value));
@@ -129,6 +144,9 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// <summary>
     /// Create a new sparse vector and initialize each value using the provided init function.
     /// </summary>
+    /// <param name="length">The length of the vector.</param>
+    /// <param name="init">The initializer used to populate each entry.</param>
+    /// <returns>A new sparse vector initialized by the specified function.</returns>
     public static SparseVector Create(int length, Func<int, float> init)
     {
       return new SparseVector(SparseVectorStorage<float>.OfInit(length, init));

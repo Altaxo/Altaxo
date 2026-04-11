@@ -74,6 +74,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Initializes a new instance of the <see cref="MultivariateLinearFitParameters"/> class.
     /// </summary>
+    /// <param name="table">The data table that contains the regression data.</param>
+    /// <param name="selectedDataColumns">The selected data columns.</param>
     public MultivariateLinearFitParameters(DataColumnCollection table, IAscendingIntegerCollection selectedDataColumns)
     {
       _table = table;
@@ -186,6 +188,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Shows the regression dialog and executes the regression if confirmed.
     /// </summary>
+    /// <param name="table">The table that contains the regression data.</param>
+    /// <param name="selectedColumns">The selected columns to include in the regression.</param>
+    /// <returns>The regression result, or <c>null</c> if the dialog is canceled or too few columns are selected.</returns>
     public static LinearFitBySvd? ShowDialogAndRegress(DataColumnCollection table, IAscendingIntegerCollection selectedColumns)
     {
       if (selectedColumns.Count < 2)
@@ -206,6 +211,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Performs the regression and returns the fit together with the parameter names.
     /// </summary>
+    /// <param name="parameters">The regression parameters.</param>
+    /// <param name="paramNames">When this method returns, contains the parameter names.</param>
+    /// <returns>The regression fit.</returns>
     public static LinearFitBySvd Regress(MultivariateLinearFitParameters parameters, out string[] paramNames)
     {
       DataColumnCollection table = parameters.Table;
@@ -262,6 +270,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Performs the regression and optionally outputs the results.
     /// </summary>
+    /// <param name="parameters">The regression parameters.</param>
+    /// <param name="outputResults">A value indicating whether the results should be written to the output.</param>
+    /// <returns>The regression fit.</returns>
     public static LinearFitBySvd Regress(MultivariateLinearFitParameters parameters, bool outputResults)
     {
       LinearFitBySvd fit = Regress(parameters, out var paramNames);
@@ -281,6 +292,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Generates regression and residual columns from the fit result.
     /// </summary>
+    /// <param name="parameters">The regression parameters.</param>
+    /// <param name="fit">The regression fit.</param>
     public static void GenerateValues(MultivariateLinearFitParameters parameters, LinearFitBySvd fit)
     {
       DataColumn dependentColumn = parameters.Table[parameters.SelectedDataColumns[parameters.DependentColumnIndexIntoSelection]];
@@ -304,6 +317,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Creates a textual description of the fit result.
     /// </summary>
+    /// <param name="fit">The regression fit.</param>
+    /// <param name="paramNames">The parameter names.</param>
+    /// <returns>The textual description of the fit result.</returns>
     public static string GetFitResultsDescription(LinearFitBySvd fit, string[] paramNames)
     {
       var stb = new System.Text.StringBuilder();
@@ -373,6 +389,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Writes the fit result description to the console.
     /// </summary>
+    /// <param name="fit">The regression fit.</param>
+    /// <param name="paramNames">The parameter names.</param>
+    /// <returns><c>null</c>.</returns>
     public static string? OutputFitResults(LinearFitBySvd fit, string[] paramNames)
     {
       // Output of results

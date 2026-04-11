@@ -88,6 +88,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <summary>
     /// Initializes a new instance of the <see cref="ParameterSet"/> class with the specified elements.
     /// </summary>
+    /// <param name="elements">The parameter set elements.</param>
     public ParameterSet(IEnumerable<ParameterSetElement> elements)
     {
       _inner = new List<ParameterSetElement>(elements);
@@ -117,6 +118,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <summary>
     /// Adds a parameter element to the set.
     /// </summary>
+    /// <param name="ele">The parameter element to add.</param>
     public void Add(ParameterSetElement ele)
     {
       _inner.Add(ele);
@@ -134,6 +136,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       return result;
     }
 
+    /// <inheritdoc/>
     IEnumerator<ParameterSetElement> IEnumerable<ParameterSetElement>.GetEnumerator()
     {
       return _inner.GetEnumerator();
@@ -145,6 +148,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       return _inner.GetEnumerator();
     }
 
+    /// <summary>
+    /// Removes all parameter elements from the set.
+    /// </summary>
     internal void Clear()
     {
       _inner.Clear();

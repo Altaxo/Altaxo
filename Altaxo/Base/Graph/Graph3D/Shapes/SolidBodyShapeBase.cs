@@ -162,6 +162,8 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// <summary>
     /// Opens the shape-properties dialog for the double-clicked object.
     /// </summary>
+    /// <param name="o">The hit-test object for the double-clicked shape.</param>
+    /// <returns><see langword="true"/> after the dialog has been handled.</returns>
     protected static bool EhHitDoubleClick(IHitTestObject o)
     {
       object hitted = o.HittedObject;

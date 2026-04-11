@@ -319,12 +319,14 @@ namespace Altaxo.Worksheet.Commands.Analysis
       }
     }
 
+    /// <inheritdoc/>
     object IAltaxoTableDataSource.ProcessOptionsObject
     {
       get => _processOptions;
       set => ProcessOptions = (RealFourierTransformation2DOptions)value;
     }
 
+    /// <inheritdoc/>
     object IAltaxoTableDataSource.ProcessDataObject
     {
       get => _processData;

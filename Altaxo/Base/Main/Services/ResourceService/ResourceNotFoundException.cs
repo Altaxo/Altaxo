@@ -38,6 +38,7 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Initializes a new instance of the <see cref="ResourceNotFoundException"/> class.
     /// </summary>
+    /// <param name="resourceName">The missing resource name.</param>
     public ResourceNotFoundException(string resourceName) : base("Resource not found : " + resourceName)
     {
       ResourceName = resourceName;
@@ -54,6 +55,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Initializes a new instance of the <see cref="ResourceNotFoundException"/> class.
     /// </summary>
+    /// <param name="resourceName">The missing resource name.</param>
+    /// <param name="innerException">The exception that caused the current exception.</param>
     public ResourceNotFoundException(string resourceName, Exception innerException) : base("Resource not found : " + resourceName, innerException)
     {
       ResourceName = resourceName;
@@ -62,6 +65,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Initializes a new instance of the <see cref="ResourceNotFoundException"/> class from serialized data.
     /// </summary>
+    /// <param name="info">The serialization information.</param>
+    /// <param name="context">The streaming context.</param>
     protected ResourceNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
       ResourceName = string.Empty;

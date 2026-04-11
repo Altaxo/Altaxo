@@ -32,6 +32,9 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization.ObjectiveFunctions
 {
+  /// <summary>
+  /// Represents an objective function that evaluates the value and derivatives lazily.
+  /// </summary>
   internal class LazyObjectiveFunction : IObjectiveFunction
   {
     private readonly Func<Vector<double>, double> _function;
@@ -45,6 +48,12 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
     private bool _hasHessianValue;
     private Matrix<double> _hessianValue;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LazyObjectiveFunction"/> class.
+    /// </summary>
+    /// <param name="function">The delegate that evaluates the objective value.</param>
+    /// <param name="gradient">The optional delegate that evaluates the gradient.</param>
+    /// <param name="hessian">The optional delegate that evaluates the Hessian.</param>
     public LazyObjectiveFunction(Func<Vector<double>, double> function, Func<Vector<double>, Vector<double>> gradient = null, Func<Vector<double>, Matrix<double>> hessian = null)
     {
       _function = function;
@@ -55,11 +64,13 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       IsHessianSupported = hessian != null;
     }
 
+    /// <inheritdoc />
     public IObjectiveFunction CreateNew()
     {
       return new LazyObjectiveFunction(_function, _gradient, _hessian);
     }
 
+    /// <inheritdoc />
     public IObjectiveFunction Fork()
     {
       // no need to deep-clone values since they are replaced on evaluation
@@ -75,9 +86,12 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       };
     }
 
+    /// <inheritdoc />
     public bool IsGradientSupported { get; }
+    /// <inheritdoc />
     public bool IsHessianSupported { get; }
 
+    /// <inheritdoc />
     public void EvaluateAt(Vector<double> point)
     {
       _point = point;
@@ -90,8 +104,10 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       _hessianValue = null;
     }
 
+    /// <inheritdoc />
     public Vector<double> Point => _point;
 
+    /// <inheritdoc />
     public double Value
     {
       get
@@ -105,6 +121,7 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       }
     }
 
+    /// <inheritdoc />
     public Vector<double> Gradient
     {
       get
@@ -118,6 +135,7 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       }
     }
 
+    /// <inheritdoc />
     public Matrix<double> Hessian
     {
       get

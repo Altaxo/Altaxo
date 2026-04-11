@@ -37,6 +37,7 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Shows an error using a message box.
     /// </summary>
+    /// <param name="message">The error message text.</param>
     public static void ShowError(string message)
     {
       Service.ShowError(message);
@@ -48,6 +49,8 @@ namespace Altaxo.Main.Services
     /// <see cref="StringParser"/>,
     /// then through <see cref="string.Format(string, object)"/>, using the formatitems as arguments.
     /// </summary>
+    /// <param name="formatstring">The resource or format string.</param>
+    /// <param name="formatitems">The format arguments.</param>
     public static void ShowErrorFormatted(string formatstring, params object[] formatitems)
     {
       Service.ShowErrorFormatted(formatstring, formatitems);
@@ -56,6 +59,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Shows an exception.
     /// </summary>
+    /// <param name="ex">The exception to show.</param>
+    /// <param name="message">An optional message to display together with the exception.</param>
     public static void ShowException(Exception ex, string? message = null)
     {
       Service.ShowException(ex, message);
@@ -64,6 +69,7 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Shows a warning message.
     /// </summary>
+    /// <param name="message">The warning message text.</param>
     public static void ShowWarning(string message)
     {
       Service.ShowWarning(message);
@@ -75,6 +81,8 @@ namespace Altaxo.Main.Services
     /// <see cref="StringParser"/>,
     /// then through <see cref="string.Format(string, object)"/>, using the formatitems as arguments.
     /// </summary>
+    /// <param name="formatstring">The resource or format string.</param>
+    /// <param name="formatitems">The format arguments.</param>
     public static void ShowWarningFormatted(string formatstring, params object[] formatitems)
     {
       Service.ShowWarningFormatted(formatstring, formatitems);
@@ -84,6 +92,9 @@ namespace Altaxo.Main.Services
     /// Asks the user a Yes/No question, using "Yes" as the default button.
     /// Returns <c>true</c> if yes was clicked, <c>false</c> if no was clicked.
     /// </summary>
+    /// <param name="question">The question text.</param>
+    /// <param name="caption">The dialog caption.</param>
+    /// <returns><see langword="true"/> if the user answered Yes; otherwise, <see langword="false"/>.</returns>
     public static bool AskQuestion(string question, string? caption = null)
     {
       return Service.AskQuestion(question, caption);
@@ -92,6 +103,10 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Asks the user a yes/no question using formatted text.
     /// </summary>
+    /// <param name="caption">The dialog caption.</param>
+    /// <param name="formatstring">The resource or format string.</param>
+    /// <param name="formatitems">The format arguments.</param>
+    /// <returns><see langword="true"/> if the user answered Yes; otherwise, <see langword="false"/>.</returns>
     public static bool AskQuestionFormatted(string caption, string formatstring, params object[] formatitems)
     {
       return Service.AskQuestion(StringParser.Format(formatstring, formatitems), caption);
@@ -100,6 +115,9 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Asks the user a yes/no question using formatted text.
     /// </summary>
+    /// <param name="formatstring">The resource or format string.</param>
+    /// <param name="formatitems">The format arguments.</param>
+    /// <returns><see langword="true"/> if the user answered Yes; otherwise, <see langword="false"/>.</returns>
     public static bool AskQuestionFormatted(string formatstring, params object[] formatitems)
     {
       return Service.AskQuestion(StringParser.Format(formatstring, formatitems));
@@ -170,6 +188,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Shows a formatted informational message.
     /// </summary>
+    /// <param name="formatstring">The resource or format string.</param>
+    /// <param name="formatitems">The format arguments.</param>
     public static void ShowMessageFormatted(string formatstring, params object[] formatitems)
     {
       Service.ShowMessageFormatted(formatstring, null, formatitems);
@@ -178,6 +198,9 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Shows a formatted informational message with a custom caption.
     /// </summary>
+    /// <param name="caption">The dialog caption.</param>
+    /// <param name="formatstring">The resource or format string.</param>
+    /// <param name="formatitems">The format arguments.</param>
     public static void ShowMessageFormatted(string caption, string formatstring, params object[] formatitems)
     {
       Service.ShowMessageFormatted(formatstring, caption, formatitems);
@@ -186,6 +209,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Shows a message.
     /// </summary>
+    /// <param name="message">The message text.</param>
+    /// <param name="caption">The dialog caption.</param>
     public static void ShowMessage(string message, string? caption = null)
     {
       Service.ShowMessage(message, caption);
@@ -194,6 +219,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Shows an exception that has already been handled.
     /// </summary>
+    /// <param name="ex">The handled exception to show.</param>
+    /// <param name="message">An optional message to display together with the exception.</param>
     public static void ShowHandledException(Exception ex, string? message = null)
     {
       Service.ShowHandledException(ex, message);

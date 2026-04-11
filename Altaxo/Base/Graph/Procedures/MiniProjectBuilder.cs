@@ -95,6 +95,8 @@ namespace Altaxo.Graph.Procedures
     /// <summary>
     /// Copies the graph document into the mini project.
     /// </summary>
+    /// <param name="oldGraph">The graph document to copy.</param>
+    /// <param name="ensureEmbeddedObjectRenderingOptionsStoredInGraph">If set to <c>true</c>, embedded-object rendering options are stored explicitly in the copied graph.</param>
     protected void CopyGraphToNewDocument(GraphDocumentBase oldGraph, bool ensureEmbeddedObjectRenderingOptionsStoredInGraph)
     {
       var newGraph = (GraphDocumentBase)oldGraph.Clone();
@@ -115,6 +117,7 @@ namespace Altaxo.Graph.Procedures
     /// <summary>
     /// Copies the folder properties referenced by the graph.
     /// </summary>
+    /// <param name="oldGraph">The graph document whose referenced folder properties are copied.</param>
     protected void CopyFolderPropertiesOf(GraphDocumentBase oldGraph)
     {
       foreach (var doc in PropertyExtensions.GetProjectFolderPropertyDocuments(oldGraph))

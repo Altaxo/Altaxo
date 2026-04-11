@@ -70,6 +70,7 @@ namespace Altaxo.Calc.Statistics.Mcmc
     /// <summary>
     /// Returns a sample from the distribution P.
     /// </summary>
+    /// <returns>A sample drawn from the target distribution.</returns>
     /// <exception cref="ArgumentOutOfRangeException">When the algorithms detects that the proposal
     /// distribution doesn't upper bound the target distribution.</exception>
     public override T Sample()

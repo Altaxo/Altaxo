@@ -34,16 +34,39 @@ namespace Altaxo.Calc.Integration.GaussRule
   /// </summary>
   internal class GaussPoint
   {
+    /// <summary>
+    /// Gets the abscissas of the quadrature rule.
+    /// </summary>
     internal double[] Abscissas { get; }
 
+    /// <summary>
+    /// Gets the weights of the quadrature rule.
+    /// </summary>
     internal double[] Weights { get; }
 
+    /// <summary>
+    /// Gets the beginning of the integration interval.
+    /// </summary>
     internal double IntervalBegin { get; }
 
+    /// <summary>
+    /// Gets the end of the integration interval.
+    /// </summary>
     internal double IntervalEnd { get; }
 
+    /// <summary>
+    /// Gets the order of the quadrature rule.
+    /// </summary>
     internal int Order { get; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GaussPoint"/> class.
+    /// </summary>
+    /// <param name="intervalBegin">The beginning of the integration interval.</param>
+    /// <param name="intervalEnd">The end of the integration interval.</param>
+    /// <param name="order">The order of the quadrature rule.</param>
+    /// <param name="abscissas">The abscissas of the quadrature rule.</param>
+    /// <param name="weights">The weights of the quadrature rule.</param>
     internal GaussPoint(double intervalBegin, double intervalEnd, int order, double[] abscissas, double[] weights)
     {
       Abscissas = abscissas;
@@ -53,6 +76,12 @@ namespace Altaxo.Calc.Integration.GaussRule
       Order = order;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GaussPoint"/> class on the default interval [-1, 1].
+    /// </summary>
+    /// <param name="order">The order of the quadrature rule.</param>
+    /// <param name="abscissas">The abscissas of the quadrature rule.</param>
+    /// <param name="weights">The weights of the quadrature rule.</param>
     internal GaussPoint(int order, double[] abscissas, double[] weights) : this(-1, 1, order, abscissas, weights)
     {
     }

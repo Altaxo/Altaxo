@@ -221,6 +221,7 @@ namespace Altaxo.Graph.Plot.Groups
       return new ColorGroupStyle(this);
     }
 
+    /// <inheritdoc />
     object ICloneable.Clone()
     {
       return new ColorGroupStyle(this);
@@ -441,6 +442,7 @@ namespace Altaxo.Graph.Plot.Groups
     /// <summary>
     /// Represents a delegate that returns a color.
     /// </summary>
+    /// <returns>The color to use.</returns>
     public delegate NamedColor Getter();
 
     /// <summary>

@@ -367,6 +367,9 @@ namespace Altaxo.Calc
     /// P(a,x) = 1/Gamma(a) * int(exp(-t)t^(a-1),t=0..x) for real a &gt; 0, x &gt; 0,
     /// such that P^(-1)(a,P(a,x)) == x.
     /// </summary>
+    /// <param name="a">Parameter a of the regularized lower incomplete gamma (must be &gt; 0).</param>
+    /// <param name="y0">Target value of P(a,x) for which the inverse is sought (in [0,1]).</param>
+    /// <returns>The value x such that P(a,x) = y0, or <see cref="double.NaN"/> if inputs are NaN.</returns>
     public static double GammaLowerRegularizedInv(double a, double y0)
     {
       const double epsilon = 0.000000000000001;

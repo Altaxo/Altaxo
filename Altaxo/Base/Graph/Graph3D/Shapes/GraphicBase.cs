@@ -722,6 +722,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// <summary>
     /// Shifts the graphic position by the specified vector.
     /// </summary>
+    /// <param name="dp">The displacement vector.</param>
     protected void ShiftPosition(PointD3D dp)
     {
       ShiftPosition(dp.X, dp.Y, dp.Z);
@@ -730,6 +731,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// <summary>
     /// Shifts the graphic position by the specified components.
     /// </summary>
+    /// <param name="dx">The displacement in x-direction.</param>
+    /// <param name="dy">The displacement in y-direction.</param>
+    /// <param name="dz">The displacement in z-direction.</param>
     protected internal void ShiftPosition(double dx, double dy, double dz)
     {
       var currPos = GetPosition();
@@ -914,6 +918,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// <summary>
     /// Gets the manipulation grips for the specified hit test object.
     /// </summary>
+    /// <param name="hitTest">The hit-test object.</param>
+    /// <param name="gripKind">The kinds of grips to create.</param>
+    /// <returns>The manipulation grips.</returns>
     protected virtual IGripManipulationHandle[] GetGrips(IHitTestObject hitTest, GripKind gripKind)
     {
       var list = new List<IGripManipulationHandle>();

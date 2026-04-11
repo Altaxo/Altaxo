@@ -90,6 +90,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       /// <summary>
       /// Deactivates this grip handle.
       /// </summary>
+      /// <returns><see langword="false"/> to keep the current grip level.</returns>
       public bool Deactivate()
       {
         if (_hasMoved)
@@ -101,6 +102,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       /// <summary>
       /// Moves the grip handle to the specified position.
       /// </summary>
+      /// <param name="newPosition">The new grip position.</param>
       public void MoveGrip(PointD2D newPosition)
       {
         newPosition = _parent.Transformation.InverseTransformPoint(newPosition);
@@ -126,6 +128,8 @@ namespace Altaxo.Graph.Gdi.Shapes
       /// <summary>
       /// Determines whether the grip is hit by the specified point.
       /// </summary>
+      /// <param name="point">The point to test.</param>
+      /// <returns><see langword="true"/> if the point hits the grip; otherwise, <see langword="false"/>.</returns>
       public bool IsGripHitted(PointD2D point)
       {
         point = _spanningHalfYRhombus.InverseTransformPoint(point);

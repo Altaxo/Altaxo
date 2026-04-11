@@ -37,6 +37,9 @@ namespace Altaxo.AddInItems
     private List<string> _bitmapResources = new List<string>();
     private List<string> _stringResources = new List<string>();
 
+    /// <summary>
+    /// Stores the file name of the add-in definition file.
+    /// </summary>
     internal string? _addInFileName = null;
     private AddInManifest _manifest = new AddInManifest();
     private Dictionary<string, ExtensionPath> _paths = new Dictionary<string, ExtensionPath>();
@@ -45,6 +48,10 @@ namespace Altaxo.AddInItems
 
     private static bool _hasShownErrorMessage = false;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AddIn"/> class.
+    /// </summary>
+    /// <param name="addInTree">The add-in tree that owns this add-in.</param>
     internal AddIn(IAddInTree addInTree)
     {
       _addInTree = addInTree ?? throw new ArgumentNullException(nameof(addInTree));
@@ -61,6 +68,8 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Creates an object from the specified class name.
     /// </summary>
+    /// <param name="className">The fully qualified name of the type to instantiate.</param>
+    /// <returns>The created instance, or <c>null</c> if the type cannot be found.</returns>
     public object? CreateObject(string className)
     {
       Type? t = FindType(className);
@@ -73,6 +82,8 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Finds the type with the specified class name in the add-in runtimes.
     /// </summary>
+    /// <param name="className">The fully qualified name of the type to locate.</param>
+    /// <returns>The matching type, or <c>null</c> if no matching type can be found.</returns>
     public Type? FindType(string className)
     {
       foreach (Runtime runtime in _runtimes)
@@ -105,6 +116,8 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Gets a manifest resource stream from the add-in assemblies.
     /// </summary>
+    /// <param name="resourceName">The fully qualified manifest resource name.</param>
+    /// <returns>The resource stream, or <c>null</c> if the resource cannot be found.</returns>
     public Stream? GetManifestResourceStream(string resourceName)
     {
       LoadDependencies();
@@ -386,6 +399,8 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Gets the extension path with the specified name.
     /// </summary>
+    /// <param name="pathName">The extension path name.</param>
+    /// <returns>The existing or newly created extension path.</returns>
     public ExtensionPath GetExtensionPath(string pathName)
     {
       if (!_paths.ContainsKey(pathName))
@@ -398,6 +413,11 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Loads an add-in from a text reader.
     /// </summary>
+    /// <param name="addInTree">The add-in tree that will own the loaded add-in.</param>
+    /// <param name="textReader">The reader that provides the add-in XML.</param>
+    /// <param name="hintPath">The base path used to resolve relative file references.</param>
+    /// <param name="nameTable">The XML name table to use while reading.</param>
+    /// <returns>The loaded add-in.</returns>
     public static AddIn Load(IAddInTree addInTree, TextReader textReader, string? hintPath = null, XmlNameTable? nameTable = null)
     {
       if (nameTable is null)
@@ -435,6 +455,10 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Loads an add-in from the specified file.
     /// </summary>
+    /// <param name="addInTree">The add-in tree that will own the loaded add-in.</param>
+    /// <param name="fileName">The add-in file to load.</param>
+    /// <param name="nameTable">The XML name table to use while reading.</param>
+    /// <returns>The loaded add-in.</returns>
     public static AddIn Load(IAddInTree addInTree, string fileName, XmlNameTable? nameTable = null)
     {
       try

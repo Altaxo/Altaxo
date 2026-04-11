@@ -240,6 +240,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <summary>
     /// This method must be called, if plot item members are added or removed to this collection.
     /// </summary>
+    /// <param name="list">The list to fill with flattened plot items.</param>
     protected void FillPlotItemList(IList<IGPlotItem> list)
     {
       foreach (IGPlotItem pi in _plotItems)
@@ -295,6 +296,7 @@ namespace Altaxo.Graph.Graph3D.Plot
       }
     }
 
+    /// <inheritdoc/>
     IEnumerable<IGPlotItem> ITreeNode<IGPlotItem>.ChildNodes
     {
       get
@@ -303,6 +305,7 @@ namespace Altaxo.Graph.Graph3D.Plot
       }
     }
 
+    /// <inheritdoc/>
     IGPlotItem? INodeWithParentNode<IGPlotItem>.ParentNode
     {
       get
@@ -412,6 +415,7 @@ namespace Altaxo.Graph.Graph3D.Plot
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc/>
     IEnumerator IEnumerable.GetEnumerator()
     {
       return _plotItems.GetEnumerator();
@@ -794,6 +798,8 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <summary>
     /// Copies plot-style information from another collection according to the specified options.
     /// </summary>
+    /// <param name="from">The source collection.</param>
+    /// <param name="options">The copy options.</param>
     public void CopyFrom(PlotItemCollection from, Gdi.GraphCopyOptions options)
     {
       if (ReferenceEquals(this, from))
@@ -814,6 +820,8 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <summary>
     /// Gets a generated name for this collection.
     /// </summary>
+    /// <param name="level">The nesting level.</param>
+    /// <returns>A generated collection name.</returns>
     public string GetName(int level)
     {
       return string.Format("<Collection of {0} plot items>", _plotItems.Count);
@@ -822,6 +830,8 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <summary>
     /// Gets a generated name for this collection.
     /// </summary>
+    /// <param name="style">The style descriptor.</param>
+    /// <returns>A generated collection name.</returns>
     public string GetName(string style)
     {
       return string.Format("<Collection of {0} plot items>", _plotItems.Count);
@@ -830,6 +840,8 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <summary>
     /// Copies from another object when supported.
     /// </summary>
+    /// <param name="obj">The object to copy from.</param>
+    /// <returns><see langword="true"/> if the object was handled; otherwise, <see langword="false"/>.</returns>
     public bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -843,6 +855,7 @@ namespace Altaxo.Graph.Graph3D.Plot
       return false;
     }
 
+    /// <inheritdoc />
     object ICloneable.Clone()
     {
       return new PlotItemCollection(this);
@@ -904,6 +917,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <summary>
     /// Performs preprocessing for painting.
     /// </summary>
+    /// <param name="context">The paint context.</param>
     public void PaintPreprocessing(IPaintContext context)
     {
       var coordTransStyle = _plotGroupStyles.CoordinateTransformingStyle;
@@ -922,6 +936,11 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <summary>
     /// Paints all contained plot items.
     /// </summary>
+    /// <param name="g">The graphics context used for drawing.</param>
+    /// <param name="context">The paint context.</param>
+    /// <param name="layer">The plot layer.</param>
+    /// <param name="previousPlotItem">The previous plot item.</param>
+    /// <param name="nextPlotItem">The next plot item.</param>
     public void Paint(IGraphicsContext3D g, IPaintContext context, Graph3D.IPlotArea layer, IGPlotItem? previousPlotItem, IGPlotItem? nextPlotItem)
     {
       var coordinateTransformingStyle = _plotGroupStyles.CoordinateTransformingStyle;
@@ -941,6 +960,7 @@ namespace Altaxo.Graph.Graph3D.Plot
       }
     }
 
+    /// <inheritdoc/>
     void IGPlotItem.PaintPostprocessing()
     {
       foreach (var pi in _plotItems)
@@ -950,6 +970,9 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <summary>
     /// Performs hit testing for the collection.
     /// </summary>
+    /// <param name="layer">The plot layer.</param>
+    /// <param name="hitpoint">The hit-test data.</param>
+    /// <returns>The hit-test object.</returns>
     public IHitTestObject HitTest(IPlotArea layer, HitTestPointData hitpoint)
     {
       throw new NotImplementedException();
@@ -960,6 +983,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <summary>
     /// Adds a plot item to the collection.
     /// </summary>
+    /// <param name="item">The plot item to add.</param>
     public void Add(IGPlotItem item)
     {
       if (item is null)

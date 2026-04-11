@@ -161,14 +161,18 @@ namespace Altaxo.Calc
       return c.MagnitudeSquared();
     }
 
-    ///<summary>Return the absolute value of a complex type calculated as the euclidean norm</summary>
+    ///<summary>Return the absolute value of a complex type calculated as the euclidean norm.</summary>
+    /// <param name="c">The complex number.</param>
+    /// <returns>The absolute value (magnitude) of the complex number.</returns>
     ///<remarks>Same as <see cref="Abs" /> and provided here for compatibility with some libraries.</remarks>
     public static double Absolute(Complex64 c)
     {
       return c.Magnitude;
     }
 
-    ///<summary>Return the absolute value of a complex type calculated as the euclidean norm</summary>
+    ///<summary>Return the absolute value of a complex type calculated as the euclidean norm.</summary>
+    /// <param name="c">The complex number.</param>
+    /// <returns>The absolute value (magnitude) of the complex number as a single-precision float.</returns>
     ///<remarks>Same as <see cref="Abs" /> and provided here for compatibility with some libraries.</remarks>
     public static float Absolute(Complex32 c)
     {
@@ -460,12 +464,16 @@ namespace Altaxo.Calc
     }
 
     ///<summary>Calculate the complex argument of a complex type. Also commonly referred to as the phase.</summary>
+    /// <param name="value">The complex number.</param>
+    /// <returns>The phase angle of the complex number.</returns>
     public static double Argument(Complex64 value)
     {
       return System.Math.Atan(value.Imaginary / value.Real);
     }
 
     ///<summary>Calculate the complex argument of a complex type. Also commonly referred to as the phase.</summary>
+    /// <param name="value">The complex number.</param>
+    /// <returns>The phase angle of the complex number.</returns>
     public static float Argument(Complex32 value)
     {
       return (float)System.Math.Atan(value.Imaginary / value.Real);
@@ -828,13 +836,17 @@ namespace Altaxo.Calc
       return z;
     }
 
-    ///<summary>Return the complex conjugate of a complex type</summary>
+    ///<summary>Return the complex conjugate of a complex type.</summary>
+    /// <param name="a">The complex number.</param>
+    /// <returns>The complex conjugate of <paramref name="a"/>.</returns>
     public static Complex64 Conjugate(Complex64 a)
     {
       return new Complex64(a.Real, -a.Imaginary);
     }
 
-    ///<summary>Return the complex conjugate of a complex type</summary>
+    ///<summary>Return the complex conjugate of a complex type.</summary>
+    /// <param name="a">The complex number.</param>
+    /// <returns>The complex conjugate of <paramref name="a"/>.</returns>
     public static Complex32 Conjugate(Complex32 a)
     {
       return new Complex32(a.Real, -a.Imaginary);
@@ -1017,7 +1029,10 @@ namespace Altaxo.Calc
       return Log(z) * M_LOG10E;
     }
 
-    ///<summary>Given two complex types return the one with the maximum norm</summary>
+    ///<summary>Given two complex types, return the one with the maximum norm.</summary>
+    /// <param name="v1">The first complex number.</param>
+    /// <param name="v2">The second complex number.</param>
+    /// <returns>The complex number with the greater norm.</returns>
     public static Complex64 Max(Complex64 v1, Complex64 v2)
     {
       if (Norm(v1) >= Norm(v2))
@@ -1026,7 +1041,10 @@ namespace Altaxo.Calc
         return v2;
     }
 
-    ///<summary>Given two complex types return the one with the maximum norm</summary>
+    ///<summary>Given two complex types, return the one with the maximum norm.</summary>
+    /// <param name="v1">The first complex number.</param>
+    /// <param name="v2">The second complex number.</param>
+    /// <returns>The complex number with the greater norm.</returns>
     public static Complex32 Max(Complex32 v1, Complex32 v2)
     {
       if (Norm(v1) >= Norm(v2))
@@ -1035,13 +1053,17 @@ namespace Altaxo.Calc
         return v2;
     }
 
-    ///<summary>Return the euclidean norm of a complex type</summary>
+    ///<summary>Return the Euclidean norm of a complex type.</summary>
+    /// <param name="value">The complex number.</param>
+    /// <returns>The Euclidean norm of the complex number.</returns>
     public static double Norm(Complex64 value)
     {
       return ComplexMath.Absolute(value);
     }
 
-    ///<summary>Return the euclidean norm of a complex type</summary>
+    ///<summary>Return the Euclidean norm of a complex type.</summary>
+    /// <param name="value">The complex number.</param>
+    /// <returns>The Euclidean norm of the complex number.</returns>
     public static float Norm(Complex32 value)
     {
       return ComplexMath.Absolute(value);
@@ -1058,13 +1080,17 @@ namespace Altaxo.Calc
       return Complex64.FromPolarCoordinates(modulus, argument);
     }
 
-    ///<summary>Return the polar representation of a complex type</summary>
+    ///<summary>Return the polar representation of a complex type.</summary>
+    /// <param name="value">The complex number.</param>
+    /// <returns>A complex value whose real part is the modulus and whose imaginary part is the argument.</returns>
     public static Complex64 Polar(Complex64 value)
     {
       return new Complex64(ComplexMath.Absolute(value), System.Math.Atan2(value.Imaginary, value.Real));
     }
 
-    ///<summary>Return the polar representation of a complex type</summary>
+    ///<summary>Return the polar representation of a complex type.</summary>
+    /// <param name="value">The complex number.</param>
+    /// <returns>A complex value whose real part is the modulus and whose imaginary part is the argument.</returns>
     public static Complex32 Polar(Complex32 value)
     {
       return new Complex32(ComplexMath.Absolute(value), (float)(System.Math.Atan2(value.Imaginary, value.Real)));

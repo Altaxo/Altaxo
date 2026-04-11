@@ -252,8 +252,9 @@ namespace Altaxo.Gui.Graph.Graph3D
     }
 
     /// <summary>
-    /// Performs the e hs ho wr an ge ch an g e d operation.
+    /// Updates the displayed plot-item names after the range display option changed.
     /// </summary>
+    /// <param name="value"><c>true</c> to include range information in the names; otherwise, <c>false</c>.</param>
     public void EhShowRangeChanged(bool value)
     {
       _plotItemsRootNode.Nodes.Clear();
@@ -567,8 +568,9 @@ namespace Altaxo.Gui.Graph.Graph3D
     #region ILineScatterLayerContentsController Members
 
     /// <summary>
-    /// Performs the e hv i e w d at aa va il ab le be fo re ex pa n d operation.
+    /// Loads the available data columns before a table node is expanded.
     /// </summary>
+    /// <param name="node">The table node that is about to be expanded.</param>
     public void EhView_DataAvailableBeforeExpand(NGTreeNode node)
     {
       DataTable dt = Current.Project.DataTableCollection[node.Text];
@@ -693,8 +695,10 @@ namespace Altaxo.Gui.Graph.Graph3D
     }
 
     /// <summary>
-    /// Performs the c on te nt sl is tb o x m ov eu pd o w n operation.
+    /// Moves the selected plot-item nodes up or down.
     /// </summary>
+    /// <param name="iDelta">The relative movement, where negative values move up and positive values move down.</param>
+    /// <param name="selNodes">The selected nodes to move.</param>
     public void ContentsListBox_MoveUpDown(int iDelta, NGTreeNode[] selNodes)
     {
       if (NGTreeNode.HaveSameParent(selNodes))
@@ -989,8 +993,9 @@ namespace Altaxo.Gui.Graph.Graph3D
     }
 
     /// <summary>
-    /// Performs the p lo ti te m s c an de le t e operation.
+    /// Determines whether the selected plot items can be deleted.
     /// </summary>
+    /// <returns><c>true</c> if one or more plot items are selected; otherwise, <c>false</c>.</returns>
     public bool PlotItems_CanDelete()
     {
       var anySelected = _plotItemsRootNode.TakeFromHereToFirstLeaves(false).Where(node => node.IsSelected).FirstOrDefault() is not null;
@@ -1015,8 +1020,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 #endif
     }
     /// <summary>
-    /// Performs the p lo ti te m s c an co p y operation.
+    /// Determines whether the selected plot items can be copied.
     /// </summary>
+    /// <returns><c>true</c> if one or more plot items are selected; otherwise, <c>false</c>.</returns>
     public bool PlotItems_CanCopy()
     {
       return PlotItemsSelected.Any();
@@ -1034,8 +1040,9 @@ namespace Altaxo.Gui.Graph.Graph3D
     }
 
     /// <summary>
-    /// Performs the p lo ti te m s c an c u t operation.
+    /// Determines whether the selected plot items can be cut.
     /// </summary>
+    /// <returns><c>true</c> if one or more plot items are selected; otherwise, <c>false</c>.</returns>
     public bool PlotItems_CanCut()
     {
       return PlotItemsSelected.Any();
@@ -1060,8 +1067,9 @@ namespace Altaxo.Gui.Graph.Graph3D
     }
 
     /// <summary>
-    /// Performs the p lo ti te m s c an pa s t e operation.
+    /// Determines whether plot items can be pasted from the clipboard.
     /// </summary>
+    /// <returns><c>true</c> if the clipboard contains a plot-item collection; otherwise, <c>false</c>.</returns>
     public bool PlotItems_CanPaste()
     {
       object o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml");
@@ -1102,16 +1110,22 @@ namespace Altaxo.Gui.Graph.Graph3D
     #region Plot items
 
     /// <summary>
-    /// Performs the p lo ti te m s c an st ar td r a g operation.
+    /// Determines whether a drag operation can be started for the specified plot items.
     /// </summary>
+    /// <param name="items">The items that are about to be dragged.</param>
+    /// <returns><c>true</c> if all items are on the same level; otherwise, <c>false</c>.</returns>
     public bool PlotItems_CanStartDrag(IEnumerable items)
     {
       return NGTreeNode.AreAllNodesFromSameLevel(items.OfType<NGTreeNode>());
     }
 
     /// <summary>
-    /// Performs the p lo ti te m s s ta rt dr a g operation.
+    /// Starts a drag operation for the specified plot items.
     /// </summary>
+    /// <param name="items">The items to include in the drag operation.</param>
+    /// <param name="data">The drag data created for the operation.</param>
+    /// <param name="canCopy">Set to <c>true</c> if copying is allowed.</param>
+    /// <param name="canMove">Set to <c>true</c> if moving is allowed.</param>
     public void PlotItems_StartDrag(IEnumerable items, out object data, out bool canCopy, out bool canMove)
     {
       data = new List<NGTreeNode>(items.OfType<NGTreeNode>());
@@ -1120,8 +1134,10 @@ namespace Altaxo.Gui.Graph.Graph3D
     }
 
     /// <summary>
-    /// Performs the p lo ti te m s d ra ge nd e d operation.
+    /// Ends a drag operation for plot items.
     /// </summary>
+    /// <param name="isCopy">If set to <c>true</c>, the drag operation completed as a copy.</param>
+    /// <param name="isMove">If set to <c>true</c>, the drag operation completed as a move.</param>
     public void PlotItems_DragEnded(bool isCopy, bool isMove)
     {
     }
@@ -1134,8 +1150,16 @@ namespace Altaxo.Gui.Graph.Graph3D
     }
 
     /// <summary>
-    /// Performs the p lo ti te m s d ro pc an ac ce pt da t a operation.
+    /// Determines whether dropped data can be accepted for the specified target item.
     /// </summary>
+    /// <param name="data">The drag data to inspect.</param>
+    /// <param name="targetItem">The target item under the drop position.</param>
+    /// <param name="insertPosition">The relative insert position for the drop.</param>
+    /// <param name="isCtrlKeyPressed">If set to <c>true</c>, the Ctrl key is pressed.</param>
+    /// <param name="isShiftKeyPressed">If set to <c>true</c>, the Shift key is pressed.</param>
+    /// <param name="canCopy">Set to <c>true</c> if the data can be copied.</param>
+    /// <param name="canMove">Set to <c>true</c> if the data can be moved.</param>
+    /// <param name="itemIsSwallowingData">Set to <c>true</c> if the target item accepts the dropped data as its child.</param>
     public void PlotItems_DropCanAcceptData(object data, NGTreeNode targetItem, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool canCopy, out bool canMove, out bool itemIsSwallowingData)
     {
       var nodes = data as IEnumerable<NGTreeNode>;
@@ -1173,8 +1197,15 @@ namespace Altaxo.Gui.Graph.Graph3D
     }
 
     /// <summary>
-    /// Performs the p lo ti te m s d r o p operation.
+    /// Drops plot-item data onto the specified target node.
     /// </summary>
+    /// <param name="data">The drag data to drop.</param>
+    /// <param name="targetNode">The target node for the drop operation.</param>
+    /// <param name="insertPosition">The relative insert position for the drop.</param>
+    /// <param name="isCtrlKeyPressed">If set to <c>true</c>, the Ctrl key is pressed.</param>
+    /// <param name="isShiftKeyPressed">If set to <c>true</c>, the Shift key is pressed.</param>
+    /// <param name="isCopy">Set to <c>true</c> if the drop performed a copy operation.</param>
+    /// <param name="isMove">Set to <c>true</c> if the drop performed a move operation.</param>
     public void PlotItems_Drop(object data, NGTreeNode targetNode, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool isCopy, out bool isMove)
     {
       isMove = false;
@@ -1272,8 +1303,10 @@ namespace Altaxo.Gui.Graph.Graph3D
     #region Available items
 
     /// <summary>
-    /// Performs the a va il ab le it e m s c an st ar td r a g operation.
+    /// Determines whether a drag operation can start for available data items.
     /// </summary>
+    /// <param name="items">The items that would participate in the drag operation.</param>
+    /// <returns><c>true</c> if the selected items can be dragged; otherwise, <c>false</c>.</returns>
     public bool AvailableItems_CanStartDrag(IEnumerable items)
     {
       var selNodes = items.OfType<NGTreeNode>();
@@ -1287,8 +1320,12 @@ namespace Altaxo.Gui.Graph.Graph3D
     }
 
     /// <summary>
-    /// Performs the a va il ab le it e m s s ta rt dr a g operation.
+    /// Starts a drag operation for available data items.
     /// </summary>
+    /// <param name="items">The items to drag.</param>
+    /// <param name="data">Receives the drag data.</param>
+    /// <param name="canCopy">Receives whether copying is supported.</param>
+    /// <param name="canMove">Receives whether moving is supported.</param>
     public void AvailableItems_StartDrag(IEnumerable items, out object data, out bool canCopy, out bool canMove)
     {
       data = new List<NGTreeNode>(items.OfType<NGTreeNode>().Where(node => (node.IsSelected && node.Tag is Altaxo.Data.DataColumn)));
@@ -1297,8 +1334,10 @@ namespace Altaxo.Gui.Graph.Graph3D
     }
 
     /// <summary>
-    /// Performs the a va il ab le it e m s d ra ge nd e d operation.
+    /// Handles the end of an available-items drag operation.
     /// </summary>
+    /// <param name="isCopy"><c>true</c> if the drag operation copied data.</param>
+    /// <param name="isMove"><c>true</c> if the drag operation moved data.</param>
     public void AvailableItems_DragEnded(bool isCopy, bool isMove)
     {
     }

@@ -54,6 +54,13 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
   /// </remarks>
   internal abstract class Evd : Evd<double>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Evd"/> class.
+    /// </summary>
+    /// <param name="eigenVectors">The eigenvectors of the factorized matrix.</param>
+    /// <param name="eigenValues">The eigenvalues of the factorized matrix.</param>
+    /// <param name="blockDiagonal">The block diagonal eigenvalue matrix.</param>
+    /// <param name="isSymmetric">A value indicating whether the factorized matrix is symmetric.</param>
     protected Evd(Matrix<double> eigenVectors, Vector<Complex> eigenValues, Matrix<double> blockDiagonal, bool isSymmetric)
         : base(eigenVectors, eigenValues, blockDiagonal, isSymmetric)
     {

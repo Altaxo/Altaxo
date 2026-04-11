@@ -32,11 +32,13 @@ namespace Altaxo.Collections
   /// <summary>
   /// Represents a mutable array-like collection with indexed access.
   /// </summary>
+  /// <typeparam name="T">The element type.</typeparam>
   public interface IArray<T>
   {
     /// <summary>
     /// Gets or sets the element at the specified index.
     /// </summary>
+    /// <param name="i">The zero-based index of the element.</param>
     T this[int i] { get; set; }
 
     /// <summary>

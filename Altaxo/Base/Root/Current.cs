@@ -129,6 +129,9 @@ namespace Altaxo
     /// <summary>
     /// Adds a service instance under two service types.
     /// </summary>
+    /// <typeparam name="T">The primary service type.</typeparam>
+    /// <typeparam name="U">The additional service type.</typeparam>
+    /// <param name="service">The service instance to register.</param>
     public static void AddService<T, U>(T service)
     {
       if (instance is IServiceContainer container)
@@ -144,6 +147,10 @@ namespace Altaxo
     /// <summary>
     /// Adds a service instance under three service types.
     /// </summary>
+    /// <typeparam name="T">The primary service type.</typeparam>
+    /// <typeparam name="U">The second service type.</typeparam>
+    /// <typeparam name="V">The third service type.</typeparam>
+    /// <param name="service">The service instance to register.</param>
     public static void AddService<T, U, V>(T service)
     {
       if (instance is IServiceContainer container)
@@ -180,6 +187,8 @@ namespace Altaxo
     /// Retrieves the service of type <typeparamref name="T"/> from the provider.
     /// If the service cannot be found, a <see cref="ServiceNotFoundException"/> will be thrown.
     /// </summary>
+    /// <typeparam name="T">The service type to retrieve.</typeparam>
+    /// <returns>The registered service instance.</returns>
     public static T GetRequiredService<T>()
     {
       var service = instance.GetService(typeof(T));
@@ -214,11 +223,10 @@ namespace Altaxo
     }
 
     /// <summary>
-    /// Gets a service. Returns null if service is not found.
-    /// </summary>
-    /// <summary>
     /// Gets a service. Returns <c>null</c> if the service is not found.
     /// </summary>
+    /// <typeparam name="T">The service type to retrieve.</typeparam>
+    /// <returns>The registered service instance, or <c>null</c> if no service was found.</returns>
     public static T? GetService<T>() where T : class
     {
       var service = instance.GetService(typeof(T));
@@ -228,6 +236,9 @@ namespace Altaxo
     /// <summary>
     /// Gets a service, optionally using a fallback service type.
     /// </summary>
+    /// <typeparam name="T">The preferred service type to retrieve.</typeparam>
+    /// <typeparam name="U">The fallback service type to query if <typeparamref name="T"/> is not registered.</typeparam>
+    /// <returns>The registered service instance, or <c>null</c> if no compatible service was found.</returns>
     public static T? GetService<T, U>() where T : class, U
     {
       var serviceObj = instance.GetService(typeof(T));
@@ -252,6 +263,8 @@ namespace Altaxo
     /// <remarks>
     /// This method can be used to solve cyclic dependencies in service initialization.
     /// </remarks>
+    /// <typeparam name="T">The service type to wait for.</typeparam>
+    /// <returns>A task that completes with the service instance once it becomes available.</returns>
     public static Task<T?> GetFutureService<T>() where T : class
     {
       return GetRequiredService<AltaxoServiceContainer>().GetFutureService<T>();
@@ -262,6 +275,8 @@ namespace Altaxo
     /// but does not throw a NullReferenceException when ActiveViewContent is null.
     /// (instead, null is returned).
     /// </summary>
+    /// <typeparam name="T">The service type to retrieve.</typeparam>
+    /// <returns>The service instance, or <c>null</c> if no active view content or service is available.</returns>
     public static T? GetActiveViewContentService<T>() where T : class
     {
       return (T?)GetActiveViewContentService(typeof(T));
@@ -272,6 +287,8 @@ namespace Altaxo
     /// but does not throw a NullReferenceException when ActiveViewContent is null.
     /// (instead, null is returned).
     /// </summary>
+    /// <param name="type">The service type to retrieve.</param>
+    /// <returns>The service instance, or <c>null</c> if no active view content or service is available.</returns>
     public static object? GetActiveViewContentService(Type type)
     {
       var workbench = instance.GetService(typeof(IWorkbench)) as IWorkbench;

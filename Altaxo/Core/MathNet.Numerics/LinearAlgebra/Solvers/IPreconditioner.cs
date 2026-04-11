@@ -49,6 +49,7 @@ namespace Altaxo.Calc.LinearAlgebra.Solvers
   /// if the changes occur after creating the preconditioner.
   /// </para>
   /// </remarks>
+  /// <typeparam name="T">The numeric element type.</typeparam>
   public interface IPreconditioner<T> where T : struct, IEquatable<T>, IFormattable
   {
     /// <summary>

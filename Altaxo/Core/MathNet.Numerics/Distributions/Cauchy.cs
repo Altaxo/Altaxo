@@ -101,6 +101,7 @@ namespace Altaxo.Calc.Distributions
     /// </summary>
     /// <param name="location">The location (x0) of the distribution.</param>
     /// <param name="scale">The scale (γ) of the distribution. Range: γ > 0.</param>
+    /// <returns><c>true</c> if the parameters define a valid Cauchy distribution; otherwise, <c>false</c>.</returns>
     public static bool IsValidParameterSet(double location, double scale)
     {
       return scale > 0.0 && !double.IsNaN(location);
@@ -230,6 +231,7 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Fills an array with samples generated from the distribution.
     /// </summary>
+    /// <param name="values">The array to fill with samples.</param>
     public void Samples(double[] values)
     {
       SamplesUnchecked(_random, values, _location, _scale);

@@ -310,6 +310,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <summary>
     /// Merges y bounds from this item into the specified boundary accumulator.
     /// </summary>
+    /// <param name="pb">The boundary accumulator to update.</param>
     public void MergeYBoundsInto(IPhysicalBoundaries pb)
     {
       _plotData.MergeYBoundsInto(pb);
@@ -322,6 +323,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <summary>
     /// Initializes z bounds from a template boundary object.
     /// </summary>
+    /// <param name="val">The template boundary object.</param>
     public void SetZBoundsFromTemplate(IPhysicalBoundaries val)
     {
       _plotData.SetVBoundsFromTemplate(val);
@@ -330,6 +332,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <summary>
     /// Merges z bounds from this item into the specified boundary accumulator.
     /// </summary>
+    /// <param name="pb">The boundary accumulator to update.</param>
     public void MergeZBoundsInto(IPhysicalBoundaries pb)
     {
       _plotData.MergeVBoundsInto(pb);
@@ -340,6 +343,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <summary>
     /// Collects group styles required by this plot item.
     /// </summary>
+    /// <param name="styles">The collection to receive the required styles.</param>
     public override void CollectStyles(PlotGroupStyleCollection styles)
     {
     }
@@ -347,6 +351,8 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <summary>
     /// Prepares group styles for this plot item.
     /// </summary>
+    /// <param name="externalGroups">The external group styles.</param>
+    /// <param name="layer">The plot layer.</param>
     public override void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, IPlotArea layer)
     {
     }
@@ -354,6 +360,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <summary>
     /// Applies prepared group styles to this plot item.
     /// </summary>
+    /// <param name="externalGroups">The external group styles.</param>
     public override void ApplyGroupStyles(PlotGroupStyleCollection externalGroups)
     {
     }

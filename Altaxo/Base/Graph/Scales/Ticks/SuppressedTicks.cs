@@ -120,6 +120,7 @@ namespace Altaxo.Graph.Scales.Ticks
     /// <summary>
     /// Copies values from another <see cref="SuppressedTicks"/> instance.
     /// </summary>
+    /// <param name="from">The instance to copy.</param>
     [MemberNotNull(nameof(_suppressedTickValues), nameof(_suppressedTicksByNumber))]
     protected void CopyFrom(SuppressedTicks from)
     {

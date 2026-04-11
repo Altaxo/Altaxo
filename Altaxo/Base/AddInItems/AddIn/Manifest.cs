@@ -117,6 +117,8 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Reads the manifest section from XML.
     /// </summary>
+    /// <param name="reader">The XML reader positioned on the manifest element.</param>
+    /// <param name="hintPath">The base path used to resolve relative references.</param>
     public void ReadManifestSection(XmlReader reader, string? hintPath)
     {
       if (reader.AttributeCount != 0)

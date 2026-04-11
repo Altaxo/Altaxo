@@ -333,6 +333,8 @@ namespace Altaxo.Gui.Serialization.Galactic
     /// <summary>
     /// Called if user presses the "Ok" button on the dialog box.
     /// </summary>
+    /// <param name="disposeController"><c>true</c> to dispose the controller after applying; otherwise, <c>false</c>.</param>
+    /// <returns><c>true</c> if the changes were applied successfully; otherwise, <c>false</c>.</returns>
     public bool Apply(bool disposeController)
     {
       if (m_CreateSpectrumFrom == CreateSpectrumFrom.Row)

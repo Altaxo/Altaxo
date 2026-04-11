@@ -94,6 +94,7 @@ namespace Altaxo.Calc.Distributions
     /// Tests whether the provided values are valid parameters for this distribution.
     /// </summary>
     /// <param name="scale">The scale (σ) of the distribution. Range: σ > 0.</param>
+    /// <returns><c>true</c> if the parameter defines a valid Rayleigh distribution; otherwise, <c>false</c>.</returns>
     public static bool IsValidParameterSet(double scale)
     {
       return scale > 0.0;
@@ -215,6 +216,7 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Fills an array with samples generated from the distribution.
     /// </summary>
+    /// <param name="values">The array to fill with samples from the distribution.</param>
     public void Samples(double[] values)
     {
       SamplesUnchecked(_random, values, _scale);

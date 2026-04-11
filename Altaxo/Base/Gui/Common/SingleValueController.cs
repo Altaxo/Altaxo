@@ -191,6 +191,7 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Handles validation of the value text.
     /// </summary>
+    /// <param name="e">The validation event arguments.</param>
     public virtual void EhView_ValidatingValue1(ValidationEventArgs<string> e)
     {
       _value1StringTemporary = e.ValueToValidate;

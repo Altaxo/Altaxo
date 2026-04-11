@@ -102,6 +102,7 @@ namespace Altaxo.Calc.Distributions
     /// </summary>
     /// <param name="degreesOfFreedom">The degree of freedom (ν) for the inverse Wishart distribution.</param>
     /// <param name="scale">The scale matrix (Ψ) for the inverse Wishart distribution.</param>
+    /// <returns><c>true</c> if the parameters define a valid inverse Wishart distribution; otherwise, <c>false</c>.</returns>
     public static bool IsValidParameterSet(double degreesOfFreedom, Matrix<double> scale)
     {
       if (scale.RowCount != scale.ColumnCount)

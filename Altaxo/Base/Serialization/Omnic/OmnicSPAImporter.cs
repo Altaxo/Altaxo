@@ -96,6 +96,7 @@ namespace Altaxo.Serialization.Omnic
     /// </summary>
     /// <param name="stream">The stream that contains the SPA data.</param>
     /// <param name="table">The table.</param>
+    /// <returns>The error message if importing fails; otherwise, <see langword="null"/>.</returns>
     public string? Import(Stream stream, DataTable table)
     {
       var result = new OmnicSPAReader(stream);

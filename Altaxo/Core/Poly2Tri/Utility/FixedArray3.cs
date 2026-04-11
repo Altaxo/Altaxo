@@ -39,6 +39,7 @@ namespace Poly2Tri
   /// <summary>
   /// Represents a fixed-size array with three reference-type elements.
   /// </summary>
+  /// <typeparam name="T">The element type of the array.</typeparam>
   public struct FixedArray3<T> : IEnumerable<T> where T : class
   {
     /// <summary>
@@ -150,6 +151,10 @@ namespace Poly2Tri
       return Enumerate().GetEnumerator();
     }
 
+    /// <summary>
+    /// Returns a non-generic enumerator that iterates over the three elements.
+    /// </summary>
+    /// <returns>A non-generic enumerator for the elements of the array.</returns>
     IEnumerator IEnumerable.GetEnumerator()
     {
       return GetEnumerator();

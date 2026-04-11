@@ -464,6 +464,9 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Returns the union of known axis-style identifiers and the supplied identifier sequences.
     /// </summary>
+    /// <param name="list1">The first additional sequence of axis-style identifiers.</param>
+    /// <param name="list2">The second additional sequence of axis-style identifiers.</param>
+    /// <returns>A sequence containing the known axis-style identifiers and any additional unique identifiers from the supplied sequences.</returns>
     public IEnumerable<CSLineID> GetJoinedAxisStyleIdentifier(IEnumerable<CSLineID> list1, IEnumerable<CSLineID> list2)
     {
       var dict = new Dictionary<CSLineID, object?>();
@@ -502,6 +505,9 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Returns the union of known plane identifiers and the supplied identifier sequences.
     /// </summary>
+    /// <param name="list1">The axis-style identifiers whose parallel planes should be included.</param>
+    /// <param name="list2">The additional plane identifiers to include.</param>
+    /// <returns>A sequence containing the known plane identifiers and any additional unique identifiers from the supplied sequences.</returns>
     public IEnumerable<CSPlaneID> GetJoinedPlaneIdentifier(IEnumerable<CSLineID> list1, IEnumerable<CSPlaneID> list2)
     {
       var set = new HashSet<CSPlaneID>();

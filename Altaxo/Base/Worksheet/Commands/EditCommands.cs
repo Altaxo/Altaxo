@@ -48,6 +48,7 @@ namespace Altaxo.Worksheet.Commands
     /// <summary>
     /// Remove the selected columns, rows or property columns.
     /// </summary>
+    /// <param name="ctrl">The worksheet controller providing the current selection.</param>
     public static void RemoveSelected(IWorksheetController ctrl)
     {
       using (var suspendToken = ctrl.DataTable.SuspendGetToken())
@@ -89,6 +90,7 @@ namespace Altaxo.Worksheet.Commands
     /// <summary>
     /// Remove all but the selected columns, rows or property columns.
     /// </summary>
+    /// <param name="ctrl">The worksheet controller providing the current selection.</param>
     public static void RemoveAllButSelected(IWorksheetController ctrl)
     {
       using (var suspendToken = ctrl.DataTable.SuspendGetToken())

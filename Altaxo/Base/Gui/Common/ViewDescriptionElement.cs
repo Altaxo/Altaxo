@@ -73,6 +73,7 @@ namespace Altaxo.Gui.Common
 
     #region ICloneable Members
 
+    /// <inheritdoc/>
     object ICloneable.Clone()
     {
       return new ViewDescriptionElement(this);

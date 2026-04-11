@@ -148,6 +148,7 @@ namespace Altaxo.Gui.Common
     /// Called when the user presses the OK button. Calls the Apply method of the
     /// hosted controller, then closes the form.
     /// </summary>
+    /// <param name="e">The cancel event arguments.</param>
     public void EhOK(System.ComponentModel.CancelEventArgs e)
     {
       var bSuccess = _hostedController?.Apply(true) ?? true;

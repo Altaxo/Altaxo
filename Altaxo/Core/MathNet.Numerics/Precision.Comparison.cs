@@ -38,6 +38,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <param name="maximumAbsoluteError">The absolute accuracy required for being almost equal.</param>
+    /// <returns>+1 if <paramref name="a"/> is greater than <paramref name="b"/>, -1 if smaller, or 0 if they are equal within the specified accuracy.</returns>
     public static int CompareTo(this double a, double b, double maximumAbsoluteError)
     {
       // NANs are equal to nothing,
@@ -75,6 +76,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <param name="decimalPlaces">The number of decimal places on which the values must be compared. Must be 1 or larger.</param>
+    /// <returns>+1 if <paramref name="a"/> is greater than <paramref name="b"/>, -1 if smaller, or 0 if they are equal within the specified decimal places.</returns>
     public static int CompareTo(this double a, double b, int decimalPlaces)
     {
       // NANs are equal to nothing,
@@ -112,6 +114,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <param name="maximumError">The relative accuracy required for being almost equal.</param>
+    /// <returns>+1 if <paramref name="a"/> is greater than <paramref name="b"/>, -1 if smaller, or 0 if they are equal within the specified relative error.</returns>
     public static int CompareToRelative(this double a, double b, double maximumError)
     {
       // NANs are equal to nothing,
@@ -149,6 +152,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <param name="decimalPlaces">The number of decimal places on which the values must be compared. Must be 1 or larger.</param>
+    /// <returns>+1 if <paramref name="a"/> is greater than <paramref name="b"/>, -1 if smaller, or 0 if they are equal within the specified decimal places.</returns>
     public static int CompareToRelative(this double a, double b, int decimalPlaces)
     {
       // NANs are equal to nothing,
@@ -186,6 +190,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <param name="maxNumbersBetween">The maximum error in terms of Units in Last Place (<c>ulps</c>), i.e. the maximum number of decimals that may be different. Must be 1 or larger.</param>
+    /// <returns>-1 if <paramref name="a"/> is smaller, 0 if the values are almost equal, or 1 if <paramref name="a"/> is larger.</returns>
     public static int CompareToNumbersBetween(this double a, double b, long maxNumbersBetween)
     {
       // NANs are equal to nothing,
@@ -676,9 +681,10 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Checks if a given double values is finite, i.e. neither NaN nor inifnity
+    /// Checks whether a given double value is finite, that is, neither NaN nor infinity.
     /// </summary>
-    /// <param name="value">The value to be checked fo finitenes.</param>
+    /// <param name="value">The value to check for finiteness.</param>
+    /// <returns><see langword="true"/> if <paramref name="value"/> is finite; otherwise, <see langword="false"/>.</returns>
     public static bool IsFinite(this double value)
     {
       return !double.IsNaN(value) && !double.IsInfinity(value);

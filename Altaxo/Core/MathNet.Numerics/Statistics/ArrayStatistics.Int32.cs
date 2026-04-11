@@ -38,6 +38,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or any entry is NaN.
     /// </summary>
     /// <param name="data">Sample array, no sorting is assumed.</param>
+    /// <returns>The sample mean, or <see cref="double.NaN"/> if the data is empty or contains NaN.</returns>
     public static double Mean(int[] data)
     {
       if (data.Length == 0)
@@ -60,6 +61,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or any entry is NaN.
     /// </summary>
     /// <param name="data">Sample array, no sorting is assumed.</param>
+    /// <returns>The geometric mean, or <see cref="double.NaN"/> if the data is empty or contains NaN.</returns>
     public static double GeometricMean(int[] data)
     {
       if (data.Length == 0)
@@ -81,6 +83,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or any entry is NaN.
     /// </summary>
     /// <param name="data">Sample array, no sorting is assumed.</param>
+    /// <returns>The harmonic mean, or <see cref="double.NaN"/> if the data is empty or contains NaN.</returns>
     public static double HarmonicMean(int[] data)
     {
       if (data.Length == 0)
@@ -103,6 +106,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data has less than two entries or if any entry is NaN.
     /// </summary>
     /// <param name="samples">Sample array, no sorting is assumed.</param>
+    /// <returns>The sample variance using Bessel's correction, or <see cref="double.NaN"/> if there are fewer than two samples or any sample is NaN.</returns>
     public static double Variance(int[] samples)
     {
       if (samples.Length <= 1)
@@ -128,6 +132,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or if any entry is NaN.
     /// </summary>
     /// <param name="population">Sample array, no sorting is assumed.</param>
+    /// <returns>The population variance, or <see cref="double.NaN"/> if the population is empty or contains NaN.</returns>
     public static double PopulationVariance(int[] population)
     {
       if (population.Length == 0)
@@ -153,6 +158,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data has less than two entries or if any entry is NaN.
     /// </summary>
     /// <param name="samples">Sample array, no sorting is assumed.</param>
+    /// <returns>The sample standard deviation using Bessel's correction, or <see cref="double.NaN"/> if there are fewer than two samples or any sample is NaN.</returns>
     public static double StandardDeviation(int[] samples)
     {
       return Math.Sqrt(Variance(samples));
@@ -164,6 +170,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or if any entry is NaN.
     /// </summary>
     /// <param name="population">Sample array, no sorting is assumed.</param>
+    /// <returns>The population standard deviation, or <see cref="double.NaN"/> if the population is empty or contains NaN.</returns>
     public static double PopulationStandardDeviation(int[] population)
     {
       return Math.Sqrt(PopulationVariance(population));
@@ -175,6 +182,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN for mean if data is empty or any entry is NaN and NaN for variance if data has less than two entries or if any entry is NaN.
     /// </summary>
     /// <param name="samples">Sample array, no sorting is assumed.</param>
+    /// <returns>A tuple containing the sample mean and the sample variance (Bessel-corrected). Each value may be <see cref="double.NaN"/> when not defined.</returns>
     public static (double Mean, double Variance) MeanVariance(int[] samples)
     {
       return (Mean(samples), Variance(samples));
@@ -186,6 +194,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN for mean if data is empty or any entry is NaN and NaN for standard deviation if data has less than two entries or if any entry is NaN.
     /// </summary>
     /// <param name="samples">Sample array, no sorting is assumed.</param>
+    /// <returns>A tuple containing the sample mean and the sample standard deviation (Bessel-corrected). Each value may be <see cref="double.NaN"/> when not defined.</returns>
     public static (double Mean, double StandardDeviation) MeanStandardDeviation(int[] samples)
     {
       return (Mean(samples), StandardDeviation(samples));
@@ -198,6 +207,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="samples1">First sample array.</param>
     /// <param name="samples2">Second sample array.</param>
+    /// <returns>The sample covariance between the two sample arrays, or <see cref="double.NaN"/> if there are fewer than two samples or any sample is NaN.</returns>
     public static double Covariance(int[] samples1, int[] samples2)
     {
       if (samples1.Length != samples2.Length)
@@ -228,6 +238,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="population1">First population array.</param>
     /// <param name="population2">Second population array.</param>
+    /// <returns>The population covariance between the two arrays, or <see cref="double.NaN"/> if the populations are empty or contain NaN.</returns>
     public static double PopulationCovariance(int[] population1, int[] population2)
     {
       if (population1.Length != population2.Length)
@@ -256,6 +267,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or any entry is NaN.
     /// </summary>
     /// <param name="data">Sample array, no sorting is assumed.</param>
+    /// <returns>The root mean square of the data, or <see cref="double.NaN"/> if the data is empty or contains NaN.</returns>
     public static double RootMeanSquare(int[] data)
     {
       if (data.Length == 0)

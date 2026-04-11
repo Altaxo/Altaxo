@@ -33,6 +33,7 @@ namespace Altaxo.Calc.LinearAlgebra
   public interface IComplexFloatSequence
   {
     /// <summary>Gets the element of the sequence at index i.</summary>
+    /// <param name="i">The zero-based element index.</param>
     /// <value>The element at index i.</value>
     Complex32T this[int i] { get; }
   }
@@ -52,6 +53,7 @@ namespace Altaxo.Calc.LinearAlgebra
   public interface IComplexFloatVector : IROComplexFloatVector
   {
     /// <summary>Read/write Accessor for the element at index i.</summary>
+    /// <param name="i">The zero-based element index.</param>
     /// <value>The element at index i.</value>
     new Complex32T this[int i] { get; set; }
   }

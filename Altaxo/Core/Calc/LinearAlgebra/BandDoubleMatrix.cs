@@ -88,6 +88,12 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
+    /// <summary>
+    /// Gets the element at the specified row and column indices.
+    /// </summary>
+    /// <param name="row">The zero-based row index of the element to get.</param>
+    /// <param name="col">The zero-based column index of the element to get.</param>
+    /// <returns>The value of the element at the specified row and column indices.</returns>
     double IROMatrix<double>.this[int row, int col]
     {
       get

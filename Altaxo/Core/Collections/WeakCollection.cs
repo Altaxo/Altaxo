@@ -27,6 +27,7 @@ namespace Altaxo.Collections
   /// The WeakCollection does not preserve any order among its contents; the ordering may be different each time the collection is enumerated.
   /// Since items may disappear at any time when they are garbage collected, this class cannot provide a useful implementation for Count and thus cannot implement the ICollection interface.
   /// </summary>
+  /// <typeparam name="T">The reference type stored in the collection.</typeparam>
   public class WeakCollection<T> : IEnumerable<T> where T : class
   {
     /// <summary>

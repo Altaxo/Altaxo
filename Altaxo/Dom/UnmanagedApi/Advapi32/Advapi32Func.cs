@@ -39,6 +39,16 @@ namespace Altaxo.UnmanagedApi.Advapi32
     /// <summary>
     /// Creates or opens the specified registry key.
     /// </summary>
+    /// <param name="hKey">A handle to an open registry key.</param>
+    /// <param name="lpSubKey">The name of the subkey to create or open.</param>
+    /// <param name="Reserved">Reserved. Must be zero.</param>
+    /// <param name="lpClass">The class of the key.</param>
+    /// <param name="dwOptions">The registry key options.</param>
+    /// <param name="samDesired">The requested security access mask.</param>
+    /// <param name="lpSecurityAttributes">A pointer to the security attributes for the key, or <see cref="IntPtr.Zero"/>.</param>
+    /// <param name="phkResult">When this method returns, contains the handle to the opened or created key.</param>
+    /// <param name="lpdwDisposition">When this method returns, contains information about whether the key was created or opened.</param>
+    /// <returns>The Win32 status code returned by the registry operation.</returns>
     [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Auto)]
     public static extern int RegCreateKeyEx(
                 [In] SafeRegistryHandle hKey,
@@ -51,9 +61,21 @@ namespace Altaxo.UnmanagedApi.Advapi32
                 [Out] out SafeRegistryHandle phkResult,
                 [Out] out RegResult lpdwDisposition);
 
+    /// <summary>
+    /// Deletes the specified subkey.
+    /// </summary>
+    /// <param name="hKey">A handle to an open registry key.</param>
+    /// <param name="lpSubKey">The name of the subkey to delete.</param>
+    /// <returns>The Win32 status code returned by the registry operation.</returns>
     [DllImport("advapi32.dll", CharSet = CharSet.Auto, BestFitMapping = false)]
     internal static extern int RegDeleteKey(SafeRegistryHandle hKey, string lpSubKey);
 
+    /// <summary>
+    /// Deletes the specified value from an open registry key.
+    /// </summary>
+    /// <param name="hKey">A handle to an open registry key.</param>
+    /// <param name="lpValueName">The name of the registry value to delete.</param>
+    /// <returns>The Win32 status code returned by the registry operation.</returns>
     [DllImport("advapi32.dll", CharSet = CharSet.Auto, BestFitMapping = false)]
     internal static extern int RegDeleteValue(SafeRegistryHandle hKey, string lpValueName);
   }

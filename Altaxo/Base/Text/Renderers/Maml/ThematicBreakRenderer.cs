@@ -36,6 +36,8 @@ namespace Altaxo.Text.Renderers.Maml
     /// <summary>
     /// Writes a thematic break.
     /// </summary>
+    /// <param name="renderer">The MAML renderer.</param>
+    /// <param name="obj">The thematic break block.</param>
     protected override void Write(MamlRenderer renderer, ThematicBreakBlock obj)
     {
       // since there is no direct equivalent to a thematic break in Maml,

@@ -291,12 +291,14 @@ namespace Altaxo.Data
       }
     }
 
+    /// <inheritdoc />
     object IAltaxoTableDataSource.ProcessOptionsObject
     {
       get => ProcessOptions;
       set => ProcessOptions = (TOptions)value;
     }
 
+    /// <inheritdoc />
     object IAltaxoTableDataSource.ProcessDataObject
     {
       get => _processData;

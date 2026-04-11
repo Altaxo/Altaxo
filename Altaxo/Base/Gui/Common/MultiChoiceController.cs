@@ -101,6 +101,7 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Initializes the controller state and updates the view.
     /// </summary>
+    /// <param name="initData">If set to <see langword="true"/>, the controller reloads its document state.</param>
     protected void Initialize(bool initData)
     {
       if (_doc is null)

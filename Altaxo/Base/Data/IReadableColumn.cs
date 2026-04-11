@@ -36,6 +36,8 @@ namespace Altaxo.Data
     /// <summary>
     /// The indexer property returns the element at index i as an AltaxoVariant.
     /// </summary>
+    /// <param name="i">The index of the element to read.</param>
+    /// <value>The element at the specified index.</value>
     AltaxoVariant this[int i]
     {
       get;

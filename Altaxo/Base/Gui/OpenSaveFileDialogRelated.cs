@@ -39,6 +39,7 @@ namespace Altaxo.Gui
     /// </summary>
     /// <param name="filter">The file filters, separated by semicolon. See example below.</param>
     /// <param name="description">The description of the filter. See example below..</param>
+    /// <returns>The current options instance.</returns>
     /// <example>
     /// <code>
     ///	options.AddFilter("*.csv;*.dat;*.txt", "Text files (*.csv;*.dat;*.txt)");

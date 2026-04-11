@@ -96,11 +96,13 @@ namespace Altaxo.Graph.Plot.Groups
     /// <summary>
     /// Creates a copy of this style.
     /// </summary>
+    /// <returns>A copied style instance.</returns>
     public IgnoreMissingDataPointsGroupStyle Clone()
     {
       return new IgnoreMissingDataPointsGroupStyle(this);
     }
 
+    /// <inheritdoc />
     object ICloneable.Clone()
     {
       return new IgnoreMissingDataPointsGroupStyle(this);
@@ -215,6 +217,7 @@ namespace Altaxo.Graph.Plot.Groups
     /// <summary>
     /// Adds the external group style when applicable.
     /// </summary>
+    /// <param name="externalGroups">The external group-style collection.</param>
     public static void AddExternalGroupStyle(IPlotGroupStyleCollection externalGroups)
     {
       // this group style is local only, so no addition is made here
@@ -262,12 +265,12 @@ namespace Altaxo.Graph.Plot.Groups
     }
 
     /// <summary>
-    /// Try to apply the symbol size group style. Returns true if successfull applied.
+    /// Tries to apply the ignore-missing-data-points group style.
     /// </summary>
-    /// <param name="externalGroups"></param>
-    /// <param name="localGroups"></param>
-    /// <param name="setter"></param>
-    /// <returns></returns>
+    /// <param name="externalGroups">The external group-style collection.</param>
+    /// <param name="localGroups">The local group-style collection.</param>
+    /// <param name="setter">The delegate that applies the ignore-missing-data-points setting.</param>
+    /// <returns><c>true</c> if the style was applied; otherwise, <c>false</c>.</returns>
     public static bool ApplyStyle(
       IPlotGroupStyleCollection externalGroups,
       IPlotGroupStyleCollection localGroups,

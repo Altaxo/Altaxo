@@ -304,12 +304,14 @@ namespace Altaxo.Data
       }
     }
 
+    /// <inheritdoc />
     object IAltaxoTableDataSource.ProcessOptionsObject
     {
       get => _processOptions;
       set => ProcessOptions = (DataTableTransposeOptions)value;
     }
 
+    /// <inheritdoc />
     object IAltaxoTableDataSource.ProcessDataObject
     {
       get => _processData;

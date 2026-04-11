@@ -120,6 +120,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// Wraps an <see cref="IList{T}"/> of values to an <see cref="IReadOnlyList{T}"/> implementation.
     /// This wrapper reads items directly from the supplied list.
     /// </summary>
+    /// <typeparam name="TW">The element type exposed by the wrapper.</typeparam>
     protected class WrapperIListToIRoVectorK<TW>(IList<TW> list) : IReadOnlyList<TW>
     {
       private IList<TW> _list = list;
@@ -141,6 +142,8 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       /// <summary>
       /// Gets the element at the specified index.
       /// </summary>
+      /// <param name="i">The zero-based index of the element to get.</param>
+      /// <returns>The element at the specified index.</returns>
       public TW this[int i]
       {
         get { return _list[i]; }
@@ -149,6 +152,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       /// <summary>
       /// Returns an enumerator that iterates through the list.
       /// </summary>
+      /// <returns>An enumerator that iterates through the collection.</returns>
       public IEnumerator<TW> GetEnumerator()
       {
         var len = Count;
@@ -156,6 +160,10 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
           yield return this[i];
       }
 
+      /// <summary>
+      /// Returns a non-generic enumerator that iterates through the list.
+      /// </summary>
+      /// <returns>A non-generic enumerator for the collection.</returns>
       IEnumerator IEnumerable.GetEnumerator()
       {
         var len = Count;
@@ -169,6 +177,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <summary>
     /// Wraps an <see cref="IList{T}"/> of <c>(TW, int)</c> tuples to an <see cref="IReadOnlyList{TW}"/> that exposes the first component of the tuple.
     /// </summary>
+    /// <typeparam name="TW">The element type exposed by the wrapper.</typeparam>
     protected class WrapperIListToIRoVectorV<TW>(IList<(TW, int)> list) : IReadOnlyList<TW>
     {
       private IList<(TW, int)> _list = list;
@@ -190,6 +199,8 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       /// <summary>
       /// Gets the first component of the tuple at the specified index.
       /// </summary>
+      /// <param name="i">The zero-based index of the element to get.</param>
+      /// <returns>The first component of the tuple at the specified index.</returns>
       public TW this[int i]
       {
         get { return _list[i].Item1; }
@@ -198,6 +209,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       /// <summary>
       /// Returns an enumerator that iterates through the projected values.
       /// </summary>
+      /// <returns>An enumerator that iterates through the projected values.</returns>
       public IEnumerator<TW> GetEnumerator()
       {
         var len = Count;
@@ -205,6 +217,10 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
           yield return this[i];
       }
 
+      /// <summary>
+      /// Returns a non-generic enumerator that iterates through the projected values.
+      /// </summary>
+      /// <returns>A non-generic enumerator for the projected values.</returns>
       IEnumerator IEnumerable.GetEnumerator()
       {
         var len = Count;
@@ -218,6 +234,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <summary>
     /// Wraps an <see cref="IList{T}"/> of <c>(TW, int)</c> tuples to an <see cref="IReadOnlyList{Int32}"/> that exposes the second component of the tuple (the curve index).
     /// </summary>
+    /// <typeparam name="TW">The element type stored in the tuple.</typeparam>
     protected class WrapperIListToIRoVectorV2<TW>(IList<(TW, int)> list) : IReadOnlyList<int>
     {
       private IList<(TW, int)> _list = list;
@@ -239,6 +256,8 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       /// <summary>
       /// Gets the second component (the int) of the tuple at the specified index.
       /// </summary>
+      /// <param name="i">The zero-based index of the element to get.</param>
+      /// <returns>The second component (the int) of the tuple at the specified index.</returns>
       public int this[int i]
       {
         get { return _list[i].Item2; }
@@ -247,6 +266,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       /// <summary>
       /// Returns an enumerator that iterates through the projected int values.
       /// </summary>
+      /// <returns>An enumerator that iterates through the projected int values.</returns>
       public IEnumerator<int> GetEnumerator()
       {
         var len = Count;
@@ -254,6 +274,10 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
           yield return this[i];
       }
 
+      /// <summary>
+      /// Returns a non-generic enumerator that iterates through the projected integer values.
+      /// </summary>
+      /// <returns>A non-generic enumerator for the projected integer values.</returns>
       IEnumerator IEnumerable.GetEnumerator()
       {
         var len = Count;

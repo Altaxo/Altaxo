@@ -233,6 +233,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// This wraps a jagged double array to the <see cref="IROMatrix{Double}" /> interface. The data is not copied!
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix.</typeparam>
     /// <param name="x">The jagged array. Each double[] vector is a row of the matrix.</param>
     /// <returns></returns>
     public static IBottomExtensibleMatrix<T> ToROMatrixFromLeftSpineJaggedArray<T>(T[][] x) where T : struct
@@ -243,6 +244,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// This wraps a jagged double array to the <see cref="IMatrix{Double}" /> interface. The data is not copied!
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix.</typeparam>
     /// <param name="x">The jagged array. Each double[] vector is a row of the matrix.</param>
     /// <returns></returns>
     public static IBottomExtensibleMatrix<T> ToMatrixFromLeftSpineJaggedArray<T>(T[][] x) where T : struct
@@ -265,7 +267,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Constructs an RE matrix from an array of double vectors. Attention! The double vectors (the second) dimensions are here
     /// the columns (!) of the matrix. The data is not copied.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix.</typeparam>
     /// <param name="x">Array of columns (!) of the matrix.</param>
+    /// <returns>A read-only matrix wrapper around the jagged array.</returns>
     public static IRightExtensibleMatrix<T> ToROMatrixFromTopSpineJaggedArray<T>(T[][] x) where T : struct
     {
       return new TopSpineJaggedArrayMatrix<T>(x);
@@ -275,7 +279,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Constructs an RE matrix from an array of double vectors. Attention! The double vectors (the second) dimensions are here
     /// the columns (!) of the matrix. The data is not copied.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix.</typeparam>
     /// <param name="x">Array of columns (!) of the matrix.</param>
+    /// <returns>A matrix wrapper around the jagged array.</returns>
     public static IRightExtensibleMatrix<T> ToMatrixFromTopSpineJaggedArray<T>(T[][] x) where T : struct
     {
       return new TopSpineJaggedArrayMatrix<T>(x);
@@ -285,7 +291,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Constructs an RE matrix from an array of double vectors. Attention! The double vectors (the second) dimensions are here
     /// the columns (!) of the matrix. The data is not copied.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix.</typeparam>
     /// <param name="wrapper">Wrapper around a top spine jagged array matrix.</param>
+    /// <returns>A matrix wrapper around the provided jagged array wrapper.</returns>
     public static IRightExtensibleMatrix<T> ToMatrix<T>(MatrixWrapperStructForTopSpineJaggedArray<T> wrapper) where T : struct
     {
       return new TopSpineJaggedArrayMatrix<T>(wrapper);
@@ -295,6 +303,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Wraps a linear array (column major order) into a read-only matrix.
     /// The array is packed in column major order, i.e. the first elements belong to the first column of the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix.</typeparam>
     /// <param name="arrayInColumMajorOrder">Linear array in column major order. The length has to be a multiple of <c>nRows</c>.</param>
     /// <param name="rows">Number of rows of the resulting matrix.</param>
     /// <returns>The read-only matrix wrappage of the linear array.</returns>
@@ -307,6 +316,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Wraps a linear array (column major order) into a read-only matrix.
     /// The array is packed in column major order, i.e. the first elements belong to the first column of the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix.</typeparam>
     /// <param name="wrapper">Wrapper around a linear array in column major order, which provides number of rows and columns.</param>
     /// <returns>The read-only matrix wrappage of the linear array.</returns>
     public static IROMatrix<T> ToROMatrix<T>(MatrixWrapperStructForColumnMajorOrderLinearArray<T> wrapper) where T : struct
@@ -317,6 +327,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Wraps a linear array into a read-write matrix. The array is packed column-wise, i.e. the first elements belong to the first column of the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix.</typeparam>
     /// <param name="x">Linear array. The length has to be a multiple of <c>nRows</c>.</param>
     /// <param name="nRows">Number of rows of the resulting matrix.</param>
     /// <returns>The read-only matrix wrappage of the linear array.</returns>
@@ -329,6 +340,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Wraps a linear array (column major order) into a read-write matrix.
     /// The array is packed in column major order, i.e. the first elements belong to the first column of the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix.</typeparam>
     /// <param name="wrapper">Wrapper around a linear array in column major order, which provides number of rows and columns.</param>
     /// <returns>The read-only matrix wrappage of the linear array.</returns>
     public static IROMatrix<T> ToMatrix<T>(MatrixWrapperStructForColumnMajorOrderLinearArray<T> wrapper) where T : struct
@@ -339,6 +351,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Returns a vector representing a matrix row by providing the matrix and the row number of that matrix that is wrapped.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix.</typeparam>
     /// <param name="x">The matrix.</param>
     /// <param name="row">The row number of the matrix that is wrapped to a vector.</param>
     /// <returns>A read-only vector representing the specified row of the matrix.</returns>
@@ -350,6 +363,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Returns a vector representing a matrix row by providing the matrix and the row number of that matrix that is wrapped.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix.</typeparam>
     /// <param name="x">The matrix.</param>
     /// <param name="row">The row number of the matrix that is wrapped to a vector.</param>
     /// <param name="columnoffset">The column of the matrix that corresponds to the first element of the vector.</param>
@@ -363,6 +377,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Returns a vector representing a matrix row by providing the matrix and the row number of that matrix that is wrapped.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix.</typeparam>
     /// <param name="x">The matrix.</param>
     /// <param name="row">The row number of the matrix that is wrapped to a vector.</param>
     /// <returns>A vector representing the specified row of the matrix.</returns>
@@ -374,6 +389,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Returns a vector representing a matrix row by providing the matrix and the row number of that matrix that is wrapped.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix.</typeparam>
     /// <param name="x">The matrix.</param>
     /// <param name="row">The row number of the matrix that is wrapped to a vector.</param>
     /// <param name="columnoffset">The column of the matrix that corresponds to the first element of the vector.</param>
@@ -387,6 +403,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Returns a read-only vector representing a matrix column by providing the matrix and the row number of that matrix that is wrapped.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix.</typeparam>
     /// <param name="x">The matrix.</param>
     /// <param name="column">The column number of the matrix that is wrapped to a vector.</param>
     /// <returns>A read-only vector representing the specified column of the matrix.</returns>
@@ -398,6 +415,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Returns a vector representing a matrix column by providing the matrix and the row number of that matrix that is wrapped.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix.</typeparam>
     /// <param name="x">The matrix.</param>
     /// <param name="column">The column number of the matrix that is wrapped to a vector.</param>
     /// <returns>A vector representing the specified column of the matrix.</returns>
@@ -409,6 +427,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Wraps a submatrix part, so that this part can be used as a matrix in operations (read-only).
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix.</typeparam>
     /// <param name="matrix">The matrix from which a submatrix part should be wrapped.</param>
     /// <param name="rowOffset">Starting row of the submatrix.</param>
     /// <param name="columnOffset">Starting column of the submatrix.</param>
@@ -423,6 +442,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Wraps a submatrix part, so that this part can be used as a matrix in operations.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix.</typeparam>
     /// <param name="matrix">The matrix from which a submatrix part should be wrapped.</param>
     /// <param name="rowoffset">Starting row of the submatrix.</param>
     /// <param name="columnoffset">Starting column of the submatrix.</param>
@@ -437,6 +457,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Wraps a read-only vector to a read-only diagonal matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix.</typeparam>
     /// <param name="vector">The vector to wrap.</param>
     /// <param name="vectoroffset">The index of the vector that is the first matrix element(0,0).</param>
     /// <param name="matrixdimensions">The number of rows = number of columns of the diagonal matrix.</param>
@@ -552,7 +573,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="a">Matrix. Must be a square matrix with both number of rows and columns the same as the vector length.</param>
     /// <param name="b">Vector. The vector must have the length as the rows and columns of the matrix.</param>
-    /// <result>The product b* A b.</result>
+    /// <returns>The product b* A b.</returns>
     public static double MultiplyVectorFromLeftAndRight(IROMatrix<double> a, IReadOnlyList<double> b)
     {
       int numil = b.Count; // number of summands for most inner loop
@@ -1656,6 +1677,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Copies one column of a source matrix into a destination matrix to a given row and column offset.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrices.</typeparam>
     /// <param name="sourceMatrix">The source matrix.</param>
     /// <param name="sourceColumnNumber">The source column number.</param>
     /// <param name="destinationMatrix">The destination matrix.</param>
@@ -1928,6 +1950,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>Returns the singular value decomposition for this matrix.</summary>
     /// <param name="input">The input matrix (is preserved).</param>
     /// <param name="output">The resulting matrix. Has to be of same dimensions as the input matrix.</param>
+    /// <returns>The singular value decomposition of the matrix.</returns>
     public static SingularValueDecomposition GetSingularValueDecomposition(IROMatrix<double> input, IMatrix<double> output)
     {
       MatrixMath.Copy(input, output);
@@ -1936,6 +1959,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     /// <summary>Returns the singular value decomposition for this matrix.</summary>
     /// <param name="inout">The input matrix, on return the resulting decomposed matrix.</param>
+    /// <returns>The singular value decomposition of the matrix.</returns>
     public static SingularValueDecomposition GetSingularValueDecomposition(IMatrix<double> inout)
     {
       return new SingularValueDecomposition(inout);

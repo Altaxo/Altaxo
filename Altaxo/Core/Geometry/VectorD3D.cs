@@ -187,6 +187,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Adds two vectors component-wise.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The component-wise sum.</returns>
     public static VectorD3D operator +(VectorD3D a, VectorD3D b)
     {
       return new VectorD3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
@@ -195,6 +198,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Subtracts two vectors component-wise.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The component-wise difference.</returns>
     public static VectorD3D operator -(VectorD3D a, VectorD3D b)
     {
       return new VectorD3D(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
@@ -203,6 +209,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Multiplies a vector by a scalar.
     /// </summary>
+    /// <param name="a">The vector.</param>
+    /// <param name="b">The scalar factor.</param>
+    /// <returns>The scaled vector.</returns>
     public static VectorD3D operator *(VectorD3D a, double b)
     {
       return new VectorD3D(a.X * b, a.Y * b, a.Z * b);
@@ -211,6 +220,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Multiplies a scalar by a vector.
     /// </summary>
+    /// <param name="b">The scalar factor.</param>
+    /// <param name="a">The vector.</param>
+    /// <returns>The scaled vector.</returns>
     public static VectorD3D operator *(double b, VectorD3D a)
     {
       return new VectorD3D(a.X * b, a.Y * b, a.Z * b);
@@ -219,6 +231,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Divides a vector by a scalar.
     /// </summary>
+    /// <param name="a">The vector.</param>
+    /// <param name="b">The scalar divisor.</param>
+    /// <returns>The scaled vector.</returns>
     public static VectorD3D operator /(VectorD3D a, double b)
     {
       return new VectorD3D(a.X / b, a.Y / b, a.Z / b);
@@ -227,6 +242,8 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Negates a vector.
     /// </summary>
+    /// <param name="b">The vector to negate.</param>
+    /// <returns>The negated vector.</returns>
     public static VectorD3D operator -(VectorD3D b)
     {
       return new VectorD3D(-b.X, -b.Y, -b.Z);
@@ -235,6 +252,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Checks if two vectors are equal.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns><see langword="true"/> if the vectors are equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator ==(VectorD3D a, VectorD3D b)
     {
       return a.X == b.X && a.Y == b.Y && a.Z == b.Z;
@@ -243,6 +263,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Checks if two vectors are not equal.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns><see langword="true"/> if the vectors are not equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator !=(VectorD3D a, VectorD3D b)
     {
       return !(a.X == b.X && a.Y == b.Y && a.Z == b.Z);
@@ -252,6 +275,7 @@ namespace Altaxo.Geometry
     /// Converts a <see cref="PointD3D"/> to a <see cref="VectorD3D"/>.
     /// </summary>
     /// <param name="v">The point to convert.</param>
+    /// <returns>The converted vector.</returns>
     public static explicit operator VectorD3D(PointD3D v)
     {
       return new VectorD3D(v.X, v.Y, v.Z);
@@ -264,6 +288,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Multiplies two vectors elementwise.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The component-wise product.</returns>
     public static VectorD3D MultiplicationElementwise(VectorD3D a, VectorD3D b)
     {
       return new VectorD3D(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
@@ -272,6 +299,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Calculates the dot product of two vectors.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The dot product.</returns>
     public static double DotProduct(VectorD3D a, VectorD3D b)
     {
       return a.X * b.X + a.Y * b.Y + a.Z * b.Z;
@@ -280,6 +310,8 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Creates a normalized version of the given vector.
     /// </summary>
+    /// <param name="pt">The vector to normalize.</param>
+    /// <returns>The normalized vector.</returns>
     public static VectorD3D CreateNormalized(VectorD3D pt)
     {
       var ilen = 1 / pt.Length;
@@ -289,6 +321,10 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Creates a normalized vector from the given x, y, and z components.
     /// </summary>
+    /// <param name="x">The x component.</param>
+    /// <param name="y">The y component.</param>
+    /// <param name="z">The z component.</param>
+    /// <returns>The normalized vector.</returns>
     public static VectorD3D CreateNormalized(double x, double y, double z)
     {
       var k = x * x + y * y + z * z;
@@ -306,6 +342,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Creates a vector that is the sum of two vectors.
     /// </summary>
+    /// <param name="pt1">The first vector.</param>
+    /// <param name="pt2">The second vector.</param>
+    /// <returns>The vector sum.</returns>
     public static VectorD3D CreateSum(VectorD3D pt1, VectorD3D pt2)
     {
       return new VectorD3D(pt1.X + pt2.X, pt1.Y + pt2.Y, pt1.Z + pt2.Z);
@@ -314,6 +353,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Creates a scaled version of the given vector.
     /// </summary>
+    /// <param name="pt">The vector to scale.</param>
+    /// <param name="scale">The scaling factor.</param>
+    /// <returns>The scaled vector.</returns>
     public static VectorD3D CreateScaled(VectorD3D pt, double scale)
     {
       return new VectorD3D(pt.X * scale, pt.Y * scale, pt.Z * scale);
@@ -322,6 +364,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Calculates the cross product of two vectors.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The cross product.</returns>
     public static VectorD3D CrossProduct(VectorD3D a, VectorD3D b)
     {
       return new VectorD3D(a.Y * b.Z - a.Z * b.Y, a.Z * b.X - a.X * b.Z, a.X * b.Y - a.Y * b.X);
@@ -330,6 +375,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Calculates the angle between two vectors in radians.
     /// </summary>
+    /// <param name="vector1">The first vector.</param>
+    /// <param name="vector2">The second vector.</param>
+    /// <returns>The angle between the two vectors in radians.</returns>
     public static double AngleBetweenInRadians(VectorD3D vector1, VectorD3D vector2)
     {
       vector1 = vector1.Normalized;

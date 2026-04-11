@@ -41,10 +41,11 @@ namespace Altaxo.Text
     /// Exports the specified <see cref="TextDocument"/> to markdown text and resource images.
     /// </summary>
     /// <param name="document">The document to export.</param>
-    /// <param name="resourceKeyOfDocument">The resource key of document.</param>
-    /// <param name="prefixOfResourceFiles">The prefix of resource files. It is assumed that string resources and image resources reside in the same folder.
-    /// Example: If the resource files reside in the source folder /Calc/FitFunctions, you must provide 'Altaxo.Calc.FitFunctions' (Altaxo first because its the namespace of the assembly).
+    /// <param name="resourceKeyOfDocument">The resource key of the document.</param>
+    /// <param name="prefixOfResourceFiles">The prefix of the resource files. It is assumed that string resources and image resources reside in the same folder.
+    /// Example: If the resource files reside in the source folder /Calc/FitFunctions, you must provide 'Altaxo.Calc.FitFunctions' (Altaxo first because it is the namespace of the assembly).
     /// </param>
+    /// <returns>The exported markdown document together with the referenced images as byte arrays.</returns>
     public static (string markdownDocument, Dictionary<string, byte[]> Images) Export(
       TextDocument document,
       string resourceKeyOfDocument,

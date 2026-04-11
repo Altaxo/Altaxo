@@ -31,35 +31,60 @@ using System;
 
 namespace Altaxo.Calc.Optimization.ObjectiveFunctions
 {
+  /// <summary>
+  /// Represents a scalar objective function evaluation that stores only the value.
+  /// </summary>
   internal class ScalarValueObjectiveFunctionEvaluation : IScalarObjectiveFunctionEvaluation
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScalarValueObjectiveFunctionEvaluation"/> class.
+    /// </summary>
+    /// <param name="point">The evaluation point.</param>
+    /// <param name="value">The evaluated objective value.</param>
     public ScalarValueObjectiveFunctionEvaluation(double point, double value)
     {
       Point = point;
       Value = value;
     }
 
+    /// <inheritdoc />
     public double Point { get; }
+    /// <inheritdoc />
     public double Value { get; }
 
+    /// <inheritdoc />
     public double Derivative => throw new NotSupportedException();
 
+    /// <inheritdoc />
     public double SecondDerivative => throw new NotSupportedException();
   }
 
+  /// <summary>
+  /// Represents a scalar objective function that evaluates only the value.
+  /// </summary>
   internal class ScalarValueObjectiveFunction : IScalarObjectiveFunction
   {
+    /// <summary>
+    /// Gets the objective function delegate.
+    /// </summary>
     public Func<double, double> Objective { get; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScalarValueObjectiveFunction"/> class.
+    /// </summary>
+    /// <param name="objective">The objective function delegate.</param>
     public ScalarValueObjectiveFunction(Func<double, double> objective)
     {
       Objective = objective;
     }
 
+    /// <inheritdoc />
     public bool IsDerivativeSupported => false;
 
+    /// <inheritdoc />
     public bool IsSecondDerivativeSupported => false;
 
+    /// <inheritdoc />
     public IScalarObjectiveFunctionEvaluation Evaluate(double point)
     {
       return new ScalarValueObjectiveFunctionEvaluation(point, Objective(point));

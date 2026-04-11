@@ -101,6 +101,8 @@ namespace Altaxo.Worksheet
     /// <summary>
     /// Gets the first table row that is visible.
     /// </summary>
+    /// <param name="layout">The worksheet layout.</param>
+    /// <param name="VertScrollPos">The vertical scroll position.</param>
     /// <returns>The first table row that is visible.</returns>
     public static int GetFirstVisibleTableRow(WorksheetLayout layout, int VertScrollPos)
     {
@@ -147,6 +149,10 @@ namespace Altaxo.Worksheet
     /// <summary>
     /// Gets the last visible table row.
     /// </summary>
+    /// <param name="layout">The worksheet layout.</param>
+    /// <param name="VertScrollPos">The vertical scroll position.</param>
+    /// <param name="TableAreaHeight">The height of the table area.</param>
+    /// <returns>The last visible table row.</returns>
     public static int GetLastVisibleTableRow(WorksheetLayout layout, int VertScrollPos, double TableAreaHeight)
     {
       return GetFirstVisibleTableRow(layout, VertScrollPos) + GetVisibleTableRows(0, TableAreaHeight, layout, VertScrollPos) - 1;
@@ -155,6 +161,10 @@ namespace Altaxo.Worksheet
     /// <summary>
     /// Gets the last fully visible table row.
     /// </summary>
+    /// <param name="layout">The worksheet layout.</param>
+    /// <param name="VertScrollPos">The vertical scroll position.</param>
+    /// <param name="TableAreaHeight">The height of the table area.</param>
+    /// <returns>The last fully visible table row.</returns>
     public static int GetLastFullyVisibleTableRow(WorksheetLayout layout, int VertScrollPos, double TableAreaHeight)
     {
       return GetFirstVisibleTableRow(layout, VertScrollPos) + GetFullyVisibleTableRows(0, TableAreaHeight, layout, VertScrollPos) - 1;
@@ -163,6 +173,11 @@ namespace Altaxo.Worksheet
     /// <summary>
     /// Gets the number of fully visible table rows between two vertical coordinates.
     /// </summary>
+    /// <param name="top">The top y coordinate.</param>
+    /// <param name="bottom">The bottom y coordinate.</param>
+    /// <param name="layout">The worksheet layout.</param>
+    /// <param name="VertScrollPos">The vertical scroll position.</param>
+    /// <returns>The number of fully visible table rows.</returns>
     public static int GetFullyVisibleTableRows(double top, double bottom, WorksheetLayout layout, int VertScrollPos)
     {
       int posOfDataRow0 = GetVerticalPositionOfFirstVisibleDataRow(layout, VertScrollPos);
@@ -178,6 +193,10 @@ namespace Altaxo.Worksheet
     /// <summary>
     /// Gets the top coordinate of the specified table row.
     /// </summary>
+    /// <param name="nRow">The row index.</param>
+    /// <param name="layout">The worksheet layout.</param>
+    /// <param name="VertScrollPos">The vertical scroll position.</param>
+    /// <returns>The top coordinate of the table row.</returns>
     public static int GetTopCoordinateOfTableRow(int nRow, WorksheetLayout layout, int VertScrollPos)
     {
       return GetVerticalPositionOfFirstVisibleDataRow(layout, VertScrollPos) + (nRow - (VertScrollPos < 0 ? 0 : VertScrollPos)) * layout.RowHeaderStyle.Height;
@@ -190,6 +209,8 @@ namespace Altaxo.Worksheet
     /// <summary>
     /// Gets the number of enabled property columns.
     /// </summary>
+    /// <param name="layout">The worksheet layout.</param>
+    /// <returns>The number of enabled property columns.</returns>
     public static int GetTotalEnabledPropertyColumns(WorksheetLayout layout)
     {
       return layout.ShowPropertyColumns ? layout.DataTable.PropertyColumnCount : 0;
@@ -198,6 +219,9 @@ namespace Altaxo.Worksheet
     /// <summary>
     /// Gets the first visible property column.
     /// </summary>
+    /// <param name="layout">The worksheet layout.</param>
+    /// <param name="VertScrollPos">The vertical scroll position.</param>
+    /// <returns>The first visible property column, or <c>-1</c> if no property column is visible.</returns>
     public static int GetFirstVisiblePropertyColumn(WorksheetLayout layout, int VertScrollPos)
     {
       if (layout.ShowPropertyColumns && VertScrollPos < 0)
@@ -214,6 +238,10 @@ namespace Altaxo.Worksheet
     /// <summary>
     /// Gets the first visible property column below the specified top coordinate.
     /// </summary>
+    /// <param name="top">The top y coordinate.</param>
+    /// <param name="layout">The worksheet layout.</param>
+    /// <param name="VertScrollPos">The vertical scroll position.</param>
+    /// <returns>The first visible property column below the specified coordinate, or <c>-1</c> if none is visible.</returns>
     public static int GetFirstVisiblePropertyColumn(double top, WorksheetLayout layout, int VertScrollPos)
     {
       if (VertScrollPos >= 0 || !layout.ShowPropertyColumns)
@@ -226,6 +254,10 @@ namespace Altaxo.Worksheet
     /// <summary>
     /// Gets the last fully visible property column.
     /// </summary>
+    /// <param name="layout">The worksheet layout.</param>
+    /// <param name="VertScrollPos">The vertical scroll position.</param>
+    /// <param name="TableAreaHeight">The height of the table area.</param>
+    /// <returns>The last fully visible property column.</returns>
     public static int GetLastFullyVisiblePropertyColumn(WorksheetLayout layout, int VertScrollPos, double TableAreaHeight)
     {
       return GetFirstVisiblePropertyColumn(layout, VertScrollPos) + GetFullyVisiblePropertyColumns(layout, VertScrollPos, TableAreaHeight) - 1;
@@ -234,6 +266,10 @@ namespace Altaxo.Worksheet
     /// <summary>
     /// Gets the top coordinate of the specified property column.
     /// </summary>
+    /// <param name="nCol">The property column index.</param>
+    /// <param name="layout">The worksheet layout.</param>
+    /// <param name="VertScrollPos">The vertical scroll position.</param>
+    /// <returns>The top coordinate of the property column.</returns>
     public static int GetTopCoordinateOfPropertyColumn(int nCol, WorksheetLayout layout, int VertScrollPos)
     {
       return layout.ColumnHeaderStyle.Height + (nCol - GetFirstVisiblePropertyColumn(layout, VertScrollPos)) * layout.PropertyColumnHeaderStyle.Height;
@@ -242,6 +278,11 @@ namespace Altaxo.Worksheet
     /// <summary>
     /// Gets the number of visible property columns between two vertical coordinates.
     /// </summary>
+    /// <param name="top">The top y coordinate.</param>
+    /// <param name="bottom">The bottom y coordinate.</param>
+    /// <param name="layout">The worksheet layout.</param>
+    /// <param name="VertScrollPos">The vertical scroll position.</param>
+    /// <returns>The number of visible property columns.</returns>
     public static int GetVisiblePropertyColumns(double top, double bottom, WorksheetLayout layout, int VertScrollPos)
     {
       if (layout.ShowPropertyColumns)
@@ -258,9 +299,9 @@ namespace Altaxo.Worksheet
     /// <summary>
     /// Gets the number of fully visible property columns in the full table area, i.e. between the y coordinates 0 to TableAreaHeight.
     /// </summary>
-    /// <param name="layout"></param>
-    /// <param name="VertScrollPos"></param>
-    /// <param name="TableAreaHeight"></param>
+    /// <param name="layout">The worksheet layout.</param>
+    /// <param name="VertScrollPos">The vertical scroll position.</param>
+    /// <param name="TableAreaHeight">The height of the table area.</param>
     /// <returns>The number of fully visible property columns.</returns>
     public static int GetFullyVisiblePropertyColumns(WorksheetLayout layout, int VertScrollPos, double TableAreaHeight)
     {
@@ -270,6 +311,11 @@ namespace Altaxo.Worksheet
     /// <summary>
     /// Gets the number of fully visible property columns between two vertical coordinates.
     /// </summary>
+    /// <param name="top">The top y coordinate.</param>
+    /// <param name="bottom">The bottom y coordinate.</param>
+    /// <param name="layout">The worksheet layout.</param>
+    /// <param name="VertScrollPos">The vertical scroll position.</param>
+    /// <returns>The number of fully visible property columns.</returns>
     public static int GetFullyVisiblePropertyColumns(double top, double bottom, WorksheetLayout layout, int VertScrollPos)
     {
       if (layout.ShowPropertyColumns)
@@ -284,6 +330,9 @@ namespace Altaxo.Worksheet
     }
 
     /// <summary>Returns the remaining number of property columns that could be shown below the current scroll position.</summary>
+    /// <param name="layout">The worksheet layout.</param>
+    /// <param name="VertScrollPos">The vertical scroll position.</param>
+    /// <returns>The remaining number of enabled property columns.</returns>
     public static int GetRemainingEnabledPropertyColumns(WorksheetLayout layout, int VertScrollPos)
     {
       return layout.ShowPropertyColumns ? Math.Max(0, -VertScrollPos) : 0;
@@ -296,6 +345,12 @@ namespace Altaxo.Worksheet
     /// <summary>
     /// Gets the first visible data column and the number of visible columns.
     /// </summary>
+    /// <param name="left">The left x coordinate.</param>
+    /// <param name="right">The right x coordinate.</param>
+    /// <param name="layout">The worksheet layout.</param>
+    /// <param name="HorzScrollPos">The horizontal scroll position.</param>
+    /// <param name="numVisibleColumns">Receives the number of visible columns.</param>
+    /// <returns>The first visible data column.</returns>
     public static int GetFirstAndNumberOfVisibleColumn(double left, double right, WorksheetLayout layout, int HorzScrollPos, out int numVisibleColumns)
     {
       var data = layout.DataTable.DataColumns;
@@ -328,6 +383,10 @@ namespace Altaxo.Worksheet
     /// <summary>
     /// Gets the number of visible data columns.
     /// </summary>
+    /// <param name="layout">The worksheet layout.</param>
+    /// <param name="HorzScrollPos">The horizontal scroll position.</param>
+    /// <param name="TableAreaWidth">The width of the table area.</param>
+    /// <returns>The number of visible data columns.</returns>
     public static int GetVisibleColumns(WorksheetLayout layout, int HorzScrollPos, double TableAreaWidth)
     {
       var data = layout.DataTable.DataColumns;
@@ -351,6 +410,10 @@ namespace Altaxo.Worksheet
     /// <summary>
     /// Gets the number of fully visible data columns.
     /// </summary>
+    /// <param name="layout">The worksheet layout.</param>
+    /// <param name="HorzScrollPos">The horizontal scroll position.</param>
+    /// <param name="TableAreaWidth">The width of the table area.</param>
+    /// <returns>The number of fully visible data columns.</returns>
     public static int GetFullyVisibleColumns(WorksheetLayout layout, int HorzScrollPos, double TableAreaWidth)
     {
       var data = layout.DataTable.DataColumns;
@@ -373,6 +436,10 @@ namespace Altaxo.Worksheet
     /// <summary>
     /// Gets the last fully visible data column.
     /// </summary>
+    /// <param name="layout">The worksheet layout.</param>
+    /// <param name="HorzScrollPos">The horizontal scroll position.</param>
+    /// <param name="TableAreaWidth">The width of the table area.</param>
+    /// <returns>The last fully visible data column.</returns>
     public static int GetLastFullyVisibleColumn(WorksheetLayout layout, int HorzScrollPos, double TableAreaWidth)
     {
       return HorzScrollPos + GetFullyVisibleColumns(layout, HorzScrollPos, TableAreaWidth) - 1;
@@ -401,17 +468,13 @@ namespace Altaxo.Worksheet
     }
 
     /// <summary>
-    /// retrieves, to which column should be scrolled in order to make
-    /// the column nForLastCol the last visible column
-    /// </summary>
-    /// <param name="nForLastCol">the column number which should be the last visible column</param>
-    /// <param name="layout">Worksheet layout referring to.</param>
-    /// <param name="HorzScrollPos">Value of the horizontal scroll bar.</param>
-    /// <param name="TableAreaWidth">Width of the table area shown.</param>
-    /// <returns>the number of the first visible column</returns>
-    /// <summary>
     /// Gets the first visible column required to show a given last visible column.
     /// </summary>
+    /// <param name="nForLastCol">The column number that should become the last visible column.</param>
+    /// <param name="layout">The worksheet layout.</param>
+    /// <param name="HorzScrollPos">The horizontal scroll position.</param>
+    /// <param name="TableAreaWidth">The width of the visible table area.</param>
+    /// <returns>The number of the first visible column.</returns>
     public static int GetFirstVisibleColumnForLastVisibleColumn(int nForLastCol, WorksheetLayout layout, int HorzScrollPos, double TableAreaWidth)
     {
       var data = layout.DataTable.DataColumns;
@@ -464,6 +527,12 @@ namespace Altaxo.Worksheet
     /// <summary>
     /// Gets the coordinates of a data cell.
     /// </summary>
+    /// <param name="nCol">The data column index.</param>
+    /// <param name="nRow">The data row index.</param>
+    /// <param name="layout">The worksheet layout.</param>
+    /// <param name="HorzScrollPos">The horizontal scroll position.</param>
+    /// <param name="VertScrollPos">The vertical scroll position.</param>
+    /// <returns>The rectangle describing the data cell.</returns>
     public static RectangleD2D GetCoordinatesOfDataCell(int nCol, int nRow, WorksheetLayout layout, int HorzScrollPos, int VertScrollPos)
     {
       double y, h;
@@ -477,6 +546,12 @@ namespace Altaxo.Worksheet
     /// <summary>
     /// Gets the coordinates of a property cell.
     /// </summary>
+    /// <param name="nCol">The property column index.</param>
+    /// <param name="nRow">The data column index.</param>
+    /// <param name="layout">The worksheet layout.</param>
+    /// <param name="HorzScrollPos">The horizontal scroll position.</param>
+    /// <param name="VertScrollPos">The vertical scroll position.</param>
+    /// <returns>The rectangle describing the property cell.</returns>
     public static RectangleD2D GetCoordinatesOfPropertyCell(int nCol, int nRow, WorksheetLayout layout, int HorzScrollPos, int VertScrollPos)
     {
       double y, h;
@@ -580,6 +655,7 @@ namespace Altaxo.Worksheet
     /// <param name="layout">The worksheet area.</param>
     /// <param name="HorzScrollPos">Value of the horizontal scroll bar.</param>
     /// <param name="VertScrollPos">Value of the vertical scroll bar.</param>
+    /// <returns>The area information for the specified position.</returns>
     public static AreaInfo GetAreaType(double positionX, double positionY, WorksheetLayout layout, int HorzScrollPos, int VertScrollPos)
     {
       //var _clickedCellRectangle = new Rect(0,0,0,0);

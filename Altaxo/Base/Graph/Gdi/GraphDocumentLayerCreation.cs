@@ -76,6 +76,7 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Creates a new layer with bottom x axis and left y axis, which is not linked.
     /// </summary>
+    /// <param name="doc">The graph document to which the layer is added.</param>
     public static void CreateNewLayerNormalBottomXLeftY(this GraphDocument doc)
     {
       var context = doc.GetPropertyHierarchy();
@@ -95,6 +96,8 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Creates a new layer with top x axis, which is linked to the same position with top x axis and right y axis.
     /// </summary>
+    /// <param name="doc">The graph document to which the layer is added.</param>
+    /// <param name="linklayernumber">The index path of the layer to link to.</param>
     public static void CreateNewLayerLinkedTopX(this GraphDocument doc, IEnumerable<int> linklayernumber)
     {
       var context = doc.GetPropertyHierarchy();
@@ -105,6 +108,8 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Creates a new layer with right y axis, which is linked to the same position with top x axis and right y axis.
     /// </summary>
+    /// <param name="doc">The graph document to which the layer is added.</param>
+    /// <param name="linklayernumber">The index path of the layer to link to.</param>
     public static void CreateNewLayerLinkedRightY(this GraphDocument doc, IEnumerable<int> linklayernumber)
     {
       var context = doc.GetPropertyHierarchy();
@@ -115,6 +120,8 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Creates a new layer with bottom x axis and left y axis, which is linked to the same position with top x axis and right y axis.
     /// </summary>
+    /// <param name="doc">The graph document to which the layer is added.</param>
+    /// <param name="linklayernumber">The index path of the layer to link to.</param>
     public static void CreateNewLayerLinkedTopXRightY(this GraphDocument doc, IEnumerable<int> linklayernumber)
     {
       var context = doc.GetPropertyHierarchy();
@@ -126,6 +133,8 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Creates a new layer with bottom x axis and left y axis, which is linked to the same position with top x axis and right y axis. The x axis is linked straight to the x axis of the linked layer.
     /// </summary>
+    /// <param name="doc">The graph document to which the layer is added.</param>
+    /// <param name="linklayernumber">The index path of the layer to link to.</param>
     public static void CreateNewLayerLinkedTopXRightY_XAxisStraight(this GraphDocument doc, IEnumerable<int> linklayernumber)
     {
       var context = doc.GetPropertyHierarchy();

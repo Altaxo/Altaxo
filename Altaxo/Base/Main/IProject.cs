@@ -146,6 +146,7 @@ namespace Altaxo.Main
     /// Removes the provided project item from the Altaxo project.
     /// </summary>
     /// <param name="item">The item to remove.</param>
+    /// <returns><c>true</c> if the item was removed; otherwise, <c>false</c>.</returns>
     /// <exception cref="System.ArgumentNullException">item</exception>
     /// <exception cref="System.ArgumentOutOfRangeException">The type of item is not yet considered here.</exception>
     public bool RemoveItem(IProjectItem item);

@@ -51,12 +51,13 @@ namespace Altaxo.Calc.LinearAlgebra.Single.Factorization
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DenseQR"/> class. This object will compute the
-    /// QR factorization when the constructor is called and cache it's factorization.
+    /// QR factorization when the constructor is called and cache its factorization.
     /// </summary>
     /// <param name="matrix">The matrix to factor.</param>
     /// <param name="method">The QR factorization method to use.</param>
+    /// <returns>A <see cref="DenseQR"/> instance for <paramref name="matrix"/>.</returns>
     /// <exception cref="ArgumentNullException">If <paramref name="matrix"/> is <c>null</c>.</exception>
-    /// <exception cref="ArgumentException">If <paramref name="matrix"/> row count is less then column count</exception>
+    /// <exception cref="ArgumentException">If <paramref name="matrix"/> row count is less than column count.</exception>
     public static DenseQR Create(DenseMatrix matrix, QRMethod method = QRMethod.Full)
     {
       if (matrix.RowCount < matrix.ColumnCount)

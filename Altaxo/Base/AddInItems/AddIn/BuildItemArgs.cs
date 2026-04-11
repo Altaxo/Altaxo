@@ -36,6 +36,10 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Initializes a new instance of the <see cref="BuildItemArgs"/> class.
     /// </summary>
+    /// <param name="parameter">The parameter passed to the build operation.</param>
+    /// <param name="codon">The codon to build.</param>
+    /// <param name="conditions">The conditions that apply to the item.</param>
+    /// <param name="subItemNode">The node that contains sub-items, if available.</param>
     public BuildItemArgs(object? parameter, Codon codon, IReadOnlyCollection<ICondition> conditions, AddInTreeNode? subItemNode)
     {
       if (codon is null)
@@ -99,6 +103,8 @@ namespace Altaxo.AddInItems
     /// Builds the sub-items.
     /// Conditions on this node are also applied to the sub-nodes.
     /// </summary>
+    /// <typeparam name="T">The expected item type.</typeparam>
+    /// <returns>The built sub-items.</returns>
     public List<T> BuildSubItems<T>()
     {
       if (_subItemNode is null)

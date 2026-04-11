@@ -103,6 +103,7 @@ namespace Altaxo.Calc.Distributions
     /// <param name="population">The size of the population (N).</param>
     /// <param name="success">The number successes within the population (K, M).</param>
     /// <param name="draws">The number of draws without replacement (n).</param>
+    /// <returns><c>true</c> if the parameters define a valid hypergeometric distribution; otherwise, <c>false</c>.</returns>
     public static bool IsValidParameterSet(int population, int success, int draws)
     {
       return population >= 0 && success >= 0 && draws >= 0 && success <= population && draws <= population;
@@ -310,6 +311,14 @@ namespace Altaxo.Calc.Distributions
       return x;
     }
 
+    /// <summary>
+    /// Fills an array with hypergeometric samples without validating the parameters.
+    /// </summary>
+    /// <param name="rnd">The random number generator to use.</param>
+    /// <param name="values">The array to fill with samples.</param>
+    /// <param name="population">The size of the population.</param>
+    /// <param name="success">The number of successes in the population.</param>
+    /// <param name="draws">The number of draws.</param>
     private static void SamplesUnchecked(System.Random rnd, int[] values, int population, int success, int draws)
     {
       for (int i = 0; i < values.Length; i++)
@@ -327,9 +336,9 @@ namespace Altaxo.Calc.Distributions
     }
 
     /// <summary>
-    /// Samples a Hypergeometric distributed random variable.
+    /// Samples a hypergeometrically distributed random variable.
     /// </summary>
-    /// <returns>The number of successes in n trials.</returns>
+    /// <returns>The number of successes in the draws.</returns>
     public int Sample()
     {
       return SampleUnchecked(_random, _population, _success, _draws);
@@ -338,15 +347,16 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Fills an array with samples generated from the distribution.
     /// </summary>
+    /// <param name="values">The array to fill with samples.</param>
     public void Samples(int[] values)
     {
       SamplesUnchecked(_random, values, _population, _success, _draws);
     }
 
     /// <summary>
-    /// Samples an array of Hypergeometric distributed random variables.
+    /// Samples a sequence of hypergeometrically distributed random variables.
     /// </summary>
-    /// <returns>a sequence of successes in n trials.</returns>
+    /// <returns>A sequence containing the number of successes in the draws.</returns>
     public IEnumerable<int> Samples()
     {
       return SamplesUnchecked(_random, _population, _success, _draws);
@@ -359,6 +369,7 @@ namespace Altaxo.Calc.Distributions
     /// <param name="population">The size of the population (N).</param>
     /// <param name="success">The number successes within the population (K, M).</param>
     /// <param name="draws">The number of draws without replacement (n).</param>
+    /// <returns>The number of successes in the draws.</returns>
     public static int Sample(System.Random rnd, int population, int success, int draws)
     {
       if (!(population >= 0 && success >= 0 && draws >= 0 && success <= population && draws <= population))
@@ -376,6 +387,7 @@ namespace Altaxo.Calc.Distributions
     /// <param name="population">The size of the population (N).</param>
     /// <param name="success">The number successes within the population (K, M).</param>
     /// <param name="draws">The number of draws without replacement (n).</param>
+    /// <returns>A sequence containing the number of successes in the draws.</returns>
     public static IEnumerable<int> Samples(System.Random rnd, int population, int success, int draws)
     {
       if (!(population >= 0 && success >= 0 && draws >= 0 && success <= population && draws <= population))
@@ -410,6 +422,7 @@ namespace Altaxo.Calc.Distributions
     /// <param name="population">The size of the population (N).</param>
     /// <param name="success">The number successes within the population (K, M).</param>
     /// <param name="draws">The number of draws without replacement (n).</param>
+    /// <returns>The number of successes in the draws.</returns>
     public static int Sample(int population, int success, int draws)
     {
       if (!(population >= 0 && success >= 0 && draws >= 0 && success <= population && draws <= population))
@@ -426,6 +439,7 @@ namespace Altaxo.Calc.Distributions
     /// <param name="population">The size of the population (N).</param>
     /// <param name="success">The number successes within the population (K, M).</param>
     /// <param name="draws">The number of draws without replacement (n).</param>
+    /// <returns>A sequence containing the number of successes in the draws.</returns>
     public static IEnumerable<int> Samples(int population, int success, int draws)
     {
       if (!(population >= 0 && success >= 0 && draws >= 0 && success <= population && draws <= population))

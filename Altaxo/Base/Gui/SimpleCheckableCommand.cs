@@ -46,12 +46,14 @@ namespace Altaxo.Gui
       IsChecked = !IsChecked;
     }
 
+    /// <inheritdoc/>
     event EventHandler? ICheckableMenuCommand.IsCheckedChanged
     {
       add { if (!(value is null)) Current.Gui.RegisterRequerySuggestedHandler(value); }
       remove { if (!(value is null)) Current.Gui.UnregisterRequerySuggestedHandler(value); }
     }
 
+    /// <inheritdoc/>
     bool ICheckableMenuCommand.IsChecked(object? parameter)
     {
       return IsChecked;

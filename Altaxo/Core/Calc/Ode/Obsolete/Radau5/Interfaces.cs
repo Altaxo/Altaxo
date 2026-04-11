@@ -215,7 +215,9 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
   //                                                     The Class: FAREN
   //----------------------------------------------------------------------------------------------------------------------------
 
-  // C
+  /// <summary>
+  /// Adapts an <see cref="OdeFunction"/> to the translated Radau5 function callback interface.
+  /// </summary>
   internal class FVPOL : IFVPOL
   {
     #region Fields
@@ -230,6 +232,11 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
 
     #region Constructor
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FVPOL"/> class.
+    /// </summary>
+    /// <param name="NEq">The number of equations.</param>
+    /// <param name="Func">The function that evaluates the differential equation system.</param>
     internal FVPOL(int NEq, OdeFunction Func)
     {
       MeNEq = NEq;
@@ -284,6 +291,9 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
 
   // C
   // C
+  /// <summary>
+  /// Adapts an <see cref="OdeJacobian"/> to the translated Radau5 Jacobian callback interface.
+  /// </summary>
   internal class JVPOL : IJVPOL
   {
     private OdeJacobian MeJacobian;
@@ -291,6 +301,11 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
     private double[,] MeJac;
     private int MeNEq;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="JVPOL"/> class.
+    /// </summary>
+    /// <param name="NEq">The number of equations.</param>
+    /// <param name="Jac">The Jacobian evaluator.</param>
     internal JVPOL(int NEq, OdeJacobian Jac)
     {
       MeNEq = NEq;
@@ -350,6 +365,9 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
   //                                                     The Class: BBAMPL
   //----------------------------------------------------------------------------------------------------------------------------
 
+  /// <summary>
+  /// Provides the translated amplitude callback required by the Radau5 solver.
+  /// </summary>
   internal class BBAMPL : IBBAMPL
   {
     #region Declaracion de variables implicitas
@@ -362,6 +380,9 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
 
     #endregion Declaracion de variables implicitas
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BBAMPL"/> class.
+    /// </summary>
     internal BBAMPL()
     {
     }

@@ -829,6 +829,7 @@ namespace Altaxo.Main
     /// <typeparam name="T">Type of the node to copy.</typeparam>
     /// <param name="myChild">Reference to a member variable of this instance that holds a child node.</param>
     /// <param name="fromAnotherChild">Another child node to copy from. If null, the child node of this instance is also set to null.</param>
+    /// <returns><c>true</c> if the member was changed; otherwise, <c>false</c>.</returns>
     protected bool ChildCopyToMember<T>([MaybeNull][AllowNull][NotNullIfNotNull("fromAnotherChild")] ref T myChild, [AllowNull] T fromAnotherChild) where T : IDocumentLeafNode?, ICloneable?
     {
       if (object.ReferenceEquals(myChild, fromAnotherChild))
@@ -870,6 +871,7 @@ namespace Altaxo.Main
     /// <param name="myChild">Reference to a member variable of this instance that holds a child node.</param>
     /// <param name="fromAnotherChild">Another child node to copy from. If null, the child node of this instance is also set to null.</param>
     /// <param name="createNew">If the parameter <paramref name="fromAnotherChild"/> is null, the provided function is used to create a new object of type <typeparamref name="T"/>. This object is then used to set the member.</param>
+    /// <returns><c>true</c> if the member was changed; otherwise, <c>false</c>.</returns>
     protected bool ChildCopyToMemberOrCreateNew<T>([NotNull] ref T? myChild, T? fromAnotherChild, Func<T> createNew) where T : class, IDocumentLeafNode, ICloneable
     {
       if (fromAnotherChild is not null)
@@ -947,11 +949,13 @@ namespace Altaxo.Main
 
     #endregion Helper functions
 
+    /// <inheritdoc/>
     IEnumerable<IDocumentLeafNode> Collections.ITreeNode<IDocumentLeafNode>.ChildNodes
     {
       get { return GetDocumentNodeChildrenWithName().Select(x => x.DocumentNode); }
     }
 
+    /// <inheritdoc/>
     IDocumentLeafNode? Collections.INodeWithParentNode<IDocumentLeafNode>.ParentNode
     {
       get { return _parent; }
@@ -960,7 +964,7 @@ namespace Altaxo.Main
     #region Diagnostic support
 
     /// <summary>
-    /// Starting from the provided root node, this function reports any missing Pa Reports the parent child and disposed problems.
+    /// Starting from the provided root node, this function reports missing parent-child relationships and disposed-state problems.
     /// </summary>
     /// <param name="node">The node to start with.</param>
     /// <param name="showFinalLineEvenWithNoProblems">If true, a final line is written to the console even when no problems have occured.</param>

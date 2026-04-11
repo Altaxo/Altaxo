@@ -181,6 +181,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     /// <value>
     /// The name of underlying data column.
     /// </value>
+    /// <param name="nameOfColumn">The name of the underlying data column.</param>
     public void UpdateWithNameOfUnderlyingDataColumn(string nameOfColumn)
     {
       _nameOfUnderlyingDataColumn = nameOfColumn;

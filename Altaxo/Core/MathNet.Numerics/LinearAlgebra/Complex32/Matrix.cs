@@ -45,6 +45,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// <summary>
     /// Initializes a new instance of the Matrix class.
     /// </summary>
+    /// <param name="storage">The storage backing this matrix.</param>
     protected Matrix(MatrixStorage<Complex32> storage)
         : base(storage)
     {
@@ -53,6 +54,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// <summary>
     /// Set all values whose absolute value is smaller than the threshold to zero.
     /// </summary>
+    /// <param name="threshold">The threshold below which values are set to zero.</param>
     public override void CoerceZero(double threshold)
     {
       MapInplace(x => x.Magnitude < threshold ? Complex32.Zero : x, Zeros.AllowSkip);
@@ -72,6 +74,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// <summary>
     /// Puts the conjugate transpose of this matrix into the result matrix.
     /// </summary>
+    /// <param name="result">The matrix that receives the conjugate transpose.</param>
     public sealed override void ConjugateTranspose(Matrix<Complex32> result)
     {
       Transpose(result);
@@ -558,6 +561,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// <summary>
     /// Computes the Moore-Penrose Pseudo-Inverse of this matrix.
     /// </summary>
+    /// <returns>The pseudo-inverse of this matrix.</returns>
     public override Matrix<Complex32> PseudoInverse()
     {
       var svd = Svd(true);
@@ -697,6 +701,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// Calculates the p-norms of all row vectors.
     /// Typical values for p are 1.0 (L1, Manhattan norm), 2.0 (L2, Euclidean norm) and positive infinity (infinity norm)
     /// </summary>
+    /// <param name="norm">The p-norm to calculate.</param>
+    /// <returns>A vector that contains the row norms.</returns>
     public override Vector<double> RowNorms(double norm)
     {
       if (norm <= 0.0)
@@ -729,6 +735,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// Calculates the p-norms of all column vectors.
     /// Typical values for p are 1.0 (L1, Manhattan norm), 2.0 (L2, Euclidean norm) and positive infinity (infinity norm)
     /// </summary>
+    /// <param name="norm">The p-norm to calculate.</param>
+    /// <returns>A vector that contains the column norms.</returns>
     public override Vector<double> ColumnNorms(double norm)
     {
       if (norm <= 0.0)
@@ -761,6 +769,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// Normalizes all row vectors to a unit p-norm.
     /// Typical values for p are 1.0 (L1, Manhattan norm), 2.0 (L2, Euclidean norm) and positive infinity (infinity norm)
     /// </summary>
+    /// <param name="norm">The p-norm to use for normalization.</param>
+    /// <returns>A matrix with normalized rows.</returns>
     public sealed override Matrix<Complex32> NormalizeRows(double norm)
     {
       var norminv = ((DenseVectorStorage<double>)RowNorms(norm).Storage).Data;
@@ -778,6 +788,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// Normalizes all column vectors to a unit p-norm.
     /// Typical values for p are 1.0 (L1, Manhattan norm), 2.0 (L2, Euclidean norm) and positive infinity (infinity norm)
     /// </summary>
+    /// <param name="norm">The p-norm to use for normalization.</param>
+    /// <returns>A matrix with normalized columns.</returns>
     public sealed override Matrix<Complex32> NormalizeColumns(double norm)
     {
       var norminv = ((DenseVectorStorage<double>)ColumnNorms(norm).Storage).Data;
@@ -794,6 +806,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// <summary>
     /// Calculates the value sum of each row vector.
     /// </summary>
+    /// <returns>A vector that contains the row sums.</returns>
     public override Vector<Complex32> RowSums()
     {
       var ret = new Complex32[RowCount];
@@ -804,6 +817,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// <summary>
     /// Calculates the absolute value sum of each row vector.
     /// </summary>
+    /// <returns>A vector that contains the absolute row sums.</returns>
     public override Vector<Complex32> RowAbsoluteSums()
     {
       var ret = new Complex32[RowCount];
@@ -814,6 +828,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// <summary>
     /// Calculates the value sum of each column vector.
     /// </summary>
+    /// <returns>A vector that contains the column sums.</returns>
     public override Vector<Complex32> ColumnSums()
     {
       var ret = new Complex32[ColumnCount];
@@ -824,6 +839,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// <summary>
     /// Calculates the absolute value sum of each column vector.
     /// </summary>
+    /// <returns>A vector that contains the absolute column sums.</returns>
     public override Vector<Complex32> ColumnAbsoluteSums()
     {
       var ret = new Complex32[ColumnCount];
@@ -834,6 +850,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// <summary>
     /// Evaluates whether this matrix is Hermitian (conjugate symmetric).
     /// </summary>
+    /// <returns><c>true</c> if this matrix is Hermitian; otherwise, <c>false</c>.</returns>
     public override bool IsHermitian()
     {
       if (RowCount != ColumnCount)

@@ -199,6 +199,7 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Find AddIns by searching all .addin files recursively in <paramref name="addInDir"/>.
     /// </summary>
+    /// <param name="addInDir">The directory that contains AddIn definition files.</param>
     public void AddAddInsFromDirectory(string addInDir)
     {
       if (addInDir is null)
@@ -209,6 +210,7 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Add the specified .addin file.
     /// </summary>
+    /// <param name="addInFile">The AddIn definition file to add.</param>
     public void AddAddInFile(string addInFile)
     {
       if (addInFile is null)

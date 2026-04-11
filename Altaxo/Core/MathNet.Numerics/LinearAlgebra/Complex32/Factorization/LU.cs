@@ -45,6 +45,11 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32.Factorization
   /// </remarks>
   internal abstract class LU : LU<Complex32>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LU"/> class.
+    /// </summary>
+    /// <param name="factors">The combined lower and upper triangular factors.</param>
+    /// <param name="pivots">The pivot indices used during factorization.</param>
     protected LU(Matrix<Complex32> factors, int[] pivots)
         : base(factors, pivots)
     {

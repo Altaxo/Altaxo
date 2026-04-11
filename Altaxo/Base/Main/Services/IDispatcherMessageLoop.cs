@@ -49,6 +49,7 @@ namespace Altaxo.Main.Services
     /// Gets whether the current thread is the same as the thread running this message loop.
     /// </summary>
     /// <remarks><c>CheckAccess() = !InvokeRequired</c></remarks>
+    /// <returns><see langword="true"/> if the current thread runs this message loop; otherwise, <see langword="false"/>.</returns>
     bool CheckAccess();
 
     /// <summary>
@@ -63,11 +64,13 @@ namespace Altaxo.Main.Services
     /// If the current thread is the thread running the message loop, executes the callback
     /// directly without pumping the message loop.
     /// </summary>
+    /// <param name="callback">The callback to execute.</param>
     void InvokeIfRequired(Action callback);
 
     /// <summary>
     /// Executes an action synchronously on the message loop thread.
     /// </summary>
+    /// <typeparam name="T">The type of the action argument.</typeparam>
     /// <param name="action">The action to execute.</param>
     /// <param name="arg">The argument of the action.</param>
     void InvokeIfRequired<T>(Action<T> action, T arg);
@@ -75,6 +78,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Executes an action synchronously on the message loop thread.
     /// </summary>
+    /// <typeparam name="T1">The type of the first action argument.</typeparam>
+    /// <typeparam name="T2">The type of the second action argument.</typeparam>
     /// <param name="action">The action to execute.</param>
     /// <param name="arg1">The first argument of the action.</param>
     /// <param name="arg2">The second argument of the action.</param>
@@ -83,6 +88,9 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Executes an action synchronously on the message loop thread.
     /// </summary>
+    /// <typeparam name="T1">The type of the first action argument.</typeparam>
+    /// <typeparam name="T2">The type of the second action argument.</typeparam>
+    /// <typeparam name="T3">The type of the third action argument.</typeparam>
     /// <param name="action">The action to execute.</param>
     /// <param name="arg1">The 1st argument of the action.</param>
     /// <param name="arg2">The 2nd argument of the action.</param>
@@ -92,6 +100,10 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Executes an action synchronously on the message loop thread.
     /// </summary>
+    /// <typeparam name="T1">The type of the first action argument.</typeparam>
+    /// <typeparam name="T2">The type of the second action argument.</typeparam>
+    /// <typeparam name="T3">The type of the third action argument.</typeparam>
+    /// <typeparam name="T4">The type of the fourth action argument.</typeparam>
     /// <param name="action">The action to execute.</param>
     /// <param name="arg1">The first argument of the action.</param>
     /// <param name="arg2">The second argument of the action.</param>
@@ -102,6 +114,11 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Executes an action synchronously on the message loop thread.
     /// </summary>
+    /// <typeparam name="T1">The type of the first action argument.</typeparam>
+    /// <typeparam name="T2">The type of the second action argument.</typeparam>
+    /// <typeparam name="T3">The type of the third action argument.</typeparam>
+    /// <typeparam name="T4">The type of the fourth action argument.</typeparam>
+    /// <typeparam name="T5">The type of the fifth action argument.</typeparam>
     /// <param name="action">The action to execute.</param>
     /// <param name="arg1">The first argument of the action.</param>
     /// <param name="arg2">The second argument of the action.</param>
@@ -119,6 +136,9 @@ namespace Altaxo.Main.Services
     /// If the current thread is the thread running the message loop, executes the callback
     /// directly without pumping the message loop.
     /// </summary>
+    /// <typeparam name="T">The type of the callback result.</typeparam>
+    /// <param name="callback">The callback to execute.</param>
+    /// <returns>The callback result.</returns>
     T InvokeIfRequired<T>(Func<T> callback);
 
     /// <summary>
@@ -134,31 +154,103 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Evaluates a function synchronously on the message loop thread.
     /// </summary>
+    /// <typeparam name="T1">The type of the first function argument.</typeparam>
+    /// <typeparam name="T2">The type of the second function argument.</typeparam>
+    /// <typeparam name="TResult">The type of the function result.</typeparam>
+    /// <param name="function">The function to execute.</param>
+    /// <param name="arg1">The first function argument.</param>
+    /// <param name="arg2">The second function argument.</param>
+    /// <returns>The result of the function evaluation.</returns>
     TResult InvokeIfRequired<T1, T2, TResult>(Func<T1, T2, TResult> function, T1 arg1, T2 arg2);
 
     /// <summary>
     /// Evaluates a function synchronously on the message loop thread.
     /// </summary>
+    /// <typeparam name="T1">The type of the first function argument.</typeparam>
+    /// <typeparam name="T2">The type of the second function argument.</typeparam>
+    /// <typeparam name="T3">The type of the third function argument.</typeparam>
+    /// <typeparam name="TResult">The type of the function result.</typeparam>
+    /// <param name="function">The function to execute.</param>
+    /// <param name="arg1">The first function argument.</param>
+    /// <param name="arg2">The second function argument.</param>
+    /// <param name="arg3">The third function argument.</param>
+    /// <returns>The result of the function evaluation.</returns>
     TResult InvokeIfRequired<T1, T2, T3, TResult>(Func<T1, T2, T3, TResult> function, T1 arg1, T2 arg2, T3 arg3);
 
     /// <summary>
     /// Evaluates a function synchronously on the message loop thread.
     /// </summary>
+    /// <typeparam name="T1">The type of the first function argument.</typeparam>
+    /// <typeparam name="T2">The type of the second function argument.</typeparam>
+    /// <typeparam name="T3">The type of the third function argument.</typeparam>
+    /// <typeparam name="T4">The type of the fourth function argument.</typeparam>
+    /// <typeparam name="TResult">The type of the function result.</typeparam>
+    /// <param name="function">The function to execute.</param>
+    /// <param name="arg1">The first function argument.</param>
+    /// <param name="arg2">The second function argument.</param>
+    /// <param name="arg3">The third function argument.</param>
+    /// <param name="arg4">The fourth function argument.</param>
+    /// <returns>The result of the function evaluation.</returns>
     TResult InvokeIfRequired<T1, T2, T3, T4, TResult>(Func<T1, T2, T3, T4, TResult> function, T1 arg1, T2 arg2, T3 arg3, T4 arg4);
 
     /// <summary>
     /// Evaluates a function synchronously on the message loop thread.
     /// </summary>
+    /// <typeparam name="T1">The type of the first function argument.</typeparam>
+    /// <typeparam name="T2">The type of the second function argument.</typeparam>
+    /// <typeparam name="T3">The type of the third function argument.</typeparam>
+    /// <typeparam name="T4">The type of the fourth function argument.</typeparam>
+    /// <typeparam name="T5">The type of the fifth function argument.</typeparam>
+    /// <typeparam name="TResult">The type of the function result.</typeparam>
+    /// <param name="function">The function to execute.</param>
+    /// <param name="arg1">The first function argument.</param>
+    /// <param name="arg2">The second function argument.</param>
+    /// <param name="arg3">The third function argument.</param>
+    /// <param name="arg4">The fourth function argument.</param>
+    /// <param name="arg5">The fifth function argument.</param>
+    /// <returns>The result of the function evaluation.</returns>
     TResult InvokeIfRequired<T1, T2, T3, T4, T5, TResult>(Func<T1, T2, T3, T4, T5, TResult> function, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5);
 
     /// <summary>
     /// Evaluates a function synchronously on the message loop thread.
     /// </summary>
+    /// <typeparam name="T1">The type of the first function argument.</typeparam>
+    /// <typeparam name="T2">The type of the second function argument.</typeparam>
+    /// <typeparam name="T3">The type of the third function argument.</typeparam>
+    /// <typeparam name="T4">The type of the fourth function argument.</typeparam>
+    /// <typeparam name="T5">The type of the fifth function argument.</typeparam>
+    /// <typeparam name="T6">The type of the sixth function argument.</typeparam>
+    /// <typeparam name="TResult">The type of the function result.</typeparam>
+    /// <param name="function">The function to execute.</param>
+    /// <param name="arg1">The first function argument.</param>
+    /// <param name="arg2">The second function argument.</param>
+    /// <param name="arg3">The third function argument.</param>
+    /// <param name="arg4">The fourth function argument.</param>
+    /// <param name="arg5">The fifth function argument.</param>
+    /// <param name="arg6">The sixth function argument.</param>
+    /// <returns>The result of the function evaluation.</returns>
     TResult InvokeIfRequired<T1, T2, T3, T4, T5, T6, TResult>(Func<T1, T2, T3, T4, T5, T6, TResult> function, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6);
 
     /// <summary>
     /// Evaluates a function synchronously on the message loop thread.
     /// </summary>
+    /// <typeparam name="T1">The type of the first function argument.</typeparam>
+    /// <typeparam name="T2">The type of the second function argument.</typeparam>
+    /// <typeparam name="T3">The type of the third function argument.</typeparam>
+    /// <typeparam name="T4">The type of the fourth function argument.</typeparam>
+    /// <typeparam name="T5">The type of the fifth function argument.</typeparam>
+    /// <typeparam name="T6">The type of the sixth function argument.</typeparam>
+    /// <typeparam name="T7">The type of the seventh function argument.</typeparam>
+    /// <typeparam name="TResult">The type of the function result.</typeparam>
+    /// <param name="function">The function to execute.</param>
+    /// <param name="arg1">The first function argument.</param>
+    /// <param name="arg2">The second function argument.</param>
+    /// <param name="arg3">The third function argument.</param>
+    /// <param name="arg4">The fourth function argument.</param>
+    /// <param name="arg5">The fifth function argument.</param>
+    /// <param name="arg6">The sixth function argument.</param>
+    /// <param name="arg7">The seventh function argument.</param>
+    /// <returns>The result of the function evaluation.</returns>
     TResult InvokeIfRequired<T1, T2, T3, T4, T5, T6, T7, TResult>(Func<T1, T2, T3, T4, T5, T6, T7, TResult> function, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7);
 
     #endregion InvokeIfRequired (Functions)
@@ -173,11 +265,13 @@ namespace Altaxo.Main.Services
     /// If this method is used on the main thread; the message loop must be pumped before the callback gets to run.
     /// If the callback causes an exception, it is left unhandled.
     /// </remarks>
+    /// <param name="callback">The callback to execute.</param>
     void InvokeAndForget(Action callback);
 
     /// <summary>
     /// Executes an action asynchronously on the message loop thread without waiting.
     /// </summary>
+    /// <typeparam name="T">The type of the action argument.</typeparam>
     /// <param name="action">The action to execute.</param>
     /// <param name="arg">The argument of the action.</param>
     void InvokeAndForget<T>(Action<T> action, T arg);
@@ -185,6 +279,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Executes an action asynchronously on the message loop thread without waiting.
     /// </summary>
+    /// <typeparam name="T1">The type of the first action argument.</typeparam>
+    /// <typeparam name="T2">The type of the second action argument.</typeparam>
     /// <param name="action">The action to execute.</param>
     /// <param name="arg1">The first argument of the action.</param>
     /// <param name="arg2">The second argument of the action.</param>
@@ -193,6 +289,9 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Executes an action asynchronously on the message loop thread without waiting.
     /// </summary>
+    /// <typeparam name="T1">The type of the first action argument.</typeparam>
+    /// <typeparam name="T2">The type of the second action argument.</typeparam>
+    /// <typeparam name="T3">The type of the third action argument.</typeparam>
     /// <param name="action">The action to execute.</param>
     /// <param name="arg1">The 1st argument of the action.</param>
     /// <param name="arg2">The 2nd argument of the action.</param>
@@ -202,6 +301,10 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Executes an action asynchronously on the message loop thread without waiting.
     /// </summary>
+    /// <typeparam name="T1">The type of the first action argument.</typeparam>
+    /// <typeparam name="T2">The type of the second action argument.</typeparam>
+    /// <typeparam name="T3">The type of the third action argument.</typeparam>
+    /// <typeparam name="T4">The type of the fourth action argument.</typeparam>
     /// <param name="action">The action to execute.</param>
     /// <param name="arg1">The first argument of the action.</param>
     /// <param name="arg2">The second argument of the action.</param>
@@ -212,6 +315,11 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Executes an action asynchronously on the message loop thread without waiting.
     /// </summary>
+    /// <typeparam name="T1">The type of the first action argument.</typeparam>
+    /// <typeparam name="T2">The type of the second action argument.</typeparam>
+    /// <typeparam name="T3">The type of the third action argument.</typeparam>
+    /// <typeparam name="T4">The type of the fourth action argument.</typeparam>
+    /// <typeparam name="T5">The type of the fifth action argument.</typeparam>
     /// <param name="action">The action to execute.</param>
     /// <param name="arg1">The first argument of the action.</param>
     /// <param name="arg2">The second argument of the action.</param>
@@ -227,6 +335,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Waits <paramref name="delay"/>, then executes <paramref name="method"/> on the message loop thread.
     /// </summary>
+    /// <param name="delay">The delay before executing the method.</param>
+    /// <param name="method">The method to execute.</param>
     void InvokeLaterAndForget(TimeSpan delay, Action method);
 
     #endregion InvokeLaterAndForget (Actions)
@@ -236,6 +346,7 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Invokes the specified callback on the message loop.
     /// </summary>
+    /// <param name="callback">The callback to execute.</param>
     /// <returns>Returns a task that is signalled when the execution of the callback is completed.</returns>
     /// <remarks>
     /// If the callback method causes an exception; the exception gets stored in the task object.

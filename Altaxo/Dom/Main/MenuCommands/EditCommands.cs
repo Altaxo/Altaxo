@@ -36,6 +36,9 @@ namespace Altaxo.Worksheet.Commands
   {
     private bool _disable;
 
+    /// <summary>
+    /// Sets a value indicating whether the command is prevented from throwing the test exception.
+    /// </summary>
     internal bool Disable { set { _disable = value; } }
 
     /// <inheritdoc/>

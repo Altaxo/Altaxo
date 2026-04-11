@@ -150,6 +150,7 @@ namespace Altaxo.Calc
     /// Select a random permutation, without repetition, from a data array by reordering the provided array in-place.
     /// Implemented using Fisher-Yates Shuffling. The provided data array will be modified.
     /// </summary>
+    /// <typeparam name="T">The type of the data elements.</typeparam>
     /// <param name="data">The data array to be reordered. The array will be modified by this routine.</param>
     /// <param name="randomSource">The random number generator to use. Optional; the default random source will be used if null.</param>
     public static void SelectPermutationInplace<T>(T[] data, System.Random randomSource = null)
@@ -168,8 +169,10 @@ namespace Altaxo.Calc
     /// Select a random permutation from a data sequence by returning the provided data in random order.
     /// Implemented using Fisher-Yates Shuffling.
     /// </summary>
+    /// <typeparam name="T">The type of the data elements.</typeparam>
     /// <param name="data">The data elements to be reordered.</param>
     /// <param name="randomSource">The random number generator to use. Optional; the default random source will be used if null.</param>
+    /// <returns>The input data in random order.</returns>
     public static IEnumerable<T> SelectPermutation<T>(this IEnumerable<T> data, System.Random randomSource = null)
     {
       var random = randomSource ?? SystemRandomSource.Default;
@@ -251,6 +254,7 @@ namespace Altaxo.Calc
     /// <summary>
     /// Select a random combination, without repetition, from a data sequence by selecting k elements in original order.
     /// </summary>
+    /// <typeparam name="T">The type of the data elements.</typeparam>
     /// <param name="data">The data source to choose from.</param>
     /// <param name="elementsToChoose">Number of elements (k) to choose from the data set. Each element is chosen at most once.</param>
     /// <param name="randomSource">The random number generator to use. Optional; the default random source will be used if null.</param>
@@ -299,6 +303,7 @@ namespace Altaxo.Calc
     /// <summary>
     /// Select a random combination, with repetition, from a data sequence by selecting k elements in original order.
     /// </summary>
+    /// <typeparam name="T">The type of the data elements.</typeparam>
     /// <param name="data">The data source to choose from.</param>
     /// <param name="elementsToChoose">Number of elements (k) to choose from the data set. Elements can be chosen more than once.</param>
     /// <param name="randomSource">The random number generator to use. Optional; the default random source will be used if null.</param>
@@ -407,6 +412,7 @@ namespace Altaxo.Calc
     /// Select a random variation, without repetition, from a data sequence by randomly selecting k elements in random order.
     /// Implemented using partial Fisher-Yates Shuffling.
     /// </summary>
+    /// <typeparam name="T">The type of the data elements.</typeparam>
     /// <param name="data">The data source to choose from.</param>
     /// <param name="elementsToChoose">Number of elements (k) to choose from the set. Each element is chosen at most once.</param>
     /// <param name="randomSource">The random number generator to use. Optional; the default random source will be used if null.</param>
@@ -450,6 +456,7 @@ namespace Altaxo.Calc
     /// <summary>
     /// Select a random variation, with repetition, from a data sequence by randomly selecting k elements in random order.
     /// </summary>
+    /// <typeparam name="T">The type of the data elements.</typeparam>
     /// <param name="data">The data source to choose from.</param>
     /// <param name="elementsToChoose">Number of elements (k) to choose from the data set. Elements can be chosen more than once.</param>
     /// <param name="randomSource">The random number generator to use. Optional; the default random source will be used if null.</param>

@@ -85,6 +85,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="coefficients">The coefficients of the polynomial.</param>
     /// <param name="x">Argument to the polynomial.</param>
+    /// <returns>The evaluated Chebyshev series value at <paramref name="x"/>.</returns>
     /// <remarks>
     /// Reference: https://bpm2.svn.codeplex.com/svn/Common.Numeric/Arithmetic.cs
     /// <p/>
@@ -119,6 +120,7 @@ namespace Altaxo.Calc
     /// <param name="n">The no. of terms in the sequence.</param>
     /// <param name="coefficients">The coefficients of the Chebyshev series, length n+1.</param>
     /// <param name="x">The value at which the series is to be evaluated.</param>
+    /// <returns>The value of the Chebyshev series evaluated at <paramref name="x"/>.</returns>
     /// <remarks>
     /// ORIGINAL AUTHOR:
     ///    Dr. Allan J. MacLeod; Dept. of Mathematics and Statistics, University of Paisley; High St., PAISLEY, SCOTLAND

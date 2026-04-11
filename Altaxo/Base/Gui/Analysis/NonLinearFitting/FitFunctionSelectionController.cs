@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -367,6 +367,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     /// <summary>
     /// Initializes the controller state.
     /// </summary>
+    /// <param name="initData">If set to <see langword="true"/>, the fit-function tree is rebuilt.</param>
     public void Initialize(bool initData)
     {
       if (initData)
@@ -461,6 +462,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     /// <summary>
     /// Updates the temporary selection.
     /// </summary>
+    /// <param name="selectedtag">The selected fit-function information.</param>
     public void EhView_SelectionChanged(IFitFunctionInformation selectedtag)
     {
       _tempdoc = selectedtag;
@@ -469,6 +471,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     /// <summary>
     /// Edits the selected item or a copy of it.
     /// </summary>
+    /// <param name="parameter">The selected item parameter.</param>
+    /// <param name="editItemCopy"><see langword="true"/> to edit a copy of the selected item; otherwise, edit the item itself.</param>
     public void EditItemOrItemCopy(object parameter, bool editItemCopy)
     {
       if (parameter is IFitFunctionInformation selectedtag)
@@ -536,6 +540,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     /// <summary>
     /// Removes the selected item.
     /// </summary>
+    /// <param name="parameter">The selected item parameter.</param>
     public void EhView_RemoveItem(object parameter)
     {
       if (parameter is IFitFunctionInformation selectedtag)

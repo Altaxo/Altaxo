@@ -141,6 +141,7 @@ namespace Altaxo.Calc.Distributions
     /// <param name="meanScale">The scale of the mean.</param>
     /// <param name="precShape">The shape of the precision.</param>
     /// <param name="precInvScale">The inverse scale of the precision.</param>
+    /// <returns><c>true</c> if the parameters define a valid normal-gamma distribution; otherwise, <c>false</c>.</returns>
     public static bool IsValidParameterSet(double meanLocation, double meanScale, double precShape, double precInvScale)
     {
       return meanScale > 0.0 && precShape > 0.0 && precInvScale > 0.0 && !double.IsNaN(meanLocation);

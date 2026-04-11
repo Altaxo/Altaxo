@@ -201,6 +201,7 @@ namespace Altaxo.Data
       return _innerDict.GetEnumerator();
     }
 
+    /// <inheritdoc/>
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
       return _innerDict.GetEnumerator();

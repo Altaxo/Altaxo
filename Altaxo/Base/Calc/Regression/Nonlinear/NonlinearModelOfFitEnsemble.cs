@@ -366,6 +366,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <summary>
     /// Copies the current model parameters back to the specified parameter set.
     /// </summary>
+    /// <param name="pset">The parameter set that receives the current model parameters.</param>
+    /// <param name="standardErrors">The optional standard errors for the fitted parameters.</param>
     public void CopyParametersBackTo(ParameterSet pset, IReadOnlyList<double>? standardErrors)
     {
       if (pset.Count != _constantParameters.Length)

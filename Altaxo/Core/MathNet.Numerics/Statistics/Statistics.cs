@@ -316,6 +316,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data has less than two entries or if any entry is NaN.
     /// </summary>
     /// <param name="samples">A subset of samples, sampled from the full population.</param>
+    /// <returns>The unbiased estimate of the population variance (uses an N-1 normalizer).</returns>
     public static double Variance(this IEnumerable<double> samples)
     {
       return samples is double[] array
@@ -329,6 +330,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data has less than two entries or if any entry is NaN.
     /// </summary>
     /// <param name="samples">A subset of samples, sampled from the full population.</param>
+    /// <returns>The unbiased estimate of the population variance (uses an N-1 normalizer).</returns>
     public static double Variance(this IEnumerable<float> samples)
     {
       return samples is float[] array
@@ -343,6 +345,7 @@ namespace Altaxo.Calc.Statistics
     /// Null-entries are ignored.
     /// </summary>
     /// <param name="samples">A subset of samples, sampled from the full population.</param>
+    /// <returns>The unbiased estimate of the population variance (uses an N-1 normalizer). Null entries are ignored.</returns>
     public static double Variance(this IEnumerable<double?> samples)
     {
       return StreamingStatistics.Variance(samples.Where(d => d.HasValue).Select(d => d.Value));
@@ -354,6 +357,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or if any entry is NaN.
     /// </summary>
     /// <param name="population">The full population data.</param>
+    /// <returns>The population variance (uses an N normalizer).</returns>
     public static double PopulationVariance(this IEnumerable<double> population)
     {
       return population is double[] array
@@ -367,6 +371,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or if any entry is NaN.
     /// </summary>
     /// <param name="population">The full population data.</param>
+    /// <returns>The population variance (uses an N normalizer).</returns>
     public static double PopulationVariance(this IEnumerable<float> population)
     {
       return population is float[] array
@@ -381,6 +386,7 @@ namespace Altaxo.Calc.Statistics
     /// Null-entries are ignored.
     /// </summary>
     /// <param name="population">The full population data.</param>
+    /// <returns>The population variance (uses an N normalizer). Null entries are ignored.</returns>
     public static double PopulationVariance(this IEnumerable<double?> population)
     {
       return StreamingStatistics.PopulationVariance(population.Where(d => d.HasValue).Select(d => d.Value));
@@ -392,6 +398,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data has less than two entries or if any entry is NaN.
     /// </summary>
     /// <param name="samples">A subset of samples, sampled from the full population.</param>
+    /// <returns>The unbiased estimate of the population standard deviation (uses an N-1 normalizer).</returns>
     public static double StandardDeviation(this IEnumerable<double> samples)
     {
       return samples is double[] array
@@ -405,6 +412,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data has less than two entries or if any entry is NaN.
     /// </summary>
     /// <param name="samples">A subset of samples, sampled from the full population.</param>
+    /// <returns>The unbiased estimate of the population standard deviation (uses an N-1 normalizer).</returns>
     public static double StandardDeviation(this IEnumerable<float> samples)
     {
       return samples is float[] array
@@ -419,6 +427,7 @@ namespace Altaxo.Calc.Statistics
     /// Null-entries are ignored.
     /// </summary>
     /// <param name="samples">A subset of samples, sampled from the full population.</param>
+    /// <returns>The unbiased estimate of the population standard deviation (uses an N-1 normalizer). Null entries are ignored.</returns>
     public static double StandardDeviation(this IEnumerable<double?> samples)
     {
       return StreamingStatistics.StandardDeviation(samples.Where(d => d.HasValue).Select(d => d.Value));
@@ -430,6 +439,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or if any entry is NaN.
     /// </summary>
     /// <param name="population">The full population data.</param>
+    /// <returns>The population standard deviation (uses an N normalizer).</returns>
     public static double PopulationStandardDeviation(this IEnumerable<double> population)
     {
       return population is double[] array
@@ -443,6 +453,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or if any entry is NaN.
     /// </summary>
     /// <param name="population">The full population data.</param>
+    /// <returns>The population standard deviation (uses an N normalizer).</returns>
     public static double PopulationStandardDeviation(this IEnumerable<float> population)
     {
       return population is float[] array
@@ -457,6 +468,7 @@ namespace Altaxo.Calc.Statistics
     /// Null-entries are ignored.
     /// </summary>
     /// <param name="population">The full population data.</param>
+    /// <returns>The population standard deviation (uses an N normalizer). Null entries are ignored.</returns>
     public static double PopulationStandardDeviation(this IEnumerable<double?> population)
     {
       return StreamingStatistics.PopulationStandardDeviation(population.Where(d => d.HasValue).Select(d => d.Value));
@@ -468,6 +480,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data has less than three entries or if any entry is NaN.
     /// </summary>
     /// <param name="samples">A subset of samples, sampled from the full population.</param>
+    /// <returns>The unbiased estimate of sample skewness.</returns>
     public static double Skewness(this IEnumerable<double> samples)
     {
       return new RunningStatistics(samples).Skewness;
@@ -480,6 +493,7 @@ namespace Altaxo.Calc.Statistics
     /// Null-entries are ignored.
     /// </summary>
     /// <param name="samples">A subset of samples, sampled from the full population.</param>
+    /// <returns>The unbiased estimate of sample skewness. Null entries are ignored.</returns>
     public static double Skewness(this IEnumerable<double?> samples)
     {
       return new RunningStatistics(samples.Where(d => d.HasValue).Select(d => d.Value)).Skewness;
@@ -491,6 +505,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data has less than two entries or if any entry is NaN.
     /// </summary>
     /// <param name="population">The full population data.</param>
+    /// <returns>The population skewness.</returns>
     public static double PopulationSkewness(this IEnumerable<double> population)
     {
       return new RunningStatistics(population).PopulationSkewness;
@@ -503,6 +518,7 @@ namespace Altaxo.Calc.Statistics
     /// Null-entries are ignored.
     /// </summary>
     /// <param name="population">The full population data.</param>
+    /// <returns>The population skewness. Null entries are ignored.</returns>
     public static double PopulationSkewness(this IEnumerable<double?> population)
     {
       return new RunningStatistics(population.Where(d => d.HasValue).Select(d => d.Value)).PopulationSkewness;
@@ -514,6 +530,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data has less than four entries or if any entry is NaN.
     /// </summary>
     /// <param name="samples">A subset of samples, sampled from the full population.</param>
+    /// <returns>The unbiased estimate of sample kurtosis.</returns>
     public static double Kurtosis(this IEnumerable<double> samples)
     {
       return new RunningStatistics(samples).Kurtosis;
@@ -526,6 +543,7 @@ namespace Altaxo.Calc.Statistics
     /// Null-entries are ignored.
     /// </summary>
     /// <param name="samples">A subset of samples, sampled from the full population.</param>
+    /// <returns>The unbiased estimate of sample kurtosis. Null entries are ignored.</returns>
     public static double Kurtosis(this IEnumerable<double?> samples)
     {
       return new RunningStatistics(samples.Where(d => d.HasValue).Select(d => d.Value)).Kurtosis;
@@ -537,6 +555,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data has less than three entries or if any entry is NaN.
     /// </summary>
     /// <param name="population">The full population data.</param>
+    /// <returns>The population kurtosis.</returns>
     public static double PopulationKurtosis(this IEnumerable<double> population)
     {
       return new RunningStatistics(population).PopulationKurtosis;
@@ -549,6 +568,7 @@ namespace Altaxo.Calc.Statistics
     /// Null-entries are ignored.
     /// </summary>
     /// <param name="population">The full population data.</param>
+    /// <returns>The population kurtosis. Null entries are ignored.</returns>
     public static double PopulationKurtosis(this IEnumerable<double?> population)
     {
       return new RunningStatistics(population.Where(d => d.HasValue).Select(d => d.Value)).PopulationKurtosis;
@@ -615,6 +635,7 @@ namespace Altaxo.Calc.Statistics
     /// Uses a normalizer (Bessel's correction; type 2).
     /// </summary>
     /// <param name="samples">A subset of samples, sampled from the full population.</param>
+    /// <returns>A tuple containing the unbiased estimates (Skewness, Kurtosis) from the sample.</returns>
     public static (double Skewness, double Kurtosis) SkewnessKurtosis(this IEnumerable<double> samples)
     {
       var stats = new RunningStatistics(samples);
@@ -626,6 +647,7 @@ namespace Altaxo.Calc.Statistics
     /// Does not use a normalizer and would thus be biased if applied to a subset (type 1).
     /// </summary>
     /// <param name="population">The full population data.</param>
+    /// <returns>A tuple containing the population (Skewness, Kurtosis).</returns>
     public static (double Skewness, double Kurtosis) PopulationSkewnessKurtosis(this IEnumerable<double> population)
     {
       var stats = new RunningStatistics(population);
@@ -639,6 +661,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="samples1">A subset of samples, sampled from the full population.</param>
     /// <param name="samples2">A subset of samples, sampled from the full population.</param>
+    /// <returns>The unbiased estimate of the covariance between the two sample sequences (uses an N-1 normalizer).</returns>
     public static double Covariance(this IEnumerable<double> samples1, IEnumerable<double> samples2)
     {
       return samples1 is double[] array1 && samples2 is double[] array2
@@ -653,6 +676,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="samples1">A subset of samples, sampled from the full population.</param>
     /// <param name="samples2">A subset of samples, sampled from the full population.</param>
+    /// <returns>The unbiased estimate of the covariance between the two sample sequences (uses an N-1 normalizer).</returns>
     public static double Covariance(this IEnumerable<float> samples1, IEnumerable<float> samples2)
     {
       return samples1 is float[] array1 && samples2 is float[] array2
@@ -668,6 +692,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="samples1">A subset of samples, sampled from the full population.</param>
     /// <param name="samples2">A subset of samples, sampled from the full population.</param>
+    /// <returns>The unbiased estimate of the covariance between the two sample sequences (uses an N-1 normalizer). Null entries are ignored.</returns>
     public static double Covariance(this IEnumerable<double?> samples1, IEnumerable<double?> samples2)
     {
       return StreamingStatistics.Covariance(samples1.Where(d => d.HasValue).Select(d => d.Value), samples2.Where(d => d.HasValue).Select(d => d.Value));
@@ -680,6 +705,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="population1">The full population data.</param>
     /// <param name="population2">The full population data.</param>
+    /// <returns>The population covariance between the two full populations (uses an N normalizer).</returns>
     public static double PopulationCovariance(this IEnumerable<double> population1, IEnumerable<double> population2)
     {
       return population1 is double[] array1 && population2 is double[] array2
@@ -694,6 +720,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="population1">The full population data.</param>
     /// <param name="population2">The full population data.</param>
+    /// <returns>The population covariance between the two full populations (uses an N normalizer).</returns>
     public static double PopulationCovariance(this IEnumerable<float> population1, IEnumerable<float> population2)
     {
       return population1 is float[] array1 && population2 is float[] array2
@@ -709,6 +736,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="population1">The full population data.</param>
     /// <param name="population2">The full population data.</param>
+    /// <returns>The population covariance between the two full populations (uses an N normalizer). Null entries are ignored.</returns>
     public static double PopulationCovariance(this IEnumerable<double?> population1, IEnumerable<double?> population2)
     {
       return StreamingStatistics.PopulationCovariance(population1.Where(d => d.HasValue).Select(d => d.Value), population2.Where(d => d.HasValue).Select(d => d.Value));
@@ -719,6 +747,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or if any entry is NaN.
     /// </summary>
     /// <param name="data">The data to calculate the RMS of.</param>
+    /// <returns>The root mean square (RMS) of the data.</returns>
     public static double RootMeanSquare(this IEnumerable<double> data)
     {
       return data is double[] array
@@ -731,6 +760,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or if any entry is NaN.
     /// </summary>
     /// <param name="data">The data to calculate the RMS of.</param>
+    /// <returns>The root mean square (RMS) of the data.</returns>
     public static double RootMeanSquare(this IEnumerable<float> data)
     {
       return data is float[] array
@@ -744,6 +774,7 @@ namespace Altaxo.Calc.Statistics
     /// Null-entries are ignored.
     /// </summary>
     /// <param name="data">The data to calculate the mean of.</param>
+    /// <returns>The root mean square (RMS) of the data. Null entries are ignored.</returns>
     public static double RootMeanSquare(this IEnumerable<double?> data)
     {
       return StreamingStatistics.RootMeanSquare(data.Where(d => d.HasValue).Select(d => d.Value));
@@ -753,6 +784,7 @@ namespace Altaxo.Calc.Statistics
     /// Estimates the sample median from the provided samples (R8).
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
+    /// <returns>The median of the sample.</returns>
     public static double Median(this IEnumerable<double> data)
     {
       double[] array = data.ToArray();
@@ -763,6 +795,7 @@ namespace Altaxo.Calc.Statistics
     /// Estimates the sample median from the provided samples (R8).
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
+    /// <returns>The median of the sample.</returns>
     public static float Median(this IEnumerable<float> data)
     {
       float[] array = data.ToArray();
@@ -773,6 +806,7 @@ namespace Altaxo.Calc.Statistics
     /// Estimates the sample median from the provided samples (R8).
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
+    /// <returns>The median of the sample, ignoring null entries.</returns>
     public static double Median(this IEnumerable<double?> data)
     {
       double[] array = data.Where(d => d.HasValue).Select(d => d.Value).ToArray();
@@ -787,6 +821,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
     /// <param name="tau">Quantile selector, between 0.0 and 1.0 (inclusive).</param>
+    /// <returns>The tau-th quantile of the sample.</returns>
     public static double Quantile(this IEnumerable<double> data, double tau)
     {
       double[] array = data.ToArray();
@@ -801,6 +836,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
     /// <param name="tau">Quantile selector, between 0.0 and 1.0 (inclusive).</param>
+    /// <returns>The tau-th quantile of the sample.</returns>
     public static float Quantile(this IEnumerable<float> data, double tau)
     {
       float[] array = data.ToArray();
@@ -815,6 +851,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
     /// <param name="tau">Quantile selector, between 0.0 and 1.0 (inclusive).</param>
+    /// <returns>The tau-th quantile of the sample, ignoring null entries.</returns>
     public static double Quantile(this IEnumerable<double?> data, double tau)
     {
       double[] array = data.Where(d => d.HasValue).Select(d => d.Value).ToArray();
@@ -828,6 +865,7 @@ namespace Altaxo.Calc.Statistics
     /// Approximately median-unbiased regardless of the sample distribution (R8).
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
+    /// <returns>A function that returns the tau-th quantile for a given tau.</returns>
     public static Func<double, double> QuantileFunc(this IEnumerable<double> data)
     {
       double[] array = data.ToArray();
@@ -842,6 +880,7 @@ namespace Altaxo.Calc.Statistics
     /// Approximately median-unbiased regardless of the sample distribution (R8).
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
+    /// <returns>A function that returns the tau-th quantile for a given tau.</returns>
     public static Func<float, float> QuantileFunc(this IEnumerable<float> data)
     {
       float[] array = data.ToArray();
@@ -856,6 +895,7 @@ namespace Altaxo.Calc.Statistics
     /// Approximately median-unbiased regardless of the sample distribution (R8).
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
+    /// <returns>A function that returns the tau-th quantile for a given tau, ignoring null entries.</returns>
     public static Func<double, double> QuantileFunc(this IEnumerable<double?> data)
     {
       double[] array = data.Where(d => d.HasValue).Select(d => d.Value).ToArray();
@@ -872,6 +912,7 @@ namespace Altaxo.Calc.Statistics
     /// <param name="data">The data sample sequence.</param>
     /// <param name="tau">Quantile selector, between 0.0 and 1.0 (inclusive).</param>
     /// <param name="definition">Quantile definition, to choose what product/definition it should be consistent with</param>
+    /// <returns>The tau-th quantile according to the specified definition.</returns>
     public static double QuantileCustom(this IEnumerable<double> data, double tau, QuantileDefinition definition)
     {
       double[] array = data.ToArray();
@@ -887,6 +928,7 @@ namespace Altaxo.Calc.Statistics
     /// <param name="data">The data sample sequence.</param>
     /// <param name="tau">Quantile selector, between 0.0 and 1.0 (inclusive).</param>
     /// <param name="definition">Quantile definition, to choose what product/definition it should be consistent with</param>
+    /// <returns>The tau-th quantile according to the specified definition.</returns>
     public static float QuantileCustom(this IEnumerable<float> data, double tau, QuantileDefinition definition)
     {
       float[] array = data.ToArray();
@@ -902,6 +944,7 @@ namespace Altaxo.Calc.Statistics
     /// <param name="data">The data sample sequence.</param>
     /// <param name="tau">Quantile selector, between 0.0 and 1.0 (inclusive).</param>
     /// <param name="definition">Quantile definition, to choose what product/definition it should be consistent with</param>
+    /// <returns>The tau-th quantile according to the specified definition, ignoring null entries.</returns>
     public static double QuantileCustom(this IEnumerable<double?> data, double tau, QuantileDefinition definition)
     {
       double[] array = data.Where(d => d.HasValue).Select(d => d.Value).ToArray();
@@ -916,6 +959,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
     /// <param name="definition">Quantile definition, to choose what product/definition it should be consistent with</param>
+    /// <returns>A function that returns the quantile for a given tau according to the specified definition.</returns>
     public static Func<double, double> QuantileCustomFunc(this IEnumerable<double> data, QuantileDefinition definition)
     {
       double[] array = data.ToArray();
@@ -931,6 +975,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
     /// <param name="definition">Quantile definition, to choose what product/definition it should be consistent with</param>
+    /// <returns>A function that returns the quantile for a given tau according to the specified definition.</returns>
     public static Func<float, float> QuantileCustomFunc(this IEnumerable<float> data, QuantileDefinition definition)
     {
       float[] array = data.ToArray();
@@ -946,6 +991,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
     /// <param name="definition">Quantile definition, to choose what product/definition it should be consistent with</param>
+    /// <returns>A function that returns the quantile for a given tau according to the specified definition, ignoring null entries.</returns>
     public static Func<double, double> QuantileCustomFunc(this IEnumerable<double?> data, QuantileDefinition definition)
     {
       double[] array = data.Where(d => d.HasValue).Select(d => d.Value).ToArray();
@@ -960,6 +1006,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
     /// <param name="p">Percentile selector, between 0 and 100 (inclusive).</param>
+    /// <returns>The p-th percentile value from the sample.</returns>
     public static double Percentile(this IEnumerable<double> data, int p)
     {
       double[] array = data.ToArray();
@@ -973,6 +1020,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
     /// <param name="p">Percentile selector, between 0 and 100 (inclusive).</param>
+    /// <returns>The p-th percentile value from the sample as <c>float</c>.</returns>
     public static float Percentile(this IEnumerable<float> data, int p)
     {
       float[] array = data.ToArray();
@@ -986,6 +1034,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
     /// <param name="p">Percentile selector, between 0 and 100 (inclusive).</param>
+    /// <returns>The p-th percentile value from the sample, ignoring null entries.</returns>
     public static double Percentile(this IEnumerable<double?> data, int p)
     {
       double[] array = data.Where(d => d.HasValue).Select(d => d.Value).ToArray();
@@ -998,6 +1047,7 @@ namespace Altaxo.Calc.Statistics
     /// Approximately median-unbiased regardless of the sample distribution (R8).
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
+    /// <returns>A function that returns the p-th percentile for a given p.</returns>
     public static Func<int, double> PercentileFunc(this IEnumerable<double> data)
     {
       double[] array = data.ToArray();
@@ -1011,6 +1061,7 @@ namespace Altaxo.Calc.Statistics
     /// Approximately median-unbiased regardless of the sample distribution (R8).
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
+    /// <returns>A function that returns the p-th percentile for a given p.</returns>
     public static Func<int, float> PercentileFunc(this IEnumerable<float> data)
     {
       float[] array = data.ToArray();
@@ -1024,6 +1075,7 @@ namespace Altaxo.Calc.Statistics
     /// Approximately median-unbiased regardless of the sample distribution (R8).
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
+    /// <returns>A function that returns the p-th percentile for a given p, ignoring null entries.</returns>
     public static Func<int, double> PercentileFunc(this IEnumerable<double?> data)
     {
       double[] array = data.Where(d => d.HasValue).Select(d => d.Value).ToArray();
@@ -1036,6 +1088,7 @@ namespace Altaxo.Calc.Statistics
     /// Approximately median-unbiased regardless of the sample distribution (R8).
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
+    /// <returns>The first quartile (lower quartile) of the sample.</returns>
     public static double LowerQuartile(this IEnumerable<double> data)
     {
       double[] array = data.ToArray();
@@ -1047,6 +1100,7 @@ namespace Altaxo.Calc.Statistics
     /// Approximately median-unbiased regardless of the sample distribution (R8).
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
+    /// <returns>The first quartile (lower quartile) of the sample.</returns>
     public static float LowerQuartile(this IEnumerable<float> data)
     {
       float[] array = data.ToArray();
@@ -1058,6 +1112,7 @@ namespace Altaxo.Calc.Statistics
     /// Approximately median-unbiased regardless of the sample distribution (R8).
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
+    /// <returns>The first quartile (lower quartile) of the sample, ignoring null entries.</returns>
     public static double LowerQuartile(this IEnumerable<double?> data)
     {
       double[] array = data.Where(d => d.HasValue).Select(d => d.Value).ToArray();
@@ -1069,6 +1124,7 @@ namespace Altaxo.Calc.Statistics
     /// Approximately median-unbiased regardless of the sample distribution (R8).
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
+    /// <returns>The third quartile (upper quartile) of the sample.</returns>
     public static double UpperQuartile(this IEnumerable<double> data)
     {
       double[] array = data.ToArray();
@@ -1080,6 +1136,7 @@ namespace Altaxo.Calc.Statistics
     /// Approximately median-unbiased regardless of the sample distribution (R8).
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
+    /// <returns>The third quartile (upper quartile) of the sample.</returns>
     public static float UpperQuartile(this IEnumerable<float> data)
     {
       float[] array = data.ToArray();
@@ -1091,6 +1148,7 @@ namespace Altaxo.Calc.Statistics
     /// Approximately median-unbiased regardless of the sample distribution (R8).
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
+    /// <returns>The third quartile (upper quartile) of the sample, ignoring null entries.</returns>
     public static double UpperQuartile(this IEnumerable<double?> data)
     {
       double[] array = data.Where(d => d.HasValue).Select(d => d.Value).ToArray();
@@ -1102,6 +1160,7 @@ namespace Altaxo.Calc.Statistics
     /// Approximately median-unbiased regardless of the sample distribution (R8).
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
+    /// <returns>The interquartile range (IQR) of the sample.</returns>
     public static double InterquartileRange(this IEnumerable<double> data)
     {
       double[] array = data.ToArray();
@@ -1113,6 +1172,7 @@ namespace Altaxo.Calc.Statistics
     /// Approximately median-unbiased regardless of the sample distribution (R8).
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
+    /// <returns>The interquartile range (IQR) of the sample.</returns>
     public static float InterquartileRange(this IEnumerable<float> data)
     {
       float[] array = data.ToArray();
@@ -1124,6 +1184,7 @@ namespace Altaxo.Calc.Statistics
     /// Approximately median-unbiased regardless of the sample distribution (R8).
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
+    /// <returns>The interquartile range (IQR) of the sample, ignoring null entries.</returns>
     public static double InterquartileRange(this IEnumerable<double?> data)
     {
       double[] array = data.Where(d => d.HasValue).Select(d => d.Value).ToArray();
@@ -1135,6 +1196,7 @@ namespace Altaxo.Calc.Statistics
     /// Approximately median-unbiased regardless of the sample distribution (R8).
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
+    /// <returns>An array containing {min, lower-quantile, median, upper-quantile, max}.</returns>
     public static double[] FiveNumberSummary(this IEnumerable<double> data)
     {
       double[] array = data.ToArray();
@@ -1146,6 +1208,7 @@ namespace Altaxo.Calc.Statistics
     /// Approximately median-unbiased regardless of the sample distribution (R8).
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
+    /// <returns>An array containing {min, lower-quantile, median, upper-quantile, max}.</returns>
     public static float[] FiveNumberSummary(this IEnumerable<float> data)
     {
       float[] array = data.ToArray();
@@ -1157,6 +1220,7 @@ namespace Altaxo.Calc.Statistics
     /// Approximately median-unbiased regardless of the sample distribution (R8).
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
+    /// <returns>An array containing {min, lower-quantile, median, upper-quantile, max}, ignoring null entries.</returns>
     public static double[] FiveNumberSummary(this IEnumerable<double?> data)
     {
       double[] array = data.Where(d => d.HasValue).Select(d => d.Value).ToArray();
@@ -1168,6 +1232,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
     /// <param name="order">One-based order of the statistic, must be between 1 and N (inclusive).</param>
+    /// <returns>The order statistic (order-th smallest value in the sample).</returns>
     public static double OrderStatistic(IEnumerable<double> data, int order)
     {
       double[] array = data.ToArray();
@@ -1179,6 +1244,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
     /// <param name="order">One-based order of the statistic, must be between 1 and N (inclusive).</param>
+    /// <returns>The order statistic (order-th smallest value in the sample).</returns>
     public static float OrderStatistic(IEnumerable<float> data, int order)
     {
       float[] array = data.ToArray();
@@ -1189,6 +1255,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns the order statistic (order 1..N) from the provided samples.
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
+    /// <returns>A function that returns the order statistic for a given one-based order.</returns>
     public static Func<int, double> OrderStatisticFunc(IEnumerable<double> data)
     {
       double[] array = data.ToArray();
@@ -1200,6 +1267,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns the order statistic (order 1..N) from the provided samples.
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
+    /// <returns>A function that returns the order statistic for a given one-based order.</returns>
     public static Func<int, float> OrderStatisticFunc(IEnumerable<float> data)
     {
       float[] array = data.ToArray();
@@ -1214,6 +1282,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
     /// <param name="definition">Rank definition, to choose how ties should be handled and what product/definition it should be consistent with</param>
+    /// <returns>An array of ranks corresponding to each entry in the sample.</returns>
     public static double[] Ranks(this IEnumerable<double> data, RankDefinition definition = RankDefinition.Default)
     {
       double[] array = data.ToArray();
@@ -1227,6 +1296,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
     /// <param name="definition">Rank definition, to choose how ties should be handled and what product/definition it should be consistent with</param>
+    /// <returns>An array of ranks corresponding to each entry in the sample.</returns>
     public static float[] Ranks(this IEnumerable<float> data, RankDefinition definition = RankDefinition.Default)
     {
       float[] array = data.ToArray();
@@ -1240,6 +1310,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
     /// <param name="definition">Rank definition, to choose how ties should be handled and what product/definition it should be consistent with</param>
+    /// <returns>An array of ranks corresponding to each entry in the sample, ignoring null entries.</returns>
     public static double[] Ranks(this IEnumerable<double?> data, RankDefinition definition = RankDefinition.Default)
     {
       return Ranks(data.Where(d => d.HasValue).Select(d => d.Value), definition);
@@ -1254,6 +1325,7 @@ namespace Altaxo.Calc.Statistics
     /// <param name="data">The data sample sequence.</param>
     /// <param name="x">Quantile value.</param>
     /// <param name="definition">Rank definition, to choose how ties should be handled and what product/definition it should be consistent with</param>
+    /// <returns>The quantile tau corresponding to the provided value x.</returns>
     public static double QuantileRank(this IEnumerable<double> data, double x, RankDefinition definition = RankDefinition.Default)
     {
       double[] array = data.ToArray();
@@ -1270,6 +1342,7 @@ namespace Altaxo.Calc.Statistics
     /// <param name="data">The data sample sequence.</param>
     /// <param name="x">Quantile value.</param>
     /// <param name="definition">Rank definition, to choose how ties should be handled and what product/definition it should be consistent with</param>
+    /// <returns>The quantile tau corresponding to the provided value x.</returns>
     public static double QuantileRank(this IEnumerable<float> data, float x, RankDefinition definition = RankDefinition.Default)
     {
       float[] array = data.ToArray();
@@ -1286,6 +1359,7 @@ namespace Altaxo.Calc.Statistics
     /// <param name="data">The data sample sequence.</param>
     /// <param name="x">Quantile value.</param>
     /// <param name="definition">Rank definition, to choose how ties should be handled and what product/definition it should be consistent with</param>
+    /// <returns>The quantile tau corresponding to the provided value x, ignoring null entries.</returns>
     public static double QuantileRank(this IEnumerable<double?> data, double x, RankDefinition definition = RankDefinition.Default)
     {
       return QuantileRank(data.Where(d => d.HasValue).Select(d => d.Value), x, definition);
@@ -1299,6 +1373,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
     /// <param name="definition">Rank definition, to choose how ties should be handled and what product/definition it should be consistent with</param>
+    /// <returns>A function that returns the quantile rank for a given x.</returns>
     public static Func<double, double> QuantileRankFunc(this IEnumerable<double> data, RankDefinition definition = RankDefinition.Default)
     {
       double[] array = data.ToArray();
@@ -1314,6 +1389,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
     /// <param name="definition">Rank definition, to choose how ties should be handled and what product/definition it should be consistent with</param>
+    /// <returns>A function that returns the quantile rank for a given x.</returns>
     public static Func<float, double> QuantileRankFunc(this IEnumerable<float> data, RankDefinition definition = RankDefinition.Default)
     {
       float[] array = data.ToArray();
@@ -1329,6 +1405,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
     /// <param name="definition">Rank definition, to choose how ties should be handled and what product/definition it should be consistent with</param>
+    /// <returns>A function that returns the quantile rank for a given x, ignoring null entries.</returns>
     public static Func<double, double> QuantileRankFunc(this IEnumerable<double?> data, RankDefinition definition = RankDefinition.Default)
     {
       return QuantileRankFunc(data.Where(d => d.HasValue).Select(d => d.Value), definition);
@@ -1339,6 +1416,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
     /// <param name="x">The value where to estimate the CDF at.</param>
+    /// <returns>The empirical cumulative distribution function value at <paramref name="x"/>.</returns>
     public static double EmpiricalCDF(this IEnumerable<double> data, double x)
     {
       double[] array = data.ToArray();
@@ -1351,6 +1429,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
     /// <param name="x">The value where to estimate the CDF at.</param>
+    /// <returns>The empirical cumulative distribution function value at <paramref name="x"/>.</returns>
     public static double EmpiricalCDF(this IEnumerable<float> data, float x)
     {
       float[] array = data.ToArray();
@@ -1363,6 +1442,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
     /// <param name="x">The value where to estimate the CDF at.</param>
+    /// <returns>The empirical cumulative distribution function value at <paramref name="x"/>, ignoring null entries.</returns>
     public static double EmpiricalCDF(this IEnumerable<double?> data, double x)
     {
       return EmpiricalCDF(data.Where(d => d.HasValue).Select(d => d.Value), x);
@@ -1372,6 +1452,7 @@ namespace Altaxo.Calc.Statistics
     /// Estimates the empirical cumulative distribution function (CDF) at x from the provided samples.
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
+    /// <returns>A function that evaluates the empirical CDF at a given x.</returns>
     public static Func<double, double> EmpiricalCDFFunc(this IEnumerable<double> data)
     {
       double[] array = data.ToArray();
@@ -1383,6 +1464,7 @@ namespace Altaxo.Calc.Statistics
     /// Estimates the empirical cumulative distribution function (CDF) at x from the provided samples.
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
+    /// <returns>A function that evaluates the empirical CDF at a given x.</returns>
     public static Func<float, double> EmpiricalCDFFunc(this IEnumerable<float> data)
     {
       float[] array = data.ToArray();
@@ -1394,6 +1476,7 @@ namespace Altaxo.Calc.Statistics
     /// Estimates the empirical cumulative distribution function (CDF) at x from the provided samples.
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
+    /// <returns>A function that evaluates the empirical CDF at a given x, ignoring null entries.</returns>
     public static Func<double, double> EmpiricalCDFFunc(this IEnumerable<double?> data)
     {
       return EmpiricalCDFFunc(data.Where(d => d.HasValue).Select(d => d.Value));
@@ -1404,6 +1487,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
     /// <param name="tau">Quantile selector, between 0.0 and 1.0 (inclusive).</param>
+    /// <returns>The empirical inverse CDF (quantile) at <paramref name="tau"/>.</returns>
     public static double EmpiricalInvCDF(this IEnumerable<double> data, double tau)
     {
       double[] array = data.ToArray();
@@ -1415,6 +1499,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
     /// <param name="tau">Quantile selector, between 0.0 and 1.0 (inclusive).</param>
+    /// <returns>The empirical inverse CDF (quantile) at <paramref name="tau"/>.</returns>
     public static float EmpiricalInvCDF(this IEnumerable<float> data, double tau)
     {
       float[] array = data.ToArray();
@@ -1426,6 +1511,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
     /// <param name="tau">Quantile selector, between 0.0 and 1.0 (inclusive).</param>
+    /// <returns>The empirical inverse CDF (quantile) at <paramref name="tau"/>, ignoring null entries.</returns>
     public static double EmpiricalInvCDF(this IEnumerable<double?> data, double tau)
     {
       return EmpiricalInvCDF(data.Where(d => d.HasValue).Select(d => d.Value), tau);
@@ -1435,6 +1521,7 @@ namespace Altaxo.Calc.Statistics
     /// Estimates the empirical inverse CDF at tau from the provided samples.
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
+    /// <returns>A function that returns the empirical inverse CDF for a given tau.</returns>
     public static Func<double, double> EmpiricalInvCDFFunc(this IEnumerable<double> data)
     {
       double[] array = data.ToArray();
@@ -1446,6 +1533,7 @@ namespace Altaxo.Calc.Statistics
     /// Estimates the empirical inverse CDF at tau from the provided samples.
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
+    /// <returns>A function that returns the empirical inverse CDF for a given tau.</returns>
     public static Func<double, float> EmpiricalInvCDFFunc(this IEnumerable<float> data)
     {
       float[] array = data.ToArray();
@@ -1457,6 +1545,7 @@ namespace Altaxo.Calc.Statistics
     /// Estimates the empirical inverse CDF at tau from the provided samples.
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
+    /// <returns>A function that returns the empirical inverse CDF for a given tau, ignoring null entries.</returns>
     public static Func<double, double> EmpiricalInvCDFFunc(this IEnumerable<double?> data)
     {
       return EmpiricalInvCDFFunc(data.Where(d => d.HasValue).Select(d => d.Value));
@@ -1467,6 +1556,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if any of the values in the stream are NaN.
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
+    /// <returns>The entropy of the data in bits.</returns>
     public static double Entropy(IEnumerable<double> data)
     {
       return StreamingStatistics.Entropy(data);
@@ -1478,6 +1568,7 @@ namespace Altaxo.Calc.Statistics
     /// Null-entries are ignored.
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
+    /// <returns>The entropy of the data in bits. Null entries are ignored.</returns>
     public static double Entropy(IEnumerable<double?> data)
     {
       return StreamingStatistics.Entropy(data.Where(d => d.HasValue).Select(d => d.Value));
@@ -1489,6 +1580,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="samples">The sample stream to calculate the mean of.</param>
     /// <param name="windowSize">The number of last samples to consider.</param>
+    /// <returns>An enumerable sequence of moving average values, one per input sample.</returns>
     public static IEnumerable<double> MovingAverage(this IEnumerable<double> samples, int windowSize)
     {
       var movingStatistics = new MovingStatistics(windowSize);

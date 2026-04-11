@@ -615,6 +615,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// <summary>
   /// Provides debugger visualization support for vectors.
   /// </summary>
+  /// <typeparam name="T">The element type of the vector.</typeparam>
   internal class VectorDebuggingView<T>
       where T : struct, IEquatable<T>, IFormattable
   {

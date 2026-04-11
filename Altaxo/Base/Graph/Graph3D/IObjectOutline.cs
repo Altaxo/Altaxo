@@ -68,6 +68,7 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Gets the bounds of the object in root layer coordinates, but then with an additional transformation.
     /// </summary>
+    /// <param name="additionalTransformation">The additional transformation to apply to the object bounds.</param>
     /// <returns>The bounds of the object, with an additional transformation.</returns>
     RectangleD3D GetBounds(Matrix3x3 additionalTransformation);
   }

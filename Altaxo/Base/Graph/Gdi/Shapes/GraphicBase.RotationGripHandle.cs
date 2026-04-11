@@ -50,6 +50,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       /// <summary>
       /// Initializes a new instance of the <see cref="RotationGripHandle"/> class.
       /// </summary>
+      /// <param name="parent">The parent hit test object.</param>
+      /// <param name="relPos">The relative position of the grip.</param>
+      /// <param name="spanningHalfYRhombus">The transformation matrix used to display the grip.</param>
       public RotationGripHandle(IHitTestObject parent, PointD2D relPos, MatrixD2D spanningHalfYRhombus)
       {
         _parent = parent;

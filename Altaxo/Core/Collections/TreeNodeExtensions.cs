@@ -1128,6 +1128,7 @@ namespace Altaxo.Collections
     /// <summary>
     /// Gets the root node of a tree to which the given node <paramref name="node"/> belongs.
     /// </summary>
+    /// <typeparam name="T">The node type.</typeparam>
     /// <param name="node">The node to start with.</param>
     /// <returns>The root node of the tree to which the given node <paramref name="node"/> belongs.</returns>
     public static T RootNode<T>(this T node) where T : INodeWithParentNode<T>
@@ -1246,6 +1247,9 @@ namespace Altaxo.Collections
     /// <summary>
     /// Frees this node, i.e. removes the node from it's parent collection.
     /// </summary>
+    /// <typeparam name="T">The node type.</typeparam>
+    /// <param name="node">The node to remove.</param>
+    /// <returns><see langword="true"/> if the node was removed; otherwise, <see langword="false"/>.</returns>
     public static bool Remove<T>(this T node) where T : ITreeListNodeWithParent<T>
     {
       var parent = node.ParentNode;
@@ -1259,6 +1263,7 @@ namespace Altaxo.Collections
     /// Returns only the nodes with the highest hierarchy level among all the provided nodes (i.e. the nodes most close to the leaf nodes of the true).
     /// First, the <paramref name="nodes"/> collection is iterated through to determine the highest node level. Then only those nodes with the hightest node level are returned.
     /// </summary>
+    /// <typeparam name="T">The node type.</typeparam>
     /// <param name="nodes">Nodes to filter.</param>
     /// <returns>Only those nodes wich have the same highest level number among all the provided nodes.</returns>
     public static HashSet<T> NodesOfSameHighestLevel<T>(IEnumerable<T> nodes) where T : ITreeListNodeWithParent<T>
@@ -1352,6 +1357,7 @@ namespace Altaxo.Collections
     /// <remarks>The following assumptions must be fullfilled:
     /// <para>The nodes have to have the same parent, otherwise an exception is thrown.</para>
     /// </remarks>
+    /// <typeparam name="T">The node type.</typeparam>
     public static int MoveNodesUpDown<T>(int indexDelta, IEnumerable<T> nodesToMove) where T : ITreeListNodeWithParent<T>
     {
       if (indexDelta == 0)

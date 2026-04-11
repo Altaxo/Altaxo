@@ -191,6 +191,7 @@ namespace Altaxo.Settings
       return new AutoUpdateSettings(this);
     }
 
+    /// <inheritdoc />
     object ICloneable.Clone()
     {
       return new AutoUpdateSettings(this);

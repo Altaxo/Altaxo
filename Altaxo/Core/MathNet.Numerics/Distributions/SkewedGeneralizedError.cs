@@ -120,6 +120,7 @@ namespace Altaxo.Calc.Distributions
     /// <param name="scale">The scale (σ) of the distribution. Range: σ > 0.</param>
     /// <param name="skew">The skew, 1 > λ > -1</param>
     /// <param name="p">Parameter that controls kurtosis. Range: p > 0</param>
+    /// <returns><c>true</c> if the parameters define a valid skewed generalized error distribution; otherwise, <c>false</c>.</returns>
     public static bool IsValidParameterSet(double location, double scale, double skew, double p)
     {
       return scale > 0.0 && skew > -1.0 && skew < 1.0 && p > 0.0 && !double.IsNaN(location);

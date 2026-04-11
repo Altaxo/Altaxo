@@ -438,6 +438,7 @@ namespace Altaxo.Scripting
       CopyInstanceMembersFrom(from);
     }
 
+    /// <inheritdoc/>
     void IFitFunctionScriptText.CopyFrom(IFitFunctionScriptText from, bool forModification)
     {
       CopyFrom((FitFunctionScript)from, forModification);
@@ -1312,6 +1313,7 @@ namespace Altaxo.Scripting
         return null;
     }
 
+    /// <inheritdoc/>
     void Altaxo.Calc.Regression.Nonlinear.IFitFunction.Evaluate(double[] independent, double[] parameters, double[] result)
     {
       MakeSureWasTriedToCompile();

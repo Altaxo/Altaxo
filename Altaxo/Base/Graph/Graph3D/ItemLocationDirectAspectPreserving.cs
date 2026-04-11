@@ -295,6 +295,7 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Updates the x size while preserving the configured aspect ratio.
     /// </summary>
+    /// <param name="value">The new x-size value.</param>
     protected override void InternalSetSizeXSilent(RADouble value)
     {
       _sizeX = value;
@@ -305,6 +306,7 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Updates the y size while preserving the configured aspect ratio.
     /// </summary>
+    /// <param name="value">The new y-size value.</param>
     protected override void InternalSetSizeYSilent(RADouble value)
     {
       _sizeY = value;
@@ -315,6 +317,9 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Updates all size components while preserving the configured aspect ratio.
     /// </summary>
+    /// <param name="valueX">The new width value.</param>
+    /// <param name="valueY">The new height value.</param>
+    /// <param name="valueZ">The new depth value.</param>
     protected override void InternalSetSizeSilent(RADouble valueX, RADouble valueY, RADouble valueZ)
     {
       _sizeX = valueX;
@@ -335,6 +340,8 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Updates the x scale while preserving the configured aspect ratio.
     /// </summary>
+    /// <param name="value">The new x-scale value.</param>
+    /// <returns><see langword="true"/> if the value changed; otherwise, <see langword="false"/>.</returns>
     protected override bool InternalSetScaleXSilent(double value)
     {
       _scaleX = 1;
@@ -349,6 +356,8 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Updates the y scale while preserving the configured aspect ratio.
     /// </summary>
+    /// <param name="value">The new y-scale value.</param>
+    /// <returns><see langword="true"/> if the value changed; otherwise, <see langword="false"/>.</returns>
     protected override bool InternalSetScaleYSilent(double value)
     {
       _scaleY = 1;
@@ -363,6 +372,8 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Updates all scale components while preserving the configured aspect ratio.
     /// </summary>
+    /// <param name="value">The new scale vector.</param>
+    /// <returns><see langword="true"/> if any relevant value changed; otherwise, <see langword="false"/>.</returns>
     protected override bool InternalSetScaleSilent(VectorD3D value)
     {
       _scaleX = 1;

@@ -229,6 +229,7 @@ namespace Altaxo.Data
     /// <summary>
     /// Gets all the names of the columns common to all tables in a unordered fashion.
     /// </summary>
+    /// <param name="tables">The tables whose common column names are determined.</param>
     /// <returns>The names of all the columns common to all tables in a unordered fashion</returns>
     public static HashSet<string> GetCommonColumnNamesUnordered(IReadOnlyList<DataTable> tables)
     {
@@ -245,6 +246,7 @@ namespace Altaxo.Data
     /// <summary>
     /// Gets all the names of the columns common to all tables in the order as the columns appear in the first table.
     /// </summary>
+    /// <param name="tables">The tables whose common column names are determined.</param>
     /// <returns>The names of all the columns common to all tables in the order as the columns appear in the first table.</returns>
     public static List<string> GetCommonColumnNamesOrderedByAppearanceInFirstTable(IReadOnlyList<DataTable> tables)
     {
@@ -265,6 +267,9 @@ namespace Altaxo.Data
     /// <summary>
     /// Executes the 'Plot common column' command.
     /// </summary>
+    /// <param name="destinationTable">The destination table that receives the extracted columns.</param>
+    /// <param name="data">The source data and selected tables.</param>
+    /// <param name="options">The options controlling how common columns are extracted.</param>
     public static void Execute(DataTable destinationTable, ExtractCommonColumnsToTableData data, ExtractCommonColumnsToTableOptions options)
     {
       bool useCommonX = true;
@@ -602,12 +607,14 @@ namespace Altaxo.Data
       }
     }
 
+    /// <inheritdoc />
     object IAltaxoTableDataSource.ProcessOptionsObject
     {
       get => _processOptions;
       set => ProcessOptions = (ExtractCommonColumnsToTableOptions)value;
     }
 
+    /// <inheritdoc />
     object IAltaxoTableDataSource.ProcessDataObject
     {
       get => _processData;

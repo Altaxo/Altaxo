@@ -178,6 +178,7 @@ namespace Altaxo.Calc.Statistics.Mcmc
     /// <summary>
     /// Returns a sample from the distribution P.
     /// </summary>
+    /// <returns>A sample drawn from the target distribution.</returns>
     public override double Sample()
     {
       Burn(BurnInterval + 1);

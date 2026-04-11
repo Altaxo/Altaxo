@@ -586,6 +586,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     /// Optionally, a subset of these peaks can be selected by specifying conditions for peak properties.
     /// For this call, the properties of this <see cref="PeakFinder"/> instance will be used (that were previously set with the <c>Set*</c> methods).
     /// </summary>
+    /// <param name="x">A signal with peaks to analyze.</param>
     /// <returns>
     /// Indices of peaks in <paramref name="x"/> that satisfy all conditions.
     /// See also the other properties of this class for access to additional results.
@@ -1166,6 +1167,9 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     /// <param name="wlen">A window length in samples (see `peak_prominences`) which is rounded up
     /// to the nearest odd integer.If smaller than 2 the entire signal `x` is
     /// used.</param>
+    /// <returns>
+    /// A tuple containing the computed prominences, left base indices, right base indices, and an optional warnings string.
+    /// </returns>
     public (double[] Prominences, int[] LeftBase, int[] RightBase, string? warnings) _peak_prominences(IReadOnlyList<double> x, int[] peaks, int wlen)
     {
       int i;

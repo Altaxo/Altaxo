@@ -36,6 +36,7 @@ namespace Altaxo.Data
     /// <summary>
     /// Returns the held object. Null can be returned if the object is no longer available, for example because it was disposed.
     /// </summary>
+    /// <returns>The held readable column, or <see langword="null"/> if it is no longer available.</returns>
     IReadableColumn? Document();
 
     /// <summary>
@@ -177,6 +178,7 @@ namespace Altaxo.Data
     /// <summary>
     /// For deserialization purposes only.
     /// </summary>
+    /// <param name="info">The deserialization information.</param>
     protected ReadableColumnProxy(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
       : base(info)
     {

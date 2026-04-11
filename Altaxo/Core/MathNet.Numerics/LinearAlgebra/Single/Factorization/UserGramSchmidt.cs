@@ -45,6 +45,7 @@ namespace Altaxo.Calc.LinearAlgebra.Single.Factorization
     /// using the modified Gram-Schmidt method.
     /// </summary>
     /// <param name="matrix">The matrix to factor.</param>
+    /// <returns>A QR factorization created with the modified Gram-Schmidt method.</returns>
     /// <exception cref="ArgumentNullException">If <paramref name="matrix"/> is <c>null</c>.</exception>
     /// <exception cref="ArgumentException">If <paramref name="matrix"/> row count is less then column count</exception>
     /// <exception cref="ArgumentException">If <paramref name="matrix"/> is rank deficient</exception>

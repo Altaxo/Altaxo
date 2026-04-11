@@ -55,6 +55,7 @@ namespace Altaxo.Main.Services
     /// This method must be called on the main thread.
     /// </para>
     /// </remarks>
+    /// <returns><see langword="true"/> if shutdown completed; otherwise, <see langword="false"/>.</returns>
     bool Shutdown();
 
     /// <summary>
@@ -70,6 +71,7 @@ namespace Altaxo.Main.Services
     /// <param name="reason">The reason, will be displayed to the user.</param>
     /// <exception cref="InvalidOperationException">Shutdown is already in progress</exception>
     /// <remarks>This method is thread-safe.</remarks>
+    /// <returns>An <see cref="IDisposable"/> that must be disposed to allow shutdown again.</returns>
     IDisposable PreventShutdown(string reason);
 
     /// <summary>
@@ -110,6 +112,7 @@ namespace Altaxo.Main.Services
     /// interrupted by the application closing down.
     /// </summary>
     /// <remarks>This method is thread-safe.</remarks>
+    /// <param name="task">The background task to track.</param>
     void AddBackgroundTask(Task task);
 
     /// <summary>

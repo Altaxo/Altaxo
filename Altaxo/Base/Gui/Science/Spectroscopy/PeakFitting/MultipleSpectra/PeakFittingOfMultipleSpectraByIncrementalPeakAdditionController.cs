@@ -296,6 +296,10 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting.MultipleSpectra
       /// <summary>
       /// Initializes a new instance of the <see cref="EditablePositionFWHM"/> class.
       /// </summary>
+      /// <param name="position">The peak position.</param>
+      /// <param name="initialFWHMValue">The initial full width at half maximum.</param>
+      /// <param name="minimalFWHMValue">The optional minimum full width at half maximum.</param>
+      /// <param name="maximalFWHMValue">The optional maximum full width at half maximum.</param>
       public EditablePositionFWHM(double position, double initialFWHMValue, double? minimalFWHMValue, double? maximalFWHMValue)
       {
         Position = position;
@@ -307,6 +311,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting.MultipleSpectra
       /// <summary>
       /// Initializes a new instance of the <see cref="EditablePositionFWHM"/> class.
       /// </summary>
+      /// <param name="v">The tuple containing the position and FWHM values.</param>
       public EditablePositionFWHM((double position, double initialFWHMValue, double? minimalFWHMValue, double? maximalFWHMValue) v)
       {
         Position = v.position;

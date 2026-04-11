@@ -105,6 +105,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex.Factorization
     /// <exception cref="ArgumentNullException">If <paramref name="matrix"/> is <c>null</c>.</exception>
     /// <exception cref="ArgumentException">If <paramref name="matrix"/> is not a square matrix.</exception>
     /// <exception cref="ArgumentException">If <paramref name="matrix"/> is not positive definite.</exception>
+    /// <returns>The Cholesky factorization of <paramref name="matrix"/>.</returns>
     public static UserCholesky Create(Matrix<Complex> matrix)
     {
       // Create a new matrix for the Cholesky factor, then perform factorization (while overwriting).

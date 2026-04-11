@@ -110,6 +110,13 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Creates a new instance with an additional translation, rotation, scaling, and shear transformation.
     /// </summary>
+    /// <param name="x">The translation in x-direction.</param>
+    /// <param name="y">The translation in y-direction.</param>
+    /// <param name="rotation">The additional rotation.</param>
+    /// <param name="scaleX">The horizontal scale factor.</param>
+    /// <param name="scaleY">The vertical scale factor.</param>
+    /// <param name="shear">The horizontal shear factor.</param>
+    /// <returns>A new hit-test data instance with the additional transformation applied.</returns>
     public HitTestPointData NewFromTranslationRotationScaleShear(double x, double y, double rotation, double scaleX, double scaleY, double shear)
     {
       var result = new HitTestPointData(this);
@@ -127,6 +134,8 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Creates a new instance with an additional transformation.
     /// </summary>
+    /// <param name="additionalTransformation">The transformation to prepend.</param>
+    /// <returns>A new hit-test data instance with the additional transformation applied.</returns>
     public HitTestPointData NewFromAdditionalTransformation(MatrixD2D additionalTransformation)
     {
       var result = new HitTestPointData(this);
@@ -146,6 +155,7 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Returns the hit point in world coordinates by applying the inverse current coordinate transformation and then the provided inverse coordinate transformation.
     /// </summary>
+    /// <param name="additionalTransform">The additional transformation whose inverse is applied afterwards.</param>
     /// <returns>Hitted point in world coordinates.</returns>
     public PointD2D GetHittedPointInWorldCoord(MatrixD2D additionalTransform)
     {

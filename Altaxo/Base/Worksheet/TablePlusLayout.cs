@@ -76,6 +76,7 @@ namespace Altaxo.Worksheet
     /// <summary>
     /// Initializes a new instance of the <see cref="TablePlusLayout"/> class for deserialization.
     /// </summary>
+    /// <param name="_">The XML deserialization info.</param>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected TablePlusLayout(Altaxo.Serialization.Xml.IXmlDeserializationInfo _)
     {

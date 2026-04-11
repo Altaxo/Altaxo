@@ -143,6 +143,7 @@ namespace Altaxo.Graph.Plot.Groups
     /// <summary>
     /// Creates a strongly typed clone of this group style.
     /// </summary>
+    /// <returns>A cloned group style.</returns>
     public BarSizePosition2DGroupStyle Clone()
     {
       var result = new BarSizePosition2DGroupStyle();
@@ -150,6 +151,7 @@ namespace Altaxo.Graph.Plot.Groups
       return result;
     }
 
+    /// <inheritdoc />
     object ICloneable.Clone()
     {
       var result = new BarSizePosition2DGroupStyle();
@@ -326,14 +328,17 @@ namespace Altaxo.Graph.Plot.Groups
       posX = _logicalItemOffsetX;
     }
 
+    /// <inheritdoc />
     bool IShiftLogicalXYGroupStyle.IsConstant { get { return true; } }
 
+    /// <inheritdoc />
     void IShiftLogicalXYGroupStyle.Apply(out double logicalShiftX, out double logicalShiftY)
     {
       logicalShiftX = _logicalItemOffsetX;
       logicalShiftY = 0;
     }
 
+    /// <inheritdoc />
     void IShiftLogicalXYGroupStyle.Apply(out Func<int, double> logicalShiftX, out Func<int, double> logicalShiftY)
     {
       throw new NotImplementedException("Use this function only if IsConstant returns false");
@@ -344,6 +349,7 @@ namespace Altaxo.Graph.Plot.Groups
     /// <summary>
     /// Adds this style as an external group style when required.
     /// </summary>
+    /// <param name="externalGroups">Collection of external plot group styles.</param>
     public static void AddExternalGroupStyle(IPlotGroupStyleCollection externalGroups)
     {
       if (PlotGroupStyle.ShouldAddExternalGroupStyle(externalGroups, typeof(BarSizePosition2DGroupStyle)))
@@ -376,6 +382,11 @@ namespace Altaxo.Graph.Plot.Groups
     /// <summary>
     /// Announces that a plot item intends to use bar-size positioning.
     /// </summary>
+    /// <param name="externalGroups">Collection of external plot group styles.</param>
+    /// <param name="localGroups">Collection of local plot group styles.</param>
+    /// <param name="numberOfItems">The number of items in the cluster.</param>
+    /// <param name="minimumLogicalXValue">The minimum logical x-value of the cluster.</param>
+    /// <param name="maximumLogicalXValue">The maximum logical x-value of the cluster.</param>
     public static void IntendToApply(
       IPlotGroupStyleCollection externalGroups,
       IPlotGroupStyleCollection localGroups,

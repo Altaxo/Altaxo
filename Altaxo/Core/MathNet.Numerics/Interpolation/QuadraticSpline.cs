@@ -114,6 +114,7 @@ namespace Altaxo.Calc.Interpolation
     /// Indefinite integral at point t.
     /// </summary>
     /// <param name="t">Point t to integrate at.</param>
+    /// <returns>The interpolated indefinite integral at point <paramref name="t"/>.</returns>
     public double Integrate(double t)
     {
       int k = LeftSegmentIndex(t);
@@ -126,6 +127,7 @@ namespace Altaxo.Calc.Interpolation
     /// </summary>
     /// <param name="a">Left bound of the integration interval [a,b].</param>
     /// <param name="b">Right bound of the integration interval [a,b].</param>
+    /// <returns>The interpolated definite integral over the interval [<paramref name="a"/>, <paramref name="b"/>].</returns>
     public double Integrate(double a, double b) => Integrate(b) - Integrate(a);
 
     private double[] ComputeIndefiniteIntegral()

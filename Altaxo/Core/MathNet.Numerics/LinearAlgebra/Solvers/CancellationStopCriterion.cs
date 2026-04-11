@@ -36,13 +36,14 @@ namespace Altaxo.Calc.LinearAlgebra.Solvers
   /// <summary>
   /// Defines an <see cref="IIterationStopCriterion{T}"/> that uses a cancellation token as stop criterion.
   /// </summary>
+  /// <typeparam name="T">The numeric element type.</typeparam>
   public sealed class CancellationStopCriterion<T> : IIterationStopCriterion<T> where T : struct, IEquatable<T>, IFormattable
   {
     private readonly CancellationToken _masterToken;
     private CancellationTokenSource _currentTcs;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="IterationCountStopCriterion{T}"/> class.
+    /// Initializes a new instance of the <see cref="CancellationStopCriterion{T}"/> class.
     /// </summary>
     public CancellationStopCriterion()
     {
@@ -51,8 +52,9 @@ namespace Altaxo.Calc.LinearAlgebra.Solvers
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="IterationCountStopCriterion{T}"/> class.
+    /// Initializes a new instance of the <see cref="CancellationStopCriterion{T}"/> class.
     /// </summary>
+    /// <param name="masterToken">The cancellation token that controls the stop criterion.</param>
     public CancellationStopCriterion(CancellationToken masterToken)
     {
       _masterToken = masterToken;
@@ -67,6 +69,7 @@ namespace Altaxo.Calc.LinearAlgebra.Solvers
     /// <param name="solutionVector">The vector containing the current solution values.</param>
     /// <param name="sourceVector">The right hand side vector.</param>
     /// <param name="residualVector">The vector containing the current residual vectors.</param>
+    /// <returns>The current iteration status.</returns>
     /// <remarks>
     /// The individual stop criteria may internally track the progress of the calculation based
     /// on the invocation of this method. Therefore this method should only be called if the

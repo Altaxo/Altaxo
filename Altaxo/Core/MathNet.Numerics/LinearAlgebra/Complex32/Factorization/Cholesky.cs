@@ -44,6 +44,10 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32.Factorization
   /// </remarks>
   internal abstract class Cholesky : Cholesky<Complex32>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Cholesky"/> class.
+    /// </summary>
+    /// <param name="factor">The triangular factor matrix.</param>
     protected Cholesky(Matrix<Complex32> factor)
         : base(factor)
     {

@@ -37,6 +37,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns the smallest value from the sorted data array (ascending).
     /// </summary>
     /// <param name="data">Sample array, must be sorted ascendingly.</param>
+    /// <returns>The smallest value in the array, or NaN if the array is empty.</returns>
     public static float Minimum(float[] data)
     {
       if (data.Length == 0)
@@ -51,6 +52,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns the largest value from the sorted data array (ascending).
     /// </summary>
     /// <param name="data">Sample array, must be sorted ascendingly.</param>
+    /// <returns>The largest value in the array, or NaN if the array is empty.</returns>
     public static float Maximum(float[] data)
     {
       if (data.Length == 0)
@@ -66,6 +68,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="data">Sample array, must be sorted ascendingly.</param>
     /// <param name="order">One-based order of the statistic, must be between 1 and N (inclusive).</param>
+    /// <returns>The order-th smallest value, or NaN if order is out of range.</returns>
     public static float OrderStatistic(float[] data, int order)
     {
       if (order < 1 || order > data.Length)
@@ -81,6 +84,7 @@ namespace Altaxo.Calc.Statistics
     /// Approximately median-unbiased regardless of the sample distribution (R8).
     /// </summary>
     /// <param name="data">Sample array, must be sorted ascendingly.</param>
+    /// <returns>The median of the array, or NaN if the array is empty.</returns>
     public static float Median(float[] data)
     {
       if (data.Length == 0)
@@ -101,6 +105,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="data">Sample array, must be sorted ascendingly.</param>
     /// <param name="p">Percentile selector, between 0 and 100 (inclusive).</param>
+    /// <returns>The p-th percentile value from the array.</returns>
     public static float Percentile(float[] data, int p)
     {
       return Quantile(data, p / 100d);
@@ -111,6 +116,7 @@ namespace Altaxo.Calc.Statistics
     /// Approximately median-unbiased regardless of the sample distribution (R8).
     /// </summary>
     /// <param name="data">Sample array, must be sorted ascendingly.</param>
+    /// <returns>The first quartile (lower quartile) value from the array.</returns>
     public static float LowerQuartile(float[] data)
     {
       return Quantile(data, 0.25d);
@@ -121,6 +127,7 @@ namespace Altaxo.Calc.Statistics
     /// Approximately median-unbiased regardless of the sample distribution (R8).
     /// </summary>
     /// <param name="data">Sample array, must be sorted ascendingly.</param>
+    /// <returns>The third quartile (upper quartile) value from the array.</returns>
     public static float UpperQuartile(float[] data)
     {
       return Quantile(data, 0.75d);
@@ -131,6 +138,7 @@ namespace Altaxo.Calc.Statistics
     /// Approximately median-unbiased regardless of the sample distribution (R8).
     /// </summary>
     /// <param name="data">Sample array, must be sorted ascendingly.</param>
+    /// <returns>The interquartile range (IQR) of the array.</returns>
     public static float InterquartileRange(float[] data)
     {
       return Quantile(data, 0.75d) - Quantile(data, 0.25d);
@@ -141,6 +149,7 @@ namespace Altaxo.Calc.Statistics
     /// Approximately median-unbiased regardless of the sample distribution (R8).
     /// </summary>
     /// <param name="data">Sample array, must be sorted ascendingly.</param>
+    /// <returns>An array containing the five-number summary.</returns>
     public static float[] FiveNumberSummary(float[] data)
     {
       if (data.Length == 0)
@@ -164,6 +173,7 @@ namespace Altaxo.Calc.Statistics
     /// Linear interpolation of the approximate medians for order statistics.
     /// When tau &lt; (2/3) / (N + 1/3), use x1. When tau &gt;= (N - 1/3) / (N + 1/3), use xN.
     /// </remarks>
+    /// <returns>The quantile value corresponding to <paramref name="tau"/>, or NaN if the input is invalid.</returns>
     public static float Quantile(float[] data, double tau)
     {
       if (tau < 0d || tau > 1d || data.Length == 0)
@@ -202,6 +212,7 @@ namespace Altaxo.Calc.Statistics
     /// <param name="b">b-parameter</param>
     /// <param name="c">c-parameter</param>
     /// <param name="d">d-parameter</param>
+    /// <returns>The tau-th quantile according to the provided parameters.</returns>
     public static float QuantileCustom(float[] data, double tau, double a, double b, double c, double d)
     {
       if (tau < 0d || tau > 1d || data.Length == 0)
@@ -232,6 +243,7 @@ namespace Altaxo.Calc.Statistics
     /// <param name="data">Sample array, must be sorted ascendingly.</param>
     /// <param name="tau">Quantile selector, between 0.0 and 1.0 (inclusive).</param>
     /// <param name="definition">Quantile definition, to choose what product/definition it should be consistent with</param>
+    /// <returns>The tau-th quantile according to the specified definition.</returns>
     public static float QuantileCustom(float[] data, double tau, QuantileDefinition definition)
     {
       if (tau < 0d || tau > 1d || data.Length == 0)
@@ -333,6 +345,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
     /// <param name="x">The value where to estimate the CDF at.</param>
+    /// <returns>The empirical cumulative distribution function value at <paramref name="x"/>.</returns>
     public static double EmpiricalCDF(float[] data, float x)
     {
       if (x < data[0])
@@ -368,6 +381,7 @@ namespace Altaxo.Calc.Statistics
     /// <param name="data">The data sample sequence.</param>
     /// <param name="x">Quantile value.</param>
     /// <param name="definition">Rank definition, to choose how ties should be handled and what product/definition it should be consistent with</param>
+    /// <returns>The quantile tau corresponding to the provided value x.</returns>
     public static double QuantileRank(float[] data, float x, RankDefinition definition = RankDefinition.Default)
     {
       if (x < data[0])
@@ -438,6 +452,9 @@ namespace Altaxo.Calc.Statistics
     /// The rank definition can be specified to be compatible
     /// with an existing system.
     /// </summary>
+    /// <param name="data">The sorted data array.</param>
+    /// <param name="definition">Rank definition indicating how to handle ties.</param>
+    /// <returns>An array of ranks corresponding to each entry in the input data.</returns>
     public static double[] Ranks(float[] data, RankDefinition definition = RankDefinition.Default)
     {
       var ranks = new double[data.Length];

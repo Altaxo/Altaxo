@@ -42,16 +42,21 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     /// <summary>
     /// Initializes the interactive color model.
     /// </summary>
+    /// <param name="colorModel">The interactive color model.</param>
+    /// <param name="silentSet">A value indicating whether change notifications should be suppressed.</param>
     void InitializeColorModel(IColorModel colorModel, bool silentSet);
 
     /// <summary>
     /// Initializes the text-only color model.
     /// </summary>
+    /// <param name="colorModel">The text-only color model.</param>
+    /// <param name="silentSet">A value indicating whether change notifications should be suppressed.</param>
     void InitializeTextOnlyColorModel(ITextOnlyColorModel colorModel, bool silentSet);
 
     /// <summary>
     /// Initializes the current color.
     /// </summary>
+    /// <param name="color">The current color.</param>
     void InitializeCurrentColor(AxoColor color);
 
     /// <summary>

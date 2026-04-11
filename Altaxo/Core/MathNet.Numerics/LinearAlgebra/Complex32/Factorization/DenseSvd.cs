@@ -51,11 +51,12 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32.Factorization
   internal sealed class DenseSvd : Svd
   {
     /// <summary>
-    /// Initializes a new instance of the <see cref="DenseSvd"/> class. This object will compute the
-    /// the singular value decomposition when the constructor is called and cache it's decomposition.
+    /// Initializes a new instance of the <see cref="DenseSvd"/> class. This object computes the
+    /// singular value decomposition when the constructor is called and caches its decomposition.
     /// </summary>
     /// <param name="matrix">The matrix to factor.</param>
     /// <param name="computeVectors">Compute the singular U and VT vectors or not.</param>
+    /// <returns>The computed singular value decomposition.</returns>
     /// <exception cref="ArgumentNullException">If <paramref name="matrix"/> is <c>null</c>.</exception>
     /// <exception cref="ArgumentException">If SVD algorithm failed to converge with matrix <paramref name="matrix"/>.</exception>
     public static DenseSvd Create(DenseMatrix matrix, bool computeVectors)

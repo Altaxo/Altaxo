@@ -40,11 +40,13 @@ namespace Altaxo.Gui.Worksheet
     /// <summary>
     /// Initializes the selectable common X columns.
     /// </summary>
+    /// <param name="list">The list of available common X columns.</param>
     void InitializeXCommonColumns(SelectableListNodeList list);
 
     /// <summary>
     /// Initializes the selectable common Y columns.
     /// </summary>
+    /// <param name="list">The list of available common Y columns.</param>
     void InitializeYCommonColumns(SelectableListNodeList list);
 
     /// <summary>

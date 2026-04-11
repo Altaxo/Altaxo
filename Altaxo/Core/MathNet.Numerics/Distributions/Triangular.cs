@@ -106,6 +106,7 @@ namespace Altaxo.Calc.Distributions
     /// <param name="lower">Lower bound. Range: lower ≤ mode ≤ upper</param>
     /// <param name="upper">Upper bound. Range: lower ≤ mode ≤ upper</param>
     /// <param name="mode">Mode (most frequent value).  Range: lower ≤ mode ≤ upper</param>
+    /// <returns><see langword="true"/> if the parameter set is valid; otherwise, <see langword="false"/>.</returns>
     public static bool IsValidParameterSet(double lower, double upper, double mode)
     {
       return upper >= mode && mode >= lower && !double.IsInfinity(upper) && !double.IsInfinity(lower) && !double.IsInfinity(mode);
@@ -265,6 +266,7 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Fills an array with samples generated from the distribution.
     /// </summary>
+    /// <param name="values">The array to fill with samples.</param>
     public void Samples(double[] values)
     {
       SamplesUnchecked(_random, values, _lower, _upper, _mode);

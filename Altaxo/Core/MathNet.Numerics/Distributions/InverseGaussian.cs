@@ -83,6 +83,7 @@ namespace Altaxo.Calc.Distributions
     /// </summary>
     /// <param name="mu">The mean (μ) of the distribution. Range: μ > 0.</param>
     /// <param name="lambda">The shape (λ) of the distribution. Range: λ > 0.</param>
+    /// <returns><c>true</c> if the parameters define a valid inverse Gaussian distribution; otherwise, <c>false</c>.</returns>
     public static bool IsValidParameterSet(double mu, double lambda)
     {
       var allFinite = mu.IsFinite() && lambda.IsFinite();

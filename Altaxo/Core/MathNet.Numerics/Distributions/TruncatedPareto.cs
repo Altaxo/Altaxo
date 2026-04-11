@@ -75,6 +75,7 @@ namespace Altaxo.Calc.Distributions
     /// <param name="scale">The scale (xm) of the distribution. Range: xm > 0.</param>
     /// <param name="shape">The shape (α) of the distribution. Range: α > 0.</param>
     /// <param name="truncation">The truncation (T) of the distribution. Range: T > xm.</param>
+    /// <returns><see langword="true"/> if the parameter set is valid; otherwise, <see langword="false"/>.</returns>
     public static bool IsValidParameterSet(double scale, double shape, double truncation)
     {
       var allFinite = scale.IsFinite() && shape.IsFinite() && truncation.IsFinite();
@@ -257,12 +258,28 @@ namespace Altaxo.Calc.Distributions
       return SamplesUnchecked(rnd, scale, shape, truncation);
     }
 
+    /// <summary>
+    /// Generates a sample without validating the parameter set.
+    /// </summary>
+    /// <param name="rnd">The random number generator to use.</param>
+    /// <param name="scale">The scale parameter.</param>
+    /// <param name="shape">The shape parameter.</param>
+    /// <param name="truncation">The truncation parameter.</param>
+    /// <returns>A sample from the truncated Pareto distribution.</returns>
     internal static double SampleUnchecked(System.Random rnd, double scale, double shape, double truncation)
     {
       double uniform = rnd.NextDouble();
       return InvCDFUncheckedImpl(scale, shape, truncation, uniform);
     }
 
+    /// <summary>
+    /// Fills an array with samples without validating the parameter set.
+    /// </summary>
+    /// <param name="rnd">The random number generator to use.</param>
+    /// <param name="values">The array to fill.</param>
+    /// <param name="scale">The scale parameter.</param>
+    /// <param name="shape">The shape parameter.</param>
+    /// <param name="truncation">The truncation parameter.</param>
     internal static void SamplesUnchecked(System.Random rnd, double[] values, double scale, double shape, double truncation)
     {
       if (values.Length == 0)
@@ -276,6 +293,14 @@ namespace Altaxo.Calc.Distributions
       }
     }
 
+    /// <summary>
+    /// Generates an infinite sample sequence without validating the parameter set.
+    /// </summary>
+    /// <param name="rnd">The random number generator to use.</param>
+    /// <param name="scale">The scale parameter.</param>
+    /// <param name="shape">The shape parameter.</param>
+    /// <param name="truncation">The truncation parameter.</param>
+    /// <returns>An infinite sequence of samples from the truncated Pareto distribution.</returns>
     internal static IEnumerable<double> SamplesUnchecked(System.Random rnd, double scale, double shape, double truncation)
     {
       while (true)

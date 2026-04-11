@@ -41,6 +41,7 @@ namespace Altaxo.Calc
     /// Computes ln(1+x) with good relative precision when |x| is small
     /// </summary>
     /// <param name="x">The parameter for which to compute the log1p function. Range: x > 0.</param>
+    /// <returns>The natural logarithm of 1 + x.</returns>
     public static double Log1p(double x)
     {
       double y0 = Math.Log(1.0 + x);

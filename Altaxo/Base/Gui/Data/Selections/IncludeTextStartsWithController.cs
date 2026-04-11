@@ -297,6 +297,7 @@ namespace Altaxo.Gui.Data.Selections
       yield break;
     }
 
+    /// <inheritdoc />
     void IDataColumnController.SetDataColumn(IReadableColumn column, DataTable supposedParentDataTable, int supposedGroupNumber)
     {
       _supposedParentDataTable = supposedParentDataTable;
@@ -305,6 +306,7 @@ namespace Altaxo.Gui.Data.Selections
       View_InitializeColumn();
     }
 
+    /// <inheritdoc />
     IReadableColumn IDataColumnController.Column
     {
       get
@@ -313,6 +315,7 @@ namespace Altaxo.Gui.Data.Selections
       }
     }
 
+    /// <inheritdoc />
     string IDataColumnController.ColumnName
     {
       get
@@ -321,6 +324,7 @@ namespace Altaxo.Gui.Data.Selections
       }
     }
 
+    /// <inheritdoc />
     void IDataColumnController.SetIndex(int idx)
     {
       DataLabel = $"Col#{idx}:";

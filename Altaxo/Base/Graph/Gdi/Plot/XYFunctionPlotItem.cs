@@ -161,6 +161,8 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <summary>
     /// Copies values from another <see cref="XYFunctionPlotItem"/> instance.
     /// </summary>
+    /// <param name="from">The instance to copy from.</param>
+    /// <param name="withBaseMembers">If set to <see langword="true"/>, base class members are copied as well.</param>
     [MemberNotNull(nameof(_plotData))]
     protected void CopyFrom(XYFunctionPlotItem from, bool withBaseMembers)
     {

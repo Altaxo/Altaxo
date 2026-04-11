@@ -39,9 +39,6 @@ namespace Altaxo.Serialization.Ascii
   public record AsciiDocumentAnalysisOptions : Main.IImmutable
   {
     /// <summary>
-    /// Storage path for storing this instance in the application properties.
-    /// </summary>
-    /// <summary>
     /// Gets the settings storage path for persisting instances in application properties.
     /// </summary>
     public static string SettingsStoragePath = "Altaxo.Options.Serialization.Ascii.DocumentAnalysisOptions";
@@ -162,6 +159,7 @@ namespace Altaxo.Serialization.Ascii
     /// <summary>
     /// Initializes an instance of <see cref="AsciiDocumentAnalysisOptions"/> with the default system values.
     /// </summary>
+    /// <returns>An instance initialized with the default system cultures.</returns>
     protected static AsciiDocumentAnalysisOptions InitializeDefaultSystemValues()
     {
       return InitializeWithCultures(
@@ -176,6 +174,7 @@ namespace Altaxo.Serialization.Ascii
     /// Initializes an instance of <see cref="AsciiDocumentAnalysisOptions"/> with the given cultures.
     /// </summary>
     /// <param name="cultures">The cultures to test.</param>
+    /// <returns>An instance initialized with the specified cultures.</returns>
     protected static AsciiDocumentAnalysisOptions InitializeWithCultures(params CultureInfo[] cultures)
     {
       return new AsciiDocumentAnalysisOptions

@@ -95,6 +95,7 @@ namespace Altaxo.Calc.Random
     /// Returns an array of uniform random numbers greater than or equal to 0.0 and less than 1.0.
     /// </summary>
     /// <param name="count">The size of the array to fill.</param>
+    /// <returns>An array of uniform random numbers greater than or equal to 0.0 and less than 1.0.</returns>
     public double[] NextDoubles(int count)
     {
       var values = new double[count];
@@ -105,6 +106,7 @@ namespace Altaxo.Calc.Random
     /// <summary>
     /// Returns an infinite sequence of uniform random numbers greater than or equal to 0.0 and less than 1.0.
     /// </summary>
+    /// <returns>An infinite sequence of uniform random numbers greater than or equal to 0.0 and less than 1.0.</returns>
     public IEnumerable<double> NextDoubleSequence()
     {
       for (int i = 0; i < 64; i++)
@@ -126,6 +128,7 @@ namespace Altaxo.Calc.Random
     /// <summary>
     /// Returns a random 32-bit signed integer greater than or equal to zero and less than <see cref="F:System.Int32.MaxValue"/>.
     /// </summary>
+    /// <returns>A random 32-bit signed integer in the interval [0, <see cref="F:System.Int32.MaxValue"/>).</returns>
     public sealed override int Next()
     {
       if (_threadSafe)
@@ -142,7 +145,7 @@ namespace Altaxo.Calc.Random
     }
 
     /// <summary>
-    /// Returns a random number less then a specified maximum.
+    /// Returns a random number less than a specified maximum.
     /// </summary>
     /// <param name="maxExclusive">The exclusive upper bound of the random number returned. Range: maxExclusive ≥ 1.</param>
     /// <returns>A 32-bit signed integer less than <paramref name="maxExclusive"/>.</returns>
@@ -259,6 +262,7 @@ namespace Altaxo.Calc.Random
     /// Returns an array with random 32-bit signed integers greater than or equal to zero and less than <see cref="F:System.Int32.MaxValue"/>.
     /// </summary>
     /// <param name="count">The size of the array to fill.</param>
+    /// <returns>An array of random 32-bit signed integers.</returns>
     public int[] NextInt32s(int count)
     {
       var values = new int[count];
@@ -318,6 +322,7 @@ namespace Altaxo.Calc.Random
     /// </summary>
     /// <param name="count">The size of the array to fill.</param>
     /// <param name="maxExclusive">The exclusive upper bound of the random number returned. Range: maxExclusive ≥ 1.</param>
+    /// <returns>An array of random 32-bit signed integers in the requested range.</returns>
     public int[] NextInt32s(int count, int maxExclusive)
     {
       var values = new int[count];
@@ -389,6 +394,7 @@ namespace Altaxo.Calc.Random
     /// <param name="count">The size of the array to fill.</param>
     /// <param name="minInclusive">The inclusive lower bound of the random number returned.</param>
     /// <param name="maxExclusive">The exclusive upper bound of the random number returned. Range: maxExclusive > minExclusive.</param>
+    /// <returns>An array of random 32-bit signed integers in the requested range.</returns>
     public int[] NextInt32s(int count, int minInclusive, int maxExclusive)
     {
       var values = new int[count];
@@ -399,6 +405,7 @@ namespace Altaxo.Calc.Random
     /// <summary>
     /// Returns an infinite sequence of random 32-bit signed integers greater than or equal to zero and less than <see cref="F:System.Int32.MaxValue"/>.
     /// </summary>
+    /// <returns>An infinite sequence of random 32-bit signed integers.</returns>
     public IEnumerable<int> NextInt32Sequence()
     {
       for (int i = 0; i < 64; i++)
@@ -422,6 +429,7 @@ namespace Altaxo.Calc.Random
     /// </summary>
     /// <param name="minInclusive">The inclusive lower bound of the random number returned.</param>
     /// <param name="maxExclusive">The exclusive upper bound of the random number returned. Range: maxExclusive > minExclusive.</param>
+    /// <returns>An infinite sequence of random 32-bit signed integers within the specified range.</returns>
     public IEnumerable<int> NextInt32Sequence(int minInclusive, int maxExclusive)
     {
       if (minInclusive > maxExclusive)
@@ -490,11 +498,13 @@ namespace Altaxo.Calc.Random
     /// <summary>
     /// Returns a random double-precision floating point number greater than or equal to 0.0, and less than 1.0.
     /// </summary>
+    /// <returns>A random double-precision floating point number in the interval [0.0, 1.0).</returns>
     protected abstract double DoSample();
 
     /// <summary>
     /// Returns a random 32-bit signed integer greater than or equal to zero and less than 2147483647 (<see cref="F:System.Int32.MaxValue"/>).
     /// </summary>
+    /// <returns>A random 32-bit signed integer in the interval [0, <see cref="F:System.Int32.MaxValue"/>).</returns>
     protected virtual int DoSampleInteger()
     {
       return (int)(DoSample() * int.MaxValue);
@@ -503,6 +513,7 @@ namespace Altaxo.Calc.Random
     /// <summary>
     /// Fills the elements of a specified array of bytes with random numbers in full range, including zero and 255 (<see cref="F:System.Byte.MaxValue"/>).
     /// </summary>
+    /// <param name="buffer">The buffer to fill with random bytes.</param>
     protected virtual void DoSampleBytes(byte[] buffer)
     {
       for (var i = 0; i < buffer.Length; i++)
@@ -515,6 +526,8 @@ namespace Altaxo.Calc.Random
     /// Returns a random N-bit signed integer greater than or equal to zero and less than 2^N.
     /// N (bit count) is expected to be greater than zero and less than 32 (not verified).
     /// </summary>
+    /// <param name="bitCount">The number of random bits to sample.</param>
+    /// <returns>A random non-negative integer whose value is smaller than 2 raised to <paramref name="bitCount"/>.</returns>
     protected virtual int DoSampleInt32WithNBits(int bitCount)
     {
       // Fast case: Only 0 is allowed to be returned
@@ -539,6 +552,8 @@ namespace Altaxo.Calc.Random
     /// Returns a random N-bit signed long integer greater than or equal to zero and less than 2^N.
     /// N (bit count) is expected to be greater than zero and less than 64 (not verified).
     /// </summary>
+    /// <param name="bitCount">The number of random bits to sample.</param>
+    /// <returns>A random non-negative long integer whose value is smaller than 2 raised to <paramref name="bitCount"/>.</returns>
     protected virtual long DoSampleInt64WithNBits(int bitCount)
     {
       // Fast case: Only 0 is allowed to be returned
@@ -563,6 +578,7 @@ namespace Altaxo.Calc.Random
     /// Returns a random 32-bit signed integer within the specified range.
     /// </summary>
     /// <param name="maxExclusive">The exclusive upper bound of the random number returned. Range: maxExclusive ≥ 2 (not verified, must be ensured by caller).</param>
+    /// <returns>A random 32-bit signed integer in the interval [0, <paramref name="maxExclusive"/>).</returns>
     protected virtual int DoSampleInteger(int maxExclusive)
     {
       // non-biased implementation
@@ -593,6 +609,7 @@ namespace Altaxo.Calc.Random
     /// </summary>
     /// <param name="minInclusive">The inclusive lower bound of the random number returned.</param>
     /// <param name="maxExclusive">The exclusive upper bound of the random number returned. Range: maxExclusive ≥ minExclusive + 2 (not verified, must be ensured by caller).</param>
+    /// <returns>A random 32-bit signed integer in the range [<paramref name="minInclusive"/>, <paramref name="maxExclusive"/>).</returns>
     protected virtual int DoSampleInteger(int minInclusive, int maxExclusive)
     {
       // Sample with maxExclusive ≥ 2

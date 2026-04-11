@@ -193,6 +193,8 @@ namespace Altaxo.Gui.Graph.Graph3D
     /// <summary>
     /// Initializes a new instance of the <see cref="XYPlotLayerController"/> class.
     /// </summary>
+    /// <param name="layer">The plot layer to edit.</param>
+    /// <param name="useDocumentCopy">Controls whether the controller edits a copy of the document.</param>
     public XYPlotLayerController(XYZPlotLayer layer, UseDocument useDocumentCopy)
       : this(layer, ScaleTag, 1, null, useDocumentCopy)
     {
@@ -201,6 +203,10 @@ namespace Altaxo.Gui.Graph.Graph3D
     /// <summary>
     /// Initializes a new instance of the <see cref="XYPlotLayerController"/> class.
     /// </summary>
+    /// <param name="layer">The plot layer to edit.</param>
+    /// <param name="currentPage">The page that should be shown initially.</param>
+    /// <param name="id">The axis identifier that should be selected initially.</param>
+    /// <param name="useDocumentCopy">Controls whether the controller edits a copy of the document.</param>
     public XYPlotLayerController(XYZPlotLayer layer, string currentPage, CSLineID id, UseDocument useDocumentCopy)
       : this(layer, currentPage, id.ParallelAxisNumber, id, useDocumentCopy)
     {
@@ -733,24 +739,33 @@ namespace Altaxo.Gui.Graph.Graph3D
     #region Dialog
 
     /// <summary>
-    /// Shows the s ho wd ia l o g.
+    /// Shows the dialog for editing the specified plot layer.
     /// </summary>
+    /// <param name="layer">The plot layer to edit.</param>
+    /// <returns><c>true</c> if the dialog was accepted; otherwise, <c>false</c>.</returns>
     public static bool ShowDialog(XYZPlotLayer layer)
     {
       return ShowDialog(layer, ScaleTag, new CSLineID(0, 0, 0));
     }
 
     /// <summary>
-    /// Shows the s ho wd ia l o g.
+    /// Shows the dialog for editing the specified plot layer and initial page.
     /// </summary>
+    /// <param name="layer">The plot layer to edit.</param>
+    /// <param name="currentPage">The page that should be shown initially.</param>
+    /// <returns><c>true</c> if the dialog was accepted; otherwise, <c>false</c>.</returns>
     public static bool ShowDialog(XYZPlotLayer layer, string currentPage)
     {
       return ShowDialog(layer, currentPage, new CSLineID(0, 0));
     }
 
     /// <summary>
-    /// Shows the s ho wd ia l o g.
+    /// Shows the dialog for editing the specified plot layer, page, and axis.
     /// </summary>
+    /// <param name="layer">The plot layer to edit.</param>
+    /// <param name="currentPage">The page that should be shown initially.</param>
+    /// <param name="currentEdge">The axis identifier that should be selected initially.</param>
+    /// <returns><c>true</c> if the dialog was accepted; otherwise, <c>false</c>.</returns>
     public static bool ShowDialog(XYZPlotLayer layer, string currentPage, CSLineID currentEdge)
     {
       var ctrl = new XYPlotLayerController(layer, currentPage, currentEdge, UseDocument.Copy);

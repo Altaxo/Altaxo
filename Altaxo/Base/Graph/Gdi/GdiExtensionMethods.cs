@@ -39,6 +39,9 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Subtracts one point from another.
     /// </summary>
+    /// <param name="p1">The point from which to subtract.</param>
+    /// <param name="p2">The point to subtract.</param>
+    /// <returns>The resulting difference vector.</returns>
     public static PointF Subtract(this PointF p1, PointF p2)
     {
       return new PointF(p1.X - p2.X, p1.Y - p2.Y);
@@ -47,6 +50,9 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Adds two points.
     /// </summary>
+    /// <param name="p1">The first point.</param>
+    /// <param name="p2">The second point.</param>
+    /// <returns>The point resulting from the coordinate-wise sum.</returns>
     public static PointF Add(this PointF p1, PointF p2)
     {
       return new PointF(p1.X + p2.X, p1.Y + p2.Y);
@@ -55,6 +61,10 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Adds a scaled point to another point.
     /// </summary>
+    /// <param name="p1">The base point.</param>
+    /// <param name="p2">The point to scale and add.</param>
+    /// <param name="s">The scale factor for <paramref name="p2"/>.</param>
+    /// <returns>The resulting point.</returns>
     public static PointF AddScaled(this PointF p1, PointF p2, float s)
     {
       return new PointF(p1.X + p2.X * s, p1.Y + p2.Y * s);
@@ -63,6 +73,8 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Gets the vector length.
     /// </summary>
+    /// <param name="p">The vector.</param>
+    /// <returns>The vector length.</returns>
     public static float VectorLength(this PointF p)
     {
       return (float)Math.Sqrt(p.X * p.X + p.Y * p.Y);
@@ -71,6 +83,8 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Gets the squared vector length.
     /// </summary>
+    /// <param name="p">The vector.</param>
+    /// <returns>The squared vector length.</returns>
     public static float VectorLengthSquared(this PointF p)
     {
       return (p.X * p.X + p.Y * p.Y);
@@ -79,6 +93,9 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Gets the distance to another point.
     /// </summary>
+    /// <param name="p">The first point.</param>
+    /// <param name="q">The second point.</param>
+    /// <returns>The distance between the two points.</returns>
     public static float DistanceTo(this PointF p, PointF q)
     {
       var dx = p.X - q.X;
@@ -89,6 +106,9 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Gets the squared distance to another point.
     /// </summary>
+    /// <param name="p">The first point.</param>
+    /// <param name="q">The second point.</param>
+    /// <returns>The squared distance between the two points.</returns>
     public static float DistanceSquaredTo(this PointF p, PointF q)
     {
       var dx = p.X - q.X;
@@ -99,6 +119,8 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Returns a point with exchanged x- and y-coordinates.
     /// </summary>
+    /// <param name="p">The point to transform.</param>
+    /// <returns>A point with exchanged coordinates.</returns>
     public static PointF FlipXY(this PointF p)
     {
       return new PointF(p.Y, p.X);
@@ -107,6 +129,8 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Rotates a point by 90 degrees around the origin.
     /// </summary>
+    /// <param name="p">The point to rotate.</param>
+    /// <returns>The rotated point.</returns>
     public static PointF Rotate90Degree(this PointF p)
     {
       return new PointF(-p.Y, p.X);
@@ -115,6 +139,8 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Flips the sign of both coordinates.
     /// </summary>
+    /// <param name="p">The point to transform.</param>
+    /// <returns>The point with both coordinates negated.</returns>
     public static PointF FlipSign(this PointF p)
     {
       return new PointF(-p.X, -p.Y);
@@ -123,6 +149,9 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Calculates the dot product of two points interpreted as vectors.
     /// </summary>
+    /// <param name="p">The first vector.</param>
+    /// <param name="q">The second vector.</param>
+    /// <returns>The dot product.</returns>
     public static float DotProduct(this PointF p, PointF q)
     {
       return p.X * q.X + p.Y * q.Y;
@@ -131,6 +160,8 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Normalizes the point interpreted as a vector.
     /// </summary>
+    /// <param name="p">The vector to normalize.</param>
+    /// <returns>The normalized vector.</returns>
     public static PointF Normalize(this PointF p)
     {
       var s = 1 / Math.Sqrt(p.X * p.X + p.Y * p.Y);
@@ -292,6 +323,9 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Gets the distance between two points.
     /// </summary>
+    /// <param name="p0">The first point.</param>
+    /// <param name="p1">The second point.</param>
+    /// <returns>The distance between the two points.</returns>
     public static double LengthBetween(PointF p0, PointF p1)
     {
       var dx = p1.X - p0.X;
@@ -678,6 +712,8 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Converts a GDI string alignment to an Altaxo alignment.
     /// </summary>
+    /// <param name="alignment">The GDI string alignment value.</param>
+    /// <returns>The converted Altaxo alignment value.</returns>
     public static Altaxo.Drawing.Alignment ToAltaxo(System.Drawing.StringAlignment alignment)
     {
       Altaxo.Drawing.Alignment result;
@@ -704,6 +740,8 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Converts an Altaxo alignment to a GDI string alignment.
     /// </summary>
+    /// <param name="alignment">The Altaxo alignment value.</param>
+    /// <returns>The converted GDI string alignment value.</returns>
     public static System.Drawing.StringAlignment ToGdi(Altaxo.Drawing.Alignment alignment)
     {
       System.Drawing.StringAlignment result;
@@ -1059,6 +1097,9 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Gets the fractional index on a Bezier curve for a specified distance from the start.
     /// </summary>
+    /// <param name="points">The Bezier curve control points.</param>
+    /// <param name="distanceFromStart">The distance measured from the start of the curve.</param>
+    /// <returns>The fractional segment index, or <see cref="double.NaN"/> if no point is found.</returns>
     public static double GetFractionalIndexFromDistanceFromStartOfBezierCurve(PointF[] points, double distanceFromStart)
     {
       var pivot = points[0];
@@ -1097,6 +1138,9 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Gets the fractional index on a Bezier curve for a specified distance from the end.
     /// </summary>
+    /// <param name="points">The Bezier curve control points.</param>
+    /// <param name="distanceFromEnd">The distance measured from the end of the curve.</param>
+    /// <returns>The fractional segment index, or <see cref="double.NaN"/> if no point is found.</returns>
     public static double GetFractionalIndexFromDistanceFromEndOfBezierCurve(PointF[] points, double distanceFromEnd)
     {
       var pivot = points[points.Length - 1];
@@ -1135,6 +1179,10 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Shortens a Bezier curve by distances from its start and end.
     /// </summary>
+    /// <param name="points">The Bezier curve control points.</param>
+    /// <param name="distanceFromStart">The distance to trim from the start of the curve.</param>
+    /// <param name="distanceFromEnd">The distance to trim from the end of the curve.</param>
+    /// <returns>The shortened curve, or <see langword="null"/> if the curve cannot be shortened.</returns>
     public static PointF[]? ShortenBezierCurve(PointF[] points, double distanceFromStart, double distanceFromEnd)
     {
       int totalSegments = (points.Length - 1) / 3;
@@ -1338,6 +1386,8 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Translates the cross by the specified offset.
     /// </summary>
+    /// <param name="dx">The horizontal offset.</param>
+    /// <param name="dy">The vertical offset.</param>
     public void Translate(float dx, float dy)
     {
       Center.X += dx;

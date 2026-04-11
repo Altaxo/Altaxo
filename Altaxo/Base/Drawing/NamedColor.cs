@@ -230,6 +230,11 @@ namespace Altaxo.Drawing
     /// <summary>
     /// Creates a named color from ARGB components.
     /// </summary>
+    /// <param name="a">The alpha component.</param>
+    /// <param name="r">The red component.</param>
+    /// <param name="g">The green component.</param>
+    /// <param name="b">The blue component.</param>
+    /// <returns>A named color created from the specified ARGB components.</returns>
     public static NamedColor FromArgb(byte a, byte r, byte g, byte b)
     {
       var c = AxoColor.FromArgb(a, r, g, b);
@@ -239,6 +244,12 @@ namespace Altaxo.Drawing
     /// <summary>
     /// Creates a named color from ARGB components and an explicit name.
     /// </summary>
+    /// <param name="a">The alpha component.</param>
+    /// <param name="r">The red component.</param>
+    /// <param name="g">The green component.</param>
+    /// <param name="b">The blue component.</param>
+    /// <param name="name">The explicit color name.</param>
+    /// <returns>A named color created from the specified ARGB components and name.</returns>
     public static NamedColor FromArgb(byte a, byte r, byte g, byte b, string name)
     {
       return new NamedColor(AxoColor.FromArgb(a, r, g, b), name);
@@ -247,6 +258,11 @@ namespace Altaxo.Drawing
     /// <summary>
     /// Creates a named color from ScRGB components.
     /// </summary>
+    /// <param name="a">The alpha component.</param>
+    /// <param name="r">The red component.</param>
+    /// <param name="g">The green component.</param>
+    /// <param name="b">The blue component.</param>
+    /// <returns>A named color created from the specified ScRGB components.</returns>
     public static NamedColor FromScRgb(float a, float r, float g, float b)
     {
       var c = AxoColor.FromScRgb(a, r, g, b);
@@ -256,6 +272,12 @@ namespace Altaxo.Drawing
     /// <summary>
     /// Creates a named color from ScRGB components and an explicit name.
     /// </summary>
+    /// <param name="a">The alpha component.</param>
+    /// <param name="r">The red component.</param>
+    /// <param name="g">The green component.</param>
+    /// <param name="b">The blue component.</param>
+    /// <param name="name">The explicit color name.</param>
+    /// <returns>A named color created from the specified ScRGB components and name.</returns>
     public static NamedColor FromScRgb(float a, float r, float g, float b, string name)
     {
       return new NamedColor(AxoColor.FromScRgb(a, r, g, b), name);
@@ -408,6 +430,9 @@ namespace Altaxo.Drawing
     /// <summary>
     /// Determines whether two <see cref="NamedColor"/> values are equal.
     /// </summary>
+    /// <param name="x">The first named color.</param>
+    /// <param name="y">The second named color.</param>
+    /// <returns><see langword="true"/> if both named colors are equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator ==(NamedColor x, NamedColor y)
     {
       return x.Equals(y);
@@ -416,6 +441,9 @@ namespace Altaxo.Drawing
     /// <summary>
     /// Determines whether two <see cref="NamedColor"/> values are not equal.
     /// </summary>
+    /// <param name="x">The first named color.</param>
+    /// <param name="y">The second named color.</param>
+    /// <returns><see langword="true"/> if the named colors are not equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator !=(NamedColor x, NamedColor y)
     {
       return !x.Equals(y);
@@ -462,6 +490,8 @@ namespace Altaxo.Drawing
     /// <summary>
     /// Converts a <see cref="NamedColor"/> to its underlying <see cref="AxoColor"/> value.
     /// </summary>
+    /// <param name="c">The named color to convert.</param>
+    /// <returns>The underlying <see cref="AxoColor"/> value.</returns>
     public static implicit operator AxoColor(NamedColor c)
     {
       return c.Color;
@@ -470,6 +500,8 @@ namespace Altaxo.Drawing
     /// <summary>
     /// Converts a <see cref="NamedColor"/> to <see cref="System.Drawing.Color"/>.
     /// </summary>
+    /// <param name="c">The named color to convert.</param>
+    /// <returns>The converted <see cref="System.Drawing.Color"/> value.</returns>
     public static implicit operator System.Drawing.Color(NamedColor c)
     {
       return c.Color;

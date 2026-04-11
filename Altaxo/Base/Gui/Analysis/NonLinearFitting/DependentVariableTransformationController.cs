@@ -525,6 +525,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       /// <summary>
       /// Initializes a new instance of the <see cref="ColumnDropHandlerImpl"/> class.
       /// </summary>
+      /// <param name="parent">The parent controller.</param>
       public ColumnDropHandlerImpl(DependentVariableTransformationController parent)
       {
         _parent = parent;

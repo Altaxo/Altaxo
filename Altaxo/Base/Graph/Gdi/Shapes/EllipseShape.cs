@@ -66,6 +66,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="EllipseShape"/> class for deserialization.
     /// </summary>
+    /// <param name="info">The deserialization information.</param>
     protected EllipseShape(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
       : base(new ItemLocationDirect(), info)
     {

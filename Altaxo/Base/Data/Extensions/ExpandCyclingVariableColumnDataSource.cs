@@ -299,12 +299,14 @@ namespace Altaxo.Data
       }
     }
 
+    /// <inheritdoc />
     object IAltaxoTableDataSource.ProcessOptionsObject
     {
       get => _processOptions;
       set => ProcessOptions = (ExpandCyclingVariableColumnOptions)value;
     }
 
+    /// <inheritdoc />
     object IAltaxoTableDataSource.ProcessDataObject
     {
       get => _processData;

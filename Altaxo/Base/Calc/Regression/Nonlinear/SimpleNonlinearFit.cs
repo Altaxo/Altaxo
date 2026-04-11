@@ -200,6 +200,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <summary>
     /// Executes the fit. Afterwards, you can get the fit parameters by <see cref="GetParameter"/>, or the resulting Chi².
     /// </summary>
+    /// <param name="cancellationToken">The cancellation token.</param>
     public void Fit(CancellationToken cancellationToken)
     {
       _fitAdapter = new LevMarAdapter(_fitDoc.FitEnsemble, _fitDoc.CurrentParameters);

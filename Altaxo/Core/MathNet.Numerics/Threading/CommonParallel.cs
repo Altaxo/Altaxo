@@ -151,6 +151,7 @@ namespace Altaxo.Calc.Threading
     /// <summary>
     /// Selects an item (such as Max or Min).
     /// </summary>
+    /// <typeparam name="T">The type produced by the select function for each subset.</typeparam>
     /// <param name="fromInclusive">Starting index of the loop.</param>
     /// <param name="toExclusive">Ending index of the loop</param>
     /// <param name="select">The function to select items over a subset.</param>
@@ -223,6 +224,8 @@ namespace Altaxo.Calc.Threading
     /// <summary>
     /// Selects an item (such as Max or Min).
     /// </summary>
+    /// <typeparam name="T">The input element type.</typeparam>
+    /// <typeparam name="TOut">The type produced by the selection function.</typeparam>
     /// <param name="array">The array to iterate over.</param>
     /// <param name="select">The function to select items over a subset.</param>
     /// <param name="reduce">The function to select the item of selection from the subsets.</param>
@@ -295,6 +298,7 @@ namespace Altaxo.Calc.Threading
     /// <summary>
     /// Selects an item (such as Max or Min).
     /// </summary>
+    /// <typeparam name="T">The element type produced by the selection function.</typeparam>
     /// <param name="fromInclusive">Starting index of the loop.</param>
     /// <param name="toExclusive">Ending index of the loop</param>
     /// <param name="select">The function to select items over a subset.</param>
@@ -328,6 +332,8 @@ namespace Altaxo.Calc.Threading
     /// <summary>
     /// Selects an item (such as Max or Min).
     /// </summary>
+    /// <typeparam name="T">The element type of the input array.</typeparam>
+    /// <typeparam name="TOut">The element type produced by the selection function.</typeparam>
     /// <param name="array">The array to iterate over.</param>
     /// <param name="select">The function to select items over a subset.</param>
     /// <param name="reducePair">The function to select the item of selection from the subsets.</param>

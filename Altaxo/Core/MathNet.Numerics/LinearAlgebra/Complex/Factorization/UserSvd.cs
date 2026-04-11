@@ -57,6 +57,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex.Factorization
     /// <param name="computeVectors">Compute the singular U and VT vectors or not.</param>
     /// <exception cref="ArgumentNullException">If <paramref name="matrix"/> is <c>null</c>.</exception>
     /// <exception cref="NonConvergenceException"></exception>
+    /// <returns>The singular value decomposition of <paramref name="matrix"/>.</returns>
     public static UserSvd Create(Matrix<Complex> matrix, bool computeVectors)
     {
       var nm = Math.Min(matrix.RowCount + 1, matrix.ColumnCount);
@@ -761,7 +762,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex.Factorization
     /// <param name="columnA">Index of column A</param>
     /// <param name="columnB">Index of column B</param>
     /// <param name="rowStart">Starting row index</param>
-    /// <returns>Dot product value</returns>
+    /// <returns>Dot product value.</returns>
     private static Complex Cdotc(Matrix<Complex> a, int rowCount, int columnA, int columnB, int rowStart)
     {
       var z = Complex.Zero;
@@ -775,14 +776,14 @@ namespace Altaxo.Calc.LinearAlgebra.Complex.Factorization
 
     /// <summary>
     /// Performs rotation of points in the plane. Given two vectors x <paramref name="columnA"/> and y <paramref name="columnB"/>,
-    /// each vector element of these vectors is replaced as follows: x(i) = c*x(i) + s*y(i); y(i) = c*y(i) - s*x(i)
+    /// each vector element of these vectors is replaced as follows: x(i) = c*x(i) + s*y(i); y(i) = c*y(i) - s*x(i).
     /// </summary>
     /// <param name="a">Source matrix</param>
     /// <param name="rowCount">The number of rows in <paramref name="a"/></param>
     /// <param name="columnA">Index of column A</param>
     /// <param name="columnB">Index of column B</param>
-    /// <param name="c">scalar cos value</param>
-    /// <param name="s">scalar sin value</param>
+    /// <param name="c">Scalar cosine value.</param>
+    /// <param name="s">Scalar sine value.</param>
     private static void Csrot(Matrix<Complex> a, int rowCount, int columnA, int columnB, double c, double s)
     {
       for (var i = 0; i < rowCount; i++)

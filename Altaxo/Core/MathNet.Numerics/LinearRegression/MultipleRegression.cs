@@ -41,6 +41,7 @@ namespace Altaxo.Calc.LinearRegression
     /// <summary>
     /// Find the model parameters β such that X*β with predictor X becomes as close to response Y as possible, with least squares residuals.
     /// </summary>
+    /// <typeparam name="T">The type of the predictor and response values.</typeparam>
     /// <param name="x">Predictor matrix X</param>
     /// <param name="y">Response vector Y</param>
     /// <param name="method">The direct method to be used to compute the regression.</param>
@@ -63,6 +64,7 @@ namespace Altaxo.Calc.LinearRegression
     /// <summary>
     /// Find the model parameters β such that X*β with predictor X becomes as close to response Y as possible, with least squares residuals.
     /// </summary>
+    /// <typeparam name="T">The type of the predictor and response values.</typeparam>
     /// <param name="x">Predictor matrix X</param>
     /// <param name="y">Response matrix Y</param>
     /// <param name="method">The direct method to be used to compute the regression.</param>
@@ -85,6 +87,7 @@ namespace Altaxo.Calc.LinearRegression
     /// <summary>
     /// Find the model parameters β such that their linear combination with all predictor-arrays in X become as close to their response in Y as possible, with least squares residuals.
     /// </summary>
+    /// <typeparam name="T">The type of the predictor and response values.</typeparam>
     /// <param name="x">List of predictor-arrays.</param>
     /// <param name="y">List of responses</param>
     /// <param name="intercept">True if an intercept should be added as first artificial predictor value. Default = false.</param>
@@ -109,6 +112,7 @@ namespace Altaxo.Calc.LinearRegression
     /// Find the model parameters β such that their linear combination with all predictor-arrays in X become as close to their response in Y as possible, with least squares residuals.
     /// Uses the cholesky decomposition of the normal equations.
     /// </summary>
+    /// <typeparam name="T">The type of the predictor and response values.</typeparam>
     /// <param name="samples">Sequence of predictor-arrays and their response.</param>
     /// <param name="intercept">True if an intercept should be added as first artificial predictor value. Default = false.</param>
     /// <param name="method">The direct method to be used to compute the regression.</param>
@@ -132,6 +136,7 @@ namespace Altaxo.Calc.LinearRegression
     /// Find the model parameters β such that X*β with predictor X becomes as close to response Y as possible, with least squares residuals.
     /// Uses the cholesky decomposition of the normal equations.
     /// </summary>
+    /// <typeparam name="T">The type of the predictor and response values.</typeparam>
     /// <param name="x">Predictor matrix X</param>
     /// <param name="y">Response vector Y</param>
     /// <returns>Best fitting vector for model parameters β</returns>
@@ -154,6 +159,7 @@ namespace Altaxo.Calc.LinearRegression
     /// Find the model parameters β such that X*β with predictor X becomes as close to response Y as possible, with least squares residuals.
     /// Uses the cholesky decomposition of the normal equations.
     /// </summary>
+    /// <typeparam name="T">The type of the predictor and response values.</typeparam>
     /// <param name="x">Predictor matrix X</param>
     /// <param name="y">Response matrix Y</param>
     /// <returns>Best fitting vector for model parameters β</returns>
@@ -176,6 +182,7 @@ namespace Altaxo.Calc.LinearRegression
     /// Find the model parameters β such that their linear combination with all predictor-arrays in X become as close to their response in Y as possible, with least squares residuals.
     /// Uses the cholesky decomposition of the normal equations.
     /// </summary>
+    /// <typeparam name="T">The type of the predictor and response values.</typeparam>
     /// <param name="x">List of predictor-arrays.</param>
     /// <param name="y">List of responses</param>
     /// <param name="intercept">True if an intercept should be added as first artificial predictor value. Default = false.</param>
@@ -206,6 +213,7 @@ namespace Altaxo.Calc.LinearRegression
     /// Find the model parameters β such that their linear combination with all predictor-arrays in X become as close to their response in Y as possible, with least squares residuals.
     /// Uses the cholesky decomposition of the normal equations.
     /// </summary>
+    /// <typeparam name="T">The type of the predictor and response values.</typeparam>
     /// <param name="samples">Sequence of predictor-arrays and their response.</param>
     /// <param name="intercept">True if an intercept should be added as first artificial predictor value. Default = false.</param>
     /// <returns>Best fitting list of model parameters β for each element in the predictor-arrays.</returns>
@@ -219,6 +227,7 @@ namespace Altaxo.Calc.LinearRegression
     /// Find the model parameters β such that their linear combination with all predictor-arrays in X become as close to their response in Y as possible, with least squares residuals.
     /// Uses the cholesky decomposition of the normal equations.
     /// </summary>
+    /// <typeparam name="T">The type of the predictor and response values.</typeparam>
     /// <param name="samples">Sequence of predictor-arrays and their response.</param>
     /// <param name="intercept">True if an intercept should be added as first artificial predictor value. Default = false.</param>
     /// <returns>Best fitting list of model parameters β for each element in the predictor-arrays.</returns>
@@ -232,6 +241,7 @@ namespace Altaxo.Calc.LinearRegression
     /// Find the model parameters β such that X*β with predictor X becomes as close to response Y as possible, with least squares residuals.
     /// Uses an orthogonal decomposition and is therefore more numerically stable than the normal equations but also slower.
     /// </summary>
+    /// <typeparam name="T">The type of the predictor and response values.</typeparam>
     /// <param name="x">Predictor matrix X</param>
     /// <param name="y">Response vector Y</param>
     /// <returns>Best fitting vector for model parameters β</returns>
@@ -254,6 +264,7 @@ namespace Altaxo.Calc.LinearRegression
     /// Find the model parameters β such that X*β with predictor X becomes as close to response Y as possible, with least squares residuals.
     /// Uses an orthogonal decomposition and is therefore more numerically stable than the normal equations but also slower.
     /// </summary>
+    /// <typeparam name="T">The type of the predictor and response values.</typeparam>
     /// <param name="x">Predictor matrix X</param>
     /// <param name="y">Response matrix Y</param>
     /// <returns>Best fitting vector for model parameters β</returns>
@@ -276,6 +287,7 @@ namespace Altaxo.Calc.LinearRegression
     /// Find the model parameters β such that their linear combination with all predictor-arrays in X become as close to their response in Y as possible, with least squares residuals.
     /// Uses an orthogonal decomposition and is therefore more numerically stable than the normal equations but also slower.
     /// </summary>
+    /// <typeparam name="T">The type of the predictor and response values.</typeparam>
     /// <param name="x">List of predictor-arrays.</param>
     /// <param name="y">List of responses</param>
     /// <param name="intercept">True if an intercept should be added as first artificial predictor value. Default = false.</param>
@@ -305,6 +317,7 @@ namespace Altaxo.Calc.LinearRegression
     /// Find the model parameters β such that their linear combination with all predictor-arrays in X become as close to their response in Y as possible, with least squares residuals.
     /// Uses an orthogonal decomposition and is therefore more numerically stable than the normal equations but also slower.
     /// </summary>
+    /// <typeparam name="T">The type of the predictor and response values.</typeparam>
     /// <param name="samples">Sequence of predictor-arrays and their response.</param>
     /// <param name="intercept">True if an intercept should be added as first artificial predictor value. Default = false.</param>
     /// <returns>Best fitting list of model parameters β for each element in the predictor-arrays.</returns>
@@ -318,6 +331,7 @@ namespace Altaxo.Calc.LinearRegression
     /// Find the model parameters β such that their linear combination with all predictor-arrays in X become as close to their response in Y as possible, with least squares residuals.
     /// Uses an orthogonal decomposition and is therefore more numerically stable than the normal equations but also slower.
     /// </summary>
+    /// <typeparam name="T">The type of the predictor and response values.</typeparam>
     /// <param name="samples">Sequence of predictor-arrays and their response.</param>
     /// <param name="intercept">True if an intercept should be added as first artificial predictor value. Default = false.</param>
     /// <returns>Best fitting list of model parameters β for each element in the predictor-arrays.</returns>
@@ -331,6 +345,7 @@ namespace Altaxo.Calc.LinearRegression
     /// Find the model parameters β such that X*β with predictor X becomes as close to response Y as possible, with least squares residuals.
     /// Uses a singular value decomposition and is therefore more numerically stable (especially if ill-conditioned) than the normal equations or QR but also slower.
     /// </summary>
+    /// <typeparam name="T">The type of the predictor and response values.</typeparam>
     /// <param name="x">Predictor matrix X</param>
     /// <param name="y">Response vector Y</param>
     /// <returns>Best fitting vector for model parameters β</returns>
@@ -353,6 +368,7 @@ namespace Altaxo.Calc.LinearRegression
     /// Find the model parameters β such that X*β with predictor X becomes as close to response Y as possible, with least squares residuals.
     /// Uses a singular value decomposition and is therefore more numerically stable (especially if ill-conditioned) than the normal equations or QR but also slower.
     /// </summary>
+    /// <typeparam name="T">The type of the predictor and response values.</typeparam>
     /// <param name="x">Predictor matrix X</param>
     /// <param name="y">Response matrix Y</param>
     /// <returns>Best fitting vector for model parameters β</returns>
@@ -375,6 +391,7 @@ namespace Altaxo.Calc.LinearRegression
     /// Find the model parameters β such that their linear combination with all predictor-arrays in X become as close to their response in Y as possible, with least squares residuals.
     /// Uses a singular value decomposition and is therefore more numerically stable (especially if ill-conditioned) than the normal equations or QR but also slower.
     /// </summary>
+    /// <typeparam name="T">The type of the predictor and response values.</typeparam>
     /// <param name="x">List of predictor-arrays.</param>
     /// <param name="y">List of responses</param>
     /// <param name="intercept">True if an intercept should be added as first artificial predictor value. Default = false.</param>
@@ -404,6 +421,7 @@ namespace Altaxo.Calc.LinearRegression
     /// Find the model parameters β such that their linear combination with all predictor-arrays in X become as close to their response in Y as possible, with least squares residuals.
     /// Uses a singular value decomposition and is therefore more numerically stable (especially if ill-conditioned) than the normal equations or QR but also slower.
     /// </summary>
+    /// <typeparam name="T">The type of the predictor and response values.</typeparam>
     /// <param name="samples">Sequence of predictor-arrays and their response.</param>
     /// <param name="intercept">True if an intercept should be added as first artificial predictor value. Default = false.</param>
     /// <returns>Best fitting list of model parameters β for each element in the predictor-arrays.</returns>
@@ -417,6 +435,7 @@ namespace Altaxo.Calc.LinearRegression
     /// Find the model parameters β such that their linear combination with all predictor-arrays in X become as close to their response in Y as possible, with least squares residuals.
     /// Uses a singular value decomposition and is therefore more numerically stable (especially if ill-conditioned) than the normal equations or QR but also slower.
     /// </summary>
+    /// <typeparam name="T">The type of the predictor and response values.</typeparam>
     /// <param name="samples">Sequence of predictor-arrays and their response.</param>
     /// <param name="intercept">True if an intercept should be added as first artificial predictor value. Default = false.</param>
     /// <returns>Best fitting list of model parameters β for each element in the predictor-arrays.</returns>

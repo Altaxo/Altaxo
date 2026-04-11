@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -286,6 +286,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Determines whether the specified table stores a PCR calibration model.
     /// </summary>
+    /// <param name="table">The table to inspect.</param>
+    /// <returns><c>true</c> if the table stores a PCR calibration model; otherwise, <c>false</c>.</returns>
     public static bool IsPCRCalibrationModel(Altaxo.Data.DataTable table)
     {
       if (!table.DataColumns.Contains(GetXOfX_ColumnName()))

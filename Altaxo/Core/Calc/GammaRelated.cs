@@ -2553,6 +2553,7 @@ L50:
     /// <param name="alpha">Probability (0..1)</param>
     /// <param name="p">Parameter p.</param>
     /// <param name="q">Parameter q.</param>
+    /// <returns>The value whose regularized incomplete beta function equals <paramref name="alpha"/>.</returns>
     public static double InverseBetaRegularized(double alpha, double p, double q)
     {
       double log_beta = LnGamma(p, true) + LnGamma(q, true) - LnGamma(p + q, true);

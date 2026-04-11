@@ -153,10 +153,19 @@ namespace Altaxo.Calc.Ode.Obsolete
 
     #endregion Public Methods
 
+    /// <summary>
+    /// Executes the configured Runge-Kutta integration.
+    /// </summary>
     internal abstract void Solve();
 
     #region Methods
 
+    /// <summary>
+    /// Initializes the Runge-Kutta solver infrastructure.
+    /// </summary>
+    /// <param name="function">The function that evaluates the differential equation system.</param>
+    /// <param name="jacobian">The optional Jacobian evaluator.</param>
+    /// <param name="numEquations">The number of equations in the system.</param>
     internal void InitializeRungeKutta(OdeFunction function, OdeJacobian? jacobian, int numEquations)
     {
       //internal void InitializeRungeKutta(OdeFunction function, OdeJacobian jacobian, double[] y0, double t0, double deltaT, double tEnd)
@@ -201,6 +210,9 @@ namespace Altaxo.Calc.Ode.Obsolete
 
     //}
 
+    /// <summary>
+    /// Creates the helper objects used by the concrete Runge-Kutta solver.
+    /// </summary>
     internal abstract void InitializeRungeKuttaClasses();
 
     //protected void SetSolutionDimension(double[] y0, double t0, double deltaT, double tEnd)

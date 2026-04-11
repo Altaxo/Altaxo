@@ -52,8 +52,9 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
     /// <param name="x">The x-values of the spectra.</param>
     /// <param name="spectraMatrix">The matrix of spectra. Each row of the matrix represents a spectrum.</param>
     /// <param name="regions">Vector of spectral regions. Each element is the index of the start of a new region.</param>
-    /// <param name="auxillaryData">The auxiliary data previously evaluated by the ensemble preprocessing.</param>
-    (double[] x, Matrix<double> y, int[]? regions) ExecuteForPrediction(double[] x, Matrix<double> spectraMatrix, int[] regions, IEnsembleProcessingAuxiliaryData? auxillaryData);
+    /// <param name="auxiliaryData">The auxiliary data previously evaluated by the ensemble preprocessing.</param>
+    /// <returns>X-values, y-values, and regions of the processed spectra for prediction.</returns>
+    (double[] x, Matrix<double> y, int[]? regions) ExecuteForPrediction(double[] x, Matrix<double> spectraMatrix, int[] regions, IEnsembleProcessingAuxiliaryData? auxiliaryData);
 
     /// <summary>
     /// Executes the single spectrum processor. By definition, in an ensemble preprocessor this does nothing.

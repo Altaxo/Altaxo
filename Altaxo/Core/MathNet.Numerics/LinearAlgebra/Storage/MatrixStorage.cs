@@ -97,6 +97,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
     /// True if the specified field can be set to any value.
     /// False if the field is fixed, like an off-diagonal field on a diagonal matrix.
     /// </summary>
+    /// <param name="row">The row index of the element.</param>
+    /// <param name="column">The column index of the element.</param>
+    /// <returns><see langword="true"/> if the specified entry can be assigned any value; otherwise, <see langword="false"/>.</returns>
     public abstract bool IsMutableAt(int row, int column);
 
     /// <summary>
@@ -258,6 +261,13 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       ClearUnchecked(rowIndex, rowCount, columnIndex, columnCount);
     }
 
+    /// <summary>
+    /// Sets a submatrix to zero without validation.
+    /// </summary>
+    /// <param name="rowIndex">The starting row index of the region to clear.</param>
+    /// <param name="rowCount">The number of rows to clear.</param>
+    /// <param name="columnIndex">The starting column index of the region to clear.</param>
+    /// <param name="columnCount">The number of columns to clear.</param>
     internal virtual void ClearUnchecked(int rowIndex, int rowCount, int columnIndex, int columnCount)
     {
       for (var i = rowIndex; i < rowIndex + rowCount; i++)
@@ -313,6 +323,10 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       ClearColumnsUnchecked(columnIndices);
     }
 
+    /// <summary>
+    /// Sets the specified rows to zero without validation.
+    /// </summary>
+    /// <param name="rowIndices">The row indices to clear.</param>
     internal virtual void ClearRowsUnchecked(int[] rowIndices)
     {
       for (var k = 0; k < rowIndices.Length; k++)
@@ -325,6 +339,10 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       }
     }
 
+    /// <summary>
+    /// Sets the specified columns to zero without validation.
+    /// </summary>
+    /// <param name="columnIndices">The column indices to clear.</param>
     internal virtual void ClearColumnsUnchecked(int[] columnIndices)
     {
       for (var k = 0; k < columnIndices.Length; k++)
@@ -365,6 +383,11 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       CopyToUnchecked(target, existingData);
     }
 
+    /// <summary>
+    /// Copies this matrix into another storage instance without validation.
+    /// </summary>
+    /// <param name="target">The target storage.</param>
+    /// <param name="existingData">How existing target data is handled.</param>
     internal virtual void CopyToUnchecked(MatrixStorage<T> target, ExistingData existingData)
     {
       for (int j = 0; j < ColumnCount; j++)
@@ -422,6 +445,17 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
           sourceColumnIndex, targetColumnIndex, columnCount, existingData);
     }
 
+    /// <summary>
+    /// Copies a submatrix into another storage instance without validation.
+    /// </summary>
+    /// <param name="target">The target storage.</param>
+    /// <param name="sourceRowIndex">The starting source row index.</param>
+    /// <param name="targetRowIndex">The starting target row index.</param>
+    /// <param name="rowCount">The number of rows to copy.</param>
+    /// <param name="sourceColumnIndex">The starting source column index.</param>
+    /// <param name="targetColumnIndex">The starting target column index.</param>
+    /// <param name="columnCount">The number of columns to copy.</param>
+    /// <param name="existingData">How existing target data is handled.</param>
     internal virtual void CopySubMatrixToUnchecked(MatrixStorage<T> target,
         int sourceRowIndex, int targetRowIndex, int rowCount,
         int sourceColumnIndex, int targetColumnIndex, int columnCount,
@@ -482,6 +516,15 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       CopySubRowToUnchecked(target, rowIndex, sourceColumnIndex, targetColumnIndex, columnCount, existingData);
     }
 
+    /// <summary>
+    /// Copies part of a row into vector storage without validation.
+    /// </summary>
+    /// <param name="target">The target vector storage.</param>
+    /// <param name="rowIndex">The source row index.</param>
+    /// <param name="sourceColumnIndex">The starting source column index.</param>
+    /// <param name="targetColumnIndex">The starting target column index.</param>
+    /// <param name="columnCount">The number of columns to copy.</param>
+    /// <param name="existingData">How existing target data is handled.</param>
     internal virtual void CopySubRowToUnchecked(VectorStorage<T> target, int rowIndex,
         int sourceColumnIndex, int targetColumnIndex, int columnCount, ExistingData existingData)
     {
@@ -537,6 +580,15 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       CopySubColumnToUnchecked(target, columnIndex, sourceRowIndex, targetRowIndex, rowCount, existingData);
     }
 
+    /// <summary>
+    /// Copies part of a column into vector storage without validation.
+    /// </summary>
+    /// <param name="target">The target vector storage.</param>
+    /// <param name="columnIndex">The source column index.</param>
+    /// <param name="sourceRowIndex">The starting source row index.</param>
+    /// <param name="targetRowIndex">The starting target row index.</param>
+    /// <param name="rowCount">The number of rows to copy.</param>
+    /// <param name="existingData">How existing target data is handled.</param>
     internal virtual void CopySubColumnToUnchecked(VectorStorage<T> target, int columnIndex,
         int sourceRowIndex, int targetRowIndex, int rowCount, ExistingData existingData)
     {
@@ -575,6 +627,11 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       TransposeToUnchecked(target, existingData);
     }
 
+    /// <summary>
+    /// Copies the transpose of this matrix into another storage instance without validation.
+    /// </summary>
+    /// <param name="target">The target storage.</param>
+    /// <param name="existingData">How existing target data is handled.</param>
     internal virtual void TransposeToUnchecked(MatrixStorage<T> target, ExistingData existingData)
     {
       for (int j = 0; j < ColumnCount; j++)
@@ -586,6 +643,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       }
     }
 
+    /// <summary>
+    /// Transposes a square matrix in place without validation.
+    /// </summary>
     internal virtual void TransposeSquareInplaceUnchecked()
     {
       for (int j = 0; j < ColumnCount; j++)
@@ -856,6 +916,14 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return Find2Unchecked(other, predicate, zeros);
     }
 
+    /// <summary>
+    /// Finds the first pair of elements from two matrices that matches a predicate without validation.
+    /// </summary>
+    /// <typeparam name="TOther">The element type of the other matrix.</typeparam>
+    /// <param name="other">The other matrix storage.</param>
+    /// <param name="predicate">The predicate used to test each pair of values.</param>
+    /// <param name="zeros">Controls whether zero values may be skipped.</param>
+    /// <returns>The first matching indexed value pair, or <c>null</c> if none is found.</returns>
     internal virtual Tuple<int, int, T, TOther> Find2Unchecked<TOther>(MatrixStorage<TOther> other, Func<T, TOther, bool> predicate, Zeros zeros)
         where TOther : struct, IEquatable<TOther>, IFormattable
     {
@@ -933,6 +1001,14 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       MapToUnchecked(target, f, zeros, existingData);
     }
 
+    /// <summary>
+    /// Maps each value into another matrix storage without validation.
+    /// </summary>
+    /// <typeparam name="TU">The target element type.</typeparam>
+    /// <param name="target">The target storage.</param>
+    /// <param name="f">The mapping function.</param>
+    /// <param name="zeros">How zeros are handled during the mapping.</param>
+    /// <param name="existingData">How existing target data is handled.</param>
     internal virtual void MapToUnchecked<TU>(MatrixStorage<TU> target, Func<T, TU> f, Zeros zeros, ExistingData existingData)
         where TU : struct, IEquatable<TU>, IFormattable
     {
@@ -970,6 +1046,14 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       MapIndexedToUnchecked(target, f, zeros, existingData);
     }
 
+    /// <summary>
+    /// Maps each indexed value into another matrix storage without validation.
+    /// </summary>
+    /// <typeparam name="TU">The target element type.</typeparam>
+    /// <param name="target">The target storage.</param>
+    /// <param name="f">The indexed mapping function.</param>
+    /// <param name="zeros">How zeros are handled during the mapping.</param>
+    /// <param name="existingData">How existing target data is handled.</param>
     internal virtual void MapIndexedToUnchecked<TU>(MatrixStorage<TU> target, Func<int, int, T, TU> f, Zeros zeros, ExistingData existingData)
         where TU : struct, IEquatable<TU>, IFormattable
     {
@@ -1024,6 +1108,20 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       MapSubMatrixIndexedToUnchecked(target, f, sourceRowIndex, targetRowIndex, rowCount, sourceColumnIndex, targetColumnIndex, columnCount, zeros, existingData);
     }
 
+    /// <summary>
+    /// Maps an indexed submatrix into another matrix storage without validation.
+    /// </summary>
+    /// <typeparam name="TU">The target element type.</typeparam>
+    /// <param name="target">The target storage.</param>
+    /// <param name="f">The indexed mapping function.</param>
+    /// <param name="sourceRowIndex">The starting source row index.</param>
+    /// <param name="targetRowIndex">The starting target row index.</param>
+    /// <param name="rowCount">The number of rows to map.</param>
+    /// <param name="sourceColumnIndex">The starting source column index.</param>
+    /// <param name="targetColumnIndex">The starting target column index.</param>
+    /// <param name="columnCount">The number of columns to map.</param>
+    /// <param name="zeros">How zeros are handled during the mapping.</param>
+    /// <param name="existingData">How existing target data is handled.</param>
     internal virtual void MapSubMatrixIndexedToUnchecked<TU>(MatrixStorage<TU> target, Func<int, int, T, TU> f,
         int sourceRowIndex, int targetRowIndex, int rowCount,
         int sourceColumnIndex, int targetColumnIndex, int columnCount,
@@ -1074,6 +1172,14 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       Map2ToUnchecked(target, other, f, zeros, existingData);
     }
 
+    /// <summary>
+    /// Maps pairs of values from two matrices into a target matrix without validation.
+    /// </summary>
+    /// <param name="target">The target storage.</param>
+    /// <param name="other">The other matrix storage.</param>
+    /// <param name="f">The mapping function.</param>
+    /// <param name="zeros">How zeros are handled during the mapping.</param>
+    /// <param name="existingData">How existing target data is handled.</param>
     internal virtual void Map2ToUnchecked(MatrixStorage<T> target, MatrixStorage<T> other, Func<T, T, T> f, Zeros zeros, ExistingData existingData)
     {
       for (int i = 0; i < RowCount; i++)
@@ -1120,7 +1226,19 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       FoldByRowUnchecked(target, f, finalize, state, zeros);
     }
 
+    /// <summary>
+    /// Folds each row into a target state array without validation.
+    /// </summary>
+    /// <typeparam name="TU">The accumulator type.</typeparam>
+    /// <param name="target">The array receiving the finalized row states.</param>
+    /// <param name="f">The accumulation function.</param>
+    /// <param name="finalize">The finalization function.</param>
+    /// <param name="state">The initial state array.</param>
+    /// <param name="zeros">How zeros are handled during the fold.</param>
     /// <remarks>The state array will not be modified, unless it is the same instance as the target array (which is allowed).</remarks>
+    /// <summary>
+    /// Folds each row into a target state array without validation.
+    /// </summary>
     internal virtual void FoldByRowUnchecked<TU>(TU[] target, Func<TU, T, TU> f, Func<TU, int, TU> finalize, TU[] state, Zeros zeros)
     {
       for (int i = 0; i < RowCount; i++)
@@ -1167,7 +1285,19 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       FoldByColumnUnchecked(target, f, finalize, state, zeros);
     }
 
+    /// <summary>
+    /// Folds each column into a target state array without validation.
+    /// </summary>
+    /// <typeparam name="TU">The accumulator type.</typeparam>
+    /// <param name="target">The array receiving the finalized column states.</param>
+    /// <param name="f">The accumulation function.</param>
+    /// <param name="finalize">The finalization function.</param>
+    /// <param name="state">The initial state array.</param>
+    /// <param name="zeros">How zeros are handled during the fold.</param>
     /// <remarks>The state array will not be modified, unless it is the same instance as the target array (which is allowed).</remarks>
+    /// <summary>
+    /// Folds each column into a target state array without validation.
+    /// </summary>
     internal virtual void FoldByColumnUnchecked<TU>(TU[] target, Func<TU, T, TU> f, Func<TU, int, TU> finalize, TU[] state, Zeros zeros)
     {
       for (int j = 0; j < ColumnCount; j++)
@@ -1208,6 +1338,16 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return Fold2Unchecked(other, f, state, zeros);
     }
 
+    /// <summary>
+    /// Folds values from this matrix and another matrix into a single state value without validation.
+    /// </summary>
+    /// <typeparam name="TOther">The element type of the other matrix.</typeparam>
+    /// <typeparam name="TState">The accumulator state type.</typeparam>
+    /// <param name="other">The other matrix storage.</param>
+    /// <param name="f">The folding function.</param>
+    /// <param name="state">The initial state.</param>
+    /// <param name="zeros">Controls whether zero values may be skipped.</param>
+    /// <returns>The final accumulated state.</returns>
     internal virtual TState Fold2Unchecked<TOther, TState>(MatrixStorage<TOther> other, Func<TState, T, TOther, TState> f, TState state, Zeros zeros)
         where TOther : struct, IEquatable<TOther>, IFormattable
     {

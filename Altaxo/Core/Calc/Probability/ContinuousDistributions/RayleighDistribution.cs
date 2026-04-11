@@ -133,6 +133,7 @@ namespace Altaxo.Calc.Probability
     /// Updates the helper variables that store intermediate results for generation of rayleigh distributed random
     ///   numbers.
     /// </summary>
+    /// <param name="sigma">The scale parameter of the distribution.</param>
     public void Initialize(double sigma)
     {
       if (!IsValidSigma(sigma))

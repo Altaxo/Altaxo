@@ -155,6 +155,13 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// Initializes a new instance of the <see cref="MixtureOfFluids"/> class with three components.
     /// </summary>
     /// <remarks>Overload that forwards to the main constructor.</remarks>
+    /// <param name="fluid1">The first fluid component.</param>
+    /// <param name="moleFraction1">The mole fraction of the first fluid component.</param>
+    /// <param name="fluid2">The second fluid component.</param>
+    /// <param name="moleFraction2">The mole fraction of the second fluid component.</param>
+    /// <param name="fluid3">The third fluid component.</param>
+    /// <param name="moleFraction3">The mole fraction of the third fluid component.</param>
+    /// <param name="checkForSumEqualsOne">If set to <see langword="true"/>, validates that the mole fractions sum to one.</param>
     public MixtureOfFluids(
       HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid1, double moleFraction1,
       HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid2, double moleFraction2,
@@ -172,6 +179,15 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// <summary>
     /// Initializes a new instance of the <see cref="MixtureOfFluids"/> class with four components.
     /// </summary>
+    /// <param name="fluid1">The first fluid component.</param>
+    /// <param name="moleFraction1">The mole fraction of the first fluid component.</param>
+    /// <param name="fluid2">The second fluid component.</param>
+    /// <param name="moleFraction2">The mole fraction of the second fluid component.</param>
+    /// <param name="fluid3">The third fluid component.</param>
+    /// <param name="moleFraction3">The mole fraction of the third fluid component.</param>
+    /// <param name="fluid4">The fourth fluid component.</param>
+    /// <param name="moleFraction4">The mole fraction of the fourth fluid component.</param>
+    /// <param name="checkForSumEqualsOne">If set to <see langword="true"/>, validates that the mole fractions sum to one.</param>
     public MixtureOfFluids(
     HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid1, double moleFraction1,
     HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid2, double moleFraction2,
@@ -191,6 +207,17 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// <summary>
     /// Initializes a new instance of the <see cref="MixtureOfFluids"/> class with five components.
     /// </summary>
+    /// <param name="fluid1">First component definition.</param>
+    /// <param name="moleFraction1">Mole fraction of the first component.</param>
+    /// <param name="fluid2">Second component definition.</param>
+    /// <param name="moleFraction2">Mole fraction of the second component.</param>
+    /// <param name="fluid3">Third component definition.</param>
+    /// <param name="moleFraction3">Mole fraction of the third component.</param>
+    /// <param name="fluid4">Fourth component definition.</param>
+    /// <param name="moleFraction4">Mole fraction of the fourth component.</param>
+    /// <param name="fluid5">Fifth component definition.</param>
+    /// <param name="moleFraction5">Mole fraction of the fifth component.</param>
+    /// <param name="checkForSumEqualsOne">If true, the mole fractions are validated to sum to one.</param>
     public MixtureOfFluids(
       HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid1, double moleFraction1,
       HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid2, double moleFraction2,

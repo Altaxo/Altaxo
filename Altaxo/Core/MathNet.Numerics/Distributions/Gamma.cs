@@ -96,6 +96,7 @@ namespace Altaxo.Calc.Distributions
     /// <param name="shape">The shape (k) of the Gamma distribution. Range: k ≥ 0.</param>
     /// <param name="scale">The scale (θ) of the Gamma distribution. Range: θ ≥ 0</param>
     /// <param name="randomSource">The random number generator which is used to draw random samples. Optional, can be null.</param>
+    /// <returns>A new Gamma distribution instance.</returns>
     public static Gamma WithShapeScale(double shape, double scale, System.Random randomSource = null)
     {
       return new Gamma(shape, 1.0 / scale, randomSource);
@@ -108,6 +109,7 @@ namespace Altaxo.Calc.Distributions
     /// <param name="shape">The shape (k, α) of the Gamma distribution. Range: α ≥ 0.</param>
     /// <param name="rate">The rate or inverse scale (β) of the Gamma distribution. Range: β ≥ 0.</param>
     /// <param name="randomSource">The random number generator which is used to draw random samples. Optional, can be null.</param>
+    /// <returns>A new Gamma distribution instance.</returns>
     public static Gamma WithShapeRate(double shape, double rate, System.Random randomSource = null)
     {
       return new Gamma(shape, rate, randomSource);
@@ -127,6 +129,7 @@ namespace Altaxo.Calc.Distributions
     /// </summary>
     /// <param name="shape">The shape (k, α) of the Gamma distribution. Range: α ≥ 0.</param>
     /// <param name="rate">The rate or inverse scale (β) of the Gamma distribution. Range: β ≥ 0.</param>
+    /// <returns><c>true</c> if the parameters define a valid Gamma distribution; otherwise, <c>false</c>.</returns>
     public static bool IsValidParameterSet(double shape, double rate)
     {
       return shape >= 0.0 && rate >= 0.0;
@@ -354,6 +357,7 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Fills an array with samples generated from the distribution.
     /// </summary>
+    /// <param name="values">The array to fill with samples.</param>
     public void Samples(double[] values)
     {
       SamplesUnchecked(_random, values, _shape, _rate);
@@ -422,6 +426,13 @@ namespace Altaxo.Calc.Distributions
       }
     }
 
+    /// <summary>
+    /// Fills an array with samples from the Gamma distribution without validating the parameters.
+    /// </summary>
+    /// <param name="rnd">The random number generator to use.</param>
+    /// <param name="values">The array to fill with samples.</param>
+    /// <param name="shape">The shape parameter.</param>
+    /// <param name="rate">The rate parameter.</param>
     internal static void SamplesUnchecked(System.Random rnd, double[] values, double shape, double rate)
     {
       for (int i = 0; i < values.Length; i++)
@@ -430,6 +441,13 @@ namespace Altaxo.Calc.Distributions
       }
     }
 
+    /// <summary>
+    /// Generates samples from the Gamma distribution without validating the parameters.
+    /// </summary>
+    /// <param name="rnd">The random number generator to use.</param>
+    /// <param name="location">The shape parameter.</param>
+    /// <param name="scale">The rate parameter.</param>
+    /// <returns>A sequence of Gamma-distributed samples.</returns>
     internal static IEnumerable<double> SamplesUnchecked(System.Random rnd, double location, double scale)
     {
       while (true)

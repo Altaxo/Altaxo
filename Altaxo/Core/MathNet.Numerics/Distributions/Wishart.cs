@@ -103,6 +103,7 @@ namespace Altaxo.Calc.Distributions
     /// </summary>
     /// <param name="degreesOfFreedom">The degrees of freedom (n) for the Wishart distribution.</param>
     /// <param name="scale">The scale matrix (V) for the Wishart distribution.</param>
+    /// <returns><see langword="true"/> if the parameter set is valid; otherwise, <see langword="false"/>.</returns>
     public static bool IsValidParameterSet(double degreesOfFreedom, Matrix<double> scale)
     {
       if (scale.RowCount != scale.ColumnCount)

@@ -43,6 +43,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Create a new matrix straight from an initialized matrix storage instance.
     /// If you have an instance of a discrete storage type instead, use their direct methods instead.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix.</typeparam>
+    /// <param name="storage">The storage.</param>
+    /// <returns>A matrix using the provided storage.</returns>
     public static Matrix<T> WithStorage<T>(MatrixStorage<T> storage)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -52,6 +55,13 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Create a new matrix with the same kind of the provided example.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <typeparam name="TU">The element type of the example matrix.</typeparam>
+    /// <param name="example">The example.</param>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="fullyMutable">True if the matrix should be fully mutable, false if it can be immutable.</param>
+    /// <returns>A matrix with the same kind as the example.</returns>
     public static Matrix<T> SameAs<T, TU>(Matrix<TU> example, int rows, int columns, bool fullyMutable = false)
         where T : struct, IEquatable<T>, IFormattable
         where TU : struct, IEquatable<TU>, IFormattable
@@ -62,6 +72,10 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Create a new matrix with the same kind and dimensions of the provided example.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <typeparam name="TU">The element type of the example matrix.</typeparam>
+    /// <param name="example">The example.</param>
+    /// <returns>A matrix with the same kind and dimensions as the example.</returns>
     public static Matrix<T> SameAs<T, TU>(Matrix<TU> example)
         where T : struct, IEquatable<T>, IFormattable
         where TU : struct, IEquatable<TU>, IFormattable
@@ -72,6 +86,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Create a new matrix with the same kind of the provided example.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="example">The example.</param>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <returns>A matrix with the same kind as the example.</returns>
     public static Matrix<T> SameAs<T>(Vector<T> example, int rows, int columns)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -81,6 +100,13 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Create a new matrix with a type that can represent and is closest to both provided samples.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="example">The first example.</param>
+    /// <param name="otherExample">The second example.</param>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="fullyMutable">True if the matrix should be fully mutable, false if it can be immutable.</param>
+    /// <returns>A matrix with a type that can represent and is closest to both provided samples.</returns>
     public static Matrix<T> SameAs<T>(Matrix<T> example, Matrix<T> otherExample, int rows, int columns, bool fullyMutable = false)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -90,6 +116,10 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Create a new matrix with a type that can represent and is closest to both provided samples and the dimensions of example.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="example">The first example.</param>
+    /// <param name="otherExample">The second example.</param>
+    /// <returns>A matrix with a type that can represent and is closest to both provided samples and the dimensions of example.</returns>
     public static Matrix<T> SameAs<T>(Matrix<T> example, Matrix<T> otherExample)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -99,6 +129,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Create a new dense matrix with values sampled from the provided random distribution.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="distribution">The distribution.</param>
+    /// <returns>A matrix with values sampled from the provided random distribution.</returns>
     public static Matrix<T> Random<T>(int rows, int columns, IContinuousDistribution distribution)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -108,6 +143,10 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Create a new dense matrix with values sampled from the standard distribution with a system random source.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <returns>A matrix with values sampled from the standard distribution.</returns>
     public static Matrix<T> Random<T>(int rows, int columns)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -117,6 +156,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Create a new dense matrix with values sampled from the standard distribution with a system random source.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="seed">The seed.</param>
+    /// <returns>A matrix with values sampled from the standard distribution.</returns>
     public static Matrix<T> Random<T>(int rows, int columns, int seed)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -127,6 +171,10 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Create a new positive definite dense matrix where each value is the product
     /// of two samples from the provided random distribution.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="order">The order.</param>
+    /// <param name="distribution">The distribution.</param>
+    /// <returns>A positive definite dense matrix.</returns>
     public static Matrix<T> RandomPositiveDefinite<T>(int order, IContinuousDistribution distribution)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -137,6 +185,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Create a new positive definite dense matrix where each value is the product
     /// of two samples from the standard distribution.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="order">The order.</param>
+    /// <returns>A positive definite dense matrix.</returns>
     public static Matrix<T> RandomPositiveDefinite<T>(int order)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -147,6 +198,10 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Create a new positive definite dense matrix where each value is the product
     /// of two samples from the provided random distribution.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="order">The order.</param>
+    /// <param name="seed">The seed.</param>
+    /// <returns>A positive definite dense matrix.</returns>
     public static Matrix<T> RandomPositiveDefinite<T>(int order, int seed)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -159,6 +214,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Intended for advanced scenarios where you're working directly with
     /// storage for performance or interop reasons.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="storage">The storage.</param>
+    /// <returns>A dense matrix using the provided storage.</returns>
     public static Matrix<T> Dense<T>(DenseColumnMajorMatrixStorage<T> storage)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -169,6 +227,10 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Create a new dense matrix with the given number of rows and columns.
     /// All cells of the matrix will be initialized to zero.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <returns>A new dense matrix.</returns>
     public static Matrix<T> Dense<T>(int rows, int columns)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -180,7 +242,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// The array is assumed to be in column-major order (column by column) and is used directly without copying.
     /// Very efficient, but changes to the array and the matrix will affect each other.
     /// </summary>
-    /// <seealso href="http://en.wikipedia.org/wiki/Row-major_order"/>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="storage">The storage array.</param>
+    /// <returns>A new dense matrix.</returns>
     public static Matrix<T> Dense<T>(int rows, int columns, T[] storage)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -190,6 +256,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Create a new dense matrix and initialize each value to the same provided value.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="value">The value to initialize each element with.</param>
+    /// <returns>A new dense matrix.</returns>
     public static Matrix<T> Dense<T>(int rows, int columns, T value)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -199,6 +270,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Create a new dense matrix and initialize each value using the provided init function.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="init">The function to initialize each element.</param>
+    /// <returns>A new dense matrix.</returns>
     public static Matrix<T> Dense<T>(int rows, int columns, Func<int, int, T> init)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -208,6 +284,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Create a new diagonal dense matrix and initialize each diagonal value to the same provided value.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="value">The value to initialize each diagonal element with.</param>
+    /// <returns>A new diagonal dense matrix.</returns>
     public static Matrix<T> DenseDiagonal<T>(int rows, int columns, T value)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -217,6 +298,10 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Create a new diagonal dense matrix and initialize each diagonal value to the same provided value.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="order">The order (number of rows and columns) of the matrix.</param>
+    /// <param name="value">The value to initialize each diagonal element with.</param>
+    /// <returns>A new diagonal dense matrix.</returns>
     public static Matrix<T> DenseDiagonal<T>(int order, T value)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -226,6 +311,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Create a new diagonal dense matrix and initialize each diagonal value using the provided init function.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="init">The function to initialize each diagonal element.</param>
+    /// <returns>A new diagonal dense matrix.</returns>
     public static Matrix<T> DenseDiagonal<T>(int rows, int columns, Func<int, T> init)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -235,6 +325,10 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Create a new diagonal dense identity matrix with a one-diagonal.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <returns>A new diagonal dense identity matrix.</returns>
     public static Matrix<T> DenseIdentity<T>(int rows, int columns)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -244,6 +338,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Create a new diagonal dense identity matrix with a one-diagonal.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="order">The order (number of rows and columns) of the matrix.</param>
+    /// <returns>A new diagonal dense identity matrix.</returns>
     public static Matrix<T> DenseIdentity<T>(int order)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -255,6 +352,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the other matrix.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="matrix">The matrix to copy.</param>
+    /// <returns>A new dense matrix.</returns>
     public static Matrix<T> DenseOfMatrix<T>(Matrix<T> matrix)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -266,6 +366,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the other matrix.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="matrix">The matrix to copy.</param>
+    /// <returns>A new dense matrix.</returns>
     public static Matrix<T> DenseOfMatrix<T>(IROMatrix<T> matrix)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -285,6 +388,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the provided array.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="array">The array to copy.</param>
+    /// <returns>A new dense matrix.</returns>
     public static Matrix<T> DenseOfArray<T>(T[,] array)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -297,6 +403,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the enumerable.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="enumerable">The indexed enumerable to copy.</param>
+    /// <returns>A new dense matrix.</returns>
     public static Matrix<T> DenseOfIndexed<T>(int rows, int columns, IEnumerable<Tuple<int, int, T>> enumerable)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -309,6 +420,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the enumerable.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="enumerable">The indexed enumerable to copy.</param>
+    /// <returns>A new dense matrix.</returns>
     public static Matrix<T> DenseOfIndexed<T>(int rows, int columns, IEnumerable<(int, int, T)> enumerable)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -321,6 +437,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the enumerable.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="columnMajor">The enumerable in column-major order.</param>
+    /// <returns>A new dense matrix.</returns>
     public static Matrix<T> DenseOfColumnMajor<T>(int rows, int columns, IEnumerable<T> columnMajor)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -333,6 +454,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the enumerables.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="data">The enumerable of enumerable columns.</param>
+    /// <returns>A new dense matrix.</returns>
     public static Matrix<T> DenseOfColumns<T>(IEnumerable<IEnumerable<T>> data)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -345,6 +469,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the enumerables.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="data">The enumerable of enumerable columns.</param>
+    /// <returns>A new dense matrix.</returns>
     public static Matrix<T> DenseOfColumns<T>(int rows, int columns, IEnumerable<IEnumerable<T>> data)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -356,6 +485,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the arrays.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="columns">The column arrays.</param>
+    /// <returns>A new dense matrix.</returns>
     public static Matrix<T> DenseOfColumnArrays<T>(params T[][] columns)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -367,6 +499,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the arrays.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="columns">The column arrays.</param>
+    /// <returns>A new dense matrix.</returns>
     public static Matrix<T> DenseOfColumnArrays<T>(IEnumerable<T[]> columns)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -378,6 +513,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the vectors.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="columns">The column vectors.</param>
+    /// <returns>A new dense matrix.</returns>
     public static Matrix<T> DenseOfColumnVectors<T>(params Vector<T>[] columns)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -389,6 +527,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the vectors.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="columns">The column vectors.</param>
+    /// <returns>A new dense matrix.</returns>
     public static Matrix<T> DenseOfColumnVectors<T>(IEnumerable<Vector<T>> columns)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -401,6 +542,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the enumerables.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="data">The enumerable of enumerable rows.</param>
+    /// <returns>A new dense matrix.</returns>
     public static Matrix<T> DenseOfRows<T>(IEnumerable<IEnumerable<T>> data)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -413,6 +557,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the enumerables.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="data">The enumerable of enumerable rows.</param>
+    /// <returns>A new dense matrix.</returns>
     public static Matrix<T> DenseOfRows<T>(int rows, int columns, IEnumerable<IEnumerable<T>> data)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -424,6 +573,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the arrays.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The row arrays.</param>
+    /// <returns>A new dense matrix.</returns>
     public static Matrix<T> DenseOfRowArrays<T>(params T[][] rows)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -435,6 +587,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the arrays.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The row arrays.</param>
+    /// <returns>A new dense matrix.</returns>
     public static Matrix<T> DenseOfRowArrays<T>(IEnumerable<T[]> rows)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -446,6 +601,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the vectors.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The row vectors.</param>
+    /// <returns>A new dense matrix.</returns>
     public static Matrix<T> DenseOfRowVectors<T>(params Vector<T>[] rows)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -457,6 +615,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the vectors.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The row vectors.</param>
+    /// <returns>A new dense matrix.</returns>
     public static Matrix<T> DenseOfRowVectors<T>(IEnumerable<Vector<T>> rows)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -468,6 +629,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the vector.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="diagonal">The vector to copy.</param>
+    /// <returns>A new dense matrix.</returns>
     public static Matrix<T> DenseOfDiagonalVector<T>(Vector<T> diagonal)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -479,6 +643,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the vector.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="diagonal">The vector to copy.</param>
+    /// <returns>A new dense matrix.</returns>
     public static Matrix<T> DenseOfDiagonalVector<T>(int rows, int columns, Vector<T> diagonal)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -490,6 +659,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the array.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="diagonal">The array to copy.</param>
+    /// <returns>A new dense matrix.</returns>
     public static Matrix<T> DenseOfDiagonalArray<T>(T[] diagonal)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -501,6 +673,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the array.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="diagonal">The array to copy.</param>
+    /// <returns>A new dense matrix.</returns>
     public static Matrix<T> DenseOfDiagonalArray<T>(int rows, int columns, T[] diagonal)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -513,6 +690,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// If the matrices do not align properly, they are placed on the top left
     /// corner of their cell with the remaining fields left zero.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="matrices">The 2D array of matrices.</param>
+    /// <returns>A new dense matrix.</returns>
     public static Matrix<T> DenseOfMatrixArray<T>(Matrix<T>[,] matrices)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -525,6 +705,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Intended for advanced scenarios where you're working directly with
     /// storage for performance or interop reasons.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="storage">The storage.</param>
+    /// <returns>A sparse matrix using the provided storage.</returns>
     public static Matrix<T> Sparse<T>(SparseCompressedRowMatrixStorage<T> storage)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -534,8 +717,10 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Create a sparse matrix of T with the given number of rows and columns.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
     /// <param name="rows">The number of rows.</param>
     /// <param name="columns">The number of columns.</param>
+    /// <returns>A new sparse matrix.</returns>
     public static Matrix<T> Sparse<T>(int rows, int columns)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -545,6 +730,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Create a new sparse matrix and initialize each value to the same provided value.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="value">The value to initialize each element with.</param>
+    /// <returns>A new sparse matrix.</returns>
     public static Matrix<T> Sparse<T>(int rows, int columns, T value)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -554,6 +744,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Create a new sparse matrix and initialize each value using the provided init function.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="init">The function to initialize each element.</param>
+    /// <returns>A new sparse matrix.</returns>
     public static Matrix<T> Sparse<T>(int rows, int columns, Func<int, int, T> init)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -563,6 +758,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Create a new diagonal sparse matrix and initialize each diagonal value to the same provided value.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="value">The value to initialize each diagonal element with.</param>
+    /// <returns>A new diagonal sparse matrix.</returns>
     public static Matrix<T> SparseDiagonal<T>(int rows, int columns, T value)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -572,6 +772,10 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Create a new diagonal sparse matrix and initialize each diagonal value to the same provided value.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="order">The order (number of rows and columns) of the matrix.</param>
+    /// <param name="value">The value to initialize each diagonal element with.</param>
+    /// <returns>A new diagonal sparse matrix.</returns>
     public static Matrix<T> SparseDiagonal<T>(int order, T value)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -581,6 +785,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Create a new diagonal sparse matrix and initialize each diagonal value using the provided init function.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="init">The function to initialize each diagonal element.</param>
+    /// <returns>A new diagonal sparse matrix.</returns>
     public static Matrix<T> SparseDiagonal<T>(int rows, int columns, Func<int, T> init)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -590,6 +799,10 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Create a new diagonal dense identity matrix with a one-diagonal.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <returns>A new diagonal dense identity matrix.</returns>
     public static Matrix<T> SparseIdentity<T>(int rows, int columns)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -599,6 +812,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Create a new diagonal dense identity matrix with a one-diagonal.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="order">The order (number of rows and columns) of the matrix.</param>
+    /// <returns>A new diagonal dense identity matrix.</returns>
     public static Matrix<T> SparseIdentity<T>(int order)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -610,6 +826,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the other matrix.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="matrix">The matrix to copy.</param>
+    /// <returns>A new sparse matrix.</returns>
     public static Matrix<T> SparseOfMatrix<T>(Matrix<T> matrix)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -621,6 +840,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the provided array.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="array">The array to copy.</param>
+    /// <returns>A new sparse matrix.</returns>
     public static Matrix<T> SparseOfArray<T>(T[,] array)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -633,6 +855,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the enumerable.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="enumerable">The indexed enumerable to copy.</param>
+    /// <returns>A new sparse matrix.</returns>
     public static Matrix<T> SparseOfIndexed<T>(int rows, int columns, IEnumerable<Tuple<int, int, T>> enumerable)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -645,6 +872,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the enumerable.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="enumerable">The indexed enumerable to copy.</param>
+    /// <returns>A new sparse matrix.</returns>
     public static Matrix<T> SparseOfIndexed<T>(int rows, int columns, IEnumerable<(int, int, T)> enumerable)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -658,6 +890,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// A new memory block will be allocated for storing the vector.
     /// </summary>
     /// <seealso href="http://en.wikipedia.org/wiki/Row-major_order"/>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="rowMajor">The enumerable in row-major order.</param>
+    /// <returns>A new sparse matrix.</returns>
     public static Matrix<T> SparseOfRowMajor<T>(int rows, int columns, IEnumerable<T> rowMajor)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -671,6 +908,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
     /// <seealso href="http://en.wikipedia.org/wiki/Row-major_order"/>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="columnMajor">The storage array in column-major order.</param>
+    /// <returns>A new sparse matrix.</returns>
     public static Matrix<T> SparseOfColumnMajor<T>(int rows, int columns, IList<T> columnMajor)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -683,6 +925,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the enumerables.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="data">The enumerable of enumerable columns.</param>
+    /// <returns>A new sparse matrix.</returns>
     public static Matrix<T> SparseOfColumns<T>(IEnumerable<IEnumerable<T>> data)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -695,6 +940,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the enumerables.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="data">The enumerable of enumerable columns.</param>
+    /// <returns>A new sparse matrix.</returns>
     public static Matrix<T> SparseOfColumns<T>(int rows, int columns, IEnumerable<IEnumerable<T>> data)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -706,6 +956,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the arrays.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="columns">The column arrays.</param>
+    /// <returns>A new sparse matrix.</returns>
     public static Matrix<T> SparseOfColumnArrays<T>(params T[][] columns)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -717,6 +970,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the arrays.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="columns">The column arrays.</param>
+    /// <returns>A new sparse matrix.</returns>
     public static Matrix<T> SparseOfColumnArrays<T>(IEnumerable<T[]> columns)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -728,6 +984,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the vectors.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="columns">The column vectors.</param>
+    /// <returns>A new sparse matrix.</returns>
     public static Matrix<T> SparseOfColumnVectors<T>(params Vector<T>[] columns)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -739,6 +998,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the vectors.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="columns">The column vectors.</param>
+    /// <returns>A new sparse matrix.</returns>
     public static Matrix<T> SparseOfColumnVectors<T>(IEnumerable<Vector<T>> columns)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -751,6 +1013,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the enumerables.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="data">The enumerable of enumerable rows.</param>
+    /// <returns>A new sparse matrix.</returns>
     public static Matrix<T> SparseOfRows<T>(IEnumerable<IEnumerable<T>> data)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -763,6 +1028,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the enumerables.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="data">The enumerable of enumerable rows.</param>
+    /// <returns>A new sparse matrix.</returns>
     public static Matrix<T> SparseOfRows<T>(int rows, int columns, IEnumerable<IEnumerable<T>> data)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -774,6 +1044,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the arrays.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The row arrays.</param>
+    /// <returns>A new sparse matrix.</returns>
     public static Matrix<T> SparseOfRowArrays<T>(params T[][] rows)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -785,6 +1058,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the arrays.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The row arrays.</param>
+    /// <returns>A new sparse matrix.</returns>
     public static Matrix<T> SparseOfRowArrays<T>(IEnumerable<T[]> rows)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -796,6 +1072,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the vectors.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The row vectors.</param>
+    /// <returns>A new sparse matrix.</returns>
     public static Matrix<T> SparseOfRowVectors<T>(params Vector<T>[] rows)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -807,6 +1086,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the vectors.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The row vectors.</param>
+    /// <returns>A new sparse matrix.</returns>
     public static Matrix<T> SparseOfRowVectors<T>(IEnumerable<Vector<T>> rows)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -818,6 +1100,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the vector.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="diagonal">The vector to copy.</param>
+    /// <returns>A new sparse matrix.</returns>
     public static Matrix<T> SparseOfDiagonalVector<T>(Vector<T> diagonal)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -829,6 +1114,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the vector.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="diagonal">The vector to copy.</param>
+    /// <returns>A new sparse matrix.</returns>
     public static Matrix<T> SparseOfDiagonalVector<T>(int rows, int columns, Vector<T> diagonal)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -840,6 +1130,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the array.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="diagonal">The array to copy.</param>
+    /// <returns>A new sparse matrix.</returns>
     public static Matrix<T> SparseOfDiagonalArray<T>(T[] diagonal)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -851,6 +1144,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the array.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="diagonal">The array to copy.</param>
+    /// <returns>A new sparse matrix.</returns>
     public static Matrix<T> SparseOfDiagonalArray<T>(int rows, int columns, T[] diagonal)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -863,6 +1161,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// If the matrices do not align properly, they are placed on the top left
     /// corner of their cell with the remaining fields left zero.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="matrices">The 2D array of matrices.</param>
+    /// <returns>A new sparse matrix.</returns>
     public static Matrix<T> SparseOfMatrixArray<T>(Matrix<T>[,] matrices)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -874,6 +1175,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the given arrays.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
     /// <param name="rows">The number of rows.</param>
     /// <param name="columns">The number of columns.</param>
     /// <param name="valueCount">The number of stored values including explicit zeros.</param>
@@ -893,6 +1195,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the given arrays.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
     /// <param name="rows">The number of rows.</param>
     /// <param name="columns">The number of columns.</param>
     /// <param name="valueCount">The number of stored values including explicit zeros.</param>
@@ -912,6 +1215,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the given arrays.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
     /// <param name="rows">The number of rows.</param>
     /// <param name="columns">The number of columns.</param>
     /// <param name="valueCount">The number of stored values including explicit zeros.</param>
@@ -932,6 +1236,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Intended for advanced scenarios where you're working directly with
     /// storage for performance or interop reasons.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="storage">The storage.</param>
+    /// <returns>A diagonal matrix using the provided storage.</returns>
     public static Matrix<T> Diagonal<T>(DiagonalMatrixStorage<T> storage)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -942,6 +1249,10 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Create a new diagonal matrix with the given number of rows and columns.
     /// All cells of the matrix will be initialized to zero.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <returns>A new diagonal matrix.</returns>
     public static Matrix<T> Diagonal<T>(int rows, int columns)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -953,6 +1264,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// The array is assumed to represent the diagonal values and is used directly without copying.
     /// Very efficient, but changes to the array and the matrix will affect each other.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="storage">The storage array representing the diagonal values.</param>
+    /// <returns>A new diagonal matrix.</returns>
     public static Matrix<T> Diagonal<T>(int rows, int columns, T[] storage)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -964,6 +1280,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// The array is assumed to represent the diagonal values and is used directly without copying.
     /// Very efficient, but changes to the array and the matrix will affect each other.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="storage">The storage array representing the diagonal values.</param>
+    /// <returns>A new square diagonal matrix.</returns>
     public static Matrix<T> Diagonal<T>(T[] storage)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -973,6 +1292,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Create a new diagonal matrix and initialize each diagonal value to the same provided value.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="value">The value to initialize each diagonal element with.</param>
+    /// <returns>A new diagonal matrix.</returns>
     public static Matrix<T> Diagonal<T>(int rows, int columns, T value)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -982,6 +1306,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Create a new diagonal matrix and initialize each diagonal value using the provided init function.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="init">The function to initialize each diagonal element.</param>
+    /// <returns>A new diagonal matrix.</returns>
     public static Matrix<T> Diagonal<T>(int rows, int columns, Func<int, T> init)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -991,6 +1320,10 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Create a new diagonal identity matrix with a one-diagonal.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <returns>A new diagonal identity matrix.</returns>
     public static Matrix<T> DiagonalIdentity<T>(int rows, int columns)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -1000,6 +1333,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Create a new diagonal identity matrix with a one-diagonal.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="order">The order (number of rows and columns) of the matrix.</param>
+    /// <returns>A new diagonal identity matrix.</returns>
     public static Matrix<T> DiagonalIdentity<T>(int order)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -1012,6 +1348,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the vector.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="diagonal">The vector to copy.</param>
+    /// <returns>A new diagonal matrix.</returns>
     public static Matrix<T> DiagonalOfDiagonalVector<T>(Vector<T> diagonal)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -1023,6 +1362,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the vector.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="diagonal">The vector to copy.</param>
+    /// <returns>A new diagonal matrix.</returns>
     public static Matrix<T> DiagonalOfDiagonalVector<T>(int rows, int columns, Vector<T> diagonal)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -1034,6 +1378,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the array.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="diagonal">The array to copy.</param>
+    /// <returns>A new diagonal matrix.</returns>
     public static Matrix<T> DiagonalOfDiagonalArray<T>(T[] diagonal)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -1045,6 +1392,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This new matrix will be independent from the array.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <typeparam name="T">The element type of the matrix to create.</typeparam>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="diagonal">The array to copy.</param>
+    /// <returns>A new diagonal matrix.</returns>
     public static Matrix<T> DiagonalOfDiagonalArray<T>(int rows, int columns, T[] diagonal)
         where T : struct, IEquatable<T>, IFormattable
     {

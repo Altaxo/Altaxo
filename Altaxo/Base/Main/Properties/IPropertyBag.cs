@@ -109,6 +109,7 @@ namespace Altaxo.Main.Properties
     /// <summary>
     /// Removes a property from this instance.
     /// </summary>
+    /// <typeparam name="T">The type of the property value.</typeparam>
     /// <param name="p">The property key.</param>
     /// <returns><c>true</c> if the property was successfully removed; otherwise, <c>false</c>.</returns>
     bool RemoveValue<T>(PropertyKey<T> p);

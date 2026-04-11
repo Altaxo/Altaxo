@@ -190,6 +190,7 @@ namespace Altaxo.Graph.Plot.Groups
     /// <summary>
     /// Creates a strongly typed clone of this group style.
     /// </summary>
+    /// <returns>A cloned group style.</returns>
     public BarSizePosition3DGroupStyle Clone()
     {
       var result = new BarSizePosition3DGroupStyle();
@@ -197,6 +198,7 @@ namespace Altaxo.Graph.Plot.Groups
       return result;
     }
 
+    /// <inheritdoc />
     object ICloneable.Clone()
     {
       var result = new BarSizePosition3DGroupStyle();
@@ -440,6 +442,16 @@ namespace Altaxo.Graph.Plot.Groups
     /// <summary>
     /// Returns the currently prepared bar-shift parameters.
     /// </summary>
+    /// <param name="barShiftStrategy">The current bar-shift strategy.</param>
+    /// <param name="barShiftMaxNumberOfItemsInOneDirection">The maximum number of items in one direction for manual strategies.</param>
+    /// <param name="relInnerGapX">The relative inner gap in x-direction.</param>
+    /// <param name="relOuterGapX">The relative outer gap in x-direction.</param>
+    /// <param name="sizeX">The prepared bar size in x-direction.</param>
+    /// <param name="posX">The prepared bar offset in x-direction.</param>
+    /// <param name="relInnerGapY">The relative inner gap in y-direction.</param>
+    /// <param name="relOuterGapY">The relative outer gap in y-direction.</param>
+    /// <param name="sizeY">The prepared bar size in y-direction.</param>
+    /// <param name="posY">The prepared bar offset in y-direction.</param>
     public void Apply(
       out BarShiftStrategy3D barShiftStrategy, out int barShiftMaxNumberOfItemsInOneDirection,
       out double relInnerGapX, out double relOuterGapX, out double sizeX, out double posX,
@@ -458,8 +470,10 @@ namespace Altaxo.Graph.Plot.Groups
       posY = _logicalItemOffsetY;
     }
 
+    /// <inheritdoc />
     bool IShiftLogicalXYZGroupStyle.IsConstant { get { return true; } }
 
+    /// <inheritdoc />
     void IShiftLogicalXYZGroupStyle.Apply(out double logicalShiftX, out double logicalShiftY, out double logicalShiftZ)
     {
       logicalShiftX = _logicalItemOffsetX;
@@ -467,6 +481,7 @@ namespace Altaxo.Graph.Plot.Groups
       logicalShiftZ = 0;
     }
 
+    /// <inheritdoc />
     void IShiftLogicalXYZGroupStyle.Apply(out Func<int, double> logicalShiftX, out Func<int, double> logicalShiftY, out Func<int, double> logicalShiftZ)
     {
       throw new NotImplementedException("Use this function only if IsConstant returns false");
@@ -477,6 +492,7 @@ namespace Altaxo.Graph.Plot.Groups
     /// <summary>
     /// Adds this style as an external group style when required.
     /// </summary>
+    /// <param name="externalGroups">Collection of external plot group styles.</param>
     public static void AddExternalGroupStyle(IPlotGroupStyleCollection externalGroups)
     {
       if (PlotGroupStyle.ShouldAddExternalGroupStyle(externalGroups, typeof(BarSizePosition3DGroupStyle)))
@@ -509,6 +525,13 @@ namespace Altaxo.Graph.Plot.Groups
     /// <summary>
     /// Announces that a plot item intends to use three-dimensional bar-size positioning.
     /// </summary>
+    /// <param name="externalGroups">Collection of external plot group styles.</param>
+    /// <param name="localGroups">Collection of local plot group styles.</param>
+    /// <param name="numberOfItems">The number of items in the cluster.</param>
+    /// <param name="minimumLogicalXValue">The minimum logical x-value of the cluster.</param>
+    /// <param name="maximumLogicalXValue">The maximum logical x-value of the cluster.</param>
+    /// <param name="minimumLogicalYValue">The minimum logical y-value of the cluster.</param>
+    /// <param name="maximumLogicalYValue">The maximum logical y-value of the cluster.</param>
     public static void IntendToApply(
       IPlotGroupStyleCollection externalGroups,
       IPlotGroupStyleCollection localGroups,

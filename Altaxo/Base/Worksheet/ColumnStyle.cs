@@ -585,16 +585,30 @@ namespace Altaxo.Worksheet
     /// <summary>
     /// Paints the cell using an abstract drawing context.
     /// </summary>
+    /// <param name="dctype">The type of the drawing context.</param>
+    /// <param name="dc">The drawing context.</param>
+    /// <param name="cellRectangle">The bounds of the cell.</param>
+    /// <param name="nRow">The row index.</param>
+    /// <param name="data">The data column providing the cell value.</param>
+    /// <param name="bSelected">A value indicating whether the cell is selected.</param>
     public abstract void Paint(System.Type dctype, object dc, RectangleD2D cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected);
 
     /// <summary>
     /// Paints the cell using a GDI graphics context.
     /// </summary>
+    /// <param name="dc">The graphics context.</param>
+    /// <param name="cellRectangle">The bounds of the cell.</param>
+    /// <param name="nRow">The row index.</param>
+    /// <param name="data">The data column providing the cell value.</param>
+    /// <param name="bSelected">A value indicating whether the cell is selected.</param>
     public abstract void Paint(Graphics dc, Rectangle cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected);
 
     /// <summary>
     /// Paints the background and border of a cell.
     /// </summary>
+    /// <param name="dc">The graphics context.</param>
+    /// <param name="cellRectangle">The bounds of the cell.</param>
+    /// <param name="bSelected">A value indicating whether the cell is selected.</param>
     public virtual void PaintBackground(Graphics dc, Rectangle cellRectangle, bool bSelected)
     {
       if (bSelected)
@@ -626,11 +640,17 @@ namespace Altaxo.Worksheet
     /// <summary>
     /// Gets the cell value formatted as text.
     /// </summary>
+    /// <param name="nRow">The row index.</param>
+    /// <param name="data">The data column providing the value.</param>
+    /// <returns>The formatted cell value.</returns>
     public abstract string GetColumnValueAtRow(int nRow, Altaxo.Data.DataColumn data);
 
     /// <summary>
     /// Sets the cell value from its textual representation.
     /// </summary>
+    /// <param name="s">The textual representation of the value.</param>
+    /// <param name="nRow">The row index.</param>
+    /// <param name="data">The data column receiving the value.</param>
     public abstract void SetColumnValueAtRow(string s, int nRow, Altaxo.Data.DataColumn data);
 
     /// <inheritdoc/>

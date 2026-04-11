@@ -88,6 +88,7 @@ namespace Altaxo.Calc.Integration
     /// <param name="targetRelativeError">The maximum relative error in the result</param>
     /// <param name="maximumDepth">The maximum number of interval splittings permitted before stopping</param>
     /// <param name="order">The number of Gauss-Kronrod points. Pre-computed for 15, 21, 31, 41, 51 and 61 points</param>
+    /// <returns>The estimated integral value.</returns>
     public static double Integrate(Func<double, double> f, double intervalBegin, double intervalEnd, out double error, out double L1Norm, double targetRelativeError = 1E-10, int maximumDepth = 15, int order = 15)
     {
       // Formula used for variable subsitution from

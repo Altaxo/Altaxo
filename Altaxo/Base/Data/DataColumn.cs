@@ -338,8 +338,9 @@ namespace Altaxo.Data
     #region Data Access/Append/Clear
 
     /// <summary>
-    /// Gets/sets the element at the index i by a value of type <see cref="AltaxoVariant"/>.
+    /// Gets or sets the element at the specified index by a value of type <see cref="AltaxoVariant"/>.
     /// </summary>
+    /// <param name="i">The element index.</param>
     public AltaxoVariant this[int i]
     {
       get
@@ -557,6 +558,7 @@ namespace Altaxo.Data
 
     #region IEnumerable Members
 
+    /// <inheritdoc />
     IEnumerator IEnumerable.GetEnumerator()
     {
       for (int i = 0; i < Count; i++)
@@ -583,7 +585,7 @@ namespace Altaxo.Data
     }
 
     /// <summary>
-    /// Gets the column typeappropriate for the given element type. Example: when typeof(double) is given, the return value is typeof(DoubleColumn).
+    /// Gets the column type appropriate for the given element type. Example: when typeof(double) is given, the return value is typeof(DoubleColumn).
     /// </summary>
     /// <param name="type">The element type.</param>
     /// <returns>The column type appropriate for the element type. If nothing specific is found, typeof(TextColumn) is returned.</returns>
@@ -634,6 +636,7 @@ namespace Altaxo.Data
       }
     }
 
+    /// <inheritdoc />
     int? IReadableColumn.Count
     {
       get

@@ -514,6 +514,10 @@ namespace Altaxo.Graph.Scales.Deprecated
     /// the org / end is adjusted only if it is not fixed
     /// and the DataBound object contains valid data
     /// </summary>
+    /// <param name="org">The requested axis origin.</param>
+    /// <param name="orgfixed">If set to <c>true</c>, the origin remains fixed.</param>
+    /// <param name="end">The requested axis end.</param>
+    /// <param name="endfixed">If set to <c>true</c>, the end remains fixed.</param>
     public override void ProcessDataBounds(double org, bool orgfixed, double end, bool endfixed)
     {
       if (IsLinked)

@@ -555,6 +555,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <summary>
     /// Collects external group styles required by this plot style.
     /// </summary>
+    /// <param name="externalGroups">The external group-style collection.</param>
     public void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups)
     {
       BarSizePosition3DGroupStyle.AddExternalGroupStyle(externalGroups);
@@ -563,6 +564,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <summary>
     /// Collects local group styles required by this plot style.
     /// </summary>
+    /// <param name="externalGroups">The external group-style collection.</param>
+    /// <param name="localGroups">The local group-style collection.</param>
     public void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       BarSizePosition3DGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
@@ -571,6 +574,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <summary>
     /// Prepares the group styles for bar positioning and coloring.
     /// </summary>
+    /// <param name="externalGroups">The external group-style collection.</param>
+    /// <param name="localGroups">The local group-style collection.</param>
+    /// <param name="layer">The plot layer.</param>
+    /// <param name="pdata">The processed plot data.</param>
     public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed3DPlotData pdata)
     {
       // first, we have to calculate the span of logical values from the minimum logical value to the maximum logical value
@@ -613,6 +620,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <summary>
     /// Applies the prepared group styles.
     /// </summary>
+    /// <param name="externalGroups">The external group-style collection.</param>
+    /// <param name="localGroups">The local group-style collection.</param>
     public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       _cachedColorForIndexFunction = null;
@@ -638,6 +647,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <summary>
     /// Paints the bars for the specified processed plot data.
     /// </summary>
+    /// <param name="g">The graphics context used for drawing.</param>
+    /// <param name="layer">The plot layer.</param>
+    /// <param name="pdata">The processed plot data to draw.</param>
+    /// <param name="prevItemData">The processed data of the previous plot item.</param>
+    /// <param name="nextItemData">The processed data of the next plot item.</param>
     public void Paint(IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData pdata, Processed3DPlotData? prevItemData, Processed3DPlotData? nextItemData)
     {
       if (pdata is null || !(pdata.RangeList is { } rangeList) || rangeList.Count == 0 || !(pdata.PlotPointsInAbsoluteLayerCoordinates is { } ptArray))
@@ -717,6 +731,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <summary>
     /// Paints a legend symbol and returns the used bounds.
     /// </summary>
+    /// <param name="g">The graphics context used for drawing.</param>
+    /// <param name="bounds">The legend-symbol bounds.</param>
+    /// <returns>The bounds used for drawing the legend symbol.</returns>
     public RectangleD3D PaintSymbol(IGraphicsContext3D g, RectangleD3D bounds)
     {
       bounds = bounds.WithPadding(0, 0, -bounds.SizeZ / 4);

@@ -451,11 +451,24 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     #region IEnumerable Members
 
+    /// <summary>
+    /// Returns an enumerator that iterates through the collection.
+    /// </summary>
+    /// <returns>An enumerator for the collection.</returns>
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
       return _axisStyles.GetEnumerator();
     }
 
+    /// <summary>
+    /// Performs hit testing for the axis styles in the collection.
+    /// </summary>
+    /// <param name="parentCoord">The hit test data in parent coordinates.</param>
+    /// <param name="AxisScaleEditorMethod">The editor handler for axis scales.</param>
+    /// <param name="AxisStyleEditorMethod">The editor handler for axis styles.</param>
+    /// <param name="AxisLabelMajorStyleEditorMethod">The editor handler for major axis labels.</param>
+    /// <param name="AxisLabelMinorStyleEditorMethod">The editor handler for minor axis labels.</param>
+    /// <returns>The hit test object, or <see langword="null"/> if no axis style was hit.</returns>
     internal IHitTestObject? HitTest(HitTestPointData parentCoord, DoubleClickHandler? AxisScaleEditorMethod, DoubleClickHandler? AxisStyleEditorMethod, DoubleClickHandler? AxisLabelMajorStyleEditorMethod, DoubleClickHandler? AxisLabelMinorStyleEditorMethod)
     {
       foreach (var axisStyle in _axisStyles)

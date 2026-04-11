@@ -72,6 +72,7 @@ namespace Altaxo.AddInItems
     /// Find AddIns by searching all .addin files recursively in <paramref name="addInDir"/>.
     /// The AddIns that were found are added to the list of AddIn files to load.
     /// </summary>
+    /// <param name="addInDir">The directory to search for add-in files.</param>
     public void AddAddInsFromDirectory(string addInDir)
     {
       if (addInDir is null)
@@ -86,6 +87,7 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Add the specified .addin file to the list of AddIn files to load.
     /// </summary>
+    /// <param name="addInFile">The add-in file to add.</param>
     public void AddAddInFile(string addInFile)
     {
       if (addInFile is null)
@@ -184,6 +186,8 @@ namespace Altaxo.AddInItems
     /// Starts the core services.
     /// This initializes the PropertyService and ResourceService.
     /// </summary>
+    /// <param name="propertyService">The property service to register.</param>
+    /// <param name="startupSettings">The startup settings used to initialize the application.</param>
     [MemberNotNull(nameof(_addInTree))]
     public void StartCoreServices(IPropertyService propertyService, Altaxo.Gui.Workbench.StartupSettings startupSettings)
     {

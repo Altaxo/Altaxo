@@ -33,6 +33,7 @@ namespace Altaxo.Collections.Operations
   /// Given a sequence of numeric values that will be added to this instance, the algorithm keeps track of the minimum value of the last <c>numberOfItems</c> added values.
   /// The name of the algorithm is ascending minima algorithm, one of the algorithms in the class of "minimum on a sliding window algorithms".
   /// </summary>
+  /// <typeparam name="T">The numeric value type tracked by the sliding window.</typeparam>
   public class MinimumOnSlidingWindow<T>
   {
     #region Item

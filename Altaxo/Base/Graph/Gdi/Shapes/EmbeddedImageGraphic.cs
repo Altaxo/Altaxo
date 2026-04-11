@@ -120,6 +120,10 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="EmbeddedImageGraphic"/> class.
     /// </summary>
+    /// <param name="posX">The x-position of the graphic.</param>
+    /// <param name="posY">The y-position of the graphic.</param>
+    /// <param name="graphicSize">The graphic size.</param>
+    /// <param name="startingImage">The starting image.</param>
     public EmbeddedImageGraphic(double posX, double posY, PointD2D graphicSize, ImageProxy startingImage)
       :
       this(new PointD2D(posX, posY), graphicSize, startingImage)
@@ -129,6 +133,11 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="EmbeddedImageGraphic"/> class.
     /// </summary>
+    /// <param name="posX">The x-position of the graphic.</param>
+    /// <param name="posY">The y-position of the graphic.</param>
+    /// <param name="width">The width of the graphic.</param>
+    /// <param name="height">The height of the graphic.</param>
+    /// <param name="startingImage">The starting image.</param>
     public EmbeddedImageGraphic(double posX, double posY, double width, double height, ImageProxy startingImage)
       :
       this(new PointD2D(posX, posY), new PointD2D(width, height), startingImage)
@@ -138,6 +147,9 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="EmbeddedImageGraphic"/> class.
     /// </summary>
+    /// <param name="graphicPosition">The graphic position.</param>
+    /// <param name="Rotation">The rotation angle.</param>
+    /// <param name="startingImage">The starting image.</param>
     public EmbeddedImageGraphic(PointD2D graphicPosition, double Rotation, ImageProxy startingImage)
       :
       this(graphicPosition, startingImage)
@@ -148,6 +160,10 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="EmbeddedImageGraphic"/> class.
     /// </summary>
+    /// <param name="posX">The x-position of the graphic.</param>
+    /// <param name="posY">The y-position of the graphic.</param>
+    /// <param name="Rotation">The rotation angle.</param>
+    /// <param name="startingImage">The starting image.</param>
     public EmbeddedImageGraphic(double posX, double posY, double Rotation, ImageProxy startingImage)
       :
       this(new PointD2D(posX, posY), Rotation, startingImage)
@@ -157,6 +173,10 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="EmbeddedImageGraphic"/> class.
     /// </summary>
+    /// <param name="graphicPosition">The graphic position.</param>
+    /// <param name="graphicSize">The graphic size.</param>
+    /// <param name="Rotation">The rotation angle.</param>
+    /// <param name="startingImage">The starting image.</param>
     public EmbeddedImageGraphic(PointD2D graphicPosition, PointD2D graphicSize, double Rotation, ImageProxy startingImage)
       :
       this(graphicPosition, Rotation, startingImage)
@@ -167,6 +187,11 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="EmbeddedImageGraphic"/> class.
     /// </summary>
+    /// <param name="posX">The x-position of the graphic.</param>
+    /// <param name="posY">The y-position of the graphic.</param>
+    /// <param name="graphicSize">The graphic size.</param>
+    /// <param name="Rotation">The rotation angle.</param>
+    /// <param name="startingImage">The starting image.</param>
     public EmbeddedImageGraphic(double posX, double posY, PointD2D graphicSize, double Rotation, ImageProxy startingImage)
       :
       this(new PointD2D(posX, posY), graphicSize, Rotation, startingImage)
@@ -176,6 +201,12 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="EmbeddedImageGraphic"/> class.
     /// </summary>
+    /// <param name="posX">The x-position of the graphic.</param>
+    /// <param name="posY">The y-position of the graphic.</param>
+    /// <param name="width">The width of the graphic.</param>
+    /// <param name="height">The height of the graphic.</param>
+    /// <param name="Rotation">The rotation angle.</param>
+    /// <param name="startingImage">The starting image.</param>
     public EmbeddedImageGraphic(double posX, double posY, double width, double height, double Rotation, ImageProxy startingImage)
       :
       this(new PointD2D(posX, posY), new PointD2D(width, height), Rotation, startingImage)

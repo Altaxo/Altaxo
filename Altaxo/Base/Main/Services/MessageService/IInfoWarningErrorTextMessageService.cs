@@ -56,6 +56,10 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Initializes a new instance of the <see cref="InfoWarningErrorTextMessageItem"/> struct.
     /// </summary>
+    /// <param name="level">The message severity level.</param>
+    /// <param name="source">The message source.</param>
+    /// <param name="message">The message text.</param>
+    /// <param name="timeUtc">The message timestamp in UTC.</param>
     public InfoWarningErrorTextMessageItem(MessageLevel level, string source, string message, DateTime timeUtc)
     {
       Level = level;
@@ -75,16 +79,28 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Writes a message line.
     /// </summary>
+    /// <param name="messageLevel">The message severity.</param>
+    /// <param name="source">The message source.</param>
+    /// <param name="message">The message text.</param>
     void WriteLine(MessageLevel messageLevel, string source, string message);
 
     /// <summary>
     /// Writes a formatted message line.
     /// </summary>
+    /// <param name="messageLevel">The message severity.</param>
+    /// <param name="source">The message source.</param>
+    /// <param name="format">The composite format string.</param>
+    /// <param name="args">The format arguments.</param>
     void WriteLine(MessageLevel messageLevel, string source, string format, params object[] args);
 
     /// <summary>
     /// Writes a culture-aware formatted message line.
     /// </summary>
+    /// <param name="messageLevel">The message severity.</param>
+    /// <param name="source">The message source.</param>
+    /// <param name="provider">The format provider.</param>
+    /// <param name="format">The composite format string.</param>
+    /// <param name="args">The format arguments.</param>
     void WriteLine(MessageLevel messageLevel, string source, System.IFormatProvider provider, string format, params object[] args);
 
     /// <summary>

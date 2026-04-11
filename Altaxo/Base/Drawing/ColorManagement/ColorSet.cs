@@ -476,6 +476,7 @@ namespace Altaxo.Drawing.ColorManagement
       return ((IList<NamedColor>)_innerList).GetEnumerator();
     }
 
+    /// <inheritdoc />
     IEnumerator IEnumerable.GetEnumerator()
     {
       return _innerList.GetEnumerator();

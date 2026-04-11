@@ -1059,6 +1059,7 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="folderName">The folder name to add.</param>
     /// <param name="folderDictionary">Dictionary that relates the full folder name to the already built-up tree nodes. At least the root node (key is the <see cref="Main.ProjectFolder.RootFolderName"/> has to be present in the dictionary. The newly created folder nodes are also added to this dictionary.</param>
+    /// <typeparam name="T">The concrete node type to create for missing folder nodes.</typeparam>
     /// <returns>The tree node corresponding to the provided folder name.</returns>
     public static NGTreeNode AddFolderNodeRecursively<T>(string folderName, Dictionary<string, NGTreeNode> folderDictionary) where T : NGTreeNode, new()
     {

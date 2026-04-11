@@ -69,6 +69,10 @@ namespace Altaxo.Science.Spectroscopy
       /// <summary>
       /// Deserializes proxies for the legacy version-0 format.
       /// </summary>
+      /// <param name="info">The deserialization information.</param>
+      /// <param name="parent">The parent object used while deserializing proxy objects.</param>
+      /// <param name="options">The spectral preprocessing options that define the processors.</param>
+      /// <returns>The list of deserialized proxies with their processor indices.</returns>
       public static List<(int number, IDocumentLeafNode proxy)> DeserializeProxiesVersion0(IXmlDeserializationInfo info, object? parent, SpectralPreprocessingOptionsBase options)
       {
         var calibrationTableProxy = info.GetValueOrNull<DataTableProxy>("CalibrationTableProxy", parent);

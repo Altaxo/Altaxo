@@ -86,6 +86,8 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Initializes a new instance of the <see cref="ExtensionPath"/> class.
     /// </summary>
+    /// <param name="name">The extension path name.</param>
+    /// <param name="addIn">The add-in that owns the extension path.</param>
     public ExtensionPath(string name, AddIn addIn)
     {
       this._addIn = addIn;
@@ -95,6 +97,9 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Reads the extension path contents from XML.
     /// </summary>
+    /// <param name="extensionPath">The extension path to populate.</param>
+    /// <param name="reader">The XML reader positioned on the path contents.</param>
+    /// <param name="endElement">The XML end element that terminates the path section.</param>
     public static void SetUp(ExtensionPath extensionPath, XmlReader reader, string endElement)
     {
       extensionPath.DoSetUp(reader, endElement, extensionPath._addIn);

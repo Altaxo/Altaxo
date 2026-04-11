@@ -114,6 +114,10 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Initializes a new instance of the <see cref="MenuItemDescriptor"/> class.
     /// </summary>
+    /// <param name="parameter">The parameter passed to the builder.</param>
+    /// <param name="codon">The codon describing the menu item.</param>
+    /// <param name="subItems">The submenu items.</param>
+    /// <param name="conditions">The conditions attached to the menu item.</param>
     public MenuItemDescriptor(object? parameter, Codon codon, IList subItems, IReadOnlyCollection<ICondition> conditions)
     {
       Parameter = parameter;

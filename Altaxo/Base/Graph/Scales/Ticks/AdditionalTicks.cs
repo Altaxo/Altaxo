@@ -94,6 +94,7 @@ namespace Altaxo.Graph.Scales.Ticks
     /// <summary>
     /// Copies the additional tick values from another instance.
     /// </summary>
+    /// <param name="from">The instance to copy.</param>
     [MemberNotNull(nameof(_additionalTicks))]
     protected void CopyFrom(AdditionalTicks from)
     {
@@ -157,6 +158,7 @@ namespace Altaxo.Graph.Scales.Ticks
     /// <summary>
     /// Gets or sets an additional tick value by index.
     /// </summary>
+    /// <param name="idx">The zero-based index of the additional tick.</param>
     public AltaxoVariant this[int idx]
     {
       get
@@ -186,6 +188,7 @@ namespace Altaxo.Graph.Scales.Ticks
     /// <summary>
     /// Adds an additional tick value.
     /// </summary>
+    /// <param name="additionalTick">The additional tick value to add.</param>
     public void Add(AltaxoVariant additionalTick)
     {
       _additionalTicks.Add(additionalTick);

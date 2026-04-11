@@ -384,6 +384,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="collection">Collection of <see cref="DataColumn" />s.</param>
     /// <param name="selectedColumns">Set set of indices into the collection that are part of the matrix. You can subsequently change this parameter without affecting this wrapper.</param>
     /// <param name="nRows">The number of rows that are part of the matrix (starting from index 0).</param>
+    /// <returns>The wrapping read-only matrix.</returns>
     public static IROMatrix<double> ToROColumnMatrix(Altaxo.Data.DataColumnCollection collection, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, int nRows)
     {
       return new DataColumnToColumnROMatrixWrapper(collection, selectedColumns, Altaxo.Collections.ContiguousIntegerRange.FromStartAndCount(0, nRows));
@@ -395,6 +396,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="collection">DataColumnCollection from which to select the data columns that are part of the matrix by their indices.</param>
     /// <param name="selectedColumns">The indices of the data columns in the collection that are part of the matrix. You can subsequently change this parameter without affecting this wrapper.</param>
     /// <param name="selectedRows">Selected rows of the data table that participate in the matrix. Remember that this are the columns of the wrapped matrix. This collection will be cloned here, i.e. you can subsequently change it without affecting this wrapper.</param>
+    /// <returns>The wrapping read-only matrix.</returns>
     public static IROMatrix<double> ToRORowMatrix(Altaxo.Data.DataColumnCollection collection, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, Altaxo.Collections.IAscendingIntegerCollection selectedRows)
     {
       return new DataColumnToRowROMatrixWrapper(collection, selectedColumns, (IAscendingIntegerCollection)selectedRows.Clone());
@@ -406,6 +408,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="collection">DataColumnCollection from which to select the data columns that are part of the matrix by their indices.</param>
     /// <param name="selectedColumns">The indices of the data columns in the collection that are part of the matrix. You can subsequently change this parameter without affecting this wrapper.</param>
     /// <param name="nRows">Number of rows of the data table that participate in the matrix (starting from index 0). Remember that this are the columns of the wrapped matrix.</param>
+    /// <returns>The wrapping read-only matrix.</returns>
     public static IROMatrix<double> ToRORowMatrix(Altaxo.Data.DataColumnCollection collection, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, int nRows)
     {
       return new DataColumnToRowROMatrixWrapper(collection, selectedColumns, Altaxo.Collections.ContiguousIntegerRange.FromStartAndCount(0, nRows));
@@ -421,6 +424,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="collection">Collection of <see cref="DataColumn" />s.</param>
     /// <param name="selectedColumns">Set set of indices into the collection that are part of the matrix. You can subsequently change this parameter without affecting this wrapper.</param>
     /// <param name="selectedRows">The set of rows that are part of the matrix. This collection will be cloned here, i.e. you can subsequently change it without affecting this wrapper.</param>
+    /// <returns>The wrapping writeable matrix.</returns>
     public static IMatrix<double> ToColumnMatrix(Altaxo.Data.DataColumnCollection collection, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, Altaxo.Collections.IAscendingIntegerCollection selectedRows)
     {
       return new DataColumnToColumnMatrixWrapper(collection, selectedColumns, (IAscendingIntegerCollection)selectedRows.Clone());
@@ -432,6 +436,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="collection">Collection of <see cref="DataColumn" />s.</param>
     /// <param name="selectedColumns">Set set of indices into the collection that are part of the matrix. You can subsequently change this parameter without affecting this wrapper.</param>
     /// <param name="nRows">The number of rows that are part of the matrix (starting from index 0).</param>
+    /// <returns>The wrapping writeable matrix.</returns>
     public static IMatrix<double> ToColumnMatrix(Altaxo.Data.DataColumnCollection collection, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, int nRows)
     {
       return new DataColumnToColumnMatrixWrapper(collection, selectedColumns, Altaxo.Collections.ContiguousIntegerRange.FromStartAndCount(0, nRows));
@@ -443,6 +448,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="collection">DataColumnCollection from which to select the data columns that are part of the matrix by their indices.</param>
     /// <param name="selectedColumns">The indices of the data columns in the collection that are part of the matrix. You can subsequently change this parameter without affecting this wrapper.</param>
     /// <param name="selectedRows">Selected rows of the data table that participate in the matrix. Remember that this are the columns of the wrapped matrix. This collection will be cloned here, i.e. you can subsequently change it without affecting this wrapper.</param>
+    /// <returns>The wrapping writeable matrix.</returns>
     public static IMatrix<double> ToRowMatrix(Altaxo.Data.DataColumnCollection collection, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, Altaxo.Collections.IAscendingIntegerCollection selectedRows)
     {
       return new DataColumnToRowMatrixWrapper(collection, selectedColumns, (IAscendingIntegerCollection)selectedRows.Clone());
@@ -454,6 +460,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="collection">DataColumnCollection from which to select the data columns that are part of the matrix by their indices.</param>
     /// <param name="selectedColumns">The indices of the data columns in the collection that are part of the matrix. You can subsequently change this parameter without affecting this wrapper.</param>
     /// <param name="nRows">Number of rows of the data table that participate in the matrix (starting from index 0). Remember that this are the columns of the wrapped matrix.</param>
+    /// <returns>The wrapping writeable matrix.</returns>
     public static IMatrix<double> ToRowMatrix(Altaxo.Data.DataColumnCollection collection, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, int nRows)
     {
       return new DataColumnToRowMatrixWrapper(collection, selectedColumns, Altaxo.Collections.ContiguousIntegerRange.FromStartAndCount(0, nRows));

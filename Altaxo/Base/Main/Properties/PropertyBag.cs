@@ -560,6 +560,7 @@ namespace Altaxo.Main.Properties
       }
     }
 
+    /// <inheritdoc/>
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
       return GetEnumerator();
@@ -583,6 +584,7 @@ namespace Altaxo.Main.Properties
     /// <summary>
     /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
     /// </summary>
+    /// <param name="isDisposing"><see langword="true"/> to release managed resources; otherwise, <see langword="false"/>.</param>
     protected override void Dispose(bool isDisposing)
     {
       if (_parent is not null)

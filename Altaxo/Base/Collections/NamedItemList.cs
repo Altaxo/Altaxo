@@ -293,6 +293,7 @@ namespace Altaxo.Collections
 
     #region IEnumerable Members
 
+    /// <inheritdoc/>
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
       return _list.GetEnumerator();

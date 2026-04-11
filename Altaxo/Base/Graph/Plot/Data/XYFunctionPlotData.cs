@@ -407,6 +407,7 @@ namespace Altaxo.Graph.Plot.Data
     /// <summary>
     /// Only for deserialization purposes.
     /// </summary>
+    /// <param name="info">The deserialization information.</param>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected SquareRootFunction(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
@@ -561,6 +562,7 @@ namespace Altaxo.Graph.Plot.Data
     /// <summary>
     /// Only for deserialization purposes.
     /// </summary>
+    /// <param name="info">The deserialization information.</param>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected ScaledSumFunction(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
@@ -728,6 +730,7 @@ namespace Altaxo.Graph.Plot.Data
     /// <summary>
     /// Only for deserialization purposes.
     /// </summary>
+    /// <param name="info">The deserialization information.</param>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected ProductFunction(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {

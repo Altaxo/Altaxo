@@ -45,6 +45,7 @@ namespace Altaxo.Calc.Providers.FourierTransform
     /// Try to find out whether the provider is available, at least in principle.
     /// Verification may still fail if available, but it will certainly fail if unavailable.
     /// </summary>
+    /// <returns><see langword="true"/> because the managed provider is always available.</returns>
     public bool IsAvailable()
     {
       return true;
@@ -53,6 +54,9 @@ namespace Altaxo.Calc.Providers.FourierTransform
     /// <summary>
     /// Initialize and verify that the provided is indeed available. If not, fall back to alternatives like the managed provider
     /// </summary>
+    /// <remarks>
+    /// This method should verify any native dependencies and throw if verification fails.
+    /// </remarks>
     public void InitializeVerify()
     {
     }

@@ -248,6 +248,7 @@ namespace Altaxo.Data
       get { return _count; }
     }
 
+    /// <inheritdoc/>
     IEnumerator<bool?> IEnumerable<bool?>.GetEnumerator()
     {
       var length = _count;

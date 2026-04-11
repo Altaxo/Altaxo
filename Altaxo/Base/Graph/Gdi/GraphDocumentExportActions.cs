@@ -574,6 +574,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="outputScalingFactor">Output scaling factor. If less than 1, the image will appear smaller than originally, if greater than 1, the image will appear larger than originally.</param>
     /// <param name="backgroundBrush">The background brush. This argument can be null, or the brush can be transparent.</param>
     /// <param name="pixelFormat">Optional: Only used if the graphics context can not be created from a printer document. Pixel format of the bitmap that is used in this case to construct the graphics context.</param>
+    /// <returns>The pixel dimensions of the rendered metafile.</returns>
     public static (int pixelsX, int pixelsY) RenderAsEnhancedMetafileVectorFormatToStream(GraphDocument doc, System.IO.Stream stream, double sourceDpiResolution, double outputScalingFactor, BrushX? backgroundBrush = null, PixelFormat pixelFormat = PixelFormat.Format32bppArgb)
     {
       var renderingProc = new Action<Graphics>(
@@ -665,6 +666,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="doc">The graph document used.</param>
     /// <param name="stream">The stream to which to render the metafile.</param>
     /// <param name="exportOptions">The clipboard export options.</param>
+    /// <returns>The pixel dimensions of the rendered metafile.</returns>
     public static (int pixelsX, int pixelsY) RenderAsEnhancedMetafileVectorFormatToStream(this GraphDocument doc, System.IO.Stream stream, GraphExportOptions exportOptions)
     {
       return RenderAsEnhancedMetafileVectorFormatToStream(doc, stream, exportOptions.SourceDpiResolution, exportOptions.SourceDpiResolution / exportOptions.DestinationDpiResolution, exportOptions.BackgroundBrush, exportOptions.PixelFormat);
@@ -700,6 +702,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="backbrush">Brush used to fill the background of the image. Can be <c>null</c>.</param>
     /// <param name="pixelformat">Specify the pixelformat here.</param>
     /// <param name="filename">The filename of the file to save the bitmap into.</param>
+    /// <returns>The rendered metafile.</returns>
     public static Metafile RenderAsEnhancedMetafileVectorFormat(this GraphDocument doc, double dpiResolution, BrushX? backbrush, PixelFormat pixelformat, string filename)
     {
       Metafile mf;
@@ -718,6 +721,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="doc">The graph document to export.</param>
     /// <param name="dpiResolution">Resolution of the bitmap in dpi. Determines the pixel size of the bitmap.</param>
     /// <param name="filename">The filename of the file to save the bitmap into.</param>
+    /// <returns>The rendered metafile.</returns>
     public static Metafile RenderAsEnhancedMetafileVectorFormat(this GraphDocument doc, double dpiResolution, string filename)
     {
       return RenderAsEnhancedMetafileVectorFormat(doc, dpiResolution, null, filename);
@@ -731,6 +735,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="dpiResolution">Resolution of the bitmap in dpi. Determines the pixel size of the bitmap.</param>
     /// <param name="backbrush">Brush used to fill the background of the image. Can be <c>null</c>.</param>
     /// <param name="filename">The filename of the file to save the bitmap into.</param>
+    /// <returns>The rendered metafile.</returns>
     public static Metafile RenderAsEnhancedMetafileVectorFormat(this GraphDocument doc, double dpiResolution, BrushX? backbrush, string filename)
     {
       return RenderAsEnhancedMetafileVectorFormat(doc, dpiResolution, backbrush, PixelFormat.Format32bppArgb, filename);

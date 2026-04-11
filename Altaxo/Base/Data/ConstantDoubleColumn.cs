@@ -136,8 +136,9 @@ namespace Altaxo.Data
     }
 
     /// <summary>
-    /// Returns the index i as AltaxoVariant.
+    /// Returns the element at the specified index as an <see cref="AltaxoVariant"/>.
     /// </summary>
+    /// <param name="i">The element index.</param>
     AltaxoVariant IReadableColumn.this[int i]
     {
       get

@@ -34,6 +34,8 @@ namespace Altaxo.Calc.LinearAlgebra
   public interface IROComplexFloatMatrix
   {
     /// <summary>Gets an element of the matrix at (row, col).</summary>
+    /// <param name="row">The zero-based row index.</param>
+    /// <param name="col">The zero-based column index.</param>
     Complex32T this[int row, int col] { get; }
 
     /// <summary>The number of rows of the matrix.</summary>
@@ -49,6 +51,8 @@ namespace Altaxo.Calc.LinearAlgebra
   public interface IComplexFloatMatrix : IROComplexFloatMatrix
   {
     /// <summary>Get / sets an element of the matrix at (row, col).</summary>
+    /// <param name="row">The zero-based row index.</param>
+    /// <param name="col">The zero-based column index.</param>
     new Complex32T this[int row, int col] { get; set; }
   }
 

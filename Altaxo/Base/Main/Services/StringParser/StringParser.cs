@@ -72,6 +72,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Expands ${xyz} style property values.
     /// </summary>
+    /// <param name="input">The input string that may contain tags to expand.</param>
+    /// <returns>The parsed string, or <c>null</c> if <paramref name="input"/> is <c>null</c>.</returns>
     [return: MaybeNull]
     [return: NotNullIfNotNull("input")]
     public static string Parse(string? input)
@@ -109,6 +111,9 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Expands ${xyz} style property values.
     /// </summary>
+    /// <param name="input">The input string that may contain tags to expand.</param>
+    /// <param name="customTags">Optional custom tags that participate in tag resolution.</param>
+    /// <returns>The parsed string, or <c>null</c> if <paramref name="input"/> is <c>null</c>.</returns>
     [return: NotNullIfNotNull("input")]
     public static string? Parse(string? input, params StringTagPair[]? customTags)
     {

@@ -496,6 +496,7 @@ namespace Altaxo.Collections
 
     /// <summary>Return the index of the element with the minimum value in an enumerable.
     /// If multiple elements with the same minimal value exist, the index of the first element in the sequence is returned.</summary>
+    /// <typeparam name="T">The element type of the sequence.</typeparam>
 		/// <param name="elements">The input elements.</param>
     /// <param name="transformer">The function that transforms the elements to a numerical value.</param>
 		/// <returns>The index of the last element with the minimum value.
@@ -518,13 +519,16 @@ namespace Altaxo.Collections
       return index;
     }
 
-    /// <summary>Return the index of the element with the maximum value in an enumerable.
-    /// If multiple elements with the same minimal value exist, the index of the first element in the sequence is returned.</summary>
-		/// <param name="elements">The input elements.</param>
+    /// <summary>
+    /// Return the index of the element with the maximum value in an enumerable.
+    /// If multiple elements with the same maximal value exist, the index of the first element in the sequence is returned.
+    /// </summary>
+    /// <typeparam name="T">The element type of the sequence.</typeparam>
+    /// <param name="elements">The input elements.</param>
     /// <param name="transformer">The function that transforms the elements to a numerical value.</param>
-		/// <returns>The index of the last element with the minimum value.
+    /// <returns>The index of the first element with the maximum transformed value.
     /// Returns -1 if the element enumeration is empty or contains only nonvalid elements (NaN).</returns>
-		public static int IndexOfMax<T>(this IEnumerable<T> elements, Func<T, double> transformer)
+    public static int IndexOfMax<T>(this IEnumerable<T> elements, Func<T, double> transformer)
     {
       int index = -1;
       int i = -1;
@@ -542,12 +546,15 @@ namespace Altaxo.Collections
       return index;
     }
 
-    /// <summary>Return the index of the element with the minimum value in an enumerable.
-    /// If multiple elements with the same minimal value exist, the index of the first element in the sequence is returned.</summary>
+    /// <summary>
+    /// Return the index of the element with the minimum value in an enumerable.
+    /// If multiple elements with the same minimal value exist, the index of the first element in the sequence is returned.
+    /// </summary>
+    /// <typeparam name="T">The element type of the sequence.</typeparam>
     /// <param name="elements">The input elements.</param>
     /// <param name="transformer">The function that transforms the elements to a numerical value.</param>
-    /// <returns>The index of the last element with the minimum value.
-    /// Returns the indeces of the minimal value and the maximal value, and -1 if the enumeration is empty or the elements are transformed to only nonvalid numbers (NaN).</returns>
+    /// <returns>A tuple with the index of the minimal and maximal transformed values.
+    /// Returns (-1, -1) if the enumeration is empty or transforms to only non-valid numbers (NaN).</returns>
     public static (int IndexOfMin, int IndexOfMax) IndicesOfMinMax<T>(this IEnumerable<T> elements, Func<T, double> transformer)
     {
       int indexMin = -1;

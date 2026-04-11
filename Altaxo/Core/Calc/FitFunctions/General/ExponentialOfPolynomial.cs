@@ -102,6 +102,7 @@ namespace Altaxo.Calc.FitFunctions.General
     /// <summary>
     /// Factory method used by fit function discovery to create a specific instance.
     /// </summary>
+    /// <returns>A fit function instance with positive exponent order 1 and negative exponent order 0.</returns>
     [FitFunctionCreator("ExponentialOfPolynomial", "General", 1, 1, 3)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.General.ExponentialOfPolynomial}")]
     public static IFitFunction CreatePolynomial_1_0()

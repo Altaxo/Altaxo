@@ -43,6 +43,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     /// <summary>
     /// Initializes the view from the specified fit element.
     /// </summary>
+    /// <param name="fitElement">The fit element to display.</param>
     void Initialize(FitElement fitElement);
 
     /// <summary>
@@ -145,6 +146,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     /// <summary>
     /// Initializes the controller and view state.
     /// </summary>
+    /// <param name="initData">If set to <see langword="true"/>, initialization data should be refreshed.</param>
     public void Initialize(bool initData)
     {
       if (_view is not null)
@@ -211,6 +213,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     /// <summary>
     /// Handles selection of an external parameter.
     /// </summary>
+    /// <param name="idx">The index of the external parameter.</param>
     public void EhView_ChooseExternalParameter(int idx)
     {
       string choice = _doc.ParameterName(idx);
@@ -234,6 +237,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     /// <summary>
     /// Handles selection of an error function.
     /// </summary>
+    /// <param name="idx">The index of the dependent variable transformation.</param>
     public void EhView_ChooseErrorFunction(int idx)
     {
       var docTrans = _doc.GetDependentVariableTransformation(idx);

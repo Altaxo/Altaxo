@@ -39,9 +39,7 @@ namespace Altaxo.Text.Renderers.Maml.Extensions
   /// </summary>
   public class MathBlockRenderer : MamlObjectRenderer<MathBlock>
   {
-    /// <summary>
-    /// Writes a block math element.
-    /// </summary>
+    /// <inheritdoc />
     protected override void Write(MamlRenderer renderer, MathBlock obj)
     {
       string formulaText = string.Empty; // obj.Content.Text.Substring(obj.Content.Start, obj.Content.Length);

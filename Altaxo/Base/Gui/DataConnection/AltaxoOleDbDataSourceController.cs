@@ -39,11 +39,13 @@ namespace Altaxo.Gui.DataConnection
     /// <summary>
     /// Sets the query view.
     /// </summary>
+    /// <param name="viewObject">The query view object.</param>
     void SetQueryView(object viewObject);
 
     /// <summary>
     /// Sets the import-options view.
     /// </summary>
+    /// <param name="viewObject">The import-options view object.</param>
     void SetImportOptionsView(object viewObject);
   }
 

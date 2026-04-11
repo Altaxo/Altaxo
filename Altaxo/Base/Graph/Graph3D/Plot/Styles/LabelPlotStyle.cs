@@ -345,6 +345,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <summary>
     /// Copies values from the specified source.
     /// </summary>
+    /// <param name="from">The source style.</param>
+    /// <param name="copyWithDataReferences">If set to <see langword="true"/>, data references are copied as well.</param>
     [MemberNotNull(nameof(_font), nameof(_material))]
     protected void CopyFrom(LabelPlotStyle from, bool copyWithDataReferences)
     {
@@ -550,6 +552,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <summary>
     /// Provides access to this member.
     /// </summary>
+    /// <returns>The additionally used columns.</returns>
     public IEnumerable<(
       string ColumnLabel, // Column label
       IReadableColumn? Column, // the column as it was at the time of this call
@@ -1128,8 +1131,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     }
 
     /// <summary>
-    /// Performs the p ai nt operation.
+    /// Paints the labels for the supplied plot data.
     /// </summary>
+    /// <param name="g">The graphics context used for drawing.</param>
+    /// <param name="layer">The plot layer.</param>
+    /// <param name="pdata">The processed plot data.</param>
+    /// <param name="prevItemData">The processed data of the previous plot item.</param>
+    /// <param name="nextItemData">The processed data of the next plot item.</param>
     public void Paint(IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData pdata, Processed3DPlotData? prevItemData, Processed3DPlotData? nextItemData)
     {
       if (!(_labelColumnProxy.Document() is Altaxo.Data.IReadableColumn labelColumn))
@@ -1265,8 +1273,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     }
 
     /// <summary>
-    /// Paints the s ym bo l.
+    /// Paints the legend symbol for this style.
     /// </summary>
+    /// <param name="g">The graphics context used for drawing.</param>
+    /// <param name="bounds">The legend-symbol bounds.</param>
+    /// <returns>The bounds used for drawing the legend symbol.</returns>
     public RectangleD3D PaintSymbol(IGraphicsContext3D g, RectangleD3D bounds)
     {
       return bounds;
@@ -1339,8 +1350,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     #region IG3DPlotStyle Members
 
     /// <summary>
-    /// Collects the e xt er na lg ro up st yl es.
+    /// Collects external group styles.
     /// </summary>
+    /// <param name="externalGroups">The external group-style collection.</param>
     public void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups)
     {
       if (IsColorProvider)
@@ -1348,8 +1360,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     }
 
     /// <summary>
-    /// Collects the l oc al gr ou ps ty le s.
+    /// Collects local group styles.
     /// </summary>
+    /// <param name="externalGroups">The external group-style collection.</param>
+    /// <param name="localGroups">The local group-style collection.</param>
     public void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       if (IsColorProvider)
@@ -1357,8 +1371,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     }
 
     /// <summary>
-    /// Prepares the g ro up st yl es.
+    /// Prepares the group styles.
     /// </summary>
+    /// <param name="externalGroups">The external group-style collection.</param>
+    /// <param name="localGroups">The local group-style collection.</param>
+    /// <param name="layer">The plot layer.</param>
+    /// <param name="pdata">The processed plot data.</param>
     public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed3DPlotData pdata)
     {
       if (IsColorProvider)
@@ -1370,8 +1388,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     }
 
     /// <summary>
-    /// Applies the g ro up st yl es.
+    /// Applies the group styles.
     /// </summary>
+    /// <param name="externalGroups">The external group-style collection.</param>
+    /// <param name="localGroups">The local group-style collection.</param>
     public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       // SkipFrequency should be the same for all sub plot styles, so there is no "private" property

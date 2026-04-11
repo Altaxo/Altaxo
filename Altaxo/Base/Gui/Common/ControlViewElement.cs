@@ -40,6 +40,7 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Initializes a new instance of the <see cref="ControlViewElement"/> class by copying another instance.
     /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public ControlViewElement(ControlViewElement from)
       : base(from)
     {
@@ -49,6 +50,9 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Initializes a new instance of the <see cref="ControlViewElement"/> class.
     /// </summary>
+    /// <param name="title">The title of the view element.</param>
+    /// <param name="controller">The controller that applies the changes.</param>
+    /// <param name="view">The view object associated with the controller.</param>
     public ControlViewElement(string title, IApplyController controller, object view)
       : base(title, view)
     {
@@ -58,6 +62,8 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Initializes a new instance of the <see cref="ControlViewElement"/> class.
     /// </summary>
+    /// <param name="title">The title of the view element.</param>
+    /// <param name="controller">The controller that provides the view.</param>
     public ControlViewElement(string title, IMVCAController controller)
       : base(title, controller.ViewObject ?? throw new InvalidOperationException("The controller provided in the argument has no view yet!"))
     {
@@ -67,6 +73,7 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Creates a typed clone of this instance.
     /// </summary>
+    /// <returns>A cloned <see cref="ControlViewElement"/> instance.</returns>
     public new ControlViewElement Clone()
     {
       return new ControlViewElement(this);
@@ -74,6 +81,7 @@ namespace Altaxo.Gui.Common
 
     #region ICloneable Members
 
+    /// <inheritdoc/>
     object ICloneable.Clone()
     {
       return new ControlViewElement(this);

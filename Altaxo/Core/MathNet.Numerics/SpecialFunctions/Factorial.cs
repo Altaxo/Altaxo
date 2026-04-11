@@ -41,17 +41,18 @@ namespace Altaxo.Calc
     };
 
     /// <summary>
-    /// Computes the factorial function x -> x! of an integer number > 0. The function can represent all number up
-    /// to 22! exactly, all numbers up to 170! using a double representation. All larger values will overflow.
+    /// Computes the factorial function x -> x! of an integer number &gt;= 0. The function can represent all numbers up
+    /// to 22! exactly, and all numbers up to 170! using a double representation. Larger values will overflow to infinity.
     /// </summary>
-    /// <returns>A value value! for value > 0</returns>
+    /// <param name="x">The integer value to compute the factorial for (must be >= 0).</param>
+    /// <returns>x! as a double (or Double.PositiveInfinity for overflow).</returns>
     /// <remarks>
     /// If you need to multiply or divide various such factorials, consider using the logarithmic version
     /// <see cref="FactorialLn"/> instead so you can add instead of multiply and subtract instead of divide, and
     /// then exponentiate the result using <see cref="System.Math.Exp"/>. This will also circumvent the problem that
     /// factorials become very large even for small parameters.
     /// </remarks>
-    /// <exception cref="ArgumentOutOfRangeException" />
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="x"/> is negative.</exception>
     public static double Factorial(int x)
     {
       if (x < 0)
@@ -70,6 +71,8 @@ namespace Altaxo.Calc
     /// <summary>
     /// Computes the factorial of an integer.
     /// </summary>
+    /// <param name="x">The integer value to compute the factorial for (must be >= 0).</param>
+    /// <returns>x! as a BigInteger.</returns>
     public static BigInteger Factorial(BigInteger x)
     {
       if (x < 0)
@@ -94,7 +97,8 @@ namespace Altaxo.Calc
     /// <summary>
     /// Computes the logarithmic factorial function x -> ln(x!) of an integer number > 0.
     /// </summary>
-    /// <returns>A value value! for value > 0</returns>
+    /// <param name="x">The integer value for which to compute ln(x!).</param>
+    /// <returns>The natural logarithm of the factorial of <paramref name="x"/>.</returns>
     public static double FactorialLn(int x)
     {
       if (x < 0)

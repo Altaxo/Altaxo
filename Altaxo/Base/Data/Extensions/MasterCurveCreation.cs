@@ -214,6 +214,7 @@ namespace Altaxo.Data.Obsolete
       /// <summary>
       /// Initialized the instance.
       /// </summary>
+      /// <param name="interpolationFunctionCreation">The factory used to create the interpolation function.</param>
       public void Initialize(Func<IInterpolationFunction> interpolationFunctionCreation)
       {
         Interpolation = interpolationFunctionCreation();

@@ -56,6 +56,7 @@ namespace Altaxo.Gui.Graph.Graph3D
     /// <summary>
     /// Initializes a new instance of the <see cref="ColorTypeThicknessPenController"/> class for the specified pen.
     /// </summary>
+    /// <param name="pen">The pen to edit.</param>
     public ColorTypeThicknessPenController(PenX3D pen) : this()
     {
       _doc = _originalDoc = pen ?? throw new ArgumentNullException(nameof(pen));

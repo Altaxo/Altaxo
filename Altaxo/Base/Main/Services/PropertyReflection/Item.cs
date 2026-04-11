@@ -43,6 +43,7 @@ namespace Altaxo.Main.Services.PropertyReflection
     /// <summary>
     /// Raises the <see cref="PropertyChanged"/> event for the specified property.
     /// </summary>
+    /// <param name="property">The name of the property that changed.</param>
     protected void NotifyPropertyChanged(string property)
     {
       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
@@ -70,6 +71,7 @@ namespace Altaxo.Main.Services.PropertyReflection
     /// <summary>
     /// Releases the resources used by this instance.
     /// </summary>
+    /// <param name="disposing"><see langword="true"/> to release managed resources; otherwise, <see langword="false"/>.</param>
     protected virtual void Dispose(bool disposing)
     {
       if (!Disposed)

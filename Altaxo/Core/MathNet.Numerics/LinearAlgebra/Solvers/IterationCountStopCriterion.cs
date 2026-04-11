@@ -36,6 +36,7 @@ namespace Altaxo.Calc.LinearAlgebra.Solvers
   /// Defines an <see cref="IIterationStopCriterion{T}"/> that monitors the numbers of iteration
   /// steps as stop criterion.
   /// </summary>
+  /// <typeparam name="T">The numeric element type.</typeparam>
   public sealed class IterationCountStopCriterion<T> : IIterationStopCriterion<T> where T : struct, IEquatable<T>, IFormattable
   {
     /// <summary>
@@ -114,6 +115,7 @@ namespace Altaxo.Calc.LinearAlgebra.Solvers
     /// <param name="solutionVector">The vector containing the current solution values.</param>
     /// <param name="sourceVector">The right hand side vector.</param>
     /// <param name="residualVector">The vector containing the current residual vectors.</param>
+    /// <returns>The current iteration status.</returns>
     /// <remarks>
     /// The individual stop criteria may internally track the progress of the calculation based
     /// on the invocation of this method. Therefore this method should only be called if the

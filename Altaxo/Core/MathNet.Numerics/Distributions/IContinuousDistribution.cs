@@ -75,6 +75,7 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Fills an array with samples generated from the distribution.
     /// </summary>
+    /// <param name="values">The array to fill with samples from the distribution.</param>
     public void Samples(double[] values);
 
     /// <summary>

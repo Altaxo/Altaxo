@@ -229,6 +229,8 @@ namespace Altaxo.Main
     /// <summary>
     /// Returns an instance when an item was added.
     /// </summary>
+    /// <param name="item">The added item.</param>
+    /// <returns>A change-event instance describing the added item.</returns>
     public static NamedObjectCollectionChangedEventArgs FromItemAdded(INamedObject item)
     {
       if (item is null)
@@ -243,6 +245,8 @@ namespace Altaxo.Main
     /// <summary>
     /// Returns an instance when an item was added.
     /// </summary>
+    /// <param name="item">The removed item.</param>
+    /// <returns>A change-event instance describing the removed item.</returns>
     public static NamedObjectCollectionChangedEventArgs FromItemRemoved(INamedObject item)
     {
       if (item is null)
@@ -258,6 +262,9 @@ namespace Altaxo.Main
     /// Returns an instance when an item was added. Here the additional parameter <paramref name="itemNameOverride"/> is used as the new and old name of the item.
     /// Use this only when absolutely sure about it.
     /// </summary>
+    /// <param name="item">The removed item.</param>
+    /// <param name="itemNameOverride">The name to record for the item.</param>
+    /// <returns>A change-event instance describing the removed item.</returns>
     public static NamedObjectCollectionChangedEventArgs FromItemRemoved(INamedObject item, string itemNameOverride)
     {
       if (item is null)
@@ -269,6 +276,9 @@ namespace Altaxo.Main
     /// <summary>
     /// Returns an instance when an item was added.
     /// </summary>
+    /// <param name="item">The renamed item.</param>
+    /// <param name="oldName">The previous name of the item.</param>
+    /// <returns>A change-event instance describing the rename operation.</returns>
     public static NamedObjectCollectionChangedEventArgs FromItemRenamed(INamedObject item, string? oldName)
     {
       if (item is null)
@@ -283,6 +293,7 @@ namespace Altaxo.Main
     /// <summary>
     /// Returns an instance when an item was added.
     /// </summary>
+    /// <returns>A change-event instance describing multiple changes.</returns>
     public static NamedObjectCollectionChangedEventArgs FromMultipleChanges()
     {
       var result = new NamedObjectCollectionChangedEventArgs(item: MultipleChangesItem, operation: NamedObjectCollectionChangeType.MultipleChanges);

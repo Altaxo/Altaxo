@@ -460,6 +460,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
       /// <summary>
       /// Initializes a new instance of the <see cref="MyColumnDropHandler"/> class.
       /// </summary>
+      /// <param name="parent">The owning single-column controller.</param>
       public MyColumnDropHandler(SingleColumnController parent)
       {
         _parent = parent;
@@ -498,6 +499,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
       /// <summary>
       /// Initializes a new instance of the <see cref="MyTransformationDropHandler"/> class.
       /// </summary>
+      /// <param name="parent">The owning single-column controller.</param>
       public MyTransformationDropHandler(SingleColumnController parent)
       {
         _parent = parent;

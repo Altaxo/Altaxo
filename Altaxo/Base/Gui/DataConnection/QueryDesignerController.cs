@@ -39,6 +39,7 @@ namespace Altaxo.Gui.DataConnection
   {
     /// <summary>Sets content of the tree view that shows the tables, views and stored procedures of a data base.</summary>
     /// <remarks>The image indices 0, 1, 2 and 3 correspond to the nodes: Table , View, Procedure and DataColumn.</remarks>
+    /// <param name="rootNode">The root node of the table tree to display.</param>
     void SetTableTreeDataSource(NGTreeNode rootNode);
 
     /// <summary>

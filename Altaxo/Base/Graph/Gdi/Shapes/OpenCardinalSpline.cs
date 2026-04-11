@@ -99,6 +99,8 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="OpenCardinalSpline"/> class.
     /// </summary>
+    /// <param name="points">The spline points.</param>
+    /// <param name="context">The property context.</param>
     public OpenCardinalSpline(IEnumerable<PointD2D> points, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
       : this(points, DefaultTension, context)
     {
@@ -107,6 +109,9 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="OpenCardinalSpline"/> class.
     /// </summary>
+    /// <param name="points">The spline points.</param>
+    /// <param name="tension">The spline tension.</param>
+    /// <param name="context">The property context.</param>
     public OpenCardinalSpline(IEnumerable<PointD2D> points, double tension, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
       : base(new ItemLocationDirectAutoSize(), context)
     {

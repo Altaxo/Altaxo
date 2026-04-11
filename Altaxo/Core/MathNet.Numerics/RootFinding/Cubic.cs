@@ -64,6 +64,10 @@ namespace Altaxo.Calc.RootFinding
     /// Find all real-valued roots of the cubic equation a0 + a1*x + a2*x^2 + x^3 = 0.
     /// Note the special coefficient order ascending by exponent (consistent with polynomials).
     /// </summary>
+    /// <param name="a0">The constant coefficient.</param>
+    /// <param name="a1">The coefficient of the linear term.</param>
+    /// <param name="a2">The coefficient of the quadratic term.</param>
+    /// <returns>A tuple (x1, x2, x3) containing the real roots. Values may be NaN when fewer than three real roots exist.</returns>
     public static (double, double, double) RealRoots(double a0, double a1, double a2)
     {
       double Q, R;
@@ -105,6 +109,11 @@ namespace Altaxo.Calc.RootFinding
     /// Find all three complex roots of the cubic equation d + c*x + b*x^2 + a*x^3 = 0.
     /// Note the special coefficient order ascending by exponent (consistent with polynomials).
     /// </summary>
+    /// <param name="d">The constant coefficient.</param>
+    /// <param name="c">The coefficient of the linear term.</param>
+    /// <param name="b">The coefficient of the quadratic term.</param>
+    /// <param name="a">The coefficient of the cubic term.</param>
+    /// <returns>A tuple of three complex roots of the cubic polynomial.</returns>
     public static (Complex, Complex, Complex) Roots(double d, double c, double b, double a)
     {
       double A = b * b - 3 * a * c;

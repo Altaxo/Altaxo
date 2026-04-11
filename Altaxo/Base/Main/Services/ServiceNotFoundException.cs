@@ -39,6 +39,7 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Initializes a new instance of the <see cref="ServiceNotFoundException"/> class.
     /// </summary>
+    /// <param name="serviceType">The required service type that could not be found.</param>
     public ServiceNotFoundException(Type serviceType) : base("Required service not found: " + serviceType.FullName)
     {
     }
@@ -46,6 +47,7 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Initializes a new instance of the <see cref="ServiceNotFoundException"/> class.
     /// </summary>
+    /// <param name="message">The exception message.</param>
     public ServiceNotFoundException(string message) : base(message)
     {
     }
@@ -53,6 +55,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Initializes a new instance of the <see cref="ServiceNotFoundException"/> class.
     /// </summary>
+    /// <param name="message">The exception message.</param>
+    /// <param name="innerException">The exception that caused the current exception.</param>
     public ServiceNotFoundException(string message, Exception innerException) : base(message, innerException)
     {
     }
@@ -60,6 +64,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Initializes a new instance of the <see cref="ServiceNotFoundException"/> class from serialized data.
     /// </summary>
+    /// <param name="info">The serialization information.</param>
+    /// <param name="context">The streaming context.</param>
     protected ServiceNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
     }

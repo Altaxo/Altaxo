@@ -284,6 +284,7 @@ namespace Altaxo.Data
       return new AltaxoVariant(this[i]);
     }
 
+    /// <inheritdoc/>
     double Altaxo.Calc.LinearAlgebra.INumericSequence<double>.this[int i]
     {
       get
@@ -292,6 +293,7 @@ namespace Altaxo.Data
       }
     }
 
+    /// <inheritdoc/>
     double Altaxo.Data.INumericColumn.this[int i]
     {
       get

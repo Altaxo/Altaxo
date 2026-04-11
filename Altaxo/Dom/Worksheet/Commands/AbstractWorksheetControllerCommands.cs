@@ -53,6 +53,7 @@ namespace Altaxo.Worksheet.Commands
     /// Determines the currently active worksheet and issues the command to that worksheet by calling
     /// <see cref="Run"/> with the worksheet as a parameter.
     /// </summary>
+    /// <param name="parameter">The command parameter that may contain the active view context.</param>
     public override void Execute(object parameter)
     {
       if (!(parameter is IViewContent activeViewContent))

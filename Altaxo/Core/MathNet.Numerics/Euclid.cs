@@ -42,6 +42,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Canonical Modulus. The result has the sign of the divisor.
     /// </summary>
+    /// <param name="dividend">The value to divide.</param>
+    /// <param name="divisor">The divisor.</param>
+    /// <returns>The canonical modulus of <paramref name="dividend"/> with respect to <paramref name="divisor"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double Modulus(double dividend, double divisor)
     {
@@ -51,6 +54,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Canonical Modulus. The result has the sign of the divisor.
     /// </summary>
+    /// <param name="dividend">The value to divide.</param>
+    /// <param name="divisor">The divisor.</param>
+    /// <returns>The canonical modulus of <paramref name="dividend"/> with respect to <paramref name="divisor"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float Modulus(float dividend, float divisor)
     {
@@ -60,6 +66,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Canonical Modulus. The result has the sign of the divisor.
     /// </summary>
+    /// <param name="dividend">The value to divide.</param>
+    /// <param name="divisor">The divisor.</param>
+    /// <returns>The canonical modulus of <paramref name="dividend"/> with respect to <paramref name="divisor"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Modulus(int dividend, int divisor)
     {
@@ -69,6 +78,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Canonical Modulus. The result has the sign of the divisor.
     /// </summary>
+    /// <param name="dividend">The value to divide.</param>
+    /// <param name="divisor">The divisor.</param>
+    /// <returns>The canonical modulus of <paramref name="dividend"/> with respect to <paramref name="divisor"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static long Modulus(long dividend, long divisor)
     {
@@ -78,6 +90,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Canonical Modulus. The result has the sign of the divisor.
     /// </summary>
+    /// <param name="dividend">The value to divide.</param>
+    /// <param name="divisor">The divisor.</param>
+    /// <returns>The canonical modulus of <paramref name="dividend"/> with respect to <paramref name="divisor"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static BigInteger Modulus(BigInteger dividend, BigInteger divisor)
     {
@@ -87,6 +102,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Remainder (% operator). The result has the sign of the dividend.
     /// </summary>
+    /// <param name="dividend">The value to divide.</param>
+    /// <param name="divisor">The divisor.</param>
+    /// <returns>The remainder of <paramref name="dividend"/> divided by <paramref name="divisor"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double Remainder(double dividend, double divisor)
     {
@@ -96,6 +114,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Remainder (% operator). The result has the sign of the dividend.
     /// </summary>
+    /// <param name="dividend">The value to divide.</param>
+    /// <param name="divisor">The divisor.</param>
+    /// <returns>The remainder of <paramref name="dividend"/> divided by <paramref name="divisor"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float Remainder(float dividend, float divisor)
     {
@@ -105,6 +126,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Remainder (% operator). The result has the sign of the dividend.
     /// </summary>
+    /// <param name="dividend">The value to divide.</param>
+    /// <param name="divisor">The divisor.</param>
+    /// <returns>The remainder of <paramref name="dividend"/> divided by <paramref name="divisor"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Remainder(int dividend, int divisor)
     {
@@ -114,6 +138,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Remainder (% operator). The result has the sign of the dividend.
     /// </summary>
+    /// <param name="dividend">The value to divide.</param>
+    /// <param name="divisor">The divisor.</param>
+    /// <returns>The remainder of <paramref name="dividend"/> divided by <paramref name="divisor"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static long Remainder(long dividend, long divisor)
     {
@@ -123,6 +150,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Remainder (% operator). The result has the sign of the dividend.
     /// </summary>
+    /// <param name="dividend">The value to divide.</param>
+    /// <param name="divisor">The divisor.</param>
+    /// <returns>The remainder of <paramref name="dividend"/> divided by <paramref name="divisor"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static BigInteger Remainder(BigInteger dividend, BigInteger divisor)
     {
@@ -132,7 +162,7 @@ namespace Altaxo.Calc
     /// <summary>
     /// Find out whether the provided 32 bit integer is an even number.
     /// </summary>
-    /// <param name="number">The number to very whether it's even.</param>
+    /// <param name="number">The number to verify.</param>
     /// <returns>True if and only if it is an even number.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsEven(this int number)
@@ -143,7 +173,7 @@ namespace Altaxo.Calc
     /// <summary>
     /// Find out whether the provided 64 bit integer is an even number.
     /// </summary>
-    /// <param name="number">The number to very whether it's even.</param>
+    /// <param name="number">The number to verify.</param>
     /// <returns>True if and only if it is an even number.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsEven(this long number)
@@ -154,7 +184,7 @@ namespace Altaxo.Calc
     /// <summary>
     /// Find out whether the provided 32 bit integer is an odd number.
     /// </summary>
-    /// <param name="number">The number to very whether it's odd.</param>
+    /// <param name="number">The number to verify.</param>
     /// <returns>True if and only if it is an odd number.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsOdd(this int number)
@@ -165,7 +195,7 @@ namespace Altaxo.Calc
     /// <summary>
     /// Find out whether the provided 64 bit integer is an odd number.
     /// </summary>
-    /// <param name="number">The number to very whether it's odd.</param>
+    /// <param name="number">The number to verify.</param>
     /// <returns>True if and only if it is an odd number.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsOdd(this long number)
@@ -176,7 +206,7 @@ namespace Altaxo.Calc
     /// <summary>
     /// Find out whether the provided 32 bit integer is a perfect power of two.
     /// </summary>
-    /// <param name="number">The number to very whether it's a power of two.</param>
+    /// <param name="number">The number to verify.</param>
     /// <returns>True if and only if it is a power of two.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsPowerOfTwo(this int number)
@@ -187,7 +217,7 @@ namespace Altaxo.Calc
     /// <summary>
     /// Find out whether the provided 64 bit integer is a perfect power of two.
     /// </summary>
-    /// <param name="number">The number to very whether it's a power of two.</param>
+    /// <param name="number">The number to verify.</param>
     /// <returns>True if and only if it is a power of two.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsPowerOfTwo(this long number)
@@ -198,7 +228,7 @@ namespace Altaxo.Calc
     /// <summary>
     /// Find out whether the provided 32 bit integer is a perfect square, i.e. a square of an integer.
     /// </summary>
-    /// <param name="number">The number to very whether it's a perfect square.</param>
+    /// <param name="number">The number to verify.</param>
     /// <returns>True if and only if it is a perfect square.</returns>
     public static bool IsPerfectSquare(this int number)
     {
@@ -225,7 +255,7 @@ namespace Altaxo.Calc
     /// <summary>
     /// Find out whether the provided 64 bit integer is a perfect square, i.e. a square of an integer.
     /// </summary>
-    /// <param name="number">The number to very whether it's a perfect square.</param>
+    /// <param name="number">The number to verify.</param>
     /// <returns>True if and only if it is a perfect square.</returns>
     public static bool IsPerfectSquare(this long number)
     {
@@ -285,6 +315,8 @@ namespace Altaxo.Calc
     /// Evaluate the binary logarithm of an integer number.
     /// </summary>
     /// <remarks>Two-step method using a De Bruijn-like sequence table lookup.</remarks>
+    /// <param name="number">The number whose binary logarithm is evaluated.</param>
+    /// <returns>The binary logarithm of <paramref name="number"/>.</returns>
     public static int Log2(this int number)
     {
       number |= number >> 1;

@@ -163,6 +163,7 @@ namespace Altaxo.Collections
     /// <summary>
     /// Returns the integer stored at position <code>i</code>.
     /// </summary>
+    /// <param name="i">The zero-based position of the integer to retrieve.</param>
     public int this[int i]
     {
       get { return _list.Keys[i]; }

@@ -105,6 +105,7 @@ namespace Altaxo.Graph.Plot.Data
     /// Collects the tuples of (ColumnGroupLabel, ColumnLabel, ColumnName) that are common to all plot items. Furthermore,
     /// it stores the underlying tables of the plot items in another collection <see cref="_tables"/>.
     /// </summary>
+    /// <param name="plotDataItems">The plot data items whose common column names and data tables are collected.</param>
     public void CollectCommonColumnNamesAndTablesFromItems(IEnumerable<IColumnPlotData> plotDataItems)
     {
       HashSet<(string ColumnGroup, string ColumnLabel, string? ColumnName, string? NewColumnName)>? totalSet = null;
@@ -146,6 +147,7 @@ namespace Altaxo.Graph.Plot.Data
     /// Collects the tuples of (ColumnGroupLabel, ColumnLabel, ColumnName) that are common to all plot items. Furthermore,
     /// it stores the underlying tables of the plot items in another collection <see cref="_tables"/>.
     /// </summary>
+    /// <param name="plotItems">The plot items whose common column names and data tables are collected.</param>
     public void CollectCommonColumnNamesAndTablesFromPlotItems(IEnumerable<IGPlotItem> plotItems)
     {
       HashSet<(string ColumnGroup, string ColumnLabel, string? ColumnName, string? NewColumnName)>? totalSet = null;
@@ -270,6 +272,7 @@ namespace Altaxo.Graph.Plot.Data
     /// <summary>
     /// Exchanges the data columns of the plot items in the provided plot items, using the field NewTableName in each entry of <see cref="Columns"/>.
     /// </summary>
+    /// <param name="plotDataItems">The plot data items whose columns are exchanged.</param>
     public void ExchangeColumns(IEnumerable<IColumnPlotData> plotDataItems)
     {
       foreach (var columnPlotData in plotDataItems)
@@ -309,6 +312,7 @@ namespace Altaxo.Graph.Plot.Data
     /// <summary>
     /// Exchanges the data columns of the plot items in the provided plot items, using the field NewTableName in each entry of <see cref="Columns"/>.
     /// </summary>
+    /// <param name="plotItems">The plot items whose columns are exchanged.</param>
     public void ExchangeColumns(IEnumerable<IGPlotItem> plotItems)
     {
       foreach (var plotItem in plotItems)

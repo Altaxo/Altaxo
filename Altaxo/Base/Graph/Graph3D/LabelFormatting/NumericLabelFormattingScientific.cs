@@ -205,6 +205,11 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
     /// <summary>
     /// Measures the specified item.
     /// </summary>
+    /// <param name="g">The graphics context used for measurement.</param>
+    /// <param name="font">The font used for measurement.</param>
+    /// <param name="mtick">The value to measure.</param>
+    /// <param name="morg">The measurement origin.</param>
+    /// <returns>The measured size of the formatted label.</returns>
     public override VectorD3D MeasureItem(IGraphicsContext3D g, FontX3D font, Altaxo.Data.AltaxoVariant mtick, PointD3D morg)
     {
       SplitInFirstPartAndExponent(mtick, out var firstpart, out var mant, out var middelpart, out var exponent);
@@ -219,6 +224,11 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
     /// <summary>
     /// Draws the specified item.
     /// </summary>
+    /// <param name="g">The graphics context used for drawing.</param>
+    /// <param name="brush">The material used to draw the label.</param>
+    /// <param name="font">The font used to draw the label.</param>
+    /// <param name="item">The value to draw.</param>
+    /// <param name="morg">The drawing origin.</param>
     public override void DrawItem(IGraphicsContext3D g, IMaterial brush, FontX3D font, Altaxo.Data.AltaxoVariant item, PointD3D morg)
     {
       SplitInFirstPartAndExponent(item, out var firstpart, out var mant, out var middelpart, out var exponent);
@@ -244,6 +254,10 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
     /// <summary>
     /// Gets measured label items for the provided values.
     /// </summary>
+    /// <param name="g">The graphics context used for measurement.</param>
+    /// <param name="font">The font used for measurement.</param>
+    /// <param name="items">The values to convert into measured label items.</param>
+    /// <returns>The measured label items.</returns>
     public override IMeasuredLabelItem[] GetMeasuredItems(IGraphicsContext3D g, FontX3D font, AltaxoVariant[] items)
     {
       var litems = new MeasuredLabelItem[items.Length];
@@ -350,6 +364,13 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
       /// <summary>
       /// Initializes a new measured scientific label item.
       /// </summary>
+      /// <param name="g">The graphics context used for measurement.</param>
+      /// <param name="font1">The primary font.</param>
+      /// <param name="font2">The font used for the exponent.</param>
+      /// <param name="firstpart">The mantissa text.</param>
+      /// <param name="exponent">The exponent text.</param>
+      /// <param name="lastpart">The suffix text.</param>
+      /// <param name="maxexposize">The maximum exponent width used for alignment.</param>
       public MeasuredLabelItem(IGraphicsContext3D g, FontX3D font1, FontX3D font2, string firstpart, string exponent, string lastpart, double maxexposize)
       {
         _firstpart = firstpart;
@@ -377,6 +398,9 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
       /// <summary>
       /// Draws the measured label.
       /// </summary>
+      /// <param name="g">The graphics context used for drawing.</param>
+      /// <param name="brush">The material used to draw the label.</param>
+      /// <param name="point">The drawing origin.</param>
       public virtual void Draw(IGraphicsContext3D g, IMaterial brush, PointD3D point)
       {
         g.DrawString(_firstpart, _font1, brush, point);

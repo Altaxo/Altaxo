@@ -48,16 +48,20 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Initializes the layout direction.
     /// </summary>
+    /// <param name="horizontalLayout"><see langword="true"/> for a horizontal layout; otherwise, <see langword="false"/>.</param>
     void InitializeLayout(bool horizontalLayout);
 
     /// <summary>
     /// Initializes the description text.
     /// </summary>
+    /// <param name="value">The description text.</param>
     void InitializeDescription(string value);
 
     /// <summary>
     /// Initializes the child views.
     /// </summary>
+    /// <param name="childs">The child view descriptions.</param>
+    /// <param name="initialFocusedChild">The index of the child that should initially receive focus.</param>
     void InitializeChilds(ViewDescriptionElement[] childs, int initialFocusedChild);
 
     /// <summary>Event fired when one of the child controls is leaved.</summary>
@@ -75,6 +79,8 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Initializes the controller with child controllers.
     /// </summary>
+    /// <param name="childs">The child controllers managed by this controller.</param>
+    /// <param name="horizontalLayout">If set to <c>true</c>, the child controls are arranged horizontally.</param>
     void Initialize(IMVCAController[] childs, bool horizontalLayout);
 
     /// <summary>
@@ -238,6 +244,8 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Handles activation changes between child controls.
     /// </summary>
+    /// <param name="sender">The child control that became active.</param>
+    /// <param name="e">The event arguments.</param>
     protected virtual void EhView_ChildControlEntered(object? sender, EventArgs e)
     {
       ChildControlChanged?.Invoke(sender, new InstanceChangedEventArgs(_lastActiveChild, sender));
@@ -247,6 +255,8 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Handles validation of the current child control.
     /// </summary>
+    /// <param name="sender">The child control that was validated.</param>
+    /// <param name="e">The event arguments.</param>
     protected virtual void EhView_ChildControlValidated(object? sender, EventArgs e)
     {
       ChildControlChanged?.Invoke(sender, new InstanceChangedEventArgs(sender, null));

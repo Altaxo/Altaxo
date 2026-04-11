@@ -149,6 +149,7 @@ namespace Altaxo.Calc.Probability
     /// Updates the helper variables that store intermediate results for generation of exponential distributed random
     ///   numbers.
     /// </summary>
+    /// <param name="lambda">The rate parameter of the distribution.</param>
     public void Initialize(double lambda)
     {
       if (!IsValidLambda(lambda))

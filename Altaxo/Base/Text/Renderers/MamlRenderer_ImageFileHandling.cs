@@ -54,6 +54,7 @@ namespace Altaxo.Text.Renderers
     /// <summary>
     /// Removes the old image files. This function will work only if there is a dedicated image folder, i.e. <see cref="ImageFileNames"/> has a value.
     /// </summary>
+    /// <param name="fullImageFolderName">The full path of the image folder.</param>
     public static void RemoveOldContentsOfImageFolder(string fullImageFolderName)
     {
       var dir = new DirectoryInfo(fullImageFolderName);

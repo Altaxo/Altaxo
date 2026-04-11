@@ -85,6 +85,8 @@ namespace Altaxo.Serialization.Jcamp
     /// <summary>
     /// Deserialization constructor
     /// </summary>
+    /// <param name="info">The deserialization information.</param>
+    /// <param name="version">The serialization version.</param>
     protected JcampImportDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     {
       switch (version)
@@ -104,6 +106,8 @@ namespace Altaxo.Serialization.Jcamp
     /// <summary>
     /// Initializes a new instance of the <see cref="JcampImportDataSource"/> class for a single file.
     /// </summary>
+    /// <param name="fileName">The file name to import.</param>
+    /// <param name="options">The import options.</param>
     public JcampImportDataSource(string fileName, JcampImportOptions options)
       : this(new string[] { fileName }, options)
     {
@@ -112,6 +116,8 @@ namespace Altaxo.Serialization.Jcamp
     /// <summary>
     /// Initializes a new instance of the <see cref="JcampImportDataSource"/> class for multiple files.
     /// </summary>
+    /// <param name="fileNames">The file names to import.</param>
+    /// <param name="options">The import options.</param>
     public JcampImportDataSource(IEnumerable<string> fileNames, JcampImportOptions options)
       : base(fileNames)
     {
@@ -121,6 +127,7 @@ namespace Altaxo.Serialization.Jcamp
     /// <summary>
     /// Initializes a new instance of the <see cref="JcampImportDataSource"/> class by copying another instance.
     /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public JcampImportDataSource(JcampImportDataSource from)
       : base(from)
     {

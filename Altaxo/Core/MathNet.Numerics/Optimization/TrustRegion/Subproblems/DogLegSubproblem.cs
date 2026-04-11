@@ -2,12 +2,18 @@
 
 namespace Altaxo.Calc.Optimization.TrustRegion.Subproblems
 {
+  /// <summary>
+  /// Solves the trust-region subproblem using the dog-leg strategy.
+  /// </summary>
   internal class DogLegSubproblem : ITrustRegionSubproblem
   {
+    /// <inheritdoc />
     public Vector<double> Pstep { get; private set; }
 
+    /// <inheritdoc />
     public bool HitBoundary { get; private set; }
 
+    /// <inheritdoc />
     public void Solve(IObjectiveModel objective, double delta)
     {
       var Gradient = objective.Gradient;

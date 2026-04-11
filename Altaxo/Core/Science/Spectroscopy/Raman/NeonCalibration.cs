@@ -692,9 +692,12 @@ namespace Altaxo.Science.Spectroscopy.Raman
     }
 
     /// <summary>
-    /// Creates a spline that corresponds the measured wavelength to the wavelength difference between the
-    /// official Nist wavelength and measured wavelength.
+    /// Creates a spline that maps the measured wavelength to the wavelength difference between the
+    /// official NIST wavelength and the measured wavelength.
     /// </summary>
+    /// <param name="options">Calibration options controlling interpolation behavior.</param>
+    /// <param name="PeakMatchings">List of peak match tuples (NistWL, MeasWL, MeasWLStdDev).</param>
+    /// <returns>A function mapping a NIST wavelength to the difference (NIST - measured).</returns>
     public static Func<double, double> GetSplineMeasuredWavelengthToWavelengthDifference(NeonCalibrationOptions options, List<(double NistWL, double MeasWL, double MeasWLStdDev)> PeakMatchings)
     {
       var x = PeakMatchings.Select(p => p.NistWL).ToArray();

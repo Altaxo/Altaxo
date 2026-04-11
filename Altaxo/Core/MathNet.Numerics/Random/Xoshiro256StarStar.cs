@@ -118,6 +118,7 @@ namespace Altaxo.Calc.Random
     /// <summary>
     /// Returns a random double-precision floating point number greater than or equal to 0.0, and less than 1.0.
     /// </summary>
+    /// <returns>A double in [0.0, 1.0).</returns>
     protected sealed override double DoSample()
     {
       // Note. Here we generate a random integer between 0 and 2^53-1 (i.e. 53 binary 1s) and multiply
@@ -129,6 +130,7 @@ namespace Altaxo.Calc.Random
     /// <summary>
     /// Returns a random 32-bit signed integer greater than or equal to zero and less than <see cref="F:System.Int32.MaxValue"/>
     /// </summary>
+    /// <returns>An integer in [0, Int32.MaxValue).</returns>
     protected override int DoSampleInteger()
     {
 retry:
@@ -145,6 +147,7 @@ retry:
     /// <summary>
     /// Fills the elements of a specified array of bytes with random numbers in full range, including zero and 255 (<see cref="F:System.Byte.MaxValue"/>).
     /// </summary>
+    /// <param name="buffer">The buffer to fill with random bytes.</param>
     protected override void DoSampleBytes(byte[] buffer)
     {
       // For improved performance the below loop operates on these stack allocated copies of the heap variables.
@@ -218,6 +221,8 @@ retry:
     /// Returns a random N-bit signed integer greater than or equal to zero and less than 2^N.
     /// N (bit count) is expected to be greater than zero and less than 32 (not verified).
     /// </summary>
+    /// <param name="bitCount">The number of random bits to sample.</param>
+    /// <returns>A random signed integer greater than or equal to zero and less than 2^<paramref name="bitCount"/>.</returns>
     protected override int DoSampleInt32WithNBits(int bitCount)
     {
       return (int)(NextInnerULong() >> (64 - bitCount));
@@ -227,6 +232,8 @@ retry:
     /// Returns a random N-bit signed long integer greater than or equal to zero and less than 2^N.
     /// N (bit count) is expected to be greater than zero and less than 64 (not verified).
     /// </summary>
+    /// <param name="bitCount">The number of random bits to sample.</param>
+    /// <returns>A random signed long integer greater than or equal to zero and less than 2^<paramref name="bitCount"/>.</returns>
     protected override long DoSampleInt64WithNBits(int bitCount)
     {
       return (long)(NextInnerULong() >> (64 - bitCount));
@@ -278,6 +285,8 @@ retry:
     /// Fills an array with random numbers greater than or equal to 0.0 and less than 1.0.
     /// </summary>
     /// <remarks>Supports being called in parallel from multiple threads.</remarks>
+    /// <param name="values">The array to fill with random values.</param>
+    /// <param name="seed">The seed value used to initialize the generator.</param>
     public static void Doubles(double[] values, int seed)
     {
       // Init state.
@@ -307,6 +316,9 @@ retry:
     /// Returns an array of random numbers greater than or equal to 0.0 and less than 1.0.
     /// </summary>
     /// <remarks>Supports being called in parallel from multiple threads.</remarks>
+    /// <param name="length">The number of random values to generate.</param>
+    /// <param name="seed">The seed value used to initialize the generator.</param>
+    /// <returns>An array of random numbers greater than or equal to 0.0 and less than 1.0.</returns>
     [TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
     public static double[] Doubles(int length, int seed)
     {
@@ -319,6 +331,8 @@ retry:
     /// Returns an infinite sequence of random numbers greater than or equal to 0.0 and less than 1.0.
     /// </summary>
     /// <remarks>Supports being called in parallel from multiple threads, but the result must be enumerated from a single thread each.</remarks>
+    /// <param name="seed">The seed value used to initialize the generator.</param>
+    /// <returns>An infinite sequence of random numbers greater than or equal to 0.0 and less than 1.0.</returns>
     public static IEnumerable<double> DoubleSequence(int seed)
     {
       // Init state.

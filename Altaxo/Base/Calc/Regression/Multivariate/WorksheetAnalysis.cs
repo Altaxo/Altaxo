@@ -56,6 +56,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       /// <summary>
       /// Initializes a new instance of the <see cref="OriginalDataTableNotFoundException"/> class with a custom message.
       /// </summary>
+      /// <param name="msg">The message that describes the error.</param>
       public OriginalDataTableNotFoundException(string msg)
         : base(msg)
       {
@@ -99,6 +100,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Gets the column name used for x-axis values of spectra.
     /// </summary>
+    /// <returns>The column name used for x-axis values of spectra.</returns>
     public static string GetXOfX_ColumnName()
     {
       return string.Format("{0}", _XOfX_ColumnName);
@@ -107,6 +109,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Gets the column name used for the mean of x-values.
     /// </summary>
+    /// <returns>The column name used for the mean of x-values.</returns>
     public static string GetXMean_ColumnName()
     {
       return string.Format("{0}", _XMean_ColumnName);
@@ -115,6 +118,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Gets the column name used for the scale of x-values.
     /// </summary>
+    /// <returns>The column name used for the scale of x-values.</returns>
     public static string GetXScale_ColumnName()
     {
       return string.Format("{0}", _XScale_ColumnName);
@@ -123,6 +127,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Gets the column name used for the mean of y-values.
     /// </summary>
+    /// <returns>The column name used for the mean of y-values.</returns>
     public static string GetYMean_ColumnName()
     {
       return string.Format("{0}", _YMean_ColumnName);
@@ -131,6 +136,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Gets the column name used for the scale of y-values.
     /// </summary>
+    /// <returns>The column name used for the scale of y-values.</returns>
     public static string GetYScale_ColumnName()
     {
       return string.Format("{0}", _YScale_ColumnName);
@@ -139,6 +145,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Gets the measurement label column name.
     /// </summary>
+    /// <returns>The measurement label column name.</returns>
     public static string GetMeasurementLabel_ColumnName()
     {
       return string.Format("{0}", _MeasurementLabel_ColumnName);
@@ -147,6 +154,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Gets the column name used for the factor count column.
     /// </summary>
+    /// <returns>The column name used for the factor count column.</returns>
     public static string GetNumberOfFactors_ColumnName()
     {
       return string.Format("{0}", _NumberOfFactors_ColumnName);
@@ -155,6 +163,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Gets the x-load column name for the specified factor.
     /// </summary>
+    /// <param name="numberOfFactors">The factor number.</param>
+    /// <returns>The x-load column name for the specified factor.</returns>
     public static string GetXLoad_ColumnName(int numberOfFactors)
     {
       return string.Format("{0}{1}", _XLoad_ColumnName, numberOfFactors);
@@ -163,6 +173,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Gets the x-load column name for the specified constituent and factor.
     /// </summary>
+    /// <param name="nConstituent">The constituent index.</param>
+    /// <param name="numberOfFactors">The factor number.</param>
+    /// <returns>The x-load column name for the specified constituent and factor.</returns>
     public static string GetXLoad_ColumnName(int nConstituent, int numberOfFactors)
     {
       return string.Format("{0}{1}.{2}", _XLoad_ColumnName, nConstituent, numberOfFactors);
@@ -171,6 +184,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Gets the prediction score column name for the specified constituent and factor.
     /// </summary>
+    /// <param name="nConstituent">The constituent index.</param>
+    /// <param name="numberOfFactors">The factor number.</param>
+    /// <returns>The prediction score column name for the specified constituent and factor.</returns>
     public static string GetPredictionScore_ColumnName(int nConstituent, int numberOfFactors)
     {
       return string.Format("{0}{1}.{2}", _PredictionScore_ColumnName, nConstituent, numberOfFactors);
@@ -179,6 +195,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Gets the x-score column name for the specified factor.
     /// </summary>
+    /// <param name="numberOfFactors">The factor number.</param>
+    /// <returns>The x-score column name for the specified factor.</returns>
     public static string GetXScore_ColumnName(int numberOfFactors)
     {
       return string.Format("{0}{1}", _XScore_ColumnName, numberOfFactors);
@@ -187,6 +205,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Gets the x-weight column name for the specified factor.
     /// </summary>
+    /// <param name="numberOfFactors">The factor number.</param>
+    /// <returns>The x-weight column name for the specified factor.</returns>
     public static string GetXWeight_ColumnName(int numberOfFactors)
     {
       return string.Format("{0}{1}", _XWeight_ColumnName, numberOfFactors);
@@ -195,6 +215,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Gets the x-weight column name for the specified constituent and factor.
     /// </summary>
+    /// <param name="nConstituent">The constituent index.</param>
+    /// <param name="numberOfFactors">The factor number.</param>
+    /// <returns>The x-weight column name for the specified constituent and factor.</returns>
     public static string GetXWeight_ColumnName(int nConstituent, int numberOfFactors)
     {
       return string.Format("{0}{1}.{2}", _XWeight_ColumnName, nConstituent, numberOfFactors);
@@ -203,6 +226,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Gets the y-load column name for the specified factor.
     /// </summary>
+    /// <param name="numberOfFactors">The factor number.</param>
+    /// <returns>The y-load column name for the specified factor.</returns>
     public static string GetYLoad_ColumnName(int numberOfFactors)
     {
       return string.Format("{0}{1}", _YLoad_ColumnName, numberOfFactors);
@@ -211,6 +236,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Gets the y-load column name for the specified constituent and factor.
     /// </summary>
+    /// <param name="nConstituent">The constituent index.</param>
+    /// <param name="numberOfFactors">The factor number.</param>
+    /// <returns>The y-load column name for the specified constituent and factor.</returns>
     public static string GetYLoad_ColumnName(int nConstituent, int numberOfFactors)
     {
       return string.Format("{0}{1}.{2}", _YLoad_ColumnName, nConstituent, numberOfFactors);
@@ -219,6 +247,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Gets the cross-product column name.
     /// </summary>
+    /// <returns>The cross-product column name.</returns>
     public static string GetCrossProduct_ColumnName()
     {
       return string.Format("{0}", _CrossProduct_ColumnName);
@@ -227,6 +256,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Gets the cross-product column name for the specified constituent.
     /// </summary>
+    /// <param name="nConstituent">The constituent index.</param>
+    /// <returns>The cross-product column name for the specified constituent.</returns>
     public static string GetCrossProduct_ColumnName(int nConstituent)
     {
       return string.Format("{0}{1}", _CrossProduct_ColumnName, nConstituent);
@@ -235,6 +266,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Gets the PRESS column name.
     /// </summary>
+    /// <returns>The PRESS column name.</returns>
     public static string GetPRESSValue_ColumnName()
     {
       return string.Format("{0}", _PRESSValue_ColumnName);
@@ -243,6 +275,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Gets the cross-PRESS column name.
     /// </summary>
+    /// <returns>The cross-PRESS column name.</returns>
     public static string GetCrossPRESSValue_ColumnName()
     {
       return string.Format("{0}", _CrossPRESSValue_ColumnName);
@@ -283,6 +316,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Calculates and stores all requested additional result columns.
     /// </summary>
+    /// <param name="destTable">The destination table in which the calculated columns are stored.</param>
+    /// <param name="columnsToCalculate">The columns to calculate, keyed by column name and grouped by factor count and dependent-variable index.</param>
     public void CalculateAdditionalColumns(DataTable destTable, ImmutableDictionary<string, ImmutableHashSet<(int, int?)>> columnsToCalculate)
     {
       foreach (var entry in columnsToCalculate)
@@ -304,6 +339,10 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Calculates and stores a single additional result column.
     /// </summary>
+    /// <param name="destTable">The destination table in which the calculated column is stored.</param>
+    /// <param name="columnName">The name of the column to calculate.</param>
+    /// <param name="numberOfFactors">The number of factors to use.</param>
+    /// <param name="whichY">The optional dependent-variable index.</param>
     public void CalculateAdditionalColumn(DataTable destTable, string columnName, int numberOfFactors, int? whichY)
     {
       switch (columnName)
@@ -431,6 +470,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Gets the column group used for the factor count column.
     /// </summary>
+    /// <returns>The column group used for the factor count column.</returns>
     public static int GetNumberOfFactors_ColumnGroup()
     {
       return _NumberOfFactors_ColumnGroup;
@@ -439,6 +479,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Gets the column group used for predicted y-values.
     /// </summary>
+    /// <returns>The column group used for predicted y-values.</returns>
     public static int GetYPredicted_ColumnGroup()
     {
       return _YPredicted_ColumnGroup;
@@ -447,6 +488,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Gets the column group used for cross-predicted y-values.
     /// </summary>
+    /// <returns>The column group used for cross-predicted y-values.</returns>
     public static int GetYCrossPredicted_ColumnGroup()
     {
       return _YPredicted_ColumnGroup;
@@ -455,6 +497,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Gets the column group used for cross residual y-values.
     /// </summary>
+    /// <returns>The column group used for cross residual y-values.</returns>
     public static int GetYCrossResidual_ColumnGroup()
     {
       return _YPredicted_ColumnGroup;
@@ -463,6 +506,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Gets the column group used for spectral residuals.
     /// </summary>
+    /// <returns>The column group used for spectral residuals.</returns>
     public static int GetXResidual_ColumnGroup()
     {
       return _YPredicted_ColumnGroup;
@@ -471,6 +515,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Gets the column group used for cross spectral residuals.
     /// </summary>
+    /// <returns>The column group used for cross spectral residuals.</returns>
     public static int GetXCrossResidual_ColumnGroup()
     {
       return _YPredicted_ColumnGroup;
@@ -479,6 +524,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Gets the column group used for prediction scores.
     /// </summary>
+    /// <returns>The column group used for prediction scores.</returns>
     public static int GetPredictionScore_ColumnGroup()
     {
       return _PredictionScore_ColumnGroup;
@@ -487,6 +533,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Gets the column group used for y residuals.
     /// </summary>
+    /// <returns>The column group used for y residuals.</returns>
     public static int GetYResidual_ColumnGroup()
     {
       return _YResidual_ColumnGroup;
@@ -495,6 +542,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Gets the column group used for leverage values.
     /// </summary>
+    /// <returns>The column group used for leverage values.</returns>
     public static int GetXLeverage_ColumnGroup()
     {
       return _XLeverage_ColumnGroup;
@@ -530,6 +578,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Creates a regression object appropriate for the current analysis.
     /// </summary>
+    /// <returns>A regression object appropriate for the current analysis.</returns>
     public abstract MultivariateRegression CreateNewRegressionObject();
 
     /// <summary>
@@ -1118,6 +1167,10 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Stores preprocessing information and dependent-variable scaling in the table.
     /// </summary>
+    /// <param name="auxiliaryDataX">The preprocessing auxiliary data for the independent variables.</param>
+    /// <param name="meanY">The mean values of the dependent variables.</param>
+    /// <param name="scaleY">The scale values of the dependent variables.</param>
+    /// <param name="table">The destination table.</param>
     public virtual void StorePreprocessedData(
       IEnsembleProcessingAuxiliaryData auxiliaryDataX,
       IReadOnlyList<double> meanY,
@@ -1147,6 +1200,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Stores the x-axis values for the spectra in the destination table.
     /// </summary>
+    /// <param name="xOfX">The x-axis values of the spectra.</param>
+    /// <param name="table">The destination table.</param>
     public virtual void StoreXOfX(System.Collections.Generic.IReadOnlyList<double> xOfX, DataTable table)
     {
       var xColOfX = table.DataColumns.EnsureExistence(_XOfX_ColumnName, typeof(DoubleColumn), ColumnKind.X, 0);
@@ -1156,6 +1211,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Stores the number-of-factors column in the destination table.
     /// </summary>
+    /// <param name="nNumberOfFactors">The number of factors to store.</param>
+    /// <param name="table">The destination table.</param>
     public virtual void StoreNumberOfFactors(
       int nNumberOfFactors,
       DataTable table)
@@ -1185,6 +1242,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Stores PRESS data in the destination table.
     /// </summary>
+    /// <param name="PRESS">The PRESS values to store.</param>
+    /// <param name="table">The destination table.</param>
     public virtual void StorePRESSData(
       System.Collections.Generic.IReadOnlyList<double> PRESS,
       DataTable table)
@@ -1200,6 +1259,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Stores F-ratio and F-probability data derived from PRESS values.
     /// </summary>
+    /// <param name="table">The destination table.</param>
+    /// <param name="regressionResult">The regression result that provides the measurement counts and receives the preferred number of factors.</param>
     public virtual void StoreFRatioData(
       DataTable table,
       ref DimensionReductionAndRegressionResult regressionResult)
@@ -1253,6 +1314,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Stores the original y-values in the destination table.
     /// </summary>
+    /// <param name="table">The destination table.</param>
+    /// <param name="regressionData">The regression data containing the original dependent values.</param>
     public void StoreOriginalY(
       DataTable table,
       DataTableMatrixProxyWithMultipleColumnHeaderColumns regressionData
@@ -1308,6 +1371,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Calculates spectral residuals for the specified y-component and factor count.
     /// </summary>
+    /// <param name="table">The table that stores the calibration model.</param>
+    /// <param name="whichY">The dependent-variable index.</param>
+    /// <param name="numberOfFactors">The number of factors used for the calculation.</param>
     public virtual void CalculateXResidual(Altaxo.Data.DataTable table, int whichY, int numberOfFactors)
     {
       CalculatePredictedAndResidual(table, whichY, numberOfFactors, false, false, true);
@@ -1316,6 +1382,12 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Calculates and optionally stores cross-predicted values and residuals.
     /// </summary>
+    /// <param name="table">The table that stores the calibration model.</param>
+    /// <param name="whichY">The dependent-variable index.</param>
+    /// <param name="numberOfFactors">The number of factors used for the calculation.</param>
+    /// <param name="saveYPredicted">If set to <c>true</c>, stores the predicted dependent values.</param>
+    /// <param name="saveYResidual">If set to <c>true</c>, stores the dependent-variable residuals.</param>
+    /// <param name="saveXResidual">If set to <c>true</c>, stores the spectral residuals.</param>
     public virtual void CalculateCrossPredictedAndResidual(
       DataTable table,
       int whichY,
@@ -1412,6 +1484,12 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Calculates and optionally stores predicted values and residuals.
     /// </summary>
+    /// <param name="table">The table that stores the calibration model.</param>
+    /// <param name="whichY">The dependent-variable index.</param>
+    /// <param name="numberOfFactors">The number of factors used for the calculation.</param>
+    /// <param name="saveYPredicted">If set to <c>true</c>, stores the predicted dependent values.</param>
+    /// <param name="saveYResidual">If set to <c>true</c>, stores the dependent-variable residuals.</param>
+    /// <param name="saveXResidual">If set to <c>true</c>, stores the spectral residuals.</param>
     public virtual void CalculatePredictedAndResidual(
      DataTable table,
      int whichY,
@@ -1482,6 +1560,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Calculates and stores prediction scores for all dependent variables.
     /// </summary>
+    /// <param name="table">The table that stores the calibration model and receives the prediction scores.</param>
+    /// <param name="preferredNumberOfFactors">The preferred number of factors used for the calculation.</param>
     public void CalculateAndStorePredictionScores(DataTable table, int preferredNumberOfFactors)
     {
       var predictionScores = CalculatePredictionScores(table, preferredNumberOfFactors);
@@ -1499,6 +1579,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Calculates and stores prediction scores for a single dependent variable.
     /// </summary>
+    /// <param name="table">The table that stores the calibration model and receives the prediction scores.</param>
+    /// <param name="preferredNumberOfFactors">The preferred number of factors used for the calculation.</param>
+    /// <param name="whichY">The dependent-variable index.</param>
     public void CalculateAndStorePredictionScores(DataTable table, int preferredNumberOfFactors, int whichY)
     {
       var predictionScores = CalculatePredictionScores(table, preferredNumberOfFactors);

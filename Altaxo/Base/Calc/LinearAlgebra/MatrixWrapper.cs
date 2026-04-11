@@ -67,6 +67,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Element accessor.
     /// </summary>
+    /// <param name="row">The row index.</param>
+    /// <param name="col">The column index.</param>
     public double this[int row, int col]
     {
       get
@@ -128,6 +130,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Element accessor.
     /// </summary>
+    /// <param name="row">The row index.</param>
+    /// <param name="col">The column index.</param>
     public double this[int row, int col]
     {
       get

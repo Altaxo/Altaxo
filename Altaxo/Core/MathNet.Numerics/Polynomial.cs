@@ -146,6 +146,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="z">The location where to evaluate the polynomial at.</param>
     /// <param name="coefficients">The coefficients of the polynomial, coefficient for power k at index k.</param>
+    /// <returns>The polynomial value at <paramref name="z"/>.</returns>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="coefficients"/> is a null reference.
     /// </exception>
@@ -185,6 +186,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="z">The location where to evaluate the polynomial at.</param>
     /// <param name="coefficients">The coefficients of the polynomial, coefficient for power k at index k.</param>
+    /// <returns>The polynomial value at <paramref name="z"/>.</returns>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="coefficients"/> is a null reference.
     /// </exception>
@@ -224,6 +226,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="z">The location where to evaluate the polynomial at.</param>
     /// <param name="coefficients">The coefficients of the polynomial, coefficient for power k at index k.</param>
+    /// <returns>The polynomial value at <paramref name="z"/>.</returns>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="coefficients"/> is a null reference.
     /// </exception>
@@ -260,6 +263,7 @@ namespace Altaxo.Calc
     /// Evaluate a polynomial at point x.
     /// </summary>
     /// <param name="z">The location where to evaluate the polynomial at.</param>
+    /// <returns>The polynomial value at <paramref name="z"/>.</returns>
     public double Evaluate(double z)
     {
       return Evaluate(z, Coefficients);
@@ -269,6 +273,7 @@ namespace Altaxo.Calc
     /// Evaluate a polynomial at point x.
     /// </summary>
     /// <param name="z">The location where to evaluate the polynomial at.</param>
+    /// <returns>The polynomial value at <paramref name="z"/>.</returns>
     public Complex Evaluate(Complex z)
     {
       return Evaluate(z, Coefficients);
@@ -278,6 +283,7 @@ namespace Altaxo.Calc
     /// Evaluate a polynomial at points z.
     /// </summary>
     /// <param name="z">The locations where to evaluate the polynomial at.</param>
+    /// <returns>The polynomial values at the supplied points.</returns>
     public IEnumerable<double> Evaluate(IEnumerable<double> z)
     {
       return z.Select(Evaluate);
@@ -287,6 +293,7 @@ namespace Altaxo.Calc
     /// Evaluate a polynomial at points z.
     /// </summary>
     /// <param name="z">The locations where to evaluate the polynomial at.</param>
+    /// <returns>The polynomial values at the supplied points.</returns>
     public IEnumerable<Complex> Evaluate(IEnumerable<Complex> z)
     {
       return z.Select(Evaluate);
@@ -349,9 +356,9 @@ namespace Altaxo.Calc
     #region Linear Algebra
 
     /// <summary>
-    /// Calculates the complex roots of the Polynomial by eigenvalue decomposition
+    /// Calculates the complex roots of the polynomial by eigenvalue decomposition.
     /// </summary>
-    /// <returns>a vector of complex numbers with the roots</returns>
+    /// <returns>An array of complex numbers containing the roots.</returns>
     public Complex[] Roots()
     {
       switch (Degree)
@@ -369,10 +376,10 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Get the eigenvalue matrix A of this polynomial such that eig(A) = roots of this polynomial.
+    /// Gets the eigenvalue matrix A of this polynomial such that eig(A) = roots of this polynomial.
     /// </summary>
-    /// <returns>Eigenvalue matrix A</returns>
-    /// <note>This matrix is similar to the companion matrix of this polynomial, in such a way, that it's transpose is the columnflip of the companion matrix</note>
+    /// <returns>The eigenvalue matrix A, or <c>null</c> if the polynomial degree is less than 2.</returns>
+    /// <note>This matrix is similar to the companion matrix of this polynomial; its transpose is a column-flipped companion matrix.</note>
     public DenseMatrix EigenvalueMatrix()
     {
       int n = Degree;
@@ -442,6 +449,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Addition of a polynomial and a scalar.
     /// </summary>
+    /// <param name="a">The polynomial.</param>
+    /// <param name="b">The scalar value.</param>
+    /// <returns>The sum of <paramref name="a"/> and <paramref name="b"/>.</returns>
     public static Polynomial Add(Polynomial a, double b)
     {
       var ac = a.Coefficients;
@@ -500,6 +510,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Addition of a scalar from a polynomial.
     /// </summary>
+    /// <param name="a">The polynomial.</param>
+    /// <param name="b">The scalar value.</param>
+    /// <returns>The result of subtracting <paramref name="b"/> from <paramref name="a"/>.</returns>
     public static Polynomial Subtract(Polynomial a, double b)
     {
       return Add(a, -b);
@@ -508,6 +521,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Addition of a polynomial from a scalar.
     /// </summary>
+    /// <param name="b">The scalar value.</param>
+    /// <param name="a">The polynomial.</param>
+    /// <returns>The result of subtracting <paramref name="a"/> from <paramref name="b"/>.</returns>
     public static Polynomial Subtract(double b, Polynomial a)
     {
       var ac = a.Coefficients;
@@ -529,6 +545,8 @@ namespace Altaxo.Calc
     /// <summary>
     /// Negation of a polynomial.
     /// </summary>
+    /// <param name="a">The polynomial.</param>
+    /// <returns>The additive inverse of <paramref name="a"/>.</returns>
     public static Polynomial Negate(Polynomial a)
     {
       var ac = a.Coefficients;
@@ -908,6 +926,7 @@ namespace Altaxo.Calc
     /// <summary>
     /// Format the polynomial in ascending order, e.g. "4.3 + 2.0x^2 - x^3".
     /// </summary>
+    /// <returns>The formatted polynomial string.</returns>
     public override string ToString()
     {
       return ToString("G", CultureInfo.CurrentCulture);
@@ -916,6 +935,7 @@ namespace Altaxo.Calc
     /// <summary>
     /// Format the polynomial in descending order, e.g. "x^3 + 2.0x^2 - 4.3".
     /// </summary>
+    /// <returns>The formatted polynomial string in descending order.</returns>
     public string ToStringDescending()
     {
       return ToStringDescending("G", CultureInfo.CurrentCulture);
@@ -924,6 +944,8 @@ namespace Altaxo.Calc
     /// <summary>
     /// Format the polynomial in ascending order, e.g. "4.3 + 2.0x^2 - x^3".
     /// </summary>
+    /// <param name="format">The numeric format string.</param>
+    /// <returns>The formatted polynomial string.</returns>
     public string ToString(string format)
     {
       return ToString(format, CultureInfo.CurrentCulture);
@@ -932,6 +954,8 @@ namespace Altaxo.Calc
     /// <summary>
     /// Format the polynomial in descending order, e.g. "x^3 + 2.0x^2 - 4.3".
     /// </summary>
+    /// <param name="format">The numeric format string.</param>
+    /// <returns>The formatted polynomial string in descending order.</returns>
     public string ToStringDescending(string format)
     {
       return ToStringDescending(format, CultureInfo.CurrentCulture);
@@ -940,6 +964,8 @@ namespace Altaxo.Calc
     /// <summary>
     /// Format the polynomial in ascending order, e.g. "4.3 + 2.0x^2 - x^3".
     /// </summary>
+    /// <param name="formatProvider">The format provider to use.</param>
+    /// <returns>The formatted polynomial string.</returns>
     public string ToString(IFormatProvider formatProvider)
     {
       return ToString("G", formatProvider);
@@ -948,6 +974,8 @@ namespace Altaxo.Calc
     /// <summary>
     /// Format the polynomial in descending order, e.g. "x^3 + 2.0x^2 - 4.3".
     /// </summary>
+    /// <param name="formatProvider">The format provider to use.</param>
+    /// <returns>The formatted polynomial string in descending order.</returns>
     public string ToStringDescending(IFormatProvider formatProvider)
     {
       return ToStringDescending("G", formatProvider);
@@ -956,6 +984,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Format the polynomial in ascending order, e.g. "4.3 + 2.0x^2 - x^3".
     /// </summary>
+    /// <param name="format">The numeric format string.</param>
+    /// <param name="formatProvider">The format provider to use.</param>
+    /// <returns>The formatted polynomial string.</returns>
     public string ToString(string format, IFormatProvider formatProvider)
     {
       if (Degree < 0)
@@ -1021,6 +1052,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Format the polynomial in descending order, e.g. "x^3 + 2.0x^2 - 4.3".
     /// </summary>
+    /// <param name="format">The numeric format string.</param>
+    /// <param name="formatProvider">The format provider to use.</param>
+    /// <returns>The formatted polynomial string in descending order.</returns>
     public string ToStringDescending(string format, IFormatProvider formatProvider)
     {
       if (Degree < 0)

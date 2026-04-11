@@ -122,6 +122,7 @@ namespace Altaxo.Calc.Distributions
     /// </summary>
     /// <param name="lambda">The lambda (λ) parameter. Range: λ > 0.</param>
     /// <param name="nu">The rate of decay (ν) parameter. Range: ν ≥ 0.</param>
+    /// <returns><c>true</c> if the parameters define a valid Conway-Maxwell-Poisson distribution; otherwise, <c>false</c>.</returns>
     public static bool IsValidParameterSet(double lambda, double nu)
     {
       return lambda > 0.0 && nu >= 0.0;
@@ -487,6 +488,14 @@ namespace Altaxo.Calc.Distributions
       return i;
     }
 
+    /// <summary>
+    /// Fills an array with samples from the distribution without validating the parameters.
+    /// </summary>
+    /// <param name="rnd">The random number generator to use.</param>
+    /// <param name="values">The array to fill with samples.</param>
+    /// <param name="lambda">The lambda parameter.</param>
+    /// <param name="nu">The rate of decay parameter.</param>
+    /// <param name="z">The normalization constant.</param>
     private static void SamplesUnchecked(System.Random rnd, int[] values, double lambda, double nu, double z)
     {
       var uniform = rnd.NextDoubles(values.Length);
@@ -530,6 +539,7 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Fills an array with samples generated from the distribution.
     /// </summary>
+    /// <param name="values">The array to fill with samples.</param>
     public void Samples(int[] values)
     {
       SamplesUnchecked(_random, values, _lambda, _nu, Z);
@@ -552,6 +562,7 @@ namespace Altaxo.Calc.Distributions
     /// <param name="rnd">The random number generator to use.</param>
     /// <param name="lambda">The lambda (λ) parameter. Range: λ > 0.</param>
     /// <param name="nu">The rate of decay (ν) parameter. Range: ν ≥ 0.</param>
+    /// <returns>A sample from the distribution.</returns>
     public static int Sample(System.Random rnd, double lambda, double nu)
     {
       if (!(lambda > 0.0 && nu >= 0.0))
@@ -569,6 +580,7 @@ namespace Altaxo.Calc.Distributions
     /// <param name="rnd">The random number generator to use.</param>
     /// <param name="lambda">The lambda (λ) parameter. Range: λ > 0.</param>
     /// <param name="nu">The rate of decay (ν) parameter. Range: ν ≥ 0.</param>
+    /// <returns>A sequence of samples from the distribution.</returns>
     public static IEnumerable<int> Samples(System.Random rnd, double lambda, double nu)
     {
       if (!(lambda > 0.0 && nu >= 0.0))
@@ -603,6 +615,7 @@ namespace Altaxo.Calc.Distributions
     /// </summary>
     /// <param name="lambda">The lambda (λ) parameter. Range: λ > 0.</param>
     /// <param name="nu">The rate of decay (ν) parameter. Range: ν ≥ 0.</param>
+    /// <returns>A sample from the distribution.</returns>
     public static int Sample(double lambda, double nu)
     {
       if (!(lambda > 0.0 && nu >= 0.0))
@@ -619,6 +632,7 @@ namespace Altaxo.Calc.Distributions
     /// </summary>
     /// <param name="lambda">The lambda (λ) parameter. Range: λ > 0.</param>
     /// <param name="nu">The rate of decay (ν) parameter. Range: ν ≥ 0.</param>
+    /// <returns>A sequence of samples from the distribution.</returns>
     public static IEnumerable<int> Samples(double lambda, double nu)
     {
       if (!(lambda > 0.0 && nu >= 0.0))

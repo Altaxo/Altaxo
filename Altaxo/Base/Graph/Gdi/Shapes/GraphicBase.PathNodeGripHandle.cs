@@ -79,6 +79,10 @@ namespace Altaxo.Graph.Gdi.Shapes
       /// <summary>
       /// Initializes a new instance of the <see cref="PathNodeGripHandle"/> class.
       /// </summary>
+      /// <param name="parent">The parent hit test object.</param>
+      /// <param name="relPos">The relative position of the grip.</param>
+      /// <param name="gripCenter">The center point of the grip.</param>
+      /// <param name="gripRadius">The grip radius.</param>
       public PathNodeGripHandle(IHitTestObject parent, PointD2D relPos, PointD2D gripCenter, double gripRadius)
       {
         _parent = parent;
@@ -93,6 +97,11 @@ namespace Altaxo.Graph.Gdi.Shapes
       /// <summary>
       /// Initializes a new instance of the <see cref="PathNodeGripHandle"/> class.
       /// </summary>
+      /// <param name="parent">The parent hit test object.</param>
+      /// <param name="relPos">The relative position of the grip.</param>
+      /// <param name="gripCenter">The center point of the grip.</param>
+      /// <param name="gripRadius">The grip radius.</param>
+      /// <param name="moveAction">The action invoked when the grip moves.</param>
       public PathNodeGripHandle(IHitTestObject parent, PointD2D relPos, PointD2D gripCenter, double gripRadius, Action<PointD2D> moveAction)
         : this(parent, relPos, gripCenter, gripRadius)
       {
@@ -133,6 +142,7 @@ namespace Altaxo.Graph.Gdi.Shapes
        /// <summary>
        /// Moves the grip to the specified position.
        /// </summary>
+       /// <param name="newPosition">The new grip position.</param>
        public virtual void MoveGrip(PointD2D newPosition)
       {
         if (_moveAction is not null)
@@ -165,6 +175,8 @@ namespace Altaxo.Graph.Gdi.Shapes
        /// <summary>
        /// Determines whether the specified point hits the grip.
        /// </summary>
+       /// <param name="point">The point to test.</param>
+       /// <returns><see langword="true"/> if the point hits the grip; otherwise, <see langword="false"/>.</returns>
        public bool IsGripHitted(PointD2D point)
       {
         return (Calc.RMath.Pow2(point.X - _gripCenter.X) + Calc.RMath.Pow2(point.Y - _gripCenter.Y)) < Calc.RMath.Pow2(_gripRadius);

@@ -55,8 +55,15 @@ namespace Altaxo.Calc.Interpolation
     }
 
     /// <summary>
-    /// Create a linear spline interpolation from a set of (x,y) value pairs, sorted ascendingly by x.
+    /// Create a transformed interpolation from a set of (x,y) value pairs, sorted ascendingly by x.
+    /// The values are transformed using <paramref name="transformInverse"/> before interpolation and the resulting
+    /// interpolant will apply <paramref name="transform"/> to the interpolated values.
     /// </summary>
+    /// <param name="transform">Function applied to interpolated values.</param>
+    /// <param name="transformInverse">Inverse function applied to raw sample values prior to interpolation.</param>
+    /// <param name="x">Sample points, sorted ascendingly.</param>
+    /// <param name="y">Sample values corresponding to <paramref name="x"/>.</param>
+    /// <returns>The transformed interpolator.</returns>
     public static TransformedInterpolation InterpolateSorted(
         Func<double, double> transform,
         Func<double, double> transformInverse,
@@ -81,9 +88,14 @@ namespace Altaxo.Calc.Interpolation
     }
 
     /// <summary>
-    /// Create a linear spline interpolation from an unsorted set of (x,y) value pairs.
+    /// Create a transformed interpolation from an unsorted set of (x,y) value pairs.
     /// WARNING: Works in-place and can thus causes the data array to be reordered and modified.
     /// </summary>
+    /// <param name="transform">Function applied to interpolated values.</param>
+    /// <param name="transformInverse">Inverse function applied to raw sample values prior to interpolation.</param>
+    /// <param name="x">Sample points (will be sorted in-place).</param>
+    /// <param name="y">Sample values corresponding to <paramref name="x"/> (will be modified in-place).</param>
+    /// <returns>The transformed interpolator.</returns>
     public static TransformedInterpolation InterpolateInplace(
         Func<double, double> transform,
         Func<double, double> transformInverse,
@@ -108,8 +120,13 @@ namespace Altaxo.Calc.Interpolation
     }
 
     /// <summary>
-    /// Create a linear spline interpolation from an unsorted set of (x,y) value pairs.
+    /// Create a transformed interpolation from an unsorted set of (x,y) value pairs.
     /// </summary>
+    /// <param name="transform">Function applied to interpolated values.</param>
+    /// <param name="transformInverse">Inverse function applied to raw sample values prior to interpolation.</param>
+    /// <param name="x">The sample points.</param>
+    /// <param name="y">The sample values corresponding to <paramref name="x"/>.</param>
+    /// <returns>The transformed interpolator.</returns>
     public static TransformedInterpolation Interpolate(
         Func<double, double> transform,
         Func<double, double> transformInverse,
@@ -155,6 +172,7 @@ namespace Altaxo.Calc.Interpolation
     /// Indefinite integral at point t. NOT SUPPORTED.
     /// </summary>
     /// <param name="t">Point t to integrate at.</param>
+    /// <returns>The interpolated indefinite integral at point <paramref name="t"/>.</returns>
     double IInterpolation.Integrate(double t) => throw new NotSupportedException();
 
     /// <summary>
@@ -162,6 +180,7 @@ namespace Altaxo.Calc.Interpolation
     /// </summary>
     /// <param name="a">Left bound of the integration interval [a,b].</param>
     /// <param name="b">Right bound of the integration interval [a,b].</param>
+    /// <returns>The interpolated definite integral over the interval [<paramref name="a"/>, <paramref name="b"/>].</returns>
     double IInterpolation.Integrate(double a, double b) => throw new NotSupportedException();
   }
 }

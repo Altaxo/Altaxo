@@ -528,32 +528,56 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     #region Peak table output
 
     /// <summary>Gets the x-column name for a preprocessed spectrum.</summary>
+    /// <param name="numberOfSpectrum">The zero-based index of the spectrum.</param>
+    /// <returns>The peak-table x-column name for the preprocessed spectrum.</returns>
     public static string PeakTable_PreprocessedColumnNameX(int numberOfSpectrum) => $"X_Preprocessed{numberOfSpectrum}";
     /// <summary>Gets the y-column name for a preprocessed spectrum.</summary>
+    /// <param name="numberOfSpectrum">The zero-based index of the spectrum.</param>
+    /// <returns>The peak-table y-column name for the preprocessed spectrum.</returns>
     public static string PeakTable_PreprocessedColumnNameY(int numberOfSpectrum) => $"Y_Preprocessed{numberOfSpectrum}";
     /// <summary>Gets the column name that indicates whether a spectrum point was used for fitting.</summary>
+    /// <param name="numberOfSpectrum">The zero-based index of the spectrum.</param>
+    /// <returns>The peak-table column name that indicates whether points were used for fitting.</returns>
     public static string PeakTable_UsedForFitColumnName(int numberOfSpectrum) => $"UsedForFit{numberOfSpectrum}";
 
     /// <summary>Gets the x-column name for a fitted curve.</summary>
+    /// <param name="numberOfSpectrum">The zero-based index of the spectrum.</param>
+    /// <returns>The peak-table x-column name for the fitted curve.</returns>
     public static string PeakTable_FitCurveColumnNameX(int numberOfSpectrum) => $"X_FitCurve{numberOfSpectrum}";
     /// <summary>Gets the y-column name for a fitted curve.</summary>
+    /// <param name="numberOfSpectrum">The zero-based index of the spectrum.</param>
+    /// <returns>The peak-table y-column name for the fitted curve.</returns>
     public static string PeakTable_FitCurveColumnNameY(int numberOfSpectrum) => $"Y_FitCurve{numberOfSpectrum}";
 
     /// <summary>Gets the x-column name for a baseline curve.</summary>
+    /// <param name="numberOfSpectrum">The zero-based index of the spectrum.</param>
+    /// <returns>The peak-table x-column name for the baseline curve.</returns>
     public static string PeakTable_BaselineCurveColumnNameX(int numberOfSpectrum) => $"X_BaselineCurve{numberOfSpectrum}";
     /// <summary>Gets the y-column name for a baseline curve.</summary>
+    /// <param name="numberOfSpectrum">The zero-based index of the spectrum.</param>
+    /// <returns>The peak-table y-column name for the baseline curve.</returns>
     public static string PeakTable_BaselineCurveColumnNameY(int numberOfSpectrum) => $"Y_BaselineCurve{numberOfSpectrum}";
 
     /// <summary>Gets the x-column name for a residual curve.</summary>
+    /// <param name="numberOfSpectrum">The zero-based index of the spectrum.</param>
+    /// <returns>The peak-table x-column name for the residual curve.</returns>
     public static string PeakTable_ResidualCurveColumnNameX(int numberOfSpectrum) => $"X_ResidualCurve{numberOfSpectrum}";
     /// <summary>Gets the y-column name for a residual curve.</summary>
+    /// <param name="numberOfSpectrum">The zero-based index of the spectrum.</param>
+    /// <returns>The peak-table y-column name for the residual curve.</returns>
     public static string PeakTable_ResidualCurveColumnNameY(int numberOfSpectrum) => $"Y_ResidualCurve{numberOfSpectrum}";
 
     /// <summary>Gets the x-column name for separately output peak curves.</summary>
+    /// <param name="numberOfSpectrum">The zero-based index of the spectrum.</param>
+    /// <returns>The peak-table x-column name for separately output peak curves.</returns>
     public static string PeakTable_SeparatePeaksColumnNameX(int numberOfSpectrum) => $"X_PeakCurves{numberOfSpectrum}";
     /// <summary>Gets the y-column name for separately output peak curves.</summary>
+    /// <param name="numberOfSpectrum">The zero-based index of the spectrum.</param>
+    /// <returns>The peak-table y-column name for separately output peak curves.</returns>
     public static string PeakTable_SeparatePeaksColumnNameY(int numberOfSpectrum) => $"Y_PeakCurves{numberOfSpectrum}";
     /// <summary>Gets the identifier-column name for separately output peak curves.</summary>
+    /// <param name="numberOfSpectrum">The zero-based index of the spectrum.</param>
+    /// <returns>The peak-table identifier-column name for separately output peak curves.</returns>
     public static string PeakTable_SeparatePeaksColumnNameID(int numberOfSpectrum) => $"ID_PeakCurves{numberOfSpectrum}";
 
 
@@ -655,12 +679,14 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
       }
     }
 
+    /// <inheritdoc/>
     object IAltaxoTableDataSource.ProcessOptionsObject
     {
       get => ProcessOptions;
       set => ProcessOptions = (PeakFittingOfMultipleSpectraByIncrementalPeakAdditionOptions)value;
     }
 
+    /// <inheritdoc/>
     object IAltaxoTableDataSource.ProcessDataObject
     {
       get => _processData;

@@ -45,6 +45,8 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Initializes a new instance of the <see cref="LazyConditionEvaluator"/> class.
     /// </summary>
+    /// <param name="addIn">The add-in that owns the evaluator.</param>
+    /// <param name="properties">The properties that define the evaluator.</param>
     public LazyConditionEvaluator(AddIn addIn, Properties properties)
     {
       if (addIn is null)

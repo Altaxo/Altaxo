@@ -29,6 +29,9 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Evaluates the specified condition.
     /// </summary>
+    /// <param name="parameter">The parameter passed to the condition evaluator.</param>
+    /// <param name="condition">The condition to evaluate.</param>
+    /// <returns><c>true</c> if the condition is satisfied; otherwise, <c>false</c>.</returns>
     bool IsValid(object? parameter, Condition condition);
   }
 }

@@ -232,6 +232,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     /// <summary>
     /// Updates the document after the font controller changed.
     /// </summary>
+    /// <param name="_">The controller that triggered the change notification.</param>
     public void EhFontChanged(IMVCAController _)
     {
       _doc.Font = FontController.Doc;

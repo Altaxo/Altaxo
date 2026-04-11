@@ -45,6 +45,9 @@ namespace Altaxo.Graph
     LazyToCS
   }
 
+  /// <summary>
+  /// XML serialization surrogate for <see cref="LayerDataClipping"/> values.
+  /// </summary>
   [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LayerDataClipping), 0)]
   internal class BrushTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
   {

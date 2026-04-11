@@ -113,6 +113,7 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Validates the currently entered value.
     /// </summary>
+    /// <returns><see langword="true"/> if the value is valid; otherwise, <see langword="false"/>.</returns>
     protected bool Validate()
     {
       if (_view is null)
@@ -141,6 +142,7 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Validates the entered integer text.
     /// </summary>
+    /// <param name="e">The validation event arguments.</param>
     public void EhView_ValidatingValue1(ValidationEventArgs<string> e)
     {
       if (!int.TryParse(e.ValueToValidate, out var val))

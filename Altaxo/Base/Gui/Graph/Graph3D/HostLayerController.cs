@@ -234,6 +234,8 @@ namespace Altaxo.Gui.Graph.Graph3D
     /// <summary>
     /// Shows the dialog for editing the specified host layer.
     /// </summary>
+    /// <param name="layer">The host layer to edit.</param>
+    /// <returns><c>true</c> if the dialog was accepted; otherwise, <c>false</c>.</returns>
     public static bool ShowDialog(HostLayer layer)
     {
       return ShowDialog(layer, PositionTag);
@@ -242,9 +244,9 @@ namespace Altaxo.Gui.Graph.Graph3D
     /// <summary>
     /// Shows the dialog for editing the specified host layer and initial page.
     /// </summary>
-    /// <summary>
-    /// Shows the dialog for editing the specified host layer and initial page.
-    /// </summary>
+    /// <param name="layer">The host layer to edit.</param>
+    /// <param name="currentPage">The page that should be shown initially.</param>
+    /// <returns><c>true</c> if the dialog was accepted; otherwise, <c>false</c>.</returns>
     public static bool ShowDialog(HostLayer layer, string currentPage)
     {
       var ctrl = new HostLayerController(layer, currentPage);
@@ -268,6 +270,8 @@ namespace Altaxo.Gui.Graph.Graph3D
     /// <summary>
     /// Edits the position of the host layer associated with the hit-test object.
     /// </summary>
+    /// <param name="hit">The hit-test object that identifies the edited layer.</param>
+    /// <returns><c>false</c> so the caller keeps the edited layer.</returns>
     public static bool EhLayerPositionEdit(IHitTestObject hit)
     {
       var layer = hit.HittedObject as XYZPlotLayer;

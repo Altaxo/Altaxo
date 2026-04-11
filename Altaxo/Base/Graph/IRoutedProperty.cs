@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -89,6 +89,7 @@ namespace Altaxo.Graph
   /// <summary>
   /// Represents a routed property with a setter value.
   /// </summary>
+  /// <typeparam name="T">The type of the property value.</typeparam>
   public class RoutedSetterProperty<T> : IRoutedSetterProperty
   {
     private T _value;
@@ -133,6 +134,7 @@ namespace Altaxo.Graph
   /// <summary>
   /// Represents a routed property that collects getter values.
   /// </summary>
+  /// <typeparam name="T">The type of the property value.</typeparam>
   public class RoutedGetterProperty<T> : IRoutedGetterProperty
   {
     /// <inheritdoc/>

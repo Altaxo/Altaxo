@@ -42,6 +42,12 @@ namespace Altaxo.Calc
     /// Find value x that minimizes the scalar function f(x), constrained within bounds, using the Golden Section algorithm.
     /// For more options and diagnostics consider to use <see cref="GoldenSectionMinimizer"/> directly.
     /// </summary>
+    /// <param name="function">The scalar function to minimize.</param>
+    /// <param name="lowerBound">The lower bound of the search interval.</param>
+    /// <param name="upperBound">The upper bound of the search interval.</param>
+    /// <param name="tolerance">The termination tolerance.</param>
+    /// <param name="maxIterations">The maximum number of iterations.</param>
+    /// <returns>The minimizing point.</returns>
     public static double OfScalarFunctionConstrained(Func<double, double> function, double lowerBound, double upperBound, double tolerance = 1e-5, int maxIterations = 1000)
     {
       var objective = ObjectiveFunction.ScalarValue(function);
@@ -53,6 +59,11 @@ namespace Altaxo.Calc
     /// Find vector x that minimizes the function f(x) using the Nelder-Mead Simplex algorithm.
     /// For more options and diagnostics consider to use <see cref="NelderMeadSimplex"/> directly.
     /// </summary>
+    /// <param name="function">The scalar function to minimize.</param>
+    /// <param name="initialGuess">The initial guess.</param>
+    /// <param name="tolerance">The termination tolerance.</param>
+    /// <param name="maxIterations">The maximum number of iterations.</param>
+    /// <returns>The minimizing point.</returns>
     public static double OfScalarFunction(Func<double, double> function, double initialGuess, double tolerance = 1e-8, int maxIterations = 1000)
     {
       var objective = ObjectiveFunction.Value(v => function(v[0]));
@@ -64,6 +75,12 @@ namespace Altaxo.Calc
     /// Find vector x that minimizes the function f(x) using the Nelder-Mead Simplex algorithm.
     /// For more options and diagnostics consider to use <see cref="NelderMeadSimplex"/> directly.
     /// </summary>
+    /// <param name="function">The function to minimize.</param>
+    /// <param name="initialGuess0">The first initial guess.</param>
+    /// <param name="initialGuess1">The second initial guess.</param>
+    /// <param name="tolerance">The termination tolerance.</param>
+    /// <param name="maxIterations">The maximum number of iterations.</param>
+    /// <returns>The minimizing point.</returns>
     public static (double P0, double P1) OfFunction(Func<double, double, double> function, double initialGuess0, double initialGuess1, double tolerance = 1e-8, int maxIterations = 1000)
     {
       var objective = ObjectiveFunction.Value(v => function(v[0], v[1]));
@@ -75,6 +92,13 @@ namespace Altaxo.Calc
     /// Find vector x that minimizes the function f(x) using the Nelder-Mead Simplex algorithm.
     /// For more options and diagnostics consider to use <see cref="NelderMeadSimplex"/> directly.
     /// </summary>
+    /// <param name="function">The function to minimize.</param>
+    /// <param name="initialGuess0">The first initial guess.</param>
+    /// <param name="initialGuess1">The second initial guess.</param>
+    /// <param name="initialGuess2">The third initial guess.</param>
+    /// <param name="tolerance">The termination tolerance.</param>
+    /// <param name="maxIterations">The maximum number of iterations.</param>
+    /// <returns>The minimizing point.</returns>
     public static (double P0, double P1, double P2) OfFunction(Func<double, double, double, double> function, double initialGuess0, double initialGuess1, double initialGuess2, double tolerance = 1e-8, int maxIterations = 1000)
     {
       var objective = ObjectiveFunction.Value(v => function(v[0], v[1], v[2]));
@@ -86,6 +110,14 @@ namespace Altaxo.Calc
     /// Find vector x that minimizes the function f(x) using the Nelder-Mead Simplex algorithm.
     /// For more options and diagnostics consider to use <see cref="NelderMeadSimplex"/> directly.
     /// </summary>
+    /// <param name="function">The function to minimize.</param>
+    /// <param name="initialGuess0">The first initial guess.</param>
+    /// <param name="initialGuess1">The second initial guess.</param>
+    /// <param name="initialGuess2">The third initial guess.</param>
+    /// <param name="initialGuess3">The fourth initial guess.</param>
+    /// <param name="tolerance">The termination tolerance.</param>
+    /// <param name="maxIterations">The maximum number of iterations.</param>
+    /// <returns>The minimizing point.</returns>
     public static (double P0, double P1, double P2, double P3) OfFunction(Func<double, double, double, double, double> function, double initialGuess0, double initialGuess1, double initialGuess2, double initialGuess3, double tolerance = 1e-8, int maxIterations = 1000)
     {
       var objective = ObjectiveFunction.Value(v => function(v[0], v[1], v[2], v[3]));
@@ -97,6 +129,15 @@ namespace Altaxo.Calc
     /// Find vector x that minimizes the function f(x) using the Nelder-Mead Simplex algorithm.
     /// For more options and diagnostics consider to use <see cref="NelderMeadSimplex"/> directly.
     /// </summary>
+    /// <param name="function">The function to minimize.</param>
+    /// <param name="initialGuess0">The first initial guess.</param>
+    /// <param name="initialGuess1">The second initial guess.</param>
+    /// <param name="initialGuess2">The third initial guess.</param>
+    /// <param name="initialGuess3">The fourth initial guess.</param>
+    /// <param name="initialGuess4">The fifth initial guess.</param>
+    /// <param name="tolerance">The termination tolerance.</param>
+    /// <param name="maxIterations">The maximum number of iterations.</param>
+    /// <returns>The minimizing point.</returns>
     public static (double P0, double P1, double P2, double P3, double P4) OfFunction(Func<double, double, double, double, double, double> function, double initialGuess0, double initialGuess1, double initialGuess2, double initialGuess3, double initialGuess4, double tolerance = 1e-8, int maxIterations = 1000)
     {
       var objective = ObjectiveFunction.Value(v => function(v[0], v[1], v[2], v[3], v[4]));
@@ -108,6 +149,11 @@ namespace Altaxo.Calc
     /// Find vector x that minimizes the function f(x) using the Nelder-Mead Simplex algorithm.
     /// For more options and diagnostics consider to use <see cref="NelderMeadSimplex"/> directly.
     /// </summary>
+    /// <param name="function">The function to minimize.</param>
+    /// <param name="initialGuess">The initial guess.</param>
+    /// <param name="tolerance">The termination tolerance.</param>
+    /// <param name="maxIterations">The maximum number of iterations.</param>
+    /// <returns>The minimizing point.</returns>
     public static Vector<double> OfFunction(Func<Vector<double>, double> function, Vector<double> initialGuess, double tolerance = 1e-8, int maxIterations = 1000)
     {
       var objective = ObjectiveFunction.Value(function);
@@ -120,6 +166,15 @@ namespace Altaxo.Calc
     /// The missing gradient is evaluated numerically (forward difference).
     /// For more options and diagnostics consider to use <see cref="BfgsBMinimizer"/> directly.
     /// </summary>
+    /// <param name="function">The function to minimize.</param>
+    /// <param name="lowerBound">The lower bounds.</param>
+    /// <param name="upperBound">The upper bounds.</param>
+    /// <param name="initialGuess">The initial guess.</param>
+    /// <param name="gradientTolerance">The gradient tolerance.</param>
+    /// <param name="parameterTolerance">The parameter tolerance.</param>
+    /// <param name="functionProgressTolerance">The function progress tolerance.</param>
+    /// <param name="maxIterations">The maximum number of iterations.</param>
+    /// <returns>The minimizing point.</returns>
     public static Vector<double> OfFunctionConstrained(Func<Vector<double>, double> function, Vector<double> lowerBound, Vector<double> upperBound, Vector<double> initialGuess, double gradientTolerance = 1e-5, double parameterTolerance = 1e-5, double functionProgressTolerance = 1e-5, int maxIterations = 1000)
     {
       var objective = ObjectiveFunction.Value(function);
@@ -134,6 +189,14 @@ namespace Altaxo.Calc
     /// For more options and diagnostics consider to use <see cref="BfgsMinimizer"/> directly.
     /// An alternative routine using conjugate gradients (CG) is available in <see cref="ConjugateGradientMinimizer"/>.
     /// </summary>
+    /// <param name="function">The function to minimize.</param>
+    /// <param name="gradient">The gradient function.</param>
+    /// <param name="initialGuess">The initial guess.</param>
+    /// <param name="gradientTolerance">The gradient tolerance.</param>
+    /// <param name="parameterTolerance">The parameter tolerance.</param>
+    /// <param name="functionProgressTolerance">The function progress tolerance.</param>
+    /// <param name="maxIterations">The maximum number of iterations.</param>
+    /// <returns>The minimizing point.</returns>
     public static Vector<double> OfFunctionGradient(Func<Vector<double>, double> function, Func<Vector<double>, Vector<double>> gradient, Vector<double> initialGuess, double gradientTolerance = 1e-5, double parameterTolerance = 1e-5, double functionProgressTolerance = 1e-5, int maxIterations = 1000)
     {
       var objective = ObjectiveFunction.Gradient(function, gradient);
@@ -147,6 +210,13 @@ namespace Altaxo.Calc
     /// For more options and diagnostics consider to use <see cref="BfgsMinimizer"/> directly.
     /// An alternative routine using conjugate gradients (CG) is available in <see cref="ConjugateGradientMinimizer"/>.
     /// </summary>
+    /// <param name="functionGradient">The combined function and gradient evaluator.</param>
+    /// <param name="initialGuess">The initial guess.</param>
+    /// <param name="gradientTolerance">The gradient tolerance.</param>
+    /// <param name="parameterTolerance">The parameter tolerance.</param>
+    /// <param name="functionProgressTolerance">The function progress tolerance.</param>
+    /// <param name="maxIterations">The maximum number of iterations.</param>
+    /// <returns>The minimizing point.</returns>
     public static Vector<double> OfFunctionGradient(Func<Vector<double>, (double, Vector<double>)> functionGradient, Vector<double> initialGuess, double gradientTolerance = 1e-5, double parameterTolerance = 1e-5, double functionProgressTolerance = 1e-5, int maxIterations = 1000)
     {
       var objective = ObjectiveFunction.Gradient(functionGradient);
@@ -159,6 +229,16 @@ namespace Altaxo.Calc
     /// Find vector x that minimizes the function f(x), constrained within bounds, using the Broyden–Fletcher–Goldfarb–Shanno Bounded (BFGS-B) algorithm.
     /// For more options and diagnostics consider to use <see cref="BfgsBMinimizer"/> directly.
     /// </summary>
+    /// <param name="function">The function to minimize.</param>
+    /// <param name="gradient">The gradient function.</param>
+    /// <param name="lowerBound">The lower bounds.</param>
+    /// <param name="upperBound">The upper bounds.</param>
+    /// <param name="initialGuess">The initial guess.</param>
+    /// <param name="gradientTolerance">The gradient tolerance.</param>
+    /// <param name="parameterTolerance">The parameter tolerance.</param>
+    /// <param name="functionProgressTolerance">The function progress tolerance.</param>
+    /// <param name="maxIterations">The maximum number of iterations.</param>
+    /// <returns>The minimizing point.</returns>
     public static Vector<double> OfFunctionGradientConstrained(Func<Vector<double>, double> function, Func<Vector<double>, Vector<double>> gradient, Vector<double> lowerBound, Vector<double> upperBound, Vector<double> initialGuess, double gradientTolerance = 1e-5, double parameterTolerance = 1e-5, double functionProgressTolerance = 1e-5, int maxIterations = 1000)
     {
       var objective = ObjectiveFunction.Gradient(function, gradient);
@@ -171,6 +251,15 @@ namespace Altaxo.Calc
     /// Find vector x that minimizes the function f(x), constrained within bounds, using the Broyden–Fletcher–Goldfarb–Shanno Bounded (BFGS-B) algorithm.
     /// For more options and diagnostics consider to use <see cref="BfgsBMinimizer"/> directly.
     /// </summary>
+    /// <param name="functionGradient">The combined function and gradient evaluator.</param>
+    /// <param name="lowerBound">The lower bounds.</param>
+    /// <param name="upperBound">The upper bounds.</param>
+    /// <param name="initialGuess">The initial guess.</param>
+    /// <param name="gradientTolerance">The gradient tolerance.</param>
+    /// <param name="parameterTolerance">The parameter tolerance.</param>
+    /// <param name="functionProgressTolerance">The function progress tolerance.</param>
+    /// <param name="maxIterations">The maximum number of iterations.</param>
+    /// <returns>The minimizing point.</returns>
     public static Vector<double> OfFunctionGradientConstrained(Func<Vector<double>, (double, Vector<double>)> functionGradient, Vector<double> lowerBound, Vector<double> upperBound, Vector<double> initialGuess, double gradientTolerance = 1e-5, double parameterTolerance = 1e-5, double functionProgressTolerance = 1e-5, int maxIterations = 1000)
     {
       var objective = ObjectiveFunction.Gradient(functionGradient);
@@ -183,6 +272,13 @@ namespace Altaxo.Calc
     /// Find vector x that minimizes the function f(x) using the Newton algorithm.
     /// For more options and diagnostics consider to use <see cref="NewtonMinimizer"/> directly.
     /// </summary>
+    /// <param name="function">The function to minimize.</param>
+    /// <param name="gradient">The gradient function.</param>
+    /// <param name="hessian">The Hessian function.</param>
+    /// <param name="initialGuess">The initial guess.</param>
+    /// <param name="gradientTolerance">The gradient tolerance.</param>
+    /// <param name="maxIterations">The maximum number of iterations.</param>
+    /// <returns>The minimizing point.</returns>
     public static Vector<double> OfFunctionGradientHessian(Func<Vector<double>, double> function, Func<Vector<double>, Vector<double>> gradient, Func<Vector<double>, Matrix<double>> hessian, Vector<double> initialGuess, double gradientTolerance = 1e-8, int maxIterations = 1000)
     {
       var objective = ObjectiveFunction.GradientHessian(function, gradient, hessian);
@@ -194,6 +290,11 @@ namespace Altaxo.Calc
     /// Find vector x that minimizes the function f(x) using the Newton algorithm.
     /// For more options and diagnostics consider to use <see cref="NewtonMinimizer"/> directly.
     /// </summary>
+    /// <param name="functionGradientHessian">The combined function, gradient, and Hessian evaluator.</param>
+    /// <param name="initialGuess">The initial guess.</param>
+    /// <param name="gradientTolerance">The gradient tolerance.</param>
+    /// <param name="maxIterations">The maximum number of iterations.</param>
+    /// <returns>The minimizing point.</returns>
     public static Vector<double> OfFunctionGradientHessian(Func<Vector<double>, (double, Vector<double>, Matrix<double>)> functionGradientHessian, Vector<double> initialGuess, double gradientTolerance = 1e-8, int maxIterations = 1000)
     {
       var objective = ObjectiveFunction.GradientHessian(functionGradientHessian);

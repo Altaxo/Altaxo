@@ -30,9 +30,12 @@ namespace Altaxo.Calc.LinearAlgebra
   /// <summary>
   /// IROMatrix represents a read-only matrix of values.
   /// </summary>
+  /// <typeparam name="T">The value type stored in the matrix.</typeparam>
   public interface IROMatrix<T> where T : struct
   {
     /// <summary>Gets an element of the matrix at (row, col).</summary>
+    /// <param name="row">The zero-based row index.</param>
+    /// <param name="col">The zero-based column index.</param>
     T this[int row, int col] { get; }
 
     /// <summary>The number of rows of the matrix.</summary>
@@ -45,9 +48,12 @@ namespace Altaxo.Calc.LinearAlgebra
   /// <summary>
   /// IMatrix represents the simplest form of a 2D matrix, which is readable and writeable.
   /// </summary>
+  /// <typeparam name="T">The value type stored in the matrix.</typeparam>
   public interface IMatrix<T> : IROMatrix<T> where T : struct
   {
     /// <summary>Get / sets an element of the matrix at (row, col).</summary>
+    /// <param name="row">The zero-based row index.</param>
+    /// <param name="col">The zero-based column index.</param>
     new T this[int row, int col] { get; set; }
   }
 
@@ -55,6 +61,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// IRightExtensibleMatrix extends IMatrix in a way that another matrix of appropriate dimensions
   /// can be appended to the right of the matrix.
   /// </summary>
+  /// <typeparam name="T">The value type stored in the matrix.</typeparam>
   public interface IRightExtensibleMatrix<T> : IMatrix<T> where T : struct
   {
     /// <summary>
@@ -69,6 +76,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// IBottomExtensibleMatrix extends IMatrix in a way that another matrix of appropriate dimensions
   /// can be appended to the bottom of the matrix.
   /// </summary>
+  /// <typeparam name="T">The value type stored in the matrix.</typeparam>
   public interface IBottomExtensibleMatrix<T> : IMatrix<T> where T : struct
   {
     /// <summary>
@@ -83,6 +91,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// IExtensibleMatrix extends IMatrix in a way that another matrix of appropriate dimensions
   /// can be appended either to the right or to the bottom of the matrix.
   /// </summary>
+  /// <typeparam name="T">The value type stored in the matrix.</typeparam>
   public interface IExtensibleMatrix<T> : IRightExtensibleMatrix<T>, IBottomExtensibleMatrix<T> where T : struct
   {
   }
@@ -90,6 +99,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// <summary>
   /// IROBandMatrix represents a read-only band matrix of values.
   /// </summary>
+  /// <typeparam name="T">The value type stored in the matrix.</typeparam>
   public interface IROBandMatrix<T> : IROMatrix<T> where T : struct
   {
     /// <summary>
@@ -113,6 +123,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// <summary>
   /// IROSparseMatrix represents a read-only sparse matrix of values.
   /// </summary>
+  /// <typeparam name="T">The value type stored in the matrix.</typeparam>
   public interface IROSparseMatrix<T> : IROMatrix<T> where T : struct
   {
   }
@@ -120,7 +131,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// <summary>
   /// Operations on matrices which do not change the matrix instance.
   /// </summary>
-  /// <typeparam name="T"></typeparam>
+  /// <typeparam name="T">The value type stored in the matrix.</typeparam>
   public interface IROMatrixLevel1<T> : IROMatrix<T> where T : struct
   {
     /// <summary>
@@ -141,6 +152,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Elementwise mapping of a function to the elements of a matrix, and storing the result in another matrix.
     /// </summary>
+    /// <typeparam name="T1">The type of the additional source parameter.</typeparam>
     /// <param name="sourceParameter1">Additional auxilary parameter to be passed to the function.</param>
     /// <param name="function">The function to apply. First arg in the row index, 2nd arg the column index, 3rd arg the matrix element, and 4th arg the parameter given in <paramref name="sourceParameter1"/>.</param>
     /// <param name="result">The matrix where to store the result.</param>
@@ -152,6 +164,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// IMatrixLevel1 represents the simplest form of a 2D matrix, which is readable and writeable,
   /// and provides level-1 matrix operations.
   /// </summary>
+  /// <typeparam name="T">The value type stored in the matrix.</typeparam>
   public interface IMatrixLevel1<T> : IROMatrixLevel1<T> where T : struct
   {
     /// <summary>

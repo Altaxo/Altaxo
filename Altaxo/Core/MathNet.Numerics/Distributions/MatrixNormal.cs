@@ -117,6 +117,7 @@ namespace Altaxo.Calc.Distributions
     /// <param name="m">The mean of the matrix normal.</param>
     /// <param name="v">The covariance matrix for the rows.</param>
     /// <param name="k">The covariance matrix for the columns.</param>
+    /// <returns><c>true</c> if the parameters define a valid matrix normal distribution; otherwise, <c>false</c>.</returns>
     public static bool IsValidParameterSet(Matrix<double> m, Matrix<double> v, Matrix<double> k)
     {
       var n = m.RowCount;

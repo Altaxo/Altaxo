@@ -110,6 +110,8 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Initializes a new instance of the <see cref="BetaPrimeDistribution"/> class, using the default generator.
     /// </summary>
+    /// <param name="alpha">First parameter of the distribution.</param>
+    /// <param name="beta">Second parameter of the distribution.</param>
     public BetaPrimeDistribution(double alpha, double beta)
       : this(alpha, beta, DefaultGenerator)
     {
@@ -165,6 +167,8 @@ namespace Altaxo.Calc.Probability
     /// Updates the helper variables that store intermediate results for generation of beta-prime distributed random
     ///   numbers.
     /// </summary>
+    /// <param name="alpha">First parameter of the distribution.</param>
+    /// <param name="beta">Second parameter of the distribution.</param>
     public void Initialize(double alpha, double beta)
     {
       if (!IsValidAlpha(alpha))

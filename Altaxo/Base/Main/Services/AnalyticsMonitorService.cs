@@ -31,6 +31,7 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Tracks an exception that has occurred.
     /// </summary>
+    /// <param name="exception">The exception to track.</param>
     void TrackException(Exception exception);
 
     /// <summary>

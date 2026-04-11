@@ -317,6 +317,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
     /// <summary>
     /// Adds the external scatter-symbol group style when required.
     /// </summary>
+    /// <param name="externalGroups">The external group-style collection.</param>
     public static void AddExternalGroupStyle(IPlotGroupStyleCollection externalGroups)
     {
       if (PlotGroupStyle.ShouldAddExternalGroupStyle(externalGroups, typeof(ScatterSymbolGroupStyle)))
@@ -332,6 +333,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
     /// <summary>
     /// Adds the local scatter-symbol group style when required.
     /// </summary>
+    /// <param name="externalGroups">The external group-style collection.</param>
+    /// <param name="localGroups">The local group-style collection.</param>
     public static void AddLocalGroupStyle(
      IPlotGroupStyleCollection externalGroups,
      IPlotGroupStyleCollection localGroups)
@@ -343,11 +346,15 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
     /// <summary>
     /// Represents a callback that reads a scatter symbol.
     /// </summary>
+    /// <returns>The current scatter symbol.</returns>
     public delegate IScatterSymbol Getter();
 
     /// <summary>
     /// Prepares the scatter-symbol group style using the supplied getter.
     /// </summary>
+    /// <param name="externalGroups">The external group-style collection.</param>
+    /// <param name="localGroups">The local group-style collection.</param>
+    /// <param name="getter">The callback that returns the current scatter symbol.</param>
     public static void PrepareStyle(
       IPlotGroupStyleCollection externalGroups,
       IPlotGroupStyleCollection localGroups,
@@ -373,11 +380,15 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
     /// <summary>
     /// Represents a callback that writes a scatter symbol.
     /// </summary>
+    /// <param name="val">The scatter symbol to assign.</param>
     public delegate void Setter(IScatterSymbol val);
 
     /// <summary>
     /// Applies the scatter-symbol group style using the supplied setter.
     /// </summary>
+    /// <param name="externalGroups">The external group-style collection.</param>
+    /// <param name="localGroups">The local group-style collection.</param>
+    /// <param name="setter">The callback that applies the scatter symbol.</param>
     public static void ApplyStyle(
       IPlotGroupStyleCollection externalGroups,
       IPlotGroupStyleCollection localGroups,

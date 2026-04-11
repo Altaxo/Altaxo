@@ -27,13 +27,145 @@ namespace Altaxo.Calc.Ode.Obsolete
 #nullable disable
 
     //internal SOLOUTR solout;
-    internal FVPOL fvpol; internal JVPOL jvpol;
+    /// <summary>
+    /// Function callback adapter for the implicit Runge-Kutta solver.
+    /// </summary>
+    internal FVPOL fvpol;
 
-    internal BBAMPL bbampl; internal DECOMR decomr; internal DECOMC decomc; internal SLVRAR slvrar; internal SLVRAI slvrai;
-    internal SLVRAD slvrad; internal ESTRAD estrad; internal ESTRAV estrav; internal SLVROD slvrod; internal SLVSEU slvseu;
-    internal DEC dec; internal SOL sol; internal DECH dech; internal SOLH solh; internal DECC decc; internal SOLC solc;
-    internal DECHC dechc; internal SOLHC solhc; internal DECB decb; internal SOLB solb; internal DECBC decbc;
-    internal SOLBC solbc; internal ELMHES elmhes; internal RADAU5 radau5; internal RADCOR radcor; internal CONTR5 contr5;
+    /// <summary>
+    /// Jacobian callback adapter for the implicit Runge-Kutta solver.
+    /// </summary>
+    internal JVPOL jvpol;
+
+    /// <summary>
+    /// Band matrix amplification helper used by the translated solver.
+    /// </summary>
+    internal BBAMPL bbampl;
+
+    /// <summary>
+    /// Real decomposition helper used by the translated solver.
+    /// </summary>
+    internal DECOMR decomr;
+
+    /// <summary>
+    /// Complex decomposition helper used by the translated solver.
+    /// </summary>
+    internal DECOMC decomc;
+
+    /// <summary>
+    /// Real arithmetic solver helper used by the translated solver.
+    /// </summary>
+    internal SLVRAR slvrar;
+
+    /// <summary>
+    /// Real arithmetic iteration helper used by the translated solver.
+    /// </summary>
+    internal SLVRAI slvrai;
+
+    /// <summary>
+    /// Radau solver helper used during translated iterations.
+    /// </summary>
+    internal SLVRAD slvrad;
+
+    /// <summary>
+    /// Radau error-estimation helper used by the translated solver.
+    /// </summary>
+    internal ESTRAD estrad;
+
+    /// <summary>
+    /// Auxiliary error-estimation helper used by the translated solver.
+    /// </summary>
+    internal ESTRAV estrav;
+
+    /// <summary>
+    /// Ordinary differential equation solver helper used by the translated solver.
+    /// </summary>
+    internal SLVROD slvrod;
+
+    /// <summary>
+    /// Sequential update helper used by the translated solver.
+    /// </summary>
+    internal SLVSEU slvseu;
+
+    /// <summary>
+    /// Dense factorization helper used by the translated solver.
+    /// </summary>
+    internal DEC dec;
+
+    /// <summary>
+    /// Dense linear-system solution helper used by the translated solver.
+    /// </summary>
+    internal SOL sol;
+
+    /// <summary>
+    /// Hessenberg factorization helper used by the translated solver.
+    /// </summary>
+    internal DECH dech;
+
+    /// <summary>
+    /// Hessenberg linear-system solution helper used by the translated solver.
+    /// </summary>
+    internal SOLH solh;
+
+    /// <summary>
+    /// Complex dense factorization helper used by the translated solver.
+    /// </summary>
+    internal DECC decc;
+
+    /// <summary>
+    /// Complex dense linear-system solution helper used by the translated solver.
+    /// </summary>
+    internal SOLC solc;
+
+    /// <summary>
+    /// Complex Hessenberg factorization helper used by the translated solver.
+    /// </summary>
+    internal DECHC dechc;
+
+    /// <summary>
+    /// Complex Hessenberg linear-system solution helper used by the translated solver.
+    /// </summary>
+    internal SOLHC solhc;
+
+    /// <summary>
+    /// Banded factorization helper used by the translated solver.
+    /// </summary>
+    internal DECB decb;
+
+    /// <summary>
+    /// Banded linear-system solution helper used by the translated solver.
+    /// </summary>
+    internal SOLB solb;
+
+    /// <summary>
+    /// Complex banded factorization helper used by the translated solver.
+    /// </summary>
+    internal DECBC decbc;
+
+    /// <summary>
+    /// Complex banded linear-system solution helper used by the translated solver.
+    /// </summary>
+    internal SOLBC solbc;
+
+    /// <summary>
+    /// Hessenberg reduction helper used by the translated solver.
+    /// </summary>
+    internal ELMHES elmhes;
+
+    /// <summary>
+    /// Core Radau5 solver instance used by this wrapper.
+    /// </summary>
+    internal RADAU5 radau5;
+
+    /// <summary>
+    /// Radau correction helper used by the translated solver.
+    /// </summary>
+    internal RADCOR radcor;
+
+    /// <summary>
+    /// Dense output control helper used by the translated solver.
+    /// </summary>
+    internal CONTR5 contr5;
 
 #nullable enable
 
@@ -230,6 +362,9 @@ namespace Altaxo.Calc.Ode.Obsolete
 
     #region Public Methods
 
+    /// <summary>
+    /// Creates the translated helper classes required by the implicit Runge-Kutta solver.
+    /// </summary>
     internal override void InitializeRungeKuttaClasses()
     {
       bbampl = new BBAMPL();
@@ -264,6 +399,9 @@ namespace Altaxo.Calc.Ode.Obsolete
       base._RKSolOut = new RKSolOut(contr5);
     }
 
+    /// <summary>
+    /// Initializes the exception messages used by the implicit Runge-Kutta solver.
+    /// </summary>
     internal override void InitializeExceptionMessages()
     {
       _Errors = new string[5];
@@ -274,6 +412,11 @@ namespace Altaxo.Calc.Ode.Obsolete
       _Errors[4] = "MATRIX IS REPEATEDLY SINGULAR.";
     }
 
+    /// <summary>
+    /// Initializes the translated function and optional Jacobian callbacks.
+    /// </summary>
+    /// <param name="fun">The function that evaluates the differential equation system.</param>
+    /// <param name="jac">The optional Jacobian evaluator.</param>
     internal override void InitializeFunctionAndJacobian(OdeFunction fun, OdeJacobian? jac)
     {
       fvpol = new FVPOL(_NEquations, fun);
@@ -281,6 +424,9 @@ namespace Altaxo.Calc.Ode.Obsolete
         jvpol = new JVPOL(_NEquations, jac);
     }
 
+    /// <summary>
+    /// Initializes the working arrays required by the implicit Runge-Kutta solver.
+    /// </summary>
     internal override void InitializeWorkingSpace()
     {
       // C     WORK        ARRAY OF WORKING SPACE OF LENGTH "LWORK".
@@ -341,6 +487,9 @@ namespace Altaxo.Calc.Ode.Obsolete
       _IWork = new int[_Liw];
     }
 
+    /// <summary>
+    /// Executes the implicit Runge-Kutta integration.
+    /// </summary>
     internal override void Solve()
     {
       bool WasSuccessfully = true;

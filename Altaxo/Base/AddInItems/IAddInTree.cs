@@ -1,4 +1,4 @@
-// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
+﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
@@ -48,11 +48,13 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Builds the items in the path. Ensures that all items have the type T.
     /// </summary>
+    /// <typeparam name="T">The expected item type.</typeparam>
     /// <param name="path">A path in the addin tree.</param>
     /// <param name="parameter">A parameter that gets passed into the doozer and condition evaluators.</param>
     /// <param name="throwOnNotFound">If true, throws a <see cref="TreePathNotFoundException"/>
     /// if the path is not found. If false, an empty list is returned when the
     /// path is not found.</param>
+    /// <returns>The built items.</returns>
     IReadOnlyList<T> BuildItems<T>(string path, object? parameter, bool throwOnNotFound = true);
 
     /// <summary>
@@ -62,11 +64,16 @@ namespace Altaxo.AddInItems
     /// <param name="parameter">A parameter that gets passed into the doozer and condition evaluators.</param>
     /// <exception cref="TreePathNotFoundException">The path does not
     /// exist or does not point to an item.</exception>
+    /// <returns>The built item.</returns>
     object BuildItem(string path, object? parameter);
 
     /// <summary>
     /// Builds a single item in the add-in tree using additional conditions.
     /// </summary>
+    /// <param name="path">A path to the item in the add-in tree.</param>
+    /// <param name="parameter">A parameter that gets passed into the doozer and condition evaluators.</param>
+    /// <param name="additionalConditions">Additional conditions applied when creating the item.</param>
+    /// <returns>The built item.</returns>
     object BuildItem(string path, object? parameter, IEnumerable<ICondition> additionalConditions);
 
     /// <summary>
@@ -78,6 +85,7 @@ namespace Altaxo.AddInItems
     /// <see cref="TreePathNotFoundException"/> when the path does not exist.
     /// If set to <c>false</c>, <c>null</c> is returned for non-existing paths.
     /// </param>
+    /// <returns>The add-in tree node for the specified path, or <c>null</c> if it does not exist and <paramref name="throwOnNotFound"/> is <c>false</c>.</returns>
     AddInTreeNode? GetTreeNode(string path, bool throwOnNotFound = true);
   }
 }

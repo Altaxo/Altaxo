@@ -50,6 +50,13 @@ namespace Altaxo.Calc.LinearAlgebra.Complex.Factorization
   /// </remarks>
   internal abstract class Evd : Evd<Complex>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Evd"/> class.
+    /// </summary>
+    /// <param name="eigenVectors">The eigenvector matrix.</param>
+    /// <param name="eigenValues">The eigenvalues.</param>
+    /// <param name="blockDiagonal">The block diagonal eigenvalue matrix.</param>
+    /// <param name="isSymmetric">A value indicating whether the source matrix is symmetric.</param>
     protected Evd(Matrix<Complex> eigenVectors, Vector<Complex> eigenValues, Matrix<Complex> blockDiagonal, bool isSymmetric)
         : base(eigenVectors, eigenValues, blockDiagonal, isSymmetric)
     {

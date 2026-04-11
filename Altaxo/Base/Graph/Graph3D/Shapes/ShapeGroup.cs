@@ -224,7 +224,8 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// <summary>
     /// Get the object outline for arrangements in object world coordinates.
     /// </summary>
-    /// <returns>Object outline for arrangements in object world coordinates</returns>
+    /// <param name="localToWorldTransformation">The transformation from local coordinates to world coordinates.</param>
+    /// <returns>Object outline for arrangements in object world coordinates.</returns>
     public override IObjectOutlineForArrangements GetObjectOutlineForArrangements(Matrix4x3 localToWorldTransformation)
     {
       var result = new ObjectOutline();

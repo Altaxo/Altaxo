@@ -881,7 +881,8 @@ namespace Altaxo.Data
     /// The table is locked during the operation, and exceptions are caught. Use the return value
     /// to see whether an error has occurred.
     /// </summary>
-    /// <returns>Null if no error occurs; otherwise, the error.</returns>
+    /// <param name="reporter">The progress reporter used while updating the table.</param>
+    /// <returns><see langword="null"/> if no error occurs; otherwise, the error message.</returns>
     public string? UpdateTableFromTableDataSource(IProgressReporter reporter)
     {
       return _tableDataSource is null ? null : _tableDataSource.FillData(this, reporter);
@@ -1089,6 +1090,7 @@ namespace Altaxo.Data
     /// Get/sets the data column at index i. Setting is done by copying data, if the two columns has the same type. If the two columns are not of
     /// the same type, an exception is thrown.
     /// </summary>
+    /// <param name="i">The zero-based index of the data column.</param>
     public DataColumn this[int i]
     {
       get { return _dataColumns[i]; }
@@ -1099,6 +1101,7 @@ namespace Altaxo.Data
     /// Get/sets the data column with the given name. Setting is done by copying data, if the two columns has the same type. If the two columns are not of
     /// the same type, an exception is thrown.
     /// </summary>
+    /// <param name="name">The name of the data column.</param>
     public DataColumn this[string name]
     {
       get { return _dataColumns[name]; }
@@ -1107,6 +1110,8 @@ namespace Altaxo.Data
 
     /// <summary>Gets or sets a property cell, with is specified by the data column name (1st argument), and the property column name (2nd argument).
     /// Attention: this order of arguments is opposite to the usual notation used for matrices (row, column)!</summary>
+    /// <param name="dataColumName">The name of the data column.</param>
+    /// <param name="propertyName">The name of the property column.</param>
     public AltaxoVariant this[string dataColumName, string propertyName]
     {
       get
@@ -1201,9 +1206,11 @@ namespace Altaxo.Data
     }
 
     /// <summary>
-    /// The table properties, key is a string, val is a object you want to store here.
+    /// The table properties, key is a string, val is an object you want to store here.
     /// </summary>
-    /// <remarks>The properties are saved on disc (with exception of those who's name starts with "tmp/".
+    /// <param name="key">The key of the property to store.</param>
+    /// <param name="val">The value of the property to store.</param>
+    /// <remarks>The properties are saved on disk, with the exception of those whose name starts with "tmp/".
     /// If the property you want to store is only temporary, the property name should therefore
     /// start with "tmp/".</remarks>
     public void SetTableProperty(string key, object? val)
@@ -1300,6 +1307,7 @@ namespace Altaxo.Data
     /// Gets the parent data table of a child object.
     /// </summary>
     /// <param name="child">The child object for which the parent table should be found.</param>
+    /// <returns>The parent data table, or <see langword="null"/> if none can be found.</returns>
     public static Altaxo.Data.DataTable? GetParentDataTableOf(Main.IDocumentLeafNode? child)
     {
       if (child is null)

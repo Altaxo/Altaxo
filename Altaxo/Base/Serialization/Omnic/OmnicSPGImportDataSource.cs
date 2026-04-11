@@ -85,6 +85,8 @@ namespace Altaxo.Serialization.Omnic
     /// <summary>
     /// Deserialization constructor.
     /// </summary>
+    /// <param name="info">The deserialization information.</param>
+    /// <param name="version">The version of the serialized data.</param>
     protected OmnicSPGImportDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     {
       switch (version)
@@ -125,6 +127,7 @@ namespace Altaxo.Serialization.Omnic
     /// <summary>
     /// Initializes a new instance of the <see cref="OmnicSPGImportDataSource"/> class by copying another instance.
     /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public OmnicSPGImportDataSource(OmnicSPGImportDataSource from)
       : base(from)
     {

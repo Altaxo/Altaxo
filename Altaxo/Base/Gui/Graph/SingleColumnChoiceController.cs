@@ -72,6 +72,9 @@ namespace Altaxo.Gui.Graph
   {
     #region My private nodes
 
+    /// <summary>
+    /// Represents a table node that can lazily expose its columns.
+    /// </summary>
     internal class TableNode : NGTreeNode
     {
       private const int MaxNumberOfColumnsInOneNode = 100;

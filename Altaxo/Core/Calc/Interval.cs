@@ -36,6 +36,7 @@ namespace Altaxo.Calc
   /// Instead of representing a value as a single number, an interval represents each value as a range of possibilities
   /// that you can perform arithmetic on.
   /// </summary>
+  /// <typeparam name="T">The floating-point type used for the interval bounds.</typeparam>
   public struct Interval<T>
     : IAdditionOperators<Interval<T>, Interval<T>, Interval<T>>,
       ISubtractionOperators<Interval<T>, Interval<T>, Interval<T>>,

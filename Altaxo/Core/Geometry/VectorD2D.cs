@@ -186,6 +186,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Adds two vectors component-wise.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The component-wise sum.</returns>
     public static VectorD2D operator +(VectorD2D a, VectorD2D b)
     {
       return new VectorD2D(a.X + b.X, a.Y + b.Y);
@@ -194,6 +197,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Subtracts two vectors component-wise.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The component-wise difference.</returns>
     public static VectorD2D operator -(VectorD2D a, VectorD2D b)
     {
       return new VectorD2D(a.X - b.X, a.Y - b.Y);
@@ -202,6 +208,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Multiplies a vector by a scalar.
     /// </summary>
+    /// <param name="a">The vector.</param>
+    /// <param name="b">The scalar factor.</param>
+    /// <returns>The scaled vector.</returns>
     public static VectorD2D operator *(VectorD2D a, double b)
     {
       return new VectorD2D(a.X * b, a.Y * b);
@@ -210,6 +219,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Multiplies a scalar by a vector.
     /// </summary>
+    /// <param name="b">The scalar factor.</param>
+    /// <param name="a">The vector.</param>
+    /// <returns>The scaled vector.</returns>
     public static VectorD2D operator *(double b, VectorD2D a)
     {
       return new VectorD2D(a.X * b, a.Y * b);
@@ -218,6 +230,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Divides a vector by a scalar.
     /// </summary>
+    /// <param name="a">The vector.</param>
+    /// <param name="b">The scalar divisor.</param>
+    /// <returns>The scaled vector.</returns>
     public static VectorD2D operator /(VectorD2D a, double b)
     {
       return new VectorD2D(a.X / b, a.Y / b);
@@ -226,6 +241,8 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Negates a vector.
     /// </summary>
+    /// <param name="b">The vector to negate.</param>
+    /// <returns>The negated vector.</returns>
     public static VectorD2D operator -(VectorD2D b)
     {
       return new VectorD2D(-b.X, -b.Y);
@@ -234,6 +251,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Checks if two vectors are equal.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns><see langword="true"/> if the vectors are equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator ==(VectorD2D a, VectorD2D b)
     {
       return a.X == b.X && a.Y == b.Y;
@@ -242,6 +262,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Checks if two vectors are not equal.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns><see langword="true"/> if the vectors are not equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator !=(VectorD2D a, VectorD2D b)
     {
       return !(a.X == b.X && a.Y == b.Y);
@@ -251,6 +274,7 @@ namespace Altaxo.Geometry
     /// Converts a <see cref="PointD2D"/> to a <see cref="VectorD2D"/>.
     /// </summary>
     /// <param name="v">The point to convert.</param>
+    /// <returns>The converted vector.</returns>
     public static explicit operator VectorD2D(PointD2D v)
     {
       return new VectorD2D(v.X, v.Y);
@@ -263,6 +287,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Multiplies two vectors elementwise.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The component-wise product.</returns>
     public static VectorD2D MultiplicationElementwise(VectorD2D a, VectorD2D b)
     {
       return new VectorD2D(a.X * b.X, a.Y * b.Y);
@@ -271,6 +298,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Calculates the dot product of two vectors.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The dot product.</returns>
     public static double DotProduct(VectorD2D a, VectorD2D b)
     {
       return a.X * b.X + a.Y * b.Y;
@@ -279,6 +309,8 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Creates a normalized version of the given vector.
     /// </summary>
+    /// <param name="pt">The vector to normalize.</param>
+    /// <returns>The normalized vector.</returns>
     public static VectorD2D CreateNormalized(VectorD2D pt)
     {
       var ilen = 1 / pt.Length;
@@ -288,6 +320,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Creates a normalized vector from the given x and y components.
     /// </summary>
+    /// <param name="x">The x component.</param>
+    /// <param name="y">The y component.</param>
+    /// <returns>The normalized vector.</returns>
     public static VectorD2D CreateNormalized(double x, double y)
     {
       var k = x * x + y * y;
@@ -309,6 +344,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Creates a vector that is the sum of two vectors.
     /// </summary>
+    /// <param name="pt1">The first vector.</param>
+    /// <param name="pt2">The second vector.</param>
+    /// <returns>The vector sum.</returns>
     public static VectorD2D CreateSum(VectorD2D pt1, VectorD2D pt2)
     {
       return new VectorD2D(pt1.X + pt2.X, pt1.Y + pt2.Y);
@@ -317,6 +355,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Creates a scaled version of the given vector.
     /// </summary>
+    /// <param name="pt">The vector to scale.</param>
+    /// <param name="scale">The scaling factor.</param>
+    /// <returns>The scaled vector.</returns>
     public static VectorD2D CreateScaled(VectorD2D pt, double scale)
     {
       return new VectorD2D(pt.X * scale, pt.Y * scale);
@@ -325,6 +366,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Calculates the angle between two vectors in radians.
     /// </summary>
+    /// <param name="vector1">The first vector.</param>
+    /// <param name="vector2">The second vector.</param>
+    /// <returns>The angle between the two vectors in radians.</returns>
     public static double AngleBetweenInRadians(VectorD2D vector1, VectorD2D vector2)
     {
       vector1 = vector1.Normalized;

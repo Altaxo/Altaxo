@@ -220,6 +220,7 @@ namespace Altaxo.Graph.Scales
       base.Dispose(isDisposing);
     }
 
+    /// <inheritdoc/>
     object ICloneable.Clone()
     {
       return new ScaleCollection(this);
@@ -358,6 +359,7 @@ namespace Altaxo.Graph.Scales
         yield return _scales[i];
     }
 
+    /// <inheritdoc/>
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
       for (int i = 0; i < _scales.Length; ++i)

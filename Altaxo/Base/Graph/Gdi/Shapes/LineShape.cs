@@ -176,6 +176,9 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="LineShape"/> class.
     /// </summary>
+    /// <param name="posX">The x-coordinate of the start position.</param>
+    /// <param name="posY">The y-coordinate of the start position.</param>
+    /// <param name="context">The property context.</param>
     public LineShape(double posX, double posY, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
       : this(new PointD2D(posX, posY), context)
     {
@@ -184,6 +187,9 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="LineShape"/> class.
     /// </summary>
+    /// <param name="startPosition">The start position.</param>
+    /// <param name="endPosition">The end position.</param>
+    /// <param name="context">The property context.</param>
     public LineShape(PointD2D startPosition, PointD2D endPosition, Altaxo.Main.Properties.IReadOnlyPropertyBag? context)
       :
       this(startPosition, context)
@@ -195,6 +201,10 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="LineShape"/> class.
     /// </summary>
+    /// <param name="startX">The x-coordinate of the start position.</param>
+    /// <param name="startY">The y-coordinate of the start position.</param>
+    /// <param name="endPosition">The end position.</param>
+    /// <param name="context">The property context.</param>
     public LineShape(double startX, double startY, PointD2D endPosition, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
       :
       this(new PointD2D(startX, startY), endPosition, context)
@@ -204,6 +214,11 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="LineShape"/> class.
     /// </summary>
+    /// <param name="startX">The x-coordinate of the start position.</param>
+    /// <param name="startY">The y-coordinate of the start position.</param>
+    /// <param name="endX">The x-coordinate of the end position.</param>
+    /// <param name="endY">The y-coordinate of the end position.</param>
+    /// <param name="context">The property context.</param>
     public LineShape(double startX, double startY, double endX, double endY, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
       :
       this(new PointD2D(startX, startY), new PointD2D(endX, endY), context)
@@ -213,6 +228,10 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="LineShape"/> class.
     /// </summary>
+    /// <param name="startPosition">The start position.</param>
+    /// <param name="endPosition">The end position.</param>
+    /// <param name="lineWidth">The line width.</param>
+    /// <param name="lineColor">The line color.</param>
     public LineShape(PointD2D startPosition, PointD2D endPosition, double lineWidth, NamedColor lineColor)
       :
       this(startPosition, null)
@@ -225,6 +244,12 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="LineShape"/> class.
     /// </summary>
+    /// <param name="startX">The x-coordinate of the start position.</param>
+    /// <param name="startY">The y-coordinate of the start position.</param>
+    /// <param name="endX">The x-coordinate of the end position.</param>
+    /// <param name="endY">The y-coordinate of the end position.</param>
+    /// <param name="lineWidth">The line width.</param>
+    /// <param name="lineColor">The line color.</param>
     public LineShape(double startX, double startY, double endX, double endY, double lineWidth, NamedColor lineColor)
       :
       this(new PointD2D(startX, startY), new PointD2D(endX, endY), null)

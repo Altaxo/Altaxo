@@ -472,6 +472,9 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     }
   }
 
+  /// <summary>
+  /// Color circle model that allows freely positioned hue values.
+  /// </summary>
   internal class ColorCircleModelFreeColors : ColorCircleModelHelperBase // , IColorCircleModel
   {
     private int _numberOfHueValues = 2;

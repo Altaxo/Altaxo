@@ -188,6 +188,7 @@ namespace Altaxo.Calc.Regression
     /// <param name="numberOfData">The number of data points (may be smaller than the array sizes of the data arrays).</param>
     /// <param name="numberOfParameter">The number of parameters to fit == size of the function base.</param>
     /// <param name="threshold">A treshold value (usually 1E-5) used to chop the unimportant singular values away.</param>
+    /// <returns>The linear fit result calculated by singular value decomposition.</returns>
     public LinearFitBySvd Calculate(
         IROMatrix<double> xbase, // NumberOfData, NumberOfParameters
         IReadOnlyList<double> yarr,

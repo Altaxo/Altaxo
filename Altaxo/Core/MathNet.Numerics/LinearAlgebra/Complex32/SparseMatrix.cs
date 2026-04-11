@@ -61,6 +61,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// Intended for advanced scenarios where you're working directly with
     /// storage for performance or interop reasons.
     /// </summary>
+    /// <param name="storage">The storage backing this matrix.</param>
     public SparseMatrix(SparseCompressedRowMatrixStorage<Complex32> storage)
         : base(storage)
     {
@@ -72,6 +73,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// All cells of the matrix will be initialized to zero.
     /// </summary>
     /// <exception cref="ArgumentException">If the order is less than one.</exception>
+    /// <param name="order">The number of rows and columns.</param>
     public SparseMatrix(int order)
         : this(order, order)
     {
@@ -82,6 +84,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// All cells of the matrix will be initialized to zero.
     /// </summary>
     /// <exception cref="ArgumentException">If the row or column count is less than one.</exception>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
     public SparseMatrix(int rows, int columns)
         : this(new SparseCompressedRowMatrixStorage<Complex32>(rows, columns))
     {
@@ -92,6 +96,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// This new matrix will be independent from the other matrix.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="matrix">The matrix to copy.</param>
+    /// <returns>The created sparse matrix.</returns>
     public static SparseMatrix OfMatrix(Matrix<Complex32> matrix)
     {
       return new SparseMatrix(SparseCompressedRowMatrixStorage<Complex32>.OfMatrix(matrix.Storage));
@@ -102,6 +108,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// This new matrix will be independent from the provided array.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="array">The array to copy.</param>
+    /// <returns>The created sparse matrix.</returns>
     public static SparseMatrix OfArray(Complex32[,] array)
     {
       return new SparseMatrix(SparseCompressedRowMatrixStorage<Complex32>.OfArray(array));
@@ -113,6 +121,10 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// This new matrix will be independent from the enumerable.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="enumerable">The indexed values to copy.</param>
+    /// <returns>The created sparse matrix.</returns>
     public static SparseMatrix OfIndexed(int rows, int columns, IEnumerable<Tuple<int, int, Complex32>> enumerable)
     {
       return new SparseMatrix(SparseCompressedRowMatrixStorage<Complex32>.OfIndexedEnumerable(rows, columns, enumerable));
@@ -124,6 +136,10 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// This new matrix will be independent from the enumerable.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="enumerable">The indexed values to copy.</param>
+    /// <returns>The created sparse matrix.</returns>
     public static SparseMatrix OfIndexed(int rows, int columns, IEnumerable<(int, int, Complex32)> enumerable)
     {
       return new SparseMatrix(SparseCompressedRowMatrixStorage<Complex32>.OfIndexedEnumerable(rows, columns, enumerable));
@@ -136,6 +152,10 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// A new memory block will be allocated for storing the vector.
     /// </summary>
     /// <seealso href="http://en.wikipedia.org/wiki/Row-major_order"/>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="rowMajor">The row-major values to copy.</param>
+    /// <returns>The created sparse matrix.</returns>
     public static SparseMatrix OfRowMajor(int rows, int columns, IEnumerable<Complex32> rowMajor)
     {
       return new SparseMatrix(SparseCompressedRowMatrixStorage<Complex32>.OfRowMajorEnumerable(rows, columns, rowMajor));
@@ -148,6 +168,10 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
     /// <seealso href="http://en.wikipedia.org/wiki/Row-major_order"/>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="columnMajor">The column-major values to copy.</param>
+    /// <returns>The created sparse matrix.</returns>
     public static SparseMatrix OfColumnMajor(int rows, int columns, IList<Complex32> columnMajor)
     {
       return new SparseMatrix(SparseCompressedRowMatrixStorage<Complex32>.OfColumnMajorList(rows, columns, columnMajor));
@@ -159,6 +183,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// This new matrix will be independent from the enumerables.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="data">The column sequences to copy.</param>
+    /// <returns>The created sparse matrix.</returns>
     public static SparseMatrix OfColumns(IEnumerable<IEnumerable<Complex32>> data)
     {
       return OfColumnArrays(data.Select(v => v.ToArray()).ToArray());
@@ -170,6 +196,10 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// This new matrix will be independent from the enumerables.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="data">The column sequences to copy.</param>
+    /// <returns>The created sparse matrix.</returns>
     public static SparseMatrix OfColumns(int rows, int columns, IEnumerable<IEnumerable<Complex32>> data)
     {
       return new SparseMatrix(SparseCompressedRowMatrixStorage<Complex32>.OfColumnEnumerables(rows, columns, data));
@@ -180,6 +210,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// This new matrix will be independent from the arrays.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="columns">The column arrays to copy.</param>
+    /// <returns>The created sparse matrix.</returns>
     public static SparseMatrix OfColumnArrays(params Complex32[][] columns)
     {
       return new SparseMatrix(SparseCompressedRowMatrixStorage<Complex32>.OfColumnArrays(columns));
@@ -190,6 +222,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// This new matrix will be independent from the arrays.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="columns">The column arrays to copy.</param>
+    /// <returns>The created sparse matrix.</returns>
     public static SparseMatrix OfColumnArrays(IEnumerable<Complex32[]> columns)
     {
       return new SparseMatrix(SparseCompressedRowMatrixStorage<Complex32>.OfColumnArrays((columns as Complex32[][]) ?? columns.ToArray()));
@@ -200,6 +234,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// This new matrix will be independent from the vectors.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="columns">The column vectors to copy.</param>
+    /// <returns>The created sparse matrix.</returns>
     public static SparseMatrix OfColumnVectors(params Vector<Complex32>[] columns)
     {
       var storage = new VectorStorage<Complex32>[columns.Length];
@@ -215,6 +251,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// This new matrix will be independent from the vectors.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="columns">The column vectors to copy.</param>
+    /// <returns>The created sparse matrix.</returns>
     public static SparseMatrix OfColumnVectors(IEnumerable<Vector<Complex32>> columns)
     {
       return new SparseMatrix(SparseCompressedRowMatrixStorage<Complex32>.OfColumnVectors(columns.Select(c => c.Storage).ToArray()));
@@ -226,6 +264,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// This new matrix will be independent from the enumerables.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="data">The row sequences to copy.</param>
+    /// <returns>The created sparse matrix.</returns>
     public static SparseMatrix OfRows(IEnumerable<IEnumerable<Complex32>> data)
     {
       return OfRowArrays(data.Select(v => v.ToArray()).ToArray());
@@ -237,6 +277,10 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// This new matrix will be independent from the enumerables.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="data">The row sequences to copy.</param>
+    /// <returns>The created sparse matrix.</returns>
     public static SparseMatrix OfRows(int rows, int columns, IEnumerable<IEnumerable<Complex32>> data)
     {
       return new SparseMatrix(SparseCompressedRowMatrixStorage<Complex32>.OfRowEnumerables(rows, columns, data));
@@ -247,6 +291,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// This new matrix will be independent from the arrays.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The row arrays to copy.</param>
+    /// <returns>The created sparse matrix.</returns>
     public static SparseMatrix OfRowArrays(params Complex32[][] rows)
     {
       return new SparseMatrix(SparseCompressedRowMatrixStorage<Complex32>.OfRowArrays(rows));
@@ -257,6 +303,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// This new matrix will be independent from the arrays.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The row arrays to copy.</param>
+    /// <returns>The created sparse matrix.</returns>
     public static SparseMatrix OfRowArrays(IEnumerable<Complex32[]> rows)
     {
       return new SparseMatrix(SparseCompressedRowMatrixStorage<Complex32>.OfRowArrays((rows as Complex32[][]) ?? rows.ToArray()));
@@ -267,6 +315,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// This new matrix will be independent from the vectors.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The row vectors to copy.</param>
+    /// <returns>The created sparse matrix.</returns>
     public static SparseMatrix OfRowVectors(params Vector<Complex32>[] rows)
     {
       var storage = new VectorStorage<Complex32>[rows.Length];
@@ -282,6 +332,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// This new matrix will be independent from the vectors.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The row vectors to copy.</param>
+    /// <returns>The created sparse matrix.</returns>
     public static SparseMatrix OfRowVectors(IEnumerable<Vector<Complex32>> rows)
     {
       return new SparseMatrix(SparseCompressedRowMatrixStorage<Complex32>.OfRowVectors(rows.Select(r => r.Storage).ToArray()));
@@ -292,6 +344,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// This new matrix will be independent from the vector.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="diagonal">The diagonal vector to copy.</param>
+    /// <returns>The created sparse matrix.</returns>
     public static SparseMatrix OfDiagonalVector(Vector<Complex32> diagonal)
     {
       var m = new SparseMatrix(diagonal.Count, diagonal.Count);
@@ -304,6 +358,10 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// This new matrix will be independent from the vector.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="diagonal">The diagonal vector to copy.</param>
+    /// <returns>The created sparse matrix.</returns>
     public static SparseMatrix OfDiagonalVector(int rows, int columns, Vector<Complex32> diagonal)
     {
       var m = new SparseMatrix(rows, columns);
@@ -316,6 +374,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// This new matrix will be independent from the array.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="diagonal">The diagonal values to copy.</param>
+    /// <returns>The created sparse matrix.</returns>
     public static SparseMatrix OfDiagonalArray(Complex32[] diagonal)
     {
       var m = new SparseMatrix(diagonal.Length, diagonal.Length);
@@ -328,6 +388,10 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// This new matrix will be independent from the array.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="diagonal">The diagonal values to copy.</param>
+    /// <returns>The created sparse matrix.</returns>
     public static SparseMatrix OfDiagonalArray(int rows, int columns, Complex32[] diagonal)
     {
       var m = new SparseMatrix(rows, columns);
@@ -338,6 +402,10 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// <summary>
     /// Create a new sparse matrix and initialize each value to the same provided value.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="value">The value assigned to each element.</param>
+    /// <returns>The created sparse matrix.</returns>
     public static SparseMatrix Create(int rows, int columns, Complex32 value)
     {
       if (value == Complex32.Zero) return new SparseMatrix(rows, columns);
@@ -347,6 +415,10 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// <summary>
     /// Create a new sparse matrix and initialize each value using the provided init function.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="init">The initialization function for each element.</param>
+    /// <returns>The created sparse matrix.</returns>
     public static SparseMatrix Create(int rows, int columns, Func<int, int, Complex32> init)
     {
       return new SparseMatrix(SparseCompressedRowMatrixStorage<Complex32>.OfInit(rows, columns, init));
@@ -355,6 +427,10 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// <summary>
     /// Create a new diagonal sparse matrix and initialize each diagonal value to the same provided value.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="value">The value assigned to each diagonal element.</param>
+    /// <returns>The created sparse matrix.</returns>
     public static SparseMatrix CreateDiagonal(int rows, int columns, Complex32 value)
     {
       if (value == Complex32.Zero) return new SparseMatrix(rows, columns);
@@ -364,6 +440,10 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// <summary>
     /// Create a new diagonal sparse matrix and initialize each diagonal value using the provided init function.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="init">The initialization function for each diagonal element.</param>
+    /// <returns>The created sparse matrix.</returns>
     public static SparseMatrix CreateDiagonal(int rows, int columns, Func<int, Complex32> init)
     {
       return new SparseMatrix(SparseCompressedRowMatrixStorage<Complex32>.OfDiagonalInit(rows, columns, init));
@@ -372,6 +452,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// <summary>
     /// Create a new square sparse identity matrix where each diagonal value is set to One.
     /// </summary>
+    /// <param name="order">The number of rows and columns.</param>
+    /// <returns>The created identity matrix.</returns>
     public static SparseMatrix CreateIdentity(int order)
     {
       return new SparseMatrix(SparseCompressedRowMatrixStorage<Complex32>.OfDiagonalInit(order, order, _ => One));
@@ -1277,6 +1359,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// <summary>
     /// Evaluates whether this matrix is symmetric.
     /// </summary>
+    /// <returns><c>true</c> if this matrix is symmetric; otherwise, <c>false</c>.</returns>
     public override bool IsSymmetric()
     {
       if (RowCount != ColumnCount)
@@ -1314,6 +1397,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// <summary>
     /// Evaluates whether this matrix is Hermitian (conjugate symmetric).
     /// </summary>
+    /// <returns><c>true</c> if this matrix is Hermitian; otherwise, <c>false</c>.</returns>
     public override bool IsHermitian()
     {
       if (RowCount != ColumnCount)

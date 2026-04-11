@@ -50,11 +50,12 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32.Factorization
   internal sealed class UserSvd : Svd
   {
     /// <summary>
-    /// Initializes a new instance of the <see cref="UserSvd"/> class. This object will compute the
-    /// the singular value decomposition when the constructor is called and cache it's decomposition.
+    /// Initializes a new instance of the <see cref="UserSvd"/> class. This object computes the
+    /// singular value decomposition when the constructor is called and caches its decomposition.
     /// </summary>
     /// <param name="matrix">The matrix to factor.</param>
     /// <param name="computeVectors">Compute the singular U and VT vectors or not.</param>
+    /// <returns>The computed singular value decomposition.</returns>
     /// <exception cref="ArgumentNullException">If <paramref name="matrix"/> is <c>null</c>.</exception>
     /// <exception cref="NonConvergenceException"></exception>
     public static UserSvd Create(Matrix<Complex32> matrix, bool computeVectors)

@@ -36,6 +36,7 @@ namespace Altaxo.Data
     /// <summary>
     /// Returns the held object. Null can be returned if the object is no longer available, for example because it was disposed.
     /// </summary>
+    /// <returns>The held numeric column, or <see langword="null"/> if it is no longer available.</returns>
     new INumericColumn? Document();
   }
 
@@ -128,11 +129,13 @@ namespace Altaxo.Data
       return _column;
     }
 
+    /// <inheritdoc />
     IReadableColumn? IReadableColumnProxy.Document()
     {
       return _column;
     }
 
+    /// <inheritdoc />
     string IReadableColumnProxy.GetName(int level)
     {
       return _column?.FullName ?? string.Empty;
@@ -272,6 +275,7 @@ namespace Altaxo.Data
     /// <summary>
     /// For deserialization purposes only.
     /// </summary>
+    /// <param name="info">The deserialization information.</param>
     protected NumericColumnProxy(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
       : base(info)
     {
@@ -300,16 +304,19 @@ namespace Altaxo.Data
     /// <summary>
     /// Returns the held object. Null can be returned if the object is no longer available, for example because it was disposed.
     /// </summary>
+    /// <returns>The held numeric column, or <see langword="null"/> if it is no longer available.</returns>
     public INumericColumn? Document()
     {
       return (INumericColumn?)base.DocumentObject();
     }
 
+    /// <inheritdoc />
     IReadableColumn? IReadableColumnProxy.Document()
     {
       return (INumericColumn?)base.DocumentObject();
     }
 
+    /// <inheritdoc />
     string IReadableColumnProxy.GetName(int level)
     {
       return Document()?.FullName ?? string.Empty;

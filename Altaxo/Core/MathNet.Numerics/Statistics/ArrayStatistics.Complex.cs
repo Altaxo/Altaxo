@@ -38,6 +38,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or any entry is NaN.
     /// </summary>
     /// <param name="data">Sample array, no sorting is assumed.</param>
+    /// <returns>The value with minimum magnitude and, as a tie-breaker, minimum phase. Returns a complex value with NaN parts when undefined.</returns>
     public static Complex MinimumMagnitudePhase(Complex[] data)
     {
       if (data.Length == 0)
@@ -69,6 +70,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or any entry is NaN.
     /// </summary>
     /// <param name="data">Sample array, no sorting is assumed.</param>
+    /// <returns>The value with minimum magnitude and, as a tie-breaker, minimum phase. Returns a complex value with NaN parts when undefined.</returns>
     public static Complex32 MinimumMagnitudePhase(Complex32[] data)
     {
       if (data.Length == 0)
@@ -100,6 +102,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or any entry is NaN.
     /// </summary>
     /// <param name="data">Sample array, no sorting is assumed.</param>
+    /// <returns>The value with maximum magnitude and, as a tie-breaker, maximum phase. Returns a complex value with NaN parts when undefined.</returns>
     public static Complex MaximumMagnitudePhase(Complex[] data)
     {
       if (data.Length == 0)
@@ -131,6 +134,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or any entry is NaN.
     /// </summary>
     /// <param name="data">Sample array, no sorting is assumed.</param>
+    /// <returns>The value with maximum magnitude and, as a tie-breaker, maximum phase. Returns a complex value with NaN parts when undefined.</returns>
     public static Complex32 MaximumMagnitudePhase(Complex32[] data)
     {
       if (data.Length == 0)

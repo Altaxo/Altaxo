@@ -267,8 +267,11 @@ namespace Altaxo.Graph.Scales.Ticks
       }
 
       /// <summary>
-      /// Performs the a dd operation.
+      /// Adds the specified span to the specified date-time value.
       /// </summary>
+      /// <param name="x">The date-time value.</param>
+      /// <param name="span">The span to add.</param>
+      /// <returns>The resulting date-time value.</returns>
       public static DateTime Add(DateTime x, TimeSpanEx span)
       {
         switch (span._unit)
@@ -295,8 +298,11 @@ namespace Altaxo.Graph.Scales.Ticks
       }
 
       /// <summary>
-      /// Performs the s ub tr ac t operation.
+      /// Subtracts the specified span from the specified date-time value.
       /// </summary>
+      /// <param name="x">The date-time value.</param>
+      /// <param name="span">The span to subtract.</param>
+      /// <returns>The resulting date-time value.</returns>
       public static DateTime Subtract(DateTime x, TimeSpanEx span)
       {
         switch (span._unit)
@@ -323,8 +329,11 @@ namespace Altaxo.Graph.Scales.Ticks
       }
 
       /// <summary>
-      /// Performs the d iv id e operation.
+      /// Divides one time span expression by another.
       /// </summary>
+      /// <param name="a">The dividend.</param>
+      /// <param name="b">The divisor.</param>
+      /// <returns>The quotient of the two time span expressions.</returns>
       public static double Divide(TimeSpanEx a, TimeSpanEx b)
       {
         switch (a._unit)
@@ -381,13 +390,16 @@ namespace Altaxo.Graph.Scales.Ticks
       }
 
       /// <summary>
-      /// Performs the e qu al s operation.
+      /// Determines whether this instance is equal to the specified value.
       /// </summary>
+      /// <param name="other">The value to compare with this instance.</param>
+      /// <returns><see langword="true"/> if the values are equal; otherwise, <see langword="false"/>.</returns>
       public bool Equals(TimeSpanEx other)
       {
         return _unit == other._unit && _span == other._span;
       }
 
+      /// <inheritdoc />
       bool IEquatable<object>.Equals(object? other)
       {
         return (other is TimeSpanEx timeSpanEx) && Equals(timeSpanEx);
@@ -406,16 +418,22 @@ namespace Altaxo.Graph.Scales.Ticks
       }
 
       /// <summary>
-      /// Gets or sets the o pe ra to r.
+      /// Determines whether two values are equal.
       /// </summary>
+      /// <param name="x">The first value to compare.</param>
+      /// <param name="y">The second value to compare.</param>
+      /// <returns><see langword="true"/> if both values are equal; otherwise, <see langword="false"/>.</returns>
       public static bool operator ==(TimeSpanEx x, TimeSpanEx y)
       {
         return x.Equals(y);
       }
 
       /// <summary>
-      /// Provides access to this member.
+      /// Determines whether two values are not equal.
       /// </summary>
+      /// <param name="x">The first value to compare.</param>
+      /// <param name="y">The second value to compare.</param>
+      /// <returns><see langword="true"/> if the values are not equal; otherwise, <see langword="false"/>.</returns>
       public static bool operator !=(TimeSpanEx x, TimeSpanEx y)
       {
         return !(x.Equals(y));
@@ -654,6 +672,7 @@ namespace Altaxo.Graph.Scales.Ticks
     /// <summary>
     /// Initializes a new instance.
     /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public DateTimeTickSpacing(DateTimeTickSpacing from)
       : base(from) // everything is done here, since CopyFrom is virtual!
     {
@@ -1208,6 +1227,7 @@ namespace Altaxo.Graph.Scales.Ticks
     /// <param name="isEndExtendable">True if the scale end can be extended.</param>
     /// <param name="propOrg">Returns the proposed value of the scale origin.</param>
     /// <param name="propEnd">Returns the proposed value of the scale end.</param>
+    /// <returns><see langword="true"/> if the boundaries were modified; otherwise, <see langword="false"/>.</returns>
     public bool GetOrgEndWithGraceAndOneLever(DateTime scaleOrg, DateTime scaleEnd, bool isOrgExtendable, bool isEndExtendable, out DateTime propOrg, out DateTime propEnd)
     {
       bool modified = false;

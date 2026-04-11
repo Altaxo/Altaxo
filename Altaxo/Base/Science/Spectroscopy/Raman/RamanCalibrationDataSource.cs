@@ -527,6 +527,12 @@ namespace Altaxo.Science.Spectroscopy.Raman
     /// <summary>
     /// Creates a neon calibration from the specified spectrum.
     /// </summary>
+    /// <param name="dstTable">The destination table that receives calibration-related output.</param>
+    /// <param name="neonOptions">The neon calibration options.</param>
+    /// <param name="x_column">The x-column containing the spectral positions.</param>
+    /// <param name="y_column">The y-column containing the spectral intensities.</param>
+    /// <param name="cancellationToken">The cancellation token for the calibration operation.</param>
+    /// <returns>The created neon calibration, or <c>null</c> if calibration could not be produced.</returns>
     public static NeonCalibration? CalibrateWithNeonSpectrum(
       DataTable dstTable,
       NeonCalibrationOptions neonOptions,
@@ -633,6 +639,12 @@ namespace Altaxo.Science.Spectroscopy.Raman
     /// <summary>
     /// Creates a silicon calibration from the specified spectrum.
     /// </summary>
+    /// <param name="dstTable">The destination table that receives calibration-related output.</param>
+    /// <param name="siliconOptions">The silicon calibration options.</param>
+    /// <param name="x_column">The x-column containing the spectral positions.</param>
+    /// <param name="y_column">The y-column containing the spectral intensities.</param>
+    /// <param name="cancellationToken">The cancellation token for the calibration operation.</param>
+    /// <returns>The created silicon calibration, or <c>null</c> if calibration could not be produced.</returns>
     public static SiliconCalibration? CalibrateWithSiliconSpectrum(DataTable dstTable, SiliconCalibrationOptions siliconOptions, IReadableColumn x_column, IReadableColumn y_column, CancellationToken cancellationToken)
     {
       var len = Math.Min(x_column.Count ?? 0, y_column.Count ?? 0);

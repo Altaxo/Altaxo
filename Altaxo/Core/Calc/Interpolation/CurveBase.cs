@@ -453,11 +453,19 @@ namespace Altaxo.Calc.Interpolation
     /// This function has to provide the points that are necessary between (x1,y1) and (x2,y2)
     /// to get a smooth curve.
     /// </summary>
+    /// <param name="x1">The x-coordinate of the start point.</param>
+    /// <param name="y1">The y-coordinate of the start point.</param>
+    /// <param name="x2">The x-coordinate of the end point.</param>
+    /// <param name="y2">The y-coordinate of the end point.</param>
+    /// <returns>The number of intermediate points required for a smooth curve segment.</returns>
     public delegate int ResolutionFunction(double x1, double y1, double x2, double y2);
 
     /// <summary>
     /// This function serves as a sink for the calculated points of a curve.
     /// </summary>
+    /// <param name="x">The x-coordinate of the calculated point.</param>
+    /// <param name="y">The y-coordinate of the calculated point.</param>
+    /// <param name="bLastPoint">Indicates whether this is the last point in the sequence.</param>
     public delegate void PointSink(double x, double y, bool bLastPoint);
 
     /// <summary>
@@ -469,8 +477,8 @@ namespace Altaxo.Calc.Interpolation
     /// </summary>
     /// <param name="xlo">Lower bound of the drawing range.</param>
     /// <param name="xhi">Upper bound of the drawing range.</param>
-    /// <param name="getresolution">A delegate that must provide the points necessary to draw a smooth curve between to points.</param>
-    /// <param name="setpoint">A delegate which is called with each calculated point. Can be used to draw the curve. </param>
+    /// <param name="getresolution">A delegate that must provide the points necessary to draw a smooth curve between two points.</param>
+    /// <param name="setpoint">A delegate which is called with each calculated point. Can be used to draw the curve.</param>
     public void GetCurvePoints(double xlo, double xhi, ResolutionFunction getresolution, PointSink setpoint)
     {
       // nothing to draw if zero or one element

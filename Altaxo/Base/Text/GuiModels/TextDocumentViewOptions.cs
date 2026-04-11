@@ -218,6 +218,7 @@ namespace Altaxo.Text.GuiModels
       }
     }
 
+    /// <inheritdoc />
     IProjectItem IProjectItemPresentationModel.Document => Document;
 
     #region Property keys

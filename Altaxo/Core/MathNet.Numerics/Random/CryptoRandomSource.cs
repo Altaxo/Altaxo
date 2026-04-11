@@ -85,6 +85,7 @@ namespace Altaxo.Calc.Random
     /// <summary>
     /// Fills the elements of a specified array of bytes with random numbers in full range, including zero and 255 (<see cref="F:System.Byte.MaxValue"/>).
     /// </summary>
+    /// <param name="buffer">The buffer to fill with random bytes.</param>
     protected override void DoSampleBytes(byte[] buffer)
     {
       _crypto.GetBytes(buffer);
@@ -93,6 +94,7 @@ namespace Altaxo.Calc.Random
     /// <summary>
     /// Returns a random double-precision floating point number greater than or equal to 0.0, and less than 1.0.
     /// </summary>
+    /// <returns>A random double-precision floating point number in the interval [0.0, 1.0).</returns>
     protected override double DoSample()
     {
       var bytes = new byte[4];
@@ -103,6 +105,7 @@ namespace Altaxo.Calc.Random
     /// <summary>
     /// Returns a random 32-bit signed integer greater than or equal to zero and less than <see cref="F:System.Int32.MaxValue"/>
     /// </summary>
+    /// <returns>A random 32-bit signed integer in the interval [0, <see cref="F:System.Int32.MaxValue"/>).</returns>
     protected override int DoSampleInteger()
     {
       var bytes = new byte[4];
@@ -129,6 +132,8 @@ namespace Altaxo.Calc.Random
     /// Fills an array with random numbers greater than or equal to 0.0 and less than 1.0.
     /// </summary>
     /// <remarks>Supports being called in parallel from multiple threads.</remarks>
+    /// <param name="values">The array to fill with random samples.</param>
+    /// <returns>Nothing. The provided array is populated with random values.</returns>
     public static void Doubles(double[] values)
     {
       var bytes = new byte[values.Length * 4];
@@ -147,6 +152,8 @@ namespace Altaxo.Calc.Random
     /// <summary>
     /// Returns an array of random numbers greater than or equal to 0.0 and less than 1.0.
     /// </summary>
+    /// <param name="length">The number of random samples to generate.</param>
+    /// <returns>An array of uniformly distributed doubles greater than or equal to 0.0 and less than 1.0.</returns>
     /// <remarks>Supports being called in parallel from multiple threads.</remarks>
     [TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
     public static double[] Doubles(int length)
@@ -160,6 +167,7 @@ namespace Altaxo.Calc.Random
     /// Returns an infinite sequence of random numbers greater than or equal to 0.0 and less than 1.0.
     /// </summary>
     /// <remarks>Supports being called in parallel from multiple threads.</remarks>
+    /// <returns>An infinite sequence of uniformly distributed doubles greater than or equal to 0.0 and less than 1.0.</returns>
     public static IEnumerable<double> DoubleSequence()
     {
       var rnd = RandomNumberGenerator.Create();

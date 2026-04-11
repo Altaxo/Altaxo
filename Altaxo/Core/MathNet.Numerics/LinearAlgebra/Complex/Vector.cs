@@ -44,6 +44,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// <summary>
     /// Initializes a new instance of the Vector class.
     /// </summary>
+    /// <param name="storage">The storage backing this vector.</param>
     protected Vector(VectorStorage<Complex> storage)
         : base(storage)
     {
@@ -52,6 +53,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// <summary>
     /// Set all values whose absolute value is smaller than the threshold to zero.
     /// </summary>
+    /// <param name="threshold">The absolute value threshold below which entries are set to zero.</param>
     public override void CoerceZero(double threshold)
     {
       MapInplace(x => x.Magnitude < threshold ? Complex.Zero : x, Zeros.AllowSkip);

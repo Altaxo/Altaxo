@@ -238,12 +238,14 @@ namespace Altaxo.DataConnection
       }
     }
 
+    /// <inheritdoc />
     object IAltaxoTableDataSource.ProcessOptionsObject
     {
       get => DataQuery;
       set => DataQuery = (OleDbDataQuery)value;
     }
 
+    /// <inheritdoc />
     object IAltaxoTableDataSource.ProcessDataObject
     {
       get => null;

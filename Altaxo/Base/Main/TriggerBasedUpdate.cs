@@ -262,6 +262,8 @@ namespace Altaxo.Main
     /// <summary>
     /// Called by the timer queue if our timer has elapsed.
     /// </summary>
+    /// <param name="timerQueueToken">The token that identifies the timer queue entry.</param>
+    /// <param name="dueTime">The due time at which the timer elapsed.</param>
     protected virtual void EhTimerElapsed(object timerQueueToken, TimeSpan dueTime)
     {
       if (_isDisposed && _timerQueue is { } tq1)
@@ -322,6 +324,7 @@ namespace Altaxo.Main
     /// <summary>
     /// Calculates the due time of the next update operation.
     /// </summary>
+    /// <param name="triggerTimes">The first and last trigger times that are currently pending, if any.</param>
     /// <returns>Due time of the next update operation. </returns>
     protected TimeSpan InternalGetDueTimeNoLock((TimeSpan TimeOfFirstTrigger, TimeSpan TimeOfLastTrigger)? triggerTimes)
     {

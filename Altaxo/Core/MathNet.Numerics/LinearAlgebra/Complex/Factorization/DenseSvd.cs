@@ -58,6 +58,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex.Factorization
     /// <param name="computeVectors">Compute the singular U and VT vectors or not.</param>
     /// <exception cref="ArgumentNullException">If <paramref name="matrix"/> is <c>null</c>.</exception>
     /// <exception cref="ArgumentException">If SVD algorithm failed to converge with matrix <paramref name="matrix"/>.</exception>
+    /// <returns>The singular value decomposition of <paramref name="matrix"/>.</returns>
     public static DenseSvd Create(DenseMatrix matrix, bool computeVectors)
     {
       var nm = Math.Min(matrix.RowCount, matrix.ColumnCount);

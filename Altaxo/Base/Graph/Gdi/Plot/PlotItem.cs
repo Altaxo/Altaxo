@@ -49,6 +49,8 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <summary>
     /// Copies state from another plot item.
     /// </summary>
+    /// <param name="from">The plot item to copy from.</param>
+    /// <param name="withBaseMembers">If set to <see langword="true"/>, base-class members are copied as well.</param>
     protected void CopyFrom(PlotItem from, bool withBaseMembers)
     {
     }
@@ -145,6 +147,7 @@ namespace Altaxo.Graph.Gdi.Plot
       }
     }
 
+    /// <inheritdoc />
     IGPlotItem? INodeWithParentNode<IGPlotItem>.ParentNode
     {
       get
@@ -154,6 +157,7 @@ namespace Altaxo.Graph.Gdi.Plot
     }
 
     private static readonly IList<IGPlotItem> _emptyChildList = new List<IGPlotItem>().AsReadOnly();
+    /// <inheritdoc />
     IList<IGPlotItem> ITreeListNode<IGPlotItem>.ChildNodes
     {
       get
@@ -162,6 +166,7 @@ namespace Altaxo.Graph.Gdi.Plot
       }
     }
 
+    /// <inheritdoc />
     IEnumerable<IGPlotItem>? ITreeNode<IGPlotItem>.ChildNodes
     {
       get

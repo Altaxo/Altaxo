@@ -103,6 +103,7 @@ namespace Altaxo.Calc.Distributions
     /// </summary>
     /// <param name="lower">Lower bound. Range: lower ≤ upper.</param>
     /// <param name="upper">Upper bound. Range: lower ≤ upper.</param>
+    /// <returns><c>true</c> if the parameters define a valid continuous uniform distribution; otherwise, <c>false</c>.</returns>
     public static bool IsValidParameterSet(double lower, double upper)
     {
       return lower <= upper;
@@ -232,6 +233,7 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Fills an array with samples generated from the distribution.
     /// </summary>
+    /// <param name="values">The array to fill with samples.</param>
     public void Samples(double[] values)
     {
       SamplesUnchecked(_random, values, _lower, _upper);
@@ -260,6 +262,13 @@ namespace Altaxo.Calc.Distributions
       }
     }
 
+    /// <summary>
+    /// Fills an array with samples from the continuous uniform distribution without validating the parameters.
+    /// </summary>
+    /// <param name="rnd">The random number generator to use.</param>
+    /// <param name="values">The array to fill with samples.</param>
+    /// <param name="lower">The lower bound.</param>
+    /// <param name="upper">The upper bound.</param>
     internal static void SamplesUnchecked(System.Random rnd, double[] values, double lower, double upper)
     {
       rnd.NextDoubles(values);

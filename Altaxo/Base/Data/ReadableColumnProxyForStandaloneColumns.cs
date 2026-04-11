@@ -35,6 +35,11 @@ namespace Altaxo.Data
   {
     private IReadableColumn? _column;
 
+    /// <summary>
+    /// Creates a proxy for a readable column that does not belong to the document hierarchy.
+    /// </summary>
+    /// <param name="column">The readable column to proxy.</param>
+    /// <returns>A proxy for the specified readable column.</returns>
     public static ReadableColumnProxyForStandaloneColumns FromColumn(IReadableColumn? column)
     {
       if (column is IDocumentLeafNode)
@@ -76,36 +81,43 @@ namespace Altaxo.Data
 
     #endregion Serialization
 
+    /// <inheritdoc />
     public IReadableColumn? Document()
     {
       return _column;
     }
 
+    /// <inheritdoc />
     public object Clone()
     {
       return FromColumn(_column);
     }
 
+    /// <inheritdoc />
     public bool IsEmpty
     {
       get { return _column is null; }
     }
 
+    /// <inheritdoc />
     public string GetName(int level)
     {
       return _column?.ToString() ?? string.Empty;
     }
 
+    /// <inheritdoc />
     public object? DocumentObject()
     {
       return _column;
     }
 
+    /// <inheritdoc />
     public AbsoluteDocumentPath DocumentPath()
     {
       return AbsoluteDocumentPath.DocumentPathOfRootNode;
     }
 
+    /// <inheritdoc />
     public bool ReplacePathParts(AbsoluteDocumentPath partToReplace, AbsoluteDocumentPath newPart, IDocumentLeafNode rootNode)
     {
       return false;

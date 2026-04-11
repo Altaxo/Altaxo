@@ -1,4 +1,4 @@
-#define VERIFY_TREESYNCHRONIZATION
+﻿#define VERIFY_TREESYNCHRONIZATION
 
 #region Copyright
 
@@ -243,8 +243,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
     }
 
     /// <summary>
-    /// Handles the s ho wr an ge ch an ge d.
+    /// Updates the displayed plot-item names after the range display option changed.
     /// </summary>
+    /// <param name="value"><c>true</c> to include range information in the names; otherwise, <c>false</c>.</param>
     public void EhShowRangeChanged(bool value)
     {
       _plotItemsRootNode.Nodes.Clear();
@@ -540,8 +541,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
     #region ILineScatterLayerContentsController Members
 
     /// <summary>
-    /// Handles the v ie w d at aa va il ab le be fo re ex pa nd.
+    /// Loads the available data columns before a table node is expanded.
     /// </summary>
+    /// <param name="node">The table node that is about to be expanded.</param>
     public void EhView_DataAvailableBeforeExpand(NGTreeNode node)
     {
       DataTable dt = Current.Project.DataTableCollection[node.Text];
@@ -666,8 +668,10 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
     }
 
     /// <summary>
-    /// Performs the c on te nt sl is tb ox m ov eu pd ow n operation.
+    /// Moves the selected plot-item nodes up or down.
     /// </summary>
+    /// <param name="iDelta">The relative movement, where negative values move up and positive values move down.</param>
+    /// <param name="selNodes">The selected nodes to move.</param>
     public void ContentsListBox_MoveUpDown(int iDelta, NGTreeNode[] selNodes)
     {
       if (NGTreeNode.HaveSameParent(selNodes))
@@ -1028,8 +1032,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
     }
 
     /// <summary>
-    /// Performs the p lo ti te ms c an de le te operation.
+    /// Determines whether plot items can currently be deleted.
     /// </summary>
+    /// <returns><c>true</c>.</returns>
     public bool PlotItems_CanDelete()
     {
       return true;
@@ -1054,8 +1059,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
     }
 
     /// <summary>
-    /// Performs the p lo ti te ms c an co py operation.
+    /// Determines whether plot items can currently be copied.
     /// </summary>
+    /// <returns><c>true</c> if at least one plot item is selected; otherwise, <c>false</c>.</returns>
     public bool PlotItems_CanCopy()
     {
       return PlotItemsSelected.Any();
@@ -1073,8 +1079,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
     }
 
     /// <summary>
-    /// Performs the p lo ti te ms c an cu t operation.
+    /// Determines whether plot items can currently be cut.
     /// </summary>
+    /// <returns><c>true</c> if at least one plot item is selected; otherwise, <c>false</c>.</returns>
     public bool PlotItems_CanCut()
     {
       return PlotItemsSelected.Any();
@@ -1099,8 +1106,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
     }
 
     /// <summary>
-    /// Performs the p lo ti te ms c an pa st e operation.
+    /// Determines whether plot items can currently be pasted.
     /// </summary>
+    /// <returns><c>true</c> if the clipboard contains a plot-item collection; otherwise, <c>false</c>.</returns>
     public bool PlotItems_CanPaste()
     {
       object o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml");

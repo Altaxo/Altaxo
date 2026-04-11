@@ -87,6 +87,11 @@ namespace Altaxo.Data
 
     #endregion Serialization
 
+    /// <summary>
+    /// Creates a proxy for a transformed readable column whose underlying column belongs to the document hierarchy.
+    /// </summary>
+    /// <param name="column">The transformed readable column to proxy.</param>
+    /// <returns>A proxy for the specified transformed readable column.</returns>
     public static TransformedReadableColumnProxy FromColumn(ITransformedReadableColumn column)
     {
       if (column is null)
@@ -98,6 +103,10 @@ namespace Altaxo.Data
       return new TransformedReadableColumnProxy(column);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TransformedReadableColumnProxy"/> class.
+    /// </summary>
+    /// <param name="column">The transformed readable column to proxy.</param>
     protected TransformedReadableColumnProxy(ITransformedReadableColumn column)
       : base((IDocumentLeafNode)column.UnderlyingReadableColumn)
     {
@@ -107,6 +116,7 @@ namespace Altaxo.Data
     /// <summary>
     /// For deserialization purposes only.
     /// </summary>
+    /// <param name="info">The deserialization information.</param>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected TransformedReadableColumnProxy(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
       : base(info)
@@ -124,11 +134,13 @@ namespace Altaxo.Data
       _transformation = from._transformation; // transformation is immutable
     }
 
+    /// <inheritdoc />
     protected override bool IsValidDocument(object obj)
     {
       return (obj is IReadableColumn) || obj is null;
     }
 
+    /// <inheritdoc />
     public IReadableColumn? Document()
     {
       var originalColumn = (IReadableColumn?)base.DocumentObject();
@@ -138,11 +150,13 @@ namespace Altaxo.Data
         return new TransformedReadableColumn(originalColumn, _transformation);
     }
 
+    /// <inheritdoc />
     public override object Clone()
     {
       return new TransformedReadableColumnProxy(this);
     }
 
+    /// <inheritdoc />
     public string GetName(int level)
     {
       string trans = _transformation.RepresentationAsOperator ?? _transformation.RepresentationAsFunction;

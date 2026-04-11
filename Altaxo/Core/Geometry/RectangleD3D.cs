@@ -666,6 +666,7 @@ namespace Altaxo.Geometry
     /// Gets the triangle indices of all faces using the vertices returned by <see cref="Vertices"/>.
     /// The order is front, back, top, bottom, left, right.
     /// </summary>
+    /// <returns>The triangle indices for all faces.</returns>
     public static IEnumerable<Tuple<int, int, int>> GetTriangleIndices()
     {
       // Front

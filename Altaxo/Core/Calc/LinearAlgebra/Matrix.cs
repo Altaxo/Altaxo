@@ -26,6 +26,9 @@ using System;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
+  /// <summary>
+  /// Represents a matrix that can switch between row-oriented and column-oriented storage views.
+  /// </summary>
   internal class TransposableMatrix : IExtensibleMatrix<double>
   {
     private static readonly double[][] _emptyArray = new double[0][];
@@ -34,6 +37,9 @@ namespace Altaxo.Calc.LinearAlgebra
     private int m_VectorLen;
     private bool m_bVerticalVectors = false; // normally the matrix consists of several rows containing column vectors
 
+    /// <summary>
+    /// Initializes a new empty instance of the <see cref="TransposableMatrix"/> class.
+    /// </summary>
     public TransposableMatrix()
     {
       m_NumVectors = 0;
@@ -41,11 +47,20 @@ namespace Altaxo.Calc.LinearAlgebra
       m_bVerticalVectors = false;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TransposableMatrix"/> class with the specified dimensions.
+    /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="cols">The number of columns.</param>
     public TransposableMatrix(int rows, int cols)
     {
       SetDimension(rows, cols);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TransposableMatrix"/> class from a jagged array.
+    /// </summary>
+    /// <param name="arr">The source jagged array.</param>
     public TransposableMatrix(double[][] arr)
     {
       // get the max number of columns in the matrix
@@ -63,6 +78,11 @@ namespace Altaxo.Calc.LinearAlgebra
 
     #region IMatrix Members
 
+    /// <summary>
+    /// Sets the dimensions of the matrix and resets its contents.
+    /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="cols">The number of columns.</param>
     public void SetDimension(int rows, int cols)
     {
       m_NumVectors = rows;
@@ -73,6 +93,11 @@ namespace Altaxo.Calc.LinearAlgebra
         m_Array[i] = new double[cols];
     }
 
+    /// <summary>
+    /// Gets or sets the element at the specified row and column.
+    /// </summary>
+    /// <param name="i">The zero-based row index.</param>
+    /// <param name="k">The zero-based column index.</param>
     public double this[int i, int k]
     {
       get
@@ -88,6 +113,9 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
+    /// <summary>
+    /// Gets the number of rows.
+    /// </summary>
     public int RowCount
     {
       get
@@ -96,6 +124,9 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
+    /// <summary>
+    /// Gets the number of columns.
+    /// </summary>
     public int ColumnCount
     {
       get
@@ -106,6 +137,10 @@ namespace Altaxo.Calc.LinearAlgebra
 
     #endregion IMatrix Members
 
+    /// <summary>
+    /// Appends the specified matrix below this matrix.
+    /// </summary>
+    /// <param name="a">The matrix to append.</param>
     public void AppendBottom(IROMatrix<double> a)
     {
       if (m_NumVectors == 0 && m_VectorLen == 0)
@@ -134,6 +169,10 @@ namespace Altaxo.Calc.LinearAlgebra
         throw new System.NotImplementedException("This worst case is not implemented yet.");
     }
 
+    /// <summary>
+    /// Appends the specified matrix to the right of this matrix.
+    /// </summary>
+    /// <param name="a">The matrix to append.</param>
     public void AppendRight(IROMatrix<double> a)
     {
       if (m_NumVectors == 0 && m_VectorLen == 0)
@@ -162,6 +201,10 @@ namespace Altaxo.Calc.LinearAlgebra
         throw new System.NotImplementedException("This worst case is not implemented yet.");
     }
 
+    /// <summary>
+    /// Returns a string representation of the matrix.
+    /// </summary>
+    /// <returns>A string representation of the matrix.</returns>
     public override string ToString()
     {
       var s = new System.Text.StringBuilder();
@@ -180,13 +223,26 @@ namespace Altaxo.Calc.LinearAlgebra
       return s.ToString();
     }
 
+    /// <summary>
+    /// Gets the matrix as formatted text.
+    /// </summary>
+    /// <value>The matrix as formatted text.</value>
     public string MatrixForm { get { return ToString(); } }
 
+    /// <summary>
+    /// Toggles the internal transposed view of the matrix.
+    /// </summary>
     public void Transpose()
     {
       m_bVerticalVectors = !m_bVerticalVectors;
     }
 
+    /// <summary>
+    /// Multiplies two matrices.
+    /// </summary>
+    /// <param name="a">The left matrix.</param>
+    /// <param name="b">The right matrix.</param>
+    /// <returns>The matrix product.</returns>
     public static TransposableMatrix operator *(TransposableMatrix a, TransposableMatrix b)
     {
       // Presumtion:
@@ -213,6 +269,12 @@ namespace Altaxo.Calc.LinearAlgebra
       return c;
     }
 
+    /// <summary>
+    /// Subtracts one matrix from another.
+    /// </summary>
+    /// <param name="a">The left matrix.</param>
+    /// <param name="b">The right matrix.</param>
+    /// <returns>The matrix difference.</returns>
     public static TransposableMatrix operator -(TransposableMatrix a, TransposableMatrix b)
     {
       // Presumtion:
@@ -250,6 +312,14 @@ namespace Altaxo.Calc.LinearAlgebra
       return mean;
     }
 
+    /// <summary>
+    /// Extracts a submatrix with the specified size and offsets.
+    /// </summary>
+    /// <param name="rows">The number of rows in the submatrix.</param>
+    /// <param name="cols">The number of columns in the submatrix.</param>
+    /// <param name="rowoffset">The starting row offset.</param>
+    /// <param name="coloffset">The starting column offset.</param>
+    /// <returns>The extracted submatrix.</returns>
     public TransposableMatrix Submatrix(int rows, int cols, int rowoffset, int coloffset)
     {
       var c = new TransposableMatrix(rows, cols);
@@ -260,11 +330,22 @@ namespace Altaxo.Calc.LinearAlgebra
       return c;
     }
 
+    /// <summary>
+    /// Extracts a submatrix from the upper-left corner.
+    /// </summary>
+    /// <param name="rows">The number of rows in the submatrix.</param>
+    /// <param name="cols">The number of columns in the submatrix.</param>
+    /// <returns>The extracted submatrix.</returns>
     public TransposableMatrix Submatrix(int rows, int cols)
     {
       return Submatrix(rows, cols, 0, 0);
     }
 
+    /// <summary>
+    /// Replaces a column of the matrix.
+    /// </summary>
+    /// <param name="col">The zero-based column index.</param>
+    /// <param name="b">The column data as a single-column matrix.</param>
     public void SetColumn(int col, TransposableMatrix b)
     {
       if (col >= ColumnCount)
@@ -278,6 +359,11 @@ namespace Altaxo.Calc.LinearAlgebra
         this[i, col] = b[i, 0];
     }
 
+    /// <summary>
+    /// Replaces a row of the matrix.
+    /// </summary>
+    /// <param name="row">The zero-based row index.</param>
+    /// <param name="b">The row data as a single-row matrix.</param>
     public void SetRow(int row, TransposableMatrix b)
     {
       if (row >= RowCount)
@@ -291,6 +377,9 @@ namespace Altaxo.Calc.LinearAlgebra
         this[row, j] = b[0, row];
     }
 
+    /// <summary>
+    /// Normalizes each row to unit length.
+    /// </summary>
     public void NormalizeRows()
     {
       for (int i = 0; i < RowCount; i++)
@@ -304,6 +393,10 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
+    /// <summary>
+    /// Calculates the sum of squares of all matrix elements.
+    /// </summary>
+    /// <returns>The sum of squares of all matrix elements.</returns>
     public double SumOfSquares()
     {
       double sum = 0;
@@ -313,6 +406,12 @@ namespace Altaxo.Calc.LinearAlgebra
       return sum;
     }
 
+    /// <summary>
+    /// Determines whether this matrix is equal to another matrix within the specified accuracy.
+    /// </summary>
+    /// <param name="m">The matrix to compare with.</param>
+    /// <param name="accuracy">The comparison accuracy.</param>
+    /// <returns><see langword="true"/> if the matrices are equal within the specified accuracy; otherwise, <see langword="false"/>.</returns>
     public bool IsEqualTo(TransposableMatrix m, double accuracy)
     {
       // Presumtion:
@@ -329,6 +428,13 @@ namespace Altaxo.Calc.LinearAlgebra
       return true;
     }
 
+    /// <summary>
+    /// Computes a NIPALS decomposition of the specified matrix.
+    /// </summary>
+    /// <param name="X">The source matrix.</param>
+    /// <param name="numFactors">The number of factors to compute.</param>
+    /// <param name="factors">Receives the factor scores.</param>
+    /// <param name="loads">Receives the loadings.</param>
     public static void NIPALS(TransposableMatrix X, int numFactors, out TransposableMatrix factors, out TransposableMatrix loads)
     {
       if (numFactors < 1)

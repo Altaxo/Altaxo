@@ -341,6 +341,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
 
       /// <summary>
       /// Initializes the evaluator with the parameter set.</summary>
+      /// <param name="P">The parameter set.</param>
       public void Initialize(double[] P)
       {
         t0 = P[0];
@@ -354,6 +355,8 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
       /// <summary>
       /// Checks whether the provided parameter set matches the evaluator's current set.
       /// </summary>
+      /// <param name="P">The parameter set to compare.</param>
+      /// <returns><see langword="true"/> if the provided parameter set matches the current evaluator state; otherwise, <see langword="false"/>.</returns>
       public bool IsSameParameterSet(double[] P)
       {
         return
@@ -368,6 +371,9 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
       /// <summary>
       /// Evaluates the rate function for the given state and time.
       /// </summary>
+      /// <param name="x">The independent variable.</param>
+      /// <param name="y">The state vector.</param>
+      /// <param name="dy">The derivative vector receiving the rate.</param>
       public void EvaluateRate(double x, double[] y, double[] dy)
       {
         double yy = y[0];
@@ -388,6 +394,9 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
       /// <summary>
       /// Evaluates the rate function for a scalar state value.
       /// </summary>
+      /// <param name="x">The independent variable.</param>
+      /// <param name="yy">The scalar state value.</param>
+      /// <returns>The evaluated rate.</returns>
       public double EvaluateRate(double x, double yy)
       {
         double dy;
@@ -410,6 +419,9 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
       /// <summary>
       /// Evaluates the Jacobian matrix of the rate function with respect to the state variables.
       /// </summary>
+      /// <param name="x">The independent variable.</param>
+      /// <param name="yy">The state vector.</param>
+      /// <param name="jac">The Jacobian matrix.</param>
       public void EvaluateJacobian(double x, double[] yy, [AllowNull][NotNull] ref IMatrix<double> jac)
       {
         jac ??= CreateMatrix.Dense<double>(1, 1);

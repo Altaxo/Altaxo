@@ -46,6 +46,11 @@ namespace Altaxo.Calc
     /// <summary>
     /// Generate samples by sampling a function at the provided points.
     /// </summary>
+    /// <typeparam name="TA">The type of the input points.</typeparam>
+    /// <typeparam name="T">The type of the generated values.</typeparam>
+    /// <param name="points">The points at which the function is sampled.</param>
+    /// <param name="map">The function to sample.</param>
+    /// <returns>The sampled values.</returns>
     public static T[] Map<TA, T>(TA[] points, Func<TA, T> map)
     {
       var res = new T[points.Length];
@@ -59,6 +64,11 @@ namespace Altaxo.Calc
     /// <summary>
     /// Generate a sample sequence by sampling a function at the provided point sequence.
     /// </summary>
+    /// <typeparam name="TA">The type of the input points.</typeparam>
+    /// <typeparam name="T">The type of the generated values.</typeparam>
+    /// <param name="points">The points at which the function is sampled.</param>
+    /// <param name="map">The function to sample.</param>
+    /// <returns>The sampled value sequence.</returns>
     public static IEnumerable<T> MapSequence<TA, T>(IEnumerable<TA> points, Func<TA, T> map)
     {
       return points.Select(map);
@@ -67,6 +77,13 @@ namespace Altaxo.Calc
     /// <summary>
     /// Generate samples by sampling a function at the provided points.
     /// </summary>
+    /// <typeparam name="TA">The type of the first input points.</typeparam>
+    /// <typeparam name="TB">The type of the second input points.</typeparam>
+    /// <typeparam name="T">The type of the generated values.</typeparam>
+    /// <param name="pointsA">The first set of points.</param>
+    /// <param name="pointsB">The second set of points.</param>
+    /// <param name="map">The function to sample.</param>
+    /// <returns>The sampled values.</returns>
     public static T[] Map2<TA, TB, T>(TA[] pointsA, TB[] pointsB, Func<TA, TB, T> map)
     {
       if (pointsA.Length != pointsB.Length)
@@ -85,6 +102,13 @@ namespace Altaxo.Calc
     /// <summary>
     /// Generate a sample sequence by sampling a function at the provided point sequence.
     /// </summary>
+    /// <typeparam name="TA">The type of the first input points.</typeparam>
+    /// <typeparam name="TB">The type of the second input points.</typeparam>
+    /// <typeparam name="T">The type of the generated values.</typeparam>
+    /// <param name="pointsA">The first set of points.</param>
+    /// <param name="pointsB">The second set of points.</param>
+    /// <param name="map">The function to sample.</param>
+    /// <returns>The sampled value sequence.</returns>
     public static IEnumerable<T> Map2Sequence<TA, TB, T>(IEnumerable<TA> pointsA, IEnumerable<TB> pointsB, Func<TA, TB, T> map)
     {
       return pointsA.Zip(pointsB, map);
@@ -94,6 +118,10 @@ namespace Altaxo.Calc
     /// Generate a linearly spaced sample vector of the given length between the specified values (inclusive).
     /// Equivalent to MATLAB linspace but with the length as first instead of last argument.
     /// </summary>
+    /// <param name="length">The number of samples to generate.</param>
+    /// <param name="start">The start value of the range.</param>
+    /// <param name="stop">The end value of the range.</param>
+    /// <returns>The linearly spaced samples.</returns>
     public static double[] LinearSpaced(int length, double start, double stop)
     {
       if (length < 0)
@@ -118,6 +146,12 @@ namespace Altaxo.Calc
     /// <summary>
     /// Generate samples by sampling a function at linearly spaced points between the specified values (inclusive).
     /// </summary>
+    /// <typeparam name="T">The type of the generated values.</typeparam>
+    /// <param name="length">The number of samples to generate.</param>
+    /// <param name="start">The start value of the range.</param>
+    /// <param name="stop">The end value of the range.</param>
+    /// <param name="map">The function to sample.</param>
+    /// <returns>The sampled values.</returns>
     public static T[] LinearSpacedMap<T>(int length, double start, double stop, Func<double, T> map)
     {
       if (length < 0)
@@ -143,6 +177,10 @@ namespace Altaxo.Calc
     /// Generate a base 10 logarithmically spaced sample vector of the given length between the specified decade exponents (inclusive).
     /// Equivalent to MATLAB logspace but with the length as first instead of last argument.
     /// </summary>
+    /// <param name="length">The number of samples to generate.</param>
+    /// <param name="startExponent">The start exponent of the range.</param>
+    /// <param name="stopExponent">The end exponent of the range.</param>
+    /// <returns>The logarithmically spaced samples.</returns>
     public static double[] LogSpaced(int length, double startExponent, double stopExponent)
     {
       if (length < 0)
@@ -167,6 +205,12 @@ namespace Altaxo.Calc
     /// <summary>
     /// Generate samples by sampling a function at base 10 logarithmically spaced points between the specified decade exponents (inclusive).
     /// </summary>
+    /// <typeparam name="T">The type of the generated values.</typeparam>
+    /// <param name="length">The number of samples to generate.</param>
+    /// <param name="startExponent">The start exponent of the range.</param>
+    /// <param name="stopExponent">The end exponent of the range.</param>
+    /// <param name="map">The function to sample.</param>
+    /// <returns>The sampled values.</returns>
     public static T[] LogSpacedMap<T>(int length, double startExponent, double stopExponent, Func<double, T> map)
     {
       if (length < 0)
@@ -192,6 +236,9 @@ namespace Altaxo.Calc
     /// Generate a linearly spaced sample vector within the inclusive interval (start, stop) and step 1.
     /// Equivalent to MATLAB colon operator (:).
     /// </summary>
+    /// <param name="start">The start value of the range.</param>
+    /// <param name="stop">The end value of the range.</param>
+    /// <returns>The generated sample vector.</returns>
     public static double[] LinearRange(int start, int stop)
     {
       if (start == stop) return new double[] { start };
@@ -219,6 +266,9 @@ namespace Altaxo.Calc
     /// Generate a linearly spaced sample vector within the inclusive interval (start, stop) and step 1.
     /// Equivalent to MATLAB colon operator (:).
     /// </summary>
+    /// <param name="start">The start value of the range.</param>
+    /// <param name="stop">The end value of the range.</param>
+    /// <returns>The generated sample vector.</returns>
     public static int[] LinearRangeInt32(int start, int stop)
     {
       if (start == stop) return new[] { start };
@@ -244,9 +294,13 @@ namespace Altaxo.Calc
 
     /// <summary>
     /// Generate a linearly spaced sample vector within the inclusive interval (start, stop) and the provided step.
-    /// The start value is aways included as first value, but stop is only included if it stop-start is a multiple of step.
+    /// The start value is always included as first value, but stop is only included if it stop-start is a multiple of step.
     /// Equivalent to MATLAB double colon operator (::).
     /// </summary>
+    /// <param name="start">The start value of the range.</param>
+    /// <param name="step">The step size.</param>
+    /// <param name="stop">The end value of the range.</param>
+    /// <returns>The generated sample vector.</returns>
     public static double[] LinearRange(int start, int step, int stop)
     {
       if (start == stop) return new double[] { start };
@@ -265,9 +319,13 @@ namespace Altaxo.Calc
 
     /// <summary>
     /// Generate a linearly spaced sample vector within the inclusive interval (start, stop) and the provided step.
-    /// The start value is aways included as first value, but stop is only included if it stop-start is a multiple of step.
+    /// The start value is always included as first value, but stop is only included if it stop-start is a multiple of step.
     /// Equivalent to MATLAB double colon operator (::).
     /// </summary>
+    /// <param name="start">The start value of the range.</param>
+    /// <param name="step">The step size.</param>
+    /// <param name="stop">The end value of the range.</param>
+    /// <returns>The generated sample vector.</returns>
     public static int[] LinearRangeInt32(int start, int step, int stop)
     {
       if (start == stop) return new[] { start };
@@ -285,10 +343,14 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Generate a linearly spaced sample vector within the inclusive interval (start, stop) and the provide step.
-    /// The start value is aways included as first value, but stop is only included if it stop-start is a multiple of step.
+    /// Generate a linearly spaced sample vector within the inclusive interval (start, stop) and the provided step.
+    /// The start value is always included as first value, but stop is only included if it stop-start is a multiple of step.
     /// Equivalent to MATLAB double colon operator (::).
     /// </summary>
+    /// <param name="start">The start value of the range.</param>
+    /// <param name="step">The step size.</param>
+    /// <param name="stop">The end value of the range.</param>
+    /// <returns>The generated sample vector.</returns>
     public static double[] LinearRange(double start, double step, double stop)
     {
       if (start == stop) return new[] { start };
@@ -306,9 +368,15 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Generate samples by sampling a function at linearly spaced points within the inclusive interval (start, stop) and the provide step.
-    /// The start value is aways included as first value, but stop is only included if it stop-start is a multiple of step.
+    /// Generate samples by sampling a function at linearly spaced points within the inclusive interval (start, stop) and the provided step.
+    /// The start value is always included as first value, but stop is only included if it stop-start is a multiple of step.
     /// </summary>
+    /// <typeparam name="T">The type of the generated values.</typeparam>
+    /// <param name="start">The start value of the range.</param>
+    /// <param name="step">The step size.</param>
+    /// <param name="stop">The end value of the range.</param>
+    /// <param name="map">The function to sample.</param>
+    /// <returns>The sampled values.</returns>
     public static T[] LinearRangeMap<T>(double start, double step, double stop, Func<double, T> map)
     {
       if (start == stop) return new[] { map(start) };
@@ -334,6 +402,7 @@ namespace Altaxo.Calc
     /// <param name="amplitude">The length of the period when sampled at one sample per time unit. This is the interval of the periodic domain, a typical value is 1.0, or 2*Pi for angular functions.</param>
     /// <param name="phase">Optional phase offset.</param>
     /// <param name="delay">Optional delay, relative to the phase.</param>
+    /// <returns>The periodic samples.</returns>
     public static double[] Periodic(int length, double samplingRate, double frequency, double amplitude = 1.0, double phase = 0.0, int delay = 0)
     {
       if (length < 0)
@@ -363,6 +432,7 @@ namespace Altaxo.Calc
     /// <summary>
     /// Create a periodic wave.
     /// </summary>
+    /// <typeparam name="T">The type of the generated values.</typeparam>
     /// <param name="length">The number of samples to generate.</param>
     /// <param name="map">The function to apply to each of the values and evaluate the resulting sample.</param>
     /// <param name="samplingRate">Samples per time unit (Hz). Must be larger than twice the frequency to satisfy the Nyquist criterion.</param>
@@ -370,6 +440,7 @@ namespace Altaxo.Calc
     /// <param name="amplitude">The length of the period when sampled at one sample per time unit. This is the interval of the periodic domain, a typical value is 1.0, or 2*Pi for angular functions.</param>
     /// <param name="phase">Optional phase offset.</param>
     /// <param name="delay">Optional delay, relative to the phase.</param>
+    /// <returns>The sampled periodic wave.</returns>
     public static T[] PeriodicMap<T>(int length, Func<double, T> map, double samplingRate, double frequency, double amplitude = 1.0, double phase = 0.0, int delay = 0)
     {
       if (length < 0)
@@ -404,6 +475,7 @@ namespace Altaxo.Calc
     /// <param name="amplitude">The length of the period when sampled at one sample per time unit. This is the interval of the periodic domain, a typical value is 1.0, or 2*Pi for angular functions.</param>
     /// <param name="phase">Optional phase offset.</param>
     /// <param name="delay">Optional delay, relative to the phase.</param>
+    /// <returns>The periodic sample sequence.</returns>
     public static IEnumerable<double> PeriodicSequence(double samplingRate, double frequency, double amplitude = 1.0, double phase = 0.0, int delay = 0)
     {
       double step = frequency / samplingRate * amplitude;
@@ -427,12 +499,14 @@ namespace Altaxo.Calc
     /// <summary>
     /// Create an infinite periodic wave sequence.
     /// </summary>
+    /// <typeparam name="T">The type of the generated values.</typeparam>
     /// <param name="map">The function to apply to each of the values and evaluate the resulting sample.</param>
     /// <param name="samplingRate">Samples per time unit (Hz). Must be larger than twice the frequency to satisfy the Nyquist criterion.</param>
     /// <param name="frequency">Frequency in periods per time unit (Hz).</param>
     /// <param name="amplitude">The length of the period when sampled at one sample per time unit. This is the interval of the periodic domain, a typical value is 1.0, or 2*Pi for angular functions.</param>
     /// <param name="phase">Optional phase offset.</param>
     /// <param name="delay">Optional delay, relative to the phase.</param>
+    /// <returns>The sampled periodic wave sequence.</returns>
     public static IEnumerable<T> PeriodicMapSequence<T>(Func<double, T> map, double samplingRate, double frequency, double amplitude = 1.0, double phase = 0.0, int delay = 0)
     {
       double step = frequency / samplingRate * amplitude;
@@ -463,6 +537,7 @@ namespace Altaxo.Calc
     /// <param name="mean">The mean, or DC part, of the signal.</param>
     /// <param name="phase">Optional phase offset.</param>
     /// <param name="delay">Optional delay, relative to the phase.</param>
+    /// <returns>The sinusoidal samples.</returns>
     public static double[] Sinusoidal(int length, double samplingRate, double frequency, double amplitude, double mean = 0.0, double phase = 0.0, int delay = 0)
     {
       if (length < 0)
@@ -490,6 +565,7 @@ namespace Altaxo.Calc
     /// <param name="mean">The mean, or DC part, of the signal.</param>
     /// <param name="phase">Optional phase offset.</param>
     /// <param name="delay">Optional delay, relative to the phase.</param>
+    /// <returns>The sinusoidal sample sequence.</returns>
     public static IEnumerable<double> SinusoidalSequence(double samplingRate, double frequency, double amplitude, double mean = 0.0, double phase = 0.0, int delay = 0)
     {
       double step = frequency / samplingRate * Constants.Pi2;
@@ -514,6 +590,7 @@ namespace Altaxo.Calc
     /// <param name="lowValue">Sample value to be emitted during the low phase.</param>
     /// <param name="highValue">Sample value to be emitted during the high phase.</param>
     /// <param name="delay">Optional delay.</param>
+    /// <returns>The square-wave samples.</returns>
     public static double[] Square(int length, int highDuration, int lowDuration, double lowValue, double highValue, int delay = 0)
     {
       var duration = highDuration + lowDuration;
@@ -528,6 +605,7 @@ namespace Altaxo.Calc
     /// <param name="lowValue">Sample value to be emitted during the low phase.</param>
     /// <param name="highValue">Sample value to be emitted during the high phase.</param>
     /// <param name="delay">Optional delay.</param>
+    /// <returns>The square-wave sample sequence.</returns>
     public static IEnumerable<double> SquareSequence(int highDuration, int lowDuration, double lowValue, double highValue, int delay = 0)
     {
       var duration = highDuration + lowDuration;
@@ -543,6 +621,7 @@ namespace Altaxo.Calc
     /// <param name="lowValue">Lowest sample value.</param>
     /// <param name="highValue">Highest sample value.</param>
     /// <param name="delay">Optional delay.</param>
+    /// <returns>The triangle-wave samples.</returns>
     public static double[] Triangle(int length, int raiseDuration, int fallDuration, double lowValue, double highValue, int delay = 0)
     {
       var duration = raiseDuration + fallDuration;
@@ -560,6 +639,7 @@ namespace Altaxo.Calc
     /// <param name="lowValue">Lowest sample value.</param>
     /// <param name="highValue">Highest sample value.</param>
     /// <param name="delay">Optional delay.</param>
+    /// <returns>The triangle-wave sample sequence.</returns>
     public static IEnumerable<double> TriangleSequence(int raiseDuration, int fallDuration, double lowValue, double highValue, int delay = 0)
     {
       var duration = raiseDuration + fallDuration;
@@ -577,6 +657,7 @@ namespace Altaxo.Calc
     /// <param name="lowValue">Lowest sample value.</param>
     /// <param name="highValue">Highest sample value.</param>
     /// <param name="delay">Optional delay.</param>
+    /// <returns>The sawtooth-wave samples.</returns>
     public static double[] Sawtooth(int length, int period, double lowValue, double highValue, int delay = 0)
     {
       var height = highValue - lowValue;
@@ -590,6 +671,7 @@ namespace Altaxo.Calc
     /// <param name="lowValue">Lowest sample value.</param>
     /// <param name="highValue">Highest sample value.</param>
     /// <param name="delay">Optional delay.</param>
+    /// <returns>The sawtooth-wave sample sequence.</returns>
     public static IEnumerable<double> SawtoothSequence(int period, double lowValue, double highValue, int delay = 0)
     {
       var height = highValue - lowValue;
@@ -599,8 +681,10 @@ namespace Altaxo.Calc
     /// <summary>
     /// Create an array with each field set to the same value.
     /// </summary>
+    /// <typeparam name="T">The type of the generated values.</typeparam>
     /// <param name="length">The number of samples to generate.</param>
     /// <param name="value">The value that each field should be set to.</param>
+    /// <returns>The generated array.</returns>
     public static T[] Repeat<T>(int length, T value)
     {
       if (length < 0)
@@ -622,7 +706,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Create an infinite sequence where each element has the same value.
     /// </summary>
+    /// <typeparam name="T">The type of the generated values.</typeparam>
     /// <param name="value">The value that each element should be set to.</param>
+    /// <returns>The generated sequence.</returns>
     public static IEnumerable<T> RepeatSequence<T>(T value)
     {
       while (true)
@@ -637,6 +723,7 @@ namespace Altaxo.Calc
     /// <param name="length">The number of samples to generate.</param>
     /// <param name="amplitude">The maximal reached peak.</param>
     /// <param name="delay">Offset to the time axis.</param>
+    /// <returns>The step samples.</returns>
     public static double[] Step(int length, double amplitude, int delay)
     {
       if (length < 0)
@@ -657,6 +744,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="amplitude">The maximal reached peak.</param>
     /// <param name="delay">Offset to the time axis.</param>
+    /// <returns>The step sample sequence.</returns>
     public static IEnumerable<double> StepSequence(double amplitude, int delay)
     {
       for (int i = 0; i < delay; i++)
@@ -676,6 +764,7 @@ namespace Altaxo.Calc
     /// <param name="length">The number of samples to generate.</param>
     /// <param name="amplitude">The maximal reached peak.</param>
     /// <param name="delay">Offset to the time axis. Zero or positive.</param>
+    /// <returns>The impulse samples.</returns>
     public static double[] Impulse(int length, double amplitude, int delay)
     {
       if (length < 0)
@@ -696,6 +785,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="amplitude">The maximal reached peak.</param>
     /// <param name="delay">Offset to the time axis, hence the sample index of the impulse.</param>
+    /// <returns>The impulse sample sequence.</returns>
     public static IEnumerable<double> ImpulseSequence(double amplitude, int delay)
     {
       if (delay >= 0)
@@ -721,6 +811,7 @@ namespace Altaxo.Calc
     /// <param name="period">impulse sequence period.</param>
     /// <param name="amplitude">The maximal reached peak.</param>
     /// <param name="delay">Offset to the time axis. Zero or positive.</param>
+    /// <returns>The periodic impulse samples.</returns>
     public static double[] PeriodicImpulse(int length, int period, double amplitude, int delay)
     {
       if (length < 0)
@@ -744,6 +835,7 @@ namespace Altaxo.Calc
     /// <param name="period">impulse sequence period.</param>
     /// <param name="amplitude">The maximal reached peak.</param>
     /// <param name="delay">Offset to the time axis. Zero or positive.</param>
+    /// <returns>The periodic impulse sample sequence.</returns>
     public static IEnumerable<double> PeriodicImpulseSequence(int period, double amplitude, int delay)
     {
       delay = Euclid.Modulus(delay, period);
@@ -767,6 +859,12 @@ namespace Altaxo.Calc
     /// <summary>
     /// Generate samples generated by the given computation.
     /// </summary>
+    /// <typeparam name="T">The type of the generated values.</typeparam>
+    /// <typeparam name="TState">The type of the unfolding state.</typeparam>
+    /// <param name="length">The number of samples to generate.</param>
+    /// <param name="f">The computation to perform.</param>
+    /// <param name="state">The initial state.</param>
+    /// <returns>The generated values.</returns>
     public static T[] Unfold<T, TState>(int length, Func<TState, Tuple<T, TState>> f, TState state)
     {
       if (length < 0)
@@ -785,6 +883,12 @@ namespace Altaxo.Calc
     /// <summary>
     /// Generate samples generated by the given computation.
     /// </summary>
+    /// <typeparam name="T">The type of the generated values.</typeparam>
+    /// <typeparam name="TState">The type of the unfolding state.</typeparam>
+    /// <param name="length">The number of samples to generate.</param>
+    /// <param name="f">The computation to perform.</param>
+    /// <param name="state">The initial state.</param>
+    /// <returns>The generated values.</returns>
     public static T[] Unfold<T, TState>(int length, Func<TState, (T, TState)> f, TState state)
     {
       if (length < 0)
@@ -803,6 +907,11 @@ namespace Altaxo.Calc
     /// <summary>
     /// Generate an infinite sequence generated by the given computation.
     /// </summary>
+    /// <typeparam name="T">The type of the generated values.</typeparam>
+    /// <typeparam name="TState">The type of the unfolding state.</typeparam>
+    /// <param name="f">The computation to perform.</param>
+    /// <param name="state">The initial state.</param>
+    /// <returns>The generated sequence.</returns>
     public static IEnumerable<T> UnfoldSequence<T, TState>(Func<TState, Tuple<T, TState>> f, TState state)
     {
       while (true)
@@ -816,6 +925,11 @@ namespace Altaxo.Calc
     /// <summary>
     /// Generate an infinite sequence generated by the given computation.
     /// </summary>
+    /// <typeparam name="T">The type of the generated values.</typeparam>
+    /// <typeparam name="TState">The type of the unfolding state.</typeparam>
+    /// <param name="f">The computation to perform.</param>
+    /// <param name="state">The initial state.</param>
+    /// <returns>The generated sequence.</returns>
     public static IEnumerable<T> UnfoldSequence<T, TState>(Func<TState, (T, TState)> f, TState state)
     {
       while (true)
@@ -829,6 +943,8 @@ namespace Altaxo.Calc
     /// <summary>
     /// Generate a Fibonacci sequence, including zero as first value.
     /// </summary>
+    /// <param name="length">The number of samples to generate.</param>
+    /// <returns>The Fibonacci numbers.</returns>
     public static BigInteger[] Fibonacci(int length)
     {
       if (length < 0)
@@ -855,6 +971,7 @@ namespace Altaxo.Calc
     /// <summary>
     /// Generate an infinite Fibonacci sequence, including zero as first value.
     /// </summary>
+    /// <returns>The Fibonacci sequence.</returns>
     public static IEnumerable<BigInteger> FibonacciSequence()
     {
       BigInteger a = BigInteger.Zero;
@@ -877,6 +994,8 @@ namespace Altaxo.Calc
     /// Create random samples, uniform between 0 and 1.
     /// Faster than other methods but with reduced guarantees on randomness.
     /// </summary>
+    /// <param name="length">The number of samples to generate.</param>
+    /// <returns>The generated samples.</returns>
     public static double[] Uniform(int length)
     {
       if (length < 0)
@@ -891,6 +1010,7 @@ namespace Altaxo.Calc
     /// Create an infinite random sample sequence, uniform between 0 and 1.
     /// Faster than other methods but with reduced guarantees on randomness.
     /// </summary>
+    /// <returns>The generated sample sequence.</returns>
     public static IEnumerable<double> UniformSequence()
     {
       return SystemRandomSource.DoubleSequence();
@@ -901,6 +1021,10 @@ namespace Altaxo.Calc
     /// Generate samples by sampling a function at samples from a probability distribution, uniform between 0 and 1.
     /// Faster than other methods but with reduced guarantees on randomness.
     /// </summary>
+    /// <typeparam name="T">The type of the generated values.</typeparam>
+    /// <param name="length">The number of samples to generate.</param>
+    /// <param name="map">The function to sample.</param>
+    /// <returns>The generated samples.</returns>
     public static T[] UniformMap<T>(int length, Func<double, T> map)
     {
       if (length < 0)
@@ -916,6 +1040,9 @@ namespace Altaxo.Calc
     /// Generate a sample sequence by sampling a function at samples from a probability distribution, uniform between 0 and 1.
     /// Faster than other methods but with reduced guarantees on randomness.
     /// </summary>
+    /// <typeparam name="T">The type of the generated values.</typeparam>
+    /// <param name="map">The function to sample.</param>
+    /// <returns>The generated sample sequence.</returns>
     public static IEnumerable<T> UniformMapSequence<T>(Func<double, T> map)
     {
       return SystemRandomSource.DoubleSequence().Select(map);
@@ -925,6 +1052,10 @@ namespace Altaxo.Calc
     /// Generate samples by sampling a function at sample pairs from a probability distribution, uniform between 0 and 1.
     /// Faster than other methods but with reduced guarantees on randomness.
     /// </summary>
+    /// <typeparam name="T">The type of the generated values.</typeparam>
+    /// <param name="length">The number of samples to generate.</param>
+    /// <param name="map">The function to sample.</param>
+    /// <returns>The generated samples.</returns>
     public static T[] UniformMap2<T>(int length, Func<double, double, T> map)
     {
       if (length < 0)
@@ -941,6 +1072,9 @@ namespace Altaxo.Calc
     /// Generate a sample sequence by sampling a function at sample pairs from a probability distribution, uniform between 0 and 1.
     /// Faster than other methods but with reduced guarantees on randomness.
     /// </summary>
+    /// <typeparam name="T">The type of the generated values.</typeparam>
+    /// <param name="map">The function to sample.</param>
+    /// <returns>An infinite sequence of generated values.</returns>
     public static IEnumerable<T> UniformMap2Sequence<T>(Func<double, double, T> map)
     {
       var rnd1 = SystemRandomSource.Default;
@@ -959,6 +1093,8 @@ namespace Altaxo.Calc
     /// <summary>
     /// Create samples with independent amplitudes of standard distribution.
     /// </summary>
+    /// <param name="length">The number of samples to generate.</param>
+    /// <returns>The generated samples.</returns>
     public static double[] Standard(int length)
     {
       return Normal(length, 0.0, 1.0);
@@ -967,6 +1103,7 @@ namespace Altaxo.Calc
     /// <summary>
     /// Create an infinite sample sequence with independent amplitudes of standard distribution.
     /// </summary>
+    /// <returns>The generated sample sequence.</returns>
     public static IEnumerable<double> StandardSequence()
     {
       return NormalSequence(0.0, 1.0);
@@ -975,6 +1112,10 @@ namespace Altaxo.Calc
     /// <summary>
     /// Create samples with independent amplitudes of normal distribution and a flat spectral density.
     /// </summary>
+    /// <param name="length">The number of samples to generate.</param>
+    /// <param name="mean">The mean of the distribution.</param>
+    /// <param name="standardDeviation">The standard deviation of the distribution.</param>
+    /// <returns>The generated samples.</returns>
     public static double[] Normal(int length, double mean, double standardDeviation)
     {
       if (length < 0)
@@ -990,6 +1131,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Create an infinite sample sequence with independent amplitudes of normal distribution and a flat spectral density.
     /// </summary>
+    /// <param name="mean">The mean of the distribution.</param>
+    /// <param name="standardDeviation">The standard deviation of the distribution.</param>
+    /// <returns>The generated sample sequence.</returns>
     public static IEnumerable<double> NormalSequence(double mean, double standardDeviation)
     {
       return Distributions.Normal.Samples(SystemRandomSource.Default, mean, standardDeviation);
@@ -998,6 +1142,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Create random samples.
     /// </summary>
+    /// <param name="length">The number of samples to generate.</param>
+    /// <param name="distribution">The probability distribution to sample from.</param>
+    /// <returns>The generated samples.</returns>
     public static double[] Random(int length, IContinuousDistribution distribution)
     {
       if (length < 0)
@@ -1013,6 +1160,8 @@ namespace Altaxo.Calc
     /// <summary>
     /// Create an infinite random sample sequence.
     /// </summary>
+    /// <param name="distribution">The probability distribution to sample from.</param>
+    /// <returns>The generated sample sequence.</returns>
     public static IEnumerable<double> Random(IContinuousDistribution distribution)
     {
       return distribution.Samples();
@@ -1021,6 +1170,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Create random samples.
     /// </summary>
+    /// <param name="length">The number of samples to generate.</param>
+    /// <param name="distribution">The probability distribution to sample from.</param>
+    /// <returns>The generated samples.</returns>
     public static float[] RandomSingle(int length, IContinuousDistribution distribution)
     {
       if (length < 0)
@@ -1036,6 +1188,8 @@ namespace Altaxo.Calc
     /// <summary>
     /// Create an infinite random sample sequence.
     /// </summary>
+    /// <param name="distribution">The probability distribution to sample from.</param>
+    /// <returns>The generated sample sequence.</returns>
     public static IEnumerable<float> RandomSingle(IContinuousDistribution distribution)
     {
       return distribution.Samples().Select(v => (float)v);
@@ -1044,6 +1198,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Create random samples.
     /// </summary>
+    /// <param name="length">The number of samples to generate.</param>
+    /// <param name="distribution">The probability distribution to sample from.</param>
+    /// <returns>The generated samples.</returns>
     public static Complex[] RandomComplex(int length, IContinuousDistribution distribution)
     {
       return RandomMap2(length, distribution, (r, i) => new Complex(r, i));
@@ -1052,6 +1209,8 @@ namespace Altaxo.Calc
     /// <summary>
     /// Create an infinite random sample sequence.
     /// </summary>
+    /// <param name="distribution">The probability distribution to sample from.</param>
+    /// <returns>The generated sample sequence.</returns>
     public static IEnumerable<Complex> RandomComplex(IContinuousDistribution distribution)
     {
       return RandomMap2Sequence(distribution, (r, i) => new Complex(r, i));
@@ -1060,6 +1219,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Create random samples.
     /// </summary>
+    /// <param name="length">The number of samples to generate.</param>
+    /// <param name="distribution">The probability distribution to sample from.</param>
+    /// <returns>The generated samples.</returns>
     public static Complex32[] RandomComplex32(int length, IContinuousDistribution distribution)
     {
       return RandomMap2(length, distribution, (r, i) => new Complex32((float)r, (float)i));
@@ -1068,6 +1230,8 @@ namespace Altaxo.Calc
     /// <summary>
     /// Create an infinite random sample sequence.
     /// </summary>
+    /// <param name="distribution">The probability distribution to sample from.</param>
+    /// <returns>The generated sample sequence.</returns>
     public static IEnumerable<Complex32> RandomComplex32(IContinuousDistribution distribution)
     {
       return RandomMap2Sequence(distribution, (r, i) => new Complex32((float)r, (float)i));
@@ -1076,6 +1240,11 @@ namespace Altaxo.Calc
     /// <summary>
     /// Generate samples by sampling a function at samples from a probability distribution.
     /// </summary>
+    /// <typeparam name="T">The type of the generated values.</typeparam>
+    /// <param name="length">The number of samples to generate.</param>
+    /// <param name="distribution">The probability distribution to sample from.</param>
+    /// <param name="map">The function to sample.</param>
+    /// <returns>The generated samples.</returns>
     public static T[] RandomMap<T>(int length, IContinuousDistribution distribution, Func<double, T> map)
     {
       if (length < 0)
@@ -1091,6 +1260,10 @@ namespace Altaxo.Calc
     /// <summary>
     /// Generate a sample sequence by sampling a function at samples from a probability distribution.
     /// </summary>
+    /// <typeparam name="T">The type of the generated values.</typeparam>
+    /// <param name="distribution">The probability distribution to sample from.</param>
+    /// <param name="map">The function to sample.</param>
+    /// <returns>The generated sample sequence.</returns>
     public static IEnumerable<T> RandomMapSequence<T>(IContinuousDistribution distribution, Func<double, T> map)
     {
       return distribution.Samples().Select(map);
@@ -1099,6 +1272,11 @@ namespace Altaxo.Calc
     /// <summary>
     /// Generate samples by sampling a function at sample pairs from a probability distribution.
     /// </summary>
+    /// <typeparam name="T">The type of the generated values.</typeparam>
+    /// <param name="length">The number of samples to generate.</param>
+    /// <param name="distribution">The probability distribution to sample from.</param>
+    /// <param name="map">The function to sample.</param>
+    /// <returns>The generated samples.</returns>
     public static T[] RandomMap2<T>(int length, IContinuousDistribution distribution, Func<double, double, T> map)
     {
       if (length < 0)
@@ -1116,6 +1294,10 @@ namespace Altaxo.Calc
     /// <summary>
     /// Generate a sample sequence by sampling a function at sample pairs from a probability distribution.
     /// </summary>
+    /// <typeparam name="T">The type of the generated values.</typeparam>
+    /// <param name="distribution">The probability distribution to sample from.</param>
+    /// <param name="map">The function to sample.</param>
+    /// <returns>The generated sample sequence.</returns>
     public static IEnumerable<T> RandomMap2Sequence<T>(IContinuousDistribution distribution, Func<double, double, T> map)
     {
       return distribution.Samples().Zip(distribution.Samples(), map);

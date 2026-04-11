@@ -99,6 +99,7 @@ namespace Altaxo.Calc.Distributions
     /// </summary>
     /// <param name="scale">The scale (xm) of the distribution. Range: xm > 0.</param>
     /// <param name="shape">The shape (α) of the distribution. Range: α > 0.</param>
+    /// <returns><c>true</c> if the parameters define a valid Pareto distribution; otherwise, <c>false</c>.</returns>
     public static bool IsValidParameterSet(double scale, double shape)
     {
       return scale > 0.0 && shape > 0.0;
@@ -247,6 +248,7 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Fills an array with samples generated from the distribution.
     /// </summary>
+    /// <param name="values">The array to fill with samples from the distribution.</param>
     public void Samples(double[] values)
     {
       SamplesUnchecked(_random, values, _scale, _shape);

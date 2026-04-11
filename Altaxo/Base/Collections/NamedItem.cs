@@ -32,6 +32,7 @@ namespace Altaxo.Collections
   /// <summary>
   /// Associates an item with a display name.
   /// </summary>
+  /// <typeparam name="T">The item type.</typeparam>
   public class NamedItem<T>
   {
     private T _item;
@@ -40,6 +41,8 @@ namespace Altaxo.Collections
     /// <summary>
     /// Initializes a new instance of the <see cref="NamedItem{T}"/> class.
     /// </summary>
+    /// <param name="item">The wrapped item.</param>
+    /// <param name="name">The display name.</param>
     public NamedItem(T item, string name)
     {
       _item = item;

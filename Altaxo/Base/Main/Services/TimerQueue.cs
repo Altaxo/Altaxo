@@ -97,6 +97,7 @@ namespace Altaxo.Main.Services
     /// <param name="time">The time when to trigger the action.</param>
     /// <param name="action">The action. Can be a single or a multicast delegate. First argument is the token for the timer queue, second argument is the due time.</param>
     /// <param name="token">The token identifying the queued item.</param>
+    /// <returns><c>true</c> if the item was added; otherwise, <c>false</c>.</returns>
     public bool TryAdd(object token, TimeSpan time, Action<object, TimeSpan> action)
     {
       if (_items.TryAdd(token, time, action))

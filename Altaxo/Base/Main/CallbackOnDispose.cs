@@ -62,25 +62,41 @@ namespace Altaxo.Main
   /// </summary>
   internal static class BusyManager
   {
+    /// <summary>
+    /// Represents a disposable busy-state token.
+    /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1815:OverrideEqualsAndOperatorEqualsOnValueTypes")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible",
       Justification = "Should always be used with 'var'")]
     public struct BusyLock : IDisposable
     {
+      /// <summary>
+      /// Gets a failed busy lock.
+      /// </summary>
       public static readonly BusyLock Failed = new BusyLock(null);
 
       private readonly List<object>? _objectList;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="BusyLock"/> struct.
+      /// </summary>
+      /// <param name="objectList">The stack of active objects, or <see langword="null"/> for a failed lock.</param>
       internal BusyLock(List<object>? objectList)
       {
         this._objectList = objectList;
       }
 
+      /// <summary>
+      /// Gets a value indicating whether the lock was acquired successfully.
+      /// </summary>
       public bool Success
       {
         get { return _objectList is not null; }
       }
 
+      /// <summary>
+      /// Releases the busy lock.
+      /// </summary>
       public void Dispose()
       {
         if (_objectList is not null)
@@ -92,6 +108,11 @@ namespace Altaxo.Main
 
     [ThreadStatic] private static List<object>? _activeObjects;
 
+    /// <summary>
+    /// Enters the busy state for the specified object.
+    /// </summary>
+    /// <param name="obj">The object to mark as busy.</param>
+    /// <returns>A lock token that releases the busy state when disposed.</returns>
     public static BusyLock Enter(object obj)
     {
       var activeObjects = _activeObjects;

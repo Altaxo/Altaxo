@@ -104,6 +104,7 @@ namespace Altaxo.Calc.Distributions
     /// </summary>
     /// <param name="s">The s parameter of the distribution.</param>
     /// <param name="n">The n parameter of the distribution.</param>
+    /// <returns><see langword="true"/> if the parameter set is valid; otherwise, <see langword="false"/>.</returns>
     public static bool IsValidParameterSet(double s, int n)
     {
       return n > 0 && s > 0.0;
@@ -359,6 +360,7 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Fills an array with samples generated from the distribution.
     /// </summary>
+    /// <param name="values">The array to fill with samples.</param>
     public void Samples(int[] values)
     {
       SamplesUnchecked(_random, values, _s, _n);
@@ -379,6 +381,7 @@ namespace Altaxo.Calc.Distributions
     /// <param name="rnd">The random number generator to use.</param>
     /// <param name="s">The s parameter of the distribution.</param>
     /// <param name="n">The n parameter of the distribution.</param>
+    /// <returns>A sample from the distribution.</returns>
     public static int Sample(System.Random rnd, double s, int n)
     {
       if (!(n > 0 && s > 0.0))
@@ -395,6 +398,7 @@ namespace Altaxo.Calc.Distributions
     /// <param name="rnd">The random number generator to use.</param>
     /// <param name="s">The s parameter of the distribution.</param>
     /// <param name="n">The n parameter of the distribution.</param>
+    /// <returns>An infinite sequence of samples from the distribution.</returns>
     public static IEnumerable<int> Samples(System.Random rnd, double s, int n)
     {
       if (!(n > 0 && s > 0.0))
@@ -427,6 +431,7 @@ namespace Altaxo.Calc.Distributions
     /// </summary>
     /// <param name="s">The s parameter of the distribution.</param>
     /// <param name="n">The n parameter of the distribution.</param>
+    /// <returns>A sample from the distribution.</returns>
     public static int Sample(double s, int n)
     {
       if (!(n > 0 && s > 0.0))
@@ -442,6 +447,7 @@ namespace Altaxo.Calc.Distributions
     /// </summary>
     /// <param name="s">The s parameter of the distribution.</param>
     /// <param name="n">The n parameter of the distribution.</param>
+    /// <returns>An infinite sequence of samples from the distribution.</returns>
     public static IEnumerable<int> Samples(double s, int n)
     {
       if (!(n > 0 && s > 0.0))

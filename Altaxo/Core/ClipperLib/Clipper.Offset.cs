@@ -261,6 +261,10 @@ namespace Clipper2Lib
       return result;
     }
 
+    /// <summary>
+    /// Determines whether polygon paths in the current group list are reversed.
+    /// </summary>
+    /// <returns><see langword="true"/> if polygon paths are reversed; otherwise, <see langword="false"/>.</returns>
     internal bool CheckPathsReversed()
     {
       bool result = false;
@@ -339,7 +343,12 @@ namespace Clipper2Lib
       ExecuteInternal(delta);
     }
 
-
+    /// <summary>
+    /// Gets the unit normal that points to the left of the directed edge.
+    /// </summary>
+    /// <param name="pt1">The start point of the edge.</param>
+    /// <param name="pt2">The end point of the edge.</param>
+    /// <returns>The unit normal of the edge.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static PointD GetUnitNormal(Point64 pt1, Point64 pt2)
     {
@@ -365,6 +374,12 @@ namespace Clipper2Lib
       Execute(1.0, solution);
     }    
     
+    /// <summary>
+    /// Finds the lowest path in a collection and reports whether its area is negative.
+    /// </summary>
+    /// <param name="paths">The paths to inspect.</param>
+    /// <param name="idx">Receives the index of the lowest path.</param>
+    /// <param name="isNegArea">Receives a value indicating whether the selected path has negative area.</param>
     internal static void GetLowestPathInfo(Paths64 paths, out int idx, out bool isNegArea)
     {
       idx = -1;

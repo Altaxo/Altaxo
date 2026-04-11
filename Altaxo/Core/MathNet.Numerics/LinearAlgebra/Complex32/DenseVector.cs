@@ -63,6 +63,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// Intended for advanced scenarios where you're working directly with
     /// storage for performance or interop reasons.
     /// </summary>
+    /// <param name="storage">The storage backing the vector.</param>
     public DenseVector(DenseVectorStorage<Complex32> storage)
         : base(storage)
     {
@@ -74,6 +75,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// Create a new dense vector with the given length.
     /// All cells of the vector will be initialized to zero.
     /// </summary>
+    /// <param name="length">The length of the vector.</param>
     /// <exception cref="ArgumentException">If length is less than one.</exception>
     public DenseVector(int length)
         : this(new DenseVectorStorage<Complex32>(length))
@@ -85,6 +87,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// The array is used directly without copying.
     /// Very efficient, but changes to the array and the vector will affect each other.
     /// </summary>
+    /// <param name="storage">The array backing the vector.</param>
     public DenseVector(Complex32[] storage)
         : this(new DenseVectorStorage<Complex32>(storage.Length, storage))
     {
@@ -95,6 +98,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// This new vector will be independent from the other vector.
     /// A new memory block will be allocated for storing the vector.
     /// </summary>
+    /// <param name="vector">The vector to copy.</param>
+    /// <returns>A dense vector copied from <paramref name="vector"/>.</returns>
     public static DenseVector OfVector(Vector<Complex32> vector)
     {
       return new DenseVector(DenseVectorStorage<Complex32>.OfVector(vector.Storage));
@@ -105,6 +110,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// This new vector will be independent from the array.
     /// A new memory block will be allocated for storing the vector.
     /// </summary>
+    /// <param name="array">The array to copy.</param>
+    /// <returns>A dense vector copied from <paramref name="array"/>.</returns>
     public static DenseVector OfArray(Complex32[] array)
     {
       return new DenseVector(DenseVectorStorage<Complex32>.OfVector(new DenseVectorStorage<Complex32>(array.Length, array)));
@@ -115,6 +122,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// This new vector will be independent from the enumerable.
     /// A new memory block will be allocated for storing the vector.
     /// </summary>
+    /// <param name="enumerable">The values to copy.</param>
+    /// <returns>A dense vector copied from <paramref name="enumerable"/>.</returns>
     public static DenseVector OfEnumerable(IEnumerable<Complex32> enumerable)
     {
       return new DenseVector(DenseVectorStorage<Complex32>.OfEnumerable(enumerable));
@@ -126,6 +135,9 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// This new vector will be independent from the enumerable.
     /// A new memory block will be allocated for storing the vector.
     /// </summary>
+    /// <param name="length">The length of the vector.</param>
+    /// <param name="enumerable">The indexed values to copy.</param>
+    /// <returns>A dense vector containing the indexed values from <paramref name="enumerable"/>.</returns>
     public static DenseVector OfIndexedEnumerable(int length, IEnumerable<Tuple<int, Complex32>> enumerable)
     {
       return new DenseVector(DenseVectorStorage<Complex32>.OfIndexedEnumerable(length, enumerable));
@@ -137,6 +149,9 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// This new vector will be independent from the enumerable.
     /// A new memory block will be allocated for storing the vector.
     /// </summary>
+    /// <param name="length">The length of the vector.</param>
+    /// <param name="enumerable">The indexed values to copy.</param>
+    /// <returns>A dense vector containing the indexed values from <paramref name="enumerable"/>.</returns>
     public static DenseVector OfIndexedEnumerable(int length, IEnumerable<(int, Complex32)> enumerable)
     {
       return new DenseVector(DenseVectorStorage<Complex32>.OfIndexedEnumerable(length, enumerable));
@@ -145,6 +160,9 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// <summary>
     /// Create a new dense vector and initialize each value using the provided value.
     /// </summary>
+    /// <param name="length">The length of the vector.</param>
+    /// <param name="value">The value assigned to each element.</param>
+    /// <returns>A dense vector initialized with <paramref name="value"/>.</returns>
     public static DenseVector Create(int length, Complex32 value)
     {
       if (value == Complex32.Zero) return new DenseVector(length);
@@ -154,6 +172,9 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// <summary>
     /// Create a new dense vector and initialize each value using the provided init function.
     /// </summary>
+    /// <param name="length">The length of the vector.</param>
+    /// <param name="init">The initialization function.</param>
+    /// <returns>A dense vector initialized by <paramref name="init"/>.</returns>
     public static DenseVector Create(int length, Func<int, Complex32> init)
     {
       return new DenseVector(DenseVectorStorage<Complex32>.OfInit(length, init));
@@ -162,6 +183,9 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// <summary>
     /// Create a new dense vector with values sampled from the provided random distribution.
     /// </summary>
+    /// <param name="length">The length of the vector.</param>
+    /// <param name="distribution">The distribution used to sample values.</param>
+    /// <returns>A dense vector initialized with values sampled from <paramref name="distribution"/>.</returns>
     public static DenseVector CreateRandom(int length, IContinuousDistribution distribution)
     {
       var samples = Generate.RandomComplex32(length, distribution);

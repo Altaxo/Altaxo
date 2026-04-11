@@ -409,6 +409,7 @@ namespace Altaxo.Gui.Science.Thermorheology
     /// <summary>
     /// Puts the selected data columns into the plot content, either at the first position(s), or immediately before the first selected item.
     /// </summary>
+    /// <param name="toLast"><c>true</c> to append the items; <c>false</c> to insert them before the first selected item.</param>
     public void AvailableItems_PutDataToPlotItems(bool toLast)
     {
       var columnsAlreadyProcessed = new HashSet<Altaxo.Data.DataColumn>();

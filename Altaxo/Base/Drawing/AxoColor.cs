@@ -357,6 +357,9 @@ namespace Altaxo.Drawing
     /// <summary>
     /// Determines whether two colors are equal.
     /// </summary>
+    /// <param name="x">The first color.</param>
+    /// <param name="y">The second color.</param>
+    /// <returns><see langword="true"/> if both colors are equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator ==(AxoColor x, AxoColor y)
     {
       return x.Equals(y);
@@ -365,6 +368,9 @@ namespace Altaxo.Drawing
     /// <summary>
     /// Determines whether two colors are not equal.
     /// </summary>
+    /// <param name="x">The first color.</param>
+    /// <param name="y">The second color.</param>
+    /// <returns><see langword="true"/> if the colors are not equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator !=(AxoColor x, AxoColor y)
     {
       return !(x.Equals(y));
@@ -646,6 +652,9 @@ namespace Altaxo.Drawing
     /// <summary>
     /// Converts the linear Rgb components to the AHSB model, with Hue [0, 1], Saturation [0, 1] and Brightness [0, 1].
     /// </summary>
+    /// <param name="r">The red component in linear RGB space.</param>
+    /// <param name="g">The green component in linear RGB space.</param>
+    /// <param name="b">The blue component in linear RGB space.</param>
     /// <returns>The hue, saturation and brightness components (all in the range [0, 1].</returns>
     /// <exception cref="System.InvalidProgramException"></exception>
     public static (float hue, float saturation, float brightness) HsbFromLinearRgb(float r, float g, float b)

@@ -57,6 +57,8 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
     /// Returns a new instance of the same class with the pivot index set.
     /// If no pivot index is required (check by <see cref="IsPivotIndexRequired"/>), the same instance is returned.
     /// </summary>
+    /// <param name="index">The pivot index to set, or <see langword="null"/> to clear it.</param>
+    /// <returns>A shift-order instance with the requested pivot index.</returns>
     public IShiftOrder WithPivotIndex(int? index);
   }
 
@@ -64,6 +66,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
   public record FirstToLast : IShiftOrder
   {
     /// <inheritdoc/>
+    /// <returns>An enumerable sequence of curve indices in the order they should be shifted; the first index is the fixed reference curve.</returns>
     public IEnumerable<int> GetShiftOrderIndices(int numberOfCurves)
     {
       for (int i = 0; i < numberOfCurves; i++)
@@ -110,6 +113,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
   public record LastToFirst : IShiftOrder
   {
     /// <inheritdoc/>
+    /// <returns>An enumerable sequence of curve indices in the order they should be shifted; the first index is the fixed reference curve.</returns>
     public IEnumerable<int> GetShiftOrderIndices(int numberOfCurves)
     {
       for (int i = numberOfCurves - 1; i >= 0; i--)
@@ -158,6 +162,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
     private int? _pivotIndex;
 
     /// <inheritdoc/>
+    /// <returns>An enumerable sequence of curve indices in the order they should be shifted; the first index is the fixed reference curve.</returns>
     public IEnumerable<int> GetShiftOrderIndices(int numberOfCurves)
     {
       if (_pivotIndex is null)

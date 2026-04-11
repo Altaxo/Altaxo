@@ -69,6 +69,7 @@ namespace Altaxo.Calc
     /// Compares two doubles and determines if they are equal
     /// within the specified maximum absolute error.
     /// </summary>
+    /// <typeparam name="T">The type of the values being compared.</typeparam>
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <param name="maximumAbsoluteError">The absolute accuracy required for being almost equal.</param>
@@ -123,6 +124,7 @@ namespace Altaxo.Calc
     /// Compares two doubles and determines if they are equal
     /// within the specified maximum error.
     /// </summary>
+    /// <typeparam name="T">The type of the values being compared.</typeparam>
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <param name="maximumError">The accuracy required for being almost equal.</param>
@@ -140,6 +142,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <param name="maximumAbsoluteError">The accuracy required for being almost equal.</param>
+    /// <returns>True if both values are almost equal up to the specified maximum absolute error; otherwise false.</returns>
     public static bool AlmostEqual(this double a, double b, double maximumAbsoluteError)
     {
       return AlmostEqualNorm(a, b, a - b, maximumAbsoluteError);
@@ -152,6 +155,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <param name="maximumAbsoluteError">The accuracy required for being almost equal.</param>
+    /// <returns>True if both values are almost equal up to the specified maximum absolute error; otherwise false.</returns>
     public static bool AlmostEqual(this float a, float b, double maximumAbsoluteError)
     {
       return AlmostEqualNorm(a, b, a - b, maximumAbsoluteError);
@@ -164,6 +168,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <param name="maximumAbsoluteError">The accuracy required for being almost equal.</param>
+    /// <returns>True if both values are almost equal up to the specified maximum absolute error; otherwise false.</returns>
     public static bool AlmostEqual(this Complex a, Complex b, double maximumAbsoluteError)
     {
       return AlmostEqualNorm(a.Norm(), b.Norm(), a.NormOfDifference(b), maximumAbsoluteError);
@@ -176,6 +181,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <param name="maximumAbsoluteError">The accuracy required for being almost equal.</param>
+    /// <returns>True if both values are almost equal up to the specified maximum absolute error; otherwise false.</returns>
     public static bool AlmostEqual(this Complex32 a, Complex32 b, double maximumAbsoluteError)
     {
       return AlmostEqualNorm(a.Norm(), b.Norm(), a.NormOfDifference(b), maximumAbsoluteError);
@@ -188,6 +194,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <param name="maximumError">The accuracy required for being almost equal.</param>
+    /// <returns>True if both values are almost equal up to the specified maximum error; otherwise false.</returns>
     public static bool AlmostEqualRelative(this double a, double b, double maximumError)
     {
       return AlmostEqualNormRelative(a, b, a - b, maximumError);
@@ -200,6 +207,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <param name="maximumError">The accuracy required for being almost equal.</param>
+    /// <returns>True if both values are almost equal up to the specified maximum error; otherwise false.</returns>
     public static bool AlmostEqualRelative(this float a, float b, double maximumError)
     {
       return AlmostEqualNormRelative(a, b, a - b, maximumError);
@@ -212,6 +220,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <param name="maximumError">The accuracy required for being almost equal.</param>
+    /// <returns>True if both values are almost equal up to the specified maximum error; otherwise false.</returns>
     public static bool AlmostEqualRelative(this Complex a, Complex b, double maximumError)
     {
       return AlmostEqualNormRelative(a.Norm(), b.Norm(), a.NormOfDifference(b), maximumError);
@@ -224,6 +233,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <param name="maximumError">The accuracy required for being almost equal.</param>
+    /// <returns>True if both values are almost equal up to the specified maximum error; otherwise false.</returns>
     public static bool AlmostEqualRelative(this Complex32 a, Complex32 b, double maximumError)
     {
       return AlmostEqualNormRelative(a.Norm(), b.Norm(), a.NormOfDifference(b), maximumError);
@@ -234,7 +244,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="a">The first number</param>
     /// <param name="b">The second number</param>
-    /// <returns>true if the two values differ by no more than 10 * 2^(-52); false otherwise.</returns>
+    /// <returns>True if the two values differ by no more than 10 * 2^(-52); otherwise false.</returns>
     public static bool AlmostEqual(this double a, double b)
     {
       return AlmostEqualNorm(a, b, a - b, DefaultDoubleAccuracy);
@@ -245,7 +255,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="a">The first number</param>
     /// <param name="b">The second number</param>
-    /// <returns>true if the two values differ by no more than 10 * 2^(-52); false otherwise.</returns>
+    /// <returns>True if the two values differ by no more than 10 * 2^(-52); otherwise false.</returns>
     public static bool AlmostEqual(this float a, float b)
     {
       return AlmostEqualNorm(a, b, a - b, DefaultSingleAccuracy);
@@ -256,7 +266,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="a">The first number</param>
     /// <param name="b">The second number</param>
-    /// <returns>true if the two values differ by no more than 10 * 2^(-52); false otherwise.</returns>
+    /// <returns>True if the two values differ by no more than 10 * 2^(-52); otherwise false.</returns>
     public static bool AlmostEqual(this Complex a, Complex b)
     {
       return AlmostEqualNorm(a.Norm(), b.Norm(), a.NormOfDifference(b), DefaultDoubleAccuracy);
@@ -267,7 +277,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="a">The first number</param>
     /// <param name="b">The second number</param>
-    /// <returns>true if the two values differ by no more than 10 * 2^(-52); false otherwise.</returns>
+    /// <returns>True if the two values differ by no more than 10 * 2^(-52); otherwise false.</returns>
     public static bool AlmostEqual(this Complex32 a, Complex32 b)
     {
       return AlmostEqualNorm(a.Norm(), b.Norm(), a.NormOfDifference(b), DefaultSingleAccuracy);
@@ -278,7 +288,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="a">The first number</param>
     /// <param name="b">The second number</param>
-    /// <returns>true if the two values differ by no more than 10 * 2^(-52); false otherwise.</returns>
+    /// <returns>True if the two values differ by no more than 10 * 2^(-52); otherwise false.</returns>
     public static bool AlmostEqualRelative(this double a, double b)
     {
       return AlmostEqualNormRelative(a, b, a - b, DefaultDoubleAccuracy);
@@ -289,7 +299,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="a">The first number</param>
     /// <param name="b">The second number</param>
-    /// <returns>true if the two values differ by no more than 10 * 2^(-52); false otherwise.</returns>
+    /// <returns>True if the two values differ by no more than 10 * 2^(-52); otherwise false.</returns>
     public static bool AlmostEqualRelative(this float a, float b)
     {
       return AlmostEqualNormRelative(a, b, a - b, DefaultSingleAccuracy);
@@ -300,7 +310,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="a">The first number</param>
     /// <param name="b">The second number</param>
-    /// <returns>true if the two values differ by no more than 10 * 2^(-52); false otherwise.</returns>
+    /// <returns>True if the two values differ by no more than 10 * 2^(-52); otherwise false.</returns>
     public static bool AlmostEqualRelative(this Complex a, Complex b)
     {
       return AlmostEqualNormRelative(a.Norm(), b.Norm(), a.NormOfDifference(b), DefaultDoubleAccuracy);
@@ -311,7 +321,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="a">The first number</param>
     /// <param name="b">The second number</param>
-    /// <returns>true if the two values differ by no more than 10 * 2^(-52); false otherwise.</returns>
+    /// <returns>True if the two values differ by no more than 10 * 2^(-52); otherwise false.</returns>
     public static bool AlmostEqualRelative(this Complex32 a, Complex32 b)
     {
       return AlmostEqualNormRelative(a.Norm(), b.Norm(), a.NormOfDifference(b), DefaultSingleAccuracy);
@@ -332,6 +342,7 @@ namespace Altaxo.Calc
     /// <param name="b">The norm of the second value (can be negative).</param>
     /// <param name="diff">The norm of the difference of the two values (can be negative).</param>
     /// <param name="decimalPlaces">The number of decimal places.</param>
+    /// <returns><see langword="true"/> if the values are equal within the specified number of decimal places; otherwise, <see langword="false"/>.</returns>
     public static bool AlmostEqualNorm(this double a, double b, double diff, int decimalPlaces)
     {
       // If A or B are a NAN, return false. NANs are equal to nothing,
@@ -367,9 +378,11 @@ namespace Altaxo.Calc
     /// 0.005 and 0.015, but not 0.02 and not 0.00
     /// </para>
     /// </remarks>
+    /// <typeparam name="T">The type of the values being compared.</typeparam>
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <param name="decimalPlaces">The number of decimal places.</param>
+    /// <returns><see langword="true"/> if the values are equal within the specified number of decimal places; otherwise, <see langword="false"/>.</returns>
     public static bool AlmostEqualNorm<T>(this T a, T b, int decimalPlaces)
         where T : IPrecisionSupport<T>
     {
@@ -392,6 +405,7 @@ namespace Altaxo.Calc
     /// <param name="diff">The norm of the difference of the two values (can be negative).</param>
     /// <param name="decimalPlaces">The number of decimal places.</param>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="decimalPlaces"/> is smaller than zero.</exception>
+    /// <returns><see langword="true"/> if the values are equal within the specified relative tolerance; otherwise, <see langword="false"/>.</returns>
     public static bool AlmostEqualNormRelative(this double a, double b, double diff, int decimalPlaces)
     {
       if (decimalPlaces < 0)
@@ -459,9 +473,11 @@ namespace Altaxo.Calc
     /// 0.005 and 0.015, but not 0.02 and not 0.00
     /// </para>
     /// </remarks>
+    /// <typeparam name="T">The type of the values being compared.</typeparam>
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <param name="decimalPlaces">The number of decimal places.</param>
+    /// <returns><see langword="true"/> if the values are equal within the specified relative tolerance; otherwise, <see langword="false"/>.</returns>
     public static bool AlmostEqualNormRelative<T>(this T a, T b, int decimalPlaces)
         where T : IPrecisionSupport<T>
     {
@@ -475,6 +491,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <param name="decimalPlaces">The number of decimal places.</param>
+    /// <returns><see langword="true"/> if the values are equal within the specified number of decimal places; otherwise, <see langword="false"/>.</returns>
     public static bool AlmostEqual(this double a, double b, int decimalPlaces)
     {
       return AlmostEqualNorm(a, b, a - b, decimalPlaces);
@@ -487,6 +504,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <param name="decimalPlaces">The number of decimal places.</param>
+    /// <returns><see langword="true"/> if the values are equal within the specified number of decimal places; otherwise, <see langword="false"/>.</returns>
     public static bool AlmostEqual(this float a, float b, int decimalPlaces)
     {
       return AlmostEqualNorm(a, b, a - b, decimalPlaces);
@@ -499,6 +517,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <param name="decimalPlaces">The number of decimal places.</param>
+    /// <returns><see langword="true"/> if the values are equal within the specified number of decimal places; otherwise, <see langword="false"/>.</returns>
     public static bool AlmostEqual(this Complex a, Complex b, int decimalPlaces)
     {
       return AlmostEqualNorm(a.Norm(), b.Norm(), a.NormOfDifference(b), decimalPlaces);
@@ -511,6 +530,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <param name="decimalPlaces">The number of decimal places.</param>
+    /// <returns><see langword="true"/> if the values are equal within the specified number of decimal places; otherwise, <see langword="false"/>.</returns>
     public static bool AlmostEqual(this Complex32 a, Complex32 b, int decimalPlaces)
     {
       return AlmostEqualNorm(a.Norm(), b.Norm(), a.NormOfDifference(b), decimalPlaces);
@@ -523,6 +543,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <param name="decimalPlaces">The number of decimal places.</param>
+    /// <returns><see langword="true"/> if the values are equal within the specified relative tolerance; otherwise, <see langword="false"/>.</returns>
     public static bool AlmostEqualRelative(this double a, double b, int decimalPlaces)
     {
       return AlmostEqualNormRelative(a, b, a - b, decimalPlaces);
@@ -535,6 +556,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <param name="decimalPlaces">The number of decimal places.</param>
+    /// <returns><see langword="true"/> if the values are equal within the specified relative tolerance; otherwise, <see langword="false"/>.</returns>
     public static bool AlmostEqualRelative(this float a, float b, int decimalPlaces)
     {
       return AlmostEqualNormRelative(a, b, a - b, decimalPlaces);
@@ -547,6 +569,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <param name="decimalPlaces">The number of decimal places.</param>
+    /// <returns><see langword="true"/> if the values are equal within the specified relative tolerance; otherwise, <see langword="false"/>.</returns>
     public static bool AlmostEqualRelative(this Complex a, Complex b, int decimalPlaces)
     {
       return AlmostEqualNormRelative(a.Norm(), b.Norm(), a.NormOfDifference(b), decimalPlaces);
@@ -559,6 +582,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <param name="decimalPlaces">The number of decimal places.</param>
+    /// <returns><see langword="true"/> if the values are equal within the specified relative tolerance; otherwise, <see langword="false"/>.</returns>
     public static bool AlmostEqualRelative(this Complex32 a, Complex32 b, int decimalPlaces)
     {
       return AlmostEqualNormRelative(a.Norm(), b.Norm(), a.NormOfDifference(b), decimalPlaces);
@@ -584,6 +608,7 @@ namespace Altaxo.Calc
     /// <param name="b">The second value.</param>
     /// <param name="maxNumbersBetween">The maximum number of floating point values between the two values. Must be 1 or larger.</param>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="maxNumbersBetween"/> is smaller than one.</exception>
+    /// <returns><see langword="true"/> if the values are equal within the specified number of representable values; otherwise, <see langword="false"/>.</returns>
     public static bool AlmostEqualNumbersBetween(this double a, double b, long maxNumbersBetween)
     {
       // Make sure maxNumbersBetween is non-negative and small enough that the
@@ -627,6 +652,7 @@ namespace Altaxo.Calc
     /// <param name="b">The second value.</param>
     /// <param name="maxNumbersBetween">The maximum number of floating point values between the two values. Must be 1 or larger.</param>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="maxNumbersBetween"/> is smaller than one.</exception>
+    /// <returns><see langword="true"/> if the values are equal within the specified number of representable values; otherwise, <see langword="false"/>.</returns>
     public static bool AlmostEqualNumbersBetween(this float a, float b, int maxNumbersBetween)
     {
       // Make sure maxNumbersBetween is non-negative and small enough that the
@@ -670,6 +696,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value list.</param>
     /// <param name="b">The second value list.</param>
     /// <param name="maximumAbsoluteError">The accuracy required for being almost equal.</param>
+    /// <returns><see langword="true"/> if the lists are element-wise almost equal; otherwise, <see langword="false"/>.</returns>
     public static bool ListAlmostEqual(this IList<double> a, IList<double> b, double maximumAbsoluteError)
     {
       return ListForAll(a, b, AlmostEqual, maximumAbsoluteError);
@@ -682,6 +709,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value list.</param>
     /// <param name="b">The second value list.</param>
     /// <param name="maximumAbsoluteError">The accuracy required for being almost equal.</param>
+    /// <returns><see langword="true"/> if the lists are element-wise almost equal; otherwise, <see langword="false"/>.</returns>
     public static bool ListAlmostEqual(this IList<float> a, IList<float> b, double maximumAbsoluteError)
     {
       return ListForAll(a, b, AlmostEqual, maximumAbsoluteError);
@@ -694,6 +722,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value list.</param>
     /// <param name="b">The second value list.</param>
     /// <param name="maximumAbsoluteError">The accuracy required for being almost equal.</param>
+    /// <returns><see langword="true"/> if the lists are element-wise almost equal; otherwise, <see langword="false"/>.</returns>
     public static bool ListAlmostEqual(this IList<Complex> a, IList<Complex> b, double maximumAbsoluteError)
     {
       return ListForAll(a, b, AlmostEqual, maximumAbsoluteError);
@@ -706,6 +735,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value list.</param>
     /// <param name="b">The second value list.</param>
     /// <param name="maximumAbsoluteError">The accuracy required for being almost equal.</param>
+    /// <returns><see langword="true"/> if the lists are element-wise almost equal; otherwise, <see langword="false"/>.</returns>
     public static bool ListAlmostEqual(this IList<Complex32> a, IList<Complex32> b, double maximumAbsoluteError)
     {
       return ListForAll(a, b, AlmostEqual, maximumAbsoluteError);
@@ -718,6 +748,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value list.</param>
     /// <param name="b">The second value list.</param>
     /// <param name="maximumError">The accuracy required for being almost equal.</param>
+    /// <returns><see langword="true"/> if the lists are element-wise almost equal under relative comparison; otherwise, <see langword="false"/>.</returns>
     public static bool ListAlmostEqualRelative(this IList<double> a, IList<double> b, double maximumError)
     {
       return ListForAll(a, b, AlmostEqualRelative, maximumError);
@@ -730,6 +761,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value list.</param>
     /// <param name="b">The second value list.</param>
     /// <param name="maximumError">The accuracy required for being almost equal.</param>
+    /// <returns><see langword="true"/> if the lists are element-wise almost equal under relative comparison; otherwise, <see langword="false"/>.</returns>
     public static bool ListAlmostEqualRelative(this IList<float> a, IList<float> b, double maximumError)
     {
       return ListForAll(a, b, AlmostEqualRelative, maximumError);
@@ -742,6 +774,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value list.</param>
     /// <param name="b">The second value list.</param>
     /// <param name="maximumError">The accuracy required for being almost equal.</param>
+    /// <returns><see langword="true"/> if the lists are element-wise almost equal under relative comparison; otherwise, <see langword="false"/>.</returns>
     public static bool ListAlmostEqualRelative(this IList<Complex> a, IList<Complex> b, double maximumError)
     {
       return ListForAll(a, b, AlmostEqualRelative, maximumError);
@@ -754,6 +787,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value list.</param>
     /// <param name="b">The second value list.</param>
     /// <param name="maximumError">The accuracy required for being almost equal.</param>
+    /// <returns><see langword="true"/> if the lists are element-wise almost equal under relative comparison; otherwise, <see langword="false"/>.</returns>
     public static bool ListAlmostEqualRelative(this IList<Complex32> a, IList<Complex32> b, double maximumError)
     {
       return ListForAll(a, b, AlmostEqualRelative, maximumError);
@@ -766,6 +800,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value list.</param>
     /// <param name="b">The second value list.</param>
     /// <param name="decimalPlaces">The number of decimal places.</param>
+    /// <returns><see langword="true"/> if the lists are element-wise almost equal; otherwise, <see langword="false"/>.</returns>
     public static bool ListAlmostEqual(this IList<double> a, IList<double> b, int decimalPlaces)
     {
       return ListForAll(a, b, AlmostEqual, decimalPlaces);
@@ -778,6 +813,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value list.</param>
     /// <param name="b">The second value list.</param>
     /// <param name="decimalPlaces">The number of decimal places.</param>
+    /// <returns><see langword="true"/> if the lists are element-wise almost equal; otherwise, <see langword="false"/>.</returns>
     public static bool ListAlmostEqual(this IList<float> a, IList<float> b, int decimalPlaces)
     {
       return ListForAll(a, b, AlmostEqual, decimalPlaces);
@@ -790,6 +826,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value list.</param>
     /// <param name="b">The second value list.</param>
     /// <param name="decimalPlaces">The number of decimal places.</param>
+    /// <returns><see langword="true"/> if the lists are element-wise almost equal; otherwise, <see langword="false"/>.</returns>
     public static bool ListAlmostEqual(this IList<Complex> a, IList<Complex> b, int decimalPlaces)
     {
       return ListForAll(a, b, AlmostEqual, decimalPlaces);
@@ -802,6 +839,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value list.</param>
     /// <param name="b">The second value list.</param>
     /// <param name="decimalPlaces">The number of decimal places.</param>
+    /// <returns><see langword="true"/> if the lists are element-wise almost equal; otherwise, <see langword="false"/>.</returns>
     public static bool ListAlmostEqual(this IList<Complex32> a, IList<Complex32> b, int decimalPlaces)
     {
       return ListForAll(a, b, AlmostEqual, decimalPlaces);
@@ -814,6 +852,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value list.</param>
     /// <param name="b">The second value list.</param>
     /// <param name="decimalPlaces">The number of decimal places.</param>
+    /// <returns><see langword="true"/> if the lists are element-wise almost equal under relative comparison; otherwise, <see langword="false"/>.</returns>
     public static bool ListAlmostEqualRelative(this IList<double> a, IList<double> b, int decimalPlaces)
     {
       return ListForAll(a, b, AlmostEqualRelative, decimalPlaces);
@@ -826,6 +865,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value list.</param>
     /// <param name="b">The second value list.</param>
     /// <param name="decimalPlaces">The number of decimal places.</param>
+    /// <returns><see langword="true"/> if the lists are element-wise almost equal under relative comparison; otherwise, <see langword="false"/>.</returns>
     public static bool ListAlmostEqualRelative(this IList<float> a, IList<float> b, int decimalPlaces)
     {
       return ListForAll(a, b, AlmostEqualRelative, decimalPlaces);
@@ -838,6 +878,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value list.</param>
     /// <param name="b">The second value list.</param>
     /// <param name="decimalPlaces">The number of decimal places.</param>
+    /// <returns><see langword="true"/> if the lists are element-wise almost equal under relative comparison; otherwise, <see langword="false"/>.</returns>
     public static bool ListAlmostEqualRelative(this IList<Complex> a, IList<Complex> b, int decimalPlaces)
     {
       return ListForAll(a, b, AlmostEqualRelative, decimalPlaces);
@@ -850,6 +891,7 @@ namespace Altaxo.Calc
     /// <param name="a">The first value list.</param>
     /// <param name="b">The second value list.</param>
     /// <param name="decimalPlaces">The number of decimal places.</param>
+    /// <returns><see langword="true"/> if the lists are element-wise almost equal under relative comparison; otherwise, <see langword="false"/>.</returns>
     public static bool ListAlmostEqualRelative(this IList<Complex32> a, IList<Complex32> b, int decimalPlaces)
     {
       return ListForAll(a, b, AlmostEqualRelative, decimalPlaces);
@@ -859,9 +901,11 @@ namespace Altaxo.Calc
     /// Compares two lists of doubles and determines if they are equal within the
     /// specified maximum error.
     /// </summary>
+    /// <typeparam name="T">The type of the values being compared.</typeparam>
     /// <param name="a">The first value list.</param>
     /// <param name="b">The second value list.</param>
     /// <param name="maximumAbsoluteError">The accuracy required for being almost equal.</param>
+    /// <returns><see langword="true"/> if the lists are element-wise almost equal; otherwise, <see langword="false"/>.</returns>
     public static bool ListAlmostEqualNorm<T>(this IList<T> a, IList<T> b, double maximumAbsoluteError)
         where T : IPrecisionSupport<T>
     {
@@ -890,9 +934,11 @@ namespace Altaxo.Calc
     /// Compares two lists of doubles and determines if they are equal within the
     /// specified maximum error.
     /// </summary>
+    /// <typeparam name="T">The type of the values being compared.</typeparam>
     /// <param name="a">The first value list.</param>
     /// <param name="b">The second value list.</param>
     /// <param name="maximumError">The accuracy required for being almost equal.</param>
+    /// <returns><see langword="true"/> if the lists are element-wise almost equal under relative comparison; otherwise, <see langword="false"/>.</returns>
     public static bool ListAlmostEqualNormRelative<T>(this IList<T> a, IList<T> b, double maximumError)
         where T : IPrecisionSupport<T>
     {
@@ -943,9 +989,11 @@ namespace Altaxo.Calc
     /// <summary>
     /// Compares two vectors and determines if they are equal within the specified maximum error.
     /// </summary>
+    /// <typeparam name="T">The type of the values being compared.</typeparam>
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <param name="maximumAbsoluteError">The accuracy required for being almost equal.</param>
+    /// <returns><see langword="true"/> if the vectors are almost equal; otherwise, <see langword="false"/>.</returns>
     public static bool AlmostEqual<T>(this Vector<T> a, Vector<T> b, double maximumAbsoluteError)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -955,9 +1003,11 @@ namespace Altaxo.Calc
     /// <summary>
     /// Compares two vectors and determines if they are equal within the specified maximum error.
     /// </summary>
+    /// <typeparam name="T">The type of the values being compared.</typeparam>
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <param name="maximumError">The accuracy required for being almost equal.</param>
+    /// <returns><see langword="true"/> if the vectors are almost equal under relative comparison; otherwise, <see langword="false"/>.</returns>
     public static bool AlmostEqualRelative<T>(this Vector<T> a, Vector<T> b, double maximumError)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -968,9 +1018,11 @@ namespace Altaxo.Calc
     /// Compares two vectors and determines if they are equal to within the specified number
     /// of decimal places or not, using the number of decimal places as an absolute measure.
     /// </summary>
+    /// <typeparam name="T">The type of the values being compared.</typeparam>
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <param name="decimalPlaces">The number of decimal places.</param>
+    /// <returns><see langword="true"/> if the vectors are almost equal; otherwise, <see langword="false"/>.</returns>
     public static bool AlmostEqual<T>(this Vector<T> a, Vector<T> b, int decimalPlaces)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -981,9 +1033,11 @@ namespace Altaxo.Calc
     /// Compares two vectors and determines if they are equal to within the specified number of decimal places or not.
     /// If the numbers are very close to zero an absolute difference is compared, otherwise the relative difference is compared.
     /// </summary>
+    /// <typeparam name="T">The type of the values being compared.</typeparam>
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <param name="decimalPlaces">The number of decimal places.</param>
+    /// <returns><see langword="true"/> if the vectors are almost equal under relative comparison; otherwise, <see langword="false"/>.</returns>
     public static bool AlmostEqualRelative<T>(this Vector<T> a, Vector<T> b, int decimalPlaces)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -993,9 +1047,11 @@ namespace Altaxo.Calc
     /// <summary>
     /// Compares two matrices and determines if they are equal within the specified maximum error.
     /// </summary>
+    /// <typeparam name="T">The type of the values being compared.</typeparam>
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <param name="maximumAbsoluteError">The accuracy required for being almost equal.</param>
+    /// <returns><see langword="true"/> if the matrices are almost equal; otherwise, <see langword="false"/>.</returns>
     public static bool AlmostEqual<T>(this Matrix<T> a, Matrix<T> b, double maximumAbsoluteError)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -1005,9 +1061,11 @@ namespace Altaxo.Calc
     /// <summary>
     /// Compares two matrices and determines if they are equal within the specified maximum error.
     /// </summary>
+    /// <typeparam name="T">The type of the values being compared.</typeparam>
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <param name="maximumError">The accuracy required for being almost equal.</param>
+    /// <returns><see langword="true"/> if the matrices are almost equal under relative comparison; otherwise, <see langword="false"/>.</returns>
     public static bool AlmostEqualRelative<T>(this Matrix<T> a, Matrix<T> b, double maximumError)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -1018,9 +1076,11 @@ namespace Altaxo.Calc
     /// Compares two matrices and determines if they are equal to within the specified number
     /// of decimal places or not, using the number of decimal places as an absolute measure.
     /// </summary>
+    /// <typeparam name="T">The type of the values being compared.</typeparam>
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <param name="decimalPlaces">The number of decimal places.</param>
+    /// <returns><see langword="true"/> if the matrices are almost equal; otherwise, <see langword="false"/>.</returns>
     public static bool AlmostEqual<T>(this Matrix<T> a, Matrix<T> b, int decimalPlaces)
         where T : struct, IEquatable<T>, IFormattable
     {
@@ -1031,9 +1091,11 @@ namespace Altaxo.Calc
     /// Compares two matrices and determines if they are equal to within the specified number of decimal places or not.
     /// If the numbers are very close to zero an absolute difference is compared, otherwise the relative difference is compared.
     /// </summary>
+    /// <typeparam name="T">The type of the values being compared.</typeparam>
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <param name="decimalPlaces">The number of decimal places.</param>
+    /// <returns><see langword="true"/> if the matrices are almost equal under relative comparison; otherwise, <see langword="false"/>.</returns>
     public static bool AlmostEqualRelative<T>(this Matrix<T> a, Matrix<T> b, int decimalPlaces)
         where T : struct, IEquatable<T>, IFormattable
     {

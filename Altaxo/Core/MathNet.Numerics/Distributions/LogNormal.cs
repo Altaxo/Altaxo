@@ -138,6 +138,7 @@ namespace Altaxo.Calc.Distributions
     /// </summary>
     /// <param name="mu">The log-scale (μ) of the distribution.</param>
     /// <param name="sigma">The shape (σ) of the distribution. Range: σ ≥ 0.</param>
+    /// <returns><c>true</c> if the parameters define a valid log-normal distribution; otherwise, <c>false</c>.</returns>
     public static bool IsValidParameterSet(double mu, double sigma)
     {
       return sigma >= 0.0 && !double.IsNaN(mu);
@@ -299,6 +300,7 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Fills an array with samples generated from the distribution.
     /// </summary>
+    /// <param name="values">The array to fill with samples.</param>
     public void Samples(double[] values)
     {
       SamplesUnchecked(_random, values, _mu, _sigma);

@@ -462,12 +462,14 @@ namespace Altaxo.Science.Spectroscopy.Calibration
       }
     }
 
+    /// <inheritdoc/>
     object IAltaxoTableDataSource.ProcessOptionsObject
     {
       get => ProcessOptions;
       set => ProcessOptions = (YCalibrationOptions)value;
     }
 
+    /// <inheritdoc/>
     object IAltaxoTableDataSource.ProcessDataObject
     {
       get => _processData;

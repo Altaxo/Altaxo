@@ -176,6 +176,7 @@ namespace Altaxo.Collections
         yield return _coll[i];
     }
 
+    /// <inheritdoc/>
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
       for (int i = _coll.Count - 1; i >= 0; i--)

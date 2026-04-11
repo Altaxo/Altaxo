@@ -91,6 +91,8 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="LinkedImageGraphic"/> class.
     /// </summary>
+    /// <param name="graphicPosition">The graphic position.</param>
+    /// <param name="ImagePath">The image path.</param>
     public LinkedImageGraphic(PointD2D graphicPosition, string ImagePath)
       : base()
     {
@@ -101,6 +103,9 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="LinkedImageGraphic"/> class.
     /// </summary>
+    /// <param name="posX">The x-position of the graphic.</param>
+    /// <param name="posY">The y-position of the graphic.</param>
+    /// <param name="ImagePath">The image path.</param>
     public LinkedImageGraphic(double posX, double posY, string ImagePath)
       :
       this(new PointD2D(posX, posY), ImagePath)
@@ -110,6 +115,9 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="LinkedImageGraphic"/> class.
     /// </summary>
+    /// <param name="graphicPosition">The graphic position.</param>
+    /// <param name="graphicSize">The graphic size.</param>
+    /// <param name="ImagePath">The image path.</param>
     public LinkedImageGraphic(PointD2D graphicPosition, PointD2D graphicSize, string ImagePath)
       :
       this(graphicPosition, ImagePath)
@@ -120,6 +128,10 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="LinkedImageGraphic"/> class.
     /// </summary>
+    /// <param name="posX">The x-position of the graphic.</param>
+    /// <param name="posY">The y-position of the graphic.</param>
+    /// <param name="graphicSize">The graphic size.</param>
+    /// <param name="ImagePath">The image path.</param>
     public LinkedImageGraphic(double posX, double posY, PointD2D graphicSize, string ImagePath)
       :
       this(new PointD2D(posX, posY), graphicSize, ImagePath)
@@ -129,6 +141,11 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="LinkedImageGraphic"/> class.
     /// </summary>
+    /// <param name="posX">The x-position of the graphic.</param>
+    /// <param name="posY">The y-position of the graphic.</param>
+    /// <param name="width">The width of the graphic.</param>
+    /// <param name="height">The height of the graphic.</param>
+    /// <param name="ImagePath">The image path.</param>
     public LinkedImageGraphic(double posX, double posY, double width, double height, string ImagePath)
       :
       this(new PointD2D(posX, posY), new PointD2D(width, height), ImagePath)
@@ -138,6 +155,9 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="LinkedImageGraphic"/> class.
     /// </summary>
+    /// <param name="graphicPosition">The graphic position.</param>
+    /// <param name="Rotation">The rotation angle.</param>
+    /// <param name="ImagePath">The image path.</param>
     public LinkedImageGraphic(PointD2D graphicPosition, double Rotation, string ImagePath)
       :
       this(graphicPosition, ImagePath)
@@ -148,6 +168,10 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="LinkedImageGraphic"/> class.
     /// </summary>
+    /// <param name="posX">The x-position of the graphic.</param>
+    /// <param name="posY">The y-position of the graphic.</param>
+    /// <param name="Rotation">The rotation angle.</param>
+    /// <param name="ImagePath">The image path.</param>
     public LinkedImageGraphic(double posX, double posY, double Rotation, string ImagePath)
       :
       this(new PointD2D(posX, posY), Rotation, ImagePath)
@@ -157,6 +181,10 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="LinkedImageGraphic"/> class.
     /// </summary>
+    /// <param name="graphicPosition">The graphic position.</param>
+    /// <param name="graphicSize">The graphic size.</param>
+    /// <param name="Rotation">The rotation angle.</param>
+    /// <param name="ImagePath">The image path.</param>
     public LinkedImageGraphic(PointD2D graphicPosition, PointD2D graphicSize, double Rotation, string ImagePath)
       :
       this(graphicPosition, Rotation, ImagePath)
@@ -167,6 +195,11 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="LinkedImageGraphic"/> class.
     /// </summary>
+    /// <param name="posX">The x-position of the graphic.</param>
+    /// <param name="posY">The y-position of the graphic.</param>
+    /// <param name="graphicSize">The graphic size.</param>
+    /// <param name="Rotation">The rotation angle.</param>
+    /// <param name="ImagePath">The image path.</param>
     public LinkedImageGraphic(double posX, double posY, PointD2D graphicSize, double Rotation, string ImagePath)
       :
       this(new PointD2D(posX, posY), graphicSize, Rotation, ImagePath)
@@ -176,6 +209,12 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="LinkedImageGraphic"/> class.
     /// </summary>
+    /// <param name="posX">The x-position of the graphic.</param>
+    /// <param name="posY">The y-position of the graphic.</param>
+    /// <param name="width">The width of the graphic.</param>
+    /// <param name="height">The height of the graphic.</param>
+    /// <param name="Rotation">The rotation angle.</param>
+    /// <param name="ImagePath">The image path.</param>
     public LinkedImageGraphic(double posX, double posY, double width, double height, double Rotation, string ImagePath)
       :
       this(new PointD2D(posX, posY), new PointD2D(width, height), Rotation, ImagePath)

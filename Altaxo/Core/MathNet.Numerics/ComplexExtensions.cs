@@ -62,6 +62,7 @@ namespace Altaxo.Calc
     /// <summary>
     /// Gets the unity of this complex (same argument, but on the unit circle; exp(I*arg))
     /// </summary>
+    /// <param name="complex">The <see cref="Complex"/> number to evaluate.</param>
     /// <returns>The unity of this <c>Complex</c>.</returns>
     public static Complex Sign(this Complex complex)
     {
@@ -121,6 +122,8 @@ namespace Altaxo.Calc
     /// <summary>
     /// Returns the multiplicative inverse of a complex number.
     /// </summary>
+    /// <param name="complex">The <see cref="Complex"/> number to invert.</param>
+    /// <returns>The multiplicative inverse of this complex number.</returns>
     [TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
     public static Complex Reciprocal(this Complex complex)
     {
@@ -156,6 +159,7 @@ namespace Altaxo.Calc
     /// <summary>
     /// Common Logarithm of this <c>Complex</c> (Base 10).
     /// </summary>
+    /// <param name="complex">The <see cref="Complex"/> number to evaluate.</param>
     /// <returns>The common logarithm of this complex number.</returns>
     [TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
     public static Complex Log10(this Complex complex)
@@ -166,6 +170,8 @@ namespace Altaxo.Calc
     /// <summary>
     /// Logarithm of this <c>Complex</c> with custom base.
     /// </summary>
+    /// <param name="complex">The <see cref="Complex"/> number to evaluate.</param>
+    /// <param name="baseValue">The logarithm base.</param>
     /// <returns>The logarithm of this complex number.</returns>
     [TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
     public static Complex Log(this Complex complex, double baseValue)
@@ -295,6 +301,8 @@ namespace Altaxo.Calc
     /// <summary>
     /// Evaluate all square roots of this <c>Complex</c>.
     /// </summary>
+    /// <param name="complex">The <see cref="Complex"/> number to evaluate.</param>
+    /// <returns>The two square roots of this complex number.</returns>
     public static (Complex, Complex) SquareRoots(this Complex complex)
     {
       var principal = SquareRoot(complex);
@@ -304,6 +312,8 @@ namespace Altaxo.Calc
     /// <summary>
     /// Evaluate all cubic roots of this <c>Complex</c>.
     /// </summary>
+    /// <param name="complex">The <see cref="Complex"/> number to evaluate.</param>
+    /// <returns>The three cubic roots of this complex number.</returns>
     public static (Complex, Complex, Complex) CubicRoots(this Complex complex)
     {
       var r = Math.Pow(complex.Magnitude, 1d / 3d);
@@ -401,6 +411,8 @@ namespace Altaxo.Calc
     /// Returns a Norm of a value of this type, which is appropriate for measuring how
     /// close this value is to zero.
     /// </summary>
+    /// <param name="complex">The value to measure.</param>
+    /// <returns>The norm of the value.</returns>
     public static double Norm(this Complex complex)
     {
       return complex.MagnitudeSquared();
@@ -410,6 +422,8 @@ namespace Altaxo.Calc
     /// Returns a Norm of a value of this type, which is appropriate for measuring how
     /// close this value is to zero.
     /// </summary>
+    /// <param name="complex">The value to measure.</param>
+    /// <returns>The norm of the value.</returns>
     public static double Norm(this Complex32 complex)
     {
       return complex.MagnitudeSquared;
@@ -419,6 +433,9 @@ namespace Altaxo.Calc
     /// Returns a Norm of the difference of two values of this type, which is
     /// appropriate for measuring how close together these two values are.
     /// </summary>
+    /// <param name="complex">The first value to compare.</param>
+    /// <param name="otherValue">The second value to compare.</param>
+    /// <returns>The norm of the difference.</returns>
     public static double NormOfDifference(this Complex complex, Complex otherValue)
     {
       return (complex - otherValue).MagnitudeSquared();
@@ -428,6 +445,9 @@ namespace Altaxo.Calc
     /// Returns a Norm of the difference of two values of this type, which is
     /// appropriate for measuring how close together these two values are.
     /// </summary>
+    /// <param name="complex">The first value to compare.</param>
+    /// <param name="otherValue">The second value to compare.</param>
+    /// <returns>The norm of the difference.</returns>
     public static double NormOfDifference(this Complex32 complex, Complex32 otherValue)
     {
       return (complex - otherValue).MagnitudeSquared;

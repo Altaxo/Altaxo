@@ -77,21 +77,36 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Gets a controller for the specified arguments.
     /// </summary>
+    /// <param name="args">The controller creation arguments.</param>
+    /// <param name="expectedControllerType">The expected controller type.</param>
+    /// <returns>The controller, or <see langword="null"/> if no suitable controller was found.</returns>
     IMVCController? GetController(object[] args, Type expectedControllerType);
 
     /// <summary>
     /// Gets a controller for the specified arguments and document usage mode.
     /// </summary>
+    /// <param name="args">The controller creation arguments.</param>
+    /// <param name="expectedControllerType">The expected controller type.</param>
+    /// <param name="copyDocument">Specifies how the document should be used.</param>
+    /// <returns>The controller, or <see langword="null"/> if no suitable controller was found.</returns>
     IMVCController? GetController(object[] args, Type expectedControllerType, UseDocument copyDocument);
 
     /// <summary>
     /// Gets a controller for the specified arguments while overriding the type of the first argument.
     /// </summary>
+    /// <param name="creationArgs">The controller creation arguments.</param>
+    /// <param name="overrideArg0Type">The override type for the first argument.</param>
+    /// <param name="expectedControllerType">The expected controller type.</param>
+    /// <param name="copyDocument">Specifies how the document should be used.</param>
+    /// <returns>The controller, or <see langword="null"/> if no suitable controller was found.</returns>
     IMVCController? GetController(object[] creationArgs, Type overrideArg0Type, Type expectedControllerType, UseDocument copyDocument);
 
     /// <summary>
     /// Gets a controller together with an attached control for the specified arguments.
     /// </summary>
+    /// <param name="args">The controller creation arguments.</param>
+    /// <param name="expectedControllerType">The expected controller type.</param>
+    /// <returns>The controller with an attached control, or <see langword="null"/> if no suitable controller was found.</returns>
     IMVCController? GetControllerAndControl(object[] args, Type expectedControllerType);
 
     /// <summary>
@@ -106,11 +121,20 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Gets a controller together with an attached control for the specified arguments and document usage mode.
     /// </summary>
+    /// <param name="args">The controller creation arguments.</param>
+    /// <param name="expectedControllerType">The expected controller type.</param>
+    /// <param name="copyDocument">Specifies how the document should be used.</param>
+    /// <returns>The controller with an attached control, or <see langword="null"/> if no suitable controller was found.</returns>
     IMVCController? GetControllerAndControl(object[] args, Type expectedControllerType, UseDocument copyDocument);
 
     /// <summary>
     /// Gets a controller together with an attached control while overriding the type of the first argument.
     /// </summary>
+    /// <param name="args">The controller creation arguments.</param>
+    /// <param name="overrideArg0Type">The override type for the first argument.</param>
+    /// <param name="expectedControllerType">The expected controller type.</param>
+    /// <param name="copyDocument">Specifies how the document should be used.</param>
+    /// <returns>The controller with an attached control, or <see langword="null"/> if no suitable controller was found.</returns>
     IMVCController? GetControllerAndControl(object[] args, Type overrideArg0Type, Type expectedControllerType, UseDocument copyDocument);
 
     /// <summary>
@@ -138,21 +162,36 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Shows a cancel dialog for a background thread that is started by the service.
     /// </summary>
+    /// <param name="millisecondsDelay">The delay before showing the dialog.</param>
+    /// <param name="threadstart">The thread entry point.</param>
+    /// <param name="monitor">The monitor that reports progress and cancellation state.</param>
+    /// <returns><see langword="true"/> if the operation completed successfully; otherwise, <see langword="false"/>.</returns>
     bool ShowBackgroundCancelDialog(int millisecondsDelay, System.Threading.ThreadStart threadstart, IExternalDrivenBackgroundMonitor monitor);
 
     /// <summary>
     /// Shows a cancel dialog for an already created background thread.
     /// </summary>
+    /// <param name="millisecondsDelay">The delay before showing the dialog.</param>
+    /// <param name="thread">The existing thread to monitor.</param>
+    /// <param name="monitor">The monitor that reports progress and cancellation state.</param>
+    /// <returns><see langword="true"/> if the operation completed successfully; otherwise, <see langword="false"/>.</returns>
     bool ShowBackgroundCancelDialog(int millisecondsDelay, System.Threading.Thread thread, IExternalDrivenBackgroundMonitor monitor);
 
     /// <summary>
     /// Shows a cancel dialog for a task.
     /// </summary>
+    /// <param name="millisecondsDelay">The delay before showing the dialog.</param>
+    /// <param name="task">The task to monitor.</param>
+    /// <param name="monitor">The monitor that reports progress and cancellation state.</param>
+    /// <returns><see langword="true"/> if the operation completed successfully; otherwise, <see langword="false"/>.</returns>
     bool ShowTaskCancelDialog(int millisecondsDelay, System.Threading.Tasks.Task task, IExternalDrivenBackgroundMonitor monitor);
 
     /// <summary>
     /// Executes an action that can be cancelled by the user.
     /// </summary>
+    /// <param name="millisecondsDelay">The delay before showing cancellation UI.</param>
+    /// <param name="action">The action to execute.</param>
+    /// <returns>The exception thrown by the action, or <see langword="null"/> if execution finished without an exception.</returns>
     Exception? ExecuteAsUserCancellable(int millisecondsDelay, Action<IProgressReporter> action);
 
     /// <summary>
@@ -169,16 +208,25 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Shows a dialog for the specified controller.
     /// </summary>
+    /// <param name="controller">The controller to show.</param>
+    /// <param name="title">The dialog title.</param>
+    /// <returns><see langword="true"/> if the dialog was accepted; otherwise, <see langword="false"/>.</returns>
     bool ShowDialog(IMVCAController controller, string title);
 
     /// <summary>
     /// Shows a dialog for selecting an enumeration value.
     /// </summary>
+    /// <param name="arg">The enumeration value to edit.</param>
+    /// <param name="title">The dialog title.</param>
+    /// <returns><see langword="true"/> if the dialog was accepted; otherwise, <see langword="false"/>.</returns>
     bool ShowDialog(ref Enum arg, string title);
 
     /// <summary>
     /// Shows a dialog for editing enumeration flags.
     /// </summary>
+    /// <param name="arg">The enumeration value to edit.</param>
+    /// <param name="title">The dialog title.</param>
+    /// <returns><see langword="true"/> if the dialog was accepted; otherwise, <see langword="false"/>.</returns>
     bool ShowDialogForEnumFlag(ref System.Enum arg, string title);
 
     /// <summary>
@@ -200,6 +248,7 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Shows a configuration dialog for any item.
     /// </summary>
+    /// <typeparam name="T">The type of the object to configure.</typeparam>
     /// <param name="arg">The object to configure.
     /// If the return value is true, arg contains the configured object. </param>
     /// <param name="title">The title of the dialog.</param>
@@ -217,36 +266,57 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Shows a dialog for the specified controller and controls whether the Apply button is visible.
     /// </summary>
+    /// <param name="controller">The controller to show.</param>
+    /// <param name="title">The dialog title.</param>
+    /// <param name="showApplyButton"><see langword="true"/> to show the Apply button; otherwise, <see langword="false"/>.</param>
+    /// <returns><see langword="true"/> if the dialog was accepted; otherwise, <see langword="false"/>.</returns>
     bool ShowDialog(IMVCAController controller, string title, bool showApplyButton);
 
     /// <summary>
     /// Shows a dialog for the specified arguments and controls whether the Apply button is visible.
     /// </summary>
+    /// <param name="args">The dialog arguments.</param>
+    /// <param name="title">The dialog title.</param>
+    /// <param name="showApplyButton"><see langword="true"/> to show the Apply button; otherwise, <see langword="false"/>.</param>
+    /// <returns><see langword="true"/> if the dialog was accepted; otherwise, <see langword="false"/>.</returns>
     bool ShowDialog(object[] args, string title, bool showApplyButton);
 
     /// <summary>
     /// Shows a dialog for the specified arguments.
     /// </summary>
+    /// <param name="args">The dialog arguments.</param>
+    /// <param name="title">The dialog title.</param>
+    /// <returns><see langword="true"/> if the dialog was accepted; otherwise, <see langword="false"/>.</returns>
     bool ShowDialog(object[] args, string title);
 
     /// <summary>
     /// Shows an open-file dialog.
     /// </summary>
+    /// <param name="options">The dialog options.</param>
+    /// <returns><see langword="true"/> if the user accepted the dialog; otherwise, <see langword="false"/>.</returns>
     bool ShowOpenFileDialog(OpenFileOptions options);
 
     /// <summary>
     /// Shows a save-file dialog.
     /// </summary>
+    /// <param name="options">The dialog options.</param>
+    /// <returns><see langword="true"/> if the user accepted the dialog; otherwise, <see langword="false"/>.</returns>
     bool ShowSaveFileDialog(SaveFileOptions options);
 
     /// <summary>
     /// Shows a folder-selection dialog.
     /// </summary>
+    /// <param name="options">The dialog options.</param>
+    /// <returns><see langword="true"/> if the user accepted the dialog; otherwise, <see langword="false"/>.</returns>
     bool ShowFolderDialog(FolderChoiceOptions options);
 
     /// <summary>
     /// Shows a yes/no message box.
     /// </summary>
+    /// <param name="txt">The question text.</param>
+    /// <param name="caption">The dialog caption.</param>
+    /// <param name="defaultanswer"><see langword="true"/> to default to Yes; otherwise, <see langword="false"/>.</param>
+    /// <returns><see langword="true"/> if the user answered Yes; otherwise, <see langword="false"/>.</returns>
     bool YesNoMessageBox(string txt, string caption, bool defaultanswer);
 
     /// <summary>
@@ -261,6 +331,7 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Shows a message box with the error text.
     /// </summary>
+    /// <param name="errortxt">The error text.</param>
     void ErrorMessageBox(string errortxt);
 
     /// <summary>
@@ -273,11 +344,14 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Shows an information message box.
     /// </summary>
+    /// <param name="errortxt">The information text.</param>
     void InfoMessageBox(string errortxt);
 
     /// <summary>
     /// Shows an information message box with the specified title.
     /// </summary>
+    /// <param name="errortxt">The information text.</param>
+    /// <param name="title">The title of the message box.</param>
     void InfoMessageBox(string errortxt, string title);
 
     #region Clipboard

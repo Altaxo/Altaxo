@@ -125,6 +125,9 @@ namespace Altaxo.DataConnection
     /// <summary>
     /// Compares two connection-string instances for equality.
     /// </summary>
+    /// <param name="x">The first connection string.</param>
+    /// <param name="y">The second connection string.</param>
+    /// <returns><see langword="true"/> if both connection strings are equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator ==(AltaxoOleDbConnectionString x, AltaxoOleDbConnectionString y)
     {
       return ReferenceEquals(x,y) || (x is not null && y is not null && x._originalConnectionString == y._originalConnectionString && x._connectionStringWithCredentials == y._connectionStringWithCredentials);
@@ -133,6 +136,9 @@ namespace Altaxo.DataConnection
     /// <summary>
     /// Compares two connection-string instances for inequality.
     /// </summary>
+    /// <param name="x">The first connection string.</param>
+    /// <param name="y">The second connection string.</param>
+    /// <returns><see langword="true"/> if the connection strings are not equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator !=(AltaxoOleDbConnectionString x, AltaxoOleDbConnectionString y)
     {
       return !(x == y);

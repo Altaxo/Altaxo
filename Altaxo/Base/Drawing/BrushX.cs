@@ -701,6 +701,9 @@ namespace Altaxo.Drawing
     /// <summary>
     /// Determines whether two <see cref="BrushX"/> instances are equal.
     /// </summary>
+    /// <param name="x">The first brush.</param>
+    /// <param name="y">The second brush.</param>
+    /// <returns><see langword="true"/> if both brushes are equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator ==(BrushX? x, BrushX? y)
     {
       return x is { } _ ? x.Equals(y) : y is { } _ ? y.Equals(x) : true;
@@ -708,6 +711,9 @@ namespace Altaxo.Drawing
     /// <summary>
     /// Determines whether two <see cref="BrushX"/> instances are not equal.
     /// </summary>
+    /// <param name="x">The first brush.</param>
+    /// <param name="y">The second brush.</param>
+    /// <returns><see langword="true"/> if the brushes are not equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator !=(BrushX? x, BrushX? y)
     {
       return !(x == y);

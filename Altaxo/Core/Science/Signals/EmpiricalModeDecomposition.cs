@@ -79,7 +79,7 @@ namespace Altaxo.Science.Signals
     /// <param name="y">The y-values of the signal.</param>
     /// <param name="maximumNumberOfModesToReturn">The maximum number of modes to return from this enumeration.</param>
     /// <param name="returnRest">If true, the returned enumeration will also include the rest.</param>
-    /// <returns>An endless enumeration of signals, consisting of the mode y, the residual yResidual, and representing the modes of the original signal.</returns>
+    /// <returns>An endless enumeration of signals, consisting of the mode yIMFC, the residual yResidual, and representing the modes of the original signal.</returns>
     public IEnumerable<(double[] yIMFC, double[] yResidual, int modeNumber)> ExtractIntrinsicModeFunctionComponents(double[] x, double[] y, int maximumNumberOfModesToReturn, bool returnRest)
     {
 
@@ -121,7 +121,7 @@ namespace Altaxo.Science.Signals
     /// </summary>
     /// <param name="x">The array of x-values of the signal.</param>
     /// <param name="y">The array of y-values of the signal.</param>
-    /// <returns>The next mode extracted from the signal, and an indication, if this is an IMF or the rest.</returns>
+    /// <returns>The next mode extracted from the signal, and an indication of whether this is an IMF or the rest.</returns>
     /// <remarks>The number of sift iterations is fixed to 10 here.</remarks>
     public (double[] yIMFC, bool isIMF) ExtractIntrinsicModeFunctionComponent(ReadOnlySpan<double> x, ReadOnlySpan<double> y)
     {
@@ -311,6 +311,7 @@ namespace Altaxo.Science.Signals
     /// <param name="y">The y-values of the signal. On return, this array is modified (mean envelope is subtracted).</param>
     /// <param name="minimaIndices">The minima indices of the signal.</param>
     /// <param name="maximaIndices">The maxima indices of the signal.</param>
+    /// <returns><see langword="true"/> if a mean envelope was subtracted; otherwise, <see langword="false"/>.</returns>
     public bool SubtractMeanEnvelope(ReadOnlySpan<double> x, double[] y, IReadOnlyList<int> minimaIndices, IReadOnlyList<int> maximaIndices)
     {
       if (minimaIndices.Count == 1 && maximaIndices.Count == 1)

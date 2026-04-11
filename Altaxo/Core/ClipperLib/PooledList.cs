@@ -25,6 +25,13 @@ namespace Clipper2Lib
   /// </summary>
   internal class VertexPoolList : PooledList<Vertex>
   {
+    /// <summary>
+    /// Adds a vertex to the pool and returns the pooled instance.
+    /// </summary>
+    /// <param name="point">The vertex position.</param>
+    /// <param name="flags">The vertex flags.</param>
+    /// <param name="prev">The previous vertex in the linked sequence.</param>
+    /// <returns>The pooled vertex instance.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Vertex Add(Point64 point, VertexFlags flags, Vertex? prev)
     {
@@ -53,8 +60,17 @@ namespace Clipper2Lib
   /// </summary>
   internal class OutPtPoolList : PooledList<OutPt>
   {
+    /// <summary>
+    /// Gets or sets a value indicating whether the output point pool is used.
+    /// </summary>
     public static bool UseOutPtPool = true;
 
+    /// <summary>
+    /// Adds an output point to the pool and returns the pooled instance.
+    /// </summary>
+    /// <param name="pt">The point to add.</param>
+    /// <param name="outrec">The owning output record.</param>
+    /// <returns>The pooled output point instance.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public OutPt Add(Point64 pt, OutRec outrec)
     {
@@ -85,6 +101,10 @@ namespace Clipper2Lib
   /// </summary>
   internal class OutRecPoolList : PooledList<OutRec>
   {
+    /// <summary>
+    /// Adds an output record to the pool and returns the pooled instance.
+    /// </summary>
+    /// <returns>The pooled output record instance.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public OutRec Add()
     {
@@ -116,7 +136,12 @@ namespace Clipper2Lib
     }
 
     //tombStone marks cleared OutRec in the pool
+    /// <summary>
+    /// Marks pooled output records that have been cleared.
+    /// </summary>
     private static readonly Path64 tombStone = new Path64();
+
+    /// <inheritdoc />
     public override void Clear()
     {
       base.Clear();
@@ -142,6 +167,12 @@ namespace Clipper2Lib
   /// </summary>
   internal class HorzJoinPoolList : PooledList<HorzJoin>
   {
+    /// <summary>
+    /// Adds a horizontal join to the pool and returns the pooled instance.
+    /// </summary>
+    /// <param name="ltor">The left-to-right endpoint.</param>
+    /// <param name="rtol">The right-to-left endpoint.</param>
+    /// <returns>The pooled horizontal join instance.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public HorzJoin Add(OutPt ltor, OutPt rtol)
     {
@@ -168,13 +199,26 @@ namespace Clipper2Lib
   /// Indexing, growing and enumeration implementation is identical to <see cref="System.Collections.Generic.List{T}"/>.
   /// The pooled list reuses allocated reference objects. Operations are limited to read, add and clear.
   /// </summary>
+  /// <typeparam name="T">The pooled reference type.</typeparam>
   internal abstract class PooledList<T> : IReadOnlyList<T> where T : class
   {
     private const int DefaultCapacity = 4;
 
+    /// <summary>
+    /// The backing array that stores pooled items.
+    /// </summary>
     protected T[] _items;
+
+    /// <summary>
+    /// The number of active items in the pool.
+    /// </summary>
     protected int _size;
 
+    /// <summary>
+    /// Gets the pooled item at the specified index.
+    /// </summary>
+    /// <param name="index">The zero-based index of the item to retrieve.</param>
+    /// <returns>The pooled item at the specified index.</returns>
     public T this[int index]
     {
       get
@@ -187,18 +231,31 @@ namespace Clipper2Lib
       }
     }
 
+    /// <summary>
+    /// Gets the number of active items in the pool.
+    /// </summary>
     public int Count => _size;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PooledList{T}"/> class.
+    /// </summary>
     public PooledList()
     {
       _items = Array.Empty<T>();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PooledList{T}"/> class with the specified capacity.
+    /// </summary>
+    /// <param name="capacity">The initial capacity.</param>
     public PooledList(int capacity)
     {
       _items = new T[capacity];
     }
 
+    /// <summary>
+    /// Gets or sets the backing array capacity.
+    /// </summary>
     public int Capacity
     {
       get => _items.Length;
@@ -220,6 +277,11 @@ namespace Clipper2Lib
     }
 
     //in DOTNET6 and newer this is available in BitOperations
+    /// <summary>
+    /// Rounds the specified value up to the next power of two.
+    /// </summary>
+    /// <param name="value">The value to round.</param>
+    /// <returns>The rounded value.</returns>
     private static uint RoundUpToPowerOf2(uint value)
     {
       // Based on https://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
@@ -232,8 +294,15 @@ namespace Clipper2Lib
       return value + 1;
     }
 
+    /// <summary>
+    /// Ensures that the pool can hold at least the specified number of items.
+    /// </summary>
+    /// <param name="capacity">The minimum required capacity.</param>
     public void EnsureCapacity(int capacity) { Capacity = capacity; }
 
+    /// <summary>
+    /// Grows the backing storage when adding another item would exceed the current capacity.
+    /// </summary>
     protected void TryGrow()
     {
       int newSize = _size + 1;
@@ -245,33 +314,50 @@ namespace Clipper2Lib
       }
     }
 
+    /// <summary>
+    /// Clears the active item count while keeping pooled objects for reuse.
+    /// </summary>
     public virtual void Clear()
     {
       //unlike List<T>, DO NOT null the objects in the list, even if they are reference types. We reuse them
       _size = 0;
     }
 
+    /// <summary>
+    /// Returns an enumerator for the active items in the pool.
+    /// </summary>
+    /// <returns>An enumerator over the active pooled items.</returns>
     public ListEnumerator<T> GetEnumerator()
     {
       return new ListEnumerator<T>(this);
     }
 
+    /// <inheritdoc />
     IEnumerator<T> IEnumerable<T>.GetEnumerator()
     {
       return new ListEnumerator<T>(this);
     }
 
+    /// <inheritdoc />
     IEnumerator IEnumerable.GetEnumerator()
     {
       return new ListEnumerator<T>(this);
     }
 
+    /// <summary>
+    /// Enumerates the active items of a <see cref="PooledList{T}"/>.
+    /// </summary>
+    /// <typeparam name="T2">The element type.</typeparam>
     internal struct ListEnumerator<T2> : IEnumerator<T2> where T2 : class
     {
       private readonly PooledList<T2> _list;
       private int _index;
       private T2? _current;
       
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ListEnumerator{T2}"/> struct.
+      /// </summary>
+      /// <param name="list">The pooled list to enumerate.</param>
       public ListEnumerator(PooledList<T2> list)
       {
         _list = list;
@@ -279,14 +365,25 @@ namespace Clipper2Lib
         _current = default;
       }
 
+      /// <summary>
+      /// Gets the current item in the enumeration.
+      /// </summary>
       public T2 Current => _current!;
 
+      /// <inheritdoc />
       object IEnumerator.Current => _current!;
 
+      /// <summary>
+      /// Releases resources used by the enumerator.
+      /// </summary>
       public void Dispose()
       {
       }
 
+      /// <summary>
+      /// Advances the enumerator to the next item.
+      /// </summary>
+      /// <returns><see langword="true"/> if the enumerator advanced to the next item; otherwise, <see langword="false"/>.</returns>
       public bool MoveNext()
       {
         int count = _list._size;
@@ -299,6 +396,11 @@ namespace Clipper2Lib
         return MoveNextRare(count);
       }
 
+      /// <summary>
+      /// Handles the end-of-sequence transition for the enumerator.
+      /// </summary>
+      /// <param name="count">The number of active items in the list.</param>
+      /// <returns><see langword="false"/>.</returns>
       private bool MoveNextRare(int count)
       {
         _index = count + 1;
@@ -306,6 +408,9 @@ namespace Clipper2Lib
         return false;
       }
 
+      /// <summary>
+      /// Resets the enumerator to its initial position.
+      /// </summary>
       public void Reset()
       {
         _index = 0;

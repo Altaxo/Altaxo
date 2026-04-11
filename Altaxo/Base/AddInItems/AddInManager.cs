@@ -159,6 +159,7 @@ namespace Altaxo.AddInItems
     /// and the affected AddIn is added to the disabled list.
     /// This method is normally called by <see cref="CoreStartup.ConfigureUserAddIns"/>
     /// </summary>
+    /// <param name="disabled">The list that receives disabled add-in identities.</param>
     public static void InstallAddIns(List<string> disabled)
     {
       if (!Directory.Exists(_addInInstallTemp))

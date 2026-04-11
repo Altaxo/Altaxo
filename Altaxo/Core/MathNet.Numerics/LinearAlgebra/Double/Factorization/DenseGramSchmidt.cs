@@ -48,8 +48,9 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     /// </summary>
     /// <param name="matrix">The matrix to factor.</param>
     /// <exception cref="ArgumentNullException">If <paramref name="matrix"/> is <c>null</c>.</exception>
-    /// <exception cref="ArgumentException">If <paramref name="matrix"/> row count is less then column count</exception>
-    /// <exception cref="ArgumentException">If <paramref name="matrix"/> is rank deficient</exception>
+    /// <returns>The computed QR factorization.</returns>
+    /// <exception cref="ArgumentException">If <paramref name="matrix"/> row count is less than column count.</exception>
+    /// <exception cref="ArgumentException">If <paramref name="matrix"/> is rank deficient.</exception>
     public static DenseGramSchmidt Create(Matrix<double> matrix)
     {
       if (matrix.RowCount < matrix.ColumnCount)

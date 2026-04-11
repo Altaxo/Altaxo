@@ -30,6 +30,9 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Builds menu items for the specified codon.
     /// </summary>
+    /// <param name="codon">The codon that describes the menu contribution.</param>
+    /// <param name="parameter">The parameter passed to the builder.</param>
+    /// <returns>The built menu items.</returns>
     IEnumerable<object> BuildItems(Codon codon, object parameter);
   }
 

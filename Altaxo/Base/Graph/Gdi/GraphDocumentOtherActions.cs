@@ -80,6 +80,7 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// This command will rescale all axes in all layers
     /// </summary>
+    /// <param name="doc">The graph document whose axes should be rescaled.</param>
     public static void OnUserRescaledAxes(this GraphDocument doc)
     {
       doc.RootLayer.ExecuteFromTopmostChildToRoot(

@@ -638,6 +638,7 @@ info.CommitArray();
 
     #region IEnumerable Members
 
+    /// <inheritdoc />
     IEnumerator IEnumerable.GetEnumerator()
     {
       return _innerList.GetEnumerator();
@@ -693,6 +694,7 @@ info.CommitArray();
 
     #endregion IDocumentNode Members
 
+    /// <inheritdoc />
     string INamedObject.Name
     {
       get { return GetType().Name; }

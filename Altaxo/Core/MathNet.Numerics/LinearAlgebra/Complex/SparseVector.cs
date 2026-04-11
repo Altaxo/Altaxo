@@ -60,6 +60,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// Intended for advanced scenarios where you're working directly with
     /// storage for performance or interop reasons.
     /// </summary>
+    /// <param name="storage">The storage backing the vector.</param>
     public SparseVector(SparseVectorStorage<Complex> storage)
         : base(storage)
     {
@@ -70,6 +71,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// Create a new sparse vector with the given length.
     /// All cells of the vector will be initialized to zero.
     /// </summary>
+    /// <param name="length">The length of the vector.</param>
     /// <exception cref="ArgumentException">If length is less than one.</exception>
     public SparseVector(int length)
         : this(new SparseVectorStorage<Complex>(length))
@@ -81,6 +83,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// This new vector will be independent from the other vector.
     /// A new memory block will be allocated for storing the vector.
     /// </summary>
+    /// <param name="vector">The vector to copy.</param>
+    /// <returns>A sparse vector copied from <paramref name="vector"/>.</returns>
     public static SparseVector OfVector(Vector<Complex> vector)
     {
       return new SparseVector(SparseVectorStorage<Complex>.OfVector(vector.Storage));
@@ -91,6 +95,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// This new vector will be independent from the enumerable.
     /// A new memory block will be allocated for storing the vector.
     /// </summary>
+    /// <param name="enumerable">The sequence of values to copy.</param>
+    /// <returns>A sparse vector copied from <paramref name="enumerable"/>.</returns>
     public static SparseVector OfEnumerable(IEnumerable<Complex> enumerable)
     {
       return new SparseVector(SparseVectorStorage<Complex>.OfEnumerable(enumerable));
@@ -102,6 +108,9 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// This new vector will be independent from the enumerable.
     /// A new memory block will be allocated for storing the vector.
     /// </summary>
+    /// <param name="length">The length of the vector.</param>
+    /// <param name="enumerable">The indexed values to copy.</param>
+    /// <returns>A sparse vector containing the indexed values from <paramref name="enumerable"/>.</returns>
     public static SparseVector OfIndexedEnumerable(int length, IEnumerable<Tuple<int, Complex>> enumerable)
     {
       return new SparseVector(SparseVectorStorage<Complex>.OfIndexedEnumerable(length, enumerable));
@@ -113,6 +122,9 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// This new vector will be independent from the enumerable.
     /// A new memory block will be allocated for storing the vector.
     /// </summary>
+    /// <param name="length">The length of the vector.</param>
+    /// <param name="enumerable">The indexed values to copy.</param>
+    /// <returns>A sparse vector containing the indexed values from <paramref name="enumerable"/>.</returns>
     public static SparseVector OfIndexedEnumerable(int length, IEnumerable<(int, Complex)> enumerable)
     {
       return new SparseVector(SparseVectorStorage<Complex>.OfIndexedEnumerable(length, enumerable));
@@ -121,6 +133,9 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// <summary>
     /// Create a new sparse vector and initialize each value using the provided value.
     /// </summary>
+    /// <param name="length">The length of the vector.</param>
+    /// <param name="value">The value assigned to each entry.</param>
+    /// <returns>A sparse vector initialized with <paramref name="value"/>.</returns>
     public static SparseVector Create(int length, Complex value)
     {
       return new SparseVector(SparseVectorStorage<Complex>.OfValue(length, value));
@@ -129,6 +144,9 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// <summary>
     /// Create a new sparse vector and initialize each value using the provided init function.
     /// </summary>
+    /// <param name="length">The length of the vector.</param>
+    /// <param name="init">The initializer used to populate each entry.</param>
+    /// <returns>A sparse vector initialized by <paramref name="init"/>.</returns>
     public static SparseVector Create(int length, Func<int, Complex> init)
     {
       return new SparseVector(SparseVectorStorage<Complex>.OfInit(length, init));

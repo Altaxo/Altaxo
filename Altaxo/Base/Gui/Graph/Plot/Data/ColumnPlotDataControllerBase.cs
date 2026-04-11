@@ -93,6 +93,8 @@ namespace Altaxo.Gui.Graph.Plot.Data
       /// <summary>
       /// Initializes a new instance of the <see cref="PlotColumnInformationInternal"/> class.
       /// </summary>
+      /// <param name="column">The column represented by this plot-column information.</param>
+      /// <param name="nameOfUnderlyingDataColumn">The name of the underlying data column.</param>
       public PlotColumnInformationInternal(IReadableColumn column, string nameOfUnderlyingDataColumn)
         : base(column, nameOfUnderlyingDataColumn)
       {
@@ -131,6 +133,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
       /// <summary>
       /// Initializes a new instance of the <see cref="DataColumnSingleNode"/> class.
       /// </summary>
+      /// <param name="table">The table that owns the column.</param>
+      /// <param name="tag">The represented data column.</param>
+      /// <param name="isSelected"><c>true</c> to initialize the node as selected; otherwise, <c>false</c>.</param>
       public DataColumnSingleNode(DataTable table, DataColumn tag, bool isSelected)
         :
         base(table.DataColumns.GetColumnName(tag))
@@ -201,6 +206,10 @@ namespace Altaxo.Gui.Graph.Plot.Data
       /// <summary>
       /// Initializes a new instance of the <see cref="DataColumnBundleNode"/> class.
       /// </summary>
+      /// <param name="dataTable">The table that owns the represented columns.</param>
+      /// <param name="columnList">The list of available columns.</param>
+      /// <param name="firstColumn">The index of the first represented column.</param>
+      /// <param name="columnCount">The number of represented columns.</param>
       public DataColumnBundleNode(DataTable dataTable, List<DataColumn> columnList, int firstColumn, int columnCount)
         : base(true)
       {
@@ -990,6 +999,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     /// <summary>
     /// Handles selection of a different source data table.
     /// </summary>
+    /// <param name="tg">The newly selected data table.</param>
     public void EhView_TableSelectionChanged(DataTable tg)
     {
       if (tg is null || object.ReferenceEquals(_doc.DataTable, tg))
@@ -1138,6 +1148,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     /// <summary>
     /// Occurs if the selection for the matching tables has changed.
     /// </summary>
+    /// <param name="tag">The selected table and group number.</param>
     public void EhView_MatchingTableSelectionChanged((DataTable table, int groupNumber) tag)
     {
       if (object.ReferenceEquals(_doc.DataTable, tag.table) && _doc.GroupNumber == tag.groupNumber) // then nothing will change
@@ -1246,6 +1257,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     /// <summary>
     /// Assigns the selected available data column to the specified plot column.
     /// </summary>
+    /// <param name="ctrl">The target plot-column controller.</param>
     public void EhView_PlotColumnAddTo(SingleColumnController ctrl)
     {
       var node = _availableDataColumns.FirstSelectedNode;
@@ -1268,6 +1280,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     /// <summary>
     /// Opens an editor for the specified plot column.
     /// </summary>
+    /// <param name="ctrl">The target plot-column controller.</param>
     public void EhPlotColumnEdit(SingleColumnController ctrl)
     {
       var tag = ctrl.Tag;
@@ -1291,6 +1304,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     /// <summary>
     /// Removes the assigned column from the specified plot column.
     /// </summary>
+    /// <param name="ctrl">The target plot-column controller.</param>
     public void EhPlotColumnErase(SingleColumnController ctrl)
     {
       var tag = ctrl.Tag;
@@ -1365,6 +1379,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     /// <summary>
     /// Assigns a newly created non-table column to the specified plot column.
     /// </summary>
+    /// <param name="ctrl">The target plot-column controller.</param>
     public void EhView_OtherAvailableColumnAddTo(SingleColumnController ctrl)
     {
       var tag = ctrl.Tag;
@@ -1494,6 +1509,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     /// <summary>
     /// Adds the selected transformation to the specified plot column.
     /// </summary>
+    /// <param name="ctrl">The target plot-column controller.</param>
     public void EhView_TransformationAddTo(SingleColumnController ctrl)
     {
       var tag = ctrl.Tag;
@@ -1515,6 +1531,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     /// <summary>
     /// Replaces the current transformation chain with the selected transformation.
     /// </summary>
+    /// <param name="ctrl">The target plot-column controller.</param>
     public void EhPlotColumnTransformationAddAsSingle(SingleColumnController ctrl)
     {
       var transfoType = AvailableTransformations.SelectedValue;
@@ -1527,6 +1544,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     /// <summary>
     /// Prepends the selected transformation to the current transformation chain.
     /// </summary>
+    /// <param name="ctrl">The target plot-column controller.</param>
     public void EhPlotColumnTransformationAddAsPrepending(SingleColumnController ctrl)
     {
       var transfoType = _availableTransformations.SelectedValue;
@@ -1539,6 +1557,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     /// <summary>
     /// Appends the selected transformation to the current transformation chain.
     /// </summary>
+    /// <param name="ctrl">The target plot-column controller.</param>
     public void EhPlotColumnTransformationAddAsAppending(SingleColumnController ctrl)
     {
       var transfoType = _availableTransformations.SelectedValue;
@@ -1549,8 +1568,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
     }
 
     /// <summary>
-    /// Performs the e hp lo tc ol um nt ra ns fo rm at io ne d i t operation.
+    /// Edits the transformation assigned to the specified plot column.
     /// </summary>
+    /// <param name="ctrl">The target plot-column controller.</param>
     public void EhPlotColumnTransformationEdit(SingleColumnController ctrl)
     {
       var tag = ctrl.Tag;
@@ -1571,8 +1591,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
     }
 
     /// <summary>
-    /// Performs the e hp lo tc ol um nt ra ns fo rm at io ne ra s e operation.
+    /// Removes the transformation assigned to the specified plot column.
     /// </summary>
+    /// <param name="ctrl">The target plot-column controller.</param>
     public void EhPlotColumnTransformationErase(SingleColumnController ctrl)
     {
       var tag = ctrl.Tag;
@@ -1659,6 +1680,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
       /// <summary>
       /// Initializes a new instance of the <see cref="AvailableTransformationsDragHandlerImpl"/> class.
       /// </summary>
+      /// <param name="parent">The owning controller.</param>
       public AvailableTransformationsDragHandlerImpl(ColumnPlotDataControllerBase<TModel> parent)
       {
         _parent = parent;
@@ -1667,6 +1689,8 @@ namespace Altaxo.Gui.Graph.Plot.Data
       /// <summary>
       /// Determines whether dragging can start for the current transformation selection.
       /// </summary>
+      /// <param name="items">The items that would participate in the drag operation.</param>
+      /// <returns><c>true</c> if a transformation is selected; otherwise, <c>false</c>.</returns>
       public bool CanStartDrag(IEnumerable items)
       {
         return _parent.AvailableTransformations.SelectedItem is not null;
@@ -1682,6 +1706,8 @@ namespace Altaxo.Gui.Graph.Plot.Data
       /// <summary>
       /// Called when a drag operation has ended.
       /// </summary>
+      /// <param name="isCopy"><c>true</c> if the drag operation copied data.</param>
+      /// <param name="isMove"><c>true</c> if the drag operation moved data.</param>
       public void DragEnded(bool isCopy, bool isMove)
       {
       }
@@ -1689,6 +1715,10 @@ namespace Altaxo.Gui.Graph.Plot.Data
       /// <summary>
       /// Starts a drag operation for the selected transformation.
       /// </summary>
+      /// <param name="items">The items to drag.</param>
+      /// <param name="data">Receives the drag data.</param>
+      /// <param name="canCopy">Receives whether copying is supported.</param>
+      /// <param name="canMove">Receives whether moving is supported.</param>
       public void StartDrag(IEnumerable items, out object data, out bool canCopy, out bool canMove)
       {
         var ttype = _parent.AvailableTransformations.SelectedValue;
@@ -1718,6 +1748,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
       /// <summary>
       /// Initializes a new instance of the <see cref="AvailableDataColumnsDragHandlerImpl"/> class.
       /// </summary>
+      /// <param name="parent">The owning controller.</param>
       public AvailableDataColumnsDragHandlerImpl(ColumnPlotDataControllerBase<TModel> parent)
       {
         _parent = parent;
@@ -1726,6 +1757,8 @@ namespace Altaxo.Gui.Graph.Plot.Data
       /// <summary>
       /// Determines whether dragging can start for the current data-column selection.
       /// </summary>
+      /// <param name="items">The items that would participate in the drag operation.</param>
+      /// <returns><c>true</c> if a data column is selected; otherwise, <c>false</c>.</returns>
       public bool CanStartDrag(IEnumerable items)
       {
         var selNode = _parent._availableDataColumns.FirstSelectedNode;
@@ -1736,6 +1769,10 @@ namespace Altaxo.Gui.Graph.Plot.Data
       /// <summary>
       /// Starts a drag operation for the selected data column.
       /// </summary>
+      /// <param name="items">The items to drag.</param>
+      /// <param name="data">Receives the drag data.</param>
+      /// <param name="canCopy">Receives whether copying is supported.</param>
+      /// <param name="canMove">Receives whether moving is supported.</param>
       public void StartDrag(IEnumerable items, out object data, out bool canCopy, out bool canMove)
       {
         var selNode = _parent._availableDataColumns.FirstSelectedNode;
@@ -1764,6 +1801,8 @@ namespace Altaxo.Gui.Graph.Plot.Data
       /// <summary>
       /// Called when a drag operation has ended.
       /// </summary>
+      /// <param name="isCopy"><c>true</c> if the drag operation copied data.</param>
+      /// <param name="isMove"><c>true</c> if the drag operation moved data.</param>
       public void DragEnded(bool isCopy, bool isMove)
       {
       }
@@ -1781,6 +1820,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
       /// <summary>
       /// Initializes a new instance of the <see cref="OtherAvailableColumnsDragHandlerImpl"/> class.
       /// </summary>
+      /// <param name="parent">The owning controller.</param>
       public OtherAvailableColumnsDragHandlerImpl(ColumnPlotDataControllerBase<TModel> parent)
       {
         _parent = parent;
@@ -1789,6 +1829,8 @@ namespace Altaxo.Gui.Graph.Plot.Data
       /// <summary>
       /// Determines whether dragging can start for the current non-table-column selection.
       /// </summary>
+      /// <param name="items">The items that would participate in the drag operation.</param>
+      /// <returns><c>true</c> if a non-table column type is selected; otherwise, <c>false</c>.</returns>
       public bool CanStartDrag(IEnumerable items)
       {
         var type = _parent.OtherAvailableColumns.SelectedValue;
@@ -1799,6 +1841,10 @@ namespace Altaxo.Gui.Graph.Plot.Data
       /// <summary>
       /// Starts a drag operation for the selected non-table column type.
       /// </summary>
+      /// <param name="items">The items to drag.</param>
+      /// <param name="data">Receives the drag data.</param>
+      /// <param name="canCopy">Receives whether copying is supported.</param>
+      /// <param name="canMove">Receives whether moving is supported.</param>
       public void StartDrag(IEnumerable items, out object data, out bool canCopy, out bool canMove)
       {
         var type = _parent.OtherAvailableColumns.SelectedValue;
@@ -1827,6 +1873,8 @@ namespace Altaxo.Gui.Graph.Plot.Data
       /// <summary>
       /// Called when a drag operation has ended.
       /// </summary>
+      /// <param name="isCopy"><c>true</c> if the drag operation copied data.</param>
+      /// <param name="isMove"><c>true</c> if the drag operation moved data.</param>
       public void DragEnded(bool isCopy, bool isMove)
       {
       }
@@ -1837,11 +1885,15 @@ namespace Altaxo.Gui.Graph.Plot.Data
     /// <summary>
     /// Handles a dropped transformation for a plot column.
     /// </summary>
+    /// <param name="ctrl">The target column controller.</param>
+    /// <param name="data">The dropped data.</param>
     public void EhPlotColumnTransformationDrop(SingleColumnController ctrl, object data) => EhPlotColumnDrop(ctrl, data);
 
     /// <summary>
     /// Handles dropped data for a plot column.
     /// </summary>
+    /// <param name="ctrl">The target column controller.</param>
+    /// <param name="data">The dropped data.</param>
     public void EhPlotColumnDrop(SingleColumnController ctrl, object data)
     {
       var tag = ctrl.Tag;

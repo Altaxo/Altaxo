@@ -357,6 +357,8 @@ namespace Altaxo.Gui.Worksheet.Viewing
     /// <summary>
     /// Handles changes in worksheet data values.
     /// </summary>
+    /// <param name="sender">The sender of the change notification.</param>
+    /// <param name="e">The event data.</param>
     public void EhTableDataChanged(object? sender, EventArgs e)
     {
       Current.Dispatcher.InvokeAndForget(EhTableDataChanged_Unsynchronized);
@@ -491,6 +493,8 @@ namespace Altaxo.Gui.Worksheet.Viewing
     /// <summary>
     /// Handles changes in worksheet property-column data.
     /// </summary>
+    /// <param name="sender">The sender of the change notification.</param>
+    /// <param name="e">The event data.</param>
     public void EhPropertyDataChanged(object? sender, EventArgs e)
     {
       Current.Dispatcher.InvokeIfRequired(EhPropertyDataChanged_Unsynchronized, sender, e);
@@ -1212,6 +1216,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
     /// <summary>
     /// Handles scrolling of the vertical scrollbar in the view.
     /// </summary>
+    /// <param name="newScrollValue">The new scrollbar value.</param>
     public void EhView_VertScrollBarScroll(int newScrollValue)
     {
       VerticalScrollPosition = newScrollValue - TotalEnabledPropertyColumns;
@@ -1220,6 +1225,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
     /// <summary>
     /// Handles scrolling of the horizontal scrollbar in the view.
     /// </summary>
+    /// <param name="newScrollValue">The new scrollbar value.</param>
     public void EhView_HorzScrollBarScroll(int newScrollValue)
     {
       //if (e.ScrollEventType != System.Windows.Controls.Primitives.ScrollEventType.ThumbTrack)
@@ -1229,6 +1235,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
     /// <summary>
     /// Handles mouse-button release over the table area.
     /// </summary>
+    /// <param name="position">The mouse position in table-area coordinates.</param>
     public void EhView_TableAreaMouseUp(PointD2D position)
     {
       if (_view is null)
@@ -1267,6 +1274,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
     /// <summary>
     /// Handles mouse-button presses over the table area.
     /// </summary>
+    /// <param name="position">The mouse position in table-area coordinates.</param>
     public void EhView_TableAreaMouseDown(PointD2D position)
     {
       if (_view is null)
@@ -1298,6 +1306,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
     /// <summary>
     /// Handles mouse movement over the table area.
     /// </summary>
+    /// <param name="position">The mouse position in table-area coordinates.</param>
     public void EhView_TableAreaMouseMove(PointD2D position)
     {
       if (_view is null)
@@ -1701,6 +1710,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
     /// <summary>
     /// Handles mouse clicks in the table area.
     /// </summary>
+    /// <param name="position">The mouse position in table-area coordinates.</param>
+    /// <param name="eButton">The mouse button that was clicked.</param>
+    /// <param name="modifierKeys">The keyboard modifier keys active during the click.</param>
     public void EhView_TableAreaMouseClick(PointD2D position, AltaxoMouseButtons eButton, AltaxoKeyboardModifierKeys modifierKeys)
     {
       var _mouseInfo = AM.GetAreaType(position.X, position.Y, _worksheetLayout, HorzScrollPos, VerticalScrollPosition);
@@ -1778,6 +1790,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
     /// <summary>
     /// Handles mouse double-clicks in the table area.
     /// </summary>
+    /// <param name="position">The mouse position in table-area coordinates.</param>
     public void EhView_TableAreaMouseDoubleClick(PointD2D position)
     {
       // TODO:  Add WorksheetController.EhView_TableAreaMouseDoubleClick implementation
@@ -1794,6 +1807,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
     /// <summary>
     /// Handles changes in the size of the table area.
     /// </summary>
+    /// <param name="e">The event data.</param>
     public void EhView_TableAreaSizeChanged(EventArgs e)
     {
       _view?.TableArea_TriggerRedrawing();
@@ -1929,6 +1943,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
     /// <summary>
     /// Handles keyboard navigation commands from the view.
     /// </summary>
+    /// <param name="eKey">The key that was pressed.</param>
     public void EhView_KeyDown(AltaxoKeyboardKey eKey)
     {
       switch (eKey)

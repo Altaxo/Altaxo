@@ -33,6 +33,7 @@ namespace Altaxo.Collections
   /// <summary>
   /// Interface for an observable list supporting move operations and collection change notifications.
   /// </summary>
+  /// <typeparam name="T">The element type of the list.</typeparam>
   public interface IObservableList<T> : IList<T>, INotifyCollectionChanged
   {
     /// <summary>
@@ -165,6 +166,7 @@ namespace Altaxo.Collections
     /// <summary>
     /// Generic partial view class for a partitionable list, supporting selection criteria and insertion behavior.
     /// </summary>
+    /// <typeparam name="M">The element type exposed by the partial view.</typeparam>
     protected class PartialView<M> : PartialViewBase, IObservableList<M> where M : T
     {
       /// <summary>

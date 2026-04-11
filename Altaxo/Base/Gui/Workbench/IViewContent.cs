@@ -47,6 +47,7 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Builds an <see cref="INavigationPoint"/> for the current position.
     /// </summary>
+    /// <returns>The navigation point for the current position, or <see langword="null"/> if navigation is not available.</returns>
     INavigationPoint? BuildNavPoint();
 
     /// <summary>

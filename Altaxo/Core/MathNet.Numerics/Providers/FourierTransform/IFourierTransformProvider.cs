@@ -60,14 +60,18 @@ namespace Altaxo.Calc.Providers.FourierTransform
   public interface IFourierTransformProvider
   {
     /// <summary>
-    /// Try to find out whether the provider is available, at least in principle.
+    /// Try to find whether the provider is available in principle.
     /// Verification may still fail if available, but it will certainly fail if unavailable.
     /// </summary>
+    /// <returns><c>true</c> if the provider is available in the current environment; otherwise <c>false</c>.</returns>
     public bool IsAvailable();
 
     /// <summary>
     /// Initialize and verify that the provider is indeed available. If not, fall back to alternatives like the managed provider.
     /// </summary>
+    /// <remarks>
+    /// Implementations should verify required native dependencies and throw on failure.
+    /// </remarks>
     public void InitializeVerify();
 
     /// <summary>
@@ -79,61 +83,93 @@ namespace Altaxo.Calc.Providers.FourierTransform
     /// <summary>
     /// Computes the forward transform of complex single-precision samples.
     /// </summary>
+    /// <param name="samples">The sample data to transform in place.</param>
+    /// <param name="scaling">The scaling convention to apply to the transform.</param>
     public void Forward(Complex32[] samples, FourierTransformScaling scaling);
 
     /// <summary>
     /// Computes the forward transform of complex double-precision samples.
     /// </summary>
+    /// <param name="samples">The sample data to transform in place.</param>
+    /// <param name="scaling">The scaling convention to apply to the transform.</param>
     public void Forward(Complex[] samples, FourierTransformScaling scaling);
 
     /// <summary>
     /// Computes the inverse transform of complex single-precision spectrum data.
     /// </summary>
+    /// <param name="spectrum">The spectrum data to transform in place.</param>
+    /// <param name="scaling">The scaling convention to apply to the transform.</param>
     public void Backward(Complex32[] spectrum, FourierTransformScaling scaling);
 
     /// <summary>
     /// Computes the inverse transform of complex double-precision spectrum data.
     /// </summary>
+    /// <param name="spectrum">The spectrum data to transform in place.</param>
+    /// <param name="scaling">The scaling convention to apply to the transform.</param>
     public void Backward(Complex[] spectrum, FourierTransformScaling scaling);
 
     /// <summary>
     /// Computes the forward transform of real single-precision samples.
     /// </summary>
+    /// <param name="samples">The sample data to transform in place.</param>
+    /// <param name="n">The length of the real data represented by <paramref name="samples"/>.</param>
+    /// <param name="scaling">The scaling convention to apply to the transform.</param>
     public void ForwardReal(float[] samples, int n, FourierTransformScaling scaling);
 
     /// <summary>
     /// Computes the forward transform of real double-precision samples.
     /// </summary>
+    /// <param name="samples">The sample data to transform in place.</param>
+    /// <param name="n">The length of the real data represented by <paramref name="samples"/>.</param>
+    /// <param name="scaling">The scaling convention to apply to the transform.</param>
     public void ForwardReal(double[] samples, int n, FourierTransformScaling scaling);
 
     /// <summary>
     /// Computes the inverse transform of real single-precision spectrum data.
     /// </summary>
+    /// <param name="spectrum">The spectrum data to transform in place.</param>
+    /// <param name="n">The length of the real data represented by <paramref name="spectrum"/>.</param>
+    /// <param name="scaling">The scaling convention to apply to the transform.</param>
     public void BackwardReal(float[] spectrum, int n, FourierTransformScaling scaling);
 
     /// <summary>
     /// Computes the inverse transform of real double-precision spectrum data.
     /// </summary>
+    /// <param name="spectrum">The spectrum data to transform in place.</param>
+    /// <param name="n">The length of the real data represented by <paramref name="spectrum"/>.</param>
+    /// <param name="scaling">The scaling convention to apply to the transform.</param>
     public void BackwardReal(double[] spectrum, int n, FourierTransformScaling scaling);
 
     /// <summary>
     /// Computes the forward multidimensional transform of complex single-precision samples.
     /// </summary>
+    /// <param name="samples">The sample data to transform in place.</param>
+    /// <param name="dimensions">The lengths of the dimensions in <paramref name="samples"/>.</param>
+    /// <param name="scaling">The scaling convention to apply to the transform.</param>
     public void ForwardMultidim(Complex32[] samples, int[] dimensions, FourierTransformScaling scaling);
 
     /// <summary>
     /// Computes the forward multidimensional transform of complex double-precision samples.
     /// </summary>
+    /// <param name="samples">The sample data to transform in place.</param>
+    /// <param name="dimensions">The lengths of the dimensions in <paramref name="samples"/>.</param>
+    /// <param name="scaling">The scaling convention to apply to the transform.</param>
     public void ForwardMultidim(Complex[] samples, int[] dimensions, FourierTransformScaling scaling);
 
     /// <summary>
     /// Computes the inverse multidimensional transform of complex single-precision spectrum data.
     /// </summary>
+    /// <param name="spectrum">The spectrum data to transform in place.</param>
+    /// <param name="dimensions">The lengths of the dimensions in <paramref name="spectrum"/>.</param>
+    /// <param name="scaling">The scaling convention to apply to the transform.</param>
     public void BackwardMultidim(Complex32[] spectrum, int[] dimensions, FourierTransformScaling scaling);
 
     /// <summary>
     /// Computes the inverse multidimensional transform of complex double-precision spectrum data.
     /// </summary>
+    /// <param name="spectrum">The spectrum data to transform in place.</param>
+    /// <param name="dimensions">The lengths of the dimensions in <paramref name="spectrum"/>.</param>
+    /// <param name="scaling">The scaling convention to apply to the transform.</param>
     public void BackwardMultidim(Complex[] spectrum, int[] dimensions, FourierTransformScaling scaling);
   }
 }

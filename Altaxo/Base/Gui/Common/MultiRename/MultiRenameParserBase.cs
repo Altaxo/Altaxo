@@ -114,12 +114,129 @@ namespace Altaxo.Gui.Common.MultiRename
   /// </summary>
   internal enum EAltaxo_MultiRename
   {
-    MainSentence = 1, Template = 2, NormalChar = 3, NonNegativeInteger = 4,
-    PositiveInteger = 5, NegativeInteger = 6, Integer = 7, QuotedString = 8,
-    IntArg1st = 9, IntArg2nd = 10, IntArgOnly = 11, IntArgNumberOfDigits = 12,
-    StringContent = 13, EscBracket = 14, ArraySeparator = 15, DateTimeArguments = 16,
-    DateTimeKind = 17, IntegerTemplate = 18, StringTemplate = 19, ArrayTemplate = 20,
-    DateTimeTemplate = 21, IntegerTChar = 22, StringTChar = 23, ArrayTChar = 24,
+    /// <summary>
+    /// The main sentence rule.
+    /// </summary>
+    MainSentence = 1,
+
+    /// <summary>
+    /// The template rule.
+    /// </summary>
+    Template = 2,
+
+    /// <summary>
+    /// The normal-character rule.
+    /// </summary>
+    NormalChar = 3,
+
+    /// <summary>
+    /// The non-negative-integer rule.
+    /// </summary>
+    NonNegativeInteger = 4,
+
+    /// <summary>
+    /// The positive-integer rule.
+    /// </summary>
+    PositiveInteger = 5,
+
+    /// <summary>
+    /// The negative-integer rule.
+    /// </summary>
+    NegativeInteger = 6,
+
+    /// <summary>
+    /// The integer rule.
+    /// </summary>
+    Integer = 7,
+
+    /// <summary>
+    /// The quoted-string rule.
+    /// </summary>
+    QuotedString = 8,
+
+    /// <summary>
+    /// The first integer-argument rule.
+    /// </summary>
+    IntArg1st = 9,
+
+    /// <summary>
+    /// The second integer-argument rule.
+    /// </summary>
+    IntArg2nd = 10,
+
+    /// <summary>
+    /// The single integer-argument rule.
+    /// </summary>
+    IntArgOnly = 11,
+
+    /// <summary>
+    /// The number-of-digits argument rule.
+    /// </summary>
+    IntArgNumberOfDigits = 12,
+
+    /// <summary>
+    /// The string-content rule.
+    /// </summary>
+    StringContent = 13,
+
+    /// <summary>
+    /// The escaped-bracket rule.
+    /// </summary>
+    EscBracket = 14,
+
+    /// <summary>
+    /// The array-separator rule.
+    /// </summary>
+    ArraySeparator = 15,
+
+    /// <summary>
+    /// The date-time-arguments rule.
+    /// </summary>
+    DateTimeArguments = 16,
+
+    /// <summary>
+    /// The date-time-kind rule.
+    /// </summary>
+    DateTimeKind = 17,
+
+    /// <summary>
+    /// The integer-template rule.
+    /// </summary>
+    IntegerTemplate = 18,
+
+    /// <summary>
+    /// The string-template rule.
+    /// </summary>
+    StringTemplate = 19,
+
+    /// <summary>
+    /// The array-template rule.
+    /// </summary>
+    ArrayTemplate = 20,
+
+    /// <summary>
+    /// The date-time-template rule.
+    /// </summary>
+    DateTimeTemplate = 21,
+
+    /// <summary>
+    /// The integer-template shortcut rule.
+    /// </summary>
+    IntegerTChar = 22,
+
+    /// <summary>
+    /// The string-template shortcut rule.
+    /// </summary>
+    StringTChar = 23,
+
+    /// <summary>
+    /// The array-template shortcut rule.
+    /// </summary>
+    ArrayTChar = 24,
+
+    /// <summary>
+    /// The date-time-template shortcut rule.
+    /// </summary>
     DateTimeTChar = 25
   };
 
@@ -202,6 +319,7 @@ namespace Altaxo.Gui.Common.MultiRename
     /// <summary>
     /// Parses the main sentence.
     /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool MainSentence()    /*[1]^^MainSentence:  (Template / EscBracket / NormalChar)*;*/
     {
       return TreeNT((int)EAltaxo_MultiRename.MainSentence, () =>
@@ -212,6 +330,7 @@ namespace Altaxo.Gui.Common.MultiRename
     /// <summary>
     /// Parses a template element.
     /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool Template()    /*[2]^Template: 	    (IntegerTemplate / StringTemplate / ArrayTemplate / DateTimeTemplate);*/
     {
       return TreeAST((int)EAltaxo_MultiRename.Template, () =>
@@ -225,6 +344,7 @@ namespace Altaxo.Gui.Common.MultiRename
     /// <summary>
     /// Parses a normal character.
     /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool NormalChar()    /*[3]NormalChar:     [#x20-#xFFFF];*/
     {
       return In('\u0020', '\uffff');
@@ -233,6 +353,7 @@ namespace Altaxo.Gui.Common.MultiRename
     /// <summary>
     /// Parses a non-negative integer.
     /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool NonNegativeInteger()    /*[4]NonNegativeInteger:	[0-9]+;*/
     {
       return PlusRepeat(() => In('0', '9'));
@@ -241,6 +362,7 @@ namespace Altaxo.Gui.Common.MultiRename
     /// <summary>
     /// Parses a positive integer.
     /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool PositiveInteger()    /*[5]PositiveInteger:	[1-9][0-9]*;*/
     {
       return And(() => In('1', '9') && OptRepeat(() => In('0', '9')));
@@ -249,6 +371,7 @@ namespace Altaxo.Gui.Common.MultiRename
     /// <summary>
     /// Parses a negative integer.
     /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool NegativeInteger()    /*[6]NegativeInteger:	'-'[1-9][0-9]*;*/
     {
       return And(() =>
@@ -260,6 +383,7 @@ namespace Altaxo.Gui.Common.MultiRename
     /// <summary>
     /// Parses an integer.
     /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool Integer()    /*[7]Integer:		PositiveInteger / NegativeInteger / ('0');*/
     {
       return PositiveInteger() || NegativeInteger() || Char('0');
@@ -268,6 +392,7 @@ namespace Altaxo.Gui.Common.MultiRename
     /// <summary>
     /// Parses a quoted string.
     /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool QuotedString()    /*[8]QuotedString:  '"' StringContent '"';*/
     {
       return And(() => Char('"') && StringContent() && Char('"'));
@@ -276,6 +401,7 @@ namespace Altaxo.Gui.Common.MultiRename
     /// <summary>
     /// Parses the first integer argument.
     /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool IntArg1st()    /*[9]^IntArg1st:		Integer;*/
     {
       return TreeAST((int)EAltaxo_MultiRename.IntArg1st, () =>
@@ -285,6 +411,7 @@ namespace Altaxo.Gui.Common.MultiRename
     /// <summary>
     /// Parses the second integer argument.
     /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool IntArg2nd()    /*[10]^IntArg2nd:		Integer;*/
     {
       return TreeAST((int)EAltaxo_MultiRename.IntArg2nd, () =>
@@ -294,6 +421,7 @@ namespace Altaxo.Gui.Common.MultiRename
     /// <summary>
     /// Parses a single integer argument.
     /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool IntArgOnly()    /*[11]^IntArgOnly:	Integer;*/
     {
       return TreeAST((int)EAltaxo_MultiRename.IntArgOnly, () =>
@@ -303,6 +431,7 @@ namespace Altaxo.Gui.Common.MultiRename
     /// <summary>
     /// Parses the number-of-digits argument.
     /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool IntArgNumberOfDigits()    /*[12]^IntArgNumberOfDigits:	PositiveInteger / ('0');*/
     {
       return TreeAST((int)EAltaxo_MultiRename.IntArgNumberOfDigits, () =>
@@ -312,6 +441,7 @@ namespace Altaxo.Gui.Common.MultiRename
     /// <summary>
     /// Parses string content.
     /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool StringContent()    /*[13]^^StringContent: ( '\\'
                            ( 	'u'([0-9A-Fa-f]{4}) /
 				["\\/]
@@ -336,6 +466,7 @@ namespace Altaxo.Gui.Common.MultiRename
     /// <summary>
     /// Parses an escaped opening bracket.
     /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool EscBracket()    /*[14]^EscBracket:		'[[';*/
     {
       return TreeAST((int)EAltaxo_MultiRename.EscBracket, () =>
@@ -345,6 +476,7 @@ namespace Altaxo.Gui.Common.MultiRename
     /// <summary>
     /// Parses an array separator.
     /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool ArraySeparator()    /*[15]^ArraySeparator:	QuotedString;*/
     {
       return TreeAST((int)EAltaxo_MultiRename.ArraySeparator, () =>
@@ -354,6 +486,7 @@ namespace Altaxo.Gui.Common.MultiRename
     /// <summary>
     /// Parses date-time arguments.
     /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool DateTimeArguments()    /*[16]^DateTimeArguments:	QuotedString;*/
     {
       return TreeAST((int)EAltaxo_MultiRename.DateTimeArguments, () =>
@@ -363,6 +496,7 @@ namespace Altaxo.Gui.Common.MultiRename
     /// <summary>
     /// Parses a date-time kind specifier.
     /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool DateTimeKind()    /*[17]^DateTimeKind:	('U'\i)/('L'\i);*/
     {
       return TreeAST((int)EAltaxo_MultiRename.DateTimeKind, () =>
@@ -372,6 +506,7 @@ namespace Altaxo.Gui.Common.MultiRename
     /// <summary>
     /// Parses an integer template.
     /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool IntegerTemplate()    /*[18]^^IntegerTemplate:	('[' IntegerTChar IntArgNumberOfDigits? (',' IntArg1st ',' IntArg2nd)? ']');*/
     {
       return TreeNT((int)EAltaxo_MultiRename.IntegerTemplate, () =>
@@ -391,6 +526,7 @@ namespace Altaxo.Gui.Common.MultiRename
     /// <summary>
     /// Parses a string template.
     /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool StringTemplate()    /*[19]^^StringTemplate:	('[' StringTChar (	(IntArg1st ',' IntArg2nd)/
 						(IntArg1st ',' ) /
 						(',' IntArg2nd) /
@@ -412,6 +548,7 @@ namespace Altaxo.Gui.Common.MultiRename
     /// <summary>
     /// Parses an array template.
     /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool ArrayTemplate()    /*[20]^^ArrayTemplate:	('[' ArrayTChar	ArraySeparator?	(	(IntArg1st ',' IntArg2nd) /
 								(IntArg1st ',' ) /
 								(',' IntArg2nd) /
@@ -434,6 +571,7 @@ namespace Altaxo.Gui.Common.MultiRename
     /// <summary>
     /// Parses a date-time template.
     /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool DateTimeTemplate()    /*[21]^^DateTimeTemplate:	('[' DateTimeTChar (DateTimeArguments)? (',' DateTimeKind)? ']');*/
     {
       return TreeNT((int)EAltaxo_MultiRename.DateTimeTemplate, () =>
@@ -448,6 +586,7 @@ namespace Altaxo.Gui.Common.MultiRename
     /// <summary>
     /// Parses the integer template shortcut.
     /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public virtual bool IntegerTChar()    /*[21]^IntegerTChar:  ('C') / ('KK');*/
     {
       return TreeAST((int)EAltaxo_MultiRename.IntegerTChar, () =>
@@ -457,6 +596,7 @@ namespace Altaxo.Gui.Common.MultiRename
     /// <summary>
     /// Parses the string template shortcut.
     /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public virtual bool StringTChar()    /*[22]^StringTChar: ('N') / ('MM');*/
     {
       return TreeAST((int)EAltaxo_MultiRename.StringTChar, () =>
@@ -466,6 +606,7 @@ namespace Altaxo.Gui.Common.MultiRename
     /// <summary>
     /// Parses the array template shortcut.
     /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public virtual bool ArrayTChar()    /*[23]^ArrayTChar: ('A');*/
     {
       return TreeAST((int)EAltaxo_MultiRename.ArrayTChar, () =>
@@ -475,6 +616,7 @@ namespace Altaxo.Gui.Common.MultiRename
     /// <summary>
     /// Parses the date-time template shortcut.
     /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public virtual bool DateTimeTChar()    /*[24]^DateTimeTChar: ('T');*/
     {
       return TreeAST((int)EAltaxo_MultiRename.DateTimeTChar, () =>

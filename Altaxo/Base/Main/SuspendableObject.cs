@@ -96,6 +96,7 @@ namespace Altaxo.Main
     /// <summary>
     /// Resumes the events of this class as long as you hold the returned resume token. The original state, that is, the suspended state, is restored when you dispose the resume token.
     /// </summary>
+    /// <returns>A token that temporarily resumes events until it is disposed.</returns>
     public IDisposable ResumeShortlyGetToken()
     {
       var token = new TemporaryResumeToken(this);

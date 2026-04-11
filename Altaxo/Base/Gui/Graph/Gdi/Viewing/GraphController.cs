@@ -242,8 +242,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     #region Initialization
 
     /// <summary>
-    /// Performs the i ni ti al iz e operation.
+    /// Initializes the controller and optionally reloads document-dependent state.
     /// </summary>
+    /// <param name="initData"><c>true</c> to initialize data-dependent state; otherwise, <c>false</c>.</param>
     protected void Initialize(bool initData)
     {
       if (initData)
@@ -855,6 +856,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     /// <summary>
     /// check the validity of the CurrentLayerNumber and correct it
     /// </summary>
+    /// <returns>The valid active layer.</returns>
     public HostLayer EnsureValidityOfCurrentLayerNumber()
     {
       _doc.RootLayer.EnsureValidityOfNodeIndex(_currentLayerNumber);
@@ -1164,6 +1166,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     /// <summary>
     /// Represents a delegate that arranges a graph element relative to the master bounds.
     /// </summary>
+    /// <param name="obj">The object to arrange.</param>
+    /// <param name="bounds">The bounds of the object to arrange.</param>
+    /// <param name="masterbounds">The bounds of the master object.</param>
     public delegate void ArrangeElement(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds);
 
     /// <summary>
@@ -1449,6 +1454,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     /// <summary>
     /// Determines whether delete is currently enabled.
     /// </summary>
+    /// <returns><c>true</c>.</returns>
     public bool IsCmdDeleteEnabled()
     {
       return true;
@@ -1499,6 +1505,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     /// <summary>
     /// Determines whether copy is currently enabled.
     /// </summary>
+    /// <returns><c>true</c>.</returns>
     public bool IsCmdCopyEnabled()
     {
       return true;
@@ -1528,6 +1535,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     /// <summary>
     /// Determines whether cut is currently enabled.
     /// </summary>
+    /// <returns><c>true</c> if at least one object is selected; otherwise, <c>false</c>.</returns>
     public bool IsCmdCutEnabled()
     {
       return 0 != SelectedObjects.Count;
@@ -1558,6 +1566,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     /// <summary>
     /// Determines whether paste is currently enabled.
     /// </summary>
+    /// <returns><c>true</c>.</returns>
     public bool IsCmdPasteEnabled()
     {
       return true;
@@ -1744,8 +1753,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     }
 
     /// <summary>
-    /// Sets the s el ec te do bj ec ts pr op er ty.
+    /// Sets the routed property on all selected objects.
     /// </summary>
+    /// <param name="property">The routed property setter to apply.</param>
     public void SetSelectedObjectsProperty(IRoutedSetterProperty property)
     {
       foreach (IHitTestObject o in SelectedObjects)
@@ -1878,16 +1888,18 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     #region Functions used by View
 
     /// <summary>
-    /// Sets the g ra ph to ol fr om in te rn al.
+    /// Updates the graph tool from controller logic.
     /// </summary>
+    /// <param name="value">The graph tool to activate.</param>
     public void SetGraphToolFromInternal(GraphToolType value)
     {
       _view.CurrentGraphTool = value;
     }
 
     /// <summary>
-    /// Sets the p an el cu rs or.
+    /// Sets the panel cursor.
     /// </summary>
+    /// <param name="cursor">The cursor object understood by the current view implementation.</param>
     public void SetPanelCursor(object cursor)
     {
       _view?.SetPanelCursor(cursor);
@@ -2034,12 +2046,18 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       return shouldDeleted;
     }
 
+    /// <summary>
+    /// Captures mouse input on the graph canvas.
+    /// </summary>
     internal void CaptureMouse()
     {
       if (_view is not null)
         _view.CaptureMouseOnCanvas();
     }
 
+    /// <summary>
+    /// Releases mouse input previously captured on the graph canvas.
+    /// </summary>
     internal void ReleaseMouseCapture()
     {
       if (_view is not null)

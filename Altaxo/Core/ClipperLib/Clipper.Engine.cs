@@ -47,23 +47,69 @@ namespace Clipper2Lib
     IsOutside = 2
   }
 
+  /// <summary>
+  /// Stores state flags for vertices during clipping preparation.
+  /// </summary>
   [Flags]
   internal enum VertexFlags
   {
+    /// <summary>
+    /// No flags are set.
+    /// </summary>
     None = 0,
+
+    /// <summary>
+    /// Marks the start of an open path.
+    /// </summary>
     OpenStart = 1,
+
+    /// <summary>
+    /// Marks the end of an open path.
+    /// </summary>
     OpenEnd = 2,
+
+    /// <summary>
+    /// Marks a local maximum.
+    /// </summary>
     LocalMax = 4,
+
+    /// <summary>
+    /// Marks a local minimum.
+    /// </summary>
     LocalMin = 8
   }
 
+  /// <summary>
+  /// Represents a vertex in the preprocessed input path list.
+  /// </summary>
   internal class Vertex
   {
+    /// <summary>
+    /// Stores the vertex position.
+    /// </summary>
     public Point64 pt;
+
+    /// <summary>
+    /// Stores the next vertex in the linked path.
+    /// </summary>
     public Vertex? next;
+
+    /// <summary>
+    /// Stores the previous vertex in the linked path.
+    /// </summary>
     public Vertex? prev;
+
+    /// <summary>
+    /// Stores the vertex state flags.
+    /// </summary>
     public VertexFlags flags;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Vertex"/> class.
+    /// </summary>
+    /// <param name="pt">The vertex position.</param>
+    /// <param name="flags">The initial vertex flags.</param>
+    /// <param name="prev">The previous vertex in the linked path.</param>
     public Vertex(Point64 pt, VertexFlags flags, Vertex? prev)
     {
       this.pt = pt;
@@ -73,12 +119,32 @@ namespace Clipper2Lib
     }
   }
 
+  /// <summary>
+  /// Represents a local minimum in the input geometry.
+  /// </summary>
   internal readonly struct LocalMinima
   {
+    /// <summary>
+    /// Stores the vertex at the local minimum.
+    /// </summary>
     public readonly Vertex vertex;
+
+    /// <summary>
+    /// Stores the path type of the local minimum.
+    /// </summary>
     public readonly PathType polytype;
+
+    /// <summary>
+    /// Stores a value indicating whether the local minimum belongs to an open path.
+    /// </summary>
     public readonly bool isOpen;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LocalMinima"/> struct.
+    /// </summary>
+    /// <param name="vertex">The vertex at the local minimum.</param>
+    /// <param name="polytype">The path type of the local minimum.</param>
+    /// <param name="isOpen">Set to <see langword="true"/> when the path is open.</param>
     public LocalMinima(Vertex vertex, PathType polytype, bool isOpen = false)
     {
       this.vertex = vertex;
@@ -96,11 +162,20 @@ namespace Clipper2Lib
       return !(lm1 == lm2);
     }
 
+    /// <summary>
+    /// Determines whether this local minimum equals another object.
+    /// </summary>
+    /// <param name="obj">The object to compare with this instance.</param>
+    /// <returns><see langword="true"/> if the objects are equal; otherwise, <see langword="false"/>.</returns>
     public override bool Equals(object? obj)
     {
       return obj is LocalMinima minima && this == minima;
     }
 
+    /// <summary>
+    /// Returns the hash code for this local minimum.
+    /// </summary>
+    /// <returns>The hash code for this instance.</returns>
     public override int GetHashCode()
     {
       return vertex.GetHashCode();
@@ -110,12 +185,32 @@ namespace Clipper2Lib
   // IntersectNode: a structure representing 2 intersecting edges.
   // Intersections must be sorted so they are processed from the largest
   // Y coordinates to the smallest while keeping edges adjacent.
+  /// <summary>
+  /// Represents an intersection between two active edges.
+  /// </summary>
   internal readonly struct IntersectNode
   {
+    /// <summary>
+    /// Stores the intersection point.
+    /// </summary>
     public readonly Point64 pt;
+
+    /// <summary>
+    /// Stores the first intersecting edge.
+    /// </summary>
     public readonly Active edge1;
+
+    /// <summary>
+    /// Stores the second intersecting edge.
+    /// </summary>
     public readonly Active edge2;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IntersectNode"/> struct.
+    /// </summary>
+    /// <param name="pt">The intersection point.</param>
+    /// <param name="edge1">The first intersecting edge.</param>
+    /// <param name="edge2">The second intersecting edge.</param>
     public IntersectNode(Point64 pt, Active edge1, Active edge2)
     {
       this.pt = pt;
@@ -124,8 +219,17 @@ namespace Clipper2Lib
     }
   }
 
+  /// <summary>
+  /// Sorts local minima from bottom to top.
+  /// </summary>
   internal struct LocMinSorter : IComparer<LocalMinima>
   {
+    /// <summary>
+    /// Compares two local minima by their Y coordinate.
+    /// </summary>
+    /// <param name="locMin1">The first local minimum.</param>
+    /// <param name="locMin2">The second local minimum.</param>
+    /// <returns>A value indicating their relative sort order.</returns>
     public readonly int Compare(LocalMinima locMin1, LocalMinima locMin2)
     {
       return locMin2.vertex.pt.Y.CompareTo(locMin1.vertex.pt.Y);
@@ -133,14 +237,41 @@ namespace Clipper2Lib
   }
 
   // OutPt: vertex data structure for clipping solutions
+  /// <summary>
+  /// Represents an output vertex in a clipping solution.
+  /// </summary>
   internal class OutPt
   {
+    /// <summary>
+    /// Stores the vertex position.
+    /// </summary>
     public Point64 pt;
+
+    /// <summary>
+    /// Stores the next output vertex.
+    /// </summary>
     public OutPt? next;
+
+    /// <summary>
+    /// Stores the previous output vertex.
+    /// </summary>
     public OutPt prev;
+
+    /// <summary>
+    /// Stores the owning output record.
+    /// </summary>
     public OutRec outrec;
+
+    /// <summary>
+    /// Stores the horizontal segment associated with this vertex.
+    /// </summary>
     public HorzSegment? horz;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OutPt"/> class.
+    /// </summary>
+    /// <param name="pt">The vertex position.</param>
+    /// <param name="outrec">The owning output record.</param>
     public OutPt(Point64 pt, OutRec outrec)
     {
       this.pt = pt;
@@ -151,32 +282,140 @@ namespace Clipper2Lib
     }
   }
 
-  internal enum JoinWith { None, Left, Right }
-  internal enum HorzPosition { Bottom, Middle, Top }
+  /// <summary>
+  /// Indicates which side a join should be associated with.
+  /// </summary>
+  internal enum JoinWith
+  {
+    /// <summary>
+    /// No join association.
+    /// </summary>
+    None,
+
+    /// <summary>
+    /// Join with the left side.
+    /// </summary>
+    Left,
+
+    /// <summary>
+    /// Join with the right side.
+    /// </summary>
+    Right,
+  }
+
+  /// <summary>
+  /// Identifies the relative vertical position of a horizontal edge.
+  /// </summary>
+  internal enum HorzPosition
+  {
+    /// <summary>
+    /// Bottom position.
+    /// </summary>
+    Bottom,
+
+    /// <summary>
+    /// Middle position.
+    /// </summary>
+    Middle,
+
+    /// <summary>
+    /// Top position.
+    /// </summary>
+    Top,
+  }
 
 
   // OutRec: path data structure for clipping solutions
+  /// <summary>
+  /// Represents an output path record in the clipping solution.
+  /// </summary>
   internal class OutRec
   {
+    /// <summary>
+    /// Stores the output record index.
+    /// </summary>
     public int idx;
+
+    /// <summary>
+    /// Stores the number of output points.
+    /// </summary>
     public int outPtCount;
+
+    /// <summary>
+    /// Stores the owning output record.
+    /// </summary>
     public OutRec? owner;
+
+    /// <summary>
+    /// Stores the front active edge.
+    /// </summary>
     public Active? frontEdge;
+
+    /// <summary>
+    /// Stores the back active edge.
+    /// </summary>
     public Active? backEdge;
+
+    /// <summary>
+    /// Stores the output point list.
+    /// </summary>
     public OutPt? pts;
+
+    /// <summary>
+    /// Stores the owning polygon tree node.
+    /// </summary>
     public PolyPathBase? polypath;
+
+    /// <summary>
+    /// Stores the cached path bounds.
+    /// </summary>
     public Rect64 bounds;
+
+    /// <summary>
+    /// Stores the cached output path.
+    /// </summary>
     public Path64 path = new Path64();
+
+    /// <summary>
+    /// Stores a value indicating whether this record represents an open path.
+    /// </summary>
     public bool isOpen;
+
+    /// <summary>
+    /// Stores output record split indices.
+    /// </summary>
     public List<int>? splits;
+
+    /// <summary>
+    /// Stores the recursive split owner.
+    /// </summary>
     public OutRec? recursiveSplit;
   }
 
+  /// <summary>
+  /// Represents a horizontal segment in an output path.
+  /// </summary>
   internal class HorzSegment
   {
+    /// <summary>
+    /// Stores the left output point.
+    /// </summary>
     public OutPt? leftOp;
+
+    /// <summary>
+    /// Stores the right output point.
+    /// </summary>
     public OutPt? rightOp;
+
+    /// <summary>
+    /// Stores a value indicating whether the segment runs from left to right.
+    /// </summary>
     public bool leftToRight;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HorzSegment"/> class.
+    /// </summary>
+    /// <param name="op">The initial output point.</param>
     public HorzSegment(OutPt op)
     {
       leftOp = op;
@@ -185,10 +424,26 @@ namespace Clipper2Lib
     }
   }
 
+  /// <summary>
+  /// Represents a pending horizontal join.
+  /// </summary>
   internal class HorzJoin
   {
+    /// <summary>
+    /// Stores the first output point.
+    /// </summary>
     public OutPt? op1;
+
+    /// <summary>
+    /// Stores the second output point.
+    /// </summary>
     public OutPt? op2;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HorzJoin"/> class.
+    /// </summary>
+    /// <param name="ltor">The left-to-right output point.</param>
+    /// <param name="rtol">The right-to-left output point.</param>
     public HorzJoin(OutPt ltor, OutPt rtol)
     {
       op1 = ltor;
@@ -201,38 +456,116 @@ namespace Clipper2Lib
   // displays, which is the orientation used in Clipper's development.
   ///////////////////////////////////////////////////////////////////
 
+  /// <summary>
+  /// Represents an active edge during the clipping sweep.
+  /// </summary>
   internal class Active
   {
+    /// <summary>
+    /// Stores the lower endpoint of the edge.
+    /// </summary>
     public Point64 bot;
+
+    /// <summary>
+    /// Stores the upper endpoint of the edge.
+    /// </summary>
     public Point64 top;
+
+    /// <summary>
+    /// Stores the current x-coordinate at the active scanline.
+    /// </summary>
     public long curX; // current (updated at every new scanline)
+
+    /// <summary>
+    /// Stores the edge slope.
+    /// </summary>
     public double dx;
+
+    /// <summary>
+    /// Stores the winding direction.
+    /// </summary>
     public int windDx; // 1 or -1 depending on winding direction
+
+    /// <summary>
+    /// Stores the winding count for the primary fill rule.
+    /// </summary>
     public int windCount;
+
+    /// <summary>
+    /// Stores the winding count for the alternate fill rule.
+    /// </summary>
     public int windCount2; // winding count of the opposite polytype
+
+    /// <summary>
+    /// Stores the associated output record.
+    /// </summary>
     public OutRec? outrec;
 
     // AEL: 'active edge list' (Vatti's AET - active edge table)
     //     a linked list of all edges (from left to right) that are present
     //     (or 'active') within the current scanbeam (a horizontal 'beam' that
     //     sweeps from bottom to top over the paths in the clipping operation).
+    /// <summary>
+    /// Stores the previous edge in the active edge list.
+    /// </summary>
     public Active? prevInAEL;
+
+    /// <summary>
+    /// Stores the next edge in the active edge list.
+    /// </summary>
     public Active? nextInAEL;
 
     // SEL: 'sorted edge list' (Vatti's ST - sorted table)
     //     linked list used when sorting edges into their new positions at the
     //     top of scanbeams, but also (re)used to process horizontals.
+    /// <summary>
+    /// Stores the previous edge in the sorted edge list.
+    /// </summary>
     public Active? prevInSEL;
+
+    /// <summary>
+    /// Stores the next edge in the sorted edge list.
+    /// </summary>
     public Active? nextInSEL;
+
+    /// <summary>
+    /// Stores the jump edge used during sorting.
+    /// </summary>
     public Active? jump;
+
+    /// <summary>
+    /// Stores the vertex at the top of the current edge.
+    /// </summary>
     public Vertex? vertexTop;
+
+    /// <summary>
+    /// Stores the local minimum that started this edge.
+    /// </summary>
     public LocalMinima localMin; // the bottom of an edge 'bound' (also Vatti)
+
+    /// <summary>
+    /// Stores a value indicating whether the edge is a left bound.
+    /// </summary>
     internal bool isLeftBound;
+
+    /// <summary>
+    /// Stores the side on which a pending join should occur.
+    /// </summary>
     internal JoinWith joinWith;
   }
 
+  /// <summary>
+  /// Provides helper methods used by the clipping engine.
+  /// </summary>
   internal static class ClipperEngine
   {
+    /// <summary>
+    /// Adds a local minimum to the supplied minima list.
+    /// </summary>
+    /// <param name="vert">The local minimum vertex.</param>
+    /// <param name="polytype">The path type.</param>
+    /// <param name="isOpen">Set to <see langword="true"/> when the path is open.</param>
+    /// <param name="minimaList">The minima list to update.</param>
     internal static void AddLocMin(Vertex vert, PathType polytype, bool isOpen,
       List<LocalMinima> minimaList)
     {
@@ -244,6 +577,12 @@ namespace Clipper2Lib
       minimaList.Add(lm);
     }
 
+    /// <summary>
+    /// Ensures that a list has at least the requested capacity.
+    /// </summary>
+    /// <typeparam name="T">The list element type.</typeparam>
+    /// <param name="list">The list whose capacity should be ensured.</param>
+    /// <param name="minCapacity">The minimum required capacity.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static void EnsureCapacity<T>(this List<T> list, int minCapacity)
     {
@@ -251,6 +590,14 @@ namespace Clipper2Lib
         list.Capacity = minCapacity;
     }
 
+    /// <summary>
+    /// Converts input paths into the reusable vertex and minima lists used by the clipping engine.
+    /// </summary>
+    /// <param name="paths">The paths to add.</param>
+    /// <param name="polytype">The path type.</param>
+    /// <param name="isOpen">Set to <see langword="true"/> when the paths are open.</param>
+    /// <param name="minimaList">The minima list to populate.</param>
+    /// <param name="vertexList">The vertex pool to populate.</param>
     internal static void AddPathsToVertexList(Paths64 paths, PathType polytype, bool isOpen,
       List<LocalMinima> minimaList, VertexPoolList vertexList)
     {
@@ -348,7 +695,14 @@ namespace Clipper2Lib
   /// </summary>
   public class ReuseableDataContainer64
   {
+    /// <summary>
+    /// Stores the collected local minima.
+    /// </summary>
     internal readonly List<LocalMinima> _minimaList;
+
+    /// <summary>
+    /// Stores the pooled vertices for the reusable data set.
+    /// </summary>
     internal readonly VertexPoolList _vertexList;
 
     /// <summary>
@@ -403,7 +757,15 @@ namespace Clipper2Lib
     private long _currentBotY;
     private bool _isSortedMinimaList;
     private bool _hasOpenPaths;
+
+    /// <summary>
+    /// Stores a value indicating whether output is currently being written into a polytree.
+    /// </summary>
     internal bool _using_polytree;
+
+    /// <summary>
+    /// Stores a value indicating whether the clipping operation has succeeded so far.
+    /// </summary>
     internal bool _succeeded;
     /// <summary>
     /// Gets or sets a value indicating whether collinear edges should be preserved.
@@ -1525,7 +1887,7 @@ namespace Clipper2Lib
       ae1.outrec.outPtCount += ae2.outrec.outPtCount;
       SetOwner(ae2.outrec, ae1.outrec);
 
-      if (IsOpenEnd(ae1))
+      if (IsOpen(ae1))
       {
         ae2.outrec.pts = ae1.outrec.pts;
         ae1.outrec.pts = null;
@@ -3093,6 +3455,14 @@ namespace Clipper2Lib
       }
     }
 
+    /// <summary>
+    /// Builds a path from a linked output point list.
+    /// </summary>
+    /// <param name="op">The starting output point.</param>
+    /// <param name="reverse">Set to <see langword="true"/> to build the path in reverse order.</param>
+    /// <param name="isOpen">Set to <see langword="true"/> when the output path is open.</param>
+    /// <param name="path">The path to populate.</param>
+    /// <returns><see langword="true"/> if a valid path was built; otherwise, <see langword="false"/>.</returns>
     internal static bool BuildPath(OutPt? op, bool reverse, bool isOpen, Path64 path)
     {
       if (op == null || op.next == op || (!isOpen && op.next == op.prev)) return false;
@@ -3266,7 +3636,6 @@ namespace Clipper2Lib
       }
     }
 
-
     /// <summary>
     /// Gets the bounds of all currently added input geometry.
     /// </summary>
@@ -3298,6 +3667,12 @@ namespace Clipper2Lib
   /// </summary>
   public class Clipper64 : ClipperBase
   {
+    /// <summary>
+    /// Adds an integer path.
+    /// </summary>
+    /// <param name="path">The path to add.</param>
+    /// <param name="polytype">The path role in the clipping operation.</param>
+    /// <param name="isOpen">Set to <see langword="true"/> when the path is open.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal new void AddPath(Path64 path, PathType polytype, bool isOpen = false)
     {
@@ -3314,6 +3689,12 @@ namespace Clipper2Lib
       base.AddReuseableData(reuseableData);
     }
 
+    /// <summary>
+    /// Adds multiple integer paths.
+    /// </summary>
+    /// <param name="paths">The paths to add.</param>
+    /// <param name="polytype">The path role in the clipping operation.</param>
+    /// <param name="isOpen">Set to <see langword="true"/> when the paths are open.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal new void AddPaths(Paths64 paths, PathType polytype, bool isOpen = false)
     {
@@ -3443,7 +3824,7 @@ namespace Clipper2Lib
   } // Clipper64 class
 
   /// <summary>
-  /// Performs clipping operations on floating-point coordinates using scaled integer arithmetic internally.
+  /// Represents a node in a polygon tree hierarchy.
   /// </summary>
   public class ClipperD : ClipperBase
   {
@@ -3705,7 +4086,14 @@ namespace Clipper2Lib
   /// </summary>
   public abstract class PolyPathBase : IEnumerable
   {
+    /// <summary>
+    /// The parent path in the hierarchy.
+    /// </summary>
     internal PolyPathBase? _parent;
+
+    /// <summary>
+    /// The child paths in the hierarchy.
+    /// </summary>
     internal List<PolyPathBase> _childs = new List<PolyPathBase>();
 
 
@@ -3805,6 +4193,12 @@ namespace Clipper2Lib
       _childs.Clear();
     }
 
+    /// <summary>
+    /// Builds a textual representation of this node and its descendants.
+    /// </summary>
+    /// <param name="idx">The child index used in the textual output.</param>
+    /// <param name="level">The current tree level.</param>
+    /// <returns>A textual representation of the subtree.</returns>
     internal string ToStringInternal(int idx, int level)
     {
       string result = "", padding = "", plural = "s";
@@ -3915,6 +4309,9 @@ namespace Clipper2Lib
   /// </summary>
   public class PolyPathD : PolyPathBase
   {
+    /// <summary>
+    /// Gets or sets the scaling factor used to convert integer coordinates back to floating-point coordinates.
+    /// </summary>
     internal double Scale { get; set; }
 
     /// <summary>

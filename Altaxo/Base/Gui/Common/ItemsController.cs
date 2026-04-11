@@ -42,6 +42,7 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Raises the <see cref="PropertyChanged"/> event.
     /// </summary>
+    /// <param name="propertyName">The name of the property that changed.</param>
     protected virtual void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
     Action<TItem>? _onSelectedValueChanged;
@@ -216,6 +217,8 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Gets the index of the specified item.
     /// </summary>
+    /// <param name="item">The item whose index should be returned.</param>
+    /// <returns>The zero-based index of the item, or <c>-1</c> if it was not found.</returns>
     protected int GetIndexOf(SelectableListNode item)
     {
       int result = -1;

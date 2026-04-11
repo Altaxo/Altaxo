@@ -335,6 +335,7 @@ namespace Altaxo.Gui.Data
     /// <summary>
     /// Puts the selected data columns into the plot content, either at the first position(s), or immediately before the first selected item.
     /// </summary>
+    /// <param name="toLast">If set to <see langword="true"/>, appends the data to the end; otherwise, inserts it at the first eligible position.</param>
     public void AvailableItems_PutDataToPlotItems(bool toLast)
     {
       var columnsAlreadyProcessed = new HashSet<Altaxo.Data.DataColumn>();

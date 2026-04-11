@@ -65,6 +65,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// Intended for advanced scenarios where you're working directly with
     /// storage for performance or interop reasons.
     /// </summary>
+    /// <param name="storage">The storage backing the matrix.</param>
     public DiagonalMatrix(DiagonalMatrixStorage<Complex32> storage)
         : base(storage)
     {
@@ -75,6 +76,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// Create a new square diagonal matrix with the given number of rows and columns.
     /// All cells of the matrix will be initialized to zero.
     /// </summary>
+    /// <param name="order">The order of the square matrix.</param>
     /// <exception cref="ArgumentException">If the order is less than one.</exception>
     public DiagonalMatrix(int order)
         : this(new DiagonalMatrixStorage<Complex32>(order, order))
@@ -85,6 +87,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// Create a new diagonal matrix with the given number of rows and columns.
     /// All cells of the matrix will be initialized to zero.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
     /// <exception cref="ArgumentException">If the row or column count is less than one.</exception>
     public DiagonalMatrix(int rows, int columns)
         : this(new DiagonalMatrixStorage<Complex32>(rows, columns))
@@ -95,6 +99,9 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// Create a new diagonal matrix with the given number of rows and columns.
     /// All diagonal cells of the matrix will be initialized to the provided value, all non-diagonal ones to zero.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="diagonalValue">The value assigned to each diagonal element.</param>
     /// <exception cref="ArgumentException">If the row or column count is less than one.</exception>
     public DiagonalMatrix(int rows, int columns, Complex32 diagonalValue)
         : this(rows, columns)
@@ -110,6 +117,9 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// The array is assumed to contain the diagonal elements only and is used directly without copying.
     /// Very efficient, but changes to the array and the matrix will affect each other.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="diagonalStorage">The array backing the diagonal values.</param>
     public DiagonalMatrix(int rows, int columns, Complex32[] diagonalStorage)
         : this(new DiagonalMatrixStorage<Complex32>(rows, columns, diagonalStorage))
     {
@@ -121,6 +131,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// The matrix to copy from must be diagonal as well.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="matrix">The matrix to copy.</param>
+    /// <returns>A diagonal matrix copied from <paramref name="matrix"/>.</returns>
     public static DiagonalMatrix OfMatrix(Matrix<Complex32> matrix)
     {
       return new DiagonalMatrix(DiagonalMatrixStorage<Complex32>.OfMatrix(matrix.Storage));
@@ -132,6 +144,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// The array to copy from must be diagonal as well.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="array">The array to copy.</param>
+    /// <returns>A diagonal matrix copied from <paramref name="array"/>.</returns>
     public static DiagonalMatrix OfArray(Complex32[,] array)
     {
       return new DiagonalMatrix(DiagonalMatrixStorage<Complex32>.OfArray(array));
@@ -143,6 +157,10 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// This new matrix will be independent from the enumerable.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="diagonal">The indexed diagonal values to copy.</param>
+    /// <returns>A diagonal matrix containing the indexed values from <paramref name="diagonal"/>.</returns>
     public static DiagonalMatrix OfIndexedDiagonal(int rows, int columns, IEnumerable<Tuple<int, Complex32>> diagonal)
     {
       return new DiagonalMatrix(DiagonalMatrixStorage<Complex32>.OfIndexedEnumerable(rows, columns, diagonal));
@@ -154,6 +172,10 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// This new matrix will be independent from the enumerable.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="diagonal">The indexed diagonal values to copy.</param>
+    /// <returns>A diagonal matrix containing the indexed values from <paramref name="diagonal"/>.</returns>
     public static DiagonalMatrix OfIndexedDiagonal(int rows, int columns, IEnumerable<(int, Complex32)> diagonal)
     {
       return new DiagonalMatrix(DiagonalMatrixStorage<Complex32>.OfIndexedEnumerable(rows, columns, diagonal));
@@ -164,6 +186,10 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// This new matrix will be independent from the enumerable.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="diagonal">The diagonal values to copy.</param>
+    /// <returns>A diagonal matrix copied from <paramref name="diagonal"/>.</returns>
     public static DiagonalMatrix OfDiagonal(int rows, int columns, IEnumerable<Complex32> diagonal)
     {
       return new DiagonalMatrix(DiagonalMatrixStorage<Complex32>.OfEnumerable(rows, columns, diagonal));
@@ -172,6 +198,10 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// <summary>
     /// Create a new diagonal matrix and initialize each diagonal value using the provided init function.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="init">The initialization function for diagonal elements.</param>
+    /// <returns>A diagonal matrix initialized by <paramref name="init"/>.</returns>
     public static DiagonalMatrix Create(int rows, int columns, Func<int, Complex32> init)
     {
       return new DiagonalMatrix(DiagonalMatrixStorage<Complex32>.OfInit(rows, columns, init));
@@ -180,6 +210,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// <summary>
     /// Create a new square sparse identity matrix where each diagonal value is set to One.
     /// </summary>
+    /// <param name="order">The order of the square matrix.</param>
+    /// <returns>An identity diagonal matrix of the requested order.</returns>
     public static DiagonalMatrix CreateIdentity(int order)
     {
       return new DiagonalMatrix(DiagonalMatrixStorage<Complex32>.OfValue(order, order, One));
@@ -188,6 +220,10 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// <summary>
     /// Create a new diagonal matrix with diagonal values sampled from the provided random distribution.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="distribution">The distribution used to sample values.</param>
+    /// <returns>A diagonal matrix initialized with values sampled from <paramref name="distribution"/>.</returns>
     public static DiagonalMatrix CreateRandom(int rows, int columns, IContinuousDistribution distribution)
     {
       return new DiagonalMatrix(new DiagonalMatrixStorage<Complex32>(rows, columns, Generate.RandomComplex32(Math.Min(rows, columns), distribution)));
@@ -980,6 +1016,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// <summary>
     /// Evaluates whether this matrix is symmetric.
     /// </summary>
+    /// <returns><see langword="true"/> because every diagonal matrix is symmetric.</returns>
     public sealed override bool IsSymmetric()
     {
       return true;
@@ -988,6 +1025,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// <summary>
     /// Evaluates whether this matrix is Hermitian (conjugate symmetric).
     /// </summary>
+    /// <returns><see langword="true"/> if all diagonal entries are real; otherwise, <see langword="false"/>.</returns>
     public sealed override bool IsHermitian()
     {
       for (var k = 0; k < _data.Length; k++)

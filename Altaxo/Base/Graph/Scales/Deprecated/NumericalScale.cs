@@ -183,6 +183,10 @@ namespace Altaxo.Graph.Scales.Deprecated
     /// Calculates the axis origin and end using the data bounds.
     /// The origin and end are adjusted only if they are not fixed and the data-bound object contains valid data.
     /// </summary>
+    /// <param name="org">The requested axis origin.</param>
+    /// <param name="orgfixed">If set to <c>true</c>, the origin remains fixed.</param>
+    /// <param name="end">The requested axis end.</param>
+    /// <param name="endfixed">If set to <c>true</c>, the end remains fixed.</param>
     public abstract void ProcessDataBounds(double org, bool orgfixed, double end, bool endfixed);
 
     /// <summary>

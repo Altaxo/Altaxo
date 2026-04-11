@@ -592,9 +592,9 @@ namespace Altaxo.Calc.Distributions
     }
 
     /// <summary>
-    /// Samples a Binomially distributed random variable.
+    /// Samples a categorically distributed random variable.
     /// </summary>
-    /// <returns>The number of successful trials.</returns>
+    /// <returns>The sampled category index.</returns>
     public int Sample()
     {
       return SampleUnchecked(_random, _cdfUnnormalized);
@@ -603,15 +603,16 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Fills an array with samples generated from the distribution.
     /// </summary>
+    /// <param name="values">The array to fill with samples.</param>
     public void Samples(int[] values)
     {
       SamplesUnchecked(_random, values, _cdfUnnormalized);
     }
 
     /// <summary>
-    /// Samples an array of Bernoulli distributed random variables.
+    /// Samples a sequence of categorically distributed random variables.
     /// </summary>
-    /// <returns>a sequence of successful trial counts.</returns>
+    /// <returns>A sequence of sampled category indices.</returns>
     public IEnumerable<int> Samples()
     {
       return SamplesUnchecked(_random, _cdfUnnormalized);

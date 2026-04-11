@@ -5,6 +5,9 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization.ObjectiveFunctions
 {
+  /// <summary>
+  /// Represents an objective model for nonlinear least-squares optimization.
+  /// </summary>
   internal class NonlinearObjectiveFunction : IObjectiveModel
   {
     #region Private Variables
@@ -87,6 +90,12 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
 
     #endregion Public Variables
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NonlinearObjectiveFunction"/> class.
+    /// </summary>
+    /// <param name="function">The user-supplied model function.</param>
+    /// <param name="derivative">The optional user-supplied Jacobian function.</param>
+    /// <param name="accuracyOrder">The numerical differentiation accuracy order.</param>
     public NonlinearObjectiveFunction(Func<Vector<double>, Vector<double>, Vector<double>> function,
         Func<Vector<double>, Vector<double>, Matrix<double>> derivative = null, int accuracyOrder = 2)
     {
@@ -95,6 +104,7 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       _accuracyOrder = Math.Min(6, Math.Max(1, accuracyOrder));
     }
 
+    /// <inheritdoc />
     public IObjectiveModel Fork()
     {
       return new NonlinearObjectiveFunction(_userFunction, _userDerivative, _accuracyOrder)
@@ -115,6 +125,7 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       };
     }
 
+    /// <inheritdoc />
     public IObjectiveModel CreateNew()
     {
       return new NonlinearObjectiveFunction(_userFunction, _userDerivative, _accuracyOrder);
@@ -178,12 +189,17 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       }
     }
 
+    /// <inheritdoc />
     public bool IsGradientSupported => true;
+    /// <inheritdoc />
     public bool IsHessianSupported => true;
 
     /// <summary>
     /// Set observed data to fit.
     /// </summary>
+    /// <param name="observedX">The observed x values.</param>
+    /// <param name="observedY">The observed y values.</param>
+    /// <param name="weights">Optional weights for the observed values.</param>
     public void SetObserved(Vector<double> observedX, Vector<double> observedY, Vector<double> weights = null)
     {
       if (observedX == null || observedY == null)
@@ -243,6 +259,7 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       IsFixed = isFixed;
     }
 
+    /// <inheritdoc />
     public void EvaluateAt(Vector<double> parameters)
     {
       if (parameters == null)
@@ -263,6 +280,10 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       _hessianValue = null;
     }
 
+    /// <summary>
+    /// Creates an <see cref="IObjectiveFunction"/> wrapper around this objective model.
+    /// </summary>
+    /// <returns>An objective function that evaluates this model at a parameter vector.</returns>
     public IObjectiveFunction ToObjectiveFunction()
     {
       (double, Vector<double>, Matrix<double>) Function(Vector<double> point)

@@ -41,6 +41,11 @@ namespace Altaxo.Drawing.D3D
     /// <summary>
     /// Adds geometry for a solid straight 3D line using the specified pen.
     /// </summary>
+    /// <param name="AddPositionAndNormal">The callback that receives generated positions and normals.</param>
+    /// <param name="AddIndices">The callback that receives generated triangle indices.</param>
+    /// <param name="vertexIndexOffset">The current vertex index offset that is updated as geometry is added.</param>
+    /// <param name="pen">The pen that defines the line appearance.</param>
+    /// <param name="line">The line for which geometry is generated.</param>
     public void AddGeometry(
     Action<PointD3D, VectorD3D> AddPositionAndNormal,
     Action<int, int, int, bool> AddIndices,

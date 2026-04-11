@@ -68,6 +68,7 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Gets a property value by key.
     /// </summary>
+    /// <param name="key">The property name.</param>
     public string this[string key]
     {
       get
@@ -90,6 +91,9 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Initializes a new instance of the <see cref="Condition"/> class.
     /// </summary>
+    /// <param name="name">The condition name.</param>
+    /// <param name="properties">The condition properties.</param>
+    /// <param name="addIn">The add-in that owns the condition.</param>
     public Condition(string name, Properties properties, AddIn addIn)
     {
       AddIn = addIn;
@@ -115,6 +119,9 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Reads a simple condition from XML.
     /// </summary>
+    /// <param name="reader">The XML reader positioned on the condition element.</param>
+    /// <param name="addIn">The add-in that owns the condition.</param>
+    /// <returns>The parsed condition.</returns>
     public static ICondition Read(XmlReader reader, AddIn addIn)
     {
       var properties = Properties.ReadFromAttributes(reader);
@@ -125,6 +132,9 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Reads a complex condition from XML.
     /// </summary>
+    /// <param name="reader">The XML reader positioned on the complex condition element.</param>
+    /// <param name="addIn">The add-in that owns the condition.</param>
+    /// <returns>The parsed condition, or <c>null</c> if no inner condition is found.</returns>
     public static ICondition? ReadComplexCondition(XmlReader reader, AddIn addIn)
     {
       var properties = Properties.ReadFromAttributes(reader);
@@ -165,6 +175,10 @@ exit:
     /// <summary>
     /// Reads a list of conditions from XML.
     /// </summary>
+    /// <param name="reader">The XML reader positioned on the first child condition element.</param>
+    /// <param name="endElement">The XML end element that terminates the condition list.</param>
+    /// <param name="addIn">The add-in that owns the conditions.</param>
+    /// <returns>The parsed conditions.</returns>
     public static ICondition[] ReadConditionList(XmlReader reader, string endElement, AddIn addIn)
     {
       var conditions = new List<ICondition>();
@@ -212,6 +226,9 @@ exit:
     /// <summary>
     /// Gets the action to take when one of the conditions fails.
     /// </summary>
+    /// <param name="conditionList">The conditions to evaluate.</param>
+    /// <param name="parameter">The parameter passed to the condition evaluators.</param>
+    /// <returns>The action to take when evaluating the conditions.</returns>
     public static ConditionFailedAction GetFailedAction(IEnumerable<ICondition> conditionList, object? parameter)
     {
       ConditionFailedAction action = ConditionFailedAction.Nothing;

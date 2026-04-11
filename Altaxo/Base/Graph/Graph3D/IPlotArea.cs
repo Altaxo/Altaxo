@@ -95,7 +95,8 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Updates the logical value of a plane id in case it uses a physical value.
     /// </summary>
-    /// <param name="id">The plane identifier</param>
+    /// <param name="id">The plane identifier.</param>
+    /// <returns>The plane identifier with an updated logical value.</returns>
     CSPlaneID UpdateCSPlaneID(CSPlaneID id);
 
     /// <summary>

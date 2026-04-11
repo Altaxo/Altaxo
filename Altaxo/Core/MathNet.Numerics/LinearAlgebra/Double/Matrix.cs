@@ -43,6 +43,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// <summary>
     /// Initializes a new instance of the Matrix class.
     /// </summary>
+    /// <param name="storage">The storage backing this matrix.</param>
     protected Matrix(MatrixStorage<double> storage)
         : base(storage)
     {
@@ -51,6 +52,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// <summary>
     /// Set all values whose absolute value is smaller than the threshold to zero.
     /// </summary>
+    /// <param name="threshold">The threshold below which values are set to zero.</param>
     public override void CoerceZero(double threshold)
     {
       MapInplace(x => Math.Abs(x) < threshold ? 0d : x, Zeros.AllowSkip);
@@ -68,6 +70,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// <summary>
     /// Puts the conjugate transpose of this matrix into the result matrix.
     /// </summary>
+    /// <param name="result">The matrix that receives the conjugate transpose.</param>
     public sealed override void ConjugateTranspose(Matrix<double> result)
     {
       Transpose(result);
@@ -509,9 +512,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double
       Map(Math.Tanh, result, Zeros.AllowSkip);
     }
 
-    /// <summary>
-    /// Computes the Moore-Penrose Pseudo-Inverse of this matrix.
-    /// </summary>
+    /// <inheritdoc/>
     public override Matrix<double> PseudoInverse()
     {
       var svd = Svd(true);
@@ -647,10 +648,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double
       return Math.Sqrt(norm);
     }
 
-    /// <summary>
-    /// Calculates the p-norms of all row vectors.
-    /// Typical values for p are 1.0 (L1, Manhattan norm), 2.0 (L2, Euclidean norm) and positive infinity (infinity norm)
-    /// </summary>
+    /// <inheritdoc/>
     public override Vector<double> RowNorms(double norm)
     {
       if (norm <= 0.0)
@@ -679,10 +677,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double
       return Vector<double>.Build.Dense(ret);
     }
 
-    /// <summary>
-    /// Calculates the p-norms of all column vectors.
-    /// Typical values for p are 1.0 (L1, Manhattan norm), 2.0 (L2, Euclidean norm) and positive infinity (infinity norm)
-    /// </summary>
+    /// <inheritdoc/>
     public override Vector<double> ColumnNorms(double norm)
     {
       if (norm <= 0.0)
@@ -711,10 +706,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double
       return Vector<double>.Build.Dense(ret);
     }
 
-    /// <summary>
-    /// Normalizes all row vectors to a unit p-norm.
-    /// Typical values for p are 1.0 (L1, Manhattan norm), 2.0 (L2, Euclidean norm) and positive infinity (infinity norm)
-    /// </summary>
+    /// <inheritdoc/>
     public sealed override Matrix<double> NormalizeRows(double norm)
     {
       var norminv = ((DenseVectorStorage<double>)RowNorms(norm).Storage).Data;
@@ -728,10 +720,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double
       return result;
     }
 
-    /// <summary>
-    /// Normalizes all column vectors to a unit p-norm.
-    /// Typical values for p are 1.0 (L1, Manhattan norm), 2.0 (L2, Euclidean norm) and positive infinity (infinity norm)
-    /// </summary>
+    /// <inheritdoc/>
     public sealed override Matrix<double> NormalizeColumns(double norm)
     {
       var norminv = ((DenseVectorStorage<double>)ColumnNorms(norm).Storage).Data;
@@ -745,9 +734,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double
       return result;
     }
 
-    /// <summary>
-    /// Calculates the value sum of each row vector.
-    /// </summary>
+    /// <inheritdoc/>
     public override Vector<double> RowSums()
     {
       var ret = new double[RowCount];
@@ -755,9 +742,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double
       return Vector<double>.Build.Dense(ret);
     }
 
-    /// <summary>
-    /// Calculates the absolute value sum of each row vector.
-    /// </summary>
+    /// <inheritdoc/>
     public override Vector<double> RowAbsoluteSums()
     {
       var ret = new double[RowCount];
@@ -765,9 +750,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double
       return Vector<double>.Build.Dense(ret);
     }
 
-    /// <summary>
-    /// Calculates the value sum of each column vector.
-    /// </summary>
+    /// <inheritdoc/>
     public override Vector<double> ColumnSums()
     {
       var ret = new double[ColumnCount];
@@ -775,9 +758,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double
       return Vector<double>.Build.Dense(ret);
     }
 
-    /// <summary>
-    /// Calculates the absolute value sum of each column vector.
-    /// </summary>
+    /// <inheritdoc/>
     public override Vector<double> ColumnAbsoluteSums()
     {
       var ret = new double[ColumnCount];
@@ -785,9 +766,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double
       return Vector<double>.Build.Dense(ret);
     }
 
-    /// <summary>
-    /// Evaluates whether this matrix is Hermitian (conjugate symmetric).
-    /// </summary>
+    /// <inheritdoc/>
     public sealed override bool IsHermitian()
     {
       return IsSymmetric();

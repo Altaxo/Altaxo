@@ -299,6 +299,7 @@ namespace Altaxo.Calc.Random
     /// <summary>
     /// Returns a random double-precision floating point number greater than or equal to 0.0, and less than 1.0.
     /// </summary>
+    /// <returns>A random double-precision floating point number in the interval [0.0, 1.0).</returns>
     protected sealed override double DoSample()
     {
       return genrand_int32() * Reciprocal;
@@ -307,6 +308,7 @@ namespace Altaxo.Calc.Random
     /// <summary>
     /// Returns a random 32-bit signed integer greater than or equal to zero and less than <see cref="F:System.Int32.MaxValue"/>
     /// </summary>
+    /// <returns>A random 32-bit signed integer in the interval [0, <see cref="F:System.Int32.MaxValue"/>).</returns>
     protected sealed override int DoSampleInteger()
     {
       uint uint32 = genrand_int32();
@@ -322,6 +324,7 @@ namespace Altaxo.Calc.Random
     /// <summary>
     /// Fills the elements of a specified array of bytes with random numbers in full range, including zero and 255 (<see cref="F:System.Byte.MaxValue"/>).
     /// </summary>
+    /// <param name="buffer">The buffer to fill with random bytes.</param>
     protected sealed override void DoSampleBytes(byte[] buffer)
     {
       for (var i = 0; i < buffer.Length; i++)
@@ -344,6 +347,9 @@ namespace Altaxo.Calc.Random
     /// Fills an array with random numbers greater than or equal to 0.0 and less than 1.0.
     /// </summary>
     /// <remarks>Supports being called in parallel from multiple threads.</remarks>
+    /// <param name="values">The array to fill with random samples.</param>
+    /// <param name="seed">The seed value used to initialize the generator.</param>
+    /// <returns>Nothing. The provided array is populated with random values.</returns>
     public static void Doubles(double[] values, int seed)
     {
       uint[] t = new uint[624];
@@ -397,6 +403,9 @@ namespace Altaxo.Calc.Random
     /// <summary>
     /// Returns an array of random numbers greater than or equal to 0.0 and less than 1.0.
     /// </summary>
+    /// <param name="length">The number of random samples to generate.</param>
+    /// <param name="seed">The seed value used to initialize the generator.</param>
+    /// <returns>An array of uniformly distributed doubles greater than or equal to 0.0 and less than 1.0.</returns>
     /// <remarks>Supports being called in parallel from multiple threads.</remarks>
     [TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
     public static double[] Doubles(int length, int seed)
@@ -410,6 +419,8 @@ namespace Altaxo.Calc.Random
     /// Returns an infinite sequence of random numbers greater than or equal to 0.0 and less than 1.0.
     /// </summary>
     /// <remarks>Supports being called in parallel from multiple threads, but the result must be enumerated from a single thread each.</remarks>
+    /// <param name="seed">The seed value used to initialize the generator.</param>
+    /// <returns>An enumerable sequence of uniformly distributed doubles greater than or equal to 0.0 and less than 1.0.</returns>
     public static IEnumerable<double> DoubleSequence(int seed)
     {
       uint[] t = new uint[624];

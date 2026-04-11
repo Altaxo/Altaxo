@@ -43,9 +43,10 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
   {
     /// <summary>
     /// Initializes a new instance of the <see cref="UserLU"/> class. This object will compute the
-    /// LU factorization when the constructor is called and cache it's factorization.
+    /// LU factorization when the constructor is called and cache its factorization.
     /// </summary>
     /// <param name="matrix">The matrix to factor.</param>
+    /// <returns>A <see cref="UserLU"/> instance for <paramref name="matrix"/>.</returns>
     /// <exception cref="ArgumentNullException">If <paramref name="matrix"/> is <c>null</c>.</exception>
     /// <exception cref="ArgumentException">If <paramref name="matrix"/> is not a square matrix.</exception>
     public static UserLU Create(Matrix<double> matrix)

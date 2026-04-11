@@ -48,6 +48,7 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Adds a sequence of codons to this node.
     /// </summary>
+    /// <param name="newCodons">The codons to add.</param>
     public void AddCodons(IEnumerable<Codon> newCodons)
     {
       if (newCodons is null)
@@ -93,8 +94,10 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Builds the child items in this path. Ensures that all items have the type T.
     /// </summary>
+    /// <typeparam name="T">The expected item type.</typeparam>
     /// <param name="parameter">A parameter that gets passed into the doozer and condition evaluators.</param>
     /// <param name="additionalConditions">Additional conditions applied to the node.</param>
+    /// <returns>The built child items.</returns>
     public List<T> BuildChildItems<T>(object? parameter, IEnumerable<ICondition>? additionalConditions = null)
     {
       var codons = Codons;
@@ -126,6 +129,10 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Builds the item represented by the specified codon.
     /// </summary>
+    /// <param name="codon">The codon that describes the item.</param>
+    /// <param name="parameter">A parameter that gets passed into the doozer and condition evaluators.</param>
+    /// <param name="additionalConditions">Additional conditions applied to the node.</param>
+    /// <returns>The built item, or <c>null</c> if no item is created.</returns>
     public object? BuildChildItem(Codon codon, object? parameter, IEnumerable<ICondition>? additionalConditions = null)
     {
       if (codon is null)
@@ -152,6 +159,7 @@ namespace Altaxo.AddInItems
     /// </param>
     /// <param name="parameter">The owner used to create the objects.</param>
     /// <param name="additionalConditions">Additional conditions applied to the created object</param>
+    /// <returns>The built child item.</returns>
     /// <exception cref="TreePathNotFoundException">
     /// Occurs when <paramref name="childItemID"/> does not exist in this path.
     /// </exception>

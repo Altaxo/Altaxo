@@ -84,6 +84,8 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     /// Sets the number of layers that are in the graph. The view has to reflect the change in the number of layers
     /// by adjusting the number of layer buttons or similar. The current layer number should be preserved.
     /// </summary>
+    /// <param name="structure">The layer tree to display.</param>
+    /// <param name="currentLayerNumber">The currently active layer index path.</param>
     void SetLayerStructure(Altaxo.Collections.NGTreeNode structure, int[] currentLayerNumber);
 
     /// <summary>
@@ -152,6 +154,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     /// <summary>
     /// Performs mouse-state specific painting after the graph has been rendered.
     /// </summary>
+    /// <param name="g">The graphics surface used for overlay painting.</param>
     void MouseState_AfterPaint(System.Drawing.Graphics g);
 
     /// <summary>
@@ -199,6 +202,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     /// <summary>
     /// Shows the data context menu for the specified layer.
     /// </summary>
+    /// <param name="layerNumber">The layer index path for which the context menu should be shown.</param>
+    /// <param name="guiParent">The parent GUI element for the context menu.</param>
+    /// <param name="pt">The screen position where the context menu should appear.</param>
     void EhView_ShowDataContextMenu(int[] layerNumber, object guiParent, Point pt);
   }
 

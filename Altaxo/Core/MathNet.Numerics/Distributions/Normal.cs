@@ -166,6 +166,7 @@ namespace Altaxo.Calc.Distributions
     /// </summary>
     /// <param name="mean">The mean (μ) of the normal distribution.</param>
     /// <param name="stddev">The standard deviation (σ) of the normal distribution. Range: σ ≥ 0.</param>
+    /// <returns><c>true</c> if the parameters define a valid normal distribution; otherwise, <c>false</c>.</returns>
     public static bool IsValidParameterSet(double mean, double stddev)
     {
       return stddev >= 0.0 && !double.IsNaN(mean);
@@ -289,6 +290,7 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Fills an array with samples generated from the distribution.
     /// </summary>
+    /// <param name="values">The array to fill with samples from the distribution.</param>
     public void Samples(double[] values)
     {
       SamplesUnchecked(_random, values, _mean, _stdDev);
@@ -303,6 +305,13 @@ namespace Altaxo.Calc.Distributions
       return SamplesUnchecked(_random, _mean, _stdDev);
     }
 
+    /// <summary>
+    /// Samples from the normal distribution without validating the parameters.
+    /// </summary>
+    /// <param name="rnd">The random number generator to use.</param>
+    /// <param name="mean">The mean parameter.</param>
+    /// <param name="stddev">The standard deviation parameter.</param>
+    /// <returns>A sample from the normal distribution.</returns>
     internal static double SampleUnchecked(System.Random rnd, double mean, double stddev)
     {
       double x;
@@ -313,6 +322,13 @@ namespace Altaxo.Calc.Distributions
       return mean + (stddev * x);
     }
 
+    /// <summary>
+    /// Generates normal samples without validating the parameters.
+    /// </summary>
+    /// <param name="rnd">The random number generator to use.</param>
+    /// <param name="mean">The mean parameter.</param>
+    /// <param name="stddev">The standard deviation parameter.</param>
+    /// <returns>A sequence of normal-distributed samples.</returns>
     internal static IEnumerable<double> SamplesUnchecked(System.Random rnd, double mean, double stddev)
     {
       while (true)
@@ -327,6 +343,13 @@ namespace Altaxo.Calc.Distributions
       }
     }
 
+    /// <summary>
+    /// Fills an array with normal samples without validating the parameters.
+    /// </summary>
+    /// <param name="rnd">The random number generator to use.</param>
+    /// <param name="values">The array to fill with samples.</param>
+    /// <param name="mean">The mean parameter.</param>
+    /// <param name="stddev">The standard deviation parameter.</param>
     internal static void SamplesUnchecked(System.Random rnd, double[] values, double mean, double stddev)
     {
       if (values.Length == 0)

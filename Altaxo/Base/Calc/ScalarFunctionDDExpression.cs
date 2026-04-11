@@ -94,6 +94,7 @@ namespace Altaxo.Calc
     /// <summary>
     /// Initializes a new instance of the <see cref="ScalarFunctionDDExpression"/> record.
     /// </summary>
+    /// <param name="expression">The C# expression to compile.</param>
     public ScalarFunctionDDExpression(string expression)
     {
       if (string.IsNullOrEmpty(expression))

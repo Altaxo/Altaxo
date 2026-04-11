@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -110,6 +110,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Determines whether the specified table stores a PLS2 calibration model.
     /// </summary>
+    /// <param name="table">The table to inspect.</param>
+    /// <returns><c>true</c> if the table stores a PLS2 calibration model; otherwise, <c>false</c>.</returns>
     public static bool IsPLS2CalibrationModel(Altaxo.Data.DataTable table)
     {
       if (!table.DataColumns.Contains(GetXOfX_ColumnName()))

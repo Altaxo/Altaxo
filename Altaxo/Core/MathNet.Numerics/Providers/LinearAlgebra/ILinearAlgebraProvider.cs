@@ -90,14 +90,18 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
       ILinearAlgebraProvider<Complex32>
   {
     /// <summary>
-    /// Try to find out whether the provider is available, at least in principle.
+    /// Try to find whether the provider is available in principle.
     /// Verification may still fail if available, but it will certainly fail if unavailable.
     /// </summary>
+    /// <returns><c>true</c> if the provider is available in the current environment; otherwise <c>false</c>.</returns>
     public bool IsAvailable();
 
     /// <summary>
     /// Initialize and verify that the provided is indeed available. If not, fall back to alternatives like the managed provider
     /// </summary>
+    /// <remarks>
+    /// This method should confirm provider availability and throw if verification fails.
+    /// </remarks>
     public void InitializeVerify();
 
     /// <summary>

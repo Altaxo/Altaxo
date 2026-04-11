@@ -193,6 +193,7 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <summary>
     /// Creates a default axis style.
     /// </summary>
+    /// <param name="context">The property context used to resolve default axis settings.</param>
     public AxisLineStyle(Main.Properties.IReadOnlyPropertyBag context)
     {
       double penWidth = GraphDocument.GetDefaultPenWidth(context);
@@ -337,6 +338,7 @@ namespace Altaxo.Graph.Gdi.Axis
     /// of the axis thickness)
     /// </summary>
     /// <param name="side">The side of the axis at which the outer distance is returned.</param>
+    /// <returns>The outer distance in points for the specified axis side.</returns>
     public double GetOuterDistance(CSAxisSide side)
     {
       double retVal = _axisPen.Width / 2; // half of the axis thickness
@@ -363,6 +365,8 @@ namespace Altaxo.Graph.Gdi.Axis
     /// if the axis is outside the layer, offset is a positive value,
     /// if the axis is shifted inside the layer, offset is negative
     /// </summary>
+    /// <param name="layerSize">The layer size.</param>
+    /// <returns>The axis offset in points relative to the layer edge.</returns>
     public float GetOffset(SizeF layerSize)
     {
       throw new NotImplementedException("Old stuff");

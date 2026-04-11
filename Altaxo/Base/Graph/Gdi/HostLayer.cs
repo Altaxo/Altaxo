@@ -371,6 +371,7 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Constructor for deserialization purposes only.
     /// </summary>
+    /// <param name="info">The deserialization information.</param>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected HostLayer(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
@@ -1644,21 +1645,25 @@ namespace Altaxo.Graph.Gdi
 
     #region ITreeListNodeWithParent implementation
 
+    /// <inheritdoc />
     IList<HostLayer> ITreeListNode<HostLayer>.ChildNodes
     {
       get { return _childLayers; }
     }
 
+    /// <inheritdoc />
     IEnumerable<HostLayer> ITreeNode<HostLayer>.ChildNodes
     {
       get { return _childLayers; }
     }
 
+    /// <inheritdoc />
     Main.IDocumentLeafNode? INodeWithParentNode<Main.IDocumentLeafNode>.ParentNode
     {
       get { return _parent; }
     }
 
+    /// <inheritdoc />
     HostLayer? INodeWithParentNode<HostLayer>.ParentNode
     {
       get { return _parent as HostLayer; }

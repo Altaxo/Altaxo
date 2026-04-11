@@ -345,6 +345,10 @@ namespace Altaxo.Graph.Scales.Rescaling
     /// <summary>
     /// Sets user-provided rescaling parameters using absolute numeric values.
     /// </summary>
+    /// <param name="orgRescaling">The origin rescaling mode.</param>
+    /// <param name="orgValue">The origin value.</param>
+    /// <param name="endRescaling">The end rescaling mode.</param>
+    /// <param name="endValue">The end value.</param>
     public virtual void SetUserParameters(BoundaryRescaling orgRescaling, double orgValue, BoundaryRescaling endRescaling, double endValue)
     {
       SetUserParameters(orgRescaling, BoundariesRelativeTo.Absolute, orgValue, endRescaling, BoundariesRelativeTo.Absolute, endValue);
@@ -353,6 +357,12 @@ namespace Altaxo.Graph.Scales.Rescaling
     /// <summary>
     /// Sets user-provided rescaling parameters using numeric values and relative modes.
     /// </summary>
+    /// <param name="orgRescaling">The origin rescaling mode.</param>
+    /// <param name="orgRelativeTo">The reference used for the origin value.</param>
+    /// <param name="orgValue">The origin value.</param>
+    /// <param name="endRescaling">The end rescaling mode.</param>
+    /// <param name="endRelativeTo">The reference used for the end value.</param>
+    /// <param name="endValue">The end value.</param>
     public virtual void SetUserParameters(BoundaryRescaling orgRescaling, BoundariesRelativeTo orgRelativeTo, double orgValue, BoundaryRescaling endRescaling, BoundariesRelativeTo endRelativeTo, double endValue)
     {
       bool isChange =
@@ -1033,6 +1043,7 @@ namespace Altaxo.Graph.Scales.Rescaling
 
     #region IScaleRescaleConditions implementation
 
+    /// <inheritdoc/>
     void IUnboundNumericScaleRescaleConditions.SetUserParameters(BoundaryRescaling orgRescaling, BoundariesRelativeTo orgRelativeTo, Data.AltaxoVariant orgValue, BoundaryRescaling endRescaling, BoundariesRelativeTo endRelativeTo, Data.AltaxoVariant endValue)
     {
       double orgV, endV;

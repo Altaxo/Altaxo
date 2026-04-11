@@ -139,6 +139,10 @@ namespace Altaxo.Gui.Common.MultiRename
     /// <summary>
     /// Initializes a new instance of the <see cref="MultiRenameStringElement"/> class.
     /// </summary>
+    /// <param name="multiRenameData">The rename data source.</param>
+    /// <param name="shortCut">The shortcut that identifies the value source.</param>
+    /// <param name="start">The start index of the substring.</param>
+    /// <param name="last">The end index of the substring.</param>
     public MultiRenameStringElement(MultiRenameData multiRenameData, string shortCut, int start, int last)
       : base(multiRenameData, shortCut)
     {
@@ -186,6 +190,11 @@ namespace Altaxo.Gui.Common.MultiRename
     /// <summary>
     /// Initializes a new instance of the <see cref="MultiRenameIntegerElement"/> class.
     /// </summary>
+    /// <param name="multiRenameData">The rename data source.</param>
+    /// <param name="shortCut">The shortcut that identifies the value source.</param>
+    /// <param name="numberOfDigits">The number of digits to use for formatting.</param>
+    /// <param name="offset">The offset applied to the generated number.</param>
+    /// <param name="step">The step multiplier applied to the generated number.</param>
     public MultiRenameIntegerElement(MultiRenameData multiRenameData, string shortCut, int numberOfDigits, int offset, int step)
       : base(multiRenameData, shortCut)
     {
@@ -226,6 +235,10 @@ namespace Altaxo.Gui.Common.MultiRename
     /// <summary>
     /// Initializes a new instance of the <see cref="MultiRenameDateTimeElement"/> class.
     /// </summary>
+    /// <param name="multiRenameData">The rename data source.</param>
+    /// <param name="shortCut">The shortcut that identifies the value source.</param>
+    /// <param name="dateTimeFormat">The custom date-time format string.</param>
+    /// <param name="useUtcTime"><see langword="true"/> to use UTC values; otherwise, local values.</param>
     public MultiRenameDateTimeElement(MultiRenameData multiRenameData, string shortCut, string? dateTimeFormat, bool useUtcTime)
       : base(multiRenameData, shortCut)
     {

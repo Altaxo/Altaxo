@@ -66,6 +66,9 @@ namespace Altaxo.Calc.Interpolation
     /// <summary>
     /// Create a barycentric polynomial interpolation from a set of (x,y) value pairs with equidistant x, sorted ascendingly by x.
     /// </summary>
+    /// <param name="x">The x-values.</param>
+    /// <param name="y">The y-values.</param>
+    /// <returns>The barycentric interpolator.</returns>
     public static Barycentric InterpolatePolynomialEquidistantSorted(double[] x, double[] y)
     {
       if (x.Length != y.Length)
@@ -92,6 +95,9 @@ namespace Altaxo.Calc.Interpolation
     /// Create a barycentric polynomial interpolation from an unordered set of (x,y) value pairs with equidistant x.
     /// WARNING: Works in-place and can thus causes the data array to be reordered.
     /// </summary>
+    /// <param name="x">The x-values.</param>
+    /// <param name="y">The y-values.</param>
+    /// <returns>The barycentric interpolator.</returns>
     public static Barycentric InterpolatePolynomialEquidistantInplace(double[] x, double[] y)
     {
       if (x.Length != y.Length)
@@ -106,6 +112,9 @@ namespace Altaxo.Calc.Interpolation
     /// <summary>
     /// Create a barycentric polynomial interpolation from an unsorted set of (x,y) value pairs with equidistant x.
     /// </summary>
+    /// <param name="x">The x-values.</param>
+    /// <param name="y">The y-values.</param>
+    /// <returns>The barycentric interpolator.</returns>
     public static Barycentric InterpolatePolynomialEquidistant(IEnumerable<double> x, IEnumerable<double> y)
     {
       // note: we must make a copy, even if the input was arrays already
@@ -115,6 +124,10 @@ namespace Altaxo.Calc.Interpolation
     /// <summary>
     /// Create a barycentric polynomial interpolation from a set of values related to linearly/equidistant spaced points within an interval.
     /// </summary>
+    /// <param name="leftBound">The left interval bound.</param>
+    /// <param name="rightBound">The right interval bound.</param>
+    /// <param name="y">The y-values.</param>
+    /// <returns>The barycentric interpolator.</returns>
     public static Barycentric InterpolatePolynomialEquidistant(double leftBound, double rightBound, IEnumerable<double> y)
     {
       var yy = (y as double[]) ?? y.ToArray();
@@ -132,6 +145,7 @@ namespace Altaxo.Calc.Interpolation
     /// Order of the interpolation scheme, 0 &lt;= order &lt;= N.
     /// In most cases a value between 3 and 8 gives good results.
     /// </param>
+    /// <returns>The barycentric interpolator.</returns>
     public static Barycentric InterpolateRationalFloaterHormannSorted(double[] x, double[] y, int order)
     {
       if (x.Length != y.Length)
@@ -189,6 +203,7 @@ namespace Altaxo.Calc.Interpolation
     /// Order of the interpolation scheme, 0 &lt;= order &lt;= N.
     /// In most cases a value between 3 and 8 gives good results.
     /// </param>
+    /// <returns>The barycentric interpolator.</returns>
     public static Barycentric InterpolateRationalFloaterHormannInplace(double[] x, double[] y, int order)
     {
       if (x.Length != y.Length)
@@ -209,6 +224,7 @@ namespace Altaxo.Calc.Interpolation
     /// Order of the interpolation scheme, 0 &lt;= order &lt;= N.
     /// In most cases a value between 3 and 8 gives good results.
     /// </param>
+    /// <returns>The barycentric interpolator.</returns>
     public static Barycentric InterpolateRationalFloaterHormann(IEnumerable<double> x, IEnumerable<double> y, int order)
     {
       // note: we must make a copy, even if the input was arrays already
@@ -221,6 +237,7 @@ namespace Altaxo.Calc.Interpolation
     /// </summary>
     /// <param name="x">Sample points (N), sorted ascendingly.</param>
     /// <param name="y">Sample values (N), sorted ascendingly by x.</param>
+    /// <returns>The barycentric interpolator.</returns>
     public static Barycentric InterpolateRationalFloaterHormannSorted(double[] x, double[] y)
     {
       return InterpolateRationalFloaterHormannSorted(x, y, Math.Min(3, x.Length - 1));
@@ -232,6 +249,7 @@ namespace Altaxo.Calc.Interpolation
     /// </summary>
     /// <param name="x">Sample points (N), no sorting assumed.</param>
     /// <param name="y">Sample values (N).</param>
+    /// <returns>The barycentric interpolator.</returns>
     public static Barycentric InterpolateRationalFloaterHormannInplace(double[] x, double[] y)
     {
       return InterpolateRationalFloaterHormannInplace(x, y, Math.Min(3, x.Length - 1));
@@ -242,6 +260,7 @@ namespace Altaxo.Calc.Interpolation
     /// </summary>
     /// <param name="x">Sample points (N), no sorting assumed.</param>
     /// <param name="y">Sample values (N).</param>
+    /// <returns>The barycentric interpolator.</returns>
     public static Barycentric InterpolateRationalFloaterHormann(IEnumerable<double> x, IEnumerable<double> y)
     {
       // note: we must make a copy, even if the input was arrays already
@@ -338,6 +357,7 @@ namespace Altaxo.Calc.Interpolation
     /// Indefinite integral at point t. NOT SUPPORTED.
     /// </summary>
     /// <param name="t">Point t to integrate at.</param>
+    /// <returns>The interpolated indefinite integral at point <paramref name="t"/>.</returns>
     double IInterpolation.Integrate(double t) => throw new NotSupportedException();
 
     /// <summary>
@@ -345,6 +365,7 @@ namespace Altaxo.Calc.Interpolation
     /// </summary>
     /// <param name="a">Left bound of the integration interval [a,b].</param>
     /// <param name="b">Right bound of the integration interval [a,b].</param>
+    /// <returns>The interpolated definite integral over the interval [<paramref name="a"/>, <paramref name="b"/>].</returns>
     double IInterpolation.Integrate(double a, double b) => throw new NotSupportedException();
   }
 }

@@ -104,6 +104,11 @@ namespace Altaxo.Data
       private IReadableColumn _col;
       private IAscendingIntegerCollection _participatingDataRows;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="HeaderColumnWrapper"/> class.
+      /// </summary>
+      /// <param name="r">The wrapped readable column.</param>
+      /// <param name="participatingDataRows">The participating data row indices.</param>
       internal HeaderColumnWrapper(IReadableColumn r, IAscendingIntegerCollection participatingDataRows)
       {
         _col = r;
@@ -116,6 +121,7 @@ namespace Altaxo.Data
         get { return _participatingDataRows.Count; }
       }
 
+      /// <inheritdoc/>
       int? IReadableColumn.Count
       {
         get { return _participatingDataRows.Count; }
@@ -135,6 +141,7 @@ namespace Altaxo.Data
         get { return _col[_participatingDataRows[i]]; }
       }
 
+      /// <inheritdoc/>
       AltaxoVariant IReadableColumn.this[int i]
       {
         get
@@ -172,6 +179,7 @@ namespace Altaxo.Data
           yield return this[i];
       }
 
+      /// <inheritdoc/>
       IEnumerator IEnumerable.GetEnumerator()
       {
         var length = Count;

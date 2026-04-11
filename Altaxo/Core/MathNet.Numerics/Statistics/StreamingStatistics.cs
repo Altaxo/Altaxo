@@ -48,6 +48,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or any entry is NaN.
     /// </summary>
     /// <param name="stream">Sample stream, no sorting is assumed.</param>
+    /// <returns>The minimum value from the stream, or <c>double.NaN</c> if the stream is empty or contains <c>NaN</c>.</returns>
     public static double Minimum(IEnumerable<double> stream)
     {
       double min = double.PositiveInfinity;
@@ -71,6 +72,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or any entry is NaN.
     /// </summary>
     /// <param name="stream">Sample stream, no sorting is assumed.</param>
+    /// <returns>The minimum value from the stream, or <c>float.NaN</c> if the stream is empty or contains <c>NaN</c>.</returns>
     public static float Minimum(IEnumerable<float> stream)
     {
       float min = float.PositiveInfinity;
@@ -94,6 +96,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or any entry is NaN.
     /// </summary>
     /// <param name="stream">Sample stream, no sorting is assumed.</param>
+    /// <returns>The maximum value from the stream, or <c>double.NaN</c> if the stream is empty or contains <c>NaN</c>.</returns>
     public static double Maximum(IEnumerable<double> stream)
     {
       double max = double.NegativeInfinity;
@@ -117,6 +120,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or any entry is NaN.
     /// </summary>
     /// <param name="stream">Sample stream, no sorting is assumed.</param>
+    /// <returns>The maximum value from the stream, or <c>float.NaN</c> if the stream is empty or contains <c>NaN</c>.</returns>
     public static float Maximum(IEnumerable<float> stream)
     {
       float max = float.NegativeInfinity;
@@ -140,6 +144,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or any entry is NaN.
     /// </summary>
     /// <param name="stream">Sample stream, no sorting is assumed.</param>
+    /// <returns>The smallest absolute value from the stream, or <c>double.NaN</c> if the stream is empty or contains <c>NaN</c>.</returns>
     public static double MinimumAbsolute(IEnumerable<double> stream)
     {
       double min = double.PositiveInfinity;
@@ -163,6 +168,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or any entry is NaN.
     /// </summary>
     /// <param name="stream">Sample stream, no sorting is assumed.</param>
+    /// <returns>The smallest absolute value from the stream, or <c>float.NaN</c> if the stream is empty or contains <c>NaN</c>.</returns>
     public static float MinimumAbsolute(IEnumerable<float> stream)
     {
       float min = float.PositiveInfinity;
@@ -186,6 +192,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or any entry is NaN.
     /// </summary>
     /// <param name="stream">Sample stream, no sorting is assumed.</param>
+    /// <returns>The largest absolute value from the stream, or <c>double.NaN</c> if the stream is empty or contains <c>NaN</c>.</returns>
     public static double MaximumAbsolute(IEnumerable<double> stream)
     {
       double max = 0.0d;
@@ -209,6 +216,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or any entry is NaN.
     /// </summary>
     /// <param name="stream">Sample stream, no sorting is assumed.</param>
+    /// <returns>The largest absolute value from the stream, or <c>float.NaN</c> if the stream is empty or contains <c>NaN</c>.</returns>
     public static float MaximumAbsolute(IEnumerable<float> stream)
     {
       float max = 0.0f;
@@ -232,6 +240,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or any entry is NaN.
     /// </summary>
     /// <param name="stream">Sample stream, no sorting is assumed.</param>
+    /// <returns>The complex value with the smallest magnitude (ties broken by smaller phase), or a complex NaN pair if the stream is empty or contains <c>NaN</c>.</returns>
     public static Complex MinimumMagnitudePhase(IEnumerable<Complex> stream)
     {
       double minMagnitude = double.PositiveInfinity;
@@ -262,6 +271,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or any entry is NaN.
     /// </summary>
     /// <param name="stream">Sample stream, no sorting is assumed.</param>
+    /// <returns>The complex value with the smallest magnitude (ties broken by smaller phase), or a complex NaN pair if the stream is empty or contains <c>NaN</c>.</returns>
     public static Complex32 MinimumMagnitudePhase(IEnumerable<Complex32> stream)
     {
       float minMagnitude = float.PositiveInfinity;
@@ -292,6 +302,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or any entry is NaN.
     /// </summary>
     /// <param name="stream">Sample stream, no sorting is assumed.</param>
+    /// <returns>The complex value with the largest magnitude (ties broken by larger phase), or a complex NaN pair if the stream is empty or contains <c>NaN</c>.</returns>
     public static Complex MaximumMagnitudePhase(IEnumerable<Complex> stream)
     {
       double maxMagnitude = 0.0d;
@@ -322,6 +333,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or any entry is NaN.
     /// </summary>
     /// <param name="stream">Sample stream, no sorting is assumed.</param>
+    /// <returns>The complex value with the largest magnitude (ties broken by larger phase), or a complex NaN pair if the stream is empty or contains <c>NaN</c>.</returns>
     public static Complex32 MaximumMagnitudePhase(IEnumerable<Complex32> stream)
     {
       float maxMagnitude = 0.0f;
@@ -352,6 +364,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or any entry is NaN.
     /// </summary>
     /// <param name="stream">Sample stream, no sorting is assumed.</param>
+    /// <returns>The arithmetic mean of the stream, or <c>double.NaN</c> if the stream is empty or contains <c>NaN</c>.</returns>
     public static double Mean(IEnumerable<double> stream)
     {
       double mean = 0;
@@ -372,6 +385,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or any entry is NaN.
     /// </summary>
     /// <param name="stream">Sample stream, no sorting is assumed.</param>
+    /// <returns>The arithmetic mean of the stream as <c>double</c>, or <c>double.NaN</c> if the stream is empty or contains <c>NaN</c>.</returns>
     public static double Mean(IEnumerable<float> stream)
     {
       return Mean(stream.Select(x => (double)x));
@@ -382,6 +396,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or any entry is NaN.
     /// </summary>
     /// <param name="stream">Sample stream, no sorting is assumed.</param>
+    /// <returns>The geometric mean of the stream, or <c>double.NaN</c> if the stream is empty or contains <c>NaN</c>.</returns>
     public static double GeometricMean(IEnumerable<double> stream)
     {
       ulong m = 0;
@@ -401,6 +416,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or any entry is NaN.
     /// </summary>
     /// <param name="stream">Sample stream, no sorting is assumed.</param>
+    /// <returns>The geometric mean of the stream as <c>double</c>, or <c>double.NaN</c> if the stream is empty or contains <c>NaN</c>.</returns>
     public static double GeometricMean(IEnumerable<float> stream)
     {
       return GeometricMean(stream.Select(x => (double)x));
@@ -411,6 +427,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or any entry is NaN.
     /// </summary>
     /// <param name="stream">Sample stream, no sorting is assumed.</param>
+    /// <returns>The harmonic mean of the stream, or <c>double.NaN</c> if the stream is empty or contains <c>NaN</c>.</returns>
     public static double HarmonicMean(IEnumerable<double> stream)
     {
       ulong m = 0;
@@ -430,6 +447,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or any entry is NaN.
     /// </summary>
     /// <param name="stream">Sample stream, no sorting is assumed.</param>
+    /// <returns>The harmonic mean of the stream as <c>double</c>, or <c>double.NaN</c> if the stream is empty or contains <c>NaN</c>.</returns>
     public static double HarmonicMean(IEnumerable<float> stream)
     {
       return HarmonicMean(stream.Select(x => (double)x));
@@ -441,6 +459,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data has less than two entries or if any entry is NaN.
     /// </summary>
     /// <param name="samples">Sample stream, no sorting is assumed.</param>
+    /// <returns>The unbiased sample variance (uses Bessel's correction), or <c>double.NaN</c> if there are fewer than two entries or if any entry is <c>NaN</c>.</returns>
     public static double Variance(IEnumerable<double> samples)
     {
       double variance = 0;
@@ -474,6 +493,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data has less than two entries or if any entry is NaN.
     /// </summary>
     /// <param name="samples">Sample stream, no sorting is assumed.</param>
+    /// <returns>The unbiased sample variance as <c>double</c>, or <c>double.NaN</c> if there are fewer than two entries or if any entry is <c>NaN</c>.</returns>
     public static double Variance(IEnumerable<float> samples)
     {
       return Variance(samples.Select(x => (double)x));
@@ -485,6 +505,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or if any entry is NaN.
     /// </summary>
     /// <param name="population">Sample stream, no sorting is assumed.</param>
+    /// <returns>The population variance, or <c>double.NaN</c> if data is empty or contains <c>NaN</c>.</returns>
     public static double PopulationVariance(IEnumerable<double> population)
     {
       double variance = 0;
@@ -518,6 +539,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or if any entry is NaN.
     /// </summary>
     /// <param name="population">Sample stream, no sorting is assumed.</param>
+    /// <returns>The population variance as <c>double</c>, or <c>double.NaN</c> if data is empty or contains <c>NaN</c>.</returns>
     public static double PopulationVariance(IEnumerable<float> population)
     {
       return PopulationVariance(population.Select(x => (double)x));
@@ -529,6 +551,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data has less than two entries or if any entry is NaN.
     /// </summary>
     /// <param name="samples">Sample stream, no sorting is assumed.</param>
+    /// <returns>The unbiased sample standard deviation, or <c>double.NaN</c> if there are fewer than two entries or if any entry is <c>NaN</c>.</returns>
     public static double StandardDeviation(IEnumerable<double> samples)
     {
       return Math.Sqrt(Variance(samples));
@@ -540,6 +563,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data has less than two entries or if any entry is NaN.
     /// </summary>
     /// <param name="samples">Sample stream, no sorting is assumed.</param>
+    /// <returns>The unbiased sample standard deviation as <c>double</c>, or <c>double.NaN</c> if there are fewer than two entries or if any entry is <c>NaN</c>.</returns>
     public static double StandardDeviation(IEnumerable<float> samples)
     {
       return Math.Sqrt(Variance(samples));
@@ -551,6 +575,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or if any entry is NaN.
     /// </summary>
     /// <param name="population">Sample stream, no sorting is assumed.</param>
+    /// <returns>The population standard deviation, or <c>double.NaN</c> if data is empty or contains <c>NaN</c>.</returns>
     public static double PopulationStandardDeviation(IEnumerable<double> population)
     {
       return Math.Sqrt(PopulationVariance(population));
@@ -562,6 +587,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or if any entry is NaN.
     /// </summary>
     /// <param name="population">Sample stream, no sorting is assumed.</param>
+    /// <returns>The population standard deviation as <c>double</c>, or <c>double.NaN</c> if data is empty or contains <c>NaN</c>.</returns>
     public static double PopulationStandardDeviation(IEnumerable<float> population)
     {
       return Math.Sqrt(PopulationVariance(population));
@@ -573,6 +599,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN for mean if data is empty or any entry is NaN, and NaN for variance if data has less than two entries or if any entry is NaN.
     /// </summary>
     /// <param name="samples">Sample stream, no sorting is assumed.</param>
+    /// <returns>A tuple containing the mean and unbiased variance. Mean is <c>double.NaN</c> if the stream is empty; variance is <c>double.NaN</c> if there are fewer than two entries or if any entry is <c>NaN</c>.</returns>
     public static (double Mean, double Variance) MeanVariance(IEnumerable<double> samples)
     {
       double mean = 0;
@@ -608,6 +635,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN for mean if data is empty or any entry is NaN, and NaN for variance if data has less than two entries or if any entry is NaN.
     /// </summary>
     /// <param name="samples">Sample stream, no sorting is assumed.</param>
+    /// <returns>A tuple containing the mean and unbiased variance as <c>double</c>. Mean is <c>double.NaN</c> if the stream is empty; variance is <c>double.NaN</c> if there are fewer than two entries or if any entry is <c>NaN</c>.</returns>
     public static (double Mean, double Variance) MeanVariance(IEnumerable<float> samples)
     {
       return MeanVariance(samples.Select(x => (double)x));
@@ -619,6 +647,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN for mean if data is empty or any entry is NaN, and NaN for standard deviation if data has less than two entries or if any entry is NaN.
     /// </summary>
     /// <param name="samples">Sample stream, no sorting is assumed.</param>
+    /// <returns>A tuple containing the mean and unbiased standard deviation. Mean is <c>double.NaN</c> if the stream is empty; standard deviation is <c>double.NaN</c> if there are fewer than two entries or if any entry is <c>NaN</c>.</returns>
     public static (double Mean, double StandardDeviation) MeanStandardDeviation(IEnumerable<double> samples)
     {
       var meanVariance = MeanVariance(samples);
@@ -631,6 +660,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN for mean if data is empty or any entry is NaN, and NaN for standard deviation if data has less than two entries or if any entry is NaN.
     /// </summary>
     /// <param name="samples">Sample stream, no sorting is assumed.</param>
+    /// <returns>A tuple containing the mean and unbiased standard deviation as <c>double</c>. Mean is <c>double.NaN</c> if the stream is empty; standard deviation is <c>double.NaN</c> if there are fewer than two entries or if any entry is <c>NaN</c>.</returns>
     public static (double Mean, double StandardDeviation) MeanStandardDeviation(IEnumerable<float> samples)
     {
       return MeanStandardDeviation(samples.Select(x => (double)x));
@@ -643,6 +673,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="samples1">First sample stream.</param>
     /// <param name="samples2">Second sample stream.</param>
+    /// <returns>The unbiased sample covariance between the two streams, or <c>double.NaN</c> if there are fewer than two paired entries or if any entry is <c>NaN</c>.</returns>
     public static double Covariance(IEnumerable<double> samples1, IEnumerable<double> samples2)
     {
       // https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
@@ -684,6 +715,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="samples1">First sample stream.</param>
     /// <param name="samples2">Second sample stream.</param>
+    /// <returns>The unbiased sample covariance as <c>double</c>, or <c>double.NaN</c> if there are fewer than two paired entries or if any entry is <c>NaN</c>.</returns>
     public static double Covariance(IEnumerable<float> samples1, IEnumerable<float> samples2)
     {
       return Covariance(samples1.Select(x => (double)x), samples2.Select(x => (double)x));
@@ -696,6 +728,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="population1">First population stream.</param>
     /// <param name="population2">Second population stream.</param>
+    /// <returns>The population covariance between the two streams, or <c>double.NaN</c> if data is empty or contains <c>NaN</c>.</returns>
     public static double PopulationCovariance(IEnumerable<double> population1, IEnumerable<double> population2)
     {
       // https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
@@ -737,6 +770,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="population1">First population stream.</param>
     /// <param name="population2">Second population stream.</param>
+    /// <returns>The population covariance as <c>double</c>, or <c>double.NaN</c> if data is empty or contains <c>NaN</c>.</returns>
     public static double PopulationCovariance(IEnumerable<float> population1, IEnumerable<float> population2)
     {
       return PopulationCovariance(population1.Select(x => (double)x), population2.Select(x => (double)x));
@@ -747,6 +781,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or any entry is NaN.
     /// </summary>
     /// <param name="stream">Sample stream, no sorting is assumed.</param>
+    /// <returns>The root mean square (quadratic mean) of the stream, or <c>double.NaN</c> if the stream is empty or contains <c>NaN</c>.</returns>
     public static double RootMeanSquare(IEnumerable<double> stream)
     {
       double mean = 0;
@@ -767,6 +802,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or any entry is NaN.
     /// </summary>
     /// <param name="stream">Sample stream, no sorting is assumed.</param>
+    /// <returns>The root mean square (quadratic mean) as <c>double</c>, or <c>double.NaN</c> if the stream is empty or contains <c>NaN</c>.</returns>
     public static double RootMeanSquare(IEnumerable<float> stream)
     {
       return RootMeanSquare(stream.Select(x => (double)x));
@@ -777,7 +813,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if any of the values in the stream are NaN.
     /// </summary>
     /// <param name="stream">The input stream to evaluate.</param>
-    /// <returns></returns>
+    /// <returns>The Shannon entropy of the stream in bits, or <c>double.NaN</c> if any value in the stream is <c>NaN</c>.</returns>
     public static double Entropy(IEnumerable<double> stream)
     {
       // http://en.wikipedia.org/wiki/Shannon_entropy

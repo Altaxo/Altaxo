@@ -138,6 +138,7 @@ namespace Altaxo.Serialization.Ascii
     /// Sets the separator character and chooses the substitute character automatically.
     /// </summary>
     /// <param name="separatorChar">The separator char.</param>
+    /// <returns>A copy of this options instance with the updated separator settings.</returns>
     public AsciiExportOptions WithSeparator(char separatorChar)
     {
       return this with

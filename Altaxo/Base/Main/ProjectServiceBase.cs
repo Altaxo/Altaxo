@@ -85,9 +85,10 @@ namespace Altaxo.Dom
 
     /// <summary>
     /// Fires the <see cref="ProjectChanged" /> event. This occurs <b>after</b> the events <see cref="ProjectOpened" />,
-    /// <see cref="ProjectClosed" />, <see cref="ProjectRenamed" />, and <see cref="ProjectDirtyChanged" /> event. Usefull if
+    /// <see cref="ProjectClosed" />, <see cref="ProjectRenamed" />, and <see cref="ProjectDirtyChanged" /> event. Useful if
     /// you do not want to subscribe to the above-mentioned single events.
     /// </summary>
+    /// <param name="e">The event arguments that describe the project change.</param>
     protected virtual void OnProjectChanged(ProjectEventArgs e)
     {
       switch (e.ProjectEventKind)
@@ -199,6 +200,8 @@ namespace Altaxo.Dom
     /// <summary>
     /// Handles changes of the current project file or folder name.
     /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The event arguments describing the name change.</param>
     protected virtual void EhFileOrFolderNameChanged(object? sender, NameChangedEventArgs e)
     {
       if (_currentProject is null)
@@ -252,6 +255,8 @@ namespace Altaxo.Dom
     /// <summary>
     /// Handles changes of the dirty state of the current project.
     /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The event arguments.</param>
     protected virtual void EhProjectDirtyChanged(object? sender, EventArgs e)
     {
       OnProjectChanged(new Altaxo.Main.ProjectEventArgs(_currentProject, _currentProject?.Name, ProjectEventKind.ProjectDirtyChanged));
@@ -663,6 +668,7 @@ namespace Altaxo.Dom
     /// <summary>
     /// Gets the set of documents that currently have open views.
     /// </summary>
+    /// <returns>The set of documents that currently have open views.</returns>
     public HashSet<object> GetOpenDocuments()
     {
       throw new NotImplementedException();

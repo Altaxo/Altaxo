@@ -45,7 +45,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Computes the Rising Factorial (Pochhammer function)  x -> (x)n, n>= 0. see: https://en.wikipedia.org/wiki/Falling_and_rising_factorials
     /// </summary>
-    /// <returns>The real value of the Rising Factorial for x and n</returns>
+    /// <param name="x">The base value.</param>
+    /// <param name="n">The non-negative integer order.</param>
+    /// <returns>The real value of the rising factorial (x)_{n}.</returns>
     public static double RisingFactorial(double x, int n)
     {
       double accumulator = 1.0;
@@ -60,7 +62,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Computes the Falling Factorial (Pochhammer function)  x -> x(n), n>= 0. see: https://en.wikipedia.org/wiki/Falling_and_rising_factorials
     /// </summary>
-    /// <returns>The real value of the Falling Factorial for x and n</returns>
+    /// <param name="x">The base value.</param>
+    /// <param name="n">The non-negative integer order.</param>
+    /// <returns>The real value of the falling factorial x_{(n)}.</returns>
     public static double FallingFactorial(double x, int n)
     {
       double accumulator = 1.0;
@@ -77,9 +81,9 @@ namespace Altaxo.Calc
     /// This is the most common pFq(a1, ..., ap; b1,...,bq; z) representation
     /// see: https://en.wikipedia.org/wiki/Generalized_hypergeometric_function
     /// </summary>
-    /// <param name="a">The list of coefficients in the numerator</param>
-    /// <param name="b">The list of coefficients in the denominator</param>
-    /// <param name="z">The variable in the power series</param>
+    /// <param name="a">The list of numerator parameters.</param>
+    /// <param name="b">The list of denominator parameters.</param>
+    /// <param name="z">The integer variable in the power series.</param>
     /// <returns>The value of the Generalized HyperGeometric Function.</returns>
     public static double GeneralizedHypergeometric(double[] a, double[] b, int z)
     {

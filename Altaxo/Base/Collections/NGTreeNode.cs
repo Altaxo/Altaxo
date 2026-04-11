@@ -283,6 +283,7 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <inheritdoc/>
     IEnumerable<NGTreeNode> ITreeNode<NGTreeNode>.ChildNodes
     {
       get
@@ -294,6 +295,7 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <inheritdoc/>
     IList<NGTreeNode> ITreeListNode<NGTreeNode>.ChildNodes
     {
       get

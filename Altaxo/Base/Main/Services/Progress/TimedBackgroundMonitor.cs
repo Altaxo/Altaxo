@@ -230,10 +230,12 @@ namespace Altaxo.Main.Services
       _timer?.Dispose();
     }
 
+    /// <inheritdoc/>
     void IProgress<string>.Report(string value)
     {
     }
 
+    /// <inheritdoc/>
     void IProgress<(string text, double progressFraction)>.Report((string text, double progressFraction) value)
     {
       Progress = value.progressFraction;

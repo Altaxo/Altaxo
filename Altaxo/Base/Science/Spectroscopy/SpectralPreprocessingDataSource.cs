@@ -490,12 +490,14 @@ namespace Altaxo.Science.Spectroscopy
       }
     }
 
+    /// <inheritdoc/>
     object IAltaxoTableDataSource.ProcessOptionsObject
     {
       get => ProcessOptions;
       set => ProcessOptions = (SpectralPreprocessingOptionsBase)value;
     }
 
+    /// <inheritdoc/>
     object IAltaxoTableDataSource.ProcessDataObject
     {
       get => _processData;

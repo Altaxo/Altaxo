@@ -187,6 +187,8 @@ namespace Altaxo.Main
     /// <summary>
     /// Gets the path part at the specified index.
     /// </summary>
+    /// <param name="idx">The zero-based index of the path part.</param>
+    /// <returns>The path part at the specified index.</returns>
     public string this[int idx] { get { return _pathParts[idx]; } }
 
     /// <inheritdoc/>
@@ -349,6 +351,7 @@ namespace Altaxo.Main
 
     /// <summary>Replaces the last part of the <see cref="AbsoluteDocumentPath"/>, which is often the name of the object.</summary>
     /// <param name="lastPart">The new last part of the <see cref="AbsoluteDocumentPath"/>.</param>
+    /// <returns>A new path with the replaced last part.</returns>
     public AbsoluteDocumentPath ReplaceLastPart(string lastPart)
     {
       if (Count == 0)
@@ -682,6 +685,7 @@ namespace Altaxo.Main
 
     #region ICloneable Members
 
+    /// <inheritdoc/>
     object System.ICloneable.Clone()
     {
       return new AbsoluteDocumentPath(this);

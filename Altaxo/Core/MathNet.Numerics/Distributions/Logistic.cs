@@ -165,6 +165,7 @@ namespace Altaxo.Calc.Distributions
     /// </summary>
     /// <param name="mean">The mean (μ) of the logistic distribution.</param>
     /// <param name="scale">The scale (s) of the logistic distribution. Range: s > 0.</param>
+    /// <returns><c>true</c> if the parameters define a valid logistic distribution; otherwise, <c>false</c>.</returns>
     public static bool IsValidParameterSet(double mean, double scale)
     {
       return scale > 0.0 && !double.IsNaN(mean);
@@ -291,6 +292,7 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Fills an array with samples generated from the distribution.
     /// </summary>
+    /// <param name="values">The array to fill with samples from the distribution.</param>
     public void Samples(double[] values)
     {
       SamplesUnchecked(_random, values, _mean, _scale);

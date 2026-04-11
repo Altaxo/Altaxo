@@ -63,6 +63,7 @@ namespace Altaxo.Gui.Common
   /// <summary>
   /// Wraps a controller that can be enabled or disabled together with its model.
   /// </summary>
+  /// <typeparam name="TModel">The type of the wrapped model.</typeparam>
   [ExpectedTypeOfView(typeof(IConditionalDocumentView))]
   public class ConditionalDocumentController<TModel> : IConditionalDocumentController, IMVCANController where TModel : notnull
   {
@@ -86,6 +87,8 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Initializes a new instance of the <see cref="ConditionalDocumentController{TModel}"/> class.
     /// </summary>
+    /// <param name="CreationAction">The action that creates the model when it is enabled.</param>
+    /// <param name="RemovalAction">The action that removes the model when it is disabled.</param>
     public ConditionalDocumentController(Func<TModel> CreationAction, Action RemovalAction)
       : this(CreationAction, RemovalAction, InternalCreateController)
     {
@@ -94,6 +97,9 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Initializes a new instance of the <see cref="ConditionalDocumentController{TModel}"/> class.
     /// </summary>
+    /// <param name="CreationAction">The action that creates the model when it is enabled.</param>
+    /// <param name="RemovalAction">The action that removes the model when it is disabled.</param>
+    /// <param name="ControllerCreationAction">The action that creates a controller for the model.</param>
     public ConditionalDocumentController(Func<TModel> CreationAction, Action RemovalAction, Func<TModel, UseDocument, IMVCANController?> ControllerCreationAction)
     {
       if (CreationAction is null)

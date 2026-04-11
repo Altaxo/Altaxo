@@ -38,6 +38,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
   /// <summary>
   /// Stores a diagonal matrix by its diagonal entries.
   /// </summary>
+  /// <typeparam name="T">The type of the stored values.</typeparam>
   [Serializable]
   [DataContract(Namespace = "urn:MathNet/Numerics/LinearAlgebra")]
   public class DiagonalMatrixStorage<T> : MatrixStorage<T>
@@ -51,12 +52,23 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
     [DataMember(Order = 1)]
     public readonly T[] Data;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DiagonalMatrixStorage{T}"/> class.
+    /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
     internal DiagonalMatrixStorage(int rows, int columns)
         : base(rows, columns)
     {
       Data = new T[Math.Min(rows, columns)];
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DiagonalMatrixStorage{T}"/> class with existing data.
+    /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="data">The diagonal data.</param>
     internal DiagonalMatrixStorage(int rows, int columns, T[] data)
         : base(rows, columns)
     {
@@ -88,6 +100,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
     /// True if the specified field can be set to any value.
     /// False if the field is fixed, like an off-diagonal field on a diagonal matrix.
     /// </summary>
+    /// <param name="row">The row index of the element.</param>
+    /// <param name="column">The column index of the element.</param>
+    /// <returns><see langword="true"/> if the requested entry lies on the diagonal; otherwise, <see langword="false"/>.</returns>
     public override bool IsMutableAt(int row, int column)
     {
       return row == column;
@@ -96,6 +111,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
     /// <summary>
     /// Retrieves the requested element without range checking.
     /// </summary>
+    /// <param name="row">The row index of the element to retrieve.</param>
+    /// <param name="column">The column index of the element to retrieve.</param>
+    /// <returns>The requested element.</returns>
     public override T At(int row, int column)
     {
       return row == column ? Data[row] : Zero;
@@ -104,6 +122,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
     /// <summary>
     /// Sets the element without range checking.
     /// </summary>
+    /// <param name="row">The row index of the element to set.</param>
+    /// <param name="column">The column index of the element to set.</param>
+    /// <param name="value">The value to assign.</param>
     public override void At(int row, int column, T value)
     {
       if (row == column)
@@ -144,6 +165,13 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       Array.Clear(Data, 0, Data.Length);
     }
 
+    /// <summary>
+    /// Clears a diagonal submatrix without validation.
+    /// </summary>
+    /// <param name="rowIndex">The starting row index of the region to clear.</param>
+    /// <param name="rowCount">The number of rows in the region to clear.</param>
+    /// <param name="columnIndex">The starting column index of the region to clear.</param>
+    /// <param name="columnCount">The number of columns in the region to clear.</param>
     internal override void ClearUnchecked(int rowIndex, int rowCount, int columnIndex, int columnCount)
     {
       var beginInclusive = Math.Max(rowIndex, columnIndex);
@@ -154,6 +182,10 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       }
     }
 
+    /// <summary>
+    /// Clears the specified rows without validation.
+    /// </summary>
+    /// <param name="rowIndices">The row indices to clear.</param>
     internal override void ClearRowsUnchecked(int[] rowIndices)
     {
       for (int i = 0; i < rowIndices.Length; i++)
@@ -162,6 +194,10 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       }
     }
 
+    /// <summary>
+    /// Clears the specified columns without validation.
+    /// </summary>
+    /// <param name="columnIndices">The column indices to clear.</param>
     internal override void ClearColumnsUnchecked(int[] columnIndices)
     {
       for (int i = 0; i < columnIndices.Length; i++)
@@ -175,6 +211,8 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
     /// <summary>
     /// Creates a diagonal matrix storage from another matrix storage.
     /// </summary>
+    /// <param name="matrix">The source matrix storage.</param>
+    /// <returns>The initialized diagonal matrix storage.</returns>
     public static DiagonalMatrixStorage<T> OfMatrix(MatrixStorage<T> matrix)
     {
       var storage = new DiagonalMatrixStorage<T>(matrix.RowCount, matrix.ColumnCount);
@@ -185,6 +223,8 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
     /// <summary>
     /// Creates a diagonal matrix storage from a two-dimensional array.
     /// </summary>
+    /// <param name="array">The source array.</param>
+    /// <returns>The initialized diagonal matrix storage.</returns>
     public static DiagonalMatrixStorage<T> OfArray(T[,] array)
     {
       var storage = new DiagonalMatrixStorage<T>(array.GetLength(0), array.GetLength(1));
@@ -210,6 +250,10 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
     /// <summary>
     /// Creates a diagonal matrix storage initialized with a constant diagonal value.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="diagonalValue">The value assigned to each diagonal entry.</param>
+    /// <returns>The initialized diagonal matrix storage.</returns>
     public static DiagonalMatrixStorage<T> OfValue(int rows, int columns, T diagonalValue)
     {
       var storage = new DiagonalMatrixStorage<T>(rows, columns);
@@ -225,6 +269,10 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
     /// <summary>
     /// Creates a diagonal matrix storage initialized by an index-based initializer.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="init">The initializer used to populate the diagonal entries.</param>
+    /// <returns>The initialized diagonal matrix storage.</returns>
     public static DiagonalMatrixStorage<T> OfInit(int rows, int columns, Func<int, T> init)
     {
       var storage = new DiagonalMatrixStorage<T>(rows, columns);
@@ -311,6 +359,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // MATRIX COPY
 
+    /// <inheritdoc/>
     internal override void CopyToUnchecked(MatrixStorage<T> target, ExistingData existingData)
     {
       if (target is DiagonalMatrixStorage<T> diagonalTarget)
@@ -377,6 +426,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       }
     }
 
+    /// <inheritdoc/>
     internal override void CopySubMatrixToUnchecked(MatrixStorage<T> target,
         int sourceRowIndex, int targetRowIndex, int rowCount,
         int sourceColumnIndex, int targetColumnIndex, int columnCount,
@@ -510,6 +560,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // ROW COPY
 
+    /// <inheritdoc/>
     internal override void CopySubRowToUnchecked(VectorStorage<T> target, int rowIndex,
         int sourceColumnIndex, int targetColumnIndex, int columnCount, ExistingData existingData)
     {
@@ -526,6 +577,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // COLUMN COPY
 
+    /// <inheritdoc/>
     internal override void CopySubColumnToUnchecked(VectorStorage<T> target, int columnIndex,
         int sourceRowIndex, int targetRowIndex, int rowCount, ExistingData existingData)
     {
@@ -542,11 +594,13 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // TRANSPOSE
 
+    /// <inheritdoc/>
     internal override void TransposeToUnchecked(MatrixStorage<T> target, ExistingData existingData)
     {
       CopyToUnchecked(target, existingData);
     }
 
+    /// <inheritdoc/>
     internal override void TransposeSquareInplaceUnchecked()
     {
       // nothing to do
@@ -687,6 +741,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return null;
     }
 
+    /// <inheritdoc/>
     internal override Tuple<int, int, T, TOther> Find2Unchecked<TOther>(MatrixStorage<TOther> other, Func<T, TOther, bool> predicate, Zeros zeros)
     {
       if (other is DenseColumnMajorMatrixStorage<TOther> denseOther)
@@ -830,6 +885,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       });
     }
 
+    /// <inheritdoc/>
     internal override void MapToUnchecked<TU>(MatrixStorage<TU> target, Func<T, TU> f,
         Zeros zeros, ExistingData existingData)
     {
@@ -880,6 +936,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       }
     }
 
+    /// <inheritdoc/>
     internal override void MapIndexedToUnchecked<TU>(MatrixStorage<TU> target, Func<int, int, T, TU> f,
         Zeros zeros, ExistingData existingData)
     {
@@ -930,6 +987,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       }
     }
 
+    /// <inheritdoc/>
     internal override void MapSubMatrixIndexedToUnchecked<TU>(MatrixStorage<TU> target, Func<int, int, T, TU> f,
         int sourceRowIndex, int targetRowIndex, int rowCount,
         int sourceColumnIndex, int targetColumnIndex, int columnCount,
@@ -1108,6 +1166,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // FUNCTIONAL COMBINATORS: FOLD
 
+    /// <inheritdoc/>
     internal override void FoldByRowUnchecked<TU>(TU[] target, Func<TU, T, TU> f, Func<TU, int, TU> finalize, TU[] state, Zeros zeros)
     {
       if (zeros == Zeros.AllowSkip)
@@ -1136,6 +1195,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       }
     }
 
+    /// <inheritdoc/>
     internal override void FoldByColumnUnchecked<TU>(TU[] target, Func<TU, T, TU> f, Func<TU, int, TU> finalize, TU[] state, Zeros zeros)
     {
       if (zeros == Zeros.AllowSkip)
@@ -1164,6 +1224,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       }
     }
 
+    /// <inheritdoc/>
     internal override TState Fold2Unchecked<TOther, TState>(MatrixStorage<TOther> other, Func<TState, T, TOther, TState> f, TState state, Zeros zeros)
     {
       if (other is DenseColumnMajorMatrixStorage<TOther> denseOther)

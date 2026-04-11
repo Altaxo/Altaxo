@@ -112,18 +112,24 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     public event EventHandler? Changed;
 
     /// <summary>Not implemented.</summary>
+    /// <param name="i">The parameter index.</param>
+    /// <returns>The default parameter value (not implemented).</returns>
     public double DefaultParameterValue(int i)
     {
       throw new NotImplementedException();
     }
 
     /// <summary>Not implemented.</summary>
+    /// <param name="i">The parameter index.</param>
+    /// <returns>Variance scaling information for the parameter (not implemented).</returns>
     public IVarianceScaling? DefaultVarianceScaling(int i)
     {
       throw new NotImplementedException();
     }
 
     /// <summary>Not implemented.</summary>
+    /// <param name="i">The dependent variable index.</param>
+    /// <returns>The dependent variable name (not implemented).</returns>
     public string DependentVariableName(int i)
     {
       throw new NotImplementedException();
@@ -250,12 +256,16 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     }
 
     /// <summary>Not implemented.</summary>
+    /// <param name="i">The independent variable index.</param>
+    /// <returns>The independent variable name.</returns>
     public string IndependentVariableName(int i)
     {
       throw new NotImplementedException();
     }
 
     /// <summary>Not implemented.</summary>
+    /// <param name="i">The parameter index.</param>
+    /// <returns>The parameter name.</returns>
     public string ParameterName(int i)
     {
       throw new NotImplementedException();

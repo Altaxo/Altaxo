@@ -37,11 +37,13 @@ namespace Altaxo.Gui.Worksheet
     /// <summary>
     /// Initializes the data tab.
     /// </summary>
+    /// <param name="guiControl">The GUI control to host in the data tab.</param>
     void InitializeDataTab(object guiControl);
 
     /// <summary>
     /// Initializes the edit tab.
     /// </summary>
+    /// <param name="guiControl">The GUI control to host in the edit tab.</param>
     void InitializeEditTab(object guiControl);
   }
 

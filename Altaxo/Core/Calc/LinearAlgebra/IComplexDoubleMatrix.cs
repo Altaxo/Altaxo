@@ -33,6 +33,8 @@ namespace Altaxo.Calc.LinearAlgebra
   public interface IROComplexDoubleMatrix
   {
     /// <summary>Gets an element of the matrix at (row, col).</summary>
+    /// <param name="row">The zero-based row index.</param>
+    /// <param name="col">The zero-based column index.</param>
     ComplexT this[int row, int col] { get; }
 
     /// <summary>The number of rows of the matrix.</summary>
@@ -48,6 +50,8 @@ namespace Altaxo.Calc.LinearAlgebra
   public interface IComplexDoubleMatrix : IROComplexDoubleMatrix
   {
     /// <summary>Get / sets an element of the matrix at (row, col).</summary>
+    /// <param name="row">The zero-based row index.</param>
+    /// <param name="col">The zero-based column index.</param>
     new ComplexT this[int row, int col] { get; set; }
   }
 

@@ -34,6 +34,8 @@ namespace Altaxo.Drawing
   /// <summary>
   /// Used to store user color sets in the user's settings.
   /// </summary>
+  /// <typeparam name="TList">The style list type that is stored in the bag.</typeparam>
+  /// <typeparam name="TItem">The immutable style item type contained in the style lists.</typeparam>
   public class StyleListBag<TList, TItem>
     where TList : IStyleList<TItem>
     where TItem : Altaxo.Main.IImmutable

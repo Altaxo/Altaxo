@@ -37,6 +37,8 @@ namespace Altaxo.Data
     /// This function should throw an exeption, if the type of the variant do not match
     /// the type of the column.
     /// </summary>
+    /// <param name="i">The index of the element to set.</param>
+    /// <value>The value assigned to the specified index.</value>
     AltaxoVariant this[int i]
     {
       set;

@@ -55,6 +55,10 @@ namespace Altaxo.Science.Spectroscopy.Raman
     /// <summary>
     /// Returns the official silicon Raman shift value adjusted for the configured temperature.
     /// </summary>
+    /// <returns>
+    /// The official silicon Raman shift value in inverse centimeters adjusted to the configured
+    /// <see cref="Temperature"/>.
+    /// </returns>
     public double GetOfficialShiftValue_Silicon_invcm()
     {
       return OfficialShiftValue_Silicone_invcm + OfficialShiftValueTemperatureCoefficient_Silicon_invcm * (Temperature.AsValueInSIUnits - ReferenceTemperature_OfficialShiftValue_Silicon_K);

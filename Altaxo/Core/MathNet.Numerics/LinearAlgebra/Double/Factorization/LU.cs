@@ -43,6 +43,11 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
   /// </remarks>
   internal abstract class LU : LU<double>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LU"/> class.
+    /// </summary>
+    /// <param name="factors">The combined lower and upper triangular factors.</param>
+    /// <param name="pivots">The pivot indices used during factorization.</param>
     protected LU(Matrix<double> factors, int[] pivots)
         : base(factors, pivots)
     {

@@ -89,6 +89,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="SimpleTextGraphic"/> class for deserialization.
     /// </summary>
+    /// <param name="info">The deserialization information.</param>
     protected SimpleTextGraphic(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
       : base(new ItemLocationDirectAutoSize())
@@ -147,6 +148,10 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="SimpleTextGraphic"/> class.
     /// </summary>
+    /// <param name="graphicPosition">The graphic position.</param>
+    /// <param name="text">The text.</param>
+    /// <param name="textFont">The text font.</param>
+    /// <param name="textColor">The text color.</param>
     public SimpleTextGraphic(PointD2D graphicPosition, string text,
       FontX textFont, Color textColor)
       : base(new ItemLocationDirectAutoSize())
@@ -160,6 +165,11 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="SimpleTextGraphic"/> class.
     /// </summary>
+    /// <param name="posX">The x-position of the graphic.</param>
+    /// <param name="posY">The y-position of the graphic.</param>
+    /// <param name="text">The text.</param>
+    /// <param name="textFont">The text font.</param>
+    /// <param name="textColor">The text color.</param>
     public SimpleTextGraphic(double posX, double posY,
       string text, FontX textFont, Color textColor)
       : this(new PointD2D(posX, posY), text, textFont, textColor)
@@ -169,6 +179,11 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="SimpleTextGraphic"/> class.
     /// </summary>
+    /// <param name="graphicPosition">The graphic position.</param>
+    /// <param name="text">The text.</param>
+    /// <param name="textFont">The text font.</param>
+    /// <param name="textColor">The text color.</param>
+    /// <param name="Rotation">The rotation angle.</param>
     public SimpleTextGraphic(PointD2D graphicPosition,
       string text, FontX textFont,
       Color textColor, double Rotation)
@@ -180,6 +195,12 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="SimpleTextGraphic"/> class.
     /// </summary>
+    /// <param name="posX">The x-position of the graphic.</param>
+    /// <param name="posY">The y-position of the graphic.</param>
+    /// <param name="text">The text.</param>
+    /// <param name="textFont">The text font.</param>
+    /// <param name="textColor">The text color.</param>
+    /// <param name="Rotation">The rotation angle.</param>
     public SimpleTextGraphic(double posX, double posY,
       string text,
       FontX textFont,

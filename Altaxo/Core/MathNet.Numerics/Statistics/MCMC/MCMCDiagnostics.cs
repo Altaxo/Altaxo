@@ -45,6 +45,7 @@ namespace Altaxo.Calc.Statistics.Mcmc
     /// <param name="series">The series for computing the auto correlation.</param>
     /// <param name="lag">The lag in the series</param>
     /// <param name="f">The function used to evaluate the series.</param>
+    /// <typeparam name="T">The element type of the series.</typeparam>
     /// <returns>The auto correlation.</returns>
     /// <exception cref="ArgumentOutOfRangeException">Throws if lag is zero or if lag is
     /// greater than or equal to the length of Series.</exception>
@@ -74,8 +75,9 @@ namespace Altaxo.Calc.Statistics.Mcmc
     /// Computes the effective size of the sample when evaluated by a function f.
     /// </summary>
     /// <param name="series">The samples.</param>
-    /// <param name="f">The function use for evaluating the series.</param>
-    /// <returns>The effective size when auto correlation is taken into account.</returns>
+    /// <param name="f">The function used for evaluating the series.</param>
+    /// <typeparam name="T">The element type of the series.</typeparam>
+    /// <returns>The effective sample size when autocorrelation is taken into account.</returns>
     public static double EffectiveSize<T>(IEnumerable<T> series, Func<T, double> f)
     {
       int length = series.Count();

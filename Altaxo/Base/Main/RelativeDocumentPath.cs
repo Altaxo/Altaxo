@@ -139,6 +139,7 @@ namespace Altaxo.Main
     /// <summary>
     /// Gets the path part at the specified index.
     /// </summary>
+    /// <param name="idx">The zero-based index of the path part to retrieve.</param>
     public string this[int idx]
     {
       get
@@ -362,6 +363,7 @@ namespace Altaxo.Main
 
     #region ICloneable Members
 
+    /// <inheritdoc/>
     object System.ICloneable.Clone()
     {
       return new RelativeDocumentPath(this);

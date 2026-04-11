@@ -74,6 +74,10 @@ namespace Altaxo.Gui.Graph
     /// <summary>
     /// Initializes a new instance of the <see cref="FitPolynomialDialogController"/> class.
     /// </summary>
+    /// <param name="order">The polynomial order.</param>
+    /// <param name="xmin">The optional lower x-limit for the fit curve.</param>
+    /// <param name="xmax">The optional upper x-limit for the fit curve.</param>
+    /// <param name="bShowFormulaOnGraph">A value indicating whether the fitted formula should be shown on the graph.</param>
     public FitPolynomialDialogController(int order, double? xmin, double? xmax, bool bShowFormulaOnGraph)
     {
       _doc = _originalDoc = new FitPolynomialOptions { Order = order, FitCurveXmin = xmin, FitCurveXmax = xmax, ShowFormulaOnGraph = bShowFormulaOnGraph };

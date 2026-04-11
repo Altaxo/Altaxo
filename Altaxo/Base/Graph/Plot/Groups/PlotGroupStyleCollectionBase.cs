@@ -784,6 +784,7 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region IEnumerable Members
 
+    /// <inheritdoc />
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
       return _typeToInstance.Values.GetEnumerator();

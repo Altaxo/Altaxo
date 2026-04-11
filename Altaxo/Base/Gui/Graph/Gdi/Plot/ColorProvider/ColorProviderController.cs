@@ -103,6 +103,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
     /// <summary>
     /// Initializes a new instance of the <see cref="ColorProviderController"/> class.
     /// </summary>
+    /// <param name="SetInstanceInParentDoc">The callback that stores the selected color provider in the parent document.</param>
     public ColorProviderController(Action<IColorProvider> SetInstanceInParentDoc)
       : base(SetInstanceInParentDoc)
     {

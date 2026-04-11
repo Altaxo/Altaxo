@@ -64,6 +64,7 @@ namespace Altaxo.Main.MenuCommands.Text
     /// Determines the currently active text document and issues the command to that controller by calling
     /// <see cref="Run"/> with the text document controller as a parameter.
     /// </summary>
+    /// <param name="parameter">The command parameter that may contain the active view context.</param>
     public override void Execute(object parameter)
     {
       if (!(parameter is IViewContent activeViewContent))

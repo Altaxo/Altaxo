@@ -224,6 +224,7 @@ namespace Altaxo.Serialization.Xml
     void GetArray(System.Collections.BitArray values, System.Collections.BitArray conditions, int count);
 
     /// <summary>Reads an array of values of type <typeparamref name="T"/>.</summary>
+    /// <typeparam name="T">The element type of the array.</typeparam>
     /// <param name="name">Element name.</param>
     /// <param name="parent">Parent object for context.</param>
     /// <returns>Array of <typeparamref name="T"/>.</returns>
@@ -252,18 +253,21 @@ namespace Altaxo.Serialization.Xml
     object? GetValueOrNull(string name, object? parent);
 
     /// <summary>Reads a value of type <typeparamref name="T"/>.</summary>
+    /// <typeparam name="T">The value type to read.</typeparam>
     /// <param name="name">Element name.</param>
     /// <param name="parentObject">Parent object for context.</param>
     /// <returns>Deserialized value.</returns>
     T GetValue<T>(string name, object? parentObject) where T : notnull;
 
     /// <summary>Reads a value of type <typeparamref name="T"/> or returns null.</summary>
+    /// <typeparam name="T">The reference type to read.</typeparam>
     /// <param name="name">Element name.</param>
     /// <param name="parentObject">Parent object for context.</param>
     /// <returns>Deserialized value or <c>null</c> if the element is missing.</returns>
     T? GetValueOrNull<T>(string name, object? parentObject) where T : class;
 
     /// <summary>Reads a nullable struct value.</summary>
+    /// <typeparam name="T">The struct type to read.</typeparam>
     /// <param name="name">Element name.</param>
     /// <param name="parentObject">Parent object for context.</param>
     /// <returns>Deserialized value or <c>null</c>.</returns>
@@ -289,6 +293,10 @@ namespace Altaxo.Serialization.Xml
     /// <remarks>
     /// This method is obsolete and kept for backward compatibility if the base type has changed. Prefer using <see cref="GetBaseValueEmbedded(object,System.Type,object?)"/> instead.
     /// </remarks>
+    /// <returns>
+    /// The deserialized base value as an <see cref="object"/>, or <c>null</c> when no base value could
+    /// be deserialized for the provided <paramref name="fullyQualifiedBaseTypeName"/>.
+    /// </returns>
     [Obsolete("For backward compatibility only (if base type has changed). Use 'void GetBaseValueEmbedded(object instance, System.Type basetype, object? parent)' instead!")]
     object? GetBaseValueEmbeddedOrNull(object instance, string fullyQualifiedBaseTypeName, object? parent);
 

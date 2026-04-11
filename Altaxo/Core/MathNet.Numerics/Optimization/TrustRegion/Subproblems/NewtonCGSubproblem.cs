@@ -3,12 +3,18 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization.TrustRegion.Subproblems
 {
+  /// <summary>
+  /// Solves the trust-region subproblem using the Newton conjugate-gradient strategy.
+  /// </summary>
   internal class NewtonCGSubproblem : ITrustRegionSubproblem
   {
+    /// <inheritdoc />
     public Vector<double> Pstep { get; private set; }
 
+    /// <inheritdoc />
     public bool HitBoundary { get; private set; }
 
+    /// <inheritdoc />
     public void Solve(IObjectiveModel objective, double delta)
     {
       var Gradient = objective.Gradient;

@@ -47,6 +47,7 @@ namespace Altaxo.Collections
     /// <summary>
     /// Represents a weak reference to a key, storing its hash code for dictionary operations.
     /// </summary>
+    /// <typeparam name="T">The key type referenced by the weak key.</typeparam>
     protected class WeakKey<T> : WeakReference
     {
       private int _hash;
@@ -107,6 +108,7 @@ namespace Altaxo.Collections
       /// <summary>
       /// Gets a value indicating whether the reference is alive.
       /// </summary>
+      /// <value><see langword="true"/> if the reference target is still alive; otherwise, <see langword="false"/>.</value>
       public bool IsAlive
       {
         get { return handle.IsAllocated && handle.Target is not null; }
@@ -115,12 +117,16 @@ namespace Altaxo.Collections
       /// <summary>
       /// Gets the target object if alive; otherwise, null.
       /// </summary>
+      /// <value>The target object if it is still alive; otherwise, <see langword="null"/>.</value>
       public object? Target
       {
         get { return IsAlive ? handle.Target : null; }
       }
 
       private GCHandle handle;
+      /// <summary>
+      /// The weak dictionary associated with this cleaner reference.
+      /// </summary>
       public WeakDictionary<TKey, TValue> Dictionary;
     }
 

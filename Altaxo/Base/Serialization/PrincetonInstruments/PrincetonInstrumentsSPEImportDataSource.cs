@@ -83,8 +83,10 @@ namespace Altaxo.Serialization.PrincetonInstruments
     #endregion Version 0
 
     /// <summary>
-    /// Deserialization constructor
+    /// Deserialization constructor.
     /// </summary>
+    /// <param name="info">The deserialization information.</param>
+    /// <param name="version">The version of the serialized data.</param>
     protected PrincetonInstrumentsSPEImportDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     {
       switch (version)
@@ -104,6 +106,8 @@ namespace Altaxo.Serialization.PrincetonInstruments
     /// <summary>
     /// Initializes a new instance of the <see cref="PrincetonInstrumentsSPEImportDataSource"/> class for a single file.
     /// </summary>
+    /// <param name="fileName">The file name of the SPE file.</param>
+    /// <param name="options">The import options.</param>
     public PrincetonInstrumentsSPEImportDataSource(string fileName, PrincetonInstrumentsSPEImportOptions options)
       : this(new string[] { fileName }, options)
     {
@@ -112,6 +116,8 @@ namespace Altaxo.Serialization.PrincetonInstruments
     /// <summary>
     /// Initializes a new instance of the <see cref="PrincetonInstrumentsSPEImportDataSource"/> class for multiple files.
     /// </summary>
+    /// <param name="fileNames">The file names of the SPE files.</param>
+    /// <param name="options">The import options.</param>
     public PrincetonInstrumentsSPEImportDataSource(IEnumerable<string> fileNames, PrincetonInstrumentsSPEImportOptions options)
       : base(fileNames)
     {
@@ -121,6 +127,7 @@ namespace Altaxo.Serialization.PrincetonInstruments
     /// <summary>
     /// Initializes a new instance of the <see cref="PrincetonInstrumentsSPEImportDataSource"/> class by copying another instance.
     /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public PrincetonInstrumentsSPEImportDataSource(PrincetonInstrumentsSPEImportDataSource from)
       : base(from)
     {

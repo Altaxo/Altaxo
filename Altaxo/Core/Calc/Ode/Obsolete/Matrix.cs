@@ -159,7 +159,8 @@ namespace Altaxo.Calc.Ode.Obsolete
       return a.a;
     }
 
-    /// <summary>Make a deep copy of a matrix</summary>
+    /// <summary>Make a deep copy of a matrix.</summary>
+    /// <returns>A deep copy of the current matrix.</returns>
     public Matrix Clone()
     {
       var X = new Matrix(m, n);

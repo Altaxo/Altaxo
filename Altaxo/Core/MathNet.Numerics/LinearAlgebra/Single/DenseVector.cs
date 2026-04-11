@@ -63,6 +63,7 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// Intended for advanced scenarios where you're working directly with
     /// storage for performance or interop reasons.
     /// </summary>
+    /// <param name="storage">The storage backing the vector.</param>
     public DenseVector(DenseVectorStorage<float> storage)
         : base(storage)
     {
@@ -74,6 +75,7 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// Create a new dense vector with the given length.
     /// All cells of the vector will be initialized to zero.
     /// </summary>
+    /// <param name="length">The length of the vector.</param>
     /// <exception cref="ArgumentException">If length is less than one.</exception>
     public DenseVector(int length)
         : this(new DenseVectorStorage<float>(length))
@@ -85,6 +87,7 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// The array is used directly without copying.
     /// Very efficient, but changes to the array and the vector will affect each other.
     /// </summary>
+    /// <param name="storage">The array backing the vector.</param>
     public DenseVector(float[] storage)
         : this(new DenseVectorStorage<float>(storage.Length, storage))
     {
@@ -95,6 +98,8 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// This new vector will be independent from the other vector.
     /// A new memory block will be allocated for storing the vector.
     /// </summary>
+    /// <param name="vector">The vector to copy.</param>
+    /// <returns>A dense vector copied from <paramref name="vector"/>.</returns>
     public static DenseVector OfVector(Vector<float> vector)
     {
       return new DenseVector(DenseVectorStorage<float>.OfVector(vector.Storage));
@@ -105,6 +110,8 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// This new vector will be independent from the array.
     /// A new memory block will be allocated for storing the vector.
     /// </summary>
+    /// <param name="array">The array to copy.</param>
+    /// <returns>A dense vector copied from <paramref name="array"/>.</returns>
     public static DenseVector OfArray(float[] array)
     {
       return new DenseVector(DenseVectorStorage<float>.OfVector(new DenseVectorStorage<float>(array.Length, array)));
@@ -115,6 +122,8 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// This new vector will be independent from the enumerable.
     /// A new memory block will be allocated for storing the vector.
     /// </summary>
+    /// <param name="enumerable">The values to copy.</param>
+    /// <returns>A dense vector containing the supplied values.</returns>
     public static DenseVector OfEnumerable(IEnumerable<float> enumerable)
     {
       return new DenseVector(DenseVectorStorage<float>.OfEnumerable(enumerable));
@@ -126,6 +135,9 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// This new vector will be independent from the enumerable.
     /// A new memory block will be allocated for storing the vector.
     /// </summary>
+    /// <param name="length">The length of the vector.</param>
+    /// <param name="enumerable">The indexed values to copy.</param>
+    /// <returns>A dense vector containing the indexed values.</returns>
     public static DenseVector OfIndexedEnumerable(int length, IEnumerable<Tuple<int, float>> enumerable)
     {
       return new DenseVector(DenseVectorStorage<float>.OfIndexedEnumerable(length, enumerable));
@@ -137,6 +149,9 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// This new vector will be independent from the enumerable.
     /// A new memory block will be allocated for storing the vector.
     /// </summary>
+    /// <param name="length">The length of the vector.</param>
+    /// <param name="enumerable">The indexed values to copy.</param>
+    /// <returns>A dense vector containing the indexed values.</returns>
     public static DenseVector OfIndexedEnumerable(int length, IEnumerable<(int, float)> enumerable)
     {
       return new DenseVector(DenseVectorStorage<float>.OfIndexedEnumerable(length, enumerable));
@@ -145,6 +160,9 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// <summary>
     /// Create a new dense vector and initialize each value using the provided value.
     /// </summary>
+    /// <param name="length">The length of the vector.</param>
+    /// <param name="value">The value assigned to each element.</param>
+    /// <returns>A dense vector initialized with <paramref name="value"/>.</returns>
     public static DenseVector Create(int length, float value)
     {
       if (value == 0f) return new DenseVector(length);
@@ -154,6 +172,9 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// <summary>
     /// Create a new dense vector and initialize each value using the provided init function.
     /// </summary>
+    /// <param name="length">The length of the vector.</param>
+    /// <param name="init">The initialization function.</param>
+    /// <returns>A dense vector initialized by <paramref name="init"/>.</returns>
     public static DenseVector Create(int length, Func<int, float> init)
     {
       return new DenseVector(DenseVectorStorage<float>.OfInit(length, init));
@@ -162,6 +183,9 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// <summary>
     /// Create a new dense vector with values sampled from the provided random distribution.
     /// </summary>
+    /// <param name="length">The length of the vector.</param>
+    /// <param name="distribution">The distribution used to sample values.</param>
+    /// <returns>A dense vector initialized with sampled values.</returns>
     public static DenseVector CreateRandom(int length, IContinuousDistribution distribution)
     {
       var samples = Generate.RandomSingle(length, distribution);

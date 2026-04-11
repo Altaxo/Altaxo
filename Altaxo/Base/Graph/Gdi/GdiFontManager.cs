@@ -190,6 +190,7 @@ namespace Altaxo.Graph.Gdi
 
     /// <summary>Gets the height of the font in points (1/72 inch).</summary>
     /// <param name="fontX">The font instance.</param>
+    /// <returns>The font height in points.</returns>
     public static double GetHeight(FontX fontX)
     {
       return ToGdi(fontX).GetHeight(72);
@@ -237,7 +238,7 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Builds the GDI font families dictionary.
     /// </summary>
-    /// <returns>The Gdi font family dictionary.</returns>
+    /// <param name="dict">The dictionary to fill with available GDI font families.</param>
     protected virtual void AddSystemGdiFontFamilies(ConcurrentDictionary<string, FontFamily[]> dict)
     {
       foreach (var fontFamily in System.Drawing.FontFamily.Families)

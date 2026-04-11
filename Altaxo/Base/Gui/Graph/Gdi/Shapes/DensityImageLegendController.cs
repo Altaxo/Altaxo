@@ -162,6 +162,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance.
     /// </summary>
+    /// <param name="layer">The density-image legend to edit.</param>
     public DensityImageLegendController(DensityImageLegend layer)
       : this(layer, ScaleTag, 1, CSLineID.X0)
     {
@@ -170,6 +171,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance.
     /// </summary>
+    /// <param name="layer">The density-image legend to edit.</param>
+    /// <param name="currentPage">The page that should be shown initially.</param>
+    /// <param name="id">The axis identifier that should be selected initially.</param>
     public DensityImageLegendController(DensityImageLegend layer, string currentPage, CSLineID id)
       : this(layer, currentPage, id.ParallelAxisNumber, id)
     {
@@ -244,6 +248,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     /// <summary>
     /// Handles the primary choice changed.
     /// </summary>
+    /// <param name="selectedTab">The newly selected primary tab.</param>
     protected void EhPrimaryChoiceChanged(string selectedTab)
     {
       switch (selectedTab)
@@ -319,6 +324,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     /// <summary>
     /// Handles the secondary choice changed.
     /// </summary>
+    /// <param name="value">The selected secondary value.</param>
     public void EhSecondaryChoiceChanged(object value)
     {
       if (SelectedTab == ScaleTag && value is int currentScale)
@@ -545,6 +551,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     /// <summary>
     /// Handles the command to create or move the axis.
     /// </summary>
+    /// <param name="moveAxis"><c>true</c> to move an existing axis; <c>false</c> to create a new axis.</param>
     public void EhCmdCreateOrMoveAxis(bool moveAxis)
     {
       if (!ApplyCurrentController(false, false))
@@ -642,24 +649,33 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     #region Dialog
 
     /// <summary>
-    /// Performs the show dialog operation.
+    /// Shows the dialog for editing the specified density-image legend.
     /// </summary>
+    /// <param name="layer">The density-image legend to edit.</param>
+    /// <returns><c>true</c> if the dialog was accepted; otherwise, <c>false</c>.</returns>
     public static bool ShowDialog(DensityImageLegend layer)
     {
       return ShowDialog(layer, ScaleTag, new CSLineID(0, 0));
     }
 
     /// <summary>
-    /// Performs the show dialog operation.
+    /// Shows the dialog for editing the specified density-image legend and initial page.
     /// </summary>
+    /// <param name="layer">The density-image legend to edit.</param>
+    /// <param name="currentPage">The page that should be shown initially.</param>
+    /// <returns><c>true</c> if the dialog was accepted; otherwise, <c>false</c>.</returns>
     public static bool ShowDialog(DensityImageLegend layer, string currentPage)
     {
       return ShowDialog(layer, currentPage, new CSLineID(0, 0));
     }
 
     /// <summary>
-    /// Performs the show dialog operation.
+    /// Shows the dialog for editing the specified density-image legend, page, and axis.
     /// </summary>
+    /// <param name="layer">The density-image legend to edit.</param>
+    /// <param name="currentPage">The page that should be shown initially.</param>
+    /// <param name="currentEdge">The axis identifier that should be selected initially.</param>
+    /// <returns><c>true</c> if the dialog was accepted; otherwise, <c>false</c>.</returns>
     public static bool ShowDialog(DensityImageLegend layer, string currentPage, CSLineID currentEdge)
     {
       var ctrl = new DensityImageLegendController(layer, currentPage, currentEdge);
@@ -683,6 +699,8 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     /// <summary>
     /// Handles the layer position edit.
     /// </summary>
+    /// <param name="hit">The hit-test object that identifies the edited legend.</param>
+    /// <returns><c>false</c> so the caller keeps the edited legend.</returns>
     public static bool EhLayerPositionEdit(IHitTestObject hit)
     {
       var layer = hit.HittedObject as DensityImageLegend;

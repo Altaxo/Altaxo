@@ -130,6 +130,7 @@ namespace Altaxo.Calc.Distributions
     /// <param name="location">The location (μ) of the distribution.</param>
     /// <param name="scale">The scale (σ) of the distribution. Range: σ > 0.</param>
     /// <param name="freedom">The degrees of freedom (ν) for the distribution. Range: ν > 0.</param>
+    /// <returns><see langword="true"/> if the parameter set is valid; otherwise, <see langword="false"/>.</returns>
     public static bool IsValidParameterSet(double location, double scale, double freedom)
     {
       return scale > 0.0 && freedom > 0.0 && !double.IsNaN(location);
@@ -347,6 +348,7 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Fills an array with samples generated from the distribution.
     /// </summary>
+    /// <param name="values">The array to fill with samples.</param>
     public void Samples(double[] values)
     {
       SamplesUnchecked(_random, values, _location, _scale, _freedom);

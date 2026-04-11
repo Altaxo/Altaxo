@@ -33,9 +33,7 @@ namespace Altaxo.Text.Renderers.Maml.Inlines
   /// <seealso cref="MamlObjectRenderer{T}" />
   public class LineBreakInlineRenderer : MamlObjectRenderer<LineBreakInline>
   {
-    /// <summary>
-    /// Writes a line break.
-    /// </summary>
+    /// <inheritdoc />
     protected override void Write(MamlRenderer renderer, LineBreakInline obj)
     {
       if (obj.IsHard)

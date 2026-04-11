@@ -482,6 +482,10 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <summary>
     /// Paints the complete axis style using the supplied axis-information resolver.
     /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="paintContext">The paint context.</param>
+    /// <param name="layer">The plot area.</param>
+    /// <param name="GetAxisStyleInformation">The axis-information resolver.</param>
     public void Paint(IGraphicsContext3D g, Altaxo.Graph.IPaintContext paintContext, IPlotArea layer, Func<CSLineID, CSAxisInformation> GetAxisStyleInformation)
     {
       PaintLine(g, layer);
@@ -493,6 +497,8 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <summary>
     /// Paints the axis line.
     /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="layer">The plot area.</param>
     public void PaintLine(IGraphicsContext3D g, IPlotArea layer)
     {
       if (_cachedAxisInfo is null)
@@ -507,6 +513,8 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <summary>
     /// Paints the major labels.
     /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="layer">The plot area.</param>
     public void PaintMajorLabels(IGraphicsContext3D g, IPlotArea layer)
     {
       if (_cachedAxisInfo is null)
@@ -524,6 +532,8 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <summary>
     /// Paints the minor labels.
     /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="layer">The plot area.</param>
     public void PaintMinorLabels(IGraphicsContext3D g, IPlotArea layer)
     {
       if (_cachedAxisInfo is null)
@@ -541,6 +551,9 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <summary>
     /// Paints the axis title.
     /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="paintContext">The paint context.</param>
+    /// <param name="layer">The plot area.</param>
     public void PaintTitle(IGraphicsContext3D g, Altaxo.Graph.IPaintContext paintContext, IPlotArea layer)
     {
       if (_axisTitle is not null)
@@ -617,6 +630,8 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <summary>
     /// Ensures that major labels exist on the specified side.
     /// </summary>
+    /// <param name="preferredLabelSide">The preferred label side.</param>
+    /// <param name="context">The property context.</param>
     public void ShowMajorLabels(CSAxisSide preferredLabelSide, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       if (_majorLabelStyle is null)
@@ -655,6 +670,8 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <summary>
     /// Ensures that minor labels exist on the specified side.
     /// </summary>
+    /// <param name="preferredLabelSide">The preferred label side.</param>
+    /// <param name="context">The property context.</param>
     public void ShowMinorLabels(CSAxisSide preferredLabelSide, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       if (_minorLabelStyle is null)

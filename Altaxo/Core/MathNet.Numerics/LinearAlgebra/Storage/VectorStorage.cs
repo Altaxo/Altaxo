@@ -227,6 +227,11 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       CopyToUnchecked(target, existingData);
     }
 
+    /// <summary>
+    /// Copies this storage into another vector storage without validation.
+    /// </summary>
+    /// <param name="target">The target storage.</param>
+    /// <param name="existingData">Specifies how existing target data is handled.</param>
     internal virtual void CopyToUnchecked(VectorStorage<T> target, ExistingData existingData)
     {
       for (int i = 0; i < Length; i++)
@@ -259,6 +264,12 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       CopyToRowUnchecked(target, rowIndex, existingData);
     }
 
+    /// <summary>
+    /// Copies this storage into a row of a matrix storage without validation.
+    /// </summary>
+    /// <param name="target">The target matrix storage.</param>
+    /// <param name="rowIndex">The target row index.</param>
+    /// <param name="existingData">Specifies how existing target data is handled.</param>
     internal virtual void CopyToRowUnchecked(MatrixStorage<T> target, int rowIndex, ExistingData existingData)
     {
       for (int j = 0; j < Length; j++)
@@ -291,6 +302,12 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       CopyToColumnUnchecked(target, columnIndex, existingData);
     }
 
+    /// <summary>
+    /// Copies this storage into a column of a matrix storage without validation.
+    /// </summary>
+    /// <param name="target">The target matrix storage.</param>
+    /// <param name="columnIndex">The target column index.</param>
+    /// <param name="existingData">Specifies how existing target data is handled.</param>
     internal virtual void CopyToColumnUnchecked(MatrixStorage<T> target, int columnIndex, ExistingData existingData)
     {
       for (int i = 0; i < Length; i++)
@@ -327,6 +344,14 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       CopySubVectorToUnchecked(target, sourceIndex, targetIndex, count, existingData);
     }
 
+    /// <summary>
+    /// Copies a subvector into another vector storage without validation.
+    /// </summary>
+    /// <param name="target">The target storage.</param>
+    /// <param name="sourceIndex">The source start index.</param>
+    /// <param name="targetIndex">The target start index.</param>
+    /// <param name="count">The number of elements to copy.</param>
+    /// <param name="existingData">Specifies how existing target data is handled.</param>
     internal virtual void CopySubVectorToUnchecked(VectorStorage<T> target,
         int sourceIndex, int targetIndex, int count, ExistingData existingData)
     {
@@ -380,6 +405,15 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       CopyToSubRowUnchecked(target, rowIndex, sourceColumnIndex, targetColumnIndex, columnCount, existingData);
     }
 
+    /// <summary>
+    /// Copies a range of elements into a row segment of a matrix storage without validation.
+    /// </summary>
+    /// <param name="target">The target matrix storage.</param>
+    /// <param name="rowIndex">The target row index.</param>
+    /// <param name="sourceColumnIndex">The source start index.</param>
+    /// <param name="targetColumnIndex">The target column start index.</param>
+    /// <param name="columnCount">The number of elements to copy.</param>
+    /// <param name="existingData">Specifies how existing target data is handled.</param>
     internal virtual void CopyToSubRowUnchecked(MatrixStorage<T> target, int rowIndex,
         int sourceColumnIndex, int targetColumnIndex, int columnCount, ExistingData existingData)
     {
@@ -418,6 +452,15 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       CopyToSubColumnUnchecked(target, columnIndex, sourceRowIndex, targetRowIndex, rowCount, existingData);
     }
 
+    /// <summary>
+    /// Copies a range of elements into a column segment of a matrix storage without validation.
+    /// </summary>
+    /// <param name="target">The target matrix storage.</param>
+    /// <param name="columnIndex">The target column index.</param>
+    /// <param name="sourceRowIndex">The source start index.</param>
+    /// <param name="targetRowIndex">The target row start index.</param>
+    /// <param name="rowCount">The number of elements to copy.</param>
+    /// <param name="existingData">Specifies how existing target data is handled.</param>
     internal virtual void CopyToSubColumnUnchecked(MatrixStorage<T> target, int columnIndex,
         int sourceRowIndex, int targetRowIndex, int rowCount, ExistingData existingData)
     {
@@ -555,6 +598,14 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return Find2Unchecked(other, predicate, zeros);
     }
 
+    /// <summary>
+    /// Finds the first pair of elements from two storages that matches the specified predicate without validation.
+    /// </summary>
+    /// <typeparam name="TOther">The element type of the other storage.</typeparam>
+    /// <param name="other">The other storage.</param>
+    /// <param name="predicate">The predicate used to test each pair of values.</param>
+    /// <param name="zeros">Specifies how zero values are treated.</param>
+    /// <returns>The first matching indexed value pair, or <c>null</c> if none is found.</returns>
     internal virtual Tuple<int, T, TOther> Find2Unchecked<TOther>(VectorStorage<TOther> other, Func<T, TOther, bool> predicate, Zeros zeros)
         where TOther : struct, IEquatable<TOther>, IFormattable
     {
@@ -622,6 +673,14 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       MapToUnchecked(target, f, zeros, existingData);
     }
 
+    /// <summary>
+    /// Maps the storage into another storage without validation.
+    /// </summary>
+    /// <typeparam name="TU">The target element type.</typeparam>
+    /// <param name="target">The target storage.</param>
+    /// <param name="f">The mapping function.</param>
+    /// <param name="zeros">Specifies how zero values are treated.</param>
+    /// <param name="existingData">Specifies how existing target data is handled.</param>
     internal virtual void MapToUnchecked<TU>(VectorStorage<TU> target, Func<T, TU> f, Zeros zeros, ExistingData existingData)
         where TU : struct, IEquatable<TU>, IFormattable
     {
@@ -655,6 +714,14 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       MapIndexedToUnchecked(target, f, zeros, existingData);
     }
 
+    /// <summary>
+    /// Maps the storage into another storage using the element index without validation.
+    /// </summary>
+    /// <typeparam name="TU">The target element type.</typeparam>
+    /// <param name="target">The target storage.</param>
+    /// <param name="f">The indexed mapping function.</param>
+    /// <param name="zeros">Specifies how zero values are treated.</param>
+    /// <param name="existingData">Specifies how existing target data is handled.</param>
     internal virtual void MapIndexedToUnchecked<TU>(VectorStorage<TU> target, Func<int, T, TU> f, Zeros zeros, ExistingData existingData)
         where TU : struct, IEquatable<TU>, IFormattable
     {
@@ -697,6 +764,14 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       Map2ToUnchecked(target, other, f, zeros, existingData);
     }
 
+    /// <summary>
+    /// Maps two storages into a target storage without validation.
+    /// </summary>
+    /// <param name="target">The target storage.</param>
+    /// <param name="other">The other source storage.</param>
+    /// <param name="f">The mapping function.</param>
+    /// <param name="zeros">Specifies how zero values are treated.</param>
+    /// <param name="existingData">Specifies how existing target data is handled.</param>
     internal virtual void Map2ToUnchecked(VectorStorage<T> target, VectorStorage<T> other, Func<T, T, T> f, Zeros zeros, ExistingData existingData)
     {
       for (int i = 0; i < Length; i++)
@@ -733,6 +808,16 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return Fold2Unchecked(other, f, state, zeros);
     }
 
+    /// <summary>
+    /// Folds two storages into a single accumulated state without validation.
+    /// </summary>
+    /// <typeparam name="TOther">The element type of the other storage.</typeparam>
+    /// <typeparam name="TState">The accumulator state type.</typeparam>
+    /// <param name="other">The other storage.</param>
+    /// <param name="f">The folding function.</param>
+    /// <param name="state">The initial state.</param>
+    /// <param name="zeros">Specifies how zero values are treated.</param>
+    /// <returns>The final accumulated state.</returns>
     internal virtual TState Fold2Unchecked<TOther, TState>(VectorStorage<TOther> other, Func<TState, T, TOther, TState> f, TState state, Zeros zeros)
         where TOther : struct, IEquatable<TOther>, IFormattable
     {

@@ -74,6 +74,10 @@ namespace Altaxo.Calc.Interpolation
     /// <summary>
     /// Create a Hermite cubic spline interpolation from a set of (x,y) value pairs and their slope (first derivative), sorted ascendingly by x.
     /// </summary>
+    /// <param name="x">Sample points, sorted ascendingly.</param>
+    /// <param name="y">Sample values corresponding to <paramref name="x"/>.</param>
+    /// <param name="firstDerivatives">First derivative values at the sample points.</param>
+    /// <returns>A cubic spline interpolation based on the supplied Hermite data.</returns>
     public static CubicSpline InterpolateHermiteSorted(double[] x, double[] y, double[] firstDerivatives)
     {
       if (x.Length != y.Length || x.Length != firstDerivatives.Length)
@@ -107,6 +111,10 @@ namespace Altaxo.Calc.Interpolation
     /// Create a Hermite cubic spline interpolation from an unsorted set of (x,y) value pairs and their slope (first derivative).
     /// WARNING: Works in-place and can thus causes the data array to be reordered.
     /// </summary>
+    /// <param name="x">Sample points (will be sorted in-place).</param>
+    /// <param name="y">Sample values corresponding to <paramref name="x"/> (will be permuted accordingly).</param>
+    /// <param name="firstDerivatives">First derivative values at the sample points (will be permuted accordingly).</param>
+    /// <returns>A cubic spline interpolation based on the sorted Hermite data.</returns>
     public static CubicSpline InterpolateHermiteInplace(double[] x, double[] y, double[] firstDerivatives)
     {
       if (x.Length != y.Length || x.Length != firstDerivatives.Length)
@@ -126,6 +134,10 @@ namespace Altaxo.Calc.Interpolation
     /// <summary>
     /// Create a Hermite cubic spline interpolation from an unsorted set of (x,y) value pairs and their slope (first derivative).
     /// </summary>
+    /// <param name="x">The sample points.</param>
+    /// <param name="y">The sample values corresponding to <paramref name="x"/>.</param>
+    /// <param name="firstDerivatives">The first derivatives at the sample points.</param>
+    /// <returns>A cubic spline interpolation based on the supplied Hermite data.</returns>
     public static CubicSpline InterpolateHermite(IEnumerable<double> x, IEnumerable<double> y, IEnumerable<double> firstDerivatives)
     {
       // note: we must make a copy, even if the input was arrays already
@@ -136,6 +148,9 @@ namespace Altaxo.Calc.Interpolation
     /// Create an Akima cubic spline interpolation from a set of (x,y) value pairs, sorted ascendingly by x.
     /// Akima splines are robust to outliers.
     /// </summary>
+    /// <param name="x">Sample points, sorted ascendingly.</param>
+    /// <param name="y">Sample values corresponding to <paramref name="x"/>.</param>
+    /// <returns>An Akima cubic spline interpolation for the supplied samples.</returns>
     public static CubicSpline InterpolateAkimaSorted(double[] x, double[] y)
     {
       if (x.Length != y.Length)
@@ -189,6 +204,9 @@ namespace Altaxo.Calc.Interpolation
     /// Akima splines are robust to outliers.
     /// WARNING: Works in-place and can thus causes the data array to be reordered.
     /// </summary>
+    /// <param name="x">Sample points (will be sorted in-place).</param>
+    /// <param name="y">Sample values corresponding to <paramref name="x"/> (will be permuted accordingly).</param>
+    /// <returns>An Akima cubic spline interpolation for the sorted samples.</returns>
     public static CubicSpline InterpolateAkimaInplace(double[] x, double[] y)
     {
       if (x.Length != y.Length)
@@ -204,6 +222,9 @@ namespace Altaxo.Calc.Interpolation
     /// Create an Akima cubic spline interpolation from an unsorted set of (x,y) value pairs.
     /// Akima splines are robust to outliers.
     /// </summary>
+    /// <param name="x">The sample points.</param>
+    /// <param name="y">The sample values corresponding to <paramref name="x"/>.</param>
+    /// <returns>An Akima cubic spline interpolation for the supplied samples.</returns>
     public static CubicSpline InterpolateAkima(IEnumerable<double> x, IEnumerable<double> y)
     {
       // note: we must make a copy, even if the input was arrays already
@@ -334,6 +355,9 @@ namespace Altaxo.Calc.Interpolation
     /// Create a piecewise cubic Hermite interpolating polynomial from an unsorted set of (x,y) value pairs.
     /// Monotone-preserving interpolation with continuous first derivative.
     /// </summary>
+    /// <param name="x">Sample points, sorted ascendingly.</param>
+    /// <param name="y">Sample values corresponding to <paramref name="x"/>.</param>
+    /// <returns>A monotone-preserving cubic spline interpolation for the supplied samples.</returns>
     public static CubicSpline InterpolatePchipSorted(double[] x, double[] y)
     {
       // Implementation based on "Numerical Computing with Matlab" (Moler, 2004).
@@ -412,6 +436,9 @@ namespace Altaxo.Calc.Interpolation
     /// Monotone-preserving interpolation with continuous first derivative.
     /// WARNING: Works in-place and can thus causes the data array to be reordered.
     /// </summary>
+    /// <param name="x">Sample points (will be sorted in-place).</param>
+    /// <param name="y">Sample values corresponding to <paramref name="x"/> (will be permuted accordingly).</param>
+    /// <returns>The cubic spline interpolator.</returns>
     public static CubicSpline InterpolatePchipInplace(double[] x, double[] y)
     {
       if (x.Length != y.Length)
@@ -427,6 +454,9 @@ namespace Altaxo.Calc.Interpolation
     /// Create a piecewise cubic Hermite interpolating polynomial from an unsorted set of (x,y) value pairs.
     /// Monotone-preserving interpolation with continuous first derivative.
     /// </summary>
+    /// <param name="x">The sample points.</param>
+    /// <param name="y">The sample values corresponding to <paramref name="x"/>.</param>
+    /// <returns>The cubic spline interpolator.</returns>
     public static CubicSpline InterpolatePchip(IEnumerable<double> x, IEnumerable<double> y)
     {
       // note: we must make a copy, even if the input was arrays already
@@ -437,6 +467,13 @@ namespace Altaxo.Calc.Interpolation
     /// Create a cubic spline interpolation from a set of (x,y) value pairs, sorted ascendingly by x,
     /// and custom boundary/termination conditions.
     /// </summary>
+    /// <param name="x">Sample points, sorted ascendingly.</param>
+    /// <param name="y">Sample values corresponding to <paramref name="x"/>.</param>
+    /// <param name="leftBoundaryCondition">Boundary condition for the left endpoint.</param>
+    /// <param name="leftBoundary">Value for the left boundary (meaning depends on condition).</param>
+    /// <param name="rightBoundaryCondition">Boundary condition for the right endpoint.</param>
+    /// <param name="rightBoundary">Value for the right boundary (meaning depends on condition).</param>
+    /// <returns>The cubic spline interpolator.</returns>
     public static CubicSpline InterpolateBoundariesSorted(double[] x, double[] y,
         SplineBoundaryCondition leftBoundaryCondition, double leftBoundary,
         SplineBoundaryCondition rightBoundaryCondition, double rightBoundary)
@@ -549,6 +586,13 @@ namespace Altaxo.Calc.Interpolation
     /// Create a cubic spline interpolation from an unsorted set of (x,y) value pairs and custom boundary/termination conditions.
     /// WARNING: Works in-place and can thus causes the data array to be reordered.
     /// </summary>
+    /// <param name="x">Sample points (will be sorted in-place).</param>
+    /// <param name="y">Sample values corresponding to <paramref name="x"/> (will be permuted accordingly).</param>
+    /// <param name="leftBoundaryCondition">Boundary condition for the left endpoint.</param>
+    /// <param name="leftBoundary">Value for the left boundary.</param>
+    /// <param name="rightBoundaryCondition">Boundary condition for the right endpoint.</param>
+    /// <param name="rightBoundary">Value for the right boundary.</param>
+    /// <returns>The cubic spline interpolator.</returns>
     public static CubicSpline InterpolateBoundariesInplace(double[] x, double[] y,
         SplineBoundaryCondition leftBoundaryCondition, double leftBoundary,
         SplineBoundaryCondition rightBoundaryCondition, double rightBoundary)
@@ -565,6 +609,13 @@ namespace Altaxo.Calc.Interpolation
     /// <summary>
     /// Create a cubic spline interpolation from an unsorted set of (x,y) value pairs and custom boundary/termination conditions.
     /// </summary>
+    /// <param name="x">The sample points.</param>
+    /// <param name="y">The sample values corresponding to <paramref name="x"/>.</param>
+    /// <param name="leftBoundaryCondition">Boundary condition for the left endpoint.</param>
+    /// <param name="leftBoundary">Value for the left boundary.</param>
+    /// <param name="rightBoundaryCondition">Boundary condition for the right endpoint.</param>
+    /// <param name="rightBoundary">Value for the right boundary.</param>
+    /// <returns>The cubic spline interpolator.</returns>
     public static CubicSpline InterpolateBoundaries(IEnumerable<double> x, IEnumerable<double> y,
         SplineBoundaryCondition leftBoundaryCondition, double leftBoundary,
         SplineBoundaryCondition rightBoundaryCondition, double rightBoundary)
@@ -577,6 +628,9 @@ namespace Altaxo.Calc.Interpolation
     /// Create a natural cubic spline interpolation from a set of (x,y) value pairs
     /// and zero second derivatives at the two boundaries, sorted ascendingly by x.
     /// </summary>
+    /// <param name="x">Sample points, sorted ascendingly.</param>
+    /// <param name="y">Sample values corresponding to <paramref name="x"/>.</param>
+    /// <returns>The cubic spline interpolator.</returns>
     public static CubicSpline InterpolateNaturalSorted(double[] x, double[] y)
     {
       return InterpolateBoundariesSorted(x, y, SplineBoundaryCondition.SecondDerivative, 0.0, SplineBoundaryCondition.SecondDerivative, 0.0);
@@ -587,6 +641,9 @@ namespace Altaxo.Calc.Interpolation
     /// and zero second derivatives at the two boundaries.
     /// WARNING: Works in-place and can thus causes the data array to be reordered.
     /// </summary>
+    /// <param name="x">Sample points (will be sorted in-place).</param>
+    /// <param name="y">Sample values corresponding to <paramref name="x"/> (will be permuted accordingly).</param>
+    /// <returns>The cubic spline interpolator.</returns>
     public static CubicSpline InterpolateNaturalInplace(double[] x, double[] y)
     {
       return InterpolateBoundariesInplace(x, y, SplineBoundaryCondition.SecondDerivative, 0.0, SplineBoundaryCondition.SecondDerivative, 0.0);
@@ -596,6 +653,9 @@ namespace Altaxo.Calc.Interpolation
     /// Create a natural cubic spline interpolation from an unsorted set of (x,y) value pairs
     /// and zero second derivatives at the two boundaries.
     /// </summary>
+    /// <param name="x">The sample points.</param>
+    /// <param name="y">The sample values corresponding to <paramref name="x"/>.</param>
+    /// <returns>The cubic spline interpolator.</returns>
     public static CubicSpline InterpolateNatural(IEnumerable<double> x, IEnumerable<double> y)
     {
       return InterpolateBoundaries(x, y, SplineBoundaryCondition.SecondDerivative, 0.0, SplineBoundaryCondition.SecondDerivative, 0.0);
@@ -703,6 +763,7 @@ namespace Altaxo.Calc.Interpolation
     /// Indefinite integral at point t.
     /// </summary>
     /// <param name="t">Point t to integrate at.</param>
+    /// <returns>The interpolated indefinite integral at point <paramref name="t"/>.</returns>
     public double Integrate(double t)
     {
       int k = LeftSegmentIndex(t);
@@ -715,6 +776,7 @@ namespace Altaxo.Calc.Interpolation
     /// </summary>
     /// <param name="a">Left bound of the integration interval [a,b].</param>
     /// <param name="b">Right bound of the integration interval [a,b].</param>
+    /// <returns>The interpolated definite integral over the interval [<paramref name="a"/>, <paramref name="b"/>].</returns>
     public double Integrate(double a, double b) => Integrate(b) - Integrate(a);
 
     private double[] ComputeIndefiniteIntegral()

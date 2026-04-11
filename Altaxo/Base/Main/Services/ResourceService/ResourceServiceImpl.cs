@@ -129,6 +129,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Registers neutral string resources.
     /// </summary>
+    /// <param name="stringManager">The resource manager that provides the strings.</param>
+    /// <param name="debugInfo">Debug information describing the resource source.</param>
     public void RegisterNeutralStrings(ResourceManager stringManager, string debugInfo)
     {
       RegisterNeutralStrings(string.Empty, stringManager, debugInfo);
@@ -182,6 +184,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Registers neutral image resources.
     /// </summary>
+    /// <param name="imageManager">The resource manager that provides the images.</param>
+    /// <param name="debugInfo">Debug information describing the resource source.</param>
     public void RegisterNeutralImages(ResourceManager imageManager, string debugInfo)
     {
       RegisterNeutralImages(string.Empty, imageManager, debugInfo);

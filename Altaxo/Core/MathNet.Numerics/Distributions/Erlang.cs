@@ -87,6 +87,7 @@ namespace Altaxo.Calc.Distributions
     /// <param name="shape">The shape (k) of the Erlang distribution. Range: k ≥ 0.</param>
     /// <param name="scale">The scale (μ) of the Erlang distribution. Range: μ ≥ 0.</param>
     /// <param name="randomSource">The random number generator which is used to draw random samples. Optional, can be null.</param>
+    /// <returns>A new Erlang distribution instance.</returns>
     public static Erlang WithShapeScale(int shape, double scale, System.Random randomSource = null)
     {
       return new Erlang(shape, 1.0 / scale, randomSource);
@@ -99,6 +100,7 @@ namespace Altaxo.Calc.Distributions
     /// <param name="shape">The shape (k) of the Erlang distribution. Range: k ≥ 0.</param>
     /// <param name="rate">The rate or inverse scale (λ) of the Erlang distribution. Range: λ ≥ 0.</param>
     /// <param name="randomSource">The random number generator which is used to draw random samples. Optional, can be null.</param>
+    /// <returns>A new Erlang distribution instance.</returns>
     public static Erlang WithShapeRate(int shape, double rate, System.Random randomSource = null)
     {
       return new Erlang(shape, rate, randomSource);
@@ -118,6 +120,7 @@ namespace Altaxo.Calc.Distributions
     /// </summary>
     /// <param name="shape">The shape (k) of the Erlang distribution. Range: k ≥ 0.</param>
     /// <param name="rate">The rate or inverse scale (λ) of the Erlang distribution. Range: λ ≥ 0.</param>
+    /// <returns><c>true</c> if the parameters define a valid Erlang distribution; otherwise, <c>false</c>.</returns>
     public static bool IsValidParameterSet(int shape, double rate)
     {
       return shape >= 0 && rate >= 0.0;
@@ -338,6 +341,7 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Fills an array with samples generated from the distribution.
     /// </summary>
+    /// <param name="values">The array to fill with samples.</param>
     public void Samples(double[] values)
     {
       Gamma.SamplesUnchecked(_random, values, _shape, _rate);

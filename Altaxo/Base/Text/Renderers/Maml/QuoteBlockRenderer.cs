@@ -33,9 +33,7 @@ namespace Altaxo.Text.Renderers.Maml
   /// <seealso cref="MamlObjectRenderer{T}" />
   public class QuoteBlockRenderer : MamlObjectRenderer<QuoteBlock>
   {
-    /// <summary>
-    /// Writes a quote block.
-    /// </summary>
+    /// <inheritdoc />
     protected override void Write(MamlRenderer renderer, QuoteBlock obj)
     {
       renderer.EnsureLine();

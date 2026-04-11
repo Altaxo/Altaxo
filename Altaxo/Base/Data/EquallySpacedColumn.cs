@@ -161,6 +161,7 @@ namespace Altaxo.Data
     /// <summary>
     /// Returns the index i as AltaxoVariant.
     /// </summary>
+    /// <inheritdoc />
     AltaxoVariant Altaxo.Data.IReadableColumn.this[int i]
     {
       get

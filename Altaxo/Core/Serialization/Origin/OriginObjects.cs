@@ -750,6 +750,7 @@ namespace Altaxo.Serialization.Origin
     };
 
     /// <summary>Returns the currently stored variant type.</summary>
+    /// <returns>The currently stored variant type.</returns>
     public VType ValueType()
     {
       return _type;
@@ -781,6 +782,7 @@ namespace Altaxo.Serialization.Origin
     }
 
     /// <summary>Creates a variant from an object (string or double).</summary>
+    /// <param name="o">Object to wrap, supported types: <see cref="string"/> and <see cref="double"/>.</param>
     /// <exception cref="Exception">Thrown when the object type is unsupported.</exception>
     public Variant(object o)
     {
@@ -831,6 +833,8 @@ namespace Altaxo.Serialization.Origin
     }
 
     /// <summary>Implicit conversion to double for variants.</summary>
+    /// <param name="f">The variant to convert.</param>
+    /// <returns>The contained double value, or NaN if the variant is empty.</returns>
     public static implicit operator double(Variant f)
     {
       if (f._type == VType.V_DOUBLE)
@@ -848,6 +852,7 @@ namespace Altaxo.Serialization.Origin
     }
 
     /// <summary>Return the contained value as a DateTime relative to 1970-01-01 UTC or null.</summary>
+    /// <returns>The contained value as a <see cref="DateTime"/>, or <see langword="null"/> if the variant is empty.</returns>
     public readonly DateTime? AsDateTime()
     {
       var refDate = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
@@ -866,6 +871,7 @@ namespace Altaxo.Serialization.Origin
     }
 
     /// <summary>Return the contained value as a TimeSpan or null.</summary>
+    /// <returns>The contained value as a <see cref="TimeSpan"/>, or <see langword="null"/> if the variant is empty.</returns>
     public readonly TimeSpan? AsTimeSpan()
     {
       if (_type == VType.V_DOUBLE)
@@ -887,6 +893,7 @@ namespace Altaxo.Serialization.Origin
     public readonly bool IsString => _type == VType.V_STRING;
 
     /// <summary>Return the contained value as string or empty string when empty.</summary>
+    /// <returns>The contained string value, or an empty string if the variant is empty.</returns>
     public readonly string AsString()
     {
       if (_type == VType.V_STRING)
@@ -904,6 +911,8 @@ namespace Altaxo.Serialization.Origin
     }
 
     /// <summary>Implicit conversion to string for variants.</summary>
+    /// <param name="f">The variant to convert.</param>
+    /// <returns>The contained string value, or an empty string if the variant is empty.</returns>
     public static implicit operator string(Variant f)
     {
       if (f._type == VType.V_STRING)
@@ -1023,8 +1032,7 @@ namespace Altaxo.Serialization.Origin
     public List<Variant> Data;
 
     /// <summary>
-    /// The imaginary data. Is only not null if
-    /// the data are complex.
+    /// The imaginary data. This is not null only when the column contains complex values.
     /// </summary>
     public List<double>? ImaginaryData;
 
@@ -2382,6 +2390,7 @@ namespace Altaxo.Serialization.Origin
     public bool UseBorderColor;
 
     /// <summary>Initializes a new <see cref="Figure"/> with default appearance.</summary>
+    /// <param name="type">The figure type to create.</param>
     public Figure(FigureType type = FigureType.Rectangle)
     {
       FigureType = type;

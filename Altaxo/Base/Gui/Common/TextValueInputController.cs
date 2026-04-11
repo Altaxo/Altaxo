@@ -165,6 +165,7 @@ namespace Altaxo.Gui.Common
       /// <summary>
       /// Initializes a new instance of the <see cref="NonEmptyStringValidator"/> class with a custom error message.
       /// </summary>
+      /// <param name="errmsg">The validation message shown when the text is empty.</param>
       public NonEmptyStringValidator(string errmsg)
       {
         m_EmptyMessage = errmsg;

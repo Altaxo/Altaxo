@@ -41,6 +41,11 @@ namespace Altaxo.Calc.LinearAlgebra.Single.Factorization
   /// </remarks>
   internal abstract class GramSchmidt : GramSchmidt<float>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GramSchmidt"/> class.
+    /// </summary>
+    /// <param name="q">The orthogonal matrix.</param>
+    /// <param name="rFull">The upper triangular matrix.</param>
     protected GramSchmidt(Matrix<float> q, Matrix<float> rFull)
         : base(q, rFull)
     {
@@ -49,6 +54,7 @@ namespace Altaxo.Calc.LinearAlgebra.Single.Factorization
     /// <summary>
     /// Gets the absolute determinant value of the matrix for which the QR matrix was computed.
     /// </summary>
+    /// <returns>The absolute value of the determinant.</returns>
     public override float Determinant
     {
       get

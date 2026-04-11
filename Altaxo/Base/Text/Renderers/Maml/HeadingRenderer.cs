@@ -37,9 +37,7 @@ namespace Altaxo.Text.Renderers.Maml
   /// </summary>
   public class HeadingRenderer : MamlObjectRenderer<HeadingBlock>
   {
-    /// <summary>
-    /// Writes a heading block.
-    /// </summary>
+    /// <inheritdoc />
     protected override void Write(MamlRenderer renderer, HeadingBlock obj)
     {
       bool newFileWasStarted = renderer.TryStartNewMamlFile(obj);

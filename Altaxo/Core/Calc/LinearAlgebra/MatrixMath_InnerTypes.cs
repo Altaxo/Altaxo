@@ -39,6 +39,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Implements a scalar as a special case of the matrix which has the dimensions (1,1).
     /// </summary>
+    /// <typeparam name="T">The element type stored by the scalar matrix.</typeparam>
     public class ScalarAsMatrix<T> : IMatrix<T>, IVector<T> where T : struct
     {
       /// <summary>
@@ -98,6 +99,8 @@ namespace Altaxo.Calc.LinearAlgebra
       /// <summary>
       /// Element accessor. Both col and row should be zero, but this is not justified here. Always returns the value of the scalar.
       /// </summary>
+      /// <param name="i">The row index.</param>
+      /// <param name="k">The column index.</param>
       public T this[int i, int k]
       {
         get
@@ -281,6 +284,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Implements a horizontal vector, i.e. a matrix which has only one row, but many columns.
     /// </summary>
+    /// <typeparam name="T">The element type stored by the matrix.</typeparam>
     public class MatrixWithOneRow<T> : IMatrix<T>, IVector<T> where T : struct
     {
       /// <summary>
@@ -336,6 +340,8 @@ namespace Altaxo.Calc.LinearAlgebra
       /// <summary>
       /// Element accessor. The argument rows should be zero, but no exception is thrown if it is not zero.
       /// </summary>
+      /// <param name="row">The row index.</param>
+      /// <param name="col">The column index.</param>
       public T this[int row, int col]
       {
         get
@@ -410,6 +416,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Implements a vertical vector, i.e. a matrix which has only one column, but many rows.
     /// </summary>
+    /// <typeparam name="T">The element type stored by the matrix.</typeparam>
     public class MatrixWithOneColumn<T> : IMatrix<T>, IVector<T> where T : struct
     {
       /// <summary>
@@ -451,6 +458,8 @@ namespace Altaxo.Calc.LinearAlgebra
       /// <summary>
       /// Element accessor. The argument col should be zero here, but no exception is thrown if it is not zero.
       /// </summary>
+      /// <param name="row">The row index.</param>
+      /// <param name="col">The column index.</param>
       public T this[int row, int col]
       {
         get
@@ -525,6 +534,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Wrapper for a row of an existing matrix to a read-only vector.
     /// </summary>
+    /// <typeparam name="T">The element type of the wrapped matrix row.</typeparam>
     public class MatrixRowROVector<T> : IReadOnlyList<T> where T : struct
     {
       private IROMatrix<T> _matrix;
@@ -604,6 +614,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Wrapper for a matrix row to a vector.
     /// </summary>
+    /// <typeparam name="T">The element type of the wrapped matrix row.</typeparam>
     public class MatrixRowVector<T> : IVector<T> where T : struct
     {
       private IMatrix<T> _matrix;
@@ -646,6 +657,7 @@ namespace Altaxo.Calc.LinearAlgebra
       #region IVector Members
 
       /// <summary>Gets the value at index i with 0 &lt;= i &lt;=Length-1.</summary>
+      /// <param name="i">The zero-based element index.</param>
       /// <value>The element at index i.</value>
       public T this[int i]
       {
@@ -696,6 +708,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Wrapper for a matrix column to a read-only vector.
     /// </summary>
+    /// <typeparam name="T">The element type of the wrapped matrix column.</typeparam>
     public class MatrixColumnROVector<T> : IReadOnlyList<T> where T : struct
     {
       private IROMatrix<T> _matrix;
@@ -765,6 +778,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Wrapper for a matrix row to a vector.
     /// </summary>
+    /// <typeparam name="T">The element type of the wrapped matrix column.</typeparam>
     public class MatrixColumnVector<T> : IVector<T> where T : struct
     {
       private IMatrix<T> _matrix;
@@ -789,6 +803,7 @@ namespace Altaxo.Calc.LinearAlgebra
       #region IVector Members
 
       /// <summary>Gets the value at index i with 0 &lt;= i &lt;=Length-1.</summary>
+      /// <param name="i">The zero-based element index.</param>
       /// <value>The element at index i.</value>
       public T this[int i]
       {
@@ -1039,6 +1054,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Wraps a linear array to a read-only matrix. The array is column oriented, i.e. consecutive elements
     /// belong mostly to one column. This is the convention used for LAPACK routines.
     /// </summary>
+    /// <typeparam name="T">The element type of the wrapped matrix.</typeparam>
     public class ROMatrixFromColumnMajorLinearArray<T> : IROMatrix<T> where T : struct
     {
       /// <summary>
@@ -1117,6 +1133,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Wraps a linear array to a read-write matrix. The array is column oriented, i.e. consecutive elements
     /// belong mostly to one column. This is the convention used for LAPACK routines.
     /// </summary>
+    /// <typeparam name="T">The element type of the wrapped matrix.</typeparam>
     public class MatrixFromColumnMajorLinearArray<T> : ROMatrixFromColumnMajorLinearArray<T>, IMatrix<T> where T : struct
     {
       /// <summary>
@@ -1162,6 +1179,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Wraps a linear array to a read-only matrix. The array is column oriented, i.e. consecutive elements
     /// belong mostly to one column. This is the convention used for LAPACK routines.
     /// </summary>
+    /// <typeparam name="T">The element type of the wrapped matrix.</typeparam>
     public class ROMatrixFromRowMajorLinearArray<T> : IROMatrix<T> where T : struct
     {
       /// <summary>
@@ -1240,6 +1258,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Wraps a linear array to a read-write matrix. The array is row oriented, i.e. consecutive elements
     /// belong mostly to one row.
     /// </summary>
+    /// <typeparam name="T">The element type of the wrapped matrix.</typeparam>
     public class MatrixFromRowMajorLinearArray<T> : ROMatrixFromRowMajorLinearArray<T>, IMatrix<T> where T : struct
     {
       /// <summary>
@@ -1284,6 +1303,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Wraps a 2d array to a read-only matrix. 
     /// </summary>
+    /// <typeparam name="T">The element type of the wrapped matrix.</typeparam>
     public class ROMatrixFrom2DArray<T> : IROMatrix<T> where T : struct
     {
       /// <summary>
@@ -1335,6 +1355,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Wraps a 2D array to a read-only matrix. 
     /// </summary>
+    /// <typeparam name="T">The element type of the wrapped matrix.</typeparam>
     public class RWMatrixFrom2DArray<T> : IMatrix<T> where T : struct
     {
       /// <summary>
@@ -1417,6 +1438,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// BEMatrix is a matrix implementation that is relatively easy to extend to the botton, i.e. to append rows.
     /// It is horizontal oriented, i.e. the storage is as a number of horizontal vectors.
     /// </summary>
+    /// <typeparam name="T">The element type stored by the matrix.</typeparam>
     public class LeftSpineJaggedArrayMatrix<T> : IMatrix<T>, IBottomExtensibleMatrix<T> where T : struct
     {
       private static readonly T[][] _emptyArray = new T[0][];
@@ -1495,6 +1517,8 @@ namespace Altaxo.Calc.LinearAlgebra
       /// <summary>
       /// Element accessor. Accesses the element [row, col] of the matrix.
       /// </summary>
+      /// <param name="row">The zero-based row index.</param>
+      /// <param name="col">The zero-based column index.</param>
       public T this[int row, int col]
       {
         get
@@ -1590,6 +1614,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// REMatrix is a matrix implementation that is relatively easy to extend to the right, i.e. to append columns.
     /// It is vertical oriented, i.e. the storage is as a number of vertical vectors.
     /// </summary>
+    /// <typeparam name="T">The element type stored by the matrix.</typeparam>
     public class TopSpineJaggedArrayMatrix<T> : IMatrix<T>, IRightExtensibleMatrix<T> where T : struct
     {
       private static T[][] _emptyArray = new T[0][];
@@ -1675,6 +1700,8 @@ namespace Altaxo.Calc.LinearAlgebra
       /// <summary>
       /// Element accessor. Accesses the element [row, col] of the matrix.
       /// </summary>
+      /// <param name="row">The zero-based row index.</param>
+      /// <param name="col">The zero-based column index.</param>
       public T this[int row, int col]
       {
         get

@@ -47,11 +47,15 @@ namespace Altaxo.Gui.Serialization.Ascii
     /// <summary>
     /// Sets the number formats that can be analyzed.
     /// </summary>
+    /// <param name="availableFormats">The available number formats.</param>
+    /// <param name="currentlySelectedItems">The currently selected number formats.</param>
     void SetNumberFormatsToAnalyze(SelectableListNodeList availableFormats, ObservableCollection<Boxed<SelectableListNode>> currentlySelectedItems);
 
     /// <summary>
     /// Sets the date/time formats that can be analyzed.
     /// </summary>
+    /// <param name="availableFormats">The available date/time formats.</param>
+    /// <param name="currentlySelectedItems">The currently selected date/time formats.</param>
     void SetDateTimeFormatsToAnalyze(SelectableListNodeList availableFormats, ObservableCollection<Boxed<SelectableListNode>> currentlySelectedItems);
   }
 

@@ -901,6 +901,7 @@ namespace Altaxo.Gui.Graph
     }
 
     /// <summary>Called when the user input has to be applied to the document being controlled. Returns true if Apply is successfull.</summary>
+    /// <param name="disposeController">If set to <see langword="true"/>, disposes the controller after applying the changes.</param>
     /// <returns>True if the apply was successfull, otherwise false.</returns>
     public override bool Apply(bool disposeController)
     {

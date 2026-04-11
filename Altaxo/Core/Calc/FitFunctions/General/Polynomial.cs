@@ -327,6 +327,11 @@ namespace Altaxo.Calc.FitFunctions.General
     /// <summary>
     /// Evaluates the derivative with respect to the parameters for all rows.
     /// </summary>
+    /// <param name="X">The independent variables.</param>
+    /// <param name="P">The parameter values.</param>
+    /// <param name="isParameterFixed">Flags indicating fixed parameters.</param>
+    /// <param name="DY">The matrix receiving the derivatives.</param>
+    /// <param name="dependentVariableChoice">The selected dependent variables.</param>
     public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = X.RowCount;

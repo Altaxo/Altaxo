@@ -281,11 +281,11 @@ namespace Altaxo.Graph
     }
 
     /// <summary>
-    /// The table properties, key is a string, val is a object you want to store here.
+    /// Sets a graph property identified by a string key.
     /// </summary>
-    /// <remarks>The properties are saved on disc (with exception of those who's name starts with "tmp/".
-    /// If the property you want to store is only temporary, the property name should therefore
-    /// start with "tmp/".</remarks>
+    /// <param name="key">The property key.</param>
+    /// <param name="val">The property value to store.</param>
+    /// <remarks>The properties are saved on disk, with the exception of those whose name starts with <c>"tmp/"</c>. If the property you want to store is only temporary, the property name should therefore start with <c>"tmp/"</c>.</remarks>
     public void SetGraphProperty(string key, object val)
     {
       PropertyBagNotNull.SetValue(key, val);

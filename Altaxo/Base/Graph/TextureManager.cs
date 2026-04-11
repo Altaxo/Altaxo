@@ -161,6 +161,7 @@ namespace Altaxo.Graph
 
     #region IEnumerable Members
 
+    /// <inheritdoc/>
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
       return GetEnumerator();

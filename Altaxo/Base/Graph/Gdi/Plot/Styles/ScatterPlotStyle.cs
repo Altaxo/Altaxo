@@ -251,6 +251,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScatterPlotStyle"/> class for old-format deserialization.
+    /// </summary>
+    /// <param name="info">The deserialization information.</param>
+    /// <param name="oldDeserializationRequiresFullConstruction">A value indicating whether old deserialization requires full construction.</param>
     internal ScatterPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, bool oldDeserializationRequiresFullConstruction)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {

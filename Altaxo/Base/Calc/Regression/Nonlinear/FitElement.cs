@@ -355,6 +355,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <summary>
     /// Initializes a new instance of the <see cref="FitElement"/> class by copying another fit element.
     /// </summary>
+    /// <param name="from">The fit element to copy.</param>
     public FitElement(FitElement from)
     {
       if (from._fitFunction is ICloneable fromFitFunc1)
@@ -396,6 +397,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <summary>
     /// Initializes a new instance of the <see cref="FitElement"/> class with the specified fit function.
     /// </summary>
+    /// <param name="fitFunction">The fit function.</param>
     public FitElement(IFitFunction fitFunction) : this(fitFunction, new AllRows())
     {
     }
@@ -403,6 +405,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <summary>
     /// Initializes a new instance of the <see cref="FitElement"/> class with the specified fit function and row selection.
     /// </summary>
+    /// <param name="fitFunction">The fit function.</param>
+    /// <param name="rowSelection">The row selection.</param>
     public FitElement(IFitFunction fitFunction, IRowSelection? rowSelection)
     {
       if (fitFunction is null)
@@ -424,6 +428,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <summary>
     /// Initializes a new instance of the <see cref="FitElement"/> class from a fit function and source columns.
     /// </summary>
+    /// <param name="fitFunction">The fit function.</param>
+    /// <param name="table">The source data table.</param>
+    /// <param name="groupNumber">The group number of the source columns.</param>
+    /// <param name="rowSelection">The row selection.</param>
+    /// <param name="xColumn">The x-column.</param>
+    /// <param name="yColumn">The y-column.</param>
     public FitElement(IFitFunction fitFunction, DataTable table, int groupNumber, IRowSelection rowSelection, IReadableColumn xColumn, IReadableColumn yColumn)
     {
       if (fitFunction is null)
@@ -452,6 +462,11 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <summary>
     /// Initializes a new instance of the <see cref="FitElement"/> class from source columns without a fit function.
     /// </summary>
+    /// <param name="table">The source data table.</param>
+    /// <param name="groupNumber">The group number of the source columns.</param>
+    /// <param name="rowSelection">The row selection.</param>
+    /// <param name="xColumn">The x-column.</param>
+    /// <param name="yColumn">The y-column.</param>
     public FitElement(DataTable table, int groupNumber, IRowSelection rowSelection, IReadableColumn xColumn, IReadableColumn yColumn)
     {
       if (rowSelection is null)
@@ -634,6 +649,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <summary>
     /// Gets the dependent variable column at the specified index.
     /// </summary>
+    /// <param name="i">The index of the dependent variable.</param>
+    /// <returns>The dependent variable column at the specified index, or <see langword="null"/> if it is unavailable.</returns>
     public IReadableColumn? GetDependentVariable(int i)
     {
       return (_dependentVariables is not null && i < _dependentVariables.Length) ? _dependentVariables[i]?.Document() : null;
@@ -810,10 +827,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <summary>
     /// Evaluates the fit function values and transforms them according to the transformations set.
     /// </summary>
-    /// <param name="independent">The independent.</param>
-    /// <param name="parameters">The parameters.</param>
-    /// <param name="FV">The fv.</param>
-    /// <returns></returns>
+    /// <param name="independent">The independent variable values.</param>
+    /// <param name="parameters">The parameter values.</param>
+    /// <param name="FV">The array that receives the evaluated function values.</param>
     public void FitFunctionEvaluate(double[] independent, double[] parameters, double[] FV)
     {
       FitFunction!.Evaluate(independent, parameters, FV);
@@ -827,6 +843,10 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <summary>
     /// Evaluates the fit function for the specified matrix of independent values.
     /// </summary>
+    /// <param name="independent">The matrix of independent variable values.</param>
+    /// <param name="parameters">The parameter values.</param>
+    /// <param name="FV">The vector that receives the evaluated function values.</param>
+    /// <param name="dependentVariableChoice">The optional selection of dependent variables to evaluate.</param>
     public void FitFunctionEvaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       FitFunction!.Evaluate(independent, parameters, FV, dependentVariableChoice);

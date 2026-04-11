@@ -52,6 +52,8 @@ namespace Altaxo.Science.Signals
     /// <summary>
     /// Initializes a new instance of the <see cref="PronySeriesRetardationTimeDomainDataSource"/> class for deserialization.
     /// </summary>
+    /// <param name="info">The deserialization information.</param>
+    /// <param name="version">The serialization version.</param>
     protected PronySeriesRetardationTimeDomainDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     : base(info, version)
     {

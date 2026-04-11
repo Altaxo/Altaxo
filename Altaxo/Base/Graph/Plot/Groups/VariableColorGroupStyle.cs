@@ -80,6 +80,7 @@ namespace Altaxo.Graph.Plot.Groups
     /// <summary>
     /// Initializes a new instance of the <see cref="VariableColorGroupStyle"/> class by copying another instance.
     /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public VariableColorGroupStyle(VariableColorGroupStyle from)
     {
       _isInitialized = from._isInitialized;
@@ -93,11 +94,13 @@ namespace Altaxo.Graph.Plot.Groups
     /// <summary>
     /// Creates a copy of this style.
     /// </summary>
+    /// <returns>A copied style instance.</returns>
     public VariableColorGroupStyle Clone()
     {
       return new VariableColorGroupStyle(this);
     }
 
+    /// <inheritdoc />
     object ICloneable.Clone()
     {
       return new VariableColorGroupStyle(this);
@@ -225,6 +228,9 @@ namespace Altaxo.Graph.Plot.Groups
     /// <summary>
     /// Prepares the variable-color style.
     /// </summary>
+    /// <param name="externalGroups">The external group-style collection.</param>
+    /// <param name="localGroups">The local group-style collection.</param>
+    /// <param name="getter">The delegate that supplies the color function.</param>
     public static void PrepareStyle(
       IPlotGroupStyleCollection externalGroups,
       IPlotGroupStyleCollection localGroups,
@@ -250,8 +256,8 @@ namespace Altaxo.Graph.Plot.Groups
     /// <summary>
     /// Tries to apply the variable-color group style.
     /// </summary>
-    /// <param name="externalGroups"></param>
-    /// <param name="localGroups"></param>
+    /// <param name="externalGroups">The external group-style collection.</param>
+    /// <param name="localGroups">The local group-style collection.</param>
     /// <param name="setter">A function of the plot style that takes the symbol size evaluation function.</param>
     /// <returns>True if successfully applied, false otherwise.</returns>
     public static bool ApplyStyle(

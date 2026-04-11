@@ -174,6 +174,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>
     /// Creates a new instance with default values.
     /// </summary>
+    /// <param name="context">The property context used to resolve default symbol-size settings.</param>
     public ColumnDrivenSymbolSizePlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       InternalSetScale(new LinearScale());

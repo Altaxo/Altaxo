@@ -59,6 +59,7 @@ namespace Altaxo.Main
     /// Returns the document node. If the stored doc node is null, it is tried to resolve the stored document path.
     /// If that fails too, null is returned.
     /// </summary>
+    /// <returns>The referenced document object, or <see langword="null"/> if it can not be resolved.</returns>
     object? DocumentObject();
 
     /// <summary>
@@ -68,6 +69,7 @@ namespace Altaxo.Main
     /// <value>
     /// The document path.
     /// </value>
+    /// <returns>The path of the referenced document object.</returns>
     Main.AbsoluteDocumentPath DocumentPath();
 
     /// <summary>

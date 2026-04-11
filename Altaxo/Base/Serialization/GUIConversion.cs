@@ -176,6 +176,8 @@ namespace Altaxo.Serialization
     /// <summary>
     /// Converts the specified date/time to a culture-dependent string.
     /// </summary>
+    /// <param name="o">The date and time value to convert.</param>
+    /// <returns>The culture-dependent string representation of <paramref name="o"/>.</returns>
     public static string ToString(DateTime o)
     {
       return o.ToString(_cultureSettings);
@@ -205,6 +207,8 @@ namespace Altaxo.Serialization
     /// <summary>
     /// Converts the specified time span to a culture-dependent string.
     /// </summary>
+    /// <param name="o">The time span value to convert.</param>
+    /// <returns>The culture-dependent string representation of <paramref name="o"/>.</returns>
     public static string ToString(TimeSpan o)
     {
       return o.ToString(string.Empty, _cultureSettings);

@@ -43,6 +43,11 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32.Factorization
   /// </remarks>
   internal abstract class GramSchmidt : GramSchmidt<Complex32>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GramSchmidt"/> class.
+    /// </summary>
+    /// <param name="q">The orthogonal matrix.</param>
+    /// <param name="rFull">The upper triangular factor.</param>
     protected GramSchmidt(Matrix<Complex32> q, Matrix<Complex32> rFull)
         : base(q, rFull)
     {

@@ -64,6 +64,7 @@ namespace Altaxo.Serialization.Matlab
     /// <summary>
     /// Returns the written MAT-file as a byte array.
     /// </summary>
+    /// <returns>The serialized MAT-file content.</returns>
     public byte[] ToArray()
     {
       EnsureHeader();
@@ -91,7 +92,7 @@ namespace Altaxo.Serialization.Matlab
     /// Writes a MATLAB character array (<c>mxCHAR_CLASS</c>) as a 1xN string.
     /// </summary>
     /// <param name="name">Variable name.</param>
-    /// <param name="value">String content.</param>
+    /// <param name="value">String content. If <c>null</c> the empty string is written.</param>
     public void WriteString(string name, string value)
     {
       Write(name, new MatValue.String(value ?? string.Empty));

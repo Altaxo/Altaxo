@@ -90,6 +90,7 @@ namespace Altaxo.Calc.Distributions
     /// Tests whether the provided values are valid parameters for this distribution.
     /// </summary>
     /// <param name="freedom">The degrees of freedom (k) of the distribution. Range: k > 0.</param>
+    /// <returns><c>true</c> if the parameters define a valid Chi distribution; otherwise, <c>false</c>.</returns>
     public static bool IsValidParameterSet(double freedom)
     {
       return freedom > 0.0;
@@ -217,6 +218,7 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Fills an array with samples generated from the distribution.
     /// </summary>
+    /// <param name="values">The array to fill with samples.</param>
     public void Samples(double[] values)
     {
       SamplesUnchecked(_random, values, (int)_freedom);

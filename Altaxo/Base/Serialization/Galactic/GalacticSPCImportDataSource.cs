@@ -85,6 +85,8 @@ namespace Altaxo.Serialization.Galactic
     /// <summary>
     /// Deserialization constructor
     /// </summary>
+    /// <param name="info">The deserialization information.</param>
+    /// <param name="version">The serialization version.</param>
     protected GalacticSPCImportDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     {
       switch (version)
@@ -104,6 +106,8 @@ namespace Altaxo.Serialization.Galactic
     /// <summary>
     /// Initializes a new instance of the <see cref="GalacticSPCImportDataSource"/> class for a single file.
     /// </summary>
+    /// <param name="fileName">The file name to import.</param>
+    /// <param name="options">The import options.</param>
     public GalacticSPCImportDataSource(string fileName, GalacticSPCImportOptions options)
       : this(new string[] { fileName }, options)
     {
@@ -112,6 +116,8 @@ namespace Altaxo.Serialization.Galactic
     /// <summary>
     /// Initializes a new instance of the <see cref="GalacticSPCImportDataSource"/> class for multiple files.
     /// </summary>
+    /// <param name="fileNames">The file names to import.</param>
+    /// <param name="options">The import options.</param>
     public GalacticSPCImportDataSource(IEnumerable<string> fileNames, GalacticSPCImportOptions options)
       : base(fileNames)
     {
@@ -121,6 +127,7 @@ namespace Altaxo.Serialization.Galactic
     /// <summary>
     /// Initializes a new instance of the <see cref="GalacticSPCImportDataSource"/> class by copying another instance.
     /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public GalacticSPCImportDataSource(GalacticSPCImportDataSource from)
       : base(from)
     {

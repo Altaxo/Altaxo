@@ -41,6 +41,8 @@ namespace Altaxo.Calc.Optimization
     /// <summary>
     /// Objective function where neither Gradient nor Hessian is available.
     /// </summary>
+    /// <param name="function">The objective function.</param>
+    /// <returns>An objective function that evaluates only the scalar value.</returns>
     public static IObjectiveFunction Value(Func<Vector<double>, double> function)
     {
       return new ValueObjectiveFunction(function);
@@ -49,6 +51,8 @@ namespace Altaxo.Calc.Optimization
     /// <summary>
     /// Objective function where the Gradient is available. Greedy evaluation.
     /// </summary>
+    /// <param name="function">The combined objective and gradient evaluator.</param>
+    /// <returns>An objective function that evaluates the value and gradient together.</returns>
     public static IObjectiveFunction Gradient(Func<Vector<double>, (double, Vector<double>)> function)
     {
       return new GradientObjectiveFunction(function);
@@ -57,6 +61,9 @@ namespace Altaxo.Calc.Optimization
     /// <summary>
     /// Objective function where the Gradient is available. Lazy evaluation.
     /// </summary>
+    /// <param name="function">The objective function.</param>
+    /// <param name="gradient">The gradient function.</param>
+    /// <returns>An objective function that evaluates the value eagerly and the gradient lazily.</returns>
     public static IObjectiveFunction Gradient(Func<Vector<double>, double> function, Func<Vector<double>, Vector<double>> gradient)
     {
       return new LazyObjectiveFunction(function, gradient: gradient);
@@ -65,6 +72,8 @@ namespace Altaxo.Calc.Optimization
     /// <summary>
     /// Objective function where the Hessian is available. Greedy evaluation.
     /// </summary>
+    /// <param name="function">The combined objective and Hessian evaluator.</param>
+    /// <returns>An objective function that evaluates the value and Hessian together.</returns>
     public static IObjectiveFunction Hessian(Func<Vector<double>, (double, Matrix<double>)> function)
     {
       return new HessianObjectiveFunction(function);
@@ -73,6 +82,9 @@ namespace Altaxo.Calc.Optimization
     /// <summary>
     /// Objective function where the Hessian is available. Lazy evaluation.
     /// </summary>
+    /// <param name="function">The objective function.</param>
+    /// <param name="hessian">The Hessian function.</param>
+    /// <returns>An objective function that evaluates the value eagerly and the Hessian lazily.</returns>
     public static IObjectiveFunction Hessian(Func<Vector<double>, double> function, Func<Vector<double>, Matrix<double>> hessian)
     {
       return new LazyObjectiveFunction(function, hessian: hessian);
@@ -81,6 +93,8 @@ namespace Altaxo.Calc.Optimization
     /// <summary>
     /// Objective function where both Gradient and Hessian are available. Greedy evaluation.
     /// </summary>
+    /// <param name="function">The combined objective, gradient, and Hessian evaluator.</param>
+    /// <returns>An objective function that evaluates the value, gradient, and Hessian together.</returns>
     public static IObjectiveFunction GradientHessian(Func<Vector<double>, (double, Vector<double>, Matrix<double>)> function)
     {
       return new GradientHessianObjectiveFunction(function);
@@ -89,6 +103,10 @@ namespace Altaxo.Calc.Optimization
     /// <summary>
     /// Objective function where both Gradient and Hessian are available. Lazy evaluation.
     /// </summary>
+    /// <param name="function">The objective function.</param>
+    /// <param name="gradient">The gradient function.</param>
+    /// <param name="hessian">The Hessian function.</param>
+    /// <returns>An objective function that evaluates the value eagerly and derivatives lazily.</returns>
     public static IObjectiveFunction GradientHessian(Func<Vector<double>, double> function, Func<Vector<double>, Vector<double>> gradient, Func<Vector<double>, Matrix<double>> hessian)
     {
       return new LazyObjectiveFunction(function, gradient: gradient, hessian: hessian);
@@ -97,6 +115,8 @@ namespace Altaxo.Calc.Optimization
     /// <summary>
     /// Objective function where neither first nor second derivative is available.
     /// </summary>
+    /// <param name="function">The scalar objective function.</param>
+    /// <returns>A scalar objective function that evaluates only the value.</returns>
     public static IScalarObjectiveFunction ScalarValue(Func<double, double> function)
     {
       return new ScalarValueObjectiveFunction(function);
@@ -105,6 +125,9 @@ namespace Altaxo.Calc.Optimization
     /// <summary>
     /// Objective function where the first derivative is available.
     /// </summary>
+    /// <param name="function">The scalar objective function.</param>
+    /// <param name="derivative">The first derivative of the objective function.</param>
+    /// <returns>A scalar objective function that evaluates the value and first derivative.</returns>
     public static IScalarObjectiveFunction ScalarDerivative(Func<double, double> function, Func<double, double> derivative)
     {
       return new ScalarObjectiveFunction(function, derivative);
@@ -113,6 +136,10 @@ namespace Altaxo.Calc.Optimization
     /// <summary>
     /// Objective function where the first and second derivatives are available.
     /// </summary>
+    /// <param name="function">The scalar objective function.</param>
+    /// <param name="derivative">The first derivative of the objective function.</param>
+    /// <param name="secondDerivative">The second derivative of the objective function.</param>
+    /// <returns>A scalar objective function that evaluates the value and both derivatives.</returns>
     public static IScalarObjectiveFunction ScalarSecondDerivative(Func<double, double> function, Func<double, double> derivative, Func<double, double> secondDerivative)
     {
       return new ScalarObjectiveFunction(function, derivative, secondDerivative);
@@ -238,6 +265,12 @@ namespace Altaxo.Calc.Optimization
     /// <summary>
     /// Objective function with a user supplied jacobian for nonlinear least squares regression.
     /// </summary>
+    /// <param name="function">The model function.</param>
+    /// <param name="derivatives">The Jacobian function.</param>
+    /// <param name="observedX">The observed x-values.</param>
+    /// <param name="observedY">The observed y-values.</param>
+    /// <param name="weight">Optional weights.</param>
+    /// <returns>An objective function for nonlinear least-squares regression with an analytic Jacobian.</returns>
     public static IObjectiveFunction NonlinearFunction(Func<Vector<double>, Vector<double>, Vector<double>> function,
         Func<Vector<double>, Vector<double>, Matrix<double>> derivatives,
         Vector<double> observedX, Vector<double> observedY, Vector<double> weight = null)
@@ -251,6 +284,12 @@ namespace Altaxo.Calc.Optimization
     /// Objective function for nonlinear least squares regression.
     /// The numerical jacobian with accuracy order is used.
     /// </summary>
+    /// <param name="function">The model function.</param>
+    /// <param name="observedX">The observed x-values.</param>
+    /// <param name="observedY">The observed y-values.</param>
+    /// <param name="weight">Optional weights.</param>
+    /// <param name="accuracyOrder">The numerical differentiation accuracy order.</param>
+    /// <returns>An objective function for nonlinear least-squares regression with a numerically approximated Jacobian.</returns>
     public static IObjectiveFunction NonlinearFunction(Func<Vector<double>, Vector<double>, Vector<double>> function,
         Vector<double> observedX, Vector<double> observedY, Vector<double> weight = null,
         int accuracyOrder = 2)

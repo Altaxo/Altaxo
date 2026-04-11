@@ -142,6 +142,7 @@ namespace Altaxo.Worksheet.Commands
     /// <summary>
     /// Sets the column kind of the first selected column or property column to a X column.
     /// </summary>
+    /// <param name="ctrl">The worksheet controller whose selected columns are updated.</param>
     public static void SetSelectedColumnAsX(IWorksheetController ctrl)
     {
       bool bChanged = false;
@@ -162,6 +163,7 @@ namespace Altaxo.Worksheet.Commands
     /// <summary>
     /// Sets the column kind of the first selected column or property column to a X column.
     /// </summary>
+    /// <param name="ctrl">The worksheet controller whose selected columns are updated.</param>
     public static void SetSelectedColumnAsY(IWorksheetController ctrl)
     {
       bool bChanged = false;
@@ -182,6 +184,7 @@ namespace Altaxo.Worksheet.Commands
     /// <summary>
     /// Sets the column kind of all selected columns or property columns to a label column.
     /// </summary>
+    /// <param name="ctrl">The worksheet controller whose selected columns are updated.</param>
     public static void SetSelectedColumnAsLabel(IWorksheetController ctrl)
     {
       bool bChanged = false;
@@ -205,6 +208,7 @@ namespace Altaxo.Worksheet.Commands
     /// <summary>
     /// Sets the column kind of the first selected column to a value column.
     /// </summary>
+    /// <param name="ctrl">The worksheet controller whose selected columns are updated.</param>
     public static void SetSelectedColumnAsValue(IWorksheetController ctrl)
     {
       bool bChanged = false;
@@ -227,6 +231,8 @@ namespace Altaxo.Worksheet.Commands
     /// <summary>
     /// Sets the column kind of the selected columns to the specified column kind.
     /// </summary>
+    /// <param name="ctrl">The worksheet controller whose selected columns are updated.</param>
+    /// <param name="kind">The column kind to assign.</param>
     public static void SetSelectedColumnAsKind(IWorksheetController ctrl, Altaxo.Data.ColumnKind kind)
     {
       bool bChanged = false;

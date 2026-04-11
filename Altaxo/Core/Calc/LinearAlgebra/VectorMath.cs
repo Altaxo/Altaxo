@@ -141,6 +141,10 @@ namespace Altaxo.Calc.LinearAlgebra
           yield return this[i];
       }
 
+      /// <summary>
+      /// Returns a non-generic enumerator that iterates through the subvector.
+      /// </summary>
+      /// <returns>A non-generic enumerator for the subvector.</returns>
       IEnumerator IEnumerable.GetEnumerator()
       {
         for (int i = 0; i < _length; ++i)
@@ -163,6 +167,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Creates a new extensible vector of length <c>length</c>
     /// </summary>
+    /// <typeparam name="T">The element type of the vector.</typeparam>
     /// <param name="length">The inital length of the vector.</param>
     /// <returns>An instance of a extensible vector.</returns>
     public static IExtensibleVector<T> CreateExtensibleVector<T>(int length)
@@ -367,6 +372,14 @@ namespace Altaxo.Calc.LinearAlgebra
           yield return _source[i];
       }
 
+      /// <summary>
+      /// Returns a non-generic enumerator that iterates through the subvector.
+      /// </summary>
+      /// <returns>A non-generic enumerator for the subvector.</returns>
+      /// <summary>
+      /// Gets a non-generic enumerator that iterates through the subvector.
+      /// </summary>
+      /// <returns>A non-generic enumerator for the subvector.</returns>
       IEnumerator IEnumerable.GetEnumerator()
       {
         for (int i = _offset, j = 0; j < _count; ++i, ++j)
@@ -455,6 +468,10 @@ namespace Altaxo.Calc.LinearAlgebra
           yield return _source[i];
       }
 
+      /// <summary>
+      /// Gets an enumerator that iterates through the subvector.
+      /// </summary>
+      /// <returns>An enumerator that can be used to iterate through the subvector.</returns>
       IEnumerator IEnumerable.GetEnumerator()
       {
         for (int i = _offset, j = 0; j < _count; ++i, ++j)

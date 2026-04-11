@@ -50,6 +50,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Initializes a new instance of the Matrix class.
     /// </summary>
+    /// <param name="storage">The storage backing this matrix.</param>
     protected Matrix(MatrixStorage<T> storage)
     {
       Storage = storage;
@@ -151,6 +152,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Sets all values of a row to zero.
     /// </summary>
+    /// <param name="rowIndex">The zero-based index of the row to clear.</param>
     public void ClearRow(int rowIndex)
     {
       if ((uint)rowIndex >= (uint)RowCount)
@@ -164,6 +166,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Sets all values of a column to zero.
     /// </summary>
+    /// <param name="columnIndex">The zero-based index of the column to clear.</param>
     public void ClearColumn(int columnIndex)
     {
       if ((uint)columnIndex >= (uint)ColumnCount)
@@ -177,6 +180,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Sets all values for all of the chosen rows to zero.
     /// </summary>
+    /// <param name="rowIndices">The zero-based row indices to clear.</param>
     public void ClearRows(params int[] rowIndices)
     {
       Storage.ClearRows(rowIndices);
@@ -185,6 +189,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Sets all values for all of the chosen columns to zero.
     /// </summary>
+    /// <param name="columnIndices">The zero-based column indices to clear.</param>
     public void ClearColumns(params int[] columnIndices)
     {
       Storage.ClearColumns(columnIndices);
@@ -193,6 +198,10 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Sets all values of a sub-matrix to zero.
     /// </summary>
+    /// <param name="rowIndex">The zero-based starting row index.</param>
+    /// <param name="rowCount">The number of rows to clear.</param>
+    /// <param name="columnIndex">The zero-based starting column index.</param>
+    /// <param name="columnCount">The number of columns to clear.</param>
     public void ClearSubMatrix(int rowIndex, int rowCount, int columnIndex, int columnCount)
     {
       Storage.Clear(rowIndex, rowCount, columnIndex, columnCount);
@@ -201,11 +210,13 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Set all values whose absolute value is smaller than the threshold to zero, in-place.
     /// </summary>
+    /// <param name="threshold">The threshold below which values are set to zero.</param>
     public abstract void CoerceZero(double threshold);
 
     /// <summary>
     /// Set all values that meet the predicate to zero, in-place.
     /// </summary>
+    /// <param name="zeroPredicate">The predicate that selects values to replace by zero.</param>
     public void CoerceZero(Func<T, bool> zeroPredicate)
     {
       MapInplace(x => zeroPredicate(x) ? Zero : x, Zeros.AllowSkip);
@@ -1036,6 +1047,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Puts the transpose of this matrix into the result matrix.
     /// </summary>
+    /// <param name="result">The matrix that receives the transpose.</param>
     public void Transpose(Matrix<T> result)
     {
       Storage.TransposeTo(result.Storage, ExistingData.Clear);
@@ -1050,6 +1062,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Puts the conjugate transpose of this matrix into the result matrix.
     /// </summary>
+    /// <param name="result">The matrix that receives the conjugate transpose.</param>
     public abstract void ConjugateTranspose(Matrix<T> result);
 
     /// <summary>
@@ -1287,6 +1300,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Evaluates whether this matrix is symmetric.
     /// </summary>
+    /// <returns><c>true</c> if this matrix is symmetric; otherwise, <c>false</c>.</returns>
     public virtual bool IsSymmetric()
     {
       if (RowCount != ColumnCount)
@@ -1311,6 +1325,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Evaluates whether this matrix is Hermitian (conjugate symmetric).
     /// </summary>
+    /// <returns><c>true</c> if this matrix is Hermitian; otherwise, <c>false</c>.</returns>
     public abstract bool IsHermitian();
 
     /// <summary>
@@ -1365,6 +1380,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// The returned arrays will be independent from this matrix.
     /// A new memory block will be allocated for the arrays.
     /// </summary>
+    /// <returns>An array containing copies of the matrix rows.</returns>
     public T[][] ToRowArrays()
     {
       return Storage.ToRowArrays();
@@ -1375,6 +1391,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// The returned arrays will be independent from this matrix.
     /// A new memory block will be allocated for the arrays.
     /// </summary>
+    /// <returns>An array containing copies of the matrix columns.</returns>
     public T[][] ToColumnArrays()
     {
       return Storage.ToColumnArrays();
@@ -1385,6 +1402,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Otherwise returns null. Changes to the returned array and the matrix will affect each other.
     /// Use ToArray instead if you always need an independent array.
     /// </summary>
+    /// <returns>The internal multidimensional array, or <c>null</c> if unavailable.</returns>
     public T[,] AsArray()
     {
       return Storage.AsArray();
@@ -1431,6 +1449,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Otherwise returns null. Changes to the returned arrays and the matrix will affect each other.
     /// Use ToRowArrays instead if you always need an independent array.
     /// </summary>
+    /// <returns>The internal row arrays, or <c>null</c> if unavailable.</returns>
     public T[][] AsRowArrays()
     {
       return Storage.AsRowArrays();
@@ -1441,6 +1460,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Otherwise returns null. Changes to the returned arrays and the matrix will affect each other.
     /// Use ToColumnArrays instead if you always need an independent array.
     /// </summary>
+    /// <returns>The internal column arrays, or <c>null</c> if unavailable.</returns>
     public T[][] AsColumnArrays()
     {
       return Storage.AsColumnArrays();
@@ -1453,6 +1473,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// The enumerator will include all values, even if they are zero.
     /// The ordering of the values is unspecified (not necessarily column-wise or row-wise).
     /// </remarks>
+    /// <returns>An enumeration of the matrix values.</returns>
     public IEnumerable<T> Enumerate()
     {
       return Storage.Enumerate();
@@ -1465,6 +1486,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// The enumerator will include all values, even if they are zero.
     /// The ordering of the values is unspecified (not necessarily column-wise or row-wise).
     /// </remarks>
+    /// <param name="zeros">Controls whether zero values may be skipped.</param>
+    /// <returns>An enumeration of the matrix values.</returns>
     public IEnumerable<T> Enumerate(Zeros zeros)
     {
       switch (zeros)
@@ -1484,6 +1507,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// and the third value being the value of the element at that index.
     /// The enumerator will include all values, even if they are zero.
     /// </remarks>
+    /// <returns>An enumeration of indexed matrix values.</returns>
     public IEnumerable<(int, int, T)> EnumerateIndexed()
     {
       return Storage.EnumerateIndexed();
@@ -1497,6 +1521,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// and the third value being the value of the element at that index.
     /// The enumerator will include all values, even if they are zero.
     /// </remarks>
+    /// <param name="zeros">Controls whether zero values may be skipped.</param>
+    /// <returns>An enumeration of indexed matrix values.</returns>
     public IEnumerable<(int, int, T)> EnumerateIndexed(Zeros zeros)
     {
       switch (zeros)
@@ -1511,6 +1537,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Returns an IEnumerable that can be used to iterate through all columns of the matrix.
     /// </summary>
+    /// <returns>An enumeration of the matrix columns.</returns>
     public IEnumerable<Vector<T>> EnumerateColumns()
     {
       for (var i = 0; i < ColumnCount; i++)
@@ -1524,6 +1551,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="index">The column to start enumerating over.</param>
     /// <param name="length">The number of columns to enumerating over.</param>
+    /// <returns>An enumeration of the selected matrix columns.</returns>
     public IEnumerable<Vector<T>> EnumerateColumns(int index, int length)
     {
       var maxIndex = Math.Min(index + length, ColumnCount);
@@ -1540,6 +1568,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// The enumerator returns a Tuple with the first value being the column index
     /// and the second value being the value of the column at that index.
     /// </remarks>
+    /// <returns>An enumeration of indexed matrix columns.</returns>
     public IEnumerable<(int, Vector<T>)> EnumerateColumnsIndexed()
     {
       for (var i = 0; i < ColumnCount; i++)
@@ -1557,6 +1586,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// The enumerator returns a Tuple with the first value being the column index
     /// and the second value being the value of the column at that index.
     /// </remarks>
+    /// <returns>An enumeration of indexed matrix columns.</returns>
     public IEnumerable<(int, Vector<T>)> EnumerateColumnsIndexed(int index, int length)
     {
       var maxIndex = Math.Min(index + length, ColumnCount);
@@ -1569,6 +1599,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Returns an IEnumerable that can be used to iterate through all rows of the matrix.
     /// </summary>
+    /// <returns>An enumeration of the matrix rows.</returns>
     public IEnumerable<Vector<T>> EnumerateRows()
     {
       for (var i = 0; i < RowCount; i++)
@@ -1582,6 +1613,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="index">The row to start enumerating over.</param>
     /// <param name="length">The number of rows to enumerating over.</param>
+    /// <returns>An enumeration of the selected matrix rows.</returns>
     public IEnumerable<Vector<T>> EnumerateRows(int index, int length)
     {
       var maxIndex = Math.Min(index + length, RowCount);
@@ -1598,6 +1630,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// The enumerator returns a Tuple with the first value being the row index
     /// and the second value being the value of the row at that index.
     /// </remarks>
+    /// <returns>An enumeration of indexed matrix rows.</returns>
     public IEnumerable<(int, Vector<T>)> EnumerateRowsIndexed()
     {
       for (var i = 0; i < RowCount; i++)
@@ -1615,6 +1648,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// The enumerator returns a Tuple with the first value being the row index
     /// and the second value being the value of the row at that index.
     /// </remarks>
+    /// <returns>An enumeration of indexed matrix rows.</returns>
     public IEnumerable<(int, Vector<T>)> EnumerateRowsIndexed(int index, int length)
     {
       var maxIndex = Math.Min(index + length, RowCount);
@@ -1629,6 +1663,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// If forceMapZero is not set to true, zero values may or may not be skipped depending
     /// on the actual data storage implementation (relevant mostly for sparse matrices).
     /// </summary>
+    /// <param name="f">The mapping function to apply to each value.</param>
+    /// <param name="zeros">Controls whether zero values may be skipped.</param>
     public void MapInplace(Func<T, T> f, Zeros zeros = Zeros.AllowSkip)
     {
       Storage.MapInplace(f, zeros);
@@ -1640,6 +1676,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// If forceMapZero is not set to true, zero values may or may not be skipped depending
     /// on the actual data storage implementation (relevant mostly for sparse matrices).
     /// </summary>
+    /// <param name="f">The mapping function to apply to each indexed value.</param>
+    /// <param name="zeros">Controls whether zero values may be skipped.</param>
     public void MapIndexedInplace(Func<int, int, T, T> f, Zeros zeros = Zeros.AllowSkip)
     {
       Storage.MapIndexedInplace(f, zeros);
@@ -1650,6 +1688,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// If forceMapZero is not set to true, zero values may or may not be skipped depending
     /// on the actual data storage implementation (relevant mostly for sparse matrices).
     /// </summary>
+    /// <param name="f">The mapping function to apply to each value.</param>
+    /// <param name="result">The matrix that receives the mapped values.</param>
+    /// <param name="zeros">Controls whether zero values may be skipped.</param>
     public void Map(Func<T, T> f, Matrix<T> result, Zeros zeros = Zeros.AllowSkip)
     {
       if (ReferenceEquals(this, result))
@@ -1668,6 +1709,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// If forceMapZero is not set to true, zero values may or may not be skipped depending
     /// on the actual data storage implementation (relevant mostly for sparse matrices).
     /// </summary>
+    /// <param name="f">The mapping function to apply to each indexed value.</param>
+    /// <param name="result">The matrix that receives the mapped values.</param>
+    /// <param name="zeros">Controls whether zero values may be skipped.</param>
     public void MapIndexed(Func<int, int, T, T> f, Matrix<T> result, Zeros zeros = Zeros.AllowSkip)
     {
       if (ReferenceEquals(this, result))
@@ -1685,6 +1729,10 @@ namespace Altaxo.Calc.LinearAlgebra
     /// If forceMapZero is not set to true, zero values may or may not be skipped depending
     /// on the actual data storage implementation (relevant mostly for sparse matrices).
     /// </summary>
+    /// <typeparam name="TU">The target element type.</typeparam>
+    /// <param name="f">The mapping function to apply to each value.</param>
+    /// <param name="result">The matrix that receives the converted values.</param>
+    /// <param name="zeros">Controls whether zero values may be skipped.</param>
     public void MapConvert<TU>(Func<T, TU> f, Matrix<TU> result, Zeros zeros = Zeros.AllowSkip)
         where TU : struct, IEquatable<TU>, IFormattable
     {
@@ -1697,6 +1745,10 @@ namespace Altaxo.Calc.LinearAlgebra
     /// If forceMapZero is not set to true, zero values may or may not be skipped depending
     /// on the actual data storage implementation (relevant mostly for sparse matrices).
     /// </summary>
+    /// <typeparam name="TU">The target element type.</typeparam>
+    /// <param name="f">The mapping function to apply to each indexed value.</param>
+    /// <param name="result">The matrix that receives the converted values.</param>
+    /// <param name="zeros">Controls whether zero values may be skipped.</param>
     public void MapIndexedConvert<TU>(Func<int, int, T, TU> f, Matrix<TU> result, Zeros zeros = Zeros.AllowSkip)
         where TU : struct, IEquatable<TU>, IFormattable
     {
@@ -1708,6 +1760,10 @@ namespace Altaxo.Calc.LinearAlgebra
     /// If forceMapZero is not set to true, zero values may or may not be skipped depending
     /// on the actual data storage implementation (relevant mostly for sparse matrices).
     /// </summary>
+    /// <typeparam name="TU">The target element type.</typeparam>
+    /// <param name="f">The mapping function to apply to each value.</param>
+    /// <param name="zeros">Controls whether zero values may be skipped.</param>
+    /// <returns>A new matrix containing the mapped values.</returns>
     public Matrix<TU> Map<TU>(Func<T, TU> f, Zeros zeros = Zeros.AllowSkip)
         where TU : struct, IEquatable<TU>, IFormattable
     {
@@ -1722,6 +1778,10 @@ namespace Altaxo.Calc.LinearAlgebra
     /// If forceMapZero is not set to true, zero values may or may not be skipped depending
     /// on the actual data storage implementation (relevant mostly for sparse matrices).
     /// </summary>
+    /// <typeparam name="TU">The target element type.</typeparam>
+    /// <param name="f">The mapping function to apply to each indexed value.</param>
+    /// <param name="zeros">Controls whether zero values may be skipped.</param>
+    /// <returns>A new matrix containing the mapped values.</returns>
     public Matrix<TU> MapIndexed<TU>(Func<int, int, T, TU> f, Zeros zeros = Zeros.AllowSkip)
         where TU : struct, IEquatable<TU>, IFormattable
     {
@@ -1734,6 +1794,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// For each row, applies a function f to each element of the row, threading an accumulator argument through the computation.
     /// Returns an array with the resulting accumulator states for each row.
     /// </summary>
+    /// <typeparam name="TU">The accumulator type.</typeparam>
+    /// <param name="f">The folding function applied to each element.</param>
+    /// <param name="state">The initial accumulator state for each row.</param>
+    /// <param name="zeros">Controls whether zero values may be skipped.</param>
+    /// <returns>An array of accumulator states, one for each row.</returns>
     public TU[] FoldByRow<TU>(Func<TU, T, TU> f, TU state, Zeros zeros = Zeros.AllowSkip)
     {
       var result = new TU[RowCount];
@@ -1755,6 +1820,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// For each column, applies a function f to each element of the column, threading an accumulator argument through the computation.
     /// Returns an array with the resulting accumulator states for each column.
     /// </summary>
+    /// <typeparam name="TU">The accumulator type.</typeparam>
+    /// <param name="f">The folding function applied to each element.</param>
+    /// <param name="state">The initial accumulator state for each column.</param>
+    /// <param name="zeros">Controls whether zero values may be skipped.</param>
+    /// <returns>An array of accumulator states, one for each column.</returns>
     public TU[] FoldByColumn<TU>(Func<TU, T, TU> f, TU state, Zeros zeros = Zeros.AllowSkip)
     {
       var result = new TU[ColumnCount];
@@ -1776,6 +1846,10 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Applies a function f to each row vector, threading an accumulator vector argument through the computation.
     /// Returns the resulting accumulator vector.
     /// </summary>
+    /// <typeparam name="TU">The accumulator element type.</typeparam>
+    /// <param name="f">The folding function applied to each row vector.</param>
+    /// <param name="state">The initial accumulator state.</param>
+    /// <returns>The accumulated result vector.</returns>
     public Vector<TU> FoldRows<TU>(Func<Vector<TU>, Vector<T>, Vector<TU>> f, Vector<TU> state)
         where TU : struct, IEquatable<TU>, IFormattable
     {
@@ -1790,6 +1864,10 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Applies a function f to each column vector, threading an accumulator vector argument through the computation.
     /// Returns the resulting accumulator vector.
     /// </summary>
+    /// <typeparam name="TU">The accumulator element type.</typeparam>
+    /// <param name="f">The folding function applied to each column vector.</param>
+    /// <param name="state">The initial accumulator state.</param>
+    /// <returns>The accumulated result vector.</returns>
     public Vector<TU> FoldColumns<TU>(Func<Vector<TU>, Vector<T>, Vector<TU>> f, Vector<TU> state)
         where TU : struct, IEquatable<TU>, IFormattable
     {
@@ -1803,6 +1881,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Reduces all row vectors by applying a function between two of them, until only a single vector is left.
     /// </summary>
+    /// <param name="f">The reduction function applied to successive row vectors.</param>
+    /// <returns>The reduced row vector.</returns>
     public Vector<T> ReduceRows(Func<Vector<T>, Vector<T>, Vector<T>> f)
     {
       return EnumerateRows().Aggregate(f);
@@ -1811,6 +1891,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Reduces all column vectors by applying a function between two of them, until only a single vector is left.
     /// </summary>
+    /// <param name="f">The reduction function applied to successive column vectors.</param>
+    /// <returns>The reduced column vector.</returns>
     public Vector<T> ReduceColumns(Func<Vector<T>, Vector<T>, Vector<T>> f)
     {
       return EnumerateColumns().Aggregate(f);
@@ -1819,14 +1901,22 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Applies a function to each value pair of two matrices and replaces the value in the result vector.
     /// </summary>
+    /// <param name="f">The mapping function to apply to each pair of values.</param>
+    /// <param name="other">The other matrix supplying the second value of each pair.</param>
+    /// <param name="result">The matrix that receives the mapped values.</param>
+    /// <param name="zeros">Controls whether zero values may be skipped.</param>
     public void Map2(Func<T, T, T> f, Matrix<T> other, Matrix<T> result, Zeros zeros = Zeros.AllowSkip)
     {
       Storage.Map2To(result.Storage, other.Storage, f, zeros, ExistingData.Clear);
     }
 
     /// <summary>
-    /// Applies a function to each value pair of two matrices and returns the results as a new vector.
+    /// Applies a function to each value pair of two matrices and returns the results as a new matrix.
     /// </summary>
+    /// <param name="f">The mapping function to apply to each pair of values.</param>
+    /// <param name="other">The other matrix supplying the second value of each pair.</param>
+    /// <param name="zeros">Controls whether zero values may be skipped.</param>
+    /// <returns>A new matrix containing the mapped values.</returns>
     public Matrix<T> Map2(Func<T, T, T> f, Matrix<T> other, Zeros zeros = Zeros.AllowSkip)
     {
       var result = Build.SameAs(this);
@@ -1837,6 +1927,13 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Applies a function to update the status with each value pair of two matrices and returns the resulting status.
     /// </summary>
+    /// <typeparam name="TOther">The element type of the other matrix.</typeparam>
+    /// <typeparam name="TState">The accumulator state type.</typeparam>
+    /// <param name="f">The folding function to apply to each pair of values.</param>
+    /// <param name="state">The initial accumulator state.</param>
+    /// <param name="other">The other matrix supplying the second value of each pair.</param>
+    /// <param name="zeros">Controls whether zero values may be skipped.</param>
+    /// <returns>The final accumulator state.</returns>
     public TState Fold2<TOther, TState>(Func<TState, T, TOther, TState> f, TState state, Matrix<TOther> other, Zeros zeros = Zeros.AllowSkip)
         where TOther : struct, IEquatable<TOther>, IFormattable
     {
@@ -1847,6 +1944,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Returns a tuple with the index and value of the first element satisfying a predicate, or null if none is found.
     /// Zero elements may be skipped on sparse data structures if allowed (default).
     /// </summary>
+    /// <param name="predicate">The predicate used to test each value.</param>
+    /// <param name="zeros">Controls whether zero values may be skipped.</param>
+    /// <returns>The first matching indexed value, or <c>null</c> if none is found.</returns>
     public Tuple<int, int, T> Find(Func<T, bool> predicate, Zeros zeros = Zeros.AllowSkip)
     {
       return Storage.Find(predicate, zeros);
@@ -1856,6 +1956,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Returns a tuple with the index and values of the first element pair of two matrices of the same size satisfying a predicate, or null if none is found.
     /// Zero elements may be skipped on sparse data structures if allowed (default).
     /// </summary>
+    /// <typeparam name="TOther">The element type of the other matrix.</typeparam>
+    /// <param name="predicate">The predicate used to test each pair of values.</param>
+    /// <param name="other">The other matrix supplying the second value of each pair.</param>
+    /// <param name="zeros">Controls whether zero values may be skipped.</param>
+    /// <returns>The first matching indexed value pair, or <c>null</c> if none is found.</returns>
     public Tuple<int, int, T, TOther> Find2<TOther>(Func<T, TOther, bool> predicate, Matrix<TOther> other, Zeros zeros = Zeros.AllowSkip)
         where TOther : struct, IEquatable<TOther>, IFormattable
     {
@@ -1866,6 +1971,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Returns true if at least one element satisfies a predicate.
     /// Zero elements may be skipped on sparse data structures if allowed (default).
     /// </summary>
+    /// <param name="predicate">The predicate used to test each value.</param>
+    /// <param name="zeros">Controls whether zero values may be skipped.</param>
+    /// <returns><see langword="true"/> if any element satisfies the predicate; otherwise, <see langword="false"/>.</returns>
     public bool Exists(Func<T, bool> predicate, Zeros zeros = Zeros.AllowSkip)
     {
       return Storage.Find(predicate, zeros) != null;
@@ -1875,6 +1983,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Returns true if at least one element pairs of two matrices of the same size satisfies a predicate.
     /// Zero elements may be skipped on sparse data structures if allowed (default).
     /// </summary>
+    /// <typeparam name="TOther">The element type of the other matrix.</typeparam>
+    /// <param name="predicate">The predicate used to test each pair of values.</param>
+    /// <param name="other">The other matrix supplying the second value of each pair.</param>
+    /// <param name="zeros">Controls whether zero values may be skipped.</param>
+    /// <returns><see langword="true"/> if any element pair satisfies the predicate; otherwise, <see langword="false"/>.</returns>
     public bool Exists2<TOther>(Func<T, TOther, bool> predicate, Matrix<TOther> other, Zeros zeros = Zeros.AllowSkip)
         where TOther : struct, IEquatable<TOther>, IFormattable
     {
@@ -1885,6 +1998,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Returns true if all elements satisfy a predicate.
     /// Zero elements may be skipped on sparse data structures if allowed (default).
     /// </summary>
+    /// <param name="predicate">The predicate used to test each value.</param>
+    /// <param name="zeros">Controls whether zero values may be skipped.</param>
+    /// <returns><see langword="true"/> if all elements satisfy the predicate; otherwise, <see langword="false"/>.</returns>
     public bool ForAll(Func<T, bool> predicate, Zeros zeros = Zeros.AllowSkip)
     {
       return Storage.Find(x => !predicate(x), zeros) == null;
@@ -1894,6 +2010,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Returns true if all element pairs of two matrices of the same size satisfy a predicate.
     /// Zero elements may be skipped on sparse data structures if allowed (default).
     /// </summary>
+    /// <typeparam name="TOther">The element type of the other matrix.</typeparam>
+    /// <param name="predicate">The predicate used to test each pair of values.</param>
+    /// <param name="other">The other matrix supplying the second value of each pair.</param>
+    /// <param name="zeros">Controls whether zero values may be skipped.</param>
+    /// <returns><see langword="true"/> if all element pairs satisfy the predicate; otherwise, <see langword="false"/>.</returns>
     public bool ForAll2<TOther>(Func<T, TOther, bool> predicate, Matrix<TOther> other, Zeros zeros = Zeros.AllowSkip)
         where TOther : struct, IEquatable<TOther>, IFormattable
     {
@@ -1901,16 +2022,27 @@ namespace Altaxo.Calc.LinearAlgebra
     }
   }
 
+  /// <summary>
+  /// Provides a debugger view for <see cref="Matrix{T}"/> instances.
+  /// </summary>
+  /// <typeparam name="T">The matrix element type.</typeparam>
   internal class MatrixDebuggingView<T>
       where T : struct, IEquatable<T>, IFormattable
   {
     private readonly Matrix<T> _matrix;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MatrixDebuggingView{T}"/> class.
+    /// </summary>
+    /// <param name="matrix">The matrix to expose in the debugger.</param>
     public MatrixDebuggingView(Matrix<T> matrix)
     {
       _matrix = matrix;
     }
 
+    /// <summary>
+    /// Gets the matrix items as a two-dimensional array.
+    /// </summary>
     [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
     public T[,] Items => _matrix.ToArray();
   }

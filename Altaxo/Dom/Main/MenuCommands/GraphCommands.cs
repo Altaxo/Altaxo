@@ -67,6 +67,7 @@ namespace Altaxo.Graph.Commands
     /// Determines the currently active graph controller and issues the command to that controller by calling
     /// <see cref="Run"/> with the controller as a parameter.
     /// </summary>
+    /// <param name="parameter">The command parameter that may contain the active view context.</param>
     public override void Execute(object parameter)
     {
       if (!(parameter is IViewContent viewContent))

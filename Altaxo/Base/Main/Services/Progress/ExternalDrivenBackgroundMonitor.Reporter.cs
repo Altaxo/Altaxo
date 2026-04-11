@@ -80,6 +80,13 @@ namespace Altaxo.Main.Services
       /// <summary>
       /// Initializes a new instance of the <see cref="Reporter"/> class.
       /// </summary>
+      /// <param name="root">The root background monitor.</param>
+      /// <param name="parent">The parent reporter, if any.</param>
+      /// <param name="level">The nesting level of this reporter.</param>
+      /// <param name="fractionOfWorkOfParent">The fraction of the parent's work represented by this reporter.</param>
+      /// <param name="taskName">The task name.</param>
+      /// <param name="cancellationToken">The soft-cancellation token.</param>
+      /// <param name="cancellationTokenHard">The hard-cancellation token.</param>
       public Reporter(
         ExternalDrivenBackgroundMonitor root,
         Reporter? parent,
@@ -109,6 +116,10 @@ namespace Altaxo.Main.Services
       /// <summary>
       /// Creates a subtask with explicit cancellation tokens.
       /// </summary>
+      /// <param name="fractionOfWork">The fraction of work represented by the subtask.</param>
+      /// <param name="cancellationTokenSoft">The soft-cancellation token.</param>
+      /// <param name="cancellationTokenHard">The hard-cancellation token.</param>
+      /// <returns>A reporter for the created subtask.</returns>
       public IProgressReporter GetSubTask(double fractionOfWork, CancellationToken cancellationTokenSoft, CancellationToken cancellationTokenHard)
       {
         return CreateSubTask(fractionOfWork, cancellationTokenSoft, cancellationTokenHard, TaskName);

@@ -51,6 +51,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex.Factorization
     /// <param name="matrix">The matrix to factor.</param>
     /// <exception cref="ArgumentNullException">If <paramref name="matrix"/> is <c>null</c>.</exception>
     /// <exception cref="ArgumentException">If <paramref name="matrix"/> is not a square matrix.</exception>
+    /// <returns>The LU factorization of <paramref name="matrix"/>.</returns>
     public static DenseLU Create(DenseMatrix matrix)
     {
       if (matrix == null)

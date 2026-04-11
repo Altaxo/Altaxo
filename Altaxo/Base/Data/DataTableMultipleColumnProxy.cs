@@ -51,6 +51,10 @@ namespace Altaxo.Data
       private List<IReadableColumnProxy> _dataColumns = new List<IReadableColumnProxy>();
       private int? _maximumNumberOfColumns;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ColumnBundleInfo"/> class.
+      /// </summary>
+      /// <param name="maximumNumberOfColumns">The maximum number of columns allowed in the bundle.</param>
       internal ColumnBundleInfo(int? maximumNumberOfColumns)
       {
         if (maximumNumberOfColumns < 1)
@@ -58,15 +62,28 @@ namespace Altaxo.Data
         _maximumNumberOfColumns = maximumNumberOfColumns;
       }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ColumnBundleInfo"/> class.
+      /// </summary>
       internal ColumnBundleInfo()
         : this(int.MaxValue)
       {
       }
 
+      /// <summary>
+      /// Gets the maximum number of columns allowed in the bundle.
+      /// </summary>
       internal int? MaximumNumberOfColumns { get { return _maximumNumberOfColumns; } }
 
+      /// <summary>
+      /// Gets the column proxies contained in the bundle.
+      /// </summary>
       internal List<IReadableColumnProxy> DataColumns { get { return _dataColumns; } }
 
+      /// <summary>
+      /// Creates a copy of the bundle information.
+      /// </summary>
+      /// <returns>A copy of the bundle information.</returns>
       public object Clone()
       {
         var result = new ColumnBundleInfo

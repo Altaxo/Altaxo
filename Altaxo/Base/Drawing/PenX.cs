@@ -1347,6 +1347,9 @@ if (0 != (cp & PenX.Configured.Width))
     /// <summary>
     /// Determines whether two <see cref="PenX"/> instances are equal.
     /// </summary>
+    /// <param name="x">The first pen.</param>
+    /// <param name="y">The second pen.</param>
+    /// <returns><see langword="true"/> if both pens are equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator ==(PenX? x, PenX? y)
     {
       return object.ReferenceEquals(x, y) || (x is not null && y is not null && x.Equals(y, true));
@@ -1354,6 +1357,9 @@ if (0 != (cp & PenX.Configured.Width))
     /// <summary>
     /// Determines whether two <see cref="PenX"/> instances are not equal.
     /// </summary>
+    /// <param name="x">The first pen.</param>
+    /// <param name="y">The second pen.</param>
+    /// <returns><see langword="true"/> if the pens are not equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator !=(PenX? x, PenX? y)
     {
       return !(x == y);

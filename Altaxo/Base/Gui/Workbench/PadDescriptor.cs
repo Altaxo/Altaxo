@@ -79,6 +79,7 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Creates a new pad descriptor from the AddIn tree.
     /// </summary>
+    /// <param name="codon">The AddIn tree codon describing the pad.</param>
     public PadDescriptor(Codon codon)
     {
       if (codon is null)
@@ -106,6 +107,9 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Creates a pad descriptor for the specified pad type.
     /// </summary>
+    /// <param name="padType">The type implementing the pad content.</param>
+    /// <param name="title">The pad title.</param>
+    /// <param name="icon">The icon resource name.</param>
     public PadDescriptor(Type padType, string title, string icon)
     {
       this.padType = padType ?? throw new ArgumentNullException(nameof(padType));

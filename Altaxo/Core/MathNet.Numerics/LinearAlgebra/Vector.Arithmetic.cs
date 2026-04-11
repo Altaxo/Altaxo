@@ -1579,6 +1579,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes the outer product M[i,j] = u[i]*v[j] of this and another vector.
     /// </summary>
     /// <param name="other">The other vector</param>
+    /// <returns>A matrix containing the outer product of this vector and <paramref name="other"/>.</returns>
     public Matrix<T> OuterProduct(Vector<T> other)
     {
       var matrix = Matrix<T>.Build.SameAs(this, Count, other.Count);

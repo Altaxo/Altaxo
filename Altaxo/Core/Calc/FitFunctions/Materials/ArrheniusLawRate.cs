@@ -78,6 +78,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
     /// Returns a copy of this instance with the provided energy unit for the parameter.
     /// </summary>
     /// <param name="value">The new energy unit.</param>
+    /// <returns>A copy of this instance with the requested energy unit, or this instance if unchanged.</returns>
     [Category("OptionsForParameters")]
     public ArrheniusLawRate WithParameterEnergyRepresentation(EnergyRepresentation value)
     {
@@ -101,6 +102,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
     /// Returns a copy of this instance with the provided temperature unit for the independent variable.
     /// </summary>
     /// <param name="value">The new temperature unit.</param>
+    /// <returns>A copy of this instance with the requested temperature unit, or this instance if unchanged.</returns>
     [Category("OptionsForIndependentVariables")]
     public ArrheniusLawRate WithIndependentVariableRepresentation(TemperatureRepresentation value)
     {

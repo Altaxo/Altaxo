@@ -88,6 +88,7 @@ namespace Altaxo.Graph.Graph3D.Commands
     /// <summary>
     /// This command will rescale all axes in all layers
     /// </summary>
+    /// <param name="doc">The graph document whose layers should rescale their axes.</param>
     public static void OnUserRescaledAxes(this GraphDocument doc)
     {
       doc.RootLayer.ExecuteFromTopmostChildToRoot(

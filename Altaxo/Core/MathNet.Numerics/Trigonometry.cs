@@ -106,6 +106,8 @@ namespace Altaxo.Calc
     /// <summary>
     /// Normalized Sinc function. sinc(x) = sin(pi*x)/(pi*x).
     /// </summary>
+    /// <param name="x">The input value to the sinc function.</param>
+    /// <returns>The value of sinc(x).</returns>
     public static double Sinc(double x)
     {
       double z = Math.PI * x;

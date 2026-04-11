@@ -183,6 +183,7 @@ namespace Altaxo.Gui.Common.MultiRename
     /// <summary>
     /// Adds the provided objects to the list of objects to be renamed.
     /// </summary>
+    /// <param name="list">The objects to add.</param>
     public void AddObjectsToRename(IEnumerable<object> list)
     {
       foreach (object o in list)

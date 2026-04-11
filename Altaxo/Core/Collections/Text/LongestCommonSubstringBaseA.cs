@@ -134,7 +134,9 @@ namespace Altaxo.Collections.Text
     /// <summary>Keeps a linked list of <see cref="LLElement"/>s.</summary>
     protected LinkedList _ddlList;
 
-    /// <summary></summary>
+    /// <summary>
+    /// Stores the LCP values from the previous iteration.
+    /// </summary>
     protected int[]? _lastLcp;
 
     /// <summary>Initializes a new instance of the problem solver for the longest common substring problem.</summary>

@@ -146,6 +146,9 @@ namespace Altaxo.Drawing
     /// <summary>
     /// Determines whether two <see cref="BrushXEnv"/> values are equal.
     /// </summary>
+    /// <param name="x">The first brush environment.</param>
+    /// <param name="y">The second brush environment.</param>
+    /// <returns><see langword="true"/> if both brush environments are equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator ==(BrushXEnv x, BrushXEnv y)
     {
       return x.Equals(y);
@@ -153,6 +156,9 @@ namespace Altaxo.Drawing
     /// <summary>
     /// Determines whether two <see cref="BrushXEnv"/> values are not equal.
     /// </summary>
+    /// <param name="x">The first brush environment.</param>
+    /// <param name="y">The second brush environment.</param>
+    /// <returns><see langword="true"/> if the brush environments are not equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator !=(BrushXEnv x, BrushXEnv y)
     {
       return !x.Equals(y);

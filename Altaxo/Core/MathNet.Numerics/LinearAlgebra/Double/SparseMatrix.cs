@@ -59,6 +59,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// Intended for advanced scenarios where you're working directly with
     /// storage for performance or interop reasons.
     /// </summary>
+    /// <param name="storage">The storage backing the matrix.</param>
     public SparseMatrix(SparseCompressedRowMatrixStorage<double> storage)
         : base(storage)
     {
@@ -69,6 +70,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// Create a new square sparse matrix with the given number of rows and columns.
     /// All cells of the matrix will be initialized to zero.
     /// </summary>
+    /// <param name="order">The number of rows and columns.</param>
     /// <exception cref="ArgumentException">If the order is less than one.</exception>
     public SparseMatrix(int order)
         : this(order, order)
@@ -79,6 +81,8 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// Create a new sparse matrix with the given number of rows and columns.
     /// All cells of the matrix will be initialized to zero.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
     /// <exception cref="ArgumentException">If the row or column count is less than one.</exception>
     public SparseMatrix(int rows, int columns)
         : this(new SparseCompressedRowMatrixStorage<double>(rows, columns))
@@ -90,6 +94,8 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// This new matrix will be independent from the other matrix.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="matrix">The matrix to copy.</param>
+    /// <returns>A sparse matrix copied from <paramref name="matrix"/>.</returns>
     public static SparseMatrix OfMatrix(Matrix<double> matrix)
     {
       return new SparseMatrix(SparseCompressedRowMatrixStorage<double>.OfMatrix(matrix.Storage));
@@ -100,6 +106,8 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// This new matrix will be independent from the provided array.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="array">The array to copy.</param>
+    /// <returns>A sparse matrix copied from <paramref name="array"/>.</returns>
     public static SparseMatrix OfArray(double[,] array)
     {
       return new SparseMatrix(SparseCompressedRowMatrixStorage<double>.OfArray(array));
@@ -111,6 +119,10 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// This new matrix will be independent from the enumerable.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="enumerable">The indexed values to copy.</param>
+    /// <returns>A sparse matrix containing the indexed values.</returns>
     public static SparseMatrix OfIndexed(int rows, int columns, IEnumerable<Tuple<int, int, double>> enumerable)
     {
       return new SparseMatrix(SparseCompressedRowMatrixStorage<double>.OfIndexedEnumerable(rows, columns, enumerable));
@@ -122,6 +134,10 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// This new matrix will be independent from the enumerable.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="enumerable">The indexed values to copy.</param>
+    /// <returns>A sparse matrix containing the indexed values.</returns>
     public static SparseMatrix OfIndexed(int rows, int columns, IEnumerable<(int, int, double)> enumerable)
     {
       return new SparseMatrix(SparseCompressedRowMatrixStorage<double>.OfIndexedEnumerable(rows, columns, enumerable));
@@ -134,6 +150,10 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// A new memory block will be allocated for storing the vector.
     /// </summary>
     /// <seealso href="http://en.wikipedia.org/wiki/Row-major_order"/>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="rowMajor">The row-major values to copy.</param>
+    /// <returns>A sparse matrix containing the supplied row-major values.</returns>
     public static SparseMatrix OfRowMajor(int rows, int columns, IEnumerable<double> rowMajor)
     {
       return new SparseMatrix(SparseCompressedRowMatrixStorage<double>.OfRowMajorEnumerable(rows, columns, rowMajor));
@@ -146,6 +166,10 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
     /// <seealso href="http://en.wikipedia.org/wiki/Row-major_order"/>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="columnMajor">The column-major values to copy.</param>
+    /// <returns>A sparse matrix containing the supplied column-major values.</returns>
     public static SparseMatrix OfColumnMajor(int rows, int columns, IList<double> columnMajor)
     {
       return new SparseMatrix(SparseCompressedRowMatrixStorage<double>.OfColumnMajorList(rows, columns, columnMajor));
@@ -157,6 +181,8 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// This new matrix will be independent from the enumerables.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="data">The column sequences to copy.</param>
+    /// <returns>A sparse matrix containing the supplied columns.</returns>
     public static SparseMatrix OfColumns(IEnumerable<IEnumerable<double>> data)
     {
       return OfColumnArrays(data.Select(v => v.ToArray()).ToArray());
@@ -168,6 +194,10 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// This new matrix will be independent from the enumerables.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="data">The column sequences to copy.</param>
+    /// <returns>A sparse matrix containing the supplied columns.</returns>
     public static SparseMatrix OfColumns(int rows, int columns, IEnumerable<IEnumerable<double>> data)
     {
       return new SparseMatrix(SparseCompressedRowMatrixStorage<double>.OfColumnEnumerables(rows, columns, data));
@@ -178,6 +208,8 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// This new matrix will be independent from the arrays.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="columns">The column arrays to copy.</param>
+    /// <returns>A sparse matrix containing the supplied column arrays.</returns>
     public static SparseMatrix OfColumnArrays(params double[][] columns)
     {
       return new SparseMatrix(SparseCompressedRowMatrixStorage<double>.OfColumnArrays(columns));
@@ -188,6 +220,8 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// This new matrix will be independent from the arrays.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="columns">The column arrays to copy.</param>
+    /// <returns>A sparse matrix containing the supplied column arrays.</returns>
     public static SparseMatrix OfColumnArrays(IEnumerable<double[]> columns)
     {
       return new SparseMatrix(SparseCompressedRowMatrixStorage<double>.OfColumnArrays((columns as double[][]) ?? columns.ToArray()));
@@ -198,6 +232,8 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// This new matrix will be independent from the vectors.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="columns">The column vectors to copy.</param>
+    /// <returns>A sparse matrix containing the supplied column vectors.</returns>
     public static SparseMatrix OfColumnVectors(params Vector<double>[] columns)
     {
       var storage = new VectorStorage<double>[columns.Length];
@@ -213,6 +249,8 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// This new matrix will be independent from the vectors.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="columns">The column vectors to copy.</param>
+    /// <returns>A sparse matrix containing the supplied column vectors.</returns>
     public static SparseMatrix OfColumnVectors(IEnumerable<Vector<double>> columns)
     {
       return new SparseMatrix(SparseCompressedRowMatrixStorage<double>.OfColumnVectors(columns.Select(c => c.Storage).ToArray()));
@@ -224,6 +262,8 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// This new matrix will be independent from the enumerables.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="data">The row sequences to copy.</param>
+    /// <returns>A sparse matrix containing the supplied rows.</returns>
     public static SparseMatrix OfRows(IEnumerable<IEnumerable<double>> data)
     {
       return OfRowArrays(data.Select(v => v.ToArray()).ToArray());
@@ -235,6 +275,10 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// This new matrix will be independent from the enumerables.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="data">The row sequences to copy.</param>
+    /// <returns>A sparse matrix containing the supplied rows.</returns>
     public static SparseMatrix OfRows(int rows, int columns, IEnumerable<IEnumerable<double>> data)
     {
       return new SparseMatrix(SparseCompressedRowMatrixStorage<double>.OfRowEnumerables(rows, columns, data));
@@ -245,6 +289,8 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// This new matrix will be independent from the arrays.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The row arrays to copy.</param>
+    /// <returns>A sparse matrix containing the supplied row arrays.</returns>
     public static SparseMatrix OfRowArrays(params double[][] rows)
     {
       return new SparseMatrix(SparseCompressedRowMatrixStorage<double>.OfRowArrays(rows));
@@ -255,6 +301,8 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// This new matrix will be independent from the arrays.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The row arrays to copy.</param>
+    /// <returns>A sparse matrix containing the supplied row arrays.</returns>
     public static SparseMatrix OfRowArrays(IEnumerable<double[]> rows)
     {
       return new SparseMatrix(SparseCompressedRowMatrixStorage<double>.OfRowArrays((rows as double[][]) ?? rows.ToArray()));
@@ -265,6 +313,8 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// This new matrix will be independent from the vectors.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The row vectors to copy.</param>
+    /// <returns>A sparse matrix containing the supplied row vectors.</returns>
     public static SparseMatrix OfRowVectors(params Vector<double>[] rows)
     {
       var storage = new VectorStorage<double>[rows.Length];
@@ -280,6 +330,8 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// This new matrix will be independent from the vectors.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The row vectors to copy.</param>
+    /// <returns>A sparse matrix containing the supplied row vectors.</returns>
     public static SparseMatrix OfRowVectors(IEnumerable<Vector<double>> rows)
     {
       return new SparseMatrix(SparseCompressedRowMatrixStorage<double>.OfRowVectors(rows.Select(r => r.Storage).ToArray()));
@@ -290,6 +342,8 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// This new matrix will be independent from the vector.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="diagonal">The diagonal values to copy.</param>
+    /// <returns>A sparse matrix with the supplied diagonal values.</returns>
     public static SparseMatrix OfDiagonalVector(Vector<double> diagonal)
     {
       var m = new SparseMatrix(diagonal.Count, diagonal.Count);
@@ -302,6 +356,10 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// This new matrix will be independent from the vector.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="diagonal">The diagonal values to copy.</param>
+    /// <returns>A sparse matrix with the supplied diagonal values.</returns>
     public static SparseMatrix OfDiagonalVector(int rows, int columns, Vector<double> diagonal)
     {
       var m = new SparseMatrix(rows, columns);
@@ -314,6 +372,8 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// This new matrix will be independent from the array.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="diagonal">The diagonal values to copy.</param>
+    /// <returns>A sparse matrix with the supplied diagonal values.</returns>
     public static SparseMatrix OfDiagonalArray(double[] diagonal)
     {
       var m = new SparseMatrix(diagonal.Length, diagonal.Length);
@@ -326,6 +386,10 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// This new matrix will be independent from the array.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="diagonal">The diagonal values to copy.</param>
+    /// <returns>A sparse matrix with the supplied diagonal values.</returns>
     public static SparseMatrix OfDiagonalArray(int rows, int columns, double[] diagonal)
     {
       var m = new SparseMatrix(rows, columns);
@@ -336,6 +400,10 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// <summary>
     /// Create a new sparse matrix and initialize each value to the same provided value.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="value">The value assigned to each entry.</param>
+    /// <returns>A sparse matrix initialized with <paramref name="value"/>.</returns>
     public static SparseMatrix Create(int rows, int columns, double value)
     {
       if (value == 0d) return new SparseMatrix(rows, columns);
@@ -345,6 +413,10 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// <summary>
     /// Create a new sparse matrix and initialize each value using the provided init function.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="init">The initializer used to populate each entry.</param>
+    /// <returns>A sparse matrix initialized by <paramref name="init"/>.</returns>
     public static SparseMatrix Create(int rows, int columns, Func<int, int, double> init)
     {
       return new SparseMatrix(SparseCompressedRowMatrixStorage<double>.OfInit(rows, columns, init));
@@ -353,6 +425,10 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// <summary>
     /// Create a new diagonal sparse matrix and initialize each diagonal value to the same provided value.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="value">The value assigned to each diagonal entry.</param>
+    /// <returns>A diagonal sparse matrix initialized with <paramref name="value"/>.</returns>
     public static SparseMatrix CreateDiagonal(int rows, int columns, double value)
     {
       if (value == 0d) return new SparseMatrix(rows, columns);
@@ -362,6 +438,10 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// <summary>
     /// Create a new diagonal sparse matrix and initialize each diagonal value using the provided init function.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="init">The initializer used to populate each diagonal entry.</param>
+    /// <returns>A diagonal sparse matrix initialized by <paramref name="init"/>.</returns>
     public static SparseMatrix CreateDiagonal(int rows, int columns, Func<int, double> init)
     {
       return new SparseMatrix(SparseCompressedRowMatrixStorage<double>.OfDiagonalInit(rows, columns, init));
@@ -370,6 +450,8 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// <summary>
     /// Create a new square sparse identity matrix where each diagonal value is set to One.
     /// </summary>
+    /// <param name="order">The number of rows and columns.</param>
+    /// <returns>An identity sparse matrix of the specified order.</returns>
     public static SparseMatrix CreateIdentity(int order)
     {
       return new SparseMatrix(SparseCompressedRowMatrixStorage<double>.OfDiagonalInit(order, order, _ => One));
@@ -1337,9 +1419,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double
       }
     }
 
-    /// <summary>
-    /// Evaluates whether this matrix is symmetric.
-    /// </summary>
+    /// <inheritdoc/>
     public override bool IsSymmetric()
     {
       if (RowCount != ColumnCount)

@@ -336,6 +336,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     /// <summary>
     /// Occurs if the selection for the matching tables has changed.
     /// </summary>
+    /// <param name="tag">The selected data table.</param>
     public void EhView_MatchingTableSelectionChanged(DataTable tag)
     {
       if (object.ReferenceEquals(_doc.NewTable, tag)) // then nothing will change

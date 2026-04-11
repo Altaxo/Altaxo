@@ -57,6 +57,7 @@ namespace Altaxo.Calc
     /// Returns the modified Struve function of order 0.
     /// </summary>
     /// <param name="x">The value to compute the function of.</param>
+    /// <returns>The value of the modified Struve function L0 at <paramref name="x"/>.</returns>
     public static double StruveL0(double x)
     {
       //*********************************************************************72
@@ -288,6 +289,7 @@ namespace Altaxo.Calc
     /// Returns the modified Struve function of order 1.
     /// </summary>
     /// <param name="x">The value to compute the function of.</param>
+    /// <returns>The value of the modified Struve function L1 at <paramref name="x"/>.</returns>
     public static double StruveL1(double x)
     {
       //*********************************************************************72
@@ -533,6 +535,7 @@ namespace Altaxo.Calc
     /// Returns the difference between the Bessel I0 and Struve L0 functions.
     /// </summary>
     /// <param name="x">The value to compute the function of.</param>
+    /// <returns>The difference between <c>I0(x)</c> and <c>L0(x)</c>.</returns>
     public static double BesselI0MStruveL0(double x)
     {
       // TODO: way off for large x (e.g. 100) - needs direct approximation
@@ -543,6 +546,7 @@ namespace Altaxo.Calc
     /// Returns the difference between the Bessel I1 and Struve L1 functions.
     /// </summary>
     /// <param name="x">The value to compute the function of.</param>
+    /// <returns>The difference between <c>I1(x)</c> and <c>L1(x)</c>.</returns>
     public static double BesselI1MStruveL1(double x)
     {
       // TODO: way off for large x (e.g. 100) - needs direct approximation

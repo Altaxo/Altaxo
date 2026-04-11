@@ -67,6 +67,9 @@ namespace Altaxo.Calc.Interpolation
     /// <summary>
     /// Create a Bulirsch-Stoer rational interpolation from a set of (x,y) value pairs, sorted ascendingly by x.
     /// </summary>
+    /// <param name="x">The x-values.</param>
+    /// <param name="y">The y-values.</param>
+    /// <returns>The rational interpolator.</returns>
     public static BulirschStoerRationalInterpolation InterpolateSorted(double[] x, double[] y)
     {
       return new BulirschStoerRationalInterpolation(x, y);
@@ -76,6 +79,9 @@ namespace Altaxo.Calc.Interpolation
     /// Create a Bulirsch-Stoer rational interpolation from an unsorted set of (x,y) value pairs.
     /// WARNING: Works in-place and can thus causes the data array to be reordered.
     /// </summary>
+    /// <param name="x">The x-values.</param>
+    /// <param name="y">The y-values.</param>
+    /// <returns>The rational interpolator.</returns>
     public static BulirschStoerRationalInterpolation InterpolateInplace(double[] x, double[] y)
     {
       if (x.Length != y.Length)
@@ -90,6 +96,9 @@ namespace Altaxo.Calc.Interpolation
     /// <summary>
     /// Create a Bulirsch-Stoer rational interpolation from an unsorted set of (x,y) value pairs.
     /// </summary>
+    /// <param name="x">The x-values.</param>
+    /// <param name="y">The y-values.</param>
+    /// <returns>The rational interpolator.</returns>
     public static BulirschStoerRationalInterpolation Interpolate(IEnumerable<double> x, IEnumerable<double> y)
     {
       // note: we must make a copy, even if the input was arrays already
@@ -186,6 +195,7 @@ namespace Altaxo.Calc.Interpolation
     /// Indefinite integral at point t. NOT SUPPORTED.
     /// </summary>
     /// <param name="t">Point t to integrate at.</param>
+    /// <returns>The interpolated indefinite integral at point <paramref name="t"/>.</returns>
     double IInterpolation.Integrate(double t) => throw new NotSupportedException();
 
     /// <summary>
@@ -193,6 +203,7 @@ namespace Altaxo.Calc.Interpolation
     /// </summary>
     /// <param name="a">Left bound of the integration interval [a,b].</param>
     /// <param name="b">Right bound of the integration interval [a,b].</param>
+    /// <returns>The interpolated definite integral over the interval [<paramref name="a"/>, <paramref name="b"/>].</returns>
     double IInterpolation.Integrate(double a, double b) => throw new NotSupportedException();
   }
 }

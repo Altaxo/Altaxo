@@ -60,6 +60,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32.Factorization
     /// <param name="symmetricity">If it is known whether the matrix is symmetric or not the routine can skip checking it itself.</param>
     /// <exception cref="ArgumentNullException">If <paramref name="matrix"/> is <c>null</c>.</exception>
     /// <exception cref="ArgumentException">If EVD algorithm failed to converge with matrix <paramref name="matrix"/>.</exception>
+    /// <returns>The eigenvalue decomposition of <paramref name="matrix"/>.</returns>
     public static DenseEvd Create(DenseMatrix matrix, Symmetricity symmetricity)
     {
       if (matrix.RowCount != matrix.ColumnCount)

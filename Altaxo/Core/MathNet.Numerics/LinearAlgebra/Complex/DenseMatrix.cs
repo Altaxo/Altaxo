@@ -75,6 +75,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// Intended for advanced scenarios where you're working directly with
     /// storage for performance or interop reasons.
     /// </summary>
+    /// <param name="storage">The storage backing this matrix.</param>
     public DenseMatrix(DenseColumnMajorMatrixStorage<Complex> storage)
         : base(storage)
     {
@@ -88,6 +89,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// All cells of the matrix will be initialized to zero.
     /// </summary>
     /// <exception cref="ArgumentException">If the order is less than one.</exception>
+    /// <param name="order">The number of rows and columns.</param>
     public DenseMatrix(int order)
         : this(new DenseColumnMajorMatrixStorage<Complex>(order, order))
     {
@@ -98,6 +100,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// All cells of the matrix will be initialized to zero.
     /// </summary>
     /// <exception cref="ArgumentException">If the row or column count is less than one.</exception>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
     public DenseMatrix(int rows, int columns)
         : this(new DenseColumnMajorMatrixStorage<Complex>(rows, columns))
     {
@@ -109,6 +113,9 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// Very efficient, but changes to the array and the matrix will affect each other.
     /// </summary>
     /// <seealso href="http://en.wikipedia.org/wiki/Row-major_order"/>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="storage">The array backing this matrix.</param>
     public DenseMatrix(int rows, int columns, Complex[] storage)
         : this(new DenseColumnMajorMatrixStorage<Complex>(rows, columns, storage))
     {
@@ -119,6 +126,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// This new matrix will be independent from the other matrix.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="matrix">The matrix to copy.</param>
+    /// <returns>The created dense matrix.</returns>
     public static DenseMatrix OfMatrix(Matrix<Complex> matrix)
     {
       return new DenseMatrix(DenseColumnMajorMatrixStorage<Complex>.OfMatrix(matrix.Storage));
@@ -129,6 +138,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// This new matrix will be independent from the provided array.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="array">The array to copy.</param>
+    /// <returns>The created dense matrix.</returns>
     public static DenseMatrix OfArray(Complex[,] array)
     {
       return new DenseMatrix(DenseColumnMajorMatrixStorage<Complex>.OfArray(array));
@@ -140,6 +151,10 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// This new matrix will be independent from the enumerable.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="enumerable">The indexed values to copy.</param>
+    /// <returns>The created dense matrix.</returns>
     public static DenseMatrix OfIndexed(int rows, int columns, IEnumerable<Tuple<int, int, Complex>> enumerable)
     {
       return new DenseMatrix(DenseColumnMajorMatrixStorage<Complex>.OfIndexedEnumerable(rows, columns, enumerable));
@@ -151,6 +166,10 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// This new matrix will be independent from the enumerable.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="enumerable">The indexed values to copy.</param>
+    /// <returns>The created dense matrix.</returns>
     public static DenseMatrix OfIndexed(int rows, int columns, IEnumerable<(int, int, Complex)> enumerable)
     {
       return new DenseMatrix(DenseColumnMajorMatrixStorage<Complex>.OfIndexedEnumerable(rows, columns, enumerable));
@@ -162,6 +181,10 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// This new matrix will be independent from the enumerable.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="columnMajor">The column-major values to copy.</param>
+    /// <returns>The created dense matrix.</returns>
     public static DenseMatrix OfColumnMajor(int rows, int columns, IEnumerable<Complex> columnMajor)
     {
       return new DenseMatrix(DenseColumnMajorMatrixStorage<Complex>.OfColumnMajorEnumerable(rows, columns, columnMajor));
@@ -173,6 +196,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// This new matrix will be independent from the enumerables.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="data">The column sequences to copy.</param>
+    /// <returns>The created dense matrix.</returns>
     public static DenseMatrix OfColumns(IEnumerable<IEnumerable<Complex>> data)
     {
       return OfColumnArrays(data.Select(v => v.ToArray()).ToArray());
@@ -184,6 +209,10 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// This new matrix will be independent from the enumerables.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="data">The column sequences to copy.</param>
+    /// <returns>The created dense matrix.</returns>
     public static DenseMatrix OfColumns(int rows, int columns, IEnumerable<IEnumerable<Complex>> data)
     {
       return new DenseMatrix(DenseColumnMajorMatrixStorage<Complex>.OfColumnEnumerables(rows, columns, data));
@@ -194,6 +223,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// This new matrix will be independent from the arrays.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="columns">The column arrays to copy.</param>
+    /// <returns>The created dense matrix.</returns>
     public static DenseMatrix OfColumnArrays(params Complex[][] columns)
     {
       return new DenseMatrix(DenseColumnMajorMatrixStorage<Complex>.OfColumnArrays(columns));
@@ -204,6 +235,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// This new matrix will be independent from the arrays.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="columns">The column arrays to copy.</param>
+    /// <returns>The created dense matrix.</returns>
     public static DenseMatrix OfColumnArrays(IEnumerable<Complex[]> columns)
     {
       return new DenseMatrix(DenseColumnMajorMatrixStorage<Complex>.OfColumnArrays((columns as Complex[][]) ?? columns.ToArray()));
@@ -214,6 +247,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// This new matrix will be independent from the vectors.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="columns">The column vectors to copy.</param>
+    /// <returns>The created dense matrix.</returns>
     public static DenseMatrix OfColumnVectors(params Vector<Complex>[] columns)
     {
       var storage = new VectorStorage<Complex>[columns.Length];
@@ -229,6 +264,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// This new matrix will be independent from the vectors.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="columns">The column vectors to copy.</param>
+    /// <returns>The created dense matrix.</returns>
     public static DenseMatrix OfColumnVectors(IEnumerable<Vector<Complex>> columns)
     {
       return new DenseMatrix(DenseColumnMajorMatrixStorage<Complex>.OfColumnVectors(columns.Select(c => c.Storage).ToArray()));
@@ -240,6 +277,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// This new matrix will be independent from the enumerables.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="data">The row sequences to copy.</param>
+    /// <returns>The created dense matrix.</returns>
     public static DenseMatrix OfRows(IEnumerable<IEnumerable<Complex>> data)
     {
       return OfRowArrays(data.Select(v => v.ToArray()).ToArray());
@@ -251,6 +290,10 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// This new matrix will be independent from the enumerables.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="data">The row sequences to copy.</param>
+    /// <returns>The created dense matrix.</returns>
     public static DenseMatrix OfRows(int rows, int columns, IEnumerable<IEnumerable<Complex>> data)
     {
       return new DenseMatrix(DenseColumnMajorMatrixStorage<Complex>.OfRowEnumerables(rows, columns, data));
@@ -261,6 +304,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// This new matrix will be independent from the arrays.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The row arrays to copy.</param>
+    /// <returns>The created dense matrix.</returns>
     public static DenseMatrix OfRowArrays(params Complex[][] rows)
     {
       return new DenseMatrix(DenseColumnMajorMatrixStorage<Complex>.OfRowArrays(rows));
@@ -271,6 +316,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// This new matrix will be independent from the arrays.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The row arrays to copy.</param>
+    /// <returns>The created dense matrix.</returns>
     public static DenseMatrix OfRowArrays(IEnumerable<Complex[]> rows)
     {
       return new DenseMatrix(DenseColumnMajorMatrixStorage<Complex>.OfRowArrays((rows as Complex[][]) ?? rows.ToArray()));
@@ -281,6 +328,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// This new matrix will be independent from the vectors.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The row vectors to copy.</param>
+    /// <returns>The created dense matrix.</returns>
     public static DenseMatrix OfRowVectors(params Vector<Complex>[] rows)
     {
       var storage = new VectorStorage<Complex>[rows.Length];
@@ -296,6 +345,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// This new matrix will be independent from the vectors.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The row vectors to copy.</param>
+    /// <returns>The created dense matrix.</returns>
     public static DenseMatrix OfRowVectors(IEnumerable<Vector<Complex>> rows)
     {
       return new DenseMatrix(DenseColumnMajorMatrixStorage<Complex>.OfRowVectors(rows.Select(r => r.Storage).ToArray()));
@@ -306,6 +357,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// This new matrix will be independent from the vector.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="diagonal">The diagonal vector to copy.</param>
+    /// <returns>The created dense matrix.</returns>
     public static DenseMatrix OfDiagonalVector(Vector<Complex> diagonal)
     {
       var m = new DenseMatrix(diagonal.Count, diagonal.Count);
@@ -318,6 +371,10 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// This new matrix will be independent from the vector.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="diagonal">The diagonal vector to copy.</param>
+    /// <returns>The created dense matrix.</returns>
     public static DenseMatrix OfDiagonalVector(int rows, int columns, Vector<Complex> diagonal)
     {
       var m = new DenseMatrix(rows, columns);
@@ -330,6 +387,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// This new matrix will be independent from the array.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="diagonal">The diagonal values to copy.</param>
+    /// <returns>The created dense matrix.</returns>
     public static DenseMatrix OfDiagonalArray(Complex[] diagonal)
     {
       var m = new DenseMatrix(diagonal.Length, diagonal.Length);
@@ -342,6 +401,10 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// This new matrix will be independent from the array.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="diagonal">The diagonal values to copy.</param>
+    /// <returns>The created dense matrix.</returns>
     public static DenseMatrix OfDiagonalArray(int rows, int columns, Complex[] diagonal)
     {
       var m = new DenseMatrix(rows, columns);
@@ -352,6 +415,10 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// <summary>
     /// Create a new dense matrix and initialize each value to the same provided value.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="value">The value assigned to each element.</param>
+    /// <returns>The created dense matrix.</returns>
     public static DenseMatrix Create(int rows, int columns, Complex value)
     {
       if (value == Complex.Zero) return new DenseMatrix(rows, columns);
@@ -361,6 +428,10 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// <summary>
     /// Create a new dense matrix and initialize each value using the provided init function.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="init">The initialization function for each element.</param>
+    /// <returns>The created dense matrix.</returns>
     public static DenseMatrix Create(int rows, int columns, Func<int, int, Complex> init)
     {
       return new DenseMatrix(DenseColumnMajorMatrixStorage<Complex>.OfInit(rows, columns, init));
@@ -369,6 +440,10 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// <summary>
     /// Create a new diagonal dense matrix and initialize each diagonal value to the same provided value.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="value">The value assigned to each diagonal element.</param>
+    /// <returns>The created dense matrix.</returns>
     public static DenseMatrix CreateDiagonal(int rows, int columns, Complex value)
     {
       if (value == Complex.Zero) return new DenseMatrix(rows, columns);
@@ -378,6 +453,10 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// <summary>
     /// Create a new diagonal dense matrix and initialize each diagonal value using the provided init function.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="init">The initialization function for each diagonal element.</param>
+    /// <returns>The created dense matrix.</returns>
     public static DenseMatrix CreateDiagonal(int rows, int columns, Func<int, Complex> init)
     {
       return new DenseMatrix(DenseColumnMajorMatrixStorage<Complex>.OfDiagonalInit(rows, columns, init));
@@ -386,6 +465,8 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// <summary>
     /// Create a new square sparse identity matrix where each diagonal value is set to One.
     /// </summary>
+    /// <param name="order">The number of rows and columns.</param>
+    /// <returns>The created identity matrix.</returns>
     public static DenseMatrix CreateIdentity(int order)
     {
       return new DenseMatrix(DenseColumnMajorMatrixStorage<Complex>.OfDiagonalInit(order, order, _ => One));
@@ -394,6 +475,10 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// <summary>
     /// Create a new dense matrix with values sampled from the provided random distribution.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="distribution">The distribution used to generate values.</param>
+    /// <returns>The created dense matrix.</returns>
     public static DenseMatrix CreateRandom(int rows, int columns, IContinuousDistribution distribution)
     {
       return new DenseMatrix(new DenseColumnMajorMatrixStorage<Complex>(rows, columns, Generate.RandomComplex(rows * columns, distribution)));
@@ -1200,6 +1285,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// <summary>
     /// Evaluates whether this matrix is symmetric.
     /// </summary>
+    /// <returns><see langword="true"/> if the matrix is symmetric; otherwise, <see langword="false"/>.</returns>
     public override bool IsSymmetric()
     {
       if (RowCount != ColumnCount)
@@ -1225,6 +1311,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     /// <summary>
     /// Evaluates whether this matrix is Hermitian (conjugate symmetric).
     /// </summary>
+    /// <returns><see langword="true"/> if the matrix is Hermitian; otherwise, <see langword="false"/>.</returns>
     public override bool IsHermitian()
     {
       if (RowCount != ColumnCount)

@@ -136,8 +136,14 @@ namespace Altaxo.Main.Services
     bool IsFatalEnabled { get; }
   }
 
+  /// <summary>
+  /// Fallback logging service that writes trace output when no other logging service is available.
+  /// </summary>
   internal sealed class FallbackLoggingService : TextWriterLoggingService
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FallbackLoggingService"/> class.
+    /// </summary>
     public FallbackLoggingService() : base(new TraceTextWriter())
     {
     }

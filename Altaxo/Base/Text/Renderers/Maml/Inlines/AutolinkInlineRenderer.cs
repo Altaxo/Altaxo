@@ -33,9 +33,7 @@ namespace Altaxo.Text.Renderers.Maml.Inlines
   /// <seealso cref="MamlObjectRenderer{T}" />
   public class AutolinkInlineRenderer : MamlObjectRenderer<AutolinkInline>
   {
-    /// <summary>
-    /// Writes an auto link.
-    /// </summary>
+    /// <inheritdoc />
     protected override void Write(MamlRenderer renderer, AutolinkInline obj)
     {
       renderer.Push(MamlElements.externalLink);

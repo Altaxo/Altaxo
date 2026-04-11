@@ -64,6 +64,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
     /// <summary>
     /// Handles selection changes of the fit function.
     /// </summary>
+    /// <param name="type">The selected fit-function type.</param>
     protected void EhFitFunctionChanged(Type type)
     {
       if (type is not null && _currentFitFunction?.GetType() != type)

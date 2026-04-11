@@ -94,6 +94,7 @@ namespace Altaxo.Calc.Distributions
     /// Tests whether the provided values are valid parameters for this distribution.
     /// </summary>
     /// <param name="lambda">The lambda (λ) parameter of the Poisson distribution. Range: λ > 0.</param>
+    /// <returns><c>true</c> if the parameter defines a valid Poisson distribution; otherwise, <c>false</c>.</returns>
     public static bool IsValidParameterSet(double lambda)
     {
       return lambda > 0.0;
@@ -385,15 +386,16 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Fills an array with samples generated from the distribution.
     /// </summary>
+    /// <param name="values">The array to fill with samples.</param>
     public void Samples(int[] values)
     {
       SamplesUnchecked(_random, values, _lambda);
     }
 
     /// <summary>
-    /// Samples an array of Poisson distributed random variables.
+    /// Samples a sequence of Poisson distributed random variables.
     /// </summary>
-    /// <returns>a sequence of successes in N trials.</returns>
+    /// <returns>A sequence of samples from the Poisson distribution.</returns>
     public IEnumerable<int> Samples()
     {
       return SamplesUnchecked(_random, _lambda);

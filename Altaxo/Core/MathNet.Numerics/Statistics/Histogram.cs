@@ -93,6 +93,9 @@ namespace Altaxo.Calc.Statistics
     /// <summary>
     /// Initializes a new instance of the Bucket class.
     /// </summary>
+    /// <param name="lowerBound">The lower bound of the bucket.</param>
+    /// <param name="upperBound">The upper bound of the bucket.</param>
+    /// <param name="count">The initial count for the bucket. Defaults to <c>0.0</c>.</param>
     public Bucket(double lowerBound, double upperBound, double count = 0.0)
     {
       if (lowerBound > upperBound)
@@ -178,6 +181,7 @@ namespace Altaxo.Calc.Statistics
     ///  1 if This bucket is lower that the compared bucket
     /// -1 otherwise
     /// </returns>
+    /// <param name="bucket">The bucket to compare with this bucket.</param>
     public int CompareTo(Bucket bucket)
     {
       if (UpperBound > bucket.LowerBound && LowerBound < bucket.LowerBound)
@@ -206,6 +210,8 @@ namespace Altaxo.Calc.Statistics
     /// <c>UpperBound</c> and <c>LowerBound</c> are compared bit-for-bit, but This method tolerates a
     /// difference in <c>Count</c> given by  <seealso cref="Precision.AlmostEqual(double,double)"/>.
     /// </remarks>
+    /// <param name="obj">The object to compare with this bucket.</param>
+    /// <returns><see langword="true"/> if the buckets are considered equal; otherwise, <see langword="false"/>.</returns>
     public override bool Equals(object obj)
     {
       if (!(obj is Bucket))
@@ -222,6 +228,7 @@ namespace Altaxo.Calc.Statistics
     /// <summary>
     /// Provides a hash code for this bucket.
     /// </summary>
+    /// <returns>A hash code for this bucket.</returns>
     public override int GetHashCode()
     {
       return LowerBound.GetHashCode() ^ UpperBound.GetHashCode() ^ Count.GetHashCode();
@@ -230,6 +237,7 @@ namespace Altaxo.Calc.Statistics
     /// <summary>
     /// Formats a human-readable string for this bucket.
     /// </summary>
+    /// <returns>A human-readable string representation of this bucket.</returns>
     public override string ToString()
     {
       return "(" + LowerBound + ";" + UpperBound + "] = " + Count;
@@ -375,10 +383,29 @@ namespace Altaxo.Calc.Statistics
     /// <summary>
     /// Adds a <c>Bucket</c> to the <c>Histogram</c>.
     /// </summary>
+    /// <param name="bucket">The bucket to add to the histogram.</param>
     public void AddBucket(Bucket bucket)
     {
       _buckets.Add(bucket);
       _areBucketsSorted = false;
+    }
+
+    /// <summary>
+    /// Constructs a histogram with explicit bucket boundaries.
+    /// </summary>
+    /// <param name="lowerBound">The lower bound of the histogram.</param>
+    /// <param name="upperBound">The upper bound of the histogram.</param>
+    /// <param name="count">The number of buckets to create.</param>
+    /// <returns>A histogram instance with the specified bucket layout.</returns>
+    public static Histogram CreateExplicit(double lowerBound, double upperBound, int count)
+    {
+      var hist = new Histogram();
+      double width = (upperBound - lowerBound) / count;
+      for (int i = 0; i < count; i++)
+      {
+        hist.AddBucket(new Bucket(lowerBound + i * width, lowerBound + (i + 1) * width));
+      }
+      return hist;
     }
 
     /// <summary>
@@ -471,6 +498,7 @@ namespace Altaxo.Calc.Statistics
     /// <summary>
     /// Gets the total number of datapoints in the histogram.
     /// </summary>
+    /// <returns>The total number of datapoints across all buckets.</returns>
     public double DataCount
     {
       get
@@ -489,6 +517,7 @@ namespace Altaxo.Calc.Statistics
     /// <summary>
     /// Prints the buckets contained in the <see cref="Histogram"/>.
     /// </summary>
+    /// <returns>A string containing the formatted histogram buckets.</returns>
     public override string ToString()
     {
       var sb = new StringBuilder();

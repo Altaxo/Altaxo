@@ -520,6 +520,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>
     /// Copies values from another <see cref="LinePlotStyle"/> instance.
     /// </summary>
+    /// <param name="from">The instance to copy from.</param>
+    /// <param name="eventFiring">The event firing mode to use when resuming notifications.</param>
     [MemberNotNull(nameof(_linePen), nameof(_connectionStyle))]
     public void CopyFrom(LinePlotStyle from, Main.EventFiring eventFiring)
     {
@@ -595,6 +597,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>
     /// Initializes a new instance of the <see cref="LinePlotStyle"/> class for deserialization.
     /// </summary>
+    /// <param name="info">The deserialization information.</param>
     protected LinePlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
@@ -605,6 +608,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>
     /// Initializes a new instance of the <see cref="LinePlotStyle"/> class for old-format deserialization.
     /// </summary>
+    /// <param name="info">The deserialization information.</param>
+    /// <param name="oldDeserializationRequiresFullConstruction">A value indicating whether old deserialization requires full construction.</param>
     internal LinePlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, bool oldDeserializationRequiresFullConstruction)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
@@ -621,6 +626,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>
     /// Initializes a new instance of the <see cref="LinePlotStyle"/> class.
     /// </summary>
+    /// <param name="context">The property context.</param>
     public LinePlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       var penWidth = GraphDocument.GetDefaultPenWidth(context);
@@ -635,6 +641,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>
     /// Initializes a new instance of the <see cref="LinePlotStyle"/> class by copying another instance.
     /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public LinePlotStyle(LinePlotStyle from)
     {
       CopyFrom(from, Main.EventFiring.Suppressed);
@@ -937,6 +944,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>
     /// Paints a sample symbol for this plot style.
     /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="bounds">The bounds used to paint the sample symbol.</param>
+    /// <returns>The bounds occupied by the painted symbol.</returns>
     public RectangleF PaintSymbol(System.Drawing.Graphics g, System.Drawing.RectangleF bounds)
     {
       if (!LineConnectionStyles.NoConnection.Instance.Equals(_connectionStyle))
@@ -971,6 +981,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>
     /// Paints the line plot.
     /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="layer">The plot layer.</param>
+    /// <param name="pdata">The processed plot data for the current item.</param>
+    /// <param name="prevItemData">The processed plot data for the previous item, if available.</param>
+    /// <param name="nextItemData">The processed plot data for the next item, if available.</param>
     public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData? prevItemData, Processed2DPlotData? nextItemData)
     {
       if (_connectionStyle is LineConnectionStyles.NoConnection)
@@ -1062,6 +1077,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>
     /// Adds the fill path for this line plot to the specified graphics path.
     /// </summary>
+    /// <param name="gp">The graphics path to extend.</param>
+    /// <param name="layer">The plot layer.</param>
+    /// <param name="pdata">The processed plot data.</param>
+    /// <param name="fillDirection">The fill direction.</param>
     public void GetFillPath(GraphicsPath gp, IPlotArea layer, Processed2DPlotData pdata, CSPlaneID fillDirection)
     {
 

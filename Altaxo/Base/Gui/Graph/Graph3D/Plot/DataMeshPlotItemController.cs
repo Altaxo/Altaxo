@@ -56,6 +56,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the available tabs for editing the plot item.
+    /// </summary>
     public SelectableListNodeList Tabs { get; } = new();
 
     private int? _selectedTab;

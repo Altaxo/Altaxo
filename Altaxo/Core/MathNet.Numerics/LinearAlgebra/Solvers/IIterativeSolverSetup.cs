@@ -36,6 +36,7 @@ namespace Altaxo.Calc.LinearAlgebra.Solvers
   /// specific settings. This interface is used to pass iterative solver creation
   /// setup information around.
   /// </summary>
+  /// <typeparam name="T">The numeric element type.</typeparam>
   public interface IIterativeSolverSetup<T> where T : struct, IEquatable<T>, IFormattable
   {
     /// <summary>
@@ -51,11 +52,13 @@ namespace Altaxo.Calc.LinearAlgebra.Solvers
     /// <summary>
     /// Creates the iterative solver to be used.
     /// </summary>
+    /// <returns>The configured iterative solver.</returns>
     public IIterativeSolver<T> CreateSolver();
 
     /// <summary>
     /// Creates the preconditioner to be used by default (can be overwritten).
     /// </summary>
+    /// <returns>The configured default preconditioner.</returns>
     public IPreconditioner<T> CreatePreconditioner();
 
     /// <summary>

@@ -3,8 +3,19 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization.TrustRegion.Subproblems
 {
+  /// <summary>
+  /// Provides helper methods for trust-region subproblems.
+  /// </summary>
   internal static class Util
   {
+    /// <summary>
+    /// Finds the interpolation factors for the intersection of the trust-region boundary.
+    /// </summary>
+    /// <param name="alpha">The scaling factor of the steepest-descent step.</param>
+    /// <param name="sd">The steepest-descent direction.</param>
+    /// <param name="gn">The Gauss-Newton direction.</param>
+    /// <param name="delta">The trust-region radius.</param>
+    /// <returns>The two beta values sorted in ascending order.</returns>
     public static (double, double) FindBeta(double alpha, Vector<double> sd, Vector<double> gn, double delta)
     {
       // Pstep is intersection of the trust region boundary

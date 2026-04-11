@@ -90,6 +90,7 @@ namespace Altaxo.Calc.Random
     /// <summary>
     /// Returns a random double-precision floating point number greater than or equal to 0.0, and less than 1.0.
     /// </summary>
+    /// <returns>A random double-precision floating point number greater than or equal to 0.0, and less than 1.0.</returns>
     protected sealed override double DoSample()
     {
       return _random.NextDouble();
@@ -98,6 +99,7 @@ namespace Altaxo.Calc.Random
     /// <summary>
     /// Returns a random 32-bit signed integer greater than or equal to zero and less than <see cref="F:System.Int32.MaxValue"/>
     /// </summary>
+    /// <returns>A random 32-bit signed integer greater than or equal to zero and less than <see cref="F:System.Int32.MaxValue"/>.</returns>
     protected override int DoSampleInteger()
     {
       return _random.Next();
@@ -107,6 +109,7 @@ namespace Altaxo.Calc.Random
     /// Returns a random 32-bit signed integer within the specified range.
     /// </summary>
     /// <param name="maxExclusive">The exclusive upper bound of the random number returned. Range: maxExclusive ≥ 2 (not verified, must be ensured by caller).</param>
+    /// <returns>A random 32-bit signed integer greater than or equal to zero and less than <paramref name="maxExclusive"/>.</returns>
     protected override int DoSampleInteger(int maxExclusive)
     {
       return _random.Next(maxExclusive);
@@ -116,7 +119,8 @@ namespace Altaxo.Calc.Random
     /// Returns a random 32-bit signed integer within the specified range.
     /// </summary>
     /// <param name="minInclusive">The inclusive lower bound of the random number returned.</param>
-    /// <param name="maxExclusive">The exclusive upper bound of the random number returned. Range: maxExclusive ≥ minExclusive + 2 (not verified, must be ensured by caller).</param>
+    /// <param name="maxExclusive">The exclusive upper bound of the random number returned. Range: maxExclusive ≥ minInclusive + 2 (not verified, must be ensured by caller).</param>
+    /// <returns>A random 32-bit signed integer greater than or equal to <paramref name="minInclusive"/> and less than <paramref name="maxExclusive"/>.</returns>
     protected override int DoSampleInteger(int minInclusive, int maxExclusive)
     {
       return _random.Next(minInclusive, maxExclusive);
@@ -125,6 +129,7 @@ namespace Altaxo.Calc.Random
     /// <summary>
     /// Fills the elements of a specified array of bytes with random numbers in full range, including zero and 255 (<see cref="F:System.Byte.MaxValue"/>).
     /// </summary>
+    /// <param name="buffer">The buffer to fill with random bytes.</param>
     protected override void DoSampleBytes(byte[] buffer)
     {
       _random.NextBytes(buffer);
@@ -135,6 +140,7 @@ namespace Altaxo.Calc.Random
     /// WARNING: potentially very short random sequence length, can generate repeated partial sequences.
     /// </summary>
     /// <remarks>Parallelized on large length, but also supports being called in parallel from multiple threads</remarks>
+    /// <param name="values">The array to fill with random values.</param>
     public static void FastDoubles(double[] values)
     {
       if (values.Length < 2048)
@@ -158,6 +164,8 @@ namespace Altaxo.Calc.Random
     /// WARNING: potentially very short random sequence length, can generate repeated partial sequences.
     /// </summary>
     /// <remarks>Parallelized on large length, but also supports being called in parallel from multiple threads</remarks>
+    /// <param name="length">The number of random values to generate.</param>
+    /// <returns>An array of uniform random numbers greater than or equal to 0.0 and less than 1.0.</returns>
     [TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
     public static double[] FastDoubles(int length)
     {
@@ -170,6 +178,7 @@ namespace Altaxo.Calc.Random
     /// Returns an infinite sequence of uniform random numbers greater than or equal to 0.0 and less than 1.0.
     /// </summary>
     /// <remarks>Supports being called in parallel from multiple threads, but the result must be enumerated from a single thread each.</remarks>
+    /// <returns>An infinite sequence of uniform random numbers greater than or equal to 0.0 and less than 1.0.</returns>
     public static IEnumerable<double> DoubleSequence()
     {
       var rnd1 = Default;
@@ -189,6 +198,8 @@ namespace Altaxo.Calc.Random
     /// Fills an array with random numbers greater than or equal to 0.0 and less than 1.0.
     /// </summary>
     /// <remarks>Supports being called in parallel from multiple threads.</remarks>
+    /// <param name="values">The array to fill with random values.</param>
+    /// <param name="seed">The seed value used to initialize the generator.</param>
     public static void Doubles(double[] values, int seed)
     {
       var rnd = new System.Random(seed);
@@ -202,6 +213,9 @@ namespace Altaxo.Calc.Random
     /// Returns an array of random numbers greater than or equal to 0.0 and less than 1.0.
     /// </summary>
     /// <remarks>Supports being called in parallel from multiple threads.</remarks>
+    /// <param name="length">The number of random values to generate.</param>
+    /// <param name="seed">The seed value used to initialize the generator.</param>
+    /// <returns>An array of random numbers greater than or equal to 0.0 and less than 1.0.</returns>
     [TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
     public static double[] Doubles(int length, int seed)
     {
@@ -214,6 +228,8 @@ namespace Altaxo.Calc.Random
     /// Returns an infinite sequence of random numbers greater than or equal to 0.0 and less than 1.0.
     /// </summary>
     /// <remarks>Supports being called in parallel from multiple threads, but the result must be enumerated from a single thread each.</remarks>
+    /// <param name="seed">The seed value used to initialize the generator.</param>
+    /// <returns>An infinite sequence of random numbers greater than or equal to 0.0 and less than 1.0.</returns>
     public static IEnumerable<double> DoubleSequence(int seed)
     {
       var rnd = new System.Random(seed);

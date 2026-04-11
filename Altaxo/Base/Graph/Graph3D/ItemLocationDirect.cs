@@ -337,6 +337,7 @@ namespace Altaxo.Graph.Graph3D
       return false;
     }
 
+    /// <inheritdoc/>
     object System.ICloneable.Clone()
     {
       return new ItemLocationDirect(this);
@@ -625,6 +626,12 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Sets position and size in one operation.
     /// </summary>
+    /// <param name="x">The x-position value.</param>
+    /// <param name="y">The y-position value.</param>
+    /// <param name="z">The z-position value.</param>
+    /// <param name="size_x">The width value.</param>
+    /// <param name="size_y">The height value.</param>
+    /// <param name="size_z">The depth value.</param>
     public virtual void SetPositionAndSize(RADouble x, RADouble y, RADouble z, RADouble size_x, RADouble size_y, RADouble size_z)
     {
       bool isChanged = x != _positionX || y != _positionY || size_x != _sizeX || size_y != _sizeY;
@@ -642,6 +649,8 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Updates the x scale without raising change notifications.
     /// </summary>
+    /// <param name="value">The new x-scale value.</param>
+    /// <returns><see langword="true"/> if the value changed; otherwise, <see langword="false"/>.</returns>
     protected virtual bool InternalSetScaleXSilent(double value)
     {
       bool chg = _scaleX != value;
@@ -652,6 +661,8 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Updates the y scale without raising change notifications.
     /// </summary>
+    /// <param name="value">The new y-scale value.</param>
+    /// <returns><see langword="true"/> if the value changed; otherwise, <see langword="false"/>.</returns>
     protected virtual bool InternalSetScaleYSilent(double value)
     {
       bool chg = _scaleY != value;
@@ -662,6 +673,8 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Updates the z scale without raising change notifications.
     /// </summary>
+    /// <param name="value">The new z-scale value.</param>
+    /// <returns><see langword="true"/> if the value changed; otherwise, <see langword="false"/>.</returns>
     protected virtual bool InternalSetScaleZSilent(double value)
     {
       bool chg = _scaleZ != value;
@@ -672,6 +685,8 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Updates all scale components without raising change notifications.
     /// </summary>
+    /// <param name="value">The new scale vector.</param>
+    /// <returns><see langword="true"/> if any scale component changed; otherwise, <see langword="false"/>.</returns>
     protected virtual bool InternalSetScaleSilent(VectorD3D value)
     {
       bool chg = _scaleX != value.X || _scaleY != value.Y || _scaleZ != value.Z;
@@ -852,6 +867,7 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Updates the width value without raising change notifications.
     /// </summary>
+    /// <param name="value">The new width value.</param>
     protected virtual void InternalSetSizeXSilent(RADouble value)
     {
       _sizeX = value;
@@ -860,6 +876,7 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Updates the height value without raising change notifications.
     /// </summary>
+    /// <param name="value">The new height value.</param>
     protected virtual void InternalSetSizeYSilent(RADouble value)
     {
       _sizeY = value;
@@ -868,6 +885,7 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Updates the depth value without raising change notifications.
     /// </summary>
+    /// <param name="value">The new depth value.</param>
     protected virtual void InternalSetSizeZSilent(RADouble value)
     {
       _sizeZ = value;
@@ -876,6 +894,9 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Updates all size components without raising change notifications.
     /// </summary>
+    /// <param name="valueX">The new width value.</param>
+    /// <param name="valueY">The new height value.</param>
+    /// <param name="valueZ">The new depth value.</param>
     protected virtual void InternalSetSizeSilent(RADouble valueX, RADouble valueY, RADouble valueZ)
     {
       _sizeX = valueX;
@@ -886,6 +907,7 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Updates the absolute width without raising change notifications.
     /// </summary>
+    /// <param name="value">The new absolute width.</param>
     protected virtual void InternalSetAbsoluteSizeXSilent(double value)
     {
       if (_sizeX.IsAbsolute)
@@ -899,6 +921,7 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Updates the absolute height without raising change notifications.
     /// </summary>
+    /// <param name="value">The new absolute height.</param>
     protected virtual void InternalSetAbsoluteSizeYSilent(double value)
     {
       if (_sizeY.IsAbsolute)
@@ -912,6 +935,7 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Updates the absolute depth without raising change notifications.
     /// </summary>
+    /// <param name="value">The new absolute depth.</param>
     protected virtual void InternalSetAbsoluteSizeZSilent(double value)
     {
       if (_sizeZ.IsAbsolute)
@@ -925,6 +949,7 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Updates the absolute size without raising change notifications.
     /// </summary>
+    /// <param name="value">The new absolute size.</param>
     protected virtual void InternalSetAbsoluteSizeSilent(VectorD3D value)
     {
       RADouble sizeX, sizeY, sizeZ;
@@ -1372,6 +1397,9 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Changes the parent anchor while keeping the absolute position constant.
     /// </summary>
+    /// <param name="newParentAnchorX">The new parent anchor in x-direction.</param>
+    /// <param name="newParentAnchorY">The new parent anchor in y-direction.</param>
+    /// <param name="newParentAnchorZ">The new parent anchor in z-direction.</param>
     public void ChangeParentAnchorButKeepPosition(RADouble newParentAnchorX, RADouble newParentAnchorY, RADouble newParentAnchorZ)
     {
       var oldRefX = _parentAnchorX.GetValueRelativeTo(_parentSize.X);

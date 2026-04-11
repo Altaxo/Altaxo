@@ -39,6 +39,7 @@ namespace Altaxo.Data
     /// Asks for a new name and then renames the selected data column or property column.
     /// </summary>
     /// <param name="col">The data column to rename.</param>
+    /// <returns><see langword="true"/> if the column was renamed; otherwise, <see langword="false"/>.</returns>
     public static bool ShowRenameColumnDialog(this DataColumn col)
     {
       var parent = col.ParentObject as DataColumnCollection;

@@ -263,6 +263,7 @@ namespace Altaxo.Main
     /// Returns the document node. If the stored doc node is null, it is tried to resolve the stored document path.
     /// If that fails too, null is returned.
     /// </summary>
+    /// <returns>The referenced document object, or <see langword="null"/> if it can not be resolved.</returns>
     public virtual object? DocumentObject()
     {
 
@@ -705,6 +706,7 @@ namespace Altaxo.Main
     /// the document path is stored for this object in addition to the object itself.</param>
     /// <param name="isCalledFromConstructor">If true, this function is called from the constructor. A value of true indicated, that some values might not be set yet.</param>
     /// <param name="doNotTriggerChangedEvent">If true, the ChangedEvent is not triggered. Set this parameter to true only if setting the doc node during resolving of the document.</param>
+    /// <returns>The change information, or <see langword="null"/> if nothing changed.</returns>
     [MemberNotNull(nameof(_docNodePath))]
     protected virtual InstanceChangedEventArgs? InternalSetDocNode(IDocumentLeafNode value, bool isCalledFromConstructor = false, bool doNotTriggerChangedEvent = false)
     {

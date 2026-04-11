@@ -90,6 +90,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Returns a string that describes the type, dimensions and shape of this matrix.
     /// </summary>
+    /// <returns>A string that describes the type, dimensions, and shape of this matrix.</returns>
     public virtual string ToTypeString()
     {
       return FormattableString.Invariant($"{GetType().Name} {RowCount}x{ColumnCount}-{typeof(T).Name}");
@@ -98,6 +99,15 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Returns a string 2D array that summarizes the content of this matrix.
     /// </summary>
+    /// <param name="upperRows">The number of rows to show from the top.</param>
+    /// <param name="lowerRows">The number of rows to show from the bottom.</param>
+    /// <param name="leftColumns">The number of columns to show from the left.</param>
+    /// <param name="rightColumns">The number of columns to show from the right.</param>
+    /// <param name="horizontalEllipsis">The string used for omitted columns.</param>
+    /// <param name="verticalEllipsis">The string used for omitted rows.</param>
+    /// <param name="diagonalEllipsis">The string used when both rows and columns are omitted.</param>
+    /// <param name="formatValue">The delegate used to format values.</param>
+    /// <returns>The formatted matrix values as a two-dimensional string array.</returns>
     public string[,] ToMatrixStringArray(int upperRows, int lowerRows, int leftColumns, int rightColumns,
         string horizontalEllipsis, string verticalEllipsis, string diagonalEllipsis, Func<T, string> formatValue)
     {
@@ -176,6 +186,17 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Returns a string 2D array that summarizes the content of this matrix.
     /// </summary>
+    /// <param name="upperRows">The number of rows to show from the top.</param>
+    /// <param name="lowerRows">The number of rows to show from the bottom.</param>
+    /// <param name="minLeftColumns">The minimum number of columns to show from the left.</param>
+    /// <param name="rightColumns">The number of columns to show from the right.</param>
+    /// <param name="maxWidth">The maximum target width.</param>
+    /// <param name="padding">The number of padding characters between columns.</param>
+    /// <param name="horizontalEllipsis">The string used for omitted columns.</param>
+    /// <param name="verticalEllipsis">The string used for omitted rows.</param>
+    /// <param name="diagonalEllipsis">The string used when both rows and columns are omitted.</param>
+    /// <param name="formatValue">The delegate used to format values.</param>
+    /// <returns>The formatted matrix values as a two-dimensional string array.</returns>
     public string[,] ToMatrixStringArray(int upperRows, int lowerRows, int minLeftColumns, int rightColumns, int maxWidth, int padding,
         string horizontalEllipsis, string verticalEllipsis, string diagonalEllipsis, Func<T, string> formatValue)
     {
@@ -423,6 +444,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Returns a string that summarizes the content of this matrix.
     /// </summary>
+    /// <param name="maxRows">The maximum number of rows to include.</param>
+    /// <param name="maxColumns">The maximum number of columns to include.</param>
+    /// <param name="format">The numeric format string to use.</param>
+    /// <param name="provider">The format provider used to format values.</param>
+    /// <returns>The formatted matrix string.</returns>
     public string ToMatrixString(int maxRows, int maxColumns, string format = null, IFormatProvider provider = null)
     {
       if (format == null)
@@ -438,6 +464,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Returns a string that summarizes the content of this matrix.
     /// </summary>
+    /// <param name="format">The numeric format string to use.</param>
+    /// <param name="provider">The format provider used to format values.</param>
+    /// <returns>The formatted matrix string.</returns>
     public string ToMatrixString(string format = null, IFormatProvider provider = null)
     {
       if (format == null)
@@ -451,6 +480,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Returns a string that summarizes this matrix.
     /// </summary>
+    /// <param name="maxRows">The maximum number of rows to include.</param>
+    /// <param name="maxColumns">The maximum number of columns to include.</param>
+    /// <param name="format">The numeric format string to use.</param>
+    /// <param name="formatProvider">The format provider used to format values.</param>
+    /// <returns>The formatted matrix summary.</returns>
     public string ToString(int maxRows, int maxColumns, string format = null, IFormatProvider formatProvider = null)
     {
       return string.Concat(ToTypeString(), Environment.NewLine, ToMatrixString(maxRows, maxColumns, format, formatProvider));
@@ -460,6 +494,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Returns a string that summarizes this matrix.
     /// The maximum number of cells can be configured in the <see cref="Control"/> class.
     /// </summary>
+    /// <returns>The formatted matrix summary.</returns>
     public sealed override string ToString()
     {
       return string.Concat(ToTypeString(), Environment.NewLine, ToMatrixString());
@@ -470,6 +505,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// The maximum number of cells can be configured in the <see cref="Control"/> class.
     /// The format string is ignored.
     /// </summary>
+    /// <param name="format">The format string to ignore.</param>
+    /// <param name="formatProvider">The format provider used to format values.</param>
+    /// <returns>The formatted matrix summary.</returns>
     public string ToString(string format = null, IFormatProvider formatProvider = null)
     {
       return string.Concat(ToTypeString(), Environment.NewLine, ToMatrixString(format, formatProvider));

@@ -111,6 +111,7 @@ namespace Altaxo.Data
     /// <summary>
     /// For deserialization purposes only.
     /// </summary>
+    /// <param name="info">The deserialization info.</param>
     protected DataTableProxy(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
       : base(info)
     {

@@ -670,6 +670,7 @@ namespace Altaxo.Main
     /// <param name="value">The document node. If <c>docNode</c> implements <see cref="Main.IDocumentLeafNode" />,
     /// the document path is stored for this object in addition to the object itself.</param>
     /// <param name="parentNode">The start point of the document path. Should be equal to the member _parent, but this might be not set now.</param>
+    /// <returns>An <see cref="InstanceChangedEventArgs"/> instance if the document node changed; otherwise, <see langword="null"/>.</returns>
     protected InstanceChangedEventArgs? InternalSetDocNode(Main.IDocumentLeafNode value, IDocumentLeafNode parentNode)
     {
       if (!IsValidDocument(value))
@@ -867,6 +868,7 @@ namespace Altaxo.Main
     /// Fired if the document node instance changed, is set to null, has changed its document path, or has changed its internal properties.
     /// If the document instance changed, this event is fired <b>after</b> the <see cref="DocumentInstanceChanged"/>  event.
     /// </summary>
+    /// <param name="e">The event arguments.</param>
     protected override void OnChanged(EventArgs e)
     {
       if (e is Main.InstanceChangedEventArgs icea)

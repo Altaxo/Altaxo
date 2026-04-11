@@ -180,6 +180,7 @@ namespace Altaxo.Settings
       return new CultureSettings(this);
     }
 
+    /// <inheritdoc />
     object ICloneable.Clone()
     {
       return new CultureSettings(this);

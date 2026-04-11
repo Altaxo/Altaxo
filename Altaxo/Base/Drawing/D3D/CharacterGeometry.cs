@@ -78,6 +78,14 @@ namespace Altaxo.Drawing.D3D
     /// <summary>
     /// Initializes a new instance of the <see cref="CharacterGeometry"/> class.
     /// </summary>
+    /// <param name="characterContour">The contour polygons that describe the character outline.</param>
+    /// <param name="frontFace">The front-face triangle geometry of the character.</param>
+    /// <param name="fontSize">The font size of the character.</param>
+    /// <param name="lineSpacing">The line spacing associated with the character.</param>
+    /// <param name="baseLine">The baseline position of the character.</param>
+    /// <param name="advanceWidth">The advance width of the character.</param>
+    /// <param name="leftSideBearing">The left side bearing of the character.</param>
+    /// <param name="rightSideBearing">The right side bearing of the character.</param>
     public CharacterGeometry(List<PolygonClosedWithNormalsD2D> characterContour, IndexedTriangles frontFace,
       double fontSize, double lineSpacing, double baseLine,
       double advanceWidth, double leftSideBearing, double rightSideBearing)

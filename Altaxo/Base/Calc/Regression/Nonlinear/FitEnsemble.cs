@@ -132,6 +132,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <summary>
     /// Gets the bundled parameter name at the specified index.
     /// </summary>
+    /// <param name="i">The parameter index.</param>
+    /// <returns>The bundled parameter name at the specified index.</returns>
     public string ParameterName(int i)
     {
       return _parameterNames[i];
@@ -140,6 +142,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <summary>
     /// Gets the default value of the bundled parameter at the specified index.
     /// </summary>
+    /// <param name="i">The parameter index.</param>
+    /// <returns>The default value of the bundled parameter at the specified index.</returns>
     public double DefaultParameterValue(int i)
     {
       return _defaultParameterValues[i];
@@ -170,6 +174,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <summary>
     /// Initializes a new instance of the <see cref="FitEnsemble"/> class by cloning another ensemble.
     /// </summary>
+    /// <param name="from">The ensemble to clone.</param>
     public FitEnsemble(FitEnsemble from)
     {
       foreach (var ele in from)
@@ -280,6 +285,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       return _fitElements.GetEnumerator();
     }
 
+    /// <inheritdoc/>
     IEnumerator IEnumerable.GetEnumerator()
     {
       return _fitElements.GetEnumerator();

@@ -212,6 +212,14 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
       /// <summary>
       /// Initializes a new instance of the <see cref="MeasuredLabelItem"/> class.
       /// </summary>
+      /// <param name="g">The graphics object used to measure the label.</param>
+      /// <param name="font">The font used for measurement.</param>
+      /// <param name="strfmt">The string format used for measurement.</param>
+      /// <param name="itemtext">The label text.</param>
+      /// <param name="lineSpacing">The relative spacing between text lines.</param>
+      /// <param name="horizontalAlignment">The horizontal alignment of each line.</param>
+      /// <param name="verticalAlignment">The vertical alignment within the text block.</param>
+      /// <param name="textBlockAligment">The alignment of the text block.</param>
       public MeasuredLabelItem(Graphics g, FontX font, StringFormat strfmt, string itemtext, double lineSpacing, StringAlignment horizontalAlignment, StringAlignment verticalAlignment, StringAlignment textBlockAligment)
       {
         _text = itemtext.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);

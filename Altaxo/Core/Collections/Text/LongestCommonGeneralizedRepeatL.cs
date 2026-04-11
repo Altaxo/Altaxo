@@ -265,6 +265,7 @@ namespace Altaxo.Collections.Text
     /// <summary>Evaluates the repeated longest common substring. After evaluation, the results can be accessed by the properties of this instance. Please be aware that the amount of resulting information depends on
     /// the state of <see cref="P:StoreVerboseResults"/>.
     /// </summary>
+    /// <param name="x_repeats">The repetition counts for each input sequence.</param>
     /// <returns>This instance.</returns>
     public LongestCommonGeneralizedRepeatL Evaluate(int[] x_repeats)
     {

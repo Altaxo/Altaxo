@@ -35,6 +35,7 @@ namespace Altaxo.Calc.LinearAlgebra.Solvers
   /// Defines the interface for <see cref="IIterativeSolver{T}"/> classes that solve the matrix equation Ax = b in
   /// an iterative manner.
   /// </summary>
+  /// <typeparam name="T">The numeric element type.</typeparam>
   public interface IIterativeSolver<T> where T : struct, IEquatable<T>, IFormattable
   {
     /// <summary>

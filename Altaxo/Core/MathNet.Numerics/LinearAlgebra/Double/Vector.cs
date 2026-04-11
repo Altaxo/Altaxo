@@ -42,6 +42,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// <summary>
     /// Initializes a new instance of the Vector class.
     /// </summary>
+    /// <param name="storage">The storage backing this vector.</param>
     protected Vector(VectorStorage<double> storage)
         : base(storage)
     {
@@ -50,6 +51,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// <summary>
     /// Set all values whose absolute value is smaller than the threshold to zero.
     /// </summary>
+    /// <param name="threshold">The threshold below which values are set to zero.</param>
     public override void CoerceZero(double threshold)
     {
       MapInplace(x => Math.Abs(x) < threshold ? 0d : x, Zeros.AllowSkip);

@@ -89,6 +89,7 @@ namespace Altaxo.Calc.Distributions
     /// Tests whether the provided values are valid parameters for this distribution.
     /// </summary>
     /// <param name="rate">The rate (λ) parameter of the distribution. Range: λ ≥ 0.</param>
+    /// <returns><c>true</c> if the parameter defines a valid exponential distribution; otherwise, <c>false</c>.</returns>
     public static bool IsValidParameterSet(double rate)
     {
       return rate >= 0.0;
@@ -210,6 +211,7 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Fills an array with samples generated from the distribution.
     /// </summary>
+    /// <param name="values">The array to fill with samples.</param>
     public void Samples(double[] values)
     {
       SamplesUnchecked(_random, values, _rate);
@@ -235,6 +237,12 @@ namespace Altaxo.Calc.Distributions
       return -Math.Log(r) / rate;
     }
 
+    /// <summary>
+    /// Fills an array with samples from the exponential distribution without validating the parameter.
+    /// </summary>
+    /// <param name="rnd">The random number generator to use.</param>
+    /// <param name="values">The array to fill with samples.</param>
+    /// <param name="rate">The rate parameter.</param>
     internal static void SamplesUnchecked(System.Random rnd, double[] values, double rate)
     {
       rnd.NextDoubles(values);

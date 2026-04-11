@@ -87,6 +87,8 @@ namespace Altaxo.Gui.Common.PropertyGrid
       /// <summary>
       /// Initializes a new instance of the <see cref="ValueInfo"/> class.
       /// </summary>
+      /// <param name="name">The display name of the value.</param>
+      /// <param name="controller">The controller used to edit the value.</param>
       public ValueInfo(string name, IMVCAController controller)
       {
         Name = name;
@@ -98,6 +100,11 @@ namespace Altaxo.Gui.Common.PropertyGrid
       /// <summary>
       /// Initializes a new instance of the <see cref="ValueInfo"/> class.
       /// </summary>
+      /// <param name="name">The display name of the value.</param>
+      /// <param name="valueType">The type of the value.</param>
+      /// <param name="method">The method that provides the value.</param>
+      /// <param name="value">The current value.</param>
+      /// <param name="controller">The controller used to edit the value.</param>
       public ValueInfo(string name, Type valueType, MethodInfo method, object? value, IMVCAController controller)
       {
         Name = name;
@@ -110,6 +117,10 @@ namespace Altaxo.Gui.Common.PropertyGrid
       /// <summary>
       /// Initializes a new instance of the <see cref="ValueInfo"/> class.
       /// </summary>
+      /// <param name="name">The display name of the value.</param>
+      /// <param name="propertyInfo">The property that provides the value.</param>
+      /// <param name="value">The current value.</param>
+      /// <param name="controller">The controller used to edit the value.</param>
       public ValueInfo(string name, PropertyInfo propertyInfo, object? value, IMVCAController controller)
       {
         Name = name;
@@ -181,6 +192,8 @@ namespace Altaxo.Gui.Common.PropertyGrid
     /// <summary>
     /// Gets the names and types of writable properties for a document.
     /// </summary>
+    /// <param name="doc">The document whose writable properties are returned.</param>
+    /// <returns>An enumeration of writable property names and their types.</returns>
     public static IEnumerable<(string Name, Type type)> GetNameAndTypeOfWritableProperties(object doc)
     {
       if (doc is null)

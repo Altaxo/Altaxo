@@ -43,10 +43,11 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
   internal sealed class DenseLU : LU
   {
     /// <summary>
-    /// Initializes a new instance of the <see cref="DenseLU"/> class. This object will compute the
-    /// LU factorization when the constructor is called and cache it's factorization.
+    /// Initializes a new instance of the <see cref="DenseLU"/> class. This object computes the
+    /// LU factorization when the constructor is called and caches its factorization.
     /// </summary>
     /// <param name="matrix">The matrix to factor.</param>
+    /// <returns>The computed LU factorization.</returns>
     /// <exception cref="ArgumentNullException">If <paramref name="matrix"/> is <c>null</c>.</exception>
     /// <exception cref="ArgumentException">If <paramref name="matrix"/> is not a square matrix.</exception>
     public static DenseLU Create(DenseMatrix matrix)

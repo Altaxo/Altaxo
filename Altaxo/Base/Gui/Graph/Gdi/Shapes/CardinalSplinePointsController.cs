@@ -455,6 +455,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       /// <summary>
       /// Initializes a new instance.
       /// </summary>
+    /// <param name="p">The point whose coordinates should initialize the instance.</param>
       public PointD2DClass(PointD2D p)
       {
         X = p.X;

@@ -183,6 +183,7 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <summary>
     /// Creates a default axis style.
     /// </summary>
+    /// <param name="context">The property context.</param>
     public AxisLineStyle(Main.Properties.IReadOnlyPropertyBag context)
     {
       double penWidth = GraphDocument.GetDefaultPenWidth(context);
@@ -203,6 +204,9 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <summary>
     /// Creates a default axis style.
     /// </summary>
+    /// <param name="showTicks">A value indicating whether ticks should be shown.</param>
+    /// <param name="preferredTickSide">The preferred side for the ticks.</param>
+    /// <param name="context">The property context.</param>
     public AxisLineStyle(bool showTicks, CSAxisSide preferredTickSide, Main.Properties.IReadOnlyPropertyBag context)
     {
       double penWidth = GraphDocument.GetDefaultPenWidth(context);
@@ -277,7 +281,8 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <summary>
     /// Copy operation.
     /// </summary>
-    /// <param name="obj">The AxisStyle to copy from</param>
+    /// <param name="obj">The axis style to copy from.</param>
+    /// <returns><see langword="true"/> if the copy succeeded; otherwise, <see langword="false"/>.</returns>
     public bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -340,6 +345,7 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// of the axis thickness)
     /// </summary>
     /// <param name="side">The side of the axis at which the outer distance is returned.</param>
+    /// <returns>The outer distance for the specified side.</returns>
     public double GetOuterDistance(CSAxisSide side)
     {
       double retVal = 0;

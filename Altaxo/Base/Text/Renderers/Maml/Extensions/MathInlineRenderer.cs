@@ -39,9 +39,7 @@ namespace Altaxo.Text.Renderers.Maml.Extensions
   /// </summary>
   public class MathInlineRenderer : MamlObjectRenderer<MathInline>
   {
-    /// <summary>
-    /// Writes an inline math element.
-    /// </summary>
+    /// <inheritdoc />
     protected override void Write(MamlRenderer renderer, MathInline obj)
     {
       var formulaText = obj.Content.Text.Substring(obj.Content.Start, obj.Content.Length);

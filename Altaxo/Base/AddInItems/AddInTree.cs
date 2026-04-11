@@ -35,6 +35,11 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Builds all items at the specified add-in tree path.
     /// </summary>
+    /// <typeparam name="T">The expected item type.</typeparam>
+    /// <param name="path">The add-in tree path.</param>
+    /// <param name="parameter">The parameter passed to the doozer and condition evaluators.</param>
+    /// <param name="throwOnNotFound">A value indicating whether a missing path should raise an exception.</param>
+    /// <returns>The built items.</returns>
     public static List<T> BuildItems<T>(string path, object? parameter, bool throwOnNotFound = true)
     {
       var addInTree = Altaxo.Current.GetRequiredService<IAddInTree>();
@@ -44,6 +49,8 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Gets the add-in tree node for the specified path.
     /// </summary>
+    /// <param name="path">The add-in tree path.</param>
+    /// <returns>The matching add-in tree node.</returns>
     public static AddInTreeNode GetTreeNode(string path)
     {
       var addInTree = Altaxo.Current.GetRequiredService<IAddInTree>();
@@ -53,6 +60,9 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Gets the add-in tree node for the specified path.
     /// </summary>
+    /// <param name="path">The add-in tree path.</param>
+    /// <param name="throwOnNotFound">A value indicating whether a missing path should raise an exception.</param>
+    /// <returns>The matching add-in tree node, or <c>null</c> if it is not found and exceptions are disabled.</returns>
     public static AddInTreeNode? GetTreeNode(string path, bool throwOnNotFound = true)
     {
       var addInTree = Altaxo.Current.GetRequiredService<IAddInTree>();
@@ -74,6 +84,7 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Initializes a new instance of the <see cref="AddInTreeImpl"/> class.
     /// </summary>
+    /// <param name="applicationStateService">The application state service used to expose add-in diagnostics.</param>
     public AddInTreeImpl(ApplicationStateInfoService applicationStateService)
     {
       doozers.TryAdd("Class", new ClassDoozer());
@@ -163,6 +174,7 @@ namespace Altaxo.AddInItems
     /// Gets the <see cref="AddInTreeNode"/> representing the specified path. An exception will be thrown if the node is not found.
     /// </summary>
     /// <param name="path">The path of the AddIn tree node</param>
+    /// <returns>The add-in tree node for the specified path.</returns>
     public AddInTreeNode GetTreeNode(string path)
     {
       return GetTreeNode(path, true)!;
@@ -177,6 +189,7 @@ namespace Altaxo.AddInItems
     /// <see cref="TreePathNotFoundException"/> when the path does not exist.
     /// If set to <c>false</c>, <c>null</c> is returned for non-existing paths.
     /// </param>
+    /// <returns>The add-in tree node for the specified path, or <c>null</c> if it does not exist and <paramref name="throwOnNotFound"/> is <c>false</c>.</returns>
     public AddInTreeNode? GetTreeNode(string path, bool throwOnNotFound)
     {
       if (path is null || path.Length == 0)
@@ -203,6 +216,7 @@ namespace Altaxo.AddInItems
     /// </summary>
     /// <param name="path">A path to the item in the addin tree.</param>
     /// <param name="parameter">A parameter that gets passed into the doozer and condition evaluators.</param>
+    /// <returns>The built item.</returns>
     /// <exception cref="TreePathNotFoundException">The path does not
     /// exist or does not point to an item.</exception>
     public object BuildItem(string path, object? parameter)
@@ -213,6 +227,10 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Builds a single item in the add-in tree using additional conditions.
     /// </summary>
+    /// <param name="path">A path to the item in the add-in tree.</param>
+    /// <param name="parameter">A parameter that gets passed into the doozer and condition evaluators.</param>
+    /// <param name="additionalConditions">Additional conditions applied when creating the item.</param>
+    /// <returns>The built item.</returns>
     public object BuildItem(string path, object? parameter, IEnumerable<ICondition>? additionalConditions)
     {
       int pos = path.LastIndexOf('/');
@@ -229,11 +247,13 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Builds the items in the path. Ensures that all items have the type T.
     /// </summary>
+    /// <typeparam name="T">The expected item type.</typeparam>
     /// <param name="path">A path in the addin tree.</param>
     /// <param name="parameter">The owner used to create the objects.</param>
     /// <param name="throwOnNotFound">If true, throws a <see cref="TreePathNotFoundException"/>
     /// if the path is not found. If false, an empty ArrayList is returned when the
     /// path is not found.</param>
+    /// <returns>The built items.</returns>
     public IReadOnlyList<T> BuildItems<T>(string path, object? parameter, bool throwOnNotFound = true)
     {
       var node = GetTreeNode(path, throwOnNotFound);
@@ -278,6 +298,7 @@ namespace Altaxo.AddInItems
     /// paths are added to the AddInTree and its resources are added to the
     /// <see cref="IResourceService"/>.
     /// </summary>
+    /// <param name="addIn">The add-in to insert.</param>
     public void InsertAddIn(AddIn addIn)
     {
       if (addIn.Enabled)
@@ -328,6 +349,7 @@ namespace Altaxo.AddInItems
     /// a restart of the application to be removed.
     /// </summary>
     /// <exception cref="ArgumentException">Occurs when trying to remove an enabled AddIn.</exception>
+    /// <param name="addIn">The add-in to remove.</param>
     public void RemoveAddIn(AddIn addIn)
     {
       if (addIn.Enabled)

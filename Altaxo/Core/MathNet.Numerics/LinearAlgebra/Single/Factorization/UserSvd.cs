@@ -53,6 +53,7 @@ namespace Altaxo.Calc.LinearAlgebra.Single.Factorization
     /// </summary>
     /// <param name="matrix">The matrix to factor.</param>
     /// <param name="computeVectors">Compute the singular U and VT vectors or not.</param>
+    /// <returns>A singular value decomposition for the specified matrix.</returns>
     /// <exception cref="ArgumentNullException">If <paramref name="matrix"/> is <c>null</c>.</exception>
     /// <exception cref="NonConvergenceException"></exception>
     public static UserSvd Create(Matrix<float> matrix, bool computeVectors)

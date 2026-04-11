@@ -169,6 +169,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
     /// <summary>
     /// Sets the text alignment of the cell editor and selects all text.
     /// </summary>
+    /// <param name="textAlignmentRight"><c>true</c> to align text to the right; otherwise, <c>false</c>.</param>
     void CellEdit_SetTextAlignmentAndSelectAll(bool textAlignmentRight);
 
     /// <summary>

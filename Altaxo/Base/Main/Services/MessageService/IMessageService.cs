@@ -52,11 +52,15 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Shows an exception.
     /// </summary>
+    /// <param name="ex">The exception to show.</param>
+    /// <param name="message">An optional message to display together with the exception.</param>
     void ShowException(Exception ex, string? message = null);
 
     /// <summary>
     /// Shows an exception.
     /// </summary>
+    /// <param name="ex">The handled exception to show.</param>
+    /// <param name="message">An optional message to display together with the exception.</param>
     void ShowHandledException(Exception ex, string? message = null);
 
     /// <summary>
@@ -89,6 +93,7 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Shows an error.
     /// </summary>
+    /// <param name="message">The error message text.</param>
     void ShowError(string message);
 
     /// <summary>
@@ -97,11 +102,14 @@ namespace Altaxo.Main.Services
     /// <see cref="StringParser"/>,
     /// then through <see cref="string.Format(string, object)"/>, using the formatitems as arguments.
     /// </summary>
+    /// <param name="formatstring">The resource or format string.</param>
+    /// <param name="formatitems">The format arguments.</param>
     void ShowErrorFormatted(string formatstring, params object[] formatitems);
 
     /// <summary>
     /// Shows a warning message.
     /// </summary>
+    /// <param name="message">The warning message text.</param>
     void ShowWarning(string message);
 
     /// <summary>
@@ -110,6 +118,8 @@ namespace Altaxo.Main.Services
     /// <see cref="StringParser"/>,
     /// then through <see cref="string.Format(string, object)"/>, using the formatitems as arguments.
     /// </summary>
+    /// <param name="formatstring">The resource or format string.</param>
+    /// <param name="formatitems">The format arguments.</param>
     void ShowWarningFormatted(string formatstring, params object[] formatitems);
 
     /// <summary>
@@ -131,6 +141,9 @@ namespace Altaxo.Main.Services
     /// Asks the user a Yes/No question, using "Yes" as the default button.
     /// Returns <c>true</c> if yes was clicked, <c>false</c> if no was clicked.
     /// </summary>
+    /// <param name="question">The question text.</param>
+    /// <param name="caption">The dialog caption.</param>
+    /// <returns><see langword="true"/> if the user answered Yes; otherwise, <see langword="false"/>.</returns>
     bool AskQuestion(string question, string? caption = null);
 
     /// <summary>
@@ -172,12 +185,22 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Show a message informing the user about a save error.
     /// </summary>
+    /// <param name="fileName">The file name involved in the save error.</param>
+    /// <param name="message">The message to show.</param>
+    /// <param name="dialogName">The dialog title or resource name.</param>
+    /// <param name="exceptionGot">The exception that caused the save error.</param>
     void InformSaveError(PathName fileName, string message, string dialogName, Exception exceptionGot);
 
     /// <summary>
     /// Show a message informing the user about a save error,
     /// and allow him to retry/save under alternative name.
     /// </summary>
+    /// <param name="fileName">The file name involved in the save error.</param>
+    /// <param name="message">The message to show.</param>
+    /// <param name="dialogName">The dialog title or resource name.</param>
+    /// <param name="exceptionGot">The exception that caused the save error.</param>
+    /// <param name="chooseLocationEnabled"><see langword="true"/> to enable choosing an alternative save location; otherwise, <see langword="false"/>.</param>
+    /// <returns>The action chosen by the user.</returns>
     ChooseSaveErrorResult ChooseSaveError(PathName fileName, string message, string dialogName, Exception exceptionGot, bool chooseLocationEnabled);
   }
 

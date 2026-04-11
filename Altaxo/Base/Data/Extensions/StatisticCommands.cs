@@ -104,6 +104,7 @@ namespace Altaxo.Data
     /// <param name="srctable">Source table.</param>
     /// <param name="selectedColumns">Selected data columns in the source table.</param>
     /// <param name="selectedRows">Selected rows in the source table.</param>
+    /// <returns>A table containing the calculated column statistics.</returns>
     public static DataTable DoStatisticsOnColumns(
       this DataTable srctable,
       IAscendingIntegerCollection selectedColumns,
@@ -121,6 +122,7 @@ namespace Altaxo.Data
     /// <param name="srctable">Source table.</param>
     /// <param name="selectedColumns">Selected data columns in the source table.</param>
     /// <param name="selectedRows">Selected rows in the source table.</param>
+    /// <returns>A table containing the calculated column statistics.</returns>
     public static DataTable DoStatisticsOnColumns(
       this DataColumnCollection srctable,
       IAscendingIntegerCollection selectedColumns,
@@ -278,6 +280,7 @@ namespace Altaxo.Data
     /// <param name="srctable">Source table.</param>
     /// <param name="selectedColumns">Selected data columns in the source table.</param>
     /// <param name="selectedRows">Selected rows in the source table.</param>
+    /// <returns>A table containing the calculated row statistics.</returns>
     public static DataTable DoStatisticsOnRows(
       this DataTable srctable,
       IAscendingIntegerCollection selectedColumns,
@@ -295,6 +298,7 @@ namespace Altaxo.Data
     /// <param name="srctable">Source table.</param>
     /// <param name="selectedColumns">Selected data columns in the source table.</param>
     /// <param name="selectedRows">Selected rows in the source table.</param>
+    /// <returns>A table containing the calculated row statistics.</returns>
     public static DataTable DoStatisticsOnRows(
       this DataColumnCollection srctable,
       IAscendingIntegerCollection selectedColumns,

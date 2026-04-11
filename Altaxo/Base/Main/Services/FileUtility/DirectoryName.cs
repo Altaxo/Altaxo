@@ -44,6 +44,7 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Initializes a new instance of the <see cref="DirectoryName"/> class from an existing directory name.
     /// </summary>
+    /// <param name="path">The directory name to copy.</param>
     [Obsolete("The input already is a DirectoryName")]
     public DirectoryName(DirectoryName path)
       : base(path)
@@ -54,6 +55,8 @@ namespace Altaxo.Main.Services
     /// Creates a DirectoryName instance from the string.
     /// It is valid to pass null or an empty string to this method (in that case, a null reference will be returned).
     /// </summary>
+    /// <param name="directoryName">The directory path.</param>
+    /// <returns>A <see cref="DirectoryName"/> instance, or <see langword="null"/> if <paramref name="directoryName"/> is null or empty.</returns>
     [return: NotNullIfNotNull("directoryName")]
     public static DirectoryName? Create(string directoryName)
     {
@@ -66,6 +69,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Returns the specified directory name instance.
     /// </summary>
+    /// <param name="directoryName">The directory name instance.</param>
+    /// <returns>The provided <paramref name="directoryName"/>.</returns>
     [Obsolete("The input already is a DirectoryName")]
     public static DirectoryName Create(DirectoryName directoryName)
     {
@@ -75,6 +80,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Combines this directory name with a relative path.
     /// </summary>
+    /// <param name="relativePath">The relative directory path to combine.</param>
+    /// <returns>The combined directory path, or <see langword="null"/> if <paramref name="relativePath"/> is <see langword="null"/>.</returns>
     [return: NotNullIfNotNull("relativePath")]
     public DirectoryName? Combine(DirectoryName? relativePath)
     {
@@ -86,6 +93,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Combines this directory name with a relative path.
     /// </summary>
+    /// <param name="relativePath">The relative file path to combine.</param>
+    /// <returns>The combined file path, or <see langword="null"/> if <paramref name="relativePath"/> is <see langword="null"/>.</returns>
     [return: NotNullIfNotNull("relativePath")]
     public FileName? Combine(FileName? relativePath)
     {
@@ -99,6 +108,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Combines this directory name with a relative path.
     /// </summary>
+    /// <param name="relativeFileName">The relative file name to combine.</param>
+    /// <returns>The combined file path, or <see langword="null"/> if <paramref name="relativeFileName"/> is <see langword="null"/>.</returns>
     [return: NotNullIfNotNull("relativeFileName")]
     public FileName? CombineFile(string? relativeFileName)
     {
@@ -110,6 +121,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Combines this directory name with a relative path.
     /// </summary>
+    /// <param name="relativeDirectoryName">The relative directory name to combine.</param>
+    /// <returns>The combined directory path, or <see langword="null"/> if <paramref name="relativeDirectoryName"/> is <see langword="null"/>.</returns>
     [return: NotNullIfNotNull("relativeDirectoryName")]
     public DirectoryName? CombineDirectory(string? relativeDirectoryName)
     {
@@ -121,6 +134,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Converts the specified absolute path into a relative path (relative to <c>this</c>).
     /// </summary>
+    /// <param name="path">The absolute directory path.</param>
+    /// <returns>The relative directory path, or <see langword="null"/> if <paramref name="path"/> is <see langword="null"/>.</returns>
     [return: NotNullIfNotNull("path")]
     public DirectoryName? GetRelativePath(DirectoryName? path)
     {
@@ -132,6 +147,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Converts the specified absolute path into a relative path (relative to <c>this</c>).
     /// </summary>
+    /// <param name="path">The absolute file path.</param>
+    /// <returns>The relative file path, or <see langword="null"/> if <paramref name="path"/> is <see langword="null"/>.</returns>
     [return: NotNullIfNotNull("path")]
     public FileName? GetRelativePath(FileName? path)
     {
@@ -143,6 +160,7 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Gets the directory name as a string, including a trailing backslash.
     /// </summary>
+    /// <returns>The directory name with a trailing backslash.</returns>
     public string ToStringWithTrailingBackslash()
     {
       if (_normalizedPath.EndsWith("\\", StringComparison.Ordinal))
@@ -173,6 +191,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Determines whether this instance and another directory name are equal.
     /// </summary>
+    /// <param name="other">The other directory name to compare with this instance.</param>
+    /// <returns><see langword="true"/> if the directory names are equal; otherwise, <see langword="false"/>.</returns>
     public bool Equals(DirectoryName? other)
     {
       if (other is null)
@@ -190,6 +210,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Determines whether two directory names are equal.
     /// </summary>
+    /// <param name="left">The left directory name.</param>
+    /// <param name="right">The right directory name.</param>
     public static bool operator ==(DirectoryName? left, DirectoryName? right)
     {
       return ReferenceEquals(left, right) || (left is not null && right is not null && left.Equals(right));
@@ -198,6 +220,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Determines whether two directory names are not equal.
     /// </summary>
+    /// <param name="left">The left directory name.</param>
+    /// <param name="right">The right directory name.</param>
     public static bool operator !=(DirectoryName left, DirectoryName right)
     {
       return !(left == right);
@@ -206,6 +230,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Determines whether a directory name and a string path are equal.
     /// </summary>
+    /// <param name="left">The left directory name.</param>
+    /// <param name="right">The right string path.</param>
     [ObsoleteAttribute("Warning: comparing DirectoryName with string results in case-sensitive comparison")]
     public static bool operator ==(DirectoryName left, string right)
     {
@@ -215,6 +241,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Determines whether a directory name and a string path are not equal.
     /// </summary>
+    /// <param name="left">The left directory name.</param>
+    /// <param name="right">The right string path.</param>
     [ObsoleteAttribute("Warning: comparing DirectoryName with string results in case-sensitive comparison")]
     public static bool operator !=(DirectoryName left, string right)
     {
@@ -224,6 +252,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Determines whether a string path and a directory name are equal.
     /// </summary>
+    /// <param name="left">The left string path.</param>
+    /// <param name="right">The right directory name.</param>
     [ObsoleteAttribute("Warning: comparing DirectoryName with string results in case-sensitive comparison")]
     public static bool operator ==(string left, DirectoryName right)
     {
@@ -233,6 +263,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Determines whether a string path and a directory name are not equal.
     /// </summary>
+    /// <param name="left">The left string path.</param>
+    /// <param name="right">The right directory name.</param>
     [ObsoleteAttribute("Warning: comparing DirectoryName with string results in case-sensitive comparison")]
     public static bool operator !=(string left, DirectoryName right)
     {

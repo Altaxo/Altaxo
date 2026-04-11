@@ -108,6 +108,7 @@ namespace Altaxo.Calc.Distributions
     /// <param name="beta">The skewness (β) of the distribution. Range: 1 ≥ β ≥ -1.</param>
     /// <param name="scale">The scale (c) of the distribution. Range: c > 0.</param>
     /// <param name="location">The location (μ) of the distribution.</param>
+    /// <returns><c>true</c> if the parameters define a valid stable distribution; otherwise, <c>false</c>.</returns>
     public static bool IsValidParameterSet(double alpha, double beta, double scale, double location)
     {
       return alpha > 0.0 && alpha <= 2.0 && beta >= -1.0 && beta <= 1.0 && scale > 0.0 && !double.IsNaN(location);
@@ -394,6 +395,7 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Fills an array with samples generated from the distribution.
     /// </summary>
+    /// <param name="values">The array to fill with samples from the distribution.</param>
     public void Samples(double[] values)
     {
       SamplesUnchecked(_random, values, _alpha, _beta, _scale, _location);

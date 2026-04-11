@@ -198,6 +198,7 @@ namespace Altaxo.Drawing
       return _allLists[name].List;
     }
 
+    /// <inheritdoc />
     IEnumerable<StyleListManagerBaseEntryValue<TList, TItem>> IStyleListManager<TList, TItem>.GetEntryValues()
     {
       return _allLists.Values;
@@ -212,6 +213,7 @@ namespace Altaxo.Drawing
       return _allLists.Values;
     }
 
+    /// <inheritdoc />
     StyleListManagerBaseEntryValue<TList, TItem> IStyleListManager<TList, TItem>.GetEntryValue(string name)
     {
       return _allLists[name];
@@ -266,6 +268,8 @@ namespace Altaxo.Drawing
     /// <summary>
     /// Called when the current project is closed. Removes all those list which are project lists.
     /// </summary>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The project event arguments.</param>
     protected virtual void EhProjectClosed(object? sender, Main.ProjectEventArgs e)
     {
       var namesToRemove = new List<string>(_allLists.Where(entry => entry.Value.Level == Main.ItemDefinitionLevel.Project).Select(entry => entry.Key));

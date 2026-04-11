@@ -99,6 +99,8 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Initializes a new instance of the <see cref="SingleChoiceObject"/> class.
     /// </summary>
+    /// <param name="choices">The available choices.</param>
+    /// <param name="selection">The initially selected index.</param>
     public SingleChoiceObject(string[] choices, int selection)
     {
       _choices = (string[])choices.Clone();
@@ -183,6 +185,8 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Initializes the selectable values and the selected index.
     /// </summary>
+    /// <param name="values">The selectable values.</param>
+    /// <param name="selected">The initially selected index.</param>
     protected void Initialize(string[] values, int selected)
     {
       _values = values;

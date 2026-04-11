@@ -257,6 +257,7 @@ namespace Altaxo.Calc.Random
     /// <summary>
     /// Returns a random double-precision floating point number greater than or equal to 0.0, and less than 1.0.
     /// </summary>
+    /// <returns>A double in [0.0, 1.0).</returns>
     protected sealed override double DoSample()
     {
       var t = (_a * _x) + _c;
@@ -270,6 +271,7 @@ namespace Altaxo.Calc.Random
     /// <summary>
     /// Returns a random 32-bit signed integer greater than or equal to zero and less than <see cref="F:System.Int32.MaxValue"/>
     /// </summary>
+    /// <returns>A random 32-bit signed integer greater than or equal to zero and less than <see cref="F:System.Int32.MaxValue"/>.</returns>
     protected sealed override int DoSampleInteger()
     {
       var t = (_a * _x) + _c;
@@ -290,6 +292,7 @@ namespace Altaxo.Calc.Random
     /// <summary>
     /// Fills the elements of a specified array of bytes with random numbers in full range, including zero and 255 (<see cref="F:System.Byte.MaxValue"/>).
     /// </summary>
+    /// <param name="buffer">The buffer to fill with random bytes.</param>
     protected sealed override void DoSampleBytes(byte[] buffer)
     {
       for (var i = 0; i < buffer.Length; i++)
@@ -307,6 +310,12 @@ namespace Altaxo.Calc.Random
     /// Fills an array with random numbers greater than or equal to 0.0 and less than 1.0.
     /// </summary>
     /// <remarks>Supports being called in parallel from multiple threads.</remarks>
+    /// <param name="values">The array to fill with random values.</param>
+    /// <param name="seed">The seed value used to initialize the generator.</param>
+    /// <param name="a">The multiplier parameter.</param>
+    /// <param name="c">The carry parameter.</param>
+    /// <param name="x1">The first xorshift state value.</param>
+    /// <param name="x2">The second xorshift state value.</param>
     [CLSCompliant(false)]
     public static void Doubles(double[] values, int seed, ulong a = ASeed, ulong c = CSeed, ulong x1 = YSeed, ulong x2 = ZSeed)
     {
@@ -337,6 +346,13 @@ namespace Altaxo.Calc.Random
     /// Returns an array of random numbers greater than or equal to 0.0 and less than 1.0.
     /// </summary>
     /// <remarks>Supports being called in parallel from multiple threads.</remarks>
+    /// <param name="length">The number of random values to generate.</param>
+    /// <param name="seed">The seed value used to initialize the generator.</param>
+    /// <param name="a">The multiplier parameter.</param>
+    /// <param name="c">The carry parameter.</param>
+    /// <param name="x1">The first xorshift state value.</param>
+    /// <param name="x2">The second xorshift state value.</param>
+    /// <returns>An array of random numbers greater than or equal to 0.0 and less than 1.0.</returns>
     [CLSCompliant(false)]
     [TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
     public static double[] Doubles(int length, int seed, ulong a = ASeed, ulong c = CSeed, ulong x1 = YSeed, ulong x2 = ZSeed)
@@ -350,6 +366,12 @@ namespace Altaxo.Calc.Random
     /// Returns an infinite sequence of random numbers greater than or equal to 0.0 and less than 1.0.
     /// </summary>
     /// <remarks>Supports being called in parallel from multiple threads, but the result must be enumerated from a single thread each.</remarks>
+    /// <param name="seed">The seed value used to initialize the generator.</param>
+    /// <param name="a">The multiplier parameter.</param>
+    /// <param name="c">The carry parameter.</param>
+    /// <param name="x1">The first xorshift state value.</param>
+    /// <param name="x2">The second xorshift state value.</param>
+    /// <returns>An infinite sequence of random numbers greater than or equal to 0.0 and less than 1.0.</returns>
     [CLSCompliant(false)]
     public static IEnumerable<double> DoubleSequence(int seed, ulong a = ASeed, ulong c = CSeed, ulong x1 = YSeed, ulong x2 = ZSeed)
     {

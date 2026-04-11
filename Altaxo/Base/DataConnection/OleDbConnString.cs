@@ -43,6 +43,7 @@ namespace Altaxo.DataConnection
     /// <summary>
     /// Prompts the user and gets a connection string.
     /// </summary>
+    /// <returns>The connection string selected by the user.</returns>
     public static string GetConnectionString()
     {
       return EditConnectionString(string.Empty);
@@ -101,6 +102,8 @@ namespace Altaxo.DataConnection
     /// <summary>
     /// Trims a connection string for display.
     /// </summary>
+    /// <param name="text">The connection string to trim.</param>
+    /// <returns>The trimmed connection string for display purposes.</returns>
     public static string TrimConnectionString(string text)
     {
       string[] keys = new string[] { "Provider", "Initial Catalog", "Data Source" };

@@ -739,7 +739,7 @@ namespace Altaxo.Data
     /// <summary>
     /// Clones the collection and all columns in it (deep copy).
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A deep copy of the collection.</returns>
     public virtual object Clone()
     {
       return new DataColumnCollection(this);
@@ -748,6 +748,7 @@ namespace Altaxo.Data
     /// <summary>
     /// Disposes the collection and all columns in it.
     /// </summary>
+    /// <param name="isDisposing">Indicates whether the method is called during explicit disposal.</param>
     protected override void Dispose(bool isDisposing)
     {
       if (!IsDisposed)
@@ -928,9 +929,8 @@ namespace Altaxo.Data
     /// Ensures the existence of a column with exactly the provided properties at the provided position.
     /// </summary>
     /// <param name="columnNumber">The column number. Have to be in the range (0..ColumnCount). If the value is ColumnCount, a new column is added.</param>
-    /// <param name="columnName">Name of the column. If another column with the same name exists, the existing column with the same name will be renamed (if the existing column has a higher column number).
-    /// <param name="strictColumnName">If true, and another column with the same name exists to the left of this column, an exception is thrown. Otherwise, a new unique name based on the provided name will be found for this column.</param>
-    /// If the existing column with the same name has a lower column number, an exception is thrown.</param>
+    /// <param name="columnName">Name of the column. If another column with the same name exists, the existing column with the same name will be renamed (if the existing column has a higher column number).</param>
+    /// <param name="strictColumnName">If true, and another column with the same name exists to the left of this column, an exception is thrown. Otherwise, a new unique name based on the provided name will be found for this column. If the existing column with the same name has a lower column number, an exception is thrown.</param>
     /// <param name="expectedColumnType">Expected type of the column. If a column with the provided type exists at the provided position, this column is used. If the column at the provided position
     /// is of a different type, a new column with the provided type is created, and is then used to replace the column at the provided position.</param>
     /// <param name="columnKind">Kind of the column.</param>
@@ -1476,10 +1476,10 @@ namespace Altaxo.Data
     }
 
     /// <summary>
-    ///
+    /// Merges column types from another collection into this collection.
     /// </summary>
-    /// <param name="from"></param>
-    /// <returns></returns>
+    /// <param name="from">The source collection whose column types are merged.</param>
+    /// <returns>The indices of columns whose types were changed.</returns>
     public IAscendingIntegerCollection MergeColumnTypesFrom(DataColumnCollection from)
     {
       var coll = new AscendingIntegerCollection();
@@ -2299,6 +2299,7 @@ namespace Altaxo.Data
     /// Returns the column with name <code>s</code>. Sets the column with name <code>s</code> by copying data from
     /// the other column (not by replacing). An exception is thrown if the two columns are not of the same type.
     /// </summary>
+    /// <param name="s">The name of the column.</param>
     public Altaxo.Data.DataColumn this[string s]
     {
       get
@@ -2347,6 +2348,7 @@ namespace Altaxo.Data
     /// Returns the column at index <code>idx</code>. Sets the column at index<code>idx</code> by copying data from
     /// the other column (not by replacing). An exception is thrown if the two columns are not of the same type.
     /// </summary>
+    /// <param name="idx">The zero-based index of the column.</param>
     public Altaxo.Data.DataColumn this[int idx]
     {
       get
@@ -2896,6 +2898,7 @@ namespace Altaxo.Data
 
     #region IEnumerable Members
 
+    /// <inheritdoc/>
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
       for (int i = 0; i < RowCount; i++)
@@ -2906,11 +2909,13 @@ namespace Altaxo.Data
 
     #region IList<DataRow> Members
 
+    /// <inheritdoc/>
     int IList<DataRow>.IndexOf(DataRow item)
     {
       return item.RowIndex;
     }
 
+    /// <inheritdoc/>
     void IList<DataRow>.Insert(int index, DataRow item)
     {
       InsertRows(index, 1);
@@ -2923,11 +2928,13 @@ namespace Altaxo.Data
         this[i][index] = item[i];
     }
 
+    /// <inheritdoc/>
     void IList<DataRow>.RemoveAt(int index)
     {
       RemoveRow(index);
     }
 
+    /// <inheritdoc/>
     DataRow IList<DataRow>.this[int index]
     {
       get
@@ -2946,6 +2953,7 @@ namespace Altaxo.Data
 
     #region ICollection<DataRow> Members
 
+    /// <inheritdoc/>
     void ICollection<DataRow>.Add(DataRow item)
     {
       int nCols = Math.Min(ColumnCount, item.ColumnCollection.ColumnCount);
@@ -2954,32 +2962,38 @@ namespace Altaxo.Data
         this[i][index] = item[i];
     }
 
+    /// <inheritdoc/>
     void ICollection<DataRow>.Clear()
     {
       ClearData();
     }
 
+    /// <inheritdoc/>
     bool ICollection<DataRow>.Contains(DataRow item)
     {
       return object.ReferenceEquals(this, item.ColumnCollection);
     }
 
+    /// <inheritdoc/>
     void ICollection<DataRow>.CopyTo(DataRow[] array, int arrayIndex)
     {
       for (int i = 0; i < RowCount; i++)
         array[i + arrayIndex] = new DataRow(this, i);
     }
 
+    /// <inheritdoc/>
     int ICollection<DataRow>.Count
     {
       get { return RowCount; }
     }
 
+    /// <inheritdoc/>
     bool ICollection<DataRow>.IsReadOnly
     {
       get { return false; }
     }
 
+    /// <inheritdoc/>
     bool ICollection<DataRow>.Remove(DataRow item)
     {
       RemoveRow(item.RowIndex);
@@ -2993,6 +3007,8 @@ namespace Altaxo.Data
     /// <summary>
     /// Gets the parent column collection of a column.
     /// </summary>
+    /// <param name="column">The column whose parent collection is requested.</param>
+    /// <returns>The parent column collection, or <see langword="null"/> if none can be found.</returns>
     public static Altaxo.Data.DataColumnCollection? GetParentDataColumnCollectionOf(Altaxo.Data.DataColumn column)
     {
       if (column is null)
@@ -3006,7 +3022,8 @@ namespace Altaxo.Data
     /// <summary>
     /// Gets the parent data column collection of a child object.
     /// </summary>
-    /// <param name="child">The child object for which the parent table should be found.</param>
+    /// <param name="child">The child object for which the parent collection should be found.</param>
+    /// <returns>The parent data column collection, or <see langword="null"/> if none can be found.</returns>
     public static Altaxo.Data.DataColumnCollection? GetParentDataColumnCollectionOf(Main.IDocumentLeafNode? child)
     {
       if (child is null)

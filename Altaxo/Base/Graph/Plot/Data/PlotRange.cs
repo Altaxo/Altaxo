@@ -232,6 +232,7 @@ namespace Altaxo.Graph.Plot.Data
     /// <summary>
     /// Getter to a plot range at index i.
     /// </summary>
+    /// <param name="i">The zero-based index of the plot range to retrieve.</param>
     public PlotRange this[int i]
     {
       get { return InnerList[i]; }

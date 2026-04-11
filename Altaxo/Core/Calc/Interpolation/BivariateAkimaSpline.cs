@@ -142,6 +142,9 @@ namespace Altaxo.Calc.Interpolation
     /// <summary>
     /// Interpolates the z value for a single point defined by the provided x and y coordinates.
     /// </summary>
+    /// <param name="x">The x-coordinate of the desired point.</param>
+    /// <param name="y">The y-coordinate of the desired point.</param>
+    /// <returns>The interpolated z value at the specified coordinates.</returns>
     public double GetValueOfXY(double x, double y)
     {
       int lx0 = _x.Count; // number of grid points in X (LX)
@@ -206,6 +209,12 @@ namespace Altaxo.Calc.Interpolation
     /// <summary>
     /// Interpolates a list of points (<paramref name="u"/>, <paramref name="v"/>) and stores results into <paramref name="w"/>.
     /// </summary>
+    /// <param name="x">The x-grid values.</param>
+    /// <param name="y">The y-grid values.</param>
+    /// <param name="z">The z-values on the grid.</param>
+    /// <param name="u">The x-coordinates of the interpolation points.</param>
+    /// <param name="v">The y-coordinates of the interpolation points.</param>
+    /// <param name="w">The vector receiving the interpolated values.</param>
     public static void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y, IROMatrix<double> z, IReadOnlyList<double> u, IReadOnlyList<double> v, IVector<double> w)
     {
       CheckUVZ(u, v, w);

@@ -82,6 +82,8 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="ClosedPathShapeBase"/> class for deserialization.
     /// </summary>
+    /// <param name="location">The item location.</param>
+    /// <param name="info">The deserialization information.</param>
     protected ClosedPathShapeBase(ItemLocationDirect location, Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
       : base(location)
@@ -118,6 +120,8 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Copies values from another <see cref="ClosedPathShapeBase"/> instance.
     /// </summary>
+    /// <param name="from">The instance to copy from.</param>
+    /// <param name="withBaseMembers">If set to <see langword="true"/>, base class members are copied as well.</param>
     [MemberNotNull(nameof(_fillBrush), nameof(_linePen))]
     protected void CopyFrom(ClosedPathShapeBase from, bool withBaseMembers)
     {
@@ -224,6 +228,8 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Opens the shape-properties dialog for the double-clicked object.
     /// </summary>
+    /// <param name="o">The hit test object.</param>
+    /// <returns><see langword="true"/> if the dialog was handled successfully; otherwise, <see langword="false"/>.</returns>
     protected static bool EhHitDoubleClick(IHitTestObject o)
     {
       object hitted = o.HittedObject;

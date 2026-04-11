@@ -597,6 +597,7 @@ namespace Altaxo.Calc.Clustering
     /// <summary>
     /// Evaluates for each cluster the mean distance, i.e. the square root ( of the sum of squared distances divided by N)
     /// </summary>
+    /// <param name="q">Order of the moment to calculate the average distance of the cluster points to their centroid. A value of 1 returns the average distance; 2 returns the square root of the mean squared distances; higher values compute the corresponding moment.</param>
     /// <returns>The mean distance in each cluster, i.e. the square root ( of the sum of squared distances divided by N)</returns>
     public IReadOnlyList<double> EvaluateMeanNthMomentOfDistances(int q)
     {
@@ -673,6 +674,7 @@ namespace Altaxo.Calc.Clustering
     /// <summary>
     /// Evaluates for each cluster the 2nd moment of the distances, i.e. the square root of the average of the squared Euclidean distances (or whatever the distance function is) of the points to their respective centroid.
     /// </summary>
+    /// <param name="q">Order of the moment used to calculate the average distance of the cluster points to their centroid. A value of 1 returns the mean distance; 2 returns the second moment (root mean square), etc.</param>
     /// <returns>The 2nd moment of the distances in each cluster, i.e. the square root of the average of the squared Euclidean distances (or whatever the distance function is) of the points to their respective centroid</returns>
     protected IReadOnlyList<double> InternalEvaluateMeanNthMomentOfDistances(int q)
     {

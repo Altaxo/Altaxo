@@ -151,6 +151,8 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// Transforms the real-part curve data according to the group's interpolation options (logarithmization of x and/or y) and filters invalid points.
     /// Returns the transformed x and y arrays suitable for interpolation.
     /// </summary>
+    /// <param name="idx">Index of the curve to transform.</param>
+    /// <returns>Tuple of transformed x and y coordinate lists suitable for interpolation.</returns>
     public (IReadOnlyList<double> x, IReadOnlyList<double> y) TransformCurveRealForInterpolationAccordingToGroupOptions(int idx)
     {
       var xarr = new List<double>();
@@ -183,6 +185,8 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// Transforms the imaginary-part curve data according to the group's interpolation options (logarithmization of x and/or y) and filters invalid points.
     /// Returns the transformed x and y arrays suitable for interpolation.
     /// </summary>
+    /// <param name="idx">Index of the curve to transform.</param>
+    /// <returns>Tuple of transformed x and y coordinate lists suitable for interpolation.</returns>
     public (IReadOnlyList<double> x, IReadOnlyList<double> y) TransformCurveImaginaryForInterpolationAccordingToGroupOptions(int idx)
     {
       var xarr = new List<double>();

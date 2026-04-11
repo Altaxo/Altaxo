@@ -52,11 +52,12 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
   internal sealed class DenseEvd : Evd
   {
     /// <summary>
-    /// Initializes a new instance of the <see cref="DenseEvd"/> class. This object will compute the
-    /// the eigenvalue decomposition when the constructor is called and cache it's decomposition.
+    /// Initializes a new instance of the <see cref="DenseEvd"/> class. This object computes the
+    /// eigenvalue decomposition when the constructor is called and caches its decomposition.
     /// </summary>
     /// <param name="matrix">The matrix to factor.</param>
     /// <param name="symmetricity">If it is known whether the matrix is symmetric or not the routine can skip checking it itself.</param>
+    /// <returns>The computed eigenvalue decomposition.</returns>
     /// <exception cref="ArgumentNullException">If <paramref name="matrix"/> is <c>null</c>.</exception>
     /// <exception cref="ArgumentException">If EVD algorithm failed to converge with matrix <paramref name="matrix"/>.</exception>
     public static DenseEvd Create(DenseMatrix matrix, Symmetricity symmetricity)

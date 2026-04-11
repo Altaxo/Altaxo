@@ -158,6 +158,7 @@ namespace Altaxo.Graph.Plot.Groups
       return new DashPatternGroupStyle(this);
     }
 
+    /// <inheritdoc />
     object ICloneable.Clone()
     {
       return new DashPatternGroupStyle(this);
@@ -345,6 +346,7 @@ namespace Altaxo.Graph.Plot.Groups
     /// <summary>
     /// Represents a delegate that returns a dash pattern.
     /// </summary>
+    /// <returns>The dash pattern to use.</returns>
     public delegate IDashPattern Getter();
 
     /// <summary>

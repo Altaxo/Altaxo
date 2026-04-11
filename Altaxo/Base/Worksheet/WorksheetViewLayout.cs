@@ -138,6 +138,7 @@ namespace Altaxo.Worksheet
       }
     }
 
+    /// <inheritdoc/>
     IProjectItem IProjectItemPresentationModel.Document
     {
       get

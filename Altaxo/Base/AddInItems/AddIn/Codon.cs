@@ -93,6 +93,7 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Gets a property value by key.
     /// </summary>
+    /// <param name="key">The property name.</param>
     public string this[string key]
     {
       get
@@ -126,6 +127,10 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Initializes a new instance of the <see cref="Codon"/> class.
     /// </summary>
+    /// <param name="addIn">The add-in that owns the codon.</param>
+    /// <param name="name">The codon name.</param>
+    /// <param name="properties">The codon properties.</param>
+    /// <param name="conditions">The conditions attached to the codon.</param>
     public Codon(AddIn addIn, string name, Properties properties, IReadOnlyList<ICondition> conditions)
     {
       if (name is null)
@@ -138,6 +143,11 @@ namespace Altaxo.AddInItems
       this._conditions = conditions;
     }
 
+    /// <summary>
+    /// Builds the item represented by this codon.
+    /// </summary>
+    /// <param name="args">The arguments used for the build operation.</param>
+    /// <returns>The built item, or <c>null</c> if no item is created.</returns>
     internal object? BuildItem(BuildItemArgs args)
     {
       if (!_addIn.AddInTree.Doozers.TryGetValue(Name, out var doozer))

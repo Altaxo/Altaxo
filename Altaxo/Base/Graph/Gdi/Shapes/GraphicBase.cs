@@ -308,6 +308,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a fresh instance of this class with default values
     /// </summary>
+    /// <param name="location">The item location.</param>
     protected GraphicBase(ItemLocationDirect location)
     {
       if (location is null)

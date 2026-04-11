@@ -37,6 +37,11 @@ namespace Altaxo.Data
     private IVariantToVariantTransformation _transformation;
     private IReadableColumn? _cachedResultingColumn;
 
+    /// <summary>
+    /// Creates a proxy for a transformed readable column whose underlying column does not belong to the document hierarchy.
+    /// </summary>
+    /// <param name="column">The transformed readable column to proxy.</param>
+    /// <returns>A proxy for the specified transformed readable column.</returns>
     public static TransformedReadableColumnProxyForStandaloneColumns FromColumn(ITransformedReadableColumn column)
     {
       if (column is null)
@@ -61,6 +66,10 @@ namespace Altaxo.Data
       _cachedResultingColumn = column;
     }
 
+    /// <summary>
+    /// Constructor for deserialization purposes.
+    /// </summary>
+    /// <param name="info">The deserialization information.</param>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected TransformedReadableColumnProxyForStandaloneColumns(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
@@ -96,21 +105,25 @@ namespace Altaxo.Data
 
     #endregion Serialization
 
+    /// <inheritdoc />
     public IReadableColumn? Document()
     {
       return _cachedResultingColumn;
     }
 
+    /// <inheritdoc />
     public object Clone()
     {
       return (TransformedReadableColumnProxyForStandaloneColumns)MemberwiseClone();
     }
 
+    /// <inheritdoc />
     public bool IsEmpty
     {
       get { return _underlyingColumn is null; }
     }
 
+    /// <inheritdoc />
     public string GetName(int level)
     {
       if (_underlyingColumn is null)
@@ -119,16 +132,19 @@ namespace Altaxo.Data
         return (_transformation.RepresentationAsOperator ?? _transformation.RepresentationAsFunction) + " " + _underlyingColumn.FullName;
     }
 
+    /// <inheritdoc />
     public object? DocumentObject()
     {
       return _cachedResultingColumn;
     }
 
+    /// <inheritdoc />
     public AbsoluteDocumentPath DocumentPath()
     {
       return AbsoluteDocumentPath.DocumentPathOfRootNode;
     }
 
+    /// <inheritdoc />
     public bool ReplacePathParts(AbsoluteDocumentPath partToReplace, AbsoluteDocumentPath newPart, IDocumentLeafNode rootNode)
     {
       return false;

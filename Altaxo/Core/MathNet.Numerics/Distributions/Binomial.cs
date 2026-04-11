@@ -101,6 +101,7 @@ namespace Altaxo.Calc.Distributions
     /// </summary>
     /// <param name="p">The success probability (p) in each trial. Range: 0 ≤ p ≤ 1.</param>
     /// <param name="n">The number of trials (n). Range: n ≥ 0.</param>
+    /// <returns><c>true</c> if the parameters define a valid binomial distribution; otherwise, <c>false</c>.</returns>
     public static bool IsValidParameterSet(double p, int n)
     {
       return p >= 0.0 && p <= 1.0 && n >= 0;
@@ -407,6 +408,7 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Fills an array with samples generated from the distribution.
     /// </summary>
+    /// <param name="values">The array to fill with samples.</param>
     public void Samples(int[] values)
     {
       SamplesUnchecked(_random, values, _p, _trials);

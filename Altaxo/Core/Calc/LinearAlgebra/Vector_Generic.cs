@@ -257,6 +257,10 @@ namespace Altaxo.Calc.LinearAlgebra
         yield return this[i];
     }
 
+    /// <summary>
+    /// Returns a non-generic enumerator that iterates through the vector.
+    /// </summary>
+    /// <returns>A non-generic enumerator for the vector.</returns>
     IEnumerator IEnumerable.GetEnumerator()
     {
       var len = Count;
@@ -404,6 +408,7 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Clone (deep copy) a <c>FloatVector</c> variable</summary>
+    ///<returns>A deep copy of this vector.</returns>
     public GenericVector<T> Clone()
     {
       return new GenericVector<T>(this);
@@ -411,6 +416,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     // --- ICloneable Interface ---
     ///<summary>Clone (deep copy) a <c>FloatVector</c> variable</summary>
+    ///<returns>A deep copy of this vector.</returns>
     object ICloneable.Clone()
     {
       return Clone();

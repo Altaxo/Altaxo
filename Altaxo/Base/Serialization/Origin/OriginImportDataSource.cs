@@ -82,8 +82,10 @@ namespace Altaxo.Serialization.Origin
     #endregion Version 0
 
     /// <summary>
-    /// Deserialization constructor
+    /// Deserialization constructor.
     /// </summary>
+    /// <param name="info">The deserialization information.</param>
+    /// <param name="version">The version of the serialized data.</param>
     protected OriginImportDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     {
       switch (version)
@@ -103,6 +105,8 @@ namespace Altaxo.Serialization.Origin
     /// <summary>
     /// Initializes a new instance of the <see cref="OriginImportDataSource"/> class for a single file.
     /// </summary>
+    /// <param name="fileName">The file name of the Origin file.</param>
+    /// <param name="options">The import options.</param>
     public OriginImportDataSource(string fileName, OriginImportOptions options)
       : this(new string[] { fileName }, options)
     {
@@ -111,6 +115,8 @@ namespace Altaxo.Serialization.Origin
     /// <summary>
     /// Initializes a new instance of the <see cref="OriginImportDataSource"/> class for multiple files.
     /// </summary>
+    /// <param name="fileNames">The file names of the Origin files.</param>
+    /// <param name="options">The import options.</param>
     public OriginImportDataSource(IEnumerable<string> fileNames, OriginImportOptions options)
       : base(fileNames)
     {
@@ -120,6 +126,7 @@ namespace Altaxo.Serialization.Origin
     /// <summary>
     /// Initializes a new instance of the <see cref="OriginImportDataSource"/> class by copying another instance.
     /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public OriginImportDataSource(OriginImportDataSource from)
       : base(from)
     {

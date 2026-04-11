@@ -62,6 +62,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     /// <summary>
     /// Initializes a new instance of the <see cref="FitEnsembleController"/> class.
     /// </summary>
+    /// <param name="doc">The fit ensemble document.</param>
     public FitEnsembleController(FitEnsemble doc)
     {
       _doc = doc;

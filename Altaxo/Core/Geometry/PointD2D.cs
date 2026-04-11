@@ -172,6 +172,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Subtracts two points component-wise.
     /// </summary>
+    /// <param name="p1">The first point.</param>
+    /// <param name="p2">The second point.</param>
+    /// <returns>The component-wise difference of the two points.</returns>
     public static PointD2D operator -(PointD2D p1, PointD2D p2)
     {
       return new PointD2D(p1.X - p2.X, p1.Y - p2.Y);
@@ -180,6 +183,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Subtracts a vector from a point component-wise.
     /// </summary>
+    /// <param name="p1">The point.</param>
+    /// <param name="p2">The vector to subtract.</param>
+    /// <returns>The translated point.</returns>
     public static PointD2D operator -(PointD2D p1, VectorD2D p2)
     {
       return new PointD2D(p1.X - p2.X, p1.Y - p2.Y);
@@ -188,6 +194,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Adds two points component-wise.
     /// </summary>
+    /// <param name="p1">The first point.</param>
+    /// <param name="p2">The second point.</param>
+    /// <returns>The component-wise sum of the two points.</returns>
     public static PointD2D operator +(PointD2D p1, PointD2D p2)
     {
       return new PointD2D(p1.X + p2.X, p1.Y + p2.Y);
@@ -196,6 +205,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Adds a vector to a point component-wise.
     /// </summary>
+    /// <param name="p1">The point.</param>
+    /// <param name="p2">The vector to add.</param>
+    /// <returns>The translated point.</returns>
     public static PointD2D operator +(PointD2D p1, VectorD2D p2)
     {
       return new PointD2D(p1.X + p2.X, p1.Y + p2.Y);
@@ -204,6 +216,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Multiplies a point by a scalar.
     /// </summary>
+    /// <param name="p">The point.</param>
+    /// <param name="s">The scalar factor.</param>
+    /// <returns>The scaled point.</returns>
     public static PointD2D operator *(PointD2D p, double s)
     {
       return new PointD2D(p.X * s, p.Y * s);
@@ -212,6 +227,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Multiplies a scalar by a point.
     /// </summary>
+    /// <param name="s">The scalar factor.</param>
+    /// <param name="p">The point.</param>
+    /// <returns>The scaled point.</returns>
     public static PointD2D operator *(double s, PointD2D p)
     {
       return new PointD2D(p.X * s, p.Y * s);
@@ -220,6 +238,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Multiplies two points component-wise.
     /// </summary>
+    /// <param name="p">The first point.</param>
+    /// <param name="q">The second point.</param>
+    /// <returns>The component-wise product.</returns>
     public static PointD2D operator *(PointD2D p, PointD2D q)
     {
       return new PointD2D(p.X * q.X, p.Y * q.Y);
@@ -228,6 +249,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Divides a point by a scalar.
     /// </summary>
+    /// <param name="p">The point.</param>
+    /// <param name="s">The scalar divisor.</param>
+    /// <returns>The scaled point.</returns>
     public static PointD2D operator /(PointD2D p, double s)
     {
       return new PointD2D(p.X / s, p.Y / s);
@@ -236,6 +260,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Checks if two points are equal.
     /// </summary>
+    /// <param name="p">The first point.</param>
+    /// <param name="q">The second point.</param>
+    /// <returns><see langword="true"/> if the points are equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator ==(PointD2D p, PointD2D q)
     {
       return p.X == q.X && p.Y == q.Y;
@@ -244,6 +271,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Checks if two points are not equal.
     /// </summary>
+    /// <param name="p">The first point.</param>
+    /// <param name="q">The second point.</param>
+    /// <returns><see langword="true"/> if the points are not equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator !=(PointD2D p, PointD2D q)
     {
       return !(p.X == q.X && p.Y == q.Y);

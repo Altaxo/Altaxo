@@ -781,6 +781,7 @@ namespace Altaxo.Calc.Ode
       /// <summary>
       /// Optimizes the step size so that the next mandatory solution point will be reached without excessively large or small step sizes.
       /// </summary>
+      /// <param name="nextMandatoryX">The next mandatory x-value that should be reached, if any.</param>
       public void AdjustStepSizeAndOrder(double? nextMandatoryX)
       {
         // think about changing the order

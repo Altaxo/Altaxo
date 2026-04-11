@@ -50,6 +50,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Element accessor.
     /// </summary>
+    /// <param name="i">The zero-based element index.</param>
     public int this[int i]
     {
       get { return x[i]; }

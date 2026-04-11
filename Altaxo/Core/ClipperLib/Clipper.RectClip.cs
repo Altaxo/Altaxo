@@ -122,6 +122,11 @@ namespace Clipper2Lib
     /// Stores the index of the current result path.
     /// </summary>
     protected int currIdx_;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RectClip64"/> class.
+    /// </summary>
+    /// <param name="rect">The clipping rectangle.</param>
     internal RectClip64(Rect64 rect)
     {
       currIdx_ = -1;
@@ -134,6 +139,12 @@ namespace Clipper2Lib
         edges_[i] = new List<OutPt2?>();
     }
 
+    /// <summary>
+    /// Adds an output point to the current clipped result path.
+    /// </summary>
+    /// <param name="pt">The point to add.</param>
+    /// <param name="startingNewPath">Set to <see langword="true"/> to start a new output path.</param>
+    /// <returns>The created or reused output point.</returns>
     internal OutPt2 Add(Point64 pt, bool startingNewPath = false)
     {  // this method is only called by InternalExecute.
        // Later splitting and rejoining won't create additional op's,
@@ -1067,6 +1078,10 @@ namespace Clipper2Lib
   /// </summary>
   public class RectClipLines64 : RectClip64
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RectClipLines64"/> class.
+    /// </summary>
+    /// <param name="rect">The clipping rectangle.</param>
     internal RectClipLines64(Rect64 rect) : base(rect) { }
 
     /// <summary>

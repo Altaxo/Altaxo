@@ -81,6 +81,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <summary>
     /// Initializes a new instance of the <see cref="NonlinearFitDocument"/> class by cloning another document.
     /// </summary>
+    /// <param name="from">The document to clone.</param>
     public NonlinearFitDocument(NonlinearFitDocument from)
     {
       _fitEnsemble = ChildCloneFrom(from._fitEnsemble);
@@ -113,6 +114,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <summary>
     /// Gets the current parameter values for the specified fit element.
     /// </summary>
+    /// <param name="idx">The index of the fit element.</param>
+    /// <returns>The current parameter values for the specified fit element.</returns>
     public double[] GetParametersForFitElement(int idx)
     {
       FitElement fitele = _fitEnsemble[idx];

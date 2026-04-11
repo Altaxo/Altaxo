@@ -117,6 +117,8 @@ namespace Altaxo.Calc.Ode.Obsolete
     /// Returns |a1| if a2&gt;= 0
     /// Returns -|a1| if a2&lt;0
     /// </summary>
+    /// <param name="a1">The value whose magnitude is used.</param>
+    /// <param name="a2">The value whose sign determines the sign of the result.</param>
     /// <returns> Returns |a1| if a2&gt;= 0, Returns -|a1| if a2&lt;0 </returns>
     public static int Sign(int a1, int a2)
     {
@@ -130,6 +132,8 @@ namespace Altaxo.Calc.Ode.Obsolete
     /// Returns |a1| if a2&gt;= 0
     /// Returns -|a1| if a2&lt;0
     /// </summary>
+    /// <param name="a1">The value whose magnitude is used.</param>
+    /// <param name="a2">The value whose sign determines the sign of the result.</param>
     /// <returns> Returns |a1| if a2&gt;= 0, Returns -|a1| if a2&lt;0 </returns>
     public static float Sign(float a1, float a2)
     {
@@ -143,6 +147,8 @@ namespace Altaxo.Calc.Ode.Obsolete
     /// Returns |a1| if a2&gt;= 0
     /// Returns -|a1| if a2&lt;0
     /// </summary>
+    /// <param name="a1">The value whose magnitude is used.</param>
+    /// <param name="a2">The value whose sign determines the sign of the result.</param>
     /// <returns> Returns |a1| if a2&gt;= 0, Returns -|a1| if a2&lt;0 </returns>
     public static double Sign(double a1, double a2)
     {

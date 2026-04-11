@@ -210,6 +210,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Adds a vector to a point component-wise.
     /// </summary>
+    /// <param name="a">The point.</param>
+    /// <param name="b">The vector to add.</param>
+    /// <returns>The translated point.</returns>
     public static PointD3D operator +(PointD3D a, VectorD3D b)
     {
       return new PointD3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
@@ -218,6 +221,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Adds a vector to a point component-wise.
     /// </summary>
+    /// <param name="b">The vector to add.</param>
+    /// <param name="a">The point.</param>
+    /// <returns>The translated point.</returns>
     public static PointD3D operator +(VectorD3D b, PointD3D a)
     {
       return new PointD3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
@@ -226,6 +232,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Subtracts two points to get a vector.
     /// </summary>
+    /// <param name="a">The first point.</param>
+    /// <param name="b">The second point.</param>
+    /// <returns>The vector from <paramref name="b"/> to <paramref name="a"/>.</returns>
     public static VectorD3D operator -(PointD3D a, PointD3D b)
     {
       return new VectorD3D(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
@@ -234,6 +243,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Subtracts a vector from a point component-wise.
     /// </summary>
+    /// <param name="a">The point.</param>
+    /// <param name="b">The vector to subtract.</param>
+    /// <returns>The translated point.</returns>
     public static PointD3D operator -(PointD3D a, VectorD3D b)
     {
       return new PointD3D(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
@@ -242,6 +254,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Checks if two points are equal.
     /// </summary>
+    /// <param name="a">The first point.</param>
+    /// <param name="b">The second point.</param>
+    /// <returns><see langword="true"/> if the points are equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator ==(PointD3D a, PointD3D b)
     {
       return a.X == b.X && a.Y == b.Y && a.Z == b.Z;
@@ -250,6 +265,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Checks if two points are not equal.
     /// </summary>
+    /// <param name="a">The first point.</param>
+    /// <param name="b">The second point.</param>
+    /// <returns><see langword="true"/> if the points are not equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator !=(PointD3D a, PointD3D b)
     {
       return !(a.X == b.X && a.Y == b.Y && a.Z == b.Z);

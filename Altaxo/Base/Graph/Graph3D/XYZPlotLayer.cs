@@ -285,6 +285,7 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Constructor for deserialization purposes only.
     /// </summary>
+    /// <param name="info">The deserialization information.</param>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected XYZPlotLayer(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
        : base(info)
@@ -417,7 +418,8 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Updates the logical value of a plane id in case it uses a physical value.
     /// </summary>
-    /// <param name="id">The plane identifier</param>
+    /// <param name="id">The plane identifier.</param>
+    /// <returns>The plane identifier with an updated logical value.</returns>
     public CSPlaneID UpdateCSPlaneID(CSPlaneID id)
     {
       if (id.UsePhysicalValue)
@@ -635,6 +637,7 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// This will create the default axes styles that are given by the coordinate system.
     /// </summary>
+    /// <param name="context">The property context used to create the default axis styles.</param>
     public void CreateDefaultAxes(IReadOnlyPropertyBag context)
     {
       foreach (CSAxisInformation info in CoordinateSystem.AxisStyles)
@@ -1103,8 +1106,9 @@ namespace Altaxo.Graph.Graph3D
     }
 
     /// <summary>
-    /// Handles the b ou nd ar yc ha ng ed ev en tf ro mp lo ti te m.
+    /// Handles a boundary-changed event raised by a plot item.
     /// </summary>
+    /// <param name="boundaryChangedEventArgs">The event arguments describing the changed boundaries.</param>
     protected void EhBoundaryChangedEventFromPlotItem(BoundariesChangedEventArgs boundaryChangedEventArgs)
     {
       var data = boundaryChangedEventArgs.Data;

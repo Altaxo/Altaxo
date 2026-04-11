@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -177,8 +177,10 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
     }
 
     /// <summary>
-    /// Gets the c on tr ol le rf ro mt ag.
+    /// Gets the controller associated with the specified tab tag.
     /// </summary>
+    /// <param name="tag">The tab tag that identifies the controller.</param>
+    /// <returns>The matching controller, or <see langword="null"/> if no controller is associated with the tag.</returns>
     public IMVCAController? GetControllerFromTag(int? tag)
     {
         if (tag is { } selIndex && Tabs is { } tabs)
@@ -309,8 +311,10 @@ end_of_function:
    
 
     /// <summary>
-    /// Handles the v ie w a ct iv ec hi ld co nt ro lc ha ng ed.
+    /// Handles a change of the active child control.
     /// </summary>
+    /// <param name="selectedTab">The newly selected tab.</param>
+    /// <param name="oldSelectedTab">The previously selected tab.</param>
     protected void EhView_ActiveChildControlChanged(int? selectedTab, int? oldSelectedTab)
     {
       if (_disablerOfActiveChildControlChanged.IsSuspended)
@@ -474,8 +478,9 @@ end_of_function:
     }
 
     /// <summary>
-    /// Performs the b ri ng ta bt of ro nt operation.
+    /// Brings the specified style tab to the front.
     /// </summary>
+    /// <param name="styleIndex">The index of the style tab to activate.</param>
     protected void BringTabToFront(int styleIndex)
     {
       SelectedTab = styleIndex;

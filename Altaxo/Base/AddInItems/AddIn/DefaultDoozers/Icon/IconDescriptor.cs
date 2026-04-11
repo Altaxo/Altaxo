@@ -75,6 +75,7 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Initializes a new instance of the <see cref="IconDescriptor"/> class.
     /// </summary>
+    /// <param name="codon">The codon that defines the icon descriptor.</param>
     public IconDescriptor(Codon codon)
     {
       this._codon = codon;

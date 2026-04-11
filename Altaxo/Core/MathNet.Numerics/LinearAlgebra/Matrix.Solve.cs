@@ -76,6 +76,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Computes the EVD decomposition for a matrix.
     /// </summary>
+    /// <param name="symmetricity">The known symmetricity of the matrix.</param>
     /// <returns>The EVD decomposition object.</returns>
     public abstract Evd<T> Evd(Symmetricity symmetricity = Symmetricity.Unknown);
 
@@ -156,6 +157,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="solver">The iterative solver to use.</param>
     /// <param name="iterator">The iterator to use to control when to stop iterating.</param>
     /// <param name="preconditioner">The preconditioner to use for approximations.</param>
+    /// <returns>The final iteration status.</returns>
     public IterationStatus TrySolveIterative(Vector<T> input, Vector<T> result, IIterativeSolver<T> solver, Iterator<T> iterator = null, IPreconditioner<T> preconditioner = null)
     {
       if (iterator == null)
@@ -181,6 +183,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="solver">The iterative solver to use.</param>
     /// <param name="iterator">The iterator to use to control when to stop iterating.</param>
     /// <param name="preconditioner">The preconditioner to use for approximations.</param>
+    /// <returns>The final iteration status.</returns>
     public IterationStatus TrySolveIterative(Matrix<T> input, Matrix<T> result, IIterativeSolver<T> solver, Iterator<T> iterator = null, IPreconditioner<T> preconditioner = null)
     {
       if (RowCount != input.RowCount || input.RowCount != result.RowCount || input.ColumnCount != result.ColumnCount)
@@ -222,6 +225,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="solver">The iterative solver to use.</param>
     /// <param name="stopCriteria">Criteria to control when to stop iterating.</param>
     /// <param name="preconditioner">The preconditioner to use for approximations.</param>
+    /// <returns>The final iteration status.</returns>
     public IterationStatus TrySolveIterative(Vector<T> input, Vector<T> result, IIterativeSolver<T> solver, IPreconditioner<T> preconditioner, params IIterationStopCriterion<T>[] stopCriteria)
     {
       var iterator = new Iterator<T>(stopCriteria.Length == 0 ? Build.IterativeSolverStopCriteria() : stopCriteria);
@@ -236,6 +240,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="solver">The iterative solver to use.</param>
     /// <param name="stopCriteria">Criteria to control when to stop iterating.</param>
     /// <param name="preconditioner">The preconditioner to use for approximations.</param>
+    /// <returns>The final iteration status.</returns>
     public IterationStatus TrySolveIterative(Matrix<T> input, Matrix<T> result, IIterativeSolver<T> solver, IPreconditioner<T> preconditioner, params IIterationStopCriterion<T>[] stopCriteria)
     {
       var iterator = new Iterator<T>(stopCriteria.Length == 0 ? Build.IterativeSolverStopCriteria() : stopCriteria);
@@ -249,6 +254,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="result">The result vector <c>x</c>.</param>
     /// <param name="solver">The iterative solver to use.</param>
     /// <param name="stopCriteria">Criteria to control when to stop iterating.</param>
+    /// <returns>The final iteration status.</returns>
     public IterationStatus TrySolveIterative(Vector<T> input, Vector<T> result, IIterativeSolver<T> solver, params IIterationStopCriterion<T>[] stopCriteria)
     {
       var iterator = new Iterator<T>(stopCriteria.Length == 0 ? Build.IterativeSolverStopCriteria() : stopCriteria);
@@ -262,6 +268,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="result">The result matrix <c>X</c></param>
     /// <param name="solver">The iterative solver to use.</param>
     /// <param name="stopCriteria">Criteria to control when to stop iterating.</param>
+    /// <returns>The final iteration status.</returns>
     public IterationStatus TrySolveIterative(Matrix<T> input, Matrix<T> result, IIterativeSolver<T> solver, params IIterationStopCriterion<T>[] stopCriteria)
     {
       var iterator = new Iterator<T>(stopCriteria.Length == 0 ? Build.IterativeSolverStopCriteria() : stopCriteria);

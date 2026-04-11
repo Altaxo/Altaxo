@@ -97,6 +97,7 @@ namespace Altaxo.Calc.Distributions
     /// </summary>
     /// <param name="r">The number of successes (r) required to stop the experiment. Range: r ≥ 0.</param>
     /// <param name="p">The probability (p) of a trial resulting in success. Range: 0 ≤ p ≤ 1.</param>
+    /// <returns><c>true</c> if the parameters define a valid negative binomial distribution; otherwise, <c>false</c>.</returns>
     public static bool IsValidParameterSet(double r, double p)
     {
       return r >= 0.0 && p >= 0.0 && p <= 1.0;
@@ -269,6 +270,13 @@ namespace Altaxo.Calc.Distributions
       return k - 1;
     }
 
+    /// <summary>
+    /// Fills an array with negative binomial samples without validating the parameters.
+    /// </summary>
+    /// <param name="rnd">The random number generator to use.</param>
+    /// <param name="values">The array to fill with samples.</param>
+    /// <param name="r">The number of successes.</param>
+    /// <param name="p">The success probability.</param>
     private static void SamplesUnchecked(System.Random rnd, int[] values, double r, double p)
     {
       for (int i = 0; i < values.Length; i++)
@@ -297,6 +305,7 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Fills an array with samples generated from the distribution.
     /// </summary>
+    /// <param name="values">The array to fill with samples.</param>
     public void Samples(int[] values)
     {
       SamplesUnchecked(_random, values, _r, _p);
@@ -317,6 +326,7 @@ namespace Altaxo.Calc.Distributions
     /// <param name="rnd">The random number generator to use.</param>
     /// <param name="r">The number of successes (r) required to stop the experiment. Range: r ≥ 0.</param>
     /// <param name="p">The probability (p) of a trial resulting in success. Range: 0 ≤ p ≤ 1.</param>
+    /// <returns>A sample from the negative binomial distribution.</returns>
     public static int Sample(System.Random rnd, double r, double p)
     {
       if (!(r >= 0.0 && p >= 0.0 && p <= 1.0))
@@ -333,6 +343,7 @@ namespace Altaxo.Calc.Distributions
     /// <param name="rnd">The random number generator to use.</param>
     /// <param name="r">The number of successes (r) required to stop the experiment. Range: r ≥ 0.</param>
     /// <param name="p">The probability (p) of a trial resulting in success. Range: 0 ≤ p ≤ 1.</param>
+    /// <returns>A sequence of samples from the negative binomial distribution.</returns>
     public static IEnumerable<int> Samples(System.Random rnd, double r, double p)
     {
       if (!(r >= 0.0 && p >= 0.0 && p <= 1.0))
@@ -365,6 +376,7 @@ namespace Altaxo.Calc.Distributions
     /// </summary>
     /// <param name="r">The number of successes (r) required to stop the experiment. Range: r ≥ 0.</param>
     /// <param name="p">The probability (p) of a trial resulting in success. Range: 0 ≤ p ≤ 1.</param>
+    /// <returns>A sample from the negative binomial distribution.</returns>
     public static int Sample(double r, double p)
     {
       if (!(r >= 0.0 && p >= 0.0 && p <= 1.0))
@@ -380,6 +392,7 @@ namespace Altaxo.Calc.Distributions
     /// </summary>
     /// <param name="r">The number of successes (r) required to stop the experiment. Range: r ≥ 0.</param>
     /// <param name="p">The probability (p) of a trial resulting in success. Range: 0 ≤ p ≤ 1.</param>
+    /// <returns>A sequence of samples from the negative binomial distribution.</returns>
     public static IEnumerable<int> Samples(double r, double p)
     {
       if (!(r >= 0.0 && p >= 0.0 && p <= 1.0))

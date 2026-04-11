@@ -131,6 +131,8 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Gets the tab at the specified index.
     /// </summary>
+    /// <param name="i">The tab index.</param>
+    /// <returns>The tab view element at the specified index.</returns>
     protected ControlViewElement Tab(int i)
     {
       return _tabs[i];
@@ -147,6 +149,9 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Adds a tab to the controller.
     /// </summary>
+    /// <param name="title">The tab title.</param>
+    /// <param name="controller">The controller associated with the tab.</param>
+    /// <param name="view">The view object hosted in the tab.</param>
     public void AddTab(string title, IApplyController controller, object view)
     {
       _tabs.Add(new ControlViewElement(title, controller, view));
@@ -227,6 +232,7 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Synchronizes the tabs with the view.
     /// </summary>
+    /// <param name="bInit">A value indicating whether the synchronization happens during initialization.</param>
     protected void SetElements(bool bInit)
     {
       if (View is not null)

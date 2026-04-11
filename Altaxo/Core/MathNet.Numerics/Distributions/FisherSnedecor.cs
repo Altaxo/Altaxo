@@ -95,6 +95,7 @@ namespace Altaxo.Calc.Distributions
     /// </summary>
     /// <param name="d1">The first degree of freedom (d1) of the distribution. Range: d1 > 0.</param>
     /// <param name="d2">The second degree of freedom (d2) of the distribution. Range: d2 > 0.</param>
+    /// <returns><c>true</c> if the parameters define a valid Fisher-Snedecor distribution; otherwise, <c>false</c>.</returns>
     public static bool IsValidParameterSet(double d1, double d2)
     {
       return d1 > 0.0 && d2 > 0.0;
@@ -266,6 +267,7 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Fills an array with samples generated from the distribution.
     /// </summary>
+    /// <param name="values">The array to fill with samples.</param>
     public void Samples(double[] values)
     {
       SamplesUnchecked(_random, values, _freedom1, _freedom2);

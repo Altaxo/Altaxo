@@ -46,6 +46,10 @@ namespace Clipper2Lib
     /// <summary>
     /// Returns the intersection of two integer path collections.
     /// </summary>
+    /// <param name="subject">The subject paths.</param>
+    /// <param name="clip">The clip paths.</param>
+    /// <param name="fillRule">The fill rule to apply during clipping.</param>
+    /// <returns>The intersection of the supplied path collections.</returns>
     public static Paths64 Intersect(Paths64 subject, Paths64 clip, FillRule fillRule)
     {
       return BooleanOp(ClipType.Intersection, subject, clip, fillRule);
@@ -54,6 +58,11 @@ namespace Clipper2Lib
     /// <summary>
     /// Returns the intersection of two floating-point path collections.
     /// </summary>
+    /// <param name="subject">The subject paths.</param>
+    /// <param name="clip">The clip paths.</param>
+    /// <param name="fillRule">The fill rule to apply during clipping.</param>
+    /// <param name="precision">The decimal precision used for conversion during clipping.</param>
+    /// <returns>The intersection of the supplied path collections.</returns>
     public static PathsD Intersect(PathsD subject, PathsD clip, 
       FillRule fillRule, int precision = 2)
     {
@@ -64,6 +73,9 @@ namespace Clipper2Lib
     /// <summary>
     /// Returns the union of an integer path collection.
     /// </summary>
+    /// <param name="subject">The subject paths.</param>
+    /// <param name="fillRule">The fill rule to apply during clipping.</param>
+    /// <returns>The union of the supplied path collection.</returns>
     public static Paths64 Union(Paths64 subject, FillRule fillRule)
     {
       return BooleanOp(ClipType.Union, subject, null, fillRule);
@@ -72,6 +84,10 @@ namespace Clipper2Lib
     /// <summary>
     /// Returns the union of two integer path collections.
     /// </summary>
+    /// <param name="subject">The subject paths.</param>
+    /// <param name="clip">The clip paths.</param>
+    /// <param name="fillRule">The fill rule to apply during clipping.</param>
+    /// <returns>The union of the supplied path collections.</returns>
     public static Paths64 Union(Paths64 subject, Paths64 clip, FillRule fillRule)
     {
       return BooleanOp(ClipType.Union, subject, clip, fillRule);
@@ -80,6 +96,9 @@ namespace Clipper2Lib
     /// <summary>
     /// Returns the union of a floating-point path collection.
     /// </summary>
+    /// <param name="subject">The subject paths.</param>
+    /// <param name="fillRule">The fill rule to apply during clipping.</param>
+    /// <returns>The union of the supplied path collection.</returns>
     public static PathsD Union(PathsD subject, FillRule fillRule)
     {
       return BooleanOp(ClipType.Union, subject, null, fillRule);
@@ -88,6 +107,11 @@ namespace Clipper2Lib
     /// <summary>
     /// Returns the union of two floating-point path collections.
     /// </summary>
+    /// <param name="subject">The subject paths.</param>
+    /// <param name="clip">The clip paths.</param>
+    /// <param name="fillRule">The fill rule to apply during clipping.</param>
+    /// <param name="precision">The decimal precision used for conversion during clipping.</param>
+    /// <returns>The union of the supplied path collections.</returns>
     public static PathsD Union(PathsD subject, PathsD clip, 
       FillRule fillRule, int precision = 2)
     {
@@ -98,6 +122,10 @@ namespace Clipper2Lib
     /// <summary>
     /// Returns the difference of two integer path collections.
     /// </summary>
+    /// <param name="subject">The subject paths.</param>
+    /// <param name="clip">The clip paths to subtract.</param>
+    /// <param name="fillRule">The fill rule to apply during clipping.</param>
+    /// <returns>The difference of the supplied path collections.</returns>
     public static Paths64 Difference(Paths64 subject, Paths64 clip, FillRule fillRule)
     {
       return BooleanOp(ClipType.Difference, subject, clip, fillRule);
@@ -106,6 +134,11 @@ namespace Clipper2Lib
     /// <summary>
     /// Returns the difference of two floating-point path collections.
     /// </summary>
+    /// <param name="subject">The subject paths.</param>
+    /// <param name="clip">The clip paths to subtract.</param>
+    /// <param name="fillRule">The fill rule to apply during clipping.</param>
+    /// <param name="precision">The decimal precision used for conversion during clipping.</param>
+    /// <returns>The difference of the supplied path collections.</returns>
     public static PathsD Difference(PathsD subject, PathsD clip, 
       FillRule fillRule, int precision = 2)
     {
@@ -116,6 +149,10 @@ namespace Clipper2Lib
     /// <summary>
     /// Returns the exclusive-or of two integer path collections.
     /// </summary>
+    /// <param name="subject">The subject paths.</param>
+    /// <param name="clip">The clip paths.</param>
+    /// <param name="fillRule">The fill rule to apply during clipping.</param>
+    /// <returns>The exclusive-or of the supplied path collections.</returns>
     public static Paths64 Xor(Paths64 subject, Paths64 clip, FillRule fillRule)
     {
       return BooleanOp(ClipType.Xor, subject, clip, fillRule);
@@ -124,6 +161,11 @@ namespace Clipper2Lib
     /// <summary>
     /// Returns the exclusive-or of two floating-point path collections.
     /// </summary>
+    /// <param name="subject">The subject paths.</param>
+    /// <param name="clip">The clip paths.</param>
+    /// <param name="fillRule">The fill rule to apply during clipping.</param>
+    /// <param name="precision">The decimal precision used for conversion during clipping.</param>
+    /// <returns>The exclusive-or of the supplied path collections.</returns>
     public static PathsD Xor(PathsD subject, PathsD clip, 
       FillRule fillRule, int precision = 2)
     {
@@ -134,6 +176,11 @@ namespace Clipper2Lib
     /// <summary>
     /// Executes a boolean operation on integer path collections.
     /// </summary>
+    /// <param name="clipType">The boolean clipping operation to perform.</param>
+    /// <param name="subject">The subject paths.</param>
+    /// <param name="clip">The optional clip paths.</param>
+    /// <param name="fillRule">The fill rule to apply during clipping.</param>
+    /// <returns>The result of the boolean operation.</returns>
     public static Paths64 BooleanOp(ClipType clipType,
       Paths64? subject, Paths64? clip, FillRule fillRule)
     {
@@ -150,6 +197,11 @@ namespace Clipper2Lib
     /// <summary>
     /// Executes a boolean operation on integer path collections and stores the result in a polytree.
     /// </summary>
+    /// <param name="clipType">The boolean clipping operation to perform.</param>
+    /// <param name="subject">The subject paths.</param>
+    /// <param name="clip">The optional clip paths.</param>
+    /// <param name="polytree">The polytree that receives the result.</param>
+    /// <param name="fillRule">The fill rule to apply during clipping.</param>
     public static void BooleanOp(ClipType clipType,
       Paths64? subject, Paths64? clip, 
       PolyTree64 polytree, FillRule fillRule)
@@ -165,6 +217,12 @@ namespace Clipper2Lib
     /// <summary>
     /// Executes a boolean operation on floating-point path collections.
     /// </summary>
+    /// <param name="clipType">The boolean clipping operation to perform.</param>
+    /// <param name="subject">The subject paths.</param>
+    /// <param name="clip">The optional clip paths.</param>
+    /// <param name="fillRule">The fill rule to apply during clipping.</param>
+    /// <param name="precision">The decimal precision used for conversion during clipping.</param>
+    /// <returns>The result of the boolean operation.</returns>
     public static PathsD BooleanOp(ClipType clipType, PathsD subject, PathsD? clip, 
       FillRule fillRule, int precision = 2)
     {
@@ -180,6 +238,12 @@ namespace Clipper2Lib
     /// <summary>
     /// Executes a boolean operation on floating-point path collections and stores the result in a polytree.
     /// </summary>
+    /// <param name="clipType">The boolean clipping operation to perform.</param>
+    /// <param name="subject">The subject paths.</param>
+    /// <param name="clip">The optional clip paths.</param>
+    /// <param name="polytree">The polytree that receives the result.</param>
+    /// <param name="fillRule">The fill rule to apply during clipping.</param>
+    /// <param name="precision">The decimal precision used for conversion during clipping.</param>
     public static void BooleanOp(ClipType clipType,
       PathsD? subject, PathsD? clip,
       PolyTreeD polytree, FillRule fillRule, int precision = 2)
@@ -195,6 +259,13 @@ namespace Clipper2Lib
     /// <summary>
     /// Offsets integer paths by the specified delta.
     /// </summary>
+    /// <param name="paths">The paths to offset.</param>
+    /// <param name="delta">The offset distance.</param>
+    /// <param name="joinType">The join type to use between path edges.</param>
+    /// <param name="endType">The end treatment to apply.</param>
+    /// <param name="miterLimit">The miter limit used for miter joins.</param>
+    /// <param name="arcTolerance">The arc tolerance used when approximating arcs.</param>
+    /// <returns>The offset paths.</returns>
     public static Paths64 InflatePaths(Paths64 paths, double delta, JoinType joinType,
       EndType endType, double miterLimit = 2.0, double arcTolerance = 0.0)
     {
@@ -208,6 +279,14 @@ namespace Clipper2Lib
     /// <summary>
     /// Offsets floating-point paths by the specified delta.
     /// </summary>
+    /// <param name="paths">The paths to offset.</param>
+    /// <param name="delta">The offset distance.</param>
+    /// <param name="joinType">The join type to use between path edges.</param>
+    /// <param name="endType">The end treatment to apply.</param>
+    /// <param name="miterLimit">The miter limit used for miter joins.</param>
+    /// <param name="precision">The decimal precision used for conversion during offsetting.</param>
+    /// <param name="arcTolerance">The arc tolerance used when approximating arcs.</param>
+    /// <returns>The offset paths.</returns>
     public static PathsD InflatePaths(PathsD paths, double delta, JoinType joinType,
       EndType endType, double miterLimit = 2.0, int precision = 2, double arcTolerance = 0.0)
     {
@@ -223,6 +302,9 @@ namespace Clipper2Lib
     /// <summary>
     /// Clips integer paths to the specified rectangle.
     /// </summary>
+    /// <param name="rect">The clipping rectangle.</param>
+    /// <param name="paths">The paths to clip.</param>
+    /// <returns>The clipped paths.</returns>
     public static Paths64 RectClip(Rect64 rect, Paths64 paths)
     {
       if (rect.IsEmpty() || paths.Count == 0) return new Paths64();
@@ -233,6 +315,9 @@ namespace Clipper2Lib
     /// <summary>
     /// Clips an integer path to the specified rectangle.
     /// </summary>
+    /// <param name="rect">The clipping rectangle.</param>
+    /// <param name="path">The path to clip.</param>
+    /// <returns>The clipped paths.</returns>
     public static Paths64 RectClip(Rect64 rect, Path64 path)
     {
       if (rect.IsEmpty() || path.Count == 0) return new Paths64();
@@ -243,6 +328,10 @@ namespace Clipper2Lib
     /// <summary>
     /// Clips floating-point paths to the specified rectangle.
     /// </summary>
+    /// <param name="rect">The clipping rectangle.</param>
+    /// <param name="paths">The paths to clip.</param>
+    /// <param name="precision">The decimal precision used for conversion during clipping.</param>
+    /// <returns>The clipped paths.</returns>
     public static PathsD RectClip(RectD rect, PathsD paths, int precision = 2)
     {
       InternalClipper.CheckPrecision(precision);
@@ -258,6 +347,10 @@ namespace Clipper2Lib
     /// <summary>
     /// Clips a floating-point path to the specified rectangle.
     /// </summary>
+    /// <param name="rect">The clipping rectangle.</param>
+    /// <param name="path">The path to clip.</param>
+    /// <param name="precision">The decimal precision used for conversion during clipping.</param>
+    /// <returns>The clipped paths.</returns>
     public static PathsD RectClip(RectD rect, PathD path, int precision = 2)
     {
       if (rect.IsEmpty() || path.Count == 0) return new PathsD();
@@ -267,6 +360,9 @@ namespace Clipper2Lib
     /// <summary>
     /// Clips integer polyline paths to the specified rectangle.
     /// </summary>
+    /// <param name="rect">The clipping rectangle.</param>
+    /// <param name="paths">The polyline paths to clip.</param>
+    /// <returns>The clipped paths.</returns>
     public static Paths64 RectClipLines(Rect64 rect, Paths64 paths)
     {
       if (rect.IsEmpty() || paths.Count == 0) return new Paths64();
@@ -277,6 +373,9 @@ namespace Clipper2Lib
     /// <summary>
     /// Clips an integer polyline path to the specified rectangle.
     /// </summary>
+    /// <param name="rect">The clipping rectangle.</param>
+    /// <param name="path">The polyline path to clip.</param>
+    /// <returns>The clipped paths.</returns>
     public static Paths64 RectClipLines(Rect64 rect, Path64 path)
     {
       if (rect.IsEmpty() || path.Count == 0) return new Paths64();
@@ -287,6 +386,10 @@ namespace Clipper2Lib
     /// <summary>
     /// Clips floating-point polyline paths to the specified rectangle.
     /// </summary>
+    /// <param name="rect">The clipping rectangle.</param>
+    /// <param name="paths">The polyline paths to clip.</param>
+    /// <param name="precision">The decimal precision used for conversion during clipping.</param>
+    /// <returns>The clipped paths.</returns>
     public static PathsD RectClipLines(RectD rect, 
       PathsD paths, int precision = 2)
     {
@@ -302,6 +405,10 @@ namespace Clipper2Lib
     /// <summary>
     /// Clips a floating-point polyline path to the specified rectangle.
     /// </summary>
+    /// <param name="rect">The clipping rectangle.</param>
+    /// <param name="path">The polyline path to clip.</param>
+    /// <param name="precision">The decimal precision used for conversion during clipping.</param>
+    /// <returns>The clipped paths.</returns>
     public static PathsD RectClipLines(RectD rect, PathD path, int precision = 2)
     {
       if (rect.IsEmpty() || path.Count == 0) return new PathsD();
@@ -311,6 +418,10 @@ namespace Clipper2Lib
     /// <summary>
     /// Returns the Minkowski sum of two integer paths.
     /// </summary>
+    /// <param name="pattern">The pattern path.</param>
+    /// <param name="path">The base path.</param>
+    /// <param name="isClosed"><see langword="true"/> if the base path is closed; otherwise, <see langword="false"/>.</param>
+    /// <returns>The Minkowski sum.</returns>
     public static Paths64 MinkowskiSum(Path64 pattern, Path64 path, bool isClosed)
     {
       return Minkowski.Sum(pattern, path, isClosed);
@@ -319,6 +430,10 @@ namespace Clipper2Lib
     /// <summary>
     /// Returns the Minkowski sum of two floating-point paths.
     /// </summary>
+    /// <param name="pattern">The pattern path.</param>
+    /// <param name="path">The base path.</param>
+    /// <param name="isClosed"><see langword="true"/> if the base path is closed; otherwise, <see langword="false"/>.</param>
+    /// <returns>The Minkowski sum.</returns>
     public static PathsD MinkowskiSum(PathD pattern, PathD path, bool isClosed)
     {
       return Minkowski.Sum(pattern, path, isClosed);
@@ -327,6 +442,10 @@ namespace Clipper2Lib
     /// <summary>
     /// Returns the Minkowski difference of two integer paths.
     /// </summary>
+    /// <param name="pattern">The pattern path.</param>
+    /// <param name="path">The base path.</param>
+    /// <param name="isClosed"><see langword="true"/> if the base path is closed; otherwise, <see langword="false"/>.</param>
+    /// <returns>The Minkowski difference.</returns>
     public static Paths64 MinkowskiDiff(Path64 pattern, Path64 path, bool isClosed)
     {
       return Minkowski.Diff(pattern, path, isClosed);
@@ -335,6 +454,10 @@ namespace Clipper2Lib
     /// <summary>
     /// Returns the Minkowski difference of two floating-point paths.
     /// </summary>
+    /// <param name="pattern">The pattern path.</param>
+    /// <param name="path">The base path.</param>
+    /// <param name="isClosed"><see langword="true"/> if the base path is closed; otherwise, <see langword="false"/>.</param>
+    /// <returns>The Minkowski difference.</returns>
     public static PathsD MinkowskiDiff(PathD pattern, PathD path, bool isClosed)
     {
       return Minkowski.Diff(pattern, path, isClosed);
@@ -343,6 +466,8 @@ namespace Clipper2Lib
     /// <summary>
     /// Calculates the signed area of an integer path.
     /// </summary>
+    /// <param name="path">The path whose signed area is calculated.</param>
+    /// <returns>The signed area of <paramref name="path"/>.</returns>
     public static double Area(Path64 path)
     {
       // https://en.wikipedia.org/wiki/Shoelace_formula
@@ -361,6 +486,8 @@ namespace Clipper2Lib
     /// <summary>
     /// Calculates the signed area of integer paths.
     /// </summary>
+    /// <param name="paths">The paths whose signed areas are calculated.</param>
+    /// <returns>The sum of the signed areas.</returns>
     public static double Area(Paths64 paths)
     {
       double a = 0.0;
@@ -372,6 +499,8 @@ namespace Clipper2Lib
     /// <summary>
     /// Calculates the signed area of a floating-point path.
     /// </summary>
+    /// <param name="path">The path whose signed area is calculated.</param>
+    /// <returns>The signed area of <paramref name="path"/>.</returns>
     public static double Area(PathD path)
     {
       double a = 0.0;
@@ -389,6 +518,8 @@ namespace Clipper2Lib
     /// <summary>
     /// Calculates the signed area of floating-point paths.
     /// </summary>
+    /// <param name="paths">The paths whose signed areas are calculated.</param>
+    /// <returns>The sum of the signed areas.</returns>
     public static double Area(PathsD paths)
     {
       double a = 0.0;
@@ -400,6 +531,8 @@ namespace Clipper2Lib
     /// <summary>
     /// Determines whether an integer polygon has positive orientation.
     /// </summary>
+    /// <param name="poly">The polygon to test.</param>
+    /// <returns><see langword="true"/> if the polygon has positive orientation; otherwise, <see langword="false"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsPositive(Path64 poly)
     {
@@ -409,6 +542,8 @@ namespace Clipper2Lib
     /// <summary>
     /// Determines whether a floating-point polygon has positive orientation.
     /// </summary>
+    /// <param name="poly">The polygon to test.</param>
+    /// <returns><see langword="true"/> if the polygon has positive orientation; otherwise, <see langword="false"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsPositive(PathD poly)
     {
@@ -418,6 +553,8 @@ namespace Clipper2Lib
     /// <summary>
     /// Converts an integer path to a string.
     /// </summary>
+    /// <param name="path">The path to convert.</param>
+    /// <returns>A string representation of the path.</returns>
     public static string Path64ToString(Path64 path)
     {
       string result = "";
@@ -428,6 +565,8 @@ namespace Clipper2Lib
     /// <summary>
     /// Converts integer paths to a string.
     /// </summary>
+    /// <param name="paths">The paths to convert.</param>
+    /// <returns>A string representation of the paths.</returns>
     public static string Paths64ToString(Paths64 paths)
     {
       string result = "";
@@ -438,6 +577,8 @@ namespace Clipper2Lib
     /// <summary>
     /// Converts a floating-point path to a string.
     /// </summary>
+    /// <param name="path">The path to convert.</param>
+    /// <returns>A string representation of the path.</returns>
     public static string PathDToString(PathD path)
     {
       string result = "";
@@ -448,6 +589,8 @@ namespace Clipper2Lib
     /// <summary>
     /// Converts floating-point paths to a string.
     /// </summary>
+    /// <param name="paths">The paths to convert.</param>
+    /// <returns>A string representation of the paths.</returns>
     public static string PathsDToString(PathsD paths)
     {
       string result = "";
@@ -458,6 +601,10 @@ namespace Clipper2Lib
     /// <summary>
     /// Offsets an integer path by the specified translation.
     /// </summary>
+    /// <param name="path">The path to translate.</param>
+    /// <param name="dx">The horizontal offset.</param>
+    /// <param name="dy">The vertical offset.</param>
+    /// <returns>The translated path.</returns>
     public static Path64 OffsetPath(Path64 path, long dx, long dy)
     {
       Path64 result = new Path64(path.Count);
@@ -469,6 +616,9 @@ namespace Clipper2Lib
     /// <summary>
     /// Scales an integer point and returns an integer point.
     /// </summary>
+    /// <param name="pt">The point to scale.</param>
+    /// <param name="scale">The scale factor.</param>
+    /// <returns>The scaled integer point.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Point64 ScalePoint64(Point64 pt, double scale)
     {
@@ -486,6 +636,9 @@ namespace Clipper2Lib
     /// <summary>
     /// Scales an integer point and returns a floating-point point.
     /// </summary>
+    /// <param name="pt">The point to scale.</param>
+    /// <param name="scale">The scale factor.</param>
+    /// <returns>The scaled floating-point point.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static PointD ScalePointD(Point64 pt, double scale)
     {
@@ -504,6 +657,9 @@ namespace Clipper2Lib
     /// <summary>
     /// Scales a floating-point rectangle and returns an integer rectangle.
     /// </summary>
+    /// <param name="rec">The rectangle to scale.</param>
+    /// <param name="scale">The scale factor.</param>
+    /// <returns>The scaled integer rectangle.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Rect64 ScaleRect(RectD rec, double scale)
     {
@@ -520,6 +676,9 @@ namespace Clipper2Lib
     /// <summary>
     /// Scales an integer path.
     /// </summary>
+    /// <param name="path">The path to scale.</param>
+    /// <param name="scale">The scale factor.</param>
+    /// <returns>The scaled path.</returns>
     public static Path64 ScalePath(Path64 path, double scale)
     {
       if (InternalClipper.IsAlmostZero(scale - 1)) return path;
@@ -537,6 +696,9 @@ namespace Clipper2Lib
     /// <summary>
     /// Scales integer paths.
     /// </summary>
+    /// <param name="paths">The paths to scale.</param>
+    /// <param name="scale">The scale factor.</param>
+    /// <returns>The scaled paths.</returns>
     public static Paths64 ScalePaths(Paths64 paths, double scale)
     {
       if (InternalClipper.IsAlmostZero(scale - 1)) return paths;
@@ -549,6 +711,9 @@ namespace Clipper2Lib
     /// <summary>
     /// Scales a floating-point path.
     /// </summary>
+    /// <param name="path">The path to scale.</param>
+    /// <param name="scale">The scale factor.</param>
+    /// <returns>The scaled path.</returns>
     public static PathD ScalePath(PathD path, double scale)
     {
       if (InternalClipper.IsAlmostZero(scale - 1)) return path;
@@ -561,6 +726,9 @@ namespace Clipper2Lib
     /// <summary>
     /// Scales floating-point paths.
     /// </summary>
+    /// <param name="paths">The paths to scale.</param>
+    /// <param name="scale">The scale factor.</param>
+    /// <returns>The scaled paths.</returns>
     public static PathsD ScalePaths(PathsD paths, double scale)
     {
       if (InternalClipper.IsAlmostZero(scale - 1)) return paths;
@@ -570,10 +738,13 @@ namespace Clipper2Lib
       return result;
     }
 
+    // Unlike ScalePath, both ScalePath64 & ScalePathD also involve type conversion
     /// <summary>
     /// Scales and converts a floating-point path to an integer path.
     /// </summary>
-    // Unlike ScalePath, both ScalePath64 & ScalePathD also involve type conversion
+    /// <param name="path">The path to scale and convert.</param>
+    /// <param name="scale">The scale factor.</param>
+    /// <returns>The scaled integer path.</returns>
     public static Path64 ScalePath64(PathD path, double scale)
     {
       int cnt = path.Count;
@@ -586,6 +757,9 @@ namespace Clipper2Lib
     /// <summary>
     /// Scales and converts floating-point paths to integer paths.
     /// </summary>
+    /// <param name="paths">The paths to scale and convert.</param>
+    /// <param name="scale">The scale factor.</param>
+    /// <returns>The scaled integer paths.</returns>
     public static Paths64 ScalePaths64(PathsD paths, double scale)
     {
       int cnt = paths.Count;
@@ -598,6 +772,9 @@ namespace Clipper2Lib
     /// <summary>
     /// Scales and converts an integer path to a floating-point path.
     /// </summary>
+    /// <param name="path">The path to scale and convert.</param>
+    /// <param name="scale">The scale factor.</param>
+    /// <returns>The scaled floating-point path.</returns>
     public static PathD ScalePathD(Path64 path, double scale)
     {
       int cnt = path.Count;
@@ -610,6 +787,9 @@ namespace Clipper2Lib
     /// <summary>
     /// Scales and converts integer paths to floating-point paths.
     /// </summary>
+    /// <param name="paths">The paths to scale and convert.</param>
+    /// <param name="scale">The scale factor.</param>
+    /// <returns>The scaled floating-point paths.</returns>
     public static PathsD ScalePathsD(Paths64 paths, double scale)
     {
       int cnt = paths.Count;
@@ -619,10 +799,12 @@ namespace Clipper2Lib
       return res;
     }
 
+    // The static functions Path64 and PathD convert path types without scaling
     /// <summary>
     /// Converts a floating-point path to an integer path without scaling.
     /// </summary>
-    // The static functions Path64 and PathD convert path types without scaling
+    /// <param name="path">The path to convert.</param>
+    /// <returns>The converted integer path.</returns>
     public static Path64 Path64(PathD path)
     {
       Path64 result = new Path64(path.Count);
@@ -634,6 +816,8 @@ namespace Clipper2Lib
     /// <summary>
     /// Converts floating-point paths to integer paths without scaling.
     /// </summary>
+    /// <param name="paths">The paths to convert.</param>
+    /// <returns>The converted integer paths.</returns>
     public static Paths64 Paths64(PathsD paths)
     {
       Paths64 result = new Paths64(paths.Count);
@@ -645,6 +829,8 @@ namespace Clipper2Lib
     /// <summary>
     /// Converts integer paths to floating-point paths without scaling.
     /// </summary>
+    /// <param name="paths">The paths to convert.</param>
+    /// <returns>The converted floating-point paths.</returns>
     public static PathsD PathsD(Paths64 paths)
     {
       PathsD result = new PathsD(paths.Count);
@@ -656,6 +842,8 @@ namespace Clipper2Lib
     /// <summary>
     /// Converts an integer path to a floating-point path without scaling.
     /// </summary>
+    /// <param name="path">The path to convert.</param>
+    /// <returns>The converted floating-point path.</returns>
     public static PathD PathD(Path64 path)
     {
       PathD result = new PathD(path.Count);
@@ -667,6 +855,10 @@ namespace Clipper2Lib
     /// <summary>
     /// Translates an integer path.
     /// </summary>
+    /// <param name="path">The path to translate.</param>
+    /// <param name="dx">The horizontal offset.</param>
+    /// <param name="dy">The vertical offset.</param>
+    /// <returns>The translated path.</returns>
     public static Path64 TranslatePath(Path64 path, long dx, long dy)
     {
       Path64 result = new Path64(path.Count);
@@ -678,6 +870,10 @@ namespace Clipper2Lib
     /// <summary>
     /// Translates integer paths.
     /// </summary>
+    /// <param name="paths">The paths to translate.</param>
+    /// <param name="dx">The horizontal offset.</param>
+    /// <param name="dy">The vertical offset.</param>
+    /// <returns>The translated paths.</returns>
     public static Paths64 TranslatePaths(Paths64 paths, long dx, long dy)
     {
       Paths64 result = new Paths64(paths.Count);
@@ -689,6 +885,10 @@ namespace Clipper2Lib
     /// <summary>
     /// Translates a floating-point path.
     /// </summary>
+    /// <param name="path">The path to translate.</param>
+    /// <param name="dx">The horizontal offset.</param>
+    /// <param name="dy">The vertical offset.</param>
+    /// <returns>The translated path.</returns>
     public static PathD TranslatePath(PathD path, double dx, double dy)
     {
       PathD result = new PathD(path.Count);
@@ -700,6 +900,10 @@ namespace Clipper2Lib
     /// <summary>
     /// Translates floating-point paths.
     /// </summary>
+    /// <param name="paths">The paths to translate.</param>
+    /// <param name="dx">The horizontal offset.</param>
+    /// <param name="dy">The vertical offset.</param>
+    /// <returns>The translated paths.</returns>
     public static PathsD TranslatePaths(PathsD paths, double dx, double dy)
     {
       PathsD result = new PathsD(paths.Count);
@@ -711,6 +915,8 @@ namespace Clipper2Lib
     /// <summary>
     /// Returns a reversed copy of an integer path.
     /// </summary>
+    /// <param name="path">The path to reverse.</param>
+    /// <returns>The reversed path.</returns>
     public static Path64 ReversePath(Path64 path)
     {
       Path64 result = new Path64(path);
@@ -721,6 +927,8 @@ namespace Clipper2Lib
     /// <summary>
     /// Returns a reversed copy of a floating-point path.
     /// </summary>
+    /// <param name="path">The path to reverse.</param>
+    /// <returns>The reversed path.</returns>
     public static PathD ReversePath(PathD path)
     {
       PathD result = new PathD(path);
@@ -731,6 +939,8 @@ namespace Clipper2Lib
     /// <summary>
     /// Returns reversed copies of integer paths.
     /// </summary>
+    /// <param name="paths">The paths to reverse.</param>
+    /// <returns>The reversed paths.</returns>
     public static Paths64 ReversePaths(Paths64 paths)
     {
       Paths64 result = new Paths64(paths.Count);
@@ -743,6 +953,8 @@ namespace Clipper2Lib
     /// <summary>
     /// Returns reversed copies of floating-point paths.
     /// </summary>
+    /// <param name="paths">The paths to reverse.</param>
+    /// <returns>The reversed paths.</returns>
     public static PathsD ReversePaths(PathsD paths)
     {
       PathsD result = new PathsD(paths.Count);
@@ -754,6 +966,8 @@ namespace Clipper2Lib
     /// <summary>
     /// Gets the bounds of an integer path.
     /// </summary>
+    /// <param name="path">The path whose bounds are calculated.</param>
+    /// <returns>The bounds of the path.</returns>
     public static Rect64 GetBounds(Path64 path)
     {
       Rect64 result = InvalidRect64;
@@ -770,6 +984,8 @@ namespace Clipper2Lib
     /// <summary>
     /// Gets the bounds of integer paths.
     /// </summary>
+    /// <param name="paths">The paths whose bounds are calculated.</param>
+    /// <returns>The bounds of the paths.</returns>
     public static Rect64 GetBounds(Paths64 paths)
     {
       Rect64 result = InvalidRect64;
@@ -787,6 +1003,8 @@ namespace Clipper2Lib
     /// <summary>
     /// Gets the bounds of a floating-point path.
     /// </summary>
+    /// <param name="path">The path whose bounds are calculated.</param>
+    /// <returns>The bounds of the path.</returns>
     public static RectD GetBounds(PathD path)
     {
       RectD result = InvalidRectD;
@@ -803,6 +1021,8 @@ namespace Clipper2Lib
     /// <summary>
     /// Gets the bounds of floating-point paths.
     /// </summary>
+    /// <param name="paths">The paths whose bounds are calculated.</param>
+    /// <returns>The bounds of the paths.</returns>
     public static RectD GetBounds(PathsD paths)
     {
       RectD result = InvalidRectD;
@@ -820,6 +1040,8 @@ namespace Clipper2Lib
     /// <summary>
     /// Creates an integer path from an array of integer coordinates.
     /// </summary>
+    /// <param name="arr">The alternating coordinate values.</param>
+    /// <returns>The created path.</returns>
     public static Path64 MakePath(int[] arr)
     {
       int len = arr.Length / 2;
@@ -832,6 +1054,8 @@ namespace Clipper2Lib
     /// <summary>
     /// Creates an integer path from an array of long coordinates.
     /// </summary>
+    /// <param name="arr">The alternating coordinate values.</param>
+    /// <returns>The created path.</returns>
     public static Path64 MakePath(long[] arr)
     {
       int len = arr.Length / 2;
@@ -844,6 +1068,8 @@ namespace Clipper2Lib
     /// <summary>
     /// Creates a floating-point path from an array of coordinates.
     /// </summary>
+    /// <param name="arr">The alternating coordinate values.</param>
+    /// <returns>The created path.</returns>
     public static PathD MakePath(double[] arr)
     {
       int len = arr.Length / 2;
@@ -882,6 +1108,8 @@ namespace Clipper2Lib
     /// <summary>
     /// Returns the square of a floating-point value.
     /// </summary>
+    /// <param name="val">The value to square.</param>
+    /// <returns>The squared value.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double Sqr(double val)
     {
@@ -891,6 +1119,8 @@ namespace Clipper2Lib
     /// <summary>
     /// Returns the square of an integer value.
     /// </summary>
+    /// <param name="val">The value to square.</param>
+    /// <returns>The squared value.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double Sqr(long val)
     {
@@ -900,6 +1130,9 @@ namespace Clipper2Lib
     /// <summary>
     /// Returns the squared distance between two integer points.
     /// </summary>
+    /// <param name="pt1">The first point.</param>
+    /// <param name="pt2">The second point.</param>
+    /// <returns>The squared distance between the points.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double DistanceSqr(Point64 pt1, Point64 pt2)
     {
@@ -909,6 +1142,9 @@ namespace Clipper2Lib
     /// <summary>
     /// Returns the midpoint between two integer points.
     /// </summary>
+    /// <param name="pt1">The first point.</param>
+    /// <param name="pt2">The second point.</param>
+    /// <returns>The midpoint between the points.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Point64 MidPoint(Point64 pt1, Point64 pt2)
     {
@@ -918,6 +1154,9 @@ namespace Clipper2Lib
     /// <summary>
     /// Returns the midpoint between two floating-point points.
     /// </summary>
+    /// <param name="pt1">The first point.</param>
+    /// <param name="pt2">The second point.</param>
+    /// <returns>The midpoint between the points.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static PointD MidPoint(PointD pt1, PointD pt2)
     {
@@ -927,6 +1166,9 @@ namespace Clipper2Lib
     /// <summary>
     /// Inflates an integer rectangle by the specified amounts.
     /// </summary>
+    /// <param name="rec">The rectangle to inflate.</param>
+    /// <param name="dx">The horizontal inflation amount.</param>
+    /// <param name="dy">The vertical inflation amount.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void InflateRect(ref Rect64 rec, int dx, int dy)
     {
@@ -939,6 +1181,9 @@ namespace Clipper2Lib
     /// <summary>
     /// Inflates a floating-point rectangle by the specified amounts.
     /// </summary>
+    /// <param name="rec">The rectangle to inflate.</param>
+    /// <param name="dx">The horizontal inflation amount.</param>
+    /// <param name="dy">The vertical inflation amount.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void InflateRect(ref RectD rec, double dx, double dy)
     {
@@ -951,6 +1196,10 @@ namespace Clipper2Lib
     /// <summary>
     /// Determines whether two floating-point points are within a squared distance threshold.
     /// </summary>
+    /// <param name="pt1">The first point.</param>
+    /// <param name="pt2">The second point.</param>
+    /// <param name="distanceSqrd">The squared distance threshold.</param>
+    /// <returns><see langword="true"/> if the points are within the threshold; otherwise, <see langword="false"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool PointsNearEqual(PointD pt1, PointD pt2, double distanceSqrd)
     {
@@ -960,6 +1209,10 @@ namespace Clipper2Lib
     /// <summary>
     /// Removes near-duplicate points from a floating-point path.
     /// </summary>
+    /// <param name="path">The path to clean.</param>
+    /// <param name="minEdgeLenSqrd">The squared minimum edge length.</param>
+    /// <param name="isClosedPath"><see langword="true"/> if the path is closed; otherwise, <see langword="false"/>.</param>
+    /// <returns>The cleaned path.</returns>
     public static PathD StripNearDuplicates(PathD path,
         double minEdgeLenSqrd, bool isClosedPath)
     {
@@ -986,6 +1239,9 @@ namespace Clipper2Lib
     /// <summary>
     /// Removes duplicate points from an integer path.
     /// </summary>
+    /// <param name="path">The path to clean.</param>
+    /// <param name="isClosedPath"><see langword="true"/> if the path is closed; otherwise, <see langword="false"/>.</param>
+    /// <returns>The cleaned path.</returns>
     public static Path64 StripDuplicates(Path64 path, bool isClosedPath)
     {
       int cnt = path.Count;
@@ -1016,6 +1272,8 @@ namespace Clipper2Lib
     /// <summary>
     /// Flattens an integer polytree into paths.
     /// </summary>
+    /// <param name="polyTree">The polytree to flatten.</param>
+    /// <returns>The flattened paths.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Paths64 PolyTreeToPaths64(PolyTree64 polyTree)
     {
@@ -1028,6 +1286,8 @@ namespace Clipper2Lib
     /// <summary>
     /// Adds a floating-point polypath and its descendants to a path collection.
     /// </summary>
+    /// <param name="polyPath">The polypath to flatten.</param>
+    /// <param name="paths">The target path collection.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void AddPolyNodeToPathsD(PolyPathD polyPath, PathsD paths)
     {
@@ -1040,6 +1300,8 @@ namespace Clipper2Lib
     /// <summary>
     /// Flattens a floating-point polytree into paths.
     /// </summary>
+    /// <param name="polyTree">The polytree to flatten.</param>
+    /// <returns>The flattened paths.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static PathsD PolyTreeToPathsD(PolyTreeD polyTree)
     {
@@ -1057,6 +1319,10 @@ namespace Clipper2Lib
     /// <summary>
     /// Returns the squared perpendicular distance from a floating-point point to a line.
     /// </summary>
+    /// <param name="pt">The point to test.</param>
+    /// <param name="line1">The first point on the line.</param>
+    /// <param name="line2">The second point on the line.</param>
+    /// <returns>The squared perpendicular distance from the point to the line.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double PerpendicDistFromLineSqrd(PointD pt, PointD line1, PointD line2)
     {
@@ -1071,6 +1337,10 @@ namespace Clipper2Lib
     /// <summary>
     /// Returns the squared perpendicular distance from an integer point to a line.
     /// </summary>
+    /// <param name="pt">The point to test.</param>
+    /// <param name="line1">The first point on the line.</param>
+    /// <param name="line2">The second point on the line.</param>
+    /// <returns>The squared perpendicular distance from the point to the line.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double PerpendicDistFromLineSqrd(Point64 pt, Point64 line1, Point64 line2)
     {
@@ -1082,6 +1352,14 @@ namespace Clipper2Lib
       return Sqr(a * d - c * b) / (c * c + d * d);
     }
 
+    /// <summary>
+    /// Recursively marks the vertices to keep when simplifying an integer path.
+    /// </summary>
+    /// <param name="path">The path being simplified.</param>
+    /// <param name="begin">The start index of the current segment.</param>
+    /// <param name="end">The end index of the current segment.</param>
+    /// <param name="epsSqrd">The squared simplification tolerance.</param>
+    /// <param name="flags">The flags indicating which vertices are preserved.</param>
     internal static void RDP(Path64 path, int begin, int end, double epsSqrd, List<bool> flags)
     {
       while (true)
@@ -1114,6 +1392,9 @@ namespace Clipper2Lib
     /// <summary>
     /// Simplifies an integer path using the Ramer-Douglas-Peucker algorithm.
     /// </summary>
+    /// <param name="path">The path to simplify.</param>
+    /// <param name="epsilon">The simplification tolerance.</param>
+    /// <returns>The simplified path.</returns>
     public static Path64 RamerDouglasPeucker(Path64 path, double epsilon)
     {
       int len = path.Count;
@@ -1129,6 +1410,9 @@ namespace Clipper2Lib
     /// <summary>
     /// Simplifies integer paths using the Ramer-Douglas-Peucker algorithm.
     /// </summary>
+    /// <param name="paths">The paths to simplify.</param>
+    /// <param name="epsilon">The simplification tolerance.</param>
+    /// <returns>The simplified paths.</returns>
     public static Paths64 RamerDouglasPeucker(Paths64 paths, double epsilon)
     {
       Paths64 result = new Paths64(paths.Count);
@@ -1137,6 +1421,14 @@ namespace Clipper2Lib
       return result;
     }
 
+    /// <summary>
+    /// Simplifies a floating-point path segment using the Ramer-Douglas-Peucker algorithm.
+    /// </summary>
+    /// <param name="path">The path being simplified.</param>
+    /// <param name="begin">The index of the first point in the segment.</param>
+    /// <param name="end">The index of the last point in the segment.</param>
+    /// <param name="epsSqrd">The squared simplification tolerance.</param>
+    /// <param name="flags">The flags that indicate which points are kept.</param>
     internal static void RDP(PathD path, int begin, int end, double epsSqrd, List<bool> flags)
     {
       while (true)
@@ -1169,6 +1461,9 @@ namespace Clipper2Lib
     /// <summary>
     /// Simplifies a floating-point path using the Ramer-Douglas-Peucker algorithm.
     /// </summary>
+    /// <param name="path">The path to simplify.</param>
+    /// <param name="epsilon">The simplification tolerance.</param>
+    /// <returns>The simplified path.</returns>
     public static PathD RamerDouglasPeucker(PathD path, double epsilon)
     {
       int len = path.Count;
@@ -1184,6 +1479,9 @@ namespace Clipper2Lib
     /// <summary>
     /// Simplifies floating-point paths using the Ramer-Douglas-Peucker algorithm.
     /// </summary>
+    /// <param name="paths">The paths to simplify.</param>
+    /// <param name="epsilon">The simplification tolerance.</param>
+    /// <returns>The simplified paths.</returns>
     public static PathsD RamerDouglasPeucker(PathsD paths, double epsilon)
     {
       PathsD result = new PathsD(paths.Count);
@@ -1218,6 +1516,10 @@ namespace Clipper2Lib
     /// <summary>
     /// Simplifies an integer path by removing redundant vertices.
     /// </summary>
+    /// <param name="path">The path to simplify.</param>
+    /// <param name="epsilon">The simplification tolerance.</param>
+    /// <param name="isClosedPath"><see langword="true"/> if the path is closed; otherwise, <see langword="false"/>.</param>
+    /// <returns>The simplified path.</returns>
     public static Path64 SimplifyPath(Path64 path,
       double epsilon, bool isClosedPath = true)
     {
@@ -1287,6 +1589,10 @@ namespace Clipper2Lib
     /// <summary>
     /// Simplifies integer paths by removing redundant vertices.
     /// </summary>
+    /// <param name="paths">The paths to simplify.</param>
+    /// <param name="epsilon">The simplification tolerance.</param>
+    /// <param name="isClosedPaths"><see langword="true"/> if the paths are closed; otherwise, <see langword="false"/>.</param>
+    /// <returns>The simplified paths.</returns>
     public static Paths64 SimplifyPaths(Paths64 paths,
       double epsilon, bool isClosedPaths = true)
     {
@@ -1299,6 +1605,10 @@ namespace Clipper2Lib
     /// <summary>
     /// Simplifies a floating-point path by removing redundant vertices.
     /// </summary>
+    /// <param name="path">The path to simplify.</param>
+    /// <param name="epsilon">The simplification tolerance.</param>
+    /// <param name="isClosedPath"><see langword="true"/> if the path is closed; otherwise, <see langword="false"/>.</param>
+    /// <returns>The simplified path.</returns>
     public static PathD SimplifyPath(PathD path,
       double epsilon, bool isClosedPath = true)
     {
@@ -1366,6 +1676,10 @@ namespace Clipper2Lib
     /// <summary>
     /// Simplifies floating-point paths by removing redundant vertices.
     /// </summary>
+    /// <param name="paths">The paths to simplify.</param>
+    /// <param name="epsilon">The simplification tolerance.</param>
+    /// <param name="isClosedPath"><see langword="true"/> if the paths are closed; otherwise, <see langword="false"/>.</param>
+    /// <returns>The simplified paths.</returns>
     public static PathsD SimplifyPaths(PathsD paths,
       double epsilon, bool isClosedPath = true)
     {
@@ -1378,6 +1692,9 @@ namespace Clipper2Lib
     /// <summary>
     /// Removes collinear vertices from an integer path.
     /// </summary>
+    /// <param name="path">The path to trim.</param>
+    /// <param name="isOpen"><see langword="true"/> if the path is open; otherwise, <see langword="false"/>.</param>
+    /// <returns>The trimmed path.</returns>
     public static Path64 TrimCollinear(Path64 path, bool isOpen = false)
     {
       int len = path.Count;
@@ -1426,6 +1743,10 @@ namespace Clipper2Lib
     /// <summary>
     /// Removes collinear vertices from a floating-point path.
     /// </summary>
+    /// <param name="path">The path to trim.</param>
+    /// <param name="precision">The decimal precision used for conversion during trimming.</param>
+    /// <param name="isOpen"><see langword="true"/> if the path is open; otherwise, <see langword="false"/>.</param>
+    /// <returns>The trimmed path.</returns>
     public static PathD TrimCollinear(PathD path, int precision, bool isOpen = false)
     {
       InternalClipper.CheckPrecision(precision);
@@ -1438,6 +1759,9 @@ namespace Clipper2Lib
     /// <summary>
     /// Determines the position of an integer point relative to an integer polygon.
     /// </summary>
+    /// <param name="pt">The point to test.</param>
+    /// <param name="polygon">The polygon to test against.</param>
+    /// <returns>The position of the point relative to the polygon.</returns>
     public static PointInPolygonResult PointInPolygon(Point64 pt, Path64 polygon)
     {
       return InternalClipper.PointInPolygon(pt, polygon);
@@ -1446,6 +1770,10 @@ namespace Clipper2Lib
     /// <summary>
     /// Determines the position of a floating-point point relative to a floating-point polygon.
     /// </summary>
+    /// <param name="pt">The point to test.</param>
+    /// <param name="polygon">The polygon to test against.</param>
+    /// <param name="precision">The decimal precision used for conversion during the test.</param>
+    /// <returns>The position of the point relative to the polygon.</returns>
     public static PointInPolygonResult PointInPolygon(PointD pt, 
       PathD polygon, int precision = 2)
     {
@@ -1459,6 +1787,11 @@ namespace Clipper2Lib
     /// <summary>
     /// Creates an integer ellipse approximation.
     /// </summary>
+    /// <param name="center">The ellipse center.</param>
+    /// <param name="radiusX">The horizontal radius.</param>
+    /// <param name="radiusY">The vertical radius. If zero or less, <paramref name="radiusX"/> is used.</param>
+    /// <param name="steps">The number of approximation steps. When zero or too small, a value is chosen automatically.</param>
+    /// <returns>The approximated ellipse path.</returns>
     public static Path64 Ellipse(Point64 center,
       double radiusX, double radiusY = 0, int steps = 0)
     {
@@ -1484,6 +1817,11 @@ namespace Clipper2Lib
     /// <summary>
     /// Creates a floating-point ellipse approximation.
     /// </summary>
+    /// <param name="center">The ellipse center.</param>
+    /// <param name="radiusX">The horizontal radius.</param>
+    /// <param name="radiusY">The vertical radius. If zero or less, <paramref name="radiusX"/> is used.</param>
+    /// <param name="steps">The number of approximation steps. When zero or too small, a value is chosen automatically.</param>
+    /// <returns>The approximated ellipse path.</returns>
     public static PathD Ellipse(PointD center,
       double radiusX, double radiusY = 0, int steps = 0)
     {
@@ -1524,6 +1862,7 @@ namespace Clipper2Lib
     /// <summary>
     /// Writes the structure of an integer polytree to the console.
     /// </summary>
+    /// <param name="polytree">The polytree to display.</param>
     public static void ShowPolyTreeStructure(PolyTree64 polytree)
     {
       Console.WriteLine("Polytree Root");
@@ -1548,6 +1887,7 @@ namespace Clipper2Lib
     /// <summary>
     /// Writes the structure of a floating-point polytree to the console.
     /// </summary>
+    /// <param name="polytree">The polytree to display.</param>
     public static void ShowPolyTreeStructure(PolyTreeD polytree)
     {
       Console.WriteLine("Polytree Root");

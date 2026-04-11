@@ -109,6 +109,10 @@ namespace Altaxo.Graph
     /// <summary>
     /// Creates an instance from flags indicating whether the lower or upper bound changed.
     /// </summary>
+    /// <typeparam name="T">The concrete event-args type to create.</typeparam>
+    /// <param name="haslowerBoundChanged"><see langword="true"/> if the lower bound changed.</param>
+    /// <param name="hasUpperBoundChanged"><see langword="true"/> if the upper bound changed.</param>
+    /// <returns>A new instance with the requested boundary-change flags applied.</returns>
     public static T FromLowerAndUpperBoundChanged<T>(bool haslowerBoundChanged, bool hasUpperBoundChanged) where T : BoundariesChangedEventArgs, new()
     {
       var result = new T();
@@ -201,6 +205,7 @@ namespace Altaxo.Graph
     /// <summary>
     /// Adds the changes from another <see cref="BoundariesChangedEventArgs"/> instance.
     /// </summary>
+    /// <param name="other">The event arguments whose flags should be added.</param>
     public void Add(BoundariesChangedEventArgs other)
     {
       _data |= other._data;
@@ -219,6 +224,7 @@ namespace Altaxo.Graph
     /// <summary>
     /// Adds additional boundary change flags.
     /// </summary>
+    /// <param name="other">The boundary change flags to add.</param>
     public void Add(BoundariesChangedData other)
     {
       _data |= other;

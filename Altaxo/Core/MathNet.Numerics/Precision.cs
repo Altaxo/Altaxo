@@ -652,9 +652,7 @@ namespace Altaxo.Calc
     /// Evaluates the minimum distance to the next distinguishable number near the argument value.
     /// </summary>
     /// <param name="value">The value used to determine the minimum distance.</param>
-    /// <returns>
-    /// Relative Epsilon (positive double or NaN).
-    /// </returns>
+    /// <returns>Relative epsilon (positive double) or NaN if input is infinite or NaN.</returns>
     /// <remarks>Evaluates the <b>negative</b> epsilon. The more common positive epsilon is equal to two times this negative epsilon.</remarks>
     /// <seealso cref="PositiveEpsilonOf(double)"/>
     public static double EpsilonOf(this double value)
@@ -681,9 +679,7 @@ namespace Altaxo.Calc
     /// Evaluates the minimum distance to the next distinguishable number near the argument value.
     /// </summary>
     /// <param name="value">The value used to determine the minimum distance.</param>
-    /// <returns>
-    /// Relative Epsilon (positive float or NaN).
-    /// </returns>
+    /// <returns>Relative epsilon (positive float) or NaN if input is infinite or NaN.</returns>
     /// <remarks>Evaluates the <b>negative</b> epsilon. The more common positive epsilon is equal to two times this negative epsilon.</remarks>
     /// <seealso cref="PositiveEpsilonOf(float)"/>
     public static float EpsilonOf(this float value)
@@ -765,6 +761,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="number">Number to be rounded.</param>
     /// <param name="basis">The basis to whose multiples to round to. Must be positive.</param>
+    /// <returns><paramref name="number"/> rounded to the nearest multiple of <paramref name="basis"/>.</returns>
     public static double RoundToMultiple(this double number, double basis)
     {
       return Math.Round(number / basis, MidpointRounding.AwayFromZero) * basis;
@@ -775,6 +772,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="number">Number to be rounded.</param>
     /// <param name="basis">The basis to whose multiples to round to. Must be positive.</param>
+    /// <returns><paramref name="number"/> rounded to the nearest multiple of <paramref name="basis"/>.</returns>
     public static float RoundToMultiple(this float number, float basis)
     {
       return (float)RoundToMultiple((double)number, basis);
@@ -785,6 +783,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="number">Number to be rounded.</param>
     /// <param name="basis">The basis to whose multiples to round to. Must be positive.</param>
+    /// <returns><paramref name="number"/> rounded to the nearest multiple of <paramref name="basis"/>.</returns>
     public static decimal RoundToMultiple(this decimal number, decimal basis)
     {
       return Math.Round(number / basis, MidpointRounding.AwayFromZero) * basis;
@@ -795,6 +794,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="number">Number to be rounded.</param>
     /// <param name="basis">The basis to whose powers to round to. Must be positive.</param>
+    /// <returns><paramref name="number"/> rounded to the nearest power of <paramref name="basis"/>.</returns>
     public static double RoundToPower(this double number, double basis)
     {
       return number < 0.0
@@ -807,6 +807,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="number">Number to be rounded.</param>
     /// <param name="basis">The basis to whose powers to round to. Must be positive.</param>
+    /// <returns><paramref name="number"/> rounded to the nearest power of <paramref name="basis"/>.</returns>
     public static float RoundToPower(this float number, float basis)
     {
       return (float)RoundToPower((double)number, basis);

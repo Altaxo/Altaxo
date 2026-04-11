@@ -125,6 +125,8 @@ namespace Altaxo.Collections
     /// <summary>
     /// Wraps the specified items in <see cref="Boxed{T}"/> instances.
     /// </summary>
+    /// <param name="items">The items to wrap.</param>
+    /// <returns>The boxed items.</returns>
     public static IEnumerable<Boxed<T>> ToBoxedItems(IEnumerable<T> items)
     {
       foreach (var item in items)
@@ -134,6 +136,8 @@ namespace Altaxo.Collections
     /// <summary>
     /// Adds boxed versions of the specified source items to the destination collection.
     /// </summary>
+    /// <param name="destination">The destination collection.</param>
+    /// <param name="sourceItems">The source items to wrap and add.</param>
     public static void AddRange(ICollection<Boxed<T>> destination, IEnumerable<T> sourceItems)
     {
       foreach (var item in sourceItems)
@@ -143,6 +147,8 @@ namespace Altaxo.Collections
     /// <summary>
     /// Returns the unboxed values from the specified boxed items.
     /// </summary>
+    /// <param name="boxedItems">The boxed items.</param>
+    /// <returns>The unboxed values.</returns>
     public static IEnumerable<T> ToUnboxedItems(IEnumerable<Boxed<T>> boxedItems)
     {
       foreach (var item in boxedItems)
@@ -152,6 +158,8 @@ namespace Altaxo.Collections
     /// <summary>
     /// Adds unboxed values from the specified boxed items to the destination collection.
     /// </summary>
+    /// <param name="destination">The destination collection.</param>
+    /// <param name="sourceItems">The boxed items whose values are added.</param>
     public static void AddRange(ICollection<T> destination, IEnumerable<Boxed<T>> sourceItems)
     {
       foreach (var item in sourceItems)
@@ -161,6 +169,8 @@ namespace Altaxo.Collections
     /// <summary>
     /// Copies the specified boxed items into a new array of unboxed values.
     /// </summary>
+    /// <param name="boxedItems">The boxed items.</param>
+    /// <returns>A new array containing the unboxed values.</returns>
     public static T[] ToUnboxedArray(ICollection<Boxed<T>> boxedItems)
     {
       var arr = new T[boxedItems.Count];

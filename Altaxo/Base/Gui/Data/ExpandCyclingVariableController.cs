@@ -40,11 +40,13 @@ namespace Altaxo.Gui.Data
     /// <summary>
     /// Sets the view for the data configuration.
     /// </summary>
+    /// <param name="control">The view object for the data configuration.</param>
     void SetDataControl(object control);
 
     /// <summary>
     /// Sets the view for the options configuration.
     /// </summary>
+    /// <param name="control">The view object for the options configuration.</param>
     void SetOptionsControl(object control);
   }
 

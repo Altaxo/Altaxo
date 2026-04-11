@@ -200,9 +200,10 @@ namespace Altaxo.Calc.Providers.SparseSolver
       ISparseSolverProvider<Complex32>
   {
     /// <summary>
-    /// Try to find out whether the provider is available, at least in principle.
+    /// Try to find whether the provider is available in principle.
     /// Verification may still fail if available, but it will certainly fail if unavailable.
     /// </summary>
+    /// <returns><c>true</c> if the provider is available in the current environment; otherwise <c>false</c>.</returns>
     public bool IsAvailable();
 
     /// <summary>
@@ -220,12 +221,26 @@ namespace Altaxo.Calc.Providers.SparseSolver
   /// <summary>
   /// Defines a generic sparse solver provider.
   /// </summary>
+  /// <typeparam name="T">The numeric value type supported by the sparse solver.</typeparam>
   public interface ISparseSolverProvider<T>
       where T : struct
   {
     /// <summary>
     /// Solves a sparse linear system.
     /// </summary>
+    /// <param name="matrixStructure">The structure of the sparse matrix.</param>
+    /// <param name="matrixType">The factorization type of the sparse matrix.</param>
+    /// <param name="systemType">The type of system to solve.</param>
+    /// <param name="rows">The number of rows in the matrix.</param>
+    /// <param name="cols">The number of columns in the matrix.</param>
+    /// <param name="nnz">The number of stored non-zero values.</param>
+    /// <param name="rowIdx">The row index array.</param>
+    /// <param name="colPtr">The column pointer array.</param>
+    /// <param name="values">The matrix values.</param>
+    /// <param name="nRhs">The number of right-hand sides.</param>
+    /// <param name="rhs">The right-hand side values.</param>
+    /// <param name="solution">The array receiving the computed solution.</param>
+    /// <returns>The <see cref="DssStatus"/> result of the solve operation.</returns>
     public DssStatus Solve(DssMatrixStructure matrixStructure, DssMatrixType matrixType, DssSystemType systemType, int rows, int cols, int nnz, int[] rowIdx, int[] colPtr, T[] values, int nRhs, T[] rhs, T[] solution);
   }
 }

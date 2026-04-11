@@ -120,6 +120,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Element accessor. Accesses the element [row, col] of the matrix.
     /// </summary>
+    /// <param name="row">The zero-based row index.</param>
+    /// <param name="col">The zero-based column index.</param>
     public double this[int row, int col]
     {
       get

@@ -39,9 +39,7 @@ namespace Altaxo.Text.Renderers.Maml.Extensions
   /// </summary>
   public class FigureCaptionRenderer : MamlObjectRenderer<Markdig.Extensions.Figures.FigureCaption>
   {
-    /// <summary>
-    /// Writes a figure caption.
-    /// </summary>
+    /// <inheritdoc />
     protected override void Write(MamlRenderer renderer, Markdig.Extensions.Figures.FigureCaption obj)
     {
       renderer.Push(MamlElements.para);

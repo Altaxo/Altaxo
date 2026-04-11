@@ -171,6 +171,7 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Executes the multi-stage application shutdown.
     /// </summary>
+    /// <param name="e">The cancel event arguments used to stop shutdown if necessary.</param>
     public void OnClosing(CancelEventArgs e)
     {
       var propertyService = Current.PropertyService;

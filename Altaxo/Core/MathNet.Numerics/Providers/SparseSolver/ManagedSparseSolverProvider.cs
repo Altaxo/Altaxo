@@ -14,9 +14,10 @@ namespace Altaxo.Calc.Providers.SparseSolver
     public static ManagedSparseSolverProvider Instance { get; } = new ManagedSparseSolverProvider();
 
     /// <summary>
-    /// Try to find out whether the provider is available, at least in principle.
+    /// Try to find whether the provider is available in principle.
     /// Verification may still fail if available, but it will certainly fail if unavailable.
     /// </summary>
+    /// <returns><c>true</c> if the provider is available in the current environment; otherwise <c>false</c>.</returns>
     public bool IsAvailable()
     {
       return true;
@@ -25,6 +26,9 @@ namespace Altaxo.Calc.Providers.SparseSolver
     /// <summary>
     /// Initialize and verify that the provided is indeed available. If not, fall back to alternatives like the managed provider
     /// </summary>
+    /// <remarks>
+    /// This method should verify that all native dependencies are present and throw if verification fails.
+    /// </remarks>
     public void InitializeVerify()
     {
     }

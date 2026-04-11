@@ -92,6 +92,10 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
     /// <summary>
     /// Creates the image for the specified resolution and colors.
     /// </summary>
+    /// <param name="maxEffectiveResolutionDpi">The maximum effective resolution in DPI.</param>
+    /// <param name="foreColor">The foreground color.</param>
+    /// <param name="backColor">The background color.</param>
+    /// <returns>The rendered image.</returns>
     protected abstract Image GetImage(double maxEffectiveResolutionDpi, NamedColor foreColor, NamedColor backColor);
 
     /// <summary>
@@ -165,6 +169,8 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
     /// <summary>
     /// Gets the pixel dimensions for the specified effective resolution.
     /// </summary>
+    /// <param name="maxEffectiveResolutionDpi">The maximum effective resolution in DPI.</param>
+    /// <returns>The pixel dimension.</returns>
     protected int GetPixelDimensions(double maxEffectiveResolutionDpi)
     {
       // use a factor of 2 for safety, thus we have at least two pixels of the bitmap mapping to 1 pixel of the drawing
@@ -178,6 +184,10 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
     /// <summary>
     /// Gets the pixel dimensions for the specified structure size constraints.
     /// </summary>
+    /// <param name="maxEffectiveResolutionDpi">The maximum effective resolution in DPI.</param>
+    /// <param name="relativeStructureSize">The relative structure size.</param>
+    /// <param name="minimumPixelsForStructureSize">The minimum number of pixels for the structure size.</param>
+    /// <returns>The pixel dimension.</returns>
     protected int GetPixelDimensions(double maxEffectiveResolutionDpi, double relativeStructureSize, int minimumPixelsForStructureSize)
     {
       // use a factor of 2 for safety, thus we have at least two pixels of the bitmap mapping to 1 pixel of the drawing

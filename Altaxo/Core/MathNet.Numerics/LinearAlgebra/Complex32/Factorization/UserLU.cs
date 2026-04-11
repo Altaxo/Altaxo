@@ -44,10 +44,11 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32.Factorization
   internal sealed class UserLU : LU
   {
     /// <summary>
-    /// Initializes a new instance of the <see cref="UserLU"/> class. This object will compute the
-    /// LU factorization when the constructor is called and cache it's factorization.
+    /// Initializes a new instance of the <see cref="UserLU"/> class. This object computes the
+    /// LU factorization when the constructor is called and caches its factorization.
     /// </summary>
     /// <param name="matrix">The matrix to factor.</param>
+    /// <returns>The computed LU factorization.</returns>
     /// <exception cref="ArgumentNullException">If <paramref name="matrix"/> is <c>null</c>.</exception>
     /// <exception cref="ArgumentException">If <paramref name="matrix"/> is not a square matrix.</exception>
     public static UserLU Create(Matrix<Complex32> matrix)

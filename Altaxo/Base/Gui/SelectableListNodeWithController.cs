@@ -33,8 +33,17 @@ namespace Altaxo.Gui
   /// <seealso cref="Altaxo.Collections.SelectableListNode" />
   class SelectableListNodeWithController : SelectableListNode
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SelectableListNodeWithController"/> class.
+    /// </summary>
+    /// <param name="text">The display text of the node.</param>
+    /// <param name="tag">The primary tag associated with the node.</param>
+    /// <param name="isSelected"><c>true</c> to initialize the node as selected; otherwise, <c>false</c>.</param>
     public SelectableListNodeWithController(string text, object tag, bool isSelected) : base(text, tag, isSelected) { }
 
+    /// <summary>
+    /// Stores the controller associated with this node.
+    /// </summary>
     protected IMVCAController? _controller;
 
     /// <summary>
@@ -57,6 +66,9 @@ namespace Altaxo.Gui
       }
     }
 
+    /// <summary>
+    /// Stores an explicit view object override.
+    /// </summary>
     public object? _viewObject;
 
     /// <summary>

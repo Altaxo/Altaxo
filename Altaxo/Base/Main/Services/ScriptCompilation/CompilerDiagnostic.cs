@@ -53,6 +53,10 @@ namespace Altaxo.Main.Services.ScriptCompilation
     /// <summary>
     /// Initializes a new instance of the <see cref="CompilerDiagnostic"/> class.
     /// </summary>
+    /// <param name="line">The one-based source line number, if available.</param>
+    /// <param name="column">The one-based source column number, if available.</param>
+    /// <param name="severity">The diagnostic severity.</param>
+    /// <param name="message">The diagnostic message.</param>
     public CompilerDiagnostic(int? line, int? column, DiagnosticSeverity severity, string message)
     {
       Line = line;

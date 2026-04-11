@@ -88,6 +88,7 @@ namespace Altaxo.Calc.Distributions
     /// Tests whether the provided values are valid parameters for this distribution.
     /// </summary>
     /// <param name="freedom">The degrees of freedom (k) of the distribution. Range: k > 0.</param>
+    /// <returns><c>true</c> if the parameters define a valid chi-squared distribution; otherwise, <c>false</c>.</returns>
     public static bool IsValidParameterSet(double freedom)
     {
       return freedom > 0.0;
@@ -209,6 +210,7 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Fills an array with samples generated from the distribution.
     /// </summary>
+    /// <param name="values">The array to fill with samples.</param>
     public void Samples(double[] values)
     {
       SamplesUnchecked(_random, values, _freedom);
@@ -249,6 +251,12 @@ namespace Altaxo.Calc.Distributions
       return Gamma.SampleUnchecked(rnd, freedom / 2.0, .5);
     }
 
+    /// <summary>
+    /// Fills an array with samples from the chi-squared distribution without validating the parameters.
+    /// </summary>
+    /// <param name="rnd">The random number generator to use.</param>
+    /// <param name="values">The array to fill with samples.</param>
+    /// <param name="freedom">The degrees of freedom.</param>
     internal static void SamplesUnchecked(System.Random rnd, double[] values, double freedom)
     {
       // Use the simple method if the degrees of freedom is an integer anyway

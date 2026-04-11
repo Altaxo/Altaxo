@@ -63,6 +63,7 @@ namespace Altaxo.Data
       get { return _count; }
     }
 
+    /// <inheritdoc/>
     IEnumerator<double> IEnumerable<double>.GetEnumerator()
     {
       var length = _count;
@@ -429,8 +430,11 @@ namespace Altaxo.Data
 
     /// <summary>
     /// Provides a setter property to which a readonly vector can be assigned to. Copies all elements of the readonly vector to this column.
-    /// The getter property creates a wrapper for this data column that implements IROVector. For short time use only, since it reflects changes in the data, but not in the length of the DoubleColumn.
+    /// The getter property creates a wrapper for this data column that implements IROVector. For short-time use only, since it reflects changes in the data, but not in the length of the DoubleColumn.
     /// </summary>
+    /// <param name="start">The start index of the segment.</param>
+    /// <param name="count">The number of elements in the segment.</param>
+    /// <returns>A read-only wrapper around the requested segment.</returns>
     public override IReadOnlyList<double> ToROVector(int start, int count)
     {
       return new ROVector(this, start, count);

@@ -563,6 +563,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <summary>
     /// Evaluates the current chi-square value for the cached varying parameters.
     /// </summary>
+    /// <returns>The current chi-square value.</returns>
     public double EvaluateChiSquare()
     {
       int info = 0;
@@ -608,6 +609,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <summary>
     /// Runs Nelder-Mead minimization for the current model.
     /// </summary>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <param name="newMinimalCostValueFound">The callback invoked when a new minimal cost value is found.</param>
     public void DoSimplexMinimization(System.Threading.CancellationToken cancellationToken, Action<double> newMinimalCostValueFound)
     {
       var nm = new Altaxo.Calc.Optimization.NelderMead(new NelderMeadCostFunction(this));
@@ -635,6 +638,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <summary>
     /// Executes the nonlinear fit.
     /// </summary>
+    /// <param name="cancellationToken">The cancellation token.</param>
     public void Fit(CancellationToken cancellationToken)
     {
       /* Up to new Fit2 is very slow, so we not use it until it is clear what causes this slow convergence
@@ -648,6 +652,7 @@ else
     /// <summary>
     /// Executes the Levenberg-Marquardt fit implementation.
     /// </summary>
+    /// <param name="cancellationToken">The cancellation token.</param>
     public void Fit1(CancellationToken cancellationToken)
     {
       int info = 0;
@@ -709,6 +714,7 @@ else
     /// <summary>
     /// Copies the fitted parameter values back to the specified parameter set.
     /// </summary>
+    /// <param name="pset">The parameter set that receives the fitted values.</param>
     public void CopyParametersBackTo(ParameterSet pset)
     {
       if (pset.Count != _constantParameters.Length)

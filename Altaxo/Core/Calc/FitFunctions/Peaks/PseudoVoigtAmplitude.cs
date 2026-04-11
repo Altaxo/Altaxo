@@ -259,6 +259,12 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <summary>
     /// Evaluates one Pseudo-Voigt term for given parameters.
     /// </summary>
+    /// <param name="x">The x-coordinate at which to evaluate the term.</param>
+    /// <param name="a">The amplitude of the peak.</param>
+    /// <param name="xc">The center position of the peak.</param>
+    /// <param name="w">The width parameter of the peak.</param>
+    /// <param name="nu">The mixing factor between Lorentzian and Gaussian contributions.</param>
+    /// <returns>The evaluated peak value.</returns>
     public static double GetYOfOneTerm(double x, double a, double xc, double w, double nu)
     {
       double arg = (Xor(xc: xc, x: x) - xc) / w; // dummy to avoid unused parameter warning in doc generator

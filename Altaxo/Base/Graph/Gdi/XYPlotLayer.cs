@@ -192,6 +192,7 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Constructor for deserialization purposes only.
     /// </summary>
+    /// <param name="info">The deserialization information.</param>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected XYPlotLayer(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
@@ -358,7 +359,8 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Updates the logical value of a plane id in case it uses a physical value.
     /// </summary>
-    /// <param name="id">The plane identifier</param>
+    /// <param name="id">The plane identifier.</param>
+    /// <returns>The updated plane identifier.</returns>
     public CSPlaneID UpdateCSPlaneID(CSPlaneID id)
     {
       if (id.UsePhysicalValue)
@@ -385,9 +387,6 @@ namespace Altaxo.Graph.Gdi
       PlotItems.VisitDocumentReferences(Report);
     }
 
-    /// <summary>
-    /// Collection of the axis styles for the left, bottom, right, and top axis.
-    /// </summary>
     /// <summary>
     /// Gets the axis styles for this layer.
     /// </summary>
@@ -526,9 +525,6 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Clears all legends from this layer.
     /// </summary>
-    /// <summary>
-    /// Clears all legends from this layer.
-    /// </summary>
     public void ClearLegends()
     {
       for (int i = GraphObjects.Count - 1; i >= 0; --i)
@@ -544,9 +540,6 @@ namespace Altaxo.Graph.Gdi
     /// <remarks>The position of the old legend is <b>only</b> used for the new legend if the old legend's position is
     /// inside the layer. This prevents a "stealth" legend in case it is not visible by accident.
     /// </remarks>
-    /// <summary>
-    /// Creates a new layer legend.
-    /// </summary>
     public void CreateNewLayerLegend()
     {
       // remove the legend if there are no plot curves on the layer
@@ -593,6 +586,7 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// This will create the default axes styles that are given by the coordinate system.
     /// </summary>
+    /// <param name="context">The property context.</param>
     public void CreateDefaultAxes(IReadOnlyPropertyBag context)
     {
       foreach (CSAxisInformation info in CoordinateSystem.AxisStyles)

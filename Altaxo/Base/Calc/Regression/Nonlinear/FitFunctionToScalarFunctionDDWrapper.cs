@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -176,6 +176,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <summary>
     /// Initializes a new instance of the <see cref="FitFunctionToScalarFunctionDDWrapper"/> class.
     /// </summary>
+    /// <param name="fitFunction">The wrapped fit function.</param>
+    /// <param name="dependentVariable">The dependent variable index.</param>
+    /// <param name="dependentVariableTransformation">The optional dependent-variable transformation.</param>
+    /// <param name="independentVariable">The independent variable index.</param>
+    /// <param name="independentVariableTransformation">The optional independent-variable transformation.</param>
+    /// <param name="parameter">The parameter values.</param>
     public FitFunctionToScalarFunctionDDWrapper(IFitFunction? fitFunction, int dependentVariable, IVariantToVariantTransformation? dependentVariableTransformation, int independentVariable, IVariantToVariantTransformation? independentVariableTransformation, double[] parameter)
     {
       Initialize(fitFunction, dependentVariable, dependentVariableTransformation, independentVariable, independentVariableTransformation, parameter);
@@ -184,6 +190,10 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <summary>
     /// Initializes a new instance of the <see cref="FitFunctionToScalarFunctionDDWrapper"/> class.
     /// </summary>
+    /// <param name="fitFunction">The wrapped fit function.</param>
+    /// <param name="dependentVariable">The dependent variable index.</param>
+    /// <param name="independentVariable">The independent variable index.</param>
+    /// <param name="parameter">The parameter values.</param>
     public FitFunctionToScalarFunctionDDWrapper(IFitFunction? fitFunction, int dependentVariable, int independentVariable, double[] parameter)
     {
       Initialize(fitFunction, dependentVariable, null, independentVariable, null, parameter);
@@ -192,6 +202,10 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <summary>
     /// Initializes a new instance of the <see cref="FitFunctionToScalarFunctionDDWrapper"/> class.
     /// </summary>
+    /// <param name="fitFunction">The wrapped fit function.</param>
+    /// <param name="dependentVariable">The dependent variable index.</param>
+    /// <param name="dependentVariableTransformation">The optional dependent-variable transformation.</param>
+    /// <param name="parameter">The parameter values.</param>
     public FitFunctionToScalarFunctionDDWrapper(IFitFunction? fitFunction, int dependentVariable, IVariantToVariantTransformation? dependentVariableTransformation, double[] parameter)
     {
       Initialize(fitFunction, dependentVariable, dependentVariableTransformation, 0, null, parameter);
@@ -200,6 +214,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <summary>
     /// Initializes a new instance of the <see cref="FitFunctionToScalarFunctionDDWrapper"/> class.
     /// </summary>
+    /// <param name="fitFunction">The wrapped fit function.</param>
+    /// <param name="dependentVariable">The dependent variable index.</param>
+    /// <param name="parameter">The parameter values.</param>
     public FitFunctionToScalarFunctionDDWrapper(IFitFunction? fitFunction, int dependentVariable, double[] parameter)
     {
       Initialize(fitFunction, dependentVariable, null, 0, null, parameter);
@@ -215,6 +232,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <summary>
     /// Initializes the wrapper state from the specified fit function and parameter values.
     /// </summary>
+    /// <param name="fitFunction">The wrapped fit function.</param>
+    /// <param name="dependentVariable">The dependent variable index.</param>
+    /// <param name="dependentVariableTransformation">The optional dependent-variable transformation.</param>
+    /// <param name="independentVariable">The independent variable index.</param>
+    /// <param name="independentVariableTransformation">The optional independent-variable transformation.</param>
+    /// <param name="parameter">The parameter values.</param>
     [MemberNotNull(nameof(_x), nameof(_y), nameof(_parameter))]
     public void Initialize(IFitFunction? fitFunction, int dependentVariable, IVariantToVariantTransformation? dependentVariableTransformation, int independentVariable, IVariantToVariantTransformation? independentVariableTransformation, double[] parameter)
     {

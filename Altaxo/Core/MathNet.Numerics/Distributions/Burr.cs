@@ -89,6 +89,7 @@ namespace Altaxo.Calc.Distributions
     /// <param name="a">The scale parameter a of the Burr distribution. Range: a > 0.</param>
     /// <param name="c">The first shape parameter c of the Burr distribution. Range: c > 0.</param>
     /// <param name="k">The second shape parameter k of the Burr distribution. Range: k > 0.</param>
+    /// <returns><c>true</c> if the parameters define a valid Burr distribution; otherwise, <c>false</c>.</returns>
     public static bool IsValidParameterSet(double a, double c, double k)
     {
       var allFinite = a.IsFinite() && c.IsFinite() && k.IsFinite();

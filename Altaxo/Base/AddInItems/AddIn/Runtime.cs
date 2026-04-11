@@ -72,6 +72,10 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Initializes a new instance of the <see cref="Runtime"/> class.
     /// </summary>
+    /// <param name="addInTree">The add-in tree that owns the runtime.</param>
+    /// <param name="assembly">The assembly reference string.</param>
+    /// <param name="hintPath">The base path used to resolve relative assembly paths.</param>
+    /// <param name="preloaded">A value indicating whether the runtime should be loaded immediately.</param>
     public Runtime(IAddInTree addInTree, string assembly, string? hintPath, bool preloaded)
     {
       if (addInTree is null)
@@ -205,11 +209,20 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Finds a type by name in the loaded assembly.
     /// </summary>
+    /// <param name="className">The fully qualified name of the type to locate.</param>
+    /// <returns>The matching type, or <c>null</c> if it cannot be found.</returns>
     public Type? FindType(string className)
     {
       return LoadedAssembly is { } asm ? asm.GetType(className) : null;
     }
 
+    /// <summary>
+    /// Reads the runtime section from XML.
+    /// </summary>
+    /// <param name="reader">The XML reader positioned on the runtime element.</param>
+    /// <param name="addIn">The add-in that owns the runtime definitions.</param>
+    /// <param name="hintPath">The base path used to resolve relative assembly paths.</param>
+    /// <returns>The runtime definitions found in the section.</returns>
     internal static List<Runtime> ReadSection(XmlReader reader, AddIn addIn, string? hintPath)
     {
       var runtimes = new List<Runtime>();
@@ -263,6 +276,14 @@ namespace Altaxo.AddInItems
       return runtimes;
     }
 
+    /// <summary>
+    /// Reads a single runtime import from XML.
+    /// </summary>
+    /// <param name="addIn">The add-in that owns the runtime definition.</param>
+    /// <param name="reader">The XML reader positioned on the import element.</param>
+    /// <param name="hintPath">The base path used to resolve relative assembly paths.</param>
+    /// <param name="conditionStack">The currently active conditions.</param>
+    /// <returns>The parsed runtime.</returns>
     internal static Runtime Read(AddIn addIn, XmlReader reader, string? hintPath, Stack<ICondition> conditionStack)
     {
       var assemblyAttr = reader.GetAttribute("assembly");

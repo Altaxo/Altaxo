@@ -487,12 +487,14 @@ namespace Altaxo.Science.Spectroscopy
       }
     }
 
+    /// <inheritdoc/>
     object IAltaxoTableDataSource.ProcessOptionsObject
     {
       get => ProcessOptions;
       set => ProcessOptions = (PeakSearchingAndFittingOptions)value;
     }
 
+    /// <inheritdoc/>
     object IAltaxoTableDataSource.ProcessDataObject
     {
       get => _processData;

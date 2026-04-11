@@ -65,17 +65,23 @@ namespace Altaxo.Calc.Interpolation
     }
 
     /// <summary>
-    /// Create a linear spline interpolation from a set of (x,y) value pairs, sorted ascendingly by x.
+    /// Create a step interpolation from a set of (x,y) value pairs, sorted ascendingly by x.
     /// </summary>
+    /// <param name="x">Sample points, sorted ascendingly.</param>
+    /// <param name="y">Segment values corresponding to each sample point.</param>
+    /// <returns>The step interpolator.</returns>
     public static StepInterpolation InterpolateSorted(double[] x, double[] y)
     {
       return new StepInterpolation(x, y);
     }
 
     /// <summary>
-    /// Create a linear spline interpolation from an unsorted set of (x,y) value pairs.
+    /// Create a step interpolation from an unsorted set of (x,y) value pairs.
     /// WARNING: Works in-place and can thus causes the data array to be reordered.
     /// </summary>
+    /// <param name="x">Sample points (will be sorted in-place).</param>
+    /// <param name="y">Segment values corresponding to each sample point (will be permuted accordingly).</param>
+    /// <returns>The step interpolator.</returns>
     public static StepInterpolation InterpolateInplace(double[] x, double[] y)
     {
       if (x.Length != y.Length)
@@ -88,16 +94,21 @@ namespace Altaxo.Calc.Interpolation
     }
 
     /// <summary>
-    /// Create a linear spline interpolation from an unsorted set of (x,y) value pairs.
+    /// Create a step interpolation from an unsorted set of (x,y) value pairs.
     /// </summary>
+    /// <param name="x">The sample points.</param>
+    /// <param name="y">The segment values corresponding to each sample point.</param>
+    /// <returns>The step interpolator.</returns>
     public static StepInterpolation Interpolate(IEnumerable<double> x, IEnumerable<double> y)
     {
       // note: we must make a copy, even if the input was arrays already
       return InterpolateInplace(x.ToArray(), y.ToArray());
     }
 
+    /// <inheritdoc />
     bool IInterpolation.SupportsDifferentiation => true;
 
+    /// <inheritdoc />
     bool IInterpolation.SupportsIntegration => true;
 
     /// <summary>
@@ -143,6 +154,7 @@ namespace Altaxo.Calc.Interpolation
     /// Indefinite integral at point t.
     /// </summary>
     /// <param name="t">Point t to integrate at.</param>
+    /// <returns>The interpolated indefinite integral at point <paramref name="t"/>.</returns>
     public double Integrate(double t)
     {
       if (t <= _x[0])
@@ -160,6 +172,7 @@ namespace Altaxo.Calc.Interpolation
     /// </summary>
     /// <param name="a">Left bound of the integration interval [a,b].</param>
     /// <param name="b">Right bound of the integration interval [a,b].</param>
+    /// <returns>The interpolated definite integral over the interval [<paramref name="a"/>, <paramref name="b"/>].</returns>
     public double Integrate(double a, double b) => Integrate(b) - Integrate(a);
 
     private double[] ComputeIndefiniteIntegral()

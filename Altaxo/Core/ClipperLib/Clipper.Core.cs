@@ -956,13 +956,39 @@ namespace Clipper2Lib
   /// </summary>
   public static class InternalClipper
   {
+    /// <summary>
+    /// The largest supported 64-bit signed integer value.
+    /// </summary>
     internal const long MaxInt64 = 9223372036854775807;
+
+    /// <summary>
+    /// The largest coordinate value considered valid during clipping.
+    /// </summary>
     internal const long MaxCoord = MaxInt64 / 4;
+
+    /// <summary>
+    /// The largest coordinate value considered valid during floating-point operations.
+    /// </summary>
     internal const double max_coord = MaxCoord;
+
+    /// <summary>
+    /// The smallest coordinate value considered valid during floating-point operations.
+    /// </summary>
     internal const double min_coord = -MaxCoord;
+
+    /// <summary>
+    /// The sentinel value used to mark invalid 64-bit coordinates.
+    /// </summary>
     internal const long Invalid64 = MaxInt64;
 
+    /// <summary>
+    /// The tolerance used for floating-point comparisons.
+    /// </summary>
     internal const double floatingPointTolerance = 1E-12;
+
+    /// <summary>
+    /// The default minimum edge length used during path cleanup.
+    /// </summary>
     internal const double defaultMinimumEdgeLength = 0.1;
 
     private static readonly string
@@ -1029,6 +1055,10 @@ namespace Clipper2Lib
     }
 #endif
 
+    /// <summary>
+    /// Validates that the supplied decimal precision is within the supported range.
+    /// </summary>
+    /// <param name="precision">The decimal precision to validate.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static void CheckPrecision(int precision)
     {
@@ -1036,12 +1066,22 @@ namespace Clipper2Lib
         throw new Exception(precision_range_error);
     }
 
+    /// <summary>
+    /// Determines whether the specified floating-point value is effectively zero.
+    /// </summary>
+    /// <param name="value">The value to test.</param>
+    /// <returns><see langword="true"/> if the value is within the floating-point tolerance; otherwise, <see langword="false"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static bool IsAlmostZero(double value)
     {
       return (Math.Abs(value) <= floatingPointTolerance);
     }
 
+    /// <summary>
+    /// Returns the sign of the supplied integer value.
+    /// </summary>
+    /// <param name="x">The value to evaluate.</param>
+    /// <returns><c>-1</c>, <c>0</c>, or <c>1</c> depending on the sign of <paramref name="x"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static int TriSign(long x) // returns 0, 1 or -1
     {
@@ -1057,6 +1097,7 @@ namespace Clipper2Lib
       /// The low 64 bits of the 128-bit integer.
       /// </summary>
       public ulong lo64;
+
       /// <summary>
       /// The high 64 bits of the 128-bit integer.
       /// </summary>
@@ -1081,6 +1122,14 @@ namespace Clipper2Lib
       return result;
     }
 
+    /// <summary>
+    /// Determines whether two products are equal without overflowing 64-bit arithmetic.
+    /// </summary>
+    /// <param name="a">The first factor of the first product.</param>
+    /// <param name="b">The second factor of the first product.</param>
+    /// <param name="c">The first factor of the second product.</param>
+    /// <param name="d">The second factor of the second product.</param>
+    /// <returns><see langword="true"/> if <paramref name="a"/> multiplied by <paramref name="b"/> equals <paramref name="c"/> multiplied by <paramref name="d"/>; otherwise, <see langword="false"/>.</returns>
     // returns true if (and only if) a * b == c * d
     internal static bool ProductsAreEqual(long a, long b, long c, long d)
     {
@@ -1100,6 +1149,13 @@ namespace Clipper2Lib
       return mul_ab.lo64 == mul_cd.lo64 && mul_ab.hi64 == mul_cd.hi64 && sign_ab == sign_cd;
     }
 
+    /// <summary>
+    /// Determines whether three integer points are collinear.
+    /// </summary>
+    /// <param name="pt1">The first point.</param>
+    /// <param name="sharedPt">The shared middle point.</param>
+    /// <param name="pt2">The third point.</param>
+    /// <returns><see langword="true"/> if the points are collinear; otherwise, <see langword="false"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static bool IsCollinear(Point64 pt1, Point64 sharedPt, Point64 pt2)
     {
@@ -1112,6 +1168,13 @@ namespace Clipper2Lib
       return ProductsAreEqual(a, b, c, d);
     }
 
+    /// <summary>
+    /// Calculates the dot product formed by three integer points.
+    /// </summary>
+    /// <param name="pt1">The first point.</param>
+    /// <param name="pt2">The shared middle point.</param>
+    /// <param name="pt3">The third point.</param>
+    /// <returns>The dot product value.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static double DotProduct(Point64 pt1, Point64 pt2, Point64 pt3)
     {
@@ -1120,18 +1183,35 @@ namespace Clipper2Lib
               (double)(pt2.Y - pt1.Y) * (pt3.Y - pt2.Y));
     }
 
+    /// <summary>
+    /// Calculates the cross product of two floating-point vectors.
+    /// </summary>
+    /// <param name="vec1">The first vector.</param>
+    /// <param name="vec2">The second vector.</param>
+    /// <returns>The cross product value.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static double CrossProduct(PointD vec1, PointD vec2)
     {
       return (vec1.y * vec2.x - vec2.y * vec1.x);
     }
 
+    /// <summary>
+    /// Calculates the dot product of two floating-point vectors.
+    /// </summary>
+    /// <param name="vec1">The first vector.</param>
+    /// <param name="vec2">The second vector.</param>
+    /// <returns>The dot product value.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static double DotProduct(PointD vec1, PointD vec2)
     {
       return (vec1.x * vec2.x + vec1.y * vec2.y);
     }
 
+    /// <summary>
+    /// Converts a floating-point value to a 64-bit integer when it is within the valid coordinate range.
+    /// </summary>
+    /// <param name="val">The value to convert.</param>
+    /// <returns>The rounded 64-bit integer value, or <see cref="Invalid64"/> when the value is out of range.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static long CheckCastInt64(double val)
     {
@@ -1221,6 +1301,15 @@ namespace Clipper2Lib
       return true;
     }
 
+    /// <summary>
+    /// Determines whether two line segments intersect.
+    /// </summary>
+    /// <param name="seg1a">The first endpoint of the first segment.</param>
+    /// <param name="seg1b">The second endpoint of the first segment.</param>
+    /// <param name="seg2a">The first endpoint of the second segment.</param>
+    /// <param name="seg2b">The second endpoint of the second segment.</param>
+    /// <param name="inclusive"><see langword="true"/> to treat touching endpoints as intersections; otherwise, <see langword="false"/>.</param>
+    /// <returns><see langword="true"/> if the segments intersect; otherwise, <see langword="false"/>.</returns>
     internal static bool SegsIntersect(Point64 seg1a,
       Point64 seg1b, Point64 seg2a, Point64 seg2b, bool inclusive = false)
     {

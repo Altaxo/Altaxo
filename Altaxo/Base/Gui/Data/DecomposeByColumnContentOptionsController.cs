@@ -41,11 +41,13 @@ namespace Altaxo.Gui.Data
     /// <summary>
     /// Initializes the selectable destination output formats.
     /// </summary>
+    /// <param name="list">The selectable destination output formats.</param>
     void InitializeDestinationOutputFormat(SelectableListNodeList list);
 
     /// <summary>
     /// Initializes the selectable destination column sorting options.
     /// </summary>
+    /// <param name="list">The selectable destination column sorting options.</param>
     void InitializeDestinationColumnSorting(SelectableListNodeList list);
   }
 

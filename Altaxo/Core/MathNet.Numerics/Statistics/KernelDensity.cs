@@ -45,6 +45,11 @@ namespace Altaxo.Calc.Statistics
     /// <remarks>
     /// The routine assumes that the provided kernel is well defined, i.e. a real non-negative function that integrates to 1.
     /// </remarks>
+    /// <param name="x">Point at which to estimate the density.</param>
+    /// <param name="bandwidth">Kernel bandwidth (scale).</param>
+    /// <param name="samples">Sample values used for estimation.</param>
+    /// <param name="kernel">The kernel function to use for estimation.</param>
+    /// <returns>The estimated density value at <paramref name="x"/>.</returns>
     public static double Estimate(double x, double bandwidth, IList<double> samples, Func<double, double> kernel)
     {
       if (bandwidth <= 0)
@@ -62,33 +67,49 @@ namespace Altaxo.Calc.Statistics
     }
 
     /// <summary>
-    /// Estimate the probability density function of a random variable with a Gaussian kernel.
+    /// Estimate the probability density function of a random variable at point <paramref name="x"/> using a Gaussian kernel.
     /// </summary>
+    /// <param name="x">Point at which to estimate the density.</param>
+    /// <param name="bandwidth">Kernel bandwidth (scale).</param>
+    /// <param name="samples">Sample values used for estimation.</param>
+    /// <returns>The estimated density value at <paramref name="x"/> using a Gaussian kernel.</returns>
     public static double EstimateGaussian(double x, double bandwidth, IList<double> samples)
     {
       return Estimate(x, bandwidth, samples, GaussianKernel);
     }
 
     /// <summary>
-    /// Estimate the probability density function of a random variable with an Epanechnikov kernel.
+    /// Estimate the probability density function of a random variable at point <paramref name="x"/> using an Epanechnikov kernel.
     /// The Epanechnikov kernel is optimal in a mean square error sense.
     /// </summary>
+    /// <param name="x">Point at which to estimate the density.</param>
+    /// <param name="bandwidth">Kernel bandwidth (scale).</param>
+    /// <param name="samples">Sample values used for estimation.</param>
+    /// <returns>The estimated density value at <paramref name="x"/> using an Epanechnikov kernel.</returns>
     public static double EstimateEpanechnikov(double x, double bandwidth, IList<double> samples)
     {
       return Estimate(x, bandwidth, samples, EpanechnikovKernel);
     }
 
     /// <summary>
-    /// Estimate the probability density function of a random variable with a uniform kernel.
+    /// Estimate the probability density function of a random variable at point <paramref name="x"/> using a uniform kernel.
     /// </summary>
+    /// <param name="x">Point at which to estimate the density.</param>
+    /// <param name="bandwidth">Kernel bandwidth (scale).</param>
+    /// <param name="samples">Sample values used for estimation.</param>
+    /// <returns>The estimated density value at <paramref name="x"/> using a uniform kernel.</returns>
     public static double EstimateUniform(double x, double bandwidth, IList<double> samples)
     {
       return Estimate(x, bandwidth, samples, UniformKernel);
     }
 
     /// <summary>
-    /// Estimate the probability density function of a random variable with a triangular kernel.
+    /// Estimate the probability density function of a random variable at point <paramref name="x"/> using a triangular kernel.
     /// </summary>
+    /// <param name="x">Point at which to estimate the density.</param>
+    /// <param name="bandwidth">Kernel bandwidth (scale).</param>
+    /// <param name="samples">Sample values used for estimation.</param>
+    /// <returns>The estimated density value at <paramref name="x"/> using a triangular kernel.</returns>
     public static double EstimateTriangular(double x, double bandwidth, IList<double> samples)
     {
       return Estimate(x, bandwidth, samples, TriangularKernel);
@@ -98,6 +119,8 @@ namespace Altaxo.Calc.Statistics
     /// A Gaussian kernel (PDF of Normal distribution with mean 0 and variance 1).
     /// This kernel is the default.
     /// </summary>
+    /// <param name="x">The standardized input value.</param>
+    /// <returns>The Gaussian kernel value at <paramref name="x"/>.</returns>
     public static double GaussianKernel(double x)
     {
       return Normal.PDF(0.0, 1.0, x);
@@ -107,6 +130,8 @@ namespace Altaxo.Calc.Statistics
     /// Epanechnikov Kernel:
     /// x =&gt; Math.Abs(x) &lt;= 1.0 ? 3.0/4.0(1.0-x^2) : 0.0
     /// </summary>
+    /// <param name="x">The standardized input value.</param>
+    /// <returns>The Epanechnikov kernel value at <paramref name="x"/>.</returns>
     public static double EpanechnikovKernel(double x)
     {
       return Math.Abs(x) <= 1.0 ? 0.75 * (1 - x * x) : 0.0;
@@ -116,6 +141,8 @@ namespace Altaxo.Calc.Statistics
     /// Uniform Kernel:
     /// x =&gt; Math.Abs(x) &lt;= 1.0 ? 1.0/2.0 : 0.0
     /// </summary>
+    /// <param name="x">The standardized input value.</param>
+    /// <returns>The uniform kernel value at <paramref name="x"/>.</returns>
     public static double UniformKernel(double x)
     {
       return ContinuousUniform.PDF(-1.0, 1.0, x);
@@ -125,6 +152,8 @@ namespace Altaxo.Calc.Statistics
     /// Triangular Kernel:
     /// x =&gt; Math.Abs(x) &lt;= 1.0 ? (1.0-Math.Abs(x)) : 0.0
     /// </summary>
+    /// <param name="x">The standardized input value.</param>
+    /// <returns>The triangular kernel value at <paramref name="x"/>.</returns>
     public static double TriangularKernel(double x)
     {
       return Triangular.PDF(-1.0, 1.0, 0.0, x);

@@ -155,6 +155,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <summary>
     /// Collects external group styles used by the contained plot styles.
     /// </summary>
+    /// <param name="styles">The collection to receive the required styles.</param>
     public override void CollectStyles(PlotGroupStyleCollection styles)
     {
       // first add missing local group styles
@@ -165,6 +166,8 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <summary>
     /// Prepares local and external group styles before painting.
     /// </summary>
+    /// <param name="externalGroups">The external group styles.</param>
+    /// <param name="layer">The plot layer.</param>
     public override void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, IPlotArea layer)
     {
       var pdata = GetRangesAndPoints(layer);
@@ -196,6 +199,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <summary>
     /// Applies the prepared group styles.
     /// </summary>
+    /// <param name="externalGroups">The external group styles.</param>
     public override void ApplyGroupStyles(PlotGroupStyleCollection externalGroups)
     {
       if (_localGroups is null)
@@ -231,6 +235,8 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <summary>
     /// Paints a legend symbol for this plot item.
     /// </summary>
+    /// <param name="g">The graphics context used for drawing.</param>
+    /// <param name="location">The legend-symbol bounds.</param>
     public override void PaintSymbol(IGraphicsContext3D g, RectangleD3D location)
     {
       _plotStyles.PaintSymbol(g, location);

@@ -52,6 +52,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex.Factorization
     /// <exception cref="ArgumentNullException">If <paramref name="matrix"/> is <c>null</c>.</exception>
     /// <exception cref="ArgumentException">If <paramref name="matrix"/> row count is less then column count</exception>
     /// <exception cref="ArgumentException">If <paramref name="matrix"/> is rank deficient</exception>
+    /// <returns>The QR decomposition of <paramref name="matrix"/>.</returns>
     public static DenseGramSchmidt Create(Matrix<Complex> matrix)
     {
       if (matrix.RowCount < matrix.ColumnCount)

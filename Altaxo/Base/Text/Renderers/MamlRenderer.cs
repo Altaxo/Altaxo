@@ -211,6 +211,22 @@ namespace Altaxo.Text.Renderers
     /// <summary>
     /// Initializes a new instance of the <see cref="MamlRenderer"/> class.
     /// </summary>
+    /// <param name="projectOrContentFileName">The project or content file name used as the rendering base path.</param>
+    /// <param name="contentFolderName">The relative name of the content folder.</param>
+    /// <param name="contentFileNameBase">The base name used for generated content files.</param>
+    /// <param name="imageFolderName">The relative name of the image folder.</param>
+    /// <param name="splitLevel">The heading level at which output is split into separate files.</param>
+    /// <param name="enableHtmlEscape">A value indicating whether HTML escaping is enabled.</param>
+    /// <param name="autoOutline">A value indicating whether automatic outlining is enabled.</param>
+    /// <param name="enableLinkToPreviousSection">A value indicating whether a link to the previous section is generated.</param>
+    /// <param name="linkToPreviousSectionLabelText">The label text used for the link to the previous section.</param>
+    /// <param name="enableLinkToNextSection">A value indicating whether a link to the next section is generated.</param>
+    /// <param name="linkToNextSectionLabelText">The label text used for the link to the next section.</param>
+    /// <param name="imagesFullFileNames">The set collecting the full file names of generated images.</param>
+    /// <param name="oldToNewImageUris">The mapping from original image URIs to the generated image URIs.</param>
+    /// <param name="bodyTextFontFamily">The font family used for body text rendering.</param>
+    /// <param name="bodyTextFontSize">The font size used for body text rendering.</param>
+    /// <param name="isIntendedForHelp1File">A value indicating whether the output is intended for a Help 1 file.</param>
     public MamlRenderer(
       string projectOrContentFileName,
       string contentFolderName,

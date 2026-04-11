@@ -77,6 +77,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
     /// <summary>
     /// Gets a copy of the outer symbol shape as polygon(s).
     /// </summary>
+    /// <param name="relativeStructureWidth">The relative structure width.</param>
     /// <returns>Polygon(s) of the outer symbol shape.</returns>
     public abstract Paths64 GetCopyOfOuterPolygon(double relativeStructureWidth);
 

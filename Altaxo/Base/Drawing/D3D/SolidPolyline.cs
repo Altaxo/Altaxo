@@ -46,6 +46,11 @@ namespace Altaxo.Drawing.D3D
     /// <summary>
     /// Adds solid polyline geometry with normals for the specified pen and polyline points.
     /// </summary>
+    /// <param name="AddPositionAndNormal">The callback that receives generated positions and normals.</param>
+    /// <param name="AddIndices">The callback that receives generated triangle indices.</param>
+    /// <param name="vertexIndexOffset">The current vertex index offset that is updated as geometry is added.</param>
+    /// <param name="pen">The pen that defines the polyline appearance.</param>
+    /// <param name="polylinePoints">The polyline points used to generate the geometry.</param>
     public void AddWithNormals(
     Action<PointD3D, VectorD3D> AddPositionAndNormal,
     Action<int, int, int, bool> AddIndices,

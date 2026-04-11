@@ -48,6 +48,7 @@ namespace Altaxo.Gui.Common.Drawing
     /// <summary>
     /// Initializes a new instance of the <see cref="BrushSimpleConditionalController"/> class.
     /// </summary>
+    /// <param name="doc">The brush document to edit.</param>
     public BrushSimpleConditionalController(BrushX doc)
     {
       _doc = _originalDoc = doc ?? new BrushX(NamedColors.Transparent);

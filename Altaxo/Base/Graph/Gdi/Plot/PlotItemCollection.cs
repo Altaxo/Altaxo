@@ -372,6 +372,7 @@ namespace Altaxo.Graph.Gdi.Plot
       return false;
     }
 
+    /// <inheritdoc />
     object ICloneable.Clone()
     {
       return new PlotItemCollection(this);
@@ -410,6 +411,7 @@ namespace Altaxo.Graph.Gdi.Plot
       }
     }
 
+    /// <inheritdoc />
     IGPlotItem? INodeWithParentNode<IGPlotItem>.ParentNode
     {
       get
@@ -418,6 +420,7 @@ namespace Altaxo.Graph.Gdi.Plot
       }
     }
 
+    /// <inheritdoc />
     IList<IGPlotItem> ITreeListNode<IGPlotItem>.ChildNodes
     {
       get
@@ -426,6 +429,7 @@ namespace Altaxo.Graph.Gdi.Plot
       }
     }
 
+    /// <inheritdoc />
     IEnumerable<IGPlotItem> ITreeNode<IGPlotItem>.ChildNodes
     {
       get
@@ -980,6 +984,7 @@ namespace Altaxo.Graph.Gdi.Plot
 
     #region IEnumerable Members
 
+    /// <inheritdoc />
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
       return _plotItems.GetEnumerator();
@@ -1113,7 +1118,7 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <summary>
     /// This method must be called, if plot item members are added or removed to this collection.
     /// </summary>
-
+    /// <param name="list">The list to fill with plot items.</param>
     protected void FillPlotItemList(IList<IGPlotItem> list)
     {
       foreach (IGPlotItem pi in _plotItems)

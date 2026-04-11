@@ -236,9 +236,11 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>Solves system of linear equations Ax = b using Gaussian elimination with partial pivoting.</summary>
+    /// <typeparam name="VectorT">The vector type used for the returned solution.</typeparam>
     /// <param name="A">Elements of matrix 'A'.</param>
     /// <param name="b">Right part 'b'</param>
     /// <param name="vectorCreation">Function to create the resulting vector. Argument is the length of the vector.</param>
+    /// <returns>The computed solution vector.</returns>
     public VectorT Solve<VectorT>(IROMatrix<double> A, IReadOnlyList<double> b, Func<int, VectorT> vectorCreation) where VectorT : IVector<double>
     {
       var x = vectorCreation(b.Count);
@@ -247,9 +249,11 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>Solves system of linear equations Ax = b using Gaussian elimination with partial pivoting.</summary>
+    /// <typeparam name="VectorT">The vector type used for the returned solution.</typeparam>
     /// <param name="A">Elements of matrix 'A'. This matrix is modified during solution!</param>
     /// <param name="b">Right part 'b'. This vector is also modified during solution!</param>
     /// <param name="vectorCreation">Function to create the resulting vector. Argument is the length of the vector.</param>
+    /// <returns>The computed solution vector.</returns>
     public VectorT SolveDestructive<VectorT>(IMatrix<double> A, IVector<double> b, Func<int, VectorT> vectorCreation) where VectorT : IVector<double>
     {
       var x = vectorCreation(b.Count);

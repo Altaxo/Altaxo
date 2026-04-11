@@ -93,6 +93,7 @@ namespace Altaxo.Graph.Plot.Data
     /// <summary>
     /// Only for deserialization purposes.
     /// </summary>
+    /// <param name="info">The deserialization information.</param>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected XYNonlinearFitFunctionPlotData(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
@@ -143,6 +144,7 @@ namespace Altaxo.Graph.Plot.Data
     /// <summary>
     /// Copies the nonlinear-fit plot data from another instance.
     /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     [MemberNotNull(nameof(_fitDocumentIdentifier), nameof(_fitDocument))]
     protected void CopyFrom(XYNonlinearFitFunctionPlotData from)
     {

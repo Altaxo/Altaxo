@@ -37,10 +37,40 @@ namespace Altaxo.Graph.Graph3D.Shapes
   /// </summary>
   internal enum EAltaxo_LabelV1
   {
-    MainSentence = 1, Sentence = 2, SentenceNC = 3, WordSpanExt = 4,
-    WordSpan = 5, WordSpanNC = 6, EscChar = 7, EscSeq = 8, Number = 9,
-    Word = 10, Space = 11, PositiveInteger = 12, EscSeq3 = 13, EscSeq2 = 14,
-    EscSeq1 = 15, QuotedString = 16, StringContent = 17
+    /// <summary>Main sentence rule.</summary>
+    MainSentence = 1,
+    /// <summary>Sentence rule.</summary>
+    Sentence = 2,
+    /// <summary>Sentence-without-comma rule.</summary>
+    SentenceNC = 3,
+    /// <summary>Extended word-span rule.</summary>
+    WordSpanExt = 4,
+    /// <summary>Word-span rule.</summary>
+    WordSpan = 5,
+    /// <summary>Word-span-without-comma rule.</summary>
+    WordSpanNC = 6,
+    /// <summary>Escaped-character rule.</summary>
+    EscChar = 7,
+    /// <summary>Escape-sequence rule.</summary>
+    EscSeq = 8,
+    /// <summary>Number rule.</summary>
+    Number = 9,
+    /// <summary>Word rule.</summary>
+    Word = 10,
+    /// <summary>Whitespace rule.</summary>
+    Space = 11,
+    /// <summary>Positive-integer rule.</summary>
+    PositiveInteger = 12,
+    /// <summary>Three-argument escape-sequence rule.</summary>
+    EscSeq3 = 13,
+    /// <summary>Two-argument escape-sequence rule.</summary>
+    EscSeq2 = 14,
+    /// <summary>One-argument escape-sequence rule.</summary>
+    EscSeq1 = 15,
+    /// <summary>Quoted-string rule.</summary>
+    QuotedString = 16,
+    /// <summary>Quoted-string-content rule.</summary>
+    StringContent = 17
   };
 
   /// <summary>
@@ -50,7 +80,14 @@ namespace Altaxo.Graph.Graph3D.Shapes
   {
     #region Input Properties
 
+    /// <summary>
+    /// Gets the encoding class used by the parser.
+    /// </summary>
     public static EncodingClass encodingClass = EncodingClass.ascii;
+
+    /// <summary>
+    /// Gets the Unicode detection mode used by the parser.
+    /// </summary>
     public static UnicodeDetection unicodeDetection = UnicodeDetection.notApplicable;
 
     #endregion Input Properties
@@ -112,6 +149,10 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     #region Grammar Rules
 
+    /// <summary>
+    /// Parses the main sentence rule.
+    /// </summary>
+    /// <returns><see langword="true"/> if the rule matches; otherwise, <see langword="false"/>.</returns>
     public bool MainSentence()    /*[1]^^MainSentence:  (EscSeq / WordSpanExt / Space)*  (WordSpanExt / EscChar / Space / '\\')*;*/
     {
       return TreeNT((int)EAltaxo_LabelV1.MainSentence, () =>
@@ -126,18 +167,30 @@ namespace Altaxo.Graph.Graph3D.Shapes
                        || Char('\\'))));
     }
 
+    /// <summary>
+    /// Parses the sentence rule.
+    /// </summary>
+    /// <returns><see langword="true"/> if the rule matches; otherwise, <see langword="false"/>.</returns>
     public bool Sentence()    /*[2]^Sentence:       (EscSeq / WordSpan / Space)+;*/
     {
       return TreeAST((int)EAltaxo_LabelV1.Sentence, () =>
            PlusRepeat(() => EscSeq() || WordSpan() || Space()));
     }
 
+    /// <summary>
+    /// Parses the sentence-without-comma rule.
+    /// </summary>
+    /// <returns><see langword="true"/> if the rule matches; otherwise, <see langword="false"/>.</returns>
     public bool SentenceNC()    /*[3]^SentenceNC:     (EscSeq / WordSpanNC / Space)+;*/
     {
       return TreeAST((int)EAltaxo_LabelV1.SentenceNC, () =>
            PlusRepeat(() => EscSeq() || WordSpanNC() || Space()));
     }
 
+    /// <summary>
+    /// Parses the extended word-span rule.
+    /// </summary>
+    /// <returns><see langword="true"/> if the rule matches; otherwise, <see langword="false"/>.</returns>
     public bool WordSpanExt()    /*[4]^^WordSpanExt:   (Word / EscChar / ',' / ')')+;*/
     {
       return TreeNT((int)EAltaxo_LabelV1.WordSpanExt, () =>
@@ -145,30 +198,50 @@ namespace Altaxo.Graph.Graph3D.Shapes
                  Word() || EscChar() || Char(',') || Char(')')));
     }
 
+    /// <summary>
+    /// Parses the word-span rule.
+    /// </summary>
+    /// <returns><see langword="true"/> if the rule matches; otherwise, <see langword="false"/>.</returns>
     public bool WordSpan()    /*[5]^^WordSpan:      (Word / EscChar / ',')+;*/
     {
       return TreeNT((int)EAltaxo_LabelV1.WordSpan, () =>
            PlusRepeat(() => Word() || EscChar() || Char(',')));
     }
 
+    /// <summary>
+    /// Parses the word-span-without-comma rule.
+    /// </summary>
+    /// <returns><see langword="true"/> if the rule matches; otherwise, <see langword="false"/>.</returns>
     public bool WordSpanNC()    /*[6]^^WordSpanNC:    (Word / EscChar)+;*/
     {
       return TreeNT((int)EAltaxo_LabelV1.WordSpanNC, () =>
            PlusRepeat(() => Word() || EscChar()));
     }
 
+    /// <summary>
+    /// Parses an escaped character.
+    /// </summary>
+    /// <returns><see langword="true"/> if the rule matches; otherwise, <see langword="false"/>.</returns>
     public bool EscChar()    /*[7]^EscChar:        '\\\\' / '\\)' / '\\(';*/
     {
       return TreeAST((int)EAltaxo_LabelV1.EscChar, () =>
                Char('\\', '\\') || Char('\\', ')') || Char('\\', '('));
     }
 
+    /// <summary>
+    /// Parses an escape sequence.
+    /// </summary>
+    /// <returns><see langword="true"/> if the rule matches; otherwise, <see langword="false"/>.</returns>
     public bool EscSeq()    /*[8]^EscSeq:   	    (EscSeq3 / EscSeq2 / EscSeq1);*/
     {
       return TreeAST((int)EAltaxo_LabelV1.EscSeq, () =>
                EscSeq3() || EscSeq2() || EscSeq1());
     }
 
+    /// <summary>
+    /// Parses a number.
+    /// </summary>
+    /// <returns><see langword="true"/> if the rule matches; otherwise, <see langword="false"/>.</returns>
     public bool Number()    /*[9]^Number:         [0-9]+ ('.' [0-9]+)?([eE][+-][0-9]+)?;*/
     {
       return TreeAST((int)EAltaxo_LabelV1.Number, () =>
@@ -185,24 +258,40 @@ namespace Altaxo.Graph.Graph3D.Shapes
                        && PlusRepeat(() => In('0', '9'))))));
     }
 
+    /// <summary>
+    /// Parses a word.
+    /// </summary>
+    /// <returns><see langword="true"/> if the rule matches; otherwise, <see langword="false"/>.</returns>
     public bool Word()    /*[10]Word:           [#x20-#x28#x2A-#x2B#x2D-#x5B#x5D-#xFFFF]+;*/
     {
       return PlusRepeat(() =>
              In('\u0020', '\u0028', '\u002a', '\u002b', '\u002d', '\u005b', '\u005d', '\uffff'));
     }
 
+    /// <summary>
+    /// Parses whitespace.
+    /// </summary>
+    /// <returns><see langword="true"/> if the rule matches; otherwise, <see langword="false"/>.</returns>
     public bool Space()    /*[11]^^Space:        '\t' / '\r\n' / '\n';*/
     {
       return TreeNT((int)EAltaxo_LabelV1.Space, () =>
                Char('\t') || Char('\r', '\n') || Char('\n'));
     }
 
+    /// <summary>
+    /// Parses a positive integer.
+    /// </summary>
+    /// <returns><see langword="true"/> if the rule matches; otherwise, <see langword="false"/>.</returns>
     public bool PositiveInteger()    /*[12]^PositiveInteger: 	[0-9]+;*/
     {
       return TreeAST((int)EAltaxo_LabelV1.PositiveInteger, () =>
            PlusRepeat(() => In('0', '9')));
     }
 
+    /// <summary>
+    /// Parses a three-argument escape sequence.
+    /// </summary>
+    /// <returns><see langword="true"/> if the rule matches; otherwise, <see langword="false"/>.</returns>
     public bool EscSeq3()    /*[13]^^EscSeq3:      ('\\L('\i PositiveInteger ',' PositiveInteger ',' PositiveInteger ')') /
                     ('\\%(' PositiveInteger ',' PositiveInteger ',' QuotedString ')');*/
     {
@@ -226,6 +315,10 @@ namespace Altaxo.Graph.Graph3D.Shapes
                  && Char(')')));
     }
 
+    /// <summary>
+    /// Parses a two-argument escape sequence.
+    /// </summary>
+    /// <returns><see langword="true"/> if the rule matches; otherwise, <see langword="false"/>.</returns>
     public bool EscSeq2()    /*[14]^^EscSeq2:      ( '\\' ( 'P'\i / 'F'\i / 'C'\i / '=' ) '(' SentenceNC ',' Sentence ')' ) /
                     ( '\\' ( 'L'\i                       ) '(' PositiveInteger ',' PositiveInteger ')' ) /
                     ( '\\' ( '%'                         ) '(' PositiveInteger ',' (PositiveInteger / QuotedString) ')' )
@@ -263,6 +356,10 @@ namespace Altaxo.Graph.Graph3D.Shapes
                  && Char(')')));
     }
 
+    /// <summary>
+    /// Parses a one-argument escape sequence.
+    /// </summary>
+    /// <returns><see langword="true"/> if the rule matches; otherwise, <see langword="false"/>.</returns>
     public bool EscSeq1()    /*[15]^^EscSeq1:      '\\' ('AB'\i / 'AD'\i / 'ID'\i / '+' / '-' /  '%' / '#' /  'B'\i / 'G'\i / 'I'\i / 'L'\i / 'N'\i / 'S'\i / 'U'\i / 'V'\i ) '(' Sentence ')';*/
     {
       return TreeNT((int)EAltaxo_LabelV1.EscSeq1, () =>
@@ -289,11 +386,19 @@ namespace Altaxo.Graph.Graph3D.Shapes
              && Char(')')));
     }
 
+    /// <summary>
+    /// Parses a quoted string.
+    /// </summary>
+    /// <returns><see langword="true"/> if the rule matches; otherwise, <see langword="false"/>.</returns>
     public bool QuotedString()    /*[16]QuotedString:  '"' StringContent '"';*/
     {
       return And(() => Char('"') && StringContent() && Char('"'));
     }
 
+    /// <summary>
+    /// Parses the content of a quoted string.
+    /// </summary>
+    /// <returns><see langword="true"/> if the rule matches; otherwise, <see langword="false"/>.</returns>
     public bool StringContent()    /*[17]^^StringContent: ( '\\'
                            ( 'u'([0-9A-Fa-f]{4}/FATAL<"4 hex digits expected">)
                            / ["\\/bfnrt]/FATAL<"illegal escape">
@@ -322,6 +427,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     #region Optimization Data
 
+    /// <summary>
+    /// Stores the optimized character set used for escape parsing.
+    /// </summary>
     internal static OptimizedCharset optimizedCharset0;
 
     static Altaxo_LabelV1()

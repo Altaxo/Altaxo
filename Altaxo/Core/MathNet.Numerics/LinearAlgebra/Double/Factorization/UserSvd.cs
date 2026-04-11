@@ -49,10 +49,11 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
   {
     /// <summary>
     /// Initializes a new instance of the <see cref="UserSvd"/> class. This object will compute the
-    /// the singular value decomposition when the constructor is called and cache it's decomposition.
+    /// singular value decomposition when the constructor is called and cache its decomposition.
     /// </summary>
     /// <param name="matrix">The matrix to factor.</param>
     /// <param name="computeVectors">Compute the singular U and VT vectors or not.</param>
+    /// <returns>A <see cref="UserSvd"/> instance for <paramref name="matrix"/>.</returns>
     /// <exception cref="ArgumentNullException">If <paramref name="matrix"/> is <c>null</c>.</exception>
     /// <exception cref="NonConvergenceException"></exception>
     public static UserSvd Create(Matrix<double> matrix, bool computeVectors)

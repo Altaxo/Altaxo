@@ -134,6 +134,9 @@ namespace Altaxo.Serialization.Xml
     /// <summary>
     /// Adds the surrogate for a type when its version is higher than the currently stored version.
     /// </summary>
+    /// <param name="type">The type for which the surrogate is registered.</param>
+    /// <param name="version">The version of the surrogate.</param>
+    /// <param name="surrogate">The surrogate used to serialize and deserialize the type.</param>
     protected void AddTypeAndVersionIfHigher(System.Type type, int version, IXmlSerializationSurrogate surrogate)
     {
       int storedversion = _versions.ContainsKey(type) ? (int)(_versions[type] ?? 0) : int.MinValue;

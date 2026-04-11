@@ -15,6 +15,9 @@ namespace Altaxo.Calc.Random
     /// WARNING: There is no randomness in this seed and quick repeated calls can cause
     /// the same seed value. Do not use for cryptography!
     /// </summary>
+    /// <returns>
+    /// An integer seed value based on the current system tick count.
+    /// </returns>
     public static int Time()
     {
       return Environment.TickCount;
@@ -25,6 +28,9 @@ namespace Altaxo.Calc.Random
     /// WARNING: There is only low randomness in this seed, but at least quick repeated
     /// calls will result in different seed values. Do not use for cryptography!
     /// </summary>
+    /// <returns>
+    /// An integer seed value based on the current system tick count and a new GUID hash code.
+    /// </returns>
     public static int Guid()
     {
       return Environment.TickCount ^ System.Guid.NewGuid().GetHashCode();
@@ -35,6 +41,9 @@ namespace Altaxo.Calc.Random
     /// WARNING: There is only medium randomness in this seed, but quick repeated
     /// calls will result in different seed values. Do not use for cryptography!
     /// </summary>
+    /// <returns>
+    /// An integer seed value based on a cryptographically secure random number generator, time, and a new GUID hash code.
+    /// </returns>
     public static int Robust()
     {
       lock (Lock)

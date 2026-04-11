@@ -296,6 +296,7 @@ namespace Altaxo.Graph.Scales.Rescaling
     /// Copies the data from another object.
     /// </summary>
     /// <param name="obj">The object to copy the data from.</param>
+    /// <returns><see langword="true"/> if the data was copied successfully; otherwise, <see langword="false"/>.</returns>
     public virtual bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -372,6 +373,14 @@ namespace Altaxo.Graph.Scales.Rescaling
     /// <summary>
     /// Sets user-provided rescaling parameters using raw tick values and relative modes.
     /// </summary>
+    /// <param name="orgRescaling">The origin rescaling mode.</param>
+    /// <param name="orgRelativeTo">The reference used for the origin value.</param>
+    /// <param name="orgValue">The raw origin tick value.</param>
+    /// <param name="orgValueKind">The kind of the origin date-time value.</param>
+    /// <param name="endRescaling">The end rescaling mode.</param>
+    /// <param name="endRelativeTo">The reference used for the end value.</param>
+    /// <param name="endValue">The raw end tick value.</param>
+    /// <param name="endValueKind">The kind of the end date-time value.</param>
     public virtual void SetUserParameters(BoundaryRescaling orgRescaling, BoundariesRelativeTo orgRelativeTo, long orgValue, DateTimeKind orgValueKind, BoundaryRescaling endRescaling, BoundariesRelativeTo endRelativeTo, long endValue, DateTimeKind endValueKind)
     {
       bool isChange =
@@ -1163,6 +1172,7 @@ namespace Altaxo.Graph.Scales.Rescaling
 
     #region IScaleRescaleConditions implementation
 
+    /// <inheritdoc/>
     void IUnboundNumericScaleRescaleConditions.SetUserParameters(BoundaryRescaling orgRescaling, BoundariesRelativeTo orgRelativeTo, Data.AltaxoVariant orgValue, BoundaryRescaling endRescaling, BoundariesRelativeTo endRelativeTo, Data.AltaxoVariant endValue)
     {
       long orgV, endV;

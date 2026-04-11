@@ -259,6 +259,7 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Returns the default file name extension (including leading dot) for the current image format.
     /// </summary>
+    /// <param name="imageFormat">The image format for which to retrieve the default extension.</param>
     /// <returns>Default file name extension (including leading dot) for the current image format</returns>
     public static string GetDefaultFileNameExtension(ImageFormat imageFormat)
     {

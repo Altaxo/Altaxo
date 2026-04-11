@@ -29,6 +29,9 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Resolves the specified tag to a string value.
     /// </summary>
+    /// <param name="tag">The tag to resolve.</param>
+    /// <param name="customTags">Optional custom tags that can be used during resolution.</param>
+    /// <returns>The resolved string value, or <c>null</c> if the tag cannot be resolved.</returns>
     string? ProvideString(string tag, StringTagPair[]? customTags);
   }
 }

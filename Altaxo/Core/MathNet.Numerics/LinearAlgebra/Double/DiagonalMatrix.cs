@@ -63,6 +63,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// Intended for advanced scenarios where you're working directly with
     /// storage for performance or interop reasons.
     /// </summary>
+    /// <param name="storage">The storage backing this matrix.</param>
     public DiagonalMatrix(DiagonalMatrixStorage<double> storage)
         : base(storage)
     {
@@ -74,6 +75,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// All cells of the matrix will be initialized to zero.
     /// </summary>
     /// <exception cref="ArgumentException">If the order is less than one.</exception>
+    /// <param name="order">The number of rows and columns.</param>
     public DiagonalMatrix(int order)
         : this(new DiagonalMatrixStorage<double>(order, order))
     {
@@ -84,6 +86,8 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// All cells of the matrix will be initialized to zero.
     /// </summary>
     /// <exception cref="ArgumentException">If the row or column count is less than one.</exception>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
     public DiagonalMatrix(int rows, int columns)
         : this(new DiagonalMatrixStorage<double>(rows, columns))
     {
@@ -94,6 +98,9 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// All diagonal cells of the matrix will be initialized to the provided value, all non-diagonal ones to zero.
     /// </summary>
     /// <exception cref="ArgumentException">If the row or column count is less than one.</exception>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="diagonalValue">The value assigned to each diagonal element.</param>
     public DiagonalMatrix(int rows, int columns, double diagonalValue)
         : this(rows, columns)
     {
@@ -108,6 +115,9 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// The array is assumed to contain the diagonal elements only and is used directly without copying.
     /// Very efficient, but changes to the array and the matrix will affect each other.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="diagonalStorage">The array backing the diagonal elements.</param>
     public DiagonalMatrix(int rows, int columns, double[] diagonalStorage)
         : this(new DiagonalMatrixStorage<double>(rows, columns, diagonalStorage))
     {
@@ -119,6 +129,8 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// The matrix to copy from must be diagonal as well.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="matrix">The matrix to copy.</param>
+    /// <returns>The created diagonal matrix.</returns>
     public static DiagonalMatrix OfMatrix(Matrix<double> matrix)
     {
       return new DiagonalMatrix(DiagonalMatrixStorage<double>.OfMatrix(matrix.Storage));
@@ -130,6 +142,8 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// The array to copy from must be diagonal as well.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="array">The array to copy.</param>
+    /// <returns>The created diagonal matrix.</returns>
     public static DiagonalMatrix OfArray(double[,] array)
     {
       return new DiagonalMatrix(DiagonalMatrixStorage<double>.OfArray(array));
@@ -141,6 +155,10 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// This new matrix will be independent from the enumerable.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="diagonal">The indexed diagonal values to copy.</param>
+    /// <returns>The created diagonal matrix.</returns>
     public static DiagonalMatrix OfIndexedDiagonal(int rows, int columns, IEnumerable<Tuple<int, double>> diagonal)
     {
       return new DiagonalMatrix(DiagonalMatrixStorage<double>.OfIndexedEnumerable(rows, columns, diagonal));
@@ -152,6 +170,10 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// This new matrix will be independent from the enumerable.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="diagonal">The indexed diagonal values to copy.</param>
+    /// <returns>The created diagonal matrix.</returns>
     public static DiagonalMatrix OfIndexedDiagonal(int rows, int columns, IEnumerable<(int, double)> diagonal)
     {
       return new DiagonalMatrix(DiagonalMatrixStorage<double>.OfIndexedEnumerable(rows, columns, diagonal));
@@ -162,6 +184,10 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// This new matrix will be independent from the enumerable.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="diagonal">The diagonal values to copy.</param>
+    /// <returns>The created diagonal matrix.</returns>
     public static DiagonalMatrix OfDiagonal(int rows, int columns, IEnumerable<double> diagonal)
     {
       return new DiagonalMatrix(DiagonalMatrixStorage<double>.OfEnumerable(rows, columns, diagonal));
@@ -170,6 +196,10 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// <summary>
     /// Create a new diagonal matrix and initialize each diagonal value using the provided init function.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="init">The initialization function for each diagonal element.</param>
+    /// <returns>The created diagonal matrix.</returns>
     public static DiagonalMatrix Create(int rows, int columns, Func<int, double> init)
     {
       return new DiagonalMatrix(DiagonalMatrixStorage<double>.OfInit(rows, columns, init));
@@ -178,6 +208,8 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// <summary>
     /// Create a new square sparse identity matrix where each diagonal value is set to One.
     /// </summary>
+    /// <param name="order">The number of rows and columns.</param>
+    /// <returns>The created identity matrix.</returns>
     public static DiagonalMatrix CreateIdentity(int order)
     {
       return new DiagonalMatrix(DiagonalMatrixStorage<double>.OfValue(order, order, One));
@@ -186,6 +218,10 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// <summary>
     /// Create a new diagonal matrix with diagonal values sampled from the provided random distribution.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="distribution">The distribution used to generate values.</param>
+    /// <returns>The created diagonal matrix.</returns>
     public static DiagonalMatrix CreateRandom(int rows, int columns, IContinuousDistribution distribution)
     {
       return new DiagonalMatrix(new DiagonalMatrixStorage<double>(rows, columns, Generate.Random(Math.Min(rows, columns), distribution)));
@@ -838,6 +874,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// <summary>
     /// Evaluates whether this matrix is symmetric.
     /// </summary>
+    /// <returns><c>true</c>, because every diagonal matrix is symmetric.</returns>
     public sealed override bool IsSymmetric()
     {
       return true;

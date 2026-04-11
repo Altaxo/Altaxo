@@ -68,6 +68,7 @@ namespace Altaxo
     /// Note: the status of the whole operation is the most severe status of all nested monitors.
     /// The more severe value persists even if the child monitor gets disposed.
     /// </summary>
+    /// <param name="status">The status to report.</param>
     void ReportStatus(OperationStatus status);
 
     /// <summary>

@@ -122,6 +122,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Gets the element at the specified index.
     /// </summary>
+    /// <param name="index">The zero-based element index.</param>
     /// <returns>Element at the specified index.</returns>
     public double this[int index] => Start + index * Step;
 

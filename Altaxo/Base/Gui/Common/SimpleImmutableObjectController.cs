@@ -55,6 +55,7 @@ namespace Altaxo.Gui.Common
   /// the setter method is the same (but the first letter can be lower case) as the property name.
   /// You must subclass this controller and set a attribute at which classes can be controlled.
   /// </summary>
+  /// <typeparam name="TObject">The immutable document type controlled by this controller.</typeparam>
   [ExpectedTypeOfView(typeof(ISimpleImmutableObjectView))]
   public class SimpleImmutableObjectController<TObject> : MVCANControllerEditImmutableDocBase<TObject, ISimpleImmutableObjectView> where TObject : Altaxo.Main.IImmutable
   {

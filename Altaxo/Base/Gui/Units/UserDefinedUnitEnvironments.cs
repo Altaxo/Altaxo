@@ -97,6 +97,7 @@ namespace Altaxo.Gui.Units
     /// <summary>
     /// Initializes a new instance of the <see cref="UserDefinedUnitEnvironments"/> class for deserialization.
     /// </summary>
+    /// <param name="info">The deserialization info.</param>
     protected UserDefinedUnitEnvironments(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
       _dictionary = new Dictionary<string, UserDefinedUnitEnvironment>();

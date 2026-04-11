@@ -38,6 +38,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or any entry is NaN.
     /// </summary>
     /// <param name="data">Sample array, no sorting is assumed.</param>
+    /// <returns>The smallest value in <paramref name="data"/>, or NaN if the array is empty or contains NaN.</returns>
     public static float Minimum(float[] data)
     {
       if (data.Length == 0)
@@ -62,6 +63,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or any entry is NaN.
     /// </summary>
     /// <param name="data">Sample array, no sorting is assumed.</param>
+    /// <returns>The largest value in the array, or <c>NaN</c> if the array is empty or contains <c>NaN</c>.</returns>
     public static float Maximum(float[] data)
     {
       if (data.Length == 0)
@@ -86,6 +88,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or any entry is NaN.
     /// </summary>
     /// <param name="data">Sample array, no sorting is assumed.</param>
+    /// <returns>The smallest absolute value in the array, or <c>NaN</c> if the array is empty or contains <c>NaN</c>.</returns>
     public static float MinimumAbsolute(float[] data)
     {
       if (data.Length == 0)
@@ -110,6 +113,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or any entry is NaN.
     /// </summary>
     /// <param name="data">Sample array, no sorting is assumed.</param>
+    /// <returns>The largest absolute value in the array, or <c>NaN</c> if the array is empty or contains <c>NaN</c>.</returns>
     public static float MaximumAbsolute(float[] data)
     {
       if (data.Length == 0)
@@ -134,6 +138,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or any entry is NaN.
     /// </summary>
     /// <param name="data">Sample array, no sorting is assumed.</param>
+    /// <returns>The arithmetic mean of the array, or <c>NaN</c> if the array is empty or contains <c>NaN</c>.</returns>
     public static double Mean(float[] data)
     {
       if (data.Length == 0)
@@ -156,6 +161,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or any entry is NaN.
     /// </summary>
     /// <param name="data">Sample array, no sorting is assumed.</param>
+    /// <returns>The geometric mean of the array, or <c>NaN</c> if the array is empty or contains <c>NaN</c>.</returns>
     public static double GeometricMean(float[] data)
     {
       if (data.Length == 0)
@@ -177,6 +183,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or any entry is NaN.
     /// </summary>
     /// <param name="data">Sample array, no sorting is assumed.</param>
+    /// <returns>The harmonic mean of the array, or <c>NaN</c> if the array is empty or contains <c>NaN</c>.</returns>
     public static double HarmonicMean(float[] data)
     {
       if (data.Length == 0)
@@ -199,6 +206,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data has less than two entries or if any entry is NaN.
     /// </summary>
     /// <param name="samples">Sample array, no sorting is assumed.</param>
+    /// <returns>The unbiased sample variance (uses N-1 normalizer), or <c>NaN</c> if insufficient data or invalid entries.</returns>
     public static double Variance(float[] samples)
     {
       if (samples.Length <= 1)
@@ -224,6 +232,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or if any entry is NaN.
     /// </summary>
     /// <param name="population">Sample array, no sorting is assumed.</param>
+    /// <returns>The population variance (uses N normalizer), or <c>NaN</c> if the array is empty or contains invalid entries.</returns>
     public static double PopulationVariance(float[] population)
     {
       if (population.Length == 0)
@@ -249,6 +258,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data has less than two entries or if any entry is NaN.
     /// </summary>
     /// <param name="samples">Sample array, no sorting is assumed.</param>
+    /// <returns>The unbiased sample standard deviation, or <c>NaN</c> if insufficient data or invalid entries.</returns>
     public static double StandardDeviation(float[] samples)
     {
       return Math.Sqrt(Variance(samples));
@@ -260,6 +270,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or if any entry is NaN.
     /// </summary>
     /// <param name="population">Sample array, no sorting is assumed.</param>
+    /// <returns>The population standard deviation, or <c>NaN</c> if the array is empty or contains invalid entries.</returns>
     public static double PopulationStandardDeviation(float[] population)
     {
       return Math.Sqrt(PopulationVariance(population));
@@ -271,6 +282,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN for mean if data is empty or any entry is NaN and NaN for variance if data has less than two entries or if any entry is NaN.
     /// </summary>
     /// <param name="samples">Sample array, no sorting is assumed.</param>
+    /// <returns>A tuple of (Mean, Variance) computed from the samples. Variance uses the unbiased (N-1) normalizer.</returns>
     public static (double Mean, double Variance) MeanVariance(float[] samples)
     {
       return (Mean(samples), Variance(samples));
@@ -282,6 +294,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN for mean if data is empty or any entry is NaN and NaN for standard deviation if data has less than two entries or if any entry is NaN.
     /// </summary>
     /// <param name="samples">Sample array, no sorting is assumed.</param>
+    /// <returns>A tuple of (Mean, StandardDeviation) computed from the samples. Standard deviation uses the unbiased (N-1) normalizer.</returns>
     public static (double Mean, double StandardDeviation) MeanStandardDeviation(float[] samples)
     {
       return (Mean(samples), StandardDeviation(samples));
@@ -294,6 +307,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="samples1">First sample array.</param>
     /// <param name="samples2">Second sample array.</param>
+    /// <returns>The unbiased sample covariance between the two arrays, or <c>NaN</c> if lengths mismatch or insufficient data.</returns>
     public static double Covariance(float[] samples1, float[] samples2)
     {
       if (samples1.Length != samples2.Length)
@@ -324,6 +338,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="population1">First population array.</param>
     /// <param name="population2">Second population array.</param>
+    /// <returns>The population covariance between the two arrays, or <c>NaN</c> if lengths mismatch or array empty.</returns>
     public static double PopulationCovariance(float[] population1, float[] population2)
     {
       if (population1.Length != population2.Length)
@@ -352,6 +367,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or any entry is NaN.
     /// </summary>
     /// <param name="data">Sample array, no sorting is assumed.</param>
+    /// <returns>The root mean square (RMS) of the array, or <c>NaN</c> if the array is empty or contains invalid entries.</returns>
     public static double RootMeanSquare(float[] data)
     {
       if (data.Length == 0)
@@ -375,6 +391,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="data">Sample array, no sorting is assumed. Will be reordered.</param>
     /// <param name="order">One-based order of the statistic, must be between 1 and N (inclusive).</param>
+    /// <returns>The order-th smallest value, or <c>NaN</c> if order is out of range.</returns>
     public static float OrderStatisticInplace(float[] data, int order)
     {
       if (order < 1 || order > data.Length)
@@ -400,6 +417,7 @@ namespace Altaxo.Calc.Statistics
     /// WARNING: Works inplace and can thus causes the data array to be reordered.
     /// </summary>
     /// <param name="data">Sample array, no sorting is assumed. Will be reordered.</param>
+    /// <returns>The median value from the array, or <c>NaN</c> if the array is empty or contains invalid entries.</returns>
     public static float MedianInplace(float[] data)
     {
       var k = data.Length / 2;
@@ -416,6 +434,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="data">Sample array, no sorting is assumed. Will be reordered.</param>
     /// <param name="p">Percentile selector, between 0 and 100 (inclusive).</param>
+    /// <returns>The p-th percentile value from the array.</returns>
     public static float PercentileInplace(float[] data, int p)
     {
       return QuantileInplace(data, p / 100.0d);
@@ -427,6 +446,7 @@ namespace Altaxo.Calc.Statistics
     /// WARNING: Works inplace and can thus causes the data array to be reordered.
     /// </summary>
     /// <param name="data">Sample array, no sorting is assumed. Will be reordered.</param>
+    /// <returns>The first quartile (lower quartile) of the array.</returns>
     public static float LowerQuartileInplace(float[] data)
     {
       return QuantileInplace(data, 0.25d);
@@ -438,6 +458,7 @@ namespace Altaxo.Calc.Statistics
     /// WARNING: Works inplace and can thus causes the data array to be reordered.
     /// </summary>
     /// <param name="data">Sample array, no sorting is assumed. Will be reordered.</param>
+    /// <returns>The third quartile (upper quartile) of the array.</returns>
     public static float UpperQuartileInplace(float[] data)
     {
       return QuantileInplace(data, 0.75d);
@@ -449,6 +470,7 @@ namespace Altaxo.Calc.Statistics
     /// WARNING: Works inplace and can thus causes the data array to be reordered.
     /// </summary>
     /// <param name="data">Sample array, no sorting is assumed. Will be reordered.</param>
+    /// <returns>The interquartile range (IQR) of the array.</returns>
     public static float InterquartileRangeInplace(float[] data)
     {
       return QuantileInplace(data, 0.75d) - QuantileInplace(data, 0.25d);
@@ -460,6 +482,7 @@ namespace Altaxo.Calc.Statistics
     /// WARNING: Works inplace and can thus causes the data array to be reordered.
     /// </summary>
     /// <param name="data">Sample array, no sorting is assumed. Will be reordered.</param>
+    /// <returns>An array containing {min, lower-quantile, median, upper-quantile, max}.</returns>
     public static float[] FiveNumberSummaryInplace(float[] data)
     {
       if (data.Length == 0)
@@ -485,6 +508,7 @@ namespace Altaxo.Calc.Statistics
     /// Linear interpolation of the approximate medians for order statistics.
     /// When tau &lt; (2/3) / (N + 1/3), use x1. When tau &gt;= (N - 1/3) / (N + 1/3), use xN.
     /// </remarks>
+    /// <returns>The tau-th quantile of the array, or <c>NaN</c> if invalid.</returns>
     public static float QuantileInplace(float[] data, double tau)
     {
       if (tau < 0d || tau > 1d || data.Length == 0)
@@ -523,6 +547,7 @@ namespace Altaxo.Calc.Statistics
     /// <param name="b">b-parameter</param>
     /// <param name="c">c-parameter</param>
     /// <param name="d">d-parameter</param>
+    /// <returns>The tau-th quantile according to the specified parameters, or <c>NaN</c> if invalid.</returns>
     public static float QuantileCustomInplace(float[] data, double tau, double a, double b, double c, double d)
     {
       if (tau < 0d || tau > 1d || data.Length == 0)
@@ -554,6 +579,7 @@ namespace Altaxo.Calc.Statistics
     /// <param name="data">Sample array, no sorting is assumed. Will be reordered.</param>
     /// <param name="tau">Quantile selector, between 0.0 and 1.0 (inclusive)</param>
     /// <param name="definition">Quantile definition, to choose what product/definition it should be consistent with</param>
+    /// <returns>The tau-th quantile according to the specified definition, or <c>NaN</c> if invalid.</returns>
     public static float QuantileCustomInplace(float[] data, double tau, QuantileDefinition definition)
     {
       if (tau < 0d || tau > 1d || data.Length == 0)
@@ -742,10 +768,12 @@ namespace Altaxo.Calc.Statistics
 
     /// <summary>
     /// Evaluates the rank of each entry of the unsorted data array.
-    /// The rank definition can be specified to be compatible
-    /// with an existing system.
-    /// WARNING: Works inplace and can thus causes the data array to be reordered.
+    /// The rank definition can be specified to be compatible with an existing system.
+    /// WARNING: Works in-place and can thus cause the data array to be reordered.
     /// </summary>
+    /// <param name="data">The input data array. Will be modified if the method performs in-place sorting.</param>
+    /// <param name="definition">Definition of ranking to apply.</param>
+    /// <returns>An array of ranks corresponding to each entry in the input data.</returns>
     public static float[] RanksInplace(float[] data, RankDefinition definition = RankDefinition.Default)
     {
       var ranks = new float[data.Length];

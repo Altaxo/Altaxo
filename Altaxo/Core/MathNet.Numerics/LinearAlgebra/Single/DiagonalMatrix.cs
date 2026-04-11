@@ -63,6 +63,7 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// Intended for advanced scenarios where you're working directly with
     /// storage for performance or interop reasons.
     /// </summary>
+    /// <param name="storage">The storage backing the matrix.</param>
     public DiagonalMatrix(DiagonalMatrixStorage<float> storage)
         : base(storage)
     {
@@ -73,6 +74,7 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// Create a new square diagonal matrix with the given number of rows and columns.
     /// All cells of the matrix will be initialized to zero.
     /// </summary>
+    /// <param name="order">The order of the square matrix.</param>
     /// <exception cref="ArgumentException">If the order is less than one.</exception>
     public DiagonalMatrix(int order)
         : this(new DiagonalMatrixStorage<float>(order, order))
@@ -83,6 +85,8 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// Create a new diagonal matrix with the given number of rows and columns.
     /// All cells of the matrix will be initialized to zero.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
     /// <exception cref="ArgumentException">If the row or column count is less than one.</exception>
     public DiagonalMatrix(int rows, int columns)
         : this(new DiagonalMatrixStorage<float>(rows, columns))
@@ -93,6 +97,9 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// Create a new diagonal matrix with the given number of rows and columns.
     /// All diagonal cells of the matrix will be initialized to the provided value, all non-diagonal ones to zero.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="diagonalValue">The value assigned to each diagonal element.</param>
     /// <exception cref="ArgumentException">If the row or column count is less than one.</exception>
     public DiagonalMatrix(int rows, int columns, float diagonalValue)
         : this(rows, columns)
@@ -108,6 +115,9 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// The array is assumed to contain the diagonal elements only and is used directly without copying.
     /// Very efficient, but changes to the array and the matrix will affect each other.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="diagonalStorage">The array backing the diagonal values.</param>
     public DiagonalMatrix(int rows, int columns, float[] diagonalStorage)
         : this(new DiagonalMatrixStorage<float>(rows, columns, diagonalStorage))
     {
@@ -119,6 +129,8 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// The matrix to copy from must be diagonal as well.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="matrix">The matrix to copy.</param>
+    /// <returns>A diagonal matrix copied from <paramref name="matrix"/>.</returns>
     public static DiagonalMatrix OfMatrix(Matrix<float> matrix)
     {
       return new DiagonalMatrix(DiagonalMatrixStorage<float>.OfMatrix(matrix.Storage));
@@ -130,6 +142,8 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// The array to copy from must be diagonal as well.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="array">The array to copy.</param>
+    /// <returns>A diagonal matrix copied from <paramref name="array"/>.</returns>
     public static DiagonalMatrix OfArray(float[,] array)
     {
       return new DiagonalMatrix(DiagonalMatrixStorage<float>.OfArray(array));
@@ -141,6 +155,10 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// This new matrix will be independent from the enumerable.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="diagonal">The indexed diagonal values to copy.</param>
+    /// <returns>A diagonal matrix containing the indexed diagonal values.</returns>
     public static DiagonalMatrix OfIndexedDiagonal(int rows, int columns, IEnumerable<Tuple<int, float>> diagonal)
     {
       return new DiagonalMatrix(DiagonalMatrixStorage<float>.OfIndexedEnumerable(rows, columns, diagonal));
@@ -152,6 +170,10 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// This new matrix will be independent from the enumerable.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="diagonal">The indexed diagonal values to copy.</param>
+    /// <returns>A diagonal matrix containing the indexed diagonal values.</returns>
     public static DiagonalMatrix OfIndexedDiagonal(int rows, int columns, IEnumerable<(int, float)> diagonal)
     {
       return new DiagonalMatrix(DiagonalMatrixStorage<float>.OfIndexedEnumerable(rows, columns, diagonal));
@@ -162,6 +184,10 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// This new matrix will be independent from the enumerable.
     /// A new memory block will be allocated for storing the matrix.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="diagonal">The diagonal values to copy.</param>
+    /// <returns>A diagonal matrix containing the supplied diagonal values.</returns>
     public static DiagonalMatrix OfDiagonal(int rows, int columns, IEnumerable<float> diagonal)
     {
       return new DiagonalMatrix(DiagonalMatrixStorage<float>.OfEnumerable(rows, columns, diagonal));
@@ -170,6 +196,10 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// <summary>
     /// Create a new diagonal matrix and initialize each diagonal value using the provided init function.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="init">The initialization function for diagonal elements.</param>
+    /// <returns>A diagonal matrix initialized by <paramref name="init"/>.</returns>
     public static DiagonalMatrix Create(int rows, int columns, Func<int, float> init)
     {
       return new DiagonalMatrix(DiagonalMatrixStorage<float>.OfInit(rows, columns, init));
@@ -178,6 +208,8 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// <summary>
     /// Create a new square sparse identity matrix where each diagonal value is set to One.
     /// </summary>
+    /// <param name="order">The order of the square matrix.</param>
+    /// <returns>An identity diagonal matrix of the specified order.</returns>
     public static DiagonalMatrix CreateIdentity(int order)
     {
       return new DiagonalMatrix(DiagonalMatrixStorage<float>.OfValue(order, order, One));
@@ -186,6 +218,10 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// <summary>
     /// Create a new diagonal matrix with diagonal values sampled from the provided random distribution.
     /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="distribution">The distribution used to sample values.</param>
+    /// <returns>A diagonal matrix initialized with sampled values.</returns>
     public static DiagonalMatrix CreateRandom(int rows, int columns, IContinuousDistribution distribution)
     {
       return new DiagonalMatrix(new DiagonalMatrixStorage<float>(rows, columns, Generate.RandomSingle(Math.Min(rows, columns), distribution)));
@@ -835,9 +871,7 @@ namespace Altaxo.Calc.LinearAlgebra.Single
       throw new InvalidOperationException("Permutations in diagonal matrix are not allowed");
     }
 
-    /// <summary>
-    /// Evaluates whether this matrix is symmetric.
-    /// </summary>
+    /// <inheritdoc/>
     public sealed override bool IsSymmetric()
     {
       return true;

@@ -45,6 +45,8 @@ namespace Altaxo.Main.Services.Implementation
     /// <summary>
     /// Writes an error line.
     /// </summary>
+    /// <param name="caption">The caption written before the message.</param>
+    /// <param name="message">The error message text.</param>
     public void WriteErrorLine(string caption, string message)
     {
       writer.WriteLine(caption ?? string.Empty + " " + message ?? string.Empty);
@@ -53,6 +55,9 @@ namespace Altaxo.Main.Services.Implementation
     /// <summary>
     /// Writes a formatted error line.
     /// </summary>
+    /// <param name="caption">The caption written before the message.</param>
+    /// <param name="message">The composite format string.</param>
+    /// <param name="args">The format arguments.</param>
     public void WriteErrorLine(string caption, string message, params object[] args)
     {
       if (string.IsNullOrEmpty(caption))

@@ -46,6 +46,8 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Initializes a new instance of the <see cref="LazyLoadDoozer"/> class.
     /// </summary>
+    /// <param name="addIn">The add-in that owns the doozer.</param>
+    /// <param name="properties">The properties that define the doozer.</param>
     public LazyLoadDoozer(AddIn addIn, Properties properties)
     {
       this._addIn = addIn;

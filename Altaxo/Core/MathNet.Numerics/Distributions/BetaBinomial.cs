@@ -109,6 +109,7 @@ namespace Altaxo.Calc.Distributions
     /// <param name="n">The number of Bernoulli trials n - n is a positive integer </param>
     /// <param name="a">Shape parameter alpha of the Beta distribution. Range: a > 0.</param>
     /// <param name="b">Shape parameter beta of the Beta distribution. Range: b > 0.</param>
+    /// <returns><c>true</c> if the parameters define a valid beta-binomial distribution; otherwise, <c>false</c>.</returns>
     public static bool IsValidParameterSet(int n, double a, double b)
     {
       return n >= 1.0 && a > 0.0 && b > 0.0;
@@ -121,6 +122,7 @@ namespace Altaxo.Calc.Distributions
     /// <param name="a">Shape parameter alpha of the Beta distribution. Range: a > 0.</param>
     /// <param name="b">Shape parameter beta of the Beta distribution. Range: b > 0.</param>
     /// <param name="k">The location in the domain where we want to evaluate the probability mass function.</param>
+    /// <returns><c>true</c> if the parameters and evaluation point are valid; otherwise, <c>false</c>.</returns>
     public static bool IsValidParameterSet(int n, double a, double b, int k)
     {
       return n >= 1.0 && a > 0.0 && b > 0.0 && k >= 0 && k <= n;
@@ -340,6 +342,7 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Fills an array with samples generated from the distribution.
     /// </summary>
+    /// <param name="values">The array to fill with samples.</param>
     public void Samples(int[] values)
     {
       SamplesUnchecked(_random, values, _n, _a, _b);

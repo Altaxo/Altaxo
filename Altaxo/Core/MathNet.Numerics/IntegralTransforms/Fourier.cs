@@ -753,6 +753,7 @@ namespace Altaxo.Calc.IntegralTransforms
     /// </summary>
     /// <param name="length">Number of samples.</param>
     /// <param name="sampleRate">The sampling rate of the time-space data.</param>
+    /// <returns>The frequency corresponding to each Fourier index.</returns>
     public static double[] FrequencyScale(int length, double sampleRate)
     {
       double[] scale = new double[length];

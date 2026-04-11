@@ -236,6 +236,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     /// <summary>
     /// Initializes the controller state and optionally reloads document-dependent data.
     /// </summary>
+    /// <param name="initData"><c>true</c> to initialize data-dependent state; otherwise, <c>false</c>.</param>
     protected void Initialize(bool initData)
     {
       if (initData)
@@ -476,6 +477,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     /// <summary>
     /// Ensures that <see cref="CurrentLayerNumber"/> refers to a valid layer and returns that layer.
     /// </summary>
+    /// <returns>The valid active layer.</returns>
     public HostLayer EnsureValidityOfCurrentLayerNumber()
     {
       _doc.RootLayer.EnsureValidityOfNodeIndex(_currentLayerNumber);
@@ -561,6 +563,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     /// <summary>
     /// Determines whether the cut command is currently available.
     /// </summary>
+    /// <returns><c>true</c> if at least one object is selected; otherwise, <c>false</c>.</returns>
     public bool IsCmdCutEnabled()
     {
       return 0 != SelectedObjects.Count;
@@ -591,6 +594,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     /// <summary>
     /// Determines whether the copy command is currently available.
     /// </summary>
+    /// <returns><c>true</c>.</returns>
     public bool IsCmdCopyEnabled()
     {
       return true;
@@ -621,6 +625,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     /// <summary>
     /// Determines whether the paste command is currently available.
     /// </summary>
+    /// <returns><c>true</c> if the paste command is available; otherwise, <c>false</c>.</returns>
     public bool IsCmdPasteEnabled()
     {
       return true;
@@ -809,6 +814,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     /// <summary>
     /// Determines whether the delete command is currently available.
     /// </summary>
+    /// <returns><c>true</c>.</returns>
     public bool IsCmdDeleteEnabled()
     {
       return true;
@@ -1020,6 +1026,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     /// <summary>
     /// Handles mouse-wheel input on the graph panel.
     /// </summary>
+    /// <param name="relX">The relative horizontal mouse position.</param>
+    /// <param name="relY">The relative vertical mouse position.</param>
+    /// <param name="aspectRatio">The current viewport aspect ratio.</param>
+    /// <param name="delta">The mouse-wheel delta.</param>
+    /// <param name="isSHIFTpressed"><c>true</c> if the Shift key is pressed.</param>
+    /// <param name="isCTRLpressed"><c>true</c> if the Ctrl key is pressed.</param>
+    /// <param name="isALTpressed"><c>true</c> if the Alt key is pressed.</param>
     public void EhView_GraphPanelMouseWheel(double relX, double relY, double aspectRatio, int delta, bool isSHIFTpressed, bool isCTRLpressed, bool isALTpressed)
     {
       // MouseWheeling only: Zoom in/out
@@ -1051,8 +1064,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     }
 
     /// <summary>
-    /// Performs the c am er az oo mb ym ou se wh e e l operation.
+    /// Zooms the camera in response to mouse-wheel input.
     /// </summary>
+    /// <param name="relX">The relative horizontal mouse position.</param>
+    /// <param name="relY">The relative vertical mouse position.</param>
+    /// <param name="aspectRatio">The current viewport aspect ratio.</param>
+    /// <param name="delta">The mouse-wheel delta converted to zoom steps.</param>
     protected void CameraZoomByMouseWheel(double relX, double relY, double aspectRatio, double delta)
     {
       var camera = CameraZoomByMouseWheel(Doc.Camera, relX, relY, aspectRatio, delta / (4 * 120));
@@ -1061,8 +1078,14 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     }
 
     /// <summary>
-    /// Performs the c am er az oo mb ym ou se wh e e l operation.
+    /// Calculates a zoomed camera in response to mouse-wheel input.
     /// </summary>
+    /// <param name="camera">The camera before zooming.</param>
+    /// <param name="relX">The relative horizontal mouse position.</param>
+    /// <param name="relY">The relative vertical mouse position.</param>
+    /// <param name="aspectRatio">The current viewport aspect ratio.</param>
+    /// <param name="delta">The zoom delta.</param>
+    /// <returns>The updated camera.</returns>
     protected static CameraBase CameraZoomByMouseWheel(CameraBase camera, double relX, double relY, double aspectRatio, double delta)
     {
       if (camera is OrthographicCamera)
@@ -1098,32 +1121,48 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     }
 
     /// <summary>
-    /// Performs the c am er am ov eh or iz on ta ll yb ym ou se wh e e l operation.
+    /// Moves the camera horizontally in response to mouse-wheel input.
     /// </summary>
+    /// <param name="relX">The relative horizontal mouse position.</param>
+    /// <param name="relY">The relative vertical mouse position.</param>
+    /// <param name="aspectRatio">The current viewport aspect ratio.</param>
+    /// <param name="delta">The mouse-wheel delta.</param>
     protected void CameraMoveHorizontallyByMouseWheel(double relX, double relY, double aspectRatio, int delta)
     {
       CameraMoveRelative(delta / 4800.0, 0);
     }
 
     /// <summary>
-    /// Performs the c am er am ov ev er ti ca ll yb ym ou se wh e e l operation.
+    /// Moves the camera vertically in response to mouse-wheel input.
     /// </summary>
+    /// <param name="relX">The relative horizontal mouse position.</param>
+    /// <param name="relY">The relative vertical mouse position.</param>
+    /// <param name="aspectRatio">The current viewport aspect ratio.</param>
+    /// <param name="delta">The mouse-wheel delta.</param>
     protected void CameraMoveVerticallyByMouseWheel(double relX, double relY, double aspectRatio, int delta)
     {
       CameraMoveRelative(0, delta / 4800.0);
     }
 
     /// <summary>
-    /// Performs the c am er ar ot at ea ro un dh or iz on ta la xi sb ym ou se wh e e l operation.
+    /// Rotates the camera around the horizontal axis in response to mouse-wheel input.
     /// </summary>
+    /// <param name="relX">The relative horizontal mouse position.</param>
+    /// <param name="relY">The relative vertical mouse position.</param>
+    /// <param name="aspectRatio">The current viewport aspect ratio.</param>
+    /// <param name="delta">The mouse-wheel delta.</param>
     protected void CameraRotateAroundHorizontalAxisByMouseWheel(double relX, double relY, double aspectRatio, int delta)
     {
       CameraRotateDegrees(delta / 24.0, 0);
     }
 
     /// <summary>
-    /// Performs the c am er ar ot at ea ro un dv er ti ca la xi sb ym ou se wh e e l operation.
+    /// Rotates the camera around the vertical axis in response to mouse-wheel input.
     /// </summary>
+    /// <param name="relX">The relative horizontal mouse position.</param>
+    /// <param name="relY">The relative vertical mouse position.</param>
+    /// <param name="aspectRatio">The current viewport aspect ratio.</param>
+    /// <param name="delta">The mouse-wheel delta.</param>
     protected void CameraRotateAroundVerticalAxisByMouseWheel(double relX, double relY, double aspectRatio, int delta)
     {
       CameraRotateDegrees(0, delta / 24.0);
@@ -1142,9 +1181,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     /// <summary>
     /// Rotates the camera.
     /// </summary>
-    /// <param name="cam">Initial camera, i.e. camera prior to the rotation</param>
+    /// <param name="cam">The initial camera, that is, the camera before the rotation.</param>
     /// <param name="stepX">The rotation around the vertical axis in degrees.</param>
     /// <param name="stepY">The rotation around the horizontal axis in degrees.</param>
+    /// <returns>The rotated camera.</returns>
     public static CameraBase CameraRotateDegrees(CameraBase cam, double stepX, double stepY)
     {
       // the axis to turn the camera around is in case of stepY the Cross of UpVector and eyeVector
@@ -1178,6 +1218,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     /// <summary>
     /// Rotates the model around the center of the root layer.
     /// </summary>
+    /// <param name="cam">The camera before the rotation.</param>
+    /// <param name="rootLayerSize">The size of the root layer.</param>
+    /// <param name="stepX">The rotation around the vertical axis in degrees.</param>
+    /// <param name="stepY">The rotation around the horizontal axis in degrees.</param>
+    /// <returns>The rotated camera.</returns>
     public static CameraBase ModelRotateDegrees(CameraBase cam, VectorD3D rootLayerSize, double stepX, double stepY)
     {
       double angleRadianZ = stepX * Math.PI / 180.0;
@@ -1693,6 +1738,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     /// <summary>
     /// Draws the root-layer orientation markers.
     /// </summary>
+    /// <param name="gc">The overlay graphics context used to draw the markers.</param>
     public void DrawRootLayerMarkers(IOverlayContext3D gc)
     {
       var buf = gc.PositionColorIndexedTriangleBuffers;

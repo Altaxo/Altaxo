@@ -323,6 +323,12 @@ namespace Altaxo.Calc.Ode.Obsolete
       InitializeWorkingSpace();
     }
 
+    /// <summary>
+    /// Initializes the solver internals for the specified ODE system.
+    /// </summary>
+    /// <param name="function">The function that evaluates the differential equation system.</param>
+    /// <param name="jacobian">The optional Jacobian evaluator.</param>
+    /// <param name="numEquations">The number of equations in the system.</param>
     internal virtual void InitializeInternal(OdeFunction function, OdeJacobian? jacobian, int numEquations)
     {
       //this.MeIsInitialized = true;
@@ -441,13 +447,20 @@ namespace Altaxo.Calc.Ode.Obsolete
     //}
 
     /// <summary>
-    /// Inicializa elespacio nesesitado por la surutinas. Se requiere que estend dedfinidas las proiedades
-    /// que definen dicho espacio, por ejemplo el numero de equaciones.
+    /// Initializes the workspace required by the solver routines.
     /// </summary>
     internal abstract void InitializeWorkingSpace();
 
+    /// <summary>
+    /// Initializes the function and optional Jacobian callbacks.
+    /// </summary>
+    /// <param name="fun">The function that evaluates the differential equation system.</param>
+    /// <param name="jac">The optional Jacobian evaluator.</param>
     internal abstract void InitializeFunctionAndJacobian(OdeFunction fun, OdeJacobian? jac);
 
+    /// <summary>
+    /// Initializes the exception messages used by the solver.
+    /// </summary>
     internal abstract void InitializeExceptionMessages();
 
     /// <summary>

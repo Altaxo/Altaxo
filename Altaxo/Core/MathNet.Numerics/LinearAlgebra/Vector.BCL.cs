@@ -92,6 +92,7 @@ namespace Altaxo.Calc.LinearAlgebra
       return Clone();
     }
 
+    /// <inheritdoc />
     int IList<T>.IndexOf(T item)
     {
       for (int i = 0; i < Count; ++i)
@@ -102,28 +103,34 @@ namespace Altaxo.Calc.LinearAlgebra
       return -1;
     }
 
+    /// <inheritdoc />
     void IList<T>.Insert(int index, T item)
     {
       throw new NotSupportedException();
     }
 
+    /// <inheritdoc />
     void IList<T>.RemoveAt(int index)
     {
       throw new NotSupportedException();
     }
 
+    /// <inheritdoc />
     bool ICollection<T>.IsReadOnly => false;
 
+    /// <inheritdoc />
     void ICollection<T>.Add(T item)
     {
       throw new NotSupportedException();
     }
 
+    /// <inheritdoc />
     bool ICollection<T>.Remove(T item)
     {
       throw new NotSupportedException();
     }
 
+    /// <inheritdoc />
     bool ICollection<T>.Contains(T item)
     {
       // ReSharper disable once LoopCanBeConvertedToQuery
@@ -135,6 +142,7 @@ namespace Altaxo.Calc.LinearAlgebra
       return false;
     }
 
+    /// <inheritdoc />
     void ICollection<T>.CopyTo(T[] array, int arrayIndex)
     {
       if (array == null)
@@ -145,16 +153,20 @@ namespace Altaxo.Calc.LinearAlgebra
       Storage.CopySubVectorTo(new DenseVectorStorage<T>(array.Length, array), 0, arrayIndex, Count);
     }
 
+    /// <inheritdoc />
     bool IList.IsReadOnly => false;
 
+    /// <inheritdoc />
     bool IList.IsFixedSize => true;
 
+    /// <inheritdoc />
     object IList.this[int index]
     {
       get => Storage[index];
       set => Storage[index] = (T)value;
     }
 
+    /// <inheritdoc />
     int IList.IndexOf(object value)
     {
       if (!(value is T))
@@ -165,6 +177,7 @@ namespace Altaxo.Calc.LinearAlgebra
       return ((IList<T>)this).IndexOf((T)value);
     }
 
+    /// <inheritdoc />
     bool IList.Contains(object value)
     {
       if (!(value is T))
@@ -175,30 +188,37 @@ namespace Altaxo.Calc.LinearAlgebra
       return ((ICollection<T>)this).Contains((T)value);
     }
 
+    /// <inheritdoc />
     void IList.Insert(int index, object value)
     {
       throw new NotSupportedException();
     }
 
+    /// <inheritdoc />
     int IList.Add(object value)
     {
       throw new NotSupportedException();
     }
 
+    /// <inheritdoc />
     void IList.Remove(object value)
     {
       throw new NotSupportedException();
     }
 
+    /// <inheritdoc />
     void IList.RemoveAt(int index)
     {
       throw new NotSupportedException();
     }
 
+    /// <inheritdoc />
     bool ICollection.IsSynchronized => false;
 
+    /// <inheritdoc />
     object ICollection.SyncRoot => Storage;
 
+    /// <inheritdoc />
     void ICollection.CopyTo(Array array, int index)
     {
       if (array == null)
@@ -424,6 +444,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// The maximum number of cells can be configured in the <see cref="Control"/> class.
     /// The format string is ignored.
     /// </summary>
+    /// <param name="format">The numeric format string.</param>
+    /// <param name="formatProvider">The format provider to use.</param>
+    /// <returns>A formatted summary string for the vector.</returns>
     public string ToString(string format = null, IFormatProvider formatProvider = null)
     {
       return string.Concat(ToTypeString(), Environment.NewLine, ToVectorString(format, formatProvider));

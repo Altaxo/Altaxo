@@ -195,6 +195,21 @@ namespace Altaxo.Text.Renderers.Html
     /// <summary>
     /// Initializes a new instance of the <see cref="HtmlSplitRenderer"/> class.
     /// </summary>
+    /// <param name="projectOrContentFileName">The project or content file name used to determine the output location.</param>
+    /// <param name="imageFolderName">The folder name used for exported images.</param>
+    /// <param name="splitLevel">The heading level at which the output is split into separate files.</param>
+    /// <param name="enableHtmlEscape">A value indicating whether HTML escaping is enabled.</param>
+    /// <param name="autoOutline">A value indicating whether an outline is generated automatically.</param>
+    /// <param name="enableLinkToPreviousSection">A value indicating whether a link to the previous section is generated.</param>
+    /// <param name="linkToPreviousSectionLabelText">The label text for the link to the previous section.</param>
+    /// <param name="enableLinkToNextSection">A value indicating whether a link to the next section is generated.</param>
+    /// <param name="linkToNextSectionLabelText">The label text for the link to the next section.</param>
+    /// <param name="enableLinkToTableOfContents">A value indicating whether a link to the table of contents is generated.</param>
+    /// <param name="linkToTableOfContentsLabelText">The label text for the link to the table of contents.</param>
+    /// <param name="imagesFullFileNames">The full file names of the images referenced by the document.</param>
+    /// <param name="oldToNewImageUris">The mapping from original image URIs to generated image URIs.</param>
+    /// <param name="bodyTextFontFamily">The font family used for body text.</param>
+    /// <param name="bodyTextFontSize">The font size used for body text.</param>
     public HtmlSplitRenderer(
       string projectOrContentFileName,
       string imageFolderName,

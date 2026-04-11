@@ -284,6 +284,9 @@ namespace Altaxo.Graph
     /// <summary>
     /// Adds two logical coordinates.
     /// </summary>
+    /// <param name="r">The first logical coordinate.</param>
+    /// <param name="s">The second logical coordinate.</param>
+    /// <returns>The component-wise sum of <paramref name="r"/> and <paramref name="s"/>.</returns>
     public static Logical3D operator +(Logical3D r, Logical3D s)
     {
       return new Logical3D(r.RX + s.RX, r.RY + s.RY, r.RZ + s.RZ);

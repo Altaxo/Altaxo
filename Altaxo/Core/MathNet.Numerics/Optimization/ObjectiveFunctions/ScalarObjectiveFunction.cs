@@ -31,6 +31,9 @@ using System;
 
 namespace Altaxo.Calc.Optimization.ObjectiveFunctions
 {
+  /// <summary>
+  /// Represents a lazily evaluated scalar objective function result.
+  /// </summary>
   internal class LazyScalarObjectiveFunctionEvaluation : IScalarObjectiveFunctionEvaluation
   {
     private double? _value;
@@ -39,6 +42,11 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
     private readonly ScalarObjectiveFunction _objectiveObject;
     private readonly double _point;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LazyScalarObjectiveFunctionEvaluation"/> class.
+    /// </summary>
+    /// <param name="f">The objective function definition.</param>
+    /// <param name="point">The evaluation point.</param>
     public LazyScalarObjectiveFunctionEvaluation(ScalarObjectiveFunction f, double point)
     {
       _objectiveObject = f;
@@ -63,18 +71,38 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       return _secondDerivative.Value;
     }
 
+    /// <inheritdoc />
     public double Point => _point;
+    /// <inheritdoc />
     public double Value => _value ?? SetValue();
+    /// <inheritdoc />
     public double Derivative => _derivative ?? SetDerivative();
+    /// <inheritdoc />
     public double SecondDerivative => _secondDerivative ?? SetSecondDerivative();
   }
 
+  /// <summary>
+  /// Represents a scalar objective function with optional first and second derivatives.
+  /// </summary>
   internal class ScalarObjectiveFunction : IScalarObjectiveFunction
   {
+    /// <summary>
+    /// Gets the objective function delegate.
+    /// </summary>
     public Func<double, double> Objective { get; }
+    /// <summary>
+    /// Gets the first derivative delegate.
+    /// </summary>
     public Func<double, double> Derivative { get; }
+    /// <summary>
+    /// Gets the second derivative delegate.
+    /// </summary>
     public Func<double, double> SecondDerivative { get; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScalarObjectiveFunction"/> class.
+    /// </summary>
+    /// <param name="objective">The objective function delegate.</param>
     public ScalarObjectiveFunction(Func<double, double> objective)
     {
       Objective = objective;
@@ -82,6 +110,11 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       SecondDerivative = null;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScalarObjectiveFunction"/> class.
+    /// </summary>
+    /// <param name="objective">The objective function delegate.</param>
+    /// <param name="derivative">The first derivative delegate.</param>
     public ScalarObjectiveFunction(Func<double, double> objective, Func<double, double> derivative)
     {
       Objective = objective;
@@ -89,6 +122,12 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       SecondDerivative = null;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScalarObjectiveFunction"/> class.
+    /// </summary>
+    /// <param name="objective">The objective function delegate.</param>
+    /// <param name="derivative">The first derivative delegate.</param>
+    /// <param name="secondDerivative">The second derivative delegate.</param>
     public ScalarObjectiveFunction(Func<double, double> objective, Func<double, double> derivative, Func<double, double> secondDerivative)
     {
       Objective = objective;
@@ -96,10 +135,13 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       SecondDerivative = secondDerivative;
     }
 
+    /// <inheritdoc />
     public bool IsDerivativeSupported => Derivative != null;
 
+    /// <inheritdoc />
     public bool IsSecondDerivativeSupported => SecondDerivative != null;
 
+    /// <inheritdoc />
     public IScalarObjectiveFunctionEvaluation Evaluate(double point)
     {
       return new LazyScalarObjectiveFunctionEvaluation(this, point);

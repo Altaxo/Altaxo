@@ -523,7 +523,10 @@ namespace Altaxo.Serialization.Ascii
     /// <summary>
     /// Get a unique column name based on regular naming from A to ZZ.
     /// </summary>
-    /// <returns>An unique column name based on regular naming.</returns>
+    /// <param name="columnNames">Existing column names.</param>
+    /// <param name="columnNamesSet">A hash set for quick membership tests corresponding to <paramref name="columnNames"/>.</param>
+    /// <param name="triedOutRegularNaming">Whether to skip regular naming and use GUID-based fallback.</param>
+    /// <returns>A unique column name based on regular naming or a GUID when exhausted.</returns>
     protected string FindUniqueColumnNameWithoutBase(List<string> columnNames, HashSet<string> columnNamesSet, bool triedOutRegularNaming = false)
     {
       string? tryName;

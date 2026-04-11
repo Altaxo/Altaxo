@@ -33,6 +33,7 @@ namespace Altaxo.Gui.Settings
   /// <summary>
   /// Base class for option panels backed by an MVCA controller.
   /// </summary>
+  /// <typeparam name="T">The type of controller backing the option panel.</typeparam>
   public abstract class OptionPanelBase<T> : IOptionPanel where T : class, IMVCANController
   {
     /// <summary>

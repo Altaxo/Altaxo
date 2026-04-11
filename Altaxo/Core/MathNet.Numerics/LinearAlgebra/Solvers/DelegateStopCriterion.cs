@@ -34,6 +34,7 @@ namespace Altaxo.Calc.LinearAlgebra.Solvers
   /// <summary>
   /// Stop criterion that delegates the status determination to a delegate.
   /// </summary>
+  /// <typeparam name="T">The numeric element type.</typeparam>
   public class DelegateStopCriterion<T> : IIterationStopCriterion<T>
         where T : struct, IEquatable<T>, IFormattable
   {
@@ -57,6 +58,7 @@ namespace Altaxo.Calc.LinearAlgebra.Solvers
     /// <param name="solutionVector">The vector containing the current solution values.</param>
     /// <param name="sourceVector">The right hand side vector.</param>
     /// <param name="residualVector">The vector containing the current residual vectors.</param>
+    /// <returns>The current iteration status.</returns>
     /// <remarks>
     /// The individual stop criteria may internally track the progress of the calculation based
     /// on the invocation of this method. Therefore this method should only be called if the
@@ -83,6 +85,7 @@ namespace Altaxo.Calc.LinearAlgebra.Solvers
     /// <summary>
     /// Clones this criterion and its settings.
     /// </summary>
+    /// <returns>A clone of this stop criterion.</returns>
     public IIterationStopCriterion<T> Clone()
     {
       return new DelegateStopCriterion<T>(_determine);

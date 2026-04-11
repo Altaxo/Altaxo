@@ -90,6 +90,7 @@ namespace Altaxo.Calc.Distributions
     /// Tests whether the provided values are valid parameters for this distribution.
     /// </summary>
     /// <param name="p">The probability (p) of generating one. Range: 0 ≤ p ≤ 1.</param>
+    /// <returns><c>true</c> if the parameter defines a valid geometric distribution; otherwise, <c>false</c>.</returns>
     public static bool IsValidParameterSet(double p)
     {
       return p >= 0.0 && p <= 1.0;
@@ -265,6 +266,12 @@ namespace Altaxo.Calc.Distributions
       return p == 1.0 ? 1 : (int)Math.Ceiling(Math.Log(1.0 - rnd.NextDouble(), 1.0 - p));
     }
 
+    /// <summary>
+    /// Fills an array with geometric samples without validating the parameter.
+    /// </summary>
+    /// <param name="rnd">The random number generator to use.</param>
+    /// <param name="values">The array to fill with samples.</param>
+    /// <param name="p">The success probability.</param>
     private static void SamplesUnchecked(System.Random rnd, int[] values, double p)
     {
       if (p == 1.0)
@@ -302,9 +309,9 @@ namespace Altaxo.Calc.Distributions
     }
 
     /// <summary>
-    /// Samples a Geometric distributed random variable.
+    /// Samples a geometrically distributed random variable.
     /// </summary>
-    /// <returns>A sample from the Geometric distribution.</returns>
+    /// <returns>A sample from the geometric distribution.</returns>
     public int Sample()
     {
       return SampleUnchecked(_random, _p);
@@ -313,15 +320,16 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Fills an array with samples generated from the distribution.
     /// </summary>
+    /// <param name="values">The array to fill with samples.</param>
     public void Samples(int[] values)
     {
       SamplesUnchecked(_random, values, _p);
     }
 
     /// <summary>
-    /// Samples an array of Geometric distributed random variables.
+    /// Samples a sequence of geometrically distributed random variables.
     /// </summary>
-    /// <returns>a sequence of samples from the distribution.</returns>
+    /// <returns>A sequence of samples from the distribution.</returns>
     public IEnumerable<int> Samples()
     {
       return SamplesUnchecked(_random, _p);
@@ -332,6 +340,7 @@ namespace Altaxo.Calc.Distributions
     /// </summary>
     /// <param name="rnd">The random number generator to use.</param>
     /// <param name="p">The probability (p) of generating one. Range: 0 ≤ p ≤ 1.</param>
+    /// <returns>A sample from the geometric distribution.</returns>
     public static int Sample(System.Random rnd, double p)
     {
       if (!(p >= 0.0 && p <= 1.0))
@@ -347,6 +356,7 @@ namespace Altaxo.Calc.Distributions
     /// </summary>
     /// <param name="rnd">The random number generator to use.</param>
     /// <param name="p">The probability (p) of generating one. Range: 0 ≤ p ≤ 1.</param>
+    /// <returns>A sequence of samples from the geometric distribution.</returns>
     public static IEnumerable<int> Samples(System.Random rnd, double p)
     {
       if (!(p >= 0.0 && p <= 1.0))
@@ -377,6 +387,7 @@ namespace Altaxo.Calc.Distributions
     /// Samples a random variable.
     /// </summary>
     /// <param name="p">The probability (p) of generating one. Range: 0 ≤ p ≤ 1.</param>
+    /// <returns>A sample from the geometric distribution.</returns>
     public static int Sample(double p)
     {
       if (!(p >= 0.0 && p <= 1.0))
@@ -391,6 +402,7 @@ namespace Altaxo.Calc.Distributions
     /// Samples a sequence of this random variable.
     /// </summary>
     /// <param name="p">The probability (p) of generating one. Range: 0 ≤ p ≤ 1.</param>
+    /// <returns>A sequence of samples from the geometric distribution.</returns>
     public static IEnumerable<int> Samples(double p)
     {
       if (!(p >= 0.0 && p <= 1.0))

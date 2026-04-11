@@ -207,6 +207,8 @@ namespace Altaxo.Graph.Scales.Deprecated
     /// <summary>
     /// Replaces the linked scale at the specified index.
     /// </summary>
+    /// <param name="newvalue">The linked scale to store.</param>
+    /// <param name="i">The zero-based index of the linked scale to replace.</param>
     protected void SetLinkedScale(LinkedScale newvalue, int i)
     {
       var oldvalue = _linkedScales[i];

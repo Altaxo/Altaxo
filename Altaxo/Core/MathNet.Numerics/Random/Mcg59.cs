@@ -101,6 +101,7 @@ namespace Altaxo.Calc.Random
     /// <summary>
     /// Returns a random double-precision floating point number greater than or equal to 0.0, and less than 1.0.
     /// </summary>
+    /// <returns>A random double-precision floating point number in the interval [0.0, 1.0).</returns>
     protected sealed override double DoSample()
     {
       double ret = _xn * Reciprocal;
@@ -112,6 +113,9 @@ namespace Altaxo.Calc.Random
     /// Fills an array with random numbers greater than or equal to 0.0 and less than 1.0.
     /// </summary>
     /// <remarks>Supports being called in parallel from multiple threads.</remarks>
+    /// <param name="values">The array to fill with random samples.</param>
+    /// <param name="seed">The seed value used to initialize the generator.</param>
+    /// <returns>Nothing. The provided array is populated with random values.</returns>
     public static void Doubles(double[] values, int seed)
     {
       if (seed == 0)
@@ -131,6 +135,9 @@ namespace Altaxo.Calc.Random
     /// <summary>
     /// Returns an array of random numbers greater than or equal to 0.0 and less than 1.0.
     /// </summary>
+    /// <param name="length">The number of random samples to generate.</param>
+    /// <param name="seed">The seed value used to initialize the generator.</param>
+    /// <returns>An array of uniformly distributed doubles greater than or equal to 0.0 and less than 1.0.</returns>
     /// <remarks>Supports being called in parallel from multiple threads.</remarks>
     [TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
     public static double[] Doubles(int length, int seed)
@@ -144,6 +151,8 @@ namespace Altaxo.Calc.Random
     /// Returns an infinite sequence of random numbers greater than or equal to 0.0 and less than 1.0.
     /// </summary>
     /// <remarks>Supports being called in parallel from multiple threads, but the result must be enumerated from a single thread each.</remarks>
+    /// <param name="seed">The seed value used to initialize the generator.</param>
+    /// <returns>An enumerable sequence of uniformly distributed doubles greater than or equal to 0.0 and less than 1.0.</returns>
     public static IEnumerable<double> DoubleSequence(int seed)
     {
       if (seed == 0)

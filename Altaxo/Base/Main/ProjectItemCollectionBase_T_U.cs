@@ -33,6 +33,8 @@ namespace Altaxo.Main
   /// <summary>
   /// Base class for collections that hold project items, which are uniquely named.
   /// </summary>
+  /// <typeparam name="TItem">The concrete project-item type exposed by the collection.</typeparam>
+  /// <typeparam name="TDictionaryItem">The dictionary item type stored internally.</typeparam>
   public abstract class ProjectItemCollectionBase<TItem, TDictionaryItem>
       :
       Main.SuspendableDocumentNodeWithSetOfEventArgs,
@@ -129,6 +131,7 @@ namespace Altaxo.Main
         return false;
     }
 
+    /// <inheritdoc />
     bool IProjectItemCollection.TryGetValue(string projectItemName, [MaybeNullWhen(false)] out IProjectItem projectItem)
     {
       var result = _itemsByName.TryGetValue(projectItemName, out var item);
@@ -149,6 +152,7 @@ namespace Altaxo.Main
       get { return false; }
     }
 
+    /// <inheritdoc/>
     bool ICollection<TItem>.Remove(TItem item)
     {
       return Remove(item);
@@ -164,6 +168,7 @@ namespace Altaxo.Main
 
     #region IEnumerable<DataTable> Members
 
+    /// <inheritdoc/>
     IEnumerator<TItem> IEnumerable<TItem>.GetEnumerator()
     {
       return _itemsByName.Values.OfType<TItem>().GetEnumerator();
@@ -173,6 +178,7 @@ namespace Altaxo.Main
 
     #region IEnumerable Members
 
+    /// <inheritdoc/>
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
       return _itemsByName.Values.GetEnumerator();
@@ -415,6 +421,7 @@ namespace Altaxo.Main
       _itemsByName.Add(newItem.Name, newItem);
     }
 
+    /// <inheritdoc/>
     bool Main.IParentOfINameOwnerChildNodes.EhChild_CanBeRenamed(Main.INameOwner childNode, string newName)
     {
       if (_itemsByName.ContainsKey(newName) && !object.ReferenceEquals(_itemsByName[newName], childNode))
@@ -423,6 +430,7 @@ namespace Altaxo.Main
         return true;
     }
 
+    /// <inheritdoc/>
     void Main.IParentOfINameOwnerChildNodes.EhChild_HasBeenRenamed(Main.INameOwner item, string? oldName)
     {
       if (_itemsByName.ContainsKey(item.Name))
@@ -449,6 +457,7 @@ namespace Altaxo.Main
       }
     }
 
+    /// <inheritdoc/>
     void Main.IParentOfINameOwnerChildNodes.EhChild_ParentChanged(Main.INameOwner childNode, Main.IDocumentNode? oldParent)
     {
       if (ReferenceEquals(this, oldParent) && _itemsByName.ContainsKey(childNode.Name))
@@ -468,7 +477,7 @@ namespace Altaxo.Main
     /// Looks for the next free standard project item name in the specified folder.
     /// </summary>
     /// <param name="folder">The folder where to find a unique project item name.</param>
-    /// <returns></returns>
+    /// <returns>A new project item name that is unique in the specified folder.</returns>
     public string FindNewItemNameInFolder(string folder)
     {
       return FindNewItemName(Main.ProjectFolder.Combine(folder, ItemBaseName));
@@ -477,6 +486,7 @@ namespace Altaxo.Main
     /// <summary>
     /// Looks for the next unique project item name base on a basic name.
     /// </summary>
+    /// <param name="basicname">The base name from which to derive a unique item name.</param>
     /// <returns>A new project item name unique for this collection.</returns>
     public string FindNewItemName(string basicname)
     {
@@ -566,11 +576,13 @@ namespace Altaxo.Main
 
     #region IProjectItemCollection hidden implementations
 
+    /// <inheritdoc/>
     IProjectItem IProjectItemCollection.this[string name]
     {
       get { return this[name]; }
     }
 
+    /// <inheritdoc/>
     void IProjectItemCollection.Add(IProjectItem projectItem)
     {
       if (projectItem is TItem titem)
@@ -581,6 +593,7 @@ namespace Altaxo.Main
         throw new ArgumentNullException(nameof(projectItem));
     }
 
+    /// <inheritdoc/>
     bool IProjectItemCollection.Remove(IProjectItem projectItem)
     {
       if (projectItem is TItem titem)
@@ -591,6 +604,7 @@ namespace Altaxo.Main
         throw new ArgumentNullException(nameof(projectItem));
     }
 
+    /// <inheritdoc/>
     IEnumerable<IProjectItem> IProjectItemCollection.ProjectItems
     {
       get

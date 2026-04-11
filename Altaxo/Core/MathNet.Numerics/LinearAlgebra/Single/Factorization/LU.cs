@@ -43,6 +43,11 @@ namespace Altaxo.Calc.LinearAlgebra.Single.Factorization
   /// </remarks>
   internal abstract class LU : LU<float>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LU"/> class.
+    /// </summary>
+    /// <param name="factors">The combined LU factors.</param>
+    /// <param name="pivots">The pivot indices.</param>
     protected LU(Matrix<float> factors, int[] pivots)
         : base(factors, pivots)
     {
@@ -51,6 +56,7 @@ namespace Altaxo.Calc.LinearAlgebra.Single.Factorization
     /// <summary>
     /// Gets the determinant of the matrix for which the LU factorization was computed.
     /// </summary>
+    /// <returns>The determinant of the factorized matrix.</returns>
     public override float Determinant
     {
       get

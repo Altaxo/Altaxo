@@ -284,6 +284,13 @@ namespace Altaxo.Calc.Integration
     /// <summary>
     /// Integrates a function using the 15-point Gauss-Kronrod rule.
     /// </summary>
+    /// <param name="f">The function to integrate.</param>
+    /// <param name="a">The lower integration bound.</param>
+    /// <param name="b">The upper integration bound.</param>
+    /// <param name="result">The computed integral value.</param>
+    /// <param name="abserr">The estimated absolute error.</param>
+    /// <param name="resabs">The approximation to the integral of the absolute value.</param>
+    /// <param name="resasc">The approximation to the integral of the absolute deviation.</param>
     public void Integrate(Func<double, double> f, double a, double b,
                 out double result, out double abserr,
                 out double resabs, out double resasc)
@@ -294,6 +301,13 @@ namespace Altaxo.Calc.Integration
     /// <summary>
     /// Integrates a function using the 15-point Gauss-Kronrod rule without creating an instance.
     /// </summary>
+    /// <param name="f">The function to integrate.</param>
+    /// <param name="a">The lower integration bound.</param>
+    /// <param name="b">The upper integration bound.</param>
+    /// <param name="result">The computed integral value.</param>
+    /// <param name="abserr">The estimated absolute error.</param>
+    /// <param name="resabs">The approximation to the integral of the absolute value.</param>
+    /// <param name="resasc">The approximation to the integral of the absolute deviation.</param>
     public static void Integration(Func<double, double> f, double a, double b,
                  out double result, out double abserr,
                  out double resabs, out double resasc)
@@ -394,6 +408,13 @@ namespace Altaxo.Calc.Integration
     /// <summary>
     /// Integrates a function using the 21-point Gauss-Kronrod rule.
     /// </summary>
+    /// <param name="f">The function to integrate.</param>
+    /// <param name="a">The lower integration bound.</param>
+    /// <param name="b">The upper integration bound.</param>
+    /// <param name="result">The computed integral value.</param>
+    /// <param name="abserr">The estimated absolute error.</param>
+    /// <param name="resabs">The approximation to the integral of the absolute value.</param>
+    /// <param name="resasc">The approximation to the integral of the absolute deviation.</param>
     public void Integrate(Func<double, double> f, double a, double b,
                 out double result, out double abserr,
                 out double resabs, out double resasc)
@@ -404,6 +425,13 @@ namespace Altaxo.Calc.Integration
     /// <summary>
     /// Integrates a function using the 21-point Gauss-Kronrod rule without creating an instance.
     /// </summary>
+    /// <param name="f">The function to integrate.</param>
+    /// <param name="a">The lower integration bound.</param>
+    /// <param name="b">The upper integration bound.</param>
+    /// <param name="result">The computed integral value.</param>
+    /// <param name="abserr">The estimated absolute error.</param>
+    /// <param name="resabs">The approximation to the integral of the absolute value.</param>
+    /// <param name="resasc">The approximation to the integral of the absolute deviation.</param>
     public static void Integration(Func<double, double> f, double a, double b,
                  out double result, out double abserr,
                  out double resabs, out double resasc)
@@ -517,6 +545,13 @@ namespace Altaxo.Calc.Integration
     /// <summary>
     /// Integrates a function using the 31-point Gauss-Kronrod rule.
     /// </summary>
+    /// <param name="f">The function to integrate.</param>
+    /// <param name="a">The lower integration bound.</param>
+    /// <param name="b">The upper integration bound.</param>
+    /// <param name="result">The computed integral value.</param>
+    /// <param name="abserr">The estimated absolute error.</param>
+    /// <param name="resabs">The approximation to the integral of the absolute value.</param>
+    /// <param name="resasc">The approximation to the integral of the absolute deviation.</param>
     public void Integrate(Func<double, double> f, double a, double b,
                 out double result, out double abserr,
                 out double resabs, out double resasc)
@@ -527,6 +562,13 @@ namespace Altaxo.Calc.Integration
     /// <summary>
     /// Integrates a function using the 31-point Gauss-Kronrod rule without creating an instance.
     /// </summary>
+    /// <param name="f">The function to integrate.</param>
+    /// <param name="a">The lower integration bound.</param>
+    /// <param name="b">The upper integration bound.</param>
+    /// <param name="result">The computed integral value.</param>
+    /// <param name="abserr">The estimated absolute error.</param>
+    /// <param name="resabs">The approximation to the integral of the absolute value.</param>
+    /// <param name="resasc">The approximation to the integral of the absolute deviation.</param>
     public static void Integration(Func<double, double> f, double a, double b,
                  out double result, out double abserr,
                  out double resabs, out double resasc)
@@ -652,6 +694,13 @@ namespace Altaxo.Calc.Integration
     /// <summary>
     /// Integrates a function using the 41-point Gauss-Kronrod rule.
     /// </summary>
+    /// <param name="f">The function to integrate.</param>
+    /// <param name="a">The lower integration bound.</param>
+    /// <param name="b">The upper integration bound.</param>
+    /// <param name="result">The computed integral value.</param>
+    /// <param name="abserr">The estimated absolute error.</param>
+    /// <param name="resabs">The approximation to the integral of the absolute value.</param>
+    /// <param name="resasc">The approximation to the integral of the absolute deviation.</param>
     public void Integrate(Func<double, double> f, double a, double b,
                 out double result, out double abserr,
                 out double resabs, out double resasc)
@@ -662,6 +711,13 @@ namespace Altaxo.Calc.Integration
     /// <summary>
     /// Integrates a function using the 41-point Gauss-Kronrod rule without creating an instance.
     /// </summary>
+    /// <param name="f">The function to integrate.</param>
+    /// <param name="a">The lower integration bound.</param>
+    /// <param name="b">The upper integration bound.</param>
+    /// <param name="result">The computed integral value.</param>
+    /// <param name="abserr">The estimated absolute error.</param>
+    /// <param name="resabs">The approximation to the integral of the absolute value.</param>
+    /// <param name="resasc">The approximation to the integral of the absolute deviation.</param>
     public static void Integration(Func<double, double> f, double a, double b,
                  out double result, out double abserr,
                  out double resabs, out double resasc)
@@ -802,6 +858,13 @@ namespace Altaxo.Calc.Integration
     /// <summary>
     /// Integrates a function using the 51-point Gauss-Kronrod rule.
     /// </summary>
+    /// <param name="f">The function to integrate.</param>
+    /// <param name="a">The lower integration bound.</param>
+    /// <param name="b">The upper integration bound.</param>
+    /// <param name="result">The computed integral value.</param>
+    /// <param name="abserr">The estimated absolute error.</param>
+    /// <param name="resabs">The approximation to the integral of the absolute value.</param>
+    /// <param name="resasc">The approximation to the integral of the absolute deviation.</param>
     public void Integrate(Func<double, double> f, double a, double b,
                 out double result, out double abserr,
                 out double resabs, out double resasc)
@@ -812,6 +875,13 @@ namespace Altaxo.Calc.Integration
     /// <summary>
     /// Integrates a function using the 51-point Gauss-Kronrod rule without creating an instance.
     /// </summary>
+    /// <param name="f">The function to integrate.</param>
+    /// <param name="a">The lower integration bound.</param>
+    /// <param name="b">The upper integration bound.</param>
+    /// <param name="result">The computed integral value.</param>
+    /// <param name="abserr">The estimated absolute error.</param>
+    /// <param name="resabs">The approximation to the integral of the absolute value.</param>
+    /// <param name="resasc">The approximation to the integral of the absolute deviation.</param>
     public static void Integration(Func<double, double> f, double a, double b,
                  out double result, out double abserr,
                  out double resabs, out double resasc)
@@ -962,6 +1032,13 @@ namespace Altaxo.Calc.Integration
     /// <summary>
     /// Integrates a function using the 61-point Gauss-Kronrod rule.
     /// </summary>
+    /// <param name="f">The function to integrate.</param>
+    /// <param name="a">The lower integration bound.</param>
+    /// <param name="b">The upper integration bound.</param>
+    /// <param name="result">The computed integral value.</param>
+    /// <param name="abserr">The estimated absolute error.</param>
+    /// <param name="resabs">The approximation to the integral of the absolute value.</param>
+    /// <param name="resasc">The approximation to the integral of the absolute deviation.</param>
     public void Integrate(Func<double, double> f, double a, double b,
                 out double result, out double abserr,
                 out double resabs, out double resasc)
@@ -972,6 +1049,13 @@ namespace Altaxo.Calc.Integration
     /// <summary>
     /// Integrates a function using the 61-point Gauss-Kronrod rule without creating an instance.
     /// </summary>
+    /// <param name="f">The function to integrate.</param>
+    /// <param name="a">The lower integration bound.</param>
+    /// <param name="b">The upper integration bound.</param>
+    /// <param name="result">The computed integral value.</param>
+    /// <param name="abserr">The estimated absolute error.</param>
+    /// <param name="resabs">The approximation to the integral of the absolute value.</param>
+    /// <param name="resasc">The approximation to the integral of the absolute deviation.</param>
     public static void Integration(Func<double, double> f, double a, double b,
                  out double result, out double abserr,
                  out double resabs, out double resasc)

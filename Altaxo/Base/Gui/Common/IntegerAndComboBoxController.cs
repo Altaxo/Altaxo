@@ -38,21 +38,28 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Initializes the combo box with the available items.
     /// </summary>
+    /// <param name="items">The available combo-box items.</param>
+    /// <param name="defaultItem">The initially selected combo-box item.</param>
     void ComboBox_Initialize(SelectableListNodeList items, SelectableListNode defaultItem);
 
     /// <summary>
     /// Initializes the label for the combo box.
     /// </summary>
+    /// <param name="text">The combo-box label text.</param>
     void ComboBoxLabel_Initialize(string text);
 
     /// <summary>
     /// Initializes the integer editor.
     /// </summary>
+    /// <param name="min">The minimum allowed integer value.</param>
+    /// <param name="max">The maximum allowed integer value.</param>
+    /// <param name="val">The initial integer value.</param>
     void IntegerEdit_Initialize(int min, int max, int val);
 
     /// <summary>
     /// Initializes the label for the integer editor.
     /// </summary>
+    /// <param name="text">The integer label text.</param>
     void IntegerLabel_Initialize(string text);
 
     /// <summary>
@@ -117,6 +124,13 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Initializes a new instance of the <see cref="IntegerAndComboBoxController"/> class.
     /// </summary>
+    /// <param name="integerLabel">The label text for the integer editor.</param>
+    /// <param name="intMin">The minimum allowed integer value.</param>
+    /// <param name="intMax">The maximum allowed integer value.</param>
+    /// <param name="intVal">The initial integer value.</param>
+    /// <param name="comboBoxLabel">The label text for the combo box.</param>
+    /// <param name="items">The available combo-box items.</param>
+    /// <param name="defaultItem">The zero-based index of the initially selected item.</param>
     public IntegerAndComboBoxController(string integerLabel,
       int intMin, int intMax,
       int intVal,
@@ -231,6 +245,7 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Handles changes of the integer value in the view.
     /// </summary>
+    /// <param name="val">The newly selected integer value.</param>
     public void EhView_IntegerChanged(int val)
     {
       _integerValue = val;
@@ -239,6 +254,7 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Handles changes of the combo box selection in the view.
     /// </summary>
+    /// <param name="selectedItem">The newly selected combo-box item.</param>
     public void EhView_ComboBoxSelectionChanged(SelectableListNode selectedItem)
     {
       _selectedItem = selectedItem;

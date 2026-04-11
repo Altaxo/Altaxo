@@ -178,11 +178,13 @@ namespace Altaxo.Graph.Graph3D.Shapes
     }
 
     /// <summary>Get the size of the original image in points (1/72 inch).</summary>
+    /// <returns>The original image size in points.</returns>
     public abstract PointD2D GetImageSizePt();
 
     /// <summary>
     /// Gets the image represented by this graphic.
     /// </summary>
+    /// <returns>The represented image.</returns>
     public abstract Image GetImage();
 
     /// <inheritdoc/>

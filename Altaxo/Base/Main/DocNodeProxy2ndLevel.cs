@@ -173,6 +173,9 @@ namespace Altaxo.Main
     /// <summary>
     /// Determines whether the specified object is a valid document for this proxy.
     /// </summary>
+    /// <param name="obj">The object to validate.</param>
+    /// <param name="isCalledFromConstructor"><c>true</c> if validation occurs during construction; otherwise, <c>false</c>.</param>
+    /// <returns><c>true</c> if the object is valid for this proxy; otherwise, <c>false</c>.</returns>
     protected override bool InternalIsValidDocument(object obj, bool isCalledFromConstructor)
     {
       if (_childName is null && IsValidDocument(obj))
@@ -211,6 +214,7 @@ namespace Altaxo.Main
     /// Returns the document node. If the stored doc node is null, it is tried to resolve the stored document path.
     /// If that fails too, null is returned.
     /// </summary>
+    /// <returns>The referenced document object, or <see langword="null"/> if it can not be resolved.</returns>
     public override object? DocumentObject()
     {
       var result = base.DocumentObject();

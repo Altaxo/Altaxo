@@ -40,16 +40,21 @@ namespace Altaxo.Gui.DataConnection
     /// <summary>
     /// Updates the dialog values.
     /// </summary>
+    /// <param name="isDistinct">A value indicating whether distinct rows are requested.</param>
+    /// <param name="topN">The requested top-N value.</param>
+    /// <param name="groupBy">The selectable group-by options.</param>
     void UpdateDialogValues(bool isDistinct, int topN, SelectableListNodeList groupBy);
 
     /// <summary>
     /// Gets the requested top-N value.
     /// </summary>
+    /// <returns>The requested top-N value.</returns>
     int GetTopN();
 
     /// <summary>
     /// Gets a value indicating whether distinct rows are requested.
     /// </summary>
+    /// <returns><see langword="true"/> if distinct rows are requested; otherwise, <see langword="false"/>.</returns>
     bool GetDistinct();
   }
 

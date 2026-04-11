@@ -122,6 +122,7 @@ namespace Altaxo.Main
     /// <summary>
     /// Fires the change event with the EventArgs provided in the argument.
     /// </summary>
+    /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
     protected virtual void OnChanged(EventArgs e)
     {
       Changed?.Invoke(this, e);

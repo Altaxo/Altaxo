@@ -39,6 +39,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Converts a matrix to single precision.
     /// </summary>
+    /// <param name="matrix">The matrix to convert.</param>
+    /// <returns>A single-precision copy of <paramref name="matrix"/>.</returns>
     public static Matrix<float> ToSingle(this Matrix<double> matrix)
     {
       return matrix.Map(x => (float)x, Zeros.AllowSkip);
@@ -47,6 +49,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Converts a matrix to double precision.
     /// </summary>
+    /// <param name="matrix">The matrix to convert.</param>
+    /// <returns>A double-precision copy of <paramref name="matrix"/>.</returns>
     public static Matrix<double> ToDouble(this Matrix<float> matrix)
     {
       return matrix.Map(x => (double)x, Zeros.AllowSkip);
@@ -55,6 +59,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Converts a matrix to single precision complex numbers.
     /// </summary>
+    /// <param name="matrix">The matrix to convert.</param>
+    /// <returns>A complex matrix converted from <paramref name="matrix"/>.</returns>
     public static Matrix<Calc.Complex32> ToComplex32(this Matrix<Complex64> matrix)
     {
       return matrix.Map(x => new Calc.Complex32((float)x.Real, (float)x.Imaginary), Zeros.AllowSkip);
@@ -63,6 +69,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Converts a matrix to double precision complex numbers.
     /// </summary>
+    /// <param name="matrix">The matrix to convert.</param>
+    /// <returns>A complex matrix converted from <paramref name="matrix"/>.</returns>
     public static Matrix<Complex64> ToComplex(this Matrix<Calc.Complex32> matrix)
     {
       return matrix.Map(x => new Complex64(x.Real, x.Imaginary), Zeros.AllowSkip);
@@ -71,6 +79,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Gets a single precision complex matrix with the real parts from the given matrix.
     /// </summary>
+    /// <param name="matrix">The matrix whose values are used as the real parts.</param>
+    /// <returns>A complex matrix whose real parts are taken from <paramref name="matrix"/>.</returns>
     public static Matrix<Calc.Complex32> ToComplex32(this Matrix<float> matrix)
     {
       return matrix.Map(x => new Calc.Complex32(x, 0f), Zeros.AllowSkip);
@@ -79,6 +89,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Gets a double precision complex matrix with the real parts from the given matrix.
     /// </summary>
+    /// <param name="matrix">The matrix whose values are used as the real parts.</param>
+    /// <returns>A complex matrix whose real parts are taken from <paramref name="matrix"/>.</returns>
     public static Matrix<Complex64> ToComplex(this Matrix<double> matrix)
     {
       return matrix.Map(x => new Complex64(x, 0d), Zeros.AllowSkip);
@@ -87,6 +99,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Gets a real matrix representing the real parts of a complex matrix.
     /// </summary>
+    /// <param name="matrix">The complex matrix.</param>
+    /// <returns>A matrix containing the real parts of <paramref name="matrix"/>.</returns>
     public static Matrix<double> Real(this Matrix<Complex64> matrix)
     {
       return matrix.Map(x => x.Real, Zeros.AllowSkip);
@@ -95,6 +109,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Gets a real matrix representing the real parts of a complex matrix.
     /// </summary>
+    /// <param name="matrix">The complex matrix.</param>
+    /// <returns>A matrix containing the real parts of <paramref name="matrix"/>.</returns>
     public static Matrix<float> Real(this Matrix<Calc.Complex32> matrix)
     {
       return matrix.Map(x => x.Real, Zeros.AllowSkip);
@@ -103,6 +119,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Gets a real matrix representing the imaginary parts of a complex matrix.
     /// </summary>
+    /// <param name="matrix">The complex matrix.</param>
+    /// <returns>A matrix containing the imaginary parts of <paramref name="matrix"/>.</returns>
     public static Matrix<double> Imaginary(this Matrix<Complex64> matrix)
     {
       return matrix.Map(x => x.Imaginary, Zeros.AllowSkip);
@@ -111,6 +129,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Gets a real matrix representing the imaginary parts of a complex matrix.
     /// </summary>
+    /// <param name="matrix">The complex matrix.</param>
+    /// <returns>A matrix containing the imaginary parts of <paramref name="matrix"/>.</returns>
     public static Matrix<float> Imaginary(this Matrix<Calc.Complex32> matrix)
     {
       return matrix.Map(x => x.Imaginary, Zeros.AllowSkip);

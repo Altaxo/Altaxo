@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -121,6 +121,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     /// <summary>
     /// Copies values from the specified source.
     /// </summary>
+    /// <param name="from">The source scale to copy from.</param>
     [MemberNotNull(nameof(_dataBounds), nameof(_rescaling))]
     public void CopyFrom(DateTimeScale from)
     {
@@ -432,7 +433,10 @@ namespace Altaxo.Graph.Scales.Deprecated
     /// the org / end is adjusted only if it is not fixed
     /// and the DataBound object contains valid data
     /// </summary>
-
+    /// <param name="org">The requested axis origin.</param>
+    /// <param name="orgfixed">If set to <c>true</c>, the origin remains fixed.</param>
+    /// <param name="end">The requested axis end.</param>
+    /// <param name="endfixed">If set to <c>true</c>, the end remains fixed.</param>
     public void ProcessDataBounds(DateTime org, bool orgfixed, DateTime end, bool endfixed)
     {
       if (IsLinked)
@@ -495,8 +499,11 @@ namespace Altaxo.Graph.Scales.Deprecated
     }
 
     /// <summary>
-    /// Performs the p ro ce ss da ta bo un ds operation.
+    /// Processes the specified data bounds using the supplied rescaling conditions.
     /// </summary>
+    /// <param name="xorg">The lower data bound.</param>
+    /// <param name="xend">The upper data bound.</param>
+    /// <param name="rescaling">The rescaling conditions to apply.</param>
     public void ProcessDataBounds(DateTime xorg, DateTime xend, DateTimeScaleRescaleConditions rescaling)
     {
       rescaling.OnDataBoundsChanged(xorg, xend);
@@ -504,10 +511,13 @@ namespace Altaxo.Graph.Scales.Deprecated
     }
 
     /// <summary>
-    /// calculates the axis org and end using the databounds
-    /// the org / end is adjusted only if it is not fixed
-    /// and the DataBound object contains valid data
+    /// Calculates the axis origin and end using the data bounds.
+    /// The origin and end are adjusted only if they are not fixed and the data-bound object contains valid data.
     /// </summary>
+    /// <param name="org">The requested axis origin.</param>
+    /// <param name="orgfixed">If set to <c>true</c>, the origin remains fixed.</param>
+    /// <param name="end">The requested axis end.</param>
+    /// <param name="endfixed">If set to <c>true</c>, the end remains fixed.</param>
     public override void ProcessDataBounds(AltaxoVariant org, bool orgfixed, AltaxoVariant end, bool endfixed)
     {
       DateTime dorg;
@@ -530,8 +540,10 @@ namespace Altaxo.Graph.Scales.Deprecated
     }
 
     /// <summary>
-    /// Handles the b ou nd ar ie sc ha ng ed.
+    /// Handles changes of the associated boundaries.
     /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The event data.</param>
     protected void EhBoundariesChanged(object sender, BoundariesChangedEventArgs e)
     {
       bool bIsRelevant = true;

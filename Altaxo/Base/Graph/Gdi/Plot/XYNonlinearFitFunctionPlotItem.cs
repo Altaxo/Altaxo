@@ -84,6 +84,8 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <summary>
     /// Deserialization constructor.
     /// </summary>
+    /// <param name="pa">The nonlinear fit function plot data.</param>
+    /// <param name="ps">The plot style collection.</param>
     protected XYNonlinearFitFunctionPlotItem(XYNonlinearFitFunctionPlotData pa, G2DPlotStyleCollection ps)
       : base(pa, ps)
     {

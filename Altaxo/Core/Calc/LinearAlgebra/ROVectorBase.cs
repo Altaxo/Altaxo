@@ -111,6 +111,10 @@ namespace Altaxo.Calc.LinearAlgebra
         yield return this[i];
     }
 
+    /// <summary>
+    /// Returns a non-generic enumerator that iterates through the vector.
+    /// </summary>
+    /// <returns>A non-generic enumerator for the vector.</returns>
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
       var cnt = Count;

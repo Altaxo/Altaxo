@@ -45,6 +45,9 @@ namespace Altaxo.Calc
     /// returning its best fitting parameters as (a, b) tuple,
     /// where a is the intercept and b the slope.
     /// </summary>
+    /// <param name="x">The x values of the sample points.</param>
+    /// <param name="y">The y values of the sample points.</param>
+    /// <returns>The intercept and slope of the fitted line.</returns>
     public static (double A, double B) Line(double[] x, double[] y)
     {
       return SimpleRegression.Fit(x, y);
@@ -54,6 +57,9 @@ namespace Altaxo.Calc
     /// Least-Squares fitting the points (x,y) to a line y : x -> a+b*x,
     /// returning a function y' for the best fitting line.
     /// </summary>
+    /// <param name="x">The x values of the sample points.</param>
+    /// <param name="y">The y values of the sample points.</param>
+    /// <returns>A function representing the fitted line.</returns>
     public static Func<double, double> LineFunc(double[] x, double[] y)
     {
       (double intercept, double slope) = SimpleRegression.Fit(x, y);
@@ -65,6 +71,9 @@ namespace Altaxo.Calc
     /// returning its best fitting parameter b,
     /// where the intercept is zero and b the slope.
     /// </summary>
+    /// <param name="x">The x values of the sample points.</param>
+    /// <param name="y">The y values of the sample points.</param>
+    /// <returns>The slope of the fitted line through the origin.</returns>
     public static double LineThroughOrigin(double[] x, double[] y)
     {
       return SimpleRegression.FitThroughOrigin(x, y);
@@ -74,6 +83,9 @@ namespace Altaxo.Calc
     /// Least-Squares fitting the points (x,y) to a line through origin y : x -> b*x,
     /// returning a function y' for the best fitting line.
     /// </summary>
+    /// <param name="x">The x values of the sample points.</param>
+    /// <param name="y">The y values of the sample points.</param>
+    /// <returns>A function representing the fitted line through the origin.</returns>
     public static Func<double, double> LineThroughOriginFunc(double[] x, double[] y)
     {
       double slope = SimpleRegression.FitThroughOrigin(x, y);
@@ -84,6 +96,10 @@ namespace Altaxo.Calc
     /// Least-Squares fitting the points (x,y) to an exponential y : x -> a*exp(r*x),
     /// returning its best fitting parameters as (a, r) tuple.
     /// </summary>
+    /// <param name="x">The x values of the sample points.</param>
+    /// <param name="y">The y values of the sample points.</param>
+    /// <param name="method">The direct regression method to use.</param>
+    /// <returns>The fitted exponential parameters.</returns>
     public static (double A, double R) Exponential(double[] x, double[] y, DirectRegressionMethod method = DirectRegressionMethod.QR)
     {
       // Transformation: y_h := ln(y) ~> y_h : x -> ln(a) + r*x;
@@ -96,6 +112,10 @@ namespace Altaxo.Calc
     /// Least-Squares fitting the points (x,y) to an exponential y : x -> a*exp(r*x),
     /// returning a function y' for the best fitting line.
     /// </summary>
+    /// <param name="x">The x values of the sample points.</param>
+    /// <param name="y">The y values of the sample points.</param>
+    /// <param name="method">The direct regression method to use.</param>
+    /// <returns>A function representing the fitted exponential curve.</returns>
     public static Func<double, double> ExponentialFunc(double[] x, double[] y, DirectRegressionMethod method = DirectRegressionMethod.QR)
     {
       (double a, double r) = Exponential(x, y, method);
@@ -106,6 +126,10 @@ namespace Altaxo.Calc
     /// Least-Squares fitting the points (x,y) to a logarithm y : x -> a + b*ln(x),
     /// returning its best fitting parameters as (a, b) tuple.
     /// </summary>
+    /// <param name="x">The x values of the sample points.</param>
+    /// <param name="y">The y values of the sample points.</param>
+    /// <param name="method">The direct regression method to use.</param>
+    /// <returns>The fitted logarithmic parameters.</returns>
     public static (double A, double B) Logarithm(double[] x, double[] y, DirectRegressionMethod method = DirectRegressionMethod.QR)
     {
       double[] lnx = Generate.Map(x, Math.Log);
@@ -117,6 +141,10 @@ namespace Altaxo.Calc
     /// Least-Squares fitting the points (x,y) to a logarithm y : x -> a + b*ln(x),
     /// returning a function y' for the best fitting line.
     /// </summary>
+    /// <param name="x">The x values of the sample points.</param>
+    /// <param name="y">The y values of the sample points.</param>
+    /// <param name="method">The direct regression method to use.</param>
+    /// <returns>A function representing the fitted logarithmic curve.</returns>
     public static Func<double, double> LogarithmFunc(double[] x, double[] y, DirectRegressionMethod method = DirectRegressionMethod.QR)
     {
       (double a, double b) = Logarithm(x, y, method);
@@ -127,6 +155,10 @@ namespace Altaxo.Calc
     /// Least-Squares fitting the points (x,y) to a power y : x -> a*x^b,
     /// returning its best fitting parameters as (a, b) tuple.
     /// </summary>
+    /// <param name="x">The x values of the sample points.</param>
+    /// <param name="y">The y values of the sample points.</param>
+    /// <param name="method">The direct regression method to use.</param>
+    /// <returns>The fitted power-law parameters.</returns>
     public static (double A, double B) Power(double[] x, double[] y, DirectRegressionMethod method = DirectRegressionMethod.QR)
     {
       // Transformation: y_h := ln(y) ~> y_h : x -> ln(a) + b*ln(x);
@@ -139,6 +171,10 @@ namespace Altaxo.Calc
     /// Least-Squares fitting the points (x,y) to a power y : x -> a*x^b,
     /// returning a function y' for the best fitting line.
     /// </summary>
+    /// <param name="x">The x values of the sample points.</param>
+    /// <param name="y">The y values of the sample points.</param>
+    /// <param name="method">The direct regression method to use.</param>
+    /// <returns>A function representing the fitted power-law curve.</returns>
     public static Func<double, double> PowerFunc(double[] x, double[] y, DirectRegressionMethod method = DirectRegressionMethod.QR)
     {
       (double a, double b) = Power(x, y, method);
@@ -150,6 +186,11 @@ namespace Altaxo.Calc
     /// returning its best fitting parameters as [p0, p1, p2, ..., pk] array, compatible with Polynomial.Evaluate.
     /// A polynomial with order/degree k has (k+1) coefficients and thus requires at least (k+1) samples.
     /// </summary>
+    /// <param name="x">The x values of the sample points.</param>
+    /// <param name="y">The y values of the sample points.</param>
+    /// <param name="order">The polynomial order.</param>
+    /// <param name="method">The direct regression method to use.</param>
+    /// <returns>The fitted polynomial coefficients.</returns>
     public static double[] Polynomial(double[] x, double[] y, int order, DirectRegressionMethod method = DirectRegressionMethod.QR)
     {
       var design = Matrix<double>.Build.Dense(x.Length, order + 1, (i, j) => Math.Pow(x[i], j));
@@ -161,6 +202,11 @@ namespace Altaxo.Calc
     /// returning a function y' for the best fitting polynomial.
     /// A polynomial with order/degree k has (k+1) coefficients and thus requires at least (k+1) samples.
     /// </summary>
+    /// <param name="x">The x values of the sample points.</param>
+    /// <param name="y">The y values of the sample points.</param>
+    /// <param name="order">The polynomial order.</param>
+    /// <param name="method">The direct regression method to use.</param>
+    /// <returns>A function representing the fitted polynomial.</returns>
     public static Func<double, double> PolynomialFunc(double[] x, double[] y, int order, DirectRegressionMethod method = DirectRegressionMethod.QR)
     {
       var parameters = Polynomial(x, y, order, method);
@@ -172,6 +218,11 @@ namespace Altaxo.Calc
     /// returning its best fitting parameters as [p0, p1, p2, ..., pk] array, compatible with Polynomial.Evaluate.
     /// A polynomial with order/degree k has (k+1) coefficients and thus requires at least (k+1) samples.
     /// </summary>
+    /// <param name="x">The x values of the sample points.</param>
+    /// <param name="y">The y values of the sample points.</param>
+    /// <param name="w">The weights of the sample points.</param>
+    /// <param name="order">The polynomial order.</param>
+    /// <returns>The fitted weighted polynomial coefficients.</returns>
     public static double[] PolynomialWeighted(double[] x, double[] y, double[] w, int order)
     {
       var design = Matrix<double>.Build.Dense(x.Length, order + 1, (i, j) => Math.Pow(x[i], j));
@@ -182,6 +233,10 @@ namespace Altaxo.Calc
     /// Least-Squares fitting the points (x,y) to an arbitrary linear combination y : x -> p0*f0(x) + p1*f1(x) + ... + pk*fk(x),
     /// returning its best fitting parameters as [p0, p1, p2, ..., pk] array.
     /// </summary>
+    /// <param name="x">The x values of the sample points.</param>
+    /// <param name="y">The y values of the sample points.</param>
+    /// <param name="functions">The basis functions of the linear combination.</param>
+    /// <returns>The fitted coefficients of the linear combination.</returns>
     public static double[] LinearCombination(double[] x, double[] y, params Func<double, double>[] functions)
     {
       var design = Matrix<double>.Build.Dense(x.Length, functions.Length, (i, j) => functions[j](x[i]));
@@ -192,6 +247,10 @@ namespace Altaxo.Calc
     /// Least-Squares fitting the points (x,y) to an arbitrary linear combination y : x -> p0*f0(x) + p1*f1(x) + ... + pk*fk(x),
     /// returning a function y' for the best fitting combination.
     /// </summary>
+    /// <param name="x">The x values of the sample points.</param>
+    /// <param name="y">The y values of the sample points.</param>
+    /// <param name="functions">The basis functions of the linear combination.</param>
+    /// <returns>A function representing the fitted linear combination.</returns>
     public static Func<double, double> LinearCombinationFunc(double[] x, double[] y, params Func<double, double>[] functions)
     {
       var parameters = LinearCombination(x, y, functions);
@@ -202,6 +261,11 @@ namespace Altaxo.Calc
     /// Least-Squares fitting the points (x,y) to an arbitrary linear combination y : x -> p0*f0(x) + p1*f1(x) + ... + pk*fk(x),
     /// returning its best fitting parameters as [p0, p1, p2, ..., pk] array.
     /// </summary>
+    /// <param name="x">The x values of the sample points.</param>
+    /// <param name="y">The y values of the sample points.</param>
+    /// <param name="method">The direct regression method to use.</param>
+    /// <param name="functions">The basis functions of the linear combination.</param>
+    /// <returns>The fitted coefficients of the linear combination.</returns>
     public static double[] LinearCombination(double[] x, double[] y, DirectRegressionMethod method, params Func<double, double>[] functions)
     {
       var design = Matrix<double>.Build.Dense(x.Length, functions.Length, (i, j) => functions[j](x[i]));
@@ -212,6 +276,11 @@ namespace Altaxo.Calc
     /// Least-Squares fitting the points (x,y) to an arbitrary linear combination y : x -> p0*f0(x) + p1*f1(x) + ... + pk*fk(x),
     /// returning a function y' for the best fitting combination.
     /// </summary>
+    /// <param name="x">The x values of the sample points.</param>
+    /// <param name="y">The y values of the sample points.</param>
+    /// <param name="method">The direct regression method to use.</param>
+    /// <param name="functions">The basis functions of the linear combination.</param>
+    /// <returns>A function representing the fitted linear combination.</returns>
     public static Func<double, double> LinearCombinationFunc(double[] x, double[] y, DirectRegressionMethod method, params Func<double, double>[] functions)
     {
       var parameters = LinearCombination(x, y, method, functions);
@@ -223,6 +292,11 @@ namespace Altaxo.Calc
     /// returning its best fitting parameters as [p0, p1, p2, ..., pk] array.
     /// If an intercept is added, its coefficient will be prepended to the resulting parameters.
     /// </summary>
+    /// <param name="x">The predictor vectors.</param>
+    /// <param name="y">The response values.</param>
+    /// <param name="intercept">Whether to include an intercept term.</param>
+    /// <param name="method">The direct regression method to use.</param>
+    /// <returns>The fitted coefficients of the linear surface.</returns>
     public static double[] MultiDim(double[][] x, double[] y, bool intercept = false, DirectRegressionMethod method = DirectRegressionMethod.NormalEquations)
     {
       return MultipleRegression.DirectMethod(x, y, intercept, method);
@@ -233,6 +307,11 @@ namespace Altaxo.Calc
     /// returning a function y' for the best fitting combination.
     /// If an intercept is added, its coefficient will be prepended to the resulting parameters.
     /// </summary>
+    /// <param name="x">The predictor vectors.</param>
+    /// <param name="y">The response values.</param>
+    /// <param name="intercept">Whether to include an intercept term.</param>
+    /// <param name="method">The direct regression method to use.</param>
+    /// <returns>A function representing the fitted linear surface.</returns>
     public static Func<double[], double> MultiDimFunc(double[][] x, double[] y, bool intercept = false, DirectRegressionMethod method = DirectRegressionMethod.NormalEquations)
     {
       var parameters = MultipleRegression.DirectMethod(x, y, intercept, method);
@@ -243,6 +322,10 @@ namespace Altaxo.Calc
     /// Weighted Least-Squares fitting the points (X,y) = ((x0,x1,..,xk),y) and weights w to a linear surface y : X -> p0*x0 + p1*x1 + ... + pk*xk,
     /// returning its best fitting parameters as [p0, p1, p2, ..., pk] array.
     /// </summary>
+    /// <param name="x">The predictor vectors.</param>
+    /// <param name="y">The response values.</param>
+    /// <param name="w">The weights of the sample points.</param>
+    /// <returns>The fitted weighted coefficients of the linear surface.</returns>
     public static double[] MultiDimWeighted(double[][] x, double[] y, double[] w)
     {
       return WeightedRegression.Weighted(x, y, w);
@@ -252,6 +335,10 @@ namespace Altaxo.Calc
     /// Least-Squares fitting the points (X,y) = ((x0,x1,..,xk),y) to an arbitrary linear combination y : X -> p0*f0(x) + p1*f1(x) + ... + pk*fk(x),
     /// returning its best fitting parameters as [p0, p1, p2, ..., pk] array.
     /// </summary>
+    /// <param name="x">The predictor vectors.</param>
+    /// <param name="y">The response values.</param>
+    /// <param name="functions">The basis functions of the linear combination.</param>
+    /// <returns>The fitted coefficients of the linear combination.</returns>
     public static double[] LinearMultiDim(double[][] x, double[] y, params Func<double[], double>[] functions)
     {
       var design = Matrix<double>.Build.Dense(x.Length, functions.Length, (i, j) => functions[j](x[i]));
@@ -262,6 +349,10 @@ namespace Altaxo.Calc
     /// Least-Squares fitting the points (X,y) = ((x0,x1,..,xk),y) to an arbitrary linear combination y : X -> p0*f0(x) + p1*f1(x) + ... + pk*fk(x),
     /// returning a function y' for the best fitting combination.
     /// </summary>
+    /// <param name="x">The predictor vectors.</param>
+    /// <param name="y">The response values.</param>
+    /// <param name="functions">The basis functions of the linear combination.</param>
+    /// <returns>A function representing the fitted linear combination.</returns>
     public static Func<double[], double> LinearMultiDimFunc(double[][] x, double[] y, params Func<double[], double>[] functions)
     {
       var parameters = LinearMultiDim(x, y, functions);
@@ -272,6 +363,11 @@ namespace Altaxo.Calc
     /// Least-Squares fitting the points (X,y) = ((x0,x1,..,xk),y) to an arbitrary linear combination y : X -> p0*f0(x) + p1*f1(x) + ... + pk*fk(x),
     /// returning its best fitting parameters as [p0, p1, p2, ..., pk] array.
     /// </summary>
+    /// <param name="x">The predictor vectors.</param>
+    /// <param name="y">The response values.</param>
+    /// <param name="method">The direct regression method to use.</param>
+    /// <param name="functions">The basis functions of the linear combination.</param>
+    /// <returns>The fitted coefficients of the linear combination.</returns>
     public static double[] LinearMultiDim(double[][] x, double[] y, DirectRegressionMethod method, params Func<double[], double>[] functions)
     {
       var design = Matrix<double>.Build.Dense(x.Length, functions.Length, (i, j) => functions[j](x[i]));
@@ -282,6 +378,11 @@ namespace Altaxo.Calc
     /// Least-Squares fitting the points (X,y) = ((x0,x1,..,xk),y) to an arbitrary linear combination y : X -> p0*f0(x) + p1*f1(x) + ... + pk*fk(x),
     /// returning a function y' for the best fitting combination.
     /// </summary>
+    /// <param name="x">The predictor vectors.</param>
+    /// <param name="y">The response values.</param>
+    /// <param name="method">The direct regression method to use.</param>
+    /// <param name="functions">The basis functions of the linear combination.</param>
+    /// <returns>A function representing the fitted linear combination.</returns>
     public static Func<double[], double> LinearMultiDimFunc(double[][] x, double[] y, DirectRegressionMethod method, params Func<double[], double>[] functions)
     {
       var parameters = LinearMultiDim(x, y, method, functions);
@@ -292,6 +393,11 @@ namespace Altaxo.Calc
     /// Least-Squares fitting the points (T,y) = (T,y) to an arbitrary linear combination y : X -> p0*f0(T) + p1*f1(T) + ... + pk*fk(T),
     /// returning its best fitting parameters as [p0, p1, p2, ..., pk] array.
     /// </summary>
+    /// <typeparam name="T">The type of the x values.</typeparam>
+    /// <param name="x">The x values of the sample points.</param>
+    /// <param name="y">The y values of the sample points.</param>
+    /// <param name="functions">The basis functions of the linear combination.</param>
+    /// <returns>The fitted coefficients of the linear combination.</returns>
     public static double[] LinearGeneric<T>(T[] x, double[] y, params Func<T, double>[] functions)
     {
       var design = Matrix<double>.Build.Dense(x.Length, functions.Length, (i, j) => functions[j](x[i]));
@@ -302,6 +408,11 @@ namespace Altaxo.Calc
     /// Least-Squares fitting the points (T,y) = (T,y) to an arbitrary linear combination y : X -> p0*f0(T) + p1*f1(T) + ... + pk*fk(T),
     /// returning a function y' for the best fitting combination.
     /// </summary>
+    /// <typeparam name="T">The type of the x values.</typeparam>
+    /// <param name="x">The x values of the sample points.</param>
+    /// <param name="y">The y values of the sample points.</param>
+    /// <param name="functions">The basis functions of the linear combination.</param>
+    /// <returns>A function representing the fitted linear combination.</returns>
     public static Func<T, double> LinearGenericFunc<T>(T[] x, double[] y, params Func<T, double>[] functions)
     {
       var parameters = LinearGeneric(x, y, functions);
@@ -312,6 +423,12 @@ namespace Altaxo.Calc
     /// Least-Squares fitting the points (T,y) = (T,y) to an arbitrary linear combination y : X -> p0*f0(T) + p1*f1(T) + ... + pk*fk(T),
     /// returning its best fitting parameters as [p0, p1, p2, ..., pk] array.
     /// </summary>
+    /// <typeparam name="T">The type of the x values.</typeparam>
+    /// <param name="x">The x values of the sample points.</param>
+    /// <param name="y">The y values of the sample points.</param>
+    /// <param name="method">The direct regression method to use.</param>
+    /// <param name="functions">The basis functions of the linear combination.</param>
+    /// <returns>The fitted coefficients of the linear combination.</returns>
     public static double[] LinearGeneric<T>(T[] x, double[] y, DirectRegressionMethod method, params Func<T, double>[] functions)
     {
       var design = Matrix<double>.Build.Dense(x.Length, functions.Length, (i, j) => functions[j](x[i]));
@@ -322,6 +439,12 @@ namespace Altaxo.Calc
     /// Least-Squares fitting the points (T,y) = (T,y) to an arbitrary linear combination y : X -> p0*f0(T) + p1*f1(T) + ... + pk*fk(T),
     /// returning a function y' for the best fitting combination.
     /// </summary>
+    /// <typeparam name="T">The type of the x values.</typeparam>
+    /// <param name="x">The x values of the sample points.</param>
+    /// <param name="y">The y values of the sample points.</param>
+    /// <param name="method">The direct regression method to use.</param>
+    /// <param name="functions">The basis functions of the linear combination.</param>
+    /// <returns>A function representing the fitted linear combination.</returns>
     public static Func<T, double> LinearGenericFunc<T>(T[] x, double[] y, DirectRegressionMethod method, params Func<T, double>[] functions)
     {
       var parameters = LinearGeneric(x, y, method, functions);
@@ -332,6 +455,13 @@ namespace Altaxo.Calc
     /// Non-linear least-squares fitting the points (x,y) to an arbitrary function y : x -> f(p, x),
     /// returning its best fitting parameter p.
     /// </summary>
+    /// <param name="x">The x values of the sample points.</param>
+    /// <param name="y">The y values of the sample points.</param>
+    /// <param name="f">The model function.</param>
+    /// <param name="initialGuess">The initial parameter guess.</param>
+    /// <param name="tolerance">The convergence tolerance.</param>
+    /// <param name="maxIterations">The maximum number of iterations.</param>
+    /// <returns>The fitted parameter.</returns>
     public static double Curve(double[] x, double[] y, Func<double, double, double> f, double initialGuess, double tolerance = 1e-8, int maxIterations = 1000)
     {
       return FindMinimum.OfScalarFunction(p => Distance.Euclidean(Generate.Map(x, t => f(p, t)), y), initialGuess, tolerance, maxIterations);
@@ -341,6 +471,14 @@ namespace Altaxo.Calc
     /// Non-linear least-squares fitting the points (x,y) to an arbitrary function y : x -> f(p0, p1, x),
     /// returning its best fitting parameter p0 and p1.
     /// </summary>
+    /// <param name="x">The x values of the sample points.</param>
+    /// <param name="y">The y values of the sample points.</param>
+    /// <param name="f">The model function.</param>
+    /// <param name="initialGuess0">The initial guess for the first parameter.</param>
+    /// <param name="initialGuess1">The initial guess for the second parameter.</param>
+    /// <param name="tolerance">The convergence tolerance.</param>
+    /// <param name="maxIterations">The maximum number of iterations.</param>
+    /// <returns>The fitted parameter pair.</returns>
     public static (double P0, double P1) Curve(double[] x, double[] y, Func<double, double, double, double> f, double initialGuess0, double initialGuess1, double tolerance = 1e-8, int maxIterations = 1000)
     {
       return FindMinimum.OfFunction((p0, p1) => Distance.Euclidean(Generate.Map(x, t => f(p0, p1, t)), y), initialGuess0, initialGuess1, tolerance, maxIterations);
@@ -350,6 +488,15 @@ namespace Altaxo.Calc
     /// Non-linear least-squares fitting the points (x,y) to an arbitrary function y : x -> f(p0, p1, p2, x),
     /// returning its best fitting parameter p0, p1 and p2.
     /// </summary>
+    /// <param name="x">The x values of the sample points.</param>
+    /// <param name="y">The y values of the sample points.</param>
+    /// <param name="f">The model function.</param>
+    /// <param name="initialGuess0">The initial guess for the first parameter.</param>
+    /// <param name="initialGuess1">The initial guess for the second parameter.</param>
+    /// <param name="initialGuess2">The initial guess for the third parameter.</param>
+    /// <param name="tolerance">The convergence tolerance.</param>
+    /// <param name="maxIterations">The maximum number of iterations.</param>
+    /// <returns>The fitted parameter triple.</returns>
     public static (double P0, double P1, double P2) Curve(double[] x, double[] y, Func<double, double, double, double, double> f, double initialGuess0, double initialGuess1, double initialGuess2, double tolerance = 1e-8, int maxIterations = 1000)
     {
       return FindMinimum.OfFunction((p0, p1, p2) => Distance.Euclidean(Generate.Map(x, t => f(p0, p1, p2, t)), y), initialGuess0, initialGuess1, initialGuess2, tolerance, maxIterations);
@@ -359,6 +506,16 @@ namespace Altaxo.Calc
     /// Non-linear least-squares fitting the points (x,y) to an arbitrary function y : x -> f(p0, p1, p2, p3, x),
     /// returning its best fitting parameter p0, p1, p2 and p3.
     /// </summary>
+    /// <param name="x">The x values of the sample points.</param>
+    /// <param name="y">The y values of the sample points.</param>
+    /// <param name="f">The model function.</param>
+    /// <param name="initialGuess0">The initial guess for the first parameter.</param>
+    /// <param name="initialGuess1">The initial guess for the second parameter.</param>
+    /// <param name="initialGuess2">The initial guess for the third parameter.</param>
+    /// <param name="initialGuess3">The initial guess for the fourth parameter.</param>
+    /// <param name="tolerance">The convergence tolerance.</param>
+    /// <param name="maxIterations">The maximum number of iterations.</param>
+    /// <returns>The fitted parameter quadruple.</returns>
     public static (double P0, double P1, double P2, double P3) Curve(double[] x, double[] y, Func<double, double, double, double, double, double> f, double initialGuess0, double initialGuess1, double initialGuess2, double initialGuess3, double tolerance = 1e-8, int maxIterations = 1000)
     {
       return FindMinimum.OfFunction((p0, p1, p2, p3) => Distance.Euclidean(Generate.Map(x, t => f(p0, p1, p2, p3, t)), y), initialGuess0, initialGuess1, initialGuess2, initialGuess3, tolerance, maxIterations);
@@ -368,6 +525,17 @@ namespace Altaxo.Calc
     /// Non-linear least-squares fitting the points (x,y) to an arbitrary function y : x -> f(p0, p1, p2, p3, p4, x),
     /// returning its best fitting parameter p0, p1, p2, p3 and p4.
     /// </summary>
+    /// <param name="x">The x values of the sample points.</param>
+    /// <param name="y">The y values of the sample points.</param>
+    /// <param name="f">The model function.</param>
+    /// <param name="initialGuess0">The initial guess for the first parameter.</param>
+    /// <param name="initialGuess1">The initial guess for the second parameter.</param>
+    /// <param name="initialGuess2">The initial guess for the third parameter.</param>
+    /// <param name="initialGuess3">The initial guess for the fourth parameter.</param>
+    /// <param name="initialGuess4">The initial guess for the fifth parameter.</param>
+    /// <param name="tolerance">The convergence tolerance.</param>
+    /// <param name="maxIterations">The maximum number of iterations.</param>
+    /// <returns>The fitted parameter quintuple.</returns>
     public static (double P0, double P1, double P2, double P3, double P4) Curve(double[] x, double[] y, Func<double, double, double, double, double, double, double> f, double initialGuess0, double initialGuess1, double initialGuess2, double initialGuess3, double initialGuess4, double tolerance = 1e-8, int maxIterations = 1000)
     {
       return FindMinimum.OfFunction((p0, p1, p2, p3, p4) => Distance.Euclidean(Generate.Map(x, t => f(p0, p1, p2, p3, p4, t)), y), initialGuess0, initialGuess1, initialGuess2, initialGuess3, initialGuess4, tolerance, maxIterations);
@@ -377,6 +545,13 @@ namespace Altaxo.Calc
     /// Non-linear least-squares fitting the points (x,y) to an arbitrary function y : x -> f(p, x),
     /// returning a function y' for the best fitting curve.
     /// </summary>
+    /// <param name="x">The x values of the sample points.</param>
+    /// <param name="y">The y values of the sample points.</param>
+    /// <param name="f">The model function.</param>
+    /// <param name="initialGuess">The initial parameter guess.</param>
+    /// <param name="tolerance">The convergence tolerance.</param>
+    /// <param name="maxIterations">The maximum number of iterations.</param>
+    /// <returns>A function representing the fitted curve.</returns>
     public static Func<double, double> CurveFunc(double[] x, double[] y, Func<double, double, double> f, double initialGuess, double tolerance = 1e-8, int maxIterations = 1000)
     {
       var parameters = Curve(x, y, f, initialGuess, tolerance, maxIterations);
@@ -387,6 +562,14 @@ namespace Altaxo.Calc
     /// Non-linear least-squares fitting the points (x,y) to an arbitrary function y : x -> f(p0, p1, x),
     /// returning a function y' for the best fitting curve.
     /// </summary>
+    /// <param name="x">The x values of the sample points.</param>
+    /// <param name="y">The y values of the sample points.</param>
+    /// <param name="f">The model function.</param>
+    /// <param name="initialGuess0">The initial guess for the first parameter.</param>
+    /// <param name="initialGuess1">The initial guess for the second parameter.</param>
+    /// <param name="tolerance">The convergence tolerance.</param>
+    /// <param name="maxIterations">The maximum number of iterations.</param>
+    /// <returns>A function representing the fitted curve.</returns>
     public static Func<double, double> CurveFunc(double[] x, double[] y, Func<double, double, double, double> f, double initialGuess0, double initialGuess1, double tolerance = 1e-8, int maxIterations = 1000)
     {
       var (p0, p1) = Curve(x, y, f, initialGuess0, initialGuess1, tolerance, maxIterations);
@@ -397,6 +580,15 @@ namespace Altaxo.Calc
     /// Non-linear least-squares fitting the points (x,y) to an arbitrary function y : x -> f(p0, p1, p2, x),
     /// returning a function y' for the best fitting curve.
     /// </summary>
+    /// <param name="x">The x values of the sample points.</param>
+    /// <param name="y">The y values of the sample points.</param>
+    /// <param name="f">The model function.</param>
+    /// <param name="initialGuess0">The initial guess for the first parameter.</param>
+    /// <param name="initialGuess1">The initial guess for the second parameter.</param>
+    /// <param name="initialGuess2">The initial guess for the third parameter.</param>
+    /// <param name="tolerance">The convergence tolerance.</param>
+    /// <param name="maxIterations">The maximum number of iterations.</param>
+    /// <returns>A function representing the fitted curve.</returns>
     public static Func<double, double> CurveFunc(double[] x, double[] y, Func<double, double, double, double, double> f, double initialGuess0, double initialGuess1, double initialGuess2, double tolerance = 1e-8, int maxIterations = 1000)
     {
       var (p0, p1, p2) = Curve(x, y, f, initialGuess0, initialGuess1, initialGuess2, tolerance, maxIterations);
@@ -407,6 +599,16 @@ namespace Altaxo.Calc
     /// Non-linear least-squares fitting the points (x,y) to an arbitrary function y : x -> f(p0, p1, p2, p3, x),
     /// returning a function y' for the best fitting curve.
     /// </summary>
+    /// <param name="x">The x values of the sample points.</param>
+    /// <param name="y">The y values of the sample points.</param>
+    /// <param name="f">The model function.</param>
+    /// <param name="initialGuess0">The initial guess for the first parameter.</param>
+    /// <param name="initialGuess1">The initial guess for the second parameter.</param>
+    /// <param name="initialGuess2">The initial guess for the third parameter.</param>
+    /// <param name="initialGuess3">The initial guess for the fourth parameter.</param>
+    /// <param name="tolerance">The convergence tolerance.</param>
+    /// <param name="maxIterations">The maximum number of iterations.</param>
+    /// <returns>A function representing the fitted curve.</returns>
     public static Func<double, double> CurveFunc(double[] x, double[] y, Func<double, double, double, double, double, double> f, double initialGuess0, double initialGuess1, double initialGuess2, double initialGuess3, double tolerance = 1e-8, int maxIterations = 1000)
     {
       var (p0, p1, p2, p3) = Curve(x, y, f, initialGuess0, initialGuess1, initialGuess2, initialGuess3, tolerance, maxIterations);
@@ -417,6 +619,17 @@ namespace Altaxo.Calc
     /// Non-linear least-squares fitting the points (x,y) to an arbitrary function y : x -> f(p0, p1, p2, p3, p4, x),
     /// returning a function y' for the best fitting curve.
     /// </summary>
+    /// <param name="x">The x values of the sample points.</param>
+    /// <param name="y">The y values of the sample points.</param>
+    /// <param name="f">The model function.</param>
+    /// <param name="initialGuess0">The initial guess for the first parameter.</param>
+    /// <param name="initialGuess1">The initial guess for the second parameter.</param>
+    /// <param name="initialGuess2">The initial guess for the third parameter.</param>
+    /// <param name="initialGuess3">The initial guess for the fourth parameter.</param>
+    /// <param name="initialGuess4">The initial guess for the fifth parameter.</param>
+    /// <param name="tolerance">The convergence tolerance.</param>
+    /// <param name="maxIterations">The maximum number of iterations.</param>
+    /// <returns>A function representing the fitted curve.</returns>
     public static Func<double, double> CurveFunc(double[] x, double[] y, Func<double, double, double, double, double, double, double> f, double initialGuess0, double initialGuess1, double initialGuess2, double initialGuess3, double initialGuess4, double tolerance = 1e-8, int maxIterations = 1000)
     {
       (double p0, double p1, double p2, double p3, double p4) = Curve(x, y, f, initialGuess0, initialGuess1, initialGuess2, initialGuess3, initialGuess4, tolerance, maxIterations);

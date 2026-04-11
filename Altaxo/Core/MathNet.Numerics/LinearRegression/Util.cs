@@ -32,8 +32,18 @@ using System.Collections.Generic;
 
 namespace Altaxo.Calc.LinearRegression
 {
+  /// <summary>
+  /// Provides helper methods for linear regression sample data.
+  /// </summary>
   internal static class Util
   {
+    /// <summary>
+    /// Unpacks a sequence of tuples into separate arrays in a single pass.
+    /// </summary>
+    /// <typeparam name="TU">The type of the first tuple element.</typeparam>
+    /// <typeparam name="TV">The type of the second tuple element.</typeparam>
+    /// <param name="samples">The samples to unpack.</param>
+    /// <returns>A pair of arrays containing the first and second tuple elements.</returns>
     public static (TU[] U, TV[] V) UnpackSinglePass<TU, TV>(this IEnumerable<Tuple<TU, TV>> samples)
     {
       var ux = new List<TU>();
@@ -48,6 +58,13 @@ namespace Altaxo.Calc.LinearRegression
       return (ux.ToArray(), vx.ToArray());
     }
 
+    /// <summary>
+    /// Unpacks a sequence of value tuples into separate arrays in a single pass.
+    /// </summary>
+    /// <typeparam name="TU">The type of the first tuple element.</typeparam>
+    /// <typeparam name="TV">The type of the second tuple element.</typeparam>
+    /// <param name="samples">The samples to unpack.</param>
+    /// <returns>A pair of arrays containing the first and second tuple elements.</returns>
     public static (TU[] U, TV[] V) UnpackSinglePass<TU, TV>(this IEnumerable<(TU, TV)> samples)
     {
       var ux = new List<TU>();

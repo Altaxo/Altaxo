@@ -66,6 +66,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="RectangleShape"/> class for deserialization.
     /// </summary>
+    /// <param name="info">The deserialization information.</param>
     protected RectangleShape(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
       : base(new ItemLocationDirect(), info)
     {
@@ -99,11 +100,14 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
 
     /// <summary>
-    /// Creates a rectangle shape from left/top/right/bottom coordinates.
-    /// </summary>
-    /// <summary>
     /// Creates a rectangle shape from left, top, right, and bottom coordinates.
     /// </summary>
+    /// <param name="left">The left coordinate.</param>
+    /// <param name="top">The top coordinate.</param>
+    /// <param name="right">The right coordinate.</param>
+    /// <param name="bottom">The bottom coordinate.</param>
+    /// <param name="context">The property context.</param>
+    /// <returns>A rectangle shape created from the specified coordinates.</returns>
     public static RectangleShape FromLTRB(double left, double top, double right, double bottom, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       if (left > right)

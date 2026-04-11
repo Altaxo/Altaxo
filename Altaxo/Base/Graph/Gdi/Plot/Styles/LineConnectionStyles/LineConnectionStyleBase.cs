@@ -149,11 +149,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
     }
 
     /// <summary>
-    /// Enumerates the line segments that should be rendered.
-    /// </summary>
-    /// <summary>
     /// Enumerates the segment ranges that should be rendered.
     /// </summary>
+    /// <param name="range">The plot range that defines the available plot points.</param>
+    /// <param name="symbolGap">A callback that returns the symbol gap for a row index.</param>
+    /// <param name="skipFrequency">The number of plot points to skip between rendered points.</param>
+    /// <param name="connectCircular">If set to <see langword="true"/>, the final point is connected to the first point.</param>
+    /// <returns>The segment ranges that should be rendered.</returns>
     protected static IEnumerable<SegmentRange> GetSegmentRanges(
       IPlotRange range,
       Func<int, double> symbolGap,

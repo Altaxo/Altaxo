@@ -166,6 +166,7 @@ namespace Altaxo.Graph.Scales
     /// <summary>
     /// Constructor for deserialization only.
     /// </summary>
+    /// <param name="info">The deserialization information.</param>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected Log10Scale(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.

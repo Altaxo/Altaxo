@@ -161,7 +161,8 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// <summary>
     /// Gets the path of the object in object world coordinates.
     /// </summary>
-    /// <returns></returns>
+    /// <param name="localToWorldTransformation">The transformation from local coordinates to world coordinates.</param>
+    /// <returns>The object outline for arrangements.</returns>
     public override IObjectOutlineForArrangements GetObjectOutlineForArrangements(Matrix4x3 localToWorldTransformation)
     {
       return new LineShapeObjectOutline(_transformation.WithAppendedTransformation(localToWorldTransformation), Bounds);
@@ -315,6 +316,8 @@ const double gripNominalSize = 10; // 10 Points nominal size on the screen
       /// <summary>
       /// Initializes a new instance of the <see cref="LineShapeHitTestObject"/> class.
       /// </summary>
+      /// <param name="parent">The parent line shape.</param>
+      /// <param name="localToWorldTransformation">The transformation from local coordinates to world coordinates.</param>
       public LineShapeHitTestObject(LineShape parent, Matrix4x3 localToWorldTransformation)
         : base(parent, localToWorldTransformation)
       {

@@ -123,6 +123,7 @@ namespace Altaxo.Gui
   /// <summary>
   /// Represents an event handler used to validate content of GUI elements.
   /// </summary>
+  /// <typeparam name="T">The type of value being validated.</typeparam>
   /// <param name="sender">Sender of the validation request.</param>
   /// <param name="e">Validation event arguments. If validation is not successful, the receiver adds an error message to the event arguments.</param>
   public delegate void ValidatingEventHandler<T>(object sender, ValidationEventArgs<T> e);

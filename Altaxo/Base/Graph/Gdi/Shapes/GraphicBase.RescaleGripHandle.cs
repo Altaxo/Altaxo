@@ -58,6 +58,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       /// <summary>
       /// Initializes a new instance of the <see cref="RescaleGripHandle"/> class.
       /// </summary>
+      /// <param name="parent">The parent hit test object.</param>
+      /// <param name="relPos">The relative position of the grip.</param>
+      /// <param name="spanningHalfYRhombus">The transformation matrix used to display the grip.</param>
       public RescaleGripHandle(IHitTestObject parent, PointD2D relPos, MatrixD2D spanningHalfYRhombus)
       {
         _parent = parent;
@@ -75,6 +78,8 @@ namespace Altaxo.Graph.Gdi.Shapes
       /// <summary>
       /// Activates this grip handle.
       /// </summary>
+      /// <param name="initialPosition">The initial mouse position in page coordinates.</param>
+      /// <param name="isActivatedUponCreation">If set to <c>true</c>, the handle is being activated immediately after creation.</param>
       public void Activate(PointD2D initialPosition, bool isActivatedUponCreation)
       {
         initialPosition = _parent.Transformation.InverseTransformPoint(initialPosition);
@@ -92,6 +97,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       /// <summary>
       /// Deactivates this grip handle.
       /// </summary>
+      /// <returns><see langword="false"/> to keep the current grip level.</returns>
       public bool Deactivate()
       {
         if (_hasMoved)
@@ -103,6 +109,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       /// <summary>
       /// Moves the grip handle to the specified position.
       /// </summary>
+      /// <param name="newPosition">The new grip position.</param>
       public void MoveGrip(PointD2D newPosition)
       {
         newPosition = _parent.Transformation.InverseTransformPoint(newPosition);
@@ -126,6 +133,8 @@ namespace Altaxo.Graph.Gdi.Shapes
       /// <summary>
       /// Determines whether the grip is hit by the specified point.
       /// </summary>
+      /// <param name="point">The point to test.</param>
+      /// <returns><see langword="true"/> if the point hits the grip; otherwise, <see langword="false"/>.</returns>
       public bool IsGripHitted(PointD2D point)
       {
         point = _spanningHalfYRhombus.InverseTransformPoint(point);

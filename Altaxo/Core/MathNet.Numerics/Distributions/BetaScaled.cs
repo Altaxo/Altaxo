@@ -147,6 +147,7 @@ namespace Altaxo.Calc.Distributions
     /// <param name="b">The β shape parameter of the BetaScaled distribution. Range: β > 0.</param>
     /// <param name="location">The location (μ) of the distribution.</param>
     /// <param name="scale">The scale (σ) of the distribution. Range: σ > 0.</param>
+    /// <returns><c>true</c> if the parameters define a valid beta-scaled distribution; otherwise, <c>false</c>.</returns>
     public static bool IsValidParameterSet(double a, double b, double location, double scale)
     {
       return a > 0.0 && b > 0.0 && scale > 0.0 && !double.IsNaN(location);
@@ -361,6 +362,7 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Fills an array with samples generated from the distribution.
     /// </summary>
+    /// <param name="values">The array to fill with samples.</param>
     public void Samples(double[] values)
     {
       SamplesUnchecked(_random, values, _shapeA, _shapeB, _location, _scale);

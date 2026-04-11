@@ -34,6 +34,7 @@ namespace Altaxo.Calc.LinearAlgebra
   public interface INumericSequence<T>
   {
     /// <summary>Gets the element of the sequence at index i.</summary>
+    /// <param name="i">The zero-based element index.</param>
     /// <value>The element at index i.</value>
     T this[int i] { get; }
   }
@@ -41,10 +42,11 @@ namespace Altaxo.Calc.LinearAlgebra
   /// <summary>
   /// Interface for a a readable and writeable vector vector of values.
   /// </summary>
-  /// <typeparam name="T"></typeparam>
+  /// <typeparam name="T">The element type of the vector.</typeparam>
   public interface IVector<T> : IReadOnlyList<T>
   {
     /// <summary>Read/write Accessor for the element at index i.</summary>
+    /// <param name="i">The zero-based element index.</param>
     /// <value>The element at index i.</value>
     new T this[int i] { get; set; }
   }
@@ -53,6 +55,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// Extends <see cref="IVector{T}"/> in a way that another vector
   /// can be appended at the end of this vector.
   /// </summary>
+  /// <typeparam name="T">The element type of the vector.</typeparam>
   public interface IExtensibleVector<T> : IVector<T>
   {
     /// <summary>

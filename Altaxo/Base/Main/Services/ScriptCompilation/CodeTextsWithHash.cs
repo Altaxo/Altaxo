@@ -109,6 +109,7 @@ namespace Altaxo.Main.Services.ScriptCompilation
       return CodeTexts.GetEnumerator();
     }
 
+    /// <inheritdoc/>
     IEnumerator IEnumerable.GetEnumerator()
     {
       return CodeTexts.GetEnumerator();

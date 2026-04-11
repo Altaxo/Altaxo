@@ -51,6 +51,13 @@ namespace Altaxo.Calc.LinearAlgebra.Single.Factorization
   /// </remarks>
   internal abstract class Evd : Evd<float>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Evd"/> class.
+    /// </summary>
+    /// <param name="eigenVectors">The eigenvector matrix.</param>
+    /// <param name="eigenValues">The eigenvalues.</param>
+    /// <param name="blockDiagonal">The block diagonal eigenvalue matrix.</param>
+    /// <param name="isSymmetric">A value indicating whether the source matrix is symmetric.</param>
     protected Evd(Matrix<float> eigenVectors, Vector<Complex> eigenValues, Matrix<float> blockDiagonal, bool isSymmetric)
         : base(eigenVectors, eigenValues, blockDiagonal, isSymmetric)
     {
@@ -59,6 +66,7 @@ namespace Altaxo.Calc.LinearAlgebra.Single.Factorization
     /// <summary>
     /// Gets the absolute value of determinant of the square matrix for which the EVD was computed.
     /// </summary>
+    /// <returns>The absolute value of the determinant.</returns>
     public override float Determinant
     {
       get

@@ -100,6 +100,7 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Raises the <see cref="PropertyChanged"/> event.
     /// </summary>
+    /// <param name="propertyName">The name of the changed property.</param>
     protected virtual void OnPropertyChanged(string propertyName)
     {
       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

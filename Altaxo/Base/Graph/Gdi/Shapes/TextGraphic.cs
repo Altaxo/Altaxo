@@ -268,6 +268,10 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="TextGraphic"/> class.
     /// </summary>
+    /// <param name="graphicPosition">The graphic position.</param>
+    /// <param name="text">The text.</param>
+    /// <param name="textFont">The text font.</param>
+    /// <param name="textColor">The text color.</param>
     public TextGraphic(PointD2D graphicPosition, string text,
       FontX textFont, NamedColor textColor)
       : base(new ItemLocationDirectAutoSize())
@@ -281,6 +285,11 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="TextGraphic"/> class.
     /// </summary>
+    /// <param name="posX">The x-position of the graphic.</param>
+    /// <param name="posY">The y-position of the graphic.</param>
+    /// <param name="text">The text.</param>
+    /// <param name="textFont">The text font.</param>
+    /// <param name="textColor">The text color.</param>
     public TextGraphic(double posX, double posY,
       string text, FontX textFont, NamedColor textColor)
       : this(new PointD2D(posX, posY), text, textFont, textColor)
@@ -290,6 +299,11 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="TextGraphic"/> class.
     /// </summary>
+    /// <param name="graphicPosition">The graphic position.</param>
+    /// <param name="text">The text.</param>
+    /// <param name="textFont">The text font.</param>
+    /// <param name="textColor">The text color.</param>
+    /// <param name="Rotation">The rotation angle.</param>
     public TextGraphic(PointD2D graphicPosition,
       string text, FontX textFont,
       NamedColor textColor, double Rotation)
@@ -301,6 +315,12 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="TextGraphic"/> class.
     /// </summary>
+    /// <param name="posX">The x-position of the graphic.</param>
+    /// <param name="posY">The y-position of the graphic.</param>
+    /// <param name="text">The text.</param>
+    /// <param name="textFont">The text font.</param>
+    /// <param name="textColor">The text color.</param>
+    /// <param name="Rotation">The rotation angle.</param>
     public TextGraphic(double posX, double posY,
       string text,
       FontX textFont,

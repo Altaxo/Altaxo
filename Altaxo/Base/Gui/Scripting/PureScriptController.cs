@@ -53,11 +53,15 @@ namespace Altaxo.Gui.Scripting
     /// <summary>
     /// Sets the script cursor location by line and column.
     /// </summary>
+    /// <param name="line">The one-based line number.</param>
+    /// <param name="column">The one-based column number.</param>
     void SetScriptCursorLocation(int line, int column);
 
     /// <summary>
     /// Marks the specified text range.
     /// </summary>
+    /// <param name="pos1">The start position of the marked range.</param>
+    /// <param name="pos2">The end position of the marked range.</param>
     void MarkText(int pos1, int pos2);
   }
 
@@ -69,6 +73,7 @@ namespace Altaxo.Gui.Scripting
     /// <summary>
     /// Initializes or reinitializes the script controller.
     /// </summary>
+    /// <param name="text">The script text to display.</param>
     void SetText(string text);
 
     /// <summary>
@@ -81,17 +86,19 @@ namespace Altaxo.Gui.Scripting
     /// <summary>
     /// Sets the cursor location using a character offset.
     /// </summary>
+    /// <param name="offset">The zero-based character offset.</param>
     void SetScriptCursorLocation(int offset);
 
     /// <summary>
     /// Sets the initial cursor location using a character offset.
     /// </summary>
+    /// <param name="offset">The zero-based character offset.</param>
     void SetInitialScriptCursorLocation(int offset);
 
     /// <summary>
     /// Gets the most current script text (if a view is present, it returns the script text of the view).
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The current script text.</returns>
     string GetCurrentScriptText();
 
     /// <summary>

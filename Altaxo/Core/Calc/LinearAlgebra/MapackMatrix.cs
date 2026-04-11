@@ -42,35 +42,43 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="endRow">End row index;</param>
     /// <param name="startColumn">Start column index;</param>
     /// <param name="endColumn">End column index;</param>
+    /// <returns>The extracted submatrix.</returns>
     IMapackMatrix Submatrix(int startRow, int endRow, int startColumn, int endColumn);
 
     /// <summary>Returns a sub matrix extracted from the current matrix.</summary>
     /// <param name="r">Array of row indices;</param>
     /// <param name="c">Array of row indices;</param>
+    /// <returns>The extracted submatrix.</returns>
     IMapackMatrix Submatrix(int[] r, int[] c);
 
     /// <summary>Returns a sub matrix extracted from the current matrix.</summary>
     /// <param name="startRow">Starttial row index.</param>
     /// <param name="endRow">End row index.</param>
     /// <param name="c">Array of row indices.</param>
+    /// <returns>The extracted submatrix.</returns>
     IMapackMatrix Submatrix(int startRow, int endRow, int[] c);
 
     /// <summary>Returns a sub matrix extracted from the current matrix.</summary>
     /// <param name="r">Array of row indices.</param>
     /// <param name="startColumn">Start column index.</param>
     /// <param name="endColumn">End column index.</param>
+    /// <returns>The extracted submatrix.</returns>
     IMapackMatrix Submatrix(int[] r, int startColumn, int endColumn);
 
     /// <summary>Creates a copy of the matrix.</summary>
+    /// <returns>A copy of the matrix.</returns>
     IMapackMatrix Clone();
 
     /// <summary>Returns the transposed matrix.</summary>
+    /// <returns>The transposed matrix.</returns>
     IMapackMatrix Transpose();
 
     /// <summary>Inverse of the matrix if matrix is square, pseudoinverse otherwise.</summary>
+    /// <value>The inverse matrix, or the pseudoinverse if the matrix is not square.</value>
     IMapackMatrix Inverse { get; }
 
     /// <summary>Determinant if matrix is square.</summary>
+    /// <value>The determinant of the matrix.</value>
     double Determinant { get; }
 
     /// <summary>Returns the One Norm for the matrix.</summary>
@@ -86,43 +94,60 @@ namespace Altaxo.Calc.LinearAlgebra
     double FrobeniusNorm { get; }
 
     /// <summary>Return <see langword="true"/> if the matrix is a square matrix.</summary>
+    /// <value><see langword="true"/> if the matrix is square; otherwise, <see langword="false"/>.</value>
     bool IsSquare { get; }
 
     /// <summary>Returns <see langword="true"/> if the matrix is symmetric.</summary>
+    /// <value><see langword="true"/> if the matrix is symmetric; otherwise, <see langword="false"/>.</value>
     bool IsSymmetric { get; }
 
     /// <summary>Returns the trace of the matrix.</summary>
-    /// <returns>Sum of the diagonal elements.</returns>
+    /// <value>The sum of the diagonal elements.</value>
     double Trace { get; }
 
     /// <summary>Matrix addition.</summary>
+    /// <param name="B">The matrix to add.</param>
+    /// <returns>The sum of this matrix and <paramref name="B"/>.</returns>
     IMapackMatrix Addition(IMapackMatrix B);
 
     /// <summary>Matrix-matrix multiplication.</summary>
+    /// <param name="B">The matrix to multiply.</param>
+    /// <returns>The product of this matrix and <paramref name="B"/>.</returns>
     IMapackMatrix Multiply(IMapackMatrix B);
 
     /// <summary>Matrix-scalar multiplication.</summary>
+    /// <param name="s">The scalar to multiply.</param>
+    /// <returns>The scaled matrix.</returns>
     IMapackMatrix Multiply(double s);
 
     /// <summary>Matrix subtraction.</summary>
+    /// <param name="B">The matrix to subtract.</param>
+    /// <returns>The difference of this matrix and <paramref name="B"/>.</returns>
     IMapackMatrix Subtraction(IMapackMatrix B);
 
     /// <summary>Returns the LHS solution vector if the matrix is square or the least squares solution otherwise.</summary>
+    /// <param name="rhs">The right-hand side matrix.</param>
+    /// <returns>The solution matrix.</returns>
     IMapackMatrix Solve(IMapackMatrix rhs);
 
     /// <summary>Returns the cholesky decomposition for this matrix.</summary>
+    /// <returns>The Cholesky decomposition.</returns>
     ICholeskyDecomposition GetCholeskyDecomposition();
 
     /// <summary>Returns the LU decomposition for this matrix.</summary>
+    /// <returns>The LU decomposition.</returns>
     ILuDecomposition GetLuDecomposition();
 
     /// <summary>Returns the singular value decomposition for this matrix.</summary>
+    /// <returns>The singular value decomposition.</returns>
     ISingularValueDecomposition GetSingularValueDecomposition();
 
     /// <summary>Returns the QR decomposition for this matrix.</summary>
+    /// <returns>The QR decomposition.</returns>
     IQrDecomposition GetQrDecomposition();
 
     /// <summary>Returns the eigenvalue decomposition for this matrix.</summary>
+    /// <returns>The eigenvalue decomposition.</returns>
     IEigenvalueDecomposition GetEigenvalueDecomposition();
   }
 
@@ -388,6 +413,8 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>Access the value at the given location.</summary>
+    /// <param name="i">The row index.</param>
+    /// <param name="j">The column index.</param>
     public double this[int i, int j]
     {
       set { data[i][j] = value; }
@@ -399,6 +426,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="i1">End row index</param>
     /// <param name="j0">Start column index</param>
     /// <param name="j1">End column index</param>
+    /// <returns>The extracted submatrix.</returns>
     public IMapackMatrix Submatrix(int i0, int i1, int j0, int j1)
     {
       var X = new MapackMatrix(i1 - i0 + 1, j1 - j0 + 1);
@@ -412,6 +440,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>Returns a sub matrix extracted from the current matrix.</summary>
     /// <param name="r">Array of row indices</param>
     /// <param name="c">Array of row indices</param>
+    /// <returns>The extracted submatrix.</returns>
     public IMapackMatrix Submatrix(int[] r, int[] c)
     {
       var X = new MapackMatrix(r.Length, c.Length);
@@ -426,6 +455,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="i0">Starttial row index</param>
     /// <param name="i1">End row index</param>
     /// <param name="c">Array of row indices</param>
+    /// <returns>The extracted submatrix.</returns>
     public IMapackMatrix Submatrix(int i0, int i1, int[] c)
     {
       var X = new MapackMatrix(i1 - i0 + 1, c.Length);
@@ -440,6 +470,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="r">Array of row indices</param>
     /// <param name="j0">Start column index</param>
     /// <param name="j1">End column index</param>
+    /// <returns>The extracted submatrix.</returns>
     public IMapackMatrix Submatrix(int[] r, int j0, int j1)
     {
       var X = new MapackMatrix(r.Length, j1 - j0 + 1);
@@ -451,6 +482,7 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>Creates a copy of the matrix.</summary>
+    /// <returns>A copy of the matrix.</returns>
     public IMapackMatrix Clone()
     {
       var X = new MapackMatrix(rows, columns);
@@ -462,6 +494,7 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>Returns the transposed matrix.</summary>
+    /// <returns>The transposed matrix.</returns>
     public IMapackMatrix Transpose()
     {
       var X = new MapackMatrix(columns, rows);
@@ -528,6 +561,7 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>Unary minus.</summary>
+    /// <returns>The negated matrix.</returns>
     public IMapackMatrix UnaryMinus()
     {
       int rows = this.rows;
@@ -541,6 +575,8 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>Matrix addition.</summary>
+    /// <param name="B">The matrix to add.</param>
+    /// <returns>The sum of this matrix and <paramref name="B"/>.</returns>
     public IMapackMatrix Addition(IMapackMatrix B)
     {
       if ((rows != B.RowCount) || (columns != B.ColumnCount))
@@ -560,6 +596,8 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>Matrix subtraction.</summary>
+    /// <param name="B">The matrix to subtract.</param>
+    /// <returns>The difference of this matrix and <paramref name="B"/>.</returns>
     public IMapackMatrix Subtraction(IMapackMatrix B)
     {
       if ((rows != B.RowCount) || (columns != B.ColumnCount))
@@ -579,6 +617,8 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>Matrix-scalar multiplication.</summary>
+    /// <param name="s">The scalar to multiply.</param>
+    /// <returns>The scaled matrix.</returns>
     public IMapackMatrix Multiply(double s)
     {
       var X = new MapackMatrix(rows, columns);
@@ -595,6 +635,8 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>Matrix-matrix multiplication.</summary>
+    /// <param name="B">The matrix to multiply.</param>
+    /// <returns>The product of this matrix and <paramref name="B"/>.</returns>
     public IMapackMatrix Multiply(IMapackMatrix B)
     {
       if (B.RowCount != this.columns)
@@ -660,25 +702,29 @@ namespace Altaxo.Calc.LinearAlgebra
         */
 
     /// <summary>Returns the LHS solution vetor if the matrix is square or the least squares solution otherwise.</summary>
+    /// <param name="rhs">The right-hand side matrix.</param>
+    /// <returns>The solution matrix.</returns>
     public IMapackMatrix Solve(IMapackMatrix rhs)
     {
       return (rows == columns) ? GetLuDecomposition().Solve(rhs) : GetQrDecomposition().Solve(rhs);
     }
 
     /// <summary>Inverse of the matrix if matrix is square, pseudoinverse otherwise.</summary>
+    /// <value>The inverse matrix, or the pseudoinverse if the matrix is not square.</value>
     public IMapackMatrix Inverse
     {
       get { return Solve(Diagonal(rows, rows, 1.0)); }
     }
 
     /// <summary>Determinant if matrix is square.</summary>
+    /// <value>The determinant of the matrix.</value>
     public double Determinant
     {
       get { return GetLuDecomposition().Determinant; }
     }
 
     /// <summary>Returns the trace of the matrix.</summary>
-    /// <returns>Sum of the diagonal elements.</returns>
+    /// <value>The sum of the diagonal elements.</value>
     public double Trace
     {
       get
@@ -693,6 +739,9 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>Returns a matrix filled with random values.</summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <returns>A matrix filled with random values.</returns>
     public static IMapackMatrix Random(int rows, int columns)
     {
       var X = new MapackMatrix(rows, columns);
@@ -708,6 +757,10 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>Returns a diagonal matrix of the given size.</summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="value">The value to assign to the diagonal elements.</param>
+    /// <returns>A diagonal matrix of the requested size.</returns>
     public static IMapackMatrix Diagonal(int rows, int columns, double value)
     {
       var X = new MapackMatrix(rows, columns);
@@ -723,6 +776,7 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>Returns the matrix in a textual form.</summary>
+    /// <returns>A string representation of the matrix.</returns>
     public override string ToString()
     {
       var builder = new StringBuilder();
@@ -738,30 +792,35 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>Returns the cholesky decomposition for this matrix.</summary>
+    /// <returns>The Cholesky decomposition.</returns>
     public ICholeskyDecomposition GetCholeskyDecomposition()
     {
       return new CholeskyDecomposition(this);
     }
 
     /// <summary>Returns the LU decomposition for this matrix.</summary>
+    /// <returns>The LU decomposition.</returns>
     public ILuDecomposition GetLuDecomposition()
     {
       return new LuDecomposition(this);
     }
 
     /// <summary>Returns the singular value decomposition for this matrix.</summary>
+    /// <returns>The singular value decomposition.</returns>
     public ISingularValueDecomposition GetSingularValueDecomposition()
     {
       return new SingularValueDecomposition(this);
     }
 
     /// <summary>Returns the QR decomposition for this matrix.</summary>
+    /// <returns>The QR decomposition.</returns>
     public IQrDecomposition GetQrDecomposition()
     {
       return new QrDecomposition(this);
     }
 
     /// <summary>Returns the eigenvalue decomposition for this matrix.</summary>
+    /// <returns>The eigenvalue decomposition.</returns>
     public IEigenvalueDecomposition GetEigenvalueDecomposition()
     {
       return new EigenvalueDecomposition(this);
@@ -1053,7 +1112,7 @@ namespace Altaxo.Calc.LinearAlgebra
         {
           for (int i = k + 1; i < columns; i++)
           {
-            for (int j = 0; j < count; j++)
+            for (int j = 0, countJ = Math.Min(count, j + 1); j < countJ; j++)
             {
               X[i, j] -= X[k, j] * lu[i][k];
             }

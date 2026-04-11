@@ -109,6 +109,7 @@ namespace Altaxo.Calc.Distributions
     /// </summary>
     /// <param name="shape">The shape (k) of the Weibull distribution. Range: k > 0.</param>
     /// <param name="scale">The scale (λ) of the Weibull distribution. Range: λ > 0.</param>
+    /// <returns><see langword="true"/> if the parameter set is valid; otherwise, <see langword="false"/>.</returns>
     public static bool IsValidParameterSet(double shape, double scale)
     {
       return shape > 0.0 && scale > 0.0;
@@ -266,6 +267,7 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Fills an array with samples generated from the distribution.
     /// </summary>
+    /// <param name="values">The array to fill with samples.</param>
     public void Samples(double[] values)
     {
       SamplesUnchecked(_random, values, _shape, _scale);

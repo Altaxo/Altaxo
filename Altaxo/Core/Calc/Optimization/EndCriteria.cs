@@ -385,6 +385,7 @@ namespace Altaxo.Calc.Optimization
 
     /// <summary>A string representation of this <c>EndCriteria</c>.</summary>
     /// <param name="format">A format specification.</param>
+    /// <returns>A string representation of this <c>EndCriteria</c>.</returns>
     public string ToString(string format)
     {
       return ToString(format, null);
@@ -392,6 +393,7 @@ namespace Altaxo.Calc.Optimization
 
     /// <summary>A string representation of this <c>EndCriteria</c>.</summary>
     /// <param name="formatProvider">An <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
+    /// <returns>A string representation of this <c>EndCriteria</c>.</returns>
     public string ToString(IFormatProvider formatProvider)
     {
       return ToString(null, formatProvider);
@@ -400,6 +402,7 @@ namespace Altaxo.Calc.Optimization
     /// <summary>A string representation of this <c>EndCriteria</c>.</summary>
     /// <param name="format">A format specification.</param>
     /// <param name="formatProvider">An <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
+    /// <returns>A string representation of this <c>EndCriteria</c>.</returns>
     public string ToString(string? format, IFormatProvider? formatProvider)
     {
       if (endCriteria == CriteriaType.MaximumFunctionEvaluation)

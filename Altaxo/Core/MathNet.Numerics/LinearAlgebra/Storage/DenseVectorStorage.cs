@@ -38,6 +38,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
   /// <summary>
   /// Stores a dense vector in contiguous memory.
   /// </summary>
+  /// <typeparam name="T">The type of the stored values.</typeparam>
   [Serializable]
   [DataContract(Namespace = "urn:MathNet/Numerics/LinearAlgebra")]
   public class DenseVectorStorage<T> : VectorStorage<T>
@@ -51,12 +52,21 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
     [DataMember(Order = 1)]
     public readonly T[] Data;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DenseVectorStorage{T}"/> class.
+    /// </summary>
+    /// <param name="length">The vector length.</param>
     internal DenseVectorStorage(int length)
         : base(length)
     {
       Data = new T[length];
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DenseVectorStorage{T}"/> class with existing data.
+    /// </summary>
+    /// <param name="length">The vector length.</param>
+    /// <param name="data">The backing vector data.</param>
     internal DenseVectorStorage(int length, T[] data)
         : base(length)
     {
@@ -81,6 +91,8 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
     /// <summary>
     /// Retrieves the requested element without range checking.
     /// </summary>
+    /// <param name="index">The index of the element to retrieve.</param>
+    /// <returns>The requested element.</returns>
     public override T At(int index)
     {
       return Data[index];
@@ -89,6 +101,8 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
     /// <summary>
     /// Sets the element without range checking.
     /// </summary>
+    /// <param name="index">The index of the element to set.</param>
+    /// <param name="value">The value to assign.</param>
     public override void At(int index, T value)
     {
       Data[index] = value;
@@ -237,6 +251,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // VECTOR COPY
 
+    /// <inheritdoc/>
     internal override void CopyToUnchecked(VectorStorage<T> target, ExistingData existingData)
     {
       var data = Data;
@@ -282,6 +297,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // ROW COPY
 
+    /// <inheritdoc/>
     internal override void CopyToRowUnchecked(MatrixStorage<T> target, int rowIndex, ExistingData existingData)
     {
       var data = Data;
@@ -306,6 +322,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // COLUMN COPY
 
+    /// <inheritdoc/>
     internal override void CopyToColumnUnchecked(MatrixStorage<T> target, int columnIndex, ExistingData existingData)
     {
 
@@ -326,6 +343,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // SUB-VECTOR COPY
 
+    /// <inheritdoc/>
     internal override void CopySubVectorToUnchecked(VectorStorage<T> target,
         int sourceIndex, int targetIndex, int count, ExistingData existingData)
     {
@@ -342,6 +360,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // SUB-ROW COPY
 
+    /// <inheritdoc/>
     internal override void CopyToSubRowUnchecked(MatrixStorage<T> target, int rowIndex,
         int sourceColumnIndex, int targetColumnIndex, int columnCount, ExistingData existingData)
     {
@@ -367,6 +386,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // SUB-COLUMN COPY
 
+    /// <inheritdoc/>
     internal override void CopyToSubColumnUnchecked(MatrixStorage<T> target, int columnIndex,
         int sourceRowIndex, int targetRowIndex, int rowCount, ExistingData existingData)
     {
@@ -451,6 +471,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       return null;
     }
 
+    /// <inheritdoc/>
     internal override Tuple<int, T, TOther> Find2Unchecked<TOther>(VectorStorage<TOther> other, Func<T, TOther, bool> predicate, Zeros zeros)
     {
       var data = Data;
@@ -530,6 +551,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       });
     }
 
+    /// <inheritdoc/>
     internal override void MapToUnchecked<TU>(VectorStorage<TU> target, Func<T, TU> f, Zeros zeros, ExistingData existingData)
     {
       var data = Data;
@@ -554,6 +576,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       }
     }
 
+    /// <inheritdoc/>
     internal override void MapIndexedToUnchecked<TU>(VectorStorage<TU> target, Func<int, T, TU> f, Zeros zeros, ExistingData existingData)
     {
       var data = Data;
@@ -578,6 +601,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
       }
     }
 
+    /// <inheritdoc/>
     internal override void Map2ToUnchecked(VectorStorage<T> target, VectorStorage<T> other, Func<T, T, T> f, Zeros zeros, ExistingData existingData)
     {
       if (target is SparseVectorStorage<T>)
@@ -636,6 +660,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 
     // FUNCTIONAL COMBINATORS: FOLD
 
+    /// <inheritdoc/>
     internal override TState Fold2Unchecked<TOther, TState>(VectorStorage<TOther> other, Func<TState, T, TOther, TState> f, TState state, Zeros zeros)
     {
       var data = Data;

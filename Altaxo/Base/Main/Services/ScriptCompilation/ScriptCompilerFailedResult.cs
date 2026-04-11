@@ -44,6 +44,8 @@ namespace Altaxo.Main.Services.ScriptCompilation
     /// <summary>
     /// Initializes a new instance of the <see cref="ScriptCompilerFailedResult"/> class.
     /// </summary>
+    /// <param name="scriptText">The compiled source texts and hash.</param>
+    /// <param name="compileErrors">The compiler diagnostics.</param>
     public ScriptCompilerFailedResult(CodeTextsWithHash scriptText, IEnumerable<ICompilerDiagnostic> compileErrors)
     {
       CodeText = scriptText ?? throw new ArgumentNullException(nameof(scriptText));

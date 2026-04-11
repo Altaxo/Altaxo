@@ -159,6 +159,8 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <summary>
     /// Gets the grid plane at the specified index.
     /// </summary>
+    /// <param name="idx">The zero-based index of the grid plane.</param>
+    /// <returns>The grid plane at the specified index.</returns>
     public GridPlane this[int idx]
     {
       get
@@ -170,6 +172,8 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <summary>
     /// Gets or sets the grid plane with the specified identifier.
     /// </summary>
+    /// <param name="planeid">The plane identifier.</param>
+    /// <returns>The matching grid plane, or <see langword="null"/> if none exists.</returns>
     public GridPlane? this[CSPlaneID planeid]
     {
       get
@@ -243,6 +247,8 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <summary>
     /// Determines whether a grid plane with the specified identifier exists.
     /// </summary>
+    /// <param name="planeid">The plane identifier.</param>
+    /// <returns><see langword="true"/> if a matching grid plane exists; otherwise, <see langword="false"/>.</returns>
     public bool Contains(CSPlaneID planeid)
     {
       foreach (GridPlane plane in _innerList)

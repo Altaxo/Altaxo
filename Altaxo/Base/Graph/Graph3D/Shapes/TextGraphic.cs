@@ -270,6 +270,10 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// <summary>
     /// Measures the background layout for the current text content.
     /// </summary>
+    /// <param name="g">The graphics context used for measurement.</param>
+    /// <param name="itemSizeX">The measured text width.</param>
+    /// <param name="itemSizeY">The measured text height.</param>
+    /// <param name="itemSizeZ">The measured text depth.</param>
     protected void MeasureBackground(IGraphicsContext3D g, double itemSizeX, double itemSizeY, double itemSizeZ)
     {
       var fontInfo = FontManager3D.Instance.GetFontInformation(_font);
@@ -335,6 +339,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// <summary>
     /// Paints the configured background.
     /// </summary>
+    /// <param name="g">The graphics context used for drawing.</param>
     protected virtual void PaintBackground(IGraphicsContext3D g)
     {
       // Assumptions:

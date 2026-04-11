@@ -43,6 +43,7 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// <summary>
     /// Initializes a new instance of the Matrix class.
     /// </summary>
+    /// <param name="storage">The storage backing this matrix.</param>
     protected Matrix(MatrixStorage<float> storage)
         : base(storage)
     {
@@ -51,6 +52,7 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// <summary>
     /// Set all values whose absolute value is smaller than the threshold to zero.
     /// </summary>
+    /// <param name="threshold">The threshold below which values are set to zero.</param>
     public override void CoerceZero(double threshold)
     {
       MapInplace(x => Math.Abs(x) < threshold ? 0f : x, Zeros.AllowSkip);
@@ -68,6 +70,7 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// <summary>
     /// Puts the conjugate transpose of this matrix into the result matrix.
     /// </summary>
+    /// <param name="result">The matrix that receives the conjugate transpose.</param>
     public sealed override void ConjugateTranspose(Matrix<float> result)
     {
       Transpose(result);
@@ -513,6 +516,7 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// <summary>
     /// Computes the Moore-Penrose Pseudo-Inverse of this matrix.
     /// </summary>
+    /// <returns>The Moore-Penrose pseudo-inverse of this matrix.</returns>
     public override Matrix<float> PseudoInverse()
     {
       var svd = Svd(true);
@@ -652,6 +656,8 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// Calculates the p-norms of all row vectors.
     /// Typical values for p are 1.0 (L1, Manhattan norm), 2.0 (L2, Euclidean norm) and positive infinity (infinity norm)
     /// </summary>
+    /// <param name="norm">The p-norm to calculate.</param>
+    /// <returns>A vector containing the p-norm of each row.</returns>
     public override Vector<double> RowNorms(double norm)
     {
       if (norm <= 0.0)
@@ -684,6 +690,8 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// Calculates the p-norms of all column vectors.
     /// Typical values for p are 1.0 (L1, Manhattan norm), 2.0 (L2, Euclidean norm) and positive infinity (infinity norm)
     /// </summary>
+    /// <param name="norm">The p-norm to calculate.</param>
+    /// <returns>A vector containing the p-norm of each column.</returns>
     public override Vector<double> ColumnNorms(double norm)
     {
       if (norm <= 0.0)
@@ -716,6 +724,8 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// Normalizes all row vectors to a unit p-norm.
     /// Typical values for p are 1.0 (L1, Manhattan norm), 2.0 (L2, Euclidean norm) and positive infinity (infinity norm)
     /// </summary>
+    /// <param name="norm">The p-norm to use for normalization.</param>
+    /// <returns>A matrix whose rows are normalized to a unit p-norm.</returns>
     public sealed override Matrix<float> NormalizeRows(double norm)
     {
       var norminv = ((DenseVectorStorage<double>)RowNorms(norm).Storage).Data;
@@ -733,6 +743,8 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// Normalizes all column vectors to a unit p-norm.
     /// Typical values for p are 1.0 (L1, Manhattan norm), 2.0 (L2, Euclidean norm) and positive infinity (infinity norm)
     /// </summary>
+    /// <param name="norm">The p-norm to use for normalization.</param>
+    /// <returns>A matrix whose columns are normalized to a unit p-norm.</returns>
     public sealed override Matrix<float> NormalizeColumns(double norm)
     {
       var norminv = ((DenseVectorStorage<double>)ColumnNorms(norm).Storage).Data;
@@ -749,6 +761,7 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// <summary>
     /// Calculates the value sum of each row vector.
     /// </summary>
+    /// <returns>A vector containing the sum of each row.</returns>
     public override Vector<float> RowSums()
     {
       var ret = new float[RowCount];
@@ -759,6 +772,7 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// <summary>
     /// Calculates the absolute value sum of each row vector.
     /// </summary>
+    /// <returns>A vector containing the absolute value sum of each row.</returns>
     public override Vector<float> RowAbsoluteSums()
     {
       var ret = new float[RowCount];
@@ -769,6 +783,7 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// <summary>
     /// Calculates the value sum of each column vector.
     /// </summary>
+    /// <returns>A vector containing the sum of each column.</returns>
     public override Vector<float> ColumnSums()
     {
       var ret = new float[ColumnCount];
@@ -779,6 +794,7 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// <summary>
     /// Calculates the absolute value sum of each column vector.
     /// </summary>
+    /// <returns>A vector containing the absolute value sum of each column.</returns>
     public override Vector<float> ColumnAbsoluteSums()
     {
       var ret = new float[ColumnCount];
@@ -789,6 +805,7 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// <summary>
     /// Evaluates whether this matrix is Hermitian (conjugate symmetric).
     /// </summary>
+    /// <returns><see langword="true"/> if this matrix is Hermitian; otherwise, <see langword="false"/>.</returns>
     public sealed override bool IsHermitian()
     {
       return IsSymmetric();

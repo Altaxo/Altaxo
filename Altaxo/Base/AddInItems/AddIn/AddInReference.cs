@@ -89,10 +89,12 @@ namespace Altaxo.AddInItems
       }
     }
 
-    /// <returns>Returns true when the reference is valid.</returns>
     /// <summary>
     /// Checks whether the reference can be satisfied from the specified add-ins.
     /// </summary>
+    /// <param name="addIns">The available add-ins keyed by identity name.</param>
+    /// <param name="versionFound">When this method returns, contains the located version if a matching add-in was found.</param>
+    /// <returns><c>true</c> if the reference can be satisfied; otherwise, <c>false</c>.</returns>
     public bool Check(Dictionary<string, Version> addIns, out Version? versionFound)
     {
       if (addIns.TryGetValue(_name, out versionFound))
@@ -138,6 +140,9 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Creates an <see cref="AddInReference"/> from properties.
     /// </summary>
+    /// <param name="properties">The properties that describe the add-in reference.</param>
+    /// <param name="hintPath">The base path used to resolve referenced version files.</param>
+    /// <returns>The created add-in reference.</returns>
     public static AddInReference Create(Properties properties, string? hintPath)
     {
       var reference = new AddInReference(properties["addin"]);
@@ -170,7 +175,12 @@ namespace Altaxo.AddInItems
       return reference;
     }
 
-
+    /// <summary>
+    /// Parses a version string, including add-in specific placeholders.
+    /// </summary>
+    /// <param name="version">The version string to parse.</param>
+    /// <param name="hintPath">The base path used to resolve file-based version references.</param>
+    /// <returns>The parsed version.</returns>
     internal static Version ParseVersion(string version, string? hintPath)
     {
       if (version is null || version.Length == 0)
@@ -207,6 +217,7 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Initializes a new instance of the <see cref="AddInReference"/> class.
     /// </summary>
+    /// <param name="name">The referenced add-in name.</param>
     public AddInReference(string name) : this(name, new Version(0, 0, 0, 0), new Version(int.MaxValue, int.MaxValue))
     {
     }
@@ -214,6 +225,8 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Initializes a new instance of the <see cref="AddInReference"/> class.
     /// </summary>
+    /// <param name="name">The referenced add-in name.</param>
+    /// <param name="specificVersion">The required add-in version.</param>
     public AddInReference(string name, Version specificVersion) : this(name, specificVersion, specificVersion)
     {
     }
@@ -221,6 +234,9 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Initializes a new instance of the <see cref="AddInReference"/> class.
     /// </summary>
+    /// <param name="name">The referenced add-in name.</param>
+    /// <param name="minimumVersion">The minimum accepted version.</param>
+    /// <param name="maximumVersion">The maximum accepted version.</param>
     public AddInReference(string name, Version minimumVersion, Version maximumVersion)
     {
       Name = name;
@@ -282,11 +298,13 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Creates a copy of this reference.
     /// </summary>
+    /// <returns>A copy of this reference.</returns>
     public AddInReference Clone()
     {
       return new AddInReference(_name, _minimumVersion, _maximumVersion);
     }
 
+    /// <inheritdoc/>
     object ICloneable.Clone()
     {
       return Clone();

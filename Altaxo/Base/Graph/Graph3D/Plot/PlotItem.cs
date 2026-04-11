@@ -140,6 +140,7 @@ namespace Altaxo.Graph.Graph3D.Plot
       }
     }
 
+    /// <inheritdoc/>
     [MaybeNull]
     IGPlotItem INodeWithParentNode<IGPlotItem>.ParentNode
     {
@@ -150,6 +151,8 @@ namespace Altaxo.Graph.Graph3D.Plot
     }
 
     static readonly IList<IGPlotItem> _emptyChildList = new List<IGPlotItem>().AsReadOnly();
+
+    /// <inheritdoc/>
     IList<IGPlotItem> ITreeListNode<IGPlotItem>.ChildNodes
     {
       get
@@ -158,6 +161,7 @@ namespace Altaxo.Graph.Graph3D.Plot
       }
     }
 
+    /// <inheritdoc/>
     IEnumerable<IGPlotItem>? ITreeNode<IGPlotItem>.ChildNodes
     {
       get

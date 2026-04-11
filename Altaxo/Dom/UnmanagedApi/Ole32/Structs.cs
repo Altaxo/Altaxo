@@ -55,24 +55,45 @@ namespace Altaxo.UnmanagedApi.Ole32
     /* variable sized string data may appear here */
   }
 
+  /// <summary>
+  /// Describes a target device for a data transfer operation.
+  /// </summary>
   [StructLayoutAttribute(LayoutKind.Sequential, CharSet = CharSet.Auto)]
   internal struct DVTARGETDEVICE
   {
+    /// <summary>
+    /// Gets or sets the size of the structure, including the variable-length data.
+    /// </summary>
     [MarshalAs(UnmanagedType.U4)]
     public int tdSize;
 
+    /// <summary>
+    /// Gets or sets the offset to the driver name string.
+    /// </summary>
     [MarshalAs(UnmanagedType.U2)]
     public short tdDriverNameOffset;
 
+    /// <summary>
+    /// Gets or sets the offset to the device name string.
+    /// </summary>
     [MarshalAs(UnmanagedType.U2)]
     public short tdDeviceNameOffset;
 
+    /// <summary>
+    /// Gets or sets the offset to the port name string.
+    /// </summary>
     [MarshalAs(UnmanagedType.U2)]
     public short tdPortNameOffset;
 
+    /// <summary>
+    /// Gets or sets the offset to the <c>DEVMODE</c> structure.
+    /// </summary>
     [MarshalAs(UnmanagedType.U2)]
     public short tdExtDevmodeOffset;
 
+    /// <summary>
+    /// Gets or sets the variable-length target device data.
+    /// </summary>
     [MarshalAs(UnmanagedType.LPArray, SizeConst = 1)]
     public byte[] tdData;
   }

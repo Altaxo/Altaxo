@@ -101,6 +101,7 @@ namespace Altaxo.Worksheet.Commands
     /// </summary>
     /// <param name="table">The table that holds the data source.</param>
     /// <param name="reporter">A reporter object that can be used to cancel, or to report the progress.</param>
+    /// <returns>The error message returned by the data source update, or <see langword="null"/> if no error occurred.</returns>
     public static string? ExecuteDataSourceOfTable(DataTable table, IProgressReporter reporter)
     {
       return table?.UpdateTableFromTableDataSource(reporter);

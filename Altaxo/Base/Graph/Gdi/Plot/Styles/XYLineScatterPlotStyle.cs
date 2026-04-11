@@ -61,8 +61,19 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   /// </summary>
   internal class XYLineScatterPlotStyle
   {
+    /// <summary>
+    /// The line style.
+    /// </summary>
     protected LinePlotStyle m_LineStyle;
+
+    /// <summary>
+    /// The scatter style.
+    /// </summary>
     protected ScatterPlotStyle? m_ScatterStyle;
+
+    /// <summary>
+    /// A value indicating whether a gap between line and symbol is used.
+    /// </summary>
     protected bool m_LineSymbolGap;
 
     /// <summary>The label style (is null if there is no label).</summary>
@@ -177,6 +188,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>
     /// Initializes a new instance of the <see cref="XYLineScatterPlotStyle"/> class for deserialization.
     /// </summary>
+    /// <param name="info">The deserialization information.</param>
     public XYLineScatterPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 

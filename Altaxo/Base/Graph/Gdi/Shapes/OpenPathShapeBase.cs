@@ -74,6 +74,8 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="OpenPathShapeBase"/> class for deserialization.
     /// </summary>
+    /// <param name="location">The item location.</param>
+    /// <param name="info">The deserialization information.</param>
     protected OpenPathShapeBase(ItemLocationDirect location, Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
       : base(location)
@@ -83,6 +85,8 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes a new instance of the <see cref="OpenPathShapeBase"/> class.
     /// </summary>
+    /// <param name="location">The item location.</param>
+    /// <param name="context">The property context.</param>
     protected OpenPathShapeBase(ItemLocationDirect location, Altaxo.Main.Properties.IReadOnlyPropertyBag? context)
       : base(location)
     {
@@ -108,6 +112,8 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Copies values from another <see cref="OpenPathShapeBase"/> instance.
     /// </summary>
+    /// <param name="from">The instance to copy from.</param>
+    /// <param name="withBaseMembers">If set to <see langword="true"/>, base class members are copied as well.</param>
     [MemberNotNull(nameof(_linePen))]
     protected void CopyFrom(OpenPathShapeBase from, bool withBaseMembers)
     {

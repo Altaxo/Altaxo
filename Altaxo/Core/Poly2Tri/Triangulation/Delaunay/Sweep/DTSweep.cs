@@ -62,8 +62,10 @@ namespace Poly2Tri
     private const double PI_3div4 = 3 * Math.PI / 4;
 
     /// <summary>
-    /// Triangulate simple polygon with holes
+    /// Triangulate simple polygon with holes.
     /// </summary>
+    /// <param name="tcx">The sweep context containing points and triangulation configuration.</param>
+    /// <remarks>The context must be initialized with points and regions before calling.</remarks>
     public static void Triangulate(DTSweepContext tcx)
     {
       tcx.CreateAdvancingFront();

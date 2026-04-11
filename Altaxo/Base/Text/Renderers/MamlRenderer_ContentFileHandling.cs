@@ -225,8 +225,9 @@ namespace Altaxo.Text.Renderers
     #endregion Maml topic file handling
 
     /// <summary>
-    /// Removes the old image files. This function will work only if there is a dedicated image folder, i.e. <see cref="ImageFileNames"/> has a value.
+    /// Removes the old content files from the content folder.
     /// </summary>
+    /// <param name="fullContentFolderName">The full path of the content folder.</param>
     public static void RemoveOldContentsOfContentFolder(string fullContentFolderName)
     {
       var dir = new DirectoryInfo(fullContentFolderName);

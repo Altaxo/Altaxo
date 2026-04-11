@@ -41,56 +41,72 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     /// <summary>
     /// Initializes the available color models.
     /// </summary>
+    /// <param name="listOfColorModels">The selectable list of color models.</param>
     void InitializeAvailableColorModels(SelectableListNodeList listOfColorModels);
 
     /// <summary>
     /// Initializes the available text-only color models.
     /// </summary>
+    /// <param name="listOfTextOnlyColorModels">The selectable list of text-only color models.</param>
     void InitializeAvailableTextOnlyColorModels(SelectableListNodeList listOfTextOnlyColorModels);
 
     /// <summary>
     /// Initializes the current color model.
     /// </summary>
+    /// <param name="colorModel">The current color model.</param>
+    /// <param name="silentSet">A value indicating whether change notifications should be suppressed.</param>
     void InitializeColorModel(IColorModel colorModel, bool silentSet);
 
     /// <summary>
     /// Initializes the current text-only color model.
     /// </summary>
+    /// <param name="colorModel">The current text-only color model.</param>
+    /// <param name="silentSet">A value indicating whether change notifications should be suppressed.</param>
     void InitializeTextOnlyColorModel(ITextOnlyColorModel colorModel, bool silentSet);
 
     /// <summary>
     /// Initializes the available color circle models.
     /// </summary>
+    /// <param name="availableColorCircleModels">The selectable list of color circle models.</param>
     void InitializeAvailableColorCircleModels(SelectableListNodeList availableColorCircleModels);
 
     /// <summary>
     /// Initializes the current color circle model.
     /// </summary>
+    /// <param name="currentColorCircleModel">The current color circle model.</param>
+    /// <param name="silentSet">A value indicating whether change notifications should be suppressed.</param>
+    /// <returns>The hue values associated with the selected color circle model.</returns>
     IReadOnlyList<double> InitializeCurrentColorCircleModel(IColorCircleModel currentColorCircleModel, bool silentSet);
 
     /// <summary>
     /// Initializes the available color variation models.
     /// </summary>
+    /// <param name="availableColorVariationModels">The selectable list of color variation models.</param>
     void InitializeAvailableColorVariationModels(SelectableListNodeList availableColorVariationModels);
 
     /// <summary>
     /// Initializes the current color variation model.
     /// </summary>
+    /// <param name="currentColorVariationModel">The current color variation model.</param>
+    /// <param name="silentSet">A value indicating whether change notifications should be suppressed.</param>
     void InitializeCurrentColorVariationModel(IColorVariationModel currentColorVariationModel, bool silentSet);
 
     /// <summary>
     /// Initializes the currently selected color.
     /// </summary>
+    /// <param name="color">The currently selected color.</param>
     void InitializeCurrentColor(AxoColor color);
 
     /// <summary>
     /// Initializes the number of generated color shades.
     /// </summary>
+    /// <param name="numberOfShades">The number of generated color shades.</param>
     void InitializeNumberOfColorShades(int numberOfShades);
 
     /// <summary>
     /// Initializes the generated color shades.
     /// </summary>
+    /// <param name="colorShades">The generated color shades.</param>
     void InitializeColorShades(AxoColor[][] colorShades);
 
     /// <summary>

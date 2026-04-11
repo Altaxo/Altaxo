@@ -123,6 +123,7 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
     /// <summary>
     /// Try to use a native provider, if available.
     /// </summary>
+    /// <returns><c>true</c> if a native provider was selected; otherwise, <c>false</c>.</returns>
     public static bool TryUseNative()
     {
       if (AppSwitches.DisableNativeProviders || AppSwitches.DisableNativeProviderProbing)

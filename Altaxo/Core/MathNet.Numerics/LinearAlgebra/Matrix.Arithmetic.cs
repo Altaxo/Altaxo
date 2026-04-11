@@ -1279,6 +1279,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Multiplies this square matrix with another matrix and returns the result.
     /// </summary>
     /// <param name="exponent">The positive integer exponent to raise the matrix to.</param>
+    /// <returns>The matrix raised to the specified power.</returns>
     public Matrix<T> Power(int exponent)
     {
       if (RowCount != ColumnCount) throw new ArgumentException("Matrix must be square.");
@@ -1533,6 +1534,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Pointwise raise this matrix to an exponent and store the result into the result matrix.
     /// </summary>
     /// <param name="exponent">The exponent to raise this matrix values to.</param>
+    /// <returns>A matrix containing the pointwise powers.</returns>
     public Matrix<T> PointwisePower(T exponent)
     {
       var result = Build.SameAs(this);
@@ -1560,6 +1562,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Pointwise raise this matrix to an exponent and store the result into the result matrix.
     /// </summary>
     /// <param name="exponent">The exponent to raise this matrix values to.</param>
+    /// <returns>A matrix containing the pointwise powers.</returns>
     public Matrix<T> PointwisePower(Matrix<T> exponent)
     {
       if (ColumnCount != exponent.ColumnCount || RowCount != exponent.RowCount)
@@ -1594,6 +1597,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="divisor">The pointwise denominator matrix to use.</param>
     /// <exception cref="ArgumentException">If this matrix and <paramref name="divisor"/> are not the same size.</exception>
+    /// <returns>A matrix containing the pointwise modulus results.</returns>
     public Matrix<T> PointwiseModulus(Matrix<T> divisor)
     {
       if (ColumnCount != divisor.ColumnCount || RowCount != divisor.RowCount)
@@ -1630,6 +1634,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="divisor">The pointwise denominator matrix to use.</param>
     /// <exception cref="ArgumentException">If this matrix and <paramref name="divisor"/> are not the same size.</exception>
+    /// <returns>A matrix containing the pointwise remainder results.</returns>
     public Matrix<T> PointwiseRemainder(Matrix<T> divisor)
     {
       if (ColumnCount != divisor.ColumnCount || RowCount != divisor.RowCount)
@@ -1735,6 +1740,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Pointwise applies the exponent function to each value.
     /// </summary>
+    /// <returns>A matrix containing the exponent of each value.</returns>
     public Matrix<T> PointwiseExp()
     {
       return PointwiseUnary(DoPointwiseExp);
@@ -1753,6 +1759,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Pointwise applies the natural logarithm function to each value.
     /// </summary>
+    /// <returns>A matrix containing the natural logarithm of each value.</returns>
     public Matrix<T> PointwiseLog()
     {
       return PointwiseUnary(DoPointwiseLog);
@@ -1771,6 +1778,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Pointwise applies the abs function to each value
     /// </summary>
+    /// <returns>A matrix containing the absolute value of each entry.</returns>
     public Matrix<T> PointwiseAbs()
     {
       return PointwiseUnary(DoPointwiseAbs);
@@ -1788,6 +1796,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Pointwise applies the acos function to each value
     /// </summary>
+    /// <returns>A matrix containing the arc cosine of each entry.</returns>
     public Matrix<T> PointwiseAcos()
     {
       return PointwiseUnary(DoPointwiseAcos);
@@ -1805,6 +1814,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Pointwise applies the asin function to each value
     /// </summary>
+    /// <returns>A matrix containing the arc sine of each entry.</returns>
     public Matrix<T> PointwiseAsin()
     {
       return PointwiseUnary(DoPointwiseAsin);
@@ -1822,6 +1832,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Pointwise applies the atan function to each value
     /// </summary>
+    /// <returns>A matrix containing the arc tangent of each entry.</returns>
     public Matrix<T> PointwiseAtan()
     {
       return PointwiseUnary(DoPointwiseAtan);
@@ -1863,6 +1874,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Pointwise applies the ceiling function to each value
     /// </summary>
+    /// <returns>A matrix containing the ceiling of each entry.</returns>
     public Matrix<T> PointwiseCeiling()
     {
       return PointwiseUnary(DoPointwiseCeiling);
@@ -1880,6 +1892,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Pointwise applies the cos function to each value
     /// </summary>
+    /// <returns>A matrix containing the cosine of each entry.</returns>
     public Matrix<T> PointwiseCos()
     {
       return PointwiseUnary(DoPointwiseCos);
@@ -1897,6 +1910,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Pointwise applies the cosh function to each value
     /// </summary>
+    /// <returns>A matrix containing the hyperbolic cosine of each entry.</returns>
     public Matrix<T> PointwiseCosh()
     {
       return PointwiseUnary(DoPointwiseCosh);
@@ -1914,6 +1928,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Pointwise applies the floor function to each value
     /// </summary>
+    /// <returns>A matrix containing the floor of each entry.</returns>
     public Matrix<T> PointwiseFloor()
     {
       return PointwiseUnary(DoPointwiseFloor);
@@ -1931,6 +1946,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Pointwise applies the log10 function to each value
     /// </summary>
+    /// <returns>A matrix containing the base-10 logarithm of each entry.</returns>
     public Matrix<T> PointwiseLog10()
     {
       return PointwiseUnary(DoPointwiseLog10);
@@ -1948,6 +1964,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Pointwise applies the round function to each value
     /// </summary>
+    /// <returns>A matrix containing the rounded values.</returns>
     public Matrix<T> PointwiseRound()
     {
       return PointwiseUnary(DoPointwiseRound);
@@ -1965,6 +1982,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Pointwise applies the sign function to each value
     /// </summary>
+    /// <returns>A matrix containing the sign of each entry.</returns>
     public Matrix<T> PointwiseSign()
     {
       return PointwiseUnary(DoPointwiseSign);
@@ -1982,6 +2000,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Pointwise applies the sin function to each value
     /// </summary>
+    /// <returns>A matrix containing the sine of each entry.</returns>
     public Matrix<T> PointwiseSin()
     {
       return PointwiseUnary(DoPointwiseSin);
@@ -1999,6 +2018,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Pointwise applies the sinh function to each value
     /// </summary>
+    /// <returns>A matrix containing the hyperbolic sine of each entry.</returns>
     public Matrix<T> PointwiseSinh()
     {
       return PointwiseUnary(DoPointwiseSinh);
@@ -2016,6 +2036,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Pointwise applies the sqrt function to each value
     /// </summary>
+    /// <returns>A matrix containing the square root of each entry.</returns>
     public Matrix<T> PointwiseSqrt()
     {
       return PointwiseUnary(DoPointwiseSqrt);
@@ -2033,6 +2054,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Pointwise applies the tan function to each value
     /// </summary>
+    /// <returns>A matrix containing the tangent of each entry.</returns>
     public Matrix<T> PointwiseTan()
     {
       return PointwiseUnary(DoPointwiseTan);
@@ -2050,6 +2072,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Pointwise applies the tanh function to each value
     /// </summary>
+    /// <returns>A matrix containing the hyperbolic tangent of each entry.</returns>
     public Matrix<T> PointwiseTanh()
     {
       return PointwiseUnary(DoPointwiseTanh);
@@ -2113,6 +2136,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes an orthonormal basis for the null space of this matrix,
     /// also known as the kernel of the corresponding matrix transformation.
     /// </summary>
+    /// <returns>An orthonormal basis for the null space.</returns>
     public virtual Vector<T>[] Kernel()
     {
       var svd = Svd(true);
@@ -2123,6 +2147,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Computes an orthonormal basis for the column space of this matrix,
     /// also known as the range or image of the corresponding matrix transformation.
     /// </summary>
+    /// <returns>An orthonormal basis for the column space.</returns>
     public virtual Vector<T>[] Range()
     {
       var svd = Svd(true);
@@ -2142,6 +2167,7 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>Computes the Moore-Penrose Pseudo-Inverse of this matrix.</summary>
+    /// <returns>The Moore-Penrose pseudo-inverse of this matrix.</returns>
     public abstract Matrix<T> PseudoInverse();
 
     /// <summary>
@@ -2184,6 +2210,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Pointwise applies the minimum with a scalar to each value.
     /// </summary>
     /// <param name="scalar">The scalar value to compare to.</param>
+    /// <returns>A matrix containing the pointwise minimum values.</returns>
     public Matrix<T> PointwiseMinimum(T scalar)
     {
       var result = Build.SameAs(this);
@@ -2211,6 +2238,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Pointwise applies the maximum with a scalar to each value.
     /// </summary>
     /// <param name="scalar">The scalar value to compare to.</param>
+    /// <returns>A matrix containing the pointwise maximum values.</returns>
     public Matrix<T> PointwiseMaximum(T scalar)
     {
       var result = Build.SameAs(this);
@@ -2238,6 +2266,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Pointwise applies the absolute minimum with a scalar to each value.
     /// </summary>
     /// <param name="scalar">The scalar value to compare to.</param>
+    /// <returns>A matrix containing the pointwise absolute minimum values.</returns>
     public Matrix<T> PointwiseAbsoluteMinimum(T scalar)
     {
       var result = Build.SameAs(this);
@@ -2265,6 +2294,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Pointwise applies the absolute maximum with a scalar to each value.
     /// </summary>
     /// <param name="scalar">The scalar value to compare to.</param>
+    /// <returns>A matrix containing the pointwise absolute maximum values.</returns>
     public Matrix<T> PointwiseAbsoluteMaximum(T scalar)
     {
       var result = Build.SameAs(this);
@@ -2292,6 +2322,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Pointwise applies the minimum with the values of another matrix to each value.
     /// </summary>
     /// <param name="other">The matrix with the values to compare to.</param>
+    /// <returns>A matrix containing the pointwise minimum values.</returns>
     public Matrix<T> PointwiseMinimum(Matrix<T> other)
     {
       var result = Build.SameAs(this);
@@ -2319,6 +2350,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Pointwise applies the maximum with the values of another matrix to each value.
     /// </summary>
     /// <param name="other">The matrix with the values to compare to.</param>
+    /// <returns>A matrix containing the pointwise maximum values.</returns>
     public Matrix<T> PointwiseMaximum(Matrix<T> other)
     {
       var result = Build.SameAs(this);
@@ -2346,6 +2378,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Pointwise applies the absolute minimum with the values of another matrix to each value.
     /// </summary>
     /// <param name="other">The matrix with the values to compare to.</param>
+    /// <returns>A matrix containing the pointwise absolute minimum values.</returns>
     public Matrix<T> PointwiseAbsoluteMinimum(Matrix<T> other)
     {
       var result = Build.SameAs(this);
@@ -2373,6 +2406,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Pointwise applies the absolute maximum with the values of another matrix to each value.
     /// </summary>
     /// <param name="other">The matrix with the values to compare to.</param>
+    /// <returns>A matrix containing the pointwise absolute maximum values.</returns>
     public Matrix<T> PointwiseAbsoluteMaximum(Matrix<T> other)
     {
       var result = Build.SameAs(this);
@@ -2423,48 +2457,69 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Calculates the p-norms of all row vectors.
     /// Typical values for p are 1.0 (L1, Manhattan norm), 2.0 (L2, Euclidean norm) and positive infinity (infinity norm)
     /// </summary>
+    /// <param name="norm">The p value of the norm to calculate.</param>
+    /// <returns>A vector containing the row p-norms.</returns>
     public abstract Vector<double> RowNorms(double norm);
 
     /// <summary>
     /// Calculates the p-norms of all column vectors.
     /// Typical values for p are 1.0 (L1, Manhattan norm), 2.0 (L2, Euclidean norm) and positive infinity (infinity norm)
     /// </summary>
+    /// <param name="norm">The p value of the norm to calculate.</param>
+    /// <returns>A vector containing the column p-norms.</returns>
     public abstract Vector<double> ColumnNorms(double norm);
 
     /// <summary>
     /// Normalizes all row vectors to a unit p-norm.
     /// Typical values for p are 1.0 (L1, Manhattan norm), 2.0 (L2, Euclidean norm) and positive infinity (infinity norm)
     /// </summary>
+    /// <param name="norm">The p value of the norm to use for normalization.</param>
+    /// <returns>A matrix whose rows are normalized to the specified p-norm.</returns>
     public abstract Matrix<T> NormalizeRows(double norm);
 
     /// <summary>
     /// Normalizes all column vectors to a unit p-norm.
     /// Typical values for p are 1.0 (L1, Manhattan norm), 2.0 (L2, Euclidean norm) and positive infinity (infinity norm)
     /// </summary>
+    /// <param name="norm">The p value of the norm to use for normalization.</param>
+    /// <returns>A matrix whose columns are normalized to the specified p-norm.</returns>
     public abstract Matrix<T> NormalizeColumns(double norm);
 
     /// <summary>
     /// Calculates the value sum of each row vector.
     /// </summary>
+    /// <returns>A vector containing the row sums.</returns>
     public abstract Vector<T> RowSums();
 
     /// <summary>
     /// Calculates the value sum of each column vector.
     /// </summary>
+    /// <returns>A vector containing the column sums.</returns>
     public abstract Vector<T> ColumnSums();
 
     /// <summary>
     /// Calculates the absolute value sum of each row vector.
     /// </summary>
+    /// <returns>A vector containing the row absolute sums.</returns>
     public abstract Vector<T> RowAbsoluteSums();
 
     /// <summary>
     /// Calculates the absolute value sum of each column vector.
     /// </summary>
+    /// <returns>A vector containing the column absolute sums.</returns>
     public abstract Vector<T> ColumnAbsoluteSums();
 
     #region Exceptions - possibly move elsewhere?
 
+    /// <summary>
+    /// Creates a dimension mismatch exception for a matrix-matrix-matrix operation.
+    /// </summary>
+    /// <typeparam name="TException">The exception type to create.</typeparam>
+    /// <param name="left">The left operand matrix.</param>
+    /// <param name="right">The right operand matrix.</param>
+    /// <param name="result">The result matrix.</param>
+    /// <param name="paramName">The parameter name associated with the exception.</param>
+    /// <returns>The created exception.</returns>
     internal static Exception DimensionsDontMatch<TException>(Matrix<T> left, Matrix<T> right, Matrix<T> result, string paramName = null)
         where TException : Exception
     {
@@ -2472,6 +2527,14 @@ namespace Altaxo.Calc.LinearAlgebra
       return CreateException<TException>(message, paramName);
     }
 
+    /// <summary>
+    /// Creates a dimension mismatch exception for a matrix-matrix operation.
+    /// </summary>
+    /// <typeparam name="TException">The exception type to create.</typeparam>
+    /// <param name="left">The left operand matrix.</param>
+    /// <param name="right">The right operand matrix.</param>
+    /// <param name="paramName">The parameter name associated with the exception.</param>
+    /// <returns>The created exception.</returns>
     internal static Exception DimensionsDontMatch<TException>(Matrix<T> left, Matrix<T> right, string paramName = null)
         where TException : Exception
     {
@@ -2479,6 +2542,12 @@ namespace Altaxo.Calc.LinearAlgebra
       return CreateException<TException>(message, paramName);
     }
 
+    /// <summary>
+    /// Creates a dimension mismatch exception for a matrix.
+    /// </summary>
+    /// <typeparam name="TException">The exception type to create.</typeparam>
+    /// <param name="matrix">The matrix with invalid dimensions.</param>
+    /// <returns>The created exception.</returns>
     internal static Exception DimensionsDontMatch<TException>(Matrix<T> matrix)
         where TException : Exception
     {
@@ -2486,24 +2555,57 @@ namespace Altaxo.Calc.LinearAlgebra
       return CreateException<TException>(message);
     }
 
+    /// <summary>
+    /// Creates a dimension mismatch exception for a matrix-vector-vector operation.
+    /// </summary>
+    /// <typeparam name="TException">The exception type to create.</typeparam>
+    /// <param name="left">The left operand matrix.</param>
+    /// <param name="right">The right operand vector.</param>
+    /// <param name="result">The result vector.</param>
+    /// <param name="paramName">The parameter name associated with the exception.</param>
+    /// <returns>The created exception.</returns>
     internal static Exception DimensionsDontMatch<TException>(Matrix<T> left, Vector<T> right, Vector<T> result, string paramName = null)
         where TException : Exception
     {
       return DimensionsDontMatch<TException>(left, right.ToColumnMatrix(), result.ToColumnMatrix(), paramName);
     }
 
+    /// <summary>
+    /// Creates a dimension mismatch exception for a matrix-vector operation.
+    /// </summary>
+    /// <typeparam name="TException">The exception type to create.</typeparam>
+    /// <param name="left">The left operand matrix.</param>
+    /// <param name="right">The right operand vector.</param>
+    /// <param name="paramName">The parameter name associated with the exception.</param>
+    /// <returns>The created exception.</returns>
     internal static Exception DimensionsDontMatch<TException>(Matrix<T> left, Vector<T> right, string paramName = null)
         where TException : Exception
     {
       return DimensionsDontMatch<TException>(left, right.ToColumnMatrix(), paramName);
     }
 
+    /// <summary>
+    /// Creates a dimension mismatch exception for a vector-matrix operation.
+    /// </summary>
+    /// <typeparam name="TException">The exception type to create.</typeparam>
+    /// <param name="left">The left operand vector.</param>
+    /// <param name="right">The right operand matrix.</param>
+    /// <param name="paramName">The parameter name associated with the exception.</param>
+    /// <returns>The created exception.</returns>
     internal static Exception DimensionsDontMatch<TException>(Vector<T> left, Matrix<T> right, string paramName = null)
         where TException : Exception
     {
       return DimensionsDontMatch<TException>(left.ToColumnMatrix(), right, paramName);
     }
 
+    /// <summary>
+    /// Creates a dimension mismatch exception for a vector-vector operation.
+    /// </summary>
+    /// <typeparam name="TException">The exception type to create.</typeparam>
+    /// <param name="left">The left operand vector.</param>
+    /// <param name="right">The right operand vector.</param>
+    /// <param name="paramName">The parameter name associated with the exception.</param>
+    /// <returns>The created exception.</returns>
     internal static Exception DimensionsDontMatch<TException>(Vector<T> left, Vector<T> right, string paramName = null)
         where TException : Exception
     {

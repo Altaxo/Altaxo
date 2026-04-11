@@ -83,8 +83,10 @@ namespace Altaxo.Serialization.TA_Instruments
     #endregion Version 0
 
     /// <summary>
-    /// Deserialization constructor
+    /// Deserialization constructor.
     /// </summary>
+    /// <param name="info">The deserialization information.</param>
+    /// <param name="version">The version of the serialized data.</param>
     protected Q800ImportDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     {
       switch (version)
@@ -104,6 +106,8 @@ namespace Altaxo.Serialization.TA_Instruments
     /// <summary>
     /// Initializes a new instance of the <see cref="Q800ImportDataSource"/> class for a single file.
     /// </summary>
+    /// <param name="fileName">The file name of the Q800 file.</param>
+    /// <param name="options">The import options.</param>
     public Q800ImportDataSource(string fileName, Q800ImportOptions options)
       : this(new string[] { fileName }, options)
     {
@@ -112,6 +116,8 @@ namespace Altaxo.Serialization.TA_Instruments
     /// <summary>
     /// Initializes a new instance of the <see cref="Q800ImportDataSource"/> class for multiple files.
     /// </summary>
+    /// <param name="fileNames">The file names of the Q800 files.</param>
+    /// <param name="options">The import options.</param>
     public Q800ImportDataSource(IEnumerable<string> fileNames, Q800ImportOptions options)
       : base(fileNames)
     {
@@ -121,6 +127,7 @@ namespace Altaxo.Serialization.TA_Instruments
     /// <summary>
     /// Initializes a new instance of the <see cref="Q800ImportDataSource"/> class by copying another instance.
     /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public Q800ImportDataSource(Q800ImportDataSource from)
       : base(from)
     {

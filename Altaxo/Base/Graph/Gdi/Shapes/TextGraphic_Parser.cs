@@ -98,10 +98,78 @@ namespace Altaxo.Graph.Gdi.Shapes
   /// </summary>
   enum EAltaxo_LabelV1
   {
-    MainSentence = 1, Sentence = 2, SentenceNC = 3, WordSpanExt = 4,
-    WordSpan = 5, WordSpanNC = 6, EscChar = 7, EscSeq = 8, Number = 9,
-    Word = 10, Space = 11, PositiveInteger = 12, EscSeq4 = 13, EscSeq3 = 14,
-    EscSeq2 = 15, EscSeq1 = 16, QuotedString = 17, StringContent = 18
+    /// <summary>
+    /// The main sentence rule.
+    /// </summary>
+    MainSentence = 1,
+    /// <summary>
+    /// The sentence rule.
+    /// </summary>
+    Sentence = 2,
+    /// <summary>
+    /// The sentence rule without commas.
+    /// </summary>
+    SentenceNC = 3,
+    /// <summary>
+    /// The extended word span rule.
+    /// </summary>
+    WordSpanExt = 4,
+    /// <summary>
+    /// The word span rule.
+    /// </summary>
+    WordSpan = 5,
+    /// <summary>
+    /// The word span rule without commas.
+    /// </summary>
+    WordSpanNC = 6,
+    /// <summary>
+    /// The escaped character rule.
+    /// </summary>
+    EscChar = 7,
+    /// <summary>
+    /// The escape sequence rule.
+    /// </summary>
+    EscSeq = 8,
+    /// <summary>
+    /// The number rule.
+    /// </summary>
+    Number = 9,
+    /// <summary>
+    /// The word rule.
+    /// </summary>
+    Word = 10,
+    /// <summary>
+    /// The whitespace rule.
+    /// </summary>
+    Space = 11,
+    /// <summary>
+    /// The positive integer rule.
+    /// </summary>
+    PositiveInteger = 12,
+    /// <summary>
+    /// The four-argument escape sequence rule.
+    /// </summary>
+    EscSeq4 = 13,
+    /// <summary>
+    /// The three-argument escape sequence rule.
+    /// </summary>
+    EscSeq3 = 14,
+    /// <summary>
+    /// The two-argument escape sequence rule.
+    /// </summary>
+    EscSeq2 = 15,
+    /// <summary>
+    /// The one-argument escape sequence rule.
+    /// </summary>
+    EscSeq1 = 16,
+    /// <summary>
+    /// The quoted string rule.
+    /// </summary>
+    QuotedString = 17,
+    /// <summary>
+    /// The string content rule.
+    /// </summary>
+    StringContent = 18
   };
   /// <summary>
   /// Parser for the Altaxo label grammar.
@@ -110,7 +178,14 @@ namespace Altaxo.Graph.Gdi.Shapes
   {
 
     #region Input Properties
+    /// <summary>
+    /// Gets the encoding class used by the parser.
+    /// </summary>
     public static EncodingClass encodingClass = EncodingClass.ascii;
+
+    /// <summary>
+    /// Gets the Unicode detection mode used by the parser.
+    /// </summary>
     public static UnicodeDetection unicodeDetection = UnicodeDetection.notApplicable;
     #endregion Input Properties
     #region Constructors
@@ -164,6 +239,10 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
     #endregion Overrides
     #region Grammar Rules
+    /// <summary>
+    /// Parses the main sentence rule.
+    /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool MainSentence()    /*[1]^^MainSentence:  (EscSeq / WordSpanExt / Space)*  (WordSpanExt / EscChar / Space / '\\')*;*/
     {
 
@@ -178,18 +257,30 @@ namespace Altaxo.Graph.Gdi.Shapes
                        || Space()
                        || Char('\\'))));
     }
+    /// <summary>
+    /// Parses the sentence rule.
+    /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool Sentence()    /*[2]^Sentence:       (EscSeq / WordSpan / Space)+;*/
     {
 
       return TreeAST((int)EAltaxo_LabelV1.Sentence, () =>
            PlusRepeat(() => EscSeq() || WordSpan() || Space()));
     }
+    /// <summary>
+    /// Parses the sentence-without-commas rule.
+    /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool SentenceNC()    /*[3]^SentenceNC:     (EscSeq / WordSpanNC / Space)+;*/
     {
 
       return TreeAST((int)EAltaxo_LabelV1.SentenceNC, () =>
            PlusRepeat(() => EscSeq() || WordSpanNC() || Space()));
     }
+    /// <summary>
+    /// Parses the extended word span rule.
+    /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool WordSpanExt()    /*[4]^^WordSpanExt:   (Word / EscChar / ',' / ')')+;*/
     {
 
@@ -197,30 +288,50 @@ namespace Altaxo.Graph.Gdi.Shapes
            PlusRepeat(() =>
                  Word() || EscChar() || Char(',') || Char(')')));
     }
+    /// <summary>
+    /// Parses the word span rule.
+    /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool WordSpan()    /*[5]^^WordSpan:      (Word / EscChar / ',')+;*/
     {
 
       return TreeNT((int)EAltaxo_LabelV1.WordSpan, () =>
            PlusRepeat(() => Word() || EscChar() || Char(',')));
     }
+    /// <summary>
+    /// Parses the word span without commas rule.
+    /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool WordSpanNC()    /*[6]^^WordSpanNC:    (Word / EscChar)+;*/
     {
 
       return TreeNT((int)EAltaxo_LabelV1.WordSpanNC, () =>
            PlusRepeat(() => Word() || EscChar()));
     }
+    /// <summary>
+    /// Parses an escaped character.
+    /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool EscChar()    /*[7]^EscChar:        '\\\\' / '\\)' / '\\(';*/
     {
 
       return TreeAST((int)EAltaxo_LabelV1.EscChar, () =>
                Char('\\', '\\') || Char('\\', ')') || Char('\\', '('));
     }
+    /// <summary>
+    /// Parses an escape sequence.
+    /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool EscSeq()    /*[8]^EscSeq:   	    (EscSeq4 / EscSeq3 / EscSeq2 / EscSeq1);*/
     {
 
       return TreeAST((int)EAltaxo_LabelV1.EscSeq, () =>
                EscSeq4() || EscSeq3() || EscSeq2() || EscSeq1());
     }
+    /// <summary>
+    /// Parses a number.
+    /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool Number()    /*[9]^Number:         [0-9]+ ('.' [0-9]+)?([eE][+-][0-9]+)?;*/
     {
 
@@ -237,24 +348,40 @@ namespace Altaxo.Graph.Gdi.Shapes
                        && OneOf("+-")
                        && PlusRepeat(() => In('0', '9'))))));
     }
+    /// <summary>
+    /// Parses a word.
+    /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool Word()    /*[10]Word:           [#x20-#x28#x2A-#x2B#x2D-#x5B#x5D-#xFFFF]+;*/
     {
 
       return PlusRepeat(() =>
              In('\u0020', '\u0028', '\u002a', '\u002b', '\u002d', '\u005b', '\u005d', '\uffff'));
     }
+    /// <summary>
+    /// Parses whitespace.
+    /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool Space()    /*[11]^^Space:        '\t' / '\r\n' / '\n';*/
     {
 
       return TreeNT((int)EAltaxo_LabelV1.Space, () =>
                Char('\t') || Char('\r', '\n') || Char('\n'));
     }
+    /// <summary>
+    /// Parses a positive integer.
+    /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool PositiveInteger()    /*[12]^PositiveInteger: 	[0-9]+;*/
     {
 
       return TreeAST((int)EAltaxo_LabelV1.PositiveInteger, () =>
            PlusRepeat(() => In('0', '9')));
     }
+    /// <summary>
+    /// Parses a four-argument escape sequence.
+    /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool EscSeq4()    /*[13]^^EscSeq4:      ('\\%(' PositiveInteger ',' PositiveInteger ',' QuotedString ',' QuotedString ')');*/
     {
 
@@ -270,6 +397,10 @@ namespace Altaxo.Graph.Gdi.Shapes
              && QuotedString()
              && Char(')')));
     }
+    /// <summary>
+    /// Parses a three-argument escape sequence.
+    /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool EscSeq3()    /*[14]^^EscSeq3:      ('\\L('\i PositiveInteger ',' PositiveInteger ',' PositiveInteger ')') /
                     ('\\%(' PositiveInteger ',' PositiveInteger ',' QuotedString ')') /
 		    ('\\%(' PositiveInteger ',' QuotedString ',' QuotedString ')');*/
@@ -302,6 +433,10 @@ namespace Altaxo.Graph.Gdi.Shapes
                  && QuotedString()
                  && Char(')')));
     }
+    /// <summary>
+    /// Parses a two-argument escape sequence.
+    /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool EscSeq2()    /*[15]^^EscSeq2:      ( '\\' ( 'P'\i / 'F'\i / 'C'\i / '=' ) '(' SentenceNC ',' Sentence ')' ) /
                     ( '\\' ( 'L'\i                       ) '(' PositiveInteger ',' PositiveInteger ')' ) /
                     ( '\\' ( '%'                         ) '(' PositiveInteger ',' (PositiveInteger / QuotedString) ')' ) 
@@ -339,6 +474,10 @@ namespace Altaxo.Graph.Gdi.Shapes
                  && (PositiveInteger() || QuotedString())
                  && Char(')')));
     }
+    /// <summary>
+    /// Parses a one-argument escape sequence.
+    /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool EscSeq1()    /*[16]^^EscSeq1:      '\\' ('AB'\i / 'AD'\i / 'ID'\i / '+' / '-' /  '%' / '#' /  'B'\i / 'G'\i / 'I'\i / 'L'\i / 'N'\i / 'S'\i / 'U'\i / 'V'\i ) '(' Sentence ')';*/
     {
 
@@ -365,11 +504,19 @@ namespace Altaxo.Graph.Gdi.Shapes
              && Sentence()
              && Char(')')));
     }
+    /// <summary>
+    /// Parses a quoted string.
+    /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool QuotedString()    /*[17]QuotedString:  '"' StringContent '"';*/
     {
 
       return And(() => Char('"') && StringContent() && Char('"'));
     }
+    /// <summary>
+    /// Parses string content.
+    /// </summary>
+    /// <returns><see langword="true"/> if parsing succeeded; otherwise, <see langword="false"/>.</returns>
     public bool StringContent()    /*[18]^^StringContent: ( '\\' 
                            ( 'u'([0-9A-Fa-f]{4}/FATAL<"4 hex digits expected">)
                            / ["\\/bfnrt]/FATAL<"illegal escape"> 
@@ -397,6 +544,9 @@ namespace Altaxo.Graph.Gdi.Shapes
     #endregion Grammar Rules
 
     #region Optimization Data 
+    /// <summary>
+    /// Cached optimized character set for escape parsing.
+    /// </summary>
     internal static OptimizedCharset optimizedCharset0;
 
 

@@ -185,6 +185,8 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Copies values from another <see cref="FloatingScale"/> instance.
     /// </summary>
+    /// <param name="from">The instance to copy from.</param>
+    /// <param name="withBaseMembers">If set to <see langword="true"/>, base class members are copied as well.</param>
     [MemberNotNull(nameof(_scaleSpanValue), nameof(_tickSpacing), nameof(_axisStyle))]
     protected void CopyFrom(FloatingScale from, bool withBaseMembers)
     {

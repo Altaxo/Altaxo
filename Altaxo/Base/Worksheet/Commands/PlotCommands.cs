@@ -498,6 +498,7 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="bScatter">If true, the scatter style is activated (the points are plotted as symbols).</param>
     /// <param name="preferredGraphName">Preferred name of the graph. Can be null if you have no preference.</param>
     /// <param name="doOpenGraph">If true (default), the created graph is opened (shown in a window).</param>
+    /// <returns>The created graph document and, if requested, its controller.</returns>
     public static (GraphDocument Graph, Altaxo.Gui.Graph.Gdi.Viewing.IGraphController? Controller) PlotLine(DataTable table, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, bool bLine, bool bScatter, string? preferredGraphName, bool doOpenGraph = true)
     {
       var graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(table.GetPropertyContext(), preferredGraphName, table.Name, true);

@@ -47,10 +47,11 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
   {
     /// <summary>
     /// Initializes a new instance of the <see cref="UserQR"/> class. This object will compute the
-    /// QR factorization when the constructor is called and cache it's factorization.
+    /// QR factorization when the constructor is called and cache its factorization.
     /// </summary>
     /// <param name="matrix">The matrix to factor.</param>
     /// <param name="method">The QR factorization method to use.</param>
+    /// <returns>A <see cref="UserQR"/> instance for <paramref name="matrix"/>.</returns>
     /// <exception cref="ArgumentNullException">If <paramref name="matrix"/> is <c>null</c>.</exception>
     public static UserQR Create(Matrix<double> matrix, QRMethod method = QRMethod.Full)
     {

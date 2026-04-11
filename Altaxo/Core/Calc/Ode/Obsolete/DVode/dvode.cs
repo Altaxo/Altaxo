@@ -7244,6 +7244,14 @@ LABEL330:
     /// <summary>
     /// Copies a rectangular array into another array with a possibly different row dimension.
     /// </summary>
+    /// <param name="NROW">The number of rows to copy.</param>
+    /// <param name="NCOL">The number of columns to copy.</param>
+    /// <param name="A">The source array.</param>
+    /// <param name="offset_a">The offset into <paramref name="A"/>.</param>
+    /// <param name="NROWA">The row dimension of <paramref name="A"/>.</param>
+    /// <param name="B">The destination array.</param>
+    /// <param name="offset_b">The offset into <paramref name="B"/>.</param>
+    /// <param name="NROWB">The row dimension of <paramref name="B"/>.</param>
     public void Run(int NROW, int NCOL, double[] A, int offset_a, int NROWA, ref double[] B, int offset_b, int NROWB)
     {
       #region Variables
@@ -8058,6 +8066,16 @@ LABEL100:
     ///
     /// ***FIRST EXECUTABLE STATEMENT  DEWSET
     ///</summary>
+    /// <param name="N">The number of solution components.</param>
+    /// <param name="ITOL">The tolerance selection indicator.</param>
+    /// <param name="RTOL">The relative tolerance array.</param>
+    /// <param name="offset_rtol">The offset into <paramref name="RTOL"/>.</param>
+    /// <param name="ATOL">The absolute tolerance array.</param>
+    /// <param name="offset_atol">The offset into <paramref name="ATOL"/>.</param>
+    /// <param name="YCUR">The current solution vector.</param>
+    /// <param name="offset_ycur">The offset into <paramref name="YCUR"/>.</param>
+    /// <param name="EWT">The error weight array.</param>
+    /// <param name="offset_ewt">The offset into <paramref name="EWT"/>.</param>
     public void Run(int N, int ITOL, double[] RTOL, int offset_rtol, double[] ATOL, int offset_atol, double[] YCUR, int offset_ycur, ref double[] EWT, int offset_ewt)
     {
       #region Variables
@@ -8210,6 +8228,12 @@ LABEL40:
     ///
     /// ***FIRST EXECUTABLE STATEMENT  DVNORM
     ///</summary>
+    /// <param name="N">The number of elements.</param>
+    /// <param name="V">The value vector.</param>
+    /// <param name="offset_v">The offset into <paramref name="V"/>.</param>
+    /// <param name="W">The weight vector.</param>
+    /// <param name="offset_w">The offset into <paramref name="W"/>.</param>
+    /// <returns>The weighted root-mean-square norm of the vector.</returns>
     public double Run(int N, double[] V, int offset_v, double[] W, int offset_w)
     {
       double dvnorm = 0;
@@ -8671,6 +8695,7 @@ LABEL100:
     ///
     /// ***FIRST EXECUTABLE STATEMENT  XSETF
     ///</summary>
+    /// <param name="MFLAG">The message-printing flag.</param>
     public void Run(int MFLAG)
     {
       #region Variables
@@ -8818,6 +8843,7 @@ LABEL100:
     ///
     /// ***FIRST EXECUTABLE STATEMENT  XSETUN
     ///</summary>
+    /// <param name="LUN">The logical unit number for messages.</param>
     public void Run(int LUN)
     {
       #region Variables
@@ -9049,6 +9075,7 @@ LABEL100:
     /// the value IVALUE.  If ISET = .FALSE., the parameter
     /// will be unchanged, and IVALUE is a dummy argument.
     ///</param>
+    /// <returns>The previous value of the selected parameter.</returns>
     public int Run(int IPAR, int IVALUE, bool ISET)
     {
       int ixsav = 0;
@@ -9199,6 +9226,7 @@ LABEL100:
     /// **End
     /// ***FIRST EXECUTABLE STATEMENT  IUMACH
     ///</summary>
+    /// <returns>The standard logical unit number for Fortran output.</returns>
     public int Run()
     {
       int iumach = 0;
@@ -9343,6 +9371,7 @@ LABEL100:
     ///
     /// ***FIRST EXECUTABLE STATEMENT  DUMACH
     ///</summary>
+    /// <returns>The machine unit roundoff.</returns>
     public double Run()
     {
       double dumach = 0;
@@ -9418,6 +9447,9 @@ LABEL10:
     /// <summary>
     /// Stores the sum of two floating-point values in the supplied result variable.
     /// </summary>
+    /// <param name="A">The first addend.</param>
+    /// <param name="B">The second addend.</param>
+    /// <param name="C">Receives the sum of <paramref name="A"/> and <paramref name="B"/>.</param>
     public void Run(double A, double B, ref double C)
     {
       // C     Routine to force normal storing of A + B, for DUMACH.
@@ -11791,8 +11823,9 @@ LABEL60:
     /// <param name="INCY">
     /// storage spacing between elements of DY
     ///</param>
-    /// <param name="offset_dx"></param>
-    /// <param name="offset_dy"></param>
+    /// <param name="offset_dx">The offset into <paramref name="DX"/>.</param>
+    /// <param name="offset_dy">The offset into <paramref name="DY"/>.</param>
+    /// <returns>The inner product of the two vectors.</returns>
     public double Run(int N, double[] DX, int offset_dx, int INCX, double[] DY, int offset_dy, int INCY)
     {
       double ddot = 0;
@@ -12126,7 +12159,8 @@ LABEL60:
     /// <param name="INCX">
     /// storage spacing between elements of DX
     ///</param>
-    ///<param name="offset_dx"></param>
+    /// <param name="offset_dx">The offset into <paramref name="DX"/>.</param>
+    /// <returns>The Euclidean length of the vector.</returns>
     public double Run(int N, double[] DX, int offset_dx, int INCX)
     {
       double dnrm2 = 0;
@@ -12686,7 +12720,8 @@ LABEL40:
     /// <param name="INCX">
     /// storage spacing between elements of DX
     ///</param>
-    ///<param name="offset_dx"></param>
+    /// <param name="offset_dx">The offset into <paramref name="DX"/>.</param>
+    /// <returns>The smallest index of the component with the maximum magnitude.</returns>
     public int Run(int N, double[] DX, int offset_dx, int INCX)
     {
       int idamax = 0;

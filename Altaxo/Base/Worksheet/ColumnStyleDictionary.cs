@@ -445,6 +445,7 @@ namespace Altaxo.Worksheet
 
     #region IEnumerable Members
 
+    /// <inheritdoc />
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
       return ((ICollection<KeyValuePair<DataColumn, ColumnStyle>>)_columnStyles).GetEnumerator();

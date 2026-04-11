@@ -44,6 +44,7 @@ namespace Altaxo.Calc
     /// <param name="upperBound">The high value of the range where the root is supposed to be.</param>
     /// <param name="accuracy">Desired accuracy. The root will be refined until the accuracy or the maximum number of iterations is reached. Example: 1e-14.</param>
     /// <param name="maxIterations">Maximum number of iterations. Example: 100.</param>
+    /// <returns>A root of the function.</returns>
     public static double OfFunction(Func<double, double> f, double lowerBound, double upperBound, double accuracy = 1e-8, int maxIterations = 100)
     {
       if (!ZeroCrossingBracketing.ExpandReduce(f, ref lowerBound, ref upperBound, 1.6, maxIterations, maxIterations * 10))
@@ -71,6 +72,7 @@ namespace Altaxo.Calc
     /// <param name="upperBound">The high value of the range where the root is supposed to be.</param>
     /// <param name="accuracy">Desired accuracy. The root will be refined until the accuracy or the maximum number of iterations is reached. Example: 1e-14.</param>
     /// <param name="maxIterations">Maximum number of iterations. Example: 100.</param>
+    /// <returns>A root of the function.</returns>
     public static double OfFunctionDerivative(Func<double, double> f, Func<double, double> df, double lowerBound, double upperBound, double accuracy = 1e-8, int maxIterations = 100)
     {
       double root;
@@ -87,6 +89,10 @@ namespace Altaxo.Calc
     /// Find both complex roots of the quadratic equation c + b*x + a*x^2 = 0.
     /// Note the special coefficient order ascending by exponent (consistent with polynomials).
     /// </summary>
+    /// <param name="c">The constant coefficient.</param>
+    /// <param name="b">The coefficient of the linear term.</param>
+    /// <param name="a">The coefficient of the quadratic term.</param>
+    /// <returns>The two complex roots of the quadratic polynomial.</returns>
     public static (Complex, Complex) Quadratic(double c, double b, double a)
     {
       if (b == 0d)
@@ -106,6 +112,11 @@ namespace Altaxo.Calc
     /// Find all three complex roots of the cubic equation d + c*x + b*x^2 + a*x^3 = 0.
     /// Note the special coefficient order ascending by exponent (consistent with polynomials).
     /// </summary>
+    /// <param name="d">The constant coefficient.</param>
+    /// <param name="c">The coefficient of the linear term.</param>
+    /// <param name="b">The coefficient of the quadratic term.</param>
+    /// <param name="a">The coefficient of the cubic term.</param>
+    /// <returns>The three complex roots of the cubic polynomial.</returns>
     public static (Complex, Complex, Complex) Cubic(double d, double c, double b, double a)
     {
       return RootFinding.Cubic.Roots(d, c, b, a);

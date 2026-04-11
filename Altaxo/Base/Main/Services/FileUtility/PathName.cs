@@ -109,6 +109,7 @@ namespace Altaxo.Main.Services
     /// <remarks>
     /// Corresponds to <c>System.IO.Path.GetDirectoryName</c>
     /// </remarks>
+    /// <returns>The parent directory.</returns>
     public DirectoryName GetParentDirectory()
     {
       DirectoryName? result;

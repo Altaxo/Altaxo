@@ -33,9 +33,7 @@ namespace Altaxo.Text.Renderers.Maml
   /// <seealso cref="MamlObjectRenderer{T}" />
   public class CodeBlockRenderer : MamlObjectRenderer<CodeBlock>
   {
-    /// <summary>
-    /// Writes a code block.
-    /// </summary>
+    /// <inheritdoc />
     protected override void Write(MamlRenderer renderer, CodeBlock obj)
     {
       renderer.EnsureLine();

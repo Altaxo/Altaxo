@@ -138,6 +138,7 @@ namespace Altaxo.Calc.Distributions
     /// No parameter can be less than zero and at least one parameter should be larger than zero.
     /// </summary>
     /// <param name="alpha">The parameters of the Dirichlet distribution.</param>
+    /// <returns><c>true</c> if the parameter vector defines a valid Dirichlet distribution; otherwise, <c>false</c>.</returns>
     public static bool IsValidParameterSet(double[] alpha)
     {
       var allzero = true;

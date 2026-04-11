@@ -107,6 +107,7 @@ namespace Altaxo.Drawing.DashPatterns
         yield return this[i];
     }
 
+    /// <inheritdoc />
     IEnumerator IEnumerable.GetEnumerator()
     {
       for (int i = 0; i < Count; ++i)
@@ -144,6 +145,9 @@ namespace Altaxo.Drawing.DashPatterns
     /// <summary>
     /// Determines whether two dash patterns are equal.
     /// </summary>
+    /// <param name="x">The first dash pattern.</param>
+    /// <param name="y">The second dash pattern.</param>
+    /// <returns><see langword="true"/> if both dash patterns are equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator ==(DashPatternBase x, DashPatternBase y)
     {
       return x is { } _ ? x.Equals(y) : y is { } _ ? y.Equals(x) : true;
@@ -151,6 +155,9 @@ namespace Altaxo.Drawing.DashPatterns
     /// <summary>
     /// Determines whether two dash patterns are not equal.
     /// </summary>
+    /// <param name="x">The first dash pattern.</param>
+    /// <param name="y">The second dash pattern.</param>
+    /// <returns><see langword="true"/> if the dash patterns are not equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator !=(DashPatternBase x, DashPatternBase y)
     {
       return !(x == y);

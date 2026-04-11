@@ -45,6 +45,8 @@ namespace Altaxo.Main.Services
     /// Creates a FileName instance from the string.
     /// It is valid to pass null or an empty string to this method (in that case, a null reference will be returned).
     /// </summary>
+    /// <param name="fileName">The file path.</param>
+    /// <returns>A <see cref="FileName"/> instance, or <see langword="null"/> if <paramref name="fileName"/> is null or empty.</returns>
     [return: NotNullIfNotNull("fileName")]
     public static FileName? Create(string? fileName)
     {
@@ -71,6 +73,7 @@ namespace Altaxo.Main.Services
     /// <remarks>
     /// Corresponds to <c>System.IO.Path.GetFileName</c>
     /// </remarks>
+    /// <returns>The file name without directory components.</returns>
     public string GetFileName()
     {
       return Path.GetFileName(_normalizedPath);
@@ -82,6 +85,7 @@ namespace Altaxo.Main.Services
     /// <remarks>
     /// Corresponds to <c>System.IO.Path.GetExtension</c>
     /// </remarks>
+    /// <returns>The file extension, including the leading period if present.</returns>
     public string GetExtension()
     {
       return Path.GetExtension(_normalizedPath);
@@ -90,6 +94,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Gets whether this file name has the specified extension.
     /// </summary>
+    /// <param name="extension">The extension to compare against, including the leading period.</param>
+    /// <returns><see langword="true"/> if this file name has the specified extension; otherwise, <see langword="false"/>.</returns>
     public bool HasExtension(string extension)
     {
       if (extension is null)
@@ -105,6 +111,7 @@ namespace Altaxo.Main.Services
     /// <remarks>
     /// Corresponds to <c>System.IO.Path.GetFileNameWithoutExtension</c>
     /// </remarks>
+    /// <returns>The file name without its extension.</returns>
     public string GetFileNameWithoutExtension()
     {
       return Path.GetFileNameWithoutExtension(_normalizedPath);
@@ -136,6 +143,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Determines whether two file names are equal.
     /// </summary>
+    /// <param name="left">The left file name.</param>
+    /// <param name="right">The right file name.</param>
     public static bool operator ==(FileName left, FileName right)
     {
       if (ReferenceEquals(left, right))
@@ -148,6 +157,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Determines whether two file names are not equal.
     /// </summary>
+    /// <param name="left">The left file name.</param>
+    /// <param name="right">The right file name.</param>
     public static bool operator !=(FileName left, FileName right)
     {
       return !(left == right);
@@ -156,6 +167,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Determines whether a file name and a string path are equal.
     /// </summary>
+    /// <param name="left">The left file name.</param>
+    /// <param name="right">The right string path.</param>
     [ObsoleteAttribute("Warning: comparing FileName with string results in case-sensitive comparison")]
     public static bool operator ==(FileName left, string right)
     {
@@ -165,6 +178,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Determines whether a file name and a string path are not equal.
     /// </summary>
+    /// <param name="left">The left file name.</param>
+    /// <param name="right">The right string path.</param>
     [ObsoleteAttribute("Warning: comparing FileName with string results in case-sensitive comparison")]
     public static bool operator !=(FileName left, string right)
     {
@@ -174,6 +189,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Determines whether a string path and a file name are equal.
     /// </summary>
+    /// <param name="left">The left string path.</param>
+    /// <param name="right">The right file name.</param>
     [ObsoleteAttribute("Warning: comparing FileName with string results in case-sensitive comparison")]
     public static bool operator ==(string left, FileName right)
     {
@@ -183,6 +200,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Determines whether a string path and a file name are not equal.
     /// </summary>
+    /// <param name="left">The left string path.</param>
+    /// <param name="right">The right file name.</param>
     [ObsoleteAttribute("Warning: comparing FileName with string results in case-sensitive comparison")]
     public static bool operator !=(string left, FileName right)
     {

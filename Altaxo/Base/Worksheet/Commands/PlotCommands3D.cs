@@ -421,6 +421,7 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="graph">The graph document to plot into.</param>
     /// <param name="templatePlotStyle">The plot style which is the template for all plot items.</param>
     /// <param name="groupStyles">The group styles for the newly built plot item collection.</param>
+    /// <returns>The controller for the created 3D graph.</returns>
     public static IGraphController Plot(
       DataTable table,
       IAscendingIntegerCollection selectedColumns,

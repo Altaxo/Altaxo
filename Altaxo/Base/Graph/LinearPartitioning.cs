@@ -410,6 +410,7 @@ namespace Altaxo.Graph
       return _innerList.GetEnumerator();
     }
 
+    /// <inheritdoc/>
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
       return _innerList.GetEnumerator();
@@ -504,6 +505,7 @@ namespace Altaxo.Graph
       ((IList)_innerList).Remove(value);
     }
 
+    /// <inheritdoc/>
     object? IList.this[int index]
     {
       get

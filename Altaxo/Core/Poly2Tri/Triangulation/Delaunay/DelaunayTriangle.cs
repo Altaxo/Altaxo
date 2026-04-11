@@ -73,9 +73,9 @@ namespace Poly2Tri
     /// <summary>
     /// Initializes a new instance of the <see cref="DelaunayTriangle"/> class.
     /// </summary>
-    /// <param name="p1">The first vertex.</param>
-    /// <param name="p2">The second vertex.</param>
-    /// <param name="p3">The third vertex.</param>
+    /// <param name="p1">The first vertex of the triangle.</param>
+    /// <param name="p2">The second vertex of the triangle.</param>
+    /// <param name="p3">The third vertex of the triangle.</param>
     public DelaunayTriangle(TriangulationPoint p1, TriangulationPoint p2, TriangulationPoint p3)
     {
       Points[0] = p1;
@@ -143,6 +143,7 @@ namespace Poly2Tri
     /// <summary>
     /// Exhaustive search to update neighbor pointers
     /// </summary>
+    /// <param name="t">The neighboring triangle to register.</param>
     public void MarkNeighbor(DelaunayTriangle t)
     {
       // Points of this triangle also belonging to t
@@ -311,6 +312,8 @@ namespace Poly2Tri
     /// <summary>
     /// Mark edge as constrained
     /// </summary>
+    /// <param name="p">The first point of the constrained edge.</param>
+    /// <param name="q">The second point of the constrained edge.</param>
     public void MarkConstrainedEdge(TriangulationPoint p, TriangulationPoint q)
     {
       int i = EdgeIndex(p, q);
@@ -344,7 +347,9 @@ namespace Poly2Tri
     /// <summary>
     /// Get the index of the neighbor that shares this edge (or -1 if it isn't shared)
     /// </summary>
-    /// <returns>index of the shared edge or -1 if edge isn't shared</returns>
+    /// <param name="p1">The first point of the edge.</param>
+    /// <param name="p2">The second point of the edge.</param>
+    /// <returns>The index of the shared edge, or -1 if the edge is not shared.</returns>
     public int EdgeIndex(TriangulationPoint p1, TriangulationPoint p2)
     {
       int i1 = Points.IndexOf(p1);

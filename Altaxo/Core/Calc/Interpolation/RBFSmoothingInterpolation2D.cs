@@ -343,6 +343,7 @@ namespace Altaxo.Calc.Interpolation
     /// <summary>
     /// Returns a delegate that evaluates this smoother.
     /// </summary>
+    /// <returns>A delegate that maps x and y coordinates to the smoothed z value.</returns>
     public Func<double, double, double> AsFunction() => Evaluate;
 
     private static int TailDimension(PolynomialTail tail)

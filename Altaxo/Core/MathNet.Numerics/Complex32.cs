@@ -369,6 +369,7 @@ namespace Altaxo.Calc
     /// <summary>
     /// Logarithm of this <c>Complex32</c> with custom base.
     /// </summary>
+    /// <param name="baseValue">The logarithm base.</param>
     /// <returns>The logarithm of this complex number.</returns>
     public Complex32 Logarithm(float baseValue)
     {
@@ -489,6 +490,7 @@ namespace Altaxo.Calc
     /// <summary>
     /// Evaluate all square roots of this <c>Complex32</c>.
     /// </summary>
+    /// <returns>The two square roots of this complex number.</returns>
     public (Complex32, Complex32) SquareRoots()
     {
       var principal = SquareRoot();
@@ -498,6 +500,7 @@ namespace Altaxo.Calc
     /// <summary>
     /// Evaluate all cubic roots of this <c>Complex32</c>.
     /// </summary>
+    /// <returns>The three cubic roots of this complex number.</returns>
     public (Complex32, Complex32, Complex32) CubicRoots()
     {
       float r = (float)Math.Pow(Magnitude, 1d / 3d);
@@ -734,6 +737,7 @@ namespace Altaxo.Calc
     /// <summary>
     /// Computes the conjugate of a complex number and returns the result.
     /// </summary>
+    /// <returns>The complex conjugate.</returns>
     public Complex32 Conjugate()
     {
       return new Complex32(_real, -_imag);
@@ -742,6 +746,7 @@ namespace Altaxo.Calc
     /// <summary>
     /// Returns the multiplicative inverse of a complex number.
     /// </summary>
+    /// <returns>The multiplicative inverse.</returns>
     public Complex32 Reciprocal()
     {
       if (IsZero())

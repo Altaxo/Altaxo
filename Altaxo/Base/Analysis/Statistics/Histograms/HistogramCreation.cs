@@ -165,6 +165,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
     /// <param name="selectedColumns">Selected data columns in the source table.</param>
     /// <param name="selectedRows">Selected rows in the source table.</param>
     /// <param name="userInteractionLevel">Determines the level of user interaction.</param>
+    /// <returns>The created histogram table, or <c>null</c> if creation was canceled.</returns>
     public static DataTable? CreateHistogramOnColumns(
       this DataTable srctable,
       IAscendingIntegerCollection selectedColumns,
@@ -183,6 +184,8 @@ namespace Altaxo.Analysis.Statistics.Histograms
     /// <summary>
     /// Creates histogram data in the specified destination table.
     /// </summary>
+    /// <param name="destinationTable">The destination table that receives the histogram data.</param>
+    /// <param name="histInfo">The histogram creation settings and source data.</param>
     public static void CreateHistogram(ref DataTable destinationTable, HistogramCreationInformation histInfo)
     {
       if (histInfo is null)
@@ -211,6 +214,9 @@ namespace Altaxo.Analysis.Statistics.Histograms
     /// <summary>
     /// Creates a histogram table using the specified histogram information.
     /// </summary>
+    /// <param name="proposedTableName">The proposed name for the new table.</param>
+    /// <param name="histInfo">The histogram creation settings and source data.</param>
+    /// <returns>The created histogram table, or <c>null</c> if creation was canceled.</returns>
     public static DataTable? CreateHistogram(string proposedTableName, HistogramCreationInformation histInfo)
     {
       if (proposedTableName is null)
@@ -240,6 +246,8 @@ namespace Altaxo.Analysis.Statistics.Histograms
     /// <summary>
     /// Populates derived histogram creation information from the current options and source data.
     /// </summary>
+    /// <param name="histInfo">The histogram creation information to update.</param>
+    /// <returns><c>true</c> if the histogram dialog should be shown; otherwise, <c>false</c>.</returns>
     public static bool PopulateHistogramCreationInformation(HistogramCreationInformation histInfo)
     {
       if (histInfo is null)
@@ -386,6 +394,13 @@ namespace Altaxo.Analysis.Statistics.Histograms
       return showDialog;
     }
 
+    /// <summary>
+    /// Creates or updates the histogram table for the specified data.
+    /// </summary>
+    /// <param name="destinationTable">The destination table to create or update.</param>
+    /// <param name="proposedTableName">The proposed name for a newly created table.</param>
+    /// <param name="sortedListOfData">The sorted data values used to create the histogram.</param>
+    /// <param name="binning">The binning strategy used to group the data.</param>
     private static void CreateHistogramTable([AllowNull][NotNull] ref DataTable destinationTable, string? proposedTableName, IReadOnlyList<double> sortedListOfData, IBinning binning)
     {
       if (destinationTable is null)
@@ -421,6 +436,11 @@ namespace Altaxo.Analysis.Statistics.Histograms
     /// <summary>
     /// Tests the histogram against a fitted normal distribution.
     /// </summary>
+    /// <param name="sortedListOfData">The sorted source data.</param>
+    /// <param name="binning">The linear binning used for the histogram.</param>
+    /// <param name="colBinPosition">The column that contains the bin positions.</param>
+    /// <param name="colBinCounts">The column that contains the bin counts.</param>
+    /// <returns>A textual summary of the test results.</returns>
     public static string TestAgainstStandardDistribution(IList<double> sortedListOfData, LinearBinning binning, INumericColumn colBinPosition, INumericColumn colBinCounts)
     {
       var stb = new StringBuilder();

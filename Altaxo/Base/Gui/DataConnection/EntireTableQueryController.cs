@@ -36,8 +36,10 @@ namespace Altaxo.Gui.DataConnection
   /// View contract for selecting a complete table, view, or stored procedure.
   /// </summary>
   public interface IEntireTableQueryView
-  { /// <summary>Sets content of the tree view that shows the tables, views and stored procedures of a data base.</summary>
+  {
+    /// <summary>Sets content of the tree view that shows the tables, views and stored procedures of a data base.</summary>
     /// <remarks>The image indices 0, 1, and 2 correspond to the nodes: Table , View, and Procedure.</remarks>
+    /// <param name="rootNode">The root node of the tree to display.</param>
     void SetTreeSource(NGTreeNode rootNode);
 
     /// <summary>

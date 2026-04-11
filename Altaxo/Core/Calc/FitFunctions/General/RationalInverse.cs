@@ -106,6 +106,7 @@ namespace Altaxo.Calc.FitFunctions.General
     /// <summary>
     /// Factory method for creating a 1/1 RationalInverse instance.
     /// </summary>
+    /// <returns>A fit function instance with nominator and denominator order 1.</returns>
     [FitFunctionCreator("RationalInverse", "General", 1, 1, 3)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.General.RationalInverse}")]
     public static IFitFunction CreateRationalInverse_1_1()
@@ -307,6 +308,11 @@ namespace Altaxo.Calc.FitFunctions.General
     /// <summary>
     /// Evaluates the derivative of the fit function with respect to parameters for all rows.
     /// </summary>
+    /// <param name="X">The independent variables.</param>
+    /// <param name="P">The parameter values.</param>
+    /// <param name="isParameterFixed">Flags indicating fixed parameters.</param>
+    /// <param name="DY">The matrix receiving the derivatives.</param>
+    /// <param name="dependentVariableChoice">The selected dependent variables.</param>
     public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = X.RowCount;

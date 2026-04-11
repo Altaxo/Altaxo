@@ -44,6 +44,10 @@ namespace Altaxo.Calc.LinearAlgebra.Single.Factorization
   /// </remarks>
   internal abstract class Cholesky : Cholesky<float>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Cholesky"/> class.
+    /// </summary>
+    /// <param name="factor">The Cholesky factor matrix.</param>
     protected Cholesky(Matrix<float> factor)
         : base(factor)
     {
@@ -52,6 +56,7 @@ namespace Altaxo.Calc.LinearAlgebra.Single.Factorization
     /// <summary>
     /// Gets the determinant of the matrix for which the Cholesky matrix was computed.
     /// </summary>
+    /// <returns>The determinant of the matrix.</returns>
     public override float Determinant
     {
       get

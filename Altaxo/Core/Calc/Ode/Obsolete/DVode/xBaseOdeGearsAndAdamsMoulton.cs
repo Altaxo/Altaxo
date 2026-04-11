@@ -24,11 +24,32 @@ namespace Altaxo.Calc.Ode.Obsolete.DVode
 
     private DVODE _dvode = new DVODE();
 #nullable disable
+    /// <summary>
+    /// Callback wrapper for the right-hand side function.
+    /// </summary>
     internal FEX _fex;
+
+    /// <summary>
+    /// Callback wrapper for the Jacobian function.
+    /// </summary>
     internal JEX _jex;
 #nullable enable
 
-    internal enum ODEType { NonStiff, Stiff }
+    /// <summary>
+    /// Specifies the stiffness classification of the ODE system.
+    /// </summary>
+    internal enum ODEType
+    {
+      /// <summary>
+      /// The system is treated as non-stiff.
+      /// </summary>
+      NonStiff,
+
+      /// <summary>
+      /// The system is treated as stiff.
+      /// </summary>
+      Stiff
+    }
 
     //private double MeT = 0d;
 
@@ -344,6 +365,11 @@ namespace Altaxo.Calc.Ode.Obsolete.DVode
       _IWork = new int[_Liw];
     }
 
+    /// <summary>
+    /// Initializes the translated function and optional Jacobian callbacks.
+    /// </summary>
+    /// <param name="fun">The function that evaluates the differential equation system.</param>
+    /// <param name="jac">The optional Jacobian evaluator.</param>
     [MemberNotNull(nameof(_fex))]
     internal override void InitializeFunctionAndJacobian(OdeFunction fun, OdeJacobian? jac)
     {
@@ -352,6 +378,9 @@ namespace Altaxo.Calc.Ode.Obsolete.DVode
         _jex = new JEX(_NEquations, jac);
     }
 
+    /// <summary>
+    /// Initializes the exception messages used by the DVODE wrapper.
+    /// </summary>
     internal override void InitializeExceptionMessages()
     {
       _Errors = new string[7];
@@ -452,6 +481,31 @@ namespace Altaxo.Calc.Ode.Obsolete.DVode
     /// <summary>
     /// Solves the nonlinear system for one DVODE step.
     /// </summary>
+    /// <param name="Y">The current solution vector.</param>
+    /// <param name="offset_y">The offset into <paramref name="Y"/>.</param>
+    /// <param name="YH">The history array.</param>
+    /// <param name="offset_yh">The offset into <paramref name="YH"/>.</param>
+    /// <param name="LDYH">The leading dimension of <paramref name="YH"/>.</param>
+    /// <param name="VSAV">The saved correction vector.</param>
+    /// <param name="offset_vsav">The offset into <paramref name="VSAV"/>.</param>
+    /// <param name="SAVF">The saved derivative vector.</param>
+    /// <param name="offset_savf">The offset into <paramref name="SAVF"/>.</param>
+    /// <param name="EWT">The error weight vector.</param>
+    /// <param name="offset_ewt">The offset into <paramref name="EWT"/>.</param>
+    /// <param name="ACOR">The accumulated corrections vector.</param>
+    /// <param name="offset_acor">The offset into <paramref name="ACOR"/>.</param>
+    /// <param name="IWM">The integer work array.</param>
+    /// <param name="offset_iwm">The offset into <paramref name="IWM"/>.</param>
+    /// <param name="WM">The floating-point work array.</param>
+    /// <param name="offset_wm">The offset into <paramref name="WM"/>.</param>
+    /// <param name="F">The function that evaluates the system derivatives.</param>
+    /// <param name="JAC">The Jacobian callback.</param>
+    /// <param name="PDUM">An auxiliary derivative callback.</param>
+    /// <param name="NFLAG">The nonlinear solver status flag.</param>
+    /// <param name="RPAR">The real parameter array.</param>
+    /// <param name="offset_rpar">The offset into <paramref name="RPAR"/>.</param>
+    /// <param name="IPAR">The integer parameter array.</param>
+    /// <param name="offset_ipar">The offset into <paramref name="IPAR"/>.</param>
     void Run(ref double[] Y, int offset_y, double[] YH, int offset_yh, int LDYH, double[] VSAV, int offset_vsav, ref double[] SAVF, int offset_savf, double[] EWT, int offset_ewt
              , ref double[] ACOR, int offset_acor, ref int[] IWM, int offset_iwm, ref double[] WM, int offset_wm, IFEX F, IJEX JAC, IFEX PDUM
              , ref int NFLAG, double[] RPAR, int offset_rpar, int[] IPAR, int offset_ipar);
@@ -471,7 +525,9 @@ namespace Altaxo.Calc.Ode.Obsolete.DVode
   //                                                      The Class: FEX
   //----------------------------------------------------------------------------------------------------------------------------
 
-  // C
+  /// <summary>
+  /// Adapts an <see cref="OdeFunction"/> to the DVODE function callback interface.
+  /// </summary>
   internal class FEX : IFEX
   {
     #region Fields
@@ -486,6 +542,11 @@ namespace Altaxo.Calc.Ode.Obsolete.DVode
 
     #region Constructor
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FEX"/> class.
+    /// </summary>
+    /// <param name="NEq">The number of equations.</param>
+    /// <param name="Func">The function that evaluates the differential equation system.</param>
     internal FEX(int NEq, OdeFunction Func)
     {
       MeNEq = NEq;
@@ -534,7 +595,9 @@ namespace Altaxo.Calc.Ode.Obsolete.DVode
   //                                                      The Class: JEX
   //----------------------------------------------------------------------------------------------------------------------------
 
-  // C
+  /// <summary>
+  /// Adapts an <see cref="OdeJacobian"/> to the DVODE Jacobian callback interface.
+  /// </summary>
   internal class JEX : IJEX
   {
     private OdeJacobian MeJacobian;
@@ -542,6 +605,11 @@ namespace Altaxo.Calc.Ode.Obsolete.DVode
     private double[,] MeJac;
     private int MeNEq;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="JEX"/> class.
+    /// </summary>
+    /// <param name="NEq">The number of equations.</param>
+    /// <param name="Jac">The Jacobian evaluator.</param>
     internal JEX(int NEq, OdeJacobian Jac)
     {
       MeNEq = NEq;

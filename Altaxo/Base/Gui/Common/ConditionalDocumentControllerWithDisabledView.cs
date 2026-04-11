@@ -46,6 +46,8 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Initializes a new instance of the <see cref="ConditionalDocumentControllerWithDisabledView{TModel}"/> class.
     /// </summary>
+    /// <param name="DocumentCreationActionForEnabledState">The action that creates the document for the enabled state.</param>
+    /// <param name="DocumentCreationActionForDisabledState">The action that creates the document for the disabled state.</param>
     public ConditionalDocumentControllerWithDisabledView(
       Func<TModel> DocumentCreationActionForEnabledState,
       Func<TModel> DocumentCreationActionForDisabledState
@@ -57,6 +59,9 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Initializes a new instance of the <see cref="ConditionalDocumentControllerWithDisabledView{TModel}"/> class.
     /// </summary>
+    /// <param name="DocumentCreationActionForEnabledState">The action that creates the document for the enabled state.</param>
+    /// <param name="DocumentCreationActionForDisabledState">The action that creates the document for the disabled state.</param>
+    /// <param name="ControllerCreationAction">The action that creates a controller for the document.</param>
     public ConditionalDocumentControllerWithDisabledView(
       Func<TModel> DocumentCreationActionForEnabledState,
       Func<TModel> DocumentCreationActionForDisabledState,

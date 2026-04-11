@@ -52,192 +52,288 @@ namespace Altaxo.Data
     /// <summary>
     /// Tries to apply addition with the specified right-hand operand.
     /// </summary>
+    /// <param name="a">The right-hand operand.</param>
+    /// <param name="b">The operation result if the operation succeeds.</param>
+    /// <returns><see langword="true"/> if the operation was applied; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_Addition(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
     /// <summary>
     /// Tries to apply addition with the specified left-hand operand.
     /// </summary>
+    /// <param name="a">The left-hand operand.</param>
+    /// <param name="b">The operation result if the operation succeeds.</param>
+    /// <returns><see langword="true"/> if the operation was applied; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_Addition_Rev(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
     /// <summary>
     /// Tries to apply subtraction with the specified right-hand operand.
     /// </summary>
+    /// <param name="a">The right-hand operand.</param>
+    /// <param name="b">The operation result if the operation succeeds.</param>
+    /// <returns><see langword="true"/> if the operation was applied; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_Subtraction(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
     /// <summary>
     /// Tries to apply subtraction with the specified left-hand operand.
     /// </summary>
+    /// <param name="a">The left-hand operand.</param>
+    /// <param name="b">The operation result if the operation succeeds.</param>
+    /// <returns><see langword="true"/> if the operation was applied; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_Subtraction_Rev(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
     /// <summary>
     /// Tries to apply multiplication with the specified right-hand operand.
     /// </summary>
+    /// <param name="a">The right-hand operand.</param>
+    /// <param name="b">The operation result if the operation succeeds.</param>
+    /// <returns><see langword="true"/> if the operation was applied; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_Multiplication(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
     /// <summary>
     /// Tries to apply multiplication with the specified left-hand operand.
     /// </summary>
+    /// <param name="a">The left-hand operand.</param>
+    /// <param name="b">The operation result if the operation succeeds.</param>
+    /// <returns><see langword="true"/> if the operation was applied; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_Multiplication_Rev(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
     /// <summary>
     /// Tries to apply division with the specified right-hand operand.
     /// </summary>
+    /// <param name="a">The right-hand operand.</param>
+    /// <param name="b">The operation result if the operation succeeds.</param>
+    /// <returns><see langword="true"/> if the operation was applied; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_Division(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
     /// <summary>
     /// Tries to apply division with the specified left-hand operand.
     /// </summary>
+    /// <param name="a">The left-hand operand.</param>
+    /// <param name="b">The operation result if the operation succeeds.</param>
+    /// <returns><see langword="true"/> if the operation was applied; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_Division_Rev(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
     /// <summary>
     /// Tries to apply modulo with the specified right-hand operand.
     /// </summary>
+    /// <param name="a">The right-hand operand.</param>
+    /// <param name="b">The operation result if the operation succeeds.</param>
+    /// <returns><see langword="true"/> if the operation was applied; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_Modulo(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
     /// <summary>
     /// Tries to apply modulo with the specified left-hand operand.
     /// </summary>
+    /// <param name="a">The left-hand operand.</param>
+    /// <param name="b">The operation result if the operation succeeds.</param>
+    /// <returns><see langword="true"/> if the operation was applied; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_Modulo_Rev(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
     /// <summary>
     /// Tries to apply bitwise/logical AND with the specified right-hand operand.
     /// </summary>
+    /// <param name="a">The right-hand operand.</param>
+    /// <param name="b">The operation result if the operation succeeds.</param>
+    /// <returns><see langword="true"/> if the operation was applied; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_And(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
     /// <summary>
     /// Tries to apply bitwise/logical AND with the specified left-hand operand.
     /// </summary>
+    /// <param name="a">The left-hand operand.</param>
+    /// <param name="b">The operation result if the operation succeeds.</param>
+    /// <returns><see langword="true"/> if the operation was applied; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_And_Rev(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
     /// <summary>
     /// Tries to apply bitwise/logical OR with the specified right-hand operand.
     /// </summary>
+    /// <param name="a">The right-hand operand.</param>
+    /// <param name="b">The operation result if the operation succeeds.</param>
+    /// <returns><see langword="true"/> if the operation was applied; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_Or(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
     /// <summary>
     /// Tries to apply bitwise/logical OR with the specified left-hand operand.
     /// </summary>
+    /// <param name="a">The left-hand operand.</param>
+    /// <param name="b">The operation result if the operation succeeds.</param>
+    /// <returns><see langword="true"/> if the operation was applied; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_Or_Rev(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
     /// <summary>
     /// Tries to apply XOR with the specified right-hand operand.
     /// </summary>
+    /// <param name="a">The right-hand operand.</param>
+    /// <param name="b">The operation result if the operation succeeds.</param>
+    /// <returns><see langword="true"/> if the operation was applied; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_Xor(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
     /// <summary>
     /// Tries to apply XOR with the specified left-hand operand.
     /// </summary>
+    /// <param name="a">The left-hand operand.</param>
+    /// <param name="b">The operation result if the operation succeeds.</param>
+    /// <returns><see langword="true"/> if the operation was applied; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_Xor_Rev(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
     /// <summary>
     /// Tries to apply a left shift with the specified operand.
     /// </summary>
+    /// <param name="a">The operand that specifies the shift count.</param>
+    /// <param name="b">The operation result if the operation succeeds.</param>
+    /// <returns><see langword="true"/> if the operation was applied; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_ShiftLeft(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
     /// <summary>
     /// Tries to apply a reversed left shift with the specified operand.
     /// </summary>
+    /// <param name="a">The operand that specifies the shift count.</param>
+    /// <param name="b">The operation result if the operation succeeds.</param>
+    /// <returns><see langword="true"/> if the operation was applied; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_ShiftLeft_Rev(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
     /// <summary>
     /// Tries to apply a right shift with the specified operand.
     /// </summary>
+    /// <param name="a">The operand that specifies the shift count.</param>
+    /// <param name="b">The operation result if the operation succeeds.</param>
+    /// <returns><see langword="true"/> if the operation was applied; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_ShiftRight(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
     /// <summary>
     /// Tries to apply a reversed right shift with the specified operand.
     /// </summary>
+    /// <param name="a">The operand that specifies the shift count.</param>
+    /// <param name="b">The operation result if the operation succeeds.</param>
+    /// <returns><see langword="true"/> if the operation was applied; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_ShiftRight_Rev(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
     /// <summary>
     /// Tries to compare for equality with the specified operand.
     /// </summary>
+    /// <param name="a">The operand to compare with this instance.</param>
+    /// <param name="b">The comparison result if the comparison is supported.</param>
+    /// <returns><see langword="true"/> if the comparison was performed; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_Equal(object a, out bool b)
     { b = Equals(a); return true; }
 
     /// <summary>
     /// Tries to compare for equality with the specified operand in reversed order.
     /// </summary>
+    /// <param name="a">The operand to compare with this instance.</param>
+    /// <param name="b">The comparison result if the comparison is supported.</param>
+    /// <returns><see langword="true"/> if the comparison was performed; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_Equal_Rev(object a, out bool b)
     { b = a.Equals(this); return true; }
 
     /// <summary>
     /// Tries to compare for inequality with the specified operand.
     /// </summary>
+    /// <param name="a">The operand to compare with this instance.</param>
+    /// <param name="b">The comparison result if the comparison is supported.</param>
+    /// <returns><see langword="true"/> if the comparison was performed; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_NotEqual(object a, out bool b)
     { b = !Equals(a); return true; }
 
     /// <summary>
     /// Tries to compare for inequality with the specified operand in reversed order.
     /// </summary>
+    /// <param name="a">The operand to compare with this instance.</param>
+    /// <param name="b">The comparison result if the comparison is supported.</param>
+    /// <returns><see langword="true"/> if the comparison was performed; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_NotEqual_Rev(object a, out bool b)
     { b = !a.Equals(this); return true; }
 
     /// <summary>
     /// Tries to compare whether this instance is less than the specified operand.
     /// </summary>
+    /// <param name="a">The operand to compare with this instance.</param>
+    /// <param name="b">The comparison result if the comparison is supported.</param>
+    /// <returns><see langword="true"/> if the comparison was performed; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_Lesser(object a, out bool b)
     { b = false; return false; }
 
     /// <summary>
     /// Tries to compare whether this instance is greater than the specified operand in reversed order.
     /// </summary>
+    /// <param name="a">The operand to compare with this instance.</param>
+    /// <param name="b">The comparison result if the comparison is supported.</param>
+    /// <returns><see langword="true"/> if the comparison was performed; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_Lesser_Rev(object a, out bool b)
     { b = false; return false; }
 
     /// <summary>
     /// Tries to compare whether this instance is greater than the specified operand.
     /// </summary>
+    /// <param name="a">The operand to compare with this instance.</param>
+    /// <param name="b">The comparison result if the comparison is supported.</param>
+    /// <returns><see langword="true"/> if the comparison was performed; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_Greater(object a, out bool b)
     { b = false; return false; }
 
     /// <summary>
     /// Tries to compare whether this instance is less than the specified operand in reversed order.
     /// </summary>
+    /// <param name="a">The operand to compare with this instance.</param>
+    /// <param name="b">The comparison result if the comparison is supported.</param>
+    /// <returns><see langword="true"/> if the comparison was performed; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_Greater_Rev(object a, out bool b)
     { b = false; return false; }
 
     /// <summary>
     /// Tries to compare whether this instance is less than or equal to the specified operand.
     /// </summary>
+    /// <param name="a">The operand to compare with this instance.</param>
+    /// <param name="b">The comparison result if the comparison is supported.</param>
+    /// <returns><see langword="true"/> if the comparison was performed; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_LesserOrEqual(object a, out bool b)
     { b = false; return false; }
 
     /// <summary>
     /// Tries to compare whether this instance is greater than or equal to the specified operand in reversed order.
     /// </summary>
+    /// <param name="a">The operand to compare with this instance.</param>
+    /// <param name="b">The comparison result if the comparison is supported.</param>
+    /// <returns><see langword="true"/> if the comparison was performed; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_LesserOrEqual_Rev(object a, out bool b)
     { b = false; return false; }
 
     /// <summary>
     /// Tries to compare whether this instance is greater than or equal to the specified operand.
     /// </summary>
+    /// <param name="a">The operand to compare with this instance.</param>
+    /// <param name="b">The comparison result if the comparison is supported.</param>
+    /// <returns><see langword="true"/> if the comparison was performed; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_GreaterOrEqual(object a, out bool b)
     { b = false; return false; }
 
     /// <summary>
     /// Tries to compare whether this instance is less than or equal to the specified operand in reversed order.
     /// </summary>
+    /// <param name="a">The operand to compare with this instance.</param>
+    /// <param name="b">The comparison result if the comparison is supported.</param>
+    /// <returns><see langword="true"/> if the comparison was performed; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_GreaterOrEqual_Rev(object a, out bool b)
     { b = false; return false; }
 
@@ -246,54 +342,73 @@ namespace Altaxo.Data
     /// <summary>
     /// Tries to apply the unary plus operator.
     /// </summary>
+    /// <param name="b">The operation result if the operation succeeds.</param>
+    /// <returns><see langword="true"/> if the operation was applied; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_Plus([MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
     /// <summary>
     /// Tries to apply the unary minus operator.
     /// </summary>
+    /// <param name="b">The operation result if the operation succeeds.</param>
+    /// <returns><see langword="true"/> if the operation was applied; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_Minus([MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
     /// <summary>
     /// Tries to apply the logical negation operator.
     /// </summary>
+    /// <param name="b">The operation result if the operation succeeds.</param>
+    /// <returns><see langword="true"/> if the operation was applied; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_Not([MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
     /// <summary>
     /// Tries to apply the bitwise complement operator.
     /// </summary>
+    /// <param name="b">The operation result if the operation succeeds.</param>
+    /// <returns><see langword="true"/> if the operation was applied; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_Complement([MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
     /// <summary>
     /// Tries to apply the increment operator.
     /// </summary>
+    /// <param name="b">The operation result if the operation succeeds.</param>
+    /// <returns><see langword="true"/> if the operation was applied; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_Increment([MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
     /// <summary>
     /// Tries to apply the decrement operator.
     /// </summary>
+    /// <param name="b">The operation result if the operation succeeds.</param>
+    /// <returns><see langword="true"/> if the operation was applied; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_Decrement([MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
     /// <summary>
     /// Tries to evaluate the instance for the <c>true</c> operator.
     /// </summary>
+    /// <param name="b">The boolean evaluation result if the operation succeeds.</param>
+    /// <returns><see langword="true"/> if the operation was applied; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_True(out bool b)
     { b = false; return false; }
 
     /// <summary>
     /// Tries to evaluate the instance for the <c>false</c> operator.
     /// </summary>
+    /// <param name="b">The boolean evaluation result if the operation succeeds.</param>
+    /// <returns><see langword="true"/> if the operation was applied; otherwise, <see langword="false"/>.</returns>
     public virtual bool vop_False(out bool b)
     { b = false; return false; }
 
     /// <summary>
     /// Applies the binary addition operator.
     /// </summary>
+    /// <param name="c1">The left-hand operand.</param>
+    /// <param name="c2">The right-hand operand.</param>
+    /// <returns>The result of the addition.</returns>
     public static OperatableObject operator +(OperatableObject c1, object c2)
     {
 
@@ -308,6 +423,9 @@ namespace Altaxo.Data
     /// <summary>
     /// Applies the binary addition operator with operands in reversed order.
     /// </summary>
+    /// <param name="c1">The left-hand operand.</param>
+    /// <param name="c2">The right-hand operand.</param>
+    /// <returns>The result of the addition.</returns>
     public static OperatableObject operator +(object c1, OperatableObject c2)
     {
 
@@ -322,6 +440,9 @@ namespace Altaxo.Data
     /// <summary>
     /// Applies the binary subtraction operator.
     /// </summary>
+    /// <param name="c1">The left-hand operand.</param>
+    /// <param name="c2">The right-hand operand.</param>
+    /// <returns>The result of the subtraction.</returns>
     public static OperatableObject operator -(OperatableObject c1, object c2)
     {
 
@@ -336,6 +457,9 @@ namespace Altaxo.Data
     /// <summary>
     /// Applies the binary multiplication operator.
     /// </summary>
+    /// <param name="c1">The left-hand operand.</param>
+    /// <param name="c2">The right-hand operand.</param>
+    /// <returns>The result of the multiplication.</returns>
     public static OperatableObject operator *(OperatableObject c1, object c2)
     {
 
@@ -350,6 +474,9 @@ namespace Altaxo.Data
     /// <summary>
     /// Applies the binary division operator.
     /// </summary>
+    /// <param name="c1">The left-hand operand.</param>
+    /// <param name="c2">The right-hand operand.</param>
+    /// <returns>The result of the division.</returns>
     public static OperatableObject operator /(OperatableObject c1, object c2)
     {
 
@@ -364,6 +491,9 @@ namespace Altaxo.Data
     /// <summary>
     /// Applies the binary modulo operator.
     /// </summary>
+    /// <param name="c1">The left-hand operand.</param>
+    /// <param name="c2">The right-hand operand.</param>
+    /// <returns>The result of the modulo operation.</returns>
     public static OperatableObject operator %(OperatableObject c1, object c2)
     {
 
@@ -378,6 +508,9 @@ namespace Altaxo.Data
     /// <summary>
     /// Applies the binary AND operator.
     /// </summary>
+    /// <param name="c1">The left-hand operand.</param>
+    /// <param name="c2">The right-hand operand.</param>
+    /// <returns>The result of the AND operation.</returns>
     public static OperatableObject operator &(OperatableObject c1, object c2)
     {
 
@@ -392,6 +525,9 @@ namespace Altaxo.Data
     /// <summary>
     /// Applies the binary OR operator.
     /// </summary>
+    /// <param name="c1">The left-hand operand.</param>
+    /// <param name="c2">The right-hand operand.</param>
+    /// <returns>The result of the OR operation.</returns>
     public static OperatableObject operator |(OperatableObject c1, object c2)
     {
 
@@ -406,6 +542,9 @@ namespace Altaxo.Data
     /// <summary>
     /// Applies the binary XOR operator.
     /// </summary>
+    /// <param name="c1">The left-hand operand.</param>
+    /// <param name="c2">The right-hand operand.</param>
+    /// <returns>The result of the XOR operation.</returns>
     public static OperatableObject operator ^(OperatableObject c1, object c2)
     {
 
@@ -420,6 +559,9 @@ namespace Altaxo.Data
     /// <summary>
     /// Applies the left-shift operator.
     /// </summary>
+    /// <param name="c1">The value to shift.</param>
+    /// <param name="c2">The shift count.</param>
+    /// <returns>The shifted value.</returns>
     public static OperatableObject operator <<(OperatableObject c1, int c2)
     {
 
@@ -431,6 +573,9 @@ namespace Altaxo.Data
     /// <summary>
     /// Applies the right-shift operator.
     /// </summary>
+    /// <param name="c1">The value to shift.</param>
+    /// <param name="c2">The shift count.</param>
+    /// <returns>The shifted value.</returns>
     public static OperatableObject operator >>(OperatableObject c1, int c2)
     {
 
@@ -443,6 +588,9 @@ namespace Altaxo.Data
     /// <summary>
     /// Applies the equality operator.
     /// </summary>
+    /// <param name="c1">The left-hand operand.</param>
+    /// <param name="c2">The right-hand operand.</param>
+    /// <returns><see langword="true"/> if both operands are equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator ==(OperatableObject c1, object c2)
     {
       if (c1 is null && c2 is null)
@@ -460,6 +608,9 @@ namespace Altaxo.Data
     /// <summary>
     /// Applies the inequality operator.
     /// </summary>
+    /// <param name="c1">The left-hand operand.</param>
+    /// <param name="c2">The right-hand operand.</param>
+    /// <returns><see langword="true"/> if the operands are not equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator !=(OperatableObject c1, object c2)
     {
 
@@ -478,6 +629,9 @@ namespace Altaxo.Data
     /// <summary>
     /// Applies the less-than operator.
     /// </summary>
+    /// <param name="c1">The left-hand operand.</param>
+    /// <param name="c2">The right-hand operand.</param>
+    /// <returns><see langword="true"/> if <paramref name="c1"/> is less than <paramref name="c2"/>; otherwise, <see langword="false"/>.</returns>
     public static bool operator <(OperatableObject c1, object c2)
     {
 
@@ -492,6 +646,9 @@ namespace Altaxo.Data
     /// <summary>
     /// Applies the greater-than operator.
     /// </summary>
+    /// <param name="c1">The left-hand operand.</param>
+    /// <param name="c2">The right-hand operand.</param>
+    /// <returns><see langword="true"/> if <paramref name="c1"/> is greater than <paramref name="c2"/>; otherwise, <see langword="false"/>.</returns>
     public static bool operator >(OperatableObject c1, object c2)
     {
 
@@ -506,6 +663,9 @@ namespace Altaxo.Data
     /// <summary>
     /// Applies the less-than-or-equal operator.
     /// </summary>
+    /// <param name="c1">The left-hand operand.</param>
+    /// <param name="c2">The right-hand operand.</param>
+    /// <returns><see langword="true"/> if <paramref name="c1"/> is less than or equal to <paramref name="c2"/>; otherwise, <see langword="false"/>.</returns>
     public static bool operator <=(OperatableObject c1, object c2)
     {
 
@@ -520,6 +680,9 @@ namespace Altaxo.Data
     /// <summary>
     /// Applies the greater-than-or-equal operator.
     /// </summary>
+    /// <param name="c1">The left-hand operand.</param>
+    /// <param name="c2">The right-hand operand.</param>
+    /// <returns><see langword="true"/> if <paramref name="c1"/> is greater than or equal to <paramref name="c2"/>; otherwise, <see langword="false"/>.</returns>
     public static bool operator >=(OperatableObject c1, object c2)
     {
 
@@ -534,6 +697,8 @@ namespace Altaxo.Data
     /// <summary>
     /// Applies unary plus.
     /// </summary>
+    /// <param name="c1">The operand.</param>
+    /// <returns>The result of applying unary plus.</returns>
     public static OperatableObject operator +(OperatableObject c1)
     {
 
@@ -546,6 +711,8 @@ namespace Altaxo.Data
     /// <summary>
     /// Applies unary minus.
     /// </summary>
+    /// <param name="c1">The operand.</param>
+    /// <returns>The result of applying unary minus.</returns>
     public static OperatableObject operator -(OperatableObject c1)
     {
 
@@ -558,6 +725,8 @@ namespace Altaxo.Data
     /// <summary>
     /// Applies logical negation.
     /// </summary>
+    /// <param name="c1">The operand.</param>
+    /// <returns>The result of applying logical negation.</returns>
     public static OperatableObject operator !(OperatableObject c1)
     {
 
@@ -570,6 +739,8 @@ namespace Altaxo.Data
     /// <summary>
     /// Applies bitwise complement.
     /// </summary>
+    /// <param name="c1">The operand.</param>
+    /// <returns>The result of applying bitwise complement.</returns>
     public static OperatableObject operator ~(OperatableObject c1)
     {
 
@@ -582,6 +753,8 @@ namespace Altaxo.Data
     /// <summary>
     /// Applies increment.
     /// </summary>
+    /// <param name="c1">The operand.</param>
+    /// <returns>The incremented value.</returns>
     public static OperatableObject operator ++(OperatableObject c1)
     {
 
@@ -594,6 +767,8 @@ namespace Altaxo.Data
     /// <summary>
     /// Applies decrement.
     /// </summary>
+    /// <param name="c1">The operand.</param>
+    /// <returns>The decremented value.</returns>
     public static OperatableObject operator --(OperatableObject c1)
     {
 
@@ -606,6 +781,8 @@ namespace Altaxo.Data
     /// <summary>
     /// Evaluates the instance for boolean <c>true</c>.
     /// </summary>
+    /// <param name="c1">The operand.</param>
+    /// <returns><see langword="true"/> if the operand evaluates to <see langword="true"/>; otherwise, <see langword="false"/>.</returns>
     public static bool operator true(OperatableObject c1)
     {
 
@@ -618,6 +795,8 @@ namespace Altaxo.Data
     /// <summary>
     /// Evaluates the instance for boolean <c>false</c>.
     /// </summary>
+    /// <param name="c1">The operand.</param>
+    /// <returns><see langword="true"/> if the operand evaluates to <see langword="false"/>; otherwise, <see langword="false"/>.</returns>
     public static bool operator false(OperatableObject c1)
     {
 

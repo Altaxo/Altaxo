@@ -129,6 +129,7 @@ namespace Altaxo.Scripting
       return returnValue;
     }
 
+    /// <inheritdoc/>
     void ICollection<FitFunctionScript>.Add(FitFunctionScript script)
     {
       Add(script);
@@ -162,6 +163,8 @@ namespace Altaxo.Scripting
     /// <summary>
     /// Copies the scripts to the specified array.
     /// </summary>
+    /// <param name="array">The destination array.</param>
+    /// <param name="index">The zero-based index in <paramref name="array"/> at which copying begins.</param>
     public void CopyTo(FitFunctionScript[] array, int index)
     {
       _innerList.Keys.CopyTo(array, index);
@@ -197,6 +200,7 @@ namespace Altaxo.Scripting
 
     #region IEnumerable Members
 
+    /// <inheritdoc/>
     IEnumerator IEnumerable.GetEnumerator()
     {
       return _innerList.Keys.GetEnumerator();
@@ -224,6 +228,7 @@ namespace Altaxo.Scripting
       get { return false; }
     }
 
+    /// <inheritdoc/>
     bool ICollection<FitFunctionScript>.Remove(FitFunctionScript item)
     {
       var success = _innerList.Remove(item);
@@ -232,6 +237,7 @@ namespace Altaxo.Scripting
       return success;
     }
 
+    /// <inheritdoc/>
     IEnumerator<FitFunctionScript> IEnumerable<FitFunctionScript>.GetEnumerator()
     {
       return _innerList.Keys.GetEnumerator();

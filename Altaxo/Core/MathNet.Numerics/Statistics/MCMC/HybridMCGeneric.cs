@@ -47,6 +47,7 @@ namespace Altaxo.Calc.Statistics.Mcmc
     /// </summary>
     /// <param name="f">Function to be differentiated.</param>
     /// <param name="x">Value where the derivative is computed.</param>
+    /// <returns>The derivative evaluated at <paramref name="x"/>.</returns>
     public delegate T DiffMethod(DensityLn<T> f, T x);
 
     /// <summary>
@@ -135,6 +136,7 @@ namespace Altaxo.Calc.Statistics.Mcmc
     /// <summary>
     /// Returns a sample from the distribution P.
     /// </summary>
+    /// <returns>A sample from the distribution P.</returns>
     public override T Sample()
     {
       Burn(_burnInterval + 1);
@@ -145,6 +147,7 @@ namespace Altaxo.Calc.Statistics.Mcmc
     /// <summary>
     /// This method runs the sampler for a number of iterations without returning a sample
     /// </summary>
+    /// <param name="n">The number of iterations to run without returning a sample.</param>
     protected void Burn(int n)
     {
       T p = Create();
@@ -214,6 +217,7 @@ namespace Altaxo.Calc.Statistics.Mcmc
     /// </summary>
     /// <param name="first">First vector/scalar in the product.</param>
     /// <param name="second">Second vector/scalar in the product.</param>
+    /// <returns>The dot product of <paramref name="first"/> and <paramref name="second"/>.</returns>
     protected abstract double DoProduct(T first, T second);
 
     /// <summary>
@@ -243,6 +247,9 @@ namespace Altaxo.Calc.Statistics.Mcmc
     /// <summary>
     /// The Hamiltonian equations that is used to produce the new sample.
     /// </summary>
+    /// <param name="gNew">The current gradient, updated in place.</param>
+    /// <param name="mNew">The current sample, updated in place.</param>
+    /// <param name="p">The momentum, updated in place.</param>
     protected void HamiltonianEquations(ref T gNew, ref T mNew, ref T p)
     {
       DoSubtract(ref p, _stepSize / 2, gNew);
@@ -254,8 +261,8 @@ namespace Altaxo.Calc.Statistics.Mcmc
     /// <summary>
     /// Method to compute the Hamiltonian used in the method.
     /// </summary>
-    /// <param name="momentum">The momentum.</param>
-    /// <param name="e">The energy.</param>
+    /// <param name="momentum">The momentum vector.</param>
+    /// <param name="e">The energy value.</param>
     /// <returns>Hamiltonian=E+p.p/2</returns>
     protected double Hamiltonian(T momentum, double e)
     {

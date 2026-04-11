@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -957,6 +957,7 @@ namespace Altaxo.Graph.Scales.Ticks
     /// <param name="isEndExtendable">True if the scale end can be extended.</param>
     /// <param name="propOrg">Returns the proposed value of the scale origin.</param>
     /// <param name="propEnd">Returns the proposed value of the scale end.</param>
+    /// <returns><see langword="true"/> if the boundaries were modified; otherwise, <see langword="false"/>.</returns>
     public bool GetOrgEndWithGraceAndZeroLever(double scaleOrg, double scaleEnd, bool isOrgExtendable, bool isEndExtendable, out double propOrg, out double propEnd)
     {
       bool modified = false;
@@ -1126,6 +1127,7 @@ namespace Altaxo.Graph.Scales.Ticks
     /// </summary>
     /// <param name="scaleSpan">Scale span (end-origin).</param>
     /// <param name="targetNumberOfMajorTicks">Target number of major ticks.</param>
+    /// <returns>The raw major span together with its decadic exponent.</returns>
     public static (double MajorSpanRaw, int MajorSpanDecadicExponent) CalculateMajorSpan(double scaleSpan, int targetNumberOfMajorTicks)
     {
       if (!(scaleSpan > 0))

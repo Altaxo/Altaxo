@@ -44,6 +44,10 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
   /// </remarks>
   internal abstract class Cholesky : Cholesky<double>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Cholesky"/> class.
+    /// </summary>
+    /// <param name="factor">The Cholesky factor.</param>
     protected Cholesky(Matrix<double> factor)
         : base(factor)
     {

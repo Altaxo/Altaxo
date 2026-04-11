@@ -272,6 +272,7 @@ namespace Altaxo.Graph.Plot.Data
     /// <summary>
     /// Only for deserialization purposes.
     /// </summary>
+    /// <param name="info">The deserialization information.</param>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected XYNonlinearFitFunctionConfidenceBandPlotData(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
@@ -400,6 +401,7 @@ namespace Altaxo.Graph.Plot.Data
     /// <summary>
     /// Initializes a new instance by copying another confidence-band plot data object.
     /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public XYNonlinearFitFunctionConfidenceBandPlotData(XYNonlinearFitFunctionConfidenceBandPlotData from)
     {
       CopyFrom(from);
@@ -408,6 +410,7 @@ namespace Altaxo.Graph.Plot.Data
     /// <summary>
     /// Copies all confidence-band settings from another instance.
     /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     [MemberNotNull(nameof(_fitDocumentIdentifier), nameof(_fitDocument), nameof(_cachedParameters), nameof(_cachedParametersForJacobianEvaluation), nameof(_cachedJacobian), nameof(_functionValues), nameof(_covarianceMatrix), nameof(_cachedIndicesOfVaryingParametersOfThisFitElement))]
     protected void CopyFrom(XYNonlinearFitFunctionConfidenceBandPlotData from)
     {

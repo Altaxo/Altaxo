@@ -96,6 +96,7 @@ namespace Altaxo.Calc.Distributions
     /// </summary>
     /// <param name="shape">The shape (α) of the distribution. Range: α > 0.</param>
     /// <param name="scale">The scale (β) of the distribution. Range: β > 0.</param>
+    /// <returns><c>true</c> if the parameters define a valid inverse-gamma distribution; otherwise, <c>false</c>.</returns>
     public static bool IsValidParameterSet(double shape, double scale)
     {
       return shape > 0.0 && scale > 0.0;
@@ -244,15 +245,16 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Fills an array with samples generated from the distribution.
     /// </summary>
+    /// <param name="values">The array to fill with samples.</param>
     public void Samples(double[] values)
     {
       SamplesUnchecked(_random, values, _shape, _scale);
     }
 
     /// <summary>
-    /// Generates a sequence of samples from the Cauchy distribution.
+    /// Generates a sequence of samples from the inverse-gamma distribution.
     /// </summary>
-    /// <returns>a sequence of samples from the distribution.</returns>
+    /// <returns>A sequence of samples from the distribution.</returns>
     public IEnumerable<double> Samples()
     {
       return SamplesUnchecked(_random, _shape, _scale);

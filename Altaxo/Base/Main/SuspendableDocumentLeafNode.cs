@@ -181,6 +181,7 @@ namespace Altaxo.Main
     /// <summary>
     /// Called if some member of this instance itself has changed.
     /// </summary>
+    /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
     protected override void EhSelfChanged(EventArgs e)
     {
       if (IsDisposeInProgress)

@@ -342,6 +342,9 @@ namespace Altaxo.Main.PegParser
   /// </summary>
   public struct PegError
   {
+    /// <summary>
+    /// Stores source-string positions where lines start.
+    /// </summary>
     internal SortedList<int, int> lineStarts;
 
     private void AddLineStarts(string s, int first, int last, ref int lineNo, out int colNo)
@@ -624,12 +627,40 @@ namespace Altaxo.Main.PegParser
     #endregion ICloneable Members
   }
 
+  /// <summary>
+  /// Stores the current parse-tree state while parsing.
+  /// </summary>
   internal struct PegTree
   {
-    internal enum AddPolicy { eAddAsChild, eAddAsSibling };
+    /// <summary>
+    /// Defines how newly created nodes are added to the tree.
+    /// </summary>
+    internal enum AddPolicy
+    {
+      /// <summary>
+      /// Adds the node as a child of the current node.
+      /// </summary>
+      eAddAsChild,
 
+      /// <summary>
+      /// Adds the node as a sibling of the current node.
+      /// </summary>
+      eAddAsSibling
+    };
+
+    /// <summary>
+    /// The root node of the parse tree.
+    /// </summary>
     internal PegNode root_;
+
+    /// <summary>
+    /// The current node in the parse tree.
+    /// </summary>
     internal PegNode cur_;
+
+    /// <summary>
+    /// The current add policy.
+    /// </summary>
     internal AddPolicy addPolicy;
   }
 
@@ -1979,6 +2010,10 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified bit range against an exact value.
     /// </summary>
+    /// <param name="lowBitNo">The one-based index of the lowest bit in the range.</param>
+    /// <param name="highBitNo">The number of bits to include starting at <paramref name="lowBitNo"/>.</param>
+    /// <param name="toMatch">The exact bit value to match.</param>
+    /// <returns><c>true</c> if the bit range matches; otherwise, <c>false</c>.</returns>
     public bool Bits(int lowBitNo, int highBitNo, byte toMatch)
     {
       if (pos_ < srcLen_ && ((src_[pos_] >> (lowBitNo - 1)) & ((1 << highBitNo) - 1)) == toMatch)
@@ -1992,6 +2027,10 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified bit range against a byte set.
     /// </summary>
+    /// <param name="lowBitNo">The one-based index of the lowest bit in the range.</param>
+    /// <param name="highBitNo">The number of bits to include starting at <paramref name="lowBitNo"/>.</param>
+    /// <param name="toMatch">The byte set to match against.</param>
+    /// <returns><c>true</c> if the bit range matches; otherwise, <c>false</c>.</returns>
     public bool Bits(int lowBitNo, int highBitNo, BytesetData toMatch)
     {
       if (pos_ < srcLen_)
@@ -2006,6 +2045,10 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Tests whether the specified bit range matches an exact value without consuming input.
     /// </summary>
+    /// <param name="lowBitNo">The one-based index of the lowest bit in the range.</param>
+    /// <param name="highBitNo">The number of bits to include starting at <paramref name="lowBitNo"/>.</param>
+    /// <param name="toMatch">The exact bit value to match.</param>
+    /// <returns><c>true</c> if the bit range matches; otherwise, <c>false</c>.</returns>
     public bool PeekBits(int lowBitNo, int highBitNo, byte toMatch)
     {
       return pos_ < srcLen_ && ((src_[pos_] >> (lowBitNo - 1)) & ((1 << highBitNo) - 1)) == toMatch;
@@ -2014,6 +2057,10 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Tests whether the specified bit range does not match an exact value without consuming input.
     /// </summary>
+    /// <param name="lowBitNo">The one-based index of the lowest bit in the range.</param>
+    /// <param name="highBitNo">The number of bits to include starting at <paramref name="lowBitNo"/>.</param>
+    /// <param name="toMatch">The exact bit value that must not match.</param>
+    /// <returns><c>true</c> if the bit range does not match; otherwise, <c>false</c>.</returns>
     public bool NotBits(int lowBitNo, int highBitNo, byte toMatch)
     {
       return !(pos_ < srcLen_ && ((src_[pos_] >> (lowBitNo - 1)) & ((1 << highBitNo) - 1)) == toMatch);
@@ -2022,6 +2069,10 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Reads the specified bit range into an integer.
     /// </summary>
+    /// <param name="lowBitNo">The one-based index of the lowest bit in the range.</param>
+    /// <param name="highBitNo">The number of bits to include starting at <paramref name="lowBitNo"/>.</param>
+    /// <param name="val">Receives the extracted bit value.</param>
+    /// <returns><c>true</c> if the bits were read successfully; otherwise, <c>false</c>.</returns>
     public bool IntoBits(int lowBitNo, int highBitNo, out int val)
     {
       return BitsInto(lowBitNo, highBitNo, out val);
@@ -2030,6 +2081,11 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Reads the specified bit range into an integer and tests it against a byte set.
     /// </summary>
+    /// <param name="lowBitNo">The one-based index of the lowest bit in the range.</param>
+    /// <param name="highBitNo">The number of bits to include starting at <paramref name="lowBitNo"/>.</param>
+    /// <param name="toMatch">The byte set to match against.</param>
+    /// <param name="val">Receives the extracted bit value.</param>
+    /// <returns><c>true</c> if the bits were read successfully; otherwise, <c>false</c>.</returns>
     public bool IntoBits(int lowBitNo, int highBitNo, BytesetData toMatch, out int val)
     {
       return BitsInto(lowBitNo, highBitNo, out val);
@@ -2038,6 +2094,9 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified single bit against an exact value.
     /// </summary>
+    /// <param name="bitNo">The one-based bit index.</param>
+    /// <param name="toMatch">The exact bit value to match.</param>
+    /// <returns><c>true</c> if the bit matches; otherwise, <c>false</c>.</returns>
     public bool Bit(int bitNo, byte toMatch)
     {
       if (pos_ < srcLen_ && ((src_[pos_] >> (bitNo - 1)) & 1) == toMatch)
@@ -2051,6 +2110,9 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Tests whether the specified single bit matches an exact value without consuming input.
     /// </summary>
+    /// <param name="bitNo">The one-based bit index.</param>
+    /// <param name="toMatch">The exact bit value to match.</param>
+    /// <returns><c>true</c> if the bit matches; otherwise, <c>false</c>.</returns>
     public bool PeekBit(int bitNo, byte toMatch)
     {
       return pos_ < srcLen_ && ((src_[pos_] >> (bitNo - 1)) & 1) == toMatch;
@@ -2059,6 +2121,9 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Tests whether the specified single bit does not match an exact value without consuming input.
     /// </summary>
+    /// <param name="bitNo">The one-based bit index.</param>
+    /// <param name="toMatch">The exact bit value that must not match.</param>
+    /// <returns><c>true</c> if the bit does not match; otherwise, <c>false</c>.</returns>
     public bool NotBit(int bitNo, byte toMatch)
     {
       return !(pos_ < srcLen_ && ((src_[pos_] >> (bitNo - 1)) & 1) == toMatch);
@@ -2071,6 +2136,8 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified byte literal.
     /// </summary>
+    /// <param name="c1">The byte to match.</param>
+    /// <returns><c>true</c> if the byte matches; otherwise, <c>false</c>.</returns>
     public bool Char(byte c1)
     {
       if (pos_ < srcLen_ && src_[pos_] == c1)
@@ -2081,6 +2148,9 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified two-byte literal.
     /// </summary>
+    /// <param name="c1">The first byte to match.</param>
+    /// <param name="c2">The second byte to match.</param>
+    /// <returns><c>true</c> if both bytes match; otherwise, <c>false</c>.</returns>
     public bool Char(byte c1, byte c2)
     {
       if (pos_ + 1 < srcLen_
@@ -2093,6 +2163,10 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified three-byte literal.
     /// </summary>
+    /// <param name="c1">The first byte to match.</param>
+    /// <param name="c2">The second byte to match.</param>
+    /// <param name="c3">The third byte to match.</param>
+    /// <returns><c>true</c> if all bytes match; otherwise, <c>false</c>.</returns>
     public bool Char(byte c1, byte c2, byte c3)
     {
       if (pos_ + 2 < srcLen_
@@ -2106,6 +2180,11 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified four-byte literal.
     /// </summary>
+    /// <param name="c1">The first byte to match.</param>
+    /// <param name="c2">The second byte to match.</param>
+    /// <param name="c3">The third byte to match.</param>
+    /// <param name="c4">The fourth byte to match.</param>
+    /// <returns><c>true</c> if all bytes match; otherwise, <c>false</c>.</returns>
     public bool Char(byte c1, byte c2, byte c3, byte c4)
     {
       if (pos_ + 3 < srcLen_
@@ -2120,6 +2199,12 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified five-byte literal.
     /// </summary>
+    /// <param name="c1">The first byte to match.</param>
+    /// <param name="c2">The second byte to match.</param>
+    /// <param name="c3">The third byte to match.</param>
+    /// <param name="c4">The fourth byte to match.</param>
+    /// <param name="c5">The fifth byte to match.</param>
+    /// <returns><c>true</c> if all bytes match; otherwise, <c>false</c>.</returns>
     public bool Char(byte c1, byte c2, byte c3, byte c4, byte c5)
     {
       if (pos_ + 4 < srcLen_
@@ -2135,6 +2220,13 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified six-byte literal.
     /// </summary>
+    /// <param name="c1">The first byte to match.</param>
+    /// <param name="c2">The second byte to match.</param>
+    /// <param name="c3">The third byte to match.</param>
+    /// <param name="c4">The fourth byte to match.</param>
+    /// <param name="c5">The fifth byte to match.</param>
+    /// <param name="c6">The sixth byte to match.</param>
+    /// <returns><c>true</c> if all bytes match; otherwise, <c>false</c>.</returns>
     public bool Char(byte c1, byte c2, byte c3, byte c4, byte c5, byte c6)
     {
       if (pos_ + 5 < srcLen_
@@ -2151,6 +2243,14 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified seven-byte literal.
     /// </summary>
+    /// <param name="c1">The first byte to match.</param>
+    /// <param name="c2">The second byte to match.</param>
+    /// <param name="c3">The third byte to match.</param>
+    /// <param name="c4">The fourth byte to match.</param>
+    /// <param name="c5">The fifth byte to match.</param>
+    /// <param name="c6">The sixth byte to match.</param>
+    /// <param name="c7">The seventh byte to match.</param>
+    /// <returns><c>true</c> if all bytes match; otherwise, <c>false</c>.</returns>
     public bool Char(byte c1, byte c2, byte c3, byte c4, byte c5, byte c6, byte c7)
     {
       if (pos_ + 6 < srcLen_
@@ -2168,6 +2268,15 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified eight-byte literal.
     /// </summary>
+    /// <param name="c1">The first byte to match.</param>
+    /// <param name="c2">The second byte to match.</param>
+    /// <param name="c3">The third byte to match.</param>
+    /// <param name="c4">The fourth byte to match.</param>
+    /// <param name="c5">The fifth byte to match.</param>
+    /// <param name="c6">The sixth byte to match.</param>
+    /// <param name="c7">The seventh byte to match.</param>
+    /// <param name="c8">The eighth byte to match.</param>
+    /// <returns><c>true</c> if all bytes match; otherwise, <c>false</c>.</returns>
     public bool Char(byte c1, byte c2, byte c3, byte c4, byte c5, byte c6, byte c7, byte c8)
     {
       if (pos_ + 7 < srcLen_
@@ -2186,6 +2295,8 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified byte sequence.
     /// </summary>
+    /// <param name="s">The byte sequence to match.</param>
+    /// <returns><c>true</c> if the sequence matches; otherwise, <c>false</c>.</returns>
     public bool Char(byte[] s)
     {
       int sLength = s.Length;
@@ -2203,6 +2314,8 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Converts an ASCII lowercase byte to uppercase.
     /// </summary>
+    /// <param name="c">The byte to convert.</param>
+    /// <returns>The uppercase byte if <paramref name="c"/> is lowercase ASCII; otherwise, the original byte.</returns>
     public static byte ToUpper(byte c)
     {
       if (c >= 97 && c <= 122)
@@ -2214,6 +2327,8 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified byte literal case-insensitively.
     /// </summary>
+    /// <param name="c1">The byte to match.</param>
+    /// <returns><c>true</c> if the byte matches; otherwise, <c>false</c>.</returns>
     public bool IChar(byte c1)
     {
       if (pos_ < srcLen_ && ToUpper(src_[pos_]) == c1)
@@ -2224,6 +2339,9 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified two-byte literal case-insensitively.
     /// </summary>
+    /// <param name="c1">The first byte to match.</param>
+    /// <param name="c2">The second byte to match.</param>
+    /// <returns><c>true</c> if both bytes match; otherwise, <c>false</c>.</returns>
     public bool IChar(byte c1, byte c2)
     {
       if (pos_ + 1 < srcLen_
@@ -2236,6 +2354,10 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified three-byte literal case-insensitively.
     /// </summary>
+    /// <param name="c1">The first byte to match.</param>
+    /// <param name="c2">The second byte to match.</param>
+    /// <param name="c3">The third byte to match.</param>
+    /// <returns><c>true</c> if all bytes match; otherwise, <c>false</c>.</returns>
     public bool IChar(byte c1, byte c2, byte c3)
     {
       if (pos_ + 2 < srcLen_
@@ -2249,6 +2371,11 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified four-byte literal case-insensitively.
     /// </summary>
+    /// <param name="c1">The first byte to match.</param>
+    /// <param name="c2">The second byte to match.</param>
+    /// <param name="c3">The third byte to match.</param>
+    /// <param name="c4">The fourth byte to match.</param>
+    /// <returns><c>true</c> if all bytes match; otherwise, <c>false</c>.</returns>
     public bool IChar(byte c1, byte c2, byte c3, byte c4)
     {
       if (pos_ + 3 < srcLen_
@@ -2263,6 +2390,12 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified five-byte literal case-insensitively.
     /// </summary>
+    /// <param name="c1">The first byte to match.</param>
+    /// <param name="c2">The second byte to match.</param>
+    /// <param name="c3">The third byte to match.</param>
+    /// <param name="c4">The fourth byte to match.</param>
+    /// <param name="c5">The fifth byte to match.</param>
+    /// <returns><c>true</c> if all bytes match; otherwise, <c>false</c>.</returns>
     public bool IChar(byte c1, byte c2, byte c3, byte c4, byte c5)
     {
       if (pos_ + 4 < srcLen_
@@ -2278,6 +2411,13 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified six-byte literal case-insensitively.
     /// </summary>
+    /// <param name="c1">The first byte to match.</param>
+    /// <param name="c2">The second byte to match.</param>
+    /// <param name="c3">The third byte to match.</param>
+    /// <param name="c4">The fourth byte to match.</param>
+    /// <param name="c5">The fifth byte to match.</param>
+    /// <param name="c6">The sixth byte to match.</param>
+    /// <returns><c>true</c> if all bytes match; otherwise, <c>false</c>.</returns>
     public bool IChar(byte c1, byte c2, byte c3, byte c4, byte c5, byte c6)
     {
       if (pos_ + 5 < srcLen_
@@ -2294,6 +2434,14 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified seven-byte literal case-insensitively.
     /// </summary>
+    /// <param name="c1">The first byte to match.</param>
+    /// <param name="c2">The second byte to match.</param>
+    /// <param name="c3">The third byte to match.</param>
+    /// <param name="c4">The fourth byte to match.</param>
+    /// <param name="c5">The fifth byte to match.</param>
+    /// <param name="c6">The sixth byte to match.</param>
+    /// <param name="c7">The seventh byte to match.</param>
+    /// <returns><c>true</c> if all bytes match; otherwise, <c>false</c>.</returns>
     public bool IChar(byte c1, byte c2, byte c3, byte c4, byte c5, byte c6, byte c7)
     {
       if (pos_ + 6 < srcLen_
@@ -2311,6 +2459,8 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified byte sequence case-insensitively.
     /// </summary>
+    /// <param name="s">The byte sequence to match.</param>
+    /// <returns><c>true</c> if the sequence matches; otherwise, <c>false</c>.</returns>
     public bool IChar(byte[] s)
     {
       int sLength = s.Length;
@@ -2328,6 +2478,9 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches a byte within the specified inclusive range.
     /// </summary>
+    /// <param name="c0">The lower bound of the range.</param>
+    /// <param name="c1">The upper bound of the range.</param>
+    /// <returns><c>true</c> if the current byte is in range; otherwise, <c>false</c>.</returns>
     public bool In(byte c0, byte c1)
     {
       if (pos_ < srcLen_
@@ -2342,6 +2495,11 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches a byte within either of the specified inclusive ranges.
     /// </summary>
+    /// <param name="c0">The lower bound of the first range.</param>
+    /// <param name="c1">The upper bound of the first range.</param>
+    /// <param name="c2">The lower bound of the second range.</param>
+    /// <param name="c3">The upper bound of the second range.</param>
+    /// <returns><c>true</c> if the current byte is in either range; otherwise, <c>false</c>.</returns>
     public bool In(byte c0, byte c1, byte c2, byte c3)
     {
       if (pos_ < srcLen_)
@@ -2360,6 +2518,13 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches a byte within any of the specified inclusive ranges.
     /// </summary>
+    /// <param name="c0">The lower bound of the first range.</param>
+    /// <param name="c1">The upper bound of the first range.</param>
+    /// <param name="c2">The lower bound of the second range.</param>
+    /// <param name="c3">The upper bound of the second range.</param>
+    /// <param name="c4">The lower bound of the third range.</param>
+    /// <param name="c5">The upper bound of the third range.</param>
+    /// <returns><c>true</c> if the current byte is in any range; otherwise, <c>false</c>.</returns>
     public bool In(byte c0, byte c1, byte c2, byte c3, byte c4, byte c5)
     {
       if (pos_ < srcLen_)
@@ -2379,6 +2544,15 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches a byte within any of the specified inclusive ranges.
     /// </summary>
+    /// <param name="c0">The lower bound of the first range.</param>
+    /// <param name="c1">The upper bound of the first range.</param>
+    /// <param name="c2">The lower bound of the second range.</param>
+    /// <param name="c3">The upper bound of the second range.</param>
+    /// <param name="c4">The lower bound of the third range.</param>
+    /// <param name="c5">The upper bound of the third range.</param>
+    /// <param name="c6">The lower bound of the fourth range.</param>
+    /// <param name="c7">The upper bound of the fourth range.</param>
+    /// <returns><c>true</c> if the current byte is in any range; otherwise, <c>false</c>.</returns>
     public bool In(byte c0, byte c1, byte c2, byte c3, byte c4, byte c5, byte c6, byte c7)
     {
       if (pos_ < srcLen_)
@@ -2399,6 +2573,8 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches a byte within any of the inclusive ranges defined by the array.
     /// </summary>
+    /// <param name="s">The array containing inclusive range pairs.</param>
+    /// <returns><c>true</c> if the current byte is in any range; otherwise, <c>false</c>.</returns>
     public bool In(byte[] s)
     {
       if (pos_ < srcLen_)
@@ -2419,6 +2595,8 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches a byte outside all inclusive ranges defined by the array.
     /// </summary>
+    /// <param name="s">The array containing inclusive range pairs.</param>
+    /// <returns><c>true</c> if the current byte is outside all ranges; otherwise, <c>false</c>.</returns>
     public bool NotIn(byte[] s)
     {
       if (pos_ < srcLen_)
@@ -2438,6 +2616,9 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches one of the specified bytes.
     /// </summary>
+    /// <param name="c0">The first byte to match.</param>
+    /// <param name="c1">The second byte to match.</param>
+    /// <returns><c>true</c> if the current byte matches any argument; otherwise, <c>false</c>.</returns>
     public bool OneOf(byte c0, byte c1)
     {
       if (pos_ < srcLen_
@@ -2452,6 +2633,10 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches one of the specified bytes.
     /// </summary>
+    /// <param name="c0">The first byte to match.</param>
+    /// <param name="c1">The second byte to match.</param>
+    /// <param name="c2">The third byte to match.</param>
+    /// <returns><c>true</c> if the current byte matches any argument; otherwise, <c>false</c>.</returns>
     public bool OneOf(byte c0, byte c1, byte c2)
     {
       if (pos_ < srcLen_)
@@ -2469,6 +2654,11 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches one of the specified bytes.
     /// </summary>
+    /// <param name="c0">The first byte to match.</param>
+    /// <param name="c1">The second byte to match.</param>
+    /// <param name="c2">The third byte to match.</param>
+    /// <param name="c3">The fourth byte to match.</param>
+    /// <returns><c>true</c> if the current byte matches any argument; otherwise, <c>false</c>.</returns>
     public bool OneOf(byte c0, byte c1, byte c2, byte c3)
     {
       if (pos_ < srcLen_)
@@ -2486,6 +2676,12 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches one of the specified bytes.
     /// </summary>
+    /// <param name="c0">The first byte to match.</param>
+    /// <param name="c1">The second byte to match.</param>
+    /// <param name="c2">The third byte to match.</param>
+    /// <param name="c3">The fourth byte to match.</param>
+    /// <param name="c4">The fifth byte to match.</param>
+    /// <returns><c>true</c> if the current byte matches any argument; otherwise, <c>false</c>.</returns>
     public bool OneOf(byte c0, byte c1, byte c2, byte c3, byte c4)
     {
       if (pos_ < srcLen_)
@@ -2503,6 +2699,13 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches one of the specified bytes.
     /// </summary>
+    /// <param name="c0">The first byte to match.</param>
+    /// <param name="c1">The second byte to match.</param>
+    /// <param name="c2">The third byte to match.</param>
+    /// <param name="c3">The fourth byte to match.</param>
+    /// <param name="c4">The fifth byte to match.</param>
+    /// <param name="c5">The sixth byte to match.</param>
+    /// <returns><c>true</c> if the current byte matches any argument; otherwise, <c>false</c>.</returns>
     public bool OneOf(byte c0, byte c1, byte c2, byte c3, byte c4, byte c5)
     {
       if (pos_ < srcLen_)
@@ -2520,6 +2723,14 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches one of the specified bytes.
     /// </summary>
+    /// <param name="c0">The first byte to match.</param>
+    /// <param name="c1">The second byte to match.</param>
+    /// <param name="c2">The third byte to match.</param>
+    /// <param name="c3">The fourth byte to match.</param>
+    /// <param name="c4">The fifth byte to match.</param>
+    /// <param name="c5">The sixth byte to match.</param>
+    /// <param name="c6">The seventh byte to match.</param>
+    /// <returns><c>true</c> if the current byte matches any argument; otherwise, <c>false</c>.</returns>
     public bool OneOf(byte c0, byte c1, byte c2, byte c3, byte c4, byte c5, byte c6)
     {
       if (pos_ < srcLen_)
@@ -2537,6 +2748,15 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches one of the specified bytes.
     /// </summary>
+    /// <param name="c0">The first byte to match.</param>
+    /// <param name="c1">The second byte to match.</param>
+    /// <param name="c2">The third byte to match.</param>
+    /// <param name="c3">The fourth byte to match.</param>
+    /// <param name="c4">The fifth byte to match.</param>
+    /// <param name="c5">The sixth byte to match.</param>
+    /// <param name="c6">The seventh byte to match.</param>
+    /// <param name="c7">The eighth byte to match.</param>
+    /// <returns><c>true</c> if the current byte matches any argument; otherwise, <c>false</c>.</returns>
     public bool OneOf(byte c0, byte c1, byte c2, byte c3, byte c4, byte c5, byte c6, byte c7)
     {
       if (pos_ < srcLen_)
@@ -2554,6 +2774,8 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches any byte contained in the specified array.
     /// </summary>
+    /// <param name="s">The set of bytes to match.</param>
+    /// <returns><c>true</c> if the current byte is contained in <paramref name="s"/>; otherwise, <c>false</c>.</returns>
     public bool OneOf(byte[] s)
     {
       if (pos_ < srcLen_)
@@ -2571,6 +2793,8 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches any byte not contained in the specified array.
     /// </summary>
+    /// <param name="s">The set of bytes that must not match.</param>
+    /// <returns><c>true</c> if the current byte is not contained in <paramref name="s"/>; otherwise, <c>false</c>.</returns>
     public bool NotOneOf(byte[] s)
     {
       if (pos_ < srcLen_)
@@ -2589,6 +2813,8 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches any byte contained in the specified optimized byte set.
     /// </summary>
+    /// <param name="bset">The optimized byte set to match.</param>
+    /// <returns><c>true</c> if the current byte is contained in <paramref name="bset"/>; otherwise, <c>false</c>.</returns>
     public bool OneOf(BytesetData bset)
     {
       if (pos_ < srcLen_ && bset.Matches(src_[pos_]))
@@ -2738,8 +2964,17 @@ namespace Altaxo.Main.PegParser
     /// </summary>
     public sealed class OptimizedLiterals
     {
+      /// <summary>
+      /// Represents a trie node used to optimize literal matching.
+      /// </summary>
       internal class Trie
       {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Trie"/> class.
+        /// </summary>
+        /// <param name="cThis">The character stored in this node.</param>
+        /// <param name="nIndex">The current character index in the literals.</param>
+        /// <param name="literals">The literals represented by this node.</param>
         internal Trie(char cThis, int nIndex, string[] literals)
         {
           cThis_ = cThis;
@@ -2787,13 +3022,30 @@ namespace Altaxo.Main.PegParser
           }
         }
 
-        internal char cThis_;           //character stored in this node
-        internal bool bLitEnd_;         //end of literal
+        /// <summary>
+        /// The character stored in this node.
+        /// </summary>
+        internal char cThis_;
 
-        internal char cMin_;            //first valid character in children
-        internal Trie[] children_;      //contains the successor node of cThis_;
+        /// <summary>
+        /// A value indicating whether this node terminates a literal.
+        /// </summary>
+        internal bool bLitEnd_;
+
+        /// <summary>
+        /// The first valid character represented by <see cref="children_"/>.
+        /// </summary>
+        internal char cMin_;
+
+        /// <summary>
+        /// The successor nodes indexed relative to <see cref="cMin_"/>.
+        /// </summary>
+        internal Trie[] children_;
       }
 
+      /// <summary>
+      /// The root node of the literal trie.
+      /// </summary>
       internal Trie literalsRoot;
 
       /// <summary>
@@ -3015,6 +3267,8 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches zero or more characters from the specified optimized character set.
     /// </summary>
+    /// <param name="charset">The optimized character set to match.</param>
+    /// <returns><c>true</c>.</returns>
     public bool OptRepeat(OptimizedCharset charset)
     {
       for (; pos_ < srcLen_ && charset.Matches(src_[pos_]); ++pos_)
@@ -3025,6 +3279,8 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches one or more characters from the specified optimized character set.
     /// </summary>
+    /// <param name="charset">The optimized character set to match.</param>
+    /// <returns><c>true</c> if at least one character matched; otherwise, <c>false</c>.</returns>
     public bool PlusRepeat(OptimizedCharset charset)
     {
       int pos0 = pos_;
@@ -3040,6 +3296,8 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified character literal.
     /// </summary>
+    /// <param name="c1">The character to match.</param>
+    /// <returns><c>true</c> if the character matches; otherwise, <c>false</c>.</returns>
     public bool Char(char c1)
     {
       if (pos_ < srcLen_ && src_[pos_] == c1)
@@ -3050,6 +3308,9 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified two-character literal.
     /// </summary>
+    /// <param name="c1">The first character to match.</param>
+    /// <param name="c2">The second character to match.</param>
+    /// <returns><c>true</c> if both characters match; otherwise, <c>false</c>.</returns>
     public bool Char(char c1, char c2)
     {
       if (pos_ + 1 < srcLen_
@@ -3062,6 +3323,10 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified three-character literal.
     /// </summary>
+    /// <param name="c1">The first character to match.</param>
+    /// <param name="c2">The second character to match.</param>
+    /// <param name="c3">The third character to match.</param>
+    /// <returns><c>true</c> if all characters match; otherwise, <c>false</c>.</returns>
     public bool Char(char c1, char c2, char c3)
     {
       if (pos_ + 2 < srcLen_
@@ -3075,6 +3340,11 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified four-character literal.
     /// </summary>
+    /// <param name="c1">The first character to match.</param>
+    /// <param name="c2">The second character to match.</param>
+    /// <param name="c3">The third character to match.</param>
+    /// <param name="c4">The fourth character to match.</param>
+    /// <returns><c>true</c> if all characters match; otherwise, <c>false</c>.</returns>
     public bool Char(char c1, char c2, char c3, char c4)
     {
       if (pos_ + 3 < srcLen_
@@ -3089,6 +3359,12 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified five-character literal.
     /// </summary>
+    /// <param name="c1">The first character to match.</param>
+    /// <param name="c2">The second character to match.</param>
+    /// <param name="c3">The third character to match.</param>
+    /// <param name="c4">The fourth character to match.</param>
+    /// <param name="c5">The fifth character to match.</param>
+    /// <returns><c>true</c> if all characters match; otherwise, <c>false</c>.</returns>
     public bool Char(char c1, char c2, char c3, char c4, char c5)
     {
       if (pos_ + 4 < srcLen_
@@ -3104,6 +3380,13 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified six-character literal.
     /// </summary>
+    /// <param name="c1">The first character to match.</param>
+    /// <param name="c2">The second character to match.</param>
+    /// <param name="c3">The third character to match.</param>
+    /// <param name="c4">The fourth character to match.</param>
+    /// <param name="c5">The fifth character to match.</param>
+    /// <param name="c6">The sixth character to match.</param>
+    /// <returns><c>true</c> if all characters match; otherwise, <c>false</c>.</returns>
     public bool Char(char c1, char c2, char c3, char c4, char c5, char c6)
     {
       if (pos_ + 5 < srcLen_
@@ -3120,6 +3403,14 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified seven-character literal.
     /// </summary>
+    /// <param name="c1">The first character to match.</param>
+    /// <param name="c2">The second character to match.</param>
+    /// <param name="c3">The third character to match.</param>
+    /// <param name="c4">The fourth character to match.</param>
+    /// <param name="c5">The fifth character to match.</param>
+    /// <param name="c6">The sixth character to match.</param>
+    /// <param name="c7">The seventh character to match.</param>
+    /// <returns><c>true</c> if all characters match; otherwise, <c>false</c>.</returns>
     public bool Char(char c1, char c2, char c3, char c4, char c5, char c6, char c7)
     {
       if (pos_ + 6 < srcLen_
@@ -3137,6 +3428,15 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified eight-character literal.
     /// </summary>
+    /// <param name="c1">The first character to match.</param>
+    /// <param name="c2">The second character to match.</param>
+    /// <param name="c3">The third character to match.</param>
+    /// <param name="c4">The fourth character to match.</param>
+    /// <param name="c5">The fifth character to match.</param>
+    /// <param name="c6">The sixth character to match.</param>
+    /// <param name="c7">The seventh character to match.</param>
+    /// <param name="c8">The eighth character to match.</param>
+    /// <returns><c>true</c> if all characters match; otherwise, <c>false</c>.</returns>
     public bool Char(char c1, char c2, char c3, char c4, char c5, char c6, char c7, char c8)
     {
       if (pos_ + 7 < srcLen_
@@ -3155,6 +3455,8 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified string literal.
     /// </summary>
+    /// <param name="s">The string literal to match.</param>
+    /// <returns><c>true</c> if the string matches; otherwise, <c>false</c>.</returns>
     public bool Char(string s)
     {
       int sLength = s.Length;
@@ -3172,6 +3474,8 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified character literal case-insensitively.
     /// </summary>
+    /// <param name="c1">The character to match.</param>
+    /// <returns><c>true</c> if the character matches; otherwise, <c>false</c>.</returns>
     public bool IChar(char c1)
     {
       if (pos_ < srcLen_ && char.ToUpper(src_[pos_]) == c1)
@@ -3182,6 +3486,9 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified two-character literal case-insensitively.
     /// </summary>
+    /// <param name="c1">The first character to match.</param>
+    /// <param name="c2">The second character to match.</param>
+    /// <returns><c>true</c> if both characters match; otherwise, <c>false</c>.</returns>
     public bool IChar(char c1, char c2)
     {
       if (pos_ + 1 < srcLen_
@@ -3194,6 +3501,10 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified three-character literal case-insensitively.
     /// </summary>
+    /// <param name="c1">The first character to match.</param>
+    /// <param name="c2">The second character to match.</param>
+    /// <param name="c3">The third character to match.</param>
+    /// <returns><c>true</c> if all characters match; otherwise, <c>false</c>.</returns>
     public bool IChar(char c1, char c2, char c3)
     {
       if (pos_ + 2 < srcLen_
@@ -3207,6 +3518,11 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified four-character literal case-insensitively.
     /// </summary>
+    /// <param name="c1">The first character to match.</param>
+    /// <param name="c2">The second character to match.</param>
+    /// <param name="c3">The third character to match.</param>
+    /// <param name="c4">The fourth character to match.</param>
+    /// <returns><c>true</c> if all characters match; otherwise, <c>false</c>.</returns>
     public bool IChar(char c1, char c2, char c3, char c4)
     {
       if (pos_ + 3 < srcLen_
@@ -3221,6 +3537,12 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified five-character literal case-insensitively.
     /// </summary>
+    /// <param name="c1">The first character to match.</param>
+    /// <param name="c2">The second character to match.</param>
+    /// <param name="c3">The third character to match.</param>
+    /// <param name="c4">The fourth character to match.</param>
+    /// <param name="c5">The fifth character to match.</param>
+    /// <returns><c>true</c> if all characters match; otherwise, <c>false</c>.</returns>
     public bool IChar(char c1, char c2, char c3, char c4, char c5)
     {
       if (pos_ + 4 < srcLen_
@@ -3236,6 +3558,13 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified six-character literal case-insensitively.
     /// </summary>
+    /// <param name="c1">The first character to match.</param>
+    /// <param name="c2">The second character to match.</param>
+    /// <param name="c3">The third character to match.</param>
+    /// <param name="c4">The fourth character to match.</param>
+    /// <param name="c5">The fifth character to match.</param>
+    /// <param name="c6">The sixth character to match.</param>
+    /// <returns><c>true</c> if all characters match; otherwise, <c>false</c>.</returns>
     public bool IChar(char c1, char c2, char c3, char c4, char c5, char c6)
     {
       if (pos_ + 5 < srcLen_
@@ -3252,6 +3581,14 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified seven-character literal case-insensitively.
     /// </summary>
+    /// <param name="c1">The first character to match.</param>
+    /// <param name="c2">The second character to match.</param>
+    /// <param name="c3">The third character to match.</param>
+    /// <param name="c4">The fourth character to match.</param>
+    /// <param name="c5">The fifth character to match.</param>
+    /// <param name="c6">The sixth character to match.</param>
+    /// <param name="c7">The seventh character to match.</param>
+    /// <returns><c>true</c> if all characters match; otherwise, <c>false</c>.</returns>
     public bool IChar(char c1, char c2, char c3, char c4, char c5, char c6, char c7)
     {
       if (pos_ + 6 < srcLen_
@@ -3269,6 +3606,8 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches the specified string literal case-insensitively.
     /// </summary>
+    /// <param name="s">The string literal to match.</param>
+    /// <returns><c>true</c> if the string matches; otherwise, <c>false</c>.</returns>
     public bool IChar(string s)
     {
       int sLength = s.Length;
@@ -3286,6 +3625,9 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches a character within the specified inclusive range.
     /// </summary>
+    /// <param name="c0">The lower bound of the range.</param>
+    /// <param name="c1">The upper bound of the range.</param>
+    /// <returns><c>true</c> if the current character is in range; otherwise, <c>false</c>.</returns>
     public bool In(char c0, char c1)
     {
       if (pos_ < srcLen_
@@ -3300,6 +3642,11 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches a character within either of the specified inclusive ranges.
     /// </summary>
+    /// <param name="c0">The lower bound of the first range.</param>
+    /// <param name="c1">The upper bound of the first range.</param>
+    /// <param name="c2">The lower bound of the second range.</param>
+    /// <param name="c3">The upper bound of the second range.</param>
+    /// <returns><c>true</c> if the current character is in either range; otherwise, <c>false</c>.</returns>
     public bool In(char c0, char c1, char c2, char c3)
     {
       if (pos_ < srcLen_)
@@ -3318,6 +3665,13 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches a character within any of the specified inclusive ranges.
     /// </summary>
+    /// <param name="c0">The lower bound of the first range.</param>
+    /// <param name="c1">The upper bound of the first range.</param>
+    /// <param name="c2">The lower bound of the second range.</param>
+    /// <param name="c3">The upper bound of the second range.</param>
+    /// <param name="c4">The lower bound of the third range.</param>
+    /// <param name="c5">The upper bound of the third range.</param>
+    /// <returns><c>true</c> if the current character is in any range; otherwise, <c>false</c>.</returns>
     public bool In(char c0, char c1, char c2, char c3, char c4, char c5)
     {
       if (pos_ < srcLen_)
@@ -3337,6 +3691,15 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches a character within any of the specified inclusive ranges.
     /// </summary>
+    /// <param name="c0">The lower bound of the first range.</param>
+    /// <param name="c1">The upper bound of the first range.</param>
+    /// <param name="c2">The lower bound of the second range.</param>
+    /// <param name="c3">The upper bound of the second range.</param>
+    /// <param name="c4">The lower bound of the third range.</param>
+    /// <param name="c5">The upper bound of the third range.</param>
+    /// <param name="c6">The lower bound of the fourth range.</param>
+    /// <param name="c7">The upper bound of the fourth range.</param>
+    /// <returns><c>true</c> if the current character is in any range; otherwise, <c>false</c>.</returns>
     public bool In(char c0, char c1, char c2, char c3, char c4, char c5, char c6, char c7)
     {
       if (pos_ < srcLen_)
@@ -3357,6 +3720,8 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches a character within any of the inclusive ranges defined by the string.
     /// </summary>
+    /// <param name="s">The string containing inclusive range pairs.</param>
+    /// <returns><c>true</c> if the current character is in any range; otherwise, <c>false</c>.</returns>
     public bool In(string s)
     {
       if (pos_ < srcLen_)
@@ -3376,6 +3741,8 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches a character outside all inclusive ranges defined by the string.
     /// </summary>
+    /// <param name="s">The string containing inclusive range pairs.</param>
+    /// <returns><c>true</c> if the current character is outside all ranges; otherwise, <c>false</c>.</returns>
     public bool NotIn(string s)
     {
       if (pos_ < srcLen_)
@@ -3395,6 +3762,9 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches one of the specified characters.
     /// </summary>
+    /// <param name="c0">The first character to match.</param>
+    /// <param name="c1">The second character to match.</param>
+    /// <returns><c>true</c> if the current character matches any argument; otherwise, <c>false</c>.</returns>
     public bool OneOf(char c0, char c1)
     {
       if (pos_ < srcLen_
@@ -3409,6 +3779,10 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches one of the specified characters.
     /// </summary>
+    /// <param name="c0">The first character to match.</param>
+    /// <param name="c1">The second character to match.</param>
+    /// <param name="c2">The third character to match.</param>
+    /// <returns><c>true</c> if the current character matches any argument; otherwise, <c>false</c>.</returns>
     public bool OneOf(char c0, char c1, char c2)
     {
       if (pos_ < srcLen_)
@@ -3426,6 +3800,11 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches one of the specified characters.
     /// </summary>
+    /// <param name="c0">The first character to match.</param>
+    /// <param name="c1">The second character to match.</param>
+    /// <param name="c2">The third character to match.</param>
+    /// <param name="c3">The fourth character to match.</param>
+    /// <returns><c>true</c> if the current character matches any argument; otherwise, <c>false</c>.</returns>
     public bool OneOf(char c0, char c1, char c2, char c3)
     {
       if (pos_ < srcLen_)
@@ -3443,6 +3822,12 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches one of the specified characters.
     /// </summary>
+    /// <param name="c0">The first character to match.</param>
+    /// <param name="c1">The second character to match.</param>
+    /// <param name="c2">The third character to match.</param>
+    /// <param name="c3">The fourth character to match.</param>
+    /// <param name="c4">The fifth character to match.</param>
+    /// <returns><c>true</c> if the current character matches any argument; otherwise, <c>false</c>.</returns>
     public bool OneOf(char c0, char c1, char c2, char c3, char c4)
     {
       if (pos_ < srcLen_)
@@ -3460,6 +3845,13 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches one of the specified characters.
     /// </summary>
+    /// <param name="c0">The first character to match.</param>
+    /// <param name="c1">The second character to match.</param>
+    /// <param name="c2">The third character to match.</param>
+    /// <param name="c3">The fourth character to match.</param>
+    /// <param name="c4">The fifth character to match.</param>
+    /// <param name="c5">The sixth character to match.</param>
+    /// <returns><c>true</c> if the current character matches any argument; otherwise, <c>false</c>.</returns>
     public bool OneOf(char c0, char c1, char c2, char c3, char c4, char c5)
     {
       if (pos_ < srcLen_)
@@ -3477,6 +3869,14 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches one of the specified characters.
     /// </summary>
+    /// <param name="c0">The first character to match.</param>
+    /// <param name="c1">The second character to match.</param>
+    /// <param name="c2">The third character to match.</param>
+    /// <param name="c3">The fourth character to match.</param>
+    /// <param name="c4">The fifth character to match.</param>
+    /// <param name="c5">The sixth character to match.</param>
+    /// <param name="c6">The seventh character to match.</param>
+    /// <returns><c>true</c> if the current character matches any argument; otherwise, <c>false</c>.</returns>
     public bool OneOf(char c0, char c1, char c2, char c3, char c4, char c5, char c6)
     {
       if (pos_ < srcLen_)
@@ -3494,6 +3894,15 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches one of the specified characters.
     /// </summary>
+    /// <param name="c0">The first character to match.</param>
+    /// <param name="c1">The second character to match.</param>
+    /// <param name="c2">The third character to match.</param>
+    /// <param name="c3">The fourth character to match.</param>
+    /// <param name="c4">The fifth character to match.</param>
+    /// <param name="c5">The sixth character to match.</param>
+    /// <param name="c6">The seventh character to match.</param>
+    /// <param name="c7">The eighth character to match.</param>
+    /// <returns><c>true</c> if the current character matches any argument; otherwise, <c>false</c>.</returns>
     public bool OneOf(char c0, char c1, char c2, char c3, char c4, char c5, char c6, char c7)
     {
       if (pos_ < srcLen_)
@@ -3511,6 +3920,8 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches any character contained in the specified string.
     /// </summary>
+    /// <param name="s">The set of characters to match.</param>
+    /// <returns><c>true</c> if the current character is contained in <paramref name="s"/>; otherwise, <c>false</c>.</returns>
     public bool OneOf(string s)
     {
       if (pos_ < srcLen_)
@@ -3527,6 +3938,8 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches any character not contained in the specified string.
     /// </summary>
+    /// <param name="s">The set of characters that must not match.</param>
+    /// <returns><c>true</c> if the current character is not contained in <paramref name="s"/>; otherwise, <c>false</c>.</returns>
     public bool NotOneOf(string s)
     {
       if (pos_ < srcLen_)
@@ -3543,6 +3956,8 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches any character contained in the specified optimized character set.
     /// </summary>
+    /// <param name="cset">The optimized character set to match.</param>
+    /// <returns><c>true</c> if the current character is contained in <paramref name="cset"/>; otherwise, <c>false</c>.</returns>
     public bool OneOf(OptimizedCharset cset)
     {
       if (pos_ < srcLen_ && cset.Matches(src_[pos_]))
@@ -3556,6 +3971,8 @@ namespace Altaxo.Main.PegParser
     /// <summary>
     /// Matches one of the specified optimized literal alternatives.
     /// </summary>
+    /// <param name="litAlt">The optimized literal alternatives to match.</param>
+    /// <returns><c>true</c> if any literal matches; otherwise, <c>false</c>.</returns>
     public bool OneOfLiterals(OptimizedLiterals litAlt)
     {
       OptimizedLiterals.Trie node = litAlt.literalsRoot;

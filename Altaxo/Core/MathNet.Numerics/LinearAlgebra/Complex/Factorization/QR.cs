@@ -48,6 +48,12 @@ namespace Altaxo.Calc.LinearAlgebra.Complex.Factorization
   /// </remarks>
   internal abstract class QR : QR<Complex>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="QR"/> class.
+    /// </summary>
+    /// <param name="q">The orthogonal factor matrix.</param>
+    /// <param name="rFull">The upper triangular factor matrix.</param>
+    /// <param name="method">The factorization method.</param>
     protected QR(Matrix<Complex> q, Matrix<Complex> rFull, QRMethod method)
         : base(q, rFull, method)
     {

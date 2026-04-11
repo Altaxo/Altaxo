@@ -451,6 +451,8 @@ namespace Altaxo.Calc.Ode.Obsolete
     }
 
     /// <summary>Switch rows of a sparse matrix</summary>
+    /// <param name="i">The index of the first row.</param>
+    /// <param name="j">The index of the second row.</param>
     public void SwitchRows(int i, int j)
     {
       var tempItems = items[i];

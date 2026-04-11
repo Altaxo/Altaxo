@@ -103,6 +103,7 @@ namespace Altaxo.Main
     /// <summary>
     /// Looks for the next unique project item name base on a basic name.
     /// </summary>
+    /// <param name="basicname">The base name from which to derive a unique item name.</param>
     /// <returns>A new project item name unique for this collection.</returns>
     string FindNewItemName(string basicname);
 

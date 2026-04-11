@@ -30,7 +30,7 @@ using System.Text;
 namespace Altaxo.Calc.LinearAlgebra
 {
   /// <summary>
-  ///
+  /// Provides routines for nonnegative matrix factorization with Tikhonov regularization.
   /// </summary>
   public static class TikhonovRegularizedNonnegativeMatrixFactorization
   {

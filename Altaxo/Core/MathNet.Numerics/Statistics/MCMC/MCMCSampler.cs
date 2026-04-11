@@ -58,6 +58,7 @@ namespace Altaxo.Calc.Statistics.Mcmc
   /// </summary>
   /// <typeparam name="T">The type of data the distribution is over.</typeparam>
   /// <param name="sample">The sample we want to evaluate the density for.</param>
+  /// <returns>The density value for <paramref name="sample"/>.</returns>
   public delegate double Density<in T>(T sample);
 
   /// <summary>
@@ -65,6 +66,7 @@ namespace Altaxo.Calc.Statistics.Mcmc
   /// </summary>
   /// <typeparam name="T">The type of data the distribution is over.</typeparam>
   /// <param name="sample">The sample we want to evaluate the log density for.</param>
+  /// <returns>The log density value for <paramref name="sample"/>.</returns>
   public delegate double DensityLn<in T>(T sample);
 
   /// <summary>
@@ -122,6 +124,7 @@ namespace Altaxo.Calc.Statistics.Mcmc
     /// <summary>
     /// Returns one sample.
     /// </summary>
+    /// <returns>A sampled value.</returns>
     public abstract T Sample();
 
     /// <summary>

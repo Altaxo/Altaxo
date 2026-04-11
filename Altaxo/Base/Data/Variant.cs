@@ -858,6 +858,9 @@ namespace Altaxo.Data
     /// <summary>
     /// Adds two variants.
     /// </summary>
+    /// <param name="a">The left-hand operand.</param>
+    /// <param name="b">The right-hand operand.</param>
+    /// <returns>The result of the addition.</returns>
     public static AltaxoVariant operator +(AltaxoVariant a, AltaxoVariant b)
     {
 
@@ -890,6 +893,9 @@ namespace Altaxo.Data
     /// <summary>
     /// Subtracts one variant from another.
     /// </summary>
+    /// <param name="a">The left-hand operand.</param>
+    /// <param name="b">The right-hand operand.</param>
+    /// <returns>The result of the subtraction.</returns>
     public static AltaxoVariant operator -(AltaxoVariant a, AltaxoVariant b)
     {
 
@@ -916,6 +922,9 @@ namespace Altaxo.Data
     /// <summary>
     /// Multiplies two variants.
     /// </summary>
+    /// <param name="a">The left-hand operand.</param>
+    /// <param name="b">The right-hand operand.</param>
+    /// <returns>The result of the multiplication.</returns>
     public static AltaxoVariant operator *(AltaxoVariant a, AltaxoVariant b)
     {
 
@@ -938,6 +947,9 @@ namespace Altaxo.Data
     /// <summary>
     /// Divides one variant by another.
     /// </summary>
+    /// <param name="a">The dividend.</param>
+    /// <param name="b">The divisor.</param>
+    /// <returns>The result of the division.</returns>
     public static AltaxoVariant operator /(AltaxoVariant a, AltaxoVariant b)
     {
       if (a._typeOfContent == Content.VDouble && b._typeOfContent == Content.VDouble)
@@ -955,6 +967,9 @@ namespace Altaxo.Data
     /// <summary>
     /// Calculates the remainder of one variant divided by another.
     /// </summary>
+    /// <param name="a">The dividend.</param>
+    /// <param name="b">The divisor.</param>
+    /// <returns>The remainder of the division.</returns>
     public static AltaxoVariant operator %(AltaxoVariant a, AltaxoVariant b)
     {
       if (a._typeOfContent == Content.VDouble && b._typeOfContent == Content.VDouble)
@@ -972,6 +987,9 @@ namespace Altaxo.Data
     /// <summary>
     /// Applies the bitwise AND operator to two variants.
     /// </summary>
+    /// <param name="a">The left-hand operand.</param>
+    /// <param name="b">The right-hand operand.</param>
+    /// <returns>The result of the AND operation.</returns>
     public static AltaxoVariant operator &(AltaxoVariant a, AltaxoVariant b)
     {
       if (a._typeOfContent == Content.VDouble && b._typeOfContent == Content.VDouble)
@@ -989,6 +1007,9 @@ namespace Altaxo.Data
     /// <summary>
     /// Applies the bitwise OR operator to two variants.
     /// </summary>
+    /// <param name="a">The left-hand operand.</param>
+    /// <param name="b">The right-hand operand.</param>
+    /// <returns>The result of the OR operation.</returns>
     public static AltaxoVariant operator |(AltaxoVariant a, AltaxoVariant b)
     {
       if (a._typeOfContent == Content.VDouble && b._typeOfContent == Content.VDouble)
@@ -1006,6 +1027,9 @@ namespace Altaxo.Data
     /// <summary>
     /// Applies the bitwise XOR operator to two variants.
     /// </summary>
+    /// <param name="a">The left-hand operand.</param>
+    /// <param name="b">The right-hand operand.</param>
+    /// <returns>The result of the XOR operation.</returns>
     public static AltaxoVariant operator ^(AltaxoVariant a, AltaxoVariant b)
     {
       if (a._typeOfContent == Content.VDouble && b._typeOfContent == Content.VDouble)
@@ -1023,6 +1047,9 @@ namespace Altaxo.Data
     /// <summary>
     /// Shifts a variant to the left.
     /// </summary>
+    /// <param name="a">The value to shift.</param>
+    /// <param name="b">The shift count.</param>
+    /// <returns>The shifted value.</returns>
     public static AltaxoVariant operator <<(AltaxoVariant a, int b)
     {
       if (a._typeOfContent == Content.VDouble)
@@ -1038,6 +1065,9 @@ namespace Altaxo.Data
     /// <summary>
     /// Shifts a variant to the right.
     /// </summary>
+    /// <param name="a">The value to shift.</param>
+    /// <param name="b">The shift count.</param>
+    /// <returns>The shifted value.</returns>
     public static AltaxoVariant operator >>(AltaxoVariant a, int b)
     {
       if (a._typeOfContent == Content.VDouble)
@@ -1053,6 +1083,9 @@ namespace Altaxo.Data
     /// <summary>
     /// Determines whether two variants are equal.
     /// </summary>
+    /// <param name="a">The first variant.</param>
+    /// <param name="b">The second variant.</param>
+    /// <returns><see langword="true"/> if both variants are equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator ==(AltaxoVariant a, AltaxoVariant b)
     {
 
@@ -1079,6 +1112,9 @@ namespace Altaxo.Data
     /// <summary>
     /// Determines whether two variants are not equal.
     /// </summary>
+    /// <param name="a">The first variant.</param>
+    /// <param name="b">The second variant.</param>
+    /// <returns><see langword="true"/> if the variants are not equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator !=(AltaxoVariant a, AltaxoVariant b)
     {
       return !(a == b);
@@ -1087,6 +1123,9 @@ namespace Altaxo.Data
     /// <summary>
     /// Determines whether one variant is less than another.
     /// </summary>
+    /// <param name="a">The first variant.</param>
+    /// <param name="b">The second variant.</param>
+    /// <returns><see langword="true"/> if <paramref name="a"/> is less than <paramref name="b"/>; otherwise, <see langword="false"/>.</returns>
     public static bool operator <(AltaxoVariant a, AltaxoVariant b)
     {
 
@@ -1114,6 +1153,9 @@ namespace Altaxo.Data
     /// <summary>
     /// Determines whether one variant is greater than another.
     /// </summary>
+    /// <param name="a">The first variant.</param>
+    /// <param name="b">The second variant.</param>
+    /// <returns><see langword="true"/> if <paramref name="a"/> is greater than <paramref name="b"/>; otherwise, <see langword="false"/>.</returns>
     public static bool operator >(AltaxoVariant a, AltaxoVariant b)
     {
 
@@ -1141,6 +1183,9 @@ namespace Altaxo.Data
     /// <summary>
     /// Determines whether one variant is less than or equal to another.
     /// </summary>
+    /// <param name="a">The first variant.</param>
+    /// <param name="b">The second variant.</param>
+    /// <returns><see langword="true"/> if <paramref name="a"/> is less than or equal to <paramref name="b"/>; otherwise, <see langword="false"/>.</returns>
     public static bool operator <=(AltaxoVariant a, AltaxoVariant b)
     {
 
@@ -1168,6 +1213,9 @@ namespace Altaxo.Data
     /// <summary>
     /// Determines whether one variant is greater than or equal to another.
     /// </summary>
+    /// <param name="a">The first variant.</param>
+    /// <param name="b">The second variant.</param>
+    /// <returns><see langword="true"/> if <paramref name="a"/> is greater than or equal to <paramref name="b"/>; otherwise, <see langword="false"/>.</returns>
     public static bool operator >=(AltaxoVariant a, AltaxoVariant b)
     {
 
@@ -1197,6 +1245,8 @@ namespace Altaxo.Data
     /// <summary>
     /// Applies the unary plus operator to a variant.
     /// </summary>
+    /// <param name="a">The operand.</param>
+    /// <returns>The result of applying unary plus.</returns>
     public static AltaxoVariant operator +(AltaxoVariant a)
     {
       switch (a._typeOfContent)
@@ -1218,6 +1268,8 @@ namespace Altaxo.Data
     /// <summary>
     /// Applies the unary minus operator to a variant.
     /// </summary>
+    /// <param name="a">The operand.</param>
+    /// <returns>The result of applying unary minus.</returns>
     public static AltaxoVariant operator -(AltaxoVariant a)
     {
       switch (a._typeOfContent)
@@ -1239,6 +1291,8 @@ namespace Altaxo.Data
     /// <summary>
     /// Applies the logical NOT operator to a variant.
     /// </summary>
+    /// <param name="a">The operand.</param>
+    /// <returns>The result of applying logical NOT.</returns>
     public static AltaxoVariant operator !(AltaxoVariant a)
     {
       switch (a._typeOfContent)
@@ -1260,6 +1314,8 @@ namespace Altaxo.Data
     /// <summary>
     /// Applies the bitwise complement operator to a variant.
     /// </summary>
+    /// <param name="a">The operand.</param>
+    /// <returns>The result of applying the bitwise complement operator.</returns>
     public static AltaxoVariant operator ~(AltaxoVariant a)
     {
       switch (a._typeOfContent)
@@ -1281,6 +1337,8 @@ namespace Altaxo.Data
     /// <summary>
     /// Increments a variant.
     /// </summary>
+    /// <param name="a">The operand.</param>
+    /// <returns>The incremented variant.</returns>
     public static AltaxoVariant operator ++(AltaxoVariant a)
     {
       switch (a._typeOfContent)
@@ -1302,6 +1360,8 @@ namespace Altaxo.Data
     /// <summary>
     /// Decrements a variant.
     /// </summary>
+    /// <param name="a">The operand.</param>
+    /// <returns>The decremented variant.</returns>
     public static AltaxoVariant operator --(AltaxoVariant a)
     {
       switch (a._typeOfContent)
@@ -1323,6 +1383,8 @@ namespace Altaxo.Data
     /// <summary>
     /// Determines whether a variant evaluates to <see langword="true"/>.
     /// </summary>
+    /// <param name="a">The operand.</param>
+    /// <returns><see langword="true"/> if the variant evaluates to <see langword="true"/>; otherwise, <see langword="false"/>.</returns>
     public static bool operator true(AltaxoVariant a)
     {
       switch (a._typeOfContent)
@@ -1344,6 +1406,8 @@ namespace Altaxo.Data
     /// <summary>
     /// Determines whether a variant evaluates to <see langword="false"/>.
     /// </summary>
+    /// <param name="a">The operand.</param>
+    /// <returns><see langword="true"/> if the variant evaluates to <see langword="false"/>; otherwise, <see langword="false"/>.</returns>
     public static bool operator false(AltaxoVariant a)
     {
       switch (a._typeOfContent)

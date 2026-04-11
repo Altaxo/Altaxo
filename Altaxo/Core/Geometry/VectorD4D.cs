@@ -203,6 +203,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Adds two vectors component-wise.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The component-wise sum.</returns>
     public static VectorD4D operator +(VectorD4D a, VectorD4D b)
     {
       return new VectorD4D(a.X + b.X, a.Y + b.Y, a.Z + b.Z, a.W + b.W);
@@ -211,6 +214,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Subtracts two vectors component-wise.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The component-wise difference.</returns>
     public static VectorD4D operator -(VectorD4D a, VectorD4D b)
     {
       return new VectorD4D(a.X - b.X, a.Y - b.Y, a.Z - b.Z, a.W - b.W);
@@ -219,6 +225,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Multiplies a vector by a scalar.
     /// </summary>
+    /// <param name="a">The vector.</param>
+    /// <param name="b">The scalar factor.</param>
+    /// <returns>The scaled vector.</returns>
     public static VectorD4D operator *(VectorD4D a, double b)
     {
       return new VectorD4D(a.X * b, a.Y * b, a.Z * b, a.W * b);
@@ -227,6 +236,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Multiplies a scalar by a vector.
     /// </summary>
+    /// <param name="b">The scalar factor.</param>
+    /// <param name="a">The vector.</param>
+    /// <returns>The scaled vector.</returns>
     public static VectorD4D operator *(double b, VectorD4D a)
     {
       return new VectorD4D(a.X * b, a.Y * b, a.Z * b, a.W * b);
@@ -235,6 +247,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Divides a vector by a scalar.
     /// </summary>
+    /// <param name="a">The vector.</param>
+    /// <param name="b">The scalar divisor.</param>
+    /// <returns>The scaled vector.</returns>
     public static VectorD4D operator /(VectorD4D a, double b)
     {
       return new VectorD4D(a.X / b, a.Y / b, a.Z / b, a.W / b);
@@ -243,6 +258,8 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Negates a vector.
     /// </summary>
+    /// <param name="b">The vector to negate.</param>
+    /// <returns>The negated vector.</returns>
     public static VectorD4D operator -(VectorD4D b)
     {
       return new VectorD4D(-b.X, -b.Y, -b.Z, -b.W);
@@ -251,6 +268,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Checks if two vectors are equal.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns><see langword="true"/> if the vectors are equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator ==(VectorD4D a, VectorD4D b)
     {
       return a.X == b.X && a.Y == b.Y && a.Z == b.Z && a.W == b.W;
@@ -259,6 +279,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Checks if two vectors are not equal.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns><see langword="true"/> if the vectors are not equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator !=(VectorD4D a, VectorD4D b)
     {
       return !(a.X == b.X && a.Y == b.Y && a.Z == b.Z && a.W == b.W);
@@ -268,6 +291,7 @@ namespace Altaxo.Geometry
     /// Converts a <see cref="PointD3D"/> to a <see cref="VectorD4D"/>.
     /// </summary>
     /// <param name="v">The point to convert.</param>
+    /// <returns>The converted vector.</returns>
     public static explicit operator VectorD4D(PointD3D v)
     {
       return new VectorD4D(v.X, v.Y, v.Z, 1);
@@ -280,6 +304,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Multiplies two vectors elementwise.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The component-wise product.</returns>
     public static VectorD4D MultiplicationElementwise(VectorD4D a, VectorD4D b)
     {
       return new VectorD4D(a.X * b.X, a.Y * b.Y, a.Z * b.Z, a.W * b.W);
@@ -288,6 +315,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Calculates the dot product of two vectors.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The dot product.</returns>
     public static double DotProduct(VectorD4D a, VectorD4D b)
     {
       return a.X * b.X + a.Y * b.Y + a.Z * b.Z + a.W * b.W;
@@ -296,6 +326,8 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Creates a normalized version of the given vector.
     /// </summary>
+    /// <param name="pt">The vector to normalize.</param>
+    /// <returns>The normalized vector.</returns>
     public static VectorD4D CreateNormalized(VectorD4D pt)
     {
       var ilen = 1 / pt.Length;
@@ -305,6 +337,11 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Creates a normalized vector from the given x, y, z, and w components.
     /// </summary>
+    /// <param name="x">The x component.</param>
+    /// <param name="y">The y component.</param>
+    /// <param name="z">The z component.</param>
+    /// <param name="w">The w component.</param>
+    /// <returns>The normalized vector.</returns>
     public static VectorD4D CreateNormalized(double x, double y, double z, double w)
     {
       var k = x * x + y * y + z * z + w * w;
@@ -322,6 +359,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Creates a vector that is the sum of two vectors.
     /// </summary>
+    /// <param name="pt1">The first vector.</param>
+    /// <param name="pt2">The second vector.</param>
+    /// <returns>The vector sum.</returns>
     public static VectorD4D CreateSum(VectorD4D pt1, VectorD4D pt2)
     {
       return new VectorD4D(pt1.X + pt2.X, pt1.Y + pt2.Y, pt1.Z + pt2.Z, pt1.W + pt2.W);
@@ -330,6 +370,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Creates a scaled version of the given vector.
     /// </summary>
+    /// <param name="pt">The vector to scale.</param>
+    /// <param name="scale">The scaling factor.</param>
+    /// <returns>The scaled vector.</returns>
     public static VectorD4D CreateScaled(VectorD4D pt, double scale)
     {
       return new VectorD4D(pt.X * scale, pt.Y * scale, pt.Z * scale, pt.W * scale);

@@ -50,6 +50,9 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Initializes a new instance of the <see cref="TextChoice"/> class.
     /// </summary>
+    /// <param name="choices">The available choices.</param>
+    /// <param name="selection">The initially selected index.</param>
+    /// <param name="allowFreeText">A value indicating whether free-text input is allowed.</param>
     public TextChoice(string[] choices, int selection, bool allowFreeText)
     {
       _choices = (string[])choices.Clone();

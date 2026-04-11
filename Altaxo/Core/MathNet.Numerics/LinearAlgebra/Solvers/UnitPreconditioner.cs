@@ -36,6 +36,7 @@ namespace Altaxo.Calc.LinearAlgebra.Solvers
   /// it is only used when running an <see cref="IIterativeSolver{T}"/> without
   /// a preconditioner.
   /// </summary>
+  /// <typeparam name="T">The numeric element type.</typeparam>
   public sealed class UnitPreconditioner<T> : IPreconditioner<T> where T : struct, IEquatable<T>, IFormattable
   {
     /// <summary>

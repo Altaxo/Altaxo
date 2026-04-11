@@ -67,6 +67,7 @@ namespace Altaxo.Calc.Random
     /// </summary>
     /// <param name="rnd">The random number generator.</param>
     /// <param name="count">The size of the array to fill.</param>
+    /// <returns>An array of uniformly distributed doubles greater than or equal to 0.0 and less than 1.0.</returns>
     /// <remarks>
     /// This extension is thread-safe if and only if called on an random number
     /// generator provided by Math.NET Numerics or derived from the RandomSource class.
@@ -81,6 +82,8 @@ namespace Altaxo.Calc.Random
     /// <summary>
     /// Returns an infinite sequence of uniform random numbers greater than or equal to 0.0 and less than 1.0.
     /// </summary>
+    /// <param name="rnd">The random number generator.</param>
+    /// <returns>An infinite sequence of uniformly distributed doubles greater than or equal to 0.0 and less than 1.0.</returns>
     /// <remarks>
     /// This extension is thread-safe if and only if called on an random number
     /// generator provided by Math.NET Numerics or derived from the RandomSource class.
@@ -112,6 +115,7 @@ namespace Altaxo.Calc.Random
     /// This extension is thread-safe if and only if called on an random number
     /// generator provided by Math.NET Numerics or derived from the RandomSource class.
     /// </remarks>
+    /// <returns>An array containing <paramref name="count"/> uniformly distributed random bytes.</returns>
     public static byte[] NextBytes(this System.Random rnd, int count)
     {
       var values = new byte[count];
@@ -170,10 +174,14 @@ namespace Altaxo.Calc.Random
     /// <summary>
     /// Returns an infinite sequence of uniform random 32-bit signed integers within the specified range.
     /// </summary>
+    /// <param name="rnd">The random number generator.</param>
+    /// <param name="minInclusive">Lower bound, inclusive.</param>
+    /// <param name="maxExclusive">Upper bound, exclusive.</param>
     /// <remarks>
     /// This extension is thread-safe if and only if called on an random number
     /// generator provided by Math.NET Numerics or derived from the RandomSource class.
     /// </remarks>
+    /// <returns>An infinite sequence of uniformly distributed random integers in the requested range.</returns>
     public static IEnumerable<int> NextInt32Sequence(this System.Random rnd, int minInclusive, int maxExclusive)
     {
       if (rnd is RandomSource rs)
@@ -195,10 +203,14 @@ namespace Altaxo.Calc.Random
     /// <summary>
     /// Returns an infinite sequence of uniform random <see cref="System.Numerics.BigInteger"/> within the specified range.
     /// </summary>
+    /// <param name="rnd">The random number generator.</param>
+    /// <param name="minInclusive">Lower bound, inclusive.</param>
+    /// <param name="maxExclusive">Upper bound, exclusive.</param>
     /// <remarks>
     /// This extension is thread-safe if and only if called on an random number
     /// generator provided by Math.NET Numerics or derived from the RandomSource class.
     /// </remarks>
+    /// <returns>An infinite sequence of uniformly distributed random <see cref="BigInteger"/> values in the requested range.</returns>
     public static IEnumerable<BigInteger> NextBigIntegerSequence(this System.Random rnd, BigInteger minInclusive, BigInteger maxExclusive)
     {
       BigInteger absoluteRange = maxExclusive - minInclusive;
@@ -330,6 +342,7 @@ namespace Altaxo.Calc.Random
     /// This extension is thread-safe if and only if called on an random number
     /// generator provided by Math.NET Numerics or derived from the RandomSource class.
     /// </remarks>
+    /// <returns>A random boolean value.</returns>
     public static bool NextBoolean(this System.Random rnd)
     {
       return rnd.NextDouble() >= 0.5;

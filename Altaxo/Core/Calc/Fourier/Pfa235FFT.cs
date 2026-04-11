@@ -139,6 +139,7 @@ namespace Altaxo.Calc.Fourier
     /// on vector machines with separate memory banks an extra leading dimension
     /// can be defined to avoid bank conflicts - also see SetOrder().
     /// </remarks>
+    /// <param name="n1">Size of the first dimension.</param>
     public Pfa235FFT(int n1)
     {
       ndim = 1;
@@ -173,6 +174,8 @@ namespace Altaxo.Calc.Fourier
     /// on vector machines with separate memory banks an extra leading dimension
     /// can be defined to avoid bank conflicts - also see SetOrder().
     /// </remarks>
+    /// <param name="n1">Size of the first dimension.</param>
+    /// <param name="n2">Size of the second dimension.</param>
     public Pfa235FFT(int n1, int n2)
     {
       ndim = 2;
@@ -206,9 +209,8 @@ namespace Altaxo.Calc.Fourier
     /// </summary>
     /// <remarks>
     /// Setup fast Fourier transform / back-transform for one, two or three
-    /// dimensions. The dimensions n1,n2,and n3 must be of the form
-    ///              n = (2**p) * (3**q) * (5**r)
-    /// otherwise an error will be generated and the error handler function
+    /// dimensions. The dimensions <paramref name="n1"/>, <paramref name="n2"/>, and <paramref name="n3"/> must be of the form
+    /// n = (2**p) * (3**q) * (5**r) otherwise an error will be generated and the error handler function
     /// Matpack.Error() is called. On instantiation some trigonometric tables
     /// will be allocated and calculated. This approach avoids multiple
     /// twiddle factor recalculations if several FFTs are calculated for data
@@ -221,6 +223,9 @@ namespace Altaxo.Calc.Fourier
     /// on vector machines with separate memory banks an extra leading dimension
     /// can be defined to avoid bank conflicts - also see SetOrder().
     /// </remarks>
+    /// <param name="n1">Size of first dimension.</param>
+    /// <param name="n2">Size of second dimension.</param>
+    /// <param name="n3">Size of third dimension.</param>
     public Pfa235FFT(int n1, int n2, int n3)
     {
       ndim = 3;
@@ -274,6 +279,7 @@ namespace Altaxo.Calc.Fourier
     /// on vector machines with separate memory banks an extra leading dimension
     /// can be defined to avoid bank conflicts - also see SetOrder().
     /// </remarks>
+    /// <param name="fft">The FFT setup instance to copy.</param>
     public Pfa235FFT(Pfa235FFT fft)
     {
       // copy all elements
@@ -343,20 +349,8 @@ L20:
     /// ordered (C style) then the last dimension is the leading dimension
     /// and will be padded!
     /// </summary>
-    /// <param name="row">If the row order argument is non-zero then the
-    ///       d-dimensional data are assumed to be stored in
-    ///       row order (the C convention), otherwise if
-    ///         zero then column order (the Fortran convention)
-    ///       is assumed. Initially row order is assumed!</param>
-    /// <param name="lead">The leading dimension can be choosen different
-    ///       from the first/last dimension of the array. This
-    ///       can give a significant speed increase on some
-    ///       vector machines avoiding memory-bank conflicts.
-    ///         If the data are stored column-ordered (Fortran
-    ///       style) then the leading dimension is the first
-    ///       dimension, otherwise if the data are stored row-
-    ///         ordered (C style) then the last dimension is the
-    ///       leading dimension and will be padded!</param>
+    /// <param name="row">If the row argument is non-zero then the d-dimensional data are assumed to be stored in row order (the C convention); otherwise column order (the Fortran convention) is assumed. Initially, row order is assumed.</param>
+    /// <param name="lead">The leading dimension can be chosen different from the first/last dimension of the array. This can give a significant speed increase on some vector machines by avoiding memory-bank conflicts. If the data are stored column-ordered (Fortran style) then the leading dimension is the first dimension; otherwise, if the data are stored row-ordered (C style) then the last dimension is the leading dimension and will be padded.</param>
     private void SetOrder(int row, int lead)
     {
       if (ndim == 0)

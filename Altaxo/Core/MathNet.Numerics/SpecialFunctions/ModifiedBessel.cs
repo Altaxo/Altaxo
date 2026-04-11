@@ -140,6 +140,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="x">The value to compute the Bessel function of.
     /// </param>
+    /// <returns>The modified Bessel function I0 evaluated at <paramref name="x"/>.</returns>
     public static double BesselI0(double x)
     {
       if (x < 0)
@@ -168,6 +169,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="x">The value to compute the Bessel function of.
     /// </param>
+    /// <returns>The modified Bessel function I1 evaluated at <paramref name="x"/>.</returns>
     public static double BesselI1(double x)
     {
       double z = Math.Abs(x);
@@ -199,6 +201,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="x">The value to compute the Bessel function of.
     /// </param>
+    /// <returns>The modified Bessel function K0 evaluated at <paramref name="x"/>.</returns>
     public static double BesselK0(double x)
     {
       if (x <= 0.0)
@@ -221,6 +224,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="x">The value to compute the Bessel function of.
     /// </param>
+    /// <returns>The exponentially scaled modified Bessel function K0e evaluated at <paramref name="x"/>.</returns>
     public static double BesselK0e(double x)
     {
       if (x <= 0.0)
@@ -247,6 +251,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="x">The value to compute the Bessel function of.
     /// </param>
+    /// <returns>The modified Bessel function K1 evaluated at <paramref name="x"/>.</returns>
     public static double BesselK1(double x)
     {
       double z = 0.5 * x;
@@ -272,6 +277,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="x">The value to compute the Bessel function of.
     /// </param>
+    /// <returns>The exponentially scaled modified Bessel function K1e evaluated at <paramref name="x"/>.</returns>
     public static double BesselK1e(double x)
     {
       if (x <= 0.0)

@@ -156,8 +156,10 @@ namespace Altaxo.Serialization.Ascii
     }
 
     /// <summary>
-    /// Getter / setter of the items of the line.
+    /// Gets the column information at the specified index.
     /// </summary>
+    /// <param name="i">Zero-based index of the column to retrieve.</param>
+    /// <returns>The <see cref="AsciiColumnInfo"/> for the requested column index.</returns>
     public AsciiColumnInfo this[int i]
     {
       get

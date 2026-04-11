@@ -58,6 +58,7 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Initializes a new instance of the <see cref="NegatedCondition"/> class.
     /// </summary>
+    /// <param name="condition">The condition to negate.</param>
     public NegatedCondition(ICondition condition)
     {
       Debug.Assert(condition is not null);
@@ -73,6 +74,9 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Reads a negated condition from XML.
     /// </summary>
+    /// <param name="reader">The XML reader positioned on the condition element.</param>
+    /// <param name="addIn">The add-in that owns the condition.</param>
+    /// <returns>The parsed condition.</returns>
     public static ICondition Read(XmlReader reader, AddIn addIn)
     {
       return new NegatedCondition(Condition.ReadConditionList(reader, "Not", addIn)[0]);
@@ -122,6 +126,7 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Initializes a new instance of the <see cref="AndCondition"/> class.
     /// </summary>
+    /// <param name="conditions">The conditions to combine.</param>
     public AndCondition(ICondition[] conditions)
     {
       Debug.Assert(conditions.Length >= 1);
@@ -144,6 +149,9 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Reads an AND condition from XML.
     /// </summary>
+    /// <param name="reader">The XML reader positioned on the condition element.</param>
+    /// <param name="addIn">The add-in that owns the condition.</param>
+    /// <returns>The parsed condition.</returns>
     public static ICondition Read(XmlReader reader, AddIn addIn)
     {
       return new AndCondition(Condition.ReadConditionList(reader, "And", addIn));
@@ -193,6 +201,7 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Initializes a new instance of the <see cref="OrCondition"/> class.
     /// </summary>
+    /// <param name="conditions">The conditions to combine.</param>
     public OrCondition(ICondition[] conditions)
     {
       Debug.Assert(conditions.Length >= 1);
@@ -215,6 +224,9 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Reads an OR condition from XML.
     /// </summary>
+    /// <param name="reader">The XML reader positioned on the condition element.</param>
+    /// <param name="addIn">The add-in that owns the condition.</param>
+    /// <returns>The parsed condition.</returns>
     public static ICondition Read(XmlReader reader, AddIn addIn)
     {
       return new OrCondition(Condition.ReadConditionList(reader, "Or", addIn));

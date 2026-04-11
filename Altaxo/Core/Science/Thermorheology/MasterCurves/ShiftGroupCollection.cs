@@ -310,6 +310,8 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <summary>
     /// Creates one or multiple master curve(s).
     /// </summary>
+    /// <param name="cancellationToken">A token that can cancel the operation.</param>
+    /// <param name="progress">Optional progress reporter receiving values from 0 to 1.</param>
     public void CreateMasterCurve(CancellationToken cancellationToken, IProgress<double>? progress)
     {
       if (NumberOfIterations == 0)
@@ -376,7 +378,8 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// </summary>
     /// <param name="shiftOrder">The order in which the curves are shifted and fitted to the master curve.</param>
     /// <param name="cancellationToken">The token to cancel the iteration.</param>
-    /// <param name="progress">Progress result.</param>
+    /// <param name="progress">Progress callback that receives values between 0.0 and 1.0 indicating completion progress, or <c>null</c>. May be <c>null</c> if progress reporting is not required.</param>
+    /// <returns>Nothing. The method performs the iteration and updates internal shift values.</returns>
     public void Iterate(IReadOnlyList<int> shiftOrder, CancellationToken cancellationToken, IProgress<double>? progress)
     {
       progress?.Report(0);

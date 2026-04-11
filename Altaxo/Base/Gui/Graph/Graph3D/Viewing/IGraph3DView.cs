@@ -52,6 +52,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     /// Sets the number of layers that are in the graph. The view has to reflect the change in the number of layers
     /// by adjusting the number of layer buttons or similar. The current layer number should be preserved.
     /// </summary>
+    /// <param name="structure">The layer tree to display.</param>
+    /// <param name="currentLayerNumber">The currently active layer index path.</param>
     void SetLayerStructure(Altaxo.Collections.NGTreeNode structure, int[] currentLayerNumber);
 
     /// <summary>

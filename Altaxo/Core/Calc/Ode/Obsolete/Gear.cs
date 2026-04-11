@@ -20,6 +20,9 @@ namespace Altaxo.Calc.Ode.Obsolete
   /// </summary>
   internal class NordsieckState
   {
+    /// <summary>
+    /// The current integration time, step size, error estimate, and scaled error value.
+    /// </summary>
     public double tn, dt, Dq, delta;
 
     /// <summary>Current method order, from 1 to qmax</summary>
@@ -34,14 +37,27 @@ namespace Altaxo.Calc.Ode.Obsolete
     /// <summary>Step size scale factor/// </summary>
     public double rFactor;
 
+    /// <summary>
+    /// The current solution vector and correction vector.
+    /// </summary>
     public Vector xn, en;
+
+    /// <summary>
+    /// The minimum admissible step size.
+    /// </summary>
     public double epsilon = 1e-12;
 
 #nullable disable
+    /// <summary>
+    /// The Nordsieck history matrix.
+    /// </summary>
     public Matrix zn;
 #nullable enable
 
 
+    /// <summary>
+    /// Halves the current step size and rescales the Nordsieck history matrix.
+    /// </summary>
     public void ChangeStep()
     {
       dt = dt / 2.0;
@@ -106,11 +122,11 @@ namespace Altaxo.Calc.Ode.Obsolete
       return res;
     }
 
-    /// <summary>Compute Jacobian</summary>
-    /// <param name="f"></param>
-    /// <param name="x"></param>
-    /// <param name="t"></param>
-    /// <returns></returns>
+    /// <summary>Compute the Jacobian matrix numerically.</summary>
+    /// <param name="f">The function that evaluates the system derivatives.</param>
+    /// <param name="x">The state vector at which to evaluate the Jacobian.</param>
+    /// <param name="t">The time at which to evaluate the Jacobian.</param>
+    /// <returns>The numerically approximated Jacobian matrix.</returns>
     public static Matrix Jacobian(Func<double, Vector, Vector> f, Vector x, double t)
     {
       int N = x.Length;
@@ -378,10 +394,10 @@ namespace Altaxo.Calc.Ode.Obsolete
     }
 
     /// <summary>
-    /// Compute factorial
+    /// Compute a factorial.
     /// </summary>
-    /// <param name="arg"></param>
-    /// <returns></returns>
+    /// <param name="arg">The integer value.</param>
+    /// <returns>The factorial of <paramref name="arg"/>, or <c>-1</c> if <paramref name="arg"/> is negative.</returns>
     internal static int Factorial(int arg)
     {
       if (arg < 0)
@@ -614,8 +630,19 @@ namespace Altaxo.Calc.Ode.Obsolete
     }
   }
 
+  /// <summary>
+  /// Provides helper methods for Gear-based ODE solvers.
+  /// </summary>
   internal static class GearUtils
   {
+    /// <summary>
+    /// Computes the infinity norm scaled by the specified absolute and relative tolerances.
+    /// </summary>
+    /// <param name="v">The vector whose norm is evaluated.</param>
+    /// <param name="RTol">The relative tolerance.</param>
+    /// <param name="ATol">The absolute tolerance.</param>
+    /// <param name="a">The reference vector used in the scaling.</param>
+    /// <returns>The scaled tolerance norm.</returns>
     internal static double ToleranceNorm(this Vector v, double RTol, double ATol, Vector a)
     {
       return v.LInfinityNorm / (ATol + RTol * a.LInfinityNorm);

@@ -73,6 +73,7 @@ namespace Altaxo.Graph.Plot.Groups
     /// <summary>
     /// Initializes a new instance of the <see cref="SkipFrequencyGroupStyle"/> class by copying another instance.
     /// </summary>
+    /// <param name="from">The instance to copy.</param>
     public SkipFrequencyGroupStyle(SkipFrequencyGroupStyle from)
     {
       _isInitialized = from._isInitialized;
@@ -86,11 +87,13 @@ namespace Altaxo.Graph.Plot.Groups
     /// <summary>
     /// Creates a copy of this style.
     /// </summary>
+    /// <returns>A copied style instance.</returns>
     public SkipFrequencyGroupStyle Clone()
     {
       return new SkipFrequencyGroupStyle(this);
     }
 
+    /// <inheritdoc />
     object ICloneable.Clone()
     {
       return new SkipFrequencyGroupStyle(this);
@@ -205,6 +208,7 @@ namespace Altaxo.Graph.Plot.Groups
     /// <summary>
     /// Adds the external group style when applicable.
     /// </summary>
+    /// <param name="externalGroups">The external group-style collection.</param>
     public static void AddExternalGroupStyle(IPlotGroupStyleCollection externalGroups)
     {
       // this group style is local only, so no addition is made here
@@ -226,11 +230,15 @@ namespace Altaxo.Graph.Plot.Groups
     /// <summary>
     /// Represents a delegate that returns an integer function value.
     /// </summary>
+    /// <returns>The integer value returned by the delegate.</returns>
     public delegate int Int32FunctionValueGetter();
 
     /// <summary>
     /// Prepares the skip-frequency style.
     /// </summary>
+    /// <param name="externalGroups">The external group-style collection.</param>
+    /// <param name="localGroups">The local group-style collection.</param>
+    /// <param name="getter">The delegate that supplies the skip frequency.</param>
     public static void PrepareStyle(
       IPlotGroupStyleCollection externalGroups,
       IPlotGroupStyleCollection localGroups,
@@ -256,14 +264,15 @@ namespace Altaxo.Graph.Plot.Groups
     /// <summary>
     /// Represents a delegate that stores an integer value.
     /// </summary>
+    /// <param name="c">The value to store.</param>
     public delegate void Int32ValueSetter(int c);
 
     /// <summary>
     /// Tries to apply the skip-frequency group style.
     /// </summary>
-    /// <param name="externalGroups"></param>
-    /// <param name="localGroups"></param>
-    /// <param name="setter"></param>
+    /// <param name="externalGroups">The external group-style collection.</param>
+    /// <param name="localGroups">The local group-style collection.</param>
+    /// <param name="setter">The delegate that applies the skip frequency.</param>
     /// <returns><c>true</c> if successfully applied; otherwise, <c>false</c>.</returns>
     public static bool ApplyStyle(
       IPlotGroupStyleCollection externalGroups,

@@ -200,6 +200,8 @@ namespace Altaxo.Main.Services
     /// Gets whether this properties instance contains any entry (value, list, or nested container)
     /// with the specified key.
     /// </summary>
+    /// <param name="key">The key to look up.</param>
+    /// <returns><see langword="true"/> if the key exists; otherwise, <see langword="false"/>.</returns>
     public bool Contains(string key)
     {
       lock (_syncRoot)
@@ -216,6 +218,7 @@ namespace Altaxo.Main.Services
     /// Retrieves a string value from this Properties-container.
     /// Using this indexer is equivalent to calling <c>Get(key, string.Empty)</c>.
     /// </summary>
+    /// <param name="key">The key of the item to retrieve or set.</param>
     public string this[string key]
     {
       get
@@ -235,8 +238,10 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Retrieves a single element from this Properties-container.
     /// </summary>
+    /// <typeparam name="T">The type of the value to retrieve.</typeparam>
     /// <param name="key">Key of the item to retrieve</param>
     /// <param name="defaultValue">Default value to be returned if the key is not present.</param>
+    /// <returns>The stored value if present and convertible; otherwise, <paramref name="defaultValue"/>.</returns>
     public T Get<T>(string key, T defaultValue)
     {
       lock (_syncRoot)
@@ -269,6 +274,9 @@ namespace Altaxo.Main.Services
     /// The element will be serialized using a TypeConverter if possible, or XAML serializer otherwise.
     /// </summary>
     /// <remarks>Setting a key to <c>null</c> has the same effect as calling <see cref="Remove"/>.</remarks>
+    /// <typeparam name="T">The type of the value to store.</typeparam>
+    /// <param name="key">The key under which to store the value.</param>
+    /// <param name="value">The value to store.</param>
     public void Set<T>(string key, T value)
     {
       var serializedValue = Serialize(value, typeof(T), key);
@@ -307,6 +315,9 @@ namespace Altaxo.Main.Services
     /// This method returns a copy of the list used internally; you need to call
     /// <see cref="SetList"/> if you want to store the changed list.
     /// </remarks>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <param name="key">The key of the list to retrieve.</param>
+    /// <returns>The stored list, or an empty list if the key is not present.</returns>
     public IReadOnlyList<T> GetList<T>(string key)
     {
       lock (_syncRoot)
@@ -349,6 +360,9 @@ namespace Altaxo.Main.Services
     /// The elements will be serialized using a TypeConverter if possible, or XAML serializer otherwise.
     /// </summary>
     /// <remarks>Passing <c>null</c> or an empty list as value has the same effect as calling <see cref="Remove"/>.</remarks>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <param name="key">The key under which to store the list.</param>
+    /// <param name="value">The list to store.</param>
     public void SetList<T>(string key, IEnumerable<T> value)
     {
       if (value is null)
@@ -502,6 +516,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Removes the entry (value, list, or nested container) with the specified key.
     /// </summary>
+    /// <param name="key">The key of the entry to remove.</param>
+    /// <returns><see langword="true"/> if the entry was removed; otherwise, <see langword="false"/>.</returns>
     public bool Remove(string key)
     {
       bool removed = false;
@@ -567,6 +583,8 @@ namespace Altaxo.Main.Services
     /// is overwritten by one of the Set-methods).
     /// Changes performed on the nested container will be persisted together with the parent container.
     /// </summary>
+    /// <param name="key">The key of the nested property container.</param>
+    /// <returns>The nested property container associated with <paramref name="key"/>.</returns>
     public Properties NestedProperties(string key)
     {
       bool isNewContainer = false;
@@ -603,6 +621,8 @@ namespace Altaxo.Main.Services
     /// This method is intended to be used in conjunction with the <see cref="IMementoCapable"/> pattern
     /// where a new unattached properties container is created and then later attached to a parent container.
     /// </summary>
+    /// <param name="key">The key under which to store the nested properties.</param>
+    /// <param name="properties">The properties container to attach.</param>
     public void SetNestedProperties(string key, Properties properties)
     {
       if (properties is null)
@@ -653,6 +673,7 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Creates a deep clone of this Properties container.
     /// </summary>
+    /// <returns>A deep clone of this <see cref="Properties"/> instance.</returns>
     public Properties Clone()
     {
       lock (_syncRoot)
@@ -675,6 +696,7 @@ namespace Altaxo.Main.Services
       return copy;
     }
 
+    /// <inheritdoc/>
     object ICloneable.Clone()
     {
       return Clone();
@@ -684,6 +706,11 @@ namespace Altaxo.Main.Services
 
     #region ReadFromAttributes
 
+    /// <summary>
+    /// Reads a <see cref="Properties"/> instance from the attributes of the current XML element.
+    /// </summary>
+    /// <param name="reader">The XML reader positioned on the element whose attributes should be read.</param>
+    /// <returns>A properties container populated from the current element attributes.</returns>
     internal static Properties ReadFromAttributes(XmlReader reader)
     {
       var properties = new Properties();

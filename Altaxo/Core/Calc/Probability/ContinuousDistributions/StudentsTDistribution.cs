@@ -83,6 +83,7 @@ namespace Altaxo.Calc.Probability
     /// Initializes a new instance of the <see cref="StudentsTDistribution"/> class, using a
     ///   <see cref="StandardGenerator"/> as underlying random number generator.
     /// </summary>
+    /// <param name="generator">The random number generator used by this distribution.</param>
     public StudentsTDistribution(Generator generator)
       : this(1, generator)
     {
@@ -135,6 +136,7 @@ namespace Altaxo.Calc.Probability
     /// Updates the helper variables that store intermediate results for generation of t-distributed random
     ///   numbers.
     /// </summary>
+    /// <param name="nu">The degrees of freedom.</param>
     public void Initialize(double nu)
     {
       if (!IsValidNu(nu))

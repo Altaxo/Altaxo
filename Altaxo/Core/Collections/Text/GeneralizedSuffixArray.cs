@@ -273,7 +273,9 @@ namespace Altaxo.Collections.Text
     }
 
     /// <summary>
+    /// Gets the LCPS array.
     /// </summary>
+    /// <value>The LCPS array.</value>
     public int[] LCPSArray
     {
       get { return _LCPS; }

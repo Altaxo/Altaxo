@@ -574,6 +574,7 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Shows a configuration dialog for any item.
     /// </summary>
+    /// <typeparam name="T">The type of the object to configure.</typeparam>
     /// <param name="arg">The object to configure.
     /// If the return value is true, arg contains the configured object. </param>
     /// <param name="title">The title of the dialog.</param>
@@ -869,11 +870,19 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Shows a cancellable background-operation dialog for an existing thread.
     /// </summary>
+    /// <param name="millisecondsDelay">The delay before showing the dialog.</param>
+    /// <param name="thread">The existing thread to monitor.</param>
+    /// <param name="monitor">The monitor that reports progress and cancellation state.</param>
+    /// <returns><see langword="true"/> if the operation completed successfully; otherwise, <see langword="false"/>.</returns>
     public abstract bool ShowBackgroundCancelDialog(int millisecondsDelay, Thread thread, IExternalDrivenBackgroundMonitor monitor);
 
     /// <summary>
     /// Shows a cancellable dialog for a task-based background operation.
     /// </summary>
+    /// <param name="millisecondsDelay">The delay before showing the dialog.</param>
+    /// <param name="task">The task to monitor.</param>
+    /// <param name="monitor">The monitor that reports progress and cancellation state.</param>
+    /// <returns><see langword="true"/> if the operation completed successfully; otherwise, <see langword="false"/>.</returns>
     public abstract bool ShowTaskCancelDialog(int millisecondsDelay, System.Threading.Tasks.Task task, IExternalDrivenBackgroundMonitor monitor);
 
     /// <summary>

@@ -45,7 +45,21 @@ namespace Altaxo.Calc.Ode.Obsolete
   /// </summary>
   internal class RKSolOut : ISOLOUT, ISOLOUTR
   {
-    protected enum SolutionOutType { Array, Delegate }
+    /// <summary>
+    /// Specifies how solution values are returned by the output helper.
+    /// </summary>
+    protected enum SolutionOutType
+    {
+      /// <summary>
+      /// Store the solution in an array.
+      /// </summary>
+      Array,
+
+      /// <summary>
+      /// Forward the solution to a delegate.
+      /// </summary>
+      Delegate
+    }
 
     #region Fields
 #nullable disable
@@ -79,7 +93,9 @@ namespace Altaxo.Calc.Ode.Obsolete
     /// </summary>
     protected double _TF = 1;
 
-    //El incremento en el tiempo de integracion
+    /// <summary>
+    /// The time increment used for integration output.
+    /// </summary>
     protected double _DeltaT = 1;
 
     /// <summary>
@@ -122,6 +138,9 @@ namespace Altaxo.Calc.Ode.Obsolete
     /// </summary>
     protected bool _isDeltaPositive = true;
 
+    /// <summary>
+    /// The current output index.
+    /// </summary>
     protected int _Index = 1;
 
     //protected int MeSolutionLength;
@@ -140,11 +159,19 @@ namespace Altaxo.Calc.Ode.Obsolete
 
     #region Constructor
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RKSolOut"/> class for explicit Runge-Kutta dense output.
+    /// </summary>
+    /// <param name="contd5ExpicitRK">The dense output evaluator for the explicit solver.</param>
     public RKSolOut(CONTD5 contd5ExpicitRK)
     {
       _Contd5ExpicitRK = contd5ExpicitRK;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RKSolOut"/> class for implicit Runge-Kutta dense output.
+    /// </summary>
+    /// <param name="contr5ImplicitRK">The dense output evaluator for the implicit solver.</param>
     public RKSolOut(CONTR5 contr5ImplicitRK)
     {
       _Contr5ImplicitRK = contr5ImplicitRK;
@@ -154,6 +181,14 @@ namespace Altaxo.Calc.Ode.Obsolete
 
     #region Methods
 
+    /// <summary>
+    /// Initializes solution output using a regular time grid and a callback delegate.
+    /// </summary>
+    /// <param name="y0">The initial values.</param>
+    /// <param name="t0">The initial time.</param>
+    /// <param name="deltaT">The output time increment.</param>
+    /// <param name="tf">The final time.</param>
+    /// <param name="solution">The callback that receives solution values.</param>
     internal void Initialize(double[] y0, double t0, double deltaT, double tf, OdeSolution solution)
     {
       _SolutionOutType = SolutionOutType.Delegate;
@@ -162,6 +197,14 @@ namespace Altaxo.Calc.Ode.Obsolete
       _SolutionOut = solution;
     }
 
+    /// <summary>
+    /// Initializes solution output using a regular time grid and an output array.
+    /// </summary>
+    /// <param name="y0">The initial values.</param>
+    /// <param name="t0">The initial time.</param>
+    /// <param name="deltaT">The output time increment.</param>
+    /// <param name="tf">The final time.</param>
+    /// <param name="solutionArray">Receives the allocated solution array.</param>
     internal void Initialize(double[] y0, double t0, double deltaT, double tf, out double[,] solutionArray)
     {
       _SolutionOutType = SolutionOutType.Array;
@@ -173,6 +216,12 @@ namespace Altaxo.Calc.Ode.Obsolete
       _SolutionArray = solutionArray;
     }
 
+    /// <summary>
+    /// Initializes solution output using explicit output times and a callback delegate.
+    /// </summary>
+    /// <param name="y0">The initial values.</param>
+    /// <param name="tspan">The requested output times.</param>
+    /// <param name="solution">The callback that receives solution values.</param>
     internal void Initialize(double[] y0, double[] tspan, OdeSolution solution)
     {
       _SolutionOutType = SolutionOutType.Delegate;
@@ -181,6 +230,12 @@ namespace Altaxo.Calc.Ode.Obsolete
       _SolutionOut = solution;
     }
 
+    /// <summary>
+    /// Initializes solution output using explicit output times and an output array.
+    /// </summary>
+    /// <param name="y0">The initial values.</param>
+    /// <param name="tspan">The requested output times.</param>
+    /// <param name="solutionArray">Receives the allocated solution array.</param>
     internal void Initialize(double[] y0, double[] tspan, out double[,] solutionArray)
     {
       _SolutionOutType = SolutionOutType.Array;
@@ -276,6 +331,24 @@ namespace Altaxo.Calc.Ode.Obsolete
 
     #region ISOLOUT Members
 
+    /// <summary>
+    /// Stores or forwards dense output produced by the explicit Runge-Kutta solver.
+    /// </summary>
+    /// <param name="NR">The current output step number.</param>
+    /// <param name="XOLD">The previous grid point.</param>
+    /// <param name="X">The current grid point.</param>
+    /// <param name="Y">The current solution vector.</param>
+    /// <param name="o_y">The offset into <paramref name="Y"/>.</param>
+    /// <param name="N">The number of equations.</param>
+    /// <param name="CON">The dense output coefficients.</param>
+    /// <param name="o_con">The offset into <paramref name="CON"/>.</param>
+    /// <param name="ICOMP">The component map.</param>
+    /// <param name="o_icomp">The offset into <paramref name="ICOMP"/>.</param>
+    /// <param name="ND">The number of dense output components.</param>
+    /// <param name="RPAR">A user-supplied real parameter.</param>
+    /// <param name="o_rpar">The offset into <paramref name="RPAR"/>.</param>
+    /// <param name="IPAR">A user-supplied integer parameter.</param>
+    /// <param name="IRTRN">The solver return flag.</param>
     void ISOLOUT.Run(int NR, double XOLD, double X, double[] Y, int o_y, int N, double[] CON,
         int o_con, int[] ICOMP, int o_icomp, int ND, double[] RPAR, int o_rpar, int IPAR, int IRTRN)
     {
@@ -347,6 +420,21 @@ namespace Altaxo.Calc.Ode.Obsolete
 
     #region ISOLOUTR Members
 
+    /// <summary>
+    /// Stores or forwards dense output produced by the implicit Runge-Kutta solver.
+    /// </summary>
+    /// <param name="NR">The current output step number.</param>
+    /// <param name="XOLD">The previous grid point.</param>
+    /// <param name="X">The current grid point.</param>
+    /// <param name="Y">The current solution vector.</param>
+    /// <param name="o_y">The offset into <paramref name="Y"/>.</param>
+    /// <param name="CONT">The dense output coefficients.</param>
+    /// <param name="o_cont">The offset into <paramref name="CONT"/>.</param>
+    /// <param name="LRC">The leading dimension of <paramref name="CONT"/>.</param>
+    /// <param name="N">The number of equations.</param>
+    /// <param name="RPAR">A user-supplied real parameter.</param>
+    /// <param name="IPAR">A user-supplied integer parameter.</param>
+    /// <param name="IRTRN">The solver return flag.</param>
     void ISOLOUTR.Run(int NR, double XOLD, double X, double[] Y, int o_y, double[] CONT, int o_cont,
         int LRC, int N, double RPAR, int IPAR, int IRTRN)
     {

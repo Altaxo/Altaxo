@@ -49,6 +49,13 @@ namespace Altaxo.Calc.LinearAlgebra.Single.Factorization
   /// </remarks>
   internal abstract class Svd : Svd<float>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Svd"/> class.
+    /// </summary>
+    /// <param name="s">The singular values.</param>
+    /// <param name="u">The left singular vectors.</param>
+    /// <param name="vt">The transposed right singular vectors.</param>
+    /// <param name="vectorsComputed">A value indicating whether the singular vectors were computed.</param>
     protected Svd(Vector<float> s, Matrix<float> u, Matrix<float> vt, bool vectorsComputed)
         : base(s, u, vt, vectorsComputed)
     {

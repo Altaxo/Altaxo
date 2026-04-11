@@ -123,6 +123,8 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// Transforms the curve data (complex valued) according to the group's interpolation options (logarithmization of x and/or y) and filters invalid points.
     /// Returns the transformed x and complex y arrays suitable for interpolation.
     /// </summary>
+    /// <param name="idx">Index of the curve to transform.</param>
+    /// <returns>Tuple of transformed x-values and complex y-values suitable for interpolation.</returns>
     public (IReadOnlyList<double> x, IReadOnlyList<Complex64> y) TransformCurveForInterpolationAccordingToGroupOptions(int idx)
     {
       var xarr = new List<double>();

@@ -232,7 +232,9 @@ namespace Altaxo.Data
     /// </summary>
     public int ColumnHeaderColumnsCount => _columnHeaderColumns.Count;
 
-    /// <summary>Column that correlate each column of the resulting matrix to a corresponding physical value. This value can be used for instance for calculating the x- or y- position in the coordinate system.</summary>
+    /// <summary>Gets the column that correlates each column of the resulting matrix to a corresponding physical value. This value can be used, for instance, for calculating the x- or y-position in the coordinate system.</summary>
+    /// <param name="idx">The zero-based index of the column header column.</param>
+    /// <returns>The requested column header column proxy.</returns>
     public IReadableColumnProxy GetColumnHeaderColumn(int idx)
     {
       if(idx< 0 || idx >= _columnHeaderColumns.Count)
@@ -244,6 +246,7 @@ namespace Altaxo.Data
     /// <summary>
     /// Gets a wrapper vector around the column header data.
     /// </summary>
+    /// <param name="idx">The zero-based index of the column header column.</param>
     /// <returns>Wrapper vector around the column header data. Each element of this vector corresponds to the column with the same index of the matrix.</returns>
     public IReadOnlyList<double> GetColumnHeaderWrapper(int idx)
     {

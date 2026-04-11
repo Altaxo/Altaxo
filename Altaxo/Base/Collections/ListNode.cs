@@ -1126,6 +1126,7 @@ namespace Altaxo.Collections
     }
 
 
+    /// <inheritdoc/>
     void SelectableListNodeWithParent.IParent.EhChild_IsSelectedChanged(SelectableListNodeWithParent itemThatWasChanged)
     {
       OnSelectedItemsChanged();

@@ -151,6 +151,9 @@ namespace Altaxo.Drawing.LineCaps
     /// <summary>
     /// Determines whether two <see cref="LineCapBase"/> instances are equal.
     /// </summary>
+    /// <param name="a">The first line cap.</param>
+    /// <param name="b">The second line cap.</param>
+    /// <returns><see langword="true"/> if both line caps are equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator ==(LineCapBase a, LineCapBase b)
     {
       return a is { } _ ? a.Equals(b) : b is { } _ ? b.Equals(a) : true;
@@ -159,6 +162,9 @@ namespace Altaxo.Drawing.LineCaps
     /// <summary>
     /// Determines whether two <see cref="LineCapBase"/> instances are not equal.
     /// </summary>
+    /// <param name="a">The first line cap.</param>
+    /// <param name="b">The second line cap.</param>
+    /// <returns><see langword="true"/> if the line caps are not equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator !=(LineCapBase a, LineCapBase b)
     {
       return !(a == b);
@@ -260,9 +266,7 @@ namespace Altaxo.Drawing.LineCaps
     {
       return _registeredStylesSortedByName;
     }
-
-
-
+    /// <inheritdoc />
     bool IEquatable<ILineCap>.Equals(ILineCap? other)
     {
       throw new NotImplementedException();

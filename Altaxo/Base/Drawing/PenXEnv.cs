@@ -92,6 +92,9 @@ namespace Altaxo.Drawing
     /// <summary>
     /// Determines whether two <see cref="PenXEnv"/> values are equal.
     /// </summary>
+    /// <param name="x">The first pen environment.</param>
+    /// <param name="y">The second pen environment.</param>
+    /// <returns><see langword="true"/> if both pen environments are equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator ==(PenXEnv x, PenXEnv y)
     {
       return x.Equals(y);
@@ -99,6 +102,9 @@ namespace Altaxo.Drawing
     /// <summary>
     /// Determines whether two <see cref="PenXEnv"/> values are not equal.
     /// </summary>
+    /// <param name="x">The first pen environment.</param>
+    /// <param name="y">The second pen environment.</param>
+    /// <returns><see langword="true"/> if the pen environments are not equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator !=(PenXEnv x, PenXEnv y)
     {
       return !x.Equals(y);

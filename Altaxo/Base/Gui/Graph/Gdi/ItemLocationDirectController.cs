@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -702,8 +702,10 @@ namespace Altaxo.Gui.Graph.Gdi
 
 
     /// <summary>
-    /// Performs the s ho ws iz ee le me nt s operation.
+    /// Shows or hides the size-related controls.
     /// </summary>
+    /// <param name="isVisible"><c>true</c> to show the controls; otherwise, <c>false</c>.</param>
+    /// <param name="isEnabled"><c>true</c> to enable the controls; otherwise, <c>false</c>.</param>
     public void ShowSizeElements(bool isVisible, bool isEnabled)
     {
       AreSizeElementsVisible = isVisible;
@@ -711,8 +713,10 @@ namespace Altaxo.Gui.Graph.Gdi
     }
 
     /// <summary>
-    /// Performs the s ho ws ca le el em en ts operation.
+    /// Shows or hides the scale-related controls.
     /// </summary>
+    /// <param name="isVisible"><c>true</c> to show the controls; otherwise, <c>false</c>.</param>
+    /// <param name="isEnabled"><c>true</c> to enable the controls; otherwise, <c>false</c>.</param>
     public void ShowScaleElements(bool isVisible, bool isEnabled)
     {
       AreScaleElementsVisible = isVisible;
@@ -720,8 +724,10 @@ namespace Altaxo.Gui.Graph.Gdi
     }
 
     /// <summary>
-    /// Performs the s ho wp os it io ne le me nt s operation.
+    /// Shows or hides the position-related controls.
     /// </summary>
+    /// <param name="isVisible"><c>true</c> to show the controls; otherwise, <c>false</c>.</param>
+    /// <param name="isEnabled"><c>true</c> to enable the controls; otherwise, <c>false</c>.</param>
     public void ShowPositionElements(bool isVisible, bool isEnabled)
     {
       ArePositionElementsVisible = isVisible;
@@ -729,8 +735,10 @@ namespace Altaxo.Gui.Graph.Gdi
     }
 
     /// <summary>
-    /// Performs the s ho wa nc ho re le me nt s operation.
+    /// Shows or hides the anchor-related controls.
     /// </summary>
+    /// <param name="isVisible"><c>true</c> to show the controls; otherwise, <c>false</c>.</param>
+    /// <param name="isEnabled"><c>true</c> to enable the controls; otherwise, <c>false</c>.</param>
     public void ShowAnchorElements(bool isVisible, bool isEnabled)
     {
       AreAnchorElementsVisible = isVisible;

@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -927,6 +927,7 @@ namespace Altaxo.Graph.Scales.Ticks
     /// <param name="isEndExtendable">True if the scale end can be extended.</param>
     /// <param name="propOrg">Returns the proposed value of the scale origin.</param>
     /// <param name="propEnd">Returns the proposed value of the scale end.</param>
+    /// <returns><see langword="true"/> if the boundaries were modified; otherwise, <see langword="false"/>.</returns>
     public bool GetOrgEndWithGraceAndOneLever(double scaleOrg, double scaleEnd, bool isOrgExtendable, bool isEndExtendable, out double propOrg, out double propEnd)
     {
       bool modified = false;

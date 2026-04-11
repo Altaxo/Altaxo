@@ -43,6 +43,10 @@ namespace Altaxo.Calc
     /// <summary>
     /// Sum of Absolute Difference (SAD), i.e. the L1-norm (Manhattan) of the difference.
     /// </summary>
+    /// <typeparam name="T">The type of the vector elements.</typeparam>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The distance value.</returns>
     public static double SAD<T>(Vector<T> a, Vector<T> b) where T : struct, IEquatable<T>, IFormattable
     {
       return (a - b).L1Norm();
@@ -51,6 +55,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Sum of Absolute Difference (SAD), i.e. the L1-norm (Manhattan) of the difference.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The distance value.</returns>
     public static double SAD(double[] a, double[] b)
     {
       if (a.Length != b.Length)
@@ -69,6 +76,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Sum of Absolute Difference (SAD), i.e. the L1-norm (Manhattan) of the difference.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The distance value.</returns>
     public static float SAD(float[] a, float[] b)
     {
       if (a.Length != b.Length)
@@ -87,6 +97,10 @@ namespace Altaxo.Calc
     /// <summary>
     /// Mean-Absolute Error (MAE), i.e. the normalized L1-norm (Manhattan) of the difference.
     /// </summary>
+    /// <typeparam name="T">The type of the vector elements.</typeparam>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The distance value.</returns>
     public static double MAE<T>(Vector<T> a, Vector<T> b) where T : struct, IEquatable<T>, IFormattable
     {
       return (a - b).L1Norm() / a.Count;
@@ -95,6 +109,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Mean-Absolute Error (MAE), i.e. the normalized L1-norm (Manhattan) of the difference.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The distance value.</returns>
     public static double MAE(double[] a, double[] b)
     {
       return SAD(a, b) / a.Length;
@@ -103,6 +120,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Mean-Absolute Error (MAE), i.e. the normalized L1-norm (Manhattan) of the difference.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The distance value.</returns>
     public static float MAE(float[] a, float[] b)
     {
       return SAD(a, b) / a.Length;
@@ -111,6 +131,10 @@ namespace Altaxo.Calc
     /// <summary>
     /// Sum of Squared Difference (SSD), i.e. the squared L2-norm (Euclidean) of the difference.
     /// </summary>
+    /// <typeparam name="T">The type of the vector elements.</typeparam>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The distance value.</returns>
     public static double SSD<T>(Vector<T> a, Vector<T> b) where T : struct, IEquatable<T>, IFormattable
     {
       var norm = (a - b).L2Norm();
@@ -120,6 +144,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Sum of Squared Difference (SSD), i.e. the squared L2-norm (Euclidean) of the difference.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The distance value.</returns>
     public static double SSD(double[] a, double[] b)
     {
       if (a.Length != b.Length)
@@ -135,6 +162,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Sum of Squared Difference (SSD), i.e. the squared L2-norm (Euclidean) of the difference.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The distance value.</returns>
     public static float SSD(float[] a, float[] b)
     {
       if (a.Length != b.Length)
@@ -150,6 +180,10 @@ namespace Altaxo.Calc
     /// <summary>
     /// Mean-Squared Error (MSE), i.e. the normalized squared L2-norm (Euclidean) of the difference.
     /// </summary>
+    /// <typeparam name="T">The type of the vector elements.</typeparam>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The distance value.</returns>
     public static double MSE<T>(Vector<T> a, Vector<T> b) where T : struct, IEquatable<T>, IFormattable
     {
       var norm = (a - b).L2Norm();
@@ -159,6 +193,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Mean-Squared Error (MSE), i.e. the normalized squared L2-norm (Euclidean) of the difference.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The distance value.</returns>
     public static double MSE(double[] a, double[] b)
     {
       return SSD(a, b) / a.Length;
@@ -167,6 +204,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Mean-Squared Error (MSE), i.e. the normalized squared L2-norm (Euclidean) of the difference.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The distance value.</returns>
     public static float MSE(float[] a, float[] b)
     {
       return SSD(a, b) / a.Length;
@@ -175,6 +215,10 @@ namespace Altaxo.Calc
     /// <summary>
     /// Euclidean Distance, i.e. the L2-norm of the difference.
     /// </summary>
+    /// <typeparam name="T">The type of the vector elements.</typeparam>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The distance value.</returns>
     public static double Euclidean<T>(Vector<T> a, Vector<T> b) where T : struct, IEquatable<T>, IFormattable
     {
       return (a - b).L2Norm();
@@ -183,6 +227,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Euclidean Distance, i.e. the L2-norm of the difference.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The distance value.</returns>
     public static double Euclidean(double[] a, double[] b)
     {
       return Math.Sqrt(SSD(a, b));
@@ -191,6 +238,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Euclidean Distance, i.e. the L2-norm of the difference.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The distance value.</returns>
     public static float Euclidean(float[] a, float[] b)
     {
       return (float)Math.Sqrt(SSD(a, b));
@@ -199,6 +249,10 @@ namespace Altaxo.Calc
     /// <summary>
     /// Manhattan Distance, i.e. the L1-norm of the difference.
     /// </summary>
+    /// <typeparam name="T">The type of the vector elements.</typeparam>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The distance value.</returns>
     public static double Manhattan<T>(Vector<T> a, Vector<T> b) where T : struct, IEquatable<T>, IFormattable
     {
       return (a - b).L1Norm();
@@ -207,6 +261,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Manhattan Distance, i.e. the L1-norm of the difference.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The distance value.</returns>
     public static double Manhattan(double[] a, double[] b)
     {
       return SAD(a, b);
@@ -215,6 +272,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Manhattan Distance, i.e. the L1-norm of the difference.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The distance value.</returns>
     public static float Manhattan(float[] a, float[] b)
     {
       return SAD(a, b);
@@ -223,6 +283,10 @@ namespace Altaxo.Calc
     /// <summary>
     /// Chebyshev Distance, i.e. the Infinity-norm of the difference.
     /// </summary>
+    /// <typeparam name="T">The type of the vector elements.</typeparam>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The distance value.</returns>
     public static double Chebyshev<T>(Vector<T> a, Vector<T> b) where T : struct, IEquatable<T>, IFormattable
     {
       return (a - b).InfinityNorm();
@@ -231,6 +295,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Chebyshev Distance, i.e. the Infinity-norm of the difference.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The distance value.</returns>
     public static double Chebyshev(double[] a, double[] b)
     {
       if (a.Length != b.Length)
@@ -253,6 +320,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Chebyshev Distance, i.e. the Infinity-norm of the difference.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The distance value.</returns>
     public static float Chebyshev(float[] a, float[] b)
     {
       if (a.Length != b.Length)
@@ -275,6 +345,11 @@ namespace Altaxo.Calc
     /// <summary>
     /// Minkowski Distance, i.e. the generalized p-norm of the difference.
     /// </summary>
+    /// <typeparam name="T">The type of the vector elements.</typeparam>
+    /// <param name="p">The p value of the norm.</param>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The distance value.</returns>
     public static double Minkowski<T>(double p, Vector<T> a, Vector<T> b) where T : struct, IEquatable<T>, IFormattable
     {
       return (a - b).Norm(p);
@@ -283,6 +358,10 @@ namespace Altaxo.Calc
     /// <summary>
     /// Minkowski Distance, i.e. the generalized p-norm of the difference.
     /// </summary>
+    /// <param name="p">The p value of the norm.</param>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The distance value.</returns>
     public static double Minkowski(double p, double[] a, double[] b)
     {
       if (a.Length != b.Length)
@@ -321,6 +400,10 @@ namespace Altaxo.Calc
     /// <summary>
     /// Minkowski Distance, i.e. the generalized p-norm of the difference.
     /// </summary>
+    /// <param name="p">The p value of the norm.</param>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The distance value.</returns>
     public static float Minkowski(double p, float[] a, float[] b)
     {
       if (a.Length != b.Length)
@@ -359,6 +442,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Canberra Distance, a weighted version of the L1-norm of the difference.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The distance value.</returns>
     public static double Canberra(double[] a, double[] b)
     {
       if (a.Length != b.Length)
@@ -377,6 +463,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Canberra Distance, a weighted version of the L1-norm of the difference.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The distance value.</returns>
     public static float Canberra(float[] a, float[] b)
     {
       if (a.Length != b.Length)
@@ -395,6 +484,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Cosine Distance, representing the angular distance while ignoring the scale.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The distance value.</returns>
     public static double Cosine(double[] a, double[] b)
     {
       if (a.Length != b.Length)
@@ -411,6 +503,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Cosine Distance, representing the angular distance while ignoring the scale.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The distance value.</returns>
     public static float Cosine(float[] a, float[] b)
     {
       if (a.Length != b.Length)
@@ -427,6 +522,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Hamming Distance, i.e. the number of positions that have different values in the vectors.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The distance value.</returns>
     public static double Hamming(double[] a, double[] b)
     {
       if (a.Length != b.Length)
@@ -448,6 +546,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Hamming Distance, i.e. the number of positions that have different values in the vectors.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The distance value.</returns>
     public static float Hamming(float[] a, float[] b)
     {
       if (a.Length != b.Length)
@@ -469,6 +570,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Pearson's distance, i.e. 1 - the person correlation coefficient.
     /// </summary>
+    /// <param name="a">The first sequence.</param>
+    /// <param name="b">The second sequence.</param>
+    /// <returns>The distance value.</returns>
     public static double Pearson(IEnumerable<double> a, IEnumerable<double> b)
     {
       return 1.0 - Correlation.Pearson(a, b);
@@ -477,6 +581,8 @@ namespace Altaxo.Calc
     /// <summary>
     /// Jaccard distance, i.e. 1 - the Jaccard index.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
     /// <exception cref="ArgumentNullException">Thrown if a or b are null.</exception>
     /// <exception cref="ArgumentException">Throw if a and b are of different lengths.</exception>
     /// <returns>Jaccard distance.</returns>
@@ -523,6 +629,8 @@ namespace Altaxo.Calc
     /// <summary>
     /// Jaccard distance, i.e. 1 - the Jaccard index.
     /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
     /// <exception cref="ArgumentNullException">Thrown if a or b are null.</exception>
     /// <exception cref="ArgumentException">Throw if a and b are of different lengths.</exception>
     /// <returns>Jaccard distance.</returns>

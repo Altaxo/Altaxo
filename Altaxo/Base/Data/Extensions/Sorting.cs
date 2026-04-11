@@ -125,6 +125,7 @@ namespace Altaxo.Data
     /// Sorts the elements, but maintains the original order in the provided array. Instead, an array of indices is created. The elements are
     /// sorted in the sense that elementsToSort[indexArray[i]] is sorted afterwards. The standard comparer of the elements is used for comparison.
     /// </summary>
+    /// <typeparam name="T">The type of elements to sort.</typeparam>
     /// <param name="elementsToSort">The list of elements to sort. The list is not changed, thus it can be readonly.</param>
     /// <returns>An array of indices, so that elementsToSort[indexArray[i]] (i = 0..Count-1) is sorted.</returns>
     public static int[] HeapSortVirtually<T>(IList<T> elementsToSort) where T : IComparable
@@ -162,6 +163,7 @@ namespace Altaxo.Data
     /// Sorts the elements, but maintains the original order in the provided array. Instead, an array of indices is created. The elements are
     /// sorted in the sense that elementsToSort[indexArray[i]] is sorted afterwards. The standard comparer of the elements is used for comparison.
     /// </summary>
+    /// <typeparam name="T">The type of elements to sort.</typeparam>
     /// <param name="elementsToSort">The list of elements to sort. The list is not changed, thus it can be readonly.</param>
     /// <param name="destinationIndexArray">Can be null. If you provide an array here with a length greater or equal to the number of elements to sort, that array is used as return value and filled with the indices.</param>
     /// <returns>An array of indices, so that elementsToSort[indexArray[i]] (i = 0..Count-1) is sorted.</returns>

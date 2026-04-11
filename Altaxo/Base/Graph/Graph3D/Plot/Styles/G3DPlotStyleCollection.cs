@@ -568,6 +568,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     #region IEnumerable Members
 
+    /// <inheritdoc/>
     IEnumerator IEnumerable.GetEnumerator()
     {
       return _innerList.GetEnumerator();
@@ -637,6 +638,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     #endregion IRoutedPropertyReceiver Members
 
+    /// <inheritdoc />
     string INamedObject.Name
     {
       get { return GetType().Name; }

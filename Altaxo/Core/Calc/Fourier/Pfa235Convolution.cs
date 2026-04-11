@@ -150,9 +150,10 @@ namespace Altaxo.Calc.Fourier
     /// </summary>
     /// <remarks>
     /// Setup fast Fourier transform / back-transform for one
-    /// dimensions. The dimension n1 must be of the form
-    ///              n = (2**p) * (3**q) * (5**r)
+    /// dimension. The dimension <paramref name="n1"/> must be of the form
+    /// n = (2**p) * (3**q) * (5**r).
     /// </remarks>
+    /// <param name="n1">Length of the first (and only) dimension.</param>
     public Pfa235Convolution(int n1)
       : base(n1)
     {
@@ -163,10 +164,11 @@ namespace Altaxo.Calc.Fourier
     /// </summary>
     /// <remarks>
     /// Setup fast Fourier transform / back-transform for two
-    /// dimensions. The dimensions n1 andn2 must be of the form
-    ///              n = (2**p) * (3**q) * (5**r)
+    /// dimensions. The dimensions <paramref name="n1"/> and <paramref name="n2"/> must be of the form
+    /// n = (2**p) * (3**q) * (5**r).
     /// </remarks>
-
+    /// <param name="n1">Length of the first dimension.</param>
+    /// <param name="n2">Length of the second dimension.</param>
     public Pfa235Convolution(int n1, int n2)
       : base(n1, n2)
     {
@@ -177,9 +179,12 @@ namespace Altaxo.Calc.Fourier
     /// </summary>
     /// <remarks>
     /// Setup fast Fourier transform / back-transform for three
-    /// dimensions. The dimensions n1,n2,and n3 must be of the form
-    ///              n = (2**p) * (3**q) * (5**r)
+    /// dimensions. The dimensions <paramref name="n1"/>, <paramref name="n2"/>, and <paramref name="n3"/> must be of the form
+    /// n = (2**p) * (3**q) * (5**r).
     /// </remarks>
+    /// <param name="n1">Length of the first dimension.</param>
+    /// <param name="n2">Length of the second dimension.</param>
+    /// <param name="n3">Length of the third dimension.</param>
     public Pfa235Convolution(int n1, int n2, int n3)
       : base(n1, n2, n3)
     {
@@ -195,23 +200,8 @@ namespace Altaxo.Calc.Fourier
     /// of the form n = (2**p) * (3**q) * (5**r), because of the underlying FFT.
     /// The d-dimensional data can be either single precision (FLOAT := float)
     /// or double precision (FLOAT := double).    /// </summary>
-    /// <param name="data">
-    ///The real-valued data set. Note, that you have to
-    ///                           care for end effects by zero padding. This means,
-    ///                           that you have to pad the data with a number of zeros
-    ///                           on one end equal to the maximal positive duration
-    ///                           or maximal negative duration of the response function,
-    ///                           whichever is larger!!   /// </param>
-    /// <param name="response">
-    ///  The response function must be stored in wrap-around
-    ///  order. This means that the first half of the array
-    ///  response[] (in each dimension) contains the impulse
-    ///  response function at positive times, while the second
-    ///  half of the array contains the impulse response
-    ///  function at negative times, counting down from the
-    ///  element with the highest index. The array must have
-    ///  at least the size of the data array.
-    /// </param>
+    /// <param name="data">The real-valued data set. Note that you must account for end effects by zero padding. This means you have to pad the data with a number of zeros on one end equal to the maximal positive duration or maximal negative duration of the response function, whichever is larger.</param>
+    /// <param name="response">The response function must be stored in wrap-around order. The first half of the array (in each dimension) contains the impulse response function at positive times, while the second half contains the impulse response function at negative times, counting down from the element with the highest index. The array must have at least the size of the data array.</param>
     /// <param name="result">
     /// The result array. It must have
     /// at least the size of the data array.

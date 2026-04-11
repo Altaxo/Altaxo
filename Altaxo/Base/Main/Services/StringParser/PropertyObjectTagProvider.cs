@@ -32,6 +32,7 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Initializes a new instance of the <see cref="PropertyObjectTagProvider"/> class.
     /// </summary>
+    /// <param name="obj">The object whose public properties and fields provide tag values.</param>
     public PropertyObjectTagProvider(object obj)
     {
       this.obj = obj ?? throw new ArgumentNullException(nameof(obj));

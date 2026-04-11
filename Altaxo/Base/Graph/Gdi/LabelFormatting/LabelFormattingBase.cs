@@ -259,6 +259,10 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
       /// <summary>
       /// Initializes a new instance of the <see cref="MeasuredLabelItem"/> class.
       /// </summary>
+      /// <param name="g">The graphics object used to measure the label.</param>
+      /// <param name="font">The font used for measurement.</param>
+      /// <param name="strfmt">The string format used for measurement.</param>
+      /// <param name="itemtext">The label text.</param>
       public MeasuredLabelItem(Graphics g, FontX font, StringFormat strfmt, string itemtext)
       {
         _text = itemtext;

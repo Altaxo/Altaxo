@@ -45,6 +45,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Initializes a new instance of the <see cref="PredictionModelExporter"/> class.
     /// </summary>
+    /// <param name="table">The table that contains the prediction model.</param>
+    /// <param name="numberOfFactors">The requested number of factors to export.</param>
     public PredictionModelExporter(Altaxo.Data.DataTable table, int numberOfFactors)
     {
       _table = table ?? throw new ArgumentNullException(nameof(table));
@@ -55,6 +57,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Exports the prediction model to the specified XML file.
     /// </summary>
+    /// <param name="filename">The output file name.</param>
     public void Export(string filename)
     {
       var writer = new System.Xml.XmlTextWriter(filename, System.Text.Encoding.UTF8);

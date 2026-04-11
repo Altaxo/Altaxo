@@ -198,6 +198,8 @@ namespace Altaxo.Gui.Graph.Gdi
     /// <summary>
     /// Initializes a new instance of the <see cref="XYPlotLayerController"/> class.
     /// </summary>
+    /// <param name="layer">The plot layer to edit.</param>
+    /// <param name="useDocumentCopy">Controls whether the controller edits a copy of the document.</param>
     public XYPlotLayerController(XYPlotLayer layer, UseDocument useDocumentCopy)
       : this(layer, ScaleTag, 1, null, useDocumentCopy)
     {
@@ -206,6 +208,10 @@ namespace Altaxo.Gui.Graph.Gdi
     /// <summary>
     /// Initializes a new instance of the <see cref="XYPlotLayerController"/> class.
     /// </summary>
+    /// <param name="layer">The plot layer to edit.</param>
+    /// <param name="currentPage">The page that should be shown initially.</param>
+    /// <param name="id">The axis identifier that should be selected initially.</param>
+    /// <param name="useDocumentCopy">Controls whether the controller edits a copy of the document.</param>
     public XYPlotLayerController(XYPlotLayer layer, string currentPage, CSLineID id, UseDocument useDocumentCopy)
       : this(layer, currentPage, id.ParallelAxisNumber, id, useDocumentCopy)
     {

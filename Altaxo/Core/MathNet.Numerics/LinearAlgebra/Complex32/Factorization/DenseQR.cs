@@ -59,6 +59,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32.Factorization
     /// <param name="method">The QR factorization method to use.</param>
     /// <exception cref="ArgumentNullException">If <paramref name="matrix"/> is <c>null</c>.</exception>
     /// <exception cref="ArgumentException">If <paramref name="matrix"/> row count is less then column count</exception>
+    /// <returns>The QR factorization of <paramref name="matrix"/>.</returns>
     public static DenseQR Create(DenseMatrix matrix, QRMethod method = QRMethod.Full)
     {
       if (matrix.RowCount < matrix.ColumnCount)

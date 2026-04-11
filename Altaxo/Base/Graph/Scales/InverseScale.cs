@@ -163,6 +163,7 @@ namespace Altaxo.Graph.Scales
     /// <summary>
     /// Constructor for deserialization only.
     /// </summary>
+    /// <param name="info">The deserialization information.</param>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected InverseScale(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {

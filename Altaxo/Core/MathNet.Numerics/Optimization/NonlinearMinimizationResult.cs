@@ -138,6 +138,8 @@ namespace Altaxo.Calc.Optimization
     /// elements that differ by orders of magnitude.
     /// This is often the case when the parameters of the fit have very different orders of magnitude.
     /// </summary>
+    /// <param name="m">The matrix to pseudo-invert.</param>
+    /// <returns>The pseudo-inverse of <paramref name="m"/> after diagonal scaling has been applied and reverted.</returns>
     public static Matrix<double> PseudoInverseWithScaling(Matrix<double> m)
     {
       // 1st scale the matrix m : scaledM = S*m*S

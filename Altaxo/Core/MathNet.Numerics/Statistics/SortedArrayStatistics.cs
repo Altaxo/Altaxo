@@ -43,6 +43,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns the smallest value from the sorted data array (ascending).
     /// </summary>
     /// <param name="data">Sample array, must be sorted ascendingly.</param>
+    /// <returns>The smallest value in <paramref name="data"/>, or NaN if the array is empty.</returns>
     public static double Minimum(double[] data)
     {
       if (data.Length == 0)
@@ -57,6 +58,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns the largest value from the sorted data array (ascending).
     /// </summary>
     /// <param name="data">Sample array, must be sorted ascendingly.</param>
+    /// <returns>The largest value in <paramref name="data"/>, or NaN if the array is empty.</returns>
     public static double Maximum(double[] data)
     {
       if (data.Length == 0)
@@ -72,6 +74,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="data">Sample array, must be sorted ascendingly.</param>
     /// <param name="order">One-based order of the statistic, must be between 1 and N (inclusive).</param>
+    /// <returns>The requested order statistic, or NaN if <paramref name="order"/> is out of range.</returns>
     public static double OrderStatistic(double[] data, int order)
     {
       if (order < 1 || order > data.Length)
@@ -87,6 +90,7 @@ namespace Altaxo.Calc.Statistics
     /// Approximately median-unbiased regardless of the sample distribution (R8).
     /// </summary>
     /// <param name="data">Sample array, must be sorted ascendingly.</param>
+    /// <returns>The median of <paramref name="data"/>, or NaN if the array is empty.</returns>
     public static double Median(double[] data)
     {
       if (data.Length == 0)
@@ -107,6 +111,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="data">Sample array, must be sorted ascendingly.</param>
     /// <param name="p">Percentile selector, between 0 and 100 (inclusive).</param>
+    /// <returns>The percentile value corresponding to <paramref name="p"/>.</returns>
     public static double Percentile(double[] data, int p)
     {
       return Quantile(data, p / 100d);
@@ -117,6 +122,7 @@ namespace Altaxo.Calc.Statistics
     /// Approximately median-unbiased regardless of the sample distribution (R8).
     /// </summary>
     /// <param name="data">Sample array, must be sorted ascendingly.</param>
+    /// <returns>The first quartile value.</returns>
     public static double LowerQuartile(double[] data)
     {
       return Quantile(data, 0.25d);
@@ -127,6 +133,7 @@ namespace Altaxo.Calc.Statistics
     /// Approximately median-unbiased regardless of the sample distribution (R8).
     /// </summary>
     /// <param name="data">Sample array, must be sorted ascendingly.</param>
+    /// <returns>The third quartile value.</returns>
     public static double UpperQuartile(double[] data)
     {
       return Quantile(data, 0.75d);
@@ -137,6 +144,7 @@ namespace Altaxo.Calc.Statistics
     /// Approximately median-unbiased regardless of the sample distribution (R8).
     /// </summary>
     /// <param name="data">Sample array, must be sorted ascendingly.</param>
+    /// <returns>The interquartile range.</returns>
     public static double InterquartileRange(double[] data)
     {
       return Quantile(data, 0.75d) - Quantile(data, 0.25d);
@@ -147,6 +155,7 @@ namespace Altaxo.Calc.Statistics
     /// Approximately median-unbiased regardless of the sample distribution (R8).
     /// </summary>
     /// <param name="data">Sample array, must be sorted ascendingly.</param>
+    /// <returns>An array containing the five-number summary.</returns>
     public static double[] FiveNumberSummary(double[] data)
     {
       if (data.Length == 0)
@@ -170,6 +179,7 @@ namespace Altaxo.Calc.Statistics
     /// Linear interpolation of the approximate medians for order statistics.
     /// When tau &lt; (2/3) / (N + 1/3), use x1. When tau &gt;= (N - 1/3) / (N + 1/3), use xN.
     /// </remarks>
+    /// <returns>The quantile value corresponding to <paramref name="tau"/>, or NaN if the input is invalid.</returns>
     public static double Quantile(double[] data, double tau)
     {
       if (tau < 0d || tau > 1d || data.Length == 0)
@@ -206,6 +216,7 @@ namespace Altaxo.Calc.Statistics
     /// <param name="b">b-parameter</param>
     /// <param name="c">c-parameter</param>
     /// <param name="d">d-parameter</param>
+    /// <returns>The quantile value corresponding to <paramref name="tau"/>, or NaN if the input is invalid.</returns>
     public static double QuantileCustom(double[] data, double tau, double a, double b, double c, double d)
     {
       if (tau < 0d || tau > 1d || data.Length == 0)
@@ -236,6 +247,7 @@ namespace Altaxo.Calc.Statistics
     /// <param name="data">Sample array, must be sorted ascendingly.</param>
     /// <param name="tau">Quantile selector, between 0.0 and 1.0 (inclusive).</param>
     /// <param name="definition">Quantile definition, to choose what product/definition it should be consistent with</param>
+    /// <returns>The estimated quantile value, or <see cref="double.NaN"/> when the input is invalid.</returns>
     public static double QuantileCustom(double[] data, double tau, QuantileDefinition definition)
     {
       if (tau < 0d || tau > 1d || data.Length == 0)
@@ -337,6 +349,7 @@ namespace Altaxo.Calc.Statistics
     /// </summary>
     /// <param name="data">The data sample sequence.</param>
     /// <param name="x">The value where to estimate the CDF at.</param>
+    /// <returns>The empirical cumulative distribution value at <paramref name="x"/>.</returns>
     public static double EmpiricalCDF(double[] data, double x)
     {
       if (x < data[0])
@@ -372,6 +385,7 @@ namespace Altaxo.Calc.Statistics
     /// <param name="data">The data sample sequence.</param>
     /// <param name="x">Quantile value.</param>
     /// <param name="definition">Rank definition, to choose how ties should be handled and what product/definition it should be consistent with</param>
+    /// <returns>The quantile rank of <paramref name="x"/>.</returns>
     public static double QuantileRank(double[] data, double x, RankDefinition definition = RankDefinition.Default)
     {
       if (x < data[0])
@@ -442,6 +456,9 @@ namespace Altaxo.Calc.Statistics
     /// The rank definition can be specified to be compatible
     /// with an existing system.
     /// </summary>
+    /// <param name="data">The sorted data array.</param>
+    /// <param name="definition">Definition of ranking to apply.</param>
+    /// <returns>An array containing the rank of each entry.</returns>
     public static double[] Ranks(double[] data, RankDefinition definition = RankDefinition.Default)
     {
       var ranks = new double[data.Length];

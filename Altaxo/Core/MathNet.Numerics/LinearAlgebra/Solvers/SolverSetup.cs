@@ -46,6 +46,7 @@ namespace Altaxo.Calc.LinearAlgebra.Solvers
     /// <param name="assembly">The assembly which will be searched for setup objects.</param>
     /// <param name="ignoreFailed">If true, types that fail to load are simply ignored. Otherwise the exception is rethrown.</param>
     /// <param name="typesToExclude">The <see cref="IIterativeSolver{T}"/> types that should not be loaded.</param>
+    /// <returns>The discovered solver setup objects.</returns>
     public static IEnumerable<IIterativeSolverSetup<T>> LoadFromAssembly(Assembly assembly, bool ignoreFailed = true, params Type[] typesToExclude)
     {
       Type setupInterfaceType = typeof(IIterativeSolverSetup<T>);
@@ -81,6 +82,7 @@ namespace Altaxo.Calc.LinearAlgebra.Solvers
     /// <param name="typeInAssembly">The type in the assembly which should be searched for setup objects.</param>
     /// <param name="ignoreFailed">If true, types that fail to load are simply ignored. Otherwise the exception is rethrown.</param>
     /// <param name="typesToExclude">The <see cref="IIterativeSolver{T}"/> types that should not be loaded.</param>
+    /// <returns>The discovered solver setup objects.</returns>
     public static IEnumerable<IIterativeSolverSetup<T>> LoadFromAssembly(Type typeInAssembly, bool ignoreFailed = true, params Type[] typesToExclude)
     {
       return LoadFromAssembly(typeInAssembly.Assembly, ignoreFailed, typesToExclude);
@@ -92,6 +94,7 @@ namespace Altaxo.Calc.LinearAlgebra.Solvers
     /// <param name="assemblyName">The <see cref="AssemblyName"/> of the assembly that should be searched for setup objects.</param>
     /// <param name="ignoreFailed">If true, types that fail to load are simply ignored. Otherwise the exception is rethrown.</param>
     /// <param name="typesToExclude">The <see cref="IIterativeSolver{T}"/> types that should not be loaded.</param>
+    /// <returns>The discovered solver setup objects.</returns>
     public static IEnumerable<IIterativeSolverSetup<T>> LoadFromAssembly(AssemblyName assemblyName, bool ignoreFailed = true, params Type[] typesToExclude)
     {
       return LoadFromAssembly(Assembly.Load(assemblyName.FullName), ignoreFailed, typesToExclude);
@@ -101,6 +104,7 @@ namespace Altaxo.Calc.LinearAlgebra.Solvers
     /// Loads the available <see cref="IIterativeSolverSetup{T}"/> objects from the Math.NET Numerics assembly.
     /// </summary>
     /// <param name="typesToExclude">The <see cref="IIterativeSolver{T}"/> types that should not be loaded.</param>
+    /// <returns>The discovered solver setup objects.</returns>
     public static IEnumerable<IIterativeSolverSetup<T>> Load(Type[] typesToExclude)
     {
       return LoadFromAssembly(typeof(SolverSetup<T>), false, typesToExclude);
@@ -109,6 +113,7 @@ namespace Altaxo.Calc.LinearAlgebra.Solvers
     /// <summary>
     /// Loads the available <see cref="IIterativeSolverSetup{T}"/> objects from the  Math.NET Numerics assembly.
     /// </summary>
+    /// <returns>The discovered solver setup objects.</returns>
     public static IEnumerable<IIterativeSolverSetup<T>> Load()
     {
       return LoadFromAssembly(typeof(SolverSetup<T>), false);

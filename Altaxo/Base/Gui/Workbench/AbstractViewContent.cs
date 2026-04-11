@@ -284,6 +284,8 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Updates the title when the localized title changes.
     /// </summary>
+    /// <param name="sender">The localization source that raised the change notification.</param>
+    /// <param name="e">The event data.</param>
     protected virtual void EhTitleLocalizationChanged(object? sender, EventArgs e)
     {
       var value = _titleToBeLocalized?.Value;

@@ -103,6 +103,7 @@ namespace Altaxo.Calc.Distributions
     /// </summary>
     /// <param name="a">The α shape parameter of the Beta distribution. Range: α ≥ 0.</param>
     /// <param name="b">The β shape parameter of the Beta distribution. Range: β ≥ 0.</param>
+    /// <returns><c>true</c> if the parameters define a valid Beta distribution; otherwise, <c>false</c>.</returns>
     public static bool IsValidParameterSet(double a, double b)
     {
       return a >= 0.0 && b >= 0.0;
@@ -368,6 +369,7 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Fills an array with samples generated from the distribution.
     /// </summary>
+    /// <param name="values">The array to fill with samples.</param>
     public void Samples(double[] values)
     {
       SamplesUnchecked(_random, values, _shapeA, _shapeB);
@@ -409,6 +411,13 @@ namespace Altaxo.Calc.Distributions
       return x / (x + y);
     }
 
+    /// <summary>
+    /// Fills an array with samples from the Beta distribution without validating the parameters.
+    /// </summary>
+    /// <param name="rnd">The random number generator to use.</param>
+    /// <param name="values">The array to fill with samples.</param>
+    /// <param name="a">The α shape parameter.</param>
+    /// <param name="b">The β shape parameter.</param>
     internal static void SamplesUnchecked(System.Random rnd, double[] values, double a, double b)
     {
       var y = new double[values.Length];

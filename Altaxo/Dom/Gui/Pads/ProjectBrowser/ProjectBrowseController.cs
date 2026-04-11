@@ -75,21 +75,33 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// <summary>
     /// Sets the sort indicator for the name column.
     /// </summary>
+     /// <param name="isSorted"><see langword="true"/> if the column is part of the current sort order.</param>
+     /// <param name="isDescendingSort"><see langword="true"/> if the column is sorted in descending order.</param>
+     /// <param name="isSecondaryAdorner"><see langword="true"/> if the column should show the secondary sort adorner.</param>
     public void SetSortIndicator_NameColumn(bool isSorted, bool isDescendingSort, bool isSecondaryAdorner);
 
     /// <summary>
     /// Sets the sort indicator for the creation date column.
     /// </summary>
+     /// <param name="isSorted"><see langword="true"/> if the column is part of the current sort order.</param>
+     /// <param name="isDescendingSort"><see langword="true"/> if the column is sorted in descending order.</param>
+     /// <param name="isSecondaryAdorner"><see langword="true"/> if the column should show the secondary sort adorner.</param>
     public void SetSortIndicator_CreationDateColumn(bool isSorted, bool isDescendingSort, bool isSecondaryAdorner);
 
     /// <summary>
     /// Sets the sort indicator for the change date column.
     /// </summary>
+     /// <param name="isSorted"><see langword="true"/> if the column is part of the current sort order.</param>
+     /// <param name="isDescendingSort"><see langword="true"/> if the column is sorted in descending order.</param>
+     /// <param name="isSecondaryAdorner"><see langword="true"/> if the column should show the secondary sort adorner.</param>
     public void SetSortIndicator_ChangeDateColumn(bool isSorted, bool isDescendingSort, bool isSecondaryAdorner);
 
     /// <summary>
     /// Sets the sort indicator for the reverse-name column.
     /// </summary>
+     /// <param name="isSorted"><see langword="true"/> if the column is part of the current sort order.</param>
+     /// <param name="isDescendingSort"><see langword="true"/> if the column is sorted in descending order.</param>
+     /// <param name="isSecondaryAdorner"><see langword="true"/> if the column should show the secondary sort adorner.</param>
     public void SetSortIndicator_NameRevColumn(bool isSorted, bool isDescendingSort, bool isSecondaryAdorner);
 
     /// <summary>
